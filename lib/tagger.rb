@@ -18,7 +18,7 @@ module Tagger
     length: /\Atime[:-](\w+)\z/,
     teks: /\A(?:teks:|ost-tag-teks-)[\w-]+-(\w+)\z/,
     requires_context: /\Arequires-context:(?:y(?:es)?|t(?:rue)?)\z/,
-    cnxfeature: /\A(?:context-)?cnxfeature:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}#([\w-]+)\z/
+    cnxfeature: /\A(?:context-)?cnxfeature:([\w-]+)\z/
   })
 
   # The capture from the regex above is substituted into the template to form the tag name

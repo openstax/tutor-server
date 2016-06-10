@@ -186,11 +186,9 @@ module Content
                                       .group(:id).having do
             count(distinct(exercise_tags.tag.id)).gteq match_count
           end
-          exercises = exercises.where(page: pages) unless pages.nil?
+          exercises = exercises.where(content_page_id: [pages].flatten.map(&:id)) unless pages.nil?
 
-          exercises.map do |entity_exercise|
-            ::Content::Exercise.new(strategy: entity_exercise)
-          end
+          exercises.map{ |entity_exercise| ::Content::Exercise.new(strategy: entity_exercise) }
         end
 
         alias_method :entity_pools, :pools

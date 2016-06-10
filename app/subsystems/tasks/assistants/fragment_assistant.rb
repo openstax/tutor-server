@@ -34,7 +34,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                 previous_step: previous_step, title: title) \
           unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Exercise
-        task_exercise(exercise_fragment: fragment, task: task, title: title,
+        task_exercise(exercise_fragment: fragment, page: page, task: task, title: title,
                       previous_step: previous_step, step_modifier: step_modifier)
       when OpenStax::Cnx::V1::Fragment::Video
         task_video(video_fragment: fragment, step: step_builder.call, title: title)
@@ -111,7 +111,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       return if node_id.blank?
 
       feature_tag = "context-cnxfeature:#{node_id}"
-      pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag == feature_tag } }
+      pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag.value == feature_tag } }
     end
 
     previous_step.related_exercise_ids = related_exercises.map(&:id) || []
