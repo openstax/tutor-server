@@ -3,7 +3,9 @@ class CreateContentMaps < ActiveRecord::Migration
     create_table :content_maps do |t|
       t.references :content_from_ecosystem, null: false
       t.references :content_to_ecosystem, null: false, index: true
-      t.jsonb :map, null: false
+      t.jsonb :page_id_to_pages_map, null: false
+      t.jsonb :pool_type_page_id_to_exercises_map, null: false
+      t.jsonb :exercise_id_to_page_map, null: false
       t.boolean :is_valid, null: false
 
       t.timestamps null: false
