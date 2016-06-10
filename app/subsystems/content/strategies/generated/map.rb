@@ -33,6 +33,107 @@ module Content
           @pool_type_page_id_to_exercises_map = {}
         end
 
+
+        def merge_maps(from_ecosystems:, to_ecosystem:)
+          from_ecosystems_ids = from_ecosystems.map(&:id)
+          from_ecosystems_ids.delete(to_ecosystem.id)
+          existing = Content::Models::Map.where(content_from_ecosystem_id: from_ecosystems_ids, content_to_ecosystem_id: to_ecosystem.id)
+
+          existing_from_ecosystems_ids = existing.map(&:content_from_ecosystem_id)
+          missing_from_ecosystems_ids = from_ecosystems_ids - existing_from_ecosystems_ids | existing_from_ecosystems_ids - from_ecosystems_ids
+
+          missing_from_ecosystems = from_ecosystems.select do |ecosystem|
+            missing_from_ecosystems_ids.include?(ecosystem[:id])
+          end
+
+          new_maps = map_ecosystems(from_ecosystems: missing_from_ecosystems, to_ecosystem: to_ecosystem)
+
+          maps = existing.map(&:map) + new_maps
+
+          # will probably need to deep merge?
+          map = maps.reduce(&:merge)
+          return map
+        end
+
+        def map_ecosystems(from_ecosystems:, to_ecosystem:)
+
+          # cache each
+          ecosystems_maps = from_ecosystems.map do |from_ecosystem|
+
+            # map each
+            ecosystem_map = map_ecosystem(from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem)
+
+            # check validity
+            validity, validity_message = validate_maps(to_ecosystem: to_ecosystem,
+              exercises: from_ecosystem[:exercises], exercises_map: ecosystem_map[:exercise_id_to_page_map],
+              pages: from_ecosystem[:pages], pages_map: ecosystem_map[:pool_type_page_id_to_exercises_map],
+            )
+
+            # save map
+            save_map(from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem, map: ecosystem_map, is_valid: validity)
+
+            return ecosystem_map
+          end
+
+          return ecosystems_maps
+        end
+
+        def map_ecosystem(from_ecosystem:, to_ecosystem:)
+
+          all_exercises = from_ecosystem[:exercises]
+          all_pages = from_ecosystem[:pages]
+
+          page_ids = all_pages.map(&:id)
+          exercise_ids = all_exercises(&:id)
+          from_ecosystems_ids = [from_ecosystem.id]
+
+          page_id_to_pages_map = make_page_id_to_pages_map_for_ecosystem(to_ecosystem)
+          exercise_id_to_exercise_map = make_exercise_id_to_exercises_map_for_ecosystem(to_ecosystem)
+
+          # map each
+          all_pages_map = make_pages_to_pages_map(
+            page_ids: page_ids,
+            from_ecosystems_ids: from_ecosystems_ids,
+            to_ecosystem: to_ecosystem,
+            to_pages: page_id_to_pages_map
+          )
+          all_exercises_map = make_exercises_to_pages_map(
+            exercise_ids: exercise_ids,
+            from_ecosystems_ids: from_ecosystems_ids,
+            to_ecosystem: to_ecosystem,
+            to_pages: page_id_to_pages_map
+          )
+          # can feed all_pages_map info next mapping.
+          # all_pages_to_exericises_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
+
+          # TODO ? how to get all unique pool types?
+          pool_types = {}
+          all_pages_to_exericises_map = pool_types.each_with_object({}) do |pool_type, hash|
+            hash[pool_type] = make_pages_to_exercises_map(
+              pages: all_pages,
+              page_to_page_map: all_pages_map,
+              pool_type: pool_type,
+              to_ecosystem: to_ecosystem,
+              to_exercises: exercise_id_to_exercise_map
+            )
+          end
+
+          ecosystem_map = {
+            :page_id_to_pages_map => all_pages_map,
+            :exercise_id_to_page_map => all_exercises_map,
+            :pool_type_page_id_to_exercises_map => all_pages_to_exericises_map
+          }
+
+          return ecosystem_map
+        end
+
+        def save_map(from_ecosystem:, to_ecosystem:, map:, is_valid:)
+          Content::Models::Map.create(map: map,
+            content_from_ecosystem_id: from_ecosystem[:id], content_to_ecosystem_id: to_ecosystem[:id],
+            is_valid: is_valid
+          )
+        end
+
         def map_pages_to_pages(pages:)
           page_ids = pages.map(&:id)
 
@@ -43,16 +144,31 @@ module Content
 
           return mapped_pages if unmapped_page_ids.empty?
 
+          pages_map = make_pages_to_pages_map(
+            page_ids: unmapped_page_ids,
+            from_ecosystems_ids: @from_ecosystems.map(&:id),
+            to_ecosystem: @to_ecosystem,
+            to_pages: @page_id_to_pages_map
+          )
+
+          @page_id_to_pages_map.merge!(pages_map)
+          @page_id_to_pages_map.slice(*page_ids)
+        end
+
+        def make_pages_to_pages_map(page_ids:, from_ecosystems_ids:, to_ecosystem:, to_pages:)
+          pages_map = {}
+          to_pages ||= make_page_id_to_pages_map_for_ecosystem(to_ecosystem)
+
           page_to_page_map = Content::Models::Page
             .joins(tags: {same_value_tags: :pages})
             .where(tags: {
-                     content_ecosystem_id: @to_ecosystem.id,
+                     content_ecosystem_id: to_ecosystem.id,
                      tag_type: mapping_tag_types,
                      same_value_tags: {
-                       content_ecosystem_id: @from_ecosystems.map(&:id),
+                       content_ecosystem_id: from_ecosystems_ids,
                        tag_type: mapping_tag_types,
                        pages: {
-                         id: unmapped_page_ids
+                         id: page_ids
                        }
                      }
                    })
@@ -61,15 +177,15 @@ module Content
             .to_a.group_by(&:unmapped_page_id)
 
           page_to_page_map.each do |page_id, page_models|
-            ecosystem_pages = page_models.map{ |pm| @page_id_to_pages_map[pm.id] }.compact.uniq
+            ecosystem_pages = page_models.map{ |pm| to_pages[pm.id] }.compact.uniq
 
             # It could happen in theory that a page maps to 2 or more pages,
             # but for now we don't handle that case
             # since it's hard to figure out what to do for the dashboard/scores
-            @page_id_to_pages_map[page_id] = ecosystem_pages.size == 1 ? ecosystem_pages.first : nil
+            pages_map[page_id] = ecosystem_pages.size == 1 ? ecosystem_pages.first : nil
           end
 
-          @page_id_to_pages_map.slice(*page_ids)
+          return pages_map
         end
 
         def map_exercises_to_pages(exercises:)
@@ -81,16 +197,31 @@ module Content
 
           initialize_page_id_to_pages_map_for_the_to_ecosystem
 
+          exercises_map = make_exercises_to_pages_map(
+            exercise_ids: unmapped_exercise_ids,
+            from_ecosystems_ids: @from_ecosystems.map(&:id),
+            to_ecosystem: @to_ecosystem,
+            to_pages: @page_id_to_pages_map
+          )
+
+          @exercise_id_to_page_map.merge!(exercises_map)
+          @exercise_id_to_page_map.slice(*exercise_ids)
+        end
+
+        def make_exercises_to_pages_map(exercise_ids:, from_ecosystems_ids:, to_ecosystem:, to_pages:)
+          exercises_map = {}
+          to_pages ||= make_page_id_to_pages_map_for_ecosystem(to_ecosystem)
+
           exercise_to_page_map = Content::Models::Page
             .joins(tags: {same_value_tags: :exercises})
             .where(tags: {
-                     content_ecosystem_id: @to_ecosystem.id,
+                     content_ecosystem_id: to_ecosystem.id,
                      tag_type: mapping_tag_types,
                      same_value_tags: {
-                       content_ecosystem_id: @from_ecosystems.map(&:id),
+                       content_ecosystem_id: from_ecosystems_ids,
                        tag_type: mapping_tag_types,
                        exercises: {
-                         id: unmapped_exercise_ids
+                         id: exercise_ids
                        }
                      }
                    })
@@ -99,13 +230,13 @@ module Content
             .to_a.group_by(&:unmapped_exercise_id)
 
           exercise_to_page_map.each do |exercise_id, page_models|
-            ecosystem_pages = page_models.map{ |pm| @page_id_to_pages_map[pm.id] }.compact.uniq
+            ecosystem_pages = page_models.map{ |pm| to_pages[pm.id] }.compact.uniq
 
             # Each exercise maps to the highest numbered page that shares a mapping tag with it
-            @exercise_id_to_page_map[exercise_id] = ecosystem_pages.max_by(&:book_location)
+            exercises_map[exercise_id] = ecosystem_pages.max_by(&:book_location)
           end
 
-          @exercise_id_to_page_map.slice(*exercise_ids)
+          return exercises_map
         end
 
         def map_pages_to_exercises(pages:, pool_type: :all_exercises)
@@ -116,42 +247,57 @@ module Content
 
           return mapped_pages if unmapped_pages.empty?
 
-          @exercise_id_to_exercise_map ||= @to_ecosystem.exercises
-                                                        .each_with_object({}) do |exercise, hash|
-            hash[exercise.id] = exercise
-          end
+          @exercise_id_to_exercise_map ||= make_exercise_id_to_exercises_map_for_ecosystem(@to_ecosystem)
 
           page_to_page_map = map_pages_to_pages(pages: unmapped_pages)
 
-          to_page_ids = page_to_page_map.values.compact.map(&:id)
+          page_id_to_exercises_map_for_pool_type = make_pages_to_exercises_map(
+            pages: unmapped_pages,
+            page_to_page_map: page_to_page_map,
+            pool_type: pool_type,
+            to_ecosystem: @to_ecosystem,
+            to_exercises: @exercise_id_to_exercise_map
+          )
+
+          @pool_type_page_id_to_exercises_map[pool_type].merge!(page_id_to_exercises_map_for_pool_type)
+          @pool_type_page_id_to_exercises_map[pool_type].slice(*page_ids)
+        end
+
+        def make_pages_to_exercises_map(pages:, page_to_page_map:, pool_type:, to_ecosystem:, to_exercises:)
+
+          pool_type_page_id_to_exercises_map = {}
+          page_ids = page_to_page_map.values.compact.map(&:id)
+
+          to_exercises ||= make_exercise_id_to_exercises_map_for_ecosystem(to_ecosystem)
 
           pool_association = "#{pool_type}_pool".to_sym
 
-          to_page_models = Content::Models::Page.where(id: to_page_ids)
+          to_page_models = Content::Models::Page.where(id: page_ids)
                                                 .joins(pool_association)
                                                 .preload(pool_association)
 
           to_page_to_exercises_map = {}
           to_page_models.each do |to_page|
             pool = to_page.send(pool_association)
-            exercises = pool.content_exercise_ids.map{ |ex_id| @exercise_id_to_exercise_map[ex_id] }
+            exercises = pool.content_exercise_ids.map{ |ex_id| to_exercises[ex_id] }
             to_page_to_exercises_map[to_page.id] = exercises
           end
 
-          unmapped_pages.each do |page|
+          pages.each do |page|
             to_page = page_to_page_map[page.id]
             exercises = to_page_to_exercises_map[to_page.try(:id)] || []
-            @pool_type_page_id_to_exercises_map[pool_type][page.id] = exercises
+            pool_type_page_id_to_exercises_map[page.id] = exercises
           end
 
-          @pool_type_page_id_to_exercises_map[pool_type].slice(*page_ids)
+          return pool_type_page_id_to_exercises_map
         end
 
         def valid?
           cached_validity = cache.read(validity_key)
           return cached_validity unless cached_validity.nil?
 
-          validity, validity_message = cache_validity
+          validity, validity_message = validate
+          cache_validity(validity, validity_message)
           validity
         end
 
@@ -159,16 +305,31 @@ module Content
           cached_validity_message = cache.read(validity_message_key)
           return cached_validity_message unless cached_validity_message.nil?
 
-          validity, validity_message = cache_validity
+          validity, validity_message = validate
+          cache_validity(validity, validity_message)
           validity_message
         end
 
         protected
 
         def initialize_page_id_to_pages_map_for_the_to_ecosystem
-          @page_id_to_pages_map = @to_ecosystem.pages.each_with_object({}) do |page, hash|
+          @page_id_to_pages_map = make_page_id_to_pages_map_for_ecosystem(@to_ecosystem) if @page_id_to_pages_map.blank?
+        end
+
+        def make_page_id_to_pages_map_for_ecosystem(ecosystem)
+          page_id_to_pages_map = ecosystem.pages.each_with_object({}) do |page, hash|
             hash[page.id] = page
-          end if @page_id_to_pages_map.blank?
+          end
+
+          return page_id_to_pages_map
+        end
+
+        def make_exercise_id_to_exercises_map_for_ecosystem(ecosystem)
+          exercise_id_to_exercises_map = ecosystem.exercises.each_with_object({}) do |exercise, hash|
+            hash[exercise.id] = exercise
+          end
+
+          return exercise_id_to_exercises_map
         end
 
         def mapping_tag_types
@@ -202,17 +363,24 @@ module Content
         # 1- All Exercises in the old Ecosystem map to one Page in the new Ecosystem
         # 2- All Pages in the old Ecosystem map to an array of Exercises in the new Ecosystem
         #    (can be empty)
-        def cache_validity
+        def validate
           all_exercises = @from_ecosystems.flat_map(&:exercises)
           all_exercises_map = map_exercises_to_pages(exercises: all_exercises)
 
           all_pages = @from_ecosystems.flat_map(&:pages)
           all_pages_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
 
-          condition_a, condition_a_message = _evaluate_condition_a(all_exercises, all_exercises_map)
-          condition_b, condition_b_message = _evaluate_condition_b(all_exercises, all_exercises_map, @to_ecosystem.pages)
-          condition_c, condition_c_message = _evaluate_condition_c(all_pages, all_pages_map)
-          condition_d, condition_d_message = _evaluate_condition_d(all_pages, all_pages_map, @to_ecosystem.exercises)
+          return validate_maps(to_ecosystem: @to_ecosystem,
+            exercises: all_exercises, exercises_map: all_exercises_map,
+            pages: all_pages, pages_map: all_pages_map,
+          )
+        end
+
+        def validate_maps(to_ecosystem:, exercises:, exercises_map:, pages:, pages_map:)
+          condition_a, condition_a_message = _evaluate_condition_a(exercises, exercises_map)
+          condition_b, condition_b_message = _evaluate_condition_b(exercises, exercises_map, to_ecosystem.pages)
+          condition_c, condition_c_message = _evaluate_condition_c(pages, pages_map)
+          condition_d, condition_d_message = _evaluate_condition_d(pages, pages_map, to_ecosystem.exercises)
 
           validity = condition_a && condition_b && condition_c && condition_d
           validity_message = "[#{condition_a_message}]" +
@@ -220,6 +388,10 @@ module Content
                              "[#{condition_c_message}]" +
                              "[#{condition_d_message}]"
 
+          return validity, validity_message
+        end
+
+        def cache_validity(validity, validity_message)
           cache.write(validity_key, validity)
           cache.write(validity_message_key, validity_message)
 
