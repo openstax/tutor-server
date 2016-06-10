@@ -178,14 +178,17 @@ module Content
           end.sort_by{ |ex| number_indices[ex.number] }
         end
 
-        def exercises_with_tags(*tags, match_count: tags.size)
-          entity_exercises.reorder(nil)
-                          .preload(exercise_tags: :tag)
-                          .joins(exercise_tags: :tag)
-                          .where(exercise_tags: {tag: {value: tags.flatten}})
-                          .group(:id).having {
-                            count(distinct(exercise_tags.tag.id)).gteq match_count
-                          }.map do |entity_exercise|
+        def exercises_with_tags(*tags, pages: nil, match_count: tags.size)
+          exercises = entity_exercises.reorder(nil)
+                                      .preload(exercise_tags: :tag)
+                                      .joins(exercise_tags: :tag)
+                                      .where(exercise_tags: {tag: {value: tags.flatten}})
+                                      .group(:id).having do
+            count(distinct(exercise_tags.tag.id)).gteq match_count
+          end
+          exercises = exercises.where(page: pages) unless pages.nil?
+
+          exercises.map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end
         end

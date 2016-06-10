@@ -101,13 +101,11 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
       [
         ['k12phys-ch03-s01-lo01', 'context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509'],
         ['k12phys-ch03-s01-lo01', 'context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509',
-         'context-cnxfeature:0e58aa87-2e09-40a7-8bf3-269b2fa16509#fs-idp56122560'],
+         'context-cnxfeature:fs-idp56122560'],
         ['k12phys-ch03-s01-lo01', 'context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509',
-         'context-cnxfeature:0e58aa87-2e09-40a7-8bf3-269b2fa16509#fs-idp56122560',
-         'requires-context:y'],
+         'context-cnxfeature:fs-idp56122560', 'requires-context:y'],
         ['k12phys-ch03-s01-lo02', 'context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509',
-         'context-cnxfeature:0e58aa87-2e09-40a7-8bf3-269b2fa16509#fs-idp42721584',
-         'requires-context:true'],
+         'context-cnxfeature:fs-idp42721584', 'requires-context:true'],
       ]
     end
 

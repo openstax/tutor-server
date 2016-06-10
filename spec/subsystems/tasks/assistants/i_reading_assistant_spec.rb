@@ -529,7 +529,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
                                        ecosystem: ecosystem_model
     end
     let!(:interactive_cnxfeature_tag) do
-      FactoryGirl.create :content_tag, value: "context-cnxfeature:#{page.uuid}#fs-interactive",
+      FactoryGirl.create :content_tag, value: "context-cnxfeature:fs-interactive",
                                        tag_type: :cnxfeature,
                                        ecosystem: ecosystem_model
     end
