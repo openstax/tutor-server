@@ -67,7 +67,9 @@ module Api::V1
                readable: true,
                writeable: false,
                decorator: Api::V1::SnapLabRepresenter,
-               getter: -> (*) { snap_labs_with_page_id },
+               getter: ->(*) do
+                 snap_labs_with_page_id.map{ |snap_lab| Hashie::Mash.new(snap_lab) }
+               end,
                if: lambda { |args| snap_labs.present? },
                schema_info: {
                  required: false,

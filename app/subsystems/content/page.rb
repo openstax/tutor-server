@@ -107,5 +107,9 @@ module Content
       verify_and_return @strategy.snap_labs, klass: Hash, error: StrategyError
     end
 
+    def snap_labs_with_page_id
+      verify_and_return @strategy.snap_labs_with_page_id, klass: Hash, error: StrategyError
+    end
+
   end
 end

@@ -35,7 +35,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
 
     # For the moment, we're assuming just one book per ecosystem
-    books = ecosystem.books
+    books = ecosystem.books(preload: true)
     raise NotYetImplemented if books.count > 1
 
     respond_with books, represent_with: Api::V1::BookTocsRepresenter
