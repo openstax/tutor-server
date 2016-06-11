@@ -55,8 +55,9 @@ module Content
       verify_and_return @strategy.manifest, klass: ::Content::Manifest, error: StrategyError
     end
 
-    def books
-      verify_and_return @strategy.books, klass: ::Content::Book, error: StrategyError
+    def books(preload: false)
+      verify_and_return @strategy.books(preload: preload), klass: ::Content::Book,
+                                                           error: StrategyError
     end
 
     def books_by_ids(*ids)

@@ -26,7 +26,7 @@ module Content
         allow(dbl).to receive(:id).with(no_args)
                      .and_return(strategy_id)
 
-        allow(dbl).to receive(:books).with(no_args)
+        allow(dbl).to receive(:books).with(preload: false)
                      .and_return(strategy_books)
 
         allow(dbl).to receive(:exercises).with(no_args)

@@ -13,12 +13,6 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
 
-  let!(:expected_codes)  {
-    [
-      'https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex038%22',
-      'https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex039%22'
-    ]
-  }
   let!(:expected_tags)   {
     [ 'k12phys-ch04-ex038', 'k12phys-ch04-ex039' ]
   }
@@ -26,9 +20,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
   it "provides info about the optional exercise fragment" do
     expect(exercise_fragments.size).to eq 1
     fragment = exercise_fragments.first
-    expect(fragment.node).not_to be_nil
     expect(fragment.title).to be_nil
-    expect(fragment.embed_codes).to eq expected_codes
     expect(fragment.embed_tags).to eq expected_tags
   end
 end

@@ -30,7 +30,6 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
 
   it 'provides info about the interactive fragment' do
     interactive_fragments.each do |fragment|
-      expect(fragment.node).not_to be_nil
       expect(fragment.title).to eq expected_title
       expect(fragment.to_html).to eq expected_content
       expect(fragment.url).to eq expected_url

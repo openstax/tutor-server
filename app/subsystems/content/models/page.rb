@@ -28,6 +28,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
+  before_validation :cache_fragments, :cache_snap_labs
+
   delegate :is_intro?, :feature_node, to: :parser
 
   def cnx_id
@@ -47,19 +49,26 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def fragments
-    return @fragments unless @fragments.nil?
-
-    @fragments = fragment_splitter.split_into_fragments(parser.converted_root)
+    @fragments ||= begin
+      cache_fragments
+      frags = super
+      frags.nil? ? nil : frags.map{ |yaml| YAML.load(yaml) }
+    end
   end
 
   def snap_labs
-    parser.snap_lab_nodes.map do |snap_lab_node|
-      {
-        id: "#{self.id}:#{snap_lab_node.attr('id')}",
-        title: parser.snap_lab_title(snap_lab_node),
-        fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab')
-      }
+    @snap_labs ||= begin
+      cache_snap_labs
+      sls = super
+      sls.nil? ? nil : sls.map do |snap_lab|
+        sl = snap_lab.symbolize_keys
+        sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) })
+      end
     end
+  end
+
+  def snap_labs_with_page_id
+    snap_labs.map{ |snap_lab| snap_lab.merge(page_id: id) }
   end
 
   protected
@@ -70,8 +79,26 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   def fragment_splitter
     @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
-      book.reading_processing_instructions
+      chapter.book.reading_processing_instructions
     )
+  end
+
+  def cache_fragments
+    return unless read_attribute(:fragments).nil?
+
+    self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
+  end
+
+  def cache_snap_labs
+    return unless read_attribute(:snap_labs).nil?
+
+    self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
+      {
+        id: snap_lab_node.attr('id'),
+        title: parser.snap_lab_title(snap_lab_node),
+        fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab').map(&:to_yaml)
+      }
+    end
   end
 
 end

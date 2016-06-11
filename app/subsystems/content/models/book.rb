@@ -15,6 +15,8 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
+  scope :preloaded, ->{ preload(chapters: :pages) }
+
   def archive_url
     Addressable::URI.parse(url).site
   end

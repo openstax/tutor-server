@@ -30,7 +30,6 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Video, type: :external, vcr: VCR_OPT
 
   it 'provides info about the video fragment' do
     video_fragments.each do |fragment|
-      expect(fragment.node).not_to be_nil
       expect(fragment.title).to eq expected_title
       expect(fragment.to_html).to eq expected_content
       expect(fragment.url).to eq expected_url

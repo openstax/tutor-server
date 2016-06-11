@@ -88,10 +88,10 @@ module Content
         end
 
         alias_method :entity_books, :books
-        def books
-          entity_books.map do |entity_book|
-            ::Content::Book.new(strategy: entity_book)
-          end
+        def books(preload: false)
+          books = repository.books
+          books = books.preloaded if preload
+          books.map{ |book| ::Content::Book.new(strategy: book.wrap) }
         end
 
         alias_method :entity_chapters, :chapters

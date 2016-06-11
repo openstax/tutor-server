@@ -9,7 +9,7 @@ module Content
                 :homework_dynamic_pool, :practice_widget_pool, :concept_coach_pool,
                 :all_exercises_pool, :exercises, :tags, :los, :aplos, :url, :uuid, :version,
                 :cnx_id, :title, :content, :book_location, :is_intro?, :fragments, :snap_labs,
-                :short_id
+                :snap_labs_with_page_id, :short_id
 
         alias_method :entity_chapter, :chapter
         def chapter

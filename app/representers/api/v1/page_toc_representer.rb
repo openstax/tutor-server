@@ -64,10 +64,12 @@ module Api::V1
              }
 
     collection :snap_labs,
-               getter: -> (*) { snap_labs.map { |snap_lab| Hashie::Mash.new(snap_lab) } },
                readable: true,
                writeable: false,
                decorator: Api::V1::SnapLabRepresenter,
+               getter: ->(*) do
+                 snap_labs_with_page_id.map{ |snap_lab| Hashie::Mash.new(snap_lab) }
+               end,
                if: lambda { |args| snap_labs.present? },
                schema_info: {
                  required: false,

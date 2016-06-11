@@ -24,9 +24,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   let!(:task_plan) {
     snap_lab_ids = []
     ecosystem.pages.each do |page|
-      if page.snap_labs.present?
-        snap_lab_ids << page.snap_labs.first[:id]
-      end
+      snap_lab_ids << "#{page.id}:#{page.snap_labs.first[:id]}" if page.snap_labs.present?
     end
     FactoryGirl.build(:tasks_task_plan,
                       assistant: assistant,
@@ -73,13 +71,17 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
 
       content = taskeds.map(&:content)
       expect(content[0]).to include(
-        'if the acceleration of a moving bicycle is constant')
+        'if the acceleration of a moving bicycle is constant'
+      )
       expect(content[1]).to include(
-        'If you graph the average velocity (x-axis) vs. the elapsed time (y-axis)')
+        'If you graph the average velocity (x-axis) vs. the elapsed time (y-axis)'
+      )
       expect(content[2]).to include(
-        'What do bathroom scales measure?')
+        'What do bathroom scales measure?'
+      )
       expect(content[3]).to include(
-        'While standing on a bathroom scale,')
+        'While standing on a bathroom scale,'
+      )
     end
   end
 end
