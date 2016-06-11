@@ -5,7 +5,7 @@ class Tasks::Assistants::GenericAssistant
   def initialize(task_plan:, taskees:)
     @task_plan = task_plan
     @taskees = taskees
-    @tag_exercises = {}
+    @exercise_cache = {}
     reset_used_exercises
   end
 
@@ -20,23 +20,25 @@ class Tasks::Assistants::GenericAssistant
     @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   end
 
-  def get_all_exercises_with_tags(tags)
-    sorted_tags = tags.uniq.sort
+  def get_all_page_exercises_with_tags(page, tags)
+    sorted_tags = [tags].flatten.uniq.sort
 
-    @tag_exercises[sorted_tags] ||= ecosystem.exercises_with_tags(sorted_tags)
+    @exercise_cache[page.id] ||= {}
+    @exercise_cache[page.id][sorted_tags] ||= ecosystem.exercises_with_tags(sorted_tags,
+                                                                            pages: page)
   end
 
   def reset_used_exercises
     @used_exercise_numbers = Set.new
   end
 
-  def get_random_unused_exercise_with_tags(tags)
-    raise 'You must call reset_used_exercises before calling get_random_unused_exercise_with_tags' \
+  def get_random_unused_page_exercise_with_tags(page, tags)
+    raise 'You must call reset_used_exercises before get_random_unused_page_exercise_with_tags' \
       if @used_exercise_numbers.nil?
 
-    tag_exercises = get_all_exercises_with_tags(tags)
+    exercises = get_all_page_exercises_with_tags(page, tags)
 
-    candidate_exercises = tag_exercises.reject do |ex|
+    candidate_exercises = exercises.reject do |ex|
       @used_exercise_numbers.include?(ex.number)
     end
 

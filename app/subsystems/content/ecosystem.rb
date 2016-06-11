@@ -98,8 +98,8 @@ module Content
                         klass: ::Content::Exercise, error: StrategyError
     end
 
-    def exercises_with_tags(*tags)
-      verify_and_return @strategy.exercises_with_tags(*tags),
+    def exercises_with_tags(*tags, pages: nil)
+      verify_and_return @strategy.exercises_with_tags(*tags, pages: pages),
                         klass: ::Content::Exercise, error: StrategyError
     end
 

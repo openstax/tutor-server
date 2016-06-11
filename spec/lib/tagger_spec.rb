@@ -65,8 +65,7 @@ RSpec.describe Tagger, type: :lib do
         { value: 'requires-context:yes', name: nil, type: :requires_context },
         { value: 'requires-context:t', name: nil, type: :requires_context },
         { value: 'requires-context:true', name: nil, type: :requires_context },
-        { value: 'context-cnxfeature:6a0568d8-23d7-439b-9a01-16e4e73886b3#fs-featureid',
-          name: nil, type: :cnxfeature },
+        { value: 'context-cnxfeature:fs-featureid', name: nil, type: :cnxfeature },
         { value: 'dont-care', name: nil, type: :generic }
       ]
     end

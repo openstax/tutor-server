@@ -89,7 +89,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def feature_ids(page_uuid)
-    feature_tag_start = "context-cnxfeature:#{page_uuid}#"
+    feature_tag_start = 'context-cnxfeature:'
     feature_tags = cnxfeatures.select{ |tag| tag.start_with? feature_tag_start }
     feature_tags.map{ |tag| tag.sub(feature_tag_start, '') }
   end

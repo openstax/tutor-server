@@ -34,8 +34,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                 previous_step: previous_step, title: title) \
           unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Exercise
-        task_exercise(exercise_fragment: fragment, page: page, task: task,
-                      title: title, previous_step: previous_step, step_modifier: step_modifier)
+        task_exercise(exercise_fragment: fragment, page: page, task: task, title: title,
+                      previous_step: previous_step, step_modifier: step_modifier)
       when OpenStax::Cnx::V1::Fragment::Video
         task_video(video_fragment: fragment, step: step_builder.call, title: title)
       when OpenStax::Cnx::V1::Fragment::Interactive
@@ -59,14 +59,14 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:, step_modifier:)
-    exercise = get_random_unused_exercise_with_tags(exercise_fragment.embed_tags)
+    exercise = get_random_unused_page_exercise_with_tags(page, exercise_fragment.embed_tags)
 
     if exercise.nil?
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
-      feature_tag = "context-cnxfeature:#{page.uuid}##{node_id}"
-      exercise = get_random_unused_exercise_with_tags([feature_tag])
+      feature_tag = "context-cnxfeature:#{node_id}"
+      exercise = get_random_unused_page_exercise_with_tags(page, feature_tag)
 
       return if exercise.nil?
     end
@@ -110,8 +110,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
-      feature_tag = "context-cnxfeature:#{page.uuid}##{node_id}"
-      pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag == feature_tag } }
+      feature_tag = "context-cnxfeature:#{node_id}"
+      pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag.value == feature_tag } }
     end
 
     previous_step.related_exercise_ids = related_exercises.map(&:id) || []
