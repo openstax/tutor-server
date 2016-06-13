@@ -41,7 +41,7 @@ class ImportSalesforceCourses
 
   def candidate_sf_records
     search_criteria = {
-      concept_coach_approved: true,
+      status: "Approved",
       course_id: nil
     }
 
@@ -50,7 +50,7 @@ class ImportSalesforceCourses
       log { "Using test data only." }
     end
 
-    Salesforce::Remote::ClassSize.where(search_criteria)
+    Salesforce::Remote::OsAncillary.where(search_criteria)
   end
 
   def create_course_for_candidate(candidate)
@@ -61,8 +61,18 @@ class ImportSalesforceCourses
       return
     end
 
-    if !offering.is_concept_coach
-      error!(candidate, "Book Name matches a Tutor offering but it isn't for CC.")
+    if !candidate.valid_product?
+      error!(candidate, "Status is approved but 'Product' is missing or has an unexpected value.")
+      return
+    end
+
+    if candidate.is_tutor? && !offering.is_tutor
+      error!(candidate, "Book Name matches an offering in Tutor but not for full Tutor courses.")
+      return
+    end
+
+    if candidate.is_concept_coach? && !offering.is_concept_coach
+      error!(candidate, "Book Name matches an offering in Tutor but not for Concept Coach courses.")
       return
     end
 
@@ -73,15 +83,23 @@ class ImportSalesforceCourses
       return
     end
 
+    if candidate.school.blank?
+      error!(candidate, "A school is required.")
+      return
+    end
+
     school = run(:get_school, name: candidate.school).outputs.school ||
              run(:create_school, name: candidate.school).outputs.school
+
+    # TODO use (and be able to set) is_normally_college
 
     course = run(
       :create_course,
       name: candidate.course_name,
       school: school,
       catalog_offering: offering,
-      is_concept_coach: true
+      is_concept_coach: candidate.is_concept_coach?,
+      is_college: candidate.is_college?
     ).outputs.course
 
     candidate.course_id = course.id

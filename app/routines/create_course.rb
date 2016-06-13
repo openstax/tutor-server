@@ -12,7 +12,8 @@ class CreateCourse
                as: :create_course_assistants
 
   def exec(name:, appearance_code: nil, school: nil,
-           catalog_offering: nil, is_concept_coach: false, time_zone: nil)
+           catalog_offering: nil, is_concept_coach: false, is_college: false,
+           time_zone: nil)
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict
     # SS
@@ -25,6 +26,7 @@ class CreateCourse
         catalog_offering_id: catalog_offering.try(:id),
         school_district_school_id: school.try(:id),
         is_concept_coach: is_concept_coach,
+        is_college: is_college,
         time_zone: time_zone)
 
     run(:create_course_assistants, course: outputs.course)
