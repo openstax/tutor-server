@@ -150,6 +150,7 @@ RSpec.describe Content::Strategies::Generated::Map do
     mapping = map.map_exercises_to_pages(exercises: [
       old_exercise, new_exercise
     ])
+    debugger
     [old_exercise, new_exercise].each do |exercise|
       expect(mapping[exercise.id]).to eq new_page
     end

@@ -25,14 +25,9 @@ module Content
         end
 
         def initialize(from_ecosystems:, to_ecosystem:)
-          @from_ecosystems = from_ecosystems
-          @to_ecosystem = to_ecosystem
-
-          maps = merge_maps(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
-
-          @page_id_to_pages_map = maps[:page_id_to_pages_map]
-          @exercise_id_to_page_map = maps[:exercise_id_to_page_map]
-          @pool_type_page_id_to_exercises_map = maps[:pool_type_page_id_to_exercises_map]
+          @page_id_to_pages_map, @exercise_id_to_page_map, @pool_type_page_id_to_exercises_map,
+          @is_valid, @validity_message = \
+            merge_maps(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
         end
 
 
@@ -56,14 +51,8 @@ module Content
 
           cache_validity(is_valid, validity_message)
 
-          map = {
-            :page_id_to_pages_map => page_id_to_pages_map,
-            :exercise_id_to_page_map => exercise_id_to_page_map,
-            :pool_type_page_id_to_exercises_map => pool_type_page_id_to_exercises_map,
-            :is_valid => is_valid
-          }
-
-          return map
+          return page_id_to_pages_map, exercise_id_to_page_map,
+                 pool_type_page_id_to_exercises_map, is_valid, validity_message
         end
 
         def map_ecosystems(from_ecosystems:, to_ecosystem:)
@@ -123,8 +112,9 @@ module Content
             to_ecosystem: to_ecosystem,
             to_pages: page_id_to_pages_map
           )
-          all_pages_to_exericises_map = Content::Models::Pool.pool_types.keys.each_with_object({}) do |pool_type, hash|
-            hash[pool_type.to_sym] = make_pages_to_exercises_map(
+          all_pages_to_exercises_map = {}
+          Content::Models::Pool.pool_types.keys.each do |pool_type|
+            all_pages_to_exercises_map[pool_type.to_sym] = make_pages_to_exercises_map(
               pages: all_pages,
               page_to_page_map: all_pages_map,
               pool_type: pool_type.to_sym,
@@ -134,9 +124,9 @@ module Content
           end
 
           ecosystem_map = {
-            :page_id_to_pages_map => all_pages_map,
-            :exercise_id_to_page_map => all_exercises_map,
-            :pool_type_page_id_to_exercises_map => all_pages_to_exericises_map
+            page_id_to_pages_map: all_pages_map,
+            exercise_id_to_page_map: all_exercises_map,
+            pool_type_page_id_to_exercises_map: all_pages_to_exercises_map
           }
 
           return ecosystem_map
@@ -208,21 +198,11 @@ module Content
         end
 
         def valid?
-          cached_validity = cache.read(validity_key)
-          return cached_validity unless cached_validity.nil?
-
-          validity, validity_message = validate
-          cache_validity(validity, validity_message)
-          validity
+          @is_valid
         end
 
         def validity_diagnostic_message
-          cached_validity_message = cache.read(validity_message_key)
-          return cached_validity_message unless cached_validity_message.nil?
-
-          validity, validity_message = validate
-          cache_validity(validity, validity_message)
-          validity_message
+          @validity_message
         end
 
         protected
@@ -346,33 +326,12 @@ module Content
           end
         end
 
-        def cache
-          return @cache unless @cache.nil?
-
-          redis_secrets = Rails.application.secrets['redis']
-          @cache = ActiveSupport::Cache::RedisStore.new(
-            url: redis_secrets['url'], namespace: redis_secrets['namespaces']['cache']
-          )
-        end
-
-        def cache_key
-          "map/#{@from_ecosystems.map(&:id).join('-')}/#{@to_ecosystem.id}"
-        end
-
-        def validity_key
-          "#{cache_key}/valid"
-        end
-
-        def validity_message_key
-          "#{cache_key}/validity_message"
-        end
-
         # Valid if:
         # 1- All Exercises in the old Ecosystem map to one Page in the new Ecosystem
         # 2- All Pages in the old Ecosystem map to an array of Exercises in the new Ecosystem
         #    (can be empty)
         def validate
-          all_exercises = @from_ecosystems.flat_map(&:exercises)
+          from_exercises = @from_ecosystems.flat_map(&:exercises)
           all_exercises_map = map_exercises_to_pages(exercises: all_exercises)
 
           all_pages = @from_ecosystems.flat_map(&:pages)
@@ -384,8 +343,14 @@ module Content
           )
         end
 
-        def validate_maps(to_ecosystem:, exercises:, exercises_map:, pages:, pages_map:)
-          condition_a, condition_a_message = _evaluate_condition_a(exercises, exercises_map)
+        def validate_map(from_ecosystem:, to_ecosystem:)
+          exercises = from_ecosystem.exercises
+          exercises_map = map_exercises_to_pages(exercises: exercises)
+
+          pages = from_ecosystem.pages
+          pages_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
+
+          condition_a, condition_a_message = _ensure_all_exercises_are_mapped(exercises, exercises_map)
           condition_b, condition_b_message = _evaluate_condition_b(exercises, exercises_map, to_ecosystem.pages)
           condition_c, condition_c_message = _evaluate_condition_c(pages, pages_map)
           condition_d, condition_d_message = _evaluate_condition_d(pages, pages_map, to_ecosystem.exercises)
@@ -399,14 +364,7 @@ module Content
           return validity, validity_message
         end
 
-        def cache_validity(validity, validity_message)
-          cache.write(validity_key, validity)
-          cache.write(validity_message_key, validity_message)
-
-          return validity, validity_message
-        end
-
-        def _evaluate_condition_a(all_exercises, all_exercises_map)
+        def _ensure_all_exercises_are_mapped(all_exercises, all_exercises_map)
           ## condition: every exercise appears in the map
 
           all_exercises_map_ids_set = Set.new(all_exercises_map.keys)
