@@ -6,5 +6,6 @@ FactoryGirl.define do
     pool_type_page_id_to_exercises_map { {} }
     exercise_id_to_page_map { {} }
     is_valid true
+    validity_messages []
   end
 end
