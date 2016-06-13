@@ -25,9 +25,11 @@ module Content
         end
 
         def initialize(from_ecosystems:, to_ecosystem:)
-          @page_id_to_pages_map, @exercise_id_to_page_map, @pool_type_page_id_to_exercises_map,
-          @is_valid, @validity_message = \
+          @page_id_to_pages_map, @exercise_id_to_page_map, @pool_type_page_id_to_exercises_map = \
             merge_maps(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
+
+          @is_valid, @validity_message = validate(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
+
         end
 
 
@@ -45,14 +47,13 @@ module Content
           page_id_to_pages_map = existing.map(&:page_id_to_pages_map).push(new_maps[:page_id_to_pages_map]).reduce(&:merge)
           exercise_id_to_page_map = existing.map(&:exercise_id_to_page_map).push(new_maps[:exercise_id_to_page_map]).reduce(&:merge)
           pool_type_page_id_to_exercises_map = existing.map(&:pool_type_page_id_to_exercises_map).push(new_maps[:pool_type_page_id_to_exercises_map]).reduce(&:merge)
-          is_valid = existing.map(&:is_valid).push(new_maps[:is_valid]).all?
+          # is_valid = existing.map(&:is_valid).push(new_maps[:is_valid]).all?
           # need to join
-          validity_message = new_maps[:validity_message]
-
-          cache_validity(is_valid, validity_message)
+          # validity_message = new_maps[:validity_message]
 
           return page_id_to_pages_map, exercise_id_to_page_map,
-                 pool_type_page_id_to_exercises_map, is_valid, validity_message
+                 pool_type_page_id_to_exercises_map
+                 # , is_valid, validity_message
         end
 
         def map_ecosystems(from_ecosystems:, to_ecosystem:)
@@ -64,13 +65,12 @@ module Content
             ecosystem_map = map_ecosystem(from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem)
 
             # check validity
-            validity, validity_message = validate_maps(to_ecosystem: to_ecosystem,
+            validity, validity_message = validate_map(to_ecosystem: to_ecosystem,
               exercises: from_ecosystem.exercises, exercises_map: ecosystem_map[:exercise_id_to_page_map],
-              pages: from_ecosystem.pages, pages_map: ecosystem_map[:pool_type_page_id_to_exercises_map][:all_exercises],
+              pages: from_ecosystem.pages, pages_map: ecosystem_map[:pool_type_page_id_to_exercises_map],
             )
-
-            ecosystem_map[:is_valid] = validity
-            ecosystem_map[:validity_message] = validity_message
+            # ecosystem_map[:is_valid] = validity
+            # ecosystem_map[:validity_message] = validity_message
 
             # save map
             Content::Models::Map.create(
@@ -114,10 +114,12 @@ module Content
           )
           all_pages_to_exercises_map = {}
           Content::Models::Pool.pool_types.keys.each do |pool_type|
-            all_pages_to_exercises_map[pool_type.to_sym] = make_pages_to_exercises_map(
+            pool_type_sym = pool_type.to_sym
+
+            all_pages_to_exercises_map[pool_type_sym] = make_pages_to_exercises_map(
               pages: all_pages,
               page_to_page_map: all_pages_map,
-              pool_type: pool_type.to_sym,
+              pool_type: pool_type_sym,
               to_ecosystem: to_ecosystem,
               to_exercises: exercise_id_to_exercise_map
             )
@@ -330,36 +332,43 @@ module Content
         # 1- All Exercises in the old Ecosystem map to one Page in the new Ecosystem
         # 2- All Pages in the old Ecosystem map to an array of Exercises in the new Ecosystem
         #    (can be empty)
-        def validate
-          from_exercises = @from_ecosystems.flat_map(&:exercises)
-          all_exercises_map = map_exercises_to_pages(exercises: all_exercises)
+        def validate(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
+          from_exercises = from_ecosystems.flat_map(&:exercises)
+          all_exercises_map = @exercise_id_to_page_map
 
-          all_pages = @from_ecosystems.flat_map(&:pages)
-          all_pages_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
+          all_pages = from_ecosystems.flat_map(&:pages)
+          all_pages_map = @pool_type_page_id_to_exercises_map
 
-          return validate_maps(to_ecosystem: @to_ecosystem,
+          return validate_map(to_ecosystem: to_ecosystem,
             exercises: all_exercises, exercises_map: all_exercises_map,
             pages: all_pages, pages_map: all_pages_map,
           )
         end
 
-        def validate_map(from_ecosystem:, to_ecosystem:)
-          exercises = from_ecosystem.exercises
-          exercises_map = map_exercises_to_pages(exercises: exercises)
-
-          pages = from_ecosystem.pages
-          pages_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
-
+        def validate_map(to_ecosystem:, exercises:, pages:, exercises_map:, pages_map:)
           condition_a, condition_a_message = _ensure_all_exercises_are_mapped(exercises, exercises_map)
-          condition_b, condition_b_message = _evaluate_condition_b(exercises, exercises_map, to_ecosystem.pages)
-          condition_c, condition_c_message = _evaluate_condition_c(pages, pages_map)
-          condition_d, condition_d_message = _evaluate_condition_d(pages, pages_map, to_ecosystem.exercises)
+          condition_b, condition_b_message = _ensure_all_exercises_mapped_to_pages(exercises, exercises_map, to_ecosystem.pages)
 
-          validity = condition_a && condition_b && condition_c && condition_d
+          condition_per_pool_types = []
+          condition_c_message_per_pool_types = []
+          condition_d_message_per_pool_types = []
+
+          Content::Models::Pool.pool_types.keys.each do |pool_type|
+            pool_type_sym = pool_type.to_sym
+
+            condition_c, condition_c_message = _ensure_all_pages_are_mapped(pages, pages_map)
+            condition_d, condition_d_message = _ensure_all_pages_mapped_to_exercises(pages, pages_map, to_ecosystem.exercises)
+
+            condition_per_pool_types + [condition_c, condition_d]
+            condition_c_message_per_pool_types + ["#{condition_c_message} for pool_type #{pool_type}"]
+            condition_d_message_per_pool_types + ["#{condition_d_message} for pool_type #{pool_type}"]
+          end
+
+          validity = condition_a && condition_b && condition_per_pool_types.all?
           validity_message = "[#{condition_a_message}]" +
                              "[#{condition_b_message}]" +
-                             "[#{condition_c_message}]" +
-                             "[#{condition_d_message}]"
+                             "[#{condition_c_message_per_pool_types.join(', ')}]" +
+                             "[#{condition_d_message_per_pool_types.join(', ')}]"
 
           return validity, validity_message
         end
@@ -384,7 +393,7 @@ module Content
           return condition, condition_message
         end
 
-        def _evaluate_condition_b(all_exercises, all_exercises_map, to_ecosystem_pages)
+        def _ensure_all_exercises_mapped_to_pages(all_exercises, all_exercises_map, to_ecosystem_pages)
           ## condition: every mapped exercise maps to a to_ecosystem page
 
           all_execises_map_pages_set = Set.new(all_exercises_map.values)
@@ -408,7 +417,7 @@ module Content
           return condition, condition_message
         end
 
-        def _evaluate_condition_c(all_pages, all_pages_map)
+        def _ensure_all_pages_are_mapped(all_pages, all_pages_map)
           ## condition: every page appears in the map
 
           all_pages_map_ids_set = Set.new(all_pages_map.keys)
@@ -428,7 +437,7 @@ module Content
           return condition, condition_message
         end
 
-        def _evaluate_condition_d(all_pages, all_pages_map, to_ecosystem_exercises)
+        def _ensure_all_pages_mapped_to_exercises(all_pages, all_pages_map, to_ecosystem_exercises)
           ## condition: every mapped page maps to exercises in the to_ecosystem
 
           all_pages_map_exercises_set = Set.new(all_pages_map.values.flatten)
