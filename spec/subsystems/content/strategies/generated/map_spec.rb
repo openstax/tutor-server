@@ -121,8 +121,6 @@ RSpec.describe Content::Strategies::Generated::Map do
   let!(:old_page)                     { old_exercise.page }
   let!(:new_page)                     { new_exercise.page }
 
-  let!(:old_pool)                     {  }
-
   let!(:old_ecosystem)                { old_page.chapter.book.ecosystem }
   let!(:new_ecosystem)                { new_page.chapter.book.ecosystem }
 
@@ -147,17 +145,12 @@ RSpec.describe Content::Strategies::Generated::Map do
   }
 
   it 'can map from_ecosystems exercises to to_ecosystem pages' do
-    mapping = map.map_exercises_to_pages(exercises: [
-      old_exercise, new_exercise
-    ])
-    debugger
+    mapping = map.map_exercises_to_pages(exercises: [old_exercise, new_exercise])
     [old_exercise, new_exercise].each do |exercise|
       expect(mapping[exercise.id]).to eq new_page
     end
 
-    mapping_2 = map.map_exercises_to_pages(exercises: [
-      another_old_exercise, another_new_exercise
-    ])
+    mapping_2 = map.map_exercises_to_pages(exercises: [another_old_exercise, another_new_exercise])
     [another_old_exercise, another_new_exercise].each do |exercise|
       expect(mapping_2[exercise.id]).to eq another_new_page
     end
@@ -175,17 +168,37 @@ RSpec.describe Content::Strategies::Generated::Map do
     end
   end
 
-  it 'can map from_ecosystems pages to to_ecosystem exercises' do
-    mapping = map.map_pages_to_exercises(pages: [
-      old_page, new_page
+  it 'can map from_ecosystems pages to to_ecosystem pages' do
+    mapping = map.map_pages_to_pages(pages: [old_page, new_page])
+    [old_page, new_page].each do |page|
+      expect(mapping[page.id]).to eq new_page
+    end
+
+    mapping_2 = map.map_pages_to_pages(pages: [another_old_page, another_new_page])
+    [another_old_page, another_new_page].each do |page|
+      expect(mapping_2[page.id]).to eq another_new_page
+    end
+
+    # Try again to see that we get the same results with the cached mapping
+    mapping_3 = map.map_pages_to_pages(pages: [
+      old_page, new_page, another_old_page, another_new_page
     ])
+    [old_page, new_page].each do |page|
+      expect(mapping_3[page.id]).to eq new_page
+    end
+
+    [another_old_page, another_new_page].each do |page|
+      expect(mapping_3[page.id]).to eq another_new_page
+    end
+  end
+
+  it 'can map from_ecosystems pages to to_ecosystem exercises' do
+    mapping = map.map_pages_to_exercises(pages: [old_page, new_page])
     [old_page, new_page].each do |page|
       expect(mapping[page.id]).to eq [new_exercise]
     end
 
-    mapping_2 = map.map_pages_to_exercises(pages: [
-      another_old_page, another_new_page
-    ])
+    mapping_2 = map.map_pages_to_exercises(pages: [another_old_page, another_new_page])
     [another_old_page, another_new_page].each do |page|
       expect(mapping_2[page.id]).to eq [another_new_exercise]
     end
@@ -204,9 +217,7 @@ RSpec.describe Content::Strategies::Generated::Map do
   end
 
   it 'does not return exercises in other pools' do
-    mapping = map.map_pages_to_exercises(pages: [
-      old_page, new_page
-    ], pool_type: :practice_widget)
+    mapping = map.map_pages_to_exercises(pages: [old_page, new_page], pool_type: :practice_widget)
     [old_page, new_page].each do |page|
       expect(mapping[page.id]).to eq []
     end

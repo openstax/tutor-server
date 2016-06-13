@@ -7,6 +7,7 @@ class CreateContentMaps < ActiveRecord::Migration
       t.jsonb :pool_type_page_id_to_exercises_map, null: false
       t.jsonb :exercise_id_to_page_map, null: false
       t.boolean :is_valid, null: false
+      t.string :validity_errors, array: true, null: false
 
       t.timestamps null: false
 

@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 20160610210955) do
     t.jsonb    "pool_type_page_id_to_exercises_map", null: false
     t.jsonb    "exercise_id_to_page_map",            null: false
     t.boolean  "is_valid",                           null: false
+    t.string   "validity_errors",                    null: false, array: true
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
   end
