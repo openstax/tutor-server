@@ -5,15 +5,15 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   validates :from_ecosystem, :to_ecosystem, presence: true
   validates :to_ecosystem, uniqueness: { scope: :content_from_ecosystem_id }
 
-  before_validation :create_exercise_id_to_page_map, :create_page_id_to_page_map,
-                    :create_page_id_to_pool_type_exercises_map, :validate_maps
+  before_validation :create_exercise_id_to_page_id_map, :create_page_id_to_page_id_map,
+                    :create_page_id_to_pool_type_exercise_ids_map, :validate_maps
 
-  def create_exercise_id_to_page_map
-    return unless exercise_id_to_page_map.nil?
+  def create_exercise_id_to_page_id_map
+    return unless exercise_id_to_page_id_map.nil?
 
-    self.exercises_id_to_page_map = {}
+    self.exercises_id_to_page_id_map = {}
 
-    temp_exercise_id_to_pages_map = Content::Models::Page
+    exercise_id_to_pages_map = Content::Models::Page
       .joins(tags: {same_value_tags: :exercises})
       .where(tags: {
                content_ecosystem_id: to_ecosystem.id,
@@ -23,24 +23,25 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
                  tag_type: mapping_tag_types
                }
              })
-      .select{[Content::Models::Page.arel_table[Arel.star],
+      .select{[Content::Models::Page.arel_table[:id],
+               Content::Models::Page.arel_table[:book_location],
                tags.same_value_tags.exercises.id.as(:from_exercise_id)]}
       .to_a.group_by(&:from_exercise_id)
 
     # Each exercise maps to the highest numbered page that shares a mapping tag with it
-    temp_exercise_id_to_pages_map.each do |exercise_id, pages|
-      exercises_id_to_page_map[exercise_id] = pages.max_by(&:book_location)
+    exercise_id_to_pages_map.each do |exercise_id, pages|
+      exercises_id_to_page_id_map[exercise_id] = pages.max_by(&:book_location).id
     end
 
-    exercises_id_to_page_map
+    exercises_id_to_page_id_map
   end
 
-  def create_page_id_to_page_map
-    return unless page_id_to_page_map.nil?
+  def create_page_id_to_page_id_map
+    return unless page_id_to_page_id_map.nil?
 
-    self.page_id_to_page_map = {}
+    self.page_id_to_page_id_map = {}
 
-    temp_page_id_to_pages_map = Content::Models::Page
+    page_id_to_pages_map = Content::Models::Page
       .joins(tags: {same_value_tags: :pages})
       .where(tags: {
                content_ecosystem_id: to_ecosystem.id,
@@ -50,41 +51,43 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
                  tag_type: mapping_tag_types
                }
              })
-      .select{[Content::Models::Page.arel_table[Arel.star],
+      .select{[Content::Models::Page.arel_table[:id],
                tags.same_value_tags.pages.id.as(:from_page_id)]}
       .to_a.group_by(&:from_page_id)
 
     # It could happen in theory that a page maps to 2 or more pages,
     # but for now we don't handle that case
     # since it's hard to figure out what to do for the dashboard/scores
-    temp_page_id_to_pages_map.each do |page_id, pages|
-      page_id_to_page_map[page_id] = pages.size == 1 ? pages.first : nil
+    page_id_to_pages_map.each do |page_id, pages|
+      page_id_to_page_id_map[page_id] = pages.size == 1 ? pages.first.id : nil
     end
 
-    page_id_to_page_map
+    page_id_to_page_id_map
   end
 
-  def create_page_id_to_pool_type_exercises_map
-    return unless page_id_to_pool_type_exercises_map.nil?
+  def create_page_id_to_pool_type_exercise_ids_map
+    return unless page_id_to_pool_type_exercise_ids_map.nil?
 
-    self.page_id_to_pool_type_exercises_map = {}
+    self.page_id_to_pool_type_exercise_ids_map = {}
 
-    create_page_id_to_page_map
-
-    to_exercises_by_id = to_ecosystem.exercises.index_by(&:id)
+    create_page_id_to_page_id_map
 
     pool_association_to_pool_type_map = Content::Models::Pool.pool_types.keys
                                                              .map(&:to_sym).group_by do |pool_type|
       "#{pool_type}_pool".to_sym
     end
 
-    page_id_to_page_map.each do |from_page_id, to_page|
-      page_id_to_pool_type_exercises_map[from_page_id] = {}
+    pool_associations = pool_association_to_pool_type_map.keys
+    to_pages_map = to_ecosystem.pages.preload(pool_associations).index_by(&:id)
+
+    page_id_to_page_id_map.each do |from_page_id, to_page_id|
+      page_id_to_pool_type_exercise_ids_map[from_page_id] = {}
+
+      to_page = to_pages_map[to_page_id]
 
       pool_association_to_pool_type_map.each do |pool_association, pool_type|
         pool = to_page.send(pool_association)
-        exercises = pool.content_exercise_ids.map{ |ex_id| to_exercises_by_id[ex_id] }
-        page_id_to_pool_type_exercises_map[from_page_id][pool_type] = exercises
+        page_id_to_pool_type_exercise_ids_map[from_page_id][pool_type] = pool.content_exercise_ids
       end
     end
 

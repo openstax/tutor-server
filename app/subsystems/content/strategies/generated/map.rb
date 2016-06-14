@@ -3,8 +3,7 @@ module Content
     module Generated
       class Map
 
-        attr_accessor :exercise_id_to_page_map, :page_id_to_page_map,
-                      :page_id_to_pool_type_exercises_map, :is_valid, :validity_error_message
+        attr_accessor :is_valid, :validity_error_message
 
         class << self
           def find_or_create(from_ecosystems:, to_ecosystem:)
@@ -21,11 +20,62 @@ module Content
         end
 
         def initialize(from_ecosystems:, to_ecosystem:)
+          @to_ecosystem = to_ecosystem
           maps = find_or_create_maps(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
+          merge_maps(maps: maps)
+        end
 
-          cache_merged_maps(maps: maps)
+        # Returns a hash that maps the given Content::Exercises
+        # to Content::Pages in the to_ecosystem
+        def map_exercises_to_pages(exercises:)
+          exercise_ids = exercises.map(&:id)
+          page_ids = exercise_ids.map{ |ex_id| @exercise_id_to_page_id_map[ex_id] }
+          pages_by_ids = to_ecosystem_pages_by_ids(*page_ids)
 
-          cache_merged_map_validity(maps: maps)
+          exercise_to_page_map = {}
+
+          exercises.each do |exercise|
+            page_id = @exercise_id_to_page_id_map[exercise.id]
+            exercise_to_page_map[exercise] = pages_by_ids[page_id]
+          end
+
+          exercise_to_page_map
+        end
+
+        # Returns a hash that maps the given Content::Pages
+        # to Content::Pages in the to_ecosystem
+        def map_pages_to_pages(pages:)
+          from_page_ids = pages.map(&:id)
+          to_page_ids = from_page_ids.map{ |pg_id| @page_id_to_page_id_map[pg_id] }
+          pages_by_ids = to_ecosystem_pages_by_ids(*to_page_ids)
+
+          page_to_page_map = {}
+
+          pages.each do |page|
+            to_page_id = @page_id_to_page_id_map[page.id]
+            page_to_page_map[page] = pages_by_ids[to_page_id]
+          end
+
+          page_to_page_map
+        end
+
+        # Returns a hash that maps the given Content::Pages
+        # to Content::Exercises in the to_ecosystem that are in a Content::Pool of the given type
+        def map_pages_to_exercises(pages:, pool_type: :all_exercises)
+          page_ids = pages.map(&:id)
+          exercise_ids = page_ids.map do |pg_id|
+            @page_id_to_pool_type_exercise_ids_map[pg_id][pool_type]
+          end
+          exercises_by_ids = to_ecosystem_exercises_by_ids(*exercise_ids)
+
+          page_to_exercises_map = {}
+
+          pages.each do |page|
+            exercise_id = @page_id_to_pool_type_exercise_ids_map[page.id][pool_type]
+            page_to_exercises_map[page] = exercises_by_ids[exercise_id]
+          end
+
+          page_to_exercises_map
         end
 
         protected
@@ -55,34 +105,15 @@ module Content
           end
         end
 
-        def wrap_hash(hash:)
-          wrapped_hash = {}
-
-          hash.each do |key, value|
-            wrapped_value = case value
-            when Hash
-              wrap_hash hash: value
-            when ::Content::Models::Exercise
-              ::Content::Exercise.new(strategy: value.wrap)
-            when ::Content::Models::Page
-              ::Content::Page.new(strategy: value.wrap)
-            else
-              raise ArgumentError, "Cannot wrap #{value.class.name}", caller
-            end
-
-            merged_hash[key] = wrapped_value
-          end
+        def merge_maps(maps:)
+          @page_id_to_page_id_map = maps.map(&:page_id_to_page_id_map).reduce(&:merge)
+          @exercise_id_to_page_id_map = maps.map(&:exercise_id_to_page_id_map).reduce(&:merge)
+          @page_id_to_pool_type_exercise_ids_map = maps.map(&:page_id_to_pool_type_exercise_ids_map)
+                                                       .reduce(&:merge)
+          merge_map_validities(maps: maps)
         end
 
-        def cache_merged_maps(maps:)
-          @page_id_to_page_map = wrap_hash(hash: maps.map(&:page_id_to_page_map).reduce(&:merge))
-          @exercise_id_to_page_map = \
-            wrap_hash(hash: maps.map(&:exercise_id_to_page_map).reduce(&:merge))
-          @page_id_to_pool_type_exercises_map = \
-            wrap_hash(hash: maps.map(&:page_id_to_pool_type_exercises_map).reduce(&:merge))
-        end
-
-        def cache_merged_map_validity(maps:)
+        def merge_map_validities(maps:)
           invalid_maps = maps.reject(&:is_valid)
 
           @is_valid = invalid_maps.none?
@@ -92,6 +123,28 @@ module Content
               ecosystem_map.to_ecosystem.title}. Errors: [#{
               ecosystem_map.validity_error_messages.join(", ")}]"
           end.join("\n")
+        end
+
+        def to_ecosystem_exercises_by_ids(*exercise_ids)
+          @to_exercises_map ||= {}
+
+          unmapped_exercise_ids = exercise_ids.reject{ |ex_id| @to_exercises_map.has_key? ex_id }
+          @to_exercises_map = @to_exercises_map.merge(
+            @to_ecosystem.exercises_by_ids(*unmapped_exercise_ids).index_by(&:id)
+          ) unless unmapped_exercise_ids.empty?
+
+          @to_exercises_map.slice(*exercise_ids)
+        end
+
+        def to_ecosystem_pages_by_ids(*page_ids)
+          @to_pages_map ||= {}
+
+          unmapped_page_ids = page_ids.reject{ |page_id| @to_pages_map.has_key? page_id }
+          @to_pages_map = @to_pages_map.merge(
+            @to_ecosystem.pages_by_ids(*unmapped_page_ids).index_by(&:id)
+          ) unless unmapped_page_ids.empty?
+
+          @to_pages_map.slice(*page_ids)
         end
 
       end
