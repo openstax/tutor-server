@@ -58,19 +58,7 @@ module CourseGuideMethods
       te.task_step.task.taskings.map(&:role)
     end.uniq
 
-    case type
-    when :student
-      # Student guide: query by role
-      Rails.logger.warn('student clues called for more than one role') if roles.size > 1
-      OpenStax::Biglearn::V1.get_clues(roles: roles.first, pools: pools, cache_for: roles.first)
-    when :teacher
-      # Teacher guide: query by period
-      periods = roles.map{ |role| role.student.period }.uniq
-      Rails.logger.warn('teacher clues called for more than one period') if periods.size > 1
-      OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools, cache_for: periods.first)
-    else
-      raise 'Course guide type must be either :student or :teacher'
-    end
+    OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
   end
 
   def compile_pages(sorted_page_groupings, clues_map)

@@ -104,21 +104,15 @@ class OpenStax::Biglearn::V1::RealClient
     result["questions"].map { |q| q["question"] }
   end
 
-  def get_clues(roles:, pools:, cache_for: nil, force_cache_miss: false)
+  def get_clues(roles:, pools:, force_cache_miss: false)
     learners = get_exchange_read_identifiers_for_roles(roles: roles)
 
     # No learners: map all pools to nil
     return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?
 
-    # Use cache_for's cache_key if present or else XOR the learner hashes
-    learner_cache_key = cache_for.present? ? \
-                          cache_for.cache_key.split('-').first : \
-                          learners.map{ |learner| Integer(learner, 16) }.reduce(:^).to_s(16)
-
     pool_ids = pools.map(&:uuid)
 
-    fetch_clues(learners: learners, pool_ids: pool_ids,
-                learner_cache_key: learner_cache_key, force_cache_miss: force_cache_miss)
+    fetch_clues(learners: learners, pool_ids: pool_ids, force_cache_miss: force_cache_miss)
   end
 
   private
@@ -128,8 +122,11 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   # Get all the CLUEs from the cache, calling Biglearn only if needed
-  def fetch_clues(learners:, pool_ids:, learner_cache_key:, force_cache_miss:)
+  def fetch_clues(learners:, pool_ids:, force_cache_miss:)
     key_prefix = 'biglearn/clues'
+
+    # XOR the learner hashes
+    learner_cache_key = learners.map{ |learner| Integer(learner, 16) }.reduce(:^).to_s(16)
 
     # The CLUEs returned refer to all given learners at once
     # Each CLUE refers to a single pool, so each pool corresponds to a different cache key
@@ -185,8 +182,7 @@ class OpenStax::Biglearn::V1::RealClient
     pool_id_to_clue_map
   end
 
-  def request_clues(learners:, pool_ids:,
-                    pool_id_to_cache_key_map:, result_map:)
+  def request_clues(learners:, pool_ids:, pool_id_to_cache_key_map:, result_map:)
     query = { learners: learners, pool_ids: pool_ids }
     response = request(:get, clue_uri, params: query)
     result = handle_response(response) || {}

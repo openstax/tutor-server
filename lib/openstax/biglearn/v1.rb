@@ -58,7 +58,7 @@ module OpenStax::Biglearn::V1
   # Each CLUe refers to one specific pool, but uses all roles given.
   # May return nil if no CLUe is available
   # (e.g. no exercises in the pools or confidence too low).
-  def self.get_clues(roles:, pools:, cache_for: nil, force_cache_miss: false)
+  def self.get_clues(roles:, pools:, force_cache_miss: false)
     roles = [roles].flatten.compact
     pools = [pools].flatten.compact
 
@@ -68,8 +68,7 @@ module OpenStax::Biglearn::V1
     # No roles given: map all pools to nil
     return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if roles.empty?
 
-    clue = client.get_clues(roles: roles, pools: pools,
-                            cache_for: cache_for, force_cache_miss: force_cache_miss)
+    clue = client.get_clues(roles: roles, pools: pools, force_cache_miss: force_cache_miss)
   end
 
   #

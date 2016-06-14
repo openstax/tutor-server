@@ -100,7 +100,7 @@ class OpenStax::Biglearn::V1::FakeClient
     question_ids.first(count)
   end
 
-  def get_clues(roles:, pools:, cache_for: 'ignored', force_cache_miss: 'ignored')
+  def get_clues(roles:, pools:, force_cache_miss: 'ignored')
     # The fake client CLUe results are completely random
     pools.each_with_object({}) do |pool, hash|
       aggregate = rand(0.0..1.0)
