@@ -13,7 +13,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: false]
+    ImportSalesforceCourses.call(include_real_salesforce_data: false)
   end
 
   it 'restricts to Denver University when told to include real data but global secrets flag false' do
@@ -26,7 +26,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: true]
+    ImportSalesforceCourses.call(include_real_salesforce_data: true)
   end
 
   it 'does not restrict to Denver University when told to include real data' do
@@ -38,89 +38,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       course_id: nil
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: true]
-  end
-
-  it 'errors when the book name does not match an offering in tutor' do
-    disable_sfdc_client
-
-    sf_record = sf_record_class.new(book_name: "jimmy")
-    stub_candidates(sf_record)
-
-    result = ImportSalesforceCourses.call
-
-    expect(sf_record.error).to eq "Book Name does not match an offering in Tutor."
-    expect(result.outputs.num_failures).to eq 1
-    expect(result.outputs.num_successes).to eq 0
-  end
-
-  it 'errors when the product is no good' do
-    disable_sfdc_client
-
-    sf_record = sf_record_class.new(book_name: "jimmy", product: "Tutor Extreme")
-    stub_candidates(sf_record)
-
-    FactoryGirl.create(:catalog_offering, salesforce_book_name: "jimmy", is_concept_coach: false)
-
-    ImportSalesforceCourses[]
-
-    expect(sf_record.error).to eq "Status is approved but 'Product' is missing or has an unexpected value."
-  end
-
-  it 'errors when the SF record is for CC but the matching offering is not' do
-    disable_sfdc_client
-
-    sf_record = sf_record_class.new(book_name: "jimmy", product: "Concept Coach")
-    stub_candidates(sf_record)
-
-    FactoryGirl.create(:catalog_offering, salesforce_book_name: "jimmy", is_concept_coach: false)
-
-    ImportSalesforceCourses[]
-
-    expect(sf_record.error).to eq "Book Name matches an offering in Tutor but not for Concept Coach courses."
-  end
-
-  it 'errors when the SF record is for Tutor but the matching offering is not' do
-    disable_sfdc_client
-
-    sf_record = sf_record_class.new(book_name: "jimmy", product: "Tutor")
-    stub_candidates(sf_record)
-
-    FactoryGirl.create(:catalog_offering, salesforce_book_name: "jimmy", is_tutor: false)
-
-    ImportSalesforceCourses[]
-
-    expect(sf_record.error).to eq "Book Name matches an offering in Tutor but not for full Tutor courses."
-  end
-
-  # TODO test other things!
-
-  it 'errors when there is no course name' do
-    disable_sfdc_client
-
-    sf_record = sf_record_class.new(book_name: "jimmy", course_name: nil, product: "Concept Coach")
-    stub_candidates(sf_record)
-
-    FactoryGirl.create(:catalog_offering, salesforce_book_name: "jimmy",
-                       default_course_name: nil, is_concept_coach: true)
-
-    ImportSalesforceCourses[]
-
-    expect(sf_record.error).to eq "A course name is needed and no default is available in Tutor."
-  end
-
-  it 'errors when there is no school' do
-    disable_sfdc_client
-
-    sf_record = sf_record_class.new(book_name: "jimmy", course_name: "Yo", product: "Concept Coach")
-    stub_candidates(sf_record)
-
-    FactoryGirl.create(:catalog_offering, salesforce_book_name: "jimmy",
-                       default_course_name: nil, is_concept_coach: true)
-
-    ImportSalesforceCourses[]
-
-    expect(sf_record.error).to eq "A school is required."
+    ImportSalesforceCourses.call(include_real_salesforce_data: true)
   end
 
   it 'creates a course and returns info' do
@@ -143,7 +61,6 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       result = ImportSalesforceCourses.call
     }.to change{Entity::Course.count}.by(1)
      .and change{Salesforce::Models::AttachedRecord.count}.by(1)
-    expect(result.errors).to be_empty
 
     created_course = Entity::Course.first
 
@@ -157,8 +74,8 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     expect(course_ecosystem.course).to eq created_course
     expect(course_ecosystem.ecosystem).to eq offering.ecosystem
 
-    expect(result.outputs.num_failures).to eq 0
-    expect(result.outputs.num_successes).to eq 1
+    expect(result.num_failures).to eq 0
+    expect(result.num_successes).to eq 1
   end
 
   it 'does not rollback successful imports if import blows up' do
