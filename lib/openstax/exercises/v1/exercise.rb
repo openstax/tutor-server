@@ -148,7 +148,8 @@ class OpenStax::Exercises::V1::Exercise
 
   def questions_without_correct_answer
     @questions_without_correct ||= questions.each_with_index.map do |qq, ii|
-      qq.merge('answers' => question_answers_without_correct_answer[ii]).except('solutions')
+      qq.except('collaborator_solutions', 'community_solutions')
+        .merge('answers' => question_answers_without_correct_answer[ii])
     end
   end
 
