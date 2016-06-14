@@ -85,8 +85,7 @@ module Tasks
 
     def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
       sorted_period_pages.map do |page|
-        page_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }.compact
-                                              .map(&:task)
+        page_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }.compact.map(&:task)
 
         {
           cnx_page_id: page.uuid,
