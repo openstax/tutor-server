@@ -26,9 +26,9 @@ class CourseContent::AddEcosystemToCourse
       ::Content::Ecosystem.new(strategy: strategy)
     end
 
-    outputs[:ecosystem_map] = ::Content::Map.create!(from_ecosystems: from_ecosystems,
-                                                     to_ecosystem: ecosystem,
-                                                     strategy_class: map_strategy_class)
+    outputs[:ecosystem_map] = ::Content::Map.find_or_create_by!(from_ecosystems: from_ecosystems,
+                                                                to_ecosystem: ecosystem,
+                                                                strategy_class: map_strategy_class)
   end
 
 end

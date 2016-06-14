@@ -7,10 +7,15 @@ module CourseGuideMethods
       content_exercise = tasked_exercise.exercise
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
-    end
-    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    end.uniq
 
-    ecosystems_map.map_exercises_to_pages(exercises: exercises)
+    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    exercise_map = ecosystems_map.map_exercises_to_pages(exercises: exercises)
+
+    exercise_id_map = {}
+    exercises.each{ |exercise| exercise_id_map[exercise.id] = exercise_map[exercise] }
+
+    exercise_id_map
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises, exercise_id_to_page_map)

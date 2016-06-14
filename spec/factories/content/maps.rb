@@ -2,10 +2,10 @@ FactoryGirl.define do
   factory :content_map, class: ::Content::Models::Map do
     association :from_ecosystem, factory: :content_ecosystem
     association :to_ecosystem, factory: :content_ecosystem
-    page_id_to_pages_map { {} }
-    pool_type_page_id_to_exercises_map { {} }
-    exercise_id_to_page_map { {} }
+    exercise_id_to_page_id_map({})
+    page_id_to_page_id_map({})
+    page_id_to_pool_type_exercise_ids_map({})
     is_valid true
-    validity_messages []
+    validity_error_messages []
   end
 end

@@ -5,22 +5,22 @@ module Content
 
     class << self
       # Find or create an ecosystem map
-      def find_or_create(from_ecosystems:, to_ecosystem:,
-                         strategy_class: ::Content::Strategies::Generated::Map)
+      def find_or_create_by(from_ecosystems:, to_ecosystem:,
+                            strategy_class: ::Content::Strategies::Generated::Map)
         from_arr = verify_and_return [from_ecosystems].flatten.compact, klass: ::Content::Ecosystem
         to = verify_and_return to_ecosystem, klass: ::Content::Ecosystem
-        verify_and_return strategy_class.find_or_create(from_ecosystems: from_ecosystems,
-                                                        to_ecosystem: to_ecosystem),
+        verify_and_return strategy_class.find_or_create_by(from_ecosystems: from_ecosystems,
+                                                           to_ecosystem: to_ecosystem),
                           klass: ::Content::Map, allow_nil: true, error: StrategyError
       end
 
       # Find or create an ecosystem map or error out if it is invalid
-      def find_or_create!(from_ecosystems:, to_ecosystem:,
-                          strategy_class: ::Content::Strategies::Generated::Map)
+      def find_or_create_by!(from_ecosystems:, to_ecosystem:,
+                             strategy_class: ::Content::Strategies::Generated::Map)
         from_arr = verify_and_return [from_ecosystems].flatten.compact, klass: ::Content::Ecosystem
         to = verify_and_return to_ecosystem, klass: ::Content::Ecosystem
-        verify_and_return strategy_class.find_or_create!(from_ecosystems: from_ecosystems,
-                                                         to_ecosystem: to_ecosystem),
+        verify_and_return strategy_class.find_or_create_by!(from_ecosystems: from_ecosystems,
+                                                            to_ecosystem: to_ecosystem),
                           klass: ::Content::Map, error: StrategyError
       end
     end

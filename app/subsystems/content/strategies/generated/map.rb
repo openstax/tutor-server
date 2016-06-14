@@ -6,14 +6,14 @@ module Content
         attr_accessor :is_valid, :validity_error_message
 
         class << self
-          def find_or_create(from_ecosystems:, to_ecosystem:)
+          def find_or_create_by(from_ecosystems:, to_ecosystem:)
             strategy = new(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
             ::Content::Map.new(strategy: strategy)
           end
 
-          def find_or_create!(from_ecosystems:, to_ecosystem:)
-            find_or_create(from_ecosystems: from_ecosystems,
-                           to_ecosystem: to_ecosystem).tap do |map|
+          def find_or_create_by!(from_ecosystems:, to_ecosystem:)
+            find_or_create_by(from_ecosystems: from_ecosystems,
+                              to_ecosystem: to_ecosystem).tap do |map|
               raise(::Content::MapInvalidError, map.validity_error_message) unless map.is_valid
             end
           end
@@ -26,7 +26,8 @@ module Content
         end
 
         # Returns a hash that maps the given Content::Exercises
-        # to Content::Pages in the to_ecosystem
+        # to a Content::Page in the to_ecosystem
+        # Unmapped Content::Exercises map to nil
         def map_exercises_to_pages(exercises:)
           exercise_ids = exercises.map(&:id)
           page_ids = exercise_ids.map{ |ex_id| @exercise_id_to_page_id_map[ex_id] }
@@ -43,7 +44,8 @@ module Content
         end
 
         # Returns a hash that maps the given Content::Pages
-        # to Content::Pages in the to_ecosystem
+        # to a Content::Page in the to_ecosystem
+        # Unmapped Content::Pages map to nil
         def map_pages_to_pages(pages:)
           from_page_ids = pages.map(&:id)
           to_page_ids = from_page_ids.map{ |pg_id| @page_id_to_page_id_map[pg_id] }
@@ -61,18 +63,25 @@ module Content
 
         # Returns a hash that maps the given Content::Pages
         # to Content::Exercises in the to_ecosystem that are in a Content::Pool of the given type
+        # Unmapped Content::Pages map to empty arrays
         def map_pages_to_exercises(pages:, pool_type: :all_exercises)
-          page_ids = pages.map(&:id)
-          exercise_ids = page_ids.map do |pg_id|
-            @page_id_to_pool_type_exercise_ids_map[pg_id][pool_type]
-          end
-          exercises_by_ids = to_ecosystem_exercises_by_ids(*exercise_ids)
+          page_id_to_exercise_ids_map = Hash.new{ |hash, key| hash[key] = [] }
 
+          pages.map(&:id).each do |pg_id|
+            next unless @page_id_to_pool_type_exercise_ids_map.has_key?(pg_id)
+
+            page_id_to_exercise_ids_map[pg_id] = \
+              @page_id_to_pool_type_exercise_ids_map[pg_id][pool_type]
+          end
+          to_exercise_ids = page_id_to_exercise_ids_map.values.flatten
+          to_exercises_by_ids = to_ecosystem_exercises_by_ids(*to_exercise_ids)
+
+          # Unmapped pages map to empty arrays
           page_to_exercises_map = {}
 
           pages.each do |page|
-            exercise_id = @page_id_to_pool_type_exercise_ids_map[page.id][pool_type]
-            page_to_exercises_map[page] = exercises_by_ids[exercise_id]
+            exercise_ids = page_id_to_exercise_ids_map[page.id]
+            page_to_exercises_map[page] = exercise_ids.map{ |ex_id| to_exercises_by_ids[ex_id] }
           end
 
           page_to_exercises_map
@@ -101,7 +110,8 @@ module Content
 
         def create_maps(from_ecosystems:, to_ecosystem:)
           from_ecosystems.map do |from_ecosystem|
-            Content::Models::Map.create from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem
+            Content::Models::Map.create from_ecosystem: from_ecosystem.to_model,
+                                        to_ecosystem: to_ecosystem.to_model
           end
         end
 
@@ -121,8 +131,8 @@ module Content
           @validity_error_message = invalid_maps.map do |ecosystem_map|
             "Invalid mapping: #{ecosystem_map.from_ecosystem.title} => #{
               ecosystem_map.to_ecosystem.title}. Errors: [#{
-              ecosystem_map.validity_error_messages.join(", ")}]"
-          end.join("\n")
+              ecosystem_map.validity_error_messages.join(', ')}]"
+          end.join('; ')
         end
 
         def to_ecosystem_exercises_by_ids(*exercise_ids)

@@ -33,9 +33,10 @@ class GetCcDashboard
     end
   end
 
-  def map_cc_task_to_page(page_id_to_page_map, cc_task)
+  def map_cc_task_to_page(page_to_page_map, cc_task)
     # Map the cc_task page to a new page, but default to the original if the mapping failed
-    page_id_to_page_map[cc_task.page.id] || Content::Page.new(strategy: cc_task.page.wrap)
+    cc_page = Content::Page.new(strategy: cc_task.page.wrap)
+    page_to_page_map[cc_page] || cc_page
   end
 
   def load_cc_teacher_stats(course, role)
@@ -51,27 +52,27 @@ class GetCcDashboard
 
     ecosystems_map = GetCourseEcosystemsMap[course: course]
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
-    page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
+    page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
     outputs.course.periods = course.periods.preload(latest_enrollments: {student: :role})
                                            .map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       active_student_roles = period.latest_enrollments.map{ |en| en.student.role }.uniq
       orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks,
-                                                                       page_id_to_page_map)
+                                                                       page_to_page_map)
 
       {
         id: period.id,
         name: period.name,
         chapters: cc_tasks.group_by do |cc_task|
-          map_cc_task_to_page(page_id_to_page_map, cc_task).chapter
+          map_cc_task_to_page(page_to_page_map, cc_task).chapter
         end.map do |chapter, cc_tasks|
           {
             id: chapter.id,
             title: chapter.title,
             book_location: chapter.book_location,
             pages: cc_tasks.group_by do |cc_task|
-              map_cc_task_to_page(page_id_to_page_map, cc_task)
+              map_cc_task_to_page(page_to_page_map, cc_task)
             end.map do |page, cc_tasks|
               tasks = cc_tasks.map(&:task)
               completed_roles = tasks.select(&:completed?)
@@ -111,16 +112,16 @@ class GetCcDashboard
 
     ecosystems_map = GetCourseEcosystemsMap[course: role.student.course]
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
-    page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
+    page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
     outputs.chapters = cc_tasks.group_by do |cc_task|
-      map_cc_task_to_page(page_id_to_page_map, cc_task).chapter
+      map_cc_task_to_page(page_to_page_map, cc_task).chapter
     end.map do |chapter, cc_tasks|
       {
         id: chapter.id,
         title: chapter.title,
         book_location: chapter.book_location,
-        pages: cc_tasks.group_by{ |cc_task| map_cc_task_to_page(page_id_to_page_map, cc_task) }
+        pages: cc_tasks.group_by{ |cc_task| map_cc_task_to_page(page_to_page_map, cc_task) }
                        .map do |page, cc_tasks|
           tasks = cc_tasks.map(&:task)
           tasked_exercises = tasks.flat_map(&:tasked_exercises)
@@ -145,9 +146,10 @@ class GetCcDashboard
     end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
   end
 
-  def get_period_performance_maps_from_cc_tasks(period, cc_tasks, page_id_to_page_map)
+  def get_period_performance_maps_from_cc_tasks(period, cc_tasks, page_to_page_map)
     all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.id }
-    all_page_ids = cc_tasks.map{ |cc_task| cc_task.page.id }.uniq
+    all_page_models = cc_tasks.map{ |cc_task| cc_task.page }.uniq
+    all_pages = all_page_models.map{ |page_model| Content::Page.new(strategy: page_model.wrap) }
 
     completed_tasked_exercises = Tasks::Models::TaskedExercise
       .joins(:task_step, :exercise)
@@ -155,12 +157,12 @@ class GetCcDashboard
       .group(exercise: :content_page_id)
     last_answer_times = completed_tasked_exercises.maximum('tasks_task_steps.last_completed_at')
 
-    cache_key_to_page_id_map = all_page_ids.each_with_object({}) do |page_id, hash|
-      cache_key = "dashboard/cc/teacher/#{period.id}/#{page_id}-#{last_answer_times[page_id]}"
-      hash[cache_key] = page_id
+    cache_key_to_page_map = all_pages.each_with_object({}) do |page, hash|
+      cache_key = "dashboard/cc/teacher/#{period.id}/#{page.id}-#{last_answer_times[page.id]}"
+      hash[cache_key] = page
     end
 
-    all_cache_keys = cache_key_to_page_id_map.keys
+    all_cache_keys = cache_key_to_page_map.keys
     cache_key_performance_map = all_cache_keys.empty? ? \
                                   {} : Rails.cache.read_multi(*all_cache_keys)
 
@@ -171,19 +173,19 @@ class GetCcDashboard
       # Ignore values cached before the cache format change
       next if performance[:original_count].nil? && performance[:spaced_count].nil?
 
-      page_id = cache_key_to_page_id_map[cache_key]
-      performance_map[page_id] = performance
+      page = cache_key_to_page_map[cache_key]
+      performance_map[page] = performance
       hit_cache_keys << cache_key
     end
 
     missed_cache_keys = all_cache_keys - hit_cache_keys
 
     unless missed_cache_keys.empty?
-      missed_page_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
-        page_id = cache_key_to_page_id_map[cache_key]
-        hash[page_id] = cache_key
+      missed_page_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
+        page = cache_key_to_page_map[cache_key]
+        hash[page] = cache_key
       end
-      missed_page_ids = missed_page_id_to_cache_key_map.keys
+      missed_page_ids = missed_page_to_cache_key_map.keys.map(&:id)
 
       missed_completed_tasked_exercises = completed_tasked_exercises.where(
         exercise: { content_page_id: missed_page_ids }
@@ -210,11 +212,11 @@ class GetCcDashboard
       missed_correct_spaced_counts = missed_correct_spaced_tasked_exercises
                                        .count('DISTINCT tasks_tasked_exercises.id')
 
-      missed_page_id_to_cache_key_map.each do |page_id, cache_key|
-        completed_core_count = missed_completed_core_counts[page_id] || 0
-        completed_spaced_count = missed_completed_spaced_counts[page_id] || 0
-        correct_core_count = missed_correct_core_counts[page_id] || 0
-        correct_spaced_count = missed_correct_spaced_counts[page_id] || 0
+      missed_page_to_cache_key_map.each do |page, cache_key|
+        completed_core_count = missed_completed_core_counts[page.id] || 0
+        completed_spaced_count = missed_completed_spaced_counts[page.id] || 0
+        correct_core_count = missed_correct_core_counts[page.id] || 0
+        correct_spaced_count = missed_correct_spaced_counts[page.id] || 0
         original_performance = completed_core_count == 0 ? \
                                  0 : correct_core_count/completed_core_count.to_f
         spaced_performance = completed_spaced_count == 0 ? \
@@ -224,7 +226,7 @@ class GetCcDashboard
 
         Rails.cache.write(cache_key, performance, expires_in: DASHBOARD_CACHE_DURATION)
 
-        performance_map[page_id] = performance
+        performance_map[page] = performance
       end
     end
 
@@ -234,8 +236,8 @@ class GetCcDashboard
     spaced_performance_counts = {}
 
     # Map the performance map to current ecosystem pages
-    performance_map.each do |page_id, performance|
-      mapped_page_id = page_id_to_page_map[page_id].id
+    performance_map.each do |page, performance|
+      mapped_page_id = page_to_page_map[page].id
 
       previous_original_count = original_performance_counts[mapped_page_id] || 0
       previous_original_performance = original_performance_map[mapped_page_id] || 0

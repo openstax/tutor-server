@@ -1,17 +1,29 @@
 class Content::Models::Map < Tutor::SubSystems::BaseModel
+  serialize :exercise_id_to_page_id_map, Hash
+  serialize :page_id_to_page_id_map, Hash
+  serialize :page_id_to_pool_type_exercise_ids_map, Hash
+
   belongs_to :from_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :to_maps
   belongs_to :to_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :from_maps
 
   validates :from_ecosystem, :to_ecosystem, presence: true
   validates :to_ecosystem, uniqueness: { scope: :content_from_ecosystem_id }
 
-  before_validation :create_exercise_id_to_page_id_map, :create_page_id_to_page_id_map,
-                    :create_page_id_to_pool_type_exercise_ids_map, :validate_maps
+  before_save :create_exercise_id_to_page_id_map, :create_page_id_to_page_id_map,
+              :create_page_id_to_pool_type_exercise_ids_map, :validate_maps
 
   def create_exercise_id_to_page_id_map
-    return unless exercise_id_to_page_id_map.nil?
+    return unless exercise_id_to_page_id_map.blank?
 
-    self.exercises_id_to_page_id_map = {}
+    # Special case: from_ecosystem == to_ecosystem
+    # Mapping succeeds even if the exercise has no tags
+    if from_ecosystem == to_ecosystem
+      to_ecosystem.exercises.each do |exercise|
+        exercise_id_to_page_id_map[exercise.id] = exercise.content_page_id
+      end
+
+      return exercise_id_to_page_id_map
+    end
 
     exercise_id_to_pages_map = Content::Models::Page
       .joins(tags: {same_value_tags: :exercises})
@@ -19,27 +31,34 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
                content_ecosystem_id: to_ecosystem.id,
                tag_type: mapping_tag_types,
                same_value_tags: {
-                 content_ecosystem_id: from_ecosystems_ids,
+                 content_ecosystem_id: from_ecosystem.id,
                  tag_type: mapping_tag_types
                }
              })
+      .uniq
       .select{[Content::Models::Page.arel_table[:id],
                Content::Models::Page.arel_table[:book_location],
                tags.same_value_tags.exercises.id.as(:from_exercise_id)]}
-      .to_a.group_by(&:from_exercise_id)
+      .group_by(&:from_exercise_id)
 
     # Each exercise maps to the highest numbered page that shares a mapping tag with it
     exercise_id_to_pages_map.each do |exercise_id, pages|
-      exercises_id_to_page_id_map[exercise_id] = pages.max_by(&:book_location).id
+      exercise_id_to_page_id_map[exercise_id] = pages.max_by(&:book_location).id
     end
 
-    exercises_id_to_page_id_map
+    exercise_id_to_page_id_map
   end
 
   def create_page_id_to_page_id_map
-    return unless page_id_to_page_id_map.nil?
+    return unless page_id_to_page_id_map.blank?
 
-    self.page_id_to_page_id_map = {}
+    # Special case: from_ecosystem == to_ecosystem
+    # Mapping succeeds even if the page has no tags
+    if from_ecosystem == to_ecosystem
+      to_ecosystem.pages.each{ |page| page_id_to_page_id_map[page.id] = page.id }
+
+      return page_id_to_page_id_map
+    end
 
     page_id_to_pages_map = Content::Models::Page
       .joins(tags: {same_value_tags: :pages})
@@ -47,13 +66,14 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
                content_ecosystem_id: to_ecosystem.id,
                tag_type: mapping_tag_types,
                same_value_tags: {
-                 content_ecosystem_id: from_ecosystems_ids,
+                 content_ecosystem_id: from_ecosystem.id,
                  tag_type: mapping_tag_types
                }
              })
+      .uniq
       .select{[Content::Models::Page.arel_table[:id],
                tags.same_value_tags.pages.id.as(:from_page_id)]}
-      .to_a.group_by(&:from_page_id)
+      .group_by(&:from_page_id)
 
     # It could happen in theory that a page maps to 2 or more pages,
     # but for now we don't handle that case
@@ -66,18 +86,16 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   end
 
   def create_page_id_to_pool_type_exercise_ids_map
-    return unless page_id_to_pool_type_exercise_ids_map.nil?
-
-    self.page_id_to_pool_type_exercise_ids_map = {}
+    return unless page_id_to_pool_type_exercise_ids_map.blank?
 
     create_page_id_to_page_id_map
 
-    pool_association_to_pool_type_map = Content::Models::Pool.pool_types.keys
-                                                             .map(&:to_sym).group_by do |pool_type|
+    pool_types = Content::Models::Pool.pool_types.keys.map(&:to_sym)
+    pool_association_to_pool_type_map = pool_types.index_by do |pool_type|
       "#{pool_type}_pool".to_sym
     end
-
     pool_associations = pool_association_to_pool_type_map.keys
+
     to_pages_map = to_ecosystem.pages.preload(pool_associations).index_by(&:id)
 
     page_id_to_page_id_map.each do |from_page_id, to_page_id|
@@ -86,12 +104,13 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
       to_page = to_pages_map[to_page_id]
 
       pool_association_to_pool_type_map.each do |pool_association, pool_type|
-        pool = to_page.send(pool_association)
-        page_id_to_pool_type_exercise_ids_map[from_page_id][pool_type] = pool.content_exercise_ids
+        pool = to_page.try(pool_association)
+        page_id_to_pool_type_exercise_ids_map[from_page_id][pool_type] = \
+          pool.try :content_exercise_ids
       end
     end
 
-    page_id_to_pool_type_exercises_map
+    page_id_to_pool_type_exercise_ids_map
   end
 
   def validate_maps
@@ -101,10 +120,9 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     self.validity_error_messages = []
 
     all_exercises_are_mapped
-    all_exercises_map_to_pages
-    all_pages_are_mapped
-    all_pages_map_to_pages
-    all_pages_map_to_exercises
+    exercises_map_to_pages
+    pages_map_to_pages
+    pages_map_to_exercises
   end
 
   protected
@@ -115,104 +133,105 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     end
   end
 
-  # Every exercise in the from_ecosystem is a key in the exercise_id_to_page_map
+  # Every exercise in the from_ecosystem is a key in the exercise_id_to_page_id_map
+  # This check may fail if an exercise fails to map to any page in the new ecosystem
   def all_exercises_are_mapped
-    all_exercises                    = from_ecosystem.exercises
-    exercise_ids_set                 = Set.new all_exercises.map(&:id)
-    exercise_id_to_page_map_keys_set = Set.new exercise_id_to_page_map.keys
+    from_exercises                      = from_ecosystem.exercises
+    from_exercise_ids_set               = Set.new from_exercises.map(&:id)
+    exercise_id_to_page_id_map_keys_set = Set.new exercise_id_to_page_id_map.keys
 
-    return true if exercise_ids_set == exercise_id_to_page_map_keys_set
+    return true if from_exercise_ids_set == exercise_id_to_page_id_map_keys_set
 
-    unmapped_ex_uids = all_exercises.reject do |ex|
-      exercise_id_to_page_map_keys_set.include? ex.id
+    unmapped_ex_uids = from_exercises.reject do |ex|
+      exercise_id_to_page_id_map_keys_set.include? ex.id
     end.map(&:uid)
 
     validity_error_messages << "Unmapped exercise uids: [#{unmapped_ex_uids.to_a.join(', ')}]"
     self.is_valid = false
   end
 
-  # Every value in the exercise_id_to_page_map is a page in the to_ecosystem
-  def all_exercises_map_to_pages
-    exercise_id_to_page_map_values_set = Set.new exercise_id_to_page_map.values
-    all_pages_set                      = Set.new to_ecosystem.pages
+  # Every value in the exercise_id_to_page_id_map is the id of a page in the to_ecosystem (no nils)
+  # This check may fail if an exercise fails to map to any page in the new ecosystem
+  def exercises_map_to_pages
+    exercise_id_to_page_id_map_values_set = Set.new exercise_id_to_page_id_map.values
+    to_page_ids_set                       = Set.new to_ecosystem.pages.map(&:id)
 
-    return true if exercise_id_to_page_map_values_set.subset?(all_pages_set)
+    return true if exercise_id_to_page_id_map_values_set.subset?(to_page_ids_set)
 
-    exercises_by_id = from_ecosystem.exercises.index_by(&:id)
-    mismapped_hash = exercise_id_to_page_map.reject{ |ex_id, page| all_pages_set.include? page }
-    diag_info = mismapped_hash.map do |ex_id, page|
-      ex_uid = exercises_by_id[ex_id].try(:uid) || 'nil'
-      title  = page.try(:title) || 'nil'
-      "#{ex_uid} => #{title}"
+    from_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
+    to_pages_by_id = to_ecosystem.pages.index_by(&:id)
+
+    mismapped_hash = exercise_id_to_page_id_map.reject do |ex_id, pg_id|
+      to_page_ids_set.include? pg_id
     end
 
-    validity_error_messages << "Mismapped exercises (to pages): [#{diag_info.join(', ')}]"
-    self.is_valid = false
-  end
-
-  # Every page in the from_ecosystem is a key in the page_id_to_page_map
-  # and in the pool_type_page_id_to_exercises_map for all pools
-  def all_pages_are_mapped
-    all_pages                     = from_ecosystem.pages
-    all_page_ids_set              = Set.new all_pages.map(&:id)
-    page_id_to_page_map_keys_set = Set.new page_id_to_page_map.keys
-
-    return true if all_page_ids_set == page_id_to_page_map_keys_set
-
-    unmapped_pg_titles = all_pages.reject do |page|
-      page_id_to_page_map_keys_set.include? page.id
-    end.map(&:title)
-
-    validity_error_messages << "Unmapped page titles: [#{unmapped_pg_titles.to_a.join(', ')}]"
-    self.is_valid = false
-  end
-
-  # Every value in the page_id_to_page_map is a page in the to_ecosystem
-  def all_pages_map_to_pages
-    page_id_to_page_map_values_set = Set.new page_id_to_page_map.values
-    all_pages_set                   = Set.new to_ecosystem.pages
-
-    return true if page_id_to_page_map_values_set.subset?(all_pages_set)
-
-    pages_by_id = from_ecosystem.pages.index_by(&:id)
-    mismapped_hash = page_id_to_page_map.reject{ |page_id, page| all_pages_set.include? page }
-    diag_info = mismapped_hash.map do |page_id, page|
-      from_title = pages_by_id[page_id].try(:title) || 'nil'
-      to_title  = page.try(:title) || 'nil'
-      "#{from_title} => #{to_title}"
+    error_messages = mismapped_hash.map do |ex_id, pg_id|
+      ex_uid = from_exercises_by_id[ex_id].try(:uid) || 'nil'
+      title  = to_pages_by_id[pg_id].try(:title) || 'nil'
+      "#{ex_uid} => \"#{title}\""
     end
 
-    validity_error_messages << "Mismapped pages (to pages): [#{diag_info.join(', ')}]"
+    validity_error_messages << "Mismapped exercises: [#{error_messages.join(', ')}]"
     self.is_valid = false
   end
 
-  # Every value in the page_id_to_pool_type_exercises_map
-  # is an array of exercises in the to_ecosystem for all pools
-  def all_pages_map_to_exercises
-    page_id_to_pool_type_exercises_map_values_set = \
-      Set.new page_id_to_pool_type_exercises_map.values.flat_map(&:values)
-    all_exercises_set                             = Set.new to_ecosystem.exercises
+  # Every value in the page_id_to_page_id_map is the id of a page in the to_ecosystem (no nils)
+  # This is more of an internal check and should never fail
+  def pages_map_to_pages
+    page_id_to_page_id_map_values_set = Set.new page_id_to_page_id_map.values
+    to_page_ids_set                   = Set.new to_ecosystem.pages.map(&:id)
 
-    return true if page_id_to_pool_type_exercises_map_values_set.subset?(all_exercises_set)
+    return true if page_id_to_page_id_map_values_set.subset?(to_page_ids_set)
 
-    mismapped_hash = {}
-    page_id_to_pool_type_exercises_map.each do |page_id, pool_type_exercises_map|
-      pool_type_exercises_map.each do |pool_type, exercises|
-        exercises.each do |exercise|
-          next if all_exercises_set.include? exercise
+    from_pages_by_id = from_ecosystem.pages.index_by(&:id)
+    to_pages_by_id = from_ecosystem.pages.index_by(&:id)
 
-          mismapped_hash[page_id] ||= []
-          mismapped_hash[page_id] << exercise
-        end
+    mismapped_hash = page_id_to_page_id_map.reject do |from_pg_id, to_pg_id|
+      to_page_ids_set.include? to_pg_id
+    end
+
+    error_messages = mismapped_hash.map do |from_pg_id, to_pg_id|
+      from_title = from_pages_by_id[from_pg_id].try(:title) || 'nil'
+      to_title  = to_pages_by_id[to_pg_id].try(:title) || 'nil'
+      "\"#{from_title}\" => \"#{to_title}\""
+    end
+
+    validity_error_messages << "Mismapped pages: [#{error_messages.join(', ')}]"
+    self.is_valid = false
+  end
+
+  # Every value in the page_id_to_pool_type_exercise_ids_map is a hash that maps to
+  # an array of ids of exercises in the to_ecosystem (can be empty, no nils)
+  # This is more of an internal check and should never fail
+  def pages_map_to_exercises
+    pool_type_exercise_ids_maps            = page_id_to_pool_type_exercise_ids_map.values
+    pool_type_exercise_ids_maps_values_set = Set.new pool_type_exercise_ids_maps.map(&:values)
+                                                                                .flatten
+    to_exercise_ids_set                    = Set.new to_ecosystem.exercises.map(&:id)
+
+    return true if pool_type_exercise_ids_maps_values_set.subset?(to_exercise_ids_set)
+
+    pool_types = Content::Models::Pool.pool_types.keys.map(&:to_sym)
+    from_pages_by_id = from_ecosystem.pages.index_by(&:id)
+    to_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
+
+    error_messages = []
+    page_id_to_pool_type_exercise_ids_map.each do |pg_id, pool_type_exercise_ids_map|
+      pool_types.each do |pool_type|
+        exercise_ids = pool_type_exercise_ids_map[pool_type]
+
+        next if exercise_ids.is_a?(Array) &&
+                exercise_ids.all?{ |ex_id| to_exercise_ids_set.include? ex_id }
+
+        title = from_pages_by_id[pg_id].try(:title) || 'nil'
+        ex_uids = exercise_ids.is_a?(Array) ? "[#{exercise_ids.map do |ex_id|
+          to_exercises_by_id[ex_id].try(:uid) || 'nil'
+        end}]" : exercise_ids.inspect
+        error_messages << "\"#{title}\" => { #{pool_type}: #{ex_uids} }"
       end
     end
-    diag_info = mismapped_hash.map do |page_id, exercises|
-      title = pages_by_id[page_id].try(:title) || 'nil'
-      ex_uids  = exercises.map(&:uid)
-      "#{title} => [#{ex_uids.join(', ')}]"
-    end
 
-    validity_error_messages << "Mismapped pages (to exercises): [#{diag_info.join(', ')}]"
+    validity_error_messages << "Mismapped pages: [#{error_messages.join(', ')}]"
     self.is_valid = false
   end
 end

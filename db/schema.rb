@@ -117,9 +117,9 @@ ActiveRecord::Schema.define(version: 20160610210955) do
   create_table "content_maps", force: :cascade do |t|
     t.integer  "content_from_ecosystem_id",             null: false
     t.integer  "content_to_ecosystem_id",               null: false
-    t.jsonb    "exercise_id_to_page_id_map",            null: false
-    t.jsonb    "page_id_to_page_id_map",                null: false
-    t.jsonb    "page_id_to_pool_type_exercise_ids_map", null: false
+    t.text     "exercise_id_to_page_id_map"
+    t.text     "page_id_to_page_id_map"
+    t.text     "page_id_to_pool_type_exercise_ids_map"
     t.boolean  "is_valid",                              null: false
     t.string   "validity_error_messages",               null: false, array: true
     t.datetime "created_at",                            null: false
