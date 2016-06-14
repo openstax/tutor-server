@@ -79,12 +79,12 @@ module Tasks
       # Return reading, homework and external tasks for a student
       # .reorder(nil) removes the ordering from the period default scope so .uniq won't blow up
       # .uniq is necessary for the preloading to work...
-      course.taskings.joins(task: { task_plan: :tasking_plans })
-                     .where(task: {task_type: task_types})
-                     .preload(task: {task_plan: {tasking_plans: :target}},
-                              role: [{student: {enrollments: :period}}, {profile: :account}])
-                     .reorder(nil).uniq.to_a
-                     .select{ |tasking| tasking.task.past_open? }
+      course.taskings
+            .joins(task: { task_plan: :tasking_plans })
+            .where(task: {task_type: task_types})
+            .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
+                     role: [{student: {enrollments: :period}}, {profile: :account}])
+            .reorder(nil).uniq.to_a.select{ |tasking| tasking.task.past_open? }
     end
 
     def get_data_headings(tasking_plans, task_plan_results)
