@@ -79,7 +79,7 @@ class UpdateClues
 
       # Map all worked exercises to pages in the current ecosystem
       # Clues are always requested based on the current ecosystem
-      worked_exercise_id_to_page_map = ecosystems_map.map_exercises_to_pages(
+      worked_exercise_to_page_map = ecosystems_map.map_exercises_to_pages(
         exercises: course_worked_exercises
       )
 
@@ -95,7 +95,7 @@ class UpdateClues
           next if worked_exercises.nil?
 
           worked_pages = worked_exercises.map do |exercise|
-            worked_exercise_id_to_page_map[exercise.id]
+            worked_exercise_to_page_map[exercise]
           end.compact.uniq
 
           # Skip if we worked something, but it somehow did not map to the current ecosystem

@@ -242,7 +242,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     context 'when the mapping is invalid' do
       it 'errors out with a Content::MapInvalidError so the background job fails immediately' do
         allow_any_instance_of(Content::Strategies::Generated::Map).to(
-          receive(:valid?).and_return(false)
+          receive(:is_valid).and_return(false)
         )
         expect{
           post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id

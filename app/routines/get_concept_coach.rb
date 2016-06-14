@@ -83,7 +83,7 @@ class GetConceptCoach
       spaced_page_model = spaced_task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
       spaced_ecosystem = Content::Ecosystem.find_by_page_ids(spaced_page.id)
-      ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
+      ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find_or_create_by(
         from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 

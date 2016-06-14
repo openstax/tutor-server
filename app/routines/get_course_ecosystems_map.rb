@@ -24,7 +24,6 @@ class GetCourseEcosystemsMap
                        to_ecosystem: to_ecosystem,
                        strategy_class: map_strategy_class }
 
-    outputs[:ecosystems_map] = ::Content::Map.find(map_attributes) || \
-                               ::Content::Map.create!(map_attributes)
+    outputs[:ecosystems_map] = ::Content::Map.find_or_create_by(map_attributes)
   end
 end

@@ -124,7 +124,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
       end.uniq
 
       # Reuse Ecosystems map when possible
-      @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
+      @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find_or_create_by(
         from_ecosystems: [spaced_ecosystem, @ecosystem].uniq, to_ecosystem: @ecosystem
       )
 

@@ -116,7 +116,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       spaced_pages = spaced_ecosystem.pages_by_ids(page_ids)
 
       # Reuse Ecosystems map when possible
-      @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
+      @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find_or_create_by(
         from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 

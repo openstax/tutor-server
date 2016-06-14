@@ -58,23 +58,24 @@ module Tasks
                      .to_a
     end
 
-    def map_cc_task_to_page(page_id_to_page_map, cc_task)
+    def map_cc_task_to_page(page_to_page_map, cc_task)
       # Map the cc_task page to a new page, but default to the original if the mapping failed
-      page_id_to_page_map[cc_task.page.id] || Content::Page.new(strategy: cc_task.page.wrap)
+      cc_page = Content::Page.new(strategy: cc_task.page.wrap)
+      page_to_page_map[cc_page] || cc_page
     end
 
     def get_cc_tasks_map(ecosystems_map, taskings)
       pages = taskings.map do |tasking|
         Content::Page.new(strategy: tasking.task.concept_coach_task.page.wrap)
       end
-      page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: pages)
+      page_to_page_map = ecosystems_map.map_pages_to_pages(pages: pages)
 
       taskings.group_by{ |tasking| tasking.role.student.period }
               .each_with_object({}) do |(period, taskings), hash|
         hash[period] = taskings.group_by{ |tasking| tasking.role }
                                .each_with_object({}) do |(role, taskings), hash|
           hash[role] = taskings.group_by do |tasking|
-            map_cc_task_to_page(page_id_to_page_map, tasking.task.concept_coach_task)
+            map_cc_task_to_page(page_to_page_map, tasking.task.concept_coach_task)
           end.each_with_object({}) do |(page, taskings), hash|
             hash[page] = taskings.map{ |tasking| tasking.task.concept_coach_task }
           end

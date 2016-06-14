@@ -121,8 +121,6 @@ RSpec.describe Content::Strategies::Generated::Map do
   let!(:old_page)                     { old_exercise.page }
   let!(:new_page)                     { new_exercise.page }
 
-  let!(:old_pool)                     {  }
-
   let!(:old_ecosystem)                { old_page.chapter.book.ecosystem }
   let!(:new_ecosystem)                { new_page.chapter.book.ecosystem }
 
@@ -140,25 +138,21 @@ RSpec.describe Content::Strategies::Generated::Map do
   let!(:another_old_page)             { another_old_exercise.page }
   let!(:another_new_page)             { another_new_exercise.page }
 
-  subject(:map)                       {
-    Content::Map.create!(from_ecosystems: [old_ecosystem, new_ecosystem],
-                         to_ecosystem: new_ecosystem,
-                         strategy_class: described_class)
-  }
+  subject!(:map)                      do
+    Content::Map.find_or_create_by!(from_ecosystems: [old_ecosystem, new_ecosystem],
+                                    to_ecosystem: new_ecosystem,
+                                    strategy_class: described_class)
+  end
 
   it 'can map from_ecosystems exercises to to_ecosystem pages' do
-    mapping = map.map_exercises_to_pages(exercises: [
-      old_exercise, new_exercise
-    ])
+    mapping = map.map_exercises_to_pages(exercises: [old_exercise, new_exercise])
     [old_exercise, new_exercise].each do |exercise|
-      expect(mapping[exercise.id]).to eq new_page
+      expect(mapping[exercise]).to eq new_page
     end
 
-    mapping_2 = map.map_exercises_to_pages(exercises: [
-      another_old_exercise, another_new_exercise
-    ])
+    mapping_2 = map.map_exercises_to_pages(exercises: [another_old_exercise, another_new_exercise])
     [another_old_exercise, another_new_exercise].each do |exercise|
-      expect(mapping_2[exercise.id]).to eq another_new_page
+      expect(mapping_2[exercise]).to eq another_new_page
     end
 
     # Try again to see that we get the same results with the cached mapping
@@ -166,27 +160,47 @@ RSpec.describe Content::Strategies::Generated::Map do
       old_exercise, new_exercise, another_old_exercise, another_new_exercise
     ])
     [old_exercise, new_exercise].each do |exercise|
-      expect(mapping_3[exercise.id]).to eq new_page
+      expect(mapping_3[exercise]).to eq new_page
     end
 
     [another_old_exercise, another_new_exercise].each do |exercise|
-      expect(mapping_3[exercise.id]).to eq another_new_page
+      expect(mapping_3[exercise]).to eq another_new_page
+    end
+  end
+
+  it 'can map from_ecosystems pages to to_ecosystem pages' do
+    mapping = map.map_pages_to_pages(pages: [old_page, new_page])
+    [old_page, new_page].each do |page|
+      expect(mapping[page]).to eq new_page
+    end
+
+    mapping_2 = map.map_pages_to_pages(pages: [another_old_page, another_new_page])
+    [another_old_page, another_new_page].each do |page|
+      expect(mapping_2[page]).to eq another_new_page
+    end
+
+    # Try again to see that we get the same results with the cached mapping
+    mapping_3 = map.map_pages_to_pages(pages: [
+      old_page, new_page, another_old_page, another_new_page
+    ])
+    [old_page, new_page].each do |page|
+      expect(mapping_3[page]).to eq new_page
+    end
+
+    [another_old_page, another_new_page].each do |page|
+      expect(mapping_3[page]).to eq another_new_page
     end
   end
 
   it 'can map from_ecosystems pages to to_ecosystem exercises' do
-    mapping = map.map_pages_to_exercises(pages: [
-      old_page, new_page
-    ])
+    mapping = map.map_pages_to_exercises(pages: [old_page, new_page])
     [old_page, new_page].each do |page|
-      expect(mapping[page.id]).to eq [new_exercise]
+      expect(mapping[page]).to eq [new_exercise]
     end
 
-    mapping_2 = map.map_pages_to_exercises(pages: [
-      another_old_page, another_new_page
-    ])
+    mapping_2 = map.map_pages_to_exercises(pages: [another_old_page, another_new_page])
     [another_old_page, another_new_page].each do |page|
-      expect(mapping_2[page.id]).to eq [another_new_exercise]
+      expect(mapping_2[page]).to eq [another_new_exercise]
     end
 
     # Try again to see that we get the same results with the cached mapping
@@ -194,37 +208,35 @@ RSpec.describe Content::Strategies::Generated::Map do
       old_page, new_page, another_old_page, another_new_page
     ])
     [old_page, new_page].each do |page|
-      expect(mapping_3[page.id]).to eq [new_exercise]
+      expect(mapping_3[page]).to eq [new_exercise]
     end
 
     [another_old_page, another_new_page].each do |page|
-      expect(mapping_3[page.id]).to eq [another_new_exercise]
+      expect(mapping_3[page]).to eq [another_new_exercise]
     end
   end
 
   it 'does not return exercises in other pools' do
-    mapping = map.map_pages_to_exercises(pages: [
-      old_page, new_page
-    ], pool_type: :practice_widget)
+    mapping = map.map_pages_to_exercises(pages: [old_page, new_page], pool_type: :practice_widget)
     [old_page, new_page].each do |page|
-      expect(mapping[page.id]).to eq []
+      expect(mapping[page]).to eq []
     end
 
     mapping_2 = map.map_pages_to_exercises(pages: [
       another_old_page, another_new_page
     ], pool_type: :practice_widget)
     [another_old_page, another_new_page].each do |page|
-      expect(mapping_2[page.id]).to eq []
+      expect(mapping_2[page]).to eq []
     end
   end
 
   it 'knows if it is valid or not' do
     # The ecosystems are identical, so we can map both ways
-    expect(map).to be_valid
-    reverse_map = Content::Map.create!(from_ecosystems: [old_ecosystem, new_ecosystem],
-                                       to_ecosystem: old_ecosystem,
-                                       strategy_class: described_class)
-    expect(reverse_map).to be_valid
+    expect(map.is_valid).to eq true
+    reverse_map = Content::Map.find_or_create_by!(from_ecosystems: [old_ecosystem, new_ecosystem],
+                                                  to_ecosystem: old_ecosystem,
+                                                  strategy_class: described_class)
+    expect(reverse_map.is_valid).to eq true
 
     # Pretend lo02 and its page were added only in the new ecosystem
     another_old_lo_tag.exercises.first.destroy
@@ -236,25 +248,35 @@ RSpec.describe Content::Strategies::Generated::Map do
     modified_old_ecosystem = Content::Ecosystem.new(strategy: modified_old_strategy)
 
     # The map validity is cached, so it is still valid
-    modified_map = Content::Map.create!(
+    modified_map = Content::Map.find_or_create_by!(
       from_ecosystems: [modified_old_ecosystem, new_ecosystem],
       to_ecosystem: new_ecosystem,
       strategy_class: described_class
     )
-    expect(modified_map).to be_valid
-    reverse_modified_map = Content::Map.create(
+    expect(modified_map.is_valid).to eq true
+    reverse_modified_map = Content::Map.find_or_create_by(
       from_ecosystems: [modified_old_ecosystem, new_ecosystem],
       to_ecosystem: modified_old_ecosystem,
       strategy_class: described_class
     )
-    expect(reverse_modified_map).to be_valid
+    expect(reverse_modified_map.is_valid).to eq true
 
     # Clear the map cache
-    map.instance_variable_get(:@strategy).send(:cache).clear
+    Content::Models::Map.delete_all
 
     # We can still map forward, but the reverse map is now invalid
-    expect(modified_map).to be_valid
-    expect(reverse_modified_map).not_to be_valid
+    modified_map = Content::Map.find_or_create_by!(
+      from_ecosystems: [modified_old_ecosystem, new_ecosystem],
+      to_ecosystem: new_ecosystem,
+      strategy_class: described_class
+    )
+    expect(modified_map.is_valid).to eq true
+    reverse_modified_map = Content::Map.find_or_create_by(
+      from_ecosystems: [modified_old_ecosystem, new_ecosystem],
+      to_ecosystem: modified_old_ecosystem,
+      strategy_class: described_class
+    )
+    expect(reverse_modified_map.is_valid).to eq false
   end
 
   it 'outputs diagnostics when mapping fails' do
@@ -268,11 +290,11 @@ RSpec.describe Content::Strategies::Generated::Map do
     modified_old_ecosystem = Content::Ecosystem.new(strategy: modified_old_strategy)
 
     expect{
-      Content::Map.create!(
+      Content::Map.find_or_create_by!(
         from_ecosystems: [modified_old_ecosystem, new_ecosystem],
         to_ecosystem: modified_old_ecosystem,
         strategy_class: described_class
       )
-    }.to raise_error(Content::MapInvalidError, /diagnostic/)
+    }.to raise_error(Content::MapInvalidError, /\AInvalid mapping/)
   end
 end

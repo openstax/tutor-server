@@ -7,25 +7,33 @@ module CourseGuideMethods
       content_exercise = tasked_exercise.exercise
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
-    end
-    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    end.uniq
 
-    ecosystems_map.map_exercises_to_pages(exercises: exercises)
+    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    exercise_map = ecosystems_map.map_exercises_to_pages(exercises: exercises)
+
+    exercise_id_map = {}
+    exercises.each{ |exercise| exercise_id_map[exercise.id] = exercise_map[exercise] }
+
+    exercise_id_map
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises, exercise_id_to_page_map)
-    tasked_exercises.each_with_object({}) do |tasked_exercise, hash|
-      page = exercise_id_to_page_map[tasked_exercise.content_exercise_id]
-      hash[page] ||= []
-      hash[page] << tasked_exercise
+    tasked_exercises.group_by do |tasked_exercise|
+      exercise_id_to_page_map[tasked_exercise.content_exercise_id]
     end
   end
 
   def group_tasked_exercises_by_chapters(tasked_exercises, exercise_id_to_page_map)
+    chapter_grouping = {}
+
     page_grouping = group_tasked_exercises_by_pages(tasked_exercises, exercise_id_to_page_map)
-    page_grouping.each_with_object({}) do |(page, exercises), hash|
-      hash[page.chapter] = (hash[page.chapter] || {}).merge(page => exercises)
+    page_grouping.each do |page, exercises|
+      chapter_grouping[page.chapter] = (chapter_grouping[page.chapter] || {})
+                                         .merge(page => exercises)
     end
+
+    chapter_grouping
   end
 
   def completed_practices(tasked_exercises)
@@ -66,10 +74,7 @@ module CourseGuideMethods
   end
 
   def compile_pages(sorted_page_groupings, clues_map)
-    tasked_exercises = sorted_page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
-    roles = tasked_exercises.flat_map do |te|
-      te.task_step.task.taskings.map(&:role)
-    end.uniq
+    tasked_exercises = sorted_page_groupings.flat_map(&:second)
 
     sorted_page_groupings.each_with_index.map do |(page, tasked_exercises), index|
       practices = completed_practices(tasked_exercises)
