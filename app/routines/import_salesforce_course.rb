@@ -47,8 +47,6 @@ class ImportSalesforceCourse
     school = run(:get_school, name: candidate.school).outputs.school ||
              run(:create_school, name: candidate.school).outputs.school
 
-    # TODO use (and be able to set) is_normally_college
-
     course = run(
       :create_course,
       name: candidate.course_name,
