@@ -75,19 +75,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/courses/:course_id/tasks',
-            'Gets all course tasks assigned to the role holder making the request'
-  description <<-EOS
-    #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}
-  EOS
-  def tasks
-    # No authorization is necessary because if the user isn't authorized, they'll just get
-    # back an empty list of tasks
-    tasks = GetCourseUserTasks[course: @course, user: current_human_user]
-    output = Hashie::Mash.new('items' => tasks.map(&:task))
-    respond_with output, represent_with: Api::V1::TaskSearchRepresenter
-  end
-
   api :GET, '/courses/:course_id/dashboard(/role/:role_id)',
             'Gets dashboard information for a given non-CC course'
   description <<-EOS
