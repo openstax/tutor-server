@@ -507,16 +507,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it "works for a student without a role specified" do
-      Hacks::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
-      Hacks::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
+      AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
+      AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
 
-      Hacks::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
-      Hacks::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
-      Hacks::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
+      AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
+      AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
+      AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
 
-      Hacks::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
-      Hacks::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
-      Hacks::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
+      AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
+      AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
+      AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
 
       api_get :dashboard, student_token, parameters: {id: course.id}
 
@@ -706,25 +706,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ]
       @task_1.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: true]
+        AnswerExercise[task_step: ts, is_correct: true]
       end
       @task_2 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ]
       @task_2.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: false]
+        AnswerExercise[task_step: ts, is_correct: false]
       end
       @task_3 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_3.uuid
       ]
       @task_3.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_4 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ]
       @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
+        AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
       @task_5 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid

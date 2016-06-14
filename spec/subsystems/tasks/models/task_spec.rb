@@ -181,8 +181,8 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                            :tasks_tasked_exercise,
                                            :tasks_tasked_exercise])
 
-    Hacks::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
-    Hacks::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
+    AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+    AnswerExercise[task_step: task.task_steps[3], is_correct: false]
 
     task.reload
 
@@ -481,7 +481,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                                           :tasks_tasked_exercise])
 
       Timecop.freeze(Time.now - 1.day) do
-        Hacks::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+        AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
 
@@ -490,7 +490,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.now + 1.day) do
-        Hacks::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
+        AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
 
@@ -509,7 +509,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.accepted_late_at).not_to be_nil
 
       Timecop.freeze(Time.now + 1.day) do
-        Hacks::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
+        AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
 
@@ -542,7 +542,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                                           :tasks_tasked_exercise])
 
       Timecop.freeze(Time.now - 1.day) do
-        Hacks::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+        AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
 
@@ -551,7 +551,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.now + 1.day) do
-        Hacks::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
+        AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
 
@@ -570,7 +570,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.accepted_late_at).not_to be_nil
 
       Timecop.freeze(Time.now + 1.day) do
-        Hacks::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
+        AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
 

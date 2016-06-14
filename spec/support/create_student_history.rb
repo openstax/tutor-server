@@ -77,7 +77,7 @@ class CreateStudentHistory
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
-      Hacks::AnswerExercise[task_step: step.reload, is_correct: true]
+      AnswerExercise[task_step: step.reload, is_correct: true]
     end
   end
 

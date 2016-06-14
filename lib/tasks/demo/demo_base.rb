@@ -345,7 +345,7 @@ class DemoBase
   #   #                            role: role, exercise_source: :biglearn]
 
   #   # task.task_steps.first(num_correct).each do |task_step|
-  #   #   Hacks::AnswerExercise[task_step: task_step, is_correct: true]
+  #   #   AnswerExercise[task_step: task_step, is_correct: true]
   #   # end
   # end
 
@@ -481,7 +481,7 @@ class DemoBase
     response = (response == '0' ? false : true) if response.is_a?(String)
 
     if step.tasked.exercise?
-      Hacks::AnswerExercise.call(task_step: step, is_correct: response)
+      AnswerExercise.call(task_step: step, is_correct: response)
     else
       run(MarkTaskStepCompleted, task_step: step)
     end
