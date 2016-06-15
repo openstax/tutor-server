@@ -1,9 +1,8 @@
-require_relative 'demo_base'
-require_relative 'content_configuration'
+require_relative 'base'
 
 # Adds students to the course periods, assigns Sets up the periods and students for a course
 # and then generates activity for them
-class DemoTasks < DemoBase
+class Demo::Tasks < Demo::Base
 
   lev_routine
 
@@ -17,7 +16,7 @@ class DemoTasks < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    in_parallel(ContentConfiguration[book]) do | contents, initial_index |
+    in_parallel(Demo::ContentConfiguration[book]) do | contents, initial_index |
 
       contents.each do |content|
 

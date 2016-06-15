@@ -522,7 +522,7 @@ http_interactions:
         "1.1", "revised": "2015-06-16T15:33:13Z", "publisher": {"surname": "APBio",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:06 GMT
 - request:
     method: get
@@ -724,7 +724,7 @@ http_interactions:
         "revised": "2015-04-21T15:21:32Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:06 GMT
 - request:
     method: get
@@ -1595,7 +1595,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T15:24:53Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:06 GMT
 - request:
     method: get
@@ -2437,7 +2437,7 @@ http_interactions:
         "id": "tutor_apbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2015-04-21T15:25:34Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:06 GMT
 - request:
     method: get
@@ -2619,7 +2619,7 @@ http_interactions:
         "revised": "2015-04-21T15:36:42Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:07 GMT
 - request:
     method: get
@@ -3045,7 +3045,7 @@ http_interactions:
         "revised": "2015-04-21T15:37:38Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:07 GMT
 - request:
     method: get
@@ -3760,7 +3760,7 @@ http_interactions:
         "1", "revised": "2015-04-21T15:38:29Z", "publisher": {"surname": "APBio",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:07 GMT
 - request:
     method: get
@@ -4549,7 +4549,7 @@ http_interactions:
         "revised": "2015-04-21T15:40:00Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:07 GMT
 - request:
     method: get
@@ -5408,7 +5408,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T15:39:04Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:07 GMT
 - request:
     method: get
@@ -6062,7 +6062,7 @@ http_interactions:
         "revised": "2015-04-21T15:44:31Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:08 GMT
 - request:
     method: get
@@ -6292,7 +6292,7 @@ http_interactions:
         "revised": "2015-04-21T15:59:33Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:08 GMT
 - request:
     method: get
@@ -6875,7 +6875,7 @@ http_interactions:
         "revised": "2015-04-21T16:00:36Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:08 GMT
 - request:
     method: get
@@ -7545,7 +7545,7 @@ http_interactions:
         "tutor_apbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2015-04-21T16:01:18Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:08 GMT
 - request:
     method: get
@@ -7964,7 +7964,7 @@ http_interactions:
         "1", "revised": "2015-04-21T16:01:51Z", "publisher": {"surname": "APBio",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:09 GMT
 - request:
     method: get
@@ -8389,7 +8389,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T16:02:30Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:09 GMT
 - request:
     method: get
@@ -9071,7 +9071,7 @@ http_interactions:
         "revised": "2015-04-21T16:03:02Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:09 GMT
 - request:
     method: get
@@ -20767,7 +20767,7 @@ http_interactions:
         eV9zb2x1dGlvbnMiOltdLCJoaW50cyI6W10sImZvcm1hdHMiOlsiZnJlZS1y
         ZXNwb25zZSIsIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpb
         XX1dfV19
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:24 GMT
 - request:
     method: get
@@ -24085,7 +24085,7 @@ http_interactions:
         b21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMiOltdLCJmb3JtYXRzIjpb
         Im11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hv
         aWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:20:37 GMT
 - request:
     method: get
@@ -24272,7 +24272,7 @@ http_interactions:
         1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:05 GMT
 - request:
     method: get
@@ -24416,7 +24416,7 @@ http_interactions:
         "version": "1", "revised": "2015-05-29T19:05:07Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:05 GMT
 - request:
     method: get
@@ -24952,7 +24952,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:05 GMT
 - request:
     method: get
@@ -25849,7 +25849,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-05-29T19:10:15Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:05 GMT
 - request:
     method: get
@@ -25968,7 +25968,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:06 GMT
 - request:
     method: get
@@ -26290,7 +26290,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:06 GMT
 - request:
     method: get
@@ -26734,7 +26734,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:21:00Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:06 GMT
 - request:
     method: get
@@ -27323,7 +27323,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:06 GMT
 - request:
     method: get
@@ -28046,7 +28046,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:27:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:06 GMT
 - request:
     method: get
@@ -39624,6 +39624,6 @@ http_interactions:
         Tn08L3NwYW4+In1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMi
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 23:11:15 GMT
 recorded_with: VCR 2.9.3

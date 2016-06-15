@@ -1,5 +1,5 @@
 # Methods in this class are available inside ERB blocks in the YAML file
-class ContentConfigurationYamlMethods
+class Demo::ContentConfigurationYamlMethods
 
     attr_reader :noon_today
 

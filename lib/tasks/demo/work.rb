@@ -1,9 +1,8 @@
-require_relative 'demo_base'
-require_relative 'content_configuration'
+require_relative 'base'
 
 # Adds students to the course periods, assigns Sets up the periods and students for a course
 # and then generates activity for them
-class DemoWork < DemoBase
+class Demo::Work < Demo::Base
 
   lev_routine
 
@@ -15,7 +14,7 @@ class DemoWork < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    ContentConfiguration[book].each do | content |
+    Demo::ContentConfiguration[book].each do | content |
 
       in_parallel(content.assignments.reject(&:draft),
                   transaction: true) do | assignments, initial_index |
@@ -58,8 +57,8 @@ class DemoWork < DemoBase
       .each_with_index do | task, index |
 
       profile = task.taskings.first.role.profile
-      strategy = ::User::Strategies::Direct::User.new(profile)
-      user = ::User::User.new(strategy: strategy)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
       task_profile = tasks_profile[user.id]
 
       unless task_profile

@@ -93,7 +93,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       first_task.task_steps.each do |ts|
         next if ts.completed?
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -120,7 +120,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       tasks = @task_plan.tasks.to_a
       first_task = tasks.first
       first_task.task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -145,7 +145,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       second_task = tasks.second
       second_task.task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -172,7 +172,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       third_task = tasks.third
       third_task.task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -199,7 +199,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       fourth_task = tasks.fourth
       fourth_task.task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -240,7 +240,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       tasks = @task_plan.tasks.to_a
       tasks.first(2).each do |task|
         task.task_steps.each do |ts|
-          ts.exercise? ? AnswerExercise[task_step: ts, is_correct: false] : \
+          ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                          MarkTaskStepCompleted[task_step: ts]
         end
       end
@@ -256,7 +256,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq false
 
       tasks.third.task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -272,7 +272,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       tasks[3..4].each do |task|
         task.task_steps.each do |ts|
-          ts.exercise? ? AnswerExercise[task_step: ts, is_correct: true] : \
+          ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                          MarkTaskStepCompleted[task_step: ts]
         end
       end
@@ -288,7 +288,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq true
 
       tasks[5].task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -303,7 +303,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq false
 
       tasks[6].task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -318,7 +318,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq true
 
       tasks[7].task_steps.each do |ts|
-        ts.exercise? ? AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -349,7 +349,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         task_data[:selected_answers] <<
           task.task_steps.each_with_object([]) do |ts, selected_answers|
             if ts.exercise?
-              AnswerExercise[task_step: ts, is_correct: (tt.even? ? true : false)]
+              Demo::AnswerExercise[task_step: ts, is_correct: (tt.even? ? true : false)]
               selected_answers << ts.tasked.answer_id
             else
               MarkTaskStepCompleted[task_step: ts]

@@ -20,7 +20,9 @@ namespace :demo do
   desc 'Initializes book content for the deployment demo'
   task :content, [:book, :version, :random_seed] => :environment do |tt, args|
     require_relative 'demo/content'
-    result = DemoContent.call(args.to_h.merge(print_logs: true))
+
+    result = Demo::Content.call(args.to_h.merge(print_logs: true))
+
     if result.errors.none?
       puts "Successfully imported content"
     else
@@ -32,7 +34,9 @@ namespace :demo do
   desc 'Creates assignments for students'
   task :tasks, [:book, :random_seed] => :environment do |tt, args|
     require_relative 'demo/tasks'
-    result = DemoTasks.call(args.to_h.merge(print_logs: true))
+
+    result = Demo::Tasks.call(args.to_h.merge(print_logs: true))
+
     if result.errors.none?
       puts "Successfully created tasks"
     else
@@ -44,7 +48,9 @@ namespace :demo do
   desc 'Works student assignments'
   task :work, [:book, :random_seed] => :environment do |tt, args|
     require_relative 'demo/work'
-    result = DemoWork.call(args.to_h.merge(print_logs: true))
+
+    result = Demo::Work.call(args.to_h.merge(print_logs: true))
+
     if result.errors.none?
       puts "Successfully worked tasks"
     else
@@ -56,6 +62,7 @@ namespace :demo do
   desc 'Output student assignments'
   task :show, [:book, :version, :random_seed] => :environment do |tt, args|
     require_relative 'demo/show'
-    DemoShow.call(args.to_h.merge(print_logs: true))
+
+    Demo::Show.call(args.to_h.merge(print_logs: true))
   end
 end

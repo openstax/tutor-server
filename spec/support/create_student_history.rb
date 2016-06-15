@@ -77,7 +77,7 @@ class CreateStudentHistory
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
-      AnswerExercise[task_step: step.reload, is_correct: true]
+      Demo::AnswerExercise[task_step: step.reload, is_correct: true]
     end
   end
 

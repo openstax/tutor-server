@@ -1,9 +1,8 @@
-require_relative 'demo_base'
-require_relative 'content_configuration'
+require_relative 'base'
 
 # Loops through the courses and periods that are to be created and worked.
 # Logs the student's assignments for review
-class DemoShow < DemoBase
+class Demo::Show < Demo::Base
 
   lev_routine
 
@@ -13,7 +12,7 @@ class DemoShow < DemoBase
     set_print_logs(print_logs)
 
     students = {}
-    ContentConfiguration[book.to_sym].each do | content |
+    Demo::ContentConfiguration[book.to_sym].each do | content |
 
       content.periods.each do | period |
         (period.students || []).each do | initials |
