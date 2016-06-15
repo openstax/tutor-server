@@ -114,8 +114,8 @@ class UpdateClues
         next [] if period_worked_pools.empty?
 
         # Update CLUes for the entire period, plus CLUes for individual students that did work
-        [[period_roles, period_worked_pools, period]] + \
-        period_roles_to_worked_pools_map.map{ |role, pools| [[role], pools, role] }
+        [[period_roles, period_worked_pools]] + \
+        period_roles_to_worked_pools_map.map{ |role, pools| [[role], pools] }
       end
     end
 
@@ -134,7 +134,7 @@ class UpdateClues
 
       slice_size = [max_query_size/num_roles, 1].max
       pools.each_slice(slice_size).map do |sliced_pools|
-        [roles, sliced_pools, query.third]
+        [roles, sliced_pools]
       end
     end
 
@@ -145,9 +145,8 @@ class UpdateClues
 
       threads = split_clue_queries.each_slice(slice_size).map do |queries|
         Thread.new do
-          queries.map do |roles, pools, cache_for|
-            OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools,
-                                             cache_for: cache_for, force_cache_miss: true)
+          queries.map do |roles, pools|
+            OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools, force_cache_miss: true)
           end
         end
       end

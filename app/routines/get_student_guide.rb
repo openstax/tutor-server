@@ -27,7 +27,8 @@ class GetStudentGuide
       completed_tasked_exercises, course
     )
 
-    { period_id: period.id }
-      .merge compile_course_guide(course, completed_tasked_exercises, exercise_id_to_page_map)
+    { period_id: period.id }.merge(
+      compile_course_guide(course, completed_tasked_exercises, exercise_id_to_page_map)
+    )
   end
 end
