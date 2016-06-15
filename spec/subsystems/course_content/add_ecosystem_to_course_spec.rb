@@ -34,20 +34,4 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
     expect(ecosystems.map(&:id)).to eq [eco1.id]
   end
 
-  it 'removes all other ecosystems if the flag is set' do
-    result = CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: eco1,
-                                                      remove_other_ecosystems: true)
-    expect(result).not_to have_routine_errors
-
-    ecosystems = CourseContent::GetCourseEcosystems[course: course]
-    expect(ecosystems.map(&:id)).to eq [eco1.id]
-
-    result = CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: eco2,
-                                                      remove_other_ecosystems: true)
-    expect(result).not_to have_routine_errors
-
-    ecosystems = CourseContent::GetCourseEcosystems[course: course]
-    expect(ecosystems.map(&:id)).to eq [eco2.id]
-  end
-
 end

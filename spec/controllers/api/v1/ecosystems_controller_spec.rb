@@ -200,6 +200,20 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         end
       end
 
+      it "returns exercise exclusion information if a course_id is given" do
+        page_ids = Content::Models::Page.all.map(&:id)
+        api_get :exercises, user_1_token, parameters: {
+          id: @ecosystem.id, page_ids: page_ids, course_id: course.id
+        }
+
+        expect(response).to have_http_status(:success)
+        hash = response.body_as_hash
+        expect(hash[:total_count]).to eq(215)
+        hash[:items].each do |item|
+          expect(item[:is_excluded]).to eq false
+        end
+      end
+
       it "returns only exercises in certain pools if pool_types are given" do
         page_ids = Content::Models::Page.all.map(&:id)
         api_get :exercises, user_1_token, parameters: {

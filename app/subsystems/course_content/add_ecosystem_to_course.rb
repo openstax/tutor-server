@@ -4,7 +4,7 @@ class CourseContent::AddEcosystemToCourse
 
   protected
 
-  def exec(course:, ecosystem:, remove_other_ecosystems: false,
+  def exec(course:, ecosystem:,
            ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
            map_strategy_class: ::Content::Strategies::Generated::Map)
     course = Marshal.load(course) if course.is_a?(String)
@@ -13,7 +13,6 @@ class CourseContent::AddEcosystemToCourse
                 message: 'The given ecosystem is already active for the given course') \
       if course.reload.ecosystems.first.try(:id) == ecosystem.id
 
-    course.ecosystems.destroy_all if remove_other_ecosystems
     course_ecosystem = CourseContent::Models::CourseEcosystem.create(
       course: course, content_ecosystem_id: ecosystem.id
     )
