@@ -1,5 +1,4 @@
 class ShortCodesController < ApplicationController
-  skip_before_filter :authenticate_user!
 
   def redirect
     handle_with(
