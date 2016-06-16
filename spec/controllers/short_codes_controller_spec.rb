@@ -31,12 +31,19 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:tasking_code) { FactoryGirl.create(:short_code_short_code,
                                           uri: tasking_gid) }
 
+  it 'redirects users to sign in before access' do
+    get :redirect, short_code: absolute_url.code
+    expect(response).to redirect_to(%r{/accounts/login})
+  end
+
   it 'redirects users to absolute urls' do
+    controller.sign_in(teacher)
     get :redirect, short_code: absolute_url.code
     expect(response).to redirect_to('https://cnx.org')
   end
 
   it 'redirects users to relative urls' do
+    controller.sign_in(student)
     get :redirect, short_code: relative_url.code
     expect(response).to redirect_to('dashboard')
   end
@@ -57,6 +64,7 @@ RSpec.describe ShortCodesController, type: :controller do
   end
 
   it 'raises ShortCodeNotFound for short code not found' do
+    controller.sign_in(user)
     expect {
       get :redirect, short_code: 'somethingrandom'
     }.to raise_error(ShortCodeNotFound)
