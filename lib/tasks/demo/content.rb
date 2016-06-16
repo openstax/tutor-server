@@ -1,8 +1,7 @@
-require_relative 'demo_base'
-require_relative 'content_configuration'
+require_relative 'base'
 
 ## Imports a book from CNX and creates a course with periods from it's data
-class DemoContent < DemoBase
+class Demo::Content < Demo::Base
   POSSIBLE_CHARS = ('0'...'9').to_a+('A'..'Z').to_a
 
   lev_routine
@@ -99,7 +98,16 @@ class DemoContent < DemoBase
   end
 
   def exec(book: :all, print_logs: true, random_seed: nil, version: :defined)
+
     set_print_logs(print_logs)
+
+    OpenStax::Exercises::V1.use_real_client
+    configuration = OpenStax::Exercises::V1.configuration
+
+    fatal_error(code: 'missing_openstax_exercises_tokens',
+                message: 'Enter your OpenStax Exercises client_id and secret ' +
+                         'in config/secrets.yml to use demo:content') \
+      if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
 
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
@@ -108,15 +116,15 @@ class DemoContent < DemoBase
     courses = []
     ActiveRecord::Base.transaction do
       setup_staff_user_accounts
-      ContentConfiguration[book].each do | content |
+      Demo::ContentConfiguration[book].each do | content |
         courses.push configure_course(content)
       end
     end
 
     # Parallel step
-    in_parallel(ContentConfiguration[book.to_sym], transaction: true) do |contents, initial_index|
+    in_parallel(Demo::ContentConfiguration[book.to_sym], transaction: true) do |contents, idx_start|
 
-      index = initial_index
+      index = idx_start
 
       contents.each do | content |
 

@@ -3,9 +3,10 @@ require 'vcr_helper'
 require 'tasks/demo/content'
 require 'tasks/demo/tasks'
 require 'tasks/demo/work'
+require 'tasks/demo/show'
 
-RSpec.describe 'Demo', type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS do
-  # Transactions are not compatible with multiple processes
+RSpec.describe Demo, type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS do
+  # Transactional fixtures are not compatible with multiple processes
   self.use_transactional_fixtures = false
 
   after(:all) { DatabaseCleaner.clean_with :truncation }
@@ -15,18 +16,23 @@ RSpec.describe 'Demo', type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS
       # The demo rake task runs demo:content, demo:tasks and demo:work
       # For testing a lightweight import is performed so it completes faster
       # The customized import files for the are located in the fixtures directory
-      fixtures_directory = File.join(File.dirname(__FILE__),'../../fixtures/demo')
-      ContentConfiguration.with_config_directory(fixtures_directory) do
-        # Disable parallel content import for the test environment (because of fakeredis)
-        # otherwise FakeBiglearn gets no exercise data
+      fixtures_directory = File.join(File.dirname(__FILE__), '../../fixtures/demo')
+
+      Demo::ContentConfiguration.with_config_directory(fixtures_directory) do
+        configuration = OpenStax::Exercises::V1.configuration
         old_max_processes = ENV['DEMO_MAX_PROCESSES']
-        ENV['DEMO_MAX_PROCESSES'] = '0'
-        expect(DemoContent.call(print_logs: false).errors).to be_empty
-        ENV['DEMO_MAX_PROCESSES'] = old_max_processes
+        begin
+          ENV['DEMO_MAX_PROCESSES'] = '0'
+          expect(Demo::Content.call(print_logs: false).errors).to be_empty
+        ensure
+          ENV['DEMO_MAX_PROCESSES'] = old_max_processes
+        end
 
-        expect(DemoTasks.call(print_logs: false).errors).to be_empty
+        expect(Demo::Tasks.call(print_logs: false).errors).to be_empty
 
-        expect(DemoWork.call(print_logs: false).errors).to be_empty
+        expect(Demo::Work.call(print_logs: false).errors).to be_empty
+
+        expect(Demo::Show.call(print_logs: false).errors).to be_empty
       end
 
       # We expect some users with no full_name for testing

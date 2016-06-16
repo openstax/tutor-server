@@ -4,14 +4,14 @@ require 'erb'
 require_relative 'content_configuration_yaml_methods'
 
 # Reads in a YAML file containg configuration for a course and its students
-class ContentConfiguration
+class Demo::ContentConfiguration
   # Yaml files will be located inside this directory
   DEFAULT_CONFIG_DIR = File.join(File.dirname(__FILE__), 'configurations')
   EXPLICIT_CONFIGURATIONS = ['large', 'ludicrous']
   class ConfigFileParser
     def initialize(file_path)
       @content = File.read(file_path)
-      @helpers = ContentConfigurationYamlMethods.new
+      @helpers = Demo::ContentConfigurationYamlMethods.new
       @file_path = file_path
     end
 

@@ -1,4 +1,4 @@
-module Hacks
+module Demo
   class AnswerExercise
     lev_routine
 
@@ -9,7 +9,7 @@ module Hacks
     def exec(task_step:, is_correct:, free_response: nil, completed: true)
       tasked = task_step.tasked
 
-      if !tasked.is_a?(Tasks::Models::TaskedExercise)
+      if !tasked.is_a?(::Tasks::Models::TaskedExercise)
         # puts "tasked:    #{tasked.inspect}"
         # puts "task step: #{task_step.inspect}"
         # puts "task:      #{task_step.task.inspect}"
