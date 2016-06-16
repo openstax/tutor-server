@@ -30,7 +30,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   def build_tasks
     # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
     # This happens, for example, on intro pages
-    skip_dynamic = pages.all?{ |page| page.reading_dynamic_pool.exercises.empty? }
+    reading_dynamic_pools = ecosystem.reading_dynamic_pools(pages: @pages)
+    skip_dynamic = reading_dynamic_pools.all?(&:empty?)
 
     taskees.map do |taskee|
       build_reading_task(pages: @pages, taskee: taskee, skip_dynamic: skip_dynamic)

@@ -9,20 +9,27 @@ class GetHistory
                                .order{[due_at_ntz.desc, task_plan.created_at.desc, created_at.desc]}
                                .preload([
                                  {task_plan: :ecosystem},
-                                 {tasked_exercises: {exercise: {page: :reading_dynamic_pool}}}
+                                 {tasked_exercises: [:task_step, {exercise: :page}]}
                                ])
 
     tasks = tasks.where(task_type: Tasks::Models::Task.task_types[type]) unless type == :all
 
     current_task_id = current_task.id unless current_task.nil?
 
-    # Remove the current task and reading tasks without dynamic exercises from the history
-    tasks = tasks.to_a.select do |task|
-      next false if task.id == current_task_id
-      next true if task.task_type != 'reading'
+    # Find reading pages without dynamic exercises
+    reading_page_ids = tasks.select(&:reading?)
+                            .flat_map{ |task| task.task_plan.settings['page_ids'] }.uniq
+    reading_pages = Content::Models::Page.where(id: all_page_ids).preload(:reading_dynamic_pool)
+    non_dynamic_reading_pages = reading_pages.to_a.select{ |page| page.reading_dynamic_pool.empty? }
+    non_dynamic_reading_page_ids_set = Set.new non_dynamic_reading_pages.map(&:id)
 
-      pages = task.tasked_exercises.map{ |te| te.exercise.page }.uniq
-      !pages.all?{ |page| page.reading_dynamic_pool.exercises.empty? }
+    # Remove the current task and reading tasks without dynamic exercises from the history
+    tasks = tasks.to_a.reject do |task|
+      next true if task.id == current_task_id
+      next false unless task.task_type == 'reading'
+
+      reading_page_ids_set = Set.new task.task_plan.settings['page_ids']
+      reading_page_ids_set.subset? non_dynamic_reading_page_ids_set
     end
 
     # Always put the current_task at the top of the list, if given

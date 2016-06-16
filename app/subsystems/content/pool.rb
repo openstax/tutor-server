@@ -26,5 +26,9 @@ module Content
                         klass: ::Content::Exercise, error: StrategyError
     end
 
+    def empty?
+      !!@strategy.empty?
+    end
+
   end
 end

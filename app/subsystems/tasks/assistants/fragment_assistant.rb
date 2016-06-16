@@ -91,7 +91,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def store_related_exercises(exercise_fragment:, page:, previous_step:, title: nil)
-    pool_exercises = page.reading_context_pool.exercises
+    pool_exercises = page.reading_context_pool.exercises(preload_tags: true)
     tasked = previous_step.tasked
 
     related_exercises = \
