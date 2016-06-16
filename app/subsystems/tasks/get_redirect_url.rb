@@ -9,6 +9,7 @@ class Tasks::GetRedirectUrl
     task_plan = GlobalID::Locator.locate(gid)
 
     fatal_error(code: :plan_not_found) if task_plan.nil?
+    fatal_error(code: :authentication_required) if user.is_anonymous?
 
     course = task_plan.owner
 
