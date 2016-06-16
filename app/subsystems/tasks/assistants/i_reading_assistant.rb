@@ -28,7 +28,13 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   end
 
   def build_tasks
-    taskees.map{ |taskee| build_reading_task(pages: @pages, taskee: taskee) }
+    # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
+    # This happens, for example, on intro pages
+    skip_dynamic = pages.all?{ |page| page.reading_dynamic_pool.exercises.empty? }
+
+    taskees.map do |taskee|
+      build_reading_task(pages: @pages, taskee: taskee, skip_dynamic: skip_dynamic)
+    end
   end
 
   protected
@@ -41,16 +47,14 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     ecosystem.pages_by_ids(task_plan.settings['page_ids'])
   end
 
-  def build_reading_task(pages:, taskee:)
+  def build_reading_task(pages:, taskee:, skip_dynamic:)
     task = build_task
 
     reset_used_exercises
 
     add_core_steps!(task: task, pages: pages)
 
-    # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
-    # This happens, for example, on intro pages
-    unless pages.all?{ |page| page.reading_dynamic_pool.exercises.empty? }
+    unless skip_dynamic
       add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
       add_personalized_exercise_steps!(task: task, taskee: taskee)
     end
