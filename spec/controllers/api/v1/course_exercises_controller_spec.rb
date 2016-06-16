@@ -74,6 +74,20 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           end
         end
 
+        it 'returns exercises in the given ecosystem if an ecosystem_id is specified' do
+          new_ecosystem_model = FactoryGirl.create :content_ecosystem
+          course.course_ecosystems << CourseContent::Models::CourseEcosystem.create!(
+            course: course, ecosystem: new_ecosystem_model
+          )
+
+          api_get :show, user_1_token, parameters: {
+            course_id: course.id, ecosystem_id: @ecosystem.id
+          }
+
+          expect(response).to have_http_status(:success)
+          expect(response.body_as_hash[:total_count]).to eq(@ecosystem.exercises.size)
+        end
+
         it 'returns all exercises if page_ids is ommitted' do
           api_get :show, user_1_token, parameters: { course_id: course.id }
 
@@ -85,7 +99,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           api_get :show, user_1_token, parameters: { course_id: course.id, page_ids: [] }
 
           expect(response).to have_http_status(:success)
-          expect(response.body_as_hash).to eq({total_count: 0, items: []})
+          expect(response.body_as_hash).to eq total_count: 0, items: []
         end
 
         it 'returns only exercises in certain pools if pool_types are given' do

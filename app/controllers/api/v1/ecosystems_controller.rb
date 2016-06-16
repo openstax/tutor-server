@@ -44,19 +44,24 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   end
 
   api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',
-            "Returns exercises for a given ecosystem, filtered by the page_ids param and optionally an array of pool_types"
+            'Returns exercises for a given ecosystem, filtered by the following params: ' +
+            'course_id, page_ids, pool_types'
   description <<-EOS
-    Returns a list of assignable exercises associated with the pages with the given ID's.
-    If no page_ids are specified, returns an empty array.
+    Returns a list of assignable exercises in the given ecosystem.
+    The list is filtered by pages matching the given page_ids array
+    and pools matching the given pool_types array, if given.
+    Exercises are marked as excluded based on the course_id param, if given.
 
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
   def exercises
     ecosystem = ::Content::Ecosystem.find(params[:id])
+    course = ::Entity::Course.find(params[:course_id]) if params[:course_id].present?
 
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 
     exercises = GetExercises[ecosystem: ecosystem,
+                             course: course,
                              page_ids: params[:page_ids],
                              pool_types: params[:pool_types]]
 
