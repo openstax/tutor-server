@@ -29,7 +29,6 @@ ActiveRecord::Schema.define(version: 20160625040530) do
     t.datetime "updated_at",                           null: false
     t.string   "default_course_name"
     t.string   "appearance_code"
-    t.boolean  "is_normally_college",  default: false, null: false
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree

@@ -14,7 +14,7 @@ class UpdateSalesforceStats
     attached_records.group_by{ |ar| ar.salesforce_class_name }
                     .each do |klass_name, attached_records|
       case klass_name
-      when 'Salesforce::Remote::ClassSize'
+      when 'Salesforce::Remote::ClassSize', 'Salesforce::Remote::OsAncillary'
         # We assume all attached_to's are Entity::Course's here
         course_ids = attached_records.map{ |ar| ar.tutor_gid.try(:model_id) }.compact
         course_id_to_preloaded_course_map = \
@@ -27,7 +27,13 @@ class UpdateSalesforceStats
             record = attached_record.record
             course_id = Integer(attached_record.tutor_gid.model_id)
             course = course_id_to_preloaded_course_map[course_id]
-            update_class_size_stats(record, course)
+
+            # TODO count archived periods
+            periods = course.periods
+
+            class_size.num_teachers = course.teachers.length
+            class_size.num_students = course.periods.flat_map(&:latest_enrollments).length
+            class_size.num_sections = course.periods.length
           rescue Exception => e
             num_errors += 1
             record.error = "Unable to update stats: #{e.message}" if record.present?
@@ -55,12 +61,6 @@ class UpdateSalesforceStats
     outputs[:num_records] = num_records
     outputs[:num_errors] = num_errors
     outputs[:num_updates] = num_updates
-  end
-
-  def update_class_size_stats(class_size, course)
-    class_size.num_teachers = course.teachers.length
-    class_size.num_students = course.periods.flat_map(&:latest_enrollments).length
-    class_size.num_sections = course.periods.length
   end
 
   def log(&block)

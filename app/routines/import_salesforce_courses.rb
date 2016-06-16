@@ -49,7 +49,7 @@ class ImportSalesforceCourses
 
   def candidate_sf_records
     search_criteria = {
-      status: "Approved",
+      status: Salesforce::Remote::OsAncillary::STATUS_APPROVED,
       course_id: nil
     }
 

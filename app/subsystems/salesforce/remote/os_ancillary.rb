@@ -16,6 +16,9 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
   field :num_teachers,              from: "Active_Teachers__c", as: :int
   field :num_sections,              from: "Sections__c", as: :int
   field :num_students,              from: "Students_Using__c", as: :int
+  field :opportunity_id,            from: 'Opportunity__c'
+
+  belongs_to :opportunity, model: Salesforce::Remote::Opportunity
 
   self.table_name = 'OS_Ancillary__c'
 
@@ -63,5 +66,6 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
     "Other"
   ].flatten
 
+  STATUS_APPROVED = "Approved"
 
 end
