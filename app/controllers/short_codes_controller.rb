@@ -1,5 +1,10 @@
 class ShortCodesController < ApplicationController
 
+  # ShortCodes currently require an authenticated user in order to detect the appropriate role for a course
+  # In the future, this requirement could be removed by adding a `requires_authentication` flag to the short_codes table
+  # If and when that occurs, authentication could be skipped by doing something like:
+  # skip_before_filter :authenticate_user!, if: ->(*) { current_short_code.requires_authentication? }
+
   def redirect
     handle_with(
       ShortCode::ShortCodeRedirect,
