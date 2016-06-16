@@ -5,7 +5,6 @@ class TaskExercise
   protected
 
   def exec(exercise:, title: nil, task: nil, task_step: nil)
-
     # This routine will make one step per exercise part.  If provided, the
     # incoming `task_step` will be used as the first step.
 
@@ -25,7 +24,7 @@ class TaskExercise
       end
 
       current_step.tasked = Tasks::Models::TaskedExercise.new(
-        content_exercise_id: exercise.id,
+        exercise: exercise.to_model,
         url: exercise.url,
         title: title || exercise.title,
         context: exercise.context,

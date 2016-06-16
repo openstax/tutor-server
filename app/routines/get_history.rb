@@ -19,7 +19,7 @@ class GetHistory
     # Find reading pages without dynamic exercises
     reading_page_ids = tasks.select(&:reading?)
                             .flat_map{ |task| task.task_plan.settings['page_ids'] }.uniq
-    reading_pages = Content::Models::Page.where(id: all_page_ids).preload(:reading_dynamic_pool)
+    reading_pages = Content::Models::Page.where(id: reading_page_ids).preload(:reading_dynamic_pool)
     non_dynamic_reading_pages = reading_pages.to_a.select{ |page| page.reading_dynamic_pool.empty? }
     non_dynamic_reading_page_ids_set = Set.new non_dynamic_reading_pages.map(&:id)
 
@@ -40,6 +40,7 @@ class GetHistory
     outputs[:ecosystems] = tasks.map do |task|
       model = task.task_plan.try(:ecosystem)
       next if model.nil?
+
       strategy = Content::Strategies::Direct::Ecosystem.new(model)
       Content::Ecosystem.new(strategy: strategy)
     end

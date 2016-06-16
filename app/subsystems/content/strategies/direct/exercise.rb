@@ -9,6 +9,10 @@ module Content
                 :number, :version, :content_hash, :pool_types, :is_excluded, :has_interactive,
                 :has_video, :content_as_independent_questions
 
+        def to_model
+          repository
+        end
+
         alias_method :entity_page, :page
         def page
           ::Content::Page.new(strategy: entity_page)
