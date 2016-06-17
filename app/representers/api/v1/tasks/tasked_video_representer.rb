@@ -1,7 +1,5 @@
 module Api::V1::Tasks
-  class TaskedVideoRepresenter < Roar::Decorator
-
-    include TaskStepProperties
+  class TaskedVideoRepresenter < TaskStepRepresenter
 
     property :url,
              type: String,

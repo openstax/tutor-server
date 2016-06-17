@@ -1,5 +1,5 @@
 module Api::V1::Tasks
-  module TaskStepProperties
+  class TaskStepRepresenter < Roar::Decorator
 
     include Roar::JSON
     include Representable::Coercion
@@ -16,7 +16,7 @@ module Api::V1::Tasks
     property :id,
              type: String,
              writeable: false,
-             getter: -> (*) { task_step.id },
+             getter: ->(*) { task_step.id },
              schema_info: {
                required: true
              }

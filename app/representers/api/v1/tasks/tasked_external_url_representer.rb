@@ -1,7 +1,5 @@
 module Api::V1::Tasks
-  class TaskedExternalUrlRepresenter < Roar::Decorator
-
-    include TaskStepProperties
+  class TaskedExternalUrlRepresenter < TaskStepRepresenter
 
     property :url,
              as: :external_url,

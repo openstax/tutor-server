@@ -35,7 +35,7 @@ module Api::V1
     collection :page_ids,
                readable: true,
                writeable: false,
-               getter: -> (*) { page_ids && page_ids.map(&:to_s) },
+               getter: ->(*) { page_ids && page_ids.map(&:to_s) },
                schema_info: {
                  required: true,
                  description: "Page IDs as strings ['1', '2', ...]"

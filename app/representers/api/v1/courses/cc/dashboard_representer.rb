@@ -111,8 +111,8 @@ module Api::V1::Courses::Cc
     collection :tasks,
                readable: true,
                writeable: false,
-               skip_render: -> (object, options) {
-                 object.task_type.to_s != 'concept_coach'
+               skip_render: ->(input:, **) {
+                 input.task_type.to_s != 'concept_coach'
                },
                decorator: TaskBase
 

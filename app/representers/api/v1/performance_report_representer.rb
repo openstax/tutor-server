@@ -148,7 +148,7 @@ module Api::V1
 
       collection :data,
                  readable: true,
-                 decorator: ->(object, *) { object.nil? ? Null : StudentData }
+                 decorator: ->(input:, **) { input.nil? ? Null : StudentData }
 
     end
 
@@ -186,7 +186,7 @@ module Api::V1
       property :period_id,
                type: String,
                readable: true,
-               getter: -> (*) { period.id.to_s }
+               getter: ->(*) { period.id.to_s }
 
       property :overall_average_score,
                type: Float,

@@ -22,7 +22,7 @@ module Api::V1
              readable: true,
              writeable: true,
              getter: ->(*) { TARGET_TYPE_TO_API_MAP[target_type] },
-             setter: ->(val, *) { self.target_type = TARGET_TYPE_TO_CLASS_MAP[val] },
+             setter: ->(fragment:, **) { self.target_type = TARGET_TYPE_TO_CLASS_MAP[fragment] },
              schema_info: {
                required: true
              }

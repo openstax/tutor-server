@@ -94,7 +94,7 @@ module Api::V1::Courses
                type: Integer,
                readable: true,
                writeable: false,
-               if: -> (*) { past_due? && completed? }
+               if: ->(*) { past_due? && completed? }
     end
 
     class Role < Roar::Decorator
@@ -160,11 +160,11 @@ module Api::V1::Courses
     collection :tasks,
                readable: true,
                writeable: false,
-               skip_render: -> (object, options) {
-                 !['reading','homework','external','event'].include?(object.task_type.to_s)
+               skip_render: ->(input:, **) {
+                 !['reading','homework','external','event'].include?(input.task_type.to_s)
                },
-               decorator: -> (task, *) {
-                 case task.task_type.to_s
+               decorator: ->(input:, **) {
+                 case input.task_type.to_s
                  when 'reading'
                    ReadingTask
                  when 'homework'

@@ -49,7 +49,8 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 6.3.2'
+gem 'openstax_accounts', github: 'openstax/accounts-rails',
+                         ref: '9e85d1f23a79a2eee2f14fa563fd6847ed776297'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
@@ -58,7 +59,8 @@ gem 'openstax_exchange', '~> 0.2.1'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 7.1.0'
+gem 'openstax_api', github: 'openstax/openstax_api',
+                    ref: 'ae249b7182913e3b677895dcf5ed5444b3d6951c'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -234,6 +236,11 @@ group :development, :test do
 
   # Testing excel files
   gem 'roo'
+
+  # API JSON rendering/parsing
+  # Do not use Roar 1.0.4
+  # Also, do not use Roar::Hypermedia links
+  gem 'roar', '1.0.3'
 end
 
 group :development do

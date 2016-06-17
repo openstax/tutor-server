@@ -23,14 +23,17 @@ module Api::V1
              schema_info: { required: true }
 
     property :preview,
+             type: String,
              readable: true,
              writeable: false
 
     property :context,
+             type: String,
              readable: true,
              writeable: false
 
     property :content,
+             type: String,
              readable: true,
              writeable: false,
              getter: ->(*) { respond_to?(:content_hash) ? content_hash : content },
@@ -39,8 +42,13 @@ module Api::V1
     collection :tags,
                readable: true,
                writeable: false,
-               decorator: ->(obj, *) { (obj.is_a?(Content::Models::Tag) || \
-                                        obj.is_a?(Content::Tag)) ? TagRepresenter : nil },
+               # We really only need :prepare here, but for some reason representable
+               # will not run :prepare without :decorator (or :extend) being present
+               decorator: TagRepresenter,
+               prepare: ->(input:, **) do
+                 (input.is_a?(Content::Models::Tag) || input.is_a?(Content::Tag)) ?
+                   TagRepresenter.new(input) : input
+               end,
                getter: ->(*) { (tags + tags.flat_map(&:teks_tags)).compact.uniq },
                schema_info: { required: true, description: 'Tags for this exercise' }
 

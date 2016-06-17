@@ -9,17 +9,17 @@ module Api::V1
              extend: Api::V1::UserRepresenter,
              readable: true,
              writeable: false,
-             getter: ->(*){ self }
+             getter: ->(*) { self }
 
     property :base_accounts_url,
              readable: true,
              writeable: false,
-             getter: -> (*){ OpenStax::Accounts.configuration.openstax_accounts_url }
+             getter: ->(*) { OpenStax::Accounts.configuration.openstax_accounts_url }
 
     property :accounts_profile_url,
              readable: true,
              writeable: false,
-             getter: -> (*){
+             getter: ->(*) {
                OpenStax::Utilities.generate_url(
                  OpenStax::Accounts.configuration.openstax_accounts_url, "profile"
                )
@@ -28,12 +28,12 @@ module Api::V1
     property :tutor_notices_url,
              readable: true,
              writeable: false,
-             getter: -> (args){ args[:tutor_notices_url] }
+             getter: ->(user_options:, **) { user_options[:tutor_notices_url] }
 
     property :flash,
              readable: true,
              writeable: false,
-             getter: ->(args) { args[:flash] },
+             getter: ->(user_options:, **) { user_options[:flash] },
              schema: {
                required: false,
                description: "A hash of messages the backend would like the frontend to show. " +
