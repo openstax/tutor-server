@@ -357,6 +357,18 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         error = response.body_as_hash[:errors].first
         expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
       end
+
+      it 'returns an error message if the tasking_plans are invalid' do
+        invalid_json_hash = valid_json_hash
+        invalid_json_hash['tasking_plans'] = [{ target_id: nil, target_type: 'not valid' }]
+
+        controller.sign_in teacher
+        api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
+                              raw_post_data: invalid_json_hash.to_json
+        expect(response).to have_http_status(:unprocessable_entity)
+        error = response.body_as_hash[:errors].first
+        expect(error[:message]).to include "Tasking plans is invalid"
+      end
     end
   end
 

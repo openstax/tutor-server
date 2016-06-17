@@ -40,12 +40,6 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     !published_at.nil? || !!@is_publish_requested
   end
 
-  def tasking_plans=(new_tasking_plans)
-    # Hard-delete tasking_plans that are being replaced
-    tasking_plans.select(&:persisted?).each(&:really_destroy!)
-    super
-  end
-
   protected
 
   def valid_settings

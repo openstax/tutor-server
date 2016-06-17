@@ -83,13 +83,14 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) {
+             getter: ->(*) do
                self.try(:shareable_url) || ShortCode::UrlFor[self, suffix: self.title]
-             }
+             end
 
     collection :tasking_plans,
                instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
                decorator: TaskingPlanRepresenter,
+               setter: RailsCollectionSetter,
                readable: true,
                writeable: true
 
