@@ -28,7 +28,7 @@ class GetHistory
       next true if task.id == current_task_id
       next false unless task.task_type == 'reading'
 
-      reading_page_ids_set = Set.new task.task_plan.settings['page_ids'].map(&:to_i)
+      reading_page_ids_set = Set.new (task.task_plan.settings['page_ids'] || []).compact.map(&:to_i)
       reading_page_ids_set.subset? non_dynamic_reading_page_ids_set
     end
 
