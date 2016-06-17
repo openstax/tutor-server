@@ -1,40 +1,5 @@
 GIT
-  remote: git://github.com/openstax/accounts-rails.git
-  revision: 9e85d1f23a79a2eee2f14fa563fd6847ed776297
-  ref: 9e85d1f23a79a2eee2f14fa563fd6847ed776297
-  specs:
-    openstax_accounts (6.4.1)
-      action_interceptor (>= 1.0)
-      keyword_search (>= 1.0.0)
-      lev (>= 2.2.1)
-      oauth2 (>= 0.5.0)
-      omniauth (>= 1.1)
-      omniauth-oauth2 (>= 1.1)
-      openstax_api (>= 3.1.0)
-      openstax_utilities (>= 4.1.0)
-      rails (>= 4.1)
-      representable (>= 2.0)
-      roar (>= 1.0)
-      squeel (>= 0.5.0)
-
-GIT
-  remote: git://github.com/openstax/openstax_api.git
-  revision: ae249b7182913e3b677895dcf5ed5444b3d6951c
-  ref: ae249b7182913e3b677895dcf5ed5444b3d6951c
-  specs:
-    openstax_api (7.1.1)
-      doorkeeper (>= 2.0)
-      exception_notification (>= 4.0)
-      lev (>= 1.0.0)
-      openstax_utilities (>= 4.2.0)
-      rails (>= 3.1)
-      representable (>= 2.0, < 4.0)
-      responders
-      roar (>= 1.0)
-      roar-rails (>= 1.0)
-
-GIT
-  remote: https://github.com/openstax/active_force
+  remote: git://github.com/openstax/active_force.git
   revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
   ref: 9695896f5
   specs:
@@ -451,6 +416,29 @@ GEM
       representable (>= 2.0)
       roar (>= 1.0)
       squeel (>= 0.5.0)
+    openstax_accounts (6.4.1)
+      action_interceptor (>= 1.0)
+      keyword_search (>= 1.0.0)
+      lev (>= 2.2.1)
+      oauth2 (>= 0.5.0)
+      omniauth (>= 1.1)
+      omniauth-oauth2 (>= 1.1)
+      openstax_api (>= 3.1.0)
+      openstax_utilities (>= 4.1.0)
+      rails (>= 4.1)
+      representable (>= 2.0)
+      roar (>= 1.0)
+      squeel (>= 0.5.0)
+    openstax_api (7.1.1)
+      doorkeeper (>= 2.0)
+      exception_notification (>= 4.0)
+      lev (>= 1.0.0)
+      openstax_utilities (>= 4.2.0)
+      rails (>= 3.1)
+      representable (>= 2.0, < 4.0)
+      responders
+      roar (>= 1.0)
+      roar-rails (>= 1.0)
     openstax_exchange (0.2.1)
       hashie
       oauth2 (>= 0.5.0)
@@ -763,8 +751,8 @@ DEPENDENCIES
   nifty-generators
   omniauth-oauth2 (~> 1.3.1)
   omniauth-salesforce
-  openstax_accounts!
-  openstax_api!
+  openstax_accounts (~> 6.4.1)
+  openstax_api (~> 7.1.1)
   openstax_exchange (~> 0.2.1)
   openstax_rescue_from (~> 1.6.0)
   openstax_utilities (~> 4.2.0)
