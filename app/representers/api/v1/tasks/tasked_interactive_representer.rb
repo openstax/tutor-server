@@ -1,7 +1,5 @@
 module Api::V1::Tasks
-  class TaskedInteractiveRepresenter < Roar::Decorator
-
-    include TaskStepProperties
+  class TaskedInteractiveRepresenter < TaskStepRepresenter
 
     property :url,
              type: String,

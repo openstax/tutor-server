@@ -26,7 +26,7 @@ class Admin::CoursesController < Admin::BaseController
 
   def create
     handle_with(Admin::CoursesCreate,
-                complete: -> (*) {
+                complete: ->(*) {
                   flash[:notice] = 'The course has been created.'
                   redirect_to admin_courses_path
                 })
@@ -39,7 +39,7 @@ class Admin::CoursesController < Admin::BaseController
   def update
     handle_with(Admin::CoursesUpdate,
                 params: course_params,
-                complete: -> (*) {
+                complete: ->(*) {
                   flash[:notice] = 'The course has been updated.'
                   redirect_to admin_courses_path
                 })
@@ -47,11 +47,11 @@ class Admin::CoursesController < Admin::BaseController
 
   def destroy
     handle_with(Admin::CoursesDestroy,
-                success: -> (*) {
+                success: ->(*) {
                   flash[:notice] = 'The course has been deleted.'
                   redirect_to admin_courses_path
                 },
-                failure: -> (*) {
+                failure: ->(*) {
                   flash[:alert] = 'The course could not be deleted because it is not empty.'
                   redirect_to admin_courses_path
                 })

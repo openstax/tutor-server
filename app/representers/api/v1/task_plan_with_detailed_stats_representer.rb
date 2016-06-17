@@ -3,7 +3,7 @@ module Api::V1
 
     collection :stats,
                decorator: Api::V1::Tasks::Stats::StatRepresenter,
-               getter: ->(args) { CalculateTaskStats[tasks: tasks, details: true] },
+               getter: ->(*) { CalculateTaskStats[tasks: tasks, details: true] },
                readable: true,
                writable: false
 

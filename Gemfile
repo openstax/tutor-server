@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 6.3.2'
+gem 'openstax_accounts', '~> 6.4.1'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
@@ -58,7 +58,7 @@ gem 'openstax_exchange', '~> 0.2.1'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 7.1.0'
+gem 'openstax_api', '~> 7.1.1'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -147,7 +147,7 @@ gem 'paranoia', '~> 2.1.3'
 gem 'restforce'
 gem 'omniauth-salesforce'
 # Fork that supports Ruby >= 2.1
-gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9695896f5'
+gem 'active_force', github: 'openstax/active_force', ref: '9695896f5'
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'
@@ -234,6 +234,11 @@ group :development, :test do
 
   # Testing excel files
   gem 'roo'
+
+  # API JSON rendering/parsing
+  # Do not use Roar 1.0.4
+  # Also, do not use Roar::Hypermedia links
+  gem 'roar', '1.0.3'
 end
 
 group :development do

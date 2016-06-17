@@ -1,7 +1,5 @@
 module Api::V1::Tasks
-  class TaskedPlaceholderRepresenter < Roar::Decorator
-
-    include TaskStepProperties
+  class TaskedPlaceholderRepresenter < TaskStepRepresenter
 
     property :placeholder_name,
              as: :placeholder_for,

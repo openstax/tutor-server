@@ -1,7 +1,5 @@
 module Api::V1::Tasks
-  class TaskedExerciseRepresenter < Roar::Decorator
-
-    include TaskStepProperties
+  class TaskedExerciseRepresenter < TaskStepRepresenter
 
     property :url,
              as: :content_url,
@@ -79,7 +77,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.feedback_available? },
+             if: ->(*) { task_step.feedback_available? },
              schema_info: {
                description: "A detailed solution that explains the correct choice"
              }
@@ -89,7 +87,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.feedback_available? },
+             if: ->(*) { task_step.feedback_available? },
              schema_info: {
                description: "The feedback given to the student"
              }
@@ -98,7 +96,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.feedback_available? },
+             if: ->(*) { task_step.feedback_available? },
              schema_info: {
                description: "The Exercise's correct answer's id"
              }
@@ -107,7 +105,7 @@ module Api::V1::Tasks
              as: :is_correct,
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.feedback_available? },
+             if: ->(*) { task_step.feedback_available? },
              schema_info: {
                type: 'boolean',
                description: "Whether or not the answer given by the student is correct"

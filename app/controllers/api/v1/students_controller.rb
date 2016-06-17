@@ -11,38 +11,6 @@ class Api::V1::StudentsController < Api::V1::ApiController
     EOS
   end
 
-  # TEMPORARILY REMOVED THIS ABILITY FOR END USERS TO ADD STUDENTS, AS THE WORKFLOW IS
-  # MORE COMPLEX THAN ORIGINALLY THOUGHT (UX NEEDS TO STUDY IT).
-  #
-  # api :POST, '/courses/:course_id/students', 'Creates a new user and adds them to the period'
-  # description <<-EOS
-  #   Creates a new user and adds them to the given course period.
-  #   #{json_schema(Api::V1::NewStudentRepresenter, include: :writeable)}
-  # EOS
-  # def create
-  #   # OpenStax::Api#standard_(update|create) require an ActiveRecord model, which we don't have
-  #   # Substitue a Hashie::Mash to read the JSON encoded body
-  #   CourseMembership::Models::Student.transaction do
-  #     @payload = consume!(Hashie::Mash.new, represent_with: Api::V1::NewStudentRepresenter)
-  #     period = CourseMembership::Models::Period.find(@payload.delete 'course_membership_period_id')
-  #     args = @payload.to_hash.symbolize_keys.merge(period: period)
-  #     @result = CreateStudent.call(args)
-  #     @student = @result.outputs[:student]
-  #     OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, @student)
-  #     raise SecurityTransgression \
-  #       unless @student.period.entity_course_id.to_s == params[:course_id].to_s
-  #   end
-
-  #   if @result.errors.any?
-  #     render_api_errors(@result.errors)
-  #   else
-  #     respond_with @student,
-  #                  represent_with: Api::V1::NewStudentRepresenter,
-  #                  location: api_student_url(@student),
-  #                  email: @payload.email
-  #   end
-  # end
-
   api :PATCH, '/user/courses/:course_id/student', "Updates the current student's information"
   description <<-EOS
     Updates the current student's information.

@@ -3,8 +3,8 @@ class ShortCodesController < ApplicationController
   def redirect
     handle_with(
       ShortCode::ShortCodeRedirect,
-        success: -> (*) { redirect_to @handler_result.outputs.uri },
-        failure: -> (*) {
+        success: ->(*) { redirect_to @handler_result.outputs.uri },
+        failure: ->(*) {
           case @handler_result.errors.first.code
           when :plan_not_published
             error_page('This assignment is not yet available.',
