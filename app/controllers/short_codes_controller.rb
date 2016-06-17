@@ -1,5 +1,4 @@
 class ShortCodesController < ApplicationController
-  skip_before_filter :authenticate_user!
 
   def redirect
     handle_with(
@@ -25,6 +24,8 @@ class ShortCodesController < ApplicationController
                       )
           when :short_code_not_found
             raise ShortCodeNotFound
+          when :authentication_required
+            authenticate_user!
           when :invalid_user
             raise SecurityTransgression
           else
