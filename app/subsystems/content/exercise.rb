@@ -81,5 +81,9 @@ module Content
       !!@strategy.has_video
     end
 
+    def to_model
+      @strategy.to_model
+    end
+
   end
 end

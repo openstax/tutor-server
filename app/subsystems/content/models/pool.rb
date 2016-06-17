@@ -18,4 +18,9 @@ class Content::Models::Pool < Tutor::SubSystems::BaseModel
     Content::Models::Exercise.where(id: content_exercise_ids)
   end
 
+  # This method checks only the array of ids, not the DB records, in order to save time
+  def empty?
+    content_exercise_ids.empty?
+  end
+
 end

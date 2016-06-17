@@ -6,7 +6,7 @@ module Content
         wraps ::Content::Models::Pool
 
         exposes :pool_types, from_class: ::Content::Models::Pool
-        exposes :pool_type, :exercise_ids, :exercises
+        exposes :pool_type, :exercise_ids, :exercises, :empty?
 
         class << self
           alias_method :pool_types_map, :pool_types

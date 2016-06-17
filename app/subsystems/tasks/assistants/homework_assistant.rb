@@ -74,7 +74,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
       description: description
     ]
     AddSpyInfo[to: task, from: @ecosystem]
-    return task
+    task
   end
 
   def add_core_steps!(task:, exercises:)
