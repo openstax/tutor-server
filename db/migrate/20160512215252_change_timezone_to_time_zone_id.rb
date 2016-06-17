@@ -22,7 +22,9 @@ class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
         end
 
         Tasks::Models::TaskingPlan.unscoped.preload(task_plan: :owner).find_each do |tasking_plan|
-          time_zone = time_zones[tasking_plan.task_plan.owner.id]
+          time_zone = time_zones[tasking_plan.task_plan.try(:owner).try(:id)]
+          next if time_zone.nil?
+
           tasking_plan.time_zone = time_zone
           tasking_plan.opens_at = tasking_plan.opens_at_ntz
           tasking_plan.due_at = tasking_plan.due_at_ntz
@@ -33,7 +35,7 @@ class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
           tasking = Tasks::Models::Tasking.unscoped
                                           .where(entity_task_id: task.entity_task_id)
                                           .preload(:period).first
-          time_zone = time_zones[tasking.period.try(:entity_course_id)]
+          time_zone = time_zones[tasking.try(:period).try(:entity_course_id)]
           next if time_zone.nil?
 
           task.time_zone = time_zone
