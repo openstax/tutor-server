@@ -312,7 +312,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def destroy
     task_plan = Tasks::Models::TaskPlan.preloaded.with_deleted.find_by(id: params[:id])
-    standard_destroy(task_plan, Api::V1::TaskPlanRepresenter)
+    # Some Task models have touch: true, so delay_touching is useful here
+    ActiveRecord::Base.delay_touching { standard_destroy(task_plan, Api::V1::TaskPlanRepresenter) }
   end
 
   api :PUT, '/plans/:id/restore', 'Restores the specified TaskPlan'
@@ -325,7 +326,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def restore
     task_plan = Tasks::Models::TaskPlan.preloaded.with_deleted.find_by(id: params[:id])
-    standard_restore(task_plan, Api::V1::TaskPlanRepresenter)
+    # Paranoia restore triggers .touch several times and some Task models have touch: true,
+    # so delay_touching is useful here
+    ActiveRecord::Base.delay_touching { standard_restore(task_plan, Api::V1::TaskPlanRepresenter) }
   end
 
   protected

@@ -163,6 +163,9 @@ gem 'p3p'
 # API throttling
 gem 'rack-attack'
 
+# Minimize DB access due to touch: true associations
+gem 'activerecord-delay_touching'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

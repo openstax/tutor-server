@@ -26,8 +26,10 @@ FactoryGirl.define do
       require File.expand_path('../../../vcr_helper', __FILE__)
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
-        @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
-                                              book_location: [1, 1]]
+        OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
+          @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
+                                                book_location: [1, 1]]
+        end
       end
 
       Content::Routines::PopulateExercisePools[book: chapter.book]

@@ -58,6 +58,8 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def destroy
+    # CourseMembership models do not have touch: true
+    # and paranoia destroy does not trigger .touch, so delay_touching is not useful here
     standard_destroy(@period.to_model, Api::V1::PeriodRepresenter)
   end
 
@@ -71,7 +73,10 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def restore
-    standard_restore(@period.to_model, Api::V1::PeriodRepresenter)
+    # Paranoia restore triggers .touch several times, so delay_touching is useful here
+    ActiveRecord::Base.delay_touching do
+      standard_restore(@period.to_model, Api::V1::PeriodRepresenter)
+    end
   end
 
   private
