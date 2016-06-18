@@ -28,7 +28,7 @@ class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
   protected
 
   def due_at_in_the_future
-    return if !task_plan.try(:is_publish_requested?) ||
+    return if task_plan.try(:is_draft?) ||
               !due_at_ntz_changed? || due_at.nil? || due_at > Time.current
     errors.add(:due_at, 'cannot be set into the past')
     false

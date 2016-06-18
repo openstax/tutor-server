@@ -79,7 +79,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   context "is_publish_requested" do
     it "can be read" do
-      allow(task_plan).to receive(:is_publish_requested?).and_return(true)
+      allow(task_plan).to receive(:is_draft?).and_return(false)
       expect(representation).to include("is_publish_requested" => true)
     end
 

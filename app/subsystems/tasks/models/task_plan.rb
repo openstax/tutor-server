@@ -36,8 +36,12 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     tasks.any?(&:past_open?)
   end
 
-  def is_publish_requested?
-    !published_at.nil? || !!@is_publish_requested
+  def is_published?
+    published_at.present?
+  end
+
+  def is_draft?
+    !@is_publish_requested && !is_published?
   end
 
   protected
@@ -90,7 +94,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def not_past_due_when_publishing
-    return if !is_publish_requested? || tasking_plans.none?(&:past_due?)
+    return if is_draft? || is_published? || tasking_plans.none?(&:past_due?)
     errors.add(:due_at, 'cannot be in the past when publishing')
     false
   end

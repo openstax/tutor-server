@@ -39,7 +39,7 @@ module Api::V1
     property :is_publish_requested,
              readable: true,
              writeable: true,
-             getter: ->(*) { is_publish_requested? },
+             getter: ->(*) { !is_draft? },
              schema_info: { type: 'boolean' }
 
     property :is_feedback_immediate,

@@ -356,7 +356,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # Returns the job uuid, if any, or nil if the request was completed inline
   def distribute_or_update_tasks(task_plan)
     task_plan.publish_last_requested_at = Time.current \
-      if !task_plan.tasks_past_open? && task_plan.is_publish_requested?
+      unless task_plan.tasks_past_open? || task_plan.is_draft?
     task_plan.save
     return unless task_plan.errors.empty?
 
@@ -364,7 +364,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       # Tasks already open: propagate updates
       PropagateTaskPlanUpdates.call(task_plan: task_plan)
       nil
-    elsif task_plan.is_publish_requested?
+    elsif !task_plan.is_draft?
       # Publish requested or already published but tasks not open: trigger publish
       uuid = DistributeTasks.perform_later(task_plan)
       task_plan.update_attribute(:publish_job_uuid, uuid)
