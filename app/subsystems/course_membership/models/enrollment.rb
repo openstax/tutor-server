@@ -19,6 +19,15 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
     }.outer}.where(newer_enrollment: {id: nil})
   }
 
+  scope :latest_with_deleted, -> {
+    joins{
+      CourseMembership::Models::Enrollment.unscoped.as(:newer_enrollment).on{
+        (newer_enrollment.course_membership_student_id == ~course_membership_student_id) & \
+        (newer_enrollment.created_at > ~created_at)
+      }.outer
+    }.where(newer_enrollment: {id: nil}).with_deleted
+  }
+
   protected
 
   def same_course

@@ -1,17 +1,17 @@
 module Salesforce
   class RenewOsAncillary
 
-    # TODO handle exceptions in caller, email devs / SF devs
+    # `based_on` can either be an `OsAncillary` or the legacy `ClassSize`
+    def self.call(based_on:, renew_for_term_year:)
 
-    def self.call(original_os_ancillary:)
       # Would be nice to have preloaded opportunity, but have had problems making it work
-      original_opportunity = original_os_ancillary.opportunity
+      based_on_opportunity = based_on.opportunity
 
       # We want to hang a new OSA off of a similar opportunity for the next TermYear
       target_opportunity_criteria = {
-        contact_id: original_opportunity.contact_id,
-        book_name: original_opportunity.book_name,
-        term_year: next_term_year(original_opportunity.term_year)
+        contact_id: based_on_opportunity.contact_id,
+        book_name: based_on_opportunity.book_name,
+        term_year: renew_for_term_year
       }
 
       target_opportunities = Salesforce::Remote::Opportunity.where(target_opportunity_criteria).all
@@ -24,9 +24,17 @@ module Salesforce
 
       target_opportunity = target_opportunities.first
 
+      based_on_product =
+        case based_on
+        when Salesforce::Remote::OsAncillary
+          based_on.product
+        when Salesforce::Remote::ClassSize
+          "Concept Coach"
+        end
+
       os_ancillary_attributes = {
         opportunity_id: target_opportunity.id,
-        product: original_os_ancillary.product
+        product: based_on_product
       }
 
       existing_os_ancillary = Salesforce::Remote::OsAncillary.where(os_ancillary_attributes).first
@@ -34,7 +42,7 @@ module Salesforce
 
       new_os_ancillary = Salesforce::Remote::OsAncillary.new(
         os_ancillary_attributes.merge(
-          course_id: original_os_ancillary.course_id,
+          course_id: based_on.course_id,
           status: Remote::OsAncillary::STATUS_APPROVED,
           error: nil
         )
@@ -47,14 +55,6 @@ module Salesforce
       end
 
       new_os_ancillary
-    end
-
-    def self.next_term_year(from)
-      from.match(/20(\d\d) - (\d\d) (\w+)/)
-
-      $3 == 'Fall' ?
-        "20#{$1} - #{$2} Spring" :
-        "20#{$1.to_i + 1} - #{$2.to_i + 1} Fall"
     end
   end
 

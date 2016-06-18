@@ -7,7 +7,10 @@ class UpdateSalesforceStats
 
     attached_records = Salesforce::AttachedRecord.preload(:salesforce_objects)
 
-    num_records = attached_records.length
+    course_attached_records = attached_records.select{|ar| ar.tutor_gid.model_class == Entity::Course}
+    period_attached_records = attached_records.select{|ar| ar.tutor_gid.model_class == CourseMembership::Models::Period}
+
+    num_records = course_attached_records.length
     num_errors = 0
     num_updates = 0
 

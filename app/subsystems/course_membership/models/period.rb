@@ -12,6 +12,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :enrollments, dependent: :destroy
   has_many :latest_enrollments, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
+  has_many :latest_enrollments_with_deleted, -> { latest_with_deleted }, class_name: '::CourseMembership::Models::Enrollment'
 
   has_many :enrollment_changes, dependent: :destroy
 
