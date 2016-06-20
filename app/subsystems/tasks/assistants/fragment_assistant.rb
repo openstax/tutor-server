@@ -99,19 +99,20 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       # Retrieve an exercise related to the previous step by LO
       exercise = tasked.exercise
 
-      los = Set.new exercise.los.map(&:id)
-      aplos = Set.new exercise.aplos.map(&:id)
+      lo_ids = exercise.los.map(&:id)
+      aplo_ids = exercise.aplos.map(&:id)
 
       pool_exercises.select do |ex|
-        ex.los.any?{ |tag| los.include?(tag.id) } || ex.aplos.any?{ |tag| aplos.include?(tag.id) }
+        ex.los.any?{ |lo| lo_ids.include?(lo.id) } ||
+        ex.aplos.any?{ |aplo| aplo_ids.include?(aplo.id) }
       end
     else # Try One (Exemplar)
       # Retrieve an exercise tagged with the context-cnxfeature tag
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
-      feature_tag = "context-cnxfeature:#{node_id}"
-      pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag.value == feature_tag } }
+      feature_tag_value = "context-cnxfeature:#{node_id}"
+      pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag.value == feature_tag_value } }
     end
 
     previous_step.related_exercise_ids = related_exercises.map(&:id) || []

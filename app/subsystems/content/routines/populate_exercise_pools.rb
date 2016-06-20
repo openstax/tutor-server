@@ -38,7 +38,7 @@ class Content::Routines::PopulateExercisePools
                                                             pool_type: :all_exercises)
 
         page.exercises.each do |exercise|
-          tags = Set.new exercise.exercise_tags.map{ |et| et.tag.value }
+          tags = exercise.exercise_tags.map{ |et| et.tag.value }
 
           # Reading Dynamic (Concept Coach)
           page.reading_dynamic_pool.content_exercise_ids << exercise.id \

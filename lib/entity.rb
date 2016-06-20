@@ -5,7 +5,7 @@ class Entity
   # Keep track of which AR classes are wrapped by which Entities and vice-versa
   cattr_reader :_wrap_class_procs, :_unwrapped_classes
   @@_wrap_class_procs = Hash.new
-  @@_unwrapped_classes = Hash.new { |hash, key| hash[key] = Set.new }
+  @@_unwrapped_classes = Hash.new { |hash, key| hash[key] = [] }
 
   class << self
     # Lists class and instance methods that are part of the API

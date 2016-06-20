@@ -21,15 +21,15 @@ class GetHistory
                             .flat_map{ |task| task.task_plan.settings['page_ids'] }.compact.uniq
     reading_pages = Content::Models::Page.where(id: reading_page_ids).preload(:reading_dynamic_pool)
     non_dynamic_reading_pages = reading_pages.to_a.select{ |page| page.reading_dynamic_pool.empty? }
-    non_dynamic_reading_page_ids_set = Set.new non_dynamic_reading_pages.map(&:id)
+    non_dynamic_reading_page_ids = non_dynamic_reading_pages.map(&:id)
 
     # Remove the current task and reading tasks without dynamic exercises from the history
     tasks = tasks.to_a.reject do |task|
       next true if task.id == current_task_id
       next false unless task.task_type == 'reading'
 
-      reading_page_ids_set = Set.new (task.task_plan.settings['page_ids'] || []).compact.map(&:to_i)
-      reading_page_ids_set.subset? non_dynamic_reading_page_ids_set
+      reading_page_ids = (task.task_plan.settings['page_ids'] || []).compact.map(&:to_i)
+      reading_page_ids.all?{ |page_id| non_dynamic_reading_page_ids.include? page_id }
     end
 
     # Always put the current_task at the top of the list, if given

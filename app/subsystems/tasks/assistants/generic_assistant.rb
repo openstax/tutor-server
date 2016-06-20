@@ -29,7 +29,7 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def reset_used_exercises
-    @used_exercise_numbers = Set.new
+    @used_exercise_numbers = []
   end
 
   def get_random_unused_page_exercise_with_tags(page, tags)
