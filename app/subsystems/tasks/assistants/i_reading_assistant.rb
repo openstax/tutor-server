@@ -33,14 +33,11 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     reading_dynamic_pools = ecosystem.reading_dynamic_pools(pages: @pages)
     skip_dynamic = reading_dynamic_pools.all?(&:empty?)
 
-    # Don't load too many histories at once so we don't risk running out of memory
-    taskees.each_slice(5).flat_map do |taskee_slice|
-      histories = GetHistory[roles: taskee_slice, type: :reading]
+    histories = GetHistory[roles: taskees, type: :reading]
 
-      taskee_slice.map do |taskee|
-        build_reading_task(pages: @pages, taskee: taskee,
-                           history: histories[taskee], skip_dynamic: skip_dynamic)
-      end
+    taskees.map do |taskee|
+      build_reading_task(pages: @pages, taskee: taskee,
+                         history: histories[taskee], skip_dynamic: skip_dynamic)
     end
   end
 

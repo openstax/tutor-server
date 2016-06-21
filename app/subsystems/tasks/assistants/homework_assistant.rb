@@ -47,13 +47,10 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_tasks
-    # Don't load too many histories at once so we don't risk running out of memory
-    taskees.each_slice(5).flat_map do |taskee_slice|
-      histories = GetHistory[roles: taskee_slice, type: :homework]
+    histories = GetHistory[roles: taskees, type: :homework]
 
-      taskee_slice.map do |taskee|
-        build_homework_task(taskee: taskee, exercises: @exercises, history: histories[taskee])
-      end
+    taskees.map do |taskee|
+      build_homework_task(taskee: taskee, exercises: @exercises, history: histories[taskee])
     end
   end
 
