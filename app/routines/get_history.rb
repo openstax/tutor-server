@@ -11,11 +11,9 @@ class GetHistory
     all_tasks = Tasks::Models::Task
       .joins{[task_plan.outer, taskings]}
       .where(taskings: { entity_role_id: role_ids })
-      .preload([
-        {task_plan: :ecosystem},
-        {tasked_exercises: [:task_step, {exercise: :page}]}
-      ]).select([Tasks::Models::Task.arel_table[Arel.star],
-                 Tasks::Models::Tasking.arel_table[:entity_role_id]])
+      .preload([:task_plan, :concept_coach_task, {tasked_exercises: :exercise}])
+      .select([Tasks::Models::Task.arel_table[Arel.star],
+               Tasks::Models::Tasking.arel_table[:entity_role_id]])
 
     all_tasks = all_tasks.where(task_type: Tasks::Models::Task.task_types[type]) unless type == :all
 
@@ -40,8 +38,19 @@ class GetHistory
     filtered_tasks = filtered_reading_tasks + other_tasks
     grouped_tasks = filtered_tasks.group_by(&:entity_role_id)
 
+    # Add an empty array for roles with no tasks
     taskless_role_ids = role_ids.reject{ |role_id| grouped_tasks.has_key? role_id }
     taskless_role_ids.each{ |role_id| grouped_tasks[role_id] = [] }
+
+    # Since getting page_ids for homework tasks requires DB access, get them all at once
+    exercise_id_to_page_id_map = {}
+    homework_tasks = all_tasks.select(&:homework?)
+    all_hw_exercise_ids = homework_tasks.flat_map{ |task| task.task_plan.settings['exercise_ids'] }
+    all_hw_exercises = Content::Models::Exercise.where(id: all_hw_exercise_ids)
+                                                .select([:id, :content_page_id])
+    all_hw_exercises.each do |exercise|
+      exercise_id_to_page_id_map[exercise.id] = exercise.content_page_id
+    end
 
     all_history = Hashie::Mash.new
 
@@ -58,23 +67,28 @@ class GetHistory
         [due_date, open_date, tie_breaker]
       end.reverse!
 
-      history.tasks = sorted_tasks
+      history.total_count = sorted_tasks.size
 
-      history.ecosystems = sorted_tasks.map do |task|
-        model = task.task_plan.try(:ecosystem)
-        next if model.nil?
+      history.ecosystem_ids = sorted_tasks.map{ |task| task.task_plan.try(:content_ecosystem_id) }
 
-        Content::Ecosystem.new(strategy: model.wrap)
+      # The core page ids exclude spaced practice/personalized pages
+      history.core_page_ids = sorted_tasks.map do |task|
+        case task.task_type.to_sym
+        when :reading
+          task.task_plan.settings['page_ids'].compact.map(&:to_i)
+        when :homework
+          exercise_ids = task.task_plan.settings['exercise_ids'].compact.map(&:to_i)
+          exercise_ids.map{ |exercise_id| exercise_id_to_page_id_map[exercise_id] }.compact.uniq
+        when :concept_coach
+          [task.concept_coach_task.content_page_id]
+        else
+          []
+        end
       end
 
-      tasked_exercises_array = sorted_tasks.map(&:tasked_exercises)
-
-      history.tasked_exercises = tasked_exercises_array
-
-      history.exercises = tasked_exercises_array.map do |tasked_exercises|
-        tasked_exercises.map do |tasked_exercise|
-          Content::Exercise.new(strategy: tasked_exercise.exercise.wrap)
-        end
+      # The exercise numbers include spaced practice/personalized exercises
+      history.exercise_numbers = sorted_tasks.map do |task|
+        task.tasked_exercises.map{ |te| te.exercise.number }
       end
 
       all_history[role] = history

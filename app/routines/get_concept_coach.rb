@@ -28,7 +28,8 @@ class GetConceptCoach
     existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.task
     unless existing_cc_task.nil?
       outputs.task = existing_cc_task
-      run(:add_spy_info, to: outputs.task, from: [ecosystem, {history: history.tasks}])
+      spy_history = history.core_page_ids.map{ |page_ids| { page_id: page_ids.first } }
+      run(:add_spy_info, to: outputs.task, from: [ecosystem, { history: spy_history }])
       return
     end
 
@@ -48,39 +49,42 @@ class GetConceptCoach
     core_exercise_numbers = core_exercises.map(&:number)
     ecosystems_map = {}
 
-    spaced_tasks = history.tasks || []
+    spaced_page_ids = history.core_page_ids
 
     spaced_practice_status = []
 
-    # Prepare eligible random-ago tasks, but only if we have 4 or more tasks
-    if spaced_tasks.size >= 4
-      random_tasks = spaced_tasks.dup
+    # Prepare eligible random-ago pages, but only if we have 4 or more tasks
+    if history.total_count >= 4
+      random_page_ids = spaced_page_ids.dup
       forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
                               .map(&:first).select{ |k_ago| k_ago != :random }.uniq
       forbidden_random_ks.sort.reverse.each do |forbidden_random_k|
         # Subtract 1 from k_ago because this history does not include the current task (0-ago)
-        random_tasks.delete_at(forbidden_random_k - 1)
+        random_page_ids.delete_at(forbidden_random_k - 1)
       end
     end
 
     k_ago_map = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
     spaced_exercises = k_ago_map.flat_map do |k_ago, num_requested|
       # Do not do random-ago if less than 4 past tasks in history
-      if k_ago == :random && spaced_tasks.size < 4
+      if k_ago == :random && history.total_count < 4
         spaced_practice_status << "Random-ago slot skipped because < 4 tasks in past history"
         next
       end
 
-      # Select a task
-      spaced_task = k_ago == :random ? random_tasks.sample : spaced_tasks[k_ago - 1]
+      # Select a pages from a CC task
+      chosen_page_ids = k_ago == :random ? random_page_ids.sample : spaced_page_ids[k_ago - 1]
 
       # Skip if no k_ago task
-      if spaced_task.nil?
+      if chosen_page_ids.blank?
         spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
         next
       end
 
-      spaced_page_model = spaced_task.concept_coach_task.page
+      # CC tasks only have 1 page
+      chosen_page_id = chosen_page_ids.first
+
+      spaced_page_model = Content::Models::Page.find(chosen_page_id)
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
       spaced_ecosystem = Content::Ecosystem.find_by_page_ids(spaced_page.id)
       ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find_or_create_by(
@@ -119,7 +123,7 @@ class GetConceptCoach
                          group_types: group_types, related_content_array: related_content_array)
 
     run(:add_spy_info, to: outputs.task,
-                       from: [ecosystem, { history: history.tasks,
+                       from: [ecosystem, { history: history.core_page_ids,
                                            spaced_practice: spaced_practice_status }])
   end
 

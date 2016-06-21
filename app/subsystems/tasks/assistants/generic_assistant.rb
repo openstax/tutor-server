@@ -1,11 +1,14 @@
 # The generic assistant is a base class for other assistants to inherit from
-# It's not intended for direct use since it does not implement the all-important `build_tasks` method
+# It's not intended for direct use
+# since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
 
   def initialize(task_plan:, taskees:)
     @task_plan = task_plan
     @taskees = taskees
+    @ecosystems_map = {}
     @exercise_cache = {}
+    @page_cache = {}
     reset_used_exercises
   end
 
@@ -18,6 +21,17 @@ class Tasks::Assistants::GenericAssistant
 
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(task_plan.ecosystem)
     @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+  end
+
+  def map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
+    # Reuse Ecosystems map when possible
+    return @ecosystems_map[spaced_ecosystem_id] if @ecosystems_map.has_key?(spaced_ecosystem_id)
+
+    spaced_ecosystem = Content::Ecosystem.find(spaced_ecosystem_id)
+
+    Content::Map.find_or_create_by(
+      from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
+    )
   end
 
   def get_all_page_exercises_with_tags(page, tags)
@@ -47,17 +61,27 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_current_task_to_individual_history(task:, history:)
-    ecosystem = Content::Ecosystem.new(strategy: task_plan.ecosystem.wrap)
-    tasked_exercises = task.task_steps.select(&:exercise?).map(&:tasked)
-    exercises = tasked_exercises.map{ |te| Content::Exercise.new(strategy: te.exercise.wrap) }
+  def add_current_task_to_individual_history(task:, core_page_ids:, history:)
+    ecosystem_id = task_plan.ecosystem.id
+    exercise_steps = task.task_steps.select(&:exercise?)
+    tasked_exercises = exercise_steps.map(&:tasked)
+    exercise_numbers = tasked_exercises.map{ |te| te.exercise.number }
 
-    history.tasks.unshift task
-    history.ecosystems.unshift ecosystem
-    history.tasked_exercises.unshift tasked_exercises
-    history.exercises.unshift exercises
+    history.total_count += 1
+    history.ecosystem_ids.unshift ecosystem_id
+    history.core_page_ids.unshift core_page_ids
+    history.exercise_numbers.unshift exercise_numbers
 
     history
+  end
+
+  def get_pages(page_ids)
+    return @page_cache[page_ids] if @page_cache.has_key?(page_ids)
+
+    page_models = Content::Models::Page.where(id: page_ids)
+    pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
+
+    @page_cache[page_ids] = pages
   end
 
 end

@@ -7,7 +7,7 @@ describe ChooseExercises, type: :routine do
   let!(:unworked_exercises) { exercises - worked_exercises }
 
   let!(:count)    { 3 }
-  let!(:history)  { Hashie::Mash.new(exercises: [worked_exercises]) }
+  let!(:history)  { Hashie::Mash.new(exercise_numbers: [worked_exercises.map(&:number)]) }
 
   let(:args) { { exercises: exercises, count: count, history: history, allow_repeats: allow_repeats,
                  randomize_exercises: randomize_exercises, randomize_order: randomize_order } }

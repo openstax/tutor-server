@@ -37,6 +37,8 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     collect_exercises
 
+    @core_page_ids = @exercises.map{ |ex| ex.page.id }.uniq
+
     @tag_exercise = {}
     @exercise_pages = {}
     @page_pools = {}
@@ -56,6 +58,29 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   end
 
   protected
+
+  def self.k_ago_map(num_spaced_practice_exercises)
+    ## Entries in the list have the form:
+    ##   [from-this-many-events-ago, choose-this-many-exercises]
+    case num_spaced_practice_exercises
+    when 0
+      []
+    when 1
+      [ [2,1] ]
+    when 2
+      [ [2,1], [4,1] ]
+    when 3
+      [ [2,2], [4,1] ]
+    when 4
+      [ [2,2], [4,2] ]
+    else
+      raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
+    end
+  end
+
+  def self.num_personalized_exercises
+    1
+  end
 
   def collect_exercises
     @exercise_ids = task_plan.settings['exercise_ids']
@@ -101,9 +126,11 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def add_spaced_practice_exercise_steps!(task:, taskee:, history:)
-    history = add_current_task_to_individual_history(task: task, history: history)
+    history = add_current_task_to_individual_history(
+      task: task, core_page_ids: @core_page_ids, history: history
+    )
 
-    core_exercise_numbers = history.exercises.first.map(&:number)
+    core_exercise_numbers = history.exercise_numbers.first
 
     course = task_plan.owner
 
@@ -112,31 +139,22 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
     self.class.k_ago_map(num_spaced_practice_exercises).each do |k_ago, num_requested|
       # Not enough history
-      if k_ago >= history.tasks.size
+      if k_ago >= history.total_count
         spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
         next
       end
 
-      spaced_ecosystem = history.ecosystems[k_ago]
+      spaced_ecosystem_id = history.ecosystem_ids[k_ago]
 
-      # Get pages from the exercise steps selected by the teacher in the spaced assignment
-      spaced_tasked_exercises = history.tasked_exercises[k_ago]
-      spaced_core_tasked_exercises = spaced_tasked_exercises.select do |tasked_exercise|
-        tasked_exercise.task_step.core_group?
-      end
-      spaced_core_pages = spaced_core_tasked_exercises.map do |tasked_exercise|
-        model = tasked_exercise.exercise.page
-        Content::Page.new(strategy: model.wrap)
-      end.uniq
+      # Get core pages from the history
+      spaced_page_ids = history.core_page_ids[k_ago]
+      spaced_pages = get_pages(spaced_page_ids)
 
-      # Reuse Ecosystems map when possible
-      @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find_or_create_by(
-        from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
-      )
+      ecosystems_map = map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
 
       # Map the core pages to exercises in the new ecosystem
-      spaced_exercises = @ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
-        pages: spaced_core_pages, pool_type: :homework_dynamic
+      spaced_exercises = ecosystems_map.map_pages_to_exercises(
+        pages: spaced_pages, pool_type: :homework_dynamic
       ).values.flatten.uniq
 
       filtered_exercises = FilterExcludedExercises[
@@ -170,31 +188,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     num_spaced_practice_exercises
   end
 
-  def self.k_ago_map(num_spaced_practice_exercises)
-    ## Entries in the list have the form:
-    ##   [from-this-many-events-ago, choose-this-many-exercises]
-    case num_spaced_practice_exercises
-    when 0
-      []
-    when 1
-      [ [2,1] ]
-    when 2
-      [ [2,1], [4,1] ]
-    when 3
-      [ [2,2], [4,1] ]
-    when 4
-      [ [2,2], [4,2] ]
-    else
-      raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
-    end
-  end
-
-  def self.num_personalized_exercises
-    1
-  end
-
   def add_personalized_exercise_steps!(task:, taskee:)
-    task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::HomeworkPersonalized.new \
+    task.personalized_placeholder_strategy = \
+      Tasks::PlaceholderStrategies::HomeworkPersonalized.new \
       if self.class.num_personalized_exercises > 0
 
     self.class.num_personalized_exercises.times do
