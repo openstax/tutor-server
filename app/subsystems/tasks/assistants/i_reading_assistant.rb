@@ -33,22 +33,24 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     reading_dynamic_pools = ecosystem.reading_dynamic_pools(pages: @pages)
     skip_dynamic = reading_dynamic_pools.all?(&:empty?)
 
-    taskees.map do |taskee|
-      build_reading_task(pages: @pages, taskee: taskee, skip_dynamic: skip_dynamic)
+    # Don't load too many histories at once so we don't risk running out of memory
+    taskees.each_slice(5).flat_map do |taskee_slice|
+      histories = GetHistory[roles: taskee_slice, type: :reading]
+
+      taskee_slice.map do |taskee|
+        build_reading_task(pages: @pages, taskee: taskee,
+                           history: histories[taskee], skip_dynamic: skip_dynamic)
+      end
     end
   end
 
   protected
 
-  def self.num_personalized_exercises
-    1
-  end
-
   def collect_pages
     ecosystem.pages_by_ids(task_plan.settings['page_ids'])
   end
 
-  def build_reading_task(pages:, taskee:, skip_dynamic:)
+  def build_reading_task(pages:, taskee:, history:, skip_dynamic:)
     task = build_task
 
     reset_used_exercises
@@ -56,7 +58,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     add_core_steps!(task: task, pages: pages)
 
     unless skip_dynamic
-      add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
+      add_spaced_practice_exercise_steps!(task: task, taskee: taskee, history: history)
       add_personalized_exercise_steps!(task: task, taskee: taskee)
     end
 
@@ -72,9 +74,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       task_type: :reading,
       title:     title,
       description: description
-    ]
-    AddSpyInfo[to: task, from: ecosystem]
-    task
+    ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
   end
 
   def add_core_steps!(task:, pages:)
@@ -96,9 +96,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, taskee:)
-    # Get taskee's reading history
-    history = GetHistory.call(role: taskee, type: :reading, current_task: task).outputs
+  def add_spaced_practice_exercise_steps!(task:, taskee:, history:)
+    history = add_current_task_to_individual_history(task: task, history: history)
 
     core_exercise_numbers = history.exercises.first.map(&:number)
 
@@ -159,6 +158,10 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     ## Entries in the list have the form:
     ##   [from-this-many-events-ago, choose-this-many-exercises]
     [ [2,1], [4,1] ]
+  end
+
+  def self.num_personalized_exercises
+    1
   end
 
   def add_personalized_exercise_steps!(task:, taskee:)

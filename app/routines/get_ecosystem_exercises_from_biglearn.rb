@@ -52,7 +52,7 @@ class GetEcosystemExercisesFromBiglearn
         pool_exercises = pools.flat_map(&:exercises)
         candidate_exercises = run(:filter, exercises: pool_exercises,
                                            course: course).outputs.exercises
-        history = run(:get_history, role: role, type: :all).outputs
+        history = run(:get_history, roles: role, type: :all).outputs.history[role]
         chosen_exercises = run(:choose, exercises: candidate_exercises, count: count,
                                         history: history, allow_repeats: false).outputs.exercises
         numbers = chosen_exercises.map(&:number).uniq

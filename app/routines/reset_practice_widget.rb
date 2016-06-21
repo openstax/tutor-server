@@ -113,7 +113,7 @@ class ResetPracticeWidget
                additional_excluded_numbers: additional_excluded_numbers
     ).outputs.exercises
 
-    history = run(:get_history, role: role, type: :all).outputs
+    history = run(:get_history, roles: role, type: :all).outputs.history[role]
     chosen_exercises = run(:choose, exercises: filtered_exercises, count: count, history: history,
                                     allow_repeats: false,
                                     randomize_exercises: randomize,

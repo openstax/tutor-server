@@ -47,4 +47,17 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
+  def add_current_task_to_individual_history(task:, history:)
+    ecosystem = Content::Ecosystem.new(strategy: task_plan.ecosystem.wrap)
+    tasked_exercises = task.task_steps.select(&:exercise?).map(&:tasked)
+    exercises = tasked_exercises.map{ |te| Content::Exercise.new(strategy: te.exercise.wrap) }
+
+    history.tasks.unshift task
+    history.ecosystems.unshift ecosystem
+    history.tasked_exercises.unshift tasked_exercises
+    history.exercises.unshift exercises
+
+    history
+  end
+
 end

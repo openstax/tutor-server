@@ -1,64 +1,82 @@
 class GetHistory
-  lev_routine
+  lev_routine express_output: :history
 
   protected
 
-  def exec(role:, type: :all, current_task: nil)
-    tasks = Tasks::Models::Task.joins{[task_plan.outer, taskings]}
-                               .where(taskings: { entity_role_id: role.id })
-                               .order{[due_at_ntz.desc, task_plan.created_at.desc, created_at.desc]}
-                               .preload([
-                                 {task_plan: :ecosystem},
-                                 {tasked_exercises: [:task_step, {exercise: :page}]}
-                               ])
+  def exec(roles:, type: :all)
+    roles = [roles].flatten.compact
+    roles_by_id = roles.index_by(&:id)
+    role_ids = roles_by_id.keys
 
-    tasks = tasks.where(task_type: Tasks::Models::Task.task_types[type]) unless type == :all
+    all_tasks = Tasks::Models::Task
+      .joins{[task_plan.outer, taskings]}
+      .where(taskings: { entity_role_id: role_ids })
+      .preload([
+        {task_plan: :ecosystem},
+        {tasked_exercises: [:task_step, {exercise: :page}]}
+      ]).select([Tasks::Models::Task.arel_table[Arel.star],
+                 Tasks::Models::Tasking.arel_table[:entity_role_id]])
 
-    current_task_id = current_task.id unless current_task.nil?
+    all_tasks = all_tasks.where(task_type: Tasks::Models::Task.task_types[type]) unless type == :all
+
+    reading_tasks, other_tasks = all_tasks.partition(&:reading?)
 
     # Find reading pages without dynamic exercises
-    reading_page_ids = tasks.select(&:reading?)
-                            .flat_map{ |task| task.task_plan.settings['page_ids'] }.compact.uniq
+    reading_page_ids = reading_tasks.flat_map{ |task| task.task_plan.settings['page_ids'] }
+                                    .compact.uniq
     reading_pages = Content::Models::Page.where(id: reading_page_ids).preload(:reading_dynamic_pool)
     non_dynamic_reading_pages = reading_pages.to_a.select{ |page| page.reading_dynamic_pool.empty? }
-    non_dynamic_reading_page_ids = non_dynamic_reading_pages.map(&:id)
+    non_dynamic_reading_page_ids_set = Set.new non_dynamic_reading_pages.map(&:id)
 
-    # Remove the current task and reading tasks without dynamic exercises from the history
-    tasks = tasks.to_a.reject do |task|
-      next true if task.id == current_task_id
-      next false unless task.task_type == 'reading'
-
+    # Remove reading tasks without dynamic exercises from the history
+    filtered_reading_tasks = reading_tasks.reject do |task|
       reading_page_ids = (task.task_plan.settings['page_ids'] || []).compact.map(&:to_i)
-      reading_page_ids.all?{ |page_id| non_dynamic_reading_page_ids.include? page_id }
+      reading_page_ids.all?{ |page_id| non_dynamic_reading_page_ids_set.include? page_id }
     end
 
-    # Always put the current_task at the top of the list, if given
-    tasks = tasks.unshift(current_task) unless current_task.nil?
+    filtered_tasks = filtered_reading_tasks + other_tasks
+    grouped_tasks = filtered_tasks.group_by(&:entity_role_id)
 
-    outputs[:tasks] = tasks
+    taskless_role_ids = role_ids.reject{ |role_id| grouped_tasks.has_key? role_id }
+    taskless_role_ids.each{ |role_id| grouped_tasks[role_id] = [] }
 
-    outputs[:ecosystems] = tasks.map do |task|
-      model = task.task_plan.try(:ecosystem)
-      next if model.nil?
+    all_history = Hashie::Mash.new
 
-      strategy = Content::Strategies::Direct::Ecosystem.new(model)
-      Content::Ecosystem.new(strategy: strategy)
-    end
+    grouped_tasks.each do |entity_role_id, tasks|
+      history = Hashie::Mash.new
 
-    tasked_exercises_array = tasks.map do |task|
-      # Handle 0-ago spaced practice
-      task.persisted? ? task.tasked_exercises : \
-                        task.task_steps.select(&:exercise?).map(&:tasked)
-    end
+      role = roles_by_id[entity_role_id]
 
-    outputs[:tasked_exercises] = tasked_exercises_array
+      sorted_tasks = tasks.sort_by do |task|
+        due_date = task.due_at_ntz.to_f
+        open_date = task.opens_at_ntz.to_f
+        tie_breaker = (task.task_plan || task).created_at.to_f
 
-    outputs[:exercises] = tasked_exercises_array.map do |tasked_exercises|
-      tasked_exercises.map do |tasked_exercise|
-        model = tasked_exercise.exercise
-        strategy = Content::Strategies::Direct::Exercise.new(model)
-        Content::Exercise.new(strategy: strategy)
+        [due_date, open_date, tie_breaker]
+      end.reverse!
+
+      history.tasks = sorted_tasks
+
+      history.ecosystems = sorted_tasks.map do |task|
+        model = task.task_plan.try(:ecosystem)
+        next if model.nil?
+
+        Content::Ecosystem.new(strategy: model.wrap)
       end
+
+      tasked_exercises_array = sorted_tasks.map(&:tasked_exercises)
+
+      history.tasked_exercises = tasked_exercises_array
+
+      history.exercises = tasked_exercises_array.map do |tasked_exercises|
+        tasked_exercises.map do |tasked_exercise|
+          Content::Exercise.new(strategy: tasked_exercise.exercise.wrap)
+        end
+      end
+
+      all_history[role] = history
     end
+
+    outputs.history = all_history
   end
 end

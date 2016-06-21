@@ -24,7 +24,7 @@ class GetConceptCoach
     role, page = get_role_and_page(user: user, cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id)
 
     ecosystem, pool = get_ecosystem_and_pool(page)
-    history = run(:get_history, role: role, type: :concept_coach).outputs
+    history = run(:get_history, roles: role, type: :concept_coach).outputs.history[role]
     existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.task
     unless existing_cc_task.nil?
       outputs.task = existing_cc_task

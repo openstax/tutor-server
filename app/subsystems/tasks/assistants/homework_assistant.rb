@@ -32,7 +32,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     }'
   end
 
-  def build_tasks
+  def initialize(task_plan:, taskees:)
+    super
+
     collect_exercises
 
     @tag_exercise = {}
@@ -40,41 +42,46 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     @page_pools = {}
     @pool_exercises = {}
     @ecosystems_map = {}
-    @taskees.map{ |taskee| build_homework_task(taskee: taskee, exercises: @exercises) }
+  end
+
+  def build_tasks
+    # Don't load too many histories at once so we don't risk running out of memory
+    taskees.each_slice(5).flat_map do |taskee_slice|
+      histories = GetHistory[roles: taskee_slice, type: :homework]
+
+      taskee_slice.map do |taskee|
+        build_homework_task(taskee: taskee, exercises: @exercises, history: histories[taskee])
+      end
+    end
   end
 
   protected
 
   def collect_exercises
-    @exercise_ids = @task_plan.settings['exercise_ids']
+    @exercise_ids = task_plan.settings['exercise_ids']
     raise "No exercises selected" if @exercise_ids.blank?
 
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
-    @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-
-    @exercises = @ecosystem.exercises_by_ids(@exercise_ids)
+    @exercises = ecosystem.exercises_by_ids(@exercise_ids)
   end
 
-  def build_homework_task(taskee:, exercises:)
+  def build_homework_task(taskee:, exercises:, history:)
     task = build_task
 
     add_core_steps!(task: task, exercises: exercises)
-    add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
+    add_spaced_practice_exercise_steps!(task: task, taskee: taskee, history: history)
     add_personalized_exercise_steps!(task: task, taskee: taskee)
   end
 
   def build_task
-    title    = @task_plan.title || 'Homework'
-    description = @task_plan.description
+    title    = task_plan.title || 'Homework'
+    description = task_plan.description
 
-    task = Tasks::BuildTask[
-      task_plan:   @task_plan,
+    Tasks::BuildTask[
+      task_plan:   task_plan,
       task_type:   :homework,
       title:       title,
       description: description
-    ]
-    AddSpyInfo[to: task, from: @ecosystem]
-    task
+    ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
   end
 
   def add_core_steps!(task:, exercises:)
@@ -93,13 +100,12 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, taskee:)
-    # Get taskee's reading history
-    history = GetHistory.call(role: taskee, type: :homework, current_task: task).outputs
+  def add_spaced_practice_exercise_steps!(task:, taskee:, history:)
+    history = add_current_task_to_individual_history(task: task, history: history)
 
     core_exercise_numbers = history.exercises.first.map(&:number)
 
-    course = @task_plan.owner
+    course = task_plan.owner
 
     spaced_practice_status = []
 
@@ -125,7 +131,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
       # Reuse Ecosystems map when possible
       @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find_or_create_by(
-        from_ecosystems: [spaced_ecosystem, @ecosystem].uniq, to_ecosystem: @ecosystem
+        from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 
       # Map the core pages to exercises in the new ecosystem
@@ -159,7 +165,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def get_num_spaced_practice_exercises
-    exercises_count_dynamic = @task_plan[:settings]['exercises_count_dynamic']
+    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic']
     num_spaced_practice_exercises = [0, exercises_count_dynamic-1].max
     num_spaced_practice_exercises
   end
@@ -183,6 +189,10 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     end
   end
 
+  def self.num_personalized_exercises
+    1
+  end
+
   def add_personalized_exercise_steps!(task:, taskee:)
     task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::HomeworkPersonalized.new \
       if self.class.num_personalized_exercises > 0
@@ -197,10 +207,6 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     end
 
     task
-  end
-
-  def self.num_personalized_exercises
-    1
   end
 
 end
