@@ -22,17 +22,20 @@ class GetHistory
     reading_tasks, other_tasks = all_tasks.partition(&:reading?)
 
     # Find reading pages without dynamic exercises
-    reading_page_ids = reading_tasks.flat_map{ |task| task.task_plan.settings['page_ids'] }
-                                    .compact.uniq
+    grouped_reading_tasks = reading_tasks.group_by(&:task_plan).map do |task_plan, tasks|
+      [(task_plan.settings['page_ids'] || []).compact, tasks]
+    end
+    reading_page_ids = grouped_reading_tasks.map(&:first).flatten.uniq
     reading_pages = Content::Models::Page.where(id: reading_page_ids).preload(:reading_dynamic_pool)
     non_dynamic_reading_pages = reading_pages.to_a.select{ |page| page.reading_dynamic_pool.empty? }
-    non_dynamic_reading_page_ids_set = Set.new non_dynamic_reading_pages.map(&:id)
+    non_dynamic_reading_page_ids_set = non_dynamic_reading_pages.map(&:id)
 
     # Remove reading tasks without dynamic exercises from the history
-    filtered_reading_tasks = reading_tasks.reject do |task|
-      reading_page_ids = (task.task_plan.settings['page_ids'] || []).compact.map(&:to_i)
+    filtered_grouped_reading_tasks = grouped_reading_tasks.reject do |page_ids, tasks|
+      reading_page_ids = page_ids.map(&:to_i)
       reading_page_ids.all?{ |page_id| non_dynamic_reading_page_ids_set.include? page_id }
     end
+    filtered_reading_tasks = filtered_grouped_reading_tasks.flat_map(&:second)
 
     filtered_tasks = filtered_reading_tasks + other_tasks
     grouped_tasks = filtered_tasks.group_by(&:entity_role_id)
