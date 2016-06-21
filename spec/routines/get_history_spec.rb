@@ -85,7 +85,7 @@ describe GetHistory, type: :routine, speed: :slow do
       when :concept_coach
         [task.concept_coach_task.content_page_id]
       else
-        []
+        task.tasked_exercises.map{ |te| te.exercise.content_page_id }.uniq
       end
     end
   end
