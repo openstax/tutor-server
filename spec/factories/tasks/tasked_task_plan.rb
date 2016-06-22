@@ -16,14 +16,14 @@ FactoryGirl.define do
     end
 
     ecosystem do
+      require File.expand_path('../../../vcr_helper', __FILE__)
+
       cnx_page = OpenStax::Cnx::V1::Page.new(
         hash: { 'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
                 'title' => 'Newton\'s First Law of Motion: Inertia' }
       )
 
       chapter = FactoryGirl.create :content_chapter
-
-      require File.expand_path('../../../vcr_helper', __FILE__)
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
         OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
@@ -58,9 +58,6 @@ FactoryGirl.define do
       task_plan.tasking_plans = [build(:tasks_tasking_plan, task_plan: task_plan, target: period)]
     end
 
-    after(:create) do |task_plan, evaluator|
-      DistributeTasks.call(task_plan)
-      task_plan.reload
-    end
+    after(:create) { |task_plan, evaluator| DistributeTasks.call(task_plan) }
   end
 end

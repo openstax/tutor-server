@@ -58,7 +58,7 @@ class Tasks::AddRelatedExerciseAfterStep
                                        additional_excluded_numbers: task_exercise_numbers)
                             .outputs.exercises
 
-    history = run(:get_history, role: role, type: :all).outputs
+    history = run(:get_history, roles: role, type: :all).outputs.history[role]
 
     run(:choose, exercises: candidate_exercises, count: 1, history: history).outputs.exercises.first
   end

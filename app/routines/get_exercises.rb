@@ -22,7 +22,7 @@ class GetExercises
                                                        page_ids: page_ids,
                                                        pool_types: pool_types]
 
-    excluded_exercise_numbers = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
+    excl_exercise_numbers_set = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
       unless course.nil?
 
     all_exercises = []
@@ -36,7 +36,7 @@ class GetExercises
         hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
         hash[exercise.uid]['pool_types'] ||= []
         hash[exercise.uid]['pool_types'] << pool_type
-        hash[exercise.uid]['is_excluded'] = excluded_exercise_numbers.include?(exercise.number) \
+        hash[exercise.uid]['is_excluded'] = excl_exercise_numbers_set.include?(exercise.number) \
           unless course.nil?
       end
 

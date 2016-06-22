@@ -7,13 +7,10 @@ class GetEcosystemPoolsByPageIdsAndPoolTypes
   def exec(ecosystem:, page_ids: nil, pool_types: nil)
     pages = page_ids.nil? ? ecosystem.pages : ecosystem.pages_by_ids(page_ids)
 
-    pool_types = [pool_types].flatten.compact
+    pool_types = [pool_types].flatten.compact.uniq
 
     # Default to all types
     pool_types = Content::Pool.pool_types if pool_types.empty?
-
-    # Convert to set
-    pool_types = Set.new pool_types
 
     # Build map of pool types to pools
     outputs[:pools_map] = pool_types.each_with_object({}) do |pool_type, result|

@@ -12,7 +12,7 @@ class Content::Routines::ImportExercises
   # page can be a Content::Models::Page or a block
   # that takes an OpenStax::Exercises::V1::Exercise
   # and returns a Content::Models::Page for that exercise
-  def exec(ecosystem:, page:, query_hash:, excluded_exercise_numbers: Set.new)
+  def exec(ecosystem:, page:, query_hash:, excluded_exercise_numbers: [])
     outputs[:exercises] = []
 
     wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']

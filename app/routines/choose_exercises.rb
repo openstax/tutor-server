@@ -4,7 +4,7 @@ class ChooseExercises
 
   def exec(exercises:, count:, history:, allow_repeats: true,
            randomize_exercises: true, randomize_order: true)
-    worked_exercise_numbers_set = Set.new history.exercises.flatten.map(&:number)
+    worked_exercise_numbers_set = Set.new history.exercise_numbers.flatten
 
     exercises = exercises.uniq
     exercises = exercises.shuffle if randomize_exercises
@@ -16,7 +16,7 @@ class ChooseExercises
 
     new_exercises_count = [new_exercises.size, count].min
     repeated_exercises_count = allow_repeats ? \
-                                [repeated_exercises.size, count - new_exercises_count].min : 0
+                                 [repeated_exercises.size, count - new_exercises_count].min : 0
 
     chosen_exercises = new_exercises.first(new_exercises_count) + \
                        repeated_exercises.first(repeated_exercises_count)
