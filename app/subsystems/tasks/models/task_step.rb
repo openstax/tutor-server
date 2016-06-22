@@ -4,7 +4,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   sortable_belongs_to :task, -> { with_deleted }, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, -> { with_deleted }, polymorphic: true, dependent: :destroy,
-                                          inverse_of: :task_step, touch: true
+                                           inverse_of: :task_step, touch: true
 
   enum group_type: [:default_group, :core_group, :spaced_practice_group,
                     :personalized_group, :recovery_group]
