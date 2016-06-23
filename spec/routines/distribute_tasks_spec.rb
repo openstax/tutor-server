@@ -82,7 +82,7 @@ RSpec.describe DistributeTasks, type: :routine do
         result = DistributeTasks.call(task_plan, publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to eq old_published_at
-        expect(task_plan.last_published_at).to eq publish_time
+        expect(task_plan.last_published_at).to be_within(1).of(publish_time)
       end
     end
 
@@ -109,7 +109,7 @@ RSpec.describe DistributeTasks, type: :routine do
         result = DistributeTasks.call(task_plan, publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to eq old_published_at
-        expect(task_plan.last_published_at).to eq publish_time
+        expect(task_plan.last_published_at).to be_within(1).of(publish_time)
       end
     end
   end

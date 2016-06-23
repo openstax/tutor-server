@@ -154,7 +154,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "is_trouble" => false,
           "type" => "homework",
           "is_draft" => false,
-          "is_publishing" => false,
+          "is_publishing" => true,
           "is_published" => true,
           "first_published_at" => be_kind_of(String),
           "last_published_at" => be_kind_of(String),

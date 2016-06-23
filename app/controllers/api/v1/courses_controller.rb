@@ -85,8 +85,13 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::Courses::DashboardRepresenter, include: :readable)}
   EOS
   def dashboard
-    start_at_ntz = DateTimeUtilities.remove_tz(DateTimeUtilities.from_s(params[:start_at]))
-    end_at_ntz = DateTimeUtilities.remove_tz(DateTimeUtilities.from_s(params[:end_at]))
+    course_tz = @course.time_zone.to_tz
+    start_at = DateTimeUtilities.from_s(params[:start_at])
+    start_at_in_course_tz = start_at.try(:in_time_zone, course_tz)
+    start_at_ntz = DateTimeUtilities.remove_tz(start_at_in_course_tz)
+    end_at = DateTimeUtilities.from_s(params[:end_at])
+    end_at_in_course_tz = end_at.try(:in_time_zone, course_tz)
+    end_at_ntz = DateTimeUtilities.remove_tz(end_at_in_course_tz)
 
     result = GetNonCcDashboard.call(course: @course, role: get_course_role,
                                     start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
@@ -108,8 +113,13 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::Courses::Cc::DashboardRepresenter, include: :readable)}
   EOS
   def cc_dashboard
-    start_at_ntz = DateTimeUtilities.remove_tz(DateTimeUtilities.from_s(params[:start_at]))
-    end_at_ntz = DateTimeUtilities.remove_tz(DateTimeUtilities.from_s(params[:end_at]))
+    course_tz = @course.time_zone.to_tz
+    start_at = DateTimeUtilities.from_s(params[:start_at])
+    start_at_in_course_tz = start_at.try(:in_time_zone, course_tz)
+    start_at_ntz = DateTimeUtilities.remove_tz(start_at_in_course_tz)
+    end_at = DateTimeUtilities.from_s(params[:end_at])
+    end_at_in_course_tz = end_at.try(:in_time_zone, course_tz)
+    end_at_ntz = DateTimeUtilities.remove_tz(end_at_in_course_tz)
 
     result = GetCcDashboard.call(course: @course, role: get_course_role,
                                  start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
