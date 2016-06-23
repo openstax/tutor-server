@@ -1,7 +1,7 @@
 class Content::Models::Map < Tutor::SubSystems::BaseModel
-  serialize :exercise_id_to_page_id_map, Hash
-  serialize :page_id_to_page_id_map, Hash
-  serialize :page_id_to_pool_type_exercise_ids_map, Hash
+  serialize :exercise_id_to_page_id_map, JSON
+  serialize :page_id_to_page_id_map, JSON
+  serialize :page_id_to_pool_type_exercise_ids_map, JSON
 
   belongs_to :from_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :to_maps
   belongs_to :to_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :from_maps

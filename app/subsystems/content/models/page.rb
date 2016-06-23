@@ -4,8 +4,6 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   acts_as_resource
 
-  serialize :book_location, Array
-
   belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :reading_context_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :homework_core_pool, class_name: 'Content::Models::Pool', dependent: :destroy

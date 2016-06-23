@@ -8,8 +8,6 @@ class Content::Models::Pool < Tutor::SubSystems::BaseModel
                     :homework_dynamic, :practice_widget, :all_exercises,
                     :concept_coach ]
 
-  serialize :content_exercise_ids, Array
-
   validates :ecosystem, presence: true
   validates :pool_type, presence: true
   validates :uuid, presence: true, uniqueness: true

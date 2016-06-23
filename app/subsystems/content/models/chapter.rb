@@ -2,8 +2,6 @@ class Content::Models::Chapter < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Content::Strategies::Direct::Chapter
 
-  serialize :book_location, Array
-
   belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
 
   sortable_belongs_to :book, on: :number, inverse_of: :chapters

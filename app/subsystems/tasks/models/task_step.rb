@@ -9,8 +9,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   enum group_type: [:default_group, :core_group, :spaced_practice_group,
                     :personalized_group, :recovery_group]
 
-  serialize :related_content, Array
-  serialize :labels, Array
+  serialize :related_content, JSON
 
   validates :task, presence: true
   validates :tasked, presence: true
