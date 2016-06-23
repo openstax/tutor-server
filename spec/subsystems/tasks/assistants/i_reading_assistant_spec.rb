@@ -170,7 +170,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(tasks.map{|task| task.taskings.first.role}).to eq expected_roles
+      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
     end
 
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
@@ -203,7 +203,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(tasks.map{|task| task.taskings.first.role}).to eq expected_roles
+      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
     end
 
     it 'does not assign excluded dynamic exercises' do
@@ -241,7 +241,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(tasks.map{|task| task.taskings.first.role}).to eq expected_roles
+      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
     end
   end
 
