@@ -296,8 +296,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(response_hash['publish_job_url']).to include("/api/jobs/")
       end
 
-      it 'does not republish the task_plan or allow the open date to be changed
-          after the assignment is open' do
+      it 'does not republish the task_plan or allow the open date
+          to be changed after the assignment is open' do
         controller.sign_in teacher
 
         time_zone = task_plan.tasking_plans.first.time_zone.to_tz

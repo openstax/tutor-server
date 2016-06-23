@@ -9,7 +9,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
-  let!(:new_user)  do
+  let!(:new_user)    do
     FactoryGirl.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
