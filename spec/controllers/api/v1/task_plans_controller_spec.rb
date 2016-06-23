@@ -160,12 +160,14 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(response).to have_http_status(:success)
         new_task_plan = Tasks::Models::TaskPlan.find(JSON.parse(response.body)['id'])
         expect(new_task_plan.publish_last_requested_at).to be > start_time
-        expect(new_task_plan.published_at).to be > new_task_plan.publish_last_requested_at
-        expect(new_task_plan.published_at).to be < end_time
+        expect(new_task_plan.first_published_at).to be > new_task_plan.publish_last_requested_at
+        expect(new_task_plan.first_published_at).to be < end_time
+        expect(new_task_plan.last_published_at).to eq new_task_plan.first_published_at
 
         # Revert task_plan to its state when the job was queued
         new_task_plan.is_publish_requested = true
-        new_task_plan.published_at = nil
+        new_task_plan.first_published_at = nil
+        new_task_plan.last_published_at = nil
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(new_task_plan).to_json
 
         response_hash = JSON.parse(response.body)
@@ -237,18 +239,20 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         # publication dates and change the representation
         task_plan.reload
         expect(task_plan.publish_last_requested_at).to be > start_time
-        expect(task_plan.published_at).to be > task_plan.publish_last_requested_at
-        expect(task_plan.published_at).to be < end_time
+        expect(task_plan.first_published_at).to be > task_plan.publish_last_requested_at
+        expect(task_plan.first_published_at).to be < end_time
+        expect(task_plan.last_published_at).to eq task_plan.first_published_at
 
         # Revert task_plan to its state when the job was queued
-        task_plan.published_at = nil
+        task_plan.first_published_at = nil
+        task_plan.last_published_at = nil
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
 
         response_hash = JSON.parse(response.body)
         expect(response_hash['publish_job_url']).to include("/api/jobs/")
       end
 
-      it 'does not update published_at for task_plans that are already published' do
+      it 'does not update first_published_at for task_plans that are already published' do
         controller.sign_in teacher
 
         time_zone = task_plan.tasking_plans.first.time_zone.to_tz
@@ -258,7 +262,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         publish_job_uuid = SecureRandom.uuid
 
         task_plan.publish_last_requested_at = publish_last_requested_at
-        task_plan.published_at = published_at
+        task_plan.first_published_at = published_at
+        task_plan.last_published_at = published_at
         task_plan.publish_job_uuid = publish_job_uuid
         task_plan.save!
 
@@ -276,7 +281,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(task_plan.reload.publish_last_requested_at).not_to(
           be_within(1).of(publish_last_requested_at)
         )
-        expect(task_plan.published_at).to be_within(1).of(published_at)
+        expect(task_plan.first_published_at).to be_within(1).of(published_at)
+        expect(task_plan.last_published_at).not_to be_within(1).of(published_at)
         expect(task_plan.publish_job_uuid).not_to eq publish_job_uuid
 
         task_plan.tasks.each do |task|
@@ -284,7 +290,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         end
 
         # Revert task_plan to its state when the job was queued
-        task_plan.published_at = published_at
+        task_plan.first_published_at = published_at
+        task_plan.last_published_at = published_at
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
 
         response_hash = JSON.parse(response.body)
@@ -306,7 +313,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
 
         DistributeTasks[task_plan]
 
-        published_at = task_plan.reload.published_at
+        published_at = task_plan.reload.last_published_at
         publish_job_uuid = task_plan.publish_job_uuid
 
         valid_json_hash['title'] = 'Canceled'
@@ -329,7 +336,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(task_plan.reload.publish_last_requested_at).to(
           be_within(1).of(publish_last_requested_at)
         )
-        expect(task_plan.published_at).to be_within(1).of(published_at)
+        expect(task_plan.last_published_at).to be_within(1).of(published_at)
         expect(task_plan.publish_job_uuid).to eq publish_job_uuid
         expect(task_plan.title).to eq 'Canceled'
         expect(task_plan.description).to eq 'Canceled Assignment'

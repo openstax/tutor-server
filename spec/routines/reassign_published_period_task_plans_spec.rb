@@ -36,7 +36,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       result = nil
       expect{
         result = ReassignPublishedPeriodTaskPlans.call(period: period.to_model)
-      }.not_to change{task_plan_2.published_at}
+      }.not_to change{task_plan_2.last_published_at}
       expect(result.errors).to be_empty
       expect(task_plan_2.tasks.size).to eq 0
     end
@@ -49,7 +49,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       result = nil
       expect{
         result = ReassignPublishedPeriodTaskPlans.call(period: period.to_model)
-      }.not_to change{task_plan_1.published_at}
+      }.not_to change{task_plan_1.last_published_at}
       expect(result.errors).to be_empty
       expect(task_plan_1.tasks.size).to eq 2
       expect(task_plan_1.tasks).to include old_task

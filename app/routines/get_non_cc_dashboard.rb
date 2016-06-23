@@ -26,19 +26,10 @@ class GetNonCcDashboard
     out = run(:get_plans, owner: course, start_at_ntz: start_at_ntz,
                           end_at_ntz: end_at_ntz, include_trouble_flags: true).outputs
     outputs[:plans] = out[:plans].map do |task_plan|
-      {
-        id: task_plan.id,
-        title: task_plan.title,
-        type: task_plan.type,
-        description: task_plan.description,
-        is_publish_requested: !task_plan.is_draft?,
-        published_at: task_plan.published_at,
-        publish_last_requested_at: task_plan.publish_last_requested_at,
-        publish_job_uuid: task_plan.publish_job_uuid,
-        tasking_plans: task_plan.tasking_plans,
+      Api::V1::TaskPlanRepresenter.new(task_plan).to_hash.merge({
         is_trouble: out[:trouble_plan_ids].include?(task_plan.id),
         shareable_url: run(:get_short_code_url, task_plan, suffix: task_plan.title).outputs.url
-      }
+      })
     end
   end
 end

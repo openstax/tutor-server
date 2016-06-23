@@ -31,6 +31,10 @@ class DistributeTasks
   def exec(task_plan, publish_time = Time.current, protect_unopened_tasks = false)
     task_plan.lock!
 
+    fatal_error(code: :publish_last_requested_at_must_be_in_the_past) \
+      if task_plan.publish_last_requested_at.present? &&
+         task_plan.publish_last_requested_at > publish_time
+
     tasks = task_plan.tasks.preload(taskings: :role)
 
     # Delete pre-existing assignments only if
@@ -75,10 +79,9 @@ class DistributeTasks
 
     save(tasks)
 
-    if task_plan.persisted?
-      task_plan.published_at.nil? ? task_plan.update_attribute(:published_at, publish_time) : \
-                                    task_plan.touch # Touch is necessary to avoid double updates
-    end
+    task_plan.first_published_at = publish_time if task_plan.first_published_at.nil?
+    task_plan.last_published_at = publish_time
+    task_plan.save! if task_plan.persisted?
 
     outputs[:tasks] = tasks
   end

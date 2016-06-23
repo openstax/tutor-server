@@ -37,15 +37,32 @@ module Api::V1
              writeable: true
 
     property :is_publish_requested,
-             readable: true,
+             readable: false,
              writeable: true,
-             getter: ->(*) { !is_draft? },
              schema_info: { type: 'boolean' }
 
     property :is_feedback_immediate,
              readable: true,
              writeable: true,
              if: ->(*) { type == 'homework' },
+             schema_info: { type: 'boolean' }
+
+    property :is_draft,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { is_draft? },
+             schema_info: { type: 'boolean' }
+
+    property :is_publishing,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { is_publishing? },
+             schema_info: { type: 'boolean' }
+
+    property :is_published,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { is_published? },
              schema_info: { type: 'boolean' }
 
     property :publish_last_requested_at,
@@ -68,11 +85,17 @@ module Api::V1
              getter: ->(*) { "/api/jobs/#{publish_job_uuid}" },
              if: ->(*) { !publish_job_uuid.blank? }
 
-    property :published_at,
+    property :first_published_at,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
+             getter: ->(*) { DateTimeUtilities.to_api_s(first_published_at) }
+
+    property :last_published_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(last_published_at) }
 
     property :settings,
              type: Object,

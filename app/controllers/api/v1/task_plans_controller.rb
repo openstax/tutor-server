@@ -202,7 +202,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
                                     "uid": "1@1",
                                     "number": 1,
                                     "version": 1,
-                                    "published_at": "2015-04-22T19:30:19.187Z",
+                                    "first_published_at": "2015-04-22T19:30:19.187Z",
+                                    "last_published_at": "2015-04-22T19:30:19.187Z",
                                     "editors": [],
                                     "authors": [
                                         {

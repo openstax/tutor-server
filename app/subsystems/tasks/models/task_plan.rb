@@ -4,8 +4,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   acts_as_paranoid
 
-  UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description',
-                                     'published_at', 'is_feedback_immediate']
+  UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description', 'first_published_at',
+                                     'last_published_at', 'is_feedback_immediate']
 
   attr_writer :is_publish_requested
 
@@ -36,12 +36,16 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     tasks.any?(&:past_open?)
   end
 
-  def is_published?
-    published_at.present?
-  end
-
   def is_draft?
     !@is_publish_requested && !is_published?
+  end
+
+  def is_publishing?
+    @is_publish_requested || publish_last_requested_at > last_published_at
+  end
+
+  def is_published?
+    first_published_at.present?
   end
 
   protected

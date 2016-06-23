@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610210955) do
+ActiveRecord::Schema.define(version: 20160623014118) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -601,13 +601,14 @@ ActiveRecord::Schema.define(version: 20160610210955) do
     t.text     "description"
     t.text     "settings",                                 null: false
     t.datetime "publish_last_requested_at"
-    t.datetime "published_at"
+    t.datetime "first_published_at"
     t.string   "publish_job_uuid"
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
     t.integer  "content_ecosystem_id",                     null: false
     t.boolean  "is_feedback_immediate",     default: true, null: false
     t.datetime "deleted_at"
+    t.datetime "last_published_at"
   end
 
   add_index "tasks_task_plans", ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id", using: :btree

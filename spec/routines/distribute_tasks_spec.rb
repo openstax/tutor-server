@@ -29,10 +29,11 @@ RSpec.describe DistributeTasks, type: :routine do
       expect(task_plan.tasks.size).to eq 2
     end
 
-    it 'sets the published_at field' do
+    it 'sets the published_at fields' do
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
-      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.current)
+      expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
+      expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
     end
 
     it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -75,12 +76,13 @@ RSpec.describe DistributeTasks, type: :routine do
         expect(task_plan.tasks).not_to include old_task
       end
 
-      it 'does not set the published_at field' do
-        old_published_at = task_plan.published_at
+      it 'does not set the first_published_at field' do
+        old_published_at = task_plan.first_published_at
         publish_time = Time.current
         result = DistributeTasks.call(task_plan, publish_time)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.published_at).to eq old_published_at
+        expect(task_plan.reload.first_published_at).to eq old_published_at
+        expect(task_plan.last_published_at).to eq publish_time
       end
     end
 
@@ -101,12 +103,13 @@ RSpec.describe DistributeTasks, type: :routine do
         expect(task_plan.tasks).to include old_task
       end
 
-      it 'does not set the published_at field' do
-        old_published_at = task_plan.published_at
+      it 'does not set the first_published_at field' do
+        old_published_at = task_plan.first_published_at
         publish_time = Time.current
         result = DistributeTasks.call(task_plan, publish_time)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.published_at).to eq old_published_at
+        expect(task_plan.reload.first_published_at).to eq old_published_at
+        expect(task_plan.last_published_at).to eq publish_time
       end
     end
   end

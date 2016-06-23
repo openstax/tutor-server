@@ -20,7 +20,9 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   it { is_expected.to validate_presence_of(:time_zone) }
 
   it "requires due_at to be in the future when changed after the task_plan is published" do
-    task_plan.published_at = Time.current
+    publish_time = Time.current
+    task_plan.first_published_at = publish_time
+    task_plan.last_published_at = publish_time
     expect(tasking_plan).to be_valid
     tasking_plan.due_at = tasking_plan.time_zone.to_tz.now
     expect(tasking_plan).not_to be_valid
