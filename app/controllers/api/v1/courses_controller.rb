@@ -77,7 +77,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   api :GET, '/courses/:course_id/dashboard(/role/:role_id)',
             'Gets dashboard information for a given non-CC course, ' +
-            'filtered by optional start_at and end_at params'
+            'filtered by optional start_at and end_at params. ' +
+            'Any time_zone information in the given dates is ignored ' +
+            'and they are assumed to be in the course\'s time_zone.'
   description <<-EOS
     Possible error codes:
       - cc_course
@@ -85,13 +87,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::Courses::DashboardRepresenter, include: :readable)}
   EOS
   def dashboard
-    course_tz = @course.time_zone.to_tz
     start_at = DateTimeUtilities.from_s(params[:start_at])
-    start_at_in_course_tz = start_at.try(:in_time_zone, course_tz)
-    start_at_ntz = DateTimeUtilities.remove_tz(start_at_in_course_tz)
+    start_at_ntz = DateTimeUtilities.remove_tz(start_at)
     end_at = DateTimeUtilities.from_s(params[:end_at])
-    end_at_in_course_tz = end_at.try(:in_time_zone, course_tz)
-    end_at_ntz = DateTimeUtilities.remove_tz(end_at_in_course_tz)
+    end_at_ntz = DateTimeUtilities.remove_tz(end_at)
 
     result = GetNonCcDashboard.call(course: @course, role: get_course_role,
                                     start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
@@ -104,8 +103,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   api :GET, '/courses/:course_id/cc/dashboard(/role/:role_id)',
-            'Gets dashboard information for a given CC course, ' +
-            'filtered by optional start_at and end_at params'
+            'Gets dashboard information for a given CC course.'
   description <<-EOS
     Possible error codes:
       - non_cc_course
@@ -113,16 +111,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::Courses::Cc::DashboardRepresenter, include: :readable)}
   EOS
   def cc_dashboard
-    course_tz = @course.time_zone.to_tz
-    start_at = DateTimeUtilities.from_s(params[:start_at])
-    start_at_in_course_tz = start_at.try(:in_time_zone, course_tz)
-    start_at_ntz = DateTimeUtilities.remove_tz(start_at_in_course_tz)
-    end_at = DateTimeUtilities.from_s(params[:end_at])
-    end_at_in_course_tz = end_at.try(:in_time_zone, course_tz)
-    end_at_ntz = DateTimeUtilities.remove_tz(end_at_in_course_tz)
-
-    result = GetCcDashboard.call(course: @course, role: get_course_role,
-                                 start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
+    result = GetCcDashboard.call(course: @course, role: get_course_role)
 
     if result.errors.any?
       render_api_errors(result.errors)

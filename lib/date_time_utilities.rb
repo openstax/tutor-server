@@ -9,7 +9,7 @@ module DateTimeUtilities
   # Parse a string representing a DateTime
   # If no time zone is given, UTC is assumed
   def self.from_s(string)
-    DateTime.parse(string) rescue nil
+    DateTime.parse(string.to_s) rescue nil
   end
 
   # Apply a time_zone to the given DateTime object (without offset)

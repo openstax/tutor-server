@@ -12,10 +12,12 @@ class Tasks::GetTasks
     task_ids = Tasks::Models::Tasking.with_deleted.where(entity_role_id: role_ids)
                                                   .pluck(:tasks_task_id)
     query = Tasks::Models::Task.with_deleted.where(id: task_ids)
-    query = query.where{(opens_at_ntz > start_at_ntz) | (due_at_ntz > start_at_ntz)} \
-              unless start_at_ntz.nil?
-    query = query.where{(opens_at_ntz < end_at_ntz) | (due_at_ntz < end_at_ntz)} \
-              unless end_at_ntz.nil?
+    query = query.where do
+      (opens_at_ntz > start_at_ntz) | (due_at_ntz > start_at_ntz) | (due_at_ntz == nil)
+    end unless start_at_ntz.nil?
+    query = query.where do
+      (opens_at_ntz < end_at_ntz) | (due_at_ntz < end_at_ntz) | (opens_at_ntz == nil)
+    end unless end_at_ntz.nil?
     outputs[:tasks] = query
   end
 
