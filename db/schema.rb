@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160623014118) do
+ActiveRecord::Schema.define(version: 20160623015400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -721,6 +721,7 @@ ActiveRecord::Schema.define(version: 20160623014118) do
 
   add_index "tasks_tasking_plans", ["deleted_at"], name: "index_tasks_tasking_plans_on_deleted_at", using: :btree
   add_index "tasks_tasking_plans", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz", using: :btree
+  add_index "tasks_tasking_plans", ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz", using: :btree
   add_index "tasks_tasking_plans", ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true, using: :btree
   add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id", using: :btree
   add_index "tasks_tasking_plans", ["time_zone_id"], name: "index_tasks_tasking_plans_on_time_zone_id", using: :btree
@@ -779,6 +780,7 @@ ActiveRecord::Schema.define(version: 20160623014118) do
   add_index "tasks_tasks", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasks", ["hidden_at"], name: "index_tasks_tasks_on_hidden_at", using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
+  add_index "tasks_tasks", ["opens_at_ntz"], name: "index_tasks_tasks_on_opens_at_ntz", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
   add_index "tasks_tasks", ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id", using: :btree
