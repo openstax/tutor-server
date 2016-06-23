@@ -8,7 +8,7 @@ class GetCcDashboard
 
   protected
 
-  def exec(course:, role:)
+  def exec(course:, role:, start_at_ntz: nil, end_at_ntz: nil)
     unless course.is_concept_coach
       fatal_error(code: :non_cc_course)
       return
@@ -20,7 +20,7 @@ class GetCcDashboard
 
     load_role(role, role_type)
     load_course(course, role_type)
-    load_tasks(role, role_type)
+    load_tasks(role, role_type, start_at_ntz, end_at_ntz)
     load_cc_stats(course, role, role_type)
   end
 

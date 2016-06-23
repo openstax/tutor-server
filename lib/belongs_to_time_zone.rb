@@ -40,27 +40,17 @@ module BelongsToTimeZone
               datetime = read_attribute(field_name)
               next nil if datetime.nil?
               # Use server's time_zone (Time.zone) if no time_zone available
-              zone = time_zone.try(:to_tz) || Time.zone
+              tz = time_zone.try(:to_tz) || Time.zone
 
-              # Apply the server's time_zone (without offset)
-              # Example: 2 PM UTC -> 2 PM EST
-              datetime = datetime.in_time_zone(zone)
-              datetime - datetime.utc_offset
+              DateTimeUtilities.apply_tz(datetime, tz)
             end
 
             # Drop any time_zones given, then write the result to the DB
             define_method("#{method_name}=") do |value|
-              datetime = case value
-              when String
-                DateTime.parse(value) rescue nil
-              else
-                value.try(:to_datetime)
-              end
+              datetime = value.is_a?(String) ? DateTimeUtilities.from_s(value) :
+                                               value.try(:to_datetime)
 
-              # Drop time_zone if given (and remove its offset)
-              # Example: 2 PM EST -> 2 PM UTC
-              write_attribute(field_name,
-                              datetime.try(:change, offset: 0).try(:in_time_zone, 'UTC'))
+              write_attribute(field_name, DateTimeUtilities.remove_tz(datetime))
             end
 
             if field_name != method_name

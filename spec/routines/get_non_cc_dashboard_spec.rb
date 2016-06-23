@@ -60,65 +60,135 @@ describe GetNonCcDashboard, type: :routine do
 
   let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
 
-  it "works for a student" do
-    outputs = described_class.call(course: course, role: student_role).outputs
+  context 'with no time period specified' do
+    it "works for a student" do
+      outputs = described_class.call(course: course, role: student_role).outputs
 
-    expect(HashWithIndifferentAccess[outputs]).to include(
-      course: {
-        id: course.id,
-        name: "Physics 101",
-        teachers: [
-          { id: teacher_role.teacher.id.to_s,
-            role_id: teacher_role.id.to_s,
-            first_name: 'Bob',
-            last_name: 'Newhart' }
-        ]
-      },
-      role: {
-        id: student_role.id,
-        type: 'student'
-      },
-      tasks: a_collection_including(
-        deleted_reading_task, reading_task # the un-opened homework_task is not included
+      expect(HashWithIndifferentAccess[outputs]).to include(
+        course: {
+          id: course.id,
+          name: "Physics 101",
+          teachers: [
+            { id: teacher_role.teacher.id.to_s,
+              role_id: teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart' }
+          ]
+        },
+        role: {
+          id: student_role.id,
+          type: 'student'
+        },
+        tasks: a_collection_including(
+          deleted_reading_task, reading_task # the un-opened homework_task is not included
+        )
       )
-    )
+    end
+
+    it "works for a teacher" do
+      outputs = described_class.call(course: course, role: teacher_role).outputs
+
+      expect(HashWithIndifferentAccess[outputs]).to include(
+        course: {
+          id: course.id,
+          name: "Physics 101",
+          teachers: [
+            { id: teacher_role.teacher.id.to_s,
+              role_id: teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart' }
+          ]
+        },
+        role: {
+          id: teacher_role.id,
+          type: 'teacher'
+        },
+        tasks: [],
+        plans: [
+          {
+            id: plan.id,
+            title: plan.title,
+            type: plan.type,
+            description: plan.description,
+            is_publish_requested: false,
+            published_at: nil,
+            publish_last_requested_at: nil,
+            publish_job_uuid: nil,
+            shareable_url: ShortCode::UrlFor[plan],
+            tasking_plans: plan.tasking_plans,
+            is_trouble: false
+          }
+        ]
+      )
+    end
   end
 
-  it "works for a teacher" do
-    outputs = described_class.call(course: course, role: teacher_role).outputs
+  context 'with a time period specified' do
+    let(:start_at_ntz) { DateTimeUtilities.remove_tz(Time.current.yesterday) }
+    let(:end_at_ntz)   { DateTimeUtilities.remove_tz(Time.current) }
 
-    expect(HashWithIndifferentAccess[outputs]).to include(
-      course: {
-        id: course.id,
-        name: "Physics 101",
-        teachers: [
-          { id: teacher_role.teacher.id.to_s,
-            role_id: teacher_role.id.to_s,
-            first_name: 'Bob',
-            last_name: 'Newhart' }
+    it "works for a student" do
+      outputs = described_class.call(course: course, role: student_role,
+                                     start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz).outputs
+
+      expect(HashWithIndifferentAccess[outputs]).to include(
+        course: {
+          id: course.id,
+          name: "Physics 101",
+          teachers: [
+            { id: teacher_role.teacher.id.to_s,
+              role_id: teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart' }
+          ]
+        },
+        role: {
+          id: student_role.id,
+          type: 'student'
+        },
+        tasks: a_collection_including(
+          deleted_reading_task, reading_task # the un-opened homework_task is not included
+        )
+      )
+    end
+
+    it "works for a teacher" do
+      outputs = described_class.call(course: course, role: teacher_role,
+                                     start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz).outputs
+
+      expect(HashWithIndifferentAccess[outputs]).to include(
+        course: {
+          id: course.id,
+          name: "Physics 101",
+          teachers: [
+            { id: teacher_role.teacher.id.to_s,
+              role_id: teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart' }
+          ]
+        },
+        role: {
+          id: teacher_role.id,
+          type: 'teacher'
+        },
+        tasks: [],
+        plans: [
+          {
+            id: plan.id,
+            title: plan.title,
+            type: plan.type,
+            description: plan.description,
+            is_publish_requested: false,
+            published_at: nil,
+            publish_last_requested_at: nil,
+            publish_job_uuid: nil,
+            shareable_url: ShortCode::UrlFor[plan],
+            tasking_plans: plan.tasking_plans,
+            is_trouble: false
+          }
         ]
-      },
-      role: {
-        id: teacher_role.id,
-        type: 'teacher'
-      },
-      tasks: [],
-      plans: [
-        {
-          id: plan.id,
-          title: plan.title,
-          type: plan.type,
-          description: plan.description,
-          is_publish_requested: false,
-          published_at: nil,
-          publish_last_requested_at: nil,
-          publish_job_uuid: nil,
-          shareable_url: ShortCode::UrlFor[plan],
-          tasking_plans: plan.tasking_plans,
-          is_trouble: false
-        }
-      ]
-    )
+      )
+    end
   end
 
 end

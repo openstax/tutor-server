@@ -1,30 +1,29 @@
 Time::DATE_FORMATS[:w3cz] = lambda { |time| time.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ") }
 
 module DateTimeUtilities
-  def self.to_api_s(time)
-    time.try(:to_formatted_s, :w3cz)
+  # Convert the given DateTime to a W3CZ formatted string
+  def self.to_api_s(date_time)
+    date_time.try(:to_formatted_s, :w3cz)
   end
 
-  def self.from_string(datetime_string:, time_zone: nil, ignore_existing_zone: true)
-    time_zone ||= Time.zone
+  # Parse a string representing a DateTime
+  # If no time zone is given, UTC is assumed
+  def self.from_s(string)
+    DateTime.parse(string) rescue nil
+  end
 
-    raise(IllegalArgument, "time_zone must not be nil") if time_zone.nil?
+  # Apply a time_zone to the given DateTime object (without offset)
+  # Example: 2 PM UTC -> 2 PM EST
+  def self.apply_tz(date_time, time_zone = Time.zone)
+    return if date_time.nil?
 
-    if ignore_existing_zone
-      datetime_string.gsub!(/(\d)T(\d)/,'\1 \2')       # handle the 'T' in w3c format
-      datetime_string.gsub!(/ [-+]\d\d\:?(\d\d)?/,'')  # remove time zone offsets, -0700, -07, -07:00
-      datetime_string.gsub!(/[a-zA-Z]/,'')             # remove any other PST or similar
-      datetime_string.strip!
-    else
-      raise NotYetImplemented
-    end
+    date_time = date_time.in_time_zone(time_zone)
+    date_time - date_time.utc_offset
+  end
 
-    original_time_class = Chronic.time_class
-    begin
-      Chronic.time_class = time_zone
-      Chronic.parse(datetime_string, ambiguous_time_range: :none)
-    ensure
-      Chronic.time_class = original_time_class
-    end
+  # Removes the time_zone from DateTime object (removing its offset)
+  # Example: 2 PM EST -> 2 PM UTC
+  def self.remove_tz(date_time)
+    date_time.try(:change, offset: 0).try(:in_time_zone, 'UTC')
   end
 end

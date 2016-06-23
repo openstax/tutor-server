@@ -5,14 +5,18 @@ class Tasks::GetTasks
 
   protected
 
-  def exec(roles:)
+  def exec(roles:, start_at_ntz: nil, end_at_ntz: nil)
     role_ids = verify_and_get_id_array(roles, Entity::Role)
 
-    # Trying to go directly to the Task here fails on deleted tasks
-    outputs[:tasks] = Tasks::Models::Tasking.with_deleted
-                                            .where(entity_role_id: role_ids)
-                                            .preload(:task)
-                                            .map(&:task).uniq
+    # Trying to join Tasks and Taskings here fails on deleted tasks
+    task_ids = Tasks::Models::Tasking.with_deleted.where(entity_role_id: role_ids)
+                                                  .pluck(:tasks_task_id)
+    query = Tasks::Models::Task.with_deleted.where(id: task_ids)
+    query = query.where{(opens_at_ntz > start_at_ntz) | (due_at_ntz > start_at_ntz)} \
+              unless start_at_ntz.nil?
+    query = query.where{(opens_at_ntz < end_at_ntz) | (due_at_ntz < end_at_ntz)} \
+              unless end_at_ntz.nil?
+    outputs[:tasks] = query
   end
 
 end
