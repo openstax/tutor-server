@@ -37,11 +37,12 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def is_draft?
-    !@is_publish_requested && !is_published?
+    publish_last_requested_at.blank?
   end
 
   def is_publishing?
-    @is_publish_requested || publish_last_requested_at > last_published_at
+    publish_last_requested_at.present? &&
+      (last_published_at.blank? || publish_last_requested_at > last_published_at)
   end
 
   def is_published?

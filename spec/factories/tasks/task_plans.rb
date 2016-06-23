@@ -7,7 +7,7 @@ FactoryGirl.define do
       due_at    { opens_at + duration }
       num_tasking_plans 1
       assistant_code_class_name 'DummyAssistant'
-      published_at
+      published_at nil
     end
 
     association :owner, factory: :entity_course

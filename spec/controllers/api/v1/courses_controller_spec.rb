@@ -602,7 +602,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => plan.id.to_s,
             "type" => "reading",
-            "published_at" => be_kind_of(String),
+            "first_published_at" => be_kind_of(String),
+            "last_published_at" => be_kind_of(String),
             "tasking_plans" => [
               a_hash_including(
               { "target_id" => course.id.to_s,

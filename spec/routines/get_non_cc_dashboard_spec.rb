@@ -105,19 +105,23 @@ describe GetNonCcDashboard, type: :routine do
         },
         tasks: [],
         plans: [
-          {
+          a_hash_including(
             id: plan.id,
             title: plan.title,
             type: plan.type,
             description: plan.description,
-            is_publish_requested: false,
-            published_at: nil,
-            publish_last_requested_at: nil,
-            publish_job_uuid: nil,
+            is_feedback_immediate: plan.is_feedback_immediate,
+            is_draft?: plan.is_draft?,
+            is_publishing?: plan.is_publishing?,
+            is_published?: plan.is_published?,
+            first_published_at: plan.first_published_at,
+            last_published_at: plan.last_published_at,
+            publish_last_requested_at: plan.publish_last_requested_at,
+            publish_job_uuid: plan.publish_job_uuid,
             shareable_url: ShortCode::UrlFor[plan],
             tasking_plans: plan.tasking_plans,
             is_trouble: false
-          }
+          )
         ]
       )
     end
@@ -173,19 +177,23 @@ describe GetNonCcDashboard, type: :routine do
         },
         tasks: [],
         plans: [
-          {
+          a_hash_including(
             id: plan.id,
             title: plan.title,
             type: plan.type,
             description: plan.description,
-            is_publish_requested: false,
-            published_at: nil,
-            publish_last_requested_at: nil,
-            publish_job_uuid: nil,
+            is_feedback_immediate: plan.is_feedback_immediate,
+            is_draft?: plan.is_draft?,
+            is_publishing?: plan.is_publishing?,
+            is_published?: plan.is_published?,
+            first_published_at: plan.first_published_at,
+            last_published_at: plan.last_published_at,
+            publish_last_requested_at: plan.publish_last_requested_at,
+            publish_job_uuid: plan.publish_job_uuid,
             shareable_url: ShortCode::UrlFor[plan],
             tasking_plans: plan.tasking_plans,
             is_trouble: false
-          }
+          )
         ]
       )
     end

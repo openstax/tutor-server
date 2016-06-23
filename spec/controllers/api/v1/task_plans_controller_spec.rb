@@ -144,8 +144,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
 
     context 'when is_publish_requested is set' do
       let!(:valid_json_hash) {
-        task_plan.is_publish_requested = true
         JSON.parse(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+            .merge('is_publish_requested' => true)
       }
 
       it 'allows a teacher to publish a task_plan for their course' do

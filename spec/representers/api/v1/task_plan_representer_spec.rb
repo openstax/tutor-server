@@ -78,9 +78,9 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
   end
 
   context "is_publish_requested" do
-    it "can be read" do
-      allow(task_plan).to receive(:is_draft?).and_return(false)
-      expect(representation).to include("is_publish_requested" => true)
+    it "cannot be read" do
+      task_plan.is_publish_requested = true
+      expect(representation).not_to have_key("is_publish_requested")
     end
 
     it "can be written" do
@@ -109,17 +109,39 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
   end
 
-  context "published_at" do
+  context "first_published_at" do
     it "can be read" do
       expected = Time.current
-      allow(task_plan).to receive(:published_at).and_return(expected)
-      expect(representation).to include("published_at" => DateTimeUtilities.to_api_s(expected))
+      allow(task_plan).to receive(:first_published_at).and_return(expected)
+      expect(representation).to(
+        include "first_published_at" => DateTimeUtilities.to_api_s(expected)
+      )
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      published_at = DateTimeUtilities.to_api_s(Time.current)
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"published_at" => published_at.to_s}.to_json)
-      expect(task_plan).to_not have_received(:published_at=)
+      first_published_at = DateTimeUtilities.to_api_s(Time.current)
+      Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
+        {"first_published_at" => first_published_at.to_s}.to_json
+      )
+      expect(task_plan).to_not have_received(:first_published_at=)
+    end
+  end
+
+  context "last_published_at" do
+    it "can be read" do
+      expected = Time.current
+      allow(task_plan).to receive(:last_published_at).and_return(expected)
+      expect(representation).to(
+        include "last_published_at" => DateTimeUtilities.to_api_s(expected)
+      )
+    end
+
+    it "cannot be written (attempts are silently ignored)" do
+      last_published_at = DateTimeUtilities.to_api_s(Time.current)
+      Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
+        {"last_published_at" => last_published_at.to_s}.to_json
+      )
+      expect(task_plan).to_not have_received(:last_published_at=)
     end
   end
 
