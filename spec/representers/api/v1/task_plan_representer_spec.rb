@@ -12,9 +12,8 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
   }
 
-  let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
-    Api::V1::TaskPlanRepresenter.new(task_plan).as_json
-  }
+  ## NOTE: This is lazily-evaluated on purpose!
+  let(:representation) { described_class.new(task_plan).as_json }
 
   context "id" do
     it "can be read" do
@@ -23,7 +22,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"id" => 42}.to_json)
+      described_class.new(task_plan).from_json({"id" => 42}.to_json)
       expect(task_plan).to_not have_received(:id=)
     end
   end
@@ -35,7 +34,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"ecosystem_id" => 42}.to_json)
+      described_class.new(task_plan).from_json({"ecosystem_id" => 42}.to_json)
       expect(task_plan).to_not have_received(:content_ecosystem_id=)
     end
   end
@@ -47,7 +46,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "can be written" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"type" => 'New type'}.to_json)
+      described_class.new(task_plan).from_json({"type" => 'New type'}.to_json)
       expect(task_plan).to have_received(:type=).with('New type')
     end
   end
@@ -59,7 +58,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "can be written" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"title" => 'New title'}.to_json)
+      described_class.new(task_plan).from_json({"title" => 'New title'}.to_json)
       expect(task_plan).to have_received(:title=).with('New title')
     end
   end
@@ -71,8 +70,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "can be written" do
-      Api::V1::TaskPlanRepresenter.new(task_plan)
-                                  .from_json({"description" => 'New description'}.to_json)
+      described_class.new(task_plan).from_json({"description" => 'New description'}.to_json)
       expect(task_plan).to have_received(:description=).with('New description')
     end
   end
@@ -84,9 +82,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "can be written" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
-        {"is_publish_requested" => true}.to_json
-      )
+      described_class.new(task_plan).from_json({"is_publish_requested" => true}.to_json)
       expect(task_plan).to have_received(:is_publish_requested=).with(true)
     end
   end
@@ -102,7 +98,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
     it "cannot be written (attempts are silently ignored)" do
       publish_last_requested_at = DateTimeUtilities.to_api_s(Time.current)
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
+      described_class.new(task_plan).from_json(
         {"publish_last_requested_at" => publish_last_requested_at.to_s}.to_json
       )
       expect(task_plan).to_not have_received(:publish_last_requested_at=)
@@ -120,7 +116,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
     it "cannot be written (attempts are silently ignored)" do
       first_published_at = DateTimeUtilities.to_api_s(Time.current)
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
+      described_class.new(task_plan).from_json(
         {"first_published_at" => first_published_at.to_s}.to_json
       )
       expect(task_plan).to_not have_received(:first_published_at=)
@@ -138,7 +134,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
     it "cannot be written (attempts are silently ignored)" do
       last_published_at = DateTimeUtilities.to_api_s(Time.current)
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
+      described_class.new(task_plan).from_json(
         {"last_published_at" => last_published_at.to_s}.to_json
       )
       expect(task_plan).to_not have_received(:last_published_at=)
@@ -153,33 +149,8 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "can be written" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"settings" => {"some" => "object"}}.to_json)
+      described_class.new(task_plan).from_json({"settings" => {"some" => "object"}}.to_json)
       expect(task_plan).to have_received(:settings=).with({"some" => "object"})
-    end
-  end
-
-  context "shareable_url" do
-    it "can be generated from model" do
-      FactoryGirl.create :short_code_short_code, code: 'short',
-                         uri: task_plan.to_global_id.to_s
-      allow(task_plan).to receive(:title).and_return('Read ch 4')
-      expect(representation).to include("shareable_url" => '/@/short/read-ch-4')
-    end
-
-    it 'can be read from provided data' do
-      data = Hashie::Mash.new FactoryGirl.build(:tasks_task_plan).as_json
-      data['shareable_url'] = '/@/blah/foo-bar-baz'
-      representation = Api::V1::TaskPlanRepresenter.new(data).as_json
-      expect(representation).to include("shareable_url" => '/@/blah/foo-bar-baz')
-    end
-
-    it "cannot be written (attempts are silently ignored)" do
-      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({
-        "shareable_url" => 'http://www.example.org'
-      }.to_json)
-
-      representation = Api::V1::TaskPlanRepresenter.new(task_plan).as_json
-      expect(representation).to_not include("shareable_url")
     end
   end
 

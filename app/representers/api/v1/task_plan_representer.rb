@@ -102,14 +102,6 @@ module Api::V1
              readable: true,
              writeable: true
 
-    property :shareable_url,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) do
-               self.try(:shareable_url) || ShortCode::UrlFor[self, suffix: self.title]
-             end
-
     collection :tasking_plans,
                instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
                decorator: TaskingPlanRepresenter,

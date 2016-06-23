@@ -10,6 +10,8 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
+  let(:representation) { described_class.new(task_plan).as_json }
+
   it "represents a task plan's stats" do
     # Answer an exercise correctly and mark it as completed
     task_step = task_plan.tasks.first.task_steps.select{ |ts| ts.tasked.exercise? }.first
@@ -27,8 +29,6 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     task_step.tasked.answer_id = incorrect_answer_ids.first
     task_step.tasked.save!
     MarkTaskStepCompleted.call(task_step: task_step)
-
-    representation = Api::V1::TaskPlanWithDetailedStatsRepresenter.new(task_plan).as_json
 
     expect(representation).to include(
       "id" => task_plan.id.to_s,
@@ -108,27 +108,6 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
         }
       ]
     )
-
-    # exercise_1 = representation['stats'].first['current_pages'].first['exercises'].first
-    # exercise_1['content']['questions'].first['answers'].each do |answer|
-    #   case answer['id']
-    #   when correct_answer_id, incorrect_answer_ids.first
-    #     expect(answer['selected_count']).to eq 1
-    #   else
-    #     expect(answer['selected_count']).to eq 0
-    #   end
-    # end
-
-    # exercise_2 = representation['stats'].first['current_pages'].first['exercises'].last
-    # exercise_2['content']['questions'].first['answers'].each do |answer|
-    #   expect(answer['selected_count']).to eq 0
-    # end
-
-    # representation['stats'].first['spaced_pages'].first['exercises'].each do |exercise|
-    #   exercise['content']['questions'].first['answers'].each do |answer|
-    #     expect(answer['selected_count']).to eq 0
-    #   end
-    # end
   end
 
 end
