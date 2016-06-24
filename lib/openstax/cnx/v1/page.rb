@@ -132,6 +132,8 @@ module OpenStax::Cnx::V1
       Fragment::Exercise.absolutize_exercise_urls(@converted_doc)
 
       @converted_doc
+    rescue Addressable::URI::InvalidURIError => exception
+      raise Addressable::URI::InvalidURIError.new(exception.message + " when parsing page: #{url}")
     end
 
     def converted_content
