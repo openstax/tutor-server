@@ -21,6 +21,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   serialize :settings, JSON
 
+  after_initialize :enforce_settings_type
+
   validates :title, presence: true
   validates :assistant, presence: true
   validates :ecosystem, presence: true
@@ -50,6 +52,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   protected
+
+  def enforce_settings_type
+    self.settings = settings.to_h unless settings.is_a?(Hash)
+  end
 
   def valid_settings
     schema = assistant.try(:schema)

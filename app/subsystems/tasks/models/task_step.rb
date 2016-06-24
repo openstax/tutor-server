@@ -11,6 +11,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   serialize :related_content, JSON
 
+  after_initialize :enforce_related_content_type
+
   validates :task, presence: true
   validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
@@ -77,6 +79,13 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   def add_labels(labels)
     self.labels = [self.labels, labels].flatten.compact.uniq
+  end
+
+  protected
+
+  def enforce_related_content_type
+    self.related_content = related_content.to_a.map(&:to_h) \
+      unless related_content.is_a?(Array) && related_content.all?{ |content| content.is_a? Hash }
   end
 
 end

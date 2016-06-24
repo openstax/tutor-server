@@ -29,14 +29,14 @@ module Content
         # to a Content::Page in the to_ecosystem
         # Unmapped Content::Exercises map to nil
         def map_exercises_to_pages(exercises:)
-          exercise_ids = exercises.map(&:id)
+          exercise_ids = exercises.map{ |exercise| exercise.id.to_s }
           page_ids = exercise_ids.map{ |ex_id| @exercise_id_to_page_id_map[ex_id] }
           pages_by_ids = to_ecosystem_pages_by_ids(*page_ids)
 
           exercise_to_page_map = {}
 
           exercises.each do |exercise|
-            page_id = @exercise_id_to_page_id_map[exercise.id]
+            page_id = @exercise_id_to_page_id_map[exercise.id.to_s]
             exercise_to_page_map[exercise] = pages_by_ids[page_id]
           end
 
@@ -47,14 +47,14 @@ module Content
         # to a Content::Page in the to_ecosystem
         # Unmapped Content::Pages map to nil
         def map_pages_to_pages(pages:)
-          from_page_ids = pages.map(&:id)
+          from_page_ids = pages.map{ |page| page.id.to_s }
           to_page_ids = from_page_ids.map{ |pg_id| @page_id_to_page_id_map[pg_id] }
           pages_by_ids = to_ecosystem_pages_by_ids(*to_page_ids)
 
           page_to_page_map = {}
 
           pages.each do |page|
-            to_page_id = @page_id_to_page_id_map[page.id]
+            to_page_id = @page_id_to_page_id_map[page.id.to_s]
             page_to_page_map[page] = pages_by_ids[to_page_id]
           end
 
@@ -67,11 +67,11 @@ module Content
         def map_pages_to_exercises(pages:, pool_type: :all_exercises)
           page_id_to_exercise_ids_map = Hash.new{ |hash, key| hash[key] = [] }
 
-          pages.map(&:id).each do |pg_id|
+          pages.map{ |page| page.id.to_s }.each do |pg_id|
             next unless @page_id_to_pool_type_exercise_ids_map.has_key?(pg_id)
 
             page_id_to_exercise_ids_map[pg_id] = \
-              @page_id_to_pool_type_exercise_ids_map[pg_id][pool_type]
+              @page_id_to_pool_type_exercise_ids_map[pg_id][pool_type.to_s]
           end
           to_exercise_ids = page_id_to_exercise_ids_map.values.flatten
           to_exercises_by_ids = to_ecosystem_exercises_by_ids(*to_exercise_ids)
@@ -80,7 +80,8 @@ module Content
           page_to_exercises_map = {}
 
           pages.each do |page|
-            exercise_ids = page_id_to_exercise_ids_map[page.id]
+            exercise_ids = page_id_to_exercise_ids_map[page.id.to_s]
+            debugger if exercise_ids.nil?
             page_to_exercises_map[page] = exercise_ids.map{ |ex_id| to_exercises_by_ids[ex_id] }
           end
 

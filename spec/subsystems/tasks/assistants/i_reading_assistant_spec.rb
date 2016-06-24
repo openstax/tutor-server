@@ -26,23 +26,24 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       @intro_step_gold_data = {
         klass: Tasks::Models::TaskedReading,
         title: "Forces and Newton's Laws of Motion",
-        related_content: [{title: "Forces and Newton's Laws of Motion", book_location: [8, 1]}]
+        related_content: [{'title' => "Forces and Newton's Laws of Motion",
+                           'book_location' => [8, 1]}]
       }
 
       @core_step_gold_data = [
         @intro_step_gold_data,
         { klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [{title: "Force", book_location: [8, 2]}] }
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}] }
       ]
 
       @spaced_practice_step_gold_data = [
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", book_location: [8, 2]}] },
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}] },
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", book_location: [8, 2]}] }
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}] }
       ]
 
       @personalized_step_gold_data = [

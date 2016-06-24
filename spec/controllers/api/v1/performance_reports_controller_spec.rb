@@ -70,7 +70,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
         expect(resp).to include({
           period_id: course.periods.first.id.to_s,
-          overall_average_score: 0.6666666666666666,
+          overall_average_score: be_within(0.01).of(2/3.0),
           data_headings: [
             { title: 'Homework 2 task plan',
               plan_id: resp[0][:data_headings][0][:plan_id],
@@ -84,7 +84,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[0][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][2][:due_at],
-              average_score: 0.6666666666666666 }
+              average_score: be_within(0.01).of(2/3.0) }
           ],
           students: [{
             name: 'Student One',
@@ -167,7 +167,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             last_name: 'Two',
             role: resp[0][:students][1][:role],
             student_identifier: 'S2',
-            average_score: 0.3333333333333333,
+            average_score: be_within(0.01).of(1/3.0),
             data: [
               {
                 type: 'homework',
@@ -228,7 +228,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 correct_exercise_count: 2,
                 correct_on_time_exercise_count: 2,
                 correct_accepted_late_exercise_count: 0,
-                score: 0.3333333333333333,
+                score: be_within(0.01).of(1/3.0),
                 recovered_exercise_count: 0,
                 due_at: resp[0][:students][1][:data][2][:due_at],
                 last_worked_at: resp[0][:students][1][:data][2][:last_worked_at],
@@ -428,8 +428,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         # moved to period 2; on the other hand, period 2 now has average scores where
         # it didn't before
         expect(resp[0][:data_headings][0]).not_to have_key(:average_score)
-        expect(resp[1][:overall_average_score]).to eq (1+0.0+1)/3  # added in a 1.0
-        expect(resp[1][:data_headings][2][:average_score]).to eq (1.0+0+1)/3
+        expect(resp[1][:overall_average_score]).to be_within(0.01).of(2/3.0)
+        expect(resp[1][:data_headings][2][:average_score]).to be_within(0.01).of(2/3.0)
 
         # There should now be 3 students in period 2 whereas before there were 2
         expect(resp[1][:students].length).to eq 3

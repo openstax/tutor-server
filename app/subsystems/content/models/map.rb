@@ -9,6 +9,8 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   validates :from_ecosystem, :to_ecosystem, presence: true
   validates :to_ecosystem, uniqueness: { scope: :content_from_ecosystem_id }
 
+  after_initialize :enforce_map_types
+
   before_save :create_exercise_id_to_page_id_map, :create_page_id_to_page_id_map,
               :create_page_id_to_pool_type_exercise_ids_map, :validate_maps
 
@@ -19,7 +21,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     # Mapping succeeds even if the exercise has no tags
     if from_ecosystem == to_ecosystem
       to_ecosystem.exercises.each do |exercise|
-        exercise_id_to_page_id_map[exercise.id] = exercise.content_page_id
+        exercise_id_to_page_id_map[exercise.id.to_s] = exercise.content_page_id
       end
 
       return exercise_id_to_page_id_map
@@ -43,7 +45,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
     # Each exercise maps to the highest numbered page that shares a mapping tag with it
     exercise_id_to_pages_map.each do |exercise_id, pages|
-      exercise_id_to_page_id_map[exercise_id] = pages.max_by(&:book_location).id
+      exercise_id_to_page_id_map[exercise_id.to_s] = pages.max_by(&:book_location).id
     end
 
     exercise_id_to_page_id_map
@@ -55,7 +57,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     # Special case: from_ecosystem == to_ecosystem
     # Mapping succeeds even if the page has no tags
     if from_ecosystem == to_ecosystem
-      to_ecosystem.pages.each{ |page| page_id_to_page_id_map[page.id] = page.id }
+      to_ecosystem.pages.each{ |page| page_id_to_page_id_map[page.id.to_s] = page.id }
 
       return page_id_to_page_id_map
     end
@@ -79,7 +81,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     # but for now we don't handle that case
     # since it's hard to figure out what to do for the dashboard/scores
     page_id_to_pages_map.each do |page_id, pages|
-      page_id_to_page_id_map[page_id] = pages.size == 1 ? pages.first.id : nil
+      page_id_to_page_id_map[page_id.to_s] = pages.size == 1 ? pages.first.id : nil
     end
 
     page_id_to_page_id_map
@@ -90,7 +92,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
     create_page_id_to_page_id_map
 
-    pool_types = Content::Models::Pool.pool_types.keys.map(&:to_sym)
+    pool_types = Content::Models::Pool.pool_types.keys
     pool_association_to_pool_type_map = pool_types.index_by do |pool_type|
       "#{pool_type}_pool".to_sym
     end
@@ -127,23 +129,32 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
   protected
 
+  def enforce_map_types
+    self.exercise_id_to_page_id_map = exercise_id_to_page_id_map.to_h \
+      unless exercise_id_to_page_id_map.is_a?(Hash)
+    self.page_id_to_page_id_map = page_id_to_page_id_map.to_h \
+      unless page_id_to_page_id_map.is_a?(Hash)
+    self.page_id_to_pool_type_exercise_ids_map = page_id_to_pool_type_exercise_ids_map.to_h \
+        unless page_id_to_pool_type_exercise_ids_map.is_a?(Hash)
+  end
+
   def mapping_tag_types
     @mapping_tag_types ||= Content::Models::Tag::MAPPING_TAG_TYPES.map do |type|
       Content::Models::Tag.tag_types[type]
     end
   end
 
-  # Every exercise in the from_ecosystem is a key in the exercise_id_to_page_id_map
+  # Every exercise id in the from_ecosystem is a string key in the exercise_id_to_page_id_map
   # This check may fail if an exercise fails to map to any page in the new ecosystem
   def all_exercises_are_mapped
     from_exercises                      = from_ecosystem.exercises
-    from_exercise_ids_set               = Set.new from_exercises.map(&:id)
+    from_exercise_ids_set               = Set.new from_exercises.map{ |ex| ex.id.to_s }
     exercise_id_to_page_id_map_keys_set = Set.new exercise_id_to_page_id_map.keys
 
     return true if from_exercise_ids_set == exercise_id_to_page_id_map_keys_set
 
     unmapped_ex_uids = from_exercises.reject do |ex|
-      exercise_id_to_page_id_map_keys_set.include? ex.id
+      exercise_id_to_page_id_map_keys_set.include? ex.id.to_s
     end.map(&:uid)
 
     validity_error_messages << "Unmapped exercise uids: [#{unmapped_ex_uids.to_a.join(', ')}]"
@@ -158,7 +169,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
     return true if exercise_id_to_page_id_map_values_set.subset?(to_page_ids_set)
 
-    from_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
+    from_exercises_by_id = from_ecosystem.exercises.index_by{ |ex| ex.id.to_s }
     to_pages_by_id = to_ecosystem.pages.index_by(&:id)
 
     mismapped_hash = exercise_id_to_page_id_map.reject do |ex_id, pg_id|
@@ -183,7 +194,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
     return true if page_id_to_page_id_map_values_set.subset?(to_page_ids_set)
 
-    from_pages_by_id = from_ecosystem.pages.index_by(&:id)
+    from_pages_by_id = from_ecosystem.pages.index_by{ |ex| ex.id.to_s }
     to_pages_by_id = from_ecosystem.pages.index_by(&:id)
 
     mismapped_hash = page_id_to_page_id_map.reject do |from_pg_id, to_pg_id|
@@ -212,7 +223,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     return true if pool_type_exercise_ids_maps_values_set.subset?(to_exercise_ids_set)
 
     pool_types = Content::Models::Pool.pool_types.keys.map(&:to_sym)
-    from_pages_by_id = from_ecosystem.pages.index_by(&:id)
+    from_pages_by_id = from_ecosystem.pages.index_by{ |ex| ex.id.to_s }
     to_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
 
     error_messages = []
