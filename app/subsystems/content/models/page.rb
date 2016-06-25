@@ -30,7 +30,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
-  before_validation :cache_fragments, :cache_snap_labs
+  before_validation :cache_fragments_and_snap_labs
 
   delegate :is_intro?, :feature_node, to: :parser
 
@@ -51,24 +51,24 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def fragments
-    return [] if chapter.nil?
+    return [] if fragment_splitter.nil?
 
     @fragments ||= begin
-      cache_fragments
+      cache_fragments_and_snap_labs
       frags = super
       frags.nil? ? nil : frags.map{ |yaml| YAML.load(yaml) }
     end
   end
 
   def snap_labs
-    return [] if chapter.nil?
+    return [] if fragment_splitter.nil?
 
     @snap_labs ||= begin
-      cache_snap_labs
+      cache_fragments_and_snap_labs
       sls = super
       sls.nil? ? nil : sls.map do |snap_lab|
         sl = snap_lab.symbolize_keys
-        sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) }) rescue debugger
+        sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) })
       end
     end
   end
@@ -84,19 +84,15 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def fragment_splitter
+    return if chapter.try(:book).nil?
+
     @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
       chapter.book.reading_processing_instructions
     )
   end
 
-  def cache_fragments
-    return if persisted?
-
-    self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
-  end
-
-  def cache_snap_labs
-    return if persisted?
+  def cache_fragments_and_snap_labs
+    return if fragment_splitter.nil? || read_attribute(:fragments).present?
 
     self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
       {
@@ -105,6 +101,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
         fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab').map(&:to_yaml)
       }
     end
+    self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
   end
 
 end

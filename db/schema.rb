@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160624222846) do
+ActiveRecord::Schema.define(version: 20160625040530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,10 +56,10 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.integer  "content_book_id",                              null: false
     t.integer  "number",                                       null: false
     t.string   "title",                                        null: false
-    t.text     "book_location",                 default: "[]", null: false
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
     t.integer  "content_all_exercises_pool_id"
+    t.text     "book_location",                 default: "[]", null: false
   end
 
   add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
@@ -117,12 +117,12 @@ ActiveRecord::Schema.define(version: 20160624222846) do
   create_table "content_maps", force: :cascade do |t|
     t.integer  "content_from_ecosystem_id",                            null: false
     t.integer  "content_to_ecosystem_id",                              null: false
-    t.text     "exercise_id_to_page_id_map",            default: "{}", null: false
-    t.text     "page_id_to_page_id_map",                default: "{}", null: false
-    t.text     "page_id_to_pool_type_exercise_ids_map", default: "{}", null: false
     t.boolean  "is_valid",                                             null: false
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
+    t.text     "exercise_id_to_page_id_map",            default: "{}", null: false
+    t.text     "page_id_to_page_id_map",                default: "{}", null: false
+    t.text     "page_id_to_pool_type_exercise_ids_map", default: "{}", null: false
     t.text     "validity_error_messages",               default: "[]", null: false
   end
 
@@ -152,12 +152,12 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.string   "title",                                           null: false
     t.string   "uuid",                                            null: false
     t.string   "version",                                         null: false
-    t.text     "book_location",                    default: "[]", null: false
     t.datetime "created_at",                                      null: false
     t.datetime "updated_at",                                      null: false
     t.integer  "content_all_exercises_pool_id"
     t.integer  "content_concept_coach_pool_id"
     t.string   "short_id"
+    t.text     "book_location",                    default: "[]", null: false
     t.text     "fragments",                        default: "[]", null: false
     t.text     "snap_labs",                        default: "[]", null: false
   end
@@ -170,9 +170,9 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.integer  "content_ecosystem_id",                null: false
     t.string   "uuid",                                null: false
     t.integer  "pool_type",                           null: false
-    t.text     "content_exercise_ids", default: "[]", null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.text     "content_exercise_ids", default: "[]", null: false
   end
 
   add_index "content_pools", ["content_ecosystem_id"], name: "index_content_pools_on_content_ecosystem_id", using: :btree
@@ -375,11 +375,11 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.string   "target_gid",                            null: false
     t.string   "target_name",                           null: false
     t.string   "contract_name",                         null: false
-    t.text     "masked_contract_names", default: "[]",  null: false
     t.boolean  "is_proxy_signed",       default: false
     t.boolean  "is_end_user_visible",   default: true
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
+    t.text     "masked_contract_names", default: "[]",  null: false
   end
 
   add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
@@ -572,10 +572,10 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.integer  "entity_course_id",                    null: false
     t.integer  "tasks_assistant_id",                  null: false
     t.string   "tasks_task_plan_type",                null: false
-    t.text     "settings",             default: "{}", null: false
-    t.text     "data",                 default: "{}", null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.text     "settings",             default: "{}", null: false
+    t.text     "data",                 default: "{}", null: false
   end
 
   add_index "tasks_course_assistants", ["entity_course_id", "tasks_task_plan_type"], name: "index_tasks_course_assistants_on_course_id_and_task_plan_type", unique: true, using: :btree
@@ -624,12 +624,12 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.datetime "first_completed_at"
     t.datetime "last_completed_at"
     t.integer  "group_type",           default: 0,    null: false
-    t.text     "related_content",      default: "[]", null: false
-    t.text     "labels",               default: "[]", null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.datetime "deleted_at"
+    t.text     "related_content",      default: "[]", null: false
     t.text     "related_exercise_ids", default: "[]", null: false
+    t.text     "labels",               default: "[]", null: false
   end
 
   add_index "tasks_task_steps", ["deleted_at"], name: "index_tasks_task_steps_on_deleted_at", using: :btree
@@ -688,10 +688,10 @@ ActiveRecord::Schema.define(version: 20160624222846) do
     t.string   "url",                          null: false
     t.text     "content",                      null: false
     t.string   "title"
-    t.text     "book_location", default: "[]", null: false
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
     t.datetime "deleted_at"
+    t.text     "book_location", default: "[]", null: false
   end
 
   add_index "tasks_tasked_readings", ["deleted_at"], name: "index_tasks_tasked_readings_on_deleted_at", using: :btree
