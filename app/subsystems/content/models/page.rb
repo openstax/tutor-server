@@ -51,25 +51,23 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def fragments
+    return @fragments unless @fragments.nil?
     return [] if fragment_splitter.nil?
 
-    @fragments ||= begin
-      cache_fragments_and_snap_labs
-      frags = super
-      frags.nil? ? nil : frags.map{ |yaml| YAML.load(yaml) }
-    end
+    cache_fragments_and_snap_labs
+    frags = super
+    @fragments = frags.nil? ? nil : frags.map{ |yaml| YAML.load(yaml) }
   end
 
   def snap_labs
+    return @snap_labs unless @snap_labs.nil?
     return [] if fragment_splitter.nil?
 
-    @snap_labs ||= begin
-      cache_fragments_and_snap_labs
-      sls = super
-      sls.nil? ? nil : sls.map do |snap_lab|
-        sl = snap_lab.symbolize_keys
-        sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) })
-      end
+    cache_fragments_and_snap_labs
+    sls = super
+    @snap_labs = sls.nil? ? nil : sls.map do |snap_lab|
+      sl = snap_lab.symbolize_keys
+      sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) })
     end
   end
 
