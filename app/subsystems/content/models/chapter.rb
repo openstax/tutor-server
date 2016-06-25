@@ -2,6 +2,8 @@ class Content::Models::Chapter < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Content::Strategies::Direct::Chapter
 
+  json_serialize :book_location, Integer, array: true
+
   belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
 
   sortable_belongs_to :book, on: :number, inverse_of: :chapters

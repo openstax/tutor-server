@@ -4,6 +4,10 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   acts_as_resource
 
+  json_serialize :fragments, OpenStax::Cnx::V1::Fragment, array: true
+  json_serialize :snap_labs, Hash, array: true
+  json_serialize :book_location, Integer, array: true
+
   belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :reading_context_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :homework_core_pool, class_name: 'Content::Models::Pool', dependent: :destroy
@@ -47,6 +51,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def fragments
+    return [] if chapter.nil?
+
     @fragments ||= begin
       cache_fragments
       frags = super
@@ -55,12 +61,14 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def snap_labs
+    return [] if chapter.nil?
+
     @snap_labs ||= begin
       cache_snap_labs
       sls = super
       sls.nil? ? nil : sls.map do |snap_lab|
         sl = snap_lab.symbolize_keys
-        sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) })
+        sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) }) rescue debugger
       end
     end
   end
@@ -82,13 +90,13 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def cache_fragments
-    return unless read_attribute(:fragments).nil?
+    return if persisted?
 
     self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
   end
 
   def cache_snap_labs
-    return unless read_attribute(:snap_labs).nil?
+    return if persisted?
 
     self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
       {

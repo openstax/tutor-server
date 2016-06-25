@@ -19,9 +19,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   has_many :tasking_plans, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
   has_many :tasks, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
 
-  serialize :settings, JSON
-
-  after_initialize :enforce_settings_type
+  json_serialize :settings, Hash
 
   validates :title, presence: true
   validates :assistant, presence: true
@@ -52,10 +50,6 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   protected
-
-  def enforce_settings_type
-    self.settings = settings.to_h unless settings.is_a?(Hash)
-  end
 
   def valid_settings
     schema = assistant.try(:schema)

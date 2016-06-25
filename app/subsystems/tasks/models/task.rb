@@ -11,7 +11,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   STEPLESS_TASK_TYPES = [:external, :event]
 
-  serialize :spy, JSON
+  json_serialize :spy, Hash
 
   belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
 
@@ -35,8 +35,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   validate :due_at_on_or_after_opens_at
 
   after_update :update_counts_if_needed!
-
-  after_initialize :enforce_spy_type
 
   def add_step(step)
     self.task_steps << step
@@ -247,10 +245,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   protected
-
-  def enforce_spy_type
-    self.spy = spy.to_h unless spy.is_a?(Hash)
-  end
 
   def due_at_on_or_after_opens_at
     return if due_at.nil? || opens_at.nil? || due_at >= opens_at

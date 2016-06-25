@@ -1,15 +1,14 @@
 class Content::Models::Map < Tutor::SubSystems::BaseModel
-  serialize :exercise_id_to_page_id_map, JSON
-  serialize :page_id_to_page_id_map, JSON
-  serialize :page_id_to_pool_type_exercise_ids_map, JSON
+  json_serialize :exercise_id_to_page_id_map, Hash
+  json_serialize :page_id_to_page_id_map, Hash
+  json_serialize :page_id_to_pool_type_exercise_ids_map, Hash
+  json_serialize :validity_error_messages, String, array: true
 
   belongs_to :from_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :to_maps
   belongs_to :to_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :from_maps
 
   validates :from_ecosystem, :to_ecosystem, presence: true
   validates :to_ecosystem, uniqueness: { scope: :content_from_ecosystem_id }
-
-  after_initialize :enforce_map_types
 
   before_save :create_exercise_id_to_page_id_map, :create_page_id_to_page_id_map,
               :create_page_id_to_pool_type_exercise_ids_map, :validate_maps
@@ -128,15 +127,6 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   end
 
   protected
-
-  def enforce_map_types
-    self.exercise_id_to_page_id_map = exercise_id_to_page_id_map.to_h \
-      unless exercise_id_to_page_id_map.is_a?(Hash)
-    self.page_id_to_page_id_map = page_id_to_page_id_map.to_h \
-      unless page_id_to_page_id_map.is_a?(Hash)
-    self.page_id_to_pool_type_exercise_ids_map = page_id_to_pool_type_exercise_ids_map.to_h \
-        unless page_id_to_pool_type_exercise_ids_map.is_a?(Hash)
-  end
 
   def mapping_tag_types
     @mapping_tag_types ||= Content::Models::Tag::MAPPING_TAG_TYPES.map do |type|

@@ -9,9 +9,9 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   enum group_type: [:default_group, :core_group, :spaced_practice_group,
                     :personalized_group, :recovery_group]
 
-  serialize :related_content, JSON
-
-  after_initialize :enforce_related_content_type
+  json_serialize :related_content, Hash, array: true
+  json_serialize :related_exercise_ids, Integer, array: true
+  json_serialize :labels, String, array: true
 
   validates :task, presence: true
   validates :tasked, presence: true
@@ -79,13 +79,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   def add_labels(labels)
     self.labels = [self.labels, labels].flatten.compact.uniq
-  end
-
-  protected
-
-  def enforce_related_content_type
-    self.related_content = related_content.to_a.map(&:to_h) \
-      unless related_content.is_a?(Array) && related_content.all?{ |content| content.is_a? Hash }
   end
 
 end
