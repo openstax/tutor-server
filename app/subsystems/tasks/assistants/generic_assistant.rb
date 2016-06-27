@@ -7,8 +7,9 @@ class Tasks::Assistants::GenericAssistant
     @task_plan = task_plan
     @taskees = taskees
     @ecosystems_map = {}
-    @exercise_cache = {}
     @page_cache = {}
+    @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
+    @spaced_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
     reset_used_exercises
   end
 
@@ -37,9 +38,9 @@ class Tasks::Assistants::GenericAssistant
   def get_all_page_exercises_with_tags(page, tags)
     sorted_tags = [tags].flatten.uniq.sort
 
-    @exercise_cache[page.id] ||= {}
-    @exercise_cache[page.id][sorted_tags] ||= ecosystem.exercises_with_tags(sorted_tags,
-                                                                            pages: page)
+    @exercise_cache[page.id][sorted_tags] ||= ecosystem.exercises_with_tags(
+      sorted_tags, pages: page
+    )
   end
 
   def reset_used_exercises
@@ -75,7 +76,8 @@ class Tasks::Assistants::GenericAssistant
     history
   end
 
-  def get_pages(page_ids)
+  def get_pages(page_ids, already_sorted: false)
+    page_ids = [page_ids].flatten.uniq.sort unless already_sorted
     return @page_cache[page_ids] if @page_cache.has_key?(page_ids)
 
     page_models = Content::Models::Page.where(id: page_ids)
@@ -122,17 +124,20 @@ class Tasks::Assistants::GenericAssistant
       end
 
       spaced_ecosystem_id = history.ecosystem_ids[k_ago]
+      sorted_spaced_page_ids = history.core_page_ids[k_ago].uniq.sort
 
-      # Get core pages from the history
-      spaced_page_ids = history.core_page_ids[k_ago]
-      spaced_pages = get_pages(spaced_page_ids)
+      @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids] ||= begin
+        # Get the ecosystems map
+        ecosystems_map = map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
 
-      ecosystems_map = map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
+        # Get core pages from the history
+        spaced_pages = get_pages(sorted_spaced_page_ids, already_sorted: true)
 
-      # Map the pages to exercises in the new ecosystem
-      spaced_exercises = ecosystems_map.map_pages_to_exercises(
-        pages: spaced_pages, pool_type: :reading_dynamic
-      ).values.flatten.uniq
+        # Map the pages to exercises in the new ecosystem
+        ecosystems_map.map_pages_to_exercises(
+          pages: spaced_pages, pool_type: :reading_dynamic
+        ).values.flatten.uniq
+      end
 
       filtered_exercises = FilterExcludedExercises[
         exercises: spaced_exercises, course: course,
@@ -169,7 +174,7 @@ class Tasks::Assistants::GenericAssistant
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
       task_step.group_type = :personalized_group
-      task.task_steps << task_step
+      task.add_step(task_step)
     end
 
     task

@@ -68,7 +68,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     when 4
       [ [2,2], [4,2] ]
     else
-      raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
+      raise "could not determine k-ago map for num_spaced_practice_exercises=#{
+              num_spaced_practice_exercises
+            }"
     end
   end
 
@@ -82,7 +84,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(
       task: task, core_page_ids: @core_page_ids, taskee: taskee, history: history,
-      k_ago_map: k_ago_map(get_num_spaced_practice_exercises)
+      k_ago_map: k_ago_map(num_spaced_practice_exercises)
     )
     add_personalized_exercise_steps!(
       task: task, taskee: taskee,
@@ -101,7 +103,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     task
   end
 
-  def get_num_spaced_practice_exercises
+  def num_spaced_practice_exercises
     exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic']
     num_spaced_practice_exercises = [0, exercises_count_dynamic-1].max
     num_spaced_practice_exercises
