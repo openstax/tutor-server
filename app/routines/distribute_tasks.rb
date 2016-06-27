@@ -52,6 +52,13 @@ class DistributeTasks
     # Exclude students that already had the assignment
     untasked_taskees = taskees - tasked_taskees
 
+    untasked_taskee_periods = CourseMembership::Models::Period
+      .joins(latest_enrollments: {student: :role})
+      .where(latest_enrollments: {student: {role: untasked_taskees}})
+      .select(CourseMembership::Models::Period.arel_table[Arel.star],
+              Entity::Role.arel_table[:id].as(:entity_role_id))
+      .to_a.group_by(:entity_role_id)
+
     assistant = task_plan.assistant
 
     # Call the assistant code to create Tasks, then distribute them
@@ -61,10 +68,11 @@ class DistributeTasks
       if tasks.any?{ |task| !task.stepless? && task.task_steps.empty? }
     tasks.each_with_index do |task, ii|
       role = untasked_taskees[ii]
+      period = untasked_taskee_periods[role]
       tasking = Tasks::Models::Tasking.new(
         task: task,
         role: role,
-        period: role.student.try(:period)
+        period: period
       )
       task.taskings << tasking
       task.time_zone = time_zones[ii]
