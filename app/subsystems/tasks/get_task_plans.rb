@@ -7,8 +7,15 @@ class Tasks::GetTaskPlans
 
   protected
 
-  def exec(owner:, include_trouble_flags: false)
-    outputs[:plans] = Tasks::Models::TaskPlan.where(owner: owner)
+  def exec(owner:, start_at_ntz: nil, end_at_ntz: nil, include_trouble_flags: false)
+    query = Tasks::Models::TaskPlan.where(owner: owner).joins(:tasking_plans)
+                                                       .preload(:tasking_plans)
+                                                       .uniq
+    query = query.where{(tasking_plans.opens_at_ntz > start_at_ntz) |
+                        (tasking_plans.due_at_ntz > start_at_ntz)} unless start_at_ntz.nil?
+    query = query.where{(tasking_plans.opens_at_ntz < end_at_ntz) |
+                        (tasking_plans.due_at_ntz < end_at_ntz)} unless end_at_ntz.nil?
+    outputs[:plans] = query
     return unless include_trouble_flags
 
     outputs[:trouble_plan_ids] = outputs[:plans]

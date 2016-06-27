@@ -4,10 +4,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   acts_as_paranoid
 
-  UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description',
-                                     'published_at', 'is_feedback_immediate']
+  UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description', 'first_published_at',
+                                     'last_published_at', 'is_feedback_immediate']
 
-  attr_writer :is_publish_requested
+  attr_accessor :is_publish_requested
 
   # Allow use of 'type' column without STI
   self.inheritance_column = nil
@@ -36,12 +36,17 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     tasks.any?(&:past_open?)
   end
 
-  def is_published?
-    published_at.present?
+  def is_draft?
+    !is_publishing? && !is_published?
   end
 
-  def is_draft?
-    !@is_publish_requested && !is_published?
+  def is_publishing?
+    publish_last_requested_at.present? &&
+      (last_published_at.blank? || publish_last_requested_at > last_published_at)
+  end
+
+  def is_published?
+    first_published_at.present? || last_published_at.present?
   end
 
   protected
@@ -94,7 +99,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def not_past_due_when_publishing
-    return if is_draft? || is_published? || tasking_plans.none?(&:past_due?)
+    return if !is_publish_requested || tasking_plans.none?(&:past_due?)
     errors.add(:due_at, 'cannot be in the past when publishing')
     false
   end

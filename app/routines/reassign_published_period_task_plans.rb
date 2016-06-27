@@ -15,7 +15,7 @@ class ReassignPublishedPeriodTaskPlans
       .preload(:tasking_plans)
       .where(tasking_plans: { target_id: period.id,
                               target_type: 'CourseMembership::Models::Period'})
-      .where{ published_at != nil }
+      .where{ first_published_at != nil }
 
     published_task_plans.each_with_index do |tp, ii|
       status.set_progress(ii, published_task_plans.size)

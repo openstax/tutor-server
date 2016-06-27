@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
-  let!(:representation) { Api::V1::TaskPlanWithStatsRepresenter.new(task_plan).as_json }
+  let(:representation) { described_class.new(task_plan).as_json }
 
   it "represents a task plan's stats" do
     expect(representation).to include(
@@ -50,6 +50,23 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
         }
       ]
     )
+  end
+
+  context "shareable_url" do
+    it "can be read" do
+      FactoryGirl.create :short_code_short_code, code: 'short',
+                         uri: task_plan.to_global_id.to_s
+      allow(task_plan).to receive(:title).and_return('Read ch 4')
+      expect(representation).to include("shareable_url" => '/@/short/read-ch-4')
+    end
+
+    it "cannot be written (attempts are silently ignored)" do
+      expect do
+        described_class.new(task_plan).from_json({
+          "shareable_url" => 'http://www.example.org'
+        }.to_json)
+      end.not_to change{ described_class.new(task_plan).as_json }
+    end
   end
 
 end

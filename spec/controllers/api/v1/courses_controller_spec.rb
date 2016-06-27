@@ -489,152 +489,215 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course,
                                                        published_at: time_zone.now - 1.week)}
 
-    it 'raises SecurityTransgression if user is anonymous or not in course' do
-      expect {
-        api_get :dashboard, nil, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
+    context 'anonymous' do
+      it 'raises SecurityTransgression if user is anonymous or not in course' do
+        expect {
+          api_get :dashboard, nil, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
 
-      expect {
-        api_get :dashboard, user_1_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
+        expect {
+          api_get :dashboard, user_1_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
     end
 
-    it 'returns an error if the course is a CC course' do
-      course.profile.update_attribute(:is_concept_coach, true)
-      api_get :dashboard, student_token, parameters: {id: course.id}
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
-    end
+    context 'student' do
+      it 'returns an error if the course is a CC course' do
+        course.profile.update_attribute(:is_concept_coach, true)
+        api_get :dashboard, student_token, parameters: {id: course.id}
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
+      end
 
-    it "works for a student without a role specified" do
-      Demo::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
-      Demo::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
+      it "works without a role specified" do
+        Demo::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
+        Demo::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
 
-      Demo::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
-      Demo::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
-      Demo::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
+        Demo::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
+        Demo::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
+        Demo::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
 
-      Demo::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
-      Demo::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
-      Demo::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
+        Demo::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
+        Demo::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
+        Demo::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
 
-      api_get :dashboard, student_token, parameters: {id: course.id}
+        api_get :dashboard, student_token, parameters: {id: course.id}
 
-      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
 
-        "tasks" => a_collection_including(
-          a_hash_including(
-            "id" => reading_task.id.to_s,
-            "title" => reading_task.title,
-            "due_at" => be_kind_of(String),
-            "type" => "reading",
-            "complete" => false,
-            "exercise_count" => 2,
-            "complete_exercise_count" => 0
+          "tasks" => a_collection_including(
+            a_hash_including(
+              "id" => reading_task.id.to_s,
+              "title" => reading_task.title,
+              "opens_at" => be_kind_of(String),
+              "due_at" => be_kind_of(String),
+              "type" => "reading",
+              "complete" => false,
+              "exercise_count" => 2,
+              "complete_exercise_count" => 0
+            ),
+            a_hash_including(
+              "id" => hw1_task.id.to_s,
+              "title" => hw1_task.title,
+              "opens_at" => be_kind_of(String),
+              "due_at" => be_kind_of(String),
+              "type" => "homework",
+              "complete" => false,
+              "exercise_count" => 3,
+              "complete_exercise_count" => 2
+            ),
+            a_hash_including(
+              "id" => hw2_task.id.to_s,
+              "title" => hw2_task.title,
+              "opens_at" => be_kind_of(String),
+              "due_at" => be_kind_of(String),
+              "type" => "homework",
+              "complete" => true,
+              "exercise_count" => 3,
+              "complete_exercise_count" => 3,
+              "correct_exercise_count" => 2
+            ),
+            a_hash_including(
+              "id" => hw3_task.id.to_s,
+              "title" => hw3_task.title,
+              "opens_at" => be_kind_of(String),
+              "due_at" => be_kind_of(String),
+              "type" => "homework",
+              "complete" => true,
+              "exercise_count" => 3,
+              "complete_exercise_count" => 3,
+            ),
           ),
-          a_hash_including(
-            "id" => hw1_task.id.to_s,
-            "title" => hw1_task.title,
-            "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
-            "type" => "homework",
-            "complete" => false,
-            "exercise_count" => 3,
-            "complete_exercise_count" => 2
-          ),
-          a_hash_including(
-            "id" => hw2_task.id.to_s,
-            "title" => hw2_task.title,
-            "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
-            "type" => "homework",
-            "complete" => true,
-            "exercise_count" => 3,
-            "complete_exercise_count" => 3,
-            "correct_exercise_count" => 2
-          ),
-          a_hash_including(
-            "id" => hw3_task.id.to_s,
-            "title" => hw3_task.title,
-            "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
-            "type" => "homework",
-            "complete" => true,
-            "exercise_count" => 3,
-            "complete_exercise_count" => 3,
-          ),
-        ),
-        "role" => {
-          "id" => student_role.id.to_s,
-          "type" => "student"
-        },
-        "course" => {
-          "name" => "Physics 101",
-          "teachers" => [
-            { 'id' => teacher_role.teacher.id.to_s,
-              'role_id' => teacher_role.id.to_s,
-              'first_name' => 'Bob',
-              'last_name' => 'Newhart' }
-          ]
-        }
-      )
-    end
-
-    it "works for a teacher without a role specified" do
-      api_get :dashboard, teacher_token, parameters: {id: course.id}
-
-      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
-        "role" => {
-          "id" => teacher_role.id.to_s,
-          "type" => "teacher"
-        },
-        "course" => {
-          "name" => "Physics 101",
-          "teachers" => [
-            { 'id' => teacher_role.teacher.id.to_s,
-              'role_id' => teacher_role.id.to_s,
-              'first_name' => 'Bob',
-              'last_name' => 'Newhart' }
-          ]
-        },
-        "tasks" => [],
-        "plans" => a_collection_including(
-          a_hash_including(
-            "id" => plan.id.to_s,
-            "type" => "reading",
-            "published_at" => be_kind_of(String),
-            "tasking_plans" => [
-              a_hash_including(
-              { "target_id" => course.id.to_s,
-                "target_type" => 'course',
-                "opens_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
-                "due_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
-              })
+          "role" => {
+            "id" => student_role.id.to_s,
+            "type" => "student"
+          },
+          "course" => {
+            "name" => "Physics 101",
+            "teachers" => [
+              { 'id' => teacher_role.teacher.id.to_s,
+                'role_id' => teacher_role.id.to_s,
+                'first_name' => 'Bob',
+                'last_name' => 'Newhart' }
             ]
+          }
+        )
+      end
+
+      it "allows the start_at and end_at dates to be specified" do
+        api_get :dashboard, student_token, parameters: {
+          id: course.id, start_at: time_zone.now + 1.day, end_at: time_zone.now + 1.week
+        }
+
+        expect(response.body_as_hash[:tasks].size).to eq 1
+      end
+
+      it "allows the start_at date to be specified alone" do
+        api_get :dashboard, student_token, parameters: {
+          id: course.id, start_at: time_zone.now + 1.day
+        }
+
+        expect(response.body_as_hash[:tasks].size).to eq 1
+      end
+
+      it "allows the end_at date to be specified alone" do
+        api_get :dashboard, student_token, parameters: {
+          id: course.id, end_at: time_zone.now - 2.weeks
+        }
+
+        expect(response.body_as_hash[:tasks]).to be_empty
+      end
+    end
+
+    context 'teacher' do
+      it 'returns an error if the course is a CC course' do
+        course.profile.update_attribute(:is_concept_coach, true)
+        api_get :dashboard, teacher_token, parameters: {id: course.id}
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
+      end
+
+      it "works without a role specified" do
+        api_get :dashboard, teacher_token, parameters: {id: course.id}
+
+        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+          "role" => {
+            "id" => teacher_role.id.to_s,
+            "type" => "teacher"
+          },
+          "course" => {
+            "name" => "Physics 101",
+            "teachers" => [
+              { 'id' => teacher_role.teacher.id.to_s,
+                'role_id' => teacher_role.id.to_s,
+                'first_name' => 'Bob',
+                'last_name' => 'Newhart' }
+            ]
+          },
+          "tasks" => [],
+          "plans" => a_collection_including(
+            a_hash_including(
+              "id" => plan.id.to_s,
+              "type" => "reading",
+              "first_published_at" => be_kind_of(String),
+              "last_published_at" => be_kind_of(String),
+              "tasking_plans" => [
+                a_hash_including(
+                { "target_id" => course.id.to_s,
+                  "target_type" => 'course',
+                  "opens_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
+                  "due_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
+                })
+              ]
+            )
           )
         )
-      )
-    end
+      end
 
-    it "works for a teacher with student role specified" do
-      api_get :dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
+      it "works with a student role specified" do
+        api_get :dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
 
-      response_body = HashWithIndifferentAccess[response.body_as_hash]
-      expect(response_body['role']).to eq({
-        'id' => student_role.id.to_s,
-        'type' => 'student'
-      })
-      expect(response_body['course']).to eq({
-        'name' => 'Physics 101',
-        'teachers' => [
-          { 'id' => teacher_role.teacher.id.to_s,
-            'role_id' => teacher_role.id.to_s,
-            'first_name' => 'Bob',
-            'last_name' => 'Newhart' }
-        ]
-      })
-      expect(response_body['tasks']).not_to be_empty
-      expect(response_body['plans']).to be_nil
+        response_body = HashWithIndifferentAccess[response.body_as_hash]
+        expect(response_body['role']).to eq({
+          'id' => student_role.id.to_s,
+          'type' => 'student'
+        })
+        expect(response_body['course']).to eq({
+          'name' => 'Physics 101',
+          'teachers' => [
+            { 'id' => teacher_role.teacher.id.to_s,
+              'role_id' => teacher_role.id.to_s,
+              'first_name' => 'Bob',
+              'last_name' => 'Newhart' }
+          ]
+        })
+        expect(response_body['tasks']).not_to be_empty
+        expect(response_body['plans']).to be_nil
+      end
+
+      it "allows the start_at and end_at dates to be specified" do
+        api_get :dashboard, teacher_token, parameters: {
+          id: course.id, start_at: time_zone.now - 2.hours, end_at: time_zone.now - 1.hour
+        }
+
+        expect(response.body_as_hash[:plans]).to be_empty
+      end
+
+      it "allows the start_at date to be specified alone" do
+        api_get :dashboard, teacher_token, parameters: {
+          id: course.id, start_at: time_zone.now - 2.hours
+        }
+
+        expect(response.body_as_hash[:plans].size).to eq 1
+      end
+
+      it "allows the end_at date to be specified alone" do
+        api_get :dashboard, teacher_token, parameters: {
+          id: course.id, end_at: time_zone.now - 1.hours
+        }
+
+        expect(response.body_as_hash[:plans]).to be_empty
+      end
     end
   end
 
@@ -735,232 +798,245 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       DatabaseCleaner.clean
     end
 
-    it 'raises SecurityTransgression if user is anonymous or not in course' do
-      expect {
-        api_get :cc_dashboard, nil, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
+    context 'anonymous' do
+      it 'raises SecurityTransgression if user is anonymous or not in course' do
+        expect {
+          api_get :cc_dashboard, nil, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
 
-      expect {
-        api_get :cc_dashboard, user_1_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
+        expect {
+          api_get :cc_dashboard, user_1_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
     end
 
-    it 'returns an error if the course is a non-CC course' do
-      course.profile.update_attribute(:is_concept_coach, false)
-      api_get :cc_dashboard, student_token, parameters: {id: course.id}
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.body_as_hash[:errors].first[:code]).to eq 'non_cc_course'
-    end
+    context 'student' do
+      it 'returns an error if the course is a non-CC course' do
+        course.profile.update_attribute(:is_concept_coach, false)
+        api_get :cc_dashboard, student_token, parameters: {id: course.id}
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'non_cc_course'
+      end
 
-    it "works for a student without a role specified" do
-      api_get :cc_dashboard, student_token, parameters: {id: course.id}
+      it "works without a role specified" do
+        api_get :cc_dashboard, student_token, parameters: {id: course.id}
 
-      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
 
-        "tasks" => a_collection_including(
-          a_hash_including(
-            "id" => @task_1.id.to_s,
-            "title" => @task_1.title,
-            "last_worked_at" => be_kind_of(String),
-            "type" => "concept_coach",
-            "complete" => true
+          "tasks" => a_collection_including(
+            a_hash_including(
+              "id" => @task_1.id.to_s,
+              "title" => @task_1.title,
+              "last_worked_at" => be_kind_of(String),
+              "type" => "concept_coach",
+              "complete" => true
+            ),
+            a_hash_including(
+              "id" => @task_2.id.to_s,
+              "title" => @task_2.title,
+              "last_worked_at" => be_kind_of(String),
+              "type" => "concept_coach",
+              "complete" => true
+            ),
+            a_hash_including(
+              "id" => @task_3.id.to_s,
+              "title" => @task_3.title,
+              "last_worked_at" => be_kind_of(String),
+              "type" => "concept_coach",
+              "complete" => true
+            )
           ),
-          a_hash_including(
-            "id" => @task_2.id.to_s,
-            "title" => @task_2.title,
-            "last_worked_at" => be_kind_of(String),
-            "type" => "concept_coach",
-            "complete" => true
-          ),
-          a_hash_including(
-            "id" => @task_3.id.to_s,
-            "title" => @task_3.title,
-            "last_worked_at" => be_kind_of(String),
-            "type" => "concept_coach",
-            "complete" => true
-          )
-        ),
-        "role" => {
-          "id" => student_role.id.to_s,
-          "type" => "student"
-        },
-        "course" => {
-          "name" => "Biology 101",
-          "teachers" => [
-            { 'id' => teacher_role.teacher.id.to_s,
-              'role_id' => teacher_role.id.to_s,
-              'first_name' => 'Bob',
-              'last_name' => 'Newhart' }
-          ]
-        },
-        "chapters" => [
-          {
-            "id" => @chapter_2.id.to_s,
-            "title" => @chapter_2.title,
-            "chapter_section" => [2],
-            "pages" => [
-              {
-                "id" => @page_3.id.to_s,
-                "title" => @page_3.title,
-                "uuid" => @page_3.uuid,
-                "version" => @page_3.version,
-                "chapter_section" => [2, 1],
-                "last_worked_at" => be_kind_of(String),
-                "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                  {
-                    "id" => a_kind_of(String),
-                    "is_completed" => true,
-                    "is_correct" => true
-                  }
-                end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-                        .select{ |k_ago, ex_count| k_ago != :random && k_ago <= 2 }
-                        .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
-                  {
-                    "id" => a_kind_of(String),
-                    "is_completed" => true,
-                    "is_correct" => false
-                  }
-                end
-              }
+          "role" => {
+            "id" => student_role.id.to_s,
+            "type" => "student"
+          },
+          "course" => {
+            "name" => "Biology 101",
+            "teachers" => [
+              { 'id' => teacher_role.teacher.id.to_s,
+                'role_id' => teacher_role.id.to_s,
+                'first_name' => 'Bob',
+                'last_name' => 'Newhart' }
             ]
           },
-          {
-            "id" => @chapter_1.id.to_s,
-            "title" => @chapter_1.title,
-            "chapter_section" => [1],
-            "pages" => [
-              {
-                "id" => @page_2.id.to_s,
-                "title" => @page_2.title,
-                "uuid" => @page_2.uuid,
-                "version" => @page_2.version,
-                "chapter_section" => [1, 2],
-                "last_worked_at" => be_kind_of(String),
-                "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                  {
-                    "id" => a_kind_of(String),
-                    "is_completed" => true,
-                    "is_correct" => false
-                  }
-                end
-              },
-              {
-                "id" => @page_1.id.to_s,
-                "title" => @page_1.title,
-                "uuid" => @page_1.uuid,
-                "version" => @page_1.version,
-                "chapter_section" => [1, 1],
-                "last_worked_at" => be_kind_of(String),
-                "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                  {
-                    "id" => a_kind_of(String),
-                    "is_completed" => true,
-                    "is_correct" => true
-                  }
-                end
-              }
-            ]
-          }
-        ]
-      )
-    end
-
-    it "works for a teacher without a role specified" do
-      api_get :cc_dashboard, teacher_token, parameters: {id: course.id}
-
-      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
-        "role" => {
-          "id" => teacher_role.id.to_s,
-          "type" => "teacher"
-        },
-        "course" => {
-          "name" => "Biology 101",
-          "teachers" => [
-            { 'id' => teacher_role.teacher.id.to_s,
-              'role_id' => teacher_role.id.to_s,
-              'first_name' => 'Bob',
-              'last_name' => 'Newhart' }
-          ],
-          "periods" => [
+          "chapters" => [
             {
-              "id" => period.id.to_s,
-              "name" => period.name,
-              "chapters" => [
+              "id" => @chapter_2.id.to_s,
+              "title" => @chapter_2.title,
+              "chapter_section" => [2],
+              "pages" => [
                 {
-                  "id" => @chapter_2.id.to_s,
-                  "title" => @chapter_2.title,
-                  "chapter_section" => [2],
-                  "pages" => [
+                  "id" => @page_3.id.to_s,
+                  "title" => @page_3.title,
+                  "uuid" => @page_3.uuid,
+                  "version" => @page_3.version,
+                  "chapter_section" => [2, 1],
+                  "last_worked_at" => be_kind_of(String),
+                  "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                     {
-                      "id" => @page_3.id.to_s,
-                      "title" => @page_3.title,
-                      "uuid" => @page_3.uuid,
-                      "version" => @page_3.version,
-                      "chapter_section" => [2, 1],
-                      "completed" => 1,
-                      "in_progress" => 0,
-                      "not_started" => 1,
-                      "original_performance" => 1.0
+                      "id" => a_kind_of(String),
+                      "is_completed" => true,
+                      "is_correct" => true
                     }
-                  ]
+                  end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                          .select{ |k_ago, ex_count| k_ago != :random && k_ago <= 2 }
+                          .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
+                    {
+                      "id" => a_kind_of(String),
+                      "is_completed" => true,
+                      "is_correct" => false
+                    }
+                  end
+                }
+              ]
+            },
+            {
+              "id" => @chapter_1.id.to_s,
+              "title" => @chapter_1.title,
+              "chapter_section" => [1],
+              "pages" => [
+                {
+                  "id" => @page_2.id.to_s,
+                  "title" => @page_2.title,
+                  "uuid" => @page_2.uuid,
+                  "version" => @page_2.version,
+                  "chapter_section" => [1, 2],
+                  "last_worked_at" => be_kind_of(String),
+                  "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                    {
+                      "id" => a_kind_of(String),
+                      "is_completed" => true,
+                      "is_correct" => false
+                    }
+                  end
                 },
                 {
-                  "id" => @chapter_1.id.to_s,
-                  "title" => @chapter_1.title,
-                  "chapter_section" => [1],
-                  "pages" => [
+                  "id" => @page_1.id.to_s,
+                  "title" => @page_1.title,
+                  "uuid" => @page_1.uuid,
+                  "version" => @page_1.version,
+                  "chapter_section" => [1, 1],
+                  "last_worked_at" => be_kind_of(String),
+                  "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                     {
-                      "id" => @page_2.id.to_s,
-                      "title" => @page_2.title,
-                      "uuid" => @page_2.uuid,
-                      "version" => @page_2.version,
-                      "chapter_section" => [1, 2],
-                      "completed" => 1,
-                      "in_progress" => 0,
-                      "not_started" => 1,
-                      "original_performance" => 0.0
-                    },
-                    {
-                      "id" => @page_1.id.to_s,
-                      "title" => @page_1.title,
-                      "uuid" => @page_1.uuid,
-                      "version" => @page_1.version,
-                      "chapter_section" => [1, 1],
-                      "completed" => 1,
-                      "in_progress" => 1,
-                      "not_started" => 0,
-                      "original_performance" => 0.8,
-                      "spaced_practice_performance" => 0.0
+                      "id" => a_kind_of(String),
+                      "is_completed" => true,
+                      "is_correct" => true
                     }
-                  ]
+                  end
                 }
               ]
             }
           ]
-        },
-        "tasks" => []
-      )
+        )
+      end
     end
 
-    it "works for a teacher with student role specified" do
-      api_get :cc_dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
+    context 'teacher' do
+      it 'returns an error if the course is a non-CC course' do
+        course.profile.update_attribute(:is_concept_coach, false)
+        api_get :cc_dashboard, teacher_token, parameters: {id: course.id}
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'non_cc_course'
+      end
 
-      response_body = HashWithIndifferentAccess[response.body_as_hash]
-      expect(response_body['role']).to eq({
-        'id' => student_role.id.to_s,
-        'type' => 'student'
-      })
-      expect(response_body['course']).to eq({
-        'name' => 'Biology 101',
-        'teachers' => [
-          { 'id' => teacher_role.teacher.id.to_s,
-            'role_id' => teacher_role.id.to_s,
-            'first_name' => 'Bob',
-            'last_name' => 'Newhart' }
-        ]
-      })
-      expect(response_body['chapters']).not_to be_empty
-      expect(response_body['tasks']).not_to be_empty
+      it "works without a role specified" do
+        api_get :cc_dashboard, teacher_token, parameters: {id: course.id}
+
+        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+          "role" => {
+            "id" => teacher_role.id.to_s,
+            "type" => "teacher"
+          },
+          "course" => {
+            "name" => "Biology 101",
+            "teachers" => [
+              { 'id' => teacher_role.teacher.id.to_s,
+                'role_id' => teacher_role.id.to_s,
+                'first_name' => 'Bob',
+                'last_name' => 'Newhart' }
+            ],
+            "periods" => [
+              {
+                "id" => period.id.to_s,
+                "name" => period.name,
+                "chapters" => [
+                  {
+                    "id" => @chapter_2.id.to_s,
+                    "title" => @chapter_2.title,
+                    "chapter_section" => [2],
+                    "pages" => [
+                      {
+                        "id" => @page_3.id.to_s,
+                        "title" => @page_3.title,
+                        "uuid" => @page_3.uuid,
+                        "version" => @page_3.version,
+                        "chapter_section" => [2, 1],
+                        "completed" => 1,
+                        "in_progress" => 0,
+                        "not_started" => 1,
+                        "original_performance" => 1.0
+                      }
+                    ]
+                  },
+                  {
+                    "id" => @chapter_1.id.to_s,
+                    "title" => @chapter_1.title,
+                    "chapter_section" => [1],
+                    "pages" => [
+                      {
+                        "id" => @page_2.id.to_s,
+                        "title" => @page_2.title,
+                        "uuid" => @page_2.uuid,
+                        "version" => @page_2.version,
+                        "chapter_section" => [1, 2],
+                        "completed" => 1,
+                        "in_progress" => 0,
+                        "not_started" => 1,
+                        "original_performance" => 0.0
+                      },
+                      {
+                        "id" => @page_1.id.to_s,
+                        "title" => @page_1.title,
+                        "uuid" => @page_1.uuid,
+                        "version" => @page_1.version,
+                        "chapter_section" => [1, 1],
+                        "completed" => 1,
+                        "in_progress" => 1,
+                        "not_started" => 0,
+                        "original_performance" => 0.8,
+                        "spaced_practice_performance" => 0.0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "tasks" => []
+        )
+      end
+
+      it "works with a student role specified" do
+        api_get :cc_dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
+
+        response_body = HashWithIndifferentAccess[response.body_as_hash]
+        expect(response_body['role']).to eq({
+          'id' => student_role.id.to_s,
+          'type' => 'student'
+        })
+        expect(response_body['course']).to eq({
+          'name' => 'Biology 101',
+          'teachers' => [
+            { 'id' => teacher_role.teacher.id.to_s,
+              'role_id' => teacher_role.id.to_s,
+              'first_name' => 'Bob',
+              'last_name' => 'Newhart' }
+          ]
+        })
+        expect(response_body['chapters']).not_to be_empty
+        expect(response_body['tasks']).not_to be_empty
+      end
     end
   end
 

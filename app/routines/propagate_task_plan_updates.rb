@@ -18,7 +18,6 @@ class PropagateTaskPlanUpdates
   end
 
   def exec(task_plan:)
-
     # For now we only handle tasking_plans that point to periods
     task_plan.tasking_plans.each do |tasking_plan|
       period = tasking_plan.target

@@ -30,5 +30,11 @@ module Api::V1
                readable: true,
                writable: false
 
+    property :shareable_url,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { try(:shareable_url) || ShortCode::UrlFor[self, suffix: title] }
+
   end
 end

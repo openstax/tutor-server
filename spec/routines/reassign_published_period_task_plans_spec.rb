@@ -4,39 +4,47 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   let!(:course)    { FactoryGirl.create :entity_course }
   let!(:period)    { CreatePeriod[course: course] }
-  let!(:user)      { user = FactoryGirl.create(:user)
-                     AddUserAsPeriodStudent.call(user: user, period: period)
-                     user }
-  let!(:new_user)      { user = FactoryGirl.create(:user)
-                         AddUserAsPeriodStudent.call(user: user, period: period)
-                         user }
-  let!(:task_plan_1) {
-    task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
-    task_plan.tasking_plans.first.target = period.to_model
-    task_plan.save!
-    task_plan
-  }
-  let!(:task_plan_2) {
-    task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
-    task_plan.tasking_plans.first.target = period.to_model
-    task_plan.save!
-    task_plan
-  }
+  let!(:user)      do
+    FactoryGirl.create(:user).tap do |user|
+      AddUserAsPeriodStudent.call(user: user, period: period)
+    end
+  end
+  let!(:new_user)    do
+    FactoryGirl.create(:user).tap do |user|
+      AddUserAsPeriodStudent.call(user: user, period: period)
+    end
+  end
+  let!(:task_plan_1) do
+    FactoryGirl.build(:tasks_task_plan, owner: course).tap do |task_plan|
+      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.save!
+    end
+  end
+  let!(:task_plan_2) do
+    FactoryGirl.build(:tasks_task_plan, owner: course).tap do |task_plan|
+      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.save!
+    end
+  end
 
-  before(:each) {
+  before(:each) do
+    # Publish task_plan_1
     DistributeTasks.call(task_plan_1)
-    # We are pretending this user is new to the period, so hard-delete their tasks
+
+    # We are pretending new_user is new to the period, so hard-delete their tasks
     new_user.to_model.roles.each do |role|
       role.taskings.each{ |tasking| tasking.task.really_destroy! }
     end
-  }
+
+    task_plan_1.tasks.reset
+  end
 
   context 'unpublished task_plan' do
     it 'does not do anything' do
       result = nil
-      expect{
+      expect do
         result = ReassignPublishedPeriodTaskPlans.call(period: period.to_model)
-      }.not_to change{task_plan_2.published_at}
+      end.not_to change{task_plan_2.last_published_at}
       expect(result.errors).to be_empty
       expect(task_plan_2.tasks.size).to eq 0
     end
@@ -47,9 +55,9 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       expect(task_plan_1.tasks.size).to eq 1
       old_task = task_plan_1.tasks.first
       result = nil
-      expect{
+      expect do
         result = ReassignPublishedPeriodTaskPlans.call(period: period.to_model)
-      }.not_to change{task_plan_1.published_at}
+      end.not_to change{task_plan_1.last_published_at}
       expect(result.errors).to be_empty
       expect(task_plan_1.tasks.size).to eq 2
       expect(task_plan_1.tasks).to include old_task

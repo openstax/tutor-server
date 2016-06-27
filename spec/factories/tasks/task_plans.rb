@@ -7,6 +7,7 @@ FactoryGirl.define do
       due_at    { opens_at + duration }
       num_tasking_plans 1
       assistant_code_class_name 'DummyAssistant'
+      published_at nil
     end
 
     association :owner, factory: :entity_course
@@ -15,6 +16,8 @@ FactoryGirl.define do
     settings { {}.to_json }
     type 'reading'
     is_feedback_immediate { type != 'homework' }
+    first_published_at { published_at }
+    last_published_at  { published_at }
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }
