@@ -16,39 +16,27 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
   end
 
   def build_tasks
-    students = @taskees.map(&:student).compact
+    role_ids = taskees.map(&:id)
+    taskee_students = CourseMembership::Models::Student.where(entity_role_id: role_ids)
+                                                       .index_by(&:entity_role_id)
 
-    raise StandardError, 'External assignment taskees must all be students'\
-      if students.length != @taskees.length
+    taskees.map do |taskee|
+      student = taskee_students[taskee.id]
+      raise StandardError, 'External assignment taskees must all be students' if student.nil?
 
-    @taskees.map.with_index do |taskee, i|
-      build_external_task(task_plan: @task_plan,
-                          taskee: taskee,
-                          student: students[i])
+      build_external_task(taskee: taskee, student: student)
     end
   end
 
   protected
 
-  def build_external_task(task_plan:, taskee:, student:)
-    task = build_task(task_plan: task_plan)
+  def build_external_task(taskee:, student:)
+    task = build_task(type: :external, default_title: 'External Assignment')
     step = Tasks::Models::TaskStep.new(task: task)
     tasked_external_url(task_step: step, taskee: taskee, student: student,
                         url: task_plan.settings['external_url'])
     task.add_step(step)
     task
-  end
-
-  def build_task(task_plan:)
-    title = task_plan.title || 'External Assignment'
-    description = task_plan.description
-
-    Tasks::BuildTask[
-      task_plan: task_plan,
-      task_type: :external,
-      title: title,
-      description: description
-    ]
   end
 
   def tasked_external_url(task_step:, taskee:, student:, url:)

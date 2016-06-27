@@ -23,8 +23,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   def initialize(task_plan:, taskees:)
     super
 
-    @pages = collect_pages
-    @ecosystems_map = {}
+    @pages = ecosystem.pages_by_ids(task_plan.settings['page_ids'])
   end
 
   def build_tasks
@@ -36,52 +35,44 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     histories = GetHistory[roles: taskees, type: :reading]
 
     taskees.map do |taskee|
-      build_reading_task(pages: @pages, taskee: taskee,
-                         history: histories[taskee], skip_dynamic: skip_dynamic)
+      build_reading_task(
+        pages: @pages, taskee: taskee, history: histories[taskee], skip_dynamic: skip_dynamic
+      )
     end
   end
 
   protected
 
-  def self.k_ago_map
+  def k_ago_map
     ## Entries in the list have the form:
     ##   [from-this-many-events-ago, choose-this-many-exercises]
     [ [2,1], [4,1] ]
   end
 
-  def self.num_personalized_exercises
+  def num_personalized_exercises
     1
   end
 
-  def collect_pages
-    ecosystem.pages_by_ids(task_plan.settings['page_ids'])
-  end
-
   def build_reading_task(pages:, taskee:, history:, skip_dynamic:)
-    task = build_task
+    task = build_task(type: :reading, default_title: 'Reading')
 
     reset_used_exercises
 
     add_core_steps!(task: task, pages: pages)
 
     unless skip_dynamic
-      add_spaced_practice_exercise_steps!(task: task, taskee: taskee, history: history)
-      add_personalized_exercise_steps!(task: task, taskee: taskee)
+      add_spaced_practice_exercise_steps!(
+        task: task, core_page_ids: @pages.map(&:id), taskee: taskee,
+        history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
+      )
+      add_personalized_exercise_steps!(
+        task: task, taskee: taskee,
+        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized,
+        num_personalized_exercises: num_personalized_exercises
+      )
     end
 
     task
-  end
-
-  def build_task
-    title    = task_plan.title || 'iReading'
-    description = task_plan.description
-
-    task = Tasks::BuildTask[
-      task_plan: task_plan,
-      task_type: :reading,
-      title:     title,
-      description: description
-    ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
   end
 
   def add_core_steps!(task:, pages:)
@@ -91,85 +82,6 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       related_content = page.related_content(title: page_title)
       task_fragments(task: task, fragments: page.fragments, page_title: page_title,
                      page: page, related_content: related_content)
-    end
-
-    task
-  end
-
-  def assign_spaced_practice_exercise(task:, exercise:)
-    TaskExercise.call(task: task, exercise: exercise) do |step|
-      step.group_type = :spaced_practice_group
-      step.add_related_content(exercise.page.related_content)
-    end
-  end
-
-  def add_spaced_practice_exercise_steps!(task:, taskee:, history:)
-    history = add_current_task_to_individual_history(
-      task: task, core_page_ids: @pages.map(&:id), history: history
-    )
-
-    core_exercise_numbers = history.exercise_numbers.first
-
-    course = task_plan.owner
-
-    spaced_practice_status = []
-
-    self.class.k_ago_map.each do |k_ago, num_requested|
-      # Not enough history
-      if k_ago >= history.total_count
-        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
-        next
-      end
-
-      spaced_ecosystem_id = history.ecosystem_ids[k_ago]
-
-      # Get core pages from the history
-      spaced_page_ids = history.core_page_ids[k_ago]
-      spaced_pages = get_pages(spaced_page_ids)
-
-      ecosystems_map = map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
-
-      # Map the pages to exercises in the new ecosystem
-      spaced_exercises = ecosystems_map.map_pages_to_exercises(
-        pages: spaced_pages, pool_type: :reading_dynamic
-      ).values.flatten.uniq
-
-      filtered_exercises = FilterExcludedExercises[
-        exercises: spaced_exercises, course: course,
-        additional_excluded_numbers: core_exercise_numbers
-      ]
-
-      chosen_exercises = ChooseExercises[
-        exercises: filtered_exercises, count: num_requested, history: history
-      ]
-
-      # Set related_content and add the exercises to the task
-      chosen_exercises.each do |chosen_exercise|
-        assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
-      end
-
-      spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
-        if chosen_exercises.size < num_requested
-    end
-
-    spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
-
-    AddSpyInfo[to: task, from: { spaced_practice: spaced_practice_status }]
-
-    task
-  end
-
-  def add_personalized_exercise_steps!(task:, taskee:)
-    task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::IReadingPersonalized.new \
-      if self.class.num_personalized_exercises > 0
-
-    self.class.num_personalized_exercises.times do
-      task_step = Tasks::Models::TaskStep.new(task: task)
-      tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
-      tasked_placeholder.placeholder_type = :exercise_type
-      task_step.tasked = tasked_placeholder
-      task_step.group_type = :personalized_group
-      task.task_steps << task_step
     end
 
     task

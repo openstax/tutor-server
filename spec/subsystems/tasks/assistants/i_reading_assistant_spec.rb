@@ -117,7 +117,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [[0, 2]] }
+      )
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
@@ -174,7 +176,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]] }
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [[0, 2]] }
+      )
 
       task_plan.update_attribute(:settings, { 'page_ids' => [@content_pages.first.id.to_s] })
       tasks = DistributeTasks.call(task_plan).outputs.tasks
@@ -207,7 +211,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'does not assign excluded dynamic exercises' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [[0, 2]] }
+      )
 
       @content_pages.each do |content_page|
         reading_dynamic_exercises = content_page.reload.reading_dynamic_pool.exercises
@@ -341,8 +347,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     it 'is split into different task steps with immediate feedback' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]] }
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [[0, 2]] }
+      )
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:num_personalized_exercises) { 0 }
+      )
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
@@ -468,8 +478,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     it 'is split into different task steps with immediate feedback and a "try another" exercise' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]] }
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [[0, 2]] }
+      )
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:num_personalized_exercises) { 0 }
+      )
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
@@ -593,8 +607,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'combines exercises with context with the previous step when possible' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [] }
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [] }
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:num_personalized_exercises) { 0 }
+      )
 
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [

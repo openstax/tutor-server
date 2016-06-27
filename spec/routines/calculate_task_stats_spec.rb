@@ -11,8 +11,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     begin
       RSpec::Mocks.setup
 
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [ [0, 2] ] }
+      )
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:num_personalized_exercises) { 0 }
+      )
 
       @task_plan = FactoryGirl.create :tasked_task_plan, number_of_students: @number_of_students
     ensure

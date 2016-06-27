@@ -5,49 +5,41 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
 
   let(:fixture_path)      { 'spec/fixtures/content/sample_tutor_manifest.yml' }
   let(:manifest_contents) { File.open(fixture_path) { |file| file.read } }
+  let(:num_taskees)       { 3 }
 
-  let!(:assistant) {
+  let!(:assistant)        do
     FactoryGirl.create(
       :tasks_assistant,
       code_class_name: 'Tasks::Assistants::ExtraAssignmentAssistant')
-  }
+  end
 
-  let!(:course) { FactoryGirl.create :entity_course }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course)           { FactoryGirl.create :entity_course }
+  let!(:period)           { CreatePeriod[course: course] }
 
-  let!(:ecosystem) {
+  let!(:ecosystem)        do
     VCR.use_cassette('Tasks_Assistants_ExtraAssignmentAssistant/with_book', VCR_OPTS) do
       ImportEcosystemManifest[manifest: manifest_contents]
     end
-  }
+  end
 
-  let!(:task_plan) {
+  let!(:task_plan)        do
     snap_lab_ids = []
     ecosystem.pages.each do |page|
       snap_lab_ids << "#{page.id}:#{page.snap_labs.first[:id]}" if page.snap_labs.present?
     end
-    FactoryGirl.build(:tasks_task_plan,
-                      assistant: assistant,
-                      ecosystem: ecosystem.to_model,
-                      settings: { snap_lab_ids: snap_lab_ids },
-                      owner: course,
-                      num_tasking_plans: 0)
-  }
+    FactoryGirl.create(:tasks_task_plan,
+                       assistant: assistant,
+                       ecosystem: ecosystem.to_model,
+                       settings: { snap_lab_ids: snap_lab_ids },
+                       owner: course)
+  end
 
-  let!(:num_taskees) { 3 }
-
-  let!(:students) {
+  let!(:students)         do
     num_taskees.times.map do
       user = FactoryGirl.create(:user)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
-  }
-
-  let!(:tasking_plans) {
-    FactoryGirl.build(:tasks_tasking_plan,
-                      task_plan: task_plan,
-                      target: course)
-  }
+  end
 
   it 'assigns tasked readings and exercises to students' do
     tasks = DistributeTasks.call(task_plan).outputs.tasks

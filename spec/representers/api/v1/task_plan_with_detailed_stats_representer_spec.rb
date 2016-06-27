@@ -6,7 +6,9 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
   let!(:number_of_students){ 2 }
 
   let!(:task_plan) {
-    allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
+    allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+      receive(:k_ago_map) { [ [0, 2] ] }
+    )
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 

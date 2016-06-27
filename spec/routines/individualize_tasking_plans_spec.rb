@@ -10,9 +10,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   context 'entity_role' do
     let!(:role) { Entity::Role.create! }
 
-    before do
-      tasking_plan.update_attribute(:target, role)
-    end
+    before      { tasking_plan.update_attribute(:target, role) }
 
     it 'returns a tasking plan with the exact same attributes' do
       expect(result.size).to eq 1
@@ -21,8 +19,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(new_tasking_plan.task_plan).to eq task_plan
       expect(new_tasking_plan.target).to eq tasking_plan.target
-      expect(new_tasking_plan.opens_at).to eq tasking_plan.opens_at
-      expect(new_tasking_plan.due_at).to eq tasking_plan.due_at
+      expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+      expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
     end
   end
 
@@ -42,8 +40,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(new_tasking_plan.task_plan).to eq task_plan
       expect(new_tasking_plan.target).to eq default_role
-      expect(new_tasking_plan.opens_at).to eq tasking_plan.opens_at
-      expect(new_tasking_plan.due_at).to eq tasking_plan.due_at
+      expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+      expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
     end
   end
 
@@ -70,8 +68,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in [student_role_1, student_role_2, student_role_3]
-        expect(new_tasking_plan.opens_at).to eq tasking_plan.opens_at
-        expect(new_tasking_plan.due_at).to eq tasking_plan.due_at
+        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
       end
     end
 
@@ -86,8 +84,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(new_tasking_plan.task_plan).to eq task_plan
       expect(new_tasking_plan.target).to eq student_role_3
-      expect(new_tasking_plan.opens_at).to eq tasking_plan.opens_at
-      expect(new_tasking_plan.due_at).to eq tasking_plan.due_at
+      expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+      expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
     end
   end
 
@@ -114,8 +112,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in [student_role_1, student_role_2]
-        expect(new_tasking_plan.opens_at).to eq tasking_plan.opens_at
-        expect(new_tasking_plan.due_at).to eq tasking_plan.due_at
+        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
       end
     end
 

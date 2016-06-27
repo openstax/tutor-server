@@ -146,10 +146,12 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     it "creates the expected assignments" do
       #puts "teacher_selected_exercises = #{teacher_selected_exercises.map(&:uid)}"
 
-      allow(Tasks::Assistants::HomeworkAssistant).
-        to receive(:k_ago_map) { [ [0, tutor_selected_exercise_count] ] }
-      allow(Tasks::Assistants::HomeworkAssistant).
-        to receive(:num_personalized_exercises) { personalized_exercise_count }
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:k_ago_map) { [ [0, tutor_selected_exercise_count] ] }
+      )
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:num_personalized_exercises) { personalized_exercise_count }
+      )
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
 
@@ -219,10 +221,12 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     it "does not assign excluded dynamic exercises" do
-      allow(Tasks::Assistants::HomeworkAssistant).
-        to receive(:k_ago_map) { [ [0, tutor_selected_exercise_count] ] }
-      allow(Tasks::Assistants::HomeworkAssistant).
-        to receive(:num_personalized_exercises) { personalized_exercise_count }
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:k_ago_map) { [ [0, tutor_selected_exercise_count] ] }
+      )
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:num_personalized_exercises) { personalized_exercise_count }
+      )
 
       exercises.each do |exercise|
         CourseContent::Models::ExcludedExercise.create!(course: course,
