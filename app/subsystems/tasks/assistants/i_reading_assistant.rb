@@ -43,13 +43,13 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
   protected
 
-  def self.k_ago_map
+  def k_ago_map
     ## Entries in the list have the form:
     ##   [from-this-many-events-ago, choose-this-many-exercises]
     [ [2,1], [4,1] ]
   end
 
-  def self.num_personalized_exercises
+  def num_personalized_exercises
     1
   end
 
@@ -62,12 +62,13 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     unless skip_dynamic
       add_spaced_practice_exercise_steps!(
-        task: task, core_page_ids: @pages.map(&:id),
-        taskee: taskee, history: history, k_ago_map: k_ago_map
+        task: task, core_page_ids: @pages.map(&:id), taskee: taskee,
+        history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
       )
       add_personalized_exercise_steps!(
         task: task, taskee: taskee,
-        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized
+        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized,
+        num_personalized_exercises: num_personalized_exercises
       )
     end
 

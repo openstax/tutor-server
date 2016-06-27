@@ -55,7 +55,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
   end
 
   def build_extra_task(pages:, page_id_to_snap_lab_id:)
-    task = build_task
+    task = build_task(type: :extra, default_title: 'Extra Assignment')
 
     reset_used_exercises
 
@@ -73,18 +73,6 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
     end
 
     task
-  end
-
-  def build_task
-    title = task_plan.title || 'Extra Assignment'
-    description = task_plan.description
-
-    Tasks::BuildTask[
-      task_plan: task_plan,
-      task_type: :extra,
-      title: title,
-      description: description
-    ]
   end
 
 end

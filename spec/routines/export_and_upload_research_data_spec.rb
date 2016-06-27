@@ -42,9 +42,9 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
 
     before(:each) do
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
-      allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
-        [ [1,1] ]
-      }
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:k_ago_map).with(1) { [ [1,1] ] }
+      )
 
       SetupPerformanceReportData[course: course,
                                  teacher: teacher,

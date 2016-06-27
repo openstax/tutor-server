@@ -53,7 +53,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
   protected
 
-  def self.k_ago_map(num_spaced_practice_exercises)
+  def k_ago_map(num_spaced_practice_exercises)
     ## Entries in the list have the form:
     ##   [from-this-many-events-ago, choose-this-many-exercises]
     case num_spaced_practice_exercises
@@ -74,7 +74,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     end
   end
 
-  def self.num_personalized_exercises
+  def num_personalized_exercises
     1
   end
 
@@ -84,11 +84,12 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(
       task: task, core_page_ids: @core_page_ids, taskee: taskee, history: history,
-      k_ago_map: k_ago_map(num_spaced_practice_exercises)
+      k_ago_map: k_ago_map(num_spaced_practice_exercises), pool_type: :homework_dynamic
     )
     add_personalized_exercise_steps!(
       task: task, taskee: taskee,
-      personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized
+      personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized,
+      num_personalized_exercises: num_personalized_exercises
     )
   end
 

@@ -105,7 +105,8 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, taskee:, history:, k_ago_map:)
+  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, taskee:,
+                                          history:, k_ago_map:, pool_type:)
     history = add_current_task_to_individual_history(
       task: task, core_page_ids: core_page_ids, history: history
     )
@@ -135,13 +136,13 @@ class Tasks::Assistants::GenericAssistant
 
         # Map the pages to exercises in the new ecosystem
         ecosystems_map.map_pages_to_exercises(
-          pages: spaced_pages, pool_type: :reading_dynamic
+          pages: spaced_pages, pool_type: pool_type
         ).values.flatten.uniq
       end
 
       filtered_exercises = FilterExcludedExercises[
-        exercises: spaced_exercises, course: course,
-        additional_excluded_numbers: core_exercise_numbers
+        exercises: @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids],
+        course: course, additional_excluded_numbers: core_exercise_numbers
       ]
 
       chosen_exercises = ChooseExercises[
@@ -164,11 +165,13 @@ class Tasks::Assistants::GenericAssistant
     task
   end
 
-  def add_personalized_exercise_steps!(task:, taskee:, personalized_placeholder_strategy_class:)
-    task.personalized_placeholder_strategy = personalized_placeholder_strategy_class.new \
-      if self.class.num_personalized_exercises > 0
+  def add_personalized_exercise_steps!(task:, taskee:, personalized_placeholder_strategy_class:,
+                                       num_personalized_exercises:)
+    return task if num_personalized_exercises == 0
 
-    self.class.num_personalized_exercises.times do
+    task.personalized_placeholder_strategy = personalized_placeholder_strategy_class.new
+
+    num_personalized_exercises.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type

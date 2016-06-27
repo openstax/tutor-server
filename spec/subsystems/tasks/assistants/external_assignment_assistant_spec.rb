@@ -1,48 +1,40 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant do
-  let!(:assistant) {
-    FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant')
-  }
 
-  let!(:url) { 'https://www.example.org/external-assignment-one.pdf' }
-  let!(:templatized_url) { 'https://www.example.org/survey?id={{deidentifier}}' }
+  let(:url)             { 'https://www.example.org/external-assignment-one.pdf' }
+  let(:templatized_url) { 'https://www.example.org/survey?id={{deidentifier}}' }
+  let(:num_taskees)     { 3 }
 
-  let!(:course) { FactoryGirl.create :entity_course }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:assistant)      do
+    FactoryGirl.create(
+      :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
+    )
+  end
 
-  let!(:task_plan_1) {
-    FactoryGirl.build(:tasks_task_plan,
-                      assistant: assistant,
-                      settings: { external_url: url },
-                      owner: course,
-                      num_tasking_plans: 0)
-  }
+  let!(:course)         { FactoryGirl.create :entity_course }
+  let!(:period)         { CreatePeriod[course: course] }
 
-  let!(:task_plan_2) {
-    FactoryGirl.build(:tasks_task_plan,
-                      assistant: assistant,
-                      settings: { external_url: templatized_url },
-                      owner: course,
-                      num_tasking_plans: 0)
-  }
+  let!(:task_plan_1)    do
+    FactoryGirl.create(:tasks_task_plan,
+                       assistant: assistant,
+                       settings: { external_url: url },
+                       owner: course)
+  end
 
-  let!(:num_taskees) { 3 }
+  let!(:task_plan_2)    do
+    FactoryGirl.create(:tasks_task_plan,
+                       assistant: assistant,
+                       settings: { external_url: templatized_url },
+                       owner: course)
+  end
 
-  let!(:students) {
+  let!(:students)       do
     num_taskees.times.map do
       user = FactoryGirl.create(:user)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
-  }
-
-  let!(:tasking_plans_1) {
-    FactoryGirl.build(:tasks_tasking_plan, task_plan: task_plan_1, target: course)
-  }
-
-  let!(:tasking_plans_2) {
-    FactoryGirl.create(:tasks_tasking_plan, task_plan: task_plan_2, target: course)
-  }
+  end
 
   it 'assigns tasked external urls to students' do
     tasks = DistributeTasks.call(task_plan_1).outputs.tasks

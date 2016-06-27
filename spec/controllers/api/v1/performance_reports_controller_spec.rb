@@ -50,9 +50,9 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                                                   full_name: 'Student Four') }
 
       before do
-        allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
-          [ [1,1] ]
-        }
+        allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+          receive(:k_ago_map).with(1) { [ [1,1] ] }
+        )
 
         SetupPerformanceReportData[course: course,
                                    teacher: teacher,

@@ -11,15 +11,11 @@ module Tasks
       end
 
       def build_tasks
-        taskees.map do
-          Tasks::BuildTask[task_plan: task_plan,
-                           task_type: :event,
-                           title: task_plan.title,
-                           description: task_plan.description]
-        end
+        taskees.map{ build_task(type: :event, default_title: 'Event') }
       end
 
       private
+
       attr_reader :task_plan, :taskees
     end
   end
