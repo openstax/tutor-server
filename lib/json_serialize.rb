@@ -1,10 +1,11 @@
 module JsonSerialize
   module ClassMethods
     DEFAULT_CONVERSION_METHODS = {
-      Hash => :to_h,
       Array => :to_a,
+      Hash => :to_h,
       String => :to_s,
-      Integer => :to_i
+      Integer => :to_i,
+      Float => :to_f
     }
 
     def json_serialize(attribute, type, options = {})

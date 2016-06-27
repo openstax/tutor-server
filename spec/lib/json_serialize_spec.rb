@@ -75,6 +75,10 @@ describe JsonSerialize, type: :lib do
         expect(instance.book_location).to eq []
       end
 
+      # Not used by any model in tutor-server
+      xit 'floats' do
+      end
+
       it 'strings' do
         instance = Legal::Models::TargetedContract.new(
           target_gid: '', target_name: '', contract_name: ''
