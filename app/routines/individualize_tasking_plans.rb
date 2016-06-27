@@ -31,7 +31,7 @@ class IndividualizeTaskingPlans
                                        due_at: tasking_plan.due_at,
                                        time_zone: tasking_plan.time_zone)
       end
-    end.uniq { |ii| ii.target }
+    end.uniq(&:target)
   end
 
 end
