@@ -2,7 +2,7 @@ class Content::Models::Chapter < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Content::Strategies::Direct::Chapter
 
-  serialize :book_location, Array
+  json_serialize :book_location, Integer, array: true
 
   belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
 

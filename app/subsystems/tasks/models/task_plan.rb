@@ -19,7 +19,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   has_many :tasking_plans, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
   has_many :tasks, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
 
-  serialize :settings, JSON
+  json_serialize :settings, Hash
 
   validates :title, presence: true
   validates :assistant, presence: true

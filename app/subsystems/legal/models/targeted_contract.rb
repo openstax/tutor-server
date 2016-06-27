@@ -1,8 +1,9 @@
 class Legal::Models::TargetedContract < Tutor::SubSystems::BaseModel
 
-  serialize :masked_contract_names, Array
+  json_serialize :masked_contract_names, String, array: true
 
   def as_poro
     Legal::TargetedContract.new(self)
   end
+
 end

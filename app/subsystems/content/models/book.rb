@@ -4,6 +4,8 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
 
   acts_as_resource
 
+  json_serialize :reading_processing_instructions, Hash, array: true
+
   belongs_to :ecosystem, inverse_of: :books
 
   sortable_has_many :chapters, on: :number, dependent: :destroy, autosave: true, inverse_of: :book

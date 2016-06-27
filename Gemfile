@@ -166,6 +166,12 @@ gem 'rack-attack'
 # Minimize DB access due to touch: true associations
 gem 'activerecord-delay_touching'
 
+# Fast JSON parsing
+gem 'oj'
+
+# Replace JSON with Oj
+gem 'oj_mimic_json'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

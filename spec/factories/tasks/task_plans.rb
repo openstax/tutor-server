@@ -13,7 +13,7 @@ FactoryGirl.define do
     association :owner, factory: :entity_course
     association :ecosystem, factory: :content_ecosystem
     title 'A task'
-    settings { {}.to_json }
+    settings { {} }
     type 'reading'
     is_feedback_immediate { type != 'homework' }
     first_published_at { published_at }

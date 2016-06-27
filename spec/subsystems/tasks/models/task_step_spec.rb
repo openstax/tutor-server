@@ -24,8 +24,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
   it "requires tasked to be unique" do
     expect(task_step).to be_valid
 
-    expect(FactoryGirl.build(:tasks_task_step,
-                             tasked: task_step.tasked)).not_to be_valid
+    expect(FactoryGirl.build(:tasks_task_step, tasked: task_step.tasked)).not_to be_valid
   end
 
   it "invalidates task's cache when updated" do
@@ -75,7 +74,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
     end
 
     it "can set related content" do
-      target_related_content = [{title: 'blah', chapter_section: 'blah'}]
+      target_related_content = [{'title' => 'blah', 'chapter_section' => 'blah'}]
       task_step.related_content = target_related_content
       task_step.save!
       task_step.reload
@@ -85,7 +84,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
     it "can add new related content" do
       expect(task_step.related_content).to eq([])
 
-      content = {title: 'blah', chapter_section: 'blah'}
+      content = {'title' => 'blah', 'chapter_section' => 'blah'}
       expect{
         task_step.add_related_content content
         task_step.save!

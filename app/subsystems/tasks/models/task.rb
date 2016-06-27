@@ -11,6 +11,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   STEPLESS_TASK_TYPES = [:external, :event]
 
+  json_serialize :spy, Hash
+
   belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
 
   belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasks
