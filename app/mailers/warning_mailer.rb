@@ -10,7 +10,7 @@ class WarningMailer < ApplicationMailer
   def warning(subject:, message:, details: {})
     @message = message
     @details = details
-    mail(subject: "[warning] #{subject}")
+    mail(subject: "[Tutor] (#{OpenStax::RescueFrom.configuration.app_env}) [Warning] #{subject}")
   end
 
   def self.log_and_deliver(args = {})

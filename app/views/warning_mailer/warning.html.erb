@@ -3,7 +3,7 @@
 <table>
   <% @details.each do | key, value | %>
   <tr>
-    <td><%= key %></td>
+    <td><%= key.to_s.humanize %>:</td>
     <td><%= simple_format value.to_s %></td>
   </tr>
   <% end %>
