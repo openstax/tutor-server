@@ -22,7 +22,7 @@ RSpec.describe WarningMailer, type: :mailer do
         }
       }.to change { ActionMailer::Base.deliveries.count }.by(1)
       mail = ActionMailer::Base.deliveries.last
-      expect(mail.subject).to eq('[warning] warning_mailer_spec.rb:20')
+      expect(mail.subject).to eq('[Tutor] (test) [Warning] warning_mailer_spec.rb:20')
     end
 
 
@@ -35,8 +35,8 @@ RSpec.describe WarningMailer, type: :mailer do
       }.to change { ActionMailer::Base.deliveries.count }.by(1)
 
       mail = ActionMailer::Base.deliveries.last
-      expect(mail.subject).to eq('[warning] warning_mailer_spec.rb:32')
-      expect(mail.body).to match('error_code')
+      expect(mail.subject).to eq('[Tutor] (test) [Warning] warning_mailer_spec.rb:32')
+      expect(mail.body).to match('Error code')
       expect(mail.body).to match('FIRE')
     end
 
@@ -57,7 +57,7 @@ RSpec.describe WarningMailer, type: :mailer do
         }
       }.to change { ActionMailer::Base.deliveries.count }.by(1)
       mail = ActionMailer::Base.deliveries.last
-      expect(mail.subject).to eq('[warning] Via args')
+      expect(mail.subject).to eq('[Tutor] (test) [Warning] Via args')
       expect(mail.body).to match('FIRE')
     end
 
@@ -69,7 +69,7 @@ RSpec.describe WarningMailer, type: :mailer do
   end
 
   it 'sets the subject' do
-    expect(mail.subject).to eq('[warning] test')
+    expect(mail.subject).to eq('[Tutor] (test) [Warning] test')
   end
 
   it 'includes the message' do
@@ -77,8 +77,8 @@ RSpec.describe WarningMailer, type: :mailer do
   end
 
   it 'logs details' do
-    expect(mail.body).to match('value_one')
-    expect(mail.body).to match('value_two')
+    expect(mail.body).to match('Value one')
+    expect(mail.body).to match('Value two')
   end
 
 

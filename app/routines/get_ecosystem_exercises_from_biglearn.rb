@@ -74,18 +74,18 @@ class GetEcosystemExercisesFromBiglearn
 
     WarningMailer.log_and_deliver({
       message: "Biglearn returned less exercises than requested.",
-      details: {
-        pools: pools.inspect, role: role.id, needed: count, got: biglearn_count
-      }
+      details: { pools: pools.map(&:uuid), role: role.id,
+                 requested: count, got: biglearn_count, exercise_numbers: numbers }
     }) if biglearn_count < count
 
     exercises = ecosystem.exercises_by_numbers(numbers)
     fatal_error(code: :missing_local_exercises,
                 message: "Biglearn returned more exercises than were " +
-                         "present locally. [pools: #{biglearn_pools.map(&:uuid)}, " +
-                         "role: #{role.id}, requested: #{count}, " +
-                         "from biglearn: #{biglearn_count}, " +
-                         "local found: #{exercises.size}] biglearn question ids: #{numbers}") \
+                         "present locally. [Pools: #{biglearn_pools.map(&:uuid)}, " +
+                         "Role: #{role.id}, Requested: #{count}, " +
+                         "Got (Biglearn): #{biglearn_count}, " +
+                         "Got (local): #{exercises.size}, " +
+                         "Exercise numbers: #{numbers}]") \
       if exercises.size < biglearn_count
 
     outputs[:ecosystem_exercises] = exercises
