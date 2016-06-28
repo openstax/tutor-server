@@ -27,7 +27,13 @@ git clone https://github.com/openstax/tutor-server.git
 cd tutor-server
 ```
 
-Then install the proper version of ruby using rbenv
+Then install the proper version of ruby using rbenv:
+
+```
+rbenv install 2.2.3
+gem install bundler
+bundle install
+```
 
 ## Permanently setting environment variables
 
