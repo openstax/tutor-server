@@ -5,9 +5,15 @@ class CourseContent::UpdateExerciseExclusions
   protected
 
   def exec(course:, updates_array:)
+
     updates_array = updates_array.map(&:stringify_keys)
     page_ids = Content::Models::Exercise.find(updates_array.map{ |update| update['id'] })
                                         .map(&:content_page_id)
+
+    # The course's biglearn_excluded_pool is updated at the end,
+    # so we can just lock the course profile to make this update atomic
+    course.profile.lock!
+
     out = GetExercises.call(course: course, page_ids: page_ids).outputs
     exercises = out.exercises.index_by{ |ex| ex.id.to_s }
     page_exercises = out.exercise_search['items'].index_by(&:id)
@@ -51,7 +57,10 @@ class CourseContent::UpdateExerciseExclusions
     end
     bl_excluded_pool = OpenStax::Biglearn::V1::Pool.new(exercises: bl_excluded_exercises)
     bl_excluded_pool_with_uuid = OpenStax::Biglearn::V1.add_pools([bl_excluded_pool]).first
+
+    # This update ensures that transactions trying to lock the same course profile will retry
     course.profile.update_attribute(:biglearn_excluded_pool_uuid, bl_excluded_pool_with_uuid.uuid)
+
   end
 
 end
