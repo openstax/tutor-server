@@ -46,8 +46,9 @@ class Content::Routines::PopulateExercisePools
               tags.include?('k12phys') && tags.include?('os-practice-concepts')
             ) || (
               tags.include?('apbio') && tags.include?('ost-chapter-review') && \
-              tags.include?('review') && tags.include?('time-short')
-            )) || (!use_old_logic && \
+              tags.include?('review') && (
+                tags.include?('time:short') || tags.include?('time-short')
+            ))) || (!use_old_logic && \
             tags.include?('type:conceptual') || tags.include?('type:recall') ||
             tags.include?('type:conceptual-or-recall'))
 
@@ -77,6 +78,7 @@ class Content::Routines::PopulateExercisePools
               tags.include?('apbio') && tags.include?('ost-chapter-review') && (
                 tags.include?('critical-thinking') || tags.include?('ap-test-prep') || (
                   tags.include?('review') && (
+                    tags.include?('time:medium') || tags.include?('time:long') ||
                     tags.include?('time-medium') || tags.include?('time-long')
                   )
                 )
