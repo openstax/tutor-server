@@ -16,35 +16,32 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
   end
 
   def build_tasks
-    role_ids = taskees.map(&:id)
-    taskee_students = CourseMembership::Models::Student.where(entity_role_id: role_ids)
-                                                       .index_by(&:entity_role_id)
+    role_ids = roles.map(&:id)
+    role_students = CourseMembership::Models::Student.where(entity_role_id: role_ids)
+                                                     .index_by(&:entity_role_id)
 
-    taskees.map do |taskee|
-      student = taskee_students[taskee.id]
+    roles.map do |role|
+      student = role_students[role.id]
       raise StandardError, 'External assignment taskees must all be students' if student.nil?
 
-      build_external_task(taskee: taskee, student: student)
+      build_external_task(role: role, student: student)
     end
   end
 
   protected
 
-  def build_external_task(taskee:, student:)
+  def build_external_task(role:, student:)
     task = build_task(type: :external, default_title: 'External Assignment')
     step = Tasks::Models::TaskStep.new(task: task)
-    tasked_external_url(task_step: step, taskee: taskee, student: student,
-                        url: task_plan.settings['external_url'])
+    step.tasked = tasked_external_url(
+      task_step: step, student: student, url: task_plan.settings['external_url']
+    )
     task.add_step(step)
     task
   end
 
-  def tasked_external_url(task_step:, taskee:, student:, url:)
-    {
-      deidentifier: student.try(:deidentifier)
-    }.each do |key, value|
-      url = url.gsub("{{#{key}}}", value)
-    end
+  def tasked_external_url(task_step:, student:, url:)
+    url = url.gsub('{{deidentifier}}', student.try(:deidentifier))
     Tasks::Models::TaskedExternalUrl.new(task_step: task_step, url: url)
   end
 end

@@ -16,10 +16,10 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     num_placeholders = personalized_placeholder_task_steps.count
 
-    taskee = task.taskings.first.role
+    role = task.taskings.first.role
 
     chosen_exercises = GetEcosystemExercisesFromBiglearn[ecosystem:         ecosystem,
-                                                         role:              taskee,
+                                                         role:              role,
                                                          pools:             pools,
                                                          count:             num_placeholders,
                                                          difficulty:        0.5,

@@ -11,12 +11,8 @@ module Tasks
       end
 
       def build_tasks
-        taskees.map{ build_task(type: :event, default_title: 'Event') }
+        roles.map{ build_task(type: :event, default_title: 'Event') }
       end
-
-      private
-
-      attr_reader :task_plan, :taskees
     end
   end
 end

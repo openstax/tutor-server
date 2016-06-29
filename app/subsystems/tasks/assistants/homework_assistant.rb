@@ -32,7 +32,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     }'
   end
 
-  def initialize(task_plan:, taskees:)
+  def initialize(task_plan:, roles:)
     super
 
     @exercise_ids = task_plan.settings['exercise_ids']
@@ -44,11 +44,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_tasks
-    histories = GetHistory[roles: taskees, type: :homework]
+    histories = GetHistory[roles: roles, type: :homework]
 
-    taskees.map do |taskee|
-      build_homework_task(taskee: taskee, exercises: @exercises, history: histories[taskee])
-    end
+    roles.map{ |role| build_homework_task(exercises: @exercises, history: histories[role]) }
   end
 
   protected
@@ -78,18 +76,17 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     1
   end
 
-  def build_homework_task(taskee:, exercises:, history:)
+  def build_homework_task(exercises:, history:)
     task = build_task(type: :homework, default_title: 'Homework')
 
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(
-      task: task, core_page_ids: @core_page_ids, taskee: taskee, history: history,
+      task: task, core_page_ids: @core_page_ids, history: history,
       k_ago_map: k_ago_map(num_spaced_practice_exercises), pool_type: :homework_dynamic
     )
     add_personalized_exercise_steps!(
-      task: task, taskee: taskee,
-      personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized,
-      num_personalized_exercises: num_personalized_exercises
+      task: task, num_personalized_exercises: num_personalized_exercises,
+      personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized
     )
   end
 

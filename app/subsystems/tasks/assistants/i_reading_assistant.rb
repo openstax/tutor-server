@@ -20,7 +20,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     }'
   end
 
-  def initialize(task_plan:, taskees:)
+  def initialize(task_plan:, roles:)
     super
 
     @pages = ecosystem.pages_by_ids(task_plan.settings['page_ids'])
@@ -32,12 +32,10 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     reading_dynamic_pools = ecosystem.reading_dynamic_pools(pages: @pages)
     skip_dynamic = reading_dynamic_pools.all?(&:empty?)
 
-    histories = GetHistory[roles: taskees, type: :reading]
+    histories = GetHistory[roles: roles, type: :reading]
 
-    taskees.map do |taskee|
-      build_reading_task(
-        pages: @pages, taskee: taskee, history: histories[taskee], skip_dynamic: skip_dynamic
-      )
+    roles.map do |role|
+      build_reading_task(pages: @pages, history: histories[role], skip_dynamic: skip_dynamic)
     end
   end
 
@@ -53,7 +51,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     1
   end
 
-  def build_reading_task(pages:, taskee:, history:, skip_dynamic:)
+  def build_reading_task(pages:, history:, skip_dynamic:)
     task = build_task(type: :reading, default_title: 'Reading')
 
     reset_used_exercises
@@ -62,13 +60,12 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     unless skip_dynamic
       add_spaced_practice_exercise_steps!(
-        task: task, core_page_ids: @pages.map(&:id), taskee: taskee,
+        task: task, core_page_ids: @pages.map(&:id),
         history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
       )
       add_personalized_exercise_steps!(
-        task: task, taskee: taskee,
-        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized,
-        num_personalized_exercises: num_personalized_exercises
+        task: task, num_personalized_exercises: num_personalized_exercises,
+        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized
       )
     end
 

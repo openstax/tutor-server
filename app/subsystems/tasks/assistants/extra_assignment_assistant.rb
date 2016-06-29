@@ -20,7 +20,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
     }'
   end
 
-  def initialize(task_plan:, taskees:)
+  def initialize(task_plan:, roles:)
     super
 
     outputs = collect_snap_labs
@@ -29,9 +29,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
   end
 
   def build_tasks
-    taskees.map do |taskee|
-      build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id)
-    end
+    roles.map{ build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id) }
   end
 
   protected

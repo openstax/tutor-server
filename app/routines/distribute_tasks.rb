@@ -43,26 +43,26 @@ class DistributeTasks
       if !protect_unopened_tasks &&
          tasks.none?{ |task| task.past_open?(current_time: publish_time) }
 
-    tasked_taskees = tasks.reject(&:destroyed?).flat_map{ |task| task.taskings.map(&:role) }
+    tasked_roles = tasks.reject(&:destroyed?).flat_map{ |task| task.taskings.map(&:role) }
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
     untasked_tasking_plans = tasking_plans.reject do |tasking_plan|
-      tasked_taskees.include? tasking_plan.target
+      tasked_roles.include? tasking_plan.target
     end
 
     # Exclude students that already had the assignment
-    untasked_taskees = untasked_tasking_plans.map(&:target)
-    untasked_taskee_ids = untasked_taskees.map(&:id)
+    untasked_roles = untasked_tasking_plans.map(&:target)
+    untasked_role_ids = untasked_roles.map(&:id)
 
-    untasked_taskee_students = CourseMembership::Models::Student
-      .where(entity_role_id: untasked_taskee_ids)
+    untasked_role_students = CourseMembership::Models::Student
+      .where(entity_role_id: untasked_role_ids)
       .preload(enrollments: :period)
       .to_a.index_by(&:entity_role_id)
 
     assistant = task_plan.assistant
 
     # Call the assistant code to create Tasks, then distribute them
-    tasks = assistant.build_tasks(task_plan: task_plan, taskees: untasked_taskees)
+    tasks = assistant.build_tasks(task_plan: task_plan, roles: untasked_roles)
 
     fatal_error(
       code: :empty_tasks, message: 'Tasks could not be published because some tasks were empty'
@@ -71,7 +71,7 @@ class DistributeTasks
     tasks.each_with_index do |task, ii|
       tasking_plan = untasked_tasking_plans[ii]
       role = tasking_plan.target
-      student = untasked_taskee_students[role.id]
+      student = untasked_role_students[role.id]
       tasking = Tasks::Models::Tasking.new task: task, role: role, period: student.try(:period)
       task.taskings << tasking
       task.time_zone = tasking_plan.time_zone

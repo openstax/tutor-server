@@ -3,9 +3,9 @@
 # since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
 
-  def initialize(task_plan:, taskees:)
+  def initialize(task_plan:, roles:)
     @task_plan = task_plan
-    @taskees = taskees
+    @roles = roles
     @ecosystems_map = {}
     @page_cache = {}
     @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
@@ -15,7 +15,7 @@ class Tasks::Assistants::GenericAssistant
 
   protected
 
-  attr_reader :task_plan, :taskees
+  attr_reader :task_plan, :roles
 
   def ecosystem
     return @ecosystem unless @ecosystem.nil?
@@ -91,9 +91,9 @@ class Tasks::Assistants::GenericAssistant
     description = task_plan.description
 
     task = Tasks::BuildTask[
-      task_plan: task_plan,
-      task_type: type,
-      title:     title,
+      task_plan:   task_plan,
+      task_type:   type,
+      title:       title,
       description: description
     ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
   end
@@ -105,8 +105,7 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, taskee:,
-                                          history:, k_ago_map:, pool_type:)
+  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
     history = add_current_task_to_individual_history(
       task: task, core_page_ids: core_page_ids, history: history
     )
@@ -165,8 +164,8 @@ class Tasks::Assistants::GenericAssistant
     task
   end
 
-  def add_personalized_exercise_steps!(task:, taskee:, personalized_placeholder_strategy_class:,
-                                       num_personalized_exercises:)
+  def add_personalized_exercise_steps!(task:, num_personalized_exercises:,
+                                       personalized_placeholder_strategy_class:)
     return task if num_personalized_exercises == 0
 
     task.personalized_placeholder_strategy = personalized_placeholder_strategy_class.new

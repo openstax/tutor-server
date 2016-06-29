@@ -4,12 +4,7 @@ class DummyAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_tasks
-    @taskees.map do |taskee|
-      Tasks::BuildTask[task_plan: @task_plan,
-                       title: @task_plan.title,
-                       description: @task_plan.description,
-                       task_type: :external]
-    end
+    roles.map{ build_task(type: :external, default_title: 'Dummy') }
   end
 
 
