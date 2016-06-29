@@ -11,7 +11,12 @@ class Salesforce::Remote::ClassSize < ActiveForce::SObject
   field :error,                     from: "Tutor_Error__c"
   field :book_name,                 from: "Book_Name__c"
   field :school,                    from: "School__c"
+  field :term_year,                 from: "TermYear__c"
 
   self.table_name = 'Class_Size__c'
+
+  def term_year_object
+    Salesforce::Remote::TermYear.from_string(self.term_year)
+  end
 
 end

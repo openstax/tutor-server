@@ -5,9 +5,7 @@ module Salesforce
 
         wraps ::Salesforce::Models::AttachedRecord
         exposes :all, :find, :preload, from_class: ::Salesforce::Models::AttachedRecord
-        exposes :salesforce_object, :attached_to
-
-        alias_method :record, :salesforce_object
+        exposes :salesforce_object, :attached_to, :attached_to_class_name, :attached_to_id
 
       end
     end

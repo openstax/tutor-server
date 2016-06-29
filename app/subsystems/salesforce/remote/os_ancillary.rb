@@ -16,6 +16,7 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
   field :num_teachers,              from: "Active_Teachers__c", as: :int
   field :num_sections,              from: "Sections__c", as: :int
   field :num_students,              from: "Students_Using__c", as: :int
+  field :term_year,                 from: "TermYear__c"
   field :opportunity_id,            from: 'Opportunity__c'
 
   belongs_to :opportunity, model: Salesforce::Remote::Opportunity
@@ -32,6 +33,10 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
 
   def valid_product?
     ["Tutor", "Concept Coach"].include?(product)
+  end
+
+  def term_year_object
+    Salesforce::Remote::TermYear.from_string(self.term_year)
   end
 
   def is_college?

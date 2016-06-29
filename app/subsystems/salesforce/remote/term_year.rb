@@ -1,6 +1,10 @@
 class Salesforce::Remote::TermYear
 
-  # One day in the not-distant future we will probably be adding :summer
+  # TermYear strings in Salesforce look like:
+  #   2015 - 16 Fall
+  #   2015 - 16 Spring
+  # One day in the not-distant future we will probably be adding Summerlas term
+
   TERMS = [:fall, :spring]
 
   attr_reader :start_year, :end_year, :term

@@ -2,70 +2,76 @@ require 'rails_helper'
 
 RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
-  context "big test" do
+  context "full test" do
+    # Includes 1 deleted period, 2 orphaned periods (one of which requires a new
+    # SF object), 1 dropped student
+
     let!(:course_1) { Entity::Course.create! }
 
     let!(:period_1) { CreatePeriod[course: course_1] }
     let!(:period_2) { CreatePeriod[course: course_1] }
-    let!(:user_1)   { FactoryGirl.create :user }
-    let!(:user_2)   { FactoryGirl.create :user }
+    let!(:period_3) { CreatePeriod[course: course_1] }
 
-    let!(:student_1_role) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
-    let!(:enrollment_1)   { student_1_role.student.latest_enrollment }
-
-    let!(:student_2_role) { AddUserAsPeriodStudent[user: user_2, period: period_2] }
-    let!(:enrollment_2)   { student_2_role.student.latest_enrollment }
+    let!(:student_1_role) { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1] }
+    let!(:student_2_role) { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2] }
+    let!(:student_3_role) { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2] }
 
     before(:each) do
-      osa = Salesforce::Remote::OsAncillary.new(
-              product: "Concept Coach", account_type: "High School", id: "123",
-              opportunity: Salesforce::Remote::Opportunity.new(term_year: '2016 - 17 Fall')
-            )
+      3.times { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course_1] }
+
+      CourseMembership::InactivateStudent[student: student_3_role.student]
+
+      # We're not really testing the existing being either OsAncillary or ClassSize b/c
+      # the type of SF object doesn't really matter to the described_class (tho does matter
+      # in 'renew' call)
+
+      @existing_sf_object = Salesforce::Remote::OsAncillary.new(
+        product: "Concept Coach", account_type: "High School", id: "123", term_year: '2015 - 16 Spring'
+      )
+
+      # period_1 is the only one to have an attached SF object, period_2 is orphaned
+      # and will need a new SF object, period_3 is orphaned but should reuse the existing
+      # SF object from the course (period_3 is the case where all periods will fall on the
+      # first run)
 
       allow_any_instance_of(UpdateSalesforceCourseStats).to receive(:attached_records).and_return(
         [
-          FactoryGirl.create(:salesforce_attached_record, tutor_object: period_1.to_model, salesforce_object: osa),
-          FactoryGirl.create(:salesforce_attached_record, tutor_object: course_1, salesforce_object: osa),
+          FactoryGirl.create(:salesforce_attached_record,
+                             tutor_object: period_1.to_model,
+                             salesforce_object: @existing_sf_object).wrap,
+          FactoryGirl.create(:salesforce_attached_record,
+                             tutor_object: course_1,
+                             salesforce_object: @existing_sf_object).wrap,
         ]
       )
 
-      allow(Salesforce::RenewOsAncillary).to receive(:call) {
-        Salesforce::Remote::OsAncillary.new(product: "Concept Coach", account_type: "High School", id: "42")
-      }
+      period_2.to_model.update_attribute(:created_at, Time.zone.local(2016,4,20))
+      period_3.to_model.update_attribute(:created_at, Time.zone.local(2016,4,10))
+
+      @new_sf_object = Salesforce::Remote::OsAncillary.new(
+        product: "Concept Coach", account_type: "High School", id: "42", term_year: '2016 - 17 Fall'
+      )
+
+      allow(Salesforce::RenewOsAncillary).to receive(:call).once { @new_sf_object }
+      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { nil }
+      allow_any_instance_of(Salesforce::Remote::ClassSize).to receive(:save) { nil }
 
       period_1.to_model.destroy
-    end
 
-    # TODO test original as ClassSize and OsAncillary
+      @outputs = described_class.call
+    end
 
     it "works" do
-      outputs = described_class.call
+      expect(@outputs.num_errors).to eq 0
+      expect(@outputs.num_updates).to eq 2
 
-      expect(outputs.num_records).to eq 1
-      expect(outputs.num_errors).to eq 0
-      expect(outputs.num_updates).to eq 1
-    end
+      expect(@existing_sf_object.num_teachers).to eq 3
+      expect(@existing_sf_object.num_sections).to eq 2
+      expect(@existing_sf_object.num_students).to eq 1
 
-
-    xit "reuses existing SF object when period created before initial cutoff" do
-    end
-
-    xit "renews SF object when period created after initial cutoff" do
-    end
-
-    xit "works ok if there were no prior periods or ARs" do
-
-    end
-
-    xit "works ok if the period's course has never had an AR" do
-    end
-
-  end
-
-  def stub_organizer
-    double.tap do |dbl|
-      allow_any_instance_of(described_class).to receive(:initialize_organizer) { dbl }
-      yield dbl
+      expect(@new_sf_object.num_teachers).to eq 3
+      expect(@new_sf_object.num_sections).to eq 1
+      expect(@new_sf_object.num_students).to eq 2
     end
   end
 
@@ -81,7 +87,6 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       @organizer = stub_organizer do |organizer|
         allow(organizer).to receive(:orphaned_periods) { [period_3.to_model] }
         allow(organizer).to receive(:get_course) { course }
-        allow(organizer).to receive(:get_sf_objects) { [sf_object] }
       end
     end
 
@@ -94,8 +99,8 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
     it "notifies if too many eligible SF objects" do
       allow(@organizer).to receive(:get_sf_objects) { [
-        OpenStruct.new(term_year: Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")),
-        OpenStruct.new(term_year: Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")),
+        Salesforce::Remote::OsAncillary.new(term_year: "2015 - 16 Fall"),
+        Salesforce::Remote::OsAncillary.new(term_year: "2015 - 16 Fall"),
       ] }
       allow(Salesforce::Remote::TermYear).to receive(:guess_from_created_at) {
         Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
@@ -108,7 +113,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
     it "reuses an existing eligible SF object" do
       term_year = Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
-      existing_sf_object = OpenStruct.new(term_year: term_year, id: 'foo')
+      existing_sf_object = Salesforce::Remote::OsAncillary.new(term_year: term_year.to_s, id: 'foo')
 
       allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
       allow(Salesforce::Remote::TermYear).to receive(:guess_from_created_at) { term_year.dup }
@@ -123,7 +128,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
     it "makes a new SF object if no eligible ones available" do
       term_year = Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
-      existing_sf_object = OpenStruct.new(term_year: term_year, id: 'foo')
+      existing_sf_object = OpenStruct.new(term_year: term_year.to_s, id: 'foo')
 
       allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
       allow(Salesforce::Remote::TermYear).to receive(:guess_from_created_at) { term_year.next }
@@ -145,14 +150,11 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     let!(:attached_record) { OpenStruct.new(record: record) }
 
     before(:each) do
-      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period]
-      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period]
-      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period]
-      AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course]
-      AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course]
+      3.times { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period] }
+      2.times { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course] }
 
       stub_organizer do |organizer|
-        allow(organizer).to receive(:each).and_yield(attached_record, course, [period.to_model])
+        allow(organizer).to receive(:each).and_yield(record, course, [period.to_model])
       end
     end
 
@@ -164,14 +166,6 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       expect(record.num_sections).to eq 1
       expect(outputs.num_updates).to eq 1
       expect(outputs.num_errors).to eq 0
-      expect(outputs.num_records).to eq 1
-    end
-
-    it "handles stat update errors if no record" do
-      allow(attached_record).to receive(:record).and_raise(StandardError, "howdy")
-      outputs = rescuing_exceptions{ described_class.call(handle_orphaned_periods: false) }
-      expect(record.error).to be_nil
-      expect(outputs.num_errors).to eq 1
     end
 
     it "handles stat update errors if record" do
@@ -188,44 +182,45 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     end
   end
 
+  it "can find the methods it needs in potential SF object classes" do
+    # Have this check since we're mostly otherwise stubbing these classes
+    [Salesforce::Remote::OsAncillary, Salesforce::Remote::ClassSize].each do |sf_class|
+      expect(sf_class.new).to respond_to(:num_teachers=, :num_sections=, :num_students=,
+                                         :error=, :changed?, :save)
+    end
+  end
+
   context "Organizer" do
     let!(:organizer) { UpdateSalesforceCourseStats::Organizer.new }
 
     it "has working period methods" do
       fake_period = OpenStruct.new(id: 2)
-      organizer.add_period_id(attached_record: "dummy", period_id: fake_period.id)
+      fake_sf_object = new_dummy_sf_object
+      organizer.add_period_id(salesforce_object: fake_sf_object, period_id: fake_period.id)
       organizer.remember_period(fake_period)
-      organizer.each do |ar, course, periods|
-        expect(ar).to eq "dummy"
+      organizer.each do |sf_object, course, periods|
+        expect(sf_object).to eq fake_sf_object
         expect(periods).to eq [fake_period]
       end
-      expect(organizer.no_attached_record_for_period?(fake_period)).to be_falsy
-      expect(organizer.no_attached_record_for_period?(OpenStruct.new(id: 'boo'))).to be_truthy
+      expect(organizer.no_salesforce_object_for_period?(fake_period)).to be_falsy
+      expect(organizer.no_salesforce_object_for_period?(OpenStruct.new(id: 'boo'))).to be_truthy
     end
 
     it "has working course methods" do
       fake_course = OpenStruct.new(id: 42)
-      organizer.set_course_id(attached_record: "dummy", course_id: fake_course.id)
+      fake_sf_object = new_dummy_sf_object
+      organizer.set_course_id(salesforce_object: fake_sf_object, course_id: fake_course.id)
       organizer.remember_course(fake_course)
-      organizer.each do |ar, course, periods|
-        expect(ar).to eq "dummy"
+      organizer.each do |sf_object, course, periods|
+        expect(sf_object).to eq fake_sf_object
         expect(course).to eq fake_course
       end
     end
 
     context "with multiple ARs per one course" do
       before(:each) do
-        fake_ar_1 = OpenStruct.new(created_at: 3.years.ago)
-        @fake_ar_2 = OpenStruct.new(created_at: Time.now)
-        fake_ar_3 = OpenStruct.new(created_at: 6.years.ago)
-
-        organizer.set_course_id(attached_record: fake_ar_1, course_id: 42)
-        organizer.set_course_id(attached_record: @fake_ar_2, course_id: 42)
-        organizer.set_course_id(attached_record: fake_ar_3, course_id: 42)
-      end
-
-      it "get latest attached records for a course" do
-        expect(organizer.latest_attached_record(course_id: 42)).to eq @fake_ar_2
+        organizer.set_course_id(salesforce_object: new_dummy_sf_object, course_id: 42)
+        organizer.set_course_id(salesforce_object: new_dummy_sf_object, course_id: 42)
       end
 
       it "gets unduplicated course_ids" do
@@ -233,7 +228,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       end
 
       it "has all 3 ARs" do
-        expect(organizer.size).to eq 3
+        expect(organizer.size).to eq 2
       end
     end
   end
@@ -286,6 +281,18 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       expect(period_1_enrollments).to eq 1
       expect(period_2_enrollments).to eq 1
     end
+  end
+
+  def stub_organizer
+    double.tap do |dbl|
+      allow_any_instance_of(described_class).to receive(:initialize_organizer) { dbl }
+      yield dbl
+    end
+  end
+
+  def new_dummy_sf_object
+    @id ||= 0
+    OpenStruct.new(id: @id+=1)
   end
 
 end

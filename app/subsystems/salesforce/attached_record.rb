@@ -13,12 +13,20 @@ module Salesforce
       verify_and_return strategy_class.preload(what), klass: self, error: StrategyError
     end
 
-    def record
-      @strategy.record
+    def salesforce_object
+      @strategy.salesforce_object
     end
 
     def attached_to
       @strategy.attached_to
+    end
+
+    def attached_to_class_name
+      @strategy.attached_to_class_name
+    end
+
+    def attached_to_id
+      @strategy.attached_to_id
     end
 
   end

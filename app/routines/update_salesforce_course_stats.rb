@@ -38,9 +38,11 @@ class UpdateSalesforceCourseStats
     attached_records.each do |ar|
       case ar.attached_to_class_name
       when "Entity::Course"
-        organizer.set_course_id(attached_record: ar, course_id: ar.attached_to_id)
+        organizer.set_course_id(salesforce_object: ar.salesforce_object,
+                                course_id: ar.attached_to_id)
       when "CourseMembership::Models::Period"
-        organizer.add_period_id(attached_record: ar, period_id: ar.attached_to_id)
+        organizer.add_period_id(salesforce_object: ar.salesforce_object,
+                                period_id: ar.attached_to_id)
       end
     end
 
@@ -60,7 +62,7 @@ class UpdateSalesforceCourseStats
 
       periods.each do |period|
         organizer.remember_period(period)
-        organizer.add_orphan_period(period) if organizer.no_attached_record_for_period?(period)
+        organizer.add_orphan_period(period) if organizer.no_salesforce_object_for_period?(period)
       end
     end
 
@@ -96,7 +98,7 @@ class UpdateSalesforceCourseStats
 
       target_term_year = Salesforce::Remote::TermYear.guess_from_created_at(period.created_at)
       eligible_sf_objects = course_sf_objects.select do |sf|
-        sf.opportunity.term_year_object == target_term_year
+        sf.term_year_object == target_term_year
       end
 
       if eligible_sf_objects.many?
@@ -111,7 +113,7 @@ class UpdateSalesforceCourseStats
         # there is one, just use it
         sf_object_to_use = eligible_sf_objects.first
       else
-        # no eligible objects, make a new one
+        # no eligible objects, make a new one based on ANY existing SF obj for course
         begin
           sf_object_to_use =
             Salesforce::RenewOsAncillary.call(based_on: course_sf_objects.first,
@@ -125,12 +127,12 @@ class UpdateSalesforceCourseStats
       # Attach the SF object to the period and course and remember these
       # attachments in the organizer
 
-      period_ar = Salesforce::AttachRecord[record: sf_object_to_use, to: period]
-      organizer.add_period_id(attached_record: period_ar, period_id: period.id)
+      Salesforce::AttachRecord[record: sf_object_to_use, to: period]
+      organizer.add_period_id(salesforce_object: sf_object_to_use, period_id: period.id)
 
       if !course_sf_objects.map(&:id).include?(sf_object_to_use.id)
-        course_ar = Salesforce::AttachRecord[record: sf_object_to_use, to: course]
-        organizer.set_course_id(attached_record: course_ar, course_id: course.id)
+        Salesforce::AttachRecord[record: sf_object_to_use, to: course]
+        organizer.set_course_id(salesforce_object: sf_object_to_use, course_id: course.id)
       end
 
     end
@@ -140,22 +142,20 @@ class UpdateSalesforceCourseStats
     num_errors = 0
     num_updates = 0
 
-    organizer.each do |attached_record, course, periods|
+    organizer.each do |salesforce_object, course, periods|
       begin
-        sf_record = attached_record.salesforce_object
-
-        sf_record.num_teachers = course.teachers.length
-        sf_record.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
-        sf_record.num_sections = periods.length
+        salesforce_object.num_teachers = course.teachers.length
+        salesforce_object.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
+        salesforce_object.num_sections = periods.length
       rescue Exception => e
         num_errors += 1
-        sf_record.error = "Unable to update stats: #{e.message}" if sf_record.present?
+        salesforce_object.error = "Unable to update stats: #{e.message}" if salesforce_object.present?
         OpenStax::RescueFrom.perform_rescue(e)
       end
 
       begin
-        if sf_record.present? && sf_record.changed?
-          sf_record.save
+        if salesforce_object.present? && salesforce_object.changed?
+          salesforce_object.save
           num_updates += 1
         end
       rescue Exception => e
@@ -167,22 +167,21 @@ class UpdateSalesforceCourseStats
     num_records = num_errors + num_updates
 
     log {
-      "Wrote stats for #{num_records} record(s); Made #{num_updates} successful " +
+      "Wrote stats for #{num_records} SF record(s); Made #{num_updates} successful " +
       "update(s); #{num_errors} error(s) occurred."
     }
 
-    outputs[:num_records] = num_records
     outputs[:num_errors] = num_errors
     outputs[:num_updates] = num_updates
   end
 
   # A helper class that (1) keeps track of relationships between courses, periods, and their
-  # attached records and (2) provides helper methods for examining and accessing those
+  # attached salesforce objects and (2) provides helper methods for examining and accessing those
   # relationships
   #
   class Organizer
     def initialize
-      @tuples_by_ar = {}
+      @tuples_by_sf_object_id = {}
       @tuples_by_period_id = {}
       @tuples_by_course_id = {}
       @period_id_to_period_map = {}
@@ -190,28 +189,23 @@ class UpdateSalesforceCourseStats
       @orphaned_periods = Set.new
     end
 
-    def add_period_id(attached_record:, period_id:)
-      tuple = get_by_attached_record(attached_record)
+    def add_period_id(salesforce_object:, period_id:)
+      tuple = get_by_sf_object(salesforce_object)
       tuple.add_period_id(period_id)
       @tuples_by_period_id[period_id] = tuple
     end
 
-    def set_course_id(attached_record:, course_id:)
-      tuple = get_by_attached_record(attached_record)
+    def set_course_id(salesforce_object:, course_id:)
+      tuple = get_by_sf_object(salesforce_object)
       tuple.course_id = course_id
       (@tuples_by_course_id[course_id] ||= []).push(tuple)
     end
 
-    def latest_attached_record(course_id:)
-      get_by_course_id(course_id).map(&:attached_record).sort_by(&:created_at).last
-    end
-
     def get_sf_objects(course_id:)
-      get_by_course_id(course_id).map(&:attached_record)
-                                 .map(&:salesforce_object)
+      get_by_course_id(course_id).map(&:salesforce_object)
     end
 
-    def no_attached_record_for_period?(period)
+    def no_salesforce_object_for_period?(period)
       @tuples_by_period_id[period.id].nil?
     end
 
@@ -240,28 +234,28 @@ class UpdateSalesforceCourseStats
     end
 
     def each(&block)
-      @tuples_by_ar.each do |k,v|
-        attached_record = v.attached_record
-        course = @course_id_to_course_map[v.course_id]
-        periods = v.period_ids.map{|period_id| @period_id_to_period_map[period_id]}
+      @tuples_by_sf_object_id.each do |_, tuple|
+        sf_object = tuple.salesforce_object
+        course = @course_id_to_course_map[tuple.course_id]
+        periods = tuple.period_ids.map{|period_id| @period_id_to_period_map[period_id]}
 
-        block.call(attached_record, course, periods)
+        block.call(sf_object, course, periods)
       end
     end
 
     def size
-      @tuples_by_ar.size
+      @tuples_by_sf_object_id.size
     end
 
     private
 
     class Tuple
-      attr_reader :attached_record
+      attr_reader :salesforce_object
       attr_reader :period_ids
-      attr_accessor :course_id
+      attr_reader :course_id
 
-      def initialize(attached_record)
-        @attached_record = attached_record
+      def initialize(salesforce_object)
+        @salesforce_object = salesforce_object
         @course_id = nil
         @period_ids = []
       end
@@ -276,8 +270,8 @@ class UpdateSalesforceCourseStats
       end
     end
 
-    def get_by_attached_record(attached_record)
-      @tuples_by_ar[attached_record] ||= Tuple.new(attached_record)
+    def get_by_sf_object(sf_object)
+      @tuples_by_sf_object_id[sf_object.id] ||= Tuple.new(sf_object)
     end
 
     def get_by_course_id(course_id)
@@ -294,7 +288,7 @@ class UpdateSalesforceCourseStats
   end
 
   def log(&block)
-    Rails.logger.info { "[UpdateSalesforceStats] #{block.call}" }
+    Rails.logger.info { "[UpdateSalesforceCourseStats] #{block.call}" }
   end
 
 end
