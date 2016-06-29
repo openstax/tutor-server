@@ -46,14 +46,12 @@ class DistributeTasks
     tasked_taskees = tasks.reject(&:destroyed?).flat_map{ |task| task.taskings.map(&:role) }
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
-
-    taskees = tasking_plans.map(&:target)
-    opens_ats = tasking_plans.map(&:opens_at)
-    due_ats = tasking_plans.map(&:due_at)
-    time_zones = tasking_plans.map(&:time_zone)
+    untasked_tasking_plans = tasking_plans.reject do |tasking_plan|
+      tasked_taskees.include? tasking_plan.target
+    end
 
     # Exclude students that already had the assignment
-    untasked_taskees = taskees - tasked_taskees
+    untasked_taskees = untasked_tasking_plans.map(&:target)
     untasked_taskee_ids = untasked_taskees.map(&:id)
 
     untasked_taskee_students = CourseMembership::Models::Student
@@ -71,13 +69,14 @@ class DistributeTasks
     ) if tasks.any?{ |task| !task.stepless? && task.task_steps.empty? }
 
     tasks.each_with_index do |task, ii|
-      role = untasked_taskees[ii]
+      tasking_plan = untasked_tasking_plans[ii]
+      role = tasking_plan.target
       student = untasked_taskee_students[role.id]
       tasking = Tasks::Models::Tasking.new task: task, role: role, period: student.try(:period)
       task.taskings << tasking
-      task.time_zone = time_zones[ii]
-      task.opens_at = opens_ats[ii]
-      task.due_at = due_ats[ii]
+      task.time_zone = tasking_plan.time_zone
+      task.opens_at = tasking_plan.opens_at
+      task.due_at = tasking_plan.due_at
       task.feedback_at = task_plan.is_feedback_immediate ? nil : task.due_at
     end
 
