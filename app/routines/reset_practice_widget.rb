@@ -13,7 +13,6 @@ class ResetPracticeWidget
     translations: { outputs: { type: :verbatim } },
     as: :create_practice_widget_task
 
-  uses_routine GetCourseEcosystem, as: :get_course_ecosystem
   uses_routine GetHistory, as: :get_history
   uses_routine FilterExcludedExercises, as: :filter
   uses_routine ChooseExercises, as: :choose
@@ -76,9 +75,11 @@ class ResetPracticeWidget
     related_content_array = exercises.map{ |ex| ex.page.related_content }
 
     # Create the new practice widget task, and put the exercises into steps
+    time_zone = role.student.try(:course).try(:time_zone)
     run(:create_practice_widget_task, exercises: exercises,
                                       task_type: task_type,
-                                      related_content_array: related_content_array)
+                                      related_content_array: related_content_array,
+                                      time_zone: time_zone)
     run(:add_spy_info, to: outputs.task, from: ecosystem)
 
     run(:create_tasking, role: role, task: outputs.task)

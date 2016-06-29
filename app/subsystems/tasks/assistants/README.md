@@ -2,13 +2,15 @@
 
 Assistant Classes must:
 
-  1. Implement the `initialize(task_plan:, taskees:)` method which:
-       - Receives as inputs and stores the TaskPlan being assigned and the taskees (targets)
+  1. Implement the `initialize(task_plan:, individualized_tasking_plans:)` method which:
+       - Receives as inputs and stores the TaskPlan being assigned
+         and the individualized_tasking_plans (tasking_plans changed to point to single roles)
 
   2. Implement the `build_tasks` method which:
-       - Builds Task objects for the TaskPlan given during initialization
-       - Returns an array containing the Tasks::Models::Task to be assigned to the taskees
-         (in order)
+       - Builds Task objects for the task_plan and individualized_tasking_plans
+         given during initialization
+       - Returns an array containing the Tasks::Models::Task to be assigned to the roles
+         in each individualized_tasking_plan (in order)
 
   3. Implement the `schema` singleton method which:
        - Receives no arguments
@@ -19,17 +21,19 @@ Example:
 ```rb
 class AbstractAssistant
 
+  attr_reader :task_plan, :individualized_tasking_plans
+
   def self.schema
     {}
   end
 
-  def initialize(task_plan:, taskees:)
+  def initialize(task_plan:, individualized_tasking_plans:)
     @task_plan = task_plan
-    @taskees = taskees
+    @individualized_tasking_plans = individualized_tasking_plans
   end
 
   def build_tasks
-    @taskees.map do |taskee|
+    individualized_tasking_plans.map do |tasking_plan|
       raise NotImplementedError
     end
   end

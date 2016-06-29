@@ -4,11 +4,8 @@ class DummyAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_tasks
-    @taskees.map do |taskee|
-      Tasks::BuildTask[task_plan: @task_plan,
-                       title: @task_plan.title,
-                       description: @task_plan.description,
-                       task_type: :external]
+    individualized_tasking_plans.map do |tasking_plan|
+      build_task(type: :external, default_title: 'Dummy', time_zone: tasking_plan.time_zone)
     end
   end
 

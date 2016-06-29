@@ -33,7 +33,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
     te
   }
 
-  let!(:course)             { Entity::Course.create }
+  let!(:course)             { FactoryGirl.create :entity_course }
   let!(:period)             { CreatePeriod[course: course] }
 
   let!(:lo)                 { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }

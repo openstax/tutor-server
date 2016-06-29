@@ -11,12 +11,10 @@ module Tasks
       end
 
       def build_tasks
-        taskees.map{ build_task(type: :event, default_title: 'Event') }
+        individualized_tasking_plans.map do |tasking_plan|
+          build_task(type: :event, default_title: 'Event', time_zone: tasking_plan.time_zone)
+        end
       end
-
-      private
-
-      attr_reader :task_plan, :taskees
     end
   end
 end

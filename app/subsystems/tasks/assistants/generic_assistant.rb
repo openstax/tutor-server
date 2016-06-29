@@ -3,9 +3,9 @@
 # since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
 
-  def initialize(task_plan:, taskees:)
+  def initialize(task_plan:, individualized_tasking_plans:)
     @task_plan = task_plan
-    @taskees = taskees
+    @individualized_tasking_plans = individualized_tasking_plans
     @ecosystems_map = {}
     @page_cache = {}
     @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
@@ -15,7 +15,7 @@ class Tasks::Assistants::GenericAssistant
 
   protected
 
-  attr_reader :task_plan, :taskees
+  attr_reader :task_plan, :individualized_tasking_plans
 
   def ecosystem
     return @ecosystem unless @ecosystem.nil?
@@ -86,7 +86,7 @@ class Tasks::Assistants::GenericAssistant
     @page_cache[page_ids] = pages
   end
 
-  def build_task(type:, default_title:)
+  def build_task(type:, default_title:, time_zone:)
     title    = task_plan.title || default_title
     description = task_plan.description
 
@@ -94,7 +94,8 @@ class Tasks::Assistants::GenericAssistant
       task_plan: task_plan,
       task_type: type,
       title:     title,
-      description: description
+      description: description,
+      time_zone: time_zone
     ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
   end
 
@@ -105,8 +106,7 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, taskee:,
-                                          history:, k_ago_map:, pool_type:)
+  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
     history = add_current_task_to_individual_history(
       task: task, core_page_ids: core_page_ids, history: history
     )
@@ -165,8 +165,8 @@ class Tasks::Assistants::GenericAssistant
     task
   end
 
-  def add_personalized_exercise_steps!(task:, taskee:, personalized_placeholder_strategy_class:,
-                                       num_personalized_exercises:)
+  def add_personalized_exercise_steps!(task:, num_personalized_exercises:,
+                                       personalized_placeholder_strategy_class:)
     return task if num_personalized_exercises == 0
 
     task.personalized_placeholder_strategy = personalized_placeholder_strategy_class.new
