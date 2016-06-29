@@ -25,7 +25,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   before_save :update_tag_type_data_and_visible
 
   IMPORT_TAG_TYPES  = Set[ :lo, :aplo, :cnxmod ]
-  MAPPING_TAG_TYPES = Set[ :lo, :aplo, :cnxmod ]
+  MAPPING_TAG_TYPES = Set[ :lo, :cnxmod ]
   VISIBLE_TAG_TYPES = Set[ :lo, :aplo, :teks, :dok, :blooms, :length ]
 
   def book_location
