@@ -7,11 +7,11 @@ module Tasks
     protected
 
     def exec(course:)
-      taskings = get_taskings(course)
+      taskings = get_course_taskings(course)
 
       outputs[:performance_report] = course.periods.map do |period|
-        # Sort task_plans by due date
-        tasking_plans = sort_tasking_plans(taskings, course, period)
+        # Filter tasking_plans period and sort by due date
+        tasking_plans = filter_and_sort_tasking_plans(taskings, course, period)
 
         # Assign column numbers in the performance report to task_plans
         task_plan_col_nums = {}
@@ -21,30 +21,31 @@ module Tasks
 
         # Sort the students into the performance report rows by name
         role_taskings = taskings.group_by(&:role)
-        sorted_student_data = role_taskings.sort_by do |student_role, _|
+        period_role_taskings = role_taskings.select do |student_role, taskings|
+          student_role.student.period == period
+        end
+        sorted_period_student_data = period_role_taskings.sort_by do |student_role, _|
           sort_name = "#{student_role.last_name} #{student_role.first_name}"
           (sort_name.blank? ? student_role.name : sort_name).downcase
         end
 
         # This hash will accumulate student tasks to calculate header stats later
-        task_plan_results = Hash.new{ |h, key| h[key] = [] }
+        task_plan_results = Hash.new{ |hash, key| hash[key] = [] }
 
-        student_data = sorted_student_data.map do |student_role, student_taskings|
-          # The student scores always show in the student's current period,
-          # so skip displaying if they are no longer in this period
-          next if student_role.student.period != period
-
+        student_data = sorted_period_student_data.map do |student_role, student_taskings|
           # Populate the student_tasks array but leave empty spaces (nils)
           # for assignments the student hasn't done
           student_tasks = Array.new(tasking_plans.size)
 
-          student_taskings.each do |tg|
-            col_num = task_plan_col_nums[tg.task.tasks_task_plan_id]
-            # Skip (leaving the nil in) if task not assigned to current period
-            # Could be individual, like practice widget, or assigned to a different period
+          student_taskings.each do |tasking|
+            col_num = task_plan_col_nums[tasking.task.tasks_task_plan_id]
+            # Skip if there is no column in the report for this task
+            # (which means it is not assigned to the current period)
+            # Could be individual, like practice widget,
+            # or assigned only to a different period and done by the student while in that period
             next if col_num.nil?
 
-            student_tasks[col_num] = tg.task
+            student_tasks[col_num] = tasking.task
           end
 
           # Gather the student tasks into the task_plan_results hash
@@ -61,24 +62,24 @@ module Tasks
             data: data,
             average_score: average_scores(data.map{ |datum| datum.present? ? datum[:task] : nil })
           }
-        end.compact
+        end
 
         Hashie::Mash.new({
           period: period,
-          overall_average_score: average(student_data.map{|sd| sd[:average_score]}),
+          overall_average_score: average(student_data.map{ |sd| sd[:average_score] }),
           data_headings: get_data_headings(tasking_plans, task_plan_results),
           students: student_data
         })
       end
     end
 
-    def sort_tasking_plans(taskings, course, period)
+    def filter_and_sort_tasking_plans(taskings, course, period)
       taskings.flat_map do |tg|
         tg.task.task_plan.tasking_plans.select{ |tp| tp.target == period  || tp.target == course }
       end.uniq.sort{ |a, b| [b.due_at_ntz, b.created_at] <=> [a.due_at_ntz, a.created_at] }
     end
 
-    def get_taskings(course)
+    def get_course_taskings(course)
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
       # .reorder(nil) removes the ordering from the period default scope so .uniq won't blow up
