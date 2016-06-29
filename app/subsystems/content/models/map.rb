@@ -106,8 +106,8 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
       pool_association_to_pool_type_map.each do |pool_association, pool_type|
         pool = to_page.try(pool_association)
-        page_id_to_pool_type_exercise_ids_map[from_page_id][pool_type] = \
-          pool.try :content_exercise_ids
+        exercise_ids = pool.try(:content_exercise_ids) || []
+        page_id_to_pool_type_exercise_ids_map[from_page_id][pool_type] = exercise_ids
       end
     end
 
@@ -147,7 +147,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
       exercise_id_to_page_id_map_keys_set.include? ex.id.to_s
     end.map(&:uid)
 
-    validity_error_messages << "Unmapped exercise uids: [#{unmapped_ex_uids.to_a.join(', ')}]"
+    validity_error_messages << "Unmapped exercise uids: #{unmapped_ex_uids.inspect}"
     self.is_valid = false
   end
 
@@ -167,9 +167,9 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     end
 
     error_messages = mismapped_hash.map do |ex_id, pg_id|
-      ex_uid = from_exercises_by_id[ex_id].try(:uid) || 'nil'
-      title  = to_pages_by_id[pg_id].try(:title) || 'nil'
-      "#{ex_uid} => \"#{title}\""
+      ex_uid = from_exercises_by_id[ex_id].try(:uid)
+      title  = to_pages_by_id[pg_id].try(:title)
+      "#{ex_uid.inspect} => #{title.inspect}"
     end
 
     validity_error_messages << "Mismapped exercises: [#{error_messages.join(', ')}]"
@@ -192,9 +192,9 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     end
 
     error_messages = mismapped_hash.map do |from_pg_id, to_pg_id|
-      from_title = from_pages_by_id[from_pg_id].try(:title) || 'nil'
-      to_title  = to_pages_by_id[to_pg_id].try(:title) || 'nil'
-      "\"#{from_title}\" => \"#{to_title}\""
+      from_title = from_pages_by_id[from_pg_id].try(:title)
+      to_title  = to_pages_by_id[to_pg_id].try(:title)
+      "#{from_title.inspect} => #{to_title.inspect}"
     end
 
     validity_error_messages << "Mismapped pages: [#{error_messages.join(', ')}]"
@@ -212,7 +212,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
     return true if pool_type_exercise_ids_maps_values_set.subset?(to_exercise_ids_set)
 
-    pool_types = Content::Models::Pool.pool_types.keys.map(&:to_sym)
+    pool_types = Content::Models::Pool.pool_types.keys
     from_pages_by_id = from_ecosystem.pages.index_by{ |ex| ex.id.to_s }
     to_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
 
@@ -224,11 +224,11 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
         next if exercise_ids.is_a?(Array) &&
                 exercise_ids.all?{ |ex_id| to_exercise_ids_set.include? ex_id }
 
-        title = from_pages_by_id[pg_id].try(:title) || 'nil'
-        ex_uids = exercise_ids.is_a?(Array) ? "[#{exercise_ids.map do |ex_id|
-          to_exercises_by_id[ex_id].try(:uid) || 'nil'
-        end}]" : exercise_ids.inspect
-        error_messages << "\"#{title}\" => { #{pool_type}: #{ex_uids} }"
+        title = from_pages_by_id[pg_id].try(:title)
+        ex_uids = exercise_ids
+        ex_uids = exercise_ids.map{ |ex_id| to_exercises_by_id[ex_id].try(:uid) } \
+          if exercise_ids.is_a?(Array)
+        error_messages << "#{title.inspect} => { #{pool_type.inspect} => #{ex_uids.inspect} }"
       end
     end
 
