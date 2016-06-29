@@ -52,18 +52,16 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   def fragments
     return @fragments unless @fragments.nil?
-    return [] if fragment_splitter.nil?
+    return [] unless cache_fragments_and_snap_labs
 
-    cache_fragments_and_snap_labs
     frags = super
     @fragments = frags.nil? ? nil : frags.map{ |yaml| YAML.load(yaml) }
   end
 
   def snap_labs
     return @snap_labs unless @snap_labs.nil?
-    return [] if fragment_splitter.nil?
+    return [] unless cache_fragments_and_snap_labs
 
-    cache_fragments_and_snap_labs
     sls = super
     @snap_labs = sls.nil? ? nil : sls.map do |snap_lab|
       sl = snap_lab.symbolize_keys
@@ -90,7 +88,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def cache_fragments_and_snap_labs
-    return if fragment_splitter.nil? || read_attribute(:fragments).present?
+    return true if read_attribute(:fragments).present?
+    return false if fragment_splitter.nil?
 
     self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
       {
@@ -100,6 +99,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
       }
     end
     self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
+
+    true
   end
 
 end

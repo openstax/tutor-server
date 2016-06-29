@@ -61,13 +61,11 @@ module Content
     end
 
     def books_by_ids(*ids)
-      verify_and_return @strategy.books_by_ids(*ids),
-                        klass: ::Content::Book, error: StrategyError
+      verify_and_return @strategy.books_by_ids(*ids), klass: ::Content::Book, error: StrategyError
     end
 
     def chapters
-      verify_and_return @strategy.chapters,
-                        klass: ::Content::Chapter, error: StrategyError
+      verify_and_return @strategy.chapters, klass: ::Content::Chapter, error: StrategyError
     end
 
     def chapters_by_ids(*ids)
@@ -80,13 +78,11 @@ module Content
     end
 
     def pages_by_ids(*ids)
-      verify_and_return @strategy.pages_by_ids(*ids),
-                        klass: ::Content::Page, error: StrategyError
+      verify_and_return @strategy.pages_by_ids(*ids), klass: ::Content::Page, error: StrategyError
     end
 
     def exercises
-      verify_and_return @strategy.exercises,
-                        klass: ::Content::Exercise, error: StrategyError
+      verify_and_return @strategy.exercises, klass: ::Content::Exercise, error: StrategyError
     end
 
     def exercises_by_ids(*ids)
