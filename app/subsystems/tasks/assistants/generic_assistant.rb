@@ -3,9 +3,9 @@
 # since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
 
-  def initialize(task_plan:, individualized_tasking_plans:)
+  def initialize(task_plan:, roles:)
     @task_plan = task_plan
-    @individualized_tasking_plans = individualized_tasking_plans
+    @roles = roles
     @ecosystems_map = {}
     @page_cache = {}
     @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
@@ -15,7 +15,7 @@ class Tasks::Assistants::GenericAssistant
 
   protected
 
-  attr_reader :task_plan, :individualized_tasking_plans
+  attr_reader :task_plan, :roles
 
   def ecosystem
     return @ecosystem unless @ecosystem.nil?
@@ -86,16 +86,15 @@ class Tasks::Assistants::GenericAssistant
     @page_cache[page_ids] = pages
   end
 
-  def build_task(type:, default_title:, time_zone:)
+  def build_task(type:, default_title:)
     title    = task_plan.title || default_title
     description = task_plan.description
 
     task = Tasks::BuildTask[
-      task_plan: task_plan,
-      task_type: type,
-      title:     title,
-      description: description,
-      time_zone: time_zone
+      task_plan:   task_plan,
+      task_type:   type,
+      title:       title,
+      description: description
     ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
   end
 

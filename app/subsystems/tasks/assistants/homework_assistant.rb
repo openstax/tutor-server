@@ -32,7 +32,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     }'
   end
 
-  def initialize(task_plan:, individualized_tasking_plans:)
+  def initialize(task_plan:, roles:)
     super
 
     @exercise_ids = task_plan.settings['exercise_ids']
@@ -44,13 +44,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_tasks
-    roles = individualized_tasking_plans.map(&:target)
     histories = GetHistory[roles: roles, type: :homework]
 
-    individualized_tasking_plans.map do |tasking_plan|
-      build_homework_task(exercises: @exercises, history: histories[tasking_plan.target],
-                          time_zone: tasking_plan.time_zone)
-    end
+    roles.map{ |role| build_homework_task(exercises: @exercises, history: histories[role]) }
   end
 
   protected
@@ -80,8 +76,8 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     1
   end
 
-  def build_homework_task(exercises:, history:, time_zone:)
-    task = build_task(type: :homework, default_title: 'Homework', time_zone: time_zone)
+  def build_homework_task(exercises:, history:)
+    task = build_task(type: :homework, default_title: 'Homework')
 
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(

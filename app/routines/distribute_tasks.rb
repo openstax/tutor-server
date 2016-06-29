@@ -62,8 +62,7 @@ class DistributeTasks
     assistant = task_plan.assistant
 
     # Call the assistant code to create Tasks, then distribute them
-    tasks = assistant.build_tasks(task_plan: task_plan,
-                                  individualized_tasking_plans: untasked_tasking_plans)
+    tasks = assistant.build_tasks(task_plan: task_plan, roles: untasked_roles)
 
     fatal_error(
       code: :empty_tasks, message: 'Tasks could not be published because some tasks were empty'

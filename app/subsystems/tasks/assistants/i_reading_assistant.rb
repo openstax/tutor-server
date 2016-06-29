@@ -20,7 +20,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     }'
   end
 
-  def initialize(task_plan:, individualized_tasking_plans:)
+  def initialize(task_plan:, roles:)
     super
 
     @pages = ecosystem.pages_by_ids(task_plan.settings['page_ids'])
@@ -32,12 +32,10 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     reading_dynamic_pools = ecosystem.reading_dynamic_pools(pages: @pages)
     skip_dynamic = reading_dynamic_pools.all?(&:empty?)
 
-    roles = individualized_tasking_plans.map(&:target)
     histories = GetHistory[roles: roles, type: :reading]
 
-    individualized_tasking_plans.map do |tasking_plan|
-      build_reading_task(pages: @pages, history: histories[tasking_plan.target],
-                         time_zone: tasking_plan.time_zone, skip_dynamic: skip_dynamic)
+    roles.map do |role|
+      build_reading_task(pages: @pages, history: histories[role], skip_dynamic: skip_dynamic)
     end
   end
 
@@ -53,8 +51,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     1
   end
 
-  def build_reading_task(pages:, history:, time_zone:, skip_dynamic:)
-    task = build_task(type: :reading, default_title: 'Reading', time_zone: time_zone)
+  def build_reading_task(pages:, history:, skip_dynamic:)
+    task = build_task(type: :reading, default_title: 'Reading')
 
     reset_used_exercises
 

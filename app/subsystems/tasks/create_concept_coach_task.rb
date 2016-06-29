@@ -15,9 +15,9 @@ module Tasks
 
     def exec(role:, page:, exercises:, group_types:, related_content_array: [])
       period = role.student.period
+      time_zone = period.try(:course).try(:time_zone)
 
-      run(:build_task, task_type: :concept_coach, title: 'Concept Coach',
-                       time_zone: period.course.time_zone)
+      run(:build_task, task_type: :concept_coach, title: 'Concept Coach', time_zone: time_zone)
 
       exercises.each_with_index do |exercise, ii|
         TaskExercise.call(exercise: exercise, task: outputs.task) do |step|
