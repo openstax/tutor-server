@@ -2,13 +2,21 @@ require 'rails_helper'
 
 RSpec.describe ImportSalesforceCourses, type: :routine do
 
-  let(:sf_record_class) { Salesforce::Remote::OsAncillary }
+  let(:osa_class) { Salesforce::Remote::OsAncillary }
+  let(:cs_class)  { Salesforce::Remote::ClassSize }
 
   it 'restricts to Denver University when asked to not run on real data' do
-    allow(sf_record_class).to receive(:where).and_return([])
+    allow(osa_class).to receive(:where).and_return([])
+    allow(cs_class).to receive(:where).and_return([])
 
-    expect(sf_record_class).to receive(:where).with(
+    expect(osa_class).to receive(:where).with(
       status: "Approved",
+      course_id: nil,
+      school: 'Denver University'
+    )
+
+    expect(cs_class).to receive(:where).with(
+      concept_coach_approved: true,
       course_id: nil,
       school: 'Denver University'
     )
@@ -17,11 +25,18 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   end
 
   it 'restricts to Denver University when told to include real data but global secrets flag false' do
-    allow(sf_record_class).to receive(:where).and_return([])
+    allow(osa_class).to receive(:where).and_return([])
+    allow(cs_class).to receive(:where).and_return([])
     allow(Rails.application.secrets.salesforce).to receive(:[]).with('allow_use_of_real_data').and_return false
 
-    expect(sf_record_class).to receive(:where).with(
+    expect(osa_class).to receive(:where).with(
       status: "Approved",
+      course_id: nil,
+      school: 'Denver University'
+    )
+
+    expect(cs_class).to receive(:where).with(
+      concept_coach_approved: true,
       course_id: nil,
       school: 'Denver University'
     )
@@ -30,11 +45,17 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   end
 
   it 'does not restrict to Denver University when told to include real data' do
-    allow(sf_record_class).to receive(:where).and_return([])
+    allow(osa_class).to receive(:where).and_return([])
+    allow(cs_class).to receive(:where).and_return([])
     allow(Rails.application.secrets.salesforce).to receive(:[]).with('allow_use_of_real_data').and_return true
 
-    expect(sf_record_class).to receive(:where).with(
+    expect(osa_class).to receive(:where).with(
       status: "Approved",
+      course_id: nil
+    )
+
+    expect(cs_class).to receive(:where).with(
+      concept_coach_approved: true,
       course_id: nil
     )
 
@@ -44,7 +65,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   it 'creates a course and returns info' do
     disable_sfdc_client
 
-    sf_record = sf_record_class.new(
+    sf_record = osa_class.new(
       book_name: "jimmy", course_name: "Jimmyness 101",
       school: "Jimmy U", id: 'booyah', product: "Concept Coach"
     )
@@ -52,7 +73,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
     )
 
-    stub_candidates(sf_record)
+    stub_candidates(osa: sf_record)
 
     expect(sf_record).to receive(:save)
 
@@ -88,14 +109,14 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
     )
 
-    sf_record = sf_record_class.new(
+    sf_record = osa_class.new(
       book_name: "jimmy", course_name: "Jimmyness 101",
       school: "Jimmy U", id: 'booyah', product: "Concept Coach"
     )
 
     # 2nd candidate here is going to force a blow up with NoMethodError:
     # undefined method `something here' for nil:NilClass
-    stub_candidates([sf_record, nil])
+    stub_candidates(osa: [sf_record, nil])
 
     expect {
       ImportSalesforceCourses.call rescue NoMethodError
@@ -110,12 +131,12 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
     )
 
-    sf_record = sf_record_class.new(
+    sf_record = osa_class.new(
       book_name: "jimmy", course_name: "Jimmyness 101",
       school: "Jimmy U", id: 'booyah', product: "Concept Coach"
     )
 
-    stub_candidates(sf_record)
+    stub_candidates(osa: sf_record)
 
     allow_any_instance_of(offering.class).to receive(:ecosystem).and_raise(NoMethodError)
 
@@ -130,10 +151,14 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       .and_return(double('null object').as_null_object)
   end
 
-  def stub_candidates(candidates)
+  def stub_candidates(osa: [], cs: [])
     allow_any_instance_of(described_class)
-      .to receive(:candidate_sf_records)
-      .and_return([candidates].flatten)
+      .to receive(:candidate_os_ancillary_records)
+      .and_return([osa].flatten)
+
+    allow_any_instance_of(described_class)
+      .to receive(:candidate_class_size_records)
+      .and_return([cs].flatten)
   end
 
 end

@@ -10,9 +10,9 @@ class ImportSalesforceCourses
   end
 
   def call(include_real_salesforce_data: nil)
-    log { "Starting." }
-
     @include_real_salesforce_data_preference = include_real_salesforce_data
+
+    log { "Starting#{' (test data only)' if !include_real_salesforce_data?}." }
 
     num_failures = 0
     num_successes = 0
@@ -27,7 +27,7 @@ class ImportSalesforceCourses
     end
 
     log {
-      "#{num_failures + num_successes} candidate record(s); " +
+      "Finished. #{num_failures + num_successes} candidate record(s); " +
       "#{num_successes} success(es) and #{num_failures} failure(s)."
     }
 
@@ -48,17 +48,29 @@ class ImportSalesforceCourses
   end
 
   def candidate_sf_records
+    [candidate_class_size_records, candidate_os_ancillary_records].flatten
+  end
+
+  def candidate_class_size_records
+    search_criteria = {
+      concept_coach_approved: true,
+      course_id: nil
+    }
+
+    search_criteria[:school] = 'Denver University' if !include_real_salesforce_data?
+
+    Salesforce::Remote::ClassSize.where(search_criteria).to_a
+  end
+
+  def candidate_os_ancillary_records
     search_criteria = {
       status: Salesforce::Remote::OsAncillary::STATUS_APPROVED,
       course_id: nil
     }
 
-    if !include_real_salesforce_data?
-      search_criteria[:school] = 'Denver University'
-      log { "Using test data only." }
-    end
+    search_criteria[:school] = 'Denver University' if !include_real_salesforce_data?
 
-    Salesforce::Remote::OsAncillary.where(search_criteria)
+    Salesforce::Remote::OsAncillary.where(search_criteria).to_a
   end
 
   def log(&block)

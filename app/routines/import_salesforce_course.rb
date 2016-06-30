@@ -7,6 +7,7 @@ class ImportSalesforceCourse
   uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
   uses_routine Salesforce::AttachRecord, as: :attach_record
 
+  # Candidate can be `OsAncillary` or `ClassSize`
   def exec(candidate:, log_prefix: nil)
     @log_prefix = log_prefix
 

@@ -19,4 +19,12 @@ class Salesforce::Remote::ClassSize < ActiveForce::SObject
     Salesforce::Remote::TermYear.from_string(self.term_year)
   end
 
+  # Methods to make this legacy SF object compatible with current OsAncillary interface.
+  # All ClassSize records were used for college CC courses.
+
+  def is_tutor?;         false; end
+  def is_concept_coach?; true; end
+  def valid_product?;    true; end
+  def is_college?;       true; end
+
 end
