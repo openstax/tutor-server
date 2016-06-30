@@ -20,6 +20,10 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
     from_ecosystem.exercises.each do |exercise|
       page_id = page_id_to_page_id_map[exercise.content_page_id.to_s]
+      # A nil page_id is an invalid map, but we want the error to say the exercise is unmapped,
+      # rather than that the mapped values are invalid
+      next if page_id.nil?
+
       exercise_id_to_page_id_map[exercise.id.to_s] = page_id
     end
 
