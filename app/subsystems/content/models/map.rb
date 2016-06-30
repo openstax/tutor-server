@@ -16,35 +16,11 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   def create_exercise_id_to_page_id_map
     return unless exercise_id_to_page_id_map.blank?
 
-    # Special case: from_ecosystem == to_ecosystem
-    # Mapping succeeds even if the exercise has no tags
-    if from_ecosystem == to_ecosystem
-      to_ecosystem.exercises.each do |exercise|
-        exercise_id_to_page_id_map[exercise.id.to_s] = exercise.content_page_id
-      end
+    create_page_id_to_page_id_map
 
-      return exercise_id_to_page_id_map
-    end
-
-    exercise_id_to_pages_map = Content::Models::Page
-      .joins(tags: {same_value_tags: :exercises})
-      .where(tags: {
-               content_ecosystem_id: to_ecosystem.id,
-               tag_type: mapping_tag_types,
-               same_value_tags: {
-                 content_ecosystem_id: from_ecosystem.id,
-                 tag_type: mapping_tag_types
-               }
-             })
-      .uniq
-      .select{[Content::Models::Page.arel_table[:id],
-               Content::Models::Page.arel_table[:book_location],
-               tags.same_value_tags.exercises.id.as(:from_exercise_id)]}
-      .group_by(&:from_exercise_id)
-
-    # Each exercise maps to the highest numbered page that shares a mapping tag with it
-    exercise_id_to_pages_map.each do |exercise_id, pages|
-      exercise_id_to_page_id_map[exercise_id.to_s] = pages.max_by(&:book_location).id
+    from_ecosystem.exercises.each do |exercise|
+      page_id = page_id_to_page_id_map[exercise.content_page_id.to_s]
+      exercise_id_to_page_id_map[exercise.id.to_s] = page_id
     end
 
     exercise_id_to_page_id_map
