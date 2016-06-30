@@ -81,7 +81,6 @@ module Content
 
           pages.each do |page|
             exercise_ids = page_id_to_exercise_ids_map[page.id.to_s]
-            debugger if exercise_ids.nil?
             page_to_exercises_map[page] = exercise_ids.map{ |ex_id| to_exercises_by_ids[ex_id] }
           end
 
