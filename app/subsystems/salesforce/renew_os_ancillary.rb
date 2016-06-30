@@ -11,10 +11,10 @@ module Salesforce
       target_opportunity_criteria = {
         contact_id: based_on_opportunity.contact_id,
         book_name: based_on_opportunity.book_name,
-        term_year: renew_for_term_year
+        term_year: renew_for_term_year.to_s
       }
 
-      target_opportunities = Salesforce::Remote::Opportunity.where(target_opportunity_criteria).all
+      target_opportunities = Salesforce::Remote::Opportunity.where(target_opportunity_criteria).to_a
 
       if target_opportunities.size > 1
         raise OsAncillaryRenewalError, "Too many opportunities matching #{target_opportunity_criteria}"
@@ -24,17 +24,9 @@ module Salesforce
 
       target_opportunity = target_opportunities.first
 
-      based_on_product =
-        case based_on
-        when Salesforce::Remote::OsAncillary
-          based_on.product
-        when Salesforce::Remote::ClassSize
-          "Concept Coach"
-        end
-
       os_ancillary_attributes = {
         opportunity_id: target_opportunity.id,
-        product: based_on_product
+        product: based_on.product
       }
 
       existing_os_ancillary = Salesforce::Remote::OsAncillary.where(os_ancillary_attributes).first
