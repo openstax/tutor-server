@@ -8,7 +8,7 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
 
   belongs_to :ecosystem, inverse_of: :books
 
-  sortable_has_many :chapters, on: :number, dependent: :destroy, autosave: true, inverse_of: :book
+  sortable_has_many :chapters, on: :number, dependent: :destroy, inverse_of: :book
   # If you need the pages in order, you MUST iterate through the chapters
   has_many :pages, through: :chapters
   has_many :exercises, through: :pages

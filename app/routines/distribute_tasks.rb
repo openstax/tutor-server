@@ -6,28 +6,6 @@ class DistributeTasks
 
   protected
 
-  def save(tasks)
-    tasks.each do |task|
-      task.task_steps.each_with_index do |task_step, index|
-        tasked = task_step.tasked
-        tasked.task_step = nil
-        tasked.save!
-        task_step.tasked = tasked
-        task_step.number = index + 1
-      end
-
-      task.update_step_counts
-    end
-
-    Tasks::Models::Task.import! tasks, recursive: true
-
-    tasks.each do |task|
-      task.task_steps.reset
-      task.tasked_exercises.reset
-      task.taskings.reset
-    end
-  end
-
   def exec(task_plan, publish_time = Time.current, protect_unopened_tasks = false)
     task_plan.lock!
 
@@ -82,11 +60,49 @@ class DistributeTasks
 
     save(tasks)
 
+    tasks.each do |task|
+      task.task_steps.reset
+      task.tasked_exercises.reset
+      task.taskings.reset
+    end
+
     task_plan.first_published_at = publish_time if task_plan.first_published_at.nil?
     task_plan.last_published_at = publish_time
     task_plan.save! if task_plan.persisted?
 
     outputs[:tasks] = tasks
+  end
+
+  # Efficiently save all task records
+  def save(tasks)
+    # Taskeds are not saved by recursive: true because they are a belongs_to association
+    # So we handle them separately
+    all_taskeds = tasks.map do |task|
+      task.update_step_counts
+
+      task.task_steps.map do |task_step|
+        task_step.tasked.tap{ |tasked| tasked.task_step = nil }
+      end
+    end
+
+    all_taskeds.flatten.group_by(&:class).each do |tasked_class, taskeds|
+      tasked_class.import! taskeds
+    end
+
+    tasks.each_with_index do |task, task_index|
+      task.task_steps.each_with_index do |task_step, step_index|
+        task_step.tasked = all_taskeds[task_index][step_index]
+        task_step.number = step_index + 1
+      end
+    end
+
+    Tasks::Models::Task.import! tasks, recursive: true
+
+    tasks.each do |task|
+      task.task_steps.reset
+      task.tasked_exercises.reset
+      task.taskings.reset
+    end
   end
 
 end

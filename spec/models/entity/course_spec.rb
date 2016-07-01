@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Entity::Course, type: :model do
-  it { is_expected.to have_one(:profile).dependent(:destroy) }
+  it { is_expected.to have_one(:profile).dependent(:destroy).autosave(true) }
 
   it { is_expected.to have_many(:periods).dependent(:destroy) }
   it { is_expected.to have_many(:teachers).dependent(:destroy) }
