@@ -20,6 +20,7 @@ class Content::Routines::TagResource
 
     outputs[:taggings] = new_tags.map do |tag|
       tagging_class.new(tag: tag, resource_field => resource).tap do |tagging|
+        tagging.skip_uniqueness_validations = true
         existing_taggings << tagging unless save
       end
     end

@@ -93,6 +93,7 @@ class DistributeTasks
       task.task_steps.each_with_index do |task_step, step_index|
         task_step.tasked = all_taskeds[task_index][step_index]
         task_step.number = step_index + 1
+        task_step.skip_uniqueness_validations = true
       end
     end
 
