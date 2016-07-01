@@ -18,6 +18,10 @@ module OpenStax::Cnx::V1
 
     attr_reader :url, :width, :height, :to_html
 
+    def self.get_url_node(node)
+      node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last
+    end
+
     # This code is run in page.rb during import
     def self.replace_embed_links_with_iframes(node)
       containers = node.css(CONTAINER_CSS)
@@ -31,10 +35,11 @@ module OpenStax::Cnx::V1
           container.replace(url_node)
         when 'a'
           # Build iframe based on the link's URL
+          url = url_node.try(:[], 'src') || url_node.try(:[], 'href')
           iframe = Nokogiri::XML::Node.new('iframe', node.document)
           iframe['src'] = url
-          iframe['width'] = width
-          iframe['height'] = height
+          iframe['width'] = default_width
+          iframe['height'] = default_height
 
           # Save the url node's parent
           parent = url_node.parent
@@ -57,7 +62,7 @@ module OpenStax::Cnx::V1
                              title_nodes.map{ |node| node.content.strip }.uniq.join('; ')
       end
 
-      url_node = get_url_node(node)
+      url_node = self.class.get_url_node(node)
 
       @width = url_node.try(:[], 'width') || default_width
       @height = url_node.try(:[], 'height') || default_height
@@ -69,12 +74,6 @@ module OpenStax::Cnx::V1
 
     def blank?
       url.blank?
-    end
-
-    protected
-
-    def get_url_node(node)
-      node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last
     end
 
   end
