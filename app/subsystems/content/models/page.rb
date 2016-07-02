@@ -22,7 +22,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   has_many :exercises, dependent: :destroy, inverse_of: :page
 
-  has_many :page_tags, dependent: :destroy, autosave: true, inverse_of: :page
+  has_many :page_tags, dependent: :destroy, inverse_of: :page
   has_many :tags, through: :page_tags
 
   validates :book_location, presence: true

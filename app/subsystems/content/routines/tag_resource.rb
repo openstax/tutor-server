@@ -26,7 +26,7 @@ class Content::Routines::TagResource
 
     return unless save
 
-    tagging_class.import! outputs[:taggings]
+    tagging_class.import outputs[:taggings], validate: false
 
     # Reset associations so they get reloaded the next time they are used
     existing_taggings.reset

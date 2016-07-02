@@ -9,7 +9,7 @@ class Content::Models::Chapter < Tutor::SubSystems::BaseModel
   sortable_belongs_to :book, on: :number, inverse_of: :chapters
   has_one :ecosystem, through: :book
 
-  sortable_has_many :pages, on: :number, dependent: :destroy, autosave: true, inverse_of: :chapter
+  sortable_has_many :pages, on: :number, dependent: :destroy, inverse_of: :chapter
   has_many :exercises, through: :pages
 
   validates :book, presence: true

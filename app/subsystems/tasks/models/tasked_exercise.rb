@@ -86,11 +86,13 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     feedback_map[answer_id] || ''
   end
 
-  protected
-
   def set_correct_answer_id
+    return correct_answer_id if correct_answer_id.present?
+
     self.correct_answer_id = correct_question_answer_ids[0].first
   end
+
+  protected
 
   def free_response_required
     return true unless formats.include?('free-response') && free_response.blank?

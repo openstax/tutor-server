@@ -18,11 +18,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasks
 
   sortable_has_many :task_steps, -> { with_deleted.order(:number) },
-                                 on: :number, dependent: :destroy, inverse_of: :task, autosave: true
+                                 on: :number, dependent: :destroy, inverse_of: :task
   has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,
                                                   source_type: 'Tasks::Models::TaskedExercise'
 
-  has_many :taskings, -> { with_deleted }, dependent: :destroy, autosave: true, inverse_of: :task
+  has_many :taskings, -> { with_deleted }, dependent: :destroy, inverse_of: :task
   has_one :concept_coach_task, -> { with_deleted }, dependent: :destroy, inverse_of: :task
 
   validates :title, presence: true
