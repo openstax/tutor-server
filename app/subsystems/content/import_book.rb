@@ -31,8 +31,8 @@ class Content::ImportBook
 
     Content::Models::Book.import [book], recursive: true, validate: false
 
-    # Reload book and reset associations so they get reloaded the next time they are used
-    book.reload.clear_association_cache
+    # Reset chapters association so it gets reloaded the next time it is used
+    book.chapters.reset
 
     import_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.import? }
     import_page_tags.each(&:reload)

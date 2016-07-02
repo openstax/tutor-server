@@ -60,12 +60,6 @@ class DistributeTasks
 
     save(tasks)
 
-    tasks.each do |task|
-      task.task_steps.reset
-      task.tasked_exercises.reset
-      task.taskings.reset
-    end
-
     task_plan.first_published_at = publish_time if task_plan.first_published_at.nil?
     task_plan.last_published_at = publish_time
     task_plan.save! if task_plan.persisted?

@@ -49,8 +49,6 @@ class Content::Routines::ImportExercises
                                                content: wrapper.content,
                                                has_interactive: wrapper.has_interactive?,
                                                has_video: wrapper.has_video?)
-      exercise.valid?
-      transfer_errors_from(exercise, {type: :verbatim}, true)
 
       relevant_tags = wrapper.tags.map{ |tag| tag_map[tag] }.compact
       run(:tag, exercise, relevant_tags, tagging_class: Content::Models::ExerciseTag, save: false)
@@ -66,10 +64,5 @@ class Content::Routines::ImportExercises
     page.exercises.reset if page.is_a?(Content::Models::Page)
 
     exercise_pages.each{ |page| page.exercises.reset }
-
-    outputs[:exercises].each do |exercise|
-      exercise.exercise_tags.reset
-      exercise.tags.reset
-    end
   end
 end
