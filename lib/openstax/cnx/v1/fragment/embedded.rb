@@ -36,8 +36,10 @@ module OpenStax::Cnx::V1
       if url_node.name == 'iframe'
         node_classes = url_node['class'].to_s.split(' ') + iframe_classes
         url_node['class'] = node_classes.uniq.join(' ')
-        url_node['width'] = default_width
-        url_node['height'] = default_height
+
+        # To always force the default iframe size, change ||= to =
+        url_node['width'] ||= default_width
+        url_node['height'] ||= default_height
       end
 
       @to_html = node.to_html

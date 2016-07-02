@@ -23,8 +23,11 @@ module OpenStax::Cnx::V1
     TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
 
     def self.feature_node(node, feature_ids)
-      feature_id_css = [feature_ids].flatten.map{ |feature_id| "##{feature_id}" }.join(', ')
-      node.at_css feature_id_css
+      feature_ids = [feature_ids].flatten
+      return if feature_ids.empty?
+
+      feature_id_css = feature_ids.map{ |feature_id| "##{feature_id}" }.join(', ')
+      node.at_css(feature_id_css)
     end
 
     def initialize(hash: {}, id: nil, title: nil, content: nil)

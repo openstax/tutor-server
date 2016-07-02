@@ -80,9 +80,6 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       feature_node = OpenStax::Cnx::V1::Page.feature_node(node, exercise.feature_ids)
 
       unless feature_node.nil?
-        # Reassign context to exercise to pick up any modifications due to processing instructions
-        exercise.context = feature_node.to_html
-
         # Remove context from previous step
         feature_node.remove
         previous_step.tasked.content = node.to_html

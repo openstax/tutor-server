@@ -74,7 +74,20 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def context_for_feature_ids(feature_ids)
-    parser_class.feature_node(parser.converted_root, feature_ids).try(:to_html)
+    @context_for_feature_ids ||= {}
+    return @context_for_feature_ids[feature_ids] if @context_for_feature_ids.has_key?(feature_ids)
+
+    feature_node = nil
+    fragments.each do |fragment|
+      next unless fragment.respond_to?(:to_html)
+
+      fragment_node = Nokogiri::HTML.fragment(fragment.to_html)
+      feature_node = parser_class.feature_node(fragment_node, feature_ids)
+
+      break unless feature_node.nil?
+    end
+
+    @context_for_feature_ids[feature_ids] = feature_node.try(:to_html)
   end
 
   protected
