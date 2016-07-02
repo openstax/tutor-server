@@ -11,8 +11,10 @@ class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
   # Delegate all real work to the actual implementation (the "worker")
   delegate :schema, to: :code_class
 
-  def build_tasks(task_plan:, roles:)
-    code_class.new(task_plan: task_plan, roles: roles).build_tasks
+  def build_tasks(task_plan:, individualized_tasking_plans:)
+    code_class.new(
+      task_plan: task_plan, individualized_tasking_plans: individualized_tasking_plans
+    ).build_tasks
   end
 
   protected

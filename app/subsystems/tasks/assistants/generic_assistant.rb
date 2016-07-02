@@ -3,19 +3,25 @@
 # since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
 
-  def initialize(task_plan:, roles:)
+  def initialize(task_plan:, individualized_tasking_plans:)
     @task_plan = task_plan
-    @roles = roles
+    @individualized_tasking_plans = individualized_tasking_plans
+    role_ids = individualized_tasking_plans.map(&:target_id)
+    @students_by_role_id = CourseMembership::Models::Student
+                            .where(entity_role_id: role_ids)
+                            .preload(enrollments: :period)
+                            .to_a.index_by(&:entity_role_id)
     @ecosystems_map = {}
     @page_cache = {}
     @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
     @spaced_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
+
     reset_used_exercises
   end
 
   protected
 
-  attr_reader :task_plan, :roles
+  attr_reader :task_plan, :individualized_tasking_plans
 
   def ecosystem
     return @ecosystem unless @ecosystem.nil?
@@ -62,16 +68,39 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_current_task_to_individual_history(task:, core_page_ids:, history:)
-    ecosystem_id = task_plan.ecosystem.id
-    exercise_steps = task.task_steps.select(&:exercise?)
-    tasked_exercises = exercise_steps.map(&:tasked)
+  # Limits the history to tasks due before the given task's due date
+  # Adds the given task to the history
+  def history_for_task(task:, core_page_ids:, history:)
+    history = history.dup
+
+    task_sort_array = [task.due_at, task.opens_at, task.created_at]
+
+    history_indices = 0.upto(history.total_count)
+    history_indices_to_keep = history_indices.select do |index|
+      ([history.due_ats[index], history.opens_ats[index], history.created_ats[index]] <=>
+      task_sort_array) == -1
+    end
+
+    # Remove tasks due after the given task from the history
+    history.total_count = history_indices_to_keep.size
+    history.ecosystem_ids = history.ecosystem_ids.values_at(*history_indices_to_keep)
+    history.core_page_ids = history.core_page_ids.values_at(*history_indices_to_keep)
+    history.exercise_numbers = history.exercise_numbers.values_at(*history_indices_to_keep)
+    history.created_ats = history.created_ats.values_at(*history_indices_to_keep)
+    history.opens_ats = history.opens_ats.values_at(*history_indices_to_keep)
+    history.due_ats = history.due_ats.values_at(*history_indices_to_keep)
+
+    # Add the given task to the history
+    tasked_exercises = task.task_steps.select(&:exercise?).map(&:tasked)
     exercise_numbers = tasked_exercises.map{ |te| te.exercise.number }
 
     history.total_count += 1
-    history.ecosystem_ids.unshift ecosystem_id
+    history.ecosystem_ids.unshift task_plan.ecosystem.id
     history.core_page_ids.unshift core_page_ids
     history.exercise_numbers.unshift exercise_numbers
+    history.created_ats.unshift task.created_at
+    history.opens_ats.unshift task.opens_at
+    history.due_ats.unshift task.due_at
 
     history
   end
@@ -86,16 +115,24 @@ class Tasks::Assistants::GenericAssistant
     @page_cache[page_ids] = pages
   end
 
-  def build_task(type:, default_title:)
-    title    = task_plan.title || default_title
-    description = task_plan.description
+  def build_task(type:, default_title:, individualized_tasking_plan:)
+    role = individualized_tasking_plan.target
+    student = @students_by_role_id[role.id]
 
-    task = Tasks::BuildTask[
+    Tasks::BuildTask[
       task_plan:   task_plan,
       task_type:   type,
-      title:       title,
-      description: description
-    ].tap{ |task| AddSpyInfo[to: task, from: ecosystem] }
+      title:       task_plan.title || default_title,
+      description: task_plan.description,
+      time_zone: individualized_tasking_plan.time_zone,
+      opens_at: individualized_tasking_plan.opens_at,
+      due_at: individualized_tasking_plan.due_at,
+      feedback_at: task_plan.is_feedback_immediate ? nil : individualized_tasking_plan.due_at
+    ].tap do |task|
+      task.taskings << Tasks::Models::Tasking.new(task: task, role: role,
+                                                  period: student.try(:period))
+      AddSpyInfo[to: task, from: ecosystem]
+    end
   end
 
   def assign_spaced_practice_exercise(task:, exercise:)
@@ -106,9 +143,7 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
-    history = add_current_task_to_individual_history(
-      task: task, core_page_ids: core_page_ids, history: history
-    )
+    history = history_for_task task: task, core_page_ids: core_page_ids, history: history
 
     core_exercise_numbers = history.exercise_numbers.first
 
