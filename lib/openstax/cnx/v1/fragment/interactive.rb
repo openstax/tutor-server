@@ -10,6 +10,7 @@ class OpenStax::Cnx::V1::Fragment
 
     self.default_width = 960
     self.default_height = 560
+    self.iframe_classes += ['interactive']
 
     # This code is run from lib/openstax/cnx/v1/page.rb during import
     def self.replace_interactive_links_with_iframes(node)
@@ -23,7 +24,7 @@ class OpenStax::Cnx::V1::Fragment
         # Build iframe based on the link's URL
         iframe = Nokogiri::XML::Node.new('iframe', node.document)
         iframe['src'] = link_node['href']
-        iframe['class'] = 'interactive os-embed'
+        iframe['class'] = iframe_classes.join(' ')
         iframe['width'] = default_width
         iframe['height'] = default_height
 

@@ -11,7 +11,9 @@ module OpenStax::Cnx::V1
     TAGGED_URL_CSS = 'iframe.os-embed, a.os-embed, .os-embed iframe, .os-embed a'
     UNTAGGED_URL_CSS = 'iframe, a'
 
-    class_attribute :default_width, :default_height
+    class_attribute :iframe_classes, :default_width, :default_height
+
+    self.iframe_classes = ['os-embed']
 
     attr_reader :url, :width, :height, :to_html
 
@@ -30,6 +32,13 @@ module OpenStax::Cnx::V1
       @height = url_node.try(:[], 'height') || default_height
 
       @url = url_node.try(:[], 'src') || url_node.try(:[], 'href')
+
+      if url_node.name == 'iframe'
+        node_classes = url_node['class'].to_s.split(' ') + iframe_classes
+        url_node['class'] = node_classes.uniq.join(' ')
+        url_node['width'] = default_width
+        url_node['height'] = default_height
+      end
 
       @to_html = node.to_html
     end

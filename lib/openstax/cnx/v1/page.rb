@@ -24,7 +24,7 @@ module OpenStax::Cnx::V1
 
     def self.feature_node(node, feature_ids)
       feature_id_css = [feature_ids].flatten.map{ |feature_id| "##{feature_id}" }.join(', ')
-      node.at_css(feature_id_css(feature_ids))
+      node.at_css feature_id_css
     end
 
     def initialize(hash: {}, id: nil, title: nil, content: nil)
@@ -97,7 +97,6 @@ module OpenStax::Cnx::V1
       @converted_doc ||= begin
         cd = doc.dup
         cd = OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes(cd)
-        cd = OpenStax::Cnx::V1::Fragment::Video.replace_video_links_with_iframes(cd)
         absolutize_and_secure_urls(cd)
       end
     end

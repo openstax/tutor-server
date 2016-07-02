@@ -210,7 +210,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
 
     it 'extracts feature nodes by id' do
       feature_id = 'fs-id1164355841632'
-      feature_node = @page.feature_node(feature_id)
+      feature_node = described_class.feature_node(@page.converted_root, feature_id)
       expect(feature_node[:id]).to eq feature_id
     end
   end

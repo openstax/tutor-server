@@ -10,7 +10,7 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
   it { is_expected.to validate_presence_of(:title) }
 
   it { is_expected.to delegate_method(:is_intro?).to(:parser) }
-  it { is_expected.to delegate_method(:feature_node).to(:parser) }
+  it { is_expected.to delegate_method(:feature_node).to(OpenStax::Cnx::V1::Page) }
 
   context 'with snap lab page' do
 
