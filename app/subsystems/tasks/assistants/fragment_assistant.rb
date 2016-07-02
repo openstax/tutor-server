@@ -11,18 +11,18 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
       title ||= fragment.title
 
-      step_modifier = ->(step) {
+      step_modifier = ->(step) do
         step.group_type = :core_group
         step.add_labels(fragment.labels)
         step.add_related_content(related_content)
-      }
+      end
 
-      step_builder = ->() {
+      step_builder = ->() do
         Tasks::Models::TaskStep.new(task: task).tap do |step|
           step_modifier.call(step)
           task.add_step(step)
         end
-      }
+      end
 
       # For Exercise and OptionalExercise (subclass of Exercise)
       previous_step = task.task_steps.last if fragment.is_a? OpenStax::Cnx::V1::Fragment::Exercise
@@ -73,14 +73,24 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
     # Removes the current exercise's context from the previous step
     # Removes the previous step completely if this modification makes its content blank
-    if previous_step.present? && exercise.context.present? &&
-       previous_step.has_content? && previous_step.tasked.content.include?(exercise.context)
-      previous_step.tasked.content = previous_step.tasked.content.sub(exercise.context, '')
+    if previous_step.present? && previous_step.has_content? && exercise.context.present?
+      node = Nokogiri::HTML.fragment(previous_step.tasked.content)
 
-      if previous_step.tasked.content.blank?
-        task.task_steps.delete(previous_step)
-      else
-        previous_step.tasked.save! if previous_step.tasked.persisted?
+      # Remove any feature_ids used as exercise context from the previous step
+      feature_node = OpenStax::Cnx::V1::Page.feature_node(node, exercise.feature_ids)
+
+      unless feature_node.nil?
+        # Remove context from previous step
+        feature_node.remove
+        previous_step.tasked.content = node.to_html
+
+        if previous_step.tasked.content.blank?
+          # If the previous step is now blank, remove it from the task
+          task.task_steps.delete(previous_step)
+        else
+          # If the previous step is persisted, save it again
+          previous_step.tasked.save! if previous_step.tasked.persisted?
+        end
       end
     end
 

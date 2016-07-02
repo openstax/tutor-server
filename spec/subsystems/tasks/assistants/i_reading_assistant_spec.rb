@@ -543,6 +543,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
                                        tag_type: :id,
                                        ecosystem: ecosystem_model
     end
+    let!(:video_cnxfeature_tag) do
+      FactoryGirl.create :content_tag, value: "context-cnxfeature:fs-video",
+                                       tag_type: :cnxfeature,
+                                       ecosystem: ecosystem_model
+    end
     let!(:interactive_cnxfeature_tag) do
       FactoryGirl.create :content_tag, value: "context-cnxfeature:fs-interactive",
                                        tag_type: :cnxfeature,
@@ -553,6 +558,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       FactoryGirl.create(:content_exercise, page: page, context: video_content).tap do |exercise|
         exercise.tags << cnxmod_tag
         exercise.tags << video_exercise_id_tag
+        exercise.tags << video_cnxfeature_tag
       end
     end
     let!(:interactive_exercise) do
@@ -621,13 +627,15 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           ),
           OpenStax::Cnx::V1::Fragment::Video.new(
             node: Nokogiri::HTML.fragment(video_content).children.first,
-            title: "Watch Newton use the Force against Robert Hooke"
+            title: "Watch Isaac Newton use the Force against Robert Hooke"
           ),
           OpenStax::Cnx::V1::Fragment::Exercise.new(
-            node: Nokogiri::HTML.fragment(
-              "<div class=\"exercise\">
-                 <a href=#ost/api/ex/#{video_exercise_id_tag.value}>[Link]</a>
-               </div>"
+            node: OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(
+              Nokogiri::HTML.fragment(
+                "<div class=\"exercise\">
+                   <a href=#ost/api/ex/#{video_exercise_id_tag.value}>[Link]</a>
+                 </div>"
+              )
             ).children.first,
             title: nil
           ),

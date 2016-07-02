@@ -38,14 +38,8 @@ module OpenStax::Cnx::V1
 
     protected
 
-    class CustomCss
-      define_method(:'has-descendants') do |node_set, selector, number = 1|
-        node_set.select{ |node| node.css(selector).size >= number }
-      end
-    end
-
     def custom_css
-      @custom_css ||= CustomCss.new
+      OpenStax::Cnx::V1::CustomCss.instance
     end
 
     # Returns an instance of the given fragment class

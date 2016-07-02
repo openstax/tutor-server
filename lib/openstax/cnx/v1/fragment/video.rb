@@ -3,6 +3,7 @@ class OpenStax::Cnx::V1::Fragment
 
     self.default_width = 560
     self.default_height = 315
+    self.iframe_classes += ['video']
 
   end
 end

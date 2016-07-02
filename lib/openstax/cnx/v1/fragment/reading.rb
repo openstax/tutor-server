@@ -5,6 +5,7 @@ module OpenStax::Cnx::V1
 
     def initialize(node:, title: nil, labels: nil)
       super
+
       @to_html = node.to_html
     end
 

@@ -42,6 +42,10 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:cnxmod?)
   end
 
+  def cnxfeatures
+    tags.to_a.select(&:cnxfeature?)
+  end
+
   def content_hash
     ::JSON.parse(content)
   end
@@ -63,6 +67,10 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   def is_multipart?
     content_hash['questions'].size > 1
+  end
+
+  def feature_ids
+    cnxfeatures.map(&:data)
   end
 
 end

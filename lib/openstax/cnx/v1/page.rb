@@ -22,6 +22,14 @@ module OpenStax::Cnx::V1
     STD_REGEX = /ost-tag-std-([\w+-]+)/
     TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
 
+    def self.feature_node(node, feature_ids)
+      feature_ids = [feature_ids].flatten
+      return if feature_ids.empty?
+
+      feature_id_css = feature_ids.map{ |feature_id| "##{feature_id}" }.join(', ')
+      node.at_css(feature_id_css)
+    end
+
     def initialize(hash: {}, id: nil, title: nil, content: nil)
       @hash            = hash
       @id              = id
@@ -33,9 +41,7 @@ module OpenStax::Cnx::V1
     attr_accessor :chapter_section
 
     def id
-      @id ||= hash.fetch('id') { |key|
-        raise "Page is missing #{key}"
-      }
+      @id ||= hash.fetch('id') { |key| raise "Page is missing #{key}" }
     end
 
     def url
@@ -44,9 +50,7 @@ module OpenStax::Cnx::V1
 
     # Use the title in the collection hash
     def title
-      @title ||= hash.fetch('title') { |key|
-        raise "Page id=#{id} is missing #{key}"
-      }
+      @title ||= hash.fetch('title') { |key| raise "Page id=#{id} is missing #{key}" }
     end
 
     def is_intro?
@@ -61,9 +65,7 @@ module OpenStax::Cnx::V1
     end
 
     def uuid
-      @uuid ||= full_hash.fetch('id') { |key|
-        raise "Book id=#{id} is missing #{key}"
-      }
+      @uuid ||= full_hash.fetch('id') { |key| raise "Book id=#{id} is missing #{key}" }
     end
 
     def short_id
@@ -71,9 +73,7 @@ module OpenStax::Cnx::V1
     end
 
     def version
-      @version ||= full_hash.fetch('version') { |key|
-        raise "Book id=#{id} is missing #{key}"
-      }
+      @version ||= full_hash.fetch('version') { |key| raise "Book id=#{id} is missing #{key}" }
     end
 
     def canonical_url
@@ -92,48 +92,16 @@ module OpenStax::Cnx::V1
       @root ||= doc.at_css(ROOT_CSS)
     end
 
-    # Changes relative url attributes in the doc to be absolute
-    # Changes http embedded scripts/images/iframes to https
+    # Replaces links to embeddable sims (and maybe videos in the future) with iframes
+    # Changes exercise urls and relative urls in the doc to be absolute
+    # Changes any embedded http url (in a src attribute) to https
     def converted_doc
-      # In the future, change to point to reference material within Tutor
-      return @converted_doc unless @converted_doc.nil?
-
-      @converted_doc = doc.dup
-
-      @converted_doc.css("[src]").each do |link|
-        src = link.attributes["src"]
-        uri = Addressable::URI.parse(src.value)
-
-        if uri.absolute?
-          # Since this is embedded content, make sure it is https
-          uri.scheme = "https"
-          src.value = uri.to_s
-        else
-          # Skip the special anchor-only exercise tags
-          next if uri.path.blank?
-
-          # Relative link: make secure and absolute
-          src.value = OpenStax::Cnx::V1.archive_url_for(uri)
-        end
+      # In the future, change CNX URLs to point to reference material within Tutor
+      @converted_doc ||= begin
+        cd = doc.dup
+        cd = OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes(cd)
+        absolutize_and_secure_urls(cd)
       end
-
-      @converted_doc.css("[href]").each do |link|
-        href = link.attributes["href"]
-        uri = Addressable::URI.parse(href.value)
-
-        # Anchors don't need to be https
-        next if uri.absolute? || uri.path.blank?
-
-        # Relative link: make secure and absolute
-        href.value = OpenStax::Cnx::V1.archive_url_for(uri)
-      end
-
-      # Absolutize exercise links
-      Fragment::Exercise.absolutize_exercise_urls(@converted_doc)
-
-      @converted_doc
-    rescue Addressable::URI::InvalidURIError => exception
-      raise Addressable::URI::InvalidURIError.new(exception.message + " when parsing page: #{url}")
     end
 
     def converted_content
@@ -146,10 +114,6 @@ module OpenStax::Cnx::V1
 
     def snap_lab_nodes
       converted_root.css(SNAP_LAB_CSS)
-    end
-
-    def feature_node(feature_id)
-      converted_root.at_css("##{feature_id}")
     end
 
     def snap_lab_title(snap_lab)
@@ -216,6 +180,59 @@ module OpenStax::Cnx::V1
       end
 
       @tags.values
+    end
+
+    protected
+
+    def absolutize_and_secure_urls(node)
+      # Absolutize exercise urls
+      node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(node.dup)
+
+      # Absolutize embed urls
+      node.css("[src]").each do |link|
+        src = link.attributes["src"]
+        uri = Addressable::URI.parse(src.value) rescue nil
+
+        # Skip invalid links
+        if uri.nil?
+          Rails.logger.warn{ "Invalid embed url: \"#{uri}\" when parsing page: #{url}" }
+          next
+        end
+
+        if uri.absolute?
+          # Absolute link: make secure (since this is embedded content)
+
+          uri.scheme = "https"
+          src.value = uri.to_s
+        else
+          # Relative link: make secure and absolute
+
+          # Skip anchor-only links
+          next if uri.path.blank?
+
+          src.value = OpenStax::Cnx::V1.archive_url_for(uri)
+        end
+      end
+
+      # Absolutize link urls
+      node.css("[href]").each do |link|
+        href = link.attributes["href"]
+        uri = Addressable::URI.parse(href.value) rescue nil
+
+        # Skip invalid links
+        if uri.nil?
+          Rails.logger.warn{ "Invalid link url: \"#{uri}\" when parsing page: #{url}" }
+          next
+        end
+
+        # Modify only valid relative links that are not anchor-only
+        next if uri.absolute? || uri.path.blank?
+
+        # Relative link: make secure and absolute
+        href.value = OpenStax::Cnx::V1.archive_url_for(uri)
+      end
+
+      node
     end
 
   end
