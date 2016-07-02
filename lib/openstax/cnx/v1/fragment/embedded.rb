@@ -7,9 +7,6 @@ module OpenStax::Cnx::V1
     # Used to get the title if there are no title nodes
     LABEL_ATTRIBUTE = 'data-label'
 
-    # CSS to find embedded element containers (will be replaced with iframe)
-    CONTAINER_CSS = '.os-interactive-link, .ost-embed-container'
-
     # CSS to find embedded content urls
     TAGGED_URL_CSS = 'iframe.os-embed, a.os-embed, .os-embed iframe, .os-embed a'
     UNTAGGED_URL_CSS = 'iframe, a'
@@ -17,41 +14,6 @@ module OpenStax::Cnx::V1
     class_attribute :default_width, :default_height
 
     attr_reader :url, :width, :height, :to_html
-
-    def self.get_url_node(node)
-      node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last
-    end
-
-    # This code is run in page.rb during import
-    def self.replace_embed_links_with_iframes(node)
-      containers = node.css(CONTAINER_CSS)
-
-      containers.each do |container|
-        url_node = get_url_node(container)
-
-        case url_node.try(:name)
-        when 'iframe'
-          # Reuse url node's iframe
-          container.replace(url_node)
-        when 'a'
-          # Build iframe based on the link's URL
-          url = url_node.try(:[], 'src') || url_node.try(:[], 'href')
-          iframe = Nokogiri::XML::Node.new('iframe', node.document)
-          iframe['src'] = url
-          iframe['width'] = default_width
-          iframe['height'] = default_height
-
-          # Save the url node's parent
-          parent = url_node.parent
-          # Replace the url node with its text
-          url_node.replace(url_node.inner_html)
-          # Replace the container with the new iframe or append it to the parent node
-          container.replace(iframe)
-        end
-      end
-
-      node
-    end
 
     def initialize(node:, title: nil, labels: nil)
       super
@@ -62,7 +24,7 @@ module OpenStax::Cnx::V1
                              title_nodes.map{ |node| node.content.strip }.uniq.join('; ')
       end
 
-      url_node = self.class.get_url_node(node)
+      url_node = node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last
 
       @width = url_node.try(:[], 'width') || default_width
       @height = url_node.try(:[], 'height') || default_height

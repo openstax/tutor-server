@@ -84,17 +84,16 @@ module OpenStax::Cnx::V1
       @root ||= doc.at_css(ROOT_CSS)
     end
 
-    # Changes relative and exercise url attributes in the doc to be absolute
-    # Changes http embedded scripts/images/iframes to https
-    # Replaces links to embeddable sims with iframes
+    # Replaces links to embeddable sims (and maybe videos in the future) with iframes
+    # Changes exercise urls and relative urls in the doc to be absolute
+    # Changes any embedded http url (in a src attribute) to https
     def converted_doc
-      # In the future, change to point to reference material within Tutor
-      return @converted_doc unless @converted_doc.nil?
-
-      # Absolutize urls
+      # In the future, change CNX URLs to point to reference material within Tutor
       @converted_doc ||= begin
-        embed_doc = OpenStax::Cnx::V1::Fragment::Embedded.replace_embed_links_with_iframes(doc.dup)
-        absolutize_urls(embed_doc)
+        cd = doc.dup
+        cd = OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes(cd)
+        cd = OpenStax::Cnx::V1::Fragment::Video.replace_video_links_with_iframes(cd)
+        absolutize_and_secure_urls(cd)
       end
     end
 
@@ -182,7 +181,7 @@ module OpenStax::Cnx::V1
 
     protected
 
-    def absolutize_urls(node)
+    def absolutize_and_secure_urls(node)
       # Absolutize exercise urls
       node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(node.dup)
 

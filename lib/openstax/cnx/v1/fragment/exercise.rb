@@ -15,7 +15,7 @@ module OpenStax::Cnx::V1
 
     attr_reader :embed_tags
 
-    # This code is run in page.rb during import
+    # This code is run from lib/openstax/cnx/v1/page.rb during import
     def self.absolutize_exercise_urls(node)
       node.css(EXERCISE_EMBED_CODE_CSS).each do |anchor|
         href = anchor.attribute('href')

@@ -1,17 +1,16 @@
 require 'addressable/uri'
 require 'open-uri'
 
-require_relative './v1/fragment_splitter'
+require_relative './v1/custom_css'
 
 require_relative './v1/fragment'
 require_relative './v1/fragment/embedded'
-
-require_relative './v1/fragment/reading'
 require_relative './v1/fragment/video'
 require_relative './v1/fragment/interactive'
-
+require_relative './v1/fragment/reading'
 require_relative './v1/fragment/exercise'
 require_relative './v1/fragment/optional_exercise'
+require_relative './v1/fragment_splitter'
 
 require_relative './v1/book'
 require_relative './v1/book_part'
