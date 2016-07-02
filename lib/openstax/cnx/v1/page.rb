@@ -22,6 +22,11 @@ module OpenStax::Cnx::V1
     STD_REGEX = /ost-tag-std-([\w+-]+)/
     TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
 
+    def self.feature_node(node, feature_ids)
+      feature_id_css = [feature_ids].flatten.map{ |feature_id| "##{feature_id}" }.join(', ')
+      node.at_css(feature_id_css(feature_ids))
+    end
+
     def initialize(hash: {}, id: nil, title: nil, content: nil)
       @hash            = hash
       @id              = id
@@ -107,10 +112,6 @@ module OpenStax::Cnx::V1
 
     def snap_lab_nodes
       converted_root.css(SNAP_LAB_CSS)
-    end
-
-    def feature_node(feature_id)
-      converted_root.at_css("##{feature_id}")
     end
 
     def snap_lab_title(snap_lab)

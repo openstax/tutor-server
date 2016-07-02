@@ -77,17 +77,23 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       node = Nokogiri::HTML.fragment(previous_step.tasked.content)
 
       # Remove any feature_ids used as exercise context from the previous step
-      feature_ids = exercise.feature_ids
-      feature_ids.each{ |feature_id| node.at_css("##{feature_id}").try(:remove) }
+      feature_node = OpenStax::Cnx::V1::Page.feature_node(node, exercise.feature_ids)
 
-      previous_step.tasked.content = node.to_html
+      unless feature_node.nil?
+        # Reassign context to exercise to pick up any modifications due to processing instructions
+        exercise.context = feature_node.to_html
 
-      if previous_step.tasked.content.blank?
-        # If the previous step is now blank, remove it from the task
-        task.task_steps.delete(previous_step)
-      else
-        # If the previous step is persisted, save it again
-        previous_step.tasked.save! if previous_step.tasked.persisted?
+        # Remove context from previous step
+        feature_node.remove
+        previous_step.tasked.content = node.to_html
+
+        if previous_step.tasked.content.blank?
+          # If the previous step is now blank, remove it from the task
+          task.task_steps.delete(previous_step)
+        else
+          # If the previous step is persisted, save it again
+          previous_step.tasked.save! if previous_step.tasked.persisted?
+        end
       end
     end
 

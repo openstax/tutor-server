@@ -32,7 +32,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   before_validation :cache_fragments_and_snap_labs
 
-  delegate :is_intro?, :feature_node, to: :parser
+  delegate :is_intro?, to: :parser
 
   def cnx_id
     "#{uuid}@#{version}"
@@ -73,10 +73,18 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
     snap_labs.map{ |snap_lab| snap_lab.merge(page_id: id) }
   end
 
+  def context_for_feature_ids(feature_ids)
+    parser_class.feature_node(parser.converted_root, feature_ids).try(:to_html)
+  end
+
   protected
 
+  def parser_class
+    OpenStax::Cnx::V1::Page
+  end
+
   def parser
-    @parser ||= OpenStax::Cnx::V1::Page.new(title: title, content: content)
+    @parser ||= parser_class.new(title: title, content: content)
   end
 
   def fragment_splitter

@@ -30,9 +30,7 @@ class Content::Routines::ImportExercises
 
       if wrapper.requires_context?
         feature_ids = wrapper.feature_ids(exercise_page.uuid)
-        wrapper.context = feature_ids.map do |feature_id|
-          exercise_page.feature_node(feature_id).try(:to_html)
-        end.compact.join("\n")
+        wrapper.context = exercise_page.context_for_feature_ids(feature_ids)
         Rails.logger.warn do
           "Exercise #{wrapper.uid} requires context, but feature ID(s) [#{
             feature_ids.join(', ')}] could not be found on #{exercise_page.url}"
