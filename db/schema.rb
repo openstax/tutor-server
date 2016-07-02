@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160625040530) do
+ActiveRecord::Schema.define(version: 20160702071446) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -831,7 +831,7 @@ ActiveRecord::Schema.define(version: 20160625040530) do
   add_index "user_profiles", ["exchange_read_identifier"], name: "index_user_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profiles", ["exchange_write_identifier"], name: "index_user_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
-  add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_chapters", "content_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_chapters", "content_pools", column: "content_all_exercises_pool_id", on_update: :cascade, on_delete: :nullify
@@ -865,7 +865,7 @@ ActiveRecord::Schema.define(version: 20160625040530) do
   add_foreign_key "course_membership_students", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_profile_profiles", "catalog_offerings", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_profile_profiles", "catalog_offerings", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_profiles", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_profiles", "time_zones", on_update: :cascade, on_delete: :nullify
