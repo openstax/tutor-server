@@ -60,6 +60,10 @@ module Content
       verify_and_return @strategy.aplos, klass: ::Content::Tag, error: StrategyError
     end
 
+    def feature_ids
+      verify_and_return @strategy.feature_ids, klass: String, error: StrategyError
+    end
+
     def page
       verify_and_return @strategy.page, klass: ::Content::Page, error: StrategyError
     end

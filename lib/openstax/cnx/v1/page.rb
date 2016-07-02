@@ -93,8 +93,8 @@ module OpenStax::Cnx::V1
 
       # Absolutize urls
       @converted_doc ||= begin
-        absolutized_doc = absolutize_urls(doc.dup)
-        OpenStax::Cnx::V1::Fragment::Embedded.replace_embed_links_with_iframes(absolutized_doc)
+        embed_doc = OpenStax::Cnx::V1::Fragment::Embedded.replace_embed_links_with_iframes(doc.dup)
+        absolutize_urls(embed_doc)
       end
     end
 
