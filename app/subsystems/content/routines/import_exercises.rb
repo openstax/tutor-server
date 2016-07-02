@@ -60,7 +60,7 @@ class Content::Routines::ImportExercises
       exercise_page
     end.compact.uniq
 
-    Content::Models::Exercise.import! outputs[:exercises], recursive: true
+    Content::Models::Exercise.import outputs[:exercises], recursive: true, validate: false
 
     # Reset associations so they get reloaded the next time they are used
     page.exercises.reset if page.is_a?(Content::Models::Page)

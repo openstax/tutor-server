@@ -62,7 +62,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
         pool.uuid = biglearn_pools_with_uuids[ii].uuid
       end
 
-      Content::Models::Pool.import! pools
+      Content::Models::Pool.import pools, validate: false
       pages.each{ |page| page.save! }
       chapters.each{ |chapter| chapter.save! }
     end

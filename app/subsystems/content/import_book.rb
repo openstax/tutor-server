@@ -29,7 +29,7 @@ class Content::ImportBook
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)
 
-    Content::Models::Book.import! [book], recursive: true
+    Content::Models::Book.import [book], recursive: true, validate: false
 
     # Reload book and reset associations so they get reloaded the next time they are used
     book.reload.clear_association_cache
@@ -120,7 +120,7 @@ class Content::ImportBook
       pool.uuid = biglearn_pools_with_uuids[ii].uuid
     end
 
-    Content::Models::Pool.import! pools
+    Content::Models::Pool.import pools, validate: false
 
     # Save ids in page/chapter tables and clear associations so pools get reloaded next time
     pages.each do |page|

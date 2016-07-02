@@ -112,20 +112,15 @@ class Content::Routines::PopulateExercisePools
       [chapter.all_exercises_pool] + page_pools
     end
 
-    outputs[:pools].each{ |pool| pool.skip_uniqueness_validations = true }
-
     outputs[:book] = book
     outputs[:chapters] = chapters
     outputs[:pages] = chapters.flat_map(&:pages)
 
-    pools = outputs[:pools].flatten
-    pools.each{ |pool| pool.skip_uniqueness_validations = true }
-
     return unless save
 
-
+    pools = outputs[:pools].flatten
     pools.each{ |pool| pool.uuid = SecureRandom.uuid }
-    Content::Models::Pool.import! pools
+    Content::Models::Pool.import pools, validate: false
 
     # Save ids in page/chapter tables and clear associations so pools get reloaded next time
     outputs[:pages].each do |page|

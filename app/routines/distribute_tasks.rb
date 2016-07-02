@@ -81,23 +81,22 @@ class DistributeTasks
       task.update_step_counts
 
       task.task_steps.map do |task_step|
-        task_step.tasked.tap{ |tasked| tasked.task_step = nil }
+        task_step.tasked
       end
     end
 
     all_taskeds.flatten.group_by(&:class).each do |tasked_class, taskeds|
-      tasked_class.import! taskeds
+      tasked_class.import taskeds, validate: false
     end
 
     tasks.each_with_index do |task, task_index|
       task.task_steps.each_with_index do |task_step, step_index|
         task_step.tasked = all_taskeds[task_index][step_index]
         task_step.number = step_index + 1
-        task_step.skip_uniqueness_validations = true
       end
     end
 
-    Tasks::Models::Task.import! tasks, recursive: true
+    Tasks::Models::Task.import tasks, recursive: true, validate: false
 
     tasks.each do |task|
       task.task_steps.reset

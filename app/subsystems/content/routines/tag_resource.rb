@@ -20,14 +20,13 @@ class Content::Routines::TagResource
 
     outputs[:taggings] = new_tags.map do |tag|
       tagging_class.new(tag: tag, resource_field => resource).tap do |tagging|
-        tagging.skip_uniqueness_validations = true
         existing_taggings << tagging unless save
       end
     end
 
     return unless save
 
-    tagging_class.import! outputs[:taggings]
+    tagging_class.import outputs[:taggings], validate: false
 
     # Reset associations so they get reloaded the next time they are used
     existing_taggings.reset
