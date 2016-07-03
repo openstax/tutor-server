@@ -23,6 +23,12 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
 
   self.table_name = 'OS_Ancillary__c'
 
+  def reset_stats
+    self.num_students = 0
+    self.num_teachers = 0
+    self.num_sections = 0
+  end
+
   def is_concept_coach?
     "Concept Coach" == product
   end

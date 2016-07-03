@@ -162,6 +162,8 @@ Rails.application.routes.draw do
         post :set_ecosystem
         post :set_catalog_offering
         post :teachers, controller: :teachers
+        post :add_salesforce
+        delete :remove_salesforce
       end
 
       post :bulk_update, on: :collection
@@ -169,6 +171,7 @@ Rails.application.routes.draw do
       resources :periods, shallow: true do
         member do
           put 'restore'
+          put :change_salesforce
         end
       end
       resources :students, only: [:index], shallow: true

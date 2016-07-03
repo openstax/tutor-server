@@ -27,6 +27,11 @@
       Student Roster
     </a>
   </li>
+  <li role="presentation">
+    <a href="#salesforce" aria-controls="salesforce" role="tab" data-toggle="tab">
+      Salesforce
+    </a>
+  </li>
 </ul>
 
 <div class="tab-content">
@@ -58,5 +63,11 @@
     <h3>Upload Student Roster</h3>
 
     <%= render 'students', url: students_admin_course_path(@course.id) %>
+  </div>
+
+  <div role="tabpanel" class="tab-pane" id="salesforce">
+    <h3>Salesforce Records</h3>
+
+    <%= render 'salesforce' %>
   </div>
 </div>

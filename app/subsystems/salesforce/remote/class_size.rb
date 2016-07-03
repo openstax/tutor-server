@@ -22,6 +22,12 @@ class Salesforce::Remote::ClassSize < ActiveForce::SObject
     Salesforce::Remote::TermYear.from_string(self.term_year)
   end
 
+  def reset_stats
+    self.num_students = 0
+    self.num_teachers = 0
+    self.num_sections = 0
+  end
+
   # Methods to make this legacy SF object compatible with current OsAncillary interface.
   # All ClassSize records were used for college CC courses.
 

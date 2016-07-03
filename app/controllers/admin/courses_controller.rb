@@ -32,6 +32,32 @@ class Admin::CoursesController < Admin::BaseController
                 })
   end
 
+  def add_salesforce
+    # @course = Entity::Course.find(params[:id])
+    handle_with(Admin::CoursesAddSalesforce,
+                success: ->(*) {
+                  flash[:notice] = 'The given Salesforce record has been attached to the course.'
+                  redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")
+                },
+                failure: ->(*) {
+                  flash[:error] = @handler_result.errors.map(&:translate).join(', ')
+                  redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")
+                })
+  end
+
+  def remove_salesforce
+    # @course = Entity::Course.find(params[:id])
+    handle_with(Admin::CoursesRemoveSalesforce,
+                success: ->(*) {
+                  flash[:notice] = 'Removal of Salesforce record from course was successful.'
+                  redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")
+                },
+                failure: ->(*) {
+                  flash[:error] = @handler_result.errors.map(&:translate).join(', ')
+                  redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")
+                })
+  end
+
   def edit
     get_course_details
   end
