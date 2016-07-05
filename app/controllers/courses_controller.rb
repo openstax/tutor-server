@@ -22,7 +22,10 @@ class CoursesController < ApplicationController
   def confirm_enrollment
     handle_with(CoursesConfirmEnrollment,
                 success: -> {
-                  send_to_student_dashboard(notice: "Enrollment successful! It may take a few minutes to build your assignments.")
+                  send_to_student_dashboard(
+                    notice: "Enrollment successful! It may take a few " \
+                            "minutes to build your assignments."
+                  )
                 },
                 failure: -> {
                   case @handler_result.errors.map(&:code).first
@@ -43,7 +46,7 @@ class CoursesController < ApplicationController
 
   def send_to_student_dashboard(notice: nil)
     course = @handler_result.outputs.course
-    redirect_to student_course_dashboard_path(course), notice: notice
+    redirect_to student_course_dashboard_path(course), webview_notice: notice
   end
 
   def send_to_teacher_dashboard(notice: nil)

@@ -22,7 +22,13 @@ class WebviewController < ApplicationController
   protected
 
   def resolve_layout
-    'home' == action_name ? false : 'webview'
+    if 'home' == action_name
+      false
+    else
+      # since webview layout used, get the webview flash info prepped
+      convert_and_clear_webview_flash
+      'webview'
+    end
   end
 
 end
