@@ -33,7 +33,6 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def add_salesforce
-    # @course = Entity::Course.find(params[:id])
     handle_with(Admin::CoursesAddSalesforce,
                 success: ->(*) {
                   flash[:notice] = 'The given Salesforce record has been attached to the course.'
@@ -46,7 +45,6 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def remove_salesforce
-    # @course = Entity::Course.find(params[:id])
     handle_with(Admin::CoursesRemoveSalesforce,
                 success: ->(*) {
                   flash[:notice] = 'Removal of Salesforce record from course was successful.'
