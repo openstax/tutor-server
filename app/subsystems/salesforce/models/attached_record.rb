@@ -24,6 +24,14 @@ module Salesforce
         @attached_to ||= GlobalID::Locator.locate tutor_gid
       end
 
+      def attached_to_class_name
+        tutor_gid.match(/\/([^\/]*)\/\d+\Z/)[1]
+      end
+
+      def attached_to_id
+        tutor_gid.match(/\/(\d+)\Z/)[1].to_i
+      end
+
       def self.preload(what = :all)
         rel = all
 

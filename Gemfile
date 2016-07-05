@@ -263,6 +263,7 @@ group :test do
   gem 'capybara-webkit'
   gem 'launchy'
   gem 'database_cleaner'
+  gem 'db-query-matchers'
 end
 
 group :production do

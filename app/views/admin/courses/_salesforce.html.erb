@@ -1,0 +1,101 @@
+
+<% salesforce_url = Salesforce::Models::User.first.try(:instance_url) %>
+
+<%
+  sf_linker = ->(id) {
+    if id.nil?
+      "<i>N/A</i>".html_safe
+    elsif salesforce_url.present?
+      "<a href='#{salesforce_url}/#{id}' target='_blank'>Open</a>".html_safe
+    else
+      "<i>Add SF User</i>".html_safe
+    end
+  }
+%>
+
+<%
+  find_id = ->(tutor_record) {
+    Salesforce::Models::AttachedRecord
+      .where(tutor_gid: tutor_record.to_global_id.to_s)
+      .map(&:salesforce_id)
+  }
+%>
+
+<% course_sf_object_ids = find_id.call(@course) %>
+
+<h4 style="margin-top:30px">Course Info</h4>
+
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th style="width:150px"></th>
+      <th style="width:300px">Link to SF</th>
+      <th>Salesforce ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% course_sf_object_ids.each do |course_sf_object_id| %>
+    <tr>
+      <td></td>
+      <td><%= sf_linker.call(course_sf_object_id) %></td>
+      <td>
+          <%= lev_form_for :remove_salesforce, url: remove_salesforce_admin_course_path(@course),
+                           method: :delete, html: {class: 'form-inline'} do |f| %>
+            <%= course_sf_object_id %>&nbsp;&nbsp;
+            <%= f.hidden_field :salesforce_id, value: course_sf_object_id %>
+            <%= f.submit 'Remove',
+                         class: 'btn btn-primary btn-xs',
+                         data: { confirm: 'Are you sure?  This will clear this record\'s stats, ' \
+                                          'and unlink any periods that are connected to it.',
+                                 disable_with: "Removing...".html_safe } %>
+          <% end %>
+      </td>
+    </tr>
+    <% end %>
+    <tr>
+      <td></td>
+      <td><i>Add a new Salesforce record:</i></td>
+      <td>
+          <%= lev_form_for :add_salesforce, url: add_salesforce_admin_course_path(@course),
+                           method: :post, html: {class: 'form-inline'} do |f| %>
+            <%= f.text_field :salesforce_id, style: 'width: 200px' %>
+            <%= f.submit 'Add', class: 'btn btn-primary btn-xs', data: { disable_with: "Adding...".html_safe } %>
+          <% end %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Period Info</h4>
+
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th style="width: 150px">Period</th>
+      <th style="width: 300px">Link to SF</th>
+      <th>Salesforce ID</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @periods.each_with_index do |period,pp| %>
+    <% period_sf_object_id = find_id.call(period) %>
+    <tr>
+      <td><%= period.name %></td>
+      <td><%= sf_linker.call(period_sf_object_id) %></td>
+      <td>
+          <%= lev_form_for :change_salesforce, url: change_salesforce_admin_period_path(period),
+                           method: :put, html: {class: 'form-inline'} do |f| %>
+
+            <%= f.select :salesforce_id,
+                         options_for_select(course_sf_object_ids.map{|csoid| [csoid, csoid]}, period_sf_object_id),
+                         { include_blank: true },
+                         class: 'form-control',
+                         id: "period_#{pp}_sf_select",
+                         style: 'width: 200px' %>
+            <%= f.submit 'Change', class: 'btn btn-primary btn-xs', data: { disable_with: "Changing...".html_safe } %>
+          <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

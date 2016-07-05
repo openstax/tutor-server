@@ -2,6 +2,9 @@ class Entity::Course < Tutor::SubSystems::BaseModel
   has_one :profile, subsystem: :course_profile, dependent: :destroy, autosave: true
 
   has_many :periods, subsystem: :course_membership, dependent: :destroy
+  has_many :periods_with_deleted, -> { with_deleted }, subsystem: :course_membership,
+           dependent: :destroy, class_name: 'CourseMembership::Models::Period'
+
   has_many :teachers, subsystem: :course_membership, dependent: :destroy
   has_many :students, subsystem: :course_membership, dependent: :destroy
 

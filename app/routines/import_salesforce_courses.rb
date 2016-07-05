@@ -1,29 +1,37 @@
 class ImportSalesforceCourses
-  lev_routine
 
-  uses_routine CreateCourse
-  uses_routine SchoolDistrict::GetSchool, as: :get_school
-  uses_routine SchoolDistrict::CreateSchool, as: :create_school
-  uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
-  uses_routine Salesforce::AttachRecord, as: :attach_record
+  # This is intentionally not a routine so that a blow up when importing one
+  # course doesn't roll back other successfully imported courses.
 
-  def exec(include_real_salesforce_data: nil)
-    log { "Starting." }
+  LOGGER_PREFIX = self.name
 
-    outputs.num_failures = 0
-    outputs.num_successes = 0
+  def self.call(include_real_salesforce_data: nil)
+    new.call(include_real_salesforce_data: include_real_salesforce_data)
+  end
 
+  def call(include_real_salesforce_data: nil)
     @include_real_salesforce_data_preference = include_real_salesforce_data
 
+    log { "Starting#{' (test data only)' if !include_real_salesforce_data?}." }
+
+    num_failures = 0
+    num_successes = 0
+
     candidate_sf_records.each do |candidate|
-      create_course_for_candidate(candidate)
+      ImportSalesforceCourse[candidate: candidate, log_prefix: LOGGER_PREFIX]
+
+      num_failures += 1  if candidate.error.present?
+      num_successes += 1 if candidate.error.blank?
+
       candidate.save_if_changed
     end
 
     log {
-      "#{outputs.num_failures + outputs.num_successes} candidate record(s); " +
-      "#{outputs.num_successes} success(es) and #{outputs.num_failures} failure(s)."
+      "Finished. #{num_failures + num_successes} candidate record(s); " +
+      "#{num_successes} success(es) and #{num_failures} failure(s)."
     }
+
+    OpenStruct.new(num_failures: num_failures, num_successes: num_successes)
   end
 
   def include_real_salesforce_data?
@@ -40,84 +48,33 @@ class ImportSalesforceCourses
   end
 
   def candidate_sf_records
+    [candidate_class_size_records, candidate_os_ancillary_records].flatten
+  end
+
+  def candidate_class_size_records
     search_criteria = {
       concept_coach_approved: true,
       course_id: nil
     }
 
-    if !include_real_salesforce_data?
-      search_criteria[:school] = 'Denver University'
-      log { "Using test data only." }
-    end
+    search_criteria[:school] = 'Denver University' if !include_real_salesforce_data?
 
-    Salesforce::Remote::ClassSize.where(search_criteria)
+    Salesforce::Remote::ClassSize.where(search_criteria).to_a
   end
 
-  def create_course_for_candidate(candidate)
-    offering = Catalog::Offering.find_by(salesforce_book_name: candidate.book_name)
-
-    if offering.nil?
-      error!(candidate, "Book Name does not match an offering in Tutor.")
-      return
-    end
-
-    if !offering.is_concept_coach
-      error!(candidate, "Book Name matches a Tutor offering but it isn't for CC.")
-      return
-    end
-
-    candidate.course_name ||= offering.default_course_name
-
-    if candidate.course_name.blank?
-      error!(candidate, "A course name is needed and no default is available in Tutor.")
-      return
-    end
-
-    school = run(:get_school, name: candidate.school).outputs.school ||
-             run(:create_school, name: candidate.school).outputs.school
-
-    course = run(
-      :create_course,
-      name: candidate.course_name,
-      school: school,
-      catalog_offering: offering,
-      is_concept_coach: true
-    ).outputs.course
-
-    candidate.course_id = course.id
-    candidate.created_at = course.created_at.iso8601
-    candidate.num_students = 0
-    candidate.num_teachers = 0
-    candidate.num_sections = 0
-    candidate.teacher_join_url = UrlGenerator.teach_course_url(course.teach_token)
-
-    run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
-
-    # Remember the candidate obj ID so we can write stats later
-    run(:attach_record, record: candidate, to: course)
-
-    log {
-      "Created course '#{course.name}' (#{course.id}) based on Salesforce record " +
-      "#{candidate.id} using offering '#{offering.salesforce_book_name}' (#{offering.id}) " +
-      "and ecosystem '#{offering.ecosystem.title}'."
+  def candidate_os_ancillary_records
+    search_criteria = {
+      status: Salesforce::Remote::OsAncillary::STATUS_APPROVED,
+      course_id: nil
     }
 
-    success!(candidate)
-  end
+    search_criteria[:school] = 'Denver University' if !include_real_salesforce_data?
 
-  def success!(candidate)
-    candidate.error = nil
-    outputs.num_successes += 1
-  end
-
-  def error!(candidate, message)
-    candidate.error = message
-    outputs.num_failures += 1
-    log { "Error! candidate: #{candidate.id}; message: #{message}." }
+    Salesforce::Remote::OsAncillary.where(search_criteria).to_a
   end
 
   def log(&block)
-    Rails.logger.info { "[ImportSalesforceCourses] #{block.call}" }
+    Rails.logger.info { "[#{LOGGER_PREFIX}] #{block.call}" }
   end
 
 end

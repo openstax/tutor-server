@@ -1,0 +1,16 @@
+FactoryGirl.define do
+  factory :salesforce_attached_record, class: 'Salesforce::Models::AttachedRecord' do
+    transient do
+      tutor_object { Entity::Course.create! }
+      salesforce_object { Salesforce::Remote::OsAncillary.new(id: "foo") }
+    end
+
+    tutor_gid { (tutor_object).to_global_id.to_s }
+    salesforce_class_name { salesforce_object.class.name }
+    salesforce_id { salesforce_object.id }
+
+    after(:build) do |object, evaluator|
+      object.salesforce_object = evaluator.salesforce_object
+    end
+  end
+end

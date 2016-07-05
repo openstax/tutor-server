@@ -19,9 +19,9 @@ module Admin
     end
 
     def update_salesforce
-      outputs = UpdateSalesforceStats.call
+      outputs = UpdateSalesforceCourseStats.call
 
-      flash[:notice] = "Ran on #{outputs[:num_records]} record(s); " +
+      flash[:notice] = "Ran on #{outputs[:num_updates]+outputs[:num_errors]} record(s); " +
                        "updated #{outputs[:num_updates]} record(s); #{outputs[:num_errors]} error(s) occurred."
 
       redirect_to admin_salesforce_path
