@@ -7,6 +7,7 @@ RSpec.describe 'Students enrolling via URL' do
 
   let(:user) { FactoryGirl.create(:user) }
   let(:other_user) { FactoryGirl.create(:user) }
+  let(:no_terms_user) { FactoryGirl.create(:user, skip_terms_agreement: true) }
 
   context 'unauthenticated' do
     it 'redirects to login' do
@@ -32,6 +33,7 @@ RSpec.describe 'Students enrolling via URL' do
           expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
           expect(CourseMembership::Models::Enrollment.last.period).to eq period1.to_model
           expect(current_path).to eq(student_course_dashboard_path(course))
+          expect(page.body).to match /notice\":\"Enrollment successful! It may take/
           expect(CourseMembership::Models::Student.last.student_identifier).to eq '12345'
         end
 
@@ -91,6 +93,42 @@ RSpec.describe 'Students enrolling via URL' do
 
         expect(page).to have_content 'You are trying to enroll in a class as a student'
       end
+    end
+  end
+
+  context 'authenticated but no term agreement' do
+    before {
+      stub_current_user(no_terms_user)
+
+      FinePrint::Contract.create do |contract|
+        contract.name    = 'general_terms_of_use'
+        contract.version = 1
+        contract.title   = 'Terms of Use'
+        contract.content = 'Placeholder'
+      end
+
+      FinePrint::Contract.create do |contract|
+        contract.name    = 'privacy_policy'
+        contract.version = 1
+        contract.title   = 'Privacy Policy'
+        contract.content = 'Placeholder'
+      end
+    }
+
+    it 'persists flash notice all the way past terms' do
+      visit token_enroll_path(period1.enrollment_code_for_url)
+      expect(page).to have_content('school-issued')
+
+      fill_in 'enroll_student_id', with: '12345'
+      click_button 'Continue'
+
+      2.times do  # 2 contracts
+        find(:css, '#i_agree').set(true)
+        click_button 'I Agree'
+      end
+
+      expect(current_path).to eq(student_course_dashboard_path(course))
+      expect(page.body).to match /\"notice\":\"Enrollment successful! It may take/
     end
   end
 
