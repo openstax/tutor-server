@@ -28,11 +28,11 @@ module OpenStax::Cnx::V1
 
       url_node = node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last
 
-      if url_node && url_node.name == 'iframe'
-        @width  = url_node['width']
-        @height = url_node['height']
-        @url    = url_node['src'] || url_node['href']
+      @width = url_node.try(:[], 'width') || default_width
+      @height = url_node.try(:[], 'height') || default_height
+      @url = url_node.try(:[], 'src') || url_node.try(:[], 'href')
 
+      if url_node.try(:name) == 'iframe'
         node_classes = url_node['class'].to_s.split(' ') + iframe_classes
         url_node['class'] = node_classes.uniq.join(' ')
 
@@ -41,8 +41,6 @@ module OpenStax::Cnx::V1
         url_node['height'] ||= default_height
       end
 
-      @width  ||= default_width
-      @height ||= default_height
       @to_html = node.to_html
     end
 
