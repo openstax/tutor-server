@@ -90,4 +90,12 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to_not be_valid
   end
 
+  it "trims title and description fields" do
+    task_plan.title = " hi\n\n\r\n "
+    task_plan.description = " \tthere\t "
+    task_plan.save
+    expect(task_plan.title).to eq "hi"
+    expect(task_plan.description).to eq "there"
+  end
+
 end
