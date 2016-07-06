@@ -28,6 +28,7 @@ module Tasks
         @helper.standard_package_settings(@package)
 
         setup_styles
+        handle_empty_periods
         write_data_worksheets
         make_first_sheet_active
         save
@@ -85,6 +86,14 @@ module Tasks
           @average_pct = s.add_style b: true,
                                      border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
                                      num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2', border_top: {style: :medium}
+        end
+      end
+
+      def handle_empty_periods
+        @report.each do |period_report|
+          if period_report[:students].empty?
+            period_report[:students].push({first_name: "---", last_name: "EMPTY", student_identifier: "---", data: []})
+          end
         end
       end
 
@@ -419,15 +428,15 @@ module Tasks
             XlsxHelper.cell_ref(row: first_student_row, column: first_column+1) + ":" +
             XlsxHelper.cell_ref(row: last_student_row, column: first_column+1)
 
-          average_columns.push(["#{@eq}AVERAGE(#{correct_range})", {style: average_style}])
-          average_columns.push(["#{@eq}AVERAGE(#{completed_range})", {style: average_style}])
+          average_columns.push(["#{@eq}IFERROR(AVERAGE(#{correct_range}),NA())", {style: average_style}])
+          average_columns.push(["#{@eq}IFERROR(AVERAGE(#{completed_range}),NA())", {style: average_style}])
 
           if format == :counts
             total_range =
               XlsxHelper.cell_ref(row: first_student_row, column: first_column+2) + ":" +
               XlsxHelper.cell_ref(row: last_student_row, column: first_column+2)
 
-            average_columns.push(["#{@eq}AVERAGE(#{total_range})", {style: average_style}])
+            average_columns.push(["#{@eq}IFERROR(AVERAGE(#{total_range}),NA())", {style: average_style}])
           end
 
           average_columns.push(["", {style: @average_R}])

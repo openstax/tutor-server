@@ -91,6 +91,32 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
   end
 
+  context 'when a period has no students' do
+    before(:context) do
+      Dir.mktmpdir do |dir|
+        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course_name: "Physics 101",
+                               report: report_with_empty_students,
+                               filename: "#{dir}/testfile",
+                               options: {stringify_formulas: false})
+        end
+
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
+
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+      end
+    end
+
+    it 'inserts an empty row so it does not explode with a circular reference' do
+      [0,1].each do |sheet_number|
+        expect(cell(11,1,sheet_number)).to eq '---'
+        expect(cell(11,2,sheet_number)).to eq 'EMPTY'
+        expect(cell(11,3,sheet_number)).to eq '---'
+      end
+    end
+  end
+
   def cell(row,col,sheet_number)
     @wb.cell(row,col,@wb.sheets[sheet_number])
   end
@@ -229,7 +255,39 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     ]
   end
 
-  # TODO add a nil data entry
+  def report_with_empty_students
+    [
+      {
+        period: {
+          name: "1st"
+        },
+        overall_average_score: 0.8,
+        data_headings: [
+          {
+            title: "HW 4.2 Atoms and Isotopes - 4.3 Prokaryotic Cells",
+            type: 'homework',
+            due_at: Chronic.parse("3/15/2016")
+          },
+          {
+            title: "External",
+            type: 'external',
+            due_at: Chronic.parse("3/14/2016")
+          },
+          {
+            title: "Reading 4.1 Studying Cells",
+            type: 'reading',
+            due_at: Chronic.parse("3/5/2016")
+          },
+          {
+            title: "Due-in-30-mins Homework",
+            type: 'homework',
+            due_at: Chronic.parse("3/18/2016 2PM")
+          }
+        ],
+        students: []
+      }
+    ]
+  end
 
 
 end

@@ -30,6 +30,7 @@ module Tasks
 
         setup_styles
         remove_excluded_tasks
+        handle_empty_periods
         write_data_worksheets
         make_first_sheet_active
         save
@@ -56,6 +57,14 @@ module Tasks
 
           period_report[:students].each do |student|
             student[:data].reject!.with_index {|student, ii| excluded_indices.include?(ii) }
+          end
+        end
+      end
+
+      def handle_empty_periods
+        @report.each do |period_report|
+          if period_report[:students].empty?
+            period_report[:students].push({first_name: "---", last_name: "EMPTY", student_identifier: "---", data: []})
           end
         end
       end
@@ -328,9 +337,9 @@ module Tasks
           ["Class Average", {style: @average_style}],
           ["", {style: @average_style}],
           ["", {style: @average_R}],
-          ["#{@eq}AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\")", {style: average_style}],
-          ["#{@eq}AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\")", {style: average_style}],
-          ["#{@eq}AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\")", {style: average_style_R}]
+          ["#{@eq}IFERROR(AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\"),NA())", {style: average_style}],
+          ["#{@eq}IFERROR(AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\"),NA())", {style: average_style}],
+          ["#{@eq}IFERROR(AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\"),NA())", {style: average_style_R}]
         ]
 
         report[:data_headings].count.times do |index|
