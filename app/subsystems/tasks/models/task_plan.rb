@@ -21,6 +21,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   json_serialize :settings, Hash
 
+  before_validation :trim_text
+
   validates :title, presence: true
   validates :assistant, presence: true
   validates :ecosystem, presence: true
@@ -102,6 +104,11 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     return if !is_publish_requested || tasking_plans.none?(&:past_due?)
     errors.add(:due_at, 'cannot be in the past when publishing')
     false
+  end
+
+  def trim_text
+    self.title.try(:strip!)
+    self.description.try(:strip!)
   end
 
 end
