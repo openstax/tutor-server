@@ -40,8 +40,8 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
     end
 
     it 'has % class averages' do
-      expect(cell(16,8,0)).to eq "AVERAGE(H13:H15)"
-      expect(cell(16,9,0)).to eq "AVERAGE(I13:I15)"
+      expect(cell(16,8,0)).to match /AVERAGE\(H13:H15\)/
+      expect(cell(16,9,0)).to match /AVERAGE\(I13:I15\)/
     end
 
     it 'has % student averages' do
@@ -67,6 +67,32 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
       expect(cell(13,6,0)).to eq 0
       expect(cell(13,6,1)).to eq 0
       expect(cell(13,7,1)).to eq 0
+    end
+  end
+
+  context 'when a period has no students' do
+    before(:context) do
+      Dir.mktmpdir do |dir|
+        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course_name: "Physics 101",
+                               report: report_with_empty_period,
+                               filename: "#{dir}/testfile",
+                               options: {stringify_formulas: false})
+        end
+
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
+
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+      end
+    end
+
+    it 'inserts an empty row so it does not explode with a circular reference' do
+      [0,1].each do |sheet_number|
+        expect(cell(13,1,sheet_number)).to eq '---'
+        expect(cell(13,2,sheet_number)).to eq 'EMPTY'
+        expect(cell(13,3,sheet_number)).to eq '---'
+      end
     end
   end
 
@@ -177,6 +203,35 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
             ]
           }
         ]
+      }
+    ]
+  end
+
+  def report_with_empty_period
+    [
+      {
+        period: {
+          name: "1st Period"
+        } ,
+        data_headings: [
+          {
+            cnx_page_id: 'UUID_1',
+            title: "1.1 Intro to Math",
+            type: 'concept_coach',
+            total_average: 0.6,
+            attempted_average: 0.7123,
+            average_actual_and_placeholder_exercise_count: 11
+          },
+          {
+            cnx_page_id: "UUID_2",
+            title: "1.2 Basket weaving is really really really really really (wrap test) hard",
+            type: 'concept_coach',
+            total_average: 0.56789,
+            attempted_average: 0.8,
+            average_actual_and_placeholder_exercise_count: 11
+          }
+        ],
+        students: []
       }
     ]
   end
