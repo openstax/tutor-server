@@ -15,17 +15,36 @@ class Content::Routines::ImportExercises
   def exec(ecosystem:, page:, query_hash:, excluded_exercise_numbers: [])
     outputs[:exercises] = []
 
-    wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']
-    wrapper_urls = wrappers.uniq(&:url)
+    # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise and
+    # wrap them in a local mutable form of that class
+
+    wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items'].map do |item|
+      MutableWrapper.new(item)
+    end
+
+    # Go through wrappers and build a map of wrappers to pages
+
+    wrapper_to_exercise_page_map = wrappers.reduce({}) do |hash, wrapper|
+      exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
+      hash[wrapper] = exercise_page
+      hash
+    end
+
+    # Go through wrappers, find their corresponding page, and add `lo:page_uuid`
+    # style tags for those missing other LOs
+
+    wrapper_to_exercise_page_map.each do |wrapper, exercise_page|
+      wrapper.add_lo("lo:#{exercise_page.uuid}") if wrapper.los.none? && wrapper.aplos.none?
+    end
+
+    # Pre-build all tags we are going to need in one shot
 
     wrapper_tag_hashes = wrappers.flat_map(&:tag_hashes).uniq{ |hash| hash[:value] }
     tags = run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes).outputs.tags
     tag_map = tags.index_by(&:value)
 
-    exercise_pages = wrappers.map do |wrapper|
+    wrapper_to_exercise_page_map.each do |wrapper, exercise_page|
       next if excluded_exercise_numbers.include? wrapper.number
-
-      exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
       next if exercise_page.nil?
 
       if wrapper.requires_context?
@@ -52,15 +71,43 @@ class Content::Routines::ImportExercises
       run(:tag, exercise, relevant_tags, tagging_class: Content::Models::ExerciseTag, save: false)
 
       outputs[:exercises] << exercise
-
-      exercise_page
-    end.compact.uniq
+    end
 
     Content::Models::Exercise.import outputs[:exercises], recursive: true, validate: false
 
     # Reset associations so they get reloaded the next time they are used
     page.exercises.reset if page.is_a?(Content::Models::Page)
 
+    exercise_pages = wrapper_to_exercise_page_map.values.compact.uniq
     exercise_pages.each{ |page| page.exercises.reset }
   end
+
+  # Instead of modifying OpenStax::Exercises::V1::Exercise to become immutable,
+  # this delegator gives us the mutable extension to that class that we need
+  # just while importing exercises
+
+  class MutableWrapper < SimpleDelegator
+    # Adds an LO tag, this impacts many tag methods but notably we don't
+    # make an attempt to alter the underlying content hash.
+    def add_lo(lo)
+      extra_los.push(lo)
+      extra_lo_hashes.push({value: lo, name: nil, type: :lo})
+    end
+
+    def extra_los
+      @extra_los ||= []
+    end
+
+    def extra_lo_hashes
+      @extra_lo_hashes ||= []
+    end
+
+    def tags;               __getobj__.tags              + extra_los;       end
+    def los;                __getobj__.los               + extra_los;       end
+    def import_tags;        __getobj__.import_tags       + extra_los;       end
+    def tag_hashes;         __getobj__.tag_hashes        + extra_lo_hashes; end
+    def lo_hashes;          __getobj__.lo_hashes         + extra_lo_hashes; end
+    def import_tag_hashes;  __getobj__.import_tag_hashes + extra_lo_hashes; end
+  end
+
 end
