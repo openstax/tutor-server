@@ -30,10 +30,9 @@ module OpenStax::Cnx::V1
 
       @width = url_node.try(:[], 'width') || default_width
       @height = url_node.try(:[], 'height') || default_height
-
       @url = url_node.try(:[], 'src') || url_node.try(:[], 'href')
 
-      if url_node.name == 'iframe'
+      if url_node.try(:name) == 'iframe'
         node_classes = url_node['class'].to_s.split(' ') + iframe_classes
         url_node['class'] = node_classes.uniq.join(' ')
 
