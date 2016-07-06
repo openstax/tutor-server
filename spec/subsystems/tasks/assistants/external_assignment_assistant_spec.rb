@@ -77,6 +77,6 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
     expect {
       DistributeTasks.call(task_plan_2)
     }.to raise_error(StandardError).with_message(
-      'External assignment taskees must all be students')
+      /External assignment taskees must all be students/)
   end
 end
