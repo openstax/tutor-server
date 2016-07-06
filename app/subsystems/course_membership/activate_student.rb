@@ -7,6 +7,7 @@ module CourseMembership
       student.restore(recursive: true)
       student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
+      ReassignPublishedPeriodTaskPlans[period: student.period]
       outputs[:student] = student
     end
   end
