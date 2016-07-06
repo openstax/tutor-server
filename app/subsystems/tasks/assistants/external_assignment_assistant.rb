@@ -22,7 +22,12 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
 
     roles.map do |role|
       student = role_students[role.id]
-      raise StandardError, 'External assignment taskees must all be students' if student.nil?
+
+      if student.nil?
+        raise StandardError, "External assignment taskees must all be students, " \
+                             "plan: #{task_plan.id}, bad role id: #{role.id}, all " \
+                             "role ids: #{role_ids.inspect}"
+      end
 
       build_external_task(role: role, student: student)
     end
