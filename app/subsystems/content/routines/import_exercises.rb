@@ -22,6 +22,11 @@ class Content::Routines::ImportExercises
       MutableWrapper.new(item)
     end
 
+    # Reject all exercises that have any free response questions, as we can't handle them.
+    # Could use `free-response` format, but let's cut to chase and look for no M/C answers.
+
+    wrappers.reject!{|wrapper| wrapper.content_hash["questions"].any?{|qq| qq["answers"].empty?} }
+
     # Go through wrappers and build a map of wrappers to pages
 
     wrapper_to_exercise_page_map = wrappers.reduce({}) do |hash, wrapper|

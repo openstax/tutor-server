@@ -210,6 +210,32 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     end
   end
 
+  context 'incoming free response exercises' do
+    before(:all) do
+      DatabaseCleaner.start
+
+      chapter = FactoryGirl.create :content_chapter
+      @ecosystem = chapter.book.ecosystem
+
+      cnx_page = OpenStax::Cnx::V1::Page.new(id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509',
+                                             title: 'Acceleration')
+
+      @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
+        Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
+                                      number: 2, book_location: [3, 1]]
+      end
+    end
+
+    after(:all) { DatabaseCleaner.clean }
+
+    it 'skips import of any exercise with no answers' do
+      stub_exercise_query([{tags: ['some-id-tag'], remove_answers: true}])
+      expect{
+        described_class.call(ecosystem: @ecosystem, page: @page, query_hash: {tags: ['some-id-tag']})
+      }.to change{Content::Models::Exercise.count}.by(0)
+    end
+  end
+
   context 'MutableWrapper' do
     it "can add LOs" do
       original_lo = 'lo:stax-phys:1-2-3'
@@ -245,6 +271,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
   def stub_exercise_query(array_of_exercise_options={})
     wrappers = array_of_exercise_options.map.with_index do |exercise_options, index|
       content_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash.tap do |hash|
+        if exercise_options.delete(:remove_answers)
+          hash[:questions].last[:answers] = []
+        end
+
         exercise_options.each do |key, value|
           hash[key] = value
         end
