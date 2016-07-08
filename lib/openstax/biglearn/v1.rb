@@ -3,6 +3,7 @@ require_relative './v1/pool'
 require_relative './v1/exercise'
 require_relative './v1/fake_client'
 require_relative './v1/real_client'
+require_relative './v1/local_query_client'
 
 module OpenStax::Biglearn::V1
 
@@ -84,29 +85,78 @@ module OpenStax::Biglearn::V1
   end
 
   # Accessor for the fake client, which has some extra fake methods on it
-  def self.fake_client
-    FakeClient.new(configuration)
+  def self.new_fake_client
+    new_client_call { FakeClient.new(configuration) }
   end
 
-  def self.real_client
-    RealClient.new(configuration)
+  def self.new_real_client
+    new_client_call { RealClient.new(configuration) }
+  end
+
+  def self.new_local_query_client
+    new_client_call { LocalQueryClient.new(new_real_client) }
   end
 
   def self.use_real_client
-    @client = real_client
+    use_client_named(:real)
   end
 
   def self.use_fake_client
-    @client = fake_client
+    use_client_named(:fake)
+  end
+
+  def self.use_client_named(client_name)
+    @forced_client_in_use = true
+    @client = new_client(client_name)
+  end
+
+  def self.default_client_name
+    # The default Biglearn client is set via an admin console setting of the
+    # client's name (real, fake, or local_query).  The code below will override
+    # this default name to 'fake' if (a) the stub configuration flag is set or
+    # (b) if stub flag isn't set at all and we are not in production.
+    #
+    # So for developers who don't set the flag, they'll get the fake client. If
+    # developers want to use other than the fake client, they'll need to explicitly
+    # set the flag to false.
+
+    secrets = Rails.application.secrets['openstax']['biglearn']
+    stub = secrets['stub'] || !Rails.env.production?
+    stub ? :fake : Settings::Db.store.biglearn_client
+  end
+
+  def self.client
+    # We normally keep a cached version of the client in use.  If a caller
+    # (normally a spec) has said to use a specific client, we don't want to
+    # change the client.  Howver if this is not the case and the client's
+    # name no longer matches the admin DB setting, change it out.
+
+    if @client.nil? || (!@forced_client_in_use && @client.name != default_client_name)
+      @client = new_client(default_client_name)
+    end
+    @client
   end
 
   private
 
-  def self.client
+  def self.new_client(name)
+    case name
+    when :local_query
+      new_local_query_client
+    when :real
+      new_real_client
+    when :fake
+      new_fake_client
+    else
+      raise "Invalid client name (#{name}); don't know which Biglearn client to make"
+    end
+  end
+
+  def self.new_client_call
     begin
-      @client ||= real_client
-    rescue StandardError => error
-      raise ClientError.new("initialization failure", error)
+      yield
+    rescue StandardError => e
+      raise "Biglearn client initialization error: #{e.message}"
     end
   end
 

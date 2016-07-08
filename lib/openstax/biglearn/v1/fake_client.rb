@@ -4,6 +4,10 @@ class OpenStax::Biglearn::V1::FakeClient
     @fake_store = biglearn_configuration.fake_store
   end
 
+  def name
+    :fake
+  end
+
   #
   # API methods
   #

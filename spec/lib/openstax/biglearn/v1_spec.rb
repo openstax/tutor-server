@@ -18,12 +18,15 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     end
   end
 
-  it 'can use the fake client or the real client' do
+  it 'can use the fake client or the real client or the local query client' do
     OpenStax::Biglearn::V1.use_fake_client
     expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::FakeClient)
 
     OpenStax::Biglearn::V1.use_real_client
     expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::RealClient)
+
+    OpenStax::Biglearn::V1.use_client_named(:local_query)
+    expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::LocalQueryClient)
 
     OpenStax::Biglearn::V1.use_fake_client
     expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::FakeClient)

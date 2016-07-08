@@ -31,6 +31,10 @@ class OpenStax::Biglearn::V1::RealClient
     @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
 
+  def name
+    :real
+  end
+
   def add_exercises(exercises)
     exercises.each_slice(MAX_EXERCISES_PER_REQUEST).map do |exercises|
       options = { body: construct_exercises_payload(exercises).to_json }
