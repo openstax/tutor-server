@@ -51,7 +51,7 @@ RSpec.describe Salesforce::RenewOsAncillary do
   end
 
   it "can run successfully" do
-    based_on = OpenStruct.new(opportunity: OpenStruct.new, product: "Tutor", course_id: "42")
+    based_on = OpenStruct.new(opportunity: OpenStruct.new, product: "Tutor", course_id: "42", teacher_join_url: 'a_url')
     target_opportunity = OpenStruct.new(id: 'target_opp_id')
     allow(Salesforce::Remote::Opportunity).to receive(:where) { [target_opportunity] }
     allow(Salesforce::Remote::OsAncillary).to receive(:where) { [] }
@@ -66,6 +66,7 @@ RSpec.describe Salesforce::RenewOsAncillary do
     expect(returned.product).to eq "Tutor"
     expect(returned.course_id).to eq "42"
     expect(returned.status).to eq "Approved"
+    expect(returned.teacher_join_url).to eq "a_url"
     expect(returned.error).to be_nil
   end
 

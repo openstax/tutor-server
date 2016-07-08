@@ -15,7 +15,7 @@ RSpec.describe CustomerService::SalesforceController, type: :controller do
         .to receive(:call)
         .with(include_real_salesforce_data: false)
         .and_return(
-          Hashie::Mash.new({outputs: {num_failures: 1, num_successes: 2}})
+          OpenStruct.new(num_failures: 1, num_successes: 2)
         )
 
       post :import_courses, use_real_data: false
