@@ -123,6 +123,11 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(result).to be_empty
     end
+
+    it 'does not create tasking plans for dropped students' do
+      CourseMembership::InactivateStudent[student: student_role_2.student]
+      expect(result.first.target_id).to eq student_role_1.id
+    end
   end
 
 end

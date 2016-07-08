@@ -16,8 +16,17 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
   end
 
   def build_tasks
+    # Because we need to be able to have a deidentifier on taskees for external
+    # assignments, we check to make sure that all taskee roles are students (only
+    # model that currently has a deidentifier).  It is up to the caller to decide
+    # if the taskees can be inactive students or not, so we will check against all
+    # students, active and inactive.  This also helps us deal with legacy dropped
+    # students where the students have `deleted_at` set but the related enrollments
+    # do not (from before when we were acts_as_paranoid everywhere).
+
     role_ids = roles.map(&:id)
-    role_students = CourseMembership::Models::Student.where(entity_role_id: role_ids)
+    role_students = CourseMembership::Models::Student.with_deleted
+                                                     .where(entity_role_id: role_ids)
                                                      .index_by(&:entity_role_id)
 
     roles.map do |role|
