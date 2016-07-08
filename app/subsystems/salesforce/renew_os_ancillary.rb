@@ -36,7 +36,8 @@ module Salesforce
         os_ancillary_attributes.merge(
           course_id: based_on.course_id,
           status: Remote::OsAncillary::STATUS_APPROVED,
-          error: nil
+          error: nil,
+          teacher_join_url: based_on.teacher_join_url
         )
       )
 

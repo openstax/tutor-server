@@ -141,14 +141,18 @@ class UpdateSalesforceCourseStats
   def write_stats_to_salesforce(organizer)
     num_errors = 0
     num_updates = 0
+    num_records = 0
 
     organizer.each do |salesforce_object, course, periods|
+      an_error_occurred = false
+      salesforce_object.error = nil
+
       begin
         salesforce_object.num_teachers = course.teachers.length
         salesforce_object.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
         salesforce_object.num_sections = periods.length
       rescue Exception => e
-        num_errors += 1
+        an_error_occurred = true
         salesforce_object.error = "Unable to update stats: #{e.message}" if salesforce_object.present?
         OpenStax::RescueFrom.perform_rescue(e)
       end
@@ -159,18 +163,20 @@ class UpdateSalesforceCourseStats
           num_updates += 1
         end
       rescue Exception => e
-        num_errors += 1
+        an_error_occurred = true
         OpenStax::RescueFrom.perform_rescue(e)
       end
-    end
 
-    num_records = num_errors + num_updates
+      num_records += 1
+      num_errors += 1 if an_error_occurred
+    end
 
     log {
       "Wrote stats for #{num_records} SF record(s); Made #{num_updates} successful " +
       "update(s); #{num_errors} error(s) occurred."
     }
 
+    outputs[:num_records] = num_records
     outputs[:num_errors] = num_errors
     outputs[:num_updates] = num_updates
   end
