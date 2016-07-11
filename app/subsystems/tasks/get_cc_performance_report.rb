@@ -95,7 +95,8 @@ module Tasks
           average_actual_and_placeholder_exercise_count: average(
             page_tasks,
             ->(tt) {tt.actual_and_placeholder_exercise_count}
-          )
+          ),
+          completion_rate: completion_fraction(page_tasks)
         }
       end
     end

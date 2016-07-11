@@ -101,7 +101,8 @@ module Tasks
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average_score: average_scores(task_plan_results[task_plan])
+          average_score: average_scores(task_plan_results[task_plan]),
+          completion_rate: completion_fraction(task_plan_results[task_plan])
         }
       end
     end
