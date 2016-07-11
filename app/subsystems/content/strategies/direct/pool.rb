@@ -28,6 +28,10 @@ module Content
           end
         end
 
+        def exercise_ids
+          repository.content_exercise_ids
+        end
+
       end
     end
   end

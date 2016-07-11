@@ -57,26 +57,27 @@ class OpenStax::Biglearn::V1::LocalQueryClient
 
   def get_clues(roles:, pools:, force_cache_miss: 'ignored')
     pools.each_with_object({}) do |pool, hash|
-      aggregate = 0.5
-      confidence_left  = 0.0
-      confidence_right = 1.0
-      level = aggregate >= 0.8 ? 'high' : (aggregate >= 0.3 ? 'medium' : 'low')
-      confidence = 'bad'
-      samples = 6
-      threshold = 'below'
-      unique_learner_count = roles.size
+
+      tasked_exercises =
+        Tasks::Models::TaskedExercise.joins{task.tasking}
+                                     .where{task.tasking.entity_role_id.in roles.map(&:id)}
+                                     .where{content_exercise_id.in pool.exercise_ids}
+
+      responses = tasked_exercises.map{|te| te.is_correct? ? 1.0 : 0.0}
+
+      local_clue = LocalClue.new(responses: responses)
 
       hash[pool.uuid] = {
-        value: aggregate,
-        value_interpretation: level,
+        value: local_clue.aggregate,
+        value_interpretation: local_clue.level.to_s,
         confidence_interval: [
-          confidence_left,
-          confidence_right
+          local_clue.left,
+          local_clue.right
         ],
-        confidence_interval_interpretation: confidence,
-        sample_size: samples,
-        sample_size_interpretation: threshold,
-        unique_learner_count: unique_learner_count
+        confidence_interval_interpretation: local_clue.confidence.to_s,
+        sample_size: responses.size,
+        sample_size_interpretation: local_clue.threshold.to_s,
+        unique_learner_count: roles.size
       }
     end
   end
