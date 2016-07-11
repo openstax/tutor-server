@@ -177,6 +177,10 @@ module Api::V1
       property :average_score,
                type: Float,
                readable: true
+
+     property :completion_rate,
+              type: Float,
+              readable: true
     end
 
     class ReportPerPeriod < Roar::Decorator

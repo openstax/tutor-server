@@ -2,13 +2,20 @@ module Tasks
   module PerformanceReportMethods
     protected
 
+    def completion_fraction(tasks)
+      completed_count = tasks.reduce(0) do |count, task|
+        count + (task.status == 'completed' ? 1 : 0)
+      end
+
+      completed_count.to_f / tasks.count
+    end
+
     def included_in_averages?(task)
       task.exercise_count > 0 &&
       (
         ( task.task_type == 'concept_coach' ) ||
         ( task.task_type == 'homework' && task.past_due? )
       )
-
     end
 
     def average_scores(tasks)
