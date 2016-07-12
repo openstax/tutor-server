@@ -10,7 +10,3 @@ OpenStax::Biglearn::V1.configure do |config|
     namespace: redis_secrets['namespaces']['fake_biglearn']
   )
 end
-
-# By default, stub unless in the production environment
-stub = biglearn_secrets['stub'].nil? ? !Rails.env.production? : biglearn_secrets['stub']
-stub ? OpenStax::Biglearn::V1.use_fake_client : OpenStax::Biglearn::V1.use_real_client

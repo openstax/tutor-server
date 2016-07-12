@@ -56,12 +56,12 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       end
     end
 
-    @original_client = OpenStax::Biglearn::V1.send :client
+    @original_client_name = OpenStax::Biglearn::V1.client.name
     @real_client = OpenStax::Biglearn::V1.use_real_client
   end
 
   after(:all) do
-    OpenStax::Biglearn::V1.instance_variable_set :@client, @original_client
+    OpenStax::Biglearn::V1.use_client_named(@original_client_name)
 
     DatabaseCleaner.clean
   end
