@@ -32,6 +32,33 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::FakeClient)
   end
 
+  context "#default_client_name" do
+    it "defaults to the fake client when no stubbing option set in non production mode" do
+      stub_biglearn_stub_value_as(nil)
+      expect(described_class.default_client_name).to eq :fake
+    end
+
+    it "defaults to the fake client when stubbing true" do
+      stub_biglearn_stub_value_as(true)
+      expect(described_class.default_client_name).to eq :fake
+    end
+
+    it "defaults to whatever is in Settings::Db.store when stub is false" do
+      stub_biglearn_stub_value_as(false)
+      allow(Settings::Db).to receive(:store).and_return OpenStruct.new(biglearn_client: "blah")
+      expect(described_class.default_client_name).to eq "blah"
+    end
+  end
+
+  def stub_biglearn_stub_value_as(value)
+    allow(Rails.application.secrets.openstax)
+      .to receive(:[])
+      .with('biglearn')
+      .and_return (
+        Rails.application.secrets.openstax['biglearn'].merge('stub' => value)
+      )
+  end
+
   context 'api calls' do
     let!(:dummy_role)              { 'some role' }
     let!(:dummy_roles)             { [dummy_role] }

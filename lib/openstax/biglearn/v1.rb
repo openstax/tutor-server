@@ -121,8 +121,8 @@ module OpenStax::Biglearn::V1
     # developers want to use other than the fake client, they'll need to explicitly
     # set the flag to false.
 
-    secrets = Rails.application.secrets['openstax']['biglearn']
-    stub = secrets['stub'] || !Rails.env.production?
+    secrets = Rails.application.secrets.openstax['biglearn']
+    stub = secrets['stub'].nil? ? !Rails.env.production? : secrets['stub']
     stub ? :fake : Settings::Db.store.biglearn_client
   end
 
