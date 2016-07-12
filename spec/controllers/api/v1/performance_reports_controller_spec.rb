@@ -75,16 +75,19 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             { title: 'Homework 2 task plan',
               plan_id: resp[0][:data_headings][0][:plan_id],
               type: 'homework',
-              due_at: resp[0][:data_headings][0][:due_at] },
+              due_at: resp[0][:data_headings][0][:due_at],
+              completion_rate: 0.5 },
             { title: 'Reading task plan',
               plan_id: resp[0][:data_headings][1][:plan_id],
               type: 'reading',
-              due_at: resp[0][:data_headings][1][:due_at] },
+              due_at: resp[0][:data_headings][1][:due_at],
+              completion_rate: 0.5 },
             { title: 'Homework task plan',
               plan_id: resp[0][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][2][:due_at],
-              average_score: be_within(0.01).of(2/3.0) }
+              average_score: be_within(0.01).of(2/3.0),
+              completion_rate: 0.5 }
           ],
           students: [{
             name: 'Student One',
@@ -244,18 +247,21 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             { title: 'Homework 2 task plan',
               plan_id: resp[1][:data_headings][0][:plan_id],
               type: 'homework',
-              due_at: resp[1][:data_headings][0][:due_at]
+              due_at: resp[1][:data_headings][0][:due_at],
+              completion_rate: 0
             },
             { title: 'Reading task plan',
               plan_id: resp[1][:data_headings][1][:plan_id],
               type: 'reading',
-              due_at: resp[1][:data_headings][1][:due_at]
+              due_at: resp[1][:data_headings][1][:due_at],
+              completion_rate: 0
             },
             { title: 'Homework task plan',
               plan_id: resp[1][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[1][:data_headings][2][:due_at],
-              average_score: 0.5
+              average_score: 0.5,
+              completion_rate: 0.5
             }
           ],
           students: [{
