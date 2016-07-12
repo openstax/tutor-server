@@ -315,6 +315,20 @@ GEM
     get_process_mem (0.2.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
+    guard (2.14.0)
+      formatador (>= 0.2.4)
+      listen (>= 2.7, < 4.0)
+      lumberjack (~> 1.0)
+      nenv (~> 0.1)
+      notiffany (~> 0.0)
+      pry (>= 0.9.12)
+      shellany (~> 0.0)
+      thor (>= 0.18.1)
+    guard-compat (1.2.1)
+    guard-rspec (4.7.2)
+      guard (~> 2.1)
+      guard-compat (~> 1.1)
+      rspec (>= 2.99.0, < 4.0)
     haml (4.0.6)
       tilt
     haml-rails (0.9.0)
@@ -366,12 +380,16 @@ GEM
       transaction_isolation
       transaction_retry
     libv8 (3.16.14.15)
+    listen (3.0.5)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
     lograge (0.3.1)
       actionpack (>= 3)
       activesupport (>= 3)
       railties (>= 3)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
+    lumberjack (1.0.10)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
     maruku (0.7.2)
@@ -383,6 +401,7 @@ GEM
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    nenv (0.3.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
@@ -392,6 +411,9 @@ GEM
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
+    notiffany (0.1.0)
+      nenv (~> 0.1)
+      shellany (~> 0.0)
     oauth2 (1.1.0)
       faraday (>= 0.8, < 0.10)
       jwt (~> 1.0, < 1.5.2)
@@ -578,6 +600,10 @@ GEM
     roo (2.3.2)
       nokogiri (~> 1)
       rubyzip (~> 1.1, < 2.0.0)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.4.4)
@@ -613,6 +639,7 @@ GEM
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
     sexp_processor (4.5.0)
+    shellany (0.0.1)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
     simplecov (0.10.0)
@@ -624,6 +651,9 @@ GEM
     sortability (0.1.0)
       rails
       squeel
+    spring (1.7.2)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -743,6 +773,7 @@ DEPENDENCIES
   fakeredis
   fine_print (~> 3.1.0)
   fog
+  guard-rspec
   hashie
   httparty
   jobba (~> 1.4.0)
@@ -793,6 +824,7 @@ DEPENDENCIES
   sass-rails (~> 5.0.0)
   shoulda-matchers
   sortability
+  spring-commands-rspec
   squeel
   therubyracer
   thin

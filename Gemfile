@@ -248,6 +248,11 @@ group :development, :test do
   # Do not use Roar 1.0.4
   # Also, do not use Roar::Hypermedia links
   gem 'roar', '1.0.3'
+
+  # Speedup and run specs when files change
+  gem 'spring-commands-rspec'
+  gem 'guard-rspec'
+
 end
 
 group :development do
