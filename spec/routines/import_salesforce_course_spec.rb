@@ -10,7 +10,7 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
     candidate = new_osa(book_name: "jimmy", product: "Concept Coach",
                         school: "Rice", account_type: "College/University (4)")
 
-    outputs = described_class[candidate: candidate]
+    outputs = described_class.call(candidate: candidate).outputs
 
     expect(candidate.error).to be_nil
     expect(candidate.num_students).to eq 0
@@ -18,7 +18,7 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
     expect(candidate.num_sections).to eq 0
     expect(candidate.teacher_join_url).to match /http.*\/teach\/[a-f0-9]+\/DO_NOT/
 
-    course = Entity::Course.first
+    course = outputs.course
 
     expect(course.profile.name).to eq "Yo"
     expect(course.profile.school.name).to eq "Rice"

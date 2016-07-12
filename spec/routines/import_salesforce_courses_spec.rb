@@ -77,13 +77,18 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     expect(sf_record).to receive(:save)
 
+    before_course_ids = Entity::Course.all.map(&:id)
+
     result = nil
     expect {
       result = ImportSalesforceCourses.call
     }.to change{Entity::Course.count}.by(1)
      .and change{Salesforce::Models::AttachedRecord.count}.by(1)
 
-    created_course = Entity::Course.first
+    after_course_ids = Entity::Course.all.map(&:id)
+    new_course_id = (after_course_ids - before_course_ids).first
+
+    created_course = Entity::Course.find(new_course_id)
 
     expect(sf_record.course_id).to eq created_course.id
     expect(sf_record.created_at).to be_a String
