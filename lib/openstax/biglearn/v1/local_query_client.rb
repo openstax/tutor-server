@@ -7,7 +7,7 @@ module OpenStax::Biglearn::V1
     end
 
     def name
-      :local_query
+      @write_client.is_a?(RealClient) ? :local_query_with_real : :local_query_with_fake
     end
 
     #

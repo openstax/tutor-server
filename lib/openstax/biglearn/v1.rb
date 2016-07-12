@@ -94,7 +94,11 @@ module OpenStax::Biglearn::V1
     new_client_call { RealClient.new(configuration) }
   end
 
-  def self.new_local_query_client
+  def self.new_local_query_client_with_fake
+    new_client_call { LocalQueryClient.new(new_fake_client) }
+  end
+
+  def self.new_local_query_client_with_real
     new_client_call { LocalQueryClient.new(new_real_client) }
   end
 
@@ -112,18 +116,14 @@ module OpenStax::Biglearn::V1
   end
 
   def self.default_client_name
-    # The default Biglearn client is set via an admin console setting of the
-    # client's name (real, fake, or local_query).  The code below will override
-    # this default name to 'fake' if (a) the stub configuration flag is set or
-    # (b) if stub flag isn't set at all and we are not in production.
-    #
-    # So for developers who don't set the flag, they'll get the fake client. If
-    # developers want to use other than the fake client, they'll need to explicitly
-    # set the flag to false.
+    # The default Biglearn client is set via an admin console setting.  The
+    # default value for this setting is environment-specific in config/initializers/
+    # 02-settings.rb.  Developers will need to use the admin console to change
+    # the setting if they want during development.  During testing, devs can
+    # use the `use_fake_client`, `use_real_client`, and `use_client_named`
+    # methods.
 
-    secrets = Rails.application.secrets.openstax['biglearn']
-    stub = secrets['stub'].nil? ? !Rails.env.production? : secrets['stub']
-    stub ? :fake : Settings::Db.store.biglearn_client
+    Settings::Biglearn.client
   end
 
   def self.client
@@ -142,8 +142,10 @@ module OpenStax::Biglearn::V1
 
   def self.new_client(name)
     case name
-    when :local_query
-      new_local_query_client
+    when :local_query_with_fake
+      new_local_query_client_with_fake
+    when :local_query_with_real
+      new_local_query_client_with_real
     when :real
       new_real_client
     when :fake

@@ -37,10 +37,11 @@ en:
       biglearn_client:
         name: 'Biglearn Client'
         labels:
-          local_query: 'local_query'
+          local_query_with_real: 'local_query_with_real'
+          local_query_with_fake: 'local_query_with_fake'
           real: 'real'
           fake: 'fake'
-        help_block: 'real is full Biglearn; local_query is real BL for writes and local for queries'
+        help_block: 'real is full Biglearn; local_query is real or fake BL for writes and local for queries'
       default_due_time:
         name: 'Default task due time'
         help_block: 'In the format HH:MM'
