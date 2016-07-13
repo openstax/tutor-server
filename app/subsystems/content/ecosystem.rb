@@ -179,5 +179,9 @@ module Content
       @strategy.to_model
     end
 
+    def unique_title
+      "#{id}-#{title}"
+    end
+
   end
 end
