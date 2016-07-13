@@ -179,5 +179,11 @@ module Content
       @strategy.to_model
     end
 
+    def unique_title
+      short_title = title.gsub(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{6}([0-9a-f]{6}\@\d+.\d+\)).*\z/i, '\1')
+      short_title = "#{id}-#{short_title}"
+      comments.blank? ? short_title : short_title + "-#{comments}"
+    end
+
   end
 end

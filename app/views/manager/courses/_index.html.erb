@@ -84,7 +84,7 @@
       <div id="courses-bulk-actions">
         <div class="form-group input-group">
           <%= select_tag :ecosystem_id,
-                         options_from_collection_for_select(@ecosystems, :id, :title, params[:ecosystem_id]),
+                         options_from_collection_for_select(@ecosystems, :id, :unique_title, params[:ecosystem_id]),
                          include_blank: '-- Select an ecosystem --',
                          class: 'form-control' %>
           <span class="input-group-btn">
