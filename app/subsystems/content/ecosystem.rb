@@ -180,7 +180,7 @@ module Content
     end
 
     def unique_title
-      "#{id}-#{title}"
+      "#{id}-#{title}-#{comments}"
     end
 
   end
