@@ -1,6 +1,7 @@
 <table class="table table-striped">
   <thead>
     <tr>
+      <th>ID</th>
       <th>Book Title</th>
       <th>Comments</th>
       <th>Book Version</th>
@@ -14,7 +15,8 @@
   <% ecosystems.each do |ecosystem| %>
     <% book = ecosystem.books.first %>
 
-    <tr>
+  <tr>
+      <td><%= ecosystem.id %></td>
       <td><%= book.title %></td>
       <td>
         <% if ecosystem_path.nil? %>
