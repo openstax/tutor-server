@@ -180,7 +180,8 @@ module Content
     end
 
     def unique_title
-      "#{id}-#{title}-#{comments}"
+      short_title = title.gsub(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{6}([0-9a-f]{6}\@\d+.\d+\)).*\z/i, '\1')
+      "#{id}-#{short_title}-#{comments}"
     end
 
   end
