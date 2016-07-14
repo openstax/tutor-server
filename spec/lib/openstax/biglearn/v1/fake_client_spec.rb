@@ -86,7 +86,7 @@ module OpenStax::Biglearn
       it "works" do
         exercises = client.get_projection_exercises(
           role: nil,
-          pools: [pool_1],
+          pool_uuids: [pool_1.uuid],
           pool_exclusions: [],
           count: 5,
           difficulty: 0.5,
@@ -101,7 +101,7 @@ module OpenStax::Biglearn
 
         exercises = client.get_projection_exercises(
           role: nil,
-          pools: [pool_1],
+          pool_uuids: [pool_1.uuid],
           pool_exclusions: [{pool: pool_1_new, ignore_versions: false},
                             {pool: pool_4, ignore_versions: false},
                             {pool: pool_5_new, ignore_versions: true}],
@@ -126,7 +126,7 @@ module OpenStax::Biglearn
         pools = [pool_1, pool_2]
         pool_uuids = pools.map(&:uuid)
 
-        clues = client.get_clues(roles: roles, pools: pools)
+        clues = client.get_clues(roles: roles, pool_uuids: pool_uuids)
         expect(clues.keys.size).to eq pools.size
 
         clues.each do |pool_uuid, clue|

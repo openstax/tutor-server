@@ -30,7 +30,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
   context "#get_projection_exercises" do
     let!(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
-    before(:all) do
+    before(:each) do
       @role = Entity::Role.create!
 
       @exercises = 3.times.map { FactoryGirl.create(:content_exercise) }
@@ -42,7 +42,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
 
     it "excludes exercises or not" do
       exclusion_pes = client.get_projection_exercises(
-        role: @role, pools: [@first_two_pool, @last_two_pool],
+        role: @role, pool_uuids: [@first_two_pool, @last_two_pool].map(&:uuid),
         pool_exclusions: [{pool: @last_one_pool}], count: 3, allow_repetitions: false
       )
 
@@ -52,7 +52,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
       )
 
       no_exclusion_pes = client.get_projection_exercises(
-        role: @role, pools: [@first_two_pool, @last_two_pool],
+        role: @role, pool_uuids: [@first_two_pool, @last_two_pool].map(&:uuid),
         pool_exclusions: [], count: 3, allow_repetitions: false
       )
 
@@ -72,7 +72,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
 
       it "excludes that history when repetitions not allowed" do
         pes = client.get_projection_exercises(
-          role: @role, pools: [@first_two_pool],
+          role: @role, pool_uuids: [@first_two_pool.uuid],
           pool_exclusions: [], count: 2, allow_repetitions: false
         )
 
@@ -81,7 +81,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
 
       it "includes that history when repetitions allowed" do
         pes = client.get_projection_exercises(
-          role: @role, pools: [@first_two_pool],
+          role: @role, pool_uuids: [@first_two_pool.uuid],
           pool_exclusions: [], count: 2, allow_repetitions: true
         )
 
@@ -121,21 +121,21 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     end
 
     it "gives back a hash with one entry per pool" do
-      clues = client.get_clues(roles: [@passing_role], pools: [@first_two_pool, @all_pool])
+      clues = client.get_clues(roles: [@passing_role], pool_uuids: [@first_two_pool, @all_pool].map(&:uuid))
       expect(clues.keys.size).to eq 2
     end
 
     it "gives increasing clues for increasing correctness" do
-      all_wrong_clue = client.get_clues(roles: [@all_wrong_role], pools: [@all_pool])["all"]
-      all_right_clue = client.get_clues(roles: [@all_right_role], pools: [@all_pool])["all"]
-      passing_clue =   client.get_clues(roles: [@passing_role],   pools: [@all_pool])["all"]
+      all_wrong_clue = client.get_clues(roles: [@all_wrong_role], pool_uuids: [@all_pool.uuid])["all"]
+      all_right_clue = client.get_clues(roles: [@all_right_role], pool_uuids: [@all_pool.uuid])["all"]
+      passing_clue =   client.get_clues(roles: [@passing_role],   pool_uuids: [@all_pool.uuid])["all"]
 
       expect(all_wrong_clue[:value]).to be < passing_clue[:value]
       expect(passing_clue[:value]).to be < all_right_clue[:value]
     end
 
     it "populates all fields in appropriate ranges" do
-      passing_clue =   client.get_clues(roles: [@passing_role],   pools: [@all_pool])["all"]
+      passing_clue = client.get_clues(roles: [@passing_role], pool_uuids: [@all_pool.uuid])["all"]
 
       expect(passing_clue).to include({
         value: a_value_between(0,1),
@@ -152,21 +152,23 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
 
     it "filters to the right tasked exercises" do
       expect(
-        client.tasked_exercises_by(pool: @all_pool,
+        client.tasked_exercises_by(pool_uuid: @all_pool.uuid,
                                    roles: [@all_wrong_role, @all_right_role, @passing_role]).map(&:id)
       ).to contain_exactly(*@te_ids)
 
       expect(
-        client.tasked_exercises_by(pool: @first_two_pool,
+        client.tasked_exercises_by(pool_uuid: @first_two_pool.uuid,
                                    roles: [@all_right_role, @passing_role]).map(&:id)
       ).to contain_exactly(*@te_ids[4..5], *@te_ids[8..9])
     end
   end
 
   def new_pool(uuid, exercises, indices)
-    pool = Content::Models::Pool.new(uuid: uuid)
+    pool = FactoryGirl.build(:content_pool, uuid: uuid)
+    # pool = Content::Models::Pool.homework_dynamic.new(uuid: uuid)
     [indices].flatten.each{|idx| pool.content_exercise_ids << exercises[idx].id}
-    pool.wrap
+    pool.save!
+    OpenStax::Biglearn::V1::Pool.new(uuid: uuid)
   end
 
 end

@@ -65,8 +65,8 @@ class OpenStax::Biglearn::V1::RealClient
     end
   end
 
-  def combine_pools(pools)
-    options = { body: construct_combine_pools_payload(pools).to_json }
+  def combine_pools(pool_uuids)
+    options = { body: construct_combine_pools_payload(pool_uuids).to_json }
     response = request(:post, add_pools_uri, with_content_type_header(options))
     body_hash = handle_response(response)
 
@@ -82,10 +82,10 @@ class OpenStax::Biglearn::V1::RealClient
     uuids.first
   end
 
-  def get_projection_exercises(role:, pools:, pool_exclusions:,
+  def get_projection_exercises(role:, pool_uuids:, pool_exclusions:,
                                count:, difficulty:, allow_repetitions:)
-    # If we have more than one pool, we must first combine them all into a single pool
-    pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
+    # If we have more than one pool uuid, we must first combine them all into a single pool
+    pool_uuid = [pool_uuids].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pool_uuids) : pool_uuids.first
 
     excluded_pools = pool_exclusions.map do |hash|
       { pool_id: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
@@ -95,7 +95,7 @@ class OpenStax::Biglearn::V1::RealClient
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
       allow_repetition: allow_repetitions ? 'true' : 'false',
-      pool_id: pool.uuid,
+      pool_id: pool_uuid,
       excluded_pools: excluded_pools
     }
 
@@ -108,15 +108,13 @@ class OpenStax::Biglearn::V1::RealClient
     result["questions"].map { |q| q["question"] }
   end
 
-  def get_clues(roles:, pools:, force_cache_miss: false)
+  def get_clues(roles:, pool_uuids:, force_cache_miss: false)
     learners = get_exchange_read_identifiers_for_roles(roles: roles)
 
     # No learners: map all pools to nil
     return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?
 
-    pool_ids = pools.map(&:uuid)
-
-    fetch_clues(learners: learners, pool_ids: pool_ids, force_cache_miss: force_cache_miss)
+    fetch_clues(learners: learners, pool_ids: pool_uuids, force_cache_miss: force_cache_miss)
   end
 
   private
@@ -267,9 +265,9 @@ class OpenStax::Biglearn::V1::RealClient
     end }
   end
 
-  def construct_combine_pools_payload(pools)
+  def construct_combine_pools_payload(pool_uuids)
     { sources: [
-      { pools: pools.map(&:uuid) }
+      { pools: pool_uuids }
     ] }
   end
 

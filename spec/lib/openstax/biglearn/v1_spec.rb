@@ -58,7 +58,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     let!(:client_double) {
       double.tap do |dbl|
         allow(dbl).to receive(:get_clues)
-                  .with(roles: dummy_roles, pools: dummy_pools, force_cache_miss: false)
+                  .with(roles: dummy_roles, pool_uuids: dummy_pools.map(&:uuid), force_cache_miss: false)
                   .and_return('client get_clues response')
         allow(dbl).to receive(:add_exercises)
                   .with(exercises: dummy_exercises)
@@ -66,7 +66,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
         allow(dbl).to receive(:get_projection_exercises)
                   .with(
                     role:              dummy_role,
-                    pools:             dummy_pools,
+                    pool_uuids:        dummy_pools.map(&:uuid),
                     pool_exclusions:   dummy_pool_exclusions,
                     count:             dummy_count,
                     difficulty:        dummy_difficulty,
