@@ -129,7 +129,7 @@ module OpenStax::Biglearn
       context 'post projections_questions API' do
         it 'calls the API well and returns the result' do
           question_ids = @client.get_projection_exercises(
-            role: @user_1_role, pools: [@biglearn_pool_1], pool_exclusions: [],
+            role: @user_1_role, pool_uuids: [@biglearn_pool_1.uuid], pool_exclusions: [],
             count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
@@ -137,7 +137,7 @@ module OpenStax::Biglearn
           expect(question_ids.first).to eq @biglearn_exercise_1.question_id
 
           question_ids = @client.get_projection_exercises(
-            role: @user_2_role, pools: [@biglearn_pool_2], pool_exclusions: [],
+            role: @user_2_role, pool_uuids: [@biglearn_pool_2.uuid], pool_exclusions: [],
             count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
@@ -147,7 +147,7 @@ module OpenStax::Biglearn
 
         it 'performs requests with exclusion pools properly' do
           question_ids = @client.get_projection_exercises(
-            role: @user_1_role, pools: [@biglearn_pool_3],
+            role: @user_1_role, pool_uuids: [@biglearn_pool_3.uuid],
             pool_exclusions: [{pool: @biglearn_pool_1, ignore_versions: false}],
             count: 5, difficulty: 0.5, allow_repetitions: true
           )
@@ -156,7 +156,7 @@ module OpenStax::Biglearn
           expect(question_ids.first).to eq @biglearn_exercise_2_new.question_id
 
           question_ids = @client.get_projection_exercises(
-            role: @user_2_role, pools: [@biglearn_pool_3],
+            role: @user_2_role, pool_uuids: [@biglearn_pool_3.uuid],
             pool_exclusions: [{pool: @biglearn_pool_2, ignore_versions: false}],
             count: 5, difficulty: 0.5, allow_repetitions: true
           )
@@ -169,7 +169,7 @@ module OpenStax::Biglearn
           )
 
           question_ids = @client.get_projection_exercises(
-            role: @user_2_role, pools: [@biglearn_pool_3],
+            role: @user_2_role, pool_uuids: [@biglearn_pool_3.uuid],
             pool_exclusions: [{pool: @biglearn_pool_2, ignore_versions: true}],
             count: 5, difficulty: 0.5, allow_repetitions: true
           )
@@ -255,7 +255,7 @@ module OpenStax::Biglearn
           it 'calls the API well and returns the result' do
             pools = [@biglearn_pool_1, @biglearn_pool_2]
             expected_pool_uuids = pools.map(&:uuid)
-            clues = @client.get_clues(roles: [@user_1_role], pools: pools)
+            clues = @client.get_clues(roles: [@user_1_role], pool_uuids: pools.map(&:uuid))
 
             expect(clues.size).to eq 2
             clues.each do |pool_uuid, clue|
@@ -275,26 +275,26 @@ module OpenStax::Biglearn
             expect(@client).to receive(:request).twice
 
             # Miss
-            clues = @client.get_clues(roles: [@user_1_role], pools: [@biglearn_pool_1,
-                                                                    @biglearn_pool_2])
+            clues = @client.get_clues(roles:      [@user_1_role],
+                                      pool_uuids: [@biglearn_pool_1, @biglearn_pool_2].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Miss
-            clues = @client.get_clues(roles: [@user_2_role], pools: [@biglearn_pool_1,
-                                                                    @biglearn_pool_2])
+            clues = @client.get_clues(roles:      [@user_2_role],
+                                      pool_uuids: [@biglearn_pool_1, @biglearn_pool_2].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Hit
-            clues = @client.get_clues(roles: [@user_2_role], pools: [@biglearn_pool_2,
-                                                                    @biglearn_pool_1])
+            clues = @client.get_clues(roles:      [@user_2_role],
+                                      pool_uuids: [@biglearn_pool_2, @biglearn_pool_1].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Hit
-            clues = @client.get_clues(roles: [@user_1_role], pools: [@biglearn_pool_1,
-                                                                    @biglearn_pool_2])
+            clues = @client.get_clues(roles:      [@user_1_role],
+                                      pool_uuids: [@biglearn_pool_1, @biglearn_pool_2].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
           end
@@ -304,7 +304,8 @@ module OpenStax::Biglearn
           it 'calls the API well and returns the result' do
             pools = [@biglearn_pool_1, @biglearn_pool_2]
             expected_pool_uuids = pools.map(&:uuid)
-            clues = @client.get_clues(roles: [@user_1_role, @user_2_role], pools: pools)
+            clues = @client.get_clues(roles:      [@user_1_role, @user_2_role],
+                                      pool_uuids: pools.map(&:uuid))
 
             expect(clues.size).to eq 2
             clues.each do |pool_uuid, clue|
@@ -324,38 +325,38 @@ module OpenStax::Biglearn
             expect(@client).to receive(:request).exactly(3).times
 
             # Miss
-            clues = @client.get_clues(roles: [@user_1_role],
-                                     pools: [@biglearn_pool_1, @biglearn_pool_2])
+            clues = @client.get_clues(roles:      [@user_1_role],
+                                      pool_uuids: [@biglearn_pool_1, @biglearn_pool_2].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Miss
-            clues = @client.get_clues(roles: [@user_2_role],
-                                     pools: [@biglearn_pool_2, @biglearn_pool_1])
+            clues = @client.get_clues(roles:      [@user_2_role],
+                                      pool_uuids: [@biglearn_pool_2, @biglearn_pool_1].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Miss
-            clues = @client.get_clues(roles: [@user_1_role, @user_2_role],
-                                     pools: [@biglearn_pool_1, @biglearn_pool_2])
+            clues = @client.get_clues(roles:      [@user_1_role, @user_2_role],
+                                      pool_uuids: [@biglearn_pool_1, @biglearn_pool_2].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Hit
-            clues = @client.get_clues(roles: [@user_2_role, @user_1_role],
-                                     pools: [@biglearn_pool_2, @biglearn_pool_1])
+            clues = @client.get_clues(roles:      [@user_2_role, @user_1_role],
+                                      pool_uuids: [@biglearn_pool_2, @biglearn_pool_1].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Hit
-            clues = @client.get_clues(roles: [@user_2_role],
-                                     pools: [@biglearn_pool_2, @biglearn_pool_1])
+            clues = @client.get_clues(roles:      [@user_2_role],
+                                      pool_uuids: [@biglearn_pool_2, @biglearn_pool_1].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
 
             # Hit
-            clues = @client.get_clues(roles: [@user_1_role],
-                                     pools: [@biglearn_pool_1, @biglearn_pool_2])
+            clues = @client.get_clues(roles:      [@user_1_role],
+                                      pool_uuids: [@biglearn_pool_1, @biglearn_pool_2].map(&:uuid))
             expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
                                   @biglearn_pool_2.uuid => pool_2_clue })
           end
