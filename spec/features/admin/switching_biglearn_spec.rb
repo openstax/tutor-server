@@ -9,7 +9,7 @@ RSpec.feature 'Switching biglearn option' do
     visit admin_rails_settings_ui_path
   end
 
-  scenario 'in test env, calls go to fake client by default' do
+  xscenario 'in test env, calls go to fake client by default' do
     expect(page).to have_content(/Biglearn client/i)
     expect(find_field('settings_biglearn_client').value).to eq "fake"
 
