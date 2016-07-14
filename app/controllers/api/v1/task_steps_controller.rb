@@ -75,7 +75,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if @task_step
       @tasked = @task_step.tasked
     else
-      render_api_errors(:no_exercises)
+      render_api_errors(:no_exercises, :not_found)
     end
   end
 
