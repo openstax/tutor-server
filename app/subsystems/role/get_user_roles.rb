@@ -13,7 +13,7 @@ class Role::GetUserRoles
 
     if role_types != :any
       role_types = [role_types].flatten.map(&:to_s)
-      roles = roles.select{|role| role_types.include?(role.role_type)}
+      roles = roles.select{|role| role_types.include?(role.role_type) && role.send(role.role_type).present? }
     end
 
     outputs[:roles] = roles
