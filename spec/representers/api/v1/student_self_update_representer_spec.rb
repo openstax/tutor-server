@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::StudentSelfUpdateRepresenter, type: :representer do
-  let!(:student) {
+  let(:student) {
     instance_spy(CourseMembership::Models::Student).tap do |dbl|
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828

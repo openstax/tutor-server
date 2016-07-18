@@ -13,7 +13,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
 
-  let!(:expected_tags)  { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
+  let(:expected_tags)  { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
 
   it "provides info about the exercise fragment" do
     exercise_fragments.each_with_index do |fragment, index|

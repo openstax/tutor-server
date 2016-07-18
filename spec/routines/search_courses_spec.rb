@@ -2,28 +2,28 @@ require 'rails_helper'
 
 RSpec.describe SearchCourses, type: :routine do
 
-  let!(:tutor_school) { FactoryGirl.create(:school, name: 'TTS') }
-  let!(:cc_school)    { FactoryGirl.create(:school, name: 'CCS') }
+  let(:tutor_school) { FactoryGirl.create(:school, name: 'TTS') }
+  let(:cc_school)    { FactoryGirl.create(:school, name: 'CCS') }
 
-  let!(:offering) {
+  let(:offering) {
     FactoryGirl.create(:catalog_offering,
                        salesforce_book_name: 'College Physics (Algebra)',
                        description: 'Introductory two-semester physics book')
   }
 
-  let!(:course_1) { FactoryGirl.create(
+  let(:course_1) { FactoryGirl.create(
     :course_profile_profile, name: 'Physics', school: tutor_school, offering: offering
   ).course }
-  let!(:course_2) { FactoryGirl.create(
+  let(:course_2) { FactoryGirl.create(
     :course_profile_profile, name: 'Biology', school: tutor_school
   ).course }
-  let!(:course_3) { FactoryGirl.create(
+  let(:course_3) { FactoryGirl.create(
     :course_profile_profile, name: 'Concept Coach', school: cc_school
   ).course }
 
-  let!(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
+  let(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
 
-  let!(:ecosystem) {
+  let(:ecosystem) {
     Content::Ecosystem.new(strategy: FactoryGirl.create(:content_ecosystem, title: 'A test').wrap)
   }
 

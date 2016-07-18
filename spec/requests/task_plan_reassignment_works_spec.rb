@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe 'Task plan reassignment works', type: :request, api: true, version: :v1 do
-  let(:course) { CreateCourse[name: 'Physics'] }
-  let(:period) { CreatePeriod[course: course, name: '1st'] }
+  let(:course)       { CreateCourse[name: 'Physics'] }
+  let(:period)       { CreatePeriod[course: course, name: '1st'] }
   let(:student_user) { FactoryGirl.create(:user) }
   let(:teacher_user) { FactoryGirl.create(:user) }
 
-  let!(:teacher_role)    { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-  let!(:teacher)         { teacher_role.teacher }
-  let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:teacher_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:teacher_role)    { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+  let!(:teacher)        { teacher_role.teacher }
+  let(:application)     { FactoryGirl.create :doorkeeper_application }
+  let(:teacher_token)   { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: teacher_user.id }
 
-  let!(:task_plan_1) do
+  let(:task_plan_1) do
     FactoryGirl.build(:tasks_task_plan, owner: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period.to_model
       task_plan.save!

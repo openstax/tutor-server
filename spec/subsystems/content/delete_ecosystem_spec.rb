@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Content::DeleteEcosystem, type: :routine do
-  let!(:course) { CreateCourse[name: 'A Course'] }
-  let!(:ecosystem_1) {
+  let(:course) { CreateCourse[name: 'A Course'] }
+  let(:ecosystem_1) {
     Content::Ecosystem.find(FactoryGirl.create(:content_ecosystem).id)
   }
-  let!(:ecosystem_2) {
+  let(:ecosystem_2) {
     Content::Ecosystem.find(FactoryGirl.create(:content_ecosystem).id)
   }
 

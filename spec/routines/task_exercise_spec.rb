@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe TaskExercise, type: :routine do
-  let!(:exercise)  do
+  let(:exercise)  do
     content_exercise = FactoryGirl.create(:content_exercise)
     strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
     Content::Exercise.new(strategy: strategy)
   end
 
-  let!(:multipart_exercise)  do
+  let(:multipart_exercise)  do
     content_exercise = FactoryGirl.create(:content_exercise, num_parts: 2, context: 'Some context')
     strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
     Content::Exercise.new(strategy: strategy)
   end
 
-  let!(:task_step) { FactoryGirl.build(:tasks_task_step) }
+  let(:task_step) { FactoryGirl.build(:tasks_task_step) }
 
   it 'builds a TaskedExercise for the given exercise and task_step (and saves when task saved)' do
     TaskExercise[exercise: exercise, task_step: task_step]

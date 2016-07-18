@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ExercisesRepresenter, type: :representer do
-  let!(:exercise_hash_array) { [
+  let(:exercise_hash_array) { [
     Hashie::Mash.new(id: 42, tags: [], pool_types: ['foo', 'bar'], is_excluded: false)
   ] }
 
@@ -9,7 +9,7 @@ RSpec.describe Api::V1::ExercisesRepresenter, type: :representer do
     described_class.new(exercise_hash_array).as_json
   }
 
-  let!(:params) { [] }
+  let(:params) { [] }
 
   context "id" do
     it "can be read" do

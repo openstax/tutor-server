@@ -2,17 +2,12 @@ require "rails_helper"
 
 describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
-  let!(:course)    { CreateCourse[name: 'Anything'] }
-  let!(:period)    { CreatePeriod[course: course] }
+  let(:course)    { CreateCourse[name: 'Anything'] }
+  let(:period)    { CreatePeriod[course: course] }
 
-  let!(:user)      { FactoryGirl.create(:user) }
-  let!(:teacher)   { FactoryGirl.create(:user) }
-  let!(:student)   { FactoryGirl.create(:user) }
-
-  let!(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan,
-                                           task_plan: task_plan,
-                                           target: period.to_model,
-                                           opens_at: Time.current.tomorrow }
+  let(:user)      { FactoryGirl.create(:user) }
+  let(:teacher)   { FactoryGirl.create(:user) }
+  let(:student)   { FactoryGirl.create(:user) }
 
   let!(:published_task_plan) { FactoryGirl.create(:tasked_task_plan,
                                                   number_of_students: 0,
@@ -20,9 +15,10 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                                   assistant: get_assistant(
                                                     course: course, task_plan_type: 'reading'),
                                                   published_at: Time.current) }
-  let!(:ecosystem) { published_task_plan.ecosystem }
-  let!(:page)      { ecosystem.pages.first }
-  let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
+  let(:ecosystem)  { published_task_plan.ecosystem }
+  let(:page)       { ecosystem.pages.first }
+
+  let(:task_plan)  { FactoryGirl.build(:tasks_task_plan,
                                        owner: course,
                                        assistant: get_assistant(
                                          course: course, task_plan_type: 'reading'
@@ -32,7 +28,12 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                        type: 'reading',
                                        num_tasking_plans: 0) }
 
-  let!(:unaffiliated_teacher) { FactoryGirl.create(:user) }
+  let!(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan,
+                                           task_plan: task_plan,
+                                           target: period.to_model,
+                                           opens_at: Time.current.tomorrow }
+
+  let(:unaffiliated_teacher) { FactoryGirl.create(:user) }
 
   before do
     course.time_zone.update_attribute(:name, 'Pacific Time (US & Canada)')
@@ -143,7 +144,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
 
     context 'when is_publish_requested is set' do
-      let!(:valid_json_hash) do
+      let(:valid_json_hash) do
         Api::V1::TaskPlanRepresenter.new(task_plan).to_hash.merge('is_publish_requested' => true)
       end
 
@@ -222,7 +223,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
 
     context 'when is_publish_requested is set' do
-      let!(:valid_json_hash) do
+      let(:valid_json_hash) do
         Api::V1::TaskPlanRepresenter.new(task_plan).to_hash.merge('is_publish_requested' => true)
       end
 

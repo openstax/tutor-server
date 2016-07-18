@@ -122,7 +122,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   context '#destroy' do
-    let!(:period) { CreatePeriod[course: course, name: '8th Period'] }
+    let(:period) { CreatePeriod[course: course, name: '8th Period'] }
 
     it 'allows teachers to delete periods' do
       api_delete :destroy, teacher_token, parameters: { id: period.id }
@@ -155,7 +155,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   context '#restore' do
-    let!(:period) { CreatePeriod[course: course, name: '8th Period'] }
+    let(:period) { CreatePeriod[course: course, name: '8th Period'] }
 
     before { period.to_model.destroy! }
 

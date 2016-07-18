@@ -192,13 +192,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   context "update step counts" do
-    let!(:task) {
+    let(:task) {
       tt = Tasks::Models::Task.new
       allow(tt).to receive(:save!)
       tt
     }
 
-    let!(:step) {
+    let(:step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
@@ -207,7 +207,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:completed_step) {
+    let(:completed_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(true)
@@ -216,7 +216,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:core_step) {
+    let(:core_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(true)
         allow(step).to receive(:completed?).and_return(false)
@@ -225,7 +225,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:completed_core_step) {
+    let(:completed_core_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(true)
         allow(step).to receive(:completed?).and_return(true)
@@ -234,7 +234,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:exercise_step) {
+    let(:exercise_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
@@ -248,7 +248,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:completed_exercise_step) {
+    let(:completed_exercise_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(true)
@@ -262,7 +262,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:correct_exercise_step) {
+    let(:correct_exercise_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(true)
@@ -277,7 +277,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:placeholder_step) {
+    let(:placeholder_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
@@ -292,7 +292,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     }
 
-    let!(:placeholder_exercise_step) {
+    let(:placeholder_exercise_step) {
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)

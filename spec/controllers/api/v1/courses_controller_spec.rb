@@ -5,18 +5,16 @@ require 'database_cleaner'
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)             { FactoryGirl.create(:user) }
-  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_1.id }
+  let(:user_1)         { FactoryGirl.create(:user) }
+  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_1.id }
 
-  let!(:user_2)             { FactoryGirl.create(:user) }
-  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_2.id }
+  let(:user_2)         { FactoryGirl.create(:user) }
+  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_2.id }
 
-  let!(:userless_token)     { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course)             { CreateCourse[name: 'Physics 101'] }
-  let!(:period)             { CreatePeriod[course: course] }
+  let(:course)         { CreateCourse[name: 'Physics 101'] }
+  let!(:period)        { CreatePeriod[course: course] }
 
   def add_book_to_course(course:)
     book = FactoryGirl.create(:content_book, :standard_contents_1)
@@ -134,37 +132,33 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe '#roster' do
-    let!(:application)       { FactoryGirl.create :doorkeeper_application }
+    let(:application)        { FactoryGirl.create :doorkeeper_application }
 
-    let!(:course)            { CreateCourse[name: 'Rosterify'] }
+    let(:course)             { CreateCourse[name: 'Rosterify'] }
     let!(:period_2)          { CreatePeriod[course: course] }
 
-    let!(:student_user)      { FactoryGirl.create(:user) }
-    let!(:student_role)      { AddUserAsPeriodStudent[user: student_user,
-                                                      period: period] }
+    let(:student_user)       { FactoryGirl.create(:user) }
+    let(:student_role)       { AddUserAsPeriodStudent[user: student_user, period: period] }
     let!(:student)           { student_role.student }
-    let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+    let(:student_token)      { FactoryGirl.create :doorkeeper_access_token,
                                                   application: application,
                                                   resource_owner_id: student_user.id }
 
-    let!(:student_user_2)    { FactoryGirl.create(:user) }
-    let!(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2,
-                                                      period: period] }
+    let(:student_user_2)     { FactoryGirl.create(:user) }
+    let(:student_role_2)     { AddUserAsPeriodStudent[user: student_user_2, period: period] }
     let!(:student_2)         { student_role_2.student }
 
-    let!(:teacher_user)      { FactoryGirl.create(:user) }
-    let!(:teacher_role)      { AddUserAsCourseTeacher[user: teacher_user,
-                                                      course: course] }
-    let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
+    let(:teacher_user)       { FactoryGirl.create(:user) }
+    let!(:teacher_role)      { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+    let(:teacher_token)      { FactoryGirl.create :doorkeeper_access_token,
                                                   application: application,
                                                   resource_owner_id: teacher_user.id }
 
-    let!(:student_user_3)    { FactoryGirl.create(:user) }
-    let!(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3,
-                                                      period: period_2] }
+    let(:student_user_3)     { FactoryGirl.create(:user) }
+    let(:student_role_3)     { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
     let!(:student_3)         { student_role_3.student }
 
-    let!(:valid_params) { { id: course.id } }
+    let(:valid_params) { { id: course.id } }
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
@@ -437,19 +431,19 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "dashboard" do
-    let!(:student_user)   { FactoryGirl.create(:user) }
+    let(:student_user)    { FactoryGirl.create(:user) }
     let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
-    let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
+    let(:student_token)   { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: student_user.id }
 
-    let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
+    let(:teacher_user)    { FactoryGirl.create(:user, first_name: 'Bob',
                                                       last_name: 'Newhart',
                                                       full_name: 'Bob Newhart') }
     let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
+    let(:teacher_token)   { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
-    let!(:time_zone)      { course.time_zone.to_tz }
+    let(:time_zone)       { course.time_zone.to_tz }
     let!(:reading_task)   { FactoryGirl.create(:tasks_task,
                                                task_type: :reading,
                                                opens_at: time_zone.now - 1.week,
@@ -702,19 +696,19 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "cc_dashboard" do
-    let!(:student_user)   { FactoryGirl.create(:user) }
+    let(:student_user)    { FactoryGirl.create(:user) }
     let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
-    let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
+    let(:student_token)   { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: student_user.id }
 
-    let!(:student_user_2) { FactoryGirl.create(:user) }
+    let(:student_user_2)  { FactoryGirl.create(:user) }
     let!(:student_role_2) { AddUserAsPeriodStudent[user: student_user_2, period: period] }
 
-    let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
+    let(:teacher_user)    { FactoryGirl.create(:user, first_name: 'Bob',
                                                       last_name: 'Newhart',
                                                       full_name: 'Bob Newhart') }
     let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
+    let(:teacher_token)   { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
     before(:all)         do

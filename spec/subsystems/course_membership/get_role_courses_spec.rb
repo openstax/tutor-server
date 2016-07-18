@@ -1,27 +1,27 @@
 require 'rails_helper'
 
 describe CourseMembership::GetRoleCourses do
-  let!(:course_1) { Entity::Course.create! }
-  let!(:course_1_period) { CreatePeriod[course: course_1] }
+  let(:course_1) { Entity::Course.create! }
+  let(:course_1_period) { CreatePeriod[course: course_1] }
 
-  let!(:course_2) { Entity::Course.create! }
-  let!(:course_2_period) { CreatePeriod[course: course_2] }
+  let(:course_2) { Entity::Course.create! }
+  let(:course_2_period) { CreatePeriod[course: course_2] }
 
-  let!(:course_3) { Entity::Course.create! }
-  let!(:course_3_period) { CreatePeriod[course: course_3] }
+  let(:course_3) { Entity::Course.create! }
+  let(:course_3_period) { CreatePeriod[course: course_3] }
 
-  let!(:role_a) { Entity::Role.create! }
-  let!(:role_b) { Entity::Role.create! }
-  let!(:role_c) { Entity::Role.create! }
+  let(:role_a) { Entity::Role.create! }
+  let(:role_b) { Entity::Role.create! }
+  let(:role_c) { Entity::Role.create! }
 
-  before {
+  before do
     CourseMembership::AddTeacher[course: course_1,        role: role_a]
     CourseMembership::AddStudent[period: course_1_period, role: role_a]
 
     CourseMembership::AddStudent[period: course_2_period, role: role_b]
 
     CourseMembership::AddTeacher[course: course_3,        role: role_c]
-  }
+  end
 
   it 'can find courses for student roles given a singular role' do
     courses = described_class[roles: role_a, types: :student]

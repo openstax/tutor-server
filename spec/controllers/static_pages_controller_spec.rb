@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe StaticPagesController, :type => :controller do
+RSpec.describe StaticPagesController, type: :controller do
 
   describe "GET copyright" do
     it "returns http success" do

@@ -1,23 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
-  let!(:user)              do
+  let(:user)              do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
 
-  let!(:course)              { FactoryGirl.create(:entity_course) }
-  let!(:period)              { ::CreatePeriod[course: course] }
+  let(:course)            { FactoryGirl.create(:entity_course) }
+  let(:period)            { ::CreatePeriod[course: course] }
 
-  let!(:teacher_user)        { FactoryGirl.create(:user) }
-  let!(:teacher_role)        { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+  let(:teacher_user)      { FactoryGirl.create(:user) }
+  let!(:teacher_role)     { AddUserAsCourseTeacher[user: teacher_user, course: course] }
 
-  let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
+  let(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
     user: user, period: period, requires_enrollee_approval: false
   ] }
 
-  let(:representation)     { described_class.new(enrollment_change).as_json }
+  let(:representation)      { described_class.new(enrollment_change).as_json }
 
   it 'represents an enrollment change request' do
     expect(representation['id']).to eq enrollment_change.id.to_s

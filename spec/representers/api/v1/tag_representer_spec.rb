@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TagRepresenter, type: :representer do
 
-  let!(:lo_tag) {
+  let(:lo_tag) {
     FactoryGirl.create :content_tag,
                        value: 'k12phys-ch04-s02-lo02',
                        tag_type: :lo,
@@ -10,14 +10,14 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
                        description: 'Discuss the relationship between mass and inertia'
   }
 
-  let!(:dok_tag) {
+  let(:dok_tag) {
     FactoryGirl.create :content_tag,
                        value: 'dok1',
                        tag_type: :generic,
                        name: nil
   }
 
-  let!(:teks_tag) {
+  let(:teks_tag) {
     FactoryGirl.create :content_tag,
                        value: 'ost-tag-teks-112-39-c-4d',
                        tag_type: :teks,
@@ -25,7 +25,7 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
                        description: 'calculate the effect of forces on objects'
   }
 
-  let!(:generic_tag) { FactoryGirl.create :content_tag }
+  let(:generic_tag) { FactoryGirl.create :content_tag }
 
   it 'represents an LO tag' do
     representation = Api::V1::TagRepresenter.new(lo_tag).as_json

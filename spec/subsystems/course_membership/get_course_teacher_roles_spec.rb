@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe CourseMembership::GetCourseTeacherRoles do
-  let!(:target_course) { Entity::Course.create! }
-  let!(:course_period) { CreatePeriod[course: target_course] }
+  let(:target_course) { Entity::Course.create! }
+  let(:course_period) { CreatePeriod[course: target_course] }
 
-  let!(:other_course) { Entity::Course.create! }
-  let!(:other_period) { CreatePeriod[course: other_course] }
+  let(:other_course)  { Entity::Course.create! }
+  let(:other_period)  { CreatePeriod[course: other_course] }
 
   let!(:other_student_role) {
     other_role = Entity::Role.create!

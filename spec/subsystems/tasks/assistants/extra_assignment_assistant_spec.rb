@@ -7,22 +7,22 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   let(:manifest_contents) { File.open(fixture_path) { |file| file.read } }
   let(:num_taskees)       { 3 }
 
-  let!(:assistant)        do
+  let(:assistant)        do
     FactoryGirl.create(
       :tasks_assistant,
       code_class_name: 'Tasks::Assistants::ExtraAssignmentAssistant')
   end
 
-  let!(:course)           { FactoryGirl.create :entity_course }
-  let!(:period)           { CreatePeriod[course: course] }
+  let(:course)           { FactoryGirl.create :entity_course }
+  let(:period)           { CreatePeriod[course: course] }
 
-  let!(:ecosystem)        do
+  let(:ecosystem)        do
     VCR.use_cassette('Tasks_Assistants_ExtraAssignmentAssistant/with_book', VCR_OPTS) do
       ImportEcosystemManifest[manifest: manifest_contents]
     end
   end
 
-  let!(:task_plan)        do
+  let(:task_plan)        do
     snap_lab_ids = []
     ecosystem.pages.each do |page|
       snap_lab_ids << "#{page.id}:#{page.snap_labs.first[:id]}" if page.snap_labs.present?

@@ -1,22 +1,22 @@
 require 'rails_helper'
 
 describe CollectCourseInfo, type: :routine do
-  let!(:course_1)       { FactoryGirl.create(:course_profile_profile, :with_offering).course }
-  let!(:course_2)       { FactoryGirl.create(:course_profile_profile, :with_offering).course }
+  let(:course_1)        { FactoryGirl.create(:course_profile_profile, :with_offering).course }
+  let(:course_2)        { FactoryGirl.create(:course_profile_profile, :with_offering).course }
 
   let!(:period_model_1) { FactoryGirl.create :course_membership_period, course: course_1 }
   let!(:period_model_2) { FactoryGirl.create :course_membership_period, course: course_1 }
   let!(:period_model_3) { FactoryGirl.create :course_membership_period, course: course_2 }
 
-  let!(:period_1)       { CourseMembership::Period.new(strategy: period_model_1.wrap) }
-  let!(:period_2)       { CourseMembership::Period.new(strategy: period_model_2.wrap) }
-  let!(:period_3)       { CourseMembership::Period.new(strategy: period_model_3.wrap) }
+  let(:period_1)        { CourseMembership::Period.new(strategy: period_model_1.wrap) }
+  let(:period_2)        { CourseMembership::Period.new(strategy: period_model_2.wrap) }
+  let(:period_3)        { CourseMembership::Period.new(strategy: period_model_3.wrap) }
 
-  let!(:profile_1)      { FactoryGirl.create :user_profile }
-  let!(:profile_2)      { FactoryGirl.create :user_profile }
+  let(:profile_1)       { FactoryGirl.create :user_profile }
+  let(:profile_2)       { FactoryGirl.create :user_profile }
 
-  let!(:user_1)         { User::User.new(strategy: profile_1.wrap) }
-  let!(:user_2)         { User::User.new(strategy: profile_2.wrap) }
+  let(:user_1)          { User::User.new(strategy: profile_1.wrap) }
+  let(:user_2)          { User::User.new(strategy: profile_2.wrap) }
 
   let!(:role)           { AddUserAsPeriodStudent[user: user_2, period: period_3] }
 
@@ -42,11 +42,11 @@ describe CollectCourseInfo, type: :routine do
   end
 
   context "when multiple courses are given" do
-    let!(:ecosystem_model_1) { FactoryGirl.create :content_ecosystem }
-    let!(:ecosystem_1)       { Content::Ecosystem.new(strategy: ecosystem_model_1.wrap) }
+    let(:ecosystem_model_1) { FactoryGirl.create :content_ecosystem }
+    let(:ecosystem_1)       { Content::Ecosystem.new(strategy: ecosystem_model_1.wrap) }
 
-    let!(:ecosystem_model_2) { FactoryGirl.create :content_ecosystem }
-    let!(:ecosystem_2)       { Content::Ecosystem.new(strategy: ecosystem_model_2.wrap) }
+    let(:ecosystem_model_2) { FactoryGirl.create :content_ecosystem }
+    let(:ecosystem_2)       { Content::Ecosystem.new(strategy: ecosystem_model_2.wrap) }
 
     before do
       AddEcosystemToCourse[ecosystem: ecosystem_1, course: course_1]
@@ -188,13 +188,13 @@ describe CollectCourseInfo, type: :routine do
     end
 
     context "when the user is a teacher and students" do
-      before {
+      before do
         AddUserAsCourseTeacher[user: user_1, course: course_1]
         result = AddUserAsPeriodStudent.call(user: user_1, period: period_1)
         @student1 = result.outputs.student
         result = AddUserAsPeriodStudent.call(user: user_1, period: period_2)
         @student2 = result.outputs.student
-      }
+      end
 
       it "returns student info for the user" do
         result = described_class[user: user_1, with: :students]

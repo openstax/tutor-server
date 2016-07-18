@@ -4,8 +4,8 @@ require 'vcr_helper'
 RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   context 'with a single tag' do
-    let!(:page)      { FactoryGirl.create(:content_page) }
-    let!(:ecosystem) { page.book.ecosystem }
+    let(:page)      { FactoryGirl.create(:content_page) }
+    let(:ecosystem) { page.book.ecosystem }
 
     before do
       original_call = described_class.method(:call)
@@ -34,8 +34,8 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
   end
 
   context 'with multiple tags' do
-    let!(:page)      { FactoryGirl.create(:content_page) }
-    let!(:ecosystem) { page.book.ecosystem }
+    let(:page)      { FactoryGirl.create(:content_page) }
+    let(:ecosystem) { page.book.ecosystem }
 
     before do
       original_call = described_class.method(:call)

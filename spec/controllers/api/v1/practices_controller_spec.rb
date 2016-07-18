@@ -3,30 +3,25 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
-  let!(:user_1)       { FactoryGirl.create(:user) }
-  let!(:user_1_token) { FactoryGirl.create :doorkeeper_access_token,
-                                           resource_owner_id: user_1.id }
+  let(:user_1)       { FactoryGirl.create(:user) }
+  let(:user_1_token) { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_1.id }
 
-  let!(:user_2)       { FactoryGirl.create(:user) }
-  let!(:user_2_token) { FactoryGirl.create :doorkeeper_access_token,
-                                           resource_owner_id: user_2.id }
+  let(:user_2)       { FactoryGirl.create(:user) }
+  let(:user_2_token) { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_2.id }
 
-  let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course) {
-    course = CreateCourse[name: 'Physics 101']
-
-  }
-  let!(:period) { CreatePeriod[course: course] }
+  let(:course) { course = CreateCourse[name: 'Physics 101'] }
+  let(:period) { CreatePeriod[course: course] }
 
   context "POST #create" do
-    let!(:page) {
+    let(:page) do
       page = FactoryGirl.create :content_page
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
       ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
       AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       page
-    }
+    end
 
     let!(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
     let!(:exercise_2) { FactoryGirl.create :content_exercise, page: page }
@@ -42,8 +37,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       pages = outs.pages
       pools = outs.pools
 
-      biglearn_exercises = [exercise_1, exercise_2, exercise_3,
-                            exercise_4, exercise_5].map do |ex|
+      biglearn_exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5].map do |ex|
         OpenStax::Biglearn::V1::Exercise.new(
           question_id: ex.number.to_s,
           version: ex.version,
@@ -114,8 +108,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
         receive(:get_projection_exercises).once { [] }
       )
 
-      expect_any_instance_of(ResetPracticeWidget).to receive(:get_local_exercises)
-                                                     .and_return([])
+      expect_any_instance_of(ResetPracticeWidget).to receive(:get_local_exercises).and_return([])
 
       api_post :create,
                user_1_token,

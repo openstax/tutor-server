@@ -2,10 +2,10 @@ require 'rails_helper'
 
 module Doorkeeper
   RSpec.describe ApplicationAccessPolicy, type: :access_policy do
-    let!(:anon)        { User::User.anonymous }
-    let!(:user)        { FactoryGirl.create(:user) }
-    let!(:admin)       { FactoryGirl.create(:user, :administrator) }
-    let!(:application) { FactoryGirl.create(:doorkeeper_application) }
+    let(:anon)        { User::User.anonymous }
+    let(:user)        { FactoryGirl.create(:user) }
+    let(:admin)       { FactoryGirl.create(:user, :administrator) }
+    let(:application) { FactoryGirl.create(:doorkeeper_application) }
 
     context 'index, read, create, update, destroy' do
       it 'cannot be accessed by non-administrators' do

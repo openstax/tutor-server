@@ -39,25 +39,25 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'POST #students' do
-    let!(:physics) { CreateCourse[name: 'Physics'] }
-    let!(:physics_period) { CreatePeriod[course: physics, name: '1st'] }
+    let(:physics)        { CreateCourse[name: 'Physics'] }
+    let(:physics_period) { CreatePeriod[course: physics, name: '1st'] }
 
-    let!(:biology) { CreateCourse[name: 'Biology'] }
-    let!(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
+    let(:biology)        { CreateCourse[name: 'Biology'] }
+    let(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
 
-    let!(:file_1) do
+    let(:file_1) do
       fixture_file_upload('roster/test_courses_post_students_1.csv', 'text/csv')
     end
 
-    let!(:file_2) do
+    let(:file_2) do
       fixture_file_upload('roster/test_courses_post_students_2.csv', 'text/csv')
     end
 
-    let!(:file_blankness) do
+    let(:file_blankness) do
       fixture_file_upload('roster/test_courses_post_students_blankness.csv', 'text/csv')
     end
 
-    let!(:incomplete_file) do
+    let(:incomplete_file) do
       fixture_file_upload('roster/test_courses_post_students_incomplete.csv', 'text/csv')
     end
 
@@ -130,23 +130,23 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'GET #edit' do
-    let!(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:eco_1)     {
+    let(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let!(:eco_1)    {
       model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let!(:book_1)    { eco_1.books.first }
-    let!(:uuid_1)    { book_1.uuid }
-    let!(:version_1) { book_1.version }
-    let!(:eco_2)     {
+    let(:book_1)    { eco_1.books.first }
+    let(:uuid_1)    { book_1.uuid }
+    let(:version_1) { book_1.version }
+    let!(:eco_2)    {
       model = FactoryGirl.create(:content_book, title: 'Biology').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let!(:book_2)    { eco_2.books.first }
-    let!(:uuid_2)    { book_2.uuid }
-    let!(:version_2) { book_2.version }
+    let(:book_2)    { eco_2.books.first }
+    let(:uuid_2)    { book_2.uuid }
+    let(:version_2) { book_2.version }
     let!(:course_ecosystem) {
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       CourseContent::Models::CourseEcosystem.where { entity_course_id == my { course.id } }
@@ -172,7 +172,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let!(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
 
     context 'destroyable course' do
       it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
@@ -200,13 +200,13 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'POST #set_ecosystem' do
-    let!(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:eco_1)     {
+    let(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let(:eco_1)     {
       model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let!(:eco_2)     {
+    let(:eco_2)     {
       model = FactoryGirl.create(:content_book, title: 'Biology', version: '2').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)

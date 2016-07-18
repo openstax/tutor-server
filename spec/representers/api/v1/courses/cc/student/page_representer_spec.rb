@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Courses::Cc::Student::PageRepresenter, type: :representer do
-  let!(:worked_at_time) { Time.current }
-  let!(:page)           {
+  let(:worked_at_time) { Time.current }
+  let(:page)           {
     Hashie::Mash.new({
       id: 42,
       title: 'A page',

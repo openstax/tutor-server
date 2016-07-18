@@ -27,7 +27,9 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   it 'restricts to Denver University when told to include real data but global secrets flag false' do
     allow(osa_class).to receive(:where).and_return([])
     allow(cs_class).to receive(:where).and_return([])
-    allow(Rails.application.secrets.salesforce).to receive(:[]).with('allow_use_of_real_data').and_return false
+    allow(Rails.application.secrets.salesforce).to(
+      receive(:[]).with('allow_use_of_real_data').and_return false
+    )
 
     expect(osa_class).to receive(:where).with(
       status: "Approved",
@@ -47,7 +49,9 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   it 'does not restrict to Denver University when told to include real data' do
     allow(osa_class).to receive(:where).and_return([])
     allow(cs_class).to receive(:where).and_return([])
-    allow(Rails.application.secrets.salesforce).to receive(:[]).with('allow_use_of_real_data').and_return true
+    allow(Rails.application.secrets.salesforce).to(
+      receive(:[]).with('allow_use_of_real_data').and_return true
+    )
 
     expect(osa_class).to receive(:where).with(
       status: "Approved",

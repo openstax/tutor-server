@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::GetTaskPlans, type: :routine do
   let!(:task_plan_1) { FactoryGirl.create :tasked_task_plan }
-  let!(:course)      { task_plan_1.owner }
+  let(:course)       { task_plan_1.owner }
   let!(:task_plan_2) { FactoryGirl.create :tasks_task_plan, owner: course }
   let!(:task_plan_3) { FactoryGirl.create :tasks_task_plan, owner: course }
 

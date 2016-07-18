@@ -2,11 +2,11 @@ require 'rails_helper'
 
 RSpec.describe TermsController, type: :controller do
 
-  let!(:contract) { FinePrint::Contract.create!(name: 'general_terms_of_use',
-                                                title: 'General Terms of Use',
-                                                content: Faker::Lorem.paragraphs,
-                                                version: 10) }
-  let!(:new_user) { FactoryGirl.create(:user, skip_terms_agreement: true) }
+  let(:contract) { FinePrint::Contract.create!(name: 'general_terms_of_use',
+                                               title: 'General Terms of Use',
+                                               content: Faker::Lorem.paragraphs,
+                                               version: 10) }
+  let(:new_user) { FactoryGirl.create(:user, skip_terms_agreement: true) }
 
   describe 'terms of service' do
 

@@ -2,14 +2,14 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr: VCR_OPTS do
-  let!(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin)  { FactoryGirl.create(:user, :administrator) }
 
-  let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
+  let(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
   let!(:ecosystem_1) { Content::Ecosystem.find(book_1.ecosystem.id) }
-  let!(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
+  let(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
 
-  let!(:course) { CreateCourse[name: 'AP Biology'] }
+  let(:course) { CreateCourse[name: 'AP Biology'] }
 
   before { controller.sign_in(admin) }
 

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe TaskedAccessPolicy, type: :access_policy do
-  let!(:period)       { FactoryGirl.create(:course_membership_period) }
-  let!(:requestor)    { FactoryGirl.create(:user) }
-  let!(:student_role) { AddUserAsPeriodStudent[user: requestor, period: period] }
-  let!(:tasked)       { FactoryGirl.create(:tasks_tasked_exercise, :with_tasking,
+  let(:period)       { FactoryGirl.create(:course_membership_period) }
+  let(:requestor)    { FactoryGirl.create(:user) }
+  let(:student_role) { AddUserAsPeriodStudent[user: requestor, period: period] }
+  let(:tasked)       { FactoryGirl.create(:tasks_tasked_exercise, :with_tasking,
                                            tasked_to: student_role) }
 
   subject(:action_allowed) do

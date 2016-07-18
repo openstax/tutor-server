@@ -2,23 +2,23 @@ require 'rails_helper'
 
 RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
 
-  let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
-  let!(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
+  let(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
-  let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
+  let(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
 
-  let!(:task)            { tasked_reading.task_step.task }
+  let(:task)            { tasked_reading.task_step.task }
 
-  let!(:tasking)         { FactoryGirl.create :tasks_tasking, task: task }
+  let!(:tasking)        { FactoryGirl.create :tasks_tasking, task: task }
 
-  let!(:tasked_exercise) {
+  let(:tasked_exercise) {
     te = FactoryGirl.build(:tasks_tasked_exercise)
     te.task_step.task = task.reload
     te.save!
     te
   }
 
-  let!(:related_exercise) { FactoryGirl.create(
+  let(:related_exercise) { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(
@@ -26,7 +26,7 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
                                     ).to_json
   ) }
 
-  let!(:tasked_exercise_with_related) {
+  let(:tasked_exercise_with_related) {
     te = FactoryGirl.build(:tasks_tasked_exercise)
     te.task_step.task = task.reload
     te.task_step.related_exercise_ids = [related_exercise.id]
@@ -34,9 +34,9 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
     te
   }
 
-  let!(:step_after_exercise)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
+  let(:step_after_exercise)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
 
-  let!(:tasked_reading_with_related) {
+  let(:tasked_reading_with_related) {
     te = FactoryGirl.build(:tasks_tasked_reading)
     te.task_step.task = task.reload
     te.task_step.related_exercise_ids = [related_exercise.id]
@@ -44,7 +44,7 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
     te
   }
 
-  let!(:step_after_reading)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
+  let(:step_after_reading)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
 
   it "cannot be called on task_steps with no related_exercise_ids" do
     expect {

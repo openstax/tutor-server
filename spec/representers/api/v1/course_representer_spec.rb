@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::CourseRepresenter, type: :representer do
-  let!(:ecosystem)        { FactoryGirl.create :content_ecosystem }
-  let!(:catalog_offering) { Catalog::CreateOffering[salesforce_book_name: 'book',
+  let(:ecosystem)        { FactoryGirl.create :content_ecosystem }
+  let(:catalog_offering) { Catalog::CreateOffering[salesforce_book_name: 'book',
                                                     appearance_code: 'appearance',
                                                     webview_url: 'web_url',
                                                     pdf_url: 'pdf_url',
                                                     description: 'desc',
                                                     ecosystem: ecosystem] }
-  let!(:course)           { CreateCourse[name: 'Test course',
+  let(:course)           { CreateCourse[name: 'Test course',
                                          appearance_code: 'appearance override',
                                          catalog_offering: catalog_offering,
                                          is_concept_coach: true] }

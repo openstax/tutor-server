@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ErrorRepresenter, type: :representer do
-  let!(:exception_error) {
+  let(:exception_error) {
     {
       "is_fatal"=>true,
       "code"=>"exception",

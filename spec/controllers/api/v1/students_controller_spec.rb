@@ -2,43 +2,43 @@ require 'rails_helper'
 
 describe Api::V1::StudentsController, type: :controller, api: true, version: :v1 do
 
-  let!(:application)       { FactoryGirl.create :doorkeeper_application }
+  let(:application)       { FactoryGirl.create :doorkeeper_application }
 
-  let!(:course)            { Entity::Course.create }
-  let!(:period)            { CreatePeriod[course: course] }
-  let!(:period_2)          { CreatePeriod[course: course] }
+  let(:course)            { Entity::Course.create }
+  let(:period)            { CreatePeriod[course: course] }
+  let(:period_2)          { CreatePeriod[course: course] }
 
-  let!(:student_user)      { FactoryGirl.create(:user) }
-  let!(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
-  let!(:student)           { student_role.student }
-  let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: student_user.id }
+  let(:student_user)      { FactoryGirl.create(:user) }
+  let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student)          { student_role.student }
+  let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: student_user.id }
 
-  let!(:teacher_user)      { FactoryGirl.create(:user) }
-  let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-  let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: teacher_user.id }
+  let(:teacher_user)      { FactoryGirl.create(:user) }
+  let!(:teacher)          { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+  let(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: teacher_user.id }
 
-  let!(:student_user_2)    { FactoryGirl.create(:user) }
-  let!(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
-  let!(:student_2)         { student_role_2.student }
+  let(:student_user_2)    { FactoryGirl.create(:user) }
+  let(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
+  let!(:student_2)        { student_role_2.student }
 
-  let!(:student_user_3)    { FactoryGirl.create(:user) }
-  let!(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
-  let!(:student_3)         { student_role_3.student }
+  let(:student_user_3)    { FactoryGirl.create(:user) }
+  let(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
+  let!(:student_3)        { student_role_3.student }
 
-  let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: nil }
+  let(:userless_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: nil }
 
   # TEMPORARILY SKIPPED UNTIL WE RESURRECT THE ABILITY FOR A TEACHER TO ADD A STUDENT
   # SEE STUDENTS CONTROLLER COMMENT
   #
   # describe '#create' do
-  #   let!(:valid_params) { { course_id: course.id } }
-  #   let!(:valid_body)   {
+  #   let(:valid_params) { { course_id: course.id } }
+  #   let(:valid_body)   {
   #     {
   #       period_id: period.id.to_s,
   #       username: 'dummyuser',
@@ -98,8 +98,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   # end
 
   describe '#update_self' do
-    let!(:valid_params) { { course_id: course.id } }
-    let!(:valid_body)   { { student_identifier: 'new identifier' } }
+    let(:valid_params) { { course_id: course.id } }
+    let(:valid_body)   { { student_identifier: 'new identifier' } }
 
     context 'caller has an authorization token' do
       context 'caller is a course student' do
@@ -143,8 +143,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   end
 
   describe '#update' do
-    let!(:valid_params) { { id: student.id } }
-    let!(:valid_body)   { { period_id: period_2.id.to_s } }
+    let(:valid_params) { { id: student.id } }
+    let(:valid_body)   { { period_id: period_2.id.to_s } }
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
@@ -196,7 +196,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   end
 
   describe '#destroy' do
-    let!(:valid_params) { { id: student.id } }
+    let(:valid_params) { { id: student.id } }
 
     context 'student is active' do
       context 'caller has an authorization token' do
@@ -257,7 +257,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   end
 
   describe '#undrop' do
-    let!(:valid_params) { { id: student.id } }
+    let(:valid_params) { { id: student.id } }
 
     context 'student is inactive' do
       before { CourseMembership::InactivateStudent[student: student] }

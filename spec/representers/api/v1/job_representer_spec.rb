@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::JobRepresenter, type: :representer do
 
-  let!(:job) {
+  let(:job) {
     instance_spy(Jobba::Status).tap do |dbl|
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828

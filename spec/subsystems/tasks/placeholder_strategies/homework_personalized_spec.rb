@@ -1,27 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::PlaceholderStrategies::HomeworkPersonalized, type: :placeholder_strategy do
-  let!(:strategy)       { described_class.new }
-  let!(:step_types)     { [:tasks_tasked_exercise] * 2 + [:tasks_tasked_placeholder] * 2 }
+  let(:strategy)       { described_class.new }
+  let(:step_types)     { [:tasks_tasked_exercise] * 2 + [:tasks_tasked_placeholder] * 2 }
 
-  let!(:period)         { FactoryGirl.create :course_membership_period }
+  let(:period)         { FactoryGirl.create :course_membership_period }
 
-  let!(:user)           { FactoryGirl.create :user }
-  let!(:taskee_role)    { AddUserAsPeriodStudent[user: user, period: period] }
+  let(:user)           { FactoryGirl.create :user }
+  let(:taskee_role)    { AddUserAsPeriodStudent[user: user, period: period] }
 
-  let!(:pool)           { FactoryGirl.create :content_pool }
-  let!(:page)           { FactoryGirl.create :content_page, homework_dynamic_pool: pool }
-  let!(:pool_exercises) do
+  let(:pool)           { FactoryGirl.create :content_pool }
+  let(:page)           { FactoryGirl.create :content_page, homework_dynamic_pool: pool }
+  let(:pool_exercises) do
     2.times.map{ FactoryGirl.create :content_exercise, page: page }.tap do |exercises|
       pool.update_attribute(:content_exercise_ids, exercises.map(&:id))
     end
   end
 
-  let!(:task_plan) { FactoryGirl.create :tasks_task_plan,
+  let(:task_plan) { FactoryGirl.create :tasks_task_plan,
                                         type: :homework,
                                         owner: period.course,
                                         ecosystem: page.ecosystem }
-  let!(:task)     do
+  let(:task)     do
     FactoryGirl.create(:tasks_task, task_plan: task_plan, task_type: :homework,
                        step_types: step_types, tasked_to: [taskee_role],
                        personalized_placeholder_strategy: strategy).tap do |task|

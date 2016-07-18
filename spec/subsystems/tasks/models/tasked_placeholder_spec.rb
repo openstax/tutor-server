@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskedPlaceholder, :type => :model do
+RSpec.describe Tasks::Models::TaskedPlaceholder, type: :model do
   let(:tasked_placeholder) { Tasks::Models::TaskedPlaceholder.new }
 
   it { is_expected.to validate_presence_of(:placeholder_type) }

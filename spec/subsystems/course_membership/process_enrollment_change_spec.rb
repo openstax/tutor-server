@@ -1,23 +1,23 @@
 require 'rails_helper'
 
 describe CourseMembership::ProcessEnrollmentChange, type: :routine do
-  let!(:course_1)          { Entity::Course.create! }
-  let!(:course_2)          { Entity::Course.create! }
+  let(:course_1)          { Entity::Course.create! }
+  let(:course_2)          { Entity::Course.create! }
 
-  let!(:course_3)          { Entity::Course.create! }
+  let(:course_3)          { Entity::Course.create! }
 
-  let!(:period_1)          { CreatePeriod[course: course_1] }
-  let!(:period_2)          { CreatePeriod[course: course_1] }
+  let(:period_1)          { CreatePeriod[course: course_1] }
+  let(:period_2)          { CreatePeriod[course: course_1] }
 
-  let!(:period_3)          { CreatePeriod[course: course_2] }
+  let(:period_3)          { CreatePeriod[course: course_2] }
 
-  let!(:period_4)          { CreatePeriod[course: course_3] }
+  let(:period_4)          { CreatePeriod[course: course_3] }
 
-  let!(:book)              { FactoryGirl.create :content_book }
+  let(:book)              { FactoryGirl.create :content_book }
 
-  let!(:ecosystem)         { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem)         { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
-  let!(:user)              do
+  let(:user)              do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
@@ -32,7 +32,7 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
 
   context 'approved enrollment_change' do
     context 'no existing courses' do
-      let!(:enrollment_change) {
+      let(:enrollment_change) {
         CourseMembership::CreateEnrollmentChange[user: user, period: period_1]
       }
 
@@ -87,9 +87,9 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
     end
 
     context 'same course' do
-      let!(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
+      let(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
-      let!(:enrollment_change) {
+      let(:enrollment_change) {
         CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
       }
 
@@ -134,7 +134,7 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
     context 'different course with the same book' do
       let!(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
-      let!(:enrollment_change) {
+      let(:enrollment_change)  {
         CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
       }
 
@@ -187,7 +187,7 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
   end
 
   context 'not approved enrollment_change' do
-    let!(:enrollment_change) {
+    let(:enrollment_change) {
       CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
     }
 

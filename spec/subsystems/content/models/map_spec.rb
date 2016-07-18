@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::Map, type: :model do
-  subject!(:map) { FactoryGirl.create :content_map }
+  subject(:map) { FactoryGirl.create :content_map }
 
   it { is_expected.to belong_to(:from_ecosystem) }
   it { is_expected.to belong_to(:to_ecosystem) }

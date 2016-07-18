@@ -2,9 +2,9 @@ require 'rails_helper'
 
 module Delayed
   RSpec.describe Worker, type: :lib do
-    let!(:job)            { ::ActiveJob::Base.new }
-    let!(:delayed_job)    { ::Delayed::Job.create!(payload_object: job) }
-    let!(:delayed_worker) { ::Delayed::Worker.new }
+    let(:job)            { ::ActiveJob::Base.new }
+    let(:delayed_job)    { ::Delayed::Job.create!(payload_object: job) }
+    let(:delayed_worker) { ::Delayed::Worker.new }
 
     context 'exceptions with no argument' do
       [
@@ -30,7 +30,7 @@ module Delayed
 
     context 'exceptions with arguments' do
       context 'ActiveJob::DeserializationError' do
-        let!(:exception) { ActiveJob::DeserializationError }
+        let(:exception) { ActiveJob::DeserializationError }
 
         it 'fails the job instantly if it is an ActiveRecord::RecordNotFound' do
           expect(job).to receive(:perform) { raise exception, ActiveRecord::RecordNotFound.new }
@@ -50,7 +50,7 @@ module Delayed
       end
 
       context 'ActiveRecord::RecordInvalid' do
-        let!(:exception) { ActiveRecord::RecordInvalid }
+        let(:exception) { ActiveRecord::RecordInvalid }
 
         it 'fails the job instantly' do
           expect(job).to receive(:perform) { raise exception, Entity::Role.new }
@@ -62,7 +62,7 @@ module Delayed
       end
 
       context 'OAuth2::Error' do
-        let!(:exception) { OAuth2::Error }
+        let(:exception) { OAuth2::Error }
 
         it 'fails the job instantly if it is a 400 status' do
           expect(job).to receive(:perform) { raise exception, OpenStruct.new(status: 404) }
@@ -90,7 +90,7 @@ module Delayed
       end
 
       context 'OpenStax::HTTPError' do
-        let!(:exception) { OpenStax::HTTPError }
+        let(:exception) { OpenStax::HTTPError }
 
         it 'fails the job instantly if it is a 400 status' do
           expect(job).to receive(:perform) { raise exception, '404 Not Found' }
@@ -118,7 +118,7 @@ module Delayed
       end
 
       context 'OpenURI::HTTPError' do
-        let!(:exception) { OpenURI::HTTPError }
+        let(:exception) { OpenURI::HTTPError }
 
         it 'fails the job instantly if it is a 400 status' do
           expect(job).to receive(:perform) { raise exception.new('404 Not Found', OpenStruct.new) }

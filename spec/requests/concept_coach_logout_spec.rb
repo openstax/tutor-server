@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe "Concept Coach teacher logout", type: :request do
   let(:user)        { FactoryGirl.create(:user) }
-  let!(:default) { OpenStax::Accounts.configuration.default_logout_redirect_url }
+  let(:default) { OpenStax::Accounts.configuration.default_logout_redirect_url }
 
   it "redirects to cc.openstax.org when the request is a CC one" do
     stub_current_user(user)

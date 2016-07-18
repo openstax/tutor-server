@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe CourseMembership::GetCourseRoles do
-  let!(:target_course) { Entity::Course.create! }
-  let!(:target_period) { CreatePeriod[course: target_course] }
+  let(:target_course) { Entity::Course.create! }
+  let(:target_period) { CreatePeriod[course: target_course] }
 
-  let!(:other_course) { Entity::Course.create! }
-  let!(:other_period) { CreatePeriod[course: other_course] }
+  let(:other_course) { Entity::Course.create! }
+  let(:other_period) { CreatePeriod[course: other_course] }
 
   let!(:other_student_role) {
     other_role = Entity::Role.create!
@@ -26,7 +26,7 @@ describe CourseMembership::GetCourseRoles do
   }
 
   context "when an invalid :type is used" do
-    let!(:types) { :bogus_type }
+    let(:types) { :bogus_type }
     let!(:student_role) {
       target_role = Entity::Role.create!
       CourseMembership::AddStudent.call(
@@ -52,7 +52,7 @@ describe CourseMembership::GetCourseRoles do
   end
 
   context "when types: :any" do
-    let!(:types) { :any }
+    let(:types) { :any }
 
     context "and there are no roles for the target course" do
       it "returns an empty enumerable" do
@@ -132,7 +132,7 @@ describe CourseMembership::GetCourseRoles do
   end
 
   context "when types: :teacher" do
-    let!(:types) { :teacher }
+    let(:types) { :teacher }
 
     context "and there are no roles for the target course" do
       it "returns an empty enumerable" do
@@ -211,9 +211,9 @@ describe CourseMembership::GetCourseRoles do
   end
 
   context "when types: :student" do
-    let!(:types) { :student }
-    let!(:target_course) { Entity::Course.create! }
-    let!(:target_period) { CreatePeriod[course: target_course] }
+    let(:types) { :student }
+    let(:target_course)  { Entity::Course.create! }
+    let(:target_period) { CreatePeriod[course: target_course] }
 
     context "and there are no roles for the target course" do
       it "returns an empty enumerable" do

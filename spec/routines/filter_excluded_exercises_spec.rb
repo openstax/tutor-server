@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe FilterExcludedExercises, type: :routine do
 
-  let!(:exercises) { 5.times.map{ FactoryGirl.create :content_exercise } }
+  let(:exercises) { 5.times.map{ FactoryGirl.create :content_exercise } }
 
   before do
     Settings::Exercises.excluded_uids = excluded_uids
@@ -18,17 +18,17 @@ describe FilterExcludedExercises, type: :routine do
                  additional_excluded_numbers: additional_excluded_numbers } }
 
   context 'with admin exclusions' do
-    let!(:excluded_uids) { exercises.first(2).map(&:uid).join(',') }
+    let(:excluded_uids) { exercises.first(2).map(&:uid).join(',') }
 
     context 'with a course with excluded exercises' do
-      let!(:course)            { FactoryGirl.create :entity_course }
+      let(:course)             { FactoryGirl.create :entity_course }
       let!(:excluded_exercise) {
         FactoryGirl.create :course_content_excluded_exercise,
                            course: course, exercise_number: exercises.third.number
       }
 
       context 'with additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [exercises.fourth.number] }
+        let(:additional_excluded_numbers) { [exercises.fourth.number] }
 
         it 'returns exercises not excluded by admin, course or additional' do
           result = described_class[**args]
@@ -37,7 +37,7 @@ describe FilterExcludedExercises, type: :routine do
       end
 
       context 'without additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [] }
+        let(:additional_excluded_numbers) { [] }
 
         it 'returns exercises not excluded by admin or course' do
           result = described_class[**args]
@@ -47,10 +47,10 @@ describe FilterExcludedExercises, type: :routine do
     end
 
     context 'without a course' do
-      let!(:course) { nil }
+      let(:course) { nil }
 
       context 'with additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [exercises.fourth.number] }
+        let(:additional_excluded_numbers) { [exercises.fourth.number] }
 
         it 'returns exercises not excluded by admin or additional' do
           result = described_class[**args]
@@ -59,7 +59,7 @@ describe FilterExcludedExercises, type: :routine do
       end
 
       context 'without additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [] }
+        let(:additional_excluded_numbers) { [] }
 
         it 'returns exercises not excluded by admin' do
           result = described_class[**args]
@@ -70,17 +70,17 @@ describe FilterExcludedExercises, type: :routine do
   end
 
   context 'without admin exclusions' do
-    let!(:excluded_uids) { '' }
+    let(:excluded_uids) { '' }
 
     context 'with a course with excluded exercises' do
-      let!(:course)            { FactoryGirl.create :entity_course }
+      let(:course)             { FactoryGirl.create :entity_course }
       let!(:excluded_exercise) {
         FactoryGirl.create :course_content_excluded_exercise,
                            course: course, exercise_number: exercises.third.number
       }
 
       context 'with additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [exercises.fourth.number] }
+        let(:additional_excluded_numbers) { [exercises.fourth.number] }
 
         it 'returns exercises not excluded by course or additional' do
           result = described_class[**args]
@@ -89,7 +89,7 @@ describe FilterExcludedExercises, type: :routine do
       end
 
       context 'without additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [] }
+        let(:additional_excluded_numbers) { [] }
 
         it 'returns exercises not excluded by course' do
           result = described_class[**args]
@@ -99,10 +99,10 @@ describe FilterExcludedExercises, type: :routine do
     end
 
     context 'without a course' do
-      let!(:course) { nil }
+      let(:course) { nil }
 
       context 'with additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [exercises.fourth.number] }
+        let(:additional_excluded_numbers) { [exercises.fourth.number] }
 
         it 'returns exercises not excluded by additional' do
           result = described_class[**args]
@@ -111,7 +111,7 @@ describe FilterExcludedExercises, type: :routine do
       end
 
       context 'without additional_excluded_numbers' do
-        let!(:additional_excluded_numbers) { [] }
+        let(:additional_excluded_numbers) { [] }
 
         it 'returns all exercises' do
           result = described_class[**args]

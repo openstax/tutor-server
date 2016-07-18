@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Tasks::Stats::ExerciseRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::Stats::ExerciseRepresenter, type: :representer do
   let(:exercise_stats) { { content: 'Cool content',
                            question_stats: [{
                              answered_count: 1,

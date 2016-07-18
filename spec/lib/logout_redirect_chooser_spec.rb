@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe LogoutRedirectChooser, type: :lib do
 
-  let!(:default) { "http://accounts.openstax.org/logout/" }
-  let!(:cc_logout) { default + "?cc=1" }
+  let(:default) { "http://accounts.openstax.org/logout/" }
+  let(:cc_logout) { default + "?cc=1" }
 
   def choose_for(url)
     LogoutRedirectChooser.new(url).choose(default: default)

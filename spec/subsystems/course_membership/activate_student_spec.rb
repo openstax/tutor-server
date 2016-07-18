@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 describe CourseMembership::ActivateStudent, type: :routine do
-  let!(:course)  { CreateCourse[name: "Physics"] }
-  let!(:period)  { CreatePeriod[course: course, name: "1st"] }
-  let!(:user)    { FactoryGirl.create(:user) }
-  let!(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
+  let(:course)  { CreateCourse[name: "Physics"] }
+  let(:period)  { CreatePeriod[course: course, name: "1st"] }
+  let(:user)    { FactoryGirl.create(:user) }
+  let(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
 
   context "inactive student" do
     before { student.destroy }

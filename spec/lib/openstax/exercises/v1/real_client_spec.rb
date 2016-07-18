@@ -16,7 +16,7 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OP
     @config.secret = @secret
   end
 
-  let!(:client) { OpenStax::Exercises::V1.real_client }
+  let(:client) { OpenStax::Exercises::V1.real_client }
 
   context "exercises search" do
 

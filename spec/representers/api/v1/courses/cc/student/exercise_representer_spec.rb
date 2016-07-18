@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Courses::Cc::Student::ExerciseRepresenter, type: :representer do
-  let!(:exercise)           {
+  let(:exercise)           {
     Hashie::Mash.new({
       id: 42,
       is_completed: true,

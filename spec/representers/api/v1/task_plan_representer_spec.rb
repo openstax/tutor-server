@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
-  let!(:task_plan) {
+  let(:task_plan) {
     instance_spy(Tasks::Models::TaskPlan).tap do |dbl|
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828

@@ -4,18 +4,17 @@ require 'vcr_helper'
 RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
                                                    version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)         { FactoryGirl.create(:user) }
-  let!(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_1)         { FactoryGirl.create(:user) }
+  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
                                              resource_owner_id: user_1.id }
 
-  let!(:user_2)         { FactoryGirl.create(:user) }
-  let!(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_2)         { FactoryGirl.create(:user) }
+  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token,
                                              resource_owner_id: user_2.id }
 
-  let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course)         { CreateCourse[name: 'Physics 101'] }
-  let!(:period)         { CreatePeriod[course: course] }
+  let(:course)         { CreateCourse[name: 'Physics 101'] }
 
   context 'with a real book' do
     before(:all) do

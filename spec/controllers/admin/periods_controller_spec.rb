@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PeriodsController do
-  let!(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin) { FactoryGirl.create(:user, :administrator) }
 
-  let!(:course) { Entity::Course.create }
-  let!(:period) { CreatePeriod[course: course, name: '1st'] }
+  let(:course) { Entity::Course.create! }
+  let(:period) { CreatePeriod[course: course, name: '1st'] }
 
   before { controller.sign_in(admin) }
 
   context 'DELETE #destroy' do
-    let!(:student)     { FactoryGirl.create(:user) }
-    let!(:add_student) { AddUserAsPeriodStudent.call(user: student, period: period) }
+    let(:student)       { FactoryGirl.create(:user) }
+    let!(:student_role) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
     it 'archives the period' do
       expect {
@@ -21,8 +21,8 @@ RSpec.describe Admin::PeriodsController do
   end
 
   context 'PUT #restore' do
-    let!(:student)     { FactoryGirl.create(:user) }
-    let!(:add_student) { AddUserAsPeriodStudent.call(user: student, period: period) }
+    let(:student)       { FactoryGirl.create(:user) }
+    let!(:student_role) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
     it 'restores the period' do
       period.to_model.destroy!

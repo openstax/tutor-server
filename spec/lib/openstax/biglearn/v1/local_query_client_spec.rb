@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
 
   context "delegation to the real client" do
-    let!(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
+    let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
     it "delegates #add_exercises to the real client" do
       expect_any_instance_of(OpenStax::Biglearn::V1::RealClient).to receive(:add_exercises).with("blah")
@@ -28,7 +28,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
   end
 
   context "#get_projection_exercises" do
-    let!(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
+    let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
     before(:each) do
       @role = Entity::Role.create!
@@ -91,7 +91,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
   end
 
   context "#get_clues" do
-    let!(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
+    let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
     before(:all) do
       @all_wrong_role = Entity::Role.create!

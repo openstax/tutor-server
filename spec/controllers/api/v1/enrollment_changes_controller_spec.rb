@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: true, version: :v1 do
-  let!(:user)                { FactoryGirl.create :user }
+  let(:user)                 { FactoryGirl.create :user }
 
-  let!(:user_2)              { FactoryGirl.create :user }
+  let(:user_2)               { FactoryGirl.create :user }
 
-  let!(:course)              do
+  let(:course)               do
     FactoryGirl.create(:entity_course).tap do |course|
       course.profile.update_attribute(:is_concept_coach, true)
     end
   end
-  let!(:period)              { ::CreatePeriod[course: course] }
-  let!(:period_2)            { ::CreatePeriod[course: course] }
+  let(:period)               { ::CreatePeriod[course: course] }
+  let(:period_2)             { ::CreatePeriod[course: course] }
 
-  let!(:book)                { FactoryGirl.create :content_book }
+  let(:book)                 { FactoryGirl.create :content_book }
 
-  let!(:ecosystem)           do
+  let(:ecosystem)            do
     model = book.ecosystem
     strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
     ::Content::Ecosystem.new(strategy: strategy)
@@ -212,7 +212,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
   end
 
   context '#approve' do
-    let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
+    let(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
       user: user, period: period, requires_enrollee_approval: true
     ] }
 

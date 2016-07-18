@@ -2,8 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
-  let!(:cnx_collection_id) { '93e2b09d-261c-4007-a987-0b3062fe154b' }
-  let!(:cnx_module_id)     { '95e61258-2faf-41d4-af92-f62e1414175a' }
+  let(:cnx_collection_id) { '93e2b09d-261c-4007-a987-0b3062fe154b' }
+  let(:cnx_module_id)     { '95e61258-2faf-41d4-af92-f62e1414175a' }
 
   it "can generate url's for resources in the cnx archive" do
     expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(

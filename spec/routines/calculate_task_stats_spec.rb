@@ -412,8 +412,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
   end
 
   context "with multiple course periods" do
-    let!(:course)   { @task_plan.owner }
-    let!(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
+    let(:course)   { @task_plan.owner }
+    let(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
 
     before(:each) do
       @task_plan.tasks.last(@number_of_students/2).each do |task|

@@ -6,15 +6,21 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     # Includes 1 deleted period, 2 orphaned periods (one of which requires a new
     # SF object), 1 dropped student
 
-    let!(:course_1) { Entity::Course.create! }
+    let(:course_1) { Entity::Course.create! }
 
-    let!(:period_1) { CreatePeriod[course: course_1] }
-    let!(:period_2) { CreatePeriod[course: course_1] }
-    let!(:period_3) { CreatePeriod[course: course_1] }
+    let(:period_1) { CreatePeriod[course: course_1] }
+    let(:period_2) { CreatePeriod[course: course_1] }
+    let(:period_3) { CreatePeriod[course: course_1] }
 
-    let!(:student_1_role) { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1] }
-    let!(:student_2_role) { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2] }
-    let!(:student_3_role) { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2] }
+    let!(:student_1_role) do
+      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1]
+    end
+    let!(:student_2_role) do
+      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2]
+    end
+    let!(:student_3_role) do
+      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2]
+    end
 
     before(:each) do
       3.times { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course_1] }
@@ -76,12 +82,12 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "#attach_orphaned_periods_to_sf_objects" do
-    let!(:course)          { Entity::Course.create! }
-    let!(:period_1)        { CreatePeriod[course: course] }
-    let!(:period_2)        { CreatePeriod[course: course] }
-    let!(:period_3)        { CreatePeriod[course: course] }
-    let!(:sf_object)       { OpenStruct.new(changed?: true, save: nil) }
-    let!(:attached_record) { OpenStruct.new(record: sf_object) }
+    let(:course)          { Entity::Course.create! }
+    let(:period_1)        { CreatePeriod[course: course] }
+    let(:period_2)        { CreatePeriod[course: course] }
+    let(:period_3)        { CreatePeriod[course: course] }
+    let(:sf_object)       { OpenStruct.new(changed?: true, save: nil) }
+    let(:attached_record) { OpenStruct.new(record: sf_object) }
 
     before(:each) do
       @organizer = stub_organizer do |organizer|
@@ -144,10 +150,10 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "#write_stats_to_salesforce" do
-    let!(:course)          { Entity::Course.create! }
-    let!(:period)          { CreatePeriod[course: course] }
-    let!(:record)          { OpenStruct.new(changed?: true, save: nil) }
-    let!(:attached_record) { OpenStruct.new(record: record) }
+    let(:course)          { Entity::Course.create! }
+    let(:period)          { CreatePeriod[course: course] }
+    let(:record)          { OpenStruct.new(changed?: true, save: nil) }
+    let(:attached_record) { OpenStruct.new(record: record) }
 
     before(:each) do
       3.times { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period] }
@@ -191,7 +197,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "Organizer" do
-    let!(:organizer) { UpdateSalesforceCourseStats::Organizer.new }
+    let(:organizer) { UpdateSalesforceCourseStats::Organizer.new }
 
     it "has working period methods" do
       fake_period = OpenStruct.new(id: 2)
@@ -234,18 +240,18 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "preloading deleted periods" do
-    let!(:course_1) { Entity::Course.create! }
+    let(:course_1) { Entity::Course.create! }
 
-    let!(:period_1) { CreatePeriod[course: course_1] }
-    let!(:period_2) { CreatePeriod[course: course_1] }
-    let!(:user_1)   { FactoryGirl.create :user }
-    let!(:user_2)   { FactoryGirl.create :user }
+    let(:period_1) { CreatePeriod[course: course_1] }
+    let(:period_2) { CreatePeriod[course: course_1] }
+    let(:user_1)   { FactoryGirl.create :user }
+    let(:user_2)   { FactoryGirl.create :user }
 
     let!(:student_1_role) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
-    let!(:enrollment_1)   { student_1_role.student.latest_enrollment }
+    let(:enrollment_1)    { student_1_role.student.latest_enrollment }
 
     let!(:student_2_role) { AddUserAsPeriodStudent[user: user_2, period: period_2] }
-    let!(:enrollment_2)   { student_2_role.student.latest_enrollment }
+    let(:enrollment_2)    { student_2_role.student.latest_enrollment }
 
     before(:each) do
       Rails.cache.clear

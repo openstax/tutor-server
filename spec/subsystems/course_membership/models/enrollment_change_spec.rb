@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
-  let!(:course_1) { Entity::Course.create! }
-  let!(:course_2) { Entity::Course.create! }
+  let(:course_1)  { Entity::Course.create! }
+  let(:course_2)  { Entity::Course.create! }
 
-  let!(:period_1) { CreatePeriod[course: course_1] }
-  let!(:period_2) { CreatePeriod[course: course_1] }
+  let(:period_1)  { CreatePeriod[course: course_1] }
+  let(:period_2)  { CreatePeriod[course: course_1] }
 
-  let!(:period_3) { CreatePeriod[course: course_2] }
+  let(:period_3)  { CreatePeriod[course: course_2] }
 
-  let!(:book)     { FactoryGirl.create :content_book }
+  let(:book)      { FactoryGirl.create :content_book }
 
-  let!(:ecosystem)         { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
-  let!(:user)                 do
+  let(:user)                 do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
@@ -23,7 +23,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     AddUserAsPeriodStudent[user: user, period: period_1]
   end
 
-  let!(:enrollment)           { role.student.latest_enrollment }
+  let(:enrollment)           { role.student.latest_enrollment }
 
   before { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 

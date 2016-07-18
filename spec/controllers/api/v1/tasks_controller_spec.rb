@@ -2,33 +2,33 @@ require "rails_helper"
 
 describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
-  let!(:application)        { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)             { FactoryGirl.create(:user) }
-  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application,
-                                                 resource_owner_id: user_1.id }
+  let(:application)        { FactoryGirl.create :doorkeeper_application }
+  let(:user_1)             { FactoryGirl.create(:user) }
+  let(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                application: application,
+                                                resource_owner_id: user_1.id }
 
-  let!(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
+  let(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
 
-  let!(:user_2)             { FactoryGirl.create(:user) }
-  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application,
-                                                 resource_owner_id: user_2.id }
+  let(:user_2)             { FactoryGirl.create(:user) }
+  let(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                application: application,
+                                                resource_owner_id: user_2.id }
 
-  let!(:userless_token)     { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application }
+  let(:userless_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                                application: application }
 
-  let!(:task_1)             { FactoryGirl.create :tasks_task, title: 'A Task Title',
-                                                 step_types: [:tasks_tasked_reading,
-                                                              :tasks_tasked_exercise] }
-  let!(:tasking_1)          { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task_1 }
+  let(:task_1)             { FactoryGirl.create :tasks_task, title: 'A Task Title',
+                                                step_types: [:tasks_tasked_reading,
+                                                             :tasks_tasked_exercise] }
+  let!(:tasking_1)         { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task_1 }
 
-  let!(:teacher_user)       { FactoryGirl.create(:user) }
-  let!(:teacher_role)       { AddUserAsCourseTeacher[course: task_1.task_plan.owner,
-                                                     user: teacher_user] }
-  let!(:teacher_user_token) { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application,
-                                                 resource_owner_id: teacher_user.id }
+  let(:teacher_user)       { FactoryGirl.create(:user) }
+  let!(:teacher_role)      { AddUserAsCourseTeacher[course: task_1.task_plan.owner,
+                                                    user: teacher_user] }
+  let(:teacher_user_token) { FactoryGirl.create :doorkeeper_access_token,
+                                                application: application,
+                                                resource_owner_id: teacher_user.id }
 
   context "#show" do
     it "should work on the happy path" do
@@ -114,7 +114,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
   context "#destroy" do
     context 'student' do
-      let!(:token) { user_1_token }
+      let(:token) { user_1_token }
 
       context 'deleted task' do
         before { task_1.destroy! }
@@ -138,7 +138,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
     end
 
     context 'non-student' do
-      let!(:token) { teacher_user_token }
+      let(:token) { teacher_user_token }
 
       before{ task_1.destroy! }
 

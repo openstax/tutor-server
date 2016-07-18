@@ -3,7 +3,7 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine do
-  let!(:course) { CreateCourse[
+  let(:course) { CreateCourse[
     name: 'Physics 101',
     time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
   ] }

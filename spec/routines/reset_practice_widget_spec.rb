@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe ResetPracticeWidget, type: :routine do
 
-  let!(:role)          { FactoryGirl.create(:course_membership_student).role }
-  let!(:practice_task) { ResetPracticeWidget[role: role, exercise_source: :fake, page_ids: []] }
+  let(:role)          { FactoryGirl.create(:course_membership_student).role }
+  let(:practice_task) { ResetPracticeWidget[role: role, exercise_source: :fake, page_ids: []] }
 
   it 'creates tasks with 5 exercise steps and feedback immediately available' do
     expect(practice_task).to be_persisted

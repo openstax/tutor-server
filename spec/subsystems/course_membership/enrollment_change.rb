@@ -1,16 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::EnrollmentChange, type: :wrapper do
-  let!(:period_1)             { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2)             { CreatePeriod[course: period_1.course] }
+  let(:period_1)             { CreatePeriod[course: Entity::Course.create!] }
+  let(:period_2)             { CreatePeriod[course: period_1.course] }
 
-  let!(:user)                 { FactoryGirl.create :user }
+  let(:user)                 { FactoryGirl.create :user }
 
   let!(:role)                 do
     AddUserAsPeriodStudent[user: user, period: period_1]
   end
-
-  let!(:enrollment)           { role.student.latest_enrollment }
 
   subject(:enrollment_change) {
     CourseMembership::CreateEnrollmentChange[user: user, period: period_2]

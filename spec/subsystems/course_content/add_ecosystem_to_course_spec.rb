@@ -2,11 +2,11 @@ require 'rails_helper'
 
 RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
 
-  let!(:course)       { Entity::Course.create! }
-  let!(:content_eco1) { FactoryGirl.create :content_ecosystem }
-  let!(:eco1)         { Content::Ecosystem.new(strategy: content_eco1.wrap) }
-  let!(:content_eco2) { FactoryGirl.create :content_ecosystem }
-  let!(:eco2)         { Content::Ecosystem.new(strategy: content_eco2.wrap) }
+  let(:course)       { Entity::Course.create! }
+  let(:content_eco1) { FactoryGirl.create :content_ecosystem }
+  let(:eco1)         { Content::Ecosystem.new(strategy: content_eco1.wrap) }
+  let(:content_eco2) { FactoryGirl.create :content_ecosystem }
+  let(:eco2)         { Content::Ecosystem.new(strategy: content_eco2.wrap) }
 
   it "adds an ecosystem to a course when the ecosystem is not already there" do
     result = nil

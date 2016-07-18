@@ -188,7 +188,7 @@ module OpenStax::Biglearn
         # Restore the original cache
         after(:each) { Rails.cache = @original_cache }
 
-        let!(:valid_clues_response) {
+        let(:valid_clues_response) {
           Hashie::Mash.new(
             status: 200,
             body: {
@@ -228,7 +228,7 @@ module OpenStax::Biglearn
           )
         }
 
-        let!(:pool_1_clue) {
+        let(:pool_1_clue) {
           {
             value: 0.5,
             value_interpretation: "medium",
@@ -239,7 +239,7 @@ module OpenStax::Biglearn
             unique_learner_count: 0
           }
         }
-        let!(:pool_2_clue) {
+        let(:pool_2_clue) {
           {
             value: 0.9,
             value_interpretation: "high",

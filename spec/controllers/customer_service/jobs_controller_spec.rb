@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CustomerService::JobsController, type: :controller do
 
-  let!(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
 
   context "GET #index" do
     it "returns http success" do
@@ -14,7 +14,7 @@ RSpec.describe CustomerService::JobsController, type: :controller do
   end
 
   context "GET #show" do
-    let!(:job) { Jobba.create! }
+    let(:job) { Jobba.create! }
 
     it "returns http success" do
       controller.sign_in(customer_service)

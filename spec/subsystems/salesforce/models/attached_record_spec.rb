@@ -25,7 +25,7 @@ RSpec.describe Salesforce::Models::AttachedRecord, type: :model do
   end
 
   context "attached_to stuff" do
-    let!(:ar) { FactoryGirl.create :salesforce_attached_record,
+    let(:ar) { FactoryGirl.create :salesforce_attached_record,
                                    tutor_object: Entity::Course.new(id: 432) }
 
     it "returns attached_to_id" do

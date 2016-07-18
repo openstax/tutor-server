@@ -4,9 +4,9 @@ module CourseMembership
   RSpec.describe Period, type: :wrapper do
     subject(:period)      { ::CreatePeriod[course: Entity::Course.create!] }
 
-    let!(:student_1_user) { FactoryGirl.create(:user) }
-    let!(:student_2_user) { FactoryGirl.create(:user) }
-    let!(:teacher_user)   { FactoryGirl.create(:user) }
+    let(:student_1_user) { FactoryGirl.create(:user) }
+    let(:student_2_user) { FactoryGirl.create(:user) }
+    let(:teacher_user)   { FactoryGirl.create(:user) }
 
     let!(:student_1)      { AddUserAsPeriodStudent.call(user: student_1_user,
                                                         period: period).outputs.role }

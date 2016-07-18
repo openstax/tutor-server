@@ -3,13 +3,13 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:chapter) { FactoryGirl.create :content_chapter }
+  let(:chapter) { FactoryGirl.create :content_chapter }
 
   context 'tutor page' do
-    let!(:cnx_page)  { OpenStax::Cnx::V1::Page.new(
+    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(
       id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force'
     ) }
-    let!(:book_location) { [4, 1] }
+    let(:book_location) { [4, 1] }
 
     it 'creates a new Page' do
       result = nil
@@ -73,10 +73,10 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
   end
 
   context 'cc page' do
-    let!(:cnx_page)  { OpenStax::Cnx::V1::Page.new(
+    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(
       id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
     ) }
-    let!(:book_location) { [1, 1] }
+    let(:book_location) { [1, 1] }
 
     it 'creates a new Page' do
       result = nil

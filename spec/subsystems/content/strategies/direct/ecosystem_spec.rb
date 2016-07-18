@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Content::Strategies::Direct::Ecosystem do
-  let!(:ecosystem_book) { FactoryGirl.create(:content_book) }
-  let!(:ecosystem)      { ecosystem_book.ecosystem }
-  let!(:strategy)       { described_class.new(ecosystem) }
+  let(:ecosystem_book) { FactoryGirl.create(:content_book) }
+  let(:ecosystem)      { ecosystem_book.ecosystem }
+  let(:strategy)       { described_class.new(ecosystem) }
 
   it 'can generate a manifest' do
     manifest = strategy.manifest

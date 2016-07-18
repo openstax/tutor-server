@@ -2,19 +2,19 @@ require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine do
 
-  let!(:course)    { FactoryGirl.create :entity_course }
-  let!(:period)    { CreatePeriod[course: course] }
-  let!(:user)      {
+  let(:course)    { FactoryGirl.create :entity_course }
+  let(:period)    { CreatePeriod[course: course] }
+  let!(:user)     {
     user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
   }
-  let!(:new_user)      {
+  let!(:new_user) {
     user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
   }
-  let!(:task_plan) {
+  let(:task_plan) {
     task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
     task_plan.tasking_plans.first.target = period.to_model
     task_plan.save!

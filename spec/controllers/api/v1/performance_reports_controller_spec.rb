@@ -5,8 +5,8 @@ require 'database_cleaner'
 RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: true,
                                                       version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let(:course) { CreateCourse[name: 'Physics 101'] }
+  let(:period) { CreatePeriod[course: course] }
 
   context 'with book' do
     before(:all) do

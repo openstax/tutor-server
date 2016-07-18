@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe CreateStudent, type: :routine do
-  let!(:course) { CreateCourse[name: 'A good course'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let(:course) { CreateCourse[name: 'A good course'] }
+  let(:period) { CreatePeriod[course: course] }
 
   it 'creates a new student in the given period with a username and a password' do
     result = nil
