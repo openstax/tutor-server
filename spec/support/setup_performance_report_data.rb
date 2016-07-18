@@ -1,11 +1,11 @@
 class SetupPerformanceReportData
+
   lev_routine
 
   protected
+
   def exec(course:, teacher:, students: [], ecosystem:)
     students = [students].flatten
-    reading_assistant = get_assistant(course: course, task_plan_type: 'reading')
-    homework_assistant = get_assistant(course: course, task_plan_type: 'homework')
 
     # There should be at least 4 students
     (students.length + 1..4).each do |extra_student|
@@ -25,10 +25,57 @@ class SetupPerformanceReportData
       AddUserAsPeriodStudent[period: period_2, user: student, student_identifier: "S#{index + 3}"]
     end
 
+    roles = students.map{ |student| GetUserCourseRoles[course: course, user: student].first }
+
     # Exclude introduction pages b/c they don't have LOs
-    pages = ecosystem.chapters.flat_map do |ch|
-      ch.pages.select{ |page| page.title != "Introduction" }
+    pages = ecosystem.books.first.chapters.flat_map do |ch|
+      ch.pages.reject{ |page| page.title == "Introduction" }
     end
+
+    student_tasks = course.is_concept_coach ? setup_cc_tasks(roles, pages) :
+                                              setup_tp_tasks(course, ecosystem, roles, pages)
+
+    course.is_concept_coach ? answer_cc_tasks(student_tasks) : answer_tp_tasks(student_tasks)
+  end
+
+  def setup_cc_tasks(roles, pages)
+    exercises = [pages.first.exercises.first(6), pages.last.exercises.last(3)]
+
+    roles.map do |role|
+      exercises.map do |exercises|
+        page = exercises.first.page
+
+        group_types = (exercises.size - 1).times.map{ :core_group } + [:spaced_practice_group]
+
+        related_content_array = exercises.map{ page.related_content }
+
+        Tasks::CreateConceptCoachTask[
+          role: role, page: page, exercises: exercises,
+          group_types: group_types, related_content_array: related_content_array
+        ]
+      end
+    end
+  end
+
+  def get_assistant(course:, task_plan_type:)
+    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
+  end
+
+  def get_student_tasks(role)
+    task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :concept_coach)
+
+    Tasks::Models::Task
+      .joins { taskings }
+      .where { taskings.entity_role_id == my { role.id } }
+      .where { task_type.in task_types }
+      .order { due_at_ntz }
+      .preload { task_steps.tasked }
+      .to_a.select(&:past_open?)
+  end
+
+  def setup_tp_tasks(course, ecosystem, roles, pages)
+    reading_assistant = get_assistant(course: course, task_plan_type: 'reading')
+    homework_assistant = get_assistant(course: course, task_plan_type: 'homework')
 
     page_ids = pages.map{ |page| page.id.to_s }
     exercise_ids = pages.flat_map{ |page| page.exercises.map{ |ex| ex.id.to_s } }
@@ -122,13 +169,51 @@ class SetupPerformanceReportData
 
     DistributeTasks[future_homework_taskplan]
 
-    student_roles = students.map do |student|
-      GetUserCourseRoles[course: course, user: student].first
+    roles.map{ |role| get_student_tasks(role) }
+  end
+
+  def answer_cc_tasks(student_tasks)
+    # User 1 answered everything in first CC correctly
+    student_1_tasks = student_tasks[0]
+    student_1_tasks[0].core_task_steps.each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: true]
     end
-    student_tasks = student_roles.map do |student_role|
-      get_student_tasks(student_role)
+    student_1_tasks[0].reload.non_core_task_steps.each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: true]
     end
 
+    # User 1 answered 3 correct, 1 incorrect in 2nd CC
+    student_1_tasks[1].core_task_steps.each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: true]
+    end
+    student_1_tasks[1].reload
+    Demo::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.first, is_correct: true]
+    Demo::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.last, is_correct: false]
+
+    # User 2 answered 2 questions correctly and 2 incorrectly in first CC
+    student_2_tasks = student_tasks[1]
+    core_task_steps = student_2_tasks[0].core_task_steps
+    core_task_steps.first(2).each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: true]
+    end
+    core_task_steps.last(2).each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: false]
+    end
+
+    # User 2 answered 1 correct in 2nd CC
+    Demo::AnswerExercise[task_step: student_2_tasks[1].core_task_steps.first, is_correct: true]
+
+    # User 3 answered everything in first CC correctly
+    student_3_tasks = student_tasks[2]
+    student_3_tasks[0].core_task_steps.each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: true]
+    end
+    student_3_tasks[0].reload.non_core_task_steps.each do |ts|
+      Demo::AnswerExercise[task_step: ts, is_correct: true]
+    end
+  end
+
+  def answer_tp_tasks(student_tasks)
     # User 1 answered everything in homework task plan correctly
     student_1_tasks = student_tasks[0]
     student_1_tasks[0].core_task_steps.each do |ts|
@@ -161,7 +246,6 @@ class SetupPerformanceReportData
     # homework task plan
     student_2_tasks = student_tasks[1]
     core_task_steps = student_2_tasks[0].core_task_steps
-    raise "expected at least 4 core task steps" if core_task_steps.count < 4
     core_task_steps.first(2).each do |ts|
       Demo::AnswerExercise[task_step: ts, is_correct: true]
     end
@@ -186,19 +270,4 @@ class SetupPerformanceReportData
     end
   end
 
-  def get_student_tasks(role)
-    task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework)
-
-    Tasks::Models::Task
-      .joins { taskings }
-      .where { taskings.entity_role_id == my { role.id } }
-      .where { task_type.in task_types }
-      .order { due_at_ntz }
-      .preload { task_steps.tasked }
-      .to_a.select(&:past_open?)
-  end
-
-  def get_assistant(course:, task_plan_type:)
-    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
-  end
 end
