@@ -25,9 +25,9 @@ module OpenStax::Biglearn::V1
   end
 
   # Creates a new OpenStax::Biglearn::V1::Pool in Biglearn
-  # by combining the exercises in all of the given pools
-  def self.combine_pools(pools)
-    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools))
+  # by combining the exercises in all of the given pool uuids
+  def self.combine_pools(pool_uuids)
+    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pool_uuids))
   end
 
   # Returns a number of recommended exercises for the given role and pools.
@@ -36,8 +36,9 @@ module OpenStax::Biglearn::V1
   def self.get_projection_exercises(role:,
                                     pools:, pool_exclusions: [],
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
+    pool_uuids = pools.map(&:uuid)
     exercises = client.get_projection_exercises(role: role,
-                                                pools: pools, pool_exclusions: pool_exclusions,
+                                                pool_uuids: pool_uuids, pool_exclusions: pool_exclusions,
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
@@ -62,15 +63,15 @@ module OpenStax::Biglearn::V1
   # (e.g. no exercises in the pools or confidence too low).
   def self.get_clues(roles:, pools:, force_cache_miss: false)
     roles = [roles].flatten.compact
-    pools = [pools].flatten.compact
+    pool_uuids = [pools].flatten.compact.map(&:uuid)
 
     # No pools given: empty map
-    return {} if pools.empty?
+    return {} if pool_uuids.empty?
 
     # No roles given: map all pools to nil
-    return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if roles.empty?
+    return pool_uuids.each_with_object({}) { |uuid, hash| hash[uuid] = nil } if roles.empty?
 
-    clue = client.get_clues(roles: roles, pools: pools, force_cache_miss: force_cache_miss)
+    clue = client.get_clues(roles: roles, pool_uuids: pool_uuids, force_cache_miss: force_cache_miss)
   end
 
   #

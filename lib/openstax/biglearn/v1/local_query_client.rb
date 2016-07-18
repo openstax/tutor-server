@@ -24,21 +24,18 @@ module OpenStax::Biglearn::V1
       @write_client.add_pools(pools)
     end
 
-    def combine_pools(pools)
-      @write_client.combine_pools(pools)
+    def combine_pools(pool_uuids)
+      @write_client.combine_pools(pool_uuids)
     end
 
-    def get_projection_exercises(role:, pools:, pool_exclusions:,
+    def get_projection_exercises(role:, pool_uuids:, pool_exclusions:,
                                  count:, difficulty: nil, allow_repetitions:)
-      pool_exercises = pools.flat_map(&:exercises)
+      pool_exercises = Content::Models::Pool.where{uuid.in pool_uuids}.flat_map(&:exercises)
       course = role.student.try(:course)
 
-      excluded_exercise_numbers = []
-      pool_exclusions.each do |hash|
-        excluded_pool = hash[:pool]
-        excluded_exercise_numbers += excluded_pool.exercises.map(&:number)
-      end
-      excluded_exercise_numbers.uniq!
+      excluded_exercise_numbers = Content::Models::Pool.where{
+        uuid.in pool_exclusions.map{|pe| pe[:pool].uuid}
+      }.flat_map(&:exercises).map(&:number).uniq
 
       filtered_exercises = FilterExcludedExercises[
         exercises: pool_exercises, course: course,
@@ -56,14 +53,14 @@ module OpenStax::Biglearn::V1
       chosen_exercises.map(&:url)
     end
 
-    def get_clues(roles:, pools:, force_cache_miss: 'ignored')
-      pools.each_with_object({}) do |pool, hash|
-        tasked_exercises = tasked_exercises_by(pool: pool, roles: roles)
+    def get_clues(roles:, pool_uuids:, force_cache_miss: 'ignored')
+      pool_uuids.each_with_object({}) do |uuid, hash|
+        tasked_exercises = tasked_exercises_by(pool_uuid: uuid, roles: roles)
         responses = tasked_exercises.map{|te| te.is_correct? ? 1.0 : 0.0}
 
         local_clue = LocalClue.new(responses: responses)
 
-        hash[pool.uuid] = {
+        hash[uuid] = {
           value: local_clue.aggregate,
           value_interpretation: local_clue.level.to_s,
           confidence_interval: [
@@ -78,11 +75,17 @@ module OpenStax::Biglearn::V1
       end
     end
 
-    def tasked_exercises_by(pool:, roles:)
-      Tasks::Models::TaskedExercise
+    def tasked_exercises_by(pool_uuid:, roles:)
+      content_pool = Content::Models::Pool.where{uuid == pool_uuid}.first
+      raise "could not find content pool for uuid #{pool_uuid}" \
+        unless content_pool
+
+      tasked_exercises = Tasks::Models::TaskedExercise
         .joins{task_step.task.taskings}
         .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
-        .where{content_exercise_id.in pool.exercise_ids}
+        .where{content_exercise_id.in content_pool.wrap.exercise_ids}
+
+      tasked_exercises
     end
   end
 

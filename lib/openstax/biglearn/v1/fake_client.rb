@@ -52,10 +52,10 @@ class OpenStax::Biglearn::V1::FakeClient
     end
   end
 
-  def combine_pools(pools)
+  def combine_pools(pool_uuids)
     # Combine the given pools into one
 
-    pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
+    pool_keys = pool_uuids.map{ |uuid| "pools/#{uuid}" }
     questions = store.read_multi(*pool_keys).values.flatten.uniq
     uuid = SecureRandom.uuid
 
@@ -66,10 +66,10 @@ class OpenStax::Biglearn::V1::FakeClient
 
   # Since the FakeClient doesn't know which questions have been answered,
   # allow_repetitions is ignored
-  def get_projection_exercises(role:, pools:, pool_exclusions:,
+  def get_projection_exercises(role:, pool_uuids:, pool_exclusions:,
                                count:, difficulty:, allow_repetitions:)
     # Get the exercises in the pools
-    pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
+    pool_keys = pool_uuids.map{ |uuid| "pools/#{uuid}" }
     pool_questions = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
 
     unless pool_exclusions.empty?
@@ -104,9 +104,9 @@ class OpenStax::Biglearn::V1::FakeClient
     question_ids.first(count)
   end
 
-  def get_clues(roles:, pools:, force_cache_miss: 'ignored')
+  def get_clues(roles:, pool_uuids:, force_cache_miss: 'ignored')
     # The fake client CLUe results are completely random
-    pools.each_with_object({}) do |pool, hash|
+    pool_uuids.each_with_object({}) do |uuid, hash|
       aggregate = rand(0.0..1.0)
       confidence_left  = [aggregate - 0.1, 0.0].max
       confidence_right = [aggregate + 0.1, 1.0].min
@@ -116,7 +116,7 @@ class OpenStax::Biglearn::V1::FakeClient
       threshold = 'above'
       unique_learner_count = roles.size
 
-      hash[pool.uuid] = {
+      hash[uuid] = {
         value: aggregate,
         value_interpretation: level,
         confidence_interval: [

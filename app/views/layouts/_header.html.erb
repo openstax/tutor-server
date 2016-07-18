@@ -20,7 +20,7 @@
             <li><%= link_to 'Log Out', openstax_accounts.logout_path, method: :delete, class: 'btn' %></li>
           <% end %>
 
-          <li><a href="http://openstaxtutor.zendesk.com" target="_blank">Help</a></li>
+          <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
         </ul>
         <a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank"></a>
       </div>
