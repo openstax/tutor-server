@@ -93,7 +93,7 @@ class GetConceptCoach
 
       # Map the spaced page to exercises in the current task's ecosystem
       spaced_exercises = ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
-        pages: spaced_page, pool_type: :all_exercises
+        pages: spaced_page, pool_type: :concept_coach
       ).values.flatten.uniq
 
       filtered_exercises = run(:filter, exercises: spaced_exercises, course: course,
@@ -113,8 +113,7 @@ class GetConceptCoach
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
 
     exercises = core_exercises + spaced_exercises
-    group_types = core_exercises.map{ :core_group } + \
-                  spaced_exercises.map{ :spaced_practice_group }
+    group_types = core_exercises.map{ :core_group } + spaced_exercises.map{ :spaced_practice_group }
 
     related_content_array = exercises.map{ |ex| ex.page.related_content }
 
