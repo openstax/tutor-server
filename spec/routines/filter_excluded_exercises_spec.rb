@@ -18,7 +18,7 @@ describe FilterExcludedExercises, type: :routine do
                  additional_excluded_numbers: additional_excluded_numbers } }
 
   context 'with admin exclusions' do
-    let(:excluded_uids) { exercises.first(2).map(&:uid).join(',') }
+    let(:excluded_uids) { [exercises.first.uid, exercises.second.number].join(', ') }
 
     context 'with a course with excluded exercises' do
       let(:course)             { FactoryGirl.create :entity_course }
