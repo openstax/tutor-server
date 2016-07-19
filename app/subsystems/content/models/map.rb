@@ -33,32 +33,44 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   def create_page_id_to_page_id_map
     return unless page_id_to_page_id_map.blank?
 
-    # Special case: from_ecosystem == to_ecosystem
-    # Mapping succeeds even if the page has no tags
-    if from_ecosystem == to_ecosystem
-      to_ecosystem.pages.each{ |page| page_id_to_page_id_map[page.id.to_s] = page.id }
+    from_page_ids = from_ecosystem.pages.map(&:id)
+    to_page_ids = to_ecosystem.pages.map(&:id)
 
-      return page_id_to_page_id_map
-    end
-
-    page_id_to_pages_map = Content::Models::Page
-      .joins(tags: {same_value_tags: :pages})
-      .where(tags: {
-               content_ecosystem_id: to_ecosystem.id,
-               tag_type: mapping_tag_types,
-               same_value_tags: {
-                 content_ecosystem_id: from_ecosystem.id,
-                 tag_type: mapping_tag_types
-               }
-             })
-      .uniq
-      .select{[Content::Models::Page.arel_table[:id],
-               tags.same_value_tags.pages.id.as(:from_page_id)]}
+    # Map pages by UUID if possible
+    uuid_map = Content::Models::Page
+      .joins(:same_uuid_pages)
+      .where(id: to_page_ids, same_uuid_pages: { id: from_page_ids })
+      .select{[Content::Models::Page.arel_table[:id], same_uuid_pages.id.as(:from_page_id)]}
       .group_by(&:from_page_id)
 
-    # It could happen in theory that a page maps to 2 or more pages,
+    from_page_ids_mapped_by_uuid = uuid_map.keys
+    from_page_ids_not_mapped_by_uuid = from_page_ids - from_page_ids_mapped_by_uuid
+
+    # Unmapped pages are mapped by LO
+    tag_map = Content::Models::Page
+      .joins(tags: {same_value_tags: :pages})
+      .where(
+        id: to_page_ids,
+        tags: {
+          tag_type: mapping_tag_type,
+          same_value_tags: {
+            tag_type: mapping_tag_type,
+            pages: {
+              id: from_page_ids_not_mapped_by_uuid
+            }
+          }
+        }
+      ).uniq
+      .select{
+        [Content::Models::Page.arel_table[:id], tags.same_value_tags.pages.id.as(:from_page_id)]
+      }.group_by(&:from_page_id)
+
+    page_id_to_pages_map = tag_map.merge uuid_map
+
+    # It could happen in theory that a page maps to 2 or more pages (through tags, not UUID),
     # but for now we don't handle that case
     # since it's hard to figure out what to do for the dashboard/scores
+    # We set the mapping to nil, which causes the map to be invalid
     page_id_to_pages_map.each do |page_id, pages|
       page_id_to_page_id_map[page_id.to_s] = pages.size == 1 ? pages.first.id : nil
     end
@@ -108,10 +120,8 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
 
   protected
 
-  def mapping_tag_types
-    @mapping_tag_types ||= Content::Models::Tag::MAPPING_TAG_TYPES.map do |type|
-      Content::Models::Tag.tag_types[type]
-    end
+  def mapping_tag_type
+    @mapping_tag_type ||= Content::Models::Tag.tag_types[Content::Models::Tag::MAPPING_TAG_TYPE]
   end
 
   # Every exercise id in the from_ecosystem is a string key in the exercise_id_to_page_id_map
