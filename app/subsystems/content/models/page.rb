@@ -25,6 +25,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   has_many :page_tags, dependent: :destroy, inverse_of: :page
   has_many :tags, through: :page_tags
 
+  has_many :same_uuid_pages, class_name: 'Page', primary_key: 'uuid', foreign_key: 'uuid'
+
   validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
