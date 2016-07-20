@@ -5,11 +5,7 @@ require 'tasks/demo/tasks'
 require 'tasks/demo/work'
 require 'tasks/demo/show'
 
-RSpec.describe Demo, type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS do
-  # Transactional fixtures are not compatible with multiple processes
-  self.use_transactional_fixtures = false
-
-  after(:all) { DatabaseCleaner.clean_with :truncation }
+RSpec.describe Demo, type: :request, version: :v1, speed: :slow, truncation: true, vcr: VCR_OPTS do
 
   context 'with the stable book version' do
     it "doesn't catch on fire" do

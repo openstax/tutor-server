@@ -4,8 +4,6 @@ require 'vcr_helper'
 describe GetCcDashboard, type: :routine do
 
   before(:all) do
-    DatabaseCleaner.start
-
     @course   = CreateCourse[name: 'Biology 101', is_concept_coach: true]
     @period   = CreatePeriod[course: @course]
     @period_2 = CreatePeriod[course: @course]
@@ -60,8 +58,6 @@ describe GetCcDashboard, type: :routine do
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
   end
-
-  after(:all) { DatabaseCleaner.clean }
 
   context 'without any work' do
     it "still returns period info for teachers" do

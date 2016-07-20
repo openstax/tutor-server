@@ -4,8 +4,6 @@ require 'vcr_helper'
 RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
 
   before(:all) do
-    DatabaseCleaner.start
-
     VCR.use_cassette("Tasks_ExportPerformanceReport/with_book", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
@@ -21,10 +19,6 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
 
   after(:each) do
     File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   it 'does not blow up' do

@@ -5,8 +5,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
 
   context 'with parts of k12phys' do
     before(:all) do
-      DatabaseCleaner.start
-
       cnx_page_infos = [
         {
           id: '3005b86b-d993-4048-aff0-500256001f42',
@@ -139,7 +137,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         end
       end
     end
-    after(:all)  { DatabaseCleaner.clean }
 
     it 'provides info about the page for the given hash' do
       @hashes_with_pages.each do |hash, page|
@@ -194,13 +191,11 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
 
   context 'with The Scientific Method' do
     before(:all) do
-      DatabaseCleaner.start
       page_info = { id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8', title: 'The Scientific Method' }
       @page = VCR.use_cassette('OpenStax_Cnx_V1_Page/with_The_Scientific_Method', VCR_OPTS) do
         page_for(page_info).tap{ |page| page.full_hash }
       end
     end
-    after(:all)  { DatabaseCleaner.clean }
 
     it 'extracts snap lab notes' do
       snap_labs = @page.snap_lab_nodes

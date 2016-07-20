@@ -6,14 +6,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                                      vcr: VCR_OPTS do
 
   before(:all) do
-    DatabaseCleaner.start
-
     @assistant = \
       FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   context "for Introduction and Force" do

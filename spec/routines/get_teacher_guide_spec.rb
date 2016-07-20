@@ -5,7 +5,6 @@ require 'database_cleaner'
 RSpec.describe GetTeacherGuide, type: :routine do
 
   before(:all) do
-    DatabaseCleaner.start
     @course = FactoryGirl.create :entity_course
 
     @period = CreatePeriod[course: @course]
@@ -24,10 +23,6 @@ RSpec.describe GetTeacherGuide, type: :routine do
         CreateStudentHistory[course: @course, roles: [@role, @second_role]]
       end
     end
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   it 'returns all course guide periods for teachers' do

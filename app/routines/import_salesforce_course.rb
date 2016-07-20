@@ -1,7 +1,7 @@
 class ImportSalesforceCourse
   lev_routine
 
-  uses_routine CreateCourse
+  uses_routine CreateCourse, translations: { outputs: {type: :verbatim} }
   uses_routine SchoolDistrict::GetSchool, as: :get_school
   uses_routine SchoolDistrict::CreateSchool, as: :create_school
   uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem

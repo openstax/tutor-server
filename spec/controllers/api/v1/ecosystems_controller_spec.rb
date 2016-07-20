@@ -140,8 +140,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
 
   context 'with a real book' do
     before(:all) do
-      DatabaseCleaner.start
-
       VCR.use_cassette("Api_V1_EcosystemsController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
@@ -152,10 +150,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
     before(:each) do
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1)
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     describe "#exercises" do

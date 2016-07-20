@@ -22,8 +22,6 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
                         '3c60e622-9b4f-4e32-97c7-9278f7199013']
 
   before(:all) do
-    DatabaseCleaner.start
-
     @course = FactoryGirl.create :entity_course
 
     @period = CreatePeriod[course: @course]
@@ -60,11 +58,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     @real_client = OpenStax::Biglearn::V1.use_real_client
   end
 
-  after(:all) do
-    OpenStax::Biglearn::V1.use_client_named(@original_client_name)
-
-    DatabaseCleaner.clean
-  end
+  after(:all) { OpenStax::Biglearn::V1.use_client_named(@original_client_name) }
 
   before(:each) do
     @original_cache = Rails.cache
