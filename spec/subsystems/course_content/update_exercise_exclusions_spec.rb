@@ -21,9 +21,7 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
     end
 
-    after(:all) do
-      DatabaseCleaner.clean
-    end
+    after(:all) { DatabaseCleaner.clean }
 
     let(:exercise) { @ecosystem.exercises.first }
 

@@ -4,9 +4,9 @@ require 'vcr_helper'
 describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   before(:all) do
-    @number_of_students = 8
-
     DatabaseCleaner.start
+
+    @number_of_students = 8
 
     begin
       RSpec::Mocks.setup

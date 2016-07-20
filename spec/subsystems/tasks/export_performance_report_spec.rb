@@ -23,9 +23,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
     File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   it 'does not blow up' do
     expect {

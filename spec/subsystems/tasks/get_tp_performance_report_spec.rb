@@ -18,9 +18,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   let(:expected_periods)    { 2 }
   let(:expected_students)   { 2 }

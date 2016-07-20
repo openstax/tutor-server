@@ -4,6 +4,8 @@ RSpec.describe UniqueTokenable, type: :lib do
   class DummyModel < ActiveRecord::Base; end
 
   before(:all) do
+    DatabaseCleaner.start
+
     capture_stdout do
       ActiveRecord::Schema.define do
         create_table :dummy_models do |t|
@@ -12,6 +14,8 @@ RSpec.describe UniqueTokenable, type: :lib do
       end
     end
   end
+
+  after(:all) { DatabaseCleaner.clean }
 
   it 'sets a random hex on a tokenable model by default' do
     DummyModel.unique_token :enrollment_code
