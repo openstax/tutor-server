@@ -54,7 +54,8 @@ module OpenStax::Biglearn::V1
     end
 
     def get_clues(roles:, pool_uuids:, force_cache_miss: 'ignored')
-      tasked_exercises_by_pool_uuid = tasked_exercises_by(pool_uuids: pool_uuids, roles: roles)
+      tasked_exercises_by_pool_uuid = completed_tasked_exercises_by(pool_uuids: pool_uuids,
+                                                                    roles: roles)
 
       hash = {}
       tasked_exercises_by_pool_uuid.each do |uuid, tasked_exercises|
@@ -79,7 +80,7 @@ module OpenStax::Biglearn::V1
       hash
     end
 
-    def tasked_exercises_by(pool_uuids:, roles:)
+    def completed_tasked_exercises_by(pool_uuids:, roles:)
       content_pools = Content::Models::Pool
         .where(uuid: pool_uuids)
         .select{[uuid, content_exercise_ids]}
@@ -103,9 +104,9 @@ module OpenStax::Biglearn::V1
         Content::Models::Exercise.where(id: all_pool_exercise_ids).pluck(:number)
 
       tasked_exercises_by_exercise_id = Tasks::Models::TaskedExercise
-        .joins{task_step.task.taskings}
+        .joins{[task_step.task.taskings, exercise]}
         .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
-        .joins{exercise}
+        .where{task_step.first_completed_at != nil}
         .where{exercise.number.in all_pool_exercise_numbers}
         .select{[Tasks::Models::TaskedExercise.arel_table[Arel.star], exercise.id.as(:exercise_id)]}
         .group_by(&:exercise_id)

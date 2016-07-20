@@ -113,6 +113,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
                                   exercise: exercise)
           @te_ids.push(te.id)
           correctness[ii] == 1 ? te.make_correct! : te.make_incorrect!
+          te.task_step.complete.save!
         end
       end
 
@@ -152,14 +153,14 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
 
     it "filters to the right tasked exercises" do
       expect(
-        client.tasked_exercises_by(
+        client.completed_tasked_exercises_by(
           pool_uuids: [@all_pool.uuid],
           roles: [@all_wrong_role, @all_right_role, @passing_role]
         )[@all_pool.uuid].map(&:id)
       ).to contain_exactly(*@te_ids)
 
       expect(
-        client.tasked_exercises_by(
+        client.completed_tasked_exercises_by(
           pool_uuids: [@first_two_pool.uuid],
           roles: [@all_right_role, @passing_role]
         )[@first_two_pool.uuid].map(&:id)
