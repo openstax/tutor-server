@@ -71,8 +71,12 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   protected
 
   def get_task_step
-    @task_step = ::Tasks::Models::TaskStep.with_deleted.find(params[:id])
-    @tasked = @task_step.tasked
+    @task_step = ::Tasks::Models::TaskStep.with_deleted.where(id: params[:id]).first
+    if @task_step
+      @tasked = @task_step.tasked
+    else
+      render_api_errors(:no_exercises, :not_found)
+    end
   end
 
 end
