@@ -62,7 +62,8 @@ class DistributeTasks
 
     task_plan.first_published_at = publish_time if task_plan.first_published_at.nil?
     task_plan.last_published_at = publish_time
-    task_plan.save! if task_plan.persisted?
+    # We are only changing timestamps here, so no reason to validate the record
+    task_plan.save(validate: false) if task_plan.persisted?
 
     outputs[:tasks] = tasks
   end
