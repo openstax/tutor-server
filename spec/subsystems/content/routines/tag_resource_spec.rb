@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Content::Routines::TagResource, type: :routine do
-  let!(:tag_1)    { FactoryGirl.create :content_tag }
-  let!(:tag_2)    { FactoryGirl.create :content_tag }
-  let!(:lo_tag_1) { FactoryGirl.create :content_tag, tag_type: :lo }
-  let!(:lo_tag_2) { FactoryGirl.create :content_tag, tag_type: :lo }
+  let(:tag_1)    { FactoryGirl.create :content_tag }
+  let(:tag_2)    { FactoryGirl.create :content_tag }
+  let(:lo_tag_1) { FactoryGirl.create :content_tag, tag_type: :lo }
+  let(:lo_tag_2) { FactoryGirl.create :content_tag, tag_type: :lo }
 
   resource_definitions = [
     {

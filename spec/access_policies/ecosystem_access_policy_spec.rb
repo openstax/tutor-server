@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe EcosystemAccessPolicy, type: :access_policy do
-  let!(:course)            { CreateCourse[name: 'Physics 401'] }
-  let!(:period)            { CreatePeriod[course: course] }
+  let(:course)            { CreateCourse[name: 'Physics 401'] }
+  let(:period)            { CreatePeriod[course: course] }
 
-  let!(:student)           { FactoryGirl.create(:user) }
-  let!(:teacher)           { FactoryGirl.create(:user) }
+  let(:student)           { FactoryGirl.create(:user) }
+  let(:teacher)           { FactoryGirl.create(:user) }
 
-  let!(:admin)             { FactoryGirl.create(:user, :administrator) }
-  let!(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
+  let(:admin)             { FactoryGirl.create(:user, :administrator) }
+  let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
 
-  let!(:ecosystem)         {
+  let(:ecosystem)         {
     content_ecosystem = FactoryGirl.create(:content_ecosystem)
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
     ::Content::Ecosystem.new(strategy: ecosystem_strategy)

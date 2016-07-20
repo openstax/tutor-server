@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe WebviewController, type: :controller do
 
-  let!(:contract)        { FinePrint::Contract.create!(name: 'general_terms_of_use',
-                                                       title: 'General Terms of Use',
-                                                       content: Faker::Lorem.paragraphs,
-                                                       version: 10) }
-  let!(:new_user)        { FactoryGirl.create(:user, skip_terms_agreement: true) }
-  let!(:registered_user) { FactoryGirl.create(:user) }
+  let!(:contract)       { FinePrint::Contract.create!(name: 'general_terms_of_use',
+                                                      title: 'General Terms of Use',
+                                                      content: Faker::Lorem.paragraphs,
+                                                      version: 10) }
+  let(:new_user)        { FactoryGirl.create(:user, skip_terms_agreement: true) }
+  let(:registered_user) { FactoryGirl.create(:user) }
 
   describe 'GET home' do
     it 'renders a static page for anonymous' do

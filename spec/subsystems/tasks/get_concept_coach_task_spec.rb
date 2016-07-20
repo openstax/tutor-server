@@ -4,11 +4,11 @@ require 'vcr_helper'
 RSpec.describe Tasks::GetConceptCoachTask, type: :routine do
   let!(:concept_coach_task) { FactoryGirl.create :tasks_concept_coach_task }
 
-  let!(:role)               { concept_coach_task.role }
-  let!(:another_role)       { Entity::Role.create! }
+  let(:role)                { concept_coach_task.role }
+  let(:another_role)        { Entity::Role.create! }
 
-  let!(:page)               { Content::Page.new(strategy: concept_coach_task.page.wrap) }
-  let!(:another_page)       do
+  let(:page)                { Content::Page.new(strategy: concept_coach_task.page.wrap) }
+  let(:another_page)        do
     page_model = FactoryGirl.create :content_page
     Content::Page.new(strategy: page_model.wrap)
   end

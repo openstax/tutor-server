@@ -1,28 +1,28 @@
 require 'rails_helper'
 
 describe CourseMembership::CreateEnrollmentChange, type: :routine do
-  let!(:course_1)  { Entity::Course.create! }
-  let!(:course_2)  { Entity::Course.create! }
-  let!(:course_3)  { Entity::Course.create! }
+  let(:course_1)  { Entity::Course.create! }
+  let(:course_2)  { Entity::Course.create! }
+  let(:course_3)  { Entity::Course.create! }
 
-  let!(:period_1)  { CreatePeriod[course: course_1] }
-  let!(:period_2)  { CreatePeriod[course: course_1] }
+  let(:period_1)  { CreatePeriod[course: course_1] }
+  let(:period_2)  { CreatePeriod[course: course_1] }
 
-  let!(:period_3)  { CreatePeriod[course: course_2] }
+  let(:period_3)  { CreatePeriod[course: course_2] }
 
-  let!(:period_4)  { CreatePeriod[course: course_3] }
+  let(:period_4)  { CreatePeriod[course: course_3] }
 
-  let!(:book)      { FactoryGirl.create :content_book }
+  let(:book)      { FactoryGirl.create :content_book }
 
-  let!(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
-  let!(:user)     do
+  let(:user)     do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
 
-  let!(:args)     { { user: user, period: period_1 } }
+  let(:args)     { { user: user, period: period_1 } }
 
   before do
     AddEcosystemToCourse[course: course_1, ecosystem: ecosystem]
@@ -47,7 +47,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
         AddUserAsPeriodStudent[user: user, period: period_2]
       end
 
-      let!(:enrollment) { role.student.latest_enrollment }
+      let(:enrollment) { role.student.latest_enrollment }
 
       it 'creates an EnrollmentChange with a from_period' do
         result = nil

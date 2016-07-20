@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::GetRedirectUrl, type: :routine do
-  let!(:course) { CreateCourse[name: 'Test Task Redirection'] }
-  let!(:period) { CreatePeriod[course: course, name: 'Period I'] }
+  let(:course) { CreateCourse[name: 'Test Task Redirection'] }
+  let(:period) { CreatePeriod[course: course, name: 'Period I'] }
 
-  let!(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
-  let!(:task_plan_gid) { task_plan.to_global_id.to_s }
+  let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let(:task_plan_gid) { task_plan.to_global_id.to_s }
 
-  let!(:task) { FactoryGirl.create(:tasks_task, task_plan: task_plan) }
+  let(:task) { FactoryGirl.create(:tasks_task, task_plan: task_plan) }
 
-  let!(:teacher) { FactoryGirl.create(:user) }
-  let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
-
-  let!(:student) { FactoryGirl.create(:user) }
+  let(:student)       { FactoryGirl.create(:user) }
   let!(:student_role) { AddUserAsPeriodStudent[period: period, user: student] }
 
-  let!(:user) { FactoryGirl.create(:user) }
+  let(:teacher)       { FactoryGirl.create(:user) }
+  let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
+
+  let(:user) { FactoryGirl.create(:user) }
 
   let!(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task) }
 

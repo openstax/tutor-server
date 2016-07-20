@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe CourseAccessPolicy, type: :access_policy do
-  let!(:course) { CreateCourse[name: 'Physics 401'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let(:course) { CreateCourse[name: 'Physics 401'] }
+  let(:period) { CreatePeriod[course: course] }
 
-  let!(:student) { FactoryGirl.create(:user) }
-  let!(:teacher) { FactoryGirl.create(:user) }
+  let(:student) { FactoryGirl.create(:user) }
+  let(:teacher) { FactoryGirl.create(:user) }
 
   before do
     AddUserAsCourseTeacher[course: course, user: teacher]

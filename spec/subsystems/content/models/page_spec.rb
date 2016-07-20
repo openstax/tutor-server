@@ -4,7 +4,7 @@ require 'database_cleaner'
 
 RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
 
-  subject!(:page) { FactoryGirl.create :content_page }
+  subject(:page) { FactoryGirl.create :content_page }
 
   it { is_expected.to belong_to(:chapter) }
   it { is_expected.to validate_presence_of(:title) }

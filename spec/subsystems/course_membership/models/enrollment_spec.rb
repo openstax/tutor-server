@@ -3,7 +3,7 @@ require 'rails_helper'
 module CourseMembership
   module Models
     RSpec.describe Enrollment, type: :model do
-      let!(:period) { ::CreatePeriod[course: Entity::Course.create!].to_model }
+      let(:period) { ::CreatePeriod[course: Entity::Course.create!].to_model }
 
       subject(:enrollment) {
         AddStudent[period: period, role: Entity::Role.create!].enrollments.first

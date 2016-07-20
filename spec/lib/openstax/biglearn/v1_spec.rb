@@ -43,19 +43,19 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
   end
 
   context 'api calls' do
-    let!(:dummy_role)              { 'some role' }
-    let!(:dummy_roles)             { [dummy_role] }
-    let!(:dummy_exercises)         { ['some exercises'] }
-    let!(:dummy_pools)             { [double(uuid: 'some uuid')] }
-    let!(:dummy_excluded_pools)    { [double(uuid: 'some excluded uuid')] }
-    let!(:dummy_pool_exclusions)   do
+    let(:dummy_role)              { 'some role' }
+    let(:dummy_roles)             { [dummy_role] }
+    let(:dummy_exercises)         { ['some exercises'] }
+    let(:dummy_pools)             { [double(uuid: 'some uuid')] }
+    let(:dummy_excluded_pools)    { [double(uuid: 'some excluded uuid')] }
+    let(:dummy_pool_exclusions)   do
       dummy_excluded_pools.map{ |pool| { pool_id: pool.uuid, ignore_versions: true } }
     end
-    let!(:dummy_count)             { 'some count' }
-    let!(:dummy_difficulty)        { 'some difficulty' }
-    let!(:dummy_allow_repetitions) { 'some allow repetitions' }
+    let(:dummy_count)             { 'some count' }
+    let(:dummy_difficulty)        { 'some difficulty' }
+    let(:dummy_allow_repetitions) { 'some allow repetitions' }
 
-    let!(:client_double) {
+    let(:client_double) {
       double.tap do |dbl|
         allow(dbl).to receive(:get_clues)
                   .with(roles: dummy_roles, pool_uuids: dummy_pools.map(&:uuid), force_cache_miss: false)

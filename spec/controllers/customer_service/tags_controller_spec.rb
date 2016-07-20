@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::TagsController do
-  let!(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
   let!(:tag_1) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-ex003' }
   let!(:tag_2) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-s03-lo01' }
   let!(:tag_3) { FactoryGirl.create :content_tag, value: 'ost-tag-teks-112-39-c-4d' }

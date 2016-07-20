@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "webview/index", :type => :view do
+RSpec.describe "webview/index", type: :view do
   it "does not contain any content" do
     render
 

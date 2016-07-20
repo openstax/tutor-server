@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskPlan, type: :model do
   subject(:task_plan) { FactoryGirl.create :tasks_task_plan }
 
-  let!(:new_task) { FactoryGirl.build :tasks_task, opens_at: Time.current.yesterday }
+  let(:new_task) { FactoryGirl.build :tasks_task, opens_at: Time.current.yesterday }
 
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }

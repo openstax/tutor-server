@@ -5,26 +5,26 @@ require 'database_cleaner'
 RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                                               version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)             { FactoryGirl.create(:user) }
-  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_1.id }
+  let(:user_1)          { FactoryGirl.create(:user) }
+  let(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                             resource_owner_id: user_1.id }
 
-  let!(:user_2)             { FactoryGirl.create(:user) }
-  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_2.id }
+  let(:user_2)          { FactoryGirl.create(:user) }
+  let(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                             resource_owner_id: user_2.id }
 
-  let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
+  let(:content_analyst) { FactoryGirl.create(:user, :content_analyst) }
 
-  let(:ca_user_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                               resource_owner_id: content_analyst.id }
+  let(:ca_user_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                             resource_owner_id: content_analyst.id }
 
-  let!(:course)          { CreateCourse[name: 'Physics 101'] }
-  let!(:period)          { CreatePeriod[course: course] }
+  let(:course)          { CreateCourse[name: 'Physics 101'] }
+  let(:period)          { CreatePeriod[course: course] }
 
   context 'with a fake book' do
-    let!(:book)            { FactoryGirl.create(:content_book, :standard_contents_1) }
+    let(:book)             { FactoryGirl.create(:content_book, :standard_contents_1) }
     let!(:ecosystem)       {
       strategy = Content::Strategies::Direct::Ecosystem.new(book.ecosystem.reload)
       ecosystem = Content::Ecosystem.new(strategy: strategy)

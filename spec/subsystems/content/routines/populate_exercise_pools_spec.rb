@@ -2,22 +2,22 @@ require 'rails_helper'
 
 RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
 
-  let!(:page)                 { FactoryGirl.create :content_page }
-  let!(:book)                 { page.book }
-  let!(:ecosystem)            { book.ecosystem }
+  let(:page)                 { FactoryGirl.create :content_page }
+  let(:book)                 { page.book }
+  let(:ecosystem)            { book.ecosystem }
 
-  let!(:requires_context_tag) { FactoryGirl.create :content_tag, value: 'requires-context:true',
+  let(:requires_context_tag) { FactoryGirl.create :content_tag, value: 'requires-context:true',
                                                                  tag_type: :requires_context,
                                                                  ecosystem: ecosystem }
 
-  let!(:exercise_1)           { FactoryGirl.create :content_exercise, page: page }
-  let!(:exercise_2)           { FactoryGirl.create :content_exercise, page: page }
-  let!(:exercise_3)           { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
+  let(:exercise_1)           { FactoryGirl.create :content_exercise, page: page }
+  let(:exercise_2)           { FactoryGirl.create :content_exercise, page: page }
+  let(:exercise_3)           { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
 
-  let!(:exercise_2_tag)       { FactoryGirl.create :content_exercise_tag,
-                                                   exercise: exercise_2, tag: requires_context_tag }
+  let!(:exercise_2_tag)      { FactoryGirl.create :content_exercise_tag,
+                                                  exercise: exercise_2, tag: requires_context_tag }
 
-  let!(:all_exercises_set)    { Set[exercise_1, exercise_2, exercise_3] }
+  let(:all_exercises_set)    { Set[exercise_1, exercise_2, exercise_3] }
 
   before { page.exercises += all_exercises_set.to_a }
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::TagsController do
-  let!(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin)  { FactoryGirl.create(:user, :administrator) }
 
   let!(:tag_1) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-ex003' }
   let!(:tag_2) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-s03-lo01' }

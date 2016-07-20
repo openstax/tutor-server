@@ -2,13 +2,13 @@ require 'rails_helper'
 
 RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
-  let!(:task_plan)    { FactoryGirl.create :tasks_task_plan }
-  let!(:tasking_plan) { task_plan.tasking_plans.first }
+  let(:task_plan)    { FactoryGirl.create :tasks_task_plan }
+  let(:tasking_plan) { task_plan.tasking_plans.first }
 
-  let(:result)        { described_class[task_plan] }
+  let(:result)       { described_class[task_plan] }
 
   context 'entity_role' do
-    let!(:role) { Entity::Role.create! }
+    let(:role)  { Entity::Role.create! }
 
     before      { tasking_plan.update_attribute(:target, role) }
 
@@ -25,9 +25,9 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'user_profile' do
-    let!(:profile)      { FactoryGirl.create :user_profile }
-    let!(:user)         { ::User::User.new(strategy: profile.wrap) }
-    let!(:default_role) { Role::GetDefaultUserRole[user] }
+    let(:profile)      { FactoryGirl.create :user_profile }
+    let(:user)         { ::User::User.new(strategy: profile.wrap) }
+    let(:default_role) { Role::GetDefaultUserRole[user] }
 
     before do
       tasking_plan.update_attribute(:target, profile)
@@ -46,13 +46,13 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'entity_course' do
-    let!(:period_1)       { FactoryGirl.create :course_membership_period }
-    let!(:course)         { period_1.course }
-    let!(:period_2)       { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_1)        { FactoryGirl.create :course_membership_period }
+    let(:course)          { period_1.course }
+    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
 
-    let!(:user_1)         { FactoryGirl.create :user }
-    let!(:user_2)         { FactoryGirl.create :user }
-    let!(:user_3)         { FactoryGirl.create :user }
+    let(:user_1)          { FactoryGirl.create :user }
+    let(:user_2)          { FactoryGirl.create :user }
+    let(:user_3)          { FactoryGirl.create :user }
 
     let!(:student_role_1) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
     let!(:student_role_2) { AddUserAsPeriodStudent[user: user_2, period: period_1] }
@@ -90,13 +90,13 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'course_membership_period' do
-    let!(:period_1)       { FactoryGirl.create :course_membership_period }
-    let!(:course)         { period_1.course }
-    let!(:period_2)       { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_1)        { FactoryGirl.create :course_membership_period }
+    let(:course)          { period_1.course }
+    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
 
-    let!(:user_1)         { FactoryGirl.create :user }
-    let!(:user_2)         { FactoryGirl.create :user }
-    let!(:user_3)         { FactoryGirl.create :user }
+    let(:user_1)          { FactoryGirl.create :user }
+    let(:user_2)          { FactoryGirl.create :user }
+    let(:user_3)          { FactoryGirl.create :user }
 
     let!(:student_role_1) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
     let!(:student_role_2) { AddUserAsPeriodStudent[user: user_2, period: period_1] }

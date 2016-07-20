@@ -85,21 +85,21 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       Content::Routines::PopulateExercisePools[book: chapter.book]
     end
 
-    let!(:pools) { @ecosystem.homework_core_pools(pages: @pages) }
+    let(:pools) { @ecosystem.homework_core_pools(pages: @pages) }
 
-    let!(:exercises) { pools.flat_map(&:exercises).sort_by(&:uid) }
+    let(:exercises) { pools.flat_map(&:exercises).sort_by(&:uid) }
 
-    let!(:teacher_selected_exercises) { exercises[1..5] }
-    let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.map{|e| e.id.to_s} }
+    let(:teacher_selected_exercises) { exercises[1..5] }
+    let(:teacher_selected_exercise_ids) { teacher_selected_exercises.map{|e| e.id.to_s} }
 
-    let!(:tutor_selected_exercise_count) { 4 }
-    let!(:personalized_exercise_count) { 2 }
+    let(:tutor_selected_exercise_count) { 4 }
+    let(:personalized_exercise_count) { 2 }
 
-    let!(:assignment_exercise_count) { teacher_selected_exercise_ids.count +
+    let(:assignment_exercise_count) { teacher_selected_exercise_ids.count +
                                        tutor_selected_exercise_count +
                                        personalized_exercise_count }
 
-    let!(:task_plan) {
+    let(:task_plan) {
       FactoryGirl.build(:tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
@@ -113,16 +113,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       )
     }
 
-    let!(:course) {
+    let(:course) {
       task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
       end
     }
-    let!(:period) { CreatePeriod[course: course] }
+    let(:period) { CreatePeriod[course: course] }
 
-    let!(:num_taskees) { 3 }
+    let(:num_taskees) { 3 }
 
-    let!(:taskee_users) {
+    let(:taskee_users) {
       num_taskees.times.map do
         user = FactoryGirl.create(:user)
         AddUserAsPeriodStudent.call(user: user, period: period)

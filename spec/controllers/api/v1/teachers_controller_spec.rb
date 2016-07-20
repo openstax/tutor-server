@@ -1,24 +1,24 @@
 require 'rails_helper'
 
 describe Api::V1::TeachersController, type: :controller, api: true, version: :v1 do
-  let!(:application)       { FactoryGirl.create :doorkeeper_application }
+  let(:application)       { FactoryGirl.create :doorkeeper_application }
 
-  let!(:course)            { Entity::Course.create }
-  let!(:period)            { CreatePeriod[course: course] }
+  let(:course)            { Entity::Course.create }
+  let(:period)            { CreatePeriod[course: course] }
 
-  let!(:student_user)      { FactoryGirl.create(:user) }
-  let!(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
-  let!(:student)           { student_role.student }
-  let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: student_user.id }
+  let(:student_user)      { FactoryGirl.create(:user) }
+  let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student)          { student_role.student }
+  let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: student_user.id }
 
-  let!(:teacher_user)      { FactoryGirl.create(:user) }
-  let!(:teacher_role)      { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-  let!(:teacher)           { teacher_role.teacher }
-  let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: teacher_user.id }
+  let(:teacher_user)      { FactoryGirl.create(:user) }
+  let(:teacher_role)      { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+  let!(:teacher)          { teacher_role.teacher }
+  let(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: teacher_user.id }
 
   describe '#destroy' do
     context 'anonymous user' do

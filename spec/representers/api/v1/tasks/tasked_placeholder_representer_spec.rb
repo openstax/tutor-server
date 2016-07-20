@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer do
-  let!(:task_step) {
+  let(:task_step) {
     step = instance_double(Tasks::Models::TaskStep)
     allow(step).to receive(:id).and_return(15)
     allow(step).to receive(:tasks_task_id).and_return(42)
@@ -14,7 +14,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
     step
   }
 
-  let!(:tasked_placeholder) {
+  let(:tasked_placeholder) {
     placeholder = instance_double(Tasks::Models::TaskedPlaceholder)
 
     ## Avoid rspec double class when figuring out :type

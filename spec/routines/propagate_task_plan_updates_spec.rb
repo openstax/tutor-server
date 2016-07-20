@@ -1,35 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe PropagateTaskPlanUpdates, type: :routine do
-  let!(:course)          { FactoryGirl.create :entity_course }
-  let!(:period)          { CreatePeriod[course: course] }
-  let!(:user)            do
+  let(:course)          { FactoryGirl.create :entity_course }
+  let(:period)          { CreatePeriod[course: course] }
+  let!(:user)           do
     FactoryGirl.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
 
-  let!(:old_title)       { 'Old Title' }
-  let!(:old_description) { 'Old description' }
+  let(:old_title)       { 'Old Title' }
+  let(:old_description) { 'Old description' }
 
-  let!(:task_plan)       { FactoryGirl.create(:tasks_task_plan, owner: course,
-                                                                title: old_title,
-                                                                description: old_description) }
+  let(:task_plan)       { FactoryGirl.create(:tasks_task_plan, owner: course,
+                                                               title: old_title,
+                                                               description: old_description) }
   let!(:tasking_plan)    do
     task_plan.tasking_plans.first.tap do |tasking_plan|
       tasking_plan.update_attribute(:target, period.to_model)
     end
   end
 
-  let!(:old_opens_at)    { tasking_plan.opens_at }
-  let!(:old_due_at)      { tasking_plan.due_at }
+  let(:old_opens_at)    { tasking_plan.opens_at }
+  let(:old_due_at)      { tasking_plan.due_at }
 
-  let!(:new_title)       { 'New Title' }
-  let!(:new_description) { 'New description' }
+  let(:new_title)       { 'New Title' }
+  let(:new_description) { 'New description' }
 
-  let!(:time_zone)       { tasking_plan.time_zone.to_tz }
-  let!(:new_opens_at)    { time_zone.now + 10.seconds }
-  let!(:new_due_at)      { time_zone.now + 1.week + 10.seconds }
+  let(:time_zone)       { tasking_plan.time_zone.to_tz }
+  let(:new_opens_at)    { time_zone.now + 10.seconds }
+  let(:new_due_at)      { time_zone.now + 1.week + 10.seconds }
 
   context 'unpublished task_plan' do
     before(:each) do

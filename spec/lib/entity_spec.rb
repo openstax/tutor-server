@@ -61,8 +61,8 @@ RSpec.describe Entity, type: :lib do
     wraps AnotherDummy
   end
 
-  let!(:dummy_instance) { Dummy.new }
-  let!(:dummy_entity)   { DummyEntity.new dummy_instance }
+  let(:dummy_instance) { Dummy.new }
+  let(:dummy_entity)   { DummyEntity.new dummy_instance }
 
   it 'remembers which classes are wrapped by which entities' do
     expect(Entity._wrap_class_procs[Dummy.name].call(dummy_instance)).to eq DummyEntity

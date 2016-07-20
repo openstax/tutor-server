@@ -2,28 +2,28 @@ require 'rails_helper'
 
 describe GetEcosystemExercisesFromBiglearn, type: :routine do
 
-  let!(:pool_model)      { FactoryGirl.create :content_pool }
-  let!(:page_model)      { FactoryGirl.create :content_page, all_exercises_pool: pool_model }
-  let!(:ecosystem_model) { page_model.ecosystem }
+  let(:pool_model)      { FactoryGirl.create :content_pool }
+  let(:page_model)      { FactoryGirl.create :content_page, all_exercises_pool: pool_model }
+  let(:ecosystem_model) { page_model.ecosystem }
 
-  let!(:exercise_1)      { FactoryGirl.create :content_exercise, page: page_model }
-  let!(:exercise_2)      { FactoryGirl.create :content_exercise, page: page_model }
-  let!(:exercise_3)      { FactoryGirl.create :content_exercise, page: page_model }
+  let(:exercise_1)      { FactoryGirl.create :content_exercise, page: page_model }
+  let(:exercise_2)      { FactoryGirl.create :content_exercise, page: page_model }
+  let(:exercise_3)      { FactoryGirl.create :content_exercise, page: page_model }
 
-  let!(:exercises)    { [exercise_1, exercise_2, exercise_3] }
+  let(:exercises)    { [exercise_1, exercise_2, exercise_3] }
 
-  let!(:pool)            do
+  let(:pool)            do
     pool_model.update_attribute(:content_exercise_ids, exercises.map(&:id))
     Content::Pool.new(strategy: pool_model.wrap)
   end
 
-  let!(:pools)           { [pool] }
+  let(:pools)           { [pool] }
 
-  let!(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.reload.wrap) }
+  let(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.reload.wrap) }
 
-  let!(:role)            { Entity::Role.create! }
+  let(:role)            { Entity::Role.create! }
 
-  let!(:count)           { 3 }
+  let(:count)           { 3 }
 
   context 'success' do
     it 'gets exercises from Biglearn then translates them to local exercises by number' do

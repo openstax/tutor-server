@@ -4,15 +4,15 @@ RSpec.describe SendTaskedExerciseAnswerToExchange, type: :routine do
   let(:exchange_identifier) { '42' }
   let(:free_response)       { 'abc' }
 
-  let!(:period)             { FactoryGirl.create :course_membership_period }
-  let!(:user)               { FactoryGirl.create :user,
+  let(:period)             { FactoryGirl.create :course_membership_period }
+  let(:user)               { FactoryGirl.create :user,
                                          exchange_write_identifier: exchange_identifier }
-  let!(:role)               { AddUserAsPeriodStudent[user: user, period: period] }
-  let!(:tasked_exercise)    { FactoryGirl.create :tasks_tasked_exercise,
+  let(:role)               { AddUserAsPeriodStudent[user: user, period: period] }
+  let(:tasked_exercise)    { FactoryGirl.create :tasks_tasked_exercise,
                                                  :with_tasking,
                                                  tasked_to: role,
                                                  free_response: free_response }
-  let!(:answer_id)          { tasked_exercise.correct_answer_id }
+  let(:answer_id)          { tasked_exercise.correct_answer_id }
 
   before(:each) do
     tasked_exercise.update_attribute(:answer_id, answer_id)

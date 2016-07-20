@@ -4,14 +4,14 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
 
   context "a user" do
 
-    let!(:user)           { FactoryGirl.create(:user) }
-    let!(:course)         { FactoryGirl.create(:entity_course) }
-    let!(:period)         { CreatePeriod[course: course] }
-    let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }
-    let!(:default_task)   { FactoryGirl.create(:tasks_task) }
-    let!(:task_count)     { rand(5..10) }
-    let!(:ecosystem)      { FactoryGirl.build(:content_ecosystem) }
-    let!(:tasks)          do
+    let(:user)           { FactoryGirl.create(:user) }
+    let(:course)         { FactoryGirl.create(:entity_course) }
+    let(:period)         { CreatePeriod[course: course] }
+    let(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }
+    let(:default_task)   { FactoryGirl.create(:tasks_task) }
+    let(:task_count)     { rand(5..10) }
+    let(:ecosystem)      { FactoryGirl.build(:content_ecosystem) }
+    let(:tasks)          do
       task_count.times.map{ FactoryGirl.create(:tasks_task, ecosystem: ecosystem) }
     end
 
@@ -19,10 +19,10 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
       tasks.map{ |task| FactoryGirl.create(:tasks_tasking, task: task, role: role) }
     end
 
-    let!(:output)         { Hashie::Mash.new(
+    let(:output)         { Hashie::Mash.new(
       'items' => GetCourseUserTasks[course: course, user: user]
     ) }
-    let!(:representation) { Api::V1::TaskSearchRepresenter.new(output).as_json }
+    let(:representation) { Api::V1::TaskSearchRepresenter.new(output).as_json }
 
     it "generates a JSON representation of their tasks" do
       expect(representation).to include(

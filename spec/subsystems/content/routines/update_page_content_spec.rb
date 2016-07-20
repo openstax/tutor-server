@@ -3,21 +3,21 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OPTS do
 
-  let!(:cnx_page_1) {
+  let(:cnx_page_1) {
     OpenStax::Cnx::V1::Page.new({
       id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
       title: 'Physical Quantities and Units'
     })
   }
 
-  let!(:cnx_page_2) {
+  let(:cnx_page_2) {
     OpenStax::Cnx::V1::Page.new({
       id: '127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
       title: "Introduction to Electric Current, Resistance, and Ohm's Law"
     })
   }
 
-  let!(:chapter) { FactoryGirl.create :content_chapter }
+  let(:chapter) { FactoryGirl.create :content_chapter }
 
   let!(:page_1) do
     OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
@@ -30,19 +30,19 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     end
   end
 
-  let!(:link_text) { [
+  let(:link_text) { [
     "Introduction to Electric Current, Resistance, and Ohm's Law",
     'Accuracy, Precision, and Significant Figures',
     'Appendix A'
   ] }
 
-  let!(:before_hrefs) { [
+  let(:before_hrefs) { [
     'https://archive.cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
     'https://archive.cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
     'https://archive.cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
   ] }
 
-  let!(:after_hrefs) { [
+  let(:after_hrefs) { [
     '127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
     'https://archive.cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
     'https://archive.cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'

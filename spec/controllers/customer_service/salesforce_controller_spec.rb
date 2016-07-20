@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::SalesforceController, type: :controller do
-  let!(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
 
   before { controller.sign_in(customer_service) }
 

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 describe GetCourseRoster, type: :routine do
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period_1) { CreatePeriod[course: course] }
-  let!(:period_2) { CreatePeriod[course: course] }
+  let(:course) { CreateCourse[name: 'Physics 101'] }
+  let(:period_1) { CreatePeriod[course: course] }
+  let(:period_2) { CreatePeriod[course: course] }
 
-  let!(:other_course) { CreateCourse[name: 'Other Course'] }
-  let!(:other_period) { CreatePeriod[course: other_course] }
+  let(:other_course) { CreateCourse[name: 'Other Course'] }
+  let(:other_period) { CreatePeriod[course: other_course] }
 
-  let!(:student_1) { FactoryGirl.create(:user) }
+  let(:student_1) { FactoryGirl.create(:user) }
   let!(:student_1_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_1).outputs[:role]
   }
@@ -23,7 +23,7 @@ describe GetCourseRoster, type: :routine do
     AddUserAsPeriodStudent.call(period: period_2, user: student_3).outputs[:role]
   }
 
-  let!(:student_4) { FactoryGirl.create(:user) }
+  let(:student_4) { FactoryGirl.create(:user) }
   let!(:student_4_role) {
     AddUserAsPeriodStudent.call(period: other_period, user: student_4).outputs[:role]
   }

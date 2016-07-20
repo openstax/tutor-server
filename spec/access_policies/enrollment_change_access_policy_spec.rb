@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
-  let!(:course)            { CreateCourse[name: 'Physics 401'] }
-  let!(:period)            { CreatePeriod[course: course] }
+  let(:course)            { CreateCourse[name: 'Physics 401'] }
+  let(:period)            { CreatePeriod[course: course] }
 
-  let!(:user)              {
+  let(:user)              {
     profile = FactoryGirl.create(:user_profile)
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
-  let!(:another_user)      {
+  let(:another_user)      {
     profile = FactoryGirl.create(:user_profile)
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
 
-  let!(:enrollment_change) {
+  let(:enrollment_change) {
     CourseMembership::CreateEnrollmentChange[user: user, period: period]
   }
 

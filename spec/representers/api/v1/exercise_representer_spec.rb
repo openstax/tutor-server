@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
-  let!(:exercise_model) { FactoryGirl.create :content_exercise }
-  let!(:exercise)       {
+  let(:exercise_model) { FactoryGirl.create :content_exercise }
+  let(:exercise)       {
     strategy = ::Content::Strategies::Direct::Exercise.new(exercise_model)
     ::Content::Exercise.new(strategy: strategy)
   }

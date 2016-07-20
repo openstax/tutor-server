@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
 
-  let!(:user)           { FactoryGirl.create(:user) }
-  let!(:representation) do
+  let(:user)           { FactoryGirl.create(:user) }
+  let(:representation) do
     described_class.new(user).to_json(
       user_options: {
         tutor_notices_url: 'https://example.com/notices',

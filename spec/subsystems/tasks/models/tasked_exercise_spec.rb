@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskedExercise, type: :model do
-  let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
-  let!(:content_exercise) { FactoryGirl.create :content_exercise,
+  let(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
+  let(:content_exercise) { FactoryGirl.create :content_exercise,
                                                content: hash.to_json }
   subject(:tasked_exercise)  { FactoryGirl.create(:tasks_tasked_exercise,
                                                   exercise: content_exercise) }

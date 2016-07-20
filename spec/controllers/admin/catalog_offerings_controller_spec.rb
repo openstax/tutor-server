@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CatalogOfferingsController, type: :controller do
-  let!(:admin) {
+  let(:admin) do
     profile = FactoryGirl.create :user_profile,
                                  :administrator,
                                  username: 'admin',
                                  full_name: 'Administrator'
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
-  }
-  let(:offering){ FactoryGirl.create(:catalog_offering) }
+  end
+  let(:offering)   { FactoryGirl.create(:catalog_offering) }
   let(:attributes) { FactoryGirl.build(:catalog_offering).attributes }
 
   before {

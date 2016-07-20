@@ -2,24 +2,24 @@ require 'rails_helper'
 
 describe ChooseExercises, type: :routine do
 
-  let!(:exercises)          { 5.times.map{ FactoryGirl.create :content_exercise } }
-  let!(:worked_exercises)   { exercises.first(3) }
-  let!(:unworked_exercises) { exercises - worked_exercises }
+  let(:exercises)          { 5.times.map{ FactoryGirl.create :content_exercise } }
+  let(:worked_exercises)   { exercises.first(3) }
+  let(:unworked_exercises) { exercises - worked_exercises }
 
-  let!(:count)    { 3 }
-  let!(:history)  { Hashie::Mash.new(exercise_numbers: [worked_exercises.map(&:number)]) }
+  let(:count)    { 3 }
+  let(:history)  { Hashie::Mash.new(exercise_numbers: [worked_exercises.map(&:number)]) }
 
   let(:args) { { exercises: exercises, count: count, history: history, allow_repeats: allow_repeats,
                  randomize_exercises: randomize_exercises, randomize_order: randomize_order } }
 
   context 'allow repeats' do
-    let!(:allow_repeats) { true }
+    let(:allow_repeats) { true }
 
     context 'random exercises' do
-      let!(:randomize_exercises) { true }
+      let(:randomize_exercises) { true }
 
       context 'random order' do
-        let!(:randomize_order) { true }
+        let(:randomize_order) { true }
 
         it 'returns random unworked (higher priority) and worked exercises in a random order' do
           result = described_class[**args]
@@ -30,7 +30,7 @@ describe ChooseExercises, type: :routine do
       end
 
       context 'set order' do
-        let!(:randomize_order) { false }
+        let(:randomize_order) { false }
 
         it 'returns random unworked (first) and worked exercises in a set order' do
           result = described_class[**args]
@@ -42,10 +42,10 @@ describe ChooseExercises, type: :routine do
     end
 
     context 'set exercises' do
-      let!(:randomize_exercises) { false }
+      let(:randomize_exercises) { false }
 
       context 'random order' do
-        let!(:randomize_order) { true }
+        let(:randomize_order) { true }
 
         it 'returns set unworked (higher priority) and worked exercises in a random order' do
           result = described_class[**args]
@@ -54,7 +54,7 @@ describe ChooseExercises, type: :routine do
       end
 
       context 'set order' do
-        let!(:randomize_order) { false }
+        let(:randomize_order) { false }
 
         it 'returns set unworked (first) and worked exercises in a set order' do
           result = described_class[**args]
@@ -65,11 +65,11 @@ describe ChooseExercises, type: :routine do
   end
 
   context 'disallow repeats' do
-    let!(:allow_repeats) { false }
+    let(:allow_repeats) { false }
 
     context 'randomize' do
-      let!(:randomize_exercises) { true }
-      let!(:randomize_order) { true }
+      let(:randomize_exercises) { true }
+      let(:randomize_order) { true }
 
       it 'returns random unworked exercises in a random order' do
         result = described_class[**args]
@@ -78,8 +78,8 @@ describe ChooseExercises, type: :routine do
     end
 
     context 'don\'t randomize' do
-      let!(:randomize_exercises) { false }
-      let!(:randomize_order) { false }
+      let(:randomize_exercises) { false }
+      let(:randomize_order) { false }
 
       it 'returns set unworked exercises in a set order' do
         result = described_class[**args]

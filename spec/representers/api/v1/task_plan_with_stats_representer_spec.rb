@@ -3,9 +3,9 @@ require 'vcr_helper'
 
 RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed: :medium do
 
-  let!(:number_of_students){ 2 }
+  let(:number_of_students){ 2 }
 
-  let!(:task_plan) {
+  let(:task_plan) {
     allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
       receive(:k_ago_map) { [ [0, 2] ] }
     )

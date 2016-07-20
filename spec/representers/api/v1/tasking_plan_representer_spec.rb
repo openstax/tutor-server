@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
 
-  let!(:tasking_plan) {
+  let(:tasking_plan) {
     instance_spy(Tasks::Models::TaskingPlan).tap do |dbl|
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828
@@ -48,12 +48,12 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
     end
   end
 
-  let!(:year_str)           { '2015' }
-  let!(:month_str) { '01' }
-  let!(:day_str)            { '04' }
+  let(:year_str)           { '2015' }
+  let(:month_str) { '01' }
+  let(:day_str)            { '04' }
 
-  let!(:date_str) { "#{year_str}-#{month_str}-#{day_str}" }
-  let!(:date_time_str) { "#date_str}T14:32:34" }
+  let(:date_str) { "#{year_str}-#{month_str}-#{day_str}" }
+  let(:date_time_str) { "#date_str}T14:32:34" }
 
   context "opens_at & due_at" do
 

@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe GetPerformanceReport, type: :routine do
 
-  let!(:course) { CreateCourse[name: 'Physics'] }
+  let(:course) { CreateCourse[name: 'Physics'] }
 
   context 'non-teacher role' do
-    let!(:role) { Entity::Role.create! }
+    let(:role) { Entity::Role.create! }
 
     it 'raises SecurityTransgression' do
       expect{ described_class[course: course, role: role] }.to raise_error(SecurityTransgression)
@@ -13,8 +13,8 @@ RSpec.describe GetPerformanceReport, type: :routine do
   end
 
   context 'teacher role' do
-    let!(:user) { FactoryGirl.create :user }
-    let!(:role) { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course] }
+    let(:user) { FactoryGirl.create :user }
+    let(:role) { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course] }
 
     context 'non-cc course' do
       it 'calls GetTpPerformanceReport' do

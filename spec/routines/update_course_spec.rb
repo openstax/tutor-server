@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UpdateCourse do
-  let!(:course) { CreateCourse[name: 'A course'] }
+  let(:course) { CreateCourse[name: 'A course'] }
 
   it 'updates the course name' do
     UpdateCourse.call(course.id, { name: 'Physics' })

@@ -3,23 +3,23 @@ require 'rails_helper'
 module Content
   describe Ecosystem, type: :wrapper do
 
-    let!(:valid_id)   { 1 }
-    let!(:invalid_id) { Object.new }
+    let(:valid_id)   { 1 }
+    let(:invalid_id) { Object.new }
 
-    let!(:valid_book)   { ::Content::Book.new(strategy: Object.new) }
-    let!(:invalid_book) { Object.new }
+    let(:valid_book)   { ::Content::Book.new(strategy: Object.new) }
+    let(:invalid_book) { Object.new }
 
-    let!(:valid_page)   { ::Content::Page.new(strategy: Object.new) }
-    let!(:invalid_page) { Object.new }
+    let(:valid_page)   { ::Content::Page.new(strategy: Object.new) }
+    let(:invalid_page) { Object.new }
 
-    let!(:valid_exercise)   { ::Content::Exercise.new(strategy: Object.new) }
-    let!(:invalid_exercise) { Object.new }
+    let(:valid_exercise)   { ::Content::Exercise.new(strategy: Object.new) }
+    let(:invalid_exercise) { Object.new }
 
-    let!(:valid_pool)   { ::Content::Pool.new(strategy: Object.new) }
-    let!(:invalid_pool) { Object.new }
+    let(:valid_pool)   { ::Content::Pool.new(strategy: Object.new) }
+    let(:invalid_pool) { Object.new }
 
-    let!(:valid_manifest)   { ::Content::Manifest.new(strategy: Object.new) }
-    let!(:invalid_manifest) { Object.new }
+    let(:valid_manifest)   { ::Content::Manifest.new(strategy: Object.new) }
+    let(:invalid_manifest) { Object.new }
 
     let(:strategy) {
       double("strategy").tap do |dbl|
@@ -93,7 +93,7 @@ module Content
       end
 
       context "strategy doesn't return an Integer" do
-        let!(:strategy_id) { invalid_id }
+        let(:strategy_id) { invalid_id }
 
         it "raises StrategyError" do
           expect{

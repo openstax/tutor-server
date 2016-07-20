@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   subject(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan }
 
-  let!(:task_plan)       { tasking_plan.task_plan }
-  let!(:target)          { tasking_plan.target }
-  let!(:course)          { task_plan.owner }
+  let(:task_plan)       { tasking_plan.task_plan }
+  let(:target)          { tasking_plan.target }
+  let(:course)          { task_plan.owner }
 
   it { is_expected.to belong_to(:target) }
   it { is_expected.to belong_to(:task_plan) }

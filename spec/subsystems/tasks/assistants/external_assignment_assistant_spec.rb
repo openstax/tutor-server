@@ -6,23 +6,23 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   let(:templatized_url) { 'https://www.example.org/survey?id={{deidentifier}}' }
   let(:num_taskees)     { 3 }
 
-  let!(:assistant)      do
+  let(:assistant)      do
     FactoryGirl.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
     )
   end
 
-  let!(:course)         { FactoryGirl.create :entity_course }
-  let!(:period)         { CreatePeriod[course: course] }
+  let(:course)         { FactoryGirl.create :entity_course }
+  let(:period)         { CreatePeriod[course: course] }
 
-  let!(:task_plan_1)    do
+  let(:task_plan_1)    do
     FactoryGirl.create(:tasks_task_plan,
                        assistant: assistant,
                        settings: { external_url: url },
                        owner: course)
   end
 
-  let!(:task_plan_2)    do
+  let(:task_plan_2)    do
     FactoryGirl.create(:tasks_task_plan,
                        assistant: assistant,
                        settings: { external_url: templatized_url },

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Tasks::Stats::PageRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::Stats::PageRepresenter, type: :representer do
   let(:page) {
     { id: 1,
       title: 'My page',

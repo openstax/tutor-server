@@ -5,7 +5,7 @@ RSpec.describe GetTeacherNames, type: :routine do
   let(:teacher) { FactoryGirl.create(:user, first_name: 'Teacher', last_name: 'Jim') }
   let(:other_teacher) { FactoryGirl.create(:user, first_name: 'Teacher',
                                                   last_name: 'Bob') }
-  let!(:not_teacher) { FactoryGirl.create(:user, first_name: 'Somebody',
+  let(:not_teacher) { FactoryGirl.create(:user, first_name: 'Somebody',
                                                  last_name: 'Else') }
 
   before do

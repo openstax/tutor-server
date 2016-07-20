@@ -75,7 +75,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       Content::Routines::PopulateExercisePools[book: chapter.book]
     end
 
-    let!(:task_plan) do
+    let(:task_plan) do
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: @assistant,
@@ -85,17 +85,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     end
 
-    let!(:course) do
+    let(:course) do
       task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
       end
     end
 
-    let!(:period) { CreatePeriod[course: course] }
+    let(:period) { CreatePeriod[course: course] }
 
     let(:num_taskees) { 3 }
 
-    let!(:taskee_users) do
+    let(:taskee_users) do
       num_taskees.times.map do
         user = FactoryGirl.create(:user)
         AddUserAsPeriodStudent.call(user: user, period: period)
@@ -112,7 +112,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         )
       end
 
-      task_plan.save
+      task_plan.save!
 
       tps
     end
@@ -253,12 +253,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
   end
 
   context "for Newton's First Law of Motion: Inertia" do
-    let!(:cnx_page_hash) { {
+    let(:cnx_page_hash) { {
       'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
       'title' => "Newton's First Law of Motion: Inertia"
     } }
 
-    let!(:core_step_gold_data) {
+    let(:core_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedReading,
           title: "Newton's First Law of Motion: Inertia" },
@@ -273,7 +273,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ]
     }
 
-    let!(:spaced_practice_step_gold_data) {
+    let(:spaced_practice_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedExercise,
           title: nil },
@@ -282,21 +282,21 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ]
     }
 
-    let!(:task_step_gold_data) {
+    let(:task_step_gold_data) {
       core_step_gold_data + spaced_practice_step_gold_data
     }
 
-    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-    let!(:chapter) { FactoryGirl.create :content_chapter,
+    let(:chapter) { FactoryGirl.create :content_chapter,
                                         title: "Forces and Newton's Laws of Motion" }
 
-    let!(:ecosystem) do
+    let(:ecosystem) do
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
       ::Content::Ecosystem.new(strategy: ecosystem_strategy)
     end
 
-    let!(:page) {
+    let(:page) {
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         chapter: chapter,
@@ -306,7 +306,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
 
-    let!(:task_plan) {
+    let(:task_plan) {
       FactoryGirl.build(:tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: ecosystem.id,
@@ -315,17 +315,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     }
 
-    let!(:course) {
+    let(:course) {
       task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       end
     }
 
-    let!(:period) { CreatePeriod[course: course] }
+    let(:period) { CreatePeriod[course: course] }
 
-    let!(:num_taskees) { 3 }
+    let(:num_taskees) { 3 }
 
-    let!(:taskee_users) {
+    let(:taskee_users) {
       num_taskees.times.map do
         FactoryGirl.create(:user_profile).tap do |profile|
           strategy = User::Strategies::Direct::User.new(profile)
@@ -374,22 +374,22 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
   end
 
   context "for Newton's Second Law of Motion" do
-    let!(:cnx_page_hash) { {
+    let(:cnx_page_hash) { {
       'id' => '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0',
       'title' => "Newton's Second Law of Motion"
     } }
 
-    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-    let!(:chapter) { FactoryGirl.create :content_chapter,
+    let(:chapter) { FactoryGirl.create :content_chapter,
                                         title: "Forces and Newton's Laws of Motion" }
 
-    let!(:ecosystem) do
+    let(:ecosystem) do
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
       ::Content::Ecosystem.new(strategy: ecosystem_strategy)
     end
 
-    let!(:page) {
+    let(:page) {
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         chapter: chapter,
@@ -399,7 +399,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
 
-    let!(:task_plan) {
+    let(:task_plan) {
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: @assistant,
@@ -409,17 +409,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     }
 
-    let!(:course) {
+    let(:course) {
       task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       end
     }
 
-    let!(:period) { CreatePeriod[course: course] }
+    let(:period) { CreatePeriod[course: course] }
 
-    let!(:num_taskees) { 3 }
+    let(:num_taskees) { 3 }
 
-    let!(:taskee_users) {
+    let(:taskee_users) {
       num_taskees.times.map do
         FactoryGirl.create(:user_profile).tap do |profile|
           strategy = User::Strategies::Direct::User.new(profile)
@@ -441,7 +441,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       tps
     }
 
-    let!(:core_step_gold_data) {
+    let(:core_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedReading,
           title: "Newton's Second Law of Motion",
@@ -463,7 +463,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ]
     }
 
-    let!(:spaced_practice_step_gold_data) {
+    let(:spaced_practice_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
@@ -474,7 +474,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ]
     }
 
-    let!(:task_step_gold_data) {
+    let(:task_step_gold_data) {
       core_step_gold_data + spaced_practice_step_gold_data
     }
 
@@ -524,14 +524,14 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
        </div>'
     end
 
-    let!(:page)            do
+    let(:page)            do
       FactoryGirl.create :content_page, title: "Newton's Flaming Laser Sword"
     end
-    let!(:book)            { page.book }
-    let!(:ecosystem_model) { book.ecosystem }
-    let!(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.wrap) }
+    let(:book)            { page.book }
+    let(:ecosystem_model) { book.ecosystem }
+    let(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.wrap) }
 
-    let!(:cnxmod_tag)                  do
+    let(:cnxmod_tag)                  do
       FactoryGirl.create(:content_tag, value: "context-cnxmod:#{page.uuid}",
                                        tag_type: :cnxmod,
                                        ecosystem: ecosystem_model).tap do |tag|
@@ -569,7 +569,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
     end
 
-    let!(:task_plan) {
+    let(:task_plan) {
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: @assistant,
@@ -579,13 +579,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     }
 
-    let!(:course) do
+    let(:course) do
       task_plan.owner.tap{ |course| AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
     end
 
-    let!(:period) { CreatePeriod[course: course] }
+    let(:period) { CreatePeriod[course: course] }
 
-    let!(:taskee_user) do
+    let(:taskee_user) do
       FactoryGirl.create(:user_profile).tap do |profile|
         strategy = User::Strategies::Direct::User.new(profile)
         user = User::User.new(strategy: strategy)
@@ -605,7 +605,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       tasking_plan
     end
 
-    let!(:task_step_gold_data) do
+    let(:task_step_gold_data) do
       [
         { klass: Tasks::Models::TaskedReading,  title: "Newton's Flaming Laser Sword" },
         { klass: Tasks::Models::TaskedExercise, title: nil },

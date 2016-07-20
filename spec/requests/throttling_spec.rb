@@ -3,7 +3,7 @@ require "rails_helper"
 describe "Throttles", type: :request, version: :v1 do
 
   describe '/api/log/entry' do
-    let!(:limit) { 50 }
+    let(:limit) { 50 }
 
     it 'allows requests under the limit, throttles at limit, and logs only once, all based on IP' do
       allow_any_instance_of(Rack::Attack::Request).to receive(:ip).and_return("1.2.3.4")

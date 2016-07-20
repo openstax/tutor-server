@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CourseMembership::GetCoursePeriods do
-  let!(:target_course) { Entity::Course.create! }
+  let(:target_course) { Entity::Course.create! }
 
   context "when there are no periods for the target course" do
     it "returns an empty enumerable" do

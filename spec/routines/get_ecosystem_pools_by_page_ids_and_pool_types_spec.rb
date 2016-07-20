@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
-  let!(:content_page_1) { FactoryGirl.create :content_page }
-  let!(:content_page_2) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
-  let!(:content_page_3) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
+  let(:content_page_1) { FactoryGirl.create :content_page }
+  let(:content_page_2) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
+  let(:content_page_3) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
 
   let!(:page_1) {
     strategy = ::Content::Strategies::Direct::Page.new(content_page_1)
@@ -18,7 +18,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
     ::Content::Page.new(strategy: strategy)
   }
 
-  let!(:ecosystem) { page_1.chapter.book.ecosystem }
+  let(:ecosystem) { page_1.chapter.book.ecosystem }
 
   context "when page_ids are not given" do
     context "when pool_types are not given" do
@@ -37,7 +37,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
     end
 
     context "when pool_types are given" do
-      let!(:pool_types) { ['reading_dynamic', 'homework_core'] }
+      let(:pool_types) { ['reading_dynamic', 'homework_core'] }
 
       it "returns a map with the given pool_types for the relevant pools in the given ecosystem" do
         pools_map = described_class[ecosystem: ecosystem, pool_types: pool_types]
@@ -53,7 +53,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
   end
 
   context "when page_ids are given" do
-    let!(:pages) { [page_1, page_2] }
+    let(:pages) { [page_1, page_2] }
 
     context "when pool_types are not given" do
       it "returns a map of pool_types for all pools in the given pages" do
@@ -71,7 +71,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
     end
 
     context "when pool_types are given" do
-      let!(:pool_types) { ['reading_dynamic', 'homework_core'] }
+      let(:pool_types) { ['reading_dynamic', 'homework_core'] }
 
       it "returns a map with the given pool_types for the relevant pools in the given pages" do
         pools_map = described_class[ecosystem: ecosystem,

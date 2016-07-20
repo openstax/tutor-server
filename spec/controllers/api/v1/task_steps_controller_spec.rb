@@ -2,44 +2,43 @@ require "rails_helper"
 
 describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
 
-  let!(:application)        { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)             { FactoryGirl.create(:user) }
-  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application,
-                                                 resource_owner_id: user_1.id }
-  let!(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
+  let(:application)        { FactoryGirl.create :doorkeeper_application }
+  let(:user_1)             { FactoryGirl.create(:user) }
+  let(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                application: application,
+                                                resource_owner_id: user_1.id }
+  let(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
 
-  let!(:user_2)             { FactoryGirl.create(:user) }
-  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application,
-                                                 resource_owner_id: user_2.id }
+  let(:user_2)             { FactoryGirl.create(:user) }
+  let(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                application: application,
+                                                resource_owner_id: user_2.id }
 
-  let!(:userless_token)     { FactoryGirl.create :doorkeeper_access_token,
-                                                 application: application }
+  let(:userless_token)     { FactoryGirl.create :doorkeeper_access_token, application: application }
 
-  let!(:task_step)          { FactoryGirl.create :tasks_task_step,
-                                                 title: 'title',
-                                                 url: 'http://u.rl',
-                                                 content: 'content' }
+  let(:task_step)          { FactoryGirl.create :tasks_task_step,
+                                                title: 'title',
+                                                url: 'http://u.rl',
+                                                content: 'content' }
 
-  let!(:task)               { task_step.task.reload }
+  let(:task)               { task_step.task.reload }
 
-  let!(:tasking)            { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task }
+  let!(:tasking)           { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task }
 
-  let!(:tasked_exercise)    {
+  let!(:tasked_exercise)   {
     te = FactoryGirl.build :tasks_tasked_exercise
     te.task_step.task = task
     te.save!
     te
   }
 
-  let!(:course)             { FactoryGirl.create :entity_course }
-  let!(:period)             { CreatePeriod[course: course] }
+  let(:course)              { FactoryGirl.create :entity_course }
+  let(:period)              { CreatePeriod[course: course] }
 
-  let!(:lo)                 { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
-  let!(:pp)                 { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
+  let(:lo)                  { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let(:pp)                  { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
-  let!(:related_exercise)    { FactoryGirl.create(
+  let(:related_exercise)    { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(tags: [lo.value, pp.value])
@@ -88,8 +87,8 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
 
   describe "PATCH update" do
 
-    let!(:tasked) { create_tasked(:tasked_exercise, user_1_role) }
-    let!(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
+    let(:tasked)        { create_tasked(:tasked_exercise, user_1_role) }
+    let(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
 
     it "updates the free response of an exercise" do
       api_put :update, user_1_token, parameters: id_parameters,

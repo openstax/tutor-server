@@ -4,8 +4,8 @@ require 'vcr_helper'
 RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   context 'tutor book' do
-    let!(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
-    let!(:book_cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
+    let(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
+    let(:book_cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
     it 'imports books and exercises as ecosystems' do
       expect {
@@ -37,8 +37,8 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slo
   end
 
   context 'cc book' do
-    let!(:archive_url) { 'https://archive.cnx.org/contents/' }
-    let!(:book_cnx_id) { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
+    let(:archive_url) { 'https://archive.cnx.org/contents/' }
+    let(:book_cnx_id) { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
 
     it 'imports books and exercises as ecosystems' do
       expect {

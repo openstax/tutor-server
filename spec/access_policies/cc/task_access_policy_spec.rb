@@ -2,7 +2,7 @@ require 'rails_helper'
 
 module Cc
   RSpec.describe TaskAccessPolicy, type: :access_policy do
-    let!(:requestor) { FactoryGirl.create(:user) }
+    let(:requestor) { FactoryGirl.create(:user) }
 
     subject(:action_allowed) do
       described_class.action_allowed?(action, requestor, Tasks::Models::ConceptCoachTask)

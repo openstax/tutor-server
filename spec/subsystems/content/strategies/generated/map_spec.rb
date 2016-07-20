@@ -1,27 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe Content::Strategies::Generated::Map do
-  let!(:old_content_exercise)         { FactoryGirl.create :content_exercise }
+  let(:old_content_exercise)         { FactoryGirl.create :content_exercise }
   let!(:old_content_pool) do
     pool = old_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [old_content_exercise.id])
     pool
   end
 
-  let!(:new_content_exercise)         { FactoryGirl.create :content_exercise }
+  let(:new_content_exercise)         { FactoryGirl.create :content_exercise }
   let!(:new_content_pool) do
     pool = new_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [new_content_exercise.id])
     pool
   end
 
-  let!(:another_old_content_chapter)  {
+  let(:another_old_content_chapter)  {
     FactoryGirl.create :content_chapter, book: old_content_exercise.book
   }
   let!(:another_old_content_page)     {
     FactoryGirl.create :content_page, chapter: another_old_content_chapter
   }
-  let!(:another_old_content_exercise) {
+  let(:another_old_content_exercise) {
     FactoryGirl.create :content_exercise, page: another_old_content_page
   }
   let!(:another_old_content_page_2)   {
@@ -33,13 +33,13 @@ RSpec.describe Content::Strategies::Generated::Map do
     pool
   end
 
-  let!(:another_new_content_chapter)  {
+  let(:another_new_content_chapter)  {
     FactoryGirl.create :content_chapter, book: new_content_exercise.book
   }
   let!(:another_new_content_page)     {
     FactoryGirl.create :content_page, chapter: another_new_content_chapter
   }
-  let!(:another_new_content_exercise) {
+  let(:another_new_content_exercise) {
     FactoryGirl.create :content_exercise, page: another_new_content_page
   }
   let!(:another_new_content_page_2)   {
@@ -107,38 +107,38 @@ RSpec.describe Content::Strategies::Generated::Map do
                                           tag: another_new_lo_tag
   }
 
-  let!(:old_exercise)                 do
+  let(:old_exercise)                 do
     model = old_content_exercise
     strategy = ::Content::Strategies::Direct::Exercise.new(model)
     ::Content::Exercise.new(strategy: strategy)
   end
-  let!(:new_exercise)                 do
+  let(:new_exercise)                 do
     model = new_content_exercise
     strategy = ::Content::Strategies::Direct::Exercise.new(model)
     ::Content::Exercise.new(strategy: strategy)
   end
 
-  let!(:old_page)                     { old_exercise.page }
-  let!(:new_page)                     { new_exercise.page }
+  let(:old_page)                     { old_exercise.page }
+  let(:new_page)                     { new_exercise.page }
 
-  let!(:old_ecosystem)                { old_page.chapter.book.ecosystem }
-  let!(:new_ecosystem)                { new_page.chapter.book.ecosystem }
+  let(:old_ecosystem)                { old_page.chapter.book.ecosystem }
+  let(:new_ecosystem)                { new_page.chapter.book.ecosystem }
 
-  let!(:another_old_exercise)                 do
+  let(:another_old_exercise)                 do
     model = another_old_content_exercise
     strategy = ::Content::Strategies::Direct::Exercise.new(model)
     ::Content::Exercise.new(strategy: strategy)
   end
-  let!(:another_new_exercise)                 do
+  let(:another_new_exercise)                 do
     model = another_new_content_exercise
     strategy = ::Content::Strategies::Direct::Exercise.new(model)
     ::Content::Exercise.new(strategy: strategy)
   end
 
-  let!(:another_old_page)             { another_old_exercise.page }
-  let!(:another_new_page)             { another_new_exercise.page }
+  let(:another_old_page)             { another_old_exercise.page }
+  let(:another_new_page)             { another_new_exercise.page }
 
-  subject!(:map)                      do
+  subject(:map)                      do
     Content::Map.find_or_create_by!(from_ecosystems: [old_ecosystem, new_ecosystem],
                                     to_ecosystem: new_ecosystem,
                                     strategy_class: described_class)
