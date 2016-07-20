@@ -2,8 +2,6 @@ require 'rails_helper'
 
 describe GetHistory, type: :routine, speed: :slow do
   before(:all) do
-    DatabaseCleaner.start
-
     homework_assistant = FactoryGirl.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
     )
@@ -67,8 +65,6 @@ describe GetHistory, type: :routine, speed: :slow do
     @homework_task_3 = homework_plan_3.tasks.joins(:taskings)
                                             .find_by(taskings: {entity_role_id: @role.id})
   end
-
-  after(:all) { DatabaseCleaner.clean }
 
   let(:correct_total_count)   { correct_tasks.size }
 

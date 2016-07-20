@@ -12,8 +12,6 @@ module OpenStax::Biglearn
 
     context 'with users and pools' do
       before(:all) do
-        DatabaseCleaner.start
-
         biglearn_configuration = OpenStax::Biglearn::V1::Configuration.new
         biglearn_configuration.server_url = 'https://biglearn-dev.openstax.org/'
 
@@ -102,10 +100,6 @@ module OpenStax::Biglearn
 
         use_real_client ? OpenStax::Exchange.use_real_client : OpenStax::Exchange.use_fake_client
         OpenStax::Exchange.reset!
-      end
-
-      after(:all) do
-        DatabaseCleaner.clean
       end
 
       context 'post facts_questions API' do

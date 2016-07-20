@@ -125,8 +125,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     end
 
     before(:all) do
-      DatabaseCleaner.start
-
       chapter = FactoryGirl.create :content_chapter
 
       @ecosystem = chapter.book.ecosystem
@@ -139,8 +137,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
                                       number: 2, book_location: [3, 1]]
       end
     end
-
-    after(:all) { DatabaseCleaner.clean }
 
     before do
       expect(OpenStax::Exercises::V1).to receive(:exercises) do |*args|
@@ -170,8 +166,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
   context 'adding lo:uuid tags' do
     before(:all) do
-      DatabaseCleaner.start
-
       chapter = FactoryGirl.create :content_chapter
       @ecosystem = chapter.book.ecosystem
 
@@ -183,8 +177,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
                                       number: 2, book_location: [3, 1]]
       end
     end
-
-    after(:all) { DatabaseCleaner.clean }
 
     it 'adds an lo:uuid tag when there are no LOs or APLOs' do
       stub_exercise_query([{tags: ['some-id-tag']}])
@@ -212,8 +204,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
   context 'incoming free response exercises' do
     before(:all) do
-      DatabaseCleaner.start
-
       chapter = FactoryGirl.create :content_chapter
       @ecosystem = chapter.book.ecosystem
 
@@ -225,8 +215,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
                                       number: 2, book_location: [3, 1]]
       end
     end
-
-    after(:all) { DatabaseCleaner.clean }
 
     it 'skips import of any exercise with no answers' do
       stub_exercise_query([{tags: ['some-id-tag'], remove_answers: true}])

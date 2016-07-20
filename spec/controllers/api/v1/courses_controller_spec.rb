@@ -718,8 +718,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                resource_owner_id: teacher_user.id }
 
     before(:all)         do
-      DatabaseCleaner.start
-
       @book = FactoryGirl.create :content_book
       @chapter_1 = FactoryGirl.create :content_chapter, book: @book, book_location: [1]
       @chapter_2 = FactoryGirl.create :content_chapter, book: @book, book_location: [2]
@@ -792,10 +790,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       @task_5 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ]
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     context 'anonymous' do

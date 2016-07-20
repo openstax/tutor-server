@@ -10,8 +10,6 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
   context 'with book' do
     before(:all) do
-      DatabaseCleaner.start
-
       VCR.use_cassette("Api_V1_PerformanceReportsController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
@@ -21,10 +19,6 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     before(:each) do
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     describe '#index' do

@@ -15,9 +15,6 @@ RSpec.describe CreatePeriod do
                           })
                           .map(&:id) }
 
-  before(:all) { DatabaseCleaner.start }
-  after(:all) { DatabaseCleaner.clean }
-
   it 'copies existing "coursewide" task plans to the new period' do
     Timecop.freeze do
       expected = FactoryGirl.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)

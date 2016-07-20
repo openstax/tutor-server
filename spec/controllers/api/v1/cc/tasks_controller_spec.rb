@@ -5,8 +5,6 @@ require 'database_cleaner'
 RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, version: :v1 do
 
   before(:all) do
-    DatabaseCleaner.start
-
     chapter = FactoryGirl.create :content_chapter
     cnx_page = OpenStax::Cnx::V1::Page.new(id: '7636a3bf-eb80-4898-8b2c-e81c1711b99f',
                                            title: 'Sample module 2')
@@ -54,10 +52,6 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
                                          application: application,
                                          resource_owner_id: nil
     @anon_user_token = nil
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   def show_api_call(token, cnx_book_id: @book.uuid, cnx_page_id: @page.uuid)

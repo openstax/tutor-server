@@ -4,8 +4,6 @@ require 'vcr_helper'
 RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed: :medium do
 
   before(:all) do
-    DatabaseCleaner.start
-
     ecosystem = VCR.use_cassette('Api_V1_ConceptCoachStatsRepresenter/with_book', VCR_OPTS) do
       OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
         FetchAndImportBookAndCreateEcosystem[book_cnx_id: 'f10533ca-f803-490d-b935-88899941197f']
@@ -41,8 +39,6 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
       end
     end
   end
-
-  after(:all) { DatabaseCleaner.clean }
 
   it "represents concept coach stats" do
     task_step = @tasks.first.task_steps.select{ |ts| ts.tasked.exercise? }.first

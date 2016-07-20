@@ -6,8 +6,6 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
 
   context 'with book' do
     before(:all) do
-      DatabaseCleaner.start
-
       VCR.use_cassette("Api_V1_PagesController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
@@ -15,10 +13,6 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       end
 
       @page_uuid = '95e61258-2faf-41d4-af92-f62e1414175a'
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     it 'returns not found if the version is not found' do

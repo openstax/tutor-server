@@ -5,7 +5,6 @@ require 'database_cleaner'
 RSpec.describe GetStudentGuide, type: :routine do
 
   before(:all) do
-    DatabaseCleaner.start
     @course = FactoryGirl.create :entity_course
 
     @period = CreatePeriod[course: @course]
@@ -24,10 +23,6 @@ RSpec.describe GetStudentGuide, type: :routine do
         CreateStudentHistory[course: @course, roles: [@role, @second_role]]
       end
     end
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   it 'gets the completed task step counts for the role' do

@@ -8,8 +8,6 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
 
   context 'with a real book' do
     before(:all) do
-      DatabaseCleaner.start
-
       VCR.use_cassette('CourseContent_UpdateExerciseExclusions/with_book', VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
@@ -19,10 +17,6 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
 
     before(:each) do
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     let(:exercise) { @ecosystem.exercises.first }

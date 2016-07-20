@@ -6,8 +6,6 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
   before(:all) do
     @number_of_students = 8
 
-    DatabaseCleaner.start
-
     begin
       RSpec::Mocks.setup
 
@@ -22,10 +20,6 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     ensure
       RSpec::Mocks.teardown
     end
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   context "with an unworked plan" do

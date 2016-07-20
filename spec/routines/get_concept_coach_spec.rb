@@ -18,8 +18,6 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
   end
 
   before(:all) do
-    DatabaseCleaner.start
-
     ecosystem = VCR.use_cassette('GetConceptCoach/with_book', VCR_OPTS) do
       OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
         FetchAndImportBookAndCreateEcosystem[book_cnx_id: 'f10533ca-f803-490d-b935-88899941197f']
@@ -52,10 +50,6 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
 
     AddUserAsPeriodStudent[user: @user_1, period: period]
     AddUserAsPeriodStudent[user: @user_2, period: period]
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
   end
 
   context 'no existing task' do

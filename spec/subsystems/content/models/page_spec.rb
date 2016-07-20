@@ -14,8 +14,6 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
   context 'with snap lab page' do
 
     before(:all) do
-      DatabaseCleaner.start
-
       snap_lab_page_content = VCR.use_cassette('Content_Models_Page/with_snap_lab_page',
                                                VCR_OPTS) do
         OpenStax::Cnx::V1::Page.new(id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8').content
@@ -24,8 +22,6 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
       @snap_lab_page = FactoryGirl.create :content_page, content: snap_lab_page_content,
                                                          fragments: nil, snap_labs: nil
     end
-
-    after(:all) { DatabaseCleaner.clean }
 
     it 'caches fragments' do
       expect(@snap_lab_page).not_to receive(:parser)

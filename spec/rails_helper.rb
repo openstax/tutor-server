@@ -67,20 +67,24 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before(:each) do
+  config.before(:all) do
     DatabaseCleaner.strategy = :transaction
   end
 
-  config.before(:each, :js => true) do
+  config.before(:all, js: true) do
     DatabaseCleaner.strategy = :truncation
   end
 
-  config.before(:each, type: :request) do
+  config.before(:all, type: :request) do
     DatabaseCleaner.strategy = :truncation
   end
 
-  config.before(:each, truncation: true) do
+  config.before(:all, truncation: true) do
     DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:all) do
+    DatabaseCleaner.start
   end
 
   config.before(:each) do
@@ -91,6 +95,10 @@ RSpec.configure do |config|
   #   "It's also recommended to use append_after to ensure DatabaseCleaner.clean
   #    runs after the after-test cleanup capybara/rspec installs."
   config.append_after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  config.append_after(:all) do
     DatabaseCleaner.clean
   end
 end
