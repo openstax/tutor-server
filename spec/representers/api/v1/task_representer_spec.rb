@@ -33,4 +33,13 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash).to include('is_feedback_available' => false)
   end
 
+  it 'includes is_deleted' do
+    task.deleted_at = nil
+    expect(described_class.new(task).to_hash).to include('is_deleted' => false)
+    task.deleted_at = Time.current.yesterday
+    expect(described_class.new(task).to_hash).to include('is_deleted' => true)
+    task.deleted_at = Time.current.tomorrow
+    expect(described_class.new(task).to_hash).to include('is_deleted' => true)
+  end
+
 end

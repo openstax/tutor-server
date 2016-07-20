@@ -82,5 +82,14 @@ module Api::V1
              readable: true,
              writeable: false
 
+    property :deleted?,
+             as: :is_deleted,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               description: "Whether or not this task has been withdrawn by the teacher"
+             }
+
   end
 end
