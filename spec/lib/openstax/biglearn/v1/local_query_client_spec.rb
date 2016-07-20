@@ -94,6 +94,8 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
     before(:all) do
+      DatabaseCleaner.start
+
       @all_wrong_role = Entity::Role.create!
       @all_right_role = Entity::Role.create!
       @passing_role = Entity::Role.create!
@@ -119,6 +121,8 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
       @first_two_pool = new_pool("first_two", exercises, [0,1])
       @all_pool = new_pool("all", exercises, [0,1,2,3])
     end
+
+    after(:all) { DatabaseCleaner.clean }
 
     it "gives back a hash with one entry per pool" do
       clues = client.get_clues(roles: [@passing_role], pool_uuids: [@first_two_pool, @all_pool].map(&:uuid))

@@ -6,6 +6,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
   before(:all) do
     DatabaseCleaner.start
+
     @course = FactoryGirl.create :entity_course
 
     @period = CreatePeriod[course: @course]
@@ -26,9 +27,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     end
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   it 'returns all course guide periods for teachers' do
     result = described_class[role: @teacher_role]

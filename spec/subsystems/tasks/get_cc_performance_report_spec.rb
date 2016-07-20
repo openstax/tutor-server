@@ -40,9 +40,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   let(:expected_periods)   { 2 }
   let(:expected_students)  { 2 }

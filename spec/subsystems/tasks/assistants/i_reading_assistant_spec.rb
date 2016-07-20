@@ -12,9 +12,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   context "for Introduction and Force" do
     before(:all) do
