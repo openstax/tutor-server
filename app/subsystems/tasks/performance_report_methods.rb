@@ -3,9 +3,7 @@ module Tasks
     protected
 
     def completion_fraction(tasks)
-      completed_count = tasks.reduce(0) do |count, task|
-        count + (task.status == 'completed' ? 1 : 0)
-      end
+      completed_count = tasks.count(&:completed?)
 
       completed_count.to_f / tasks.count
     end
