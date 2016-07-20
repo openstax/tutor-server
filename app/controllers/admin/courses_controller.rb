@@ -10,7 +10,7 @@ class Admin::CoursesController < Admin::BaseController
     courses = SearchCourses[query: params[:query]]
     @course_infos = CollectCourseInfo[courses: courses,
                                       with: [:teacher_names, :periods, :ecosystem_book]]
-    @ecosystems = Content::ListEcosystems[].sort{|ecosystem| ecosystem.imported_at.to_i }
+    @ecosystems = Content::ListEcosystems[]
     @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
       job.data.try :[], 'course_ecosystem'
     end
