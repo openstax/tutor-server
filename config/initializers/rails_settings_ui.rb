@@ -32,6 +32,9 @@ Rails.application.config.to_prepare do
 
       excluded_exercises = new_excluded_uids.split(',').map do |excluded_uid|
         excluded_number, excluded_version = excluded_uid.strip.split('@')
+        # version 1 is the default according to the Biglearn API docs...
+        # what we really want here is to exclude all versions
+        excluded_version ||= 1
         OpenStax::Biglearn::V1::Exercise.new(question_id: excluded_number,
                                              version: excluded_version.to_i,
                                              tags: [])

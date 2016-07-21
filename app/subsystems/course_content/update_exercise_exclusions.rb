@@ -51,8 +51,7 @@ class CourseContent::UpdateExerciseExclusions
     end
     bl_excluded_exercises = excluded_exercise_question_ids.map do |question_id|
       # version 1 is the default according to the Biglearn API docs...
-      # If we need to track it, we might need an extra field in ExcludedExercise,
-      # or switch to using the Content::Models::Exercise id
+      # what we really want here is to exclude all versions
       OpenStax::Biglearn::V1::Exercise.new(question_id: question_id, version: 1, tags: [])
     end
     bl_excluded_pool = OpenStax::Biglearn::V1::Pool.new(exercises: bl_excluded_exercises)
