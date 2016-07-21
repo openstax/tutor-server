@@ -63,13 +63,21 @@ module Api::V1
 
     property :has_interactive,
              readable: true,
-             writeable: true,
+             writeable: false,
              schema_info: { type: 'boolean' }
 
     property :has_video,
              readable: true,
-             writeable: true,
+             writeable: false,
              schema_info: { type: 'boolean' }
+
+    property :page_uuid,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { respond_to?(:page_uuid) ? page_uuid : page.try(:uuid) },
+             schema_info: { required: true }
+
 
   end
 end

@@ -20,9 +20,9 @@ module Content
         end
 
         alias_method :entity_exercises, :exercises
-        def exercises(preload_tags: false)
+        def exercises(preload: nil)
           ex = entity_exercises
-          ex = ex.preload(tags: :teks_tags) if preload_tags
+          ex = ex.preload(preload) if preload.present?
           ex.map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end

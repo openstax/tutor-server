@@ -65,7 +65,8 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
           }
         ),
         'has_interactive' => false,
-        'has_video' => false
+        'has_video' => false,
+        'page_uuid' => exercise.page.uuid
       )
     end
   end
@@ -87,7 +88,8 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
         'content' => JSON.parse(exercise.content),
         'tags' => [],
         'has_interactive' => true,
-        'has_video' => false
+        'has_video' => false,
+        'page_uuid' => exercise.page.uuid
       )
     end
   end
@@ -109,7 +111,8 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
         'content' => JSON.parse(exercise.content),
         'tags' => [],
         'has_interactive' => false,
-        'has_video' => true
+        'has_video' => true,
+        'page_uuid' => exercise.page.uuid
       )
     end
   end
@@ -127,7 +130,8 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
         'content' => JSON.parse(exercise.content),
         'tags' => [],
         'has_interactive' => false,
-        'has_video' => false
+        'has_video' => false,
+        'page_uuid' => exercise.page.uuid
       )
     end
   end

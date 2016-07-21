@@ -29,15 +29,18 @@ class GetExercises
 
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
-      pool_exercises = pools.flat_map{ |pool| pool.exercises(preload_tags: true) }
+      pool_exercises = pools.flat_map{ |pool| pool.exercises(preload: [:page, {tags: :teks_tags}]) }
       exercises = run(:filter, exercises: pool_exercises).outputs.exercises
 
       exercises.each do |exercise|
-        hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
-        hash[exercise.uid]['pool_types'] ||= []
+        unless hash.has_key?(exercise.uid)
+          hash[exercise.uid] = Api::V1::ExerciseRepresenter.new(exercise).to_hash
+          hash[exercise.uid]['pool_types'] = []
+          hash[exercise.uid]['is_excluded'] = excl_exercise_numbers_set.include?(exercise.number) \
+            unless course.nil?
+        end
+
         hash[exercise.uid]['pool_types'] << pool_type
-        hash[exercise.uid]['is_excluded'] = excl_exercise_numbers_set.include?(exercise.number) \
-          unless course.nil?
       end
 
       all_exercises += exercises
