@@ -80,13 +80,10 @@ module OpenStax::Biglearn::V1
       raise "could not find content pool for uuid #{pool_uuid}" \
         unless content_pool
 
-      pool_exercise_numbers = content_pool.exercises.collect{|ex| ex.number}.sort.uniq
-
       tasked_exercises = Tasks::Models::TaskedExercise
         .joins{task_step.task.taskings}
         .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
-        .joins{exercise}
-        .where{exercise.number.in pool_exercise_numbers}
+        .where{content_exercise_id.in content_pool.wrap.exercise_ids}
 
       tasked_exercises
     end
