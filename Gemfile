@@ -182,7 +182,7 @@ group :development, :test do
   gem 'dotenv-rails'
 
   # Run specs in parallel
-  gem "parallel_tests"
+  gem 'parallel_tests'
 
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
@@ -250,6 +250,7 @@ group :development, :test do
   gem 'roo'
 
   # Speedup and run specs when files change
+  gem 'spring'
   gem 'spring-commands-rspec'
   gem 'guard-rspec'
 
