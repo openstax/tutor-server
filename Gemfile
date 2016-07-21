@@ -63,6 +63,11 @@ gem 'openstax_api', '~> 7.1.1'
 gem 'apipie-rails'
 gem 'maruku'
 
+# API JSON rendering/parsing
+# Do not use Roar 1.0.4
+# Also, do not use Roar::Hypermedia links
+gem 'roar', '1.0.3'
+
 # Background job status store
 gem 'jobba', '~> 1.4.0'
 
@@ -243,11 +248,6 @@ group :development, :test do
 
   # Testing excel files
   gem 'roo'
-
-  # API JSON rendering/parsing
-  # Do not use Roar 1.0.4
-  # Also, do not use Roar::Hypermedia links
-  gem 'roar', '1.0.3'
 
   # Speedup and run specs when files change
   gem 'spring-commands-rspec'
