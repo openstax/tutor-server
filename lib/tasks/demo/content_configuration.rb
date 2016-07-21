@@ -9,7 +9,8 @@ class Demo::ContentConfiguration
   DEFAULT_CONFIG_DIR = File.join(File.dirname(__FILE__), 'config')
 
   # File paths including any of these words will be excluded when running "all" demo scripts
-  EXCLUDED_CONFIGURATIONS = ['base', 'large', 'ludicrous', 'people', 'real', 'small']
+  EXCLUDED_CONFIGURATIONS = ['base', 'large', 'ludicrous', 'mini',
+                             'people', 'real', 'small', 'test']
 
   class ConfigFileParser
     def initialize(file_path)
