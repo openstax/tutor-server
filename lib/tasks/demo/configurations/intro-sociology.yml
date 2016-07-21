@@ -1,0 +1,18 @@
+course_name: Intro to Sociology
+cnx_id: 02040312-72c8-441e-a685-20e9333f3e1d
+cnx_book_id: 02040312-72c8-441e-a685-20e9333f3e1d
+url_base: https://archive.cnx.org/contents/
+webview_url_base: https://demo.cnx.org/contents/
+appearance_code: intro_sociology
+catalog_offering_salesforce_book_name: Intro to Sociology
+catalog_offering_is_concept_coach: false
+teachers:
+  - cm
+
+periods:
+  - id: p1
+    name: 1st
+    students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
+  - id: p2
+    name: 2nd
+    students: [af,ag,bb,cd,hg,ft,js,ms,nz,ra]
