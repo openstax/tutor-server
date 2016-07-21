@@ -17,7 +17,7 @@ class Demo::Base
 
 
   def people
-    @people ||= Hashie::Mash.load(File.dirname(__FILE__) + '/people.yml')
+    @people ||= Hashie::Mash.load(File.join(File.dirname(__FILE__), 'config/people.yml'))
   end
 
   def user_for_username(username)
@@ -107,14 +107,17 @@ class Demo::Base
   end
 
   def find_or_create_catalog_offering( content, ecosystem )
-    Catalog::GetOffering[ salesforce_book_name: content.catalog_offering_salesforce_book_name ] ||
+    Catalog::GetOffering[ salesforce_book_name: content.salesforce_book_name ] ||
       Catalog::CreateOffering[
-        salesforce_book_name: content.catalog_offering_salesforce_book_name,
-        appearance_code: content.catalog_offering_salesforce_book_name,
+        salesforce_book_name: content.salesforce_book_name,
+        appearance_code: content.appearance_code,
         description: content.course_name,
-        webview_url: (content.webview_url_base || content.url_base.sub(/archive\./,'')) + content.cnx_book,
-        pdf_url: content.url_base.sub(%r{contents/$}, 'exports/') + content.cnx_book + '.pdf',
-        is_concept_coach: content.catalog_offering_is_concept_coach,
+        webview_url: (content.webview_url_base ||
+                      content.archive_url_base.sub(/archive\./,'')) + content.cnx_book,
+        pdf_url: content.archive_url_base.sub(%r{contents/$}, 'exports/') +
+                 content.cnx_book + '.pdf',
+        is_concept_coach: content.is_concept_coach,
+        is_tutor: !content.is_concept_coach,
         content_ecosystem_id: ecosystem.id
       ]
   end
@@ -501,11 +504,13 @@ class Demo::Base
     CourseProfile::Models::Profile.where(name: name).first.try(:course)
   end
 
-  def create_course(name:, catalog_offering: nil, appearance_code:nil, is_concept_coach: false)
+  def create_course(name:, catalog_offering: nil, appearance_code:nil,
+                    is_concept_coach: false, is_college: false)
     course = run(:create_course, name: name,
                  catalog_offering: catalog_offering,
                  appearance_code: appearance_code,
-                 is_concept_coach: is_concept_coach).outputs.course
+                 is_concept_coach: is_concept_coach,
+                 is_college: is_college).outputs.course
     log("Created a course named '#{name}'.")
     course
   end

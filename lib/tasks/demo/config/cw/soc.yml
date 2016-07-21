@@ -1,0 +1,30 @@
+# If any substantial changes are made to this file such as book_id or version
+# The fixture at spec/fixtures/demo/physics.yml must also be updated
+<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
+
+course_name: Introduction to Sociology 2e with Courseware
+salesforce_book_name: Sociology w Courseware
+appearance_code: intro_sociology
+cnx_book_id: 02040312-72c8-441e-a685-20e9333f3e1d
+
+periods:
+  - id: p1
+    name: 1st
+    students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
+  - id: p2
+    name: 2nd
+    students: [af,ag,bb,cd,hg,ft,js,ms,nz,ra]
+
+auto_assign:
+  - type: homework
+    generate: 30
+    steps: 10
+  - type: homework
+    generate: 30
+    steps: 50
+  - type: reading
+    generate: 10
+    steps: 5
+  - type: reading
+    generate: 10
+    steps: 10

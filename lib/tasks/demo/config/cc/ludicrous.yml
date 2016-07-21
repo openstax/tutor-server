@@ -1,0 +1,27 @@
+<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
+
+course_name: Biology with Concept Coach Ludicrous
+salesforce_book_name: Biology
+appearance_code: biology
+cnx_book_id: 3402dc53-113d-45f3-954e-8d2ad1e73659
+
+teachers:
+  - cm
+
+periods:
+  - id: p1
+    name: 1st
+    auto_students: 5000
+  - id: p2
+    name: 2nd
+    auto_students: 5000
+  - id: p3
+    name: 3rd
+    auto_students: 5000
+  - id: p4
+    name: 4th
+    auto_students: 5000
+
+auto_assign:
+  - type: concept_coach
+    generate: 15

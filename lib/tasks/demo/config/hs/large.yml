@@ -1,0 +1,37 @@
+<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
+
+course_name: HS Physics Large
+salesforce_book_name: HS Physics
+appearance_code: physics
+cnx_book_id: 334f8b61-30eb-4475-8e05-5260a4866b4b
+
+periods:
+  - id: p1
+    name: 1st
+    students: [ sg,ak1,bh,kp,mu,at1,hc,cp1,mu1,ke,ms1,an,tm1,jl1,kp1,ne,gj,sb,kl,cg1,dc1,lh1,la,jl2,lk,jt,dg,na,mh,ak ]
+  - id: p2
+    name: 2nd
+    students: [ kf,gj1,ir,js1,cd,hc1,bb,gs1,al,bs1,cc1,ew,wh,mr1,ap1,sm,sp,gs,lt,nz,lr,ks,bv,jm1,iw,lt1,jb,ab1,hp,gd ]
+  - id: p3
+    name: 3rd
+    students: [ fa,iu,cc2,ai,af,rp,ky,ls,jl,sh1,rl,lk1,cs3,lh,js,cs2,mr,lv,lb,cg,jb1,bs2,sh,jr,bj,cy,ls1,bs,la1,gg ]
+  - id: p4
+    name: 4th
+    students: [ cs1,rh,lh2,db,cs,dc,sk,mj,ag,ft,dp,jo,jh,bc,cc,eg,ks1,qk,mb,cm1,tm,cp,br,ar,hg,lm,mt,mc,am,ie ]
+  - id: p5
+    name: 5th
+    students: [ ia,gm,sw,sb1,sd,ab,vw,lc,nh,as,kb,cm,eh,jm,ro,tb,rh1,at,sl,dp1,lp1,kc,lp,mm,ta,ms,hs,rb,ra,ap ]
+
+auto_assign:
+  - type: homework
+    generate: 30
+    steps: 10
+  - type: homework
+    generate: 30
+    steps: 50
+  - type: reading
+    generate: 10
+    steps: 5
+  - type: reading
+    generate: 10
+    steps: 10

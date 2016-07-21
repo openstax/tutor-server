@@ -1,8 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
-course_name: Introduction to Sociology
-catalog_offering_salesforce_book_name: Introduction to Sociology
-appearance_code: intro_sociology
-cnx_book_id: 4f86c023-a135-412a-9d96-dcbd1ca61e7d
-cnx_book_version: 1.1
-teachers:
-  - ct

@@ -12,11 +12,11 @@ class Demo::Tasks < Demo::Base
 
   protected
 
-  def exec(book: :all, print_logs: true, random_seed: nil)
+  def exec(config: :all, print_logs: true, random_seed: nil)
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    in_parallel(Demo::ContentConfiguration[book]) do | contents, initial_index |
+    in_parallel(Demo::ContentConfiguration[config]) do | contents, initial_index |
 
       contents.each do |content|
 

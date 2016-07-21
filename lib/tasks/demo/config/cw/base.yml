@@ -1,0 +1,7 @@
+archive_url_base: https://archive.cnx.org/contents/
+webview_url_base: https://demo.cnx.org/contents/
+is_concept_coach: false
+is_college: true
+
+teachers:
+  - cm

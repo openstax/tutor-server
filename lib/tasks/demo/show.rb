@@ -8,11 +8,11 @@ class Demo::Show < Demo::Base
 
   protected
 
-  def exec(book: :all, print_logs: true)
+  def exec(config: :all, print_logs: true)
     set_print_logs(print_logs)
 
     students = {}
-    Demo::ContentConfiguration[book.to_sym].each do | content |
+    Demo::ContentConfiguration[config].each do | content |
 
       content.periods.each do | period |
         (period.students || []).each do | initials |

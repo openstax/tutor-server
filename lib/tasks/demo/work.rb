@@ -10,11 +10,11 @@ class Demo::Work < Demo::Base
 
   protected
 
-  def exec(book: :all, print_logs: true, random_seed: nil)
+  def exec(config: :all, print_logs: true, random_seed: nil)
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    Demo::ContentConfiguration[book].each do | content |
+    Demo::ContentConfiguration[config].each do | content |
 
       in_parallel(content.assignments.reject(&:draft),
                   transaction: true) do | assignments, initial_index |

@@ -81,9 +81,10 @@ class Demo::Content < Demo::Base
 
   def configure_course(content)
      course = find_course(name: content.course_name) ||
-             create_course(name: content.course_name,
-                           appearance_code: content.appearance_code,
-                           is_concept_coach: content.is_concept_coach || false)
+              create_course(name: content.course_name,
+                            appearance_code: content.appearance_code,
+                            is_concept_coach: content.is_concept_coach,
+                            is_college: content.is_college)
 
     log("Course: #{content.course_name}")
 
@@ -97,7 +98,7 @@ class Demo::Content < Demo::Base
     course
   end
 
-  def exec(book: :all, print_logs: true, random_seed: nil, version: :defined)
+  def exec(config: :all, print_logs: true, random_seed: nil, version: :defined)
 
     set_print_logs(print_logs)
 
@@ -116,13 +117,13 @@ class Demo::Content < Demo::Base
     courses = []
     ActiveRecord::Base.transaction do
       setup_staff_user_accounts
-      Demo::ContentConfiguration[book].each do | content |
+      Demo::ContentConfiguration[config].each do | content |
         courses.push configure_course(content)
       end
     end
 
     # Parallel step
-    in_parallel(Demo::ContentConfiguration[book.to_sym], transaction: true) do |contents, idx_start|
+    in_parallel(Demo::ContentConfiguration[config], transaction: true) do |contents, idx_start|
 
       index = idx_start
 
@@ -130,11 +131,12 @@ class Demo::Content < Demo::Base
 
         book = content.cnx_book(version)
         course = courses[index]
-        log("Starting book import for #{course.name} #{book} from #{content.url_base}.")
+        log("Starting book import for #{course.name} from #{
+            content.archive_url_base}#{book}")
         ecosystem = run(
           :import_book,
           book_cnx_id: book,
-          archive_url: content.url_base,
+          archive_url: content.archive_url_base,
           reading_processing_instructions: content.reading_processing_instructions
         ).outputs.ecosystem
 
