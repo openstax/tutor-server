@@ -17,14 +17,8 @@ periods:
 
 auto_assign:
   - type: homework
-    generate: 30
+    generate: 3
     steps: 10
-  - type: homework
-    generate: 30
-    steps: 50
   - type: reading
-    generate: 10
-    steps: 5
-  - type: reading
-    generate: 10
+    generate: 3
     steps: 10
