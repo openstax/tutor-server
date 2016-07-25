@@ -8,9 +8,11 @@ class Demo::ContentConfiguration
   # Yaml files will be located inside this directory
   DEFAULT_CONFIG_DIR = File.join(File.dirname(__FILE__), 'config')
 
-  # File paths including any of these words will be excluded when running "all" demo scripts
-  EXCLUDED_CONFIGURATIONS = ['base', 'large', 'ludicrous', 'mini',
-                             'people', 'real', 'small', 'test']
+  # File paths including any of these words are always excluded
+  EXCLUDED_CONFIGURATIONS = ['base', 'people']
+
+  # File paths including any of these words are excluded when running the "all" config
+  EXPLICIT_CONFIGURATIONS = ['large', 'ludicrous', 'mini', 'real', 'small', 'test']
 
   class ConfigFileParser
     def initialize(file_path)
@@ -39,16 +41,23 @@ class Demo::ContentConfiguration
     config_directory = Thread.current[:config_directory] ||
                        ENV['CONFIG'] || DEFAULT_CONFIG_DIR
 
-    valid_exclusions = EXCLUDED_CONFIGURATIONS.reject{ |name| config_directory.include? name }
-
     all_files = Dir[File.join(config_directory, '**/*.yml')]
-    files = if :all == name.to_sym
-              all_files.reject do |path|
-                valid_exclusions.any?{ |exclusion| path.include? exclusion }
-              end
-            else
-              all_files.select{ |path| path.include? name }
-            end
+
+    name_string = name.to_s
+
+    if name_string == 'all'
+      exclusions = EXCLUDED_CONFIGURATIONS + EXPLICIT_CONFIGURATIONS
+      inclusion = ''
+    else
+      exclusions = EXCLUDED_CONFIGURATIONS
+      inclusion = name_string
+    end
+
+    files = all_files.select do |path|
+      rpath = path.sub(config_directory, '')
+
+      rpath.include?(inclusion) && exclusions.none?{ |exclusion| rpath.include? exclusion }
+    end
 
     files.map{|file| self.new(file) }
   end
