@@ -31,12 +31,16 @@
   <div class="form-group">
     <%= f.label :appearance_code,
                 'Appearance Code (leave blank for Catalog Offering\'s default)' %>
-    <%= f.select :appearance_code,
+    <% if Rails.application.secrets['appearance_codes'] -%>
+       <%= f.select :appearance_code,
                  Rails.application.secrets['appearance_codes'].map {|code, name|
                    [name, code]
                  },
                  { include_blank: true },
                  class: 'form-control' %>
+    <% else -%>
+       <%= f.text_field :appearance_code, class: 'form-control' %>
+    <% end -%>
   </div>
 
   <div class="form-group">
