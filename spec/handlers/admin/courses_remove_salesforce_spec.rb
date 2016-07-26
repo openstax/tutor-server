@@ -57,6 +57,22 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
     expect(fake_sf_object_2.num_students).to eq 38
   end
 
+  it 'does not explode if the SF object is no longer in SF' do
+    disable_sfdc_client
+
+    FactoryGirl.create(:salesforce_attached_record,
+                       tutor_object: course,
+                       salesforce_class_name: "Salesforce::Remote::ClassSize",
+                       salesforce_id: "something",
+                       salesforce_object: nil)
+
+    allow(Salesforce::Remote::ClassSize).to receive(:find).with("something") { nil }
+
+    expect{
+      call(course_id: course.id, salesforce_id: 'something')
+    }.not_to raise_error
+  end
+
   it "can find the methods it needs in potential SF object classes" do
     # Have this check since we're mostly otherwise stubbing these classes
     [Salesforce::Remote::OsAncillary, Salesforce::Remote::ClassSize].each do |sf_class|
