@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
-course_name: Concepts of Biology 2
-catalog_offering_salesforce_book_name: Concepts of Bio (non-majors)
-appearance_code: concepts_biology
-cnx_book_id: bf96bfc5-e723-46c2-9fa2-5a4c9294fa26
-cnx_book_version: 1.1
-teachers:
-  - td
-  - ak

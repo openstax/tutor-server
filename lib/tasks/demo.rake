@@ -1,11 +1,13 @@
 desc 'Initializes data for the deployment demo (run all demo:* tasks), book can be either all, bio or phy.'
-task :demo, [:book, :version, :random_seed] => :environment do |tt, args|
+task :demo, [:config, :version, :random_seed] => :environment do |tt, args|
   failures = []
-  Rake::Task[:"demo:content"].invoke(args[:book], args[:version], args[:random_seed]) \
+  Rake::Task[:"demo:content"].invoke(args[:config], args[:version], args[:random_seed]) \
     rescue failures << 'Content'
-  Rake::Task[:"demo:tasks"].invoke(args[:book], args[:random_seed]) rescue failures << 'Tasks'
+  Rake::Task[:"demo:tasks"].invoke(args[:config], args[:random_seed]) \
+    rescue failures << 'Tasks'
   unless ENV['NOWORK']
-    Rake::Task[:"demo:work"].invoke(args[:book], args[:random_seed]) rescue failures << 'Work'
+    Rake::Task[:"demo:work"].invoke(args[:config], args[:random_seed]) \
+      rescue failures << 'Work'
   end
 
   if failures.empty?
@@ -18,7 +20,7 @@ end
 namespace :demo do
 
   desc 'Initializes book content for the deployment demo'
-  task :content, [:book, :version, :random_seed] => :environment do |tt, args|
+  task :content, [:config, :version, :random_seed] => :environment do |tt, args|
     require_relative 'demo/content'
 
     result = Demo::Content.call(args.to_h.merge(print_logs: true))
@@ -32,7 +34,7 @@ namespace :demo do
   end
 
   desc 'Creates assignments for students'
-  task :tasks, [:book, :random_seed] => :environment do |tt, args|
+  task :tasks, [:config, :random_seed] => :environment do |tt, args|
     require_relative 'demo/tasks'
 
     result = Demo::Tasks.call(args.to_h.merge(print_logs: true))
@@ -46,7 +48,7 @@ namespace :demo do
   end
 
   desc 'Works student assignments'
-  task :work, [:book, :random_seed] => :environment do |tt, args|
+  task :work, [:config, :random_seed] => :environment do |tt, args|
     require_relative 'demo/work'
 
     result = Demo::Work.call(args.to_h.merge(print_logs: true))
@@ -60,7 +62,7 @@ namespace :demo do
   end
 
   desc 'Output student assignments'
-  task :show, [:book, :version, :random_seed] => :environment do |tt, args|
+  task :show, [:config, :version, :random_seed] => :environment do |tt, args|
     require_relative 'demo/show'
 
     Demo::Show.call(args.to_h.merge(print_logs: true))

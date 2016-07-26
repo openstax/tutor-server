@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
-course_name: College Physics
-catalog_offering_salesforce_book_name: College Physics (Algebra)
-appearance_code: college_physics
-cnx_book_id: 27275f49-f212-4506-b3b1-a4d5e3598b99
-cnx_book_version: 1.1
-teachers:
-  - cm
-  - ct

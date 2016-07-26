@@ -1,0 +1,50 @@
+# This is a stripped down verion of lib/tasks/demo/config/hs/physics.yml
+# It's only used by the demo spec
+<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
+
+course_name: HS Physics Demo
+salesforce_book_name: HS Physics
+appearance_code: physics
+cnx_book_id: 93e2b09d-261c-4007-a987-0b3062fe154b
+cnx_book_version: 4.4
+
+periods:
+  - id: p1
+    name: Period 1
+    students: [sd, vw]
+
+assignments:
+  - type: reading
+    title: Read 3.1 Acceleration Pt1
+    book_locations: [[3, 0], [3, 1]]
+    step_types: [ r, r, r, i, e, r, e, v, e, p ]
+    periods:
+      - id: p1
+        opens_at: <%= open_three_days_ago %>
+        due_at: <%= due_today %>
+        students: {sd: 81, vw: i}
+
+  - type: reading
+    title: Read 3.2 Acceleration Pt2
+    book_locations: [[3, 2]]
+    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, p]
+    periods:
+      - id: p1
+        opens_at: <%= open_three_days_ago %>
+        due_at: <%= due_today %>
+        students:
+          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
+          vw: ns
+
+  - type: homework
+    title: HW Chapter 3 Acceleration
+    num_exercises: 10
+    book_locations: [[3, 0], [3, 1], [3, 2]]
+    step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
+    periods:
+      - id: p1
+        opens_at: <%= open_one_day_ago %>
+        due_at: <%= due_today %>
+        students:
+          sd: i
+          vw: [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]

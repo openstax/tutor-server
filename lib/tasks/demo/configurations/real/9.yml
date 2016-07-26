@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
-course_name: Macro Economics 2
-catalog_offering_salesforce_book_name: Macro Econ
-appearance_code: macro_economics
-cnx_book_id: 947a1417-5fd5-4b3c-ac8f-bd9d1aedf2d2
-cnx_book_version: 1.1
-teachers:
-  - td
-  - ak

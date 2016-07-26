@@ -6,8 +6,14 @@ require_relative 'content_configuration_yaml_methods'
 # Reads in a YAML file containg configuration for a course and its students
 class Demo::ContentConfiguration
   # Yaml files will be located inside this directory
-  DEFAULT_CONFIG_DIR = File.join(File.dirname(__FILE__), 'configurations')
-  EXPLICIT_CONFIGURATIONS = ['large', 'ludicrous']
+  DEFAULT_CONFIG_DIR = File.join(File.dirname(__FILE__), 'config')
+
+  # File paths including any of these words are always excluded
+  EXCLUDED_CONFIGURATIONS = ['base', 'people']
+
+  # File paths including any of these words are excluded when running the "all" config
+  EXPLICIT_CONFIGURATIONS = ['large', 'ludicrous', 'mini', 'real', 'small', 'test']
+
   class ConfigFileParser
     def initialize(file_path)
       @content = File.read(file_path)
@@ -32,28 +38,42 @@ class Demo::ContentConfiguration
     # The directory for the config files can be either set using either
     # config_directory block (which sets it's value using Thread.current),
     # the CONFIG environmental variable or the default
-    config_directory = Thread.current[:config_directory] || ENV['CONFIG'] || DEFAULT_CONFIG_DIR
-    files = if :all == name
-              Dir[File.join(config_directory, '*.yml')].reject{ |path|
-                EXPLICIT_CONFIGURATIONS.include?( File.basename(path,'.yml') )
-              }
-            else
-              Dir[File.join(config_directory, "#{name}*.yml")]
-            end
+    config_directory = Thread.current[:config_directory] ||
+                       ENV['CONFIG'] || DEFAULT_CONFIG_DIR
+
+    all_files = Dir[File.join(config_directory, '**/*.yml')]
+
+    name_string = name.to_s
+
+    if name_string == 'all'
+      exclusions = EXCLUDED_CONFIGURATIONS + EXPLICIT_CONFIGURATIONS
+      inclusion = ''
+    else
+      exclusions = EXCLUDED_CONFIGURATIONS
+      inclusion = name_string
+    end
+
+    files = all_files.select do |path|
+      rpath = path.sub(config_directory, '')
+
+      rpath.include?(inclusion) && exclusions.none?{ |exclusion| rpath.include? exclusion }
+    end
+
     files.map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :teachers, :periods, :is_concept_coach,
-                 :appearance_code, :catalog_offering_salesforce_book_name,
-                 :catalog_offering_is_concept_coach, :reading_processing_instructions
+  def_delegators :@configuration, :course_name, :teachers, :periods,
+                 :appearance_code, :salesforce_book_name,
+                 :is_concept_coach, :is_college, :reading_processing_instructions
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)
     validate_config
   end
 
-  def url_base
-    @configuration.url_base || Rails.application.secrets.openstax['cnx']['archive_url']
+  def archive_url_base
+    @configuration.archive_url_base ||
+      Rails.application.secrets.openstax['cnx']['archive_url']
   end
 
   def webview_url_base

@@ -1,0 +1,22 @@
+archive_url_base: https://archive.cnx.org/contents/
+webview_url_base: https://demo.cnx.org/contents/
+is_concept_coach: true
+is_college: true
+
+periods:
+  - id: p1
+    name: 1st
+    auto_students: 10
+  - id: p2
+    name: 2nd
+    auto_students: 10
+  - id: p3
+    name: 3rd
+    auto_students: 10
+  - id: p4
+    name: 4th
+    auto_students: 10
+
+auto_assign:
+  - type: concept_coach
+    generate: 5
