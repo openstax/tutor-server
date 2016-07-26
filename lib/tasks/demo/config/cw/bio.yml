@@ -2,7 +2,7 @@
 # The fixture at spec/fixtures/demo/biology.yml must also be updated
 <%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
 
-course_name: Biology with Courseware
+course_name: College Biology
 salesforce_book_name: Biology w Courseware
 appearance_code: biology
 cnx_book_id: 185cbf87-c72e-48f5-b51e-f14f21b5eabd
