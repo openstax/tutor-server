@@ -103,9 +103,6 @@ class Demo::ContentConfiguration
   end
 
   def course
-    unless CourseProfile::Models::Profile.where(name: course_name).exists?
-      debugger
-    end
     @course ||= CourseProfile::Models::Profile.where(name: course_name)
                                               .order{created_at.desc}.first!.course
   end
