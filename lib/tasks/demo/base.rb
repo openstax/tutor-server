@@ -412,7 +412,7 @@ class Demo::Base
   def assign_concept_coach(course:)
     ecosystem = get_ecosystem(course: course)
     book = ecosystem.books.first
-    acceptable_pages = book.pages.select{ |page| !page.exercises.empty? }
+    acceptable_pages = book.pages.select{ |page| !page.concept_coach_pool.empty? }
 
     raise "None of the pages in the ecosystem have exercises" if acceptable_pages.empty?
 
