@@ -1,10 +1,12 @@
 # If any substantial changes are made to this file such as book_id or version
 # The fixture at spec/fixtures/demo/physics.yml must also be updated
 <%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
+
 course_name: College Physics with Courseware
 salesforce_book_name: Physics w Courseware
 appearance_code: college_physics
 cnx_book_id: 405335a3-7cff-4df2-a9ad-29062a4af261
+
 periods:
   - id: p1
     name: 1st
