@@ -62,7 +62,7 @@ class Demo::ContentConfiguration
     files.map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :teachers, :periods,
+  def_delegators :@configuration, :course_name, :teachers,
                  :appearance_code, :salesforce_book_name,
                  :is_concept_coach, :is_college, :reading_processing_instructions
 
@@ -87,6 +87,10 @@ class Demo::ContentConfiguration
     @configuration.auto_assign || []
   end
 
+  def periods
+    @configuration.periods || []
+  end
+
   def cnx_book(book_version=:defined)
     version = if book_version.to_sym != :defined
                 book_version.to_sym == :latest ? '' : "@#{book_version}"
@@ -99,6 +103,9 @@ class Demo::ContentConfiguration
   end
 
   def course
+    unless CourseProfile::Models::Profile.where(name: course_name).exists?
+      debugger
+    end
     @course ||= CourseProfile::Models::Profile.where(name: course_name)
                                               .order{created_at.desc}.first!.course
   end
