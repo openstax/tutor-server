@@ -81,6 +81,29 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     end
   end
 
+  context "#initialize_organizer" do
+    context "when an SF object is not found for an AR" do
+      before(:each) do
+        allow_any_instance_of(UpdateSalesforceCourseStats).to receive(:attached_records) {
+          [OpenStruct.new(attached_to_class_name: "Entity::Course",
+                          attached_to_id: "foo",
+                          salesforce_id: "blah")]
+        }
+      end
+
+      it "does not explode" do
+        expect{described_class.new.initialize_organizer}.not_to raise_error
+      end
+
+      it "notifies devs" do
+        expect_any_instance_of(described_class)
+          .to receive(:notify)
+          .with(a_string_matching(/are missing!/), salesforce_ids: ["blah"])
+        described_class.new.initialize_organizer
+      end
+    end
+  end
+
   context "#attach_orphaned_periods_to_sf_objects" do
     let(:course)          { Entity::Course.create! }
     let(:period_1)        { CreatePeriod[course: course] }
@@ -151,16 +174,17 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
   context "#write_stats_to_salesforce" do
     let(:course)          { Entity::Course.create! }
-    let(:period)          { CreatePeriod[course: course] }
+    let(:period_1)        { CreatePeriod[course: course] }
+    let(:period_2)        { CreatePeriod[course: course] }
     let(:record)          { OpenStruct.new(changed?: true, save: nil) }
     let(:attached_record) { OpenStruct.new(record: record) }
 
     before(:each) do
-      3.times { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period] }
+      @s1, @s2, @s3 = 3.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1] }
       2.times { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course] }
 
       stub_organizer do |organizer|
-        allow(organizer).to receive(:each).and_yield(record, course, [period.to_model])
+        allow(organizer).to receive(:each).and_yield(record, course, [period_1.to_model, period_2.to_model])
       end
     end
 
@@ -169,7 +193,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       outputs = described_class.call(handle_orphaned_periods: false)
       expect(record.num_teachers).to eq 2
       expect(record.num_students).to eq 3
-      expect(record.num_sections).to eq 1
+      expect(record.num_sections).to eq 2
       expect(outputs.num_updates).to eq 1
       expect(outputs.num_errors).to eq 0
     end
@@ -185,6 +209,18 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       allow(record).to receive(:save).and_raise(StandardError, "howdy")
       outputs = rescuing_exceptions{ described_class.call(handle_orphaned_periods: false) }
       expect(outputs.num_errors).to eq 1
+    end
+
+    it "counts moved students correctly" do
+      MoveStudent[period: period_2, student: @s1.student]
+      described_class.call(handle_orphaned_periods: false)
+      expect(record.num_students).to eq 3
+    end
+
+    it "counts dropped students correctly" do
+      CourseMembership::InactivateStudent[student: @s1.student]
+      described_class.call(handle_orphaned_periods: false)
+      expect(record.num_students).to eq 3
     end
   end
 

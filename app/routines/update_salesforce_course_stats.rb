@@ -35,7 +35,14 @@ class UpdateSalesforceCourseStats
 
     # Loop through known AR/course/period relations and add them to the organizer
 
+    missing_salesforce_record_ids = []
+
     attached_records.each do |ar|
+      if ar.salesforce_object.nil?
+        missing_salesforce_record_ids.push(ar.salesforce_id)
+        next
+      end
+
       case ar.attached_to_class_name
       when "Entity::Course"
         organizer.set_course_id(salesforce_object: ar.salesforce_object,
@@ -44,6 +51,11 @@ class UpdateSalesforceCourseStats
         organizer.add_period_id(salesforce_object: ar.salesforce_object,
                                 period_id: ar.attached_to_id)
       end
+    end
+
+    if missing_salesforce_record_ids.any?
+      notify("Some Salesforce records for Tutor courses are missing!",
+             salesforce_ids: missing_salesforce_record_ids)
     end
 
     # Load all of the model data at once (prevent N+1 queries later)
