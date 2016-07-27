@@ -68,21 +68,22 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  # Limits the history to tasks due before the given task's due date
+  # Limits the history to tasks open before the given task's open date
   # Adds the given task to the history
   def history_for_task(task:, core_page_ids:, history:)
     history = history.dup
 
-    task_sort_array = [task.due_at, task.opens_at, task.created_at]
+    task_sort_array = [task.opens_at, task.due_at, task.created_at, task.id]
 
     history_indices = 0.upto(history.total_count)
     history_indices_to_keep = history_indices.select do |index|
-      ([history.due_ats[index], history.opens_ats[index], history.created_ats[index]] <=>
-      task_sort_array) == -1
+      ([history.opens_ats[index], history.due_ats[index],
+        history.created_ats[index], history.task_ids[index]] <=> task_sort_array) == -1
     end
 
     # Remove tasks due after the given task from the history
     history.total_count = history_indices_to_keep.size
+    history.task_ids = history.task_ids.values_at(*history_indices_to_keep)
     history.ecosystem_ids = history.ecosystem_ids.values_at(*history_indices_to_keep)
     history.core_page_ids = history.core_page_ids.values_at(*history_indices_to_keep)
     history.exercise_numbers = history.exercise_numbers.values_at(*history_indices_to_keep)
@@ -95,6 +96,7 @@ class Tasks::Assistants::GenericAssistant
     exercise_numbers = tasked_exercises.map{ |te| te.exercise.number }
 
     history.total_count += 1
+    history.task_ids.unshift task.id
     history.ecosystem_ids.unshift task_plan.ecosystem.id
     history.core_page_ids.unshift core_page_ids
     history.exercise_numbers.unshift exercise_numbers
