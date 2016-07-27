@@ -13,8 +13,9 @@ class Demo::Content < Demo::Base
   uses_routine CreatePeriod, as: :create_period
   uses_routine CourseMembership::UpdatePeriod, as: :update_period
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
-  uses_routine User::MakeAdministrator, as: :make_administrator
+  uses_routine User::SetAdministratorState, as: :set_administrator
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
+  uses_routine User::SetCustomerServiceState, as: :set_customer_service
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine UserIsCourseStudent, as: :is_student
@@ -25,12 +26,20 @@ class Demo::Content < Demo::Base
 
   def setup_staff_user_accounts
     admin_user = user_for_username('admin') || new_user(username: 'admin', name: people.admin)
-    run(:make_administrator, user: admin_user) unless admin_user.is_admin?
+    run(:set_administrator, user: admin_user, administrator: true)
+    run(:set_content_analyst, user: admin_user, content_analyst: true)
+    run(:set_customer_service, user: admin_user, customer_service: true)
     log("Admin user: #{admin_user.name}")
 
-    ca_user = user_for_username('content') || new_user(username: 'content', name: people.content)
+    ca_user = user_for_username('content') ||
+              new_user(username: 'content', name: people.content_analyst)
     run(:set_content_analyst, user: ca_user, content_analyst: true)
     log("Content Analyst user: #{ca_user.name}")
+
+    cs_user = user_for_username('customer') ||
+              new_user(username: 'customer', name: people.customer_service)
+    run(:set_customer_service, user: cs_user, customer_service: true)
+    log("Customer Service user: #{cs_user.name}")
 
     (0..99).to_a.each do |ii|
       username = "zz_#{ii.to_s.rjust(2,"0")}"

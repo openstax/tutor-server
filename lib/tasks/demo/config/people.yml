@@ -1,5 +1,7 @@
-content: Content Analyst
 admin: Administrator User
+content_analyst: Content Analyst
+customer_service: Customer Service
+
 teachers:
   cm: {name: Charles Morris, username: teacher01 }
   rb: {name: Redmond Blake,  username: teacher02 }
