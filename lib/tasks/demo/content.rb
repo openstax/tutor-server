@@ -2,7 +2,6 @@ require_relative 'base'
 
 ## Imports a book from CNX and creates a course with periods from it's data
 class Demo::Content < Demo::Base
-  POSSIBLE_CHARS = ('0'...'9').to_a+('A'..'Z').to_a
 
   lev_routine
 
@@ -71,9 +70,9 @@ class Demo::Content < Demo::Base
       student_info = people.students[initials]
       user = get_student_user(initials) ||
              new_user(username: student_info.username, name: student_info.name)
-      student_identifier = POSSIBLE_CHARS.shuffle.take(10).join()
+      student_identifier = SecureRandom.urlsafe_base64(10)
       log("    #{initials} #{student_info.username} (#{student_info.name})")
-      run(:add_student, period: period, user: user, student_identifier: "#{student_identifier}") \
+      run(:add_student, period: period, user: user, student_identifier: student_identifier) \
         unless run(:is_student, user: user, course: course,
                                 include_dropped: true).outputs.user_is_course_student
 
