@@ -47,7 +47,11 @@ module Salesforce
               "#{new_os_ancillary.errors.full_messages.join(', ')}"
       end
 
-      new_os_ancillary
+      # Values in the OSA that are derived from other places in SF, e.g. `TermYear`,
+      # cannot be set when creating the record above.  Instead of manually setting them
+      # here, just reload the object from SF so that we know any derived fields are
+      # populated.
+      new_os_ancillary.reload
     end
   end
 

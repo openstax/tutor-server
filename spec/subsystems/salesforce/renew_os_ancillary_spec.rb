@@ -58,6 +58,9 @@ RSpec.describe Salesforce::RenewOsAncillary do
 
     allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { true }
 
+    # to guarantee data pulled in by formula is populated...
+    expect_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:reload) { |instance| instance }
+
     returned = described_class.call(based_on: based_on, renew_for_term_year: "fake")
 
     expect(returned).to be_a Salesforce::Remote::OsAncillary
