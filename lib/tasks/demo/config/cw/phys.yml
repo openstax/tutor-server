@@ -184,3 +184,15 @@ assignments:
         opens_at: <%= standard_opens_at school_day_on_or_before 10.days.from_now %>
         due_at:   <%= standard_due_at   school_day_on_or_before 14.days.from_now %>
         students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: i, ra: 100}
+
+reading_processing_instructions:
+- css: .conceptual-questions, .problems-exercises, .check-understanding, [data-type="glossary"]
+  fragments: []
+- css: .phet-explorations-embedded
+  fragments:
+  - interactive
+  - exercise
+- css: .watch-physics
+  fragments:
+  - video
+  - exercise

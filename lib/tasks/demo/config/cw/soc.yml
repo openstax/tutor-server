@@ -22,3 +22,7 @@ auto_assign:
   - type: reading
     generate: 3
     steps: 10
+
+reading_processing_instructions:
+- css: .section-quiz, .short-answer, .further-research, [data-type="glossary"]
+  fragments: []
