@@ -80,6 +80,8 @@ module OpenStax::Biglearn::V1
       hash
     end
 
+    # This method returns completed tasked exercises grouped by their pool uuid
+    # for the array of pool_uuids and the array of roles given
     def completed_tasked_exercises_by(pool_uuids:, roles:)
       content_pools = Content::Models::Pool
         .where(uuid: pool_uuids)
@@ -88,40 +90,39 @@ module OpenStax::Biglearn::V1
       if content_pools.size < pool_uuids.size
         missing_uuids = pool_uuids - content_pools.map(&:uuid)
 
-        raise "Could not find content pools for uuids #{missing_uuids.join(', ')}"
+        raise "Could not find content pools for uuids: [#{missing_uuids.join(', ')}]"
       end
 
-      pool_uuids_by_exercise_id = {}
+      all_pool_exercise_ids = content_pools.flat_map(&:content_exercise_ids)
+      pool_exercises_by_id = Content::Models::Exercise.where(id: all_pool_exercise_ids)
+                                                      .select([:id, :number])
+                                                      .index_by(&:id)
+
+      pool_uuids_by_exercise_number = {}
       content_pools.each do |pool|
         exercise_ids = pool.content_exercise_ids
         exercise_ids.each do |exercise_id|
-          pool_uuids_by_exercise_id[exercise_id] = pool.uuid
+          exercise_number = pool_exercises_by_id[exercise_id].number
+          pool_uuids_by_exercise_number[exercise_number] = pool.uuid
         end
       end
 
-      all_pool_exercise_ids = pool_uuids_by_exercise_id.keys
-      all_pool_exercise_numbers = \
-        Content::Models::Exercise.where(id: all_pool_exercise_ids).pluck(:number)
-
-      tasked_exercises_by_exercise_id = Tasks::Models::TaskedExercise
-        .joins{[task_step.task.taskings, exercise]}
-        .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
-        .where{task_step.first_completed_at != nil}
-        .where{exercise.number.in all_pool_exercise_numbers}
-        .select{[Tasks::Models::TaskedExercise.arel_table[Arel.star], exercise.id.as(:exercise_id)]}
-        .group_by(&:exercise_id)
+      all_pool_exercise_numbers = pool_uuids_by_exercise_number.keys
 
       tasked_exercises_by_pool_uuid = {}
-      pool_uuids.each do |pool_uuid|
-        tasked_exercises_by_pool_uuid[pool_uuid] = []
-      end
+      pool_uuids.each{ |pool_uuid| tasked_exercises_by_pool_uuid[pool_uuid] = [] }
 
-      tasked_exercises_by_exercise_id.each do |exercise_id, tasked_exercises|
-        pool_uuid = pool_uuids_by_exercise_id[exercise_id]
-        tasked_exercises_by_pool_uuid[pool_uuid] += tasked_exercises
-      end
-
-      tasked_exercises_by_pool_uuid
+      tasked_exercises_by_pool_uuid.merge(
+        Tasks::Models::TaskedExercise
+          .joins{[task_step.task.taskings, exercise]}
+          .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
+          .where{task_step.first_completed_at != nil}
+          .where{exercise.number.in all_pool_exercise_numbers}
+          .select do
+            [Tasks::Models::TaskedExercise.arel_table[Arel.star],
+             exercise.number.as(:exercise_number)]
+          end.group_by{ |te| pool_uuids_by_exercise_number[te.exercise_number] }
+      )
     end
   end
 
