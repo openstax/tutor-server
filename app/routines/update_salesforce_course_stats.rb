@@ -33,15 +33,37 @@ class UpdateSalesforceCourseStats
   def initialize_organizer
     organizer = Organizer.new
 
+    # Detect SF objects that are attached to multiple courses; this is bad, but just
+    # notify devs instead of encountering exceptions when trying to set_course_id
+    # multiple times for the same SF object below
+
+    course_attached_records =
+      attached_records.select{|ar| ar.attached_to_class_name == "Entity::Course"}
+
+    salesforce_ids_to_multiple_courses_map =
+      course_attached_records.group_by{|car| car.salesforce_id}
+                             .select{|sf_id,cars| cars.length > 1}
+
+    salesforce_ids_with_multiple_courses = salesforce_ids_to_multiple_courses_map.keys
+
+    if salesforce_ids_with_multiple_courses.any?
+      notify("Some Salesforce records are attached to more than one course in Tutor!",
+             salesforce_ids: salesforce_ids_with_multiple_courses)
+    end
+
     # Loop through known AR/course/period relations and add them to the organizer
 
     missing_salesforce_record_ids = []
 
     attached_records.each do |ar|
+      # Record and skip missing SF objects
       if ar.salesforce_object.nil?
         missing_salesforce_record_ids.push(ar.salesforce_id)
         next
       end
+
+      # Skip cases where SF objects map to multiple courses (already recorded above)
+      next if salesforce_ids_to_multiple_courses_map[ar.salesforce_id].present?
 
       case ar.attached_to_class_name
       when "Entity::Course"

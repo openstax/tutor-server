@@ -17,6 +17,10 @@ module Salesforce
       @strategy.salesforce_object
     end
 
+    def salesforce_id
+      @strategy.salesforce_id
+    end
+
     def attached_to
       @strategy.attached_to
     end
