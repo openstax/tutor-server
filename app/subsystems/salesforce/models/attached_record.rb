@@ -1,6 +1,8 @@
 module Salesforce
   module Models
     class AttachedRecord < Tutor::SubSystems::BaseModel
+      # recovering SF linkage info is hard if not impossible, so soft delete
+      acts_as_paranoid
 
       MAX_IDS_PER_REQUEST = 500
 
