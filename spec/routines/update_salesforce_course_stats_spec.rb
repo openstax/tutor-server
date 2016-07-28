@@ -155,6 +155,17 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       described_class.call(write_stats: false)
     end
 
+    it "gracefully handles a bad term year in an SF object" do
+      existing_sf_object = Salesforce::Remote::OsAncillary.new(term_year: "fix formula 2016", id: 'foo')
+      allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
+
+      expect_any_instance_of(described_class)
+        .to receive(:notify)
+        .with(a_string_matching(/Error attaching.*ParseError.*fix formula/))
+
+      expect{described_class.call(write_stats: false)}.not_to raise_error
+    end
+
     it "makes a new SF object if no eligible ones available" do
       term_year = Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
       existing_sf_object = OpenStruct.new(term_year: term_year.to_s, id: 'foo')

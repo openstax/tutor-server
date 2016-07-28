@@ -54,6 +54,4 @@ module Salesforce
       new_os_ancillary.reload
     end
   end
-
-  class OsAncillaryRenewalError < StandardError; end
 end

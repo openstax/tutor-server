@@ -30,7 +30,9 @@ class Salesforce::Remote::TermYear
   end
 
   def self.from_string(string)
-    string.match(/20(\d\d) - (\d\d) (\w+)/)
+    string.match(/20(\d\d) - (\d\d) (\w+)/).tap do |match|
+      raise(ParseError, "Cannot parse '#{string}' as a TermYear") if match.nil?
+    end
 
     term = $3.downcase.to_sym
     start_year = "20#{$1}".to_i
@@ -68,5 +70,7 @@ class Salesforce::Remote::TermYear
   def dup
     self.class.new(start_year: start_year, term: term)
   end
+
+  class ParseError < StandardError; end
 
 end

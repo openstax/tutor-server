@@ -26,6 +26,12 @@ RSpec.describe Salesforce::Remote::TermYear do
         described_class.from_string("2015 - 17 Fall")
       }.to raise_error(StandardError)
     end
+
+    it "freaks out for bad formats" do
+      expect{
+        described_class.from_string("fix formula 2016")
+      }.to raise_error(described_class::ParseError)
+    end
   end
 
   context "#initialize" do
