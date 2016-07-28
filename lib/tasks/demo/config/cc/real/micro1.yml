@@ -1,6 +1,6 @@
 <%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
 
-course_name: Micro Economics with Concept Coach 1
+course_name: Microeconomics with Concept Coach 1
 salesforce_book_name: Micro Econ
 appearance_code: micro_economics
 cnx_book_id: 08df2bee-3db4-4243-bd76-ee032da173e8
