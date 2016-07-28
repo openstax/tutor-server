@@ -20,7 +20,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
     }'
   end
 
-  def initialize(task_plan:, roles:)
+  def initialize(task_plan:, individualized_tasking_plans:)
     super
 
     outputs = collect_snap_labs
@@ -29,7 +29,10 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
   end
 
   def build_tasks
-    roles.map{ build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id) }
+    individualized_tasking_plans.map do |tasking_plan|
+      build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id,
+                       individualized_tasking_plan: tasking_plan)
+    end
   end
 
   protected
@@ -52,8 +55,9 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
     }
   end
 
-  def build_extra_task(pages:, page_id_to_snap_lab_id:)
-    task = build_task(type: :extra, default_title: 'Extra Assignment')
+  def build_extra_task(pages:, page_id_to_snap_lab_id:, individualized_tasking_plan:)
+    task = build_task(type: :extra, default_title: 'Extra Assignment',
+                      individualized_tasking_plan: individualized_tasking_plan)
 
     reset_used_exercises
 

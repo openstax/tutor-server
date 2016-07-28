@@ -24,28 +24,30 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
     # students where the students have `deleted_at` set but the related enrollments
     # do not (from before when we were acts_as_paranoid everywhere).
 
-    role_ids = roles.map(&:id)
+    role_ids = individualized_tasking_plans.map(&:target_id)
     role_students = CourseMembership::Models::Student.with_deleted
                                                      .where(entity_role_id: role_ids)
                                                      .index_by(&:entity_role_id)
 
-    roles.map do |role|
-      student = role_students[role.id]
+    individualized_tasking_plans.map do |tasking_plan|
+      role_id = tasking_plan.target_id
+      student = role_students[role_id]
 
       if student.nil?
         raise StandardError, "External assignment taskees must all be students, " \
-                             "plan: #{task_plan.id}, bad role id: #{role.id}, all " \
+                             "plan: #{task_plan.id}, bad role id: #{role_id}, all " \
                              "role ids: #{role_ids.inspect}"
       end
 
-      build_external_task(role: role, student: student)
+      build_external_task(individualized_tasking_plan: tasking_plan, student: student)
     end
   end
 
   protected
 
-  def build_external_task(role:, student:)
-    task = build_task(type: :external, default_title: 'External Assignment')
+  def build_external_task(individualized_tasking_plan:, student:)
+    task = build_task(type: :external, default_title: 'External Assignment',
+                      individualized_tasking_plan: individualized_tasking_plan)
     step = Tasks::Models::TaskStep.new(task: task)
     step.tasked = tasked_external_url(
       task_step: step, student: student, url: task_plan.settings['external_url']

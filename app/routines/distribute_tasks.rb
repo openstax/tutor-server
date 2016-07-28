@@ -2,7 +2,7 @@ class DistributeTasks
 
   lev_routine
 
-  uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
+  uses_routine IndividualizeTaskingPlans, as: :individualize_tasking_plans
 
   protected
 
@@ -13,7 +13,7 @@ class DistributeTasks
       if task_plan.publish_last_requested_at.present? &&
          task_plan.publish_last_requested_at > publish_time
 
-    tasks = task_plan.tasks.preload(taskings: :role)
+    tasks = task_plan.tasks.preload(:taskings)
 
     # Delete pre-existing assignments only if
     # no assignments are open and protect_unopened_tasks is false
@@ -21,42 +21,25 @@ class DistributeTasks
       if !protect_unopened_tasks &&
          tasks.none?{ |task| task.past_open?(current_time: publish_time) }
 
-    tasked_roles = tasks.reject(&:destroyed?).flat_map{ |task| task.taskings.map(&:role) }
-
-    tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
-    untasked_tasking_plans = tasking_plans.reject do |tasking_plan|
-      tasked_roles.include? tasking_plan.target
+    tasked_role_ids = tasks.reject(&:destroyed?).flat_map do |task|
+      task.taskings.map(&:entity_role_id)
     end
 
-    # Exclude students that already had the assignment
-    untasked_roles = untasked_tasking_plans.map(&:target)
-    untasked_role_ids = untasked_roles.map(&:id)
-
-    untasked_role_students = CourseMembership::Models::Student
-      .where(entity_role_id: untasked_role_ids)
-      .preload(enrollments: :period)
-      .to_a.index_by(&:entity_role_id)
+    tasking_plans = run(:individualize_tasking_plans, task_plan).outputs.tasking_plans
+    untasked_tasking_plans = tasking_plans.reject do |tasking_plan|
+      tasked_role_ids.include? tasking_plan.target_id
+    end
 
     assistant = task_plan.assistant
 
     # Call the assistant code to create Tasks, then distribute them
-    tasks = assistant.build_tasks(task_plan: task_plan, roles: untasked_roles)
+    tasks = assistant.build_tasks(
+      task_plan: task_plan, individualized_tasking_plans: untasked_tasking_plans
+    )
 
     fatal_error(
       code: :empty_tasks, message: 'Tasks could not be published because some tasks were empty'
     ) if tasks.any?{ |task| !task.stepless? && task.task_steps.empty? }
-
-    tasks.each_with_index do |task, ii|
-      tasking_plan = untasked_tasking_plans[ii]
-      role = tasking_plan.target
-      student = untasked_role_students[role.id]
-      tasking = Tasks::Models::Tasking.new task: task, role: role, period: student.try(:period)
-      task.taskings << tasking
-      task.time_zone = tasking_plan.time_zone
-      task.opens_at = tasking_plan.opens_at
-      task.due_at = tasking_plan.due_at
-      task.feedback_at = task_plan.is_feedback_immediate ? nil : task.due_at
-    end
 
     save(tasks)
 

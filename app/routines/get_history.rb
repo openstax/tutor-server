@@ -11,7 +11,8 @@ class GetHistory
     all_history = Hashie::Mash.new
     roles.each do |role|
       all_history[role] = Hashie::Mash.new(
-        total_count: 0, ecosystem_ids: [], core_page_ids: [], exercise_numbers: []
+        total_count: 0, task_ids: [], ecosystem_ids: [], core_page_ids: [],
+        exercise_numbers: [], created_ats: [], opens_ats: [], due_ats: []
       )
     end
 
@@ -82,18 +83,20 @@ class GetHistory
     # http://stackoverflow.com/a/15190294
     # This logic works because we don't modify the tasks at all here
     (0..[task_count - TASK_BATCH_SIZE, 0].max).step(TASK_BATCH_SIZE) do |offset|
-      tasks = query.order{[due_at_ntz.desc, opens_at_ntz.desc,
-                           task_plan.created_at.desc, created_at.desc]}
+      tasks = query.order{[opens_at_ntz.desc, due_at_ntz.desc, created_at.desc, id.desc]}
                    .limit(TASK_BATCH_SIZE).offset(offset)
                    .select([Tasks::Models::Task.arel_table[Arel.star],
                             Tasks::Models::Tasking.arel_table[:entity_role_id]])
-                   .preload([:task_plan, :concept_coach_task, {tasked_exercises: :exercise}])
+                   .preload([:task_plan, :concept_coach_task,
+                             :time_zone, {tasked_exercises: :exercise}])
 
       tasks.each do |task|
         role = roles_by_id[task.entity_role_id]
         history = all_history[role]
 
         history.total_count += 1
+
+        history.task_ids << task.id
 
         history.ecosystem_ids << task.task_plan.try(:content_ecosystem_id)
 
@@ -111,6 +114,11 @@ class GetHistory
 
         # The exercise numbers include spaced practice/personalized exercises
         history.exercise_numbers << task.tasked_exercises.map{ |te| te.exercise.number }
+
+        # Store some useful dates
+        history.created_ats << task.created_at # Date task was assigned
+        history.opens_ats << task.opens_at
+        history.due_ats << task.due_at
       end
     end
 
