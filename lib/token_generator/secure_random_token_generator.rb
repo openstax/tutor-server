@@ -15,6 +15,7 @@ class SecureRandomTokenGenerator
   end
 
   private
+
   def run_hex
     strategy.hex(options[:length])
   end

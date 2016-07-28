@@ -1,8 +1,6 @@
 class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   acts_as_paranoid
 
-  unique_token :enrollment_code, mode: :random_number, length: 6
-
   wrapped_by CourseMembership::Strategies::Direct::Period
 
   belongs_to :course, subsystem: :entity
@@ -19,10 +17,12 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :taskings, subsystem: :tasks, dependent: :nullify
   has_many :tasks, through: :taskings
 
+  unique_token :enrollment_code, mode: :random_number, length: 6
+
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id,
                                                  conditions: -> { where(deleted_at: nil) } }
-  validates :enrollment_code, presence: true, uniqueness: true, format: {with: /[a-zA-Z0-9 ]+/}
+  validates :enrollment_code, format: {with: /[a-zA-Z0-9 ]+/}
 
   include DefaultTimeValidations
   validate :default_times_have_good_values

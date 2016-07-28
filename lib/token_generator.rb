@@ -1,13 +1,7 @@
 class TokenGenerator
   @@token_generators = {}
 
-  def self.generator_for(mode)
-    mode, options = if mode.respond_to?(:keys)
-                      [mode.keys.first, mode.values.first]
-                    else
-                      [mode, {}]
-                    end
-
+  def self.generator_for(mode, options)
     if generator = @@token_generators[mode]
       generator.new(mode, options)
     else

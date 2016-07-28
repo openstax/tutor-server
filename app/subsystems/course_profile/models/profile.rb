@@ -1,7 +1,5 @@
 class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   include DefaultTimeValidations
-  
-  unique_token :teach_token
 
   belongs_to_time_zone default: 'Central Time (US & Canada)', dependent: :destroy, autosave: true
 
@@ -9,6 +7,8 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   belongs_to :school, subsystem: :school_district
   belongs_to :course, subsystem: :entity, dependent: :delete
   belongs_to :offering, subsystem: :catalog
+
+  unique_token :teach_token
 
   validates :course, :time_zone, presence: true, uniqueness: true
   validates :name, presence: true

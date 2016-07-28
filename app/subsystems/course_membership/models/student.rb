@@ -6,12 +6,11 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   has_many :enrollments, -> { with_deleted }, dependent: :destroy
 
+  unique_token :deidentifier, mode: :hex, length: 4
+
   validates :course, presence: true
   validates :role, presence: true, uniqueness: true
-  validates :deidentifier, uniqueness: true
   validates :student_identifier, uniqueness: { scope: :course, allow_nil: true }
-
-  unique_token :deidentifier, mode: { hex: { length: 4 } }
 
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment

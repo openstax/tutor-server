@@ -11,7 +11,7 @@ module UniqueTokenable
     def unique_token(token_field, options = {})
       options[:mode] ||= :hex
       before_validation -> { generate_unique_token(token_field, options) }, prepend: true
-      validates token_field, uniqueness: true
+      validates token_field, presence: true, uniqueness: true
     end
   end
 
@@ -19,11 +19,11 @@ module UniqueTokenable
   def generate_unique_token(field, options)
     return unless send(field).blank?
 
-    generator = TokenGenerator.generator_for(options[:mode])
+    generator = TokenGenerator.generator_for(options[:mode], options.except(:mode))
 
     begin
       self[field] = generator.run
-    end while self.class.exists?(field => self[field])
+    end while self.class.unscoped.exists?(field => self[field])
   end
 end
 
