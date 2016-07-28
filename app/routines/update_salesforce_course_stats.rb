@@ -95,7 +95,7 @@ class UpdateSalesforceCourseStats
 
         if course_sf_objects.none?
           notify("No Salesforce object available for period #{period.id} stats reporting",
-                 period: period.id)
+                 period: period.id, course: course.id)
           next
         end
 
@@ -117,7 +117,7 @@ class UpdateSalesforceCourseStats
 
         if eligible_sf_objects.many?
           notify("Multiple Salesforce records are eligible for to period #{period.id} stats reporting",
-                 period: period.id, eligible_sf_objects: eligible_sf_objects.map(&:id))
+                 period: period.id, course: course.id, eligible_sf_objects: eligible_sf_objects.map(&:id))
           next
         end
 
@@ -145,9 +145,11 @@ class UpdateSalesforceCourseStats
         end
 
       rescue Salesforce::OsAncillaryRenewalError => e
-        notify("Salesforce record renewal error for period #{period.id}: #{e.message}")
+        notify("Salesforce record renewal error for period #{period.id} " \
+               "of course #{course.id}: #{e.message}")
       rescue StandardError => e
-        notify("Error attaching Salesforce-orphaned period #{period.id}: #{e.class.name} - #{e.message}")
+        notify("Error attaching Salesforce-orphaned period #{period.id} " \
+               "of course #{course.id}: #{e.class.name} - #{e.message}")
       end
     end
   end
