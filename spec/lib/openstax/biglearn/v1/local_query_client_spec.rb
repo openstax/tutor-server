@@ -98,27 +98,28 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
       @all_right_role = Entity::Role.create!
       @passing_role = Entity::Role.create!
 
-      exercises = 4.times.map { FactoryGirl.create(:content_exercise) }
-      @te_ids = []
+      @exercises = 4.times.map { FactoryGirl.create(:content_exercise) }
 
-      {
+      @role_map = {
         @all_wrong_role => [0, 0, 0, 0],
         @all_right_role => [1, 1, 1, 1],
         @passing_role   => [1, 1, 1, 0]
-      }.each do |role, correctness|
-        exercises.each_with_index do |exercise, ii|
+      }
+
+      @te_ids = @role_map.flat_map do |role, correctness|
+        @exercises.each_with_index.map do |exercise, ii|
           te = FactoryGirl.create(:tasks_tasked_exercise,
                                   :with_tasking, tasked_to: role,
                                   free_response: '.',
                                   exercise: exercise)
-          @te_ids.push(te.id)
           correctness[ii] == 1 ? te.make_correct! : te.make_incorrect!
           te.task_step.complete.save!
+          te.id
         end
       end
 
-      @first_two_pool = new_pool("first_two", exercises, [0,1])
-      @all_pool = new_pool("all", exercises, [0,1,2,3])
+      @first_two_pool = new_pool("first_two", @exercises, [0,1])
+      @all_pool = new_pool("all", @exercises, [0,1,2,3])
     end
 
     it "gives back a hash with one entry per pool" do
@@ -165,6 +166,41 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
           roles: [@all_right_role, @passing_role]
         )[@first_two_pool.uuid].map(&:id)
       ).to contain_exactly(*@te_ids[4..5], *@te_ids[8..9])
+    end
+
+    it "filters to the right tasked exercises even with old and new exercises" do
+      new_exercises = @exercises.map do |exercise|
+        FactoryGirl.create(:content_exercise, number: exercise.number)
+      end
+
+      new_te_ids = @role_map.flat_map do |role, correctness|
+        new_exercises.each_with_index.map do |exercise, ii|
+          te = FactoryGirl.create(:tasks_tasked_exercise,
+                                  :with_tasking, tasked_to: role,
+                                  free_response: '.',
+                                  exercise: exercise)
+          correctness[ii] == 1 ? te.make_correct! : te.make_incorrect!
+          te.task_step.complete.save!
+          te.id
+        end
+      end
+
+      new_first_two_pool = new_pool("new_first_two", new_exercises, [0,1])
+      new_all_pool = new_pool("new_all", new_exercises, [0,1,2,3])
+
+      expect(
+        client.completed_tasked_exercises_by(
+          pool_uuids: [new_all_pool.uuid],
+          roles: [@all_wrong_role, @all_right_role, @passing_role]
+        )[new_all_pool.uuid].map(&:id)
+      ).to contain_exactly(*@te_ids, *new_te_ids)
+
+      expect(
+        client.completed_tasked_exercises_by(
+          pool_uuids: [new_first_two_pool.uuid],
+          roles: [@all_right_role, @passing_role]
+        )[new_first_two_pool.uuid].map(&:id)
+      ).to contain_exactly(*@te_ids[4..5], *@te_ids[8..9], *new_te_ids[4..5], *new_te_ids[8..9])
     end
   end
 
