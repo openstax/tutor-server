@@ -18,6 +18,7 @@
 
 <%= form_tag(url, method: method, id: 'assign-teachers-form') do |f| %>
   <div class="form-group">
-    <%= text_field_tag :course_teacher, nil, class: 'form-control', placeholder: 'Start typing to search for a user...' %>
+    <%= text_field_tag :course_teacher, nil, class: 'form-control',
+                                             placeholder: 'Start typing to search for a user...' %>
   </div>
 <% end %>

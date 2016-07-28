@@ -6,12 +6,10 @@
     <%= f.text_field :name, class: 'form-control' %>
   </div>
 
-  <% unless @period.nil? # new record %>
-    <div class="form-group">
-      <%= f.label :enrollment_code %>
-      <%= f.text_field :enrollment_code, class: 'form-control' %>
-    </div>
-  <% end %>
+  <div class="form-group">
+    <%= f.label :enrollment_code %>
+    <%= f.text_field :enrollment_code, class: 'form-control', placeholder: 'Random' %>
+  </div>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>
 <% end %>

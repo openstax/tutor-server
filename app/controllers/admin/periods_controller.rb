@@ -7,24 +7,32 @@ class Admin::PeriodsController < Admin::BaseController
   end
 
   def create
-    period = CreatePeriod[course: @course, name: params[:period][:name]]
-    flash[:notice] = "Period \"#{period.name}\" created."
-    redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
+    result = CreatePeriod.call(course: @course,
+                               name: params[:period][:name],
+                               enrollment_code: params[:period][:enrollment_code])
+    if result.errors.any?
+      flash[:error] = result.errors.map do |err|
+        "#{err.data[:attribute].to_s.humanize} #{err.message}"
+      end
+      redirect_to new_admin_course_period_path(@course)
+    else
+      flash[:notice] = "Period \"#{result.outputs.period.name}\" created."
+      redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
+    end
   end
 
   def edit
   end
 
   def update
-    unless params[:period][:enrollment_code].present?
-      flash[:error] = 'Enrollment code required.'
+    if @period.update_attributes(name: params[:period][:name],
+                                 enrollment_code: params[:period][:enrollment_code])
+      flash[:notice] = 'Period updated.'
+      redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
+    else
+      flash[:alert] = @period.errors.full_messages
       redirect_to edit_admin_period_path(@period.id)
-      return
     end
-    @period.update_attributes(name: params[:period][:name],
-                              enrollment_code: params[:period][:enrollment_code])
-    flash[:notice] = 'Period updated.'
-    redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end
 
   def destroy

@@ -15,6 +15,7 @@ $(document).ready(function() {
 $(document).ready(function() {
   //=========== Course teacher auto complete ==============//
   $('#course_teacher').autocomplete({
+    autoFocus: true,
     minLength: 2,
     select: function(event_, ui) {
       $('#course_teacher').val(ui.item.label);
