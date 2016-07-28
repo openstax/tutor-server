@@ -187,5 +187,15 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response.body_as_hash[:errors].first[:code]).to eq 'period_is_not_deleted'
       expect(period.to_model.reload).not_to be_deleted
     end
+
+    it 'returns a proper error message if there is a name conflict' do
+      conflicting_period = CreatePeriod[course: course, name: period.name]
+
+      api_put :restore, teacher_token, parameters: { id: period.id }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq 'name_has_already_been_taken'
+      expect(period.to_model.reload).to be_deleted
+    end
   end
 end

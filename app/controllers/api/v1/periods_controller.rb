@@ -69,13 +69,17 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     Must be a course teacher.
 
     Possible error code: period_is_not_deleted
+                         name_has_already_been_taken
 
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def restore
+    period_model = @period.to_model
+    return render_api_errors(period_model.errors) unless period_model.valid?
+
     # Paranoia restore triggers .touch several times, so delay_touching is useful here
     ActiveRecord::Base.delay_touching do
-      standard_restore(@period.to_model, Api::V1::PeriodRepresenter)
+      standard_restore(period_model, Api::V1::PeriodRepresenter)
     end
   end
 
