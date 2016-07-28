@@ -2,7 +2,7 @@
 # The fixture at spec/fixtures/demo/physics.yml must also be updated
 <%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
 
-course_name: Introduction to Sociology 2e with Courseware
+course_name: Introduction to Sociology
 salesforce_book_name: Sociology w Courseware
 appearance_code: intro_sociology
 cnx_book_id: 02040312-72c8-441e-a685-20e9333f3e1d

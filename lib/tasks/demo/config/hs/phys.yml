@@ -1,8 +1,8 @@
 <%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
 
-course_name: HS Physics
+course_name: High School Physics
 salesforce_book_name: HS Physics
-appearance_code: physics
+appearance_code: hs_physics
 cnx_book_id: 334f8b61-30eb-4475-8e05-5260a4866b4b
 
 periods:

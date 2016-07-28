@@ -2,8 +2,9 @@
 
 course_name: Biology with Concept Coach
 salesforce_book_name: Biology
-appearance_code: biology
+appearance_code: college_biology
 cnx_book_id: 3402dc53-113d-45f3-954e-8d2ad1e73659
 
 teachers:
+  - cm
   - ct

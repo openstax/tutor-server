@@ -28,3 +28,15 @@ Settings::Redis.store = Redis::Store.new(
 )
 
 
+Settings::Db.store.defaults[:course_appearance_codes] = {
+    hs_physics:           'Physics',
+    ap_biology:           'AP Biology',
+    principles_economics: 'Principles of Economics',
+    macro_economics:      'Macro Economics',
+    college_physics:      'College Physics',
+    micro_economics:      'Micro Economics',
+    concepts_biology:     'Concepts of Biology',
+    college_biology:      'College Biology',
+    intro_sociology:      'Intro to Sociology',
+    anatomy_physiology:   'Anatomy and Physiology'
+}

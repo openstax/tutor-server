@@ -45,4 +45,6 @@ en:
       default_due_time:
         name: 'Default task due time'
         help_block: 'In the format HH:MM'
-
+      course_appearance_codes:
+        name: 'Valid Course Appearance Codes'
+        help_blocK: 'As a Ruby Hash'
