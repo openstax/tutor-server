@@ -54,7 +54,8 @@ class ImportSalesforceCourses
   def candidate_class_size_records
     search_criteria = {
       concept_coach_approved: true,
-      course_id: nil
+      course_id: nil,
+      term_year: candidate_term_years_array
     }
 
     search_criteria[:school] = 'Denver University' if !include_real_salesforce_data?
@@ -65,12 +66,23 @@ class ImportSalesforceCourses
   def candidate_os_ancillary_records
     search_criteria = {
       status: Salesforce::Remote::OsAncillary::STATUS_APPROVED,
-      course_id: nil
+      course_id: nil,
+      term_year: candidate_term_years_array
     }
 
     search_criteria[:school] = 'Denver University' if !include_real_salesforce_data?
 
     Salesforce::Remote::OsAncillary.where(search_criteria).to_a
+  end
+
+  def candidate_term_years_array
+    array = (Settings::Salesforce.term_years_to_import || '').split(',').map(&:strip)
+
+    # An empty array means for us to not import anything (we are going to explicitly
+    # opt in to various TermYears).  Salesforce explodes for an empty array, and an
+    # array with a blank entry could catch SF objects that don't have a TermYear
+    # populated (not what we want); so use a bogus string to exclude any matches
+    array.empty? ? ['exclude all'] : array
   end
 
   def log(&block)

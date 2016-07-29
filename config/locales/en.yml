@@ -31,6 +31,9 @@ en:
       import_real_salesforce_courses:
         name: 'Import real Salesforce courses?'
         help_block: 'Unchecked: limits to Denver University'
+      term_years_to_import:
+        name: 'Term years to import'
+        help_block: 'Comma-separated list of Salesforce-formatted term years, e.g. "2015 - 16 Spring, 2016 - 17 Fall", blank to disable import'
       default_open_time:
         name: 'Default task open time'
         help_block: 'In the format HH:MM'

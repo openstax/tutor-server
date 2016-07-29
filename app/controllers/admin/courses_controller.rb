@@ -56,6 +56,14 @@ class Admin::CoursesController < Admin::BaseController
                 })
   end
 
+  def restore_salesforce
+    Salesforce::Models::AttachedRecord
+      .with_deleted
+      .find(params[:restore_salesforce][:attached_record_id])
+      .restore
+    redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")
+  end
+
   def edit
     get_course_details
   end

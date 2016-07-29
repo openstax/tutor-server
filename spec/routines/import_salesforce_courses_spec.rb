@@ -5,6 +5,9 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   let(:osa_class) { Salesforce::Remote::OsAncillary }
   let(:cs_class)  { Salesforce::Remote::ClassSize }
 
+  let(:target_term_year) { '2015 - 16 Spring'}
+  before(:each) { allow(Settings::Salesforce).to receive(:term_years_to_import) { target_term_year } }
+
   it 'restricts to Denver University when asked to not run on real data' do
     allow(osa_class).to receive(:where).and_return([])
     allow(cs_class).to receive(:where).and_return([])
@@ -12,13 +15,15 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     expect(osa_class).to receive(:where).with(
       status: "Approved",
       course_id: nil,
-      school: 'Denver University'
+      school: 'Denver University',
+      term_year: [target_term_year]
     )
 
     expect(cs_class).to receive(:where).with(
       concept_coach_approved: true,
       course_id: nil,
-      school: 'Denver University'
+      school: 'Denver University',
+      term_year: [target_term_year]
     )
 
     ImportSalesforceCourses.call(include_real_salesforce_data: false)
@@ -34,13 +39,15 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     expect(osa_class).to receive(:where).with(
       status: "Approved",
       course_id: nil,
-      school: 'Denver University'
+      school: 'Denver University',
+      term_year: [target_term_year]
     )
 
     expect(cs_class).to receive(:where).with(
       concept_coach_approved: true,
       course_id: nil,
-      school: 'Denver University'
+      school: 'Denver University',
+      term_year: [target_term_year]
     )
 
     ImportSalesforceCourses.call(include_real_salesforce_data: true)
@@ -55,12 +62,14 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     expect(osa_class).to receive(:where).with(
       status: "Approved",
-      course_id: nil
+      course_id: nil,
+      term_year: [target_term_year]
     )
 
     expect(cs_class).to receive(:where).with(
       concept_coach_approved: true,
-      course_id: nil
+      course_id: nil,
+      term_year: [target_term_year]
     )
 
     ImportSalesforceCourses.call(include_real_salesforce_data: true)
@@ -152,6 +161,18 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     expect {
       ImportSalesforceCourses.call rescue NoMethodError
     }.to change{Entity::Course.count}.by(0)
+  end
+
+  context '#candidate_term_years_array' do
+    it 'handles blankness' do
+      allow(Settings::Salesforce).to receive(:term_years_to_import) { '' }
+      expect(described_class.new.candidate_term_years_array).to eq ['exclude all']
+    end
+
+    it 'handles multiple' do
+      allow(Settings::Salesforce).to receive(:term_years_to_import) { ' 2015 - 16 Spring, 2016 - 17 Fall ' }
+      expect(described_class.new.candidate_term_years_array).to eq ['2015 - 16 Spring', '2016 - 17 Fall']
+    end
   end
 
   def disable_sfdc_client

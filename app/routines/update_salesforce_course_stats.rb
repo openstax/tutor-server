@@ -33,15 +33,37 @@ class UpdateSalesforceCourseStats
   def initialize_organizer
     organizer = Organizer.new
 
+    # Detect SF objects that are attached to multiple courses; this is bad, but just
+    # notify devs instead of encountering exceptions when trying to set_course_id
+    # multiple times for the same SF object below
+
+    course_attached_records =
+      attached_records.select{|ar| ar.attached_to_class_name == "Entity::Course"}
+
+    salesforce_ids_to_multiple_courses_map =
+      course_attached_records.group_by{|car| car.salesforce_id}
+                             .select{|sf_id,cars| cars.length > 1}
+
+    salesforce_ids_with_multiple_courses = salesforce_ids_to_multiple_courses_map.keys
+
+    if salesforce_ids_with_multiple_courses.any?
+      notify("Some Salesforce records are attached to more than one course in Tutor!",
+             salesforce_ids: salesforce_ids_with_multiple_courses)
+    end
+
     # Loop through known AR/course/period relations and add them to the organizer
 
     missing_salesforce_record_ids = []
 
     attached_records.each do |ar|
+      # Record and skip missing SF objects
       if ar.salesforce_object.nil?
         missing_salesforce_record_ids.push(ar.salesforce_id)
         next
       end
+
+      # Skip cases where SF objects map to multiple courses (already recorded above)
+      next if salesforce_ids_to_multiple_courses_map[ar.salesforce_id].present?
 
       case ar.attached_to_class_name
       when "Entity::Course"
@@ -86,67 +108,71 @@ class UpdateSalesforceCourseStats
 
     organizer.orphaned_periods.each do |period|
 
-      # Figure out what SF objects we already have for this period's course
+      begin # handle exceptions from any period so we can continue with others
 
-      course = organizer.get_course(period.entity_course_id)
-      course_sf_objects = organizer.get_sf_objects(course_id: course.id)
+        # Figure out what SF objects we already have for this period's course
 
-      if course_sf_objects.none?
-        notify("No Salesforce object available for period #{period.id} stats reporting",
-               period: period.id)
-        next
-      end
+        course = organizer.get_course(period.entity_course_id)
+        course_sf_objects = organizer.get_sf_objects(course_id: course.id)
 
-      # Narrow down those SF objects to those that work for this period, reusing if
-      # there is one or making if there aren't any.
-      #
-      # Note that this code is where we have a HACK to keep stats from different
-      # semesters in different SF objects while allowing teachers to reuse one
-      # Course from semester to semester.  We guess which TermYear periods belong
-      # to based on their creation date (assuming that periods created towards the end
-      # of the semester are intended to be used in the following semester).  Hopefully
-      # in the future some of this code will go away or become unused when we prohibit
-      # teachers from reusing Courses across semesters.
+        if course_sf_objects.none?
+          notify("No Salesforce object available for period #{period.id} stats reporting",
+                 period: period.id, course: course.id)
+          next
+        end
 
-      target_term_year = Salesforce::Remote::TermYear.guess_from_created_at(period.created_at)
-      eligible_sf_objects = course_sf_objects.select do |sf|
-        sf.term_year_object == target_term_year
-      end
+        # Narrow down those SF objects to those that work for this period, reusing if
+        # there is one or making if there aren't any.
+        #
+        # Note that this code is where we have a HACK to keep stats from different
+        # semesters in different SF objects while allowing teachers to reuse one
+        # Course from semester to semester.  We guess which TermYear periods belong
+        # to based on their creation date (assuming that periods created towards the end
+        # of the semester are intended to be used in the following semester).  Hopefully
+        # in the future some of this code will go away or become unused when we prohibit
+        # teachers from reusing Courses across semesters.
 
-      if eligible_sf_objects.many?
-        notify("Multiple Salesforce records are eligible for to period #{period.id} stats reporting",
-               period: period.id, eligible_sf_objects: eligible_sf_objects.map(&:id))
-        next
-      end
+        target_term_year = Salesforce::Remote::TermYear.guess_from_created_at(period.created_at)
+        eligible_sf_objects = course_sf_objects.select do |sf|
+          sf.term_year_object == target_term_year
+        end
 
-      sf_object_to_use = nil
+        if eligible_sf_objects.many?
+          notify("Multiple Salesforce records are eligible for to period #{period.id} stats reporting",
+                 period: period.id, course: course.id, eligible_sf_objects: eligible_sf_objects.map(&:id))
+          next
+        end
 
-      if eligible_sf_objects.one?
-        # there is one, just use it
-        sf_object_to_use = eligible_sf_objects.first
-      else
-        # no eligible objects, make a new one based on ANY existing SF obj for course
-        begin
+        sf_object_to_use = nil
+
+        if eligible_sf_objects.one?
+          # there is one, just use it
+          sf_object_to_use = eligible_sf_objects.first
+        else
+          # no eligible objects, make a new one based on ANY existing SF obj for course
           sf_object_to_use =
             Salesforce::RenewOsAncillary.call(based_on: course_sf_objects.first,
                                               renew_for_term_year: target_term_year)
-        rescue Salesforce::OsAncillaryRenewalError => e
-          notify("Salesforce record renewal error for period #{period.id}: #{e.message}")
-          next
         end
+
+        # Attach the SF object to the period and course and remember these
+        # attachments in the organizer
+
+        Salesforce::AttachRecord[record: sf_object_to_use, to: period]
+        organizer.add_period_id(salesforce_object: sf_object_to_use, period_id: period.id)
+
+        if !course_sf_objects.map(&:id).include?(sf_object_to_use.id)
+          Salesforce::AttachRecord[record: sf_object_to_use, to: course]
+          organizer.set_course_id(salesforce_object: sf_object_to_use, course_id: course.id)
+        end
+
+      rescue Salesforce::OsAncillaryRenewalError => e
+        notify("Salesforce record renewal error for period #{period.id} " \
+               "of course #{course.id}: #{e.message}")
+      rescue StandardError => e
+        notify("Error attaching Salesforce-orphaned period #{period.id} " \
+               "of course #{course.id}: #{e.class.name} - #{e.message}")
       end
-
-      # Attach the SF object to the period and course and remember these
-      # attachments in the organizer
-
-      Salesforce::AttachRecord[record: sf_object_to_use, to: period]
-      organizer.add_period_id(salesforce_object: sf_object_to_use, period_id: period.id)
-
-      if !course_sf_objects.map(&:id).include?(sf_object_to_use.id)
-        Salesforce::AttachRecord[record: sf_object_to_use, to: course]
-        organizer.set_course_id(salesforce_object: sf_object_to_use, course_id: course.id)
-      end
-
     end
   end
 

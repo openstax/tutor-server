@@ -102,6 +102,39 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
         described_class.new.initialize_organizer
       end
     end
+
+    context "when an SF object is linked to more than one course" do
+      before(:each) do
+        common_sf_object = OpenStruct.new(id: "blah")
+        allow_any_instance_of(UpdateSalesforceCourseStats).to receive(:attached_records) {
+          [OpenStruct.new(attached_to_class_name: "Entity::Course",
+                          attached_to_id: "foo",
+                          salesforce_id: "blah",
+                          salesforce_object: common_sf_object),
+           OpenStruct.new(attached_to_class_name: "Entity::Course",
+                          attached_to_id: "jimbo",
+                          salesforce_id: "blah",
+                          salesforce_object: common_sf_object),
+           OpenStruct.new(attached_to_class_name: "CourseMembership::Models::Period",
+                          attached_to_id: "lalala",
+                          salesforce_id: "blah",
+                          salesforce_object: common_sf_object)]
+        }
+      end
+
+      it "notifies and does not explode" do
+        expect_any_instance_of(described_class)
+          .to receive(:notify)
+          .with(a_string_matching(/to more than one course/), salesforce_ids: ["blah"])
+        expect{described_class.new.initialize_organizer}.not_to raise_error
+      end
+
+      it "excludes all related ARs" do
+        expect_any_instance_of(UpdateSalesforceCourseStats::Organizer).not_to receive(:set_course_id)
+        expect_any_instance_of(UpdateSalesforceCourseStats::Organizer).not_to receive(:add_period_id)
+        described_class.new.initialize_organizer
+      end
+    end
   end
 
   context "#attach_orphaned_periods_to_sf_objects" do
@@ -153,6 +186,17 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       expect(@organizer).to receive(:add_period_id)
 
       described_class.call(write_stats: false)
+    end
+
+    it "gracefully handles a bad term year in an SF object" do
+      existing_sf_object = Salesforce::Remote::OsAncillary.new(term_year: "fix formula 2016", id: 'foo')
+      allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
+
+      expect_any_instance_of(described_class)
+        .to receive(:notify)
+        .with(a_string_matching(/Error attaching.*ParseError.*fix formula/))
+
+      expect{described_class.call(write_stats: false)}.not_to raise_error
     end
 
     it "makes a new SF object if no eligible ones available" do

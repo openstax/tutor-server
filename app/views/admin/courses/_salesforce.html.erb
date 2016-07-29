@@ -16,12 +16,24 @@
 <%
   find_id = ->(tutor_record) {
     Salesforce::Models::AttachedRecord
+      .with_deleted
       .where(tutor_gid: tutor_record.to_global_id.to_s)
       .map(&:salesforce_id)
   }
 %>
 
-<% course_sf_object_ids = find_id.call(@course) %>
+<style type="text/css">
+  .deleted {
+    color: #aaa;
+    text-decoration: line-through;
+  }
+</style>
+
+<% course_ars = Salesforce::Models::AttachedRecord
+                  .with_deleted
+                  .where(tutor_gid: @course.to_global_id.to_s) %>
+
+<% available_course_sf_object_ids = course_ars.select{|car| !car.deleted? }.map(&:salesforce_id) %>
 
 <h4 style="margin-top:30px">Course Info</h4>
 
@@ -34,20 +46,32 @@
     </tr>
   </thead>
   <tbody>
-    <% course_sf_object_ids.each do |course_sf_object_id| %>
+    <% course_ars.each do |course_ar| %>
     <tr>
       <td></td>
-      <td><%= sf_linker.call(course_sf_object_id) %></td>
+      <td><%= sf_linker.call(course_ar.salesforce_id) %></td>
       <td>
-          <%= lev_form_for :remove_salesforce, url: remove_salesforce_admin_course_path(@course),
-                           method: :delete, html: {class: 'form-inline'} do |f| %>
-            <%= course_sf_object_id %>&nbsp;&nbsp;
-            <%= f.hidden_field :salesforce_id, value: course_sf_object_id %>
-            <%= f.submit 'Remove',
-                         class: 'btn btn-primary btn-xs',
-                         data: { confirm: 'Are you sure?  This will clear this record\'s stats, ' \
-                                          'and unlink any periods that are connected to it.',
-                                 disable_with: "Removing...".html_safe } %>
+          <span class="<%= 'deleted' if course_ar.deleted? %>"><%= course_ar.salesforce_id %></span>&nbsp;&nbsp;
+          <% if !course_ar.deleted? %>
+            <%= lev_form_for :remove_salesforce, url: remove_salesforce_admin_course_path(@course),
+                             method: :delete, html: {class: 'form-inline', style: 'display: inline'} do |f| %>
+
+              <%= f.hidden_field :salesforce_id, value: course_ar.salesforce_id %>
+              <%= f.submit 'Remove',
+                           class: 'btn btn-primary btn-xs',
+                           data: { confirm: 'Are you sure?  This will clear this record\'s stats, ' \
+                                            'and unlink any periods that are connected to it.',
+                                   disable_with: "Removing...".html_safe } %>
+            <% end %>
+          <% else %>
+            <%= lev_form_for :restore_salesforce, url: restore_salesforce_admin_course_path(@course),
+                             method: :put, html: {class: 'form-inline', style: 'display:inline'} do |f| %>
+
+              <%= f.hidden_field :attached_record_id, value: course_ar.id %>
+              <%= f.submit 'Restore',
+                           class: 'btn btn-primary btn-xs',
+                           data: { disable_with: "Restoring...".html_safe } %>
+            <% end %>
           <% end %>
       </td>
     </tr>
@@ -68,26 +92,36 @@
 
 <h4>Period Info</h4>
 
+<small>Grayed out means the period has been deleted / archived.</small>
+
 <table class='table table-striped'>
   <thead>
     <tr>
       <th style="width: 150px">Period</th>
+      <th>Created At</th>
+      <th>Deleted At</th>
       <th style="width: 300px">Link to SF</th>
       <th>Salesforce ID</th>
     </tr>
   </thead>
   <tbody>
-  <% @periods.each_with_index do |period,pp| %>
-    <% period_sf_object_id = find_id.call(period) %>
+  <% @periods.with_deleted.each_with_index do |period,pp| %>
+    <% period_sf_object_id = Salesforce::Models::AttachedRecord
+                               .where(tutor_gid: period.to_global_id.to_s).first.try(:salesforce_id) %>
     <tr>
-      <td><%= period.name %></td>
+      <td><span class="<%= 'deleted' if period.deleted? %>"><%= period.name %><span></td>
+      <td><small><%= period.created_at %></small></td>
+      <td><small><%= period.deleted_at %></small></td>
       <td><%= sf_linker.call(period_sf_object_id) %></td>
       <td>
           <%= lev_form_for :change_salesforce, url: change_salesforce_admin_period_path(period),
                            method: :put, html: {class: 'form-inline'} do |f| %>
 
             <%= f.select :salesforce_id,
-                         options_for_select(course_sf_object_ids.map{|csoid| [csoid, csoid]}, period_sf_object_id),
+                         options_for_select(
+                           available_course_sf_object_ids.map{|csoid| [csoid, csoid]},
+                           period_sf_object_id
+                         ),
                          { include_blank: true },
                          class: 'form-control',
                          id: "period_#{pp}_sf_select",

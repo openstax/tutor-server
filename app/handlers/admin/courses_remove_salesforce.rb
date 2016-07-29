@@ -29,18 +29,25 @@ class Admin::CoursesRemoveSalesforce
 
     fatal_error(code: :no_salesforce_matches_for_this_course) if existing_ars.none?
 
-    # All have the same SF object, so just pull from one
-    sf_object = existing_ars.first.salesforce_object
-
     # Get rid of all the attached records
     existing_ars.each do |existing_ar|
-      existing_ar.destroy
+      case existing_ar.attached_to_class_name
+      when 'Entity::Course'
+        existing_ar.destroy
+      when 'CourseMembership::Models::Period'
+        existing_ar.really_destroy! # only need soft delete on course ARs
+      end
       transfer_errors_from(existing_ar, {type: :verbatim}, true)
     end
 
-    # If that all went well, zero the stats on the SF object
-    sf_object.reset_stats
-    fatal_error(code: :could_not_clear_salesforce_stats) if !sf_object.save
+    # All have the same SF object, so just pull from one
+    sf_object = existing_ars.first.salesforce_object
+
+    # If that all went well, and SF object exists, zero the stats on the it
+    if sf_object.present?
+      sf_object.reset_stats
+      fatal_error(code: :could_not_clear_salesforce_stats) if !sf_object.save
+    end
   end
 
 end
