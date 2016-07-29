@@ -31,7 +31,12 @@ class Admin::CoursesRemoveSalesforce
 
     # Get rid of all the attached records
     existing_ars.each do |existing_ar|
-      existing_ar.destroy
+      case existing_ar.attached_to_class_name
+      when 'Entity::Course'
+        existing_ar.destroy
+      when 'CourseMembership::Models::Period'
+        existing_ar.really_destroy! # only need soft delete on course ARs
+      end
       transfer_errors_from(existing_ar, {type: :verbatim}, true)
     end
 

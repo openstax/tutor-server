@@ -164,6 +164,7 @@ Rails.application.routes.draw do
         post :teachers, controller: :teachers
         post :add_salesforce
         delete :remove_salesforce
+        put :restore_salesforce
       end
 
       post :bulk_update, on: :collection

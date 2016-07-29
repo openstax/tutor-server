@@ -53,6 +53,11 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
     expect(Salesforce::Models::AttachedRecord.all.map(&:tutor_gid))
       .to contain_exactly(course.to_global_id.to_s, period_2.to_global_id.to_s)
 
+    # Course AR should be soft deleted, period AR should be really deleted
+    expect(Salesforce::Models::AttachedRecord.with_deleted.all.map(&:tutor_gid))
+      .to contain_exactly(course.to_global_id.to_s, course.to_global_id.to_s,
+                          period_2.to_global_id.to_s)
+
     expect(fake_sf_object_1.num_students).to eq 0
     expect(fake_sf_object_2.num_students).to eq 38
   end
