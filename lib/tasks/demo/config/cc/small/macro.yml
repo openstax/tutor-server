@@ -1,6 +1,6 @@
 <%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
 
-course_name: Macro Economics with Concept Coach
+course_name: Macroeconomics with Concept Coach
 salesforce_book_name: Macro Econ
 appearance_code: macro_economics
 cnx_book_id: 947a1417-5fd5-4b3c-ac8f-bd9d1aedf2d2

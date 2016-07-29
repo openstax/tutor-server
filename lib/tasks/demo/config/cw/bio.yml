@@ -129,3 +129,12 @@ assignments:
           ms: i
           rb: 80
           wh: 100
+
+reading_processing_instructions:
+- css: .multiple-choice, .free-response, .art-exercise, .interactive-embedded-homework,
+    .scientific, .experiment, [data-type="glossary"]
+  fragments: []
+- css: .interactive-embedded-reading
+  fragments:
+  - node
+  - exercise
