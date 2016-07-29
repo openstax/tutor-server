@@ -60,7 +60,7 @@ RSpec.feature 'Admin editing a course' do
 
     click_link 'Add period'
     expect(page).to have_content('New Period for Physics I')
-    expect(page).not_to have_content('Enrollment code')
+    expect(page).to have_content('Enrollment code')
 
     fill_in 'Name', with: '2nd'
     click_button 'Save'

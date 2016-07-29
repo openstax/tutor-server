@@ -168,9 +168,9 @@ Rails.application.routes.draw do
 
       post :bulk_update, on: :collection
 
-      resources :periods, shallow: true do
+      resources :periods, shallow: true, except: :index do
         member do
-          put 'restore'
+          put :restore
           put :change_salesforce
         end
       end

@@ -3,8 +3,8 @@ class CourseMembership::CreatePeriod
 
   protected
 
-  def exec(course:, name:)
-    period = CourseMembership::Models::Period.new(name: name)
+  def exec(course:, name:, enrollment_code: nil)
+    period = CourseMembership::Models::Period.new(name: name, enrollment_code: enrollment_code)
     course.periods << period # fixes association cache bug
     transfer_errors_from(period, {type: :verbatim}, true)
     strategy = CourseMembership::Strategies::Direct::Period.new(period)
