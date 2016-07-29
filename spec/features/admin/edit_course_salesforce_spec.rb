@@ -61,7 +61,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
   end
 
   context "when removing a course SF record" do
-    it "removes the same record from the relevant periods" do
+    before(:each) do
       sf_object = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'orig')
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @course,
                                                       salesforce_object: sf_object)
@@ -71,10 +71,21 @@ RSpec.feature 'Admin changing course Salesforce settings' do
       go_to_salesforce_tab
 
       expect(page).to have_content(/orig.*orig/) # maybe not the best test, but meh...
+    end
+
+    it "removes the same record from the relevant periods" do
       expect {
         click_button 'Remove'
       }.to change{Salesforce::Models::AttachedRecord.count}.by(-2)
-      expect(page).not_to have_content 'orig'
+      expect(page).not_to have_content(/orig.*orig/) # should just be one 'orig' now
+    end
+
+    it "can be restored" do
+      click_button 'Remove'
+      expect(page).to have_content(/orig/)
+      expect{
+        click_button 'Restore'
+      }.to change{Salesforce::Models::AttachedRecord.count}.by(1)
     end
   end
 
