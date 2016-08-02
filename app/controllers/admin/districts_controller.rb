@@ -24,9 +24,7 @@ module Admin
                   },
                   failure: -> {
                     @page_header = "Create a district"
-                    flash.now[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                         @handler_result.errors.first.message]
-                                           .compact.join(' ').humanize
+                    flash.now[:error] = @handler_result.errors.full_messages
                     @district = @handler_result.outputs.district
                     render :new, status: :unprocessable_entity
                   })
@@ -40,9 +38,7 @@ module Admin
                   },
                   failure: -> {
                     @page_header = "Edit district"
-                    flash.now[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                         @handler_result.errors.first.message]
-                                           .compact.join(' ').humanize
+                    flash.now[:error] = @handler_result.errors.full_messages
                     @district = @handler_result.outputs.district
                     render :edit, status: :unprocessable_entity
                   })
@@ -55,9 +51,7 @@ module Admin
                     redirect_to admin_districts_path, notice: 'The district has been deleted.'
                   },
                   failure: -> {
-                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message]
-                                       .compact.join(' ').humanize
+                    flash[:error] = @handler_result.errors.full_messages
                     redirect_to admin_districts_path
                   })
     end

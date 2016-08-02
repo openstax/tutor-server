@@ -1,19 +1,4 @@
 GIT
-  remote: git://github.com/lml/lev.git
-  revision: f49e941d3f79a56b3000e995125564cad52b34cf
-  ref: f49e941d3f79a56b3000e995125564cad52b34cf
-  specs:
-    lev (7.0.2)
-      actionpack (>= 4.2)
-      active_attr
-      activejob
-      activemodel (>= 4.2)
-      activerecord (>= 4.2)
-      hashie
-      transaction_isolation
-      transaction_retry
-
-GIT
   remote: git://github.com/openstax/active_force.git
   revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
   ref: 9695896f5
@@ -385,6 +370,15 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
+    lev (7.0.3)
+      actionpack (>= 4.2)
+      active_attr
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
+      hashie
+      transaction_isolation
+      transaction_retry
     libv8 (3.16.14.15)
     listen (3.0.5)
       rb-fsevent (>= 0.9.3)
@@ -787,7 +781,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev!
+  lev (~> 7.0.3)
   lograge
   maruku
   mini_magick
