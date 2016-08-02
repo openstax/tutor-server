@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe SearchCourses, type: :routine do
 
-  let(:tutor_school) { FactoryGirl.create(:school, name: 'TTS') }
-  let(:cc_school)    { FactoryGirl.create(:school, name: 'CCS') }
+  let(:tutor_school) { FactoryGirl.create(:school_district_school, name: 'TTS') }
+  let(:cc_school)    { FactoryGirl.create(:school_district_school, name: 'CCS') }
 
   let(:offering) {
     FactoryGirl.create(:catalog_offering,

@@ -3,7 +3,7 @@ class Admin::SchoolsCreate
 
   paramify :school do
     attribute :name, type: String
-    attribute :district_id, type: Integer
+    attribute :school_district_district_id, type: Integer
     validates :name, presence: true
   end
 
@@ -17,7 +17,7 @@ class Admin::SchoolsCreate
   end
 
   def handle
-    district = SchoolDistrict::GetDistrict[id: school_params.district_id]
+    district = SchoolDistrict::GetDistrict[id: school_params.school_district_district_id]
     run(:create_school, name: school_params.name, district: district)
   end
 end

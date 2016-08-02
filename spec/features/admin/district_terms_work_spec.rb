@@ -95,7 +95,7 @@ RSpec.feature 'DistrictTermsWork' do
           .to eq ['district_b_terms']
 
     # Move a school
-    SchoolDistrict::UpdateSchool[id: school_d.id, attributes: {school_district_district_id: district_a.id}]
+    SchoolDistrict::UpdateSchool[school: school_d, name: school_d.name, district: district_a]
 
     expect(Legal::GetTargetedContracts[applicable_to: course_f]
           .map(&:contract_name))

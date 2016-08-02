@@ -43,7 +43,7 @@ RSpec.feature 'Admin editing a course' do
   end
 
   scenario 'Assigning a school' do
-    FactoryGirl.create(:school, name: 'School name')
+    FactoryGirl.create(:school_district_school, name: 'School name')
     visit admin_courses_path
     click_link 'Edit'
 

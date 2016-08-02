@@ -32,7 +32,8 @@ RSpec.describe Admin::SchoolsController, type: :controller do
 
     context 'unused name' do
       it 'creates the school and redirects to #index' do
-        expect { post :create, school: { name: 'Hello World', district_id: nil } }.to(
+        expect { post :create, school: { name: 'Hello World',
+                                         school_district_district_id: nil } }.to(
           change { SchoolDistrict::Models::School.count }.by(1)
         )
 
@@ -45,8 +46,10 @@ RSpec.describe Admin::SchoolsController, type: :controller do
 
     context 'used name' do
       it 'displays an error message and assigns @school and @page_header' do
-        expect { post :create, school: { name: 'Hello World', district_id: school.district.id } }
-          .not_to change { SchoolDistrict::Models::School.count }
+        expect { post :create, school: { name: 'Hello World',
+                                         school_district_district_id: school.district.id } }.not_to(
+          change { SchoolDistrict::Models::School.count }
+        )
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(flash[:error]).to include('name has already been taken')
@@ -73,7 +76,8 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     context 'unused name' do
       it 'updates the school and redirects to #index' do
         patch :update, id: school.id,
-                       school: { name: 'Hello Again', district_id: school.district.id }
+                       school: { name: 'Hello Again',
+                                 school_district_district_id: school.district.id }
 
         expect(response).to redirect_to(admin_schools_path)
         expect(school.reload.name).to eq 'Hello Again'
@@ -86,7 +90,8 @@ RSpec.describe Admin::SchoolsController, type: :controller do
 
       it 'displays an error message and assigns @school and @page_header' do
         patch :update, id: school.id,
-                       school: { name: 'Hello Again', district_id: school.district.id }
+                       school: { name: 'Hello Again',
+                                 school_district_district_id: school.district.id }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(flash[:error]).to include('name has already been taken')

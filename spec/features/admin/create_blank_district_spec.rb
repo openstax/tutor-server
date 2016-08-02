@@ -44,8 +44,7 @@ RSpec.describe 'Administration' do
     click_link 'delete'
 
     expect(current_path).to eq(admin_districts_path)
-    expect(page).to have_css('.flash_alert',
-                             text: "Cannot delete a district that has schools.")
+    expect(page).to have_css('.flash_error', text: "Cannot delete a district that has schools.")
     expect(page).to have_content('Houston Independent School District')
   end
 end
