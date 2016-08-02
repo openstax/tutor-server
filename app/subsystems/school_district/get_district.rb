@@ -3,10 +3,9 @@ module SchoolDistrict
     lev_routine express_output: :district
 
     protected
+
     def exec(id:)
-      if !id.blank? && id != 0 # webforms weirdness
-        outputs.district = Models::District.find(id)
-      end
+      outputs.district = ::SchoolDistrict::Models::District.find_by(id: id)
     end
   end
 end

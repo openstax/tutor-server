@@ -45,7 +45,7 @@ class ImportSalesforceCourse
       return
     end
 
-    school = run(:get_school, name: candidate.school).outputs.school ||
+    school = run(:get_school, name: candidate.school, district: nil).outputs.school ||
              run(:create_school, name: candidate.school).outputs.school
 
     course = run(

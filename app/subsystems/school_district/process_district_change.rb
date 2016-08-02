@@ -9,14 +9,12 @@ class SchoolDistrict::ProcessDistrictChange
 
     if old_district_id
       old_district = SchoolDistrict::Models::District.find(old_district_id)
-      Legal::MakeChildNotGetParentContracts[child: school,
-                                            parent: old_district]
+      Legal::MakeChildNotGetParentContracts[child: school, parent: old_district]
     end
 
     if new_district_id
       new_district = SchoolDistrict::Models::District.find(new_district_id)
-      Legal::MakeChildGetParentContracts[child: school,
-                                         parent: new_district]
+      Legal::MakeChildGetParentContracts[child: school, parent: new_district]
     end
 
   end

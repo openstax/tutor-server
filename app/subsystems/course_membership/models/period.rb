@@ -1,4 +1,7 @@
 class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
+
+  include DefaultTimeValidations
+
   acts_as_paranoid
 
   wrapped_by CourseMembership::Strategies::Direct::Period
@@ -10,7 +13,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :enrollments, dependent: :destroy
   has_many :latest_enrollments, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
-  has_many :latest_enrollments_with_deleted, -> { latest_with_deleted }, class_name: '::CourseMembership::Models::Enrollment'
+  has_many :latest_enrollments_with_deleted, -> { latest.with_deleted },
+                                                class_name: '::CourseMembership::Models::Enrollment'
 
   has_many :enrollment_changes, dependent: :destroy
 
@@ -22,9 +26,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id,
                                                  conditions: -> { where(deleted_at: nil) } }
-  validates :enrollment_code, format: {with: /[a-zA-Z0-9 ]+/}
+  validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
 
-  include DefaultTimeValidations
   validate :default_times_have_good_values
 
   default_scope { order(:name) }
@@ -46,4 +49,5 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   def enrollment_code_for_url
     enrollment_code.gsub(/ /,'-')
   end
+
 end

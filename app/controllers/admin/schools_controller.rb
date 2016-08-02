@@ -1,6 +1,8 @@
 module Admin
   class SchoolsController < BaseController
-    before_filter :populate_districts, except: [:destroy, :index]
+
+    before_filter :get_districts, only: [:new, :edit]
+    before_filter :get_school, only: [:edit, :update, :destroy]
 
     def index
       @schools = SchoolDistrict::ListSchools[]
@@ -8,60 +10,67 @@ module Admin
     end
 
     def edit
-      @school = SchoolDistrict::GetSchool[id: params[:id]]
       @page_header = "Edit school"
     end
 
     def new
       @page_header = "Create a school"
+      @school = SchoolDistrict::Models::School.new
     end
 
     def create
       @page_header = "Create a school"
       handle_with(Admin::SchoolsCreate,
                   success: -> {
-                    redirect_to admin_schools_path,
-                                notice: 'The school has been created.'
+                    redirect_to admin_schools_path, notice: 'The school has been created.'
                   },
                   failure: -> {
-                    @school = SchoolDistrict::Models::School.new(school_params)
-                    render :new
+                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                     @handler_result.errors.first.message].compact.join(' ')
+                    get_districts
+                    @school = @handler_result.outputs.school
+                    render :new, status: :unprocessable_entity
                   })
     end
 
     def update
       @page_header = "Edit school"
       handle_with(Admin::SchoolsUpdate,
+                  school: @school,
                   success: -> {
-                    redirect_to admin_schools_path,
-                                notice: 'The school has been updated.'
+                    redirect_to admin_schools_path, notice: 'The school has been updated.'
                   },
                   failure: -> {
-                    @school = SchoolDistrict::GetSchool[id: params[:id]]
-                    @school.attributes.merge!(school_params)
-                    render :edit
+                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                     @handler_result.errors.first.message].compact.join(' ')
+                    get_districts
+                    @school = @handler_result.outputs.school
+                    render :edit, status: :unprocessable_entity
                   })
     end
 
     def destroy
       handle_with(Admin::SchoolsDestroy,
+                  school: @school,
                   success: -> {
-                    redirect_to admin_schools_path,
-                                notice: 'The school has been deleted.'
+                    redirect_to admin_schools_path, notice: 'The school has been deleted.'
                   },
                   failure: -> {
-                    redirect_to admin_schools_path,
-                                alert: @handler_result.errors.first.message
+                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                     @handler_result.errors.first.message].compact.join(' ')
+                    redirect_to admin_schools_path
                   })
     end
 
-    private
-    def populate_districts
+    protected
+
+    def get_districts
       @districts = SchoolDistrict::ListDistricts[]
     end
 
-    def school_params
-      params.require(:school).permit(:name, :district_id)
+    def get_school
+      @school = SchoolDistrict::GetSchool[id: params[:id]] || raise(ActiveRecord::RecordNotFound)
     end
+
   end
 end

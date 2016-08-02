@@ -72,7 +72,7 @@ gem 'roar', '1.0.3'
 gem 'jobba', '~> 1.4.0'
 
 # Lev framework
-gem 'lev', '~> 7.0.2'
+gem 'lev', github: 'lml/lev', ref: 'f49e941d3f79a56b3000e995125564cad52b34cf'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

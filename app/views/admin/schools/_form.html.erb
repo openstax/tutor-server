@@ -1,14 +1,12 @@
-<% method ||= :post %>
-
-<%= lev_form_for :school, url: url, method: method do |f| %>
+<%= form_for @school, as: :school, url: url do |f| %>
   <div class='form-group'>
     <%= f.label :name %>
     <%= f.text_field :name, class: 'form-control' %>
   </div>
 
   <div class='form-group'>
-    <%= f.label :school_district_district_id, 'District' %>
-    <%= f.collection_select :school_district_district_id,
+    <%= f.label :district_id, 'District' %>
+    <%= f.collection_select :district_id,
                             @districts,
                             :id, :name,
                             { include_blank: true },

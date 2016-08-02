@@ -6,14 +6,16 @@ class Admin::DistrictsUpdate
     validates :name, presence: true
   end
 
-  uses_routine SchoolDistrict::UpdateDistrict, as: :update_district
+  uses_routine SchoolDistrict::UpdateDistrict, as: :update_district,
+                                               translations: { outputs: { type: :verbatim } }
 
   protected
+
   def authorized?
     true # already authenticated in admin controller base
   end
 
   def handle
-    run(:update_district, id: params[:id], attributes: district_params.as_hash(:name))
+    run(:update_district, district: options[:district], name: district_params.name)
   end
 end

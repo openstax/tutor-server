@@ -1,52 +1,70 @@
 module Admin
   class DistrictsController < BaseController
+
+    before_filter :get_district, only: [:edit, :update, :destroy]
+
     def index
       @districts = SchoolDistrict::ListDistricts[]
       @page_header = "Manage districts"
     end
 
     def edit
-      @district = SchoolDistrict::GetDistrict[id: params[:id]]
       @page_header = "Edit district"
     end
 
     def new
       @page_header = "Create a district"
+      @district = SchoolDistrict::Models::District.new
     end
 
     def create
-      @page_header = "Create a district"
       handle_with(Admin::DistrictsCreate,
-                  complete: -> {
-                    redirect_to admin_districts_path,
-                                notice: 'The district has been created.'
+                  success: -> {
+                    redirect_to admin_districts_path, notice: 'The district has been created.'
+                  },
+                  failure: -> {
+                    @page_header = "Create a district"
+                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                     @handler_result.errors.first.message].compact.join(' ')
+                    @district = @handler_result.outputs.district
+                    render :new, status: :unprocessable_entity
                   })
     end
 
     def update
-      @page_header = "Edit district"
       handle_with(Admin::DistrictsUpdate,
+                  district: @district,
                   success: -> {
-                    redirect_to admin_districts_path,
-                                notice: 'The district has been updated.'
+                    redirect_to admin_districts_path, notice: 'The district has been updated.'
                   },
                   failure: -> {
-                    @district = SchoolDistrict::GetDistrict[id: params[:id]]
-                    @district.attributes.merge!(district_params)
-                    render :edit
+                    @page_header = "Edit district"
+                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                     @handler_result.errors.first.message].compact.join(' ')
+                    @district = @handler_result.outputs.district
+                    render :edit, status: :unprocessable_entity
                   })
     end
 
     def destroy
       handle_with(Admin::DistrictsDestroy,
+                  district: @district,
                   success: -> {
-                    redirect_to admin_districts_path,
-                                notice: 'The district has been deleted.'
+                    redirect_to admin_districts_path, notice: 'The district has been deleted.'
                   },
                   failure: -> {
-                    redirect_to admin_districts_path,
-                                alert: @handler_result.errors.first.message
+                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                     @handler_result.errors.first.message].compact.join(' ')
+                    redirect_to admin_districts_path
                   })
     end
+
+    protected
+
+    def get_district
+      @district = SchoolDistrict::GetDistrict[id: params[:id]] ||
+                  raise(ActiveRecord::RecordNotFound)
+    end
+
   end
 end

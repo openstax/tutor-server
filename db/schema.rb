@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160726045753) do
+ActiveRecord::Schema.define(version: 20160802210108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -497,26 +497,31 @@ ActiveRecord::Schema.define(version: 20160726045753) do
     t.string   "tutor_gid",             null: false
     t.string   "salesforce_class_name", null: false
     t.string   "salesforce_id",         null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.datetime "deleted_at"
   end
 
-  add_index "salesforce_attached_records", ["deleted_at"], name: "index_salesforce_attached_records_on_deleted_at", using: :btree
   add_index "salesforce_attached_records", ["salesforce_id", "salesforce_class_name", "tutor_gid"], name: "salesforce_attached_record_tutor_gid", unique: true, using: :btree
   add_index "salesforce_attached_records", ["tutor_gid"], name: "index_salesforce_attached_records_on_tutor_gid", using: :btree
 
   create_table "salesforce_users", force: :cascade do |t|
-    t.string "name"
-    t.string "uid",           null: false
-    t.string "oauth_token",   null: false
-    t.string "refresh_token", null: false
-    t.string "instance_url",  null: false
+    t.string   "name"
+    t.string   "uid",           null: false
+    t.string   "oauth_token",   null: false
+    t.string   "refresh_token", null: false
+    t.string   "instance_url",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "school_district_districts", force: :cascade do |t|
-    t.string "name", null: false
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
+
+  add_index "school_district_districts", ["name"], name: "index_school_district_districts_on_name", unique: true, using: :btree
 
   create_table "school_district_schools", force: :cascade do |t|
     t.string   "name",                        null: false
@@ -525,6 +530,8 @@ ActiveRecord::Schema.define(version: 20160726045753) do
     t.datetime "updated_at",                  null: false
   end
 
+  add_index "school_district_schools", ["name", "school_district_district_id"], name: "index_schools_on_name_and_district_id", unique: true, using: :btree
+  add_index "school_district_schools", ["name"], name: "index_school_district_schools_on_name", unique: true, where: "(school_district_district_id IS NULL)", using: :btree
   add_index "school_district_schools", ["school_district_district_id"], name: "index_school_district_schools_on_school_district_district_id", using: :btree
 
   create_table "settings", force: :cascade do |t|
@@ -539,8 +546,10 @@ ActiveRecord::Schema.define(version: 20160726045753) do
   add_index "settings", ["thing_type", "thing_id", "var"], name: "index_settings_on_thing_type_and_thing_id_and_var", unique: true, using: :btree
 
   create_table "short_code_short_codes", force: :cascade do |t|
-    t.string "code", null: false
-    t.text   "uri",  null: false
+    t.string   "code",       null: false
+    t.text     "uri",        null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "short_code_short_codes", ["code"], name: "index_short_code_short_codes_on_code", unique: true, using: :btree
@@ -586,8 +595,8 @@ ActiveRecord::Schema.define(version: 20160726045753) do
     t.integer  "entity_course_id", null: false
     t.integer  "entity_role_id",   null: false
     t.string   "export"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
   add_index "tasks_performance_report_exports", ["entity_course_id"], name: "index_tasks_performance_report_exports_on_entity_course_id", using: :btree
@@ -681,6 +690,8 @@ ActiveRecord::Schema.define(version: 20160726045753) do
   create_table "tasks_tasked_placeholders", force: :cascade do |t|
     t.integer  "placeholder_type", default: 0, null: false
     t.datetime "deleted_at"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   add_index "tasks_tasked_placeholders", ["deleted_at"], name: "index_tasks_tasked_placeholders_on_deleted_at", using: :btree
