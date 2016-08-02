@@ -50,7 +50,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
         )
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(flash[:error]).to include('name has already been taken')
+        expect(flash[:error]).to include('Name has already been taken')
         expect(assigns[:district]).to be_present
         expect(assigns[:page_header]).to eq("Create a district")
       end
@@ -87,7 +87,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
         patch :update, id: district.id, district: { name: 'Hello Again' }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(flash[:error]).to include('name has already been taken')
+        expect(flash[:error]).to include('Name has already been taken')
         expect(assigns[:district]).to be_present
         expect(assigns[:page_header]).to eq("Edit district")
         expect(district.reload.name).to eq 'Hello World'

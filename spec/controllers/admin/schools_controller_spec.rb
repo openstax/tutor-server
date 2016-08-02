@@ -52,7 +52,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
         )
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(flash[:error]).to include('name has already been taken')
+        expect(flash[:error]).to include('Name has already been taken')
         expect(assigns[:school]).to be_present
         expect(assigns[:page_header]).to eq("Create a school")
       end
@@ -94,7 +94,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
                                  school_district_district_id: school.district.id }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(flash[:error]).to include('name has already been taken')
+        expect(flash[:error]).to include('Name has already been taken')
         expect(assigns[:school]).to be_present
         expect(assigns[:page_header]).to eq("Edit school")
         expect(school.reload.name).to eq 'Hello World'

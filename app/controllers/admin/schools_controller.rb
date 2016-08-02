@@ -25,8 +25,9 @@ module Admin
                     redirect_to admin_schools_path, notice: 'The school has been created.'
                   },
                   failure: -> {
-                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message].compact.join(' ')
+                    flash.now[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                         @handler_result.errors.first.message]
+                                           .compact.join(' ').humanize
                     get_districts
                     @school = @handler_result.outputs.school
                     render :new, status: :unprocessable_entity
@@ -41,8 +42,9 @@ module Admin
                     redirect_to admin_schools_path, notice: 'The school has been updated.'
                   },
                   failure: -> {
-                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message].compact.join(' ')
+                    flash.now[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                         @handler_result.errors.first.message]
+                                           .compact.join(' ').humanize
                     get_districts
                     @school = @handler_result.outputs.school
                     render :edit, status: :unprocessable_entity
@@ -57,7 +59,8 @@ module Admin
                   },
                   failure: -> {
                     flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message].compact.join(' ')
+                                     @handler_result.errors.first.message]
+                                       .compact.join(' ').humanize
                     redirect_to admin_schools_path
                   })
     end

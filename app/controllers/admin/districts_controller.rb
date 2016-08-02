@@ -24,8 +24,9 @@ module Admin
                   },
                   failure: -> {
                     @page_header = "Create a district"
-                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message].compact.join(' ')
+                    flash.now[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                         @handler_result.errors.first.message]
+                                           .compact.join(' ').humanize
                     @district = @handler_result.outputs.district
                     render :new, status: :unprocessable_entity
                   })
@@ -39,8 +40,9 @@ module Admin
                   },
                   failure: -> {
                     @page_header = "Edit district"
-                    flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message].compact.join(' ')
+                    flash.now[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
+                                         @handler_result.errors.first.message]
+                                           .compact.join(' ').humanize
                     @district = @handler_result.outputs.district
                     render :edit, status: :unprocessable_entity
                   })
@@ -54,7 +56,8 @@ module Admin
                   },
                   failure: -> {
                     flash[:error] = [@handler_result.errors.first.data.try(:[], :attribute),
-                                     @handler_result.errors.first.message].compact.join(' ')
+                                     @handler_result.errors.first.message]
+                                       .compact.join(' ').humanize
                     redirect_to admin_districts_path
                   })
     end
