@@ -22,7 +22,7 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
                                                          pools:             pools,
                                                          count:             num_placeholders,
                                                          difficulty:        0.5,
-                                                         allow_repetitions: true]
+                                                         allow_repetitions: false]
 
     task_step_chosen_exercise_pairs = personalized_placeholder_task_steps.zip(chosen_exercises)
     task_step_chosen_exercise_pairs.each do |step, exercise|
