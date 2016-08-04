@@ -14,7 +14,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :enrollment_changes, dependent: :destroy
 
-  has_many :taskings, subsystem: :tasks, dependent: :nullify
+  has_many :taskings, subsystem: :tasks
   has_many :tasks, through: :taskings
 
   unique_token :enrollment_code, mode: :random_number, length: 6

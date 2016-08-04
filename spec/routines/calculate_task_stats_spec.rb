@@ -17,6 +17,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       )
 
       @task_plan = FactoryGirl.create :tasked_task_plan, number_of_students: @number_of_students
+      @period = @task_plan.owner.periods.first
     ensure
       RSpec::Mocks.teardown
     end
@@ -24,8 +25,9 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   context "with an unworked plan" do
 
+    let(:stats) { described_class.call(tasks: @task_plan.tasks).outputs.stats }
+
     it "is all nil or zero for an unworked task_plan" do
-      stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
       expect(stats.first.mean_grade_percent).to be_nil
       expect(stats.first.total_count).to eq(@task_plan.tasks.length)
       expect(stats.first.complete_count).to eq(0)
@@ -67,7 +69,6 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       DistributeTasks.call(task_plan)
 
-      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
       expect(stats.first.complete_count).to eq 0
     end
 
@@ -82,8 +83,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         tasked_type: "Tasks::Models::TaskedReading"
       ).first
       MarkTaskStepCompleted[task_step: step]
+      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
       expect(stats.first.mean_grade_percent).to be_nil
       expect(stats.first.complete_count).to eq(0)
       expect(stats.first.partially_complete_count).to eq(1)
@@ -122,6 +123,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+
       expect(stats.first.mean_grade_percent).to eq (100)
       expect(stats.first.complete_count).to eq(1)
       expect(stats.first.partially_complete_count).to eq(0)
@@ -226,7 +228,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     # This test assumes that all of these tasks have the same numbers of steps,
     # which is true at least for now
     it "sets trouble to true if >50% incorrect and >25% completed" do
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
@@ -331,10 +333,6 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq false
     end
 
-    def answer_ids(exercise_content, question_index)
-      JSON.parse(exercise_content)['questions'][question_index]['answers'].map{|aa| aa['id']}
-    end
-
     it "returns detailed stats if :details is true" do
       tasks = @task_plan.tasks.to_a[0..2]
 
@@ -408,8 +406,9 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
   context "with multiple course periods" do
     let(:course)   { @task_plan.owner }
     let(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
+    let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
-    before(:each) do
+    before do
       @task_plan.tasks.last(@number_of_students/2).each do |task|
         task.taskings.each do |tasking|
           ::MoveStudent.call(period: period_2, student: tasking.role.student)
@@ -418,7 +417,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     end
 
     context "if the students were already in the periods before the assignment" do
-      before(:each) do
+      before do
         @task_plan.tasks.last(@number_of_students/2).each do |task|
           task.taskings.each do |tasking|
             tasking.period = period_2.to_model
@@ -428,8 +427,6 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
 
       it "splits the students into their periods" do
-        stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
-
         expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq(@task_plan.tasks.length/2)
         expect(stats.first.complete_count).to eq(0)
@@ -460,12 +457,33 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         spaced_page = stats.second.spaced_pages[0]
         expect(spaced_page).to eq page
       end
+
+      context 'if a period was archived after the assignment was distributed' do
+        before { period_2.to_model.destroy }
+
+        it 'does not show the archived period' do
+          expect(stats.first.mean_grade_percent).to be_nil
+          expect(stats.first.total_count).to eq(@task_plan.tasks.length/2)
+          expect(stats.first.complete_count).to eq(0)
+          expect(stats.first.partially_complete_count).to eq(0)
+          expect(stats.first.trouble).to eq false
+
+          page = stats.first.current_pages[0]
+          expect(page.student_count).to eq(0)
+          expect(page.incorrect_count).to eq(0)
+          expect(page.correct_count).to eq(0)
+          expect(page.trouble).to eq false
+
+          spaced_page = stats.first.spaced_pages[0]
+          expect(spaced_page).to eq page
+
+          expect(stats.second).to be_nil
+        end
+      end
     end
 
     context "if the students changed periods after the assignment was distributed" do
       it "shows students that changed periods in their original period" do
-        stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
-
         expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq(@task_plan.tasks.length)
         expect(stats.first.complete_count).to eq(0)
@@ -483,12 +501,47 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
         expect(stats.second).to be_nil
       end
+
+      context 'if the old period was archived after the assignment was distributed' do
+        before { @period.destroy }
+
+        it "shows no stats" do
+          expect(stats.first).to be_nil
+        end
+      end
+
+      context 'if the new period was archived after the assignment was distributed' do
+        before { period_2.to_model.destroy }
+
+        it "shows students that changed periods in their original period" do
+          expect(stats.first.mean_grade_percent).to be_nil
+          expect(stats.first.total_count).to eq(@task_plan.tasks.length)
+          expect(stats.first.complete_count).to eq(0)
+          expect(stats.first.partially_complete_count).to eq(0)
+          expect(stats.first.trouble).to eq false
+
+          page = stats.first.current_pages[0]
+          expect(page.student_count).to eq(0)
+          expect(page.incorrect_count).to eq(0)
+          expect(page.correct_count).to eq(0)
+          expect(page.trouble).to eq false
+
+          spaced_page = stats.first.spaced_pages[0]
+          expect(spaced_page).to eq page
+
+          expect(stats.second).to be_nil
+        end
+      end
     end
 
   end
 
   def get_assistant(course:, task_plan_type:)
     course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
+  end
+
+  def answer_ids(exercise_content, question_index)
+    JSON.parse(exercise_content)['questions'][question_index]['answers'].map{|aa| aa['id']}
   end
 
 end

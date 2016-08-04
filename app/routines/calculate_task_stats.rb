@@ -135,16 +135,16 @@ class CalculateTaskStats
              .sort_by{ |page_stats| page_stats[:chapter_section] }
   end
 
-  def no_period
-    @no_period ||= CourseMembership::Models::Period.new(name: 'None')
-  end
-
   def generate_period_stat_data
     tasks = @tasks.preload([:task_steps, {taskings: :period}]).to_a
+
     grouped_tasks = tasks.group_by do |task|
-      task.taskings.first.try(:period) || no_period
+      task.taskings.first.try(:period)
     end
+
     grouped_tasks.map do |period, period_tasks|
+      next if period.nil? || period.deleted?
+
       current_page_stats = generate_page_stats_for_task_steps(
                              period_tasks.map{ |t| t.core_task_steps + t.personalized_task_steps }
                            )
@@ -172,7 +172,7 @@ class CalculateTaskStats
         # For now personalized pages are the same as current pages, so it's fine to include them
         trouble: (current_page_stats + spaced_page_stats).any?{ |page_stats| page_stats[:trouble] }
       )
-    end
+    end.compact
   end
 
   def exec(tasks:, details: false)
