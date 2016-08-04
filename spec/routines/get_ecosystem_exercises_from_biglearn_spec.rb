@@ -69,20 +69,17 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
       expect(Set.new(bl_exercises.map(&:id))).to eq Set.new(exercises.map(&:id))
     end
 
-    it 'sends a warning if Biglearn returns less exercises than requested' do
+    it 'logs a warning if Biglearn returns less exercises than requested' do
       expect(OpenStax::Biglearn::V1).to(
         receive(:get_projection_exercises).once { exercises.first(2).map(&:url) }
       )
 
       expect(ExceptionNotifier).not_to receive(:notify_exception)
-      msg = "Biglearn returned less exercises than requested."
-      expect(Rails.logger).to receive(:warn).with(msg)
-      mail = ActionMailer::Base.deliveries.last
-      expect(mail.body).to match(msg)
+      expect(WarningMailer).not_to receive(:log_and_deliver)
+      expect(Rails.logger).to receive(:warn)
 
       bl_exercises = described_class[ecosystem: ecosystem, role: role, pools: pools, count: count]
       expect(Set.new(bl_exercises.map(&:id))).to eq Set.new(exercises.first(2).map(&:id))
-
     end
 
 
