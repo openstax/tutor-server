@@ -42,7 +42,7 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
   end
 
   def term_year_object
-    Salesforce::Remote::TermYear.from_string(self.term_year)
+    @term_year_object ||= Salesforce::Remote::TermYear.from_string(self.term_year)
   end
 
   def is_college?
