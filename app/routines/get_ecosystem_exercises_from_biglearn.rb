@@ -11,7 +11,7 @@ class GetEcosystemExercisesFromBiglearn
 
   protected
 
-  def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: true)
+  def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: false)
     biglearn_pools = pools.map{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
 
     course = role.student.try(:course)
@@ -54,7 +54,8 @@ class GetEcosystemExercisesFromBiglearn
                                            course: course).outputs.exercises
         history = run(:get_history, roles: role, type: :all).outputs.history[role]
         chosen_exercises = run(:choose, exercises: candidate_exercises, count: count,
-                                        history: history, allow_repeats: false).outputs.exercises
+                                        history: history, allow_repeats: allow_repetitions)
+                              .outputs.exercises
         numbers = chosen_exercises.map(&:number).uniq
 
         ExceptionNotifier.notify_exception(
