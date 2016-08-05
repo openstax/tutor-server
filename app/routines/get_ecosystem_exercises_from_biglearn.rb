@@ -73,11 +73,10 @@ class GetEcosystemExercisesFromBiglearn
 
     biglearn_count = numbers.size
 
-    WarningMailer.log_and_deliver({
-      message: "Biglearn returned less exercises than requested.",
-      details: { pools: pools.map(&:uuid), role: role.id,
-                 requested: count, got: biglearn_count, exercise_numbers: numbers }
-    }) if biglearn_count < count
+    Rails.logger.warn do
+      "Biglearn returned less exercises than requested. Pools: #{pools.map(&:uuid)}. Role: #{
+        role.id}. Requested: #{count}. Got: #{biglearn_count}. Exercise numbers: #{numbers}."
+     end if biglearn_count < count
 
     exercises = ecosystem.exercises_by_numbers(numbers)
     fatal_error(code: :missing_local_exercises,
