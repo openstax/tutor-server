@@ -21,6 +21,12 @@ RSpec.describe Salesforce::Remote::TermYear do
       expect(term_year).to be_spring
     end
 
+    it "works for nil" do
+      term_year = described_class.from_string(nil)
+
+      expect(term_year).to be_nil
+    end
+
     it "freaks out for bad years" do
       expect{
         described_class.from_string("2015 - 17 Fall")

@@ -121,6 +121,9 @@ class UpdateSalesforceCourseStats
           next
         end
 
+        notify("One or more Salesforce objects for course #{course.id} have NULL TermYears",
+               course: course.id) if course_sf_objects.any?{ |sf| sf.term_year_object.nil? }
+
         # Narrow down those SF objects to those that work for this period, reusing if
         # there is one or making if there aren't any.
         #

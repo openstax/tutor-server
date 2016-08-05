@@ -30,6 +30,8 @@ class Salesforce::Remote::TermYear
   end
 
   def self.from_string(string)
+    return if string.blank?
+
     string.match(/20(\d\d) - (\d\d) (\w+)/).tap do |match|
       raise(ParseError, "Cannot parse '#{string}' as a TermYear") if match.nil?
     end

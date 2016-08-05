@@ -7,7 +7,7 @@ class Salesforce::Remote::Opportunity < ActiveForce::SObject
   self.table_name = 'Opportunity'
 
   def term_year_object
-    Salesforce::Remote::TermYear.from_string(self.term_year)
+    @term_year_object ||= Salesforce::Remote::TermYear.from_string(self.term_year)
   end
 
 end
