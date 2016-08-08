@@ -13,6 +13,7 @@ class Salesforce::Remote::ClassSize < ActiveForce::SObject
   field :school,                    from: "School__c"
   field :term_year,                 from: "TermYear__c"
   field :opportunity_id,            from: 'Opportunity__c'
+  field :os_ancillary_id,           from: "OSA__c"
 
   belongs_to :opportunity, model: Salesforce::Remote::Opportunity
 
