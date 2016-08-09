@@ -10,8 +10,7 @@ module SchoolDistrict
       protected
 
       def check_no_schools
-        errors.add(:base, 'Cannot delete a district that has schools.') unless schools.empty?
-        errors.none?
+        schools.empty?
       end
     end
   end

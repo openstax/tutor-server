@@ -2,13 +2,12 @@ module SchoolDistrict
   class CreateSchool
     lev_routine express_output: :school
 
-    uses_routine SchoolDistrict::ProcessDistrictChange,
-                 as: :process_district_change
+    uses_routine ::SchoolDistrict::ProcessDistrictChange, as: :process_district_change
 
     protected
+
     def exec(name:, district: nil)
-      outputs.school = Models::School.create(name: name,
-                                             school_district_district_id: district.try(:id))
+      outputs.school = ::SchoolDistrict::Models::School.create(name: name, district: district)
 
       transfer_errors_from(outputs.school, {type: :verbatim}, true)
 

@@ -19,8 +19,6 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
     }.outer}.where(newer_enrollment: {id: nil})
   }
 
-  scope :latest_with_deleted, -> { latest.with_deleted }
-
   protected
 
   def same_course

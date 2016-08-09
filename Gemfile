@@ -72,7 +72,7 @@ gem 'roar', '1.0.3'
 gem 'jobba', '~> 1.4.0'
 
 # Lev framework
-gem 'lev', '~> 7.0.2'
+gem 'lev', '~> 7.0.3'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

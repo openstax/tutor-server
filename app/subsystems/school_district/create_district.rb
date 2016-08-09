@@ -3,13 +3,11 @@ module SchoolDistrict
     lev_routine express_output: :district
 
     protected
-    def exec(name:)
-      district = Models::District.create!(name: name)
 
-      outputs[:district] = {
-        id: district.id,
-        name: district.name
-      }
+    def exec(name:)
+      outputs.district = ::SchoolDistrict::Models::District.create(name: name)
+
+      transfer_errors_from(outputs.district, {type: :verbatim})
     end
   end
 end

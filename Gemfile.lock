@@ -370,7 +370,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (7.0.2)
+    lev (7.0.3)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -781,7 +781,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev (~> 7.0.2)
+  lev (~> 7.0.3)
   lograge
   maruku
   mini_magick

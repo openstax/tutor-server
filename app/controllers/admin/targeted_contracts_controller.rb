@@ -23,7 +23,7 @@ class Admin::TargetedContractsController < Admin::BaseController
 
   def load_district_targets
     @targets = SchoolDistrict::ListDistricts[].map do |district|
-      Hashie::Mash.new(value: "#{district.gid}|#{district.name}", name: district.name)
+      Hashie::Mash.new(value: "#{district.to_global_id}|#{district.name}", name: district.name)
     end
   end
 

@@ -3,15 +3,9 @@ module SchoolDistrict
     lev_routine express_output: :districts
 
     protected
+
     def exec
-      districts = Models::District.all
-      outputs.districts = districts.map do |district|
-        {
-          id: district.id,
-          gid: district.to_global_id.to_s,
-          name: district.name
-        }
-      end
+      outputs.districts = ::SchoolDistrict::Models::District.all
     end
   end
 end

@@ -30,7 +30,7 @@ RSpec.describe 'Administration' do
   end
 
   scenario 'add a district' do
-    FactoryGirl.create(:district, name: 'Good district')
+    FactoryGirl.create(:school_district_district, name: 'Good district')
 
     click_link 'edit'
 
@@ -57,8 +57,7 @@ RSpec.describe 'Administration' do
     click_link 'delete'
 
     expect(current_path).to eq(admin_schools_path)
-    expect(page).to have_css('.flash_alert',
-                             text: "Cannot delete a school that has courses.")
+    expect(page).to have_css('.flash_error', text: "Cannot delete a school that has courses.")
     expect(page).to have_content('John F Kennedy High')
   end
 end

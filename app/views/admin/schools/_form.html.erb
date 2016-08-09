@@ -1,6 +1,4 @@
-<% method ||= :post %>
-
-<%= lev_form_for :school, url: url, method: method do |f| %>
+<%= form_for @school, as: :school, url: url do |f| %>
   <div class='form-group'>
     <%= f.label :name %>
     <%= f.text_field :name, class: 'form-control' %>

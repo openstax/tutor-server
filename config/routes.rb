@@ -179,9 +179,9 @@ Rails.application.routes.draw do
       resources :teachers, only: [:destroy], shallow: true
     end
 
-    resources :districts
+    resources :districts, except: [:show]
 
-    resources :schools
+    resources :schools, except: [:show]
 
     resource :cron, only: [:update]
 

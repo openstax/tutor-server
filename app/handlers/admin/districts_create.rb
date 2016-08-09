@@ -6,9 +6,11 @@ class Admin::DistrictsCreate
     validates :name, presence: true
   end
 
-  uses_routine SchoolDistrict::CreateDistrict, as: :create_district
+  uses_routine SchoolDistrict::CreateDistrict, as: :create_district,
+                                               translations: { outputs: { type: :verbatim } }
 
   protected
+
   def authorized?
     true # already authenticated in admin controller base
   end
