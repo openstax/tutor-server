@@ -4,7 +4,7 @@ module WebviewHelper
   def bootstrap_data
     Api::V1::BootstrapDataRepresenter.new(current_user).to_json(
       user_options: {
-        tutor_notices_url: api_notifications_url,
+        tutor_api_url: api_root_url,
         flash: flash.to_hash
       }
     )
