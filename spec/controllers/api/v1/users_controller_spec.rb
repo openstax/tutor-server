@@ -65,4 +65,13 @@ describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
     end
   end
 
+  describe "#ui-settings" do
+    it "saves to profile" do
+      api_put :ui_settings, user_1_token, raw_post_data: {'ui_settings' => {is_open: false, answer: 42}}.to_json
+      expect(response.code).to eq('202')
+      expect(response.body).to eq('')
+      expect(user_1.to_model.reload.ui_settings).to eq({'is_open' => false, 'answer' => 42})
+    end
+  end
+
 end

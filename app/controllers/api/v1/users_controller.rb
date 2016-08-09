@@ -23,4 +23,27 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
+  api :POST, '/ui-settings', 'Save settings about the currently logged in user'
+  description <<-EOS
+    Saves the user interface settigs for the current user.
+    The front-end of the application uses this endpoint to save various non-critical settings
+    related to how the interface should behave based on actions the user has performed
+    Returns header forbidden (403) if the user is not logged in or api_errors if the update fails.
+  EOS
+  def ui_settings
+    profile = current_human_user.to_model
+
+    # sure seems like this *should* work, but it raises:
+    #   NoMethodError: undefined method `user_models_profile_url
+    # standard_update(profile, Api::V1::UiSettingsRepresenter)
+
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, profile)
+    consume!(profile, represent_with: Api::V1::UiSettingsRepresenter)
+    if profile.save
+      head :accepted
+    else
+      render_api_errors(model.errors)
+    end
+  end
+
 end

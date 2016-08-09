@@ -23,6 +23,8 @@ module User
       validates :exchange_read_identifier, presence: true
       validates :exchange_write_identifier, presence: true
 
+      json_serialize :ui_settings, Hash
+
       delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
                :first_name=, :last_name=, :full_name=, :title=, to: :account
 

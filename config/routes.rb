@@ -41,7 +41,9 @@ Rails.application.routes.draw do
   api :v1, default: true do
     resources :jobs, only: [:index, :show]
 
-    resources :users, only: [:index]
+    resources :users, only: [:index] do
+      put :ui_settings, on: :collection
+    end
 
     resource :user, only: [:show] do
       get 'tasks', on: :collection

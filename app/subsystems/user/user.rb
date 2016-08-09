@@ -134,6 +134,10 @@ module User
       !!@strategy.is_content_analyst?
     end
 
+    def ui_settings
+      verify_and_return @strategy.ui_settings, klass: Hash, allow_nil: true, error: StrategyError
+    end
+
     # Necessary, at least temporarily, so we can assign users to external polymorphics,
     # like task_plan owner, tasking_plan target and FinePrint signatures
     def to_model

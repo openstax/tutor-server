@@ -8,7 +8,7 @@ module User
 
         exposes :account, :exchange_read_identifier, :exchange_write_identifier,
                 :username, :first_name, :last_name, :full_name, :title, :name,
-                :casual_name
+                :casual_name, :ui_settings
 
         class << self
           alias_method :entity_all, :all
