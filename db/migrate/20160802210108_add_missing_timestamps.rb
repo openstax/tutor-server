@@ -12,7 +12,7 @@ class AddMissingTimestamps < ActiveRecord::Migration
 
     MODELS_MISSING_TIMESTAMPS.each do |klass|
       add_timestamps klass.table_name, null: true
-      klass.update_all(created_at: time, updated_at: time)
+      klass.unscoped.update_all({created_at: time, updated_at: time})
     end
 
     (MODELS_MISSING_TIMESTAMPS + MODELS_WITH_NULLABLE_TIMESTAMPS).each do |klass|
