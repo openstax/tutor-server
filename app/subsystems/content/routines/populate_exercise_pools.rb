@@ -5,6 +5,8 @@ class Content::Routines::PopulateExercisePools
               'd52e93f4-8653-4273-86da-3850001c0786',
               '93e2b09d-261c-4007-a987-0b3062fe154b']
 
+  SOCIOLOGY_CW_UUID = '02040312-72c8-441e-a685-20e9333f3e1d'
+
   lev_routine express_output: :pools
 
   protected
@@ -15,6 +17,7 @@ class Content::Routines::PopulateExercisePools
     chapters = book.chapters.preload(pages: { exercises: { exercise_tags: :tag } })
 
     use_old_logic = HS_UUIDS.include?(book.uuid)
+    sociology_cw = book.uuid == SOCIOLOGY_CW_UUID
 
     outputs[:pools] = chapters.flat_map do |chapter|
       ecosystem = chapter.ecosystem
@@ -59,7 +62,8 @@ class Content::Routines::PopulateExercisePools
 
           # Homework Core (Assignment Builder)
           page.homework_core_pool.content_exercise_ids << exercise.id \
-            if (use_old_logic && tags.include?('ost-chapter-review')) ||
+            if sociology_cw ||
+               (use_old_logic && tags.include?('ost-chapter-review')) ||
                (!use_old_logic && tags.include?('type:practice'))
 
           # Homework Dynamic
