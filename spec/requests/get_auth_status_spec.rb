@@ -28,6 +28,7 @@ describe "Get authentication status", type: :request, version: :v1 do
                                          :tutor_api_url => a_string_starting_with("http"),
                                          :accounts_profile_url => a_string_starting_with("http"),
                                          :accounts_api_url => a_string_starting_with("http"),
+                                         :ui_settings => {},
                                          :endpoints => {
                                            :is_stubbed=>true,
                                            :logout=>a_string_starting_with("http"),
