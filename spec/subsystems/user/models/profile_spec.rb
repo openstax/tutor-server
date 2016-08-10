@@ -27,4 +27,10 @@ RSpec.describe User::Models::Profile, type: :model do
     it { is_expected.to delegate_method(method).to(:account).with_arguments('foo') }
   end
 
+  it 'enforces length of ui_settings' do
+    profile = FactoryGirl.build(:user_profile)
+    profile.ui_settings = {test: ('a' * 1000)}
+    expect(profile).to_not be_valid
+    expect(profile.errors[:ui_settings].to_s).to include 'too long'
+  end
 end

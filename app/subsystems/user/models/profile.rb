@@ -19,11 +19,12 @@ module User
       has_one :customer_service, dependent: :destroy, inverse_of: :profile
       has_one :content_analyst, dependent: :destroy, inverse_of: :profile
 
+      json_serialize :ui_settings, Hash
+
       validates :account, presence: true, uniqueness: true
       validates :exchange_read_identifier, presence: true
       validates :exchange_write_identifier, presence: true
-
-      json_serialize :ui_settings, Hash
+      validates :ui_settings, max_json_length: 1000
 
       delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
                :first_name=, :last_name=, :full_name=, :title=, to: :account
