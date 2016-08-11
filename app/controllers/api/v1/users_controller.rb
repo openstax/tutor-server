@@ -23,7 +23,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
-  api :POST, '/ui-settings', 'Save settings about the currently logged in user'
+  api :PUT, '/ui-settings', 'Save settings about the currently logged in user'
   description <<-EOS
     Saves the user interface settigs for the current user.
     The front-end of the application uses this endpoint to save various non-critical settings
