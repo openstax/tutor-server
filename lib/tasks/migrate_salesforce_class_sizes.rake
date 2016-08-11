@@ -28,7 +28,7 @@ task :migrate_salesforce_class_sizes, [:run_mode] => :environment do |t, args|
       print "In AR #{attached_record.id}, ClassSize #{old_id} "
 
       if new_id.nil?
-        puts " does not point to a new OsAncillary!"
+        puts "does not point to a new OsAncillary!"
         next
       end
 
@@ -39,6 +39,7 @@ task :migrate_salesforce_class_sizes, [:run_mode] => :environment do |t, args|
 
       if real_run?(args)
         attached_record.save!
+        attached_record.salesforce_object = nil # preloaded value invalid
         puts "(saved!)"
       else
         puts "(dry run)"
