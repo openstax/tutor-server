@@ -11,10 +11,14 @@ module Api::V1
              writeable: false,
              getter: ->(*) { self }
 
-    property :base_accounts_url,
+    property :accounts_api_url,
              readable: true,
              writeable: false,
-             getter: ->(*) { OpenStax::Accounts.configuration.openstax_accounts_url }
+             getter: ->(*) {
+               OpenStax::Utilities.generate_url(
+                 OpenStax::Accounts.configuration.openstax_accounts_url, "api"
+               )
+             }
 
     property :accounts_profile_url,
              readable: true,
@@ -25,10 +29,10 @@ module Api::V1
                )
              }
 
-    property :tutor_notices_url,
+    property :tutor_api_url,
              readable: true,
              writeable: false,
-             getter: ->(user_options:, **) { user_options[:tutor_notices_url] }
+             getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
     property :flash,
              readable: true,
@@ -41,6 +45,10 @@ module Api::V1
                             "to the message.  These keys can be interpreted as referring to " +
                             "Bootstrap `success`, `info`, `warning`, and `danger` alert stylings."
              }
+
+    property :ui_settings,
+             readable: true,
+             writeable: false
 
     property :courses,
              extend: Api::V1::CoursesRepresenter,

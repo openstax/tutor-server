@@ -23,4 +23,15 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
+  api :PUT, '/ui-settings', 'Save settings about the currently logged in user'
+  description <<-EOS
+    Saves the user interface settigs for the current user.
+    The front-end of the application uses this endpoint to save various non-critical settings
+    related to how the interface should behave based on actions the user has performed
+    Returns header forbidden (403) if the user is not logged in or api_errors if the update fails.
+  EOS
+  def ui_settings
+    standard_update(current_human_user.to_model, Api::V1::UiSettingsRepresenter, location: nil)
+  end
+
 end

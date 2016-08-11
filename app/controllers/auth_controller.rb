@@ -61,7 +61,7 @@ class AuthController < ApplicationController
     status = strategy.authorize.body.slice('access_token')
     if !current_user.is_anonymous? && ( stubbed_auth? || terms_agreed? )
       status.merge! Api::V1::BootstrapDataRepresenter.new(current_user).to_hash(
-                      user_options: { tutor_notices_url: api_notifications_url }
+                      user_options: { tutor_api_url: api_root_url }
                     )
     end
     status[:endpoints] = {

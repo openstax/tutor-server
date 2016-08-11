@@ -25,9 +25,10 @@ describe "Get authentication status", type: :request, version: :v1 do
       token = Doorkeeper::AccessToken.find_by(resource_owner_id: user.id).token
       expect(response.body_as_hash).to match(
                                          :access_token => token,
-                                         :tutor_notices_url => a_string_starting_with("http"),
+                                         :tutor_api_url => a_string_starting_with("http"),
                                          :accounts_profile_url => a_string_starting_with("http"),
-                                         :base_accounts_url => a_string_starting_with("http"),
+                                         :accounts_api_url => a_string_starting_with("http"),
+                                         :ui_settings => {},
                                          :endpoints => {
                                            :is_stubbed=>true,
                                            :logout=>a_string_starting_with("http"),
