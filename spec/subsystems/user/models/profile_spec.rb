@@ -33,4 +33,15 @@ RSpec.describe User::Models::Profile, type: :model do
     expect(profile).to_not be_valid
     expect(profile.errors[:ui_settings].to_s).to include 'too long'
   end
+
+  it 'requires prevsious settings to be valid when changed' do
+    profile = FactoryGirl.create(:user_profile, ui_settings: {'one' => 1})
+    profile.ui_settings = {test: true}
+    expect(profile.save).to be false
+    expect(profile.errors[:previous_ui_settings].to_s).to include 'out-of-band update detected'
+    profile.previous_ui_settings = {'one' => 1}
+    expect(profile.save).to be true
+    expect(profile.errors[:previous_ui_settings]).to be_empty
+  end
+
 end

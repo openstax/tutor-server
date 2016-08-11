@@ -19,12 +19,14 @@ module User
       has_one :customer_service, dependent: :destroy, inverse_of: :profile
       has_one :content_analyst, dependent: :destroy, inverse_of: :profile
 
+      attr_accessor :previous_ui_settings
       json_serialize :ui_settings, Hash
 
       validates :account, presence: true, uniqueness: true
       validates :exchange_read_identifier, presence: true
       validates :exchange_write_identifier, presence: true
       validates :ui_settings, max_json_length: 1000
+      validate  :validate_ui_settings_change_history , on: :update
 
       delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
                :first_name=, :last_name=, :full_name=, :title=, to: :account
@@ -32,6 +34,15 @@ module User
       def self.anonymous
         ::User::Models::AnonymousProfile.instance
       end
+
+      private
+
+      def validate_ui_settings_change_history
+        if ui_settings_changed? && previous_ui_settings != ui_settings_was
+          errors.add(:previous_ui_settings, "out-of-band update detected. Previous does not match stored value")
+        end
+      end
+
     end
   end
 end
