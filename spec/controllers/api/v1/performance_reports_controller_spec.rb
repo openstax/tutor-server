@@ -90,6 +90,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             role: resp[0][:students][0][:role],
             student_identifier: 'S1',
             average_score: 1.0,
+            is_dropped: false,
             data: [
               {
                 type: 'homework',
@@ -165,6 +166,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             role: resp[0][:students][1][:role],
             student_identifier: 'S2',
             average_score: be_within(0.01).of(1/3.0),
+            is_dropped: false,
             data: [
               {
                 type: 'homework',
@@ -265,6 +267,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             role: resp[1][:students][0][:role],
             student_identifier: 'S4',
             average_score: 0.0,
+            is_dropped: false,
             data: [
               {
                 type: 'homework',
@@ -338,6 +341,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             role: resp[1][:students][1][:role],
             student_identifier: 'S3',
             average_score: 1.0,
+            is_dropped: false,
             data: [
               {
                 type: 'homework',

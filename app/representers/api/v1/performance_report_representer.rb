@@ -146,6 +146,10 @@ module Api::V1
                type: Float,
                readable: true
 
+      property :is_dropped,
+               readable: true,
+               writeable: false
+
       collection :data,
                  readable: true,
                  decorator: ->(input:, **) { input.nil? ? Null : StudentData }

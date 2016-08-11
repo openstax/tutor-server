@@ -32,7 +32,8 @@ module Tasks
             student_identifier: student.student_identifier,
             role: student.role.id,
             data: data,
-            average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil})
+            average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil}),
+            is_dropped: student.deleted_at.present?
           }
         end.sort_by do |hash|
           sort_name = "#{hash[:last_name]} #{hash[:first_name]}"

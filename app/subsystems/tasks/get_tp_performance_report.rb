@@ -60,7 +60,8 @@ module Tasks
             student_identifier: student_role.student.student_identifier,
             role: student_role.id,
             data: data,
-            average_score: average_scores(data.map{ |datum| datum.present? ? datum[:task] : nil })
+            average_score: average_scores(data.map{ |datum| datum.present? ? datum[:task] : nil }),
+            is_dropped: student_role.student.deleted_at.present?
           }
         end
 

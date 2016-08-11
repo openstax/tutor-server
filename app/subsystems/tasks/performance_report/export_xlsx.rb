@@ -295,31 +295,39 @@ module Tasks
 
         first_student_row = sheet.rows.count + 1
 
-        students = report[:students].sort_by{|student| student[:last_name]}
-        task_total_counts ||= Array.new(report[:data_headings].length)
+        student_data_writer = ->(students) do
+          task_total_counts ||= Array.new(report[:data_headings].length)
 
-        students.each_with_index do |student,ss|
-          formula = format == :counts ? "SUM" : "AVERAGE"
+          students.each_with_index do |student,ss|
+            formula = format == :counts ? "SUM" : "AVERAGE"
 
-          student_columns = [
-            student[:first_name],
-            student[:last_name],
-            [student[:student_identifier], {style: @normal_R}],
-            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_score_columns, rows: first_student_row + ss)}),NA())",
-             style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_progress_columns, rows: first_student_row + ss)}),NA())",
-             style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: reading_progress_columns, rows: first_student_row + ss)}),NA())",
-             style: (format == :counts ? nil : @pct)]
-          ]
+            student_columns = [
+              student[:first_name],
+              student[:last_name],
+              [student[:student_identifier], {style: @normal_R}],
+              ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_score_columns, rows: first_student_row + ss)}),NA())",
+               style: (format == :counts ? nil : @pct)],
+              ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_progress_columns, rows: first_student_row + ss)}),NA())",
+               style: (format == :counts ? nil : @pct)],
+              ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: reading_progress_columns, rows: first_student_row + ss)}),NA())",
+               style: (format == :counts ? nil : @pct)]
+            ]
 
-          student[:data].each_with_index do |data,dd|
-            push_score_columns(data, student_columns, format)
-            (task_total_counts[dd] ||= data[:actual_and_placeholder_exercise_count]) if data.present?
+            student[:data].each_with_index do |data,dd|
+              push_score_columns(data, student_columns, format)
+              (task_total_counts[dd] ||= data[:actual_and_placeholder_exercise_count]) if data.present?
+            end
+
+            @helper.add_row(sheet, student_columns)
           end
 
-          @helper.add_row(sheet, student_columns)
+          task_total_counts
         end
+
+        students = report[:students].sort_by{|student| student[:last_name]}
+        dropped_students, active_students = students.partition{|student| student[:is_dropped]}
+
+        task_total_counts = student_data_writer.call(active_students)
 
         last_student_row = sheet.rows.count
 
@@ -383,6 +391,29 @@ module Tasks
 
           @helper.add_row(sheet, total_possible_columns)
         end
+
+        # Dropped students
+
+        5.times { sheet.add_row }
+
+        dropped_heading_style =
+          style!(border: { edges: [:bottom], :color => '000000', :style => :thin},
+                 alignment: {horizontal: :left},
+                 b: true)
+        dropped_heading_columns =
+          [["DROPPED", {style: dropped_heading_style}]] +
+          5.times.map{["", {style: dropped_heading_style}]} +
+          (report[:data_headings].count*5).times.map {["", {style: dropped_heading_style}]}
+        @helper.add_row(sheet, dropped_heading_columns)
+
+        student_data_writer.call(dropped_students)
+
+        dropped_footer_style = style!(border: { edges: [:top], :color => '000000', :style => :thin})
+        dropped_footer_columns =
+          (report[:data_headings].count*5 + 6).times.map {["", {style: dropped_footer_style}]}
+        @helper.add_row(sheet, dropped_footer_columns)
+
+        # Normalize height
 
         sheet.rows.each{|row| row.height = 15}
 

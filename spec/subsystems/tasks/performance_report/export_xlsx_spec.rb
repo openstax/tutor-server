@@ -10,7 +10,7 @@ require 'axlsx'
 require 'xlsx_helper'
 require 'roo'
 require 'timecop'
-# require 'byebug'
+require 'byebug'
 
 RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
 
@@ -40,6 +40,12 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
 
     it 'does not include a task due in the future' do
       (7..12).to_a.map{|row| expect(cell(row,17,0)).to be_blank}
+    end
+
+    it 'puts dropped students at the bottom' do
+      expect(cell(19,1,0)).to eq "DROPPED"
+      expect(cell(20,1,0)).to eq "Droppy"
+      expect(cell(20,7,0)).to eq 2/9.0
     end
 
     context 'zeter\'s scores' do
@@ -233,6 +239,32 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
               }
             ],
             # average_score: 2/3.0
+          },
+          {
+            name: "Droppy McDropFace",
+            first_name: "Droppy",
+            last_name: "McDropFace",
+            student_identifier: "SID89",
+            is_dropped: true,
+            data: [
+              {
+                last_worked_at: Chronic.parse("3/13/2016 1PM"),
+                step_count:                             9,
+                completed_step_count:                   4,
+                completed_on_time_step_count:           3,
+                completed_accepted_late_step_count:     1,
+                actual_and_placeholder_exercise_count:  9,
+                completed_exercise_count:               4,
+                completed_on_time_exercise_count:       3,
+                completed_accepted_late_exercise_count: 1,
+                correct_exercise_count:                 2,
+                correct_on_time_exercise_count:         2,
+                correct_accepted_late_exercise_count:   0,
+              },
+              nil,
+              nil,
+              nil
+            ],
           },
           {
             name: "Abby Gail",
