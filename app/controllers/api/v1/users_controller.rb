@@ -31,19 +31,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     Returns header forbidden (403) if the user is not logged in or api_errors if the update fails.
   EOS
   def ui_settings
-    profile = current_human_user.to_model
-
-    # sure seems like this *should* work, but it raises:
-    #   NoMethodError: undefined method `user_models_profile_url
-    # standard_update(profile, Api::V1::UiSettingsRepresenter)
-
-    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, profile)
-    consume!(profile, represent_with: Api::V1::UiSettingsRepresenter)
-    if profile.save
-      head :accepted
-    else
-      render_api_errors(model.errors)
-    end
+    standard_update(current_human_user.to_model, Api::V1::UiSettingsRepresenter, location: nil)
   end
 
 end
