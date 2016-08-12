@@ -24,7 +24,7 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
   end
 
   def webview_url
-    archive_url.gsub('archive.','')
+    archive_url.sub(/archive-?/, '')
   end
 
   def cnx_id

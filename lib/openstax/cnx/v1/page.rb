@@ -229,7 +229,7 @@ module OpenStax::Cnx::V1
         next if uri.absolute? || uri.path.blank?
 
         # Relative link: make secure and absolute
-        href.value = OpenStax::Cnx::V1.archive_url_for(uri)
+        href.value = OpenStax::Cnx::V1.webview_url_for(uri)
       end
 
       node
