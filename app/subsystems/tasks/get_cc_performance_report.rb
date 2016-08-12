@@ -15,8 +15,13 @@ module Tasks
 
       outputs[:performance_report] = course.periods.map do |period|
         period_cc_tasks_map = cc_tasks_map[period] || {}
-        sorted_period_pages = period_cc_tasks_map
-          .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
+
+        sorted_period_pages =
+          period_cc_tasks_map.values                 # ignore the roles keys
+                             .flat_map(&:keys)       # ignore the values of page and is_dropped keys
+                             .keep_if{|key| key.is_a? Content::Page} # ignore is_dropped
+                             .uniq
+                             .sort{ |a, b| b.book_location <=> a.book_location }
 
         period_students = period.latest_enrollments
                                 .preload(student: {role: {profile: :account}})
