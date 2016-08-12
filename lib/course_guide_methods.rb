@@ -42,7 +42,7 @@ module CourseGuideMethods
                          completed_exercises_count_by_mapped_core_page_ids)
 
     mapped_core_pages_by_chapter.map do |chapter, mapped_core_pages|
-      mapped_core_page_ids = mapped_core_pages.map(&:id).sort
+      mapped_core_page_ids = mapped_core_pages.map(&:id)
 
       {
         title: chapter.title,
@@ -84,11 +84,12 @@ module CourseGuideMethods
     # Map pages in tasks to the newest ecosystem
     page_map = ecosystems_map.map_pages_to_pages(pages: all_core_pages)
 
-    mapped_core_page_ids = page_map.values.flatten.map(&:id).uniq.sort
+    mapped_core_page_ids = page_map.values.flatten.map(&:id)
     mapped_core_pages_by_chapter = Content::Models::Page
       .where(id: mapped_core_page_ids)
       .preload([:all_exercises_pool, {chapter: :all_exercises_pool}])
       .reject{ |page| page.all_exercises_pool.empty? } # Skip intro pages
+      .sort_by(&:book_location)
       .group_by(&:chapter)
     mapped_core_page_ids_with_exercises = mapped_core_pages_by_chapter.values.flatten.map(&:id)
 

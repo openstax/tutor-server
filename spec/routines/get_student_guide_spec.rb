@@ -45,7 +45,7 @@ RSpec.describe GetStudentGuide, type: :routine do
     )
   end
 
-  it "returns each chapter's stats for the student" do
+  it "includes chapter stats for the student only" do
     guide = described_class[role: @role]
 
     chapter_1 = guide['children'].first
@@ -87,7 +87,7 @@ RSpec.describe GetStudentGuide, type: :routine do
     )
   end
 
-  it "returns each page's stats for the student" do
+  it "includes page stats for the student only" do
     guide = described_class[role: @role]
 
     chapter_1_pages = guide['children'].first['children']

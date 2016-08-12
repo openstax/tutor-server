@@ -44,7 +44,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     )
   end
 
-  it 'includes chapter stats for the periods' do
+  it 'includes chapter stats for each period' do
     guide = described_class[role: @teacher_role]
 
     period_1_chapter_1 = guide.first['children'].first
@@ -124,7 +124,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     )
   end
 
-  it 'includes the page stats for the periods' do
+  it 'includes page stats for each period and each chapter' do
     guide = described_class[role: @teacher_role]
 
     period_1_chapter_1_pages = guide.first['children'].first['children']
