@@ -38,8 +38,8 @@ module OpenStax::Cnx::V1
     end
   end
 
-  def webview_url_base
-    archive_url_base.sub(/archive-?/, '')
+  def self.webview_url_base
+    archive_url_base.sub(/archive[\.-]?/, '')
   end
 
   # Archive url for the given path

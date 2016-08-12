@@ -210,7 +210,7 @@ module OpenStax::Cnx::V1
           # Skip anchor-only links
           next if uri.path.blank?
 
-          src.value = OpenStax::Cnx::V1.archive_url_for(uri)
+          src.value = OpenStax::Cnx::V1.webview_url_for(uri)
         end
       end
 
