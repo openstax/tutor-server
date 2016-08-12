@@ -2,6 +2,8 @@ module Tasks
   class GetTpPerformanceReport
     include PerformanceReportMethods
 
+    # Overall average score and heading stats do not include dropped student data
+
     lev_routine express_output: :performance_report
 
     protected
@@ -30,7 +32,7 @@ module Tasks
         end
 
         # This hash will accumulate student tasks to calculate header stats later
-        task_plan_results = Hash.new{ |hash, key| hash[key] = [] }
+        heading_stats_plan_to_task_map = Hash.new{ |hash, key| hash[key] = [] }
 
         student_data = sorted_period_student_data.map do |student_role, student_taskings|
           # Populate the student_tasks array but leave empty spaces (nils)
@@ -48,8 +50,14 @@ module Tasks
             student_tasks[col_num] = tasking.task
           end
 
-          # Gather the student tasks into the task_plan_results hash
-          student_tasks.compact.each{ |task| task_plan_results[task.task_plan] << task }
+          is_dropped = student_role.student.deleted_at.present?
+
+          # Gather the non-dropped student tasks into the heading_stats_plan_to_task_map hash
+          if !is_dropped
+            student_tasks.compact.each do |task|
+              heading_stats_plan_to_task_map[task.task_plan] << task
+            end
+          end
 
           data = get_student_data(student_tasks)
 
@@ -61,14 +69,16 @@ module Tasks
             role: student_role.id,
             data: data,
             average_score: average_scores(data.map{ |datum| datum.present? ? datum[:task] : nil }),
-            is_dropped: student_role.student.deleted_at.present?
+            is_dropped: is_dropped
           }
         end
 
         Hashie::Mash.new({
           period: period,
-          overall_average_score: average(student_data.map{ |sd| sd[:average_score] }),
-          data_headings: get_data_headings(tasking_plans, task_plan_results),
+          overall_average_score: average(
+            student_data.map{ |sd| sd[:is_dropped] ? nil : sd[:average_score] }
+          ),
+          data_headings: get_data_headings(tasking_plans, heading_stats_plan_to_task_map),
           students: student_data
         })
       end
@@ -93,7 +103,7 @@ module Tasks
             .reorder(nil).uniq.to_a.select{ |tasking| tasking.task.past_open? }
     end
 
-    def get_data_headings(tasking_plans, task_plan_results)
+    def get_data_headings(tasking_plans, heading_stats_plan_to_task_map)
       tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
 
@@ -102,8 +112,8 @@ module Tasks
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average_score: average_scores(task_plan_results[task_plan]),
-          completion_rate: completion_fraction(task_plan_results[task_plan])
+          average_score: average_scores(heading_stats_plan_to_task_map[task_plan]),
+          completion_rate: completion_fraction(heading_stats_plan_to_task_map[task_plan])
         }
       end
     end

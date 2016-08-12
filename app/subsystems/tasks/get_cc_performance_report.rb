@@ -2,6 +2,8 @@ module Tasks
   class GetCcPerformanceReport
     include PerformanceReportMethods
 
+    # Overall average score and heading stats do not include dropped student data
+
     lev_routine express_output: :performance_report
 
     protected
@@ -42,7 +44,9 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          overall_average_score: average(student_data.map{|sd| sd[:average_score]}),
+          overall_average_score: average(
+            student_data.map{|sd| sd[:is_dropped] ? nil : sd[:average_score]}
+          ),
           data_headings: data_headings,
           students: student_data
         })
@@ -79,25 +83,32 @@ module Tasks
             map_cc_task_to_page(page_to_page_map, tasking.task.concept_coach_task)
           end.each_with_object({}) do |(page, taskings), hash|
             hash[page] = taskings.map{ |tasking| tasking.task.concept_coach_task }
+            hash[:is_dropped] = role.student.deleted_at.present?
           end
         end
       end
     end
 
     def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
+      # Only include non-dropped students in the heading stats
+
       sorted_period_pages.map do |page|
-        page_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }.compact.map(&:task)
+        non_dropped_page_tasks =
+          period_cc_tasks_map_array.select{|hash| !hash[:is_dropped]}
+                                   .flat_map{ |hash| hash[page] }
+                                   .compact
+                                   .map(&:task)
 
         {
           cnx_page_id: page.uuid,
           title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
-          average_score: average_scores(page_tasks),
+          average_score: average_scores(non_dropped_page_tasks),
           average_actual_and_placeholder_exercise_count: average(
-            page_tasks,
+            non_dropped_page_tasks,
             ->(tt) {tt.actual_and_placeholder_exercise_count}
           ),
-          completion_rate: completion_fraction(page_tasks)
+          completion_rate: completion_fraction(non_dropped_page_tasks)
         }
       end
     end
