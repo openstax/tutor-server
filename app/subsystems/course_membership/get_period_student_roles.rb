@@ -2,6 +2,7 @@ class CourseMembership::GetPeriodStudentRoles
   lev_routine express_output: :roles
 
   protected
+
   def exec(periods:, include_inactive_students: false)
     periods = [periods].flatten.uniq
 

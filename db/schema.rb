@@ -503,6 +503,7 @@ ActiveRecord::Schema.define(version: 20160808204103) do
     t.datetime "deleted_at"
   end
 
+  add_index "salesforce_attached_records", ["deleted_at"], name: "index_salesforce_attached_records_on_deleted_at", using: :btree
   add_index "salesforce_attached_records", ["salesforce_id", "salesforce_class_name", "tutor_gid"], name: "salesforce_attached_record_tutor_gid", unique: true, using: :btree
   add_index "salesforce_attached_records", ["tutor_gid"], name: "index_salesforce_attached_records_on_tutor_gid", using: :btree
 
