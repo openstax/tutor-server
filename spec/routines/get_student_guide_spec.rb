@@ -38,8 +38,9 @@ RSpec.describe GetStudentGuide, type: :routine do
   it 'returns the period course guide for a student' do
     guide = described_class[role: @role]
 
-    expect(guide).to match a_hash_including(
-      "title" => "Physics (Demo)",
+    expect(guide).to match(
+      "period_id" => @period.id,
+      "title" => 'Physics (Demo)',
       "page_ids" => [kind_of(Integer)]*6,
       "children" => [kind_of(Hash)]*2
     )
@@ -49,7 +50,7 @@ RSpec.describe GetStudentGuide, type: :routine do
     guide = described_class[role: @role]
 
     chapter_1 = guide['children'].first
-    expect(chapter_1).to match a_hash_including(
+    expect(chapter_1).to match(
       "title" => "Acceleration",
       "book_location" => [3],
       "questions_answered_count" => 2,
@@ -68,7 +69,7 @@ RSpec.describe GetStudentGuide, type: :routine do
     )
 
     chapter_2 = guide['children'].second
-    expect(chapter_2).to match a_hash_including(
+    expect(chapter_2).to match(
       "title" => "Force and Newton's Laws of Motion",
       "book_location" => [4],
       "questions_answered_count" => 7,
@@ -91,7 +92,7 @@ RSpec.describe GetStudentGuide, type: :routine do
     guide = described_class[role: @role]
 
     chapter_1_pages = guide['children'].first['children']
-    expect(chapter_1_pages).to match a_collection_containing_exactly(
+    expect(chapter_1_pages).to match [
       {
         "title" => "Acceleration",
         "book_location" => [3, 1],
@@ -124,10 +125,10 @@ RSpec.describe GetStudentGuide, type: :routine do
         "practice_count" => 0,
         "page_ids" => [kind_of(Integer)]
       }
-    )
+    ]
 
     chapter_2_pages = guide['children'].second['children']
-    expect(chapter_2_pages).to match a_collection_containing_exactly(
+    expect(chapter_2_pages).to match [
       {
         "title" => "Force",
         "book_location" => [4, 1],
@@ -192,7 +193,7 @@ RSpec.describe GetStudentGuide, type: :routine do
         "practice_count" => 0,
         "page_ids" => [kind_of(Integer)]
       }
-    )
+    ]
   end
 
 end

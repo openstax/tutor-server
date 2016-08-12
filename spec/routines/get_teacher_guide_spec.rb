@@ -28,27 +28,27 @@ RSpec.describe GetTeacherGuide, type: :routine do
   it 'returns all course guide periods for teachers' do
     guide = described_class[role: @teacher_role]
 
-    expect(guide).to match a_collection_containing_exactly(
+    expect(guide).to match [
       {
-        period_id: @period.id,
-        title: 'Physics (Demo)',
-        page_ids: [kind_of(Integer)]*6,
-        children: [kind_of(Hash)]*2
+        "period_id" => @period.id,
+        "title" => 'Physics (Demo)',
+        "page_ids" => [kind_of(Integer)]*6,
+        "children" => [kind_of(Hash)]*2
       },
       {
-        period_id: @second_period.id,
-        title: 'Physics (Demo)',
-        page_ids: [kind_of(Integer)]*6,
-        children: [kind_of(Hash)]*2
+        "period_id" => @second_period.id,
+        "title" => 'Physics (Demo)',
+        "page_ids" => [kind_of(Integer)]*6,
+        "children" => [kind_of(Hash)]*2
       }
-    )
+    ]
   end
 
   it 'includes chapter stats for each period' do
     guide = described_class[role: @teacher_role]
 
     period_1_chapter_1 = guide.first['children'].first
-    expect([period_1_chapter_1]).to match a_hash_including(
+    expect(period_1_chapter_1).to match(
       "title" => "Acceleration",
       "book_location" => [3],
       "questions_answered_count" => 2,
@@ -67,7 +67,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     )
 
     period_1_chapter_2 = guide.first['children'].second
-    expect([period_1_chapter_2]).to match a_hash_including(
+    expect(period_1_chapter_2).to match(
       "title" => "Force and Newton's Laws of Motion",
       "book_location" => [4],
       "questions_answered_count" => 7,
@@ -86,7 +86,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     )
 
     period_2_chapter_1 = guide.second['children'].first
-    expect([period_2_chapter_1]).to match a_hash_including(
+    expect(period_2_chapter_1).to match(
       "title" => "Acceleration",
       "book_location" => [3],
       "questions_answered_count" => 5,
@@ -105,7 +105,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     )
 
     period_2_chapter_2 = guide.second['children'].second
-    expect([period_2_chapter_2]).to match a_hash_including(
+    expect(period_2_chapter_2).to match(
       "title" => "Force and Newton's Laws of Motion",
       "book_location" => [4],
       "questions_answered_count" => 5,
@@ -128,7 +128,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     guide = described_class[role: @teacher_role]
 
     period_1_chapter_1_pages = guide.first['children'].first['children']
-    expect(period_1_chapter_1_pages).to match a_collection_containing_exactly(
+    expect(period_1_chapter_1_pages).to match [
       {
         "title" => "Acceleration",
         "book_location" => [3, 1],
@@ -161,10 +161,10 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "practice_count" => 0,
         "page_ids" => [kind_of(Integer)]
       }
-    )
+    ]
 
     period_1_chapter_2_pages = guide.first['children'].second['children']
-    expect(period_1_chapter_2_pages).to match a_collection_containing_exactly(
+    expect(period_1_chapter_2_pages).to match [
       {
         "title" => "Force",
         "book_location" => [4, 1],
@@ -229,10 +229,10 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "practice_count" => 0,
         "page_ids" => [kind_of(Integer)]
       }
-    )
+    ]
 
     period_2_chapter_1_pages = guide.second['children'].first['children']
-    expect(period_2_chapter_1_pages).to match a_collection_containing_exactly(
+    expect(period_2_chapter_1_pages).to match [
       {
         "title" => "Acceleration",
         "book_location" => [3, 1],
@@ -265,10 +265,10 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "practice_count" => 0,
         "page_ids" => [kind_of(Integer)]
       }
-    )
+    ]
 
     period_2_chapter_2_pages = guide.second['children'].second['children']
-    expect(period_2_chapter_2_pages).to match a_collection_containing_exactly(
+    expect(period_2_chapter_2_pages).to match [
       {
         "title" => "Force",
         "book_location" => [4, 1],
@@ -333,7 +333,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "practice_count" => 0,
         "page_ids" => [kind_of(Integer)]
       }
-    )
+    ]
   end
 
 end
