@@ -84,6 +84,7 @@ class Tasks::Assistants::GenericAssistant
     # Remove tasks due after the given task from the history
     history.total_count = history_indices_to_keep.size
     history.task_ids = history.task_ids.values_at(*history_indices_to_keep)
+    history.task_types = history.task_types.values_at(*history_indices_to_keep)
     history.ecosystem_ids = history.ecosystem_ids.values_at(*history_indices_to_keep)
     history.core_page_ids = history.core_page_ids.values_at(*history_indices_to_keep)
     history.exercise_numbers = history.exercise_numbers.values_at(*history_indices_to_keep)
@@ -97,6 +98,7 @@ class Tasks::Assistants::GenericAssistant
 
     history.total_count += 1
     history.task_ids.unshift task.id
+    history.task_types.unshift task.task_type.to_sym
     history.ecosystem_ids.unshift task_plan.ecosystem.id
     history.core_page_ids.unshift core_page_ids
     history.exercise_numbers.unshift exercise_numbers

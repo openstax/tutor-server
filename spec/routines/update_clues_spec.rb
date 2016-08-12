@@ -102,7 +102,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       described_class[described_args] # 4 requests
     end
 
-    it 'warms up the cache for the teacher guide for an arbitrary course' do
+    xit 'warms up the cache for the teacher guide for an arbitrary course' do
       expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
       described_class[described_args] # 4 requests
@@ -120,7 +120,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       described_class[described_args] # 4 requests
     end
 
-    it 'warms up the cache for the student guide for an arbitrary student' do
+    xit 'warms up the cache for the student guide for an arbitrary student' do
       expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
       described_class[described_args] # 4 requests
@@ -160,7 +160,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
         described_class[described_args] # 4 requests
       end
 
-      it 'warms up the cache for the teacher guide for an arbitrary course' do
+      xit 'warms up the cache for the teacher guide for an arbitrary course' do
         expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
         described_class[described_args] # 4 requests
@@ -178,7 +178,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
         described_class[described_args] # 4 requests
       end
 
-      it 'warms up the cache for the student guide for an arbitrary student' do
+      xit 'warms up the cache for the student guide for an arbitrary student' do
         expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
         described_class[described_args] # 4 requests
@@ -219,7 +219,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
         described_class[described_args] # 2 requests
       end
 
-      it 'warms up the cache for the student guide for students that recently worked problems' do
+      xit 'warms up the cache for the student guide for students that recently worked problems' do
         expect(@real_client).to receive(:request_clues).twice.and_call_original
 
         described_class[described_args] # 2 requests

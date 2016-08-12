@@ -11,7 +11,7 @@ class GetHistory
     all_history = Hashie::Mash.new
     roles.each do |role|
       all_history[role] = Hashie::Mash.new(
-        total_count: 0, task_ids: [], ecosystem_ids: [], core_page_ids: [],
+        total_count: 0, task_ids: [], task_types: [], ecosystem_ids: [], core_page_ids: [],
         exercise_numbers: [], created_ats: [], opens_ats: [], due_ats: []
       )
     end
@@ -97,6 +97,8 @@ class GetHistory
         history.total_count += 1
 
         history.task_ids << task.id
+
+        history.task_types << task.task_type.to_sym
 
         history.ecosystem_ids << task.task_plan.try(:content_ecosystem_id)
 
