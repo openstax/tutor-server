@@ -7,22 +7,18 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     related_content ||= page.related_content
     title = page_title
 
-    fragments.each do |fragment|
-
-      title ||= fragment.title
-
-      step_modifier = ->(step) do
+    step_builder = ->(fragment) do
+      Tasks::Models::TaskStep.new(task: task).tap do |step|
         step.group_type = :core_group
         step.add_labels(fragment.labels)
         step.add_related_content(related_content)
+        task.add_step(step)
       end
+    end
 
-      step_builder = ->() do
-        Tasks::Models::TaskStep.new(task: task).tap do |step|
-          step_modifier.call(step)
-          task.add_step(step)
-        end
-      end
+    fragments.each do |fragment|
+
+      title ||= fragment.title
 
       # For Exercise and OptionalExercise (subclass of Exercise)
       previous_step = task.task_steps.last if fragment.is_a? OpenStax::Cnx::V1::Fragment::Exercise
@@ -34,14 +30,16 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                 previous_step: previous_step, title: title) \
           unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Exercise
-        task_exercise(exercise_fragment: fragment, page: page, task: task, title: title,
-                      previous_step: previous_step, step_modifier: step_modifier)
+        task_exercise(exercise_fragment: fragment, page: page, task: task,
+                      previous_step: previous_step, title: title)
       when OpenStax::Cnx::V1::Fragment::Video
-        task_video(video_fragment: fragment, step: step_builder.call, title: title)
+        task_video(video_fragment: fragment, step: step_builder.call(fragment), title: title)
       when OpenStax::Cnx::V1::Fragment::Interactive
-        task_interactive(interactive_fragment: fragment, step: step_builder.call, title: title)
+        task_interactive(interactive_fragment: fragment,
+                         step: step_builder.call(fragment), title: title)
       else
-        task_reading(reading_fragment: fragment, page: page, title: title, step: step_builder.call)
+        task_reading(reading_fragment: fragment, page: page,
+                     step: step_builder.call(fragment), title: title)
       end
 
       # The page title applies only to the first step in the set of fragments given
@@ -58,7 +56,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                      content: reading_fragment.to_html)
   end
 
-  def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:, step_modifier:)
+  def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:)
     exercise = get_random_unused_page_exercise_with_tags(page, exercise_fragment.embed_tags)
 
     if exercise.nil?
@@ -95,9 +93,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     end
 
     # Assign the exercise
-    TaskExercise.call(exercise: exercise, title: title, task: task) do |step|
-      step_modifier.call(step)
-    end
+    add_exercise_step!(task: task, exercise: exercise, title: title, group_type: :core_group,
+                       labels: exercise_fragment.labels)
   end
 
   def store_related_exercises(exercise_fragment:, page:, previous_step:, title: nil)
