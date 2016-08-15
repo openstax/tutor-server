@@ -9,54 +9,54 @@ module CourseGuideMethods
     base.uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
   end
 
-  def get_clues_by_pool_uuids(roles, mapped_core_pages_by_chapter, type)
+  def get_clues_by_pool_uuids(roles, mapped_relevant_pages_by_chapter, type)
     # Flatten the array of pools at the end so we can send it to Biglearn
-    pools = mapped_core_pages_by_chapter.flat_map do |chapter, mapped_core_pages|
-      [chapter.all_exercises_pool] + mapped_core_pages.map(&:all_exercises_pool)
+    pools = mapped_relevant_pages_by_chapter.flat_map do |chapter, mapped_relevant_pages|
+      [chapter.all_exercises_pool] + mapped_relevant_pages.map(&:all_exercises_pool)
     end
 
     OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
   end
 
-  def get_page_guides(mapped_core_pages,
+  def get_page_guides(mapped_relevant_pages,
                       clues_by_pool_uuids,
-                      practice_counts_by_mapped_core_page_ids,
-                      completed_exercises_count_by_mapped_core_page_ids)
-    mapped_core_pages.map do |mapped_core_page|
-      page_id = mapped_core_page.id
+                      practice_counts_by_mapped_relevant_page_ids,
+                      completed_exercises_count_by_mapped_relevant_page_ids)
+    mapped_relevant_pages.map do |mapped_relevant_page|
+      page_id = mapped_relevant_page.id
 
       {
-        title: mapped_core_page.title,
-        book_location: mapped_core_page.book_location,
-        questions_answered_count: completed_exercises_count_by_mapped_core_page_ids[page_id],
-        clue: clues_by_pool_uuids[mapped_core_page.all_exercises_pool.uuid],
-        practice_count: practice_counts_by_mapped_core_page_ids[page_id],
+        title: mapped_relevant_page.title,
+        book_location: mapped_relevant_page.book_location,
+        questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids[page_id],
+        clue: clues_by_pool_uuids[mapped_relevant_page.all_exercises_pool.uuid],
+        practice_count: practice_counts_by_mapped_relevant_page_ids[page_id],
         page_ids: [page_id]
       }
     end
   end
 
-  def get_chapter_guides(mapped_core_pages_by_chapter,
+  def get_chapter_guides(mapped_relevant_pages_by_chapter,
                          clues_by_pool_uuids,
-                         practice_counts_by_mapped_core_page_ids,
-                         completed_exercises_count_by_mapped_core_page_ids)
+                         practice_counts_by_mapped_relevant_page_ids,
+                         completed_exercises_count_by_mapped_relevant_page_ids)
 
-    mapped_core_pages_by_chapter.map do |chapter, mapped_core_pages|
-      mapped_core_page_ids = mapped_core_pages.map(&:id)
+    mapped_relevant_pages_by_chapter.map do |chapter, mapped_relevant_pages|
+      mapped_relevant_page_ids = mapped_relevant_pages.map(&:id)
 
       {
         title: chapter.title,
         book_location: chapter.book_location,
-        questions_answered_count: completed_exercises_count_by_mapped_core_page_ids
-                                    .values_at(*mapped_core_page_ids).reduce(:+),
+        questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids
+                                    .values_at(*mapped_relevant_page_ids).reduce(:+),
         clue: clues_by_pool_uuids[chapter.all_exercises_pool.uuid],
-        practice_count: practice_counts_by_mapped_core_page_ids.values_at(*mapped_core_page_ids)
-                                                               .reduce(:+),
-        page_ids: mapped_core_page_ids,
-        children: get_page_guides(mapped_core_pages,
+        practice_count: practice_counts_by_mapped_relevant_page_ids
+                          .values_at(*mapped_relevant_page_ids).reduce(:+),
+        page_ids: mapped_relevant_page_ids,
+        children: get_page_guides(mapped_relevant_pages,
                                   clues_by_pool_uuids,
-                                  practice_counts_by_mapped_core_page_ids,
-                                  completed_exercises_count_by_mapped_core_page_ids)
+                                  practice_counts_by_mapped_relevant_page_ids,
+                                  completed_exercises_count_by_mapped_relevant_page_ids)
       }
     end
   end
@@ -74,28 +74,40 @@ module CourseGuideMethods
       role_history.core_page_ids.values_at(*open_task_indices)
     end.flatten
 
-    all_core_pages_by_id = {}
-    Content::Models::Page.where(id: all_core_page_ids).each do |content_page|
-      all_core_pages_by_id[content_page.id] = Content::Page.new strategy: content_page.wrap
+    role_ids = roles.map(&:id)
+    completed_exercises_count_by_page_ids = Tasks::Models::TaskedExercise
+      .joins([:exercise, {task_step: {task: :taskings}}])
+      .where(task_step: {task: {taskings: {entity_role_id: role_ids}}})
+      .where{task_step.first_completed_at != nil}
+      .group(exercise: :content_page_id)
+      .count
+    all_worked_page_ids = completed_exercises_count_by_page_ids.keys
+
+    all_relevant_page_ids = (all_core_page_ids + all_worked_page_ids).uniq
+
+    all_relevant_pages_by_id = {}
+    Content::Models::Page.where(id: all_relevant_page_ids).each do |content_page|
+      all_relevant_pages_by_id[content_page.id] = Content::Page.new strategy: content_page.wrap
     end
 
-    all_core_pages = all_core_pages_by_id.values
+    all_relevant_pages = all_relevant_pages_by_id.values
 
     # Map pages in tasks to the newest ecosystem
-    page_map = ecosystems_map.map_pages_to_pages(pages: all_core_pages)
+    page_map = ecosystems_map.map_pages_to_pages(pages: all_relevant_pages)
 
-    mapped_core_page_ids = page_map.values.flatten.map(&:id)
-    mapped_core_pages_by_chapter = Content::Models::Page
-      .where(id: mapped_core_page_ids)
+    all_mapped_page_ids = page_map.values.flatten.map(&:id)
+    mapped_relevant_pages_by_chapter = Content::Models::Page
+      .where(id: all_mapped_page_ids)
       .preload([:all_exercises_pool, {chapter: :all_exercises_pool}])
       .reject{ |page| page.all_exercises_pool.empty? } # Skip intro pages
       .sort_by(&:book_location)
       .group_by(&:chapter)
-    mapped_core_page_ids_with_exercises = mapped_core_pages_by_chapter.values.flatten.map(&:id)
+    mapped_relevant_page_ids_with_exercises = \
+      mapped_relevant_pages_by_chapter.values.flatten.map(&:id)
 
-    clues_by_pool_uuids = get_clues_by_pool_uuids(roles, mapped_core_pages_by_chapter, type)
+    clues_by_pool_uuids = get_clues_by_pool_uuids(roles, mapped_relevant_pages_by_chapter, type)
 
-    practice_counts_by_mapped_core_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
+    practice_counts_by_mapped_relevant_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
     relevant_role_histories.each do |role_history|
       task_types = role_history.task_types
       practice_task_indices = task_types.each_index.select do |index|
@@ -104,27 +116,22 @@ module CourseGuideMethods
       practice_core_page_ids = role_history.core_page_ids.values_at(*practice_task_indices)
       practice_core_page_ids.each do |core_page_ids|
         core_page_ids.each do |core_page_id|
-          core_page = all_core_pages_by_id[core_page_id]
-          mapped_core_page_id = page_map[core_page].id
+          relevant_page = all_relevant_pages_by_id[core_page_id]
+          mapped_relevant_page_id = page_map[relevant_page].id
 
-          practice_counts_by_mapped_core_page_ids[mapped_core_page_id] += 1
+          practice_counts_by_mapped_relevant_page_ids[mapped_relevant_page_id] += 1
         end
       end
     end
 
-    role_ids = roles.map(&:id)
-    completed_exercises_count_by_core_page_ids = Tasks::Models::TaskedExercise
-      .joins([:exercise, {task_step: {task: :taskings}}])
-      .where(task_step: {task: {taskings: {entity_role_id: role_ids}}})
-      .where{task_step.first_completed_at != nil}
-      .group(exercise: :content_page_id)
-      .count
-    completed_exercises_count_by_mapped_core_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
-    completed_exercises_count_by_core_page_ids.each do |core_page_id, completed_exercises_count|
-      core_page = all_core_pages_by_id[core_page_id]
-      mapped_page_id = page_map[core_page].id
 
-      completed_exercises_count_by_mapped_core_page_ids[mapped_page_id] = completed_exercises_count
+    completed_exercises_count_by_mapped_relevant_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
+    completed_exercises_count_by_page_ids.each do |page_id, completed_exercises_count|
+      relevant_page = all_relevant_pages_by_id[page_id]
+      mapped_relevant_page_id = page_map[relevant_page].id
+
+      completed_exercises_count_by_mapped_relevant_page_ids[mapped_relevant_page_id] += \
+        completed_exercises_count
     end
 
     # Assuming only 1 book per ecosystem
@@ -132,11 +139,11 @@ module CourseGuideMethods
 
     {
       title: book.title,
-      page_ids: mapped_core_page_ids_with_exercises,
-      children: get_chapter_guides(mapped_core_pages_by_chapter,
+      page_ids: mapped_relevant_page_ids_with_exercises,
+      children: get_chapter_guides(mapped_relevant_pages_by_chapter,
                                    clues_by_pool_uuids,
-                                   practice_counts_by_mapped_core_page_ids,
-                                   completed_exercises_count_by_mapped_core_page_ids)
+                                   practice_counts_by_mapped_relevant_page_ids,
+                                   completed_exercises_count_by_mapped_relevant_page_ids)
     }
   end
 
