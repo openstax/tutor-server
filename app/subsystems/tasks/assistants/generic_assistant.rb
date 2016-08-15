@@ -15,8 +15,6 @@ class Tasks::Assistants::GenericAssistant
     @page_cache = {}
     @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
     @spaced_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
-
-    reset_used_exercises
   end
 
   protected
@@ -50,7 +48,19 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def reset_used_exercises
-    @used_exercise_numbers = []
+    @used_exercise_numbers = Set.new
+  end
+
+  def add_exercise_step!(task:, exercise:, group_type:, title: nil, labels: nil)
+    related_content = exercise.page.related_content
+
+    TaskExercise.call(task: task, exercise: exercise) do |step|
+      step.group_type = group_type
+      step.add_related_content(related_content) if related_content.present?
+      step.add_labels(labels) if labels.present?
+    end
+
+    @used_exercise_numbers << exercise.number
   end
 
   def get_random_unused_page_exercise_with_tags(page, tags)
@@ -59,13 +69,7 @@ class Tasks::Assistants::GenericAssistant
 
     exercises = get_all_page_exercises_with_tags(page, tags)
 
-    candidate_exercises = exercises.reject do |ex|
-      @used_exercise_numbers.include?(ex.number)
-    end
-
-    candidate_exercises.sample.tap do |chosen_exercise|
-      @used_exercise_numbers << chosen_exercise.number unless chosen_exercise.nil?
-    end
+    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }.sample
   end
 
   # Limits the history to tasks open before the given task's open date
@@ -139,13 +143,6 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def assign_spaced_practice_exercise(task:, exercise:)
-    TaskExercise.call(task: task, exercise: exercise) do |step|
-      step.group_type = :spaced_practice_group
-      step.add_related_content(exercise.page.related_content)
-    end
-  end
-
   def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
     raise 'You must call reset_used_exercises before add_spaced_practice_exercise_steps!' \
       if @used_exercise_numbers.nil?
@@ -190,8 +187,8 @@ class Tasks::Assistants::GenericAssistant
 
       # Set related_content and add the exercises to the task
       chosen_exercises.each do |chosen_exercise|
-        assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
-        @used_exercise_numbers << chosen_exercise.number
+        add_exercise_step!(task: task, exercise: chosen_exercise,
+                           group_type: :spaced_practice_group)
       end
 
       spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \

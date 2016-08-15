@@ -9,7 +9,9 @@ class FilterExcludedExercises
     course_excluded_numbers = course.nil? ? [] : course.excluded_exercises.map(&:exercise_number)
 
     excluded_exercise_numbers_set = Set.new(
-      admin_excluded_numbers.map(&:to_i) + course_excluded_numbers + additional_excluded_numbers
+      admin_excluded_numbers.map(&:to_i) +
+      course_excluded_numbers +
+      additional_excluded_numbers.to_a
     )
 
     admin_excluded_uids_set = Set.new admin_excluded_uids

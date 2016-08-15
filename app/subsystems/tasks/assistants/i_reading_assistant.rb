@@ -66,6 +66,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
         task: task, core_page_ids: @pages.map(&:id),
         history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
       )
+
       add_personalized_exercise_steps!(
         task: task, num_personalized_exercises: num_personalized_exercises,
         personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized

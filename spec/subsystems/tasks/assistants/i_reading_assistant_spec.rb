@@ -244,6 +244,37 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
       expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
     end
+
+    it 'does not assign the same spaced practice exercise twice in the same assignment' do
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:k_ago_map) { [[0, 2], [0, 2]] }
+      )
+
+      unexcluded_exercise = nil
+      @content_pages.each do |content_page|
+        reading_dynamic_exercises = content_page.reload.reading_dynamic_pool.exercises
+        reading_dynamic_exercises.each do |exercise|
+          next unexcluded_exercise = exercise if unexcluded_exercise.nil?
+          CourseContent::Models::ExcludedExercise.create!(course: course,
+                                                          exercise_number: exercise.number)
+        end
+      end
+
+      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      expect(tasks.length).to eq num_taskees
+
+      tasks.each do |task|
+        expect(task.core_task_steps.count).to eq @core_step_gold_data.count
+
+        expect(task.spaced_practice_task_steps.count).to eq 1
+        expect(task.spaced_practice_task_steps.first.tasked.exercise).to eq unexcluded_exercise
+
+        expect(task.personalized_task_steps.count).to eq 1
+      end
+
+      expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
+      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
+    end
   end
 
   context "for Newton's First Law of Motion: Inertia" do

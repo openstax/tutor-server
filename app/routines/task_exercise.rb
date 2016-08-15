@@ -35,9 +35,9 @@ class TaskExercise
 
       current_step.tasked.set_correct_answer_id
 
-      task.add_step(current_step)
-
       yield current_step if block_given?
+
+      task.add_step(current_step)
 
       current_step
     end

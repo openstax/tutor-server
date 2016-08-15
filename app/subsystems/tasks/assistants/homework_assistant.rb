@@ -84,11 +84,15 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     task = build_task(type: :homework, default_title: 'Homework',
                       individualized_tasking_plan: individualized_tasking_plan)
 
+    reset_used_exercises
+
     add_core_steps!(task: task, exercises: exercises)
+
     add_spaced_practice_exercise_steps!(
       task: task, core_page_ids: @core_page_ids, history: history,
       k_ago_map: k_ago_map(num_spaced_practice_exercises), pool_type: :homework_dynamic
     )
+
     add_personalized_exercise_steps!(
       task: task, num_personalized_exercises: num_personalized_exercises,
       personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized
@@ -97,10 +101,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
   def add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
-      TaskExercise.call(task: task, exercise: exercise) do |step|
-        step.group_type = :core_group
-        step.add_related_content(exercise.page.related_content)
-      end
+      add_exercise_step!(task: task, exercise: exercise, group_type: :core_group)
     end
 
     task
