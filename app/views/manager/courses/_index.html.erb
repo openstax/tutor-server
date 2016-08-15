@@ -4,6 +4,10 @@
 <% incomplete_jobs ||= [] %>
 <% failed_jobs ||= [] %>
 
+<% page ||= 1 %>
+<% per_page ||= 25 %>
+<% #total_count ||= course_infos.count %>
+
 <ul class="nav nav-tabs" role="tablist">
   <li role="presentation" class="active">
     <a href="#main" aria-controls="main" role="tab" data-toggle="tab">
@@ -28,7 +32,18 @@
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="main">
-    <table class="table table-striped">
+
+    <%
+    pagination = will_paginate(
+      WillPaginate::Collection.create(page, per_page, total_count) do |pager|
+        pager.replace course_infos
+      end
+    )
+    %>
+
+    <%= pagination %>
+
+    <table class="table table-striped courses-table">
       <thead>
         <tr>
           <% if bulk_actions %>
@@ -79,6 +94,8 @@
         <% end %>
       </tbody>
     </table>
+
+    <%= pagination %>
 
     <% if bulk_actions %>
       <div id="courses-bulk-actions">

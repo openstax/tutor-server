@@ -7,7 +7,8 @@ class Admin::CoursesController < Admin::BaseController
 
   def index
     @query = params[:query]
-    courses = SearchCourses[query: params[:query]]
+    courses = SearchCourses[query: params[:query], order_by: params[:order_by]].paginate(page: params.fetch(:page, 1), per_page: params.fetch(:per_page, 25))
+    @total_courses = courses.count
     @course_infos = CollectCourseInfo[courses: courses,
                                       with: [:teacher_names, :periods, :ecosystem_book]]
     @ecosystems = Content::ListEcosystems[]
