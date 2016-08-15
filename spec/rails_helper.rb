@@ -63,27 +63,27 @@ RSpec.configure do |config|
   # Use DatabaseCleaner instead of rspec transaction rollbacks
   # http://tomdallimore.com/blog/taking-the-test-trash-out-with-databasecleaner-and-rspec/
 
-  config.before(:suite) do
+  config.prepend_before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before(:all) do
-    DatabaseCleaner.strategy = :transaction
-  end
-
-  config.before(:all, js: true) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.before(:all, truncation: true) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.before(:all) do
+  config.prepend_before(:all) do
     DatabaseCleaner.start
   end
 
-  config.before(:each) do
+  config.prepend_before(:all, js: true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.prepend_before(:all, truncation: true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.prepend_before(:all) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.prepend_before(:each) do
     DatabaseCleaner.start
   end
 

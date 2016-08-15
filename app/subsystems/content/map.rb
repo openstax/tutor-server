@@ -25,6 +25,10 @@ module Content
       end
     end
 
+    def to_ecosystem
+      verify_and_return @strategy.to_ecosystem, klass: Content::Ecosystem, error: StrategyError
+    end
+
     # Returns a hash that maps the given Content::Exercises
     # to Content::Pages in the to_ecosystem
     def map_exercises_to_pages(exercises:)

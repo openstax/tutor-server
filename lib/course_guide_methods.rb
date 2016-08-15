@@ -69,7 +69,7 @@ module CourseGuideMethods
       # Exclude unopened tasks in history
       opens_ats = role_history.opens_ats
       open_task_indices = opens_ats.each_index.select do |index|
-        opens_ats[index] <= Time.now
+        opens_ats[index].nil? || opens_ats[index] <= Time.now
       end
       role_history.core_page_ids.values_at(*open_task_indices)
     end.flatten
@@ -128,7 +128,7 @@ module CourseGuideMethods
     end
 
     # Assuming only 1 book per ecosystem
-    book = mapped_core_pages_by_chapter.keys.first.book
+    book = ecosystems_map.to_ecosystem.books.first
 
     {
       title: book.title,
