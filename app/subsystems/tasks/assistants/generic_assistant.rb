@@ -147,9 +147,10 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
-    history = history_for_task task: task, core_page_ids: core_page_ids, history: history
+    raise 'You must call reset_used_exercises before add_spaced_practice_exercise_steps!' \
+      if @used_exercise_numbers.nil?
 
-    core_exercise_numbers = history.exercise_numbers.first
+    history = history_for_task task: task, core_page_ids: core_page_ids, history: history
 
     course = task_plan.owner
 
@@ -180,7 +181,7 @@ class Tasks::Assistants::GenericAssistant
 
       filtered_exercises = FilterExcludedExercises[
         exercises: @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids],
-        course: course, additional_excluded_numbers: core_exercise_numbers
+        course: course, additional_excluded_numbers: @used_exercise_numbers
       ]
 
       chosen_exercises = ChooseExercises[
@@ -190,6 +191,7 @@ class Tasks::Assistants::GenericAssistant
       # Set related_content and add the exercises to the task
       chosen_exercises.each do |chosen_exercise|
         assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
+        @used_exercise_numbers << chosen_exercise.number
       end
 
       spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
