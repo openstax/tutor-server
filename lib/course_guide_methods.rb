@@ -128,7 +128,7 @@ module CourseGuideMethods
     end
 
     # Assuming only 1 book per ecosystem
-    book = mapped_core_pages_by_chapter.keys.first.book
+    book = ecosystems_map.to_ecosystem.books.first
 
     {
       title: book.title,

@@ -4,6 +4,7 @@ module Content
       class Map
 
         attr_accessor :is_valid, :validity_error_message
+        attr_reader :to_ecosystem
 
         class << self
           def find_or_create_by(from_ecosystems:, to_ecosystem:)
