@@ -17,16 +17,22 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     })
   }
 
-  let(:chapter) { FactoryGirl.create :content_chapter }
+  let(:chapter_1)  { FactoryGirl.create :content_chapter, book_location: [1] }
+  let(:book)       { chapter_1.book }
+  let(:chapter_20) { FactoryGirl.create :content_chapter, book: book, book_location: [20] }
 
   let!(:page_1) do
     OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage[cnx_page: cnx_page_1, chapter: chapter, book_location: [1, 1]]
+      Content::Routines::ImportPage[
+        cnx_page: cnx_page_1, chapter: chapter_1, book_location: [1, 2]
+      ]
     end
   end
   let!(:page_2) do
     OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage[cnx_page: cnx_page_2, chapter: chapter, book_location: [1, 2]]
+      Content::Routines::ImportPage[
+        cnx_page: cnx_page_2, chapter: chapter_20, book_location: [20, 0]
+      ]
     end
   end
 
@@ -37,15 +43,15 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
   ] }
 
   let(:before_hrefs) { [
-    'https://archive.cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
-    'https://archive.cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
-    'https://archive.cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
+    'https://cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
+    'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
+    'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
   ] }
 
   let(:after_hrefs) { [
-    '127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
-    'https://archive.cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
-    'https://archive.cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
+    '20',
+    'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
+    'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
   ] }
 
   it 'updates page content links to relative url if the link points to the book' do
@@ -56,8 +62,9 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
       expect(link.attribute('href').value).to eq before_hrefs[i]
     end
 
-    Content::Routines::UpdatePageContent.call(pages: chapter.pages)
-    chapter.pages.each{ |page| page.save! }
+    pages = [page_1, page_2]
+    Content::Routines::UpdatePageContent.call(pages: pages)
+    pages.each(&:save!)
 
     doc = Nokogiri::HTML(page_1.reload.content)
 
