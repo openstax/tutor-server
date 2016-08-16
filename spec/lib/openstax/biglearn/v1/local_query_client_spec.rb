@@ -123,14 +123,20 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     end
 
     it "gives back a hash with one entry per pool" do
-      clues = client.get_clues(roles: [@passing_role], pool_uuids: [@first_two_pool, @all_pool].map(&:uuid))
+      clues = client.get_clues(
+        roles: [@passing_role], pool_uuids: [@first_two_pool, @all_pool].map(&:uuid)
+      )
       expect(clues.keys.size).to eq 2
     end
 
     it "gives increasing clues for increasing correctness" do
-      all_wrong_clue = client.get_clues(roles: [@all_wrong_role], pool_uuids: [@all_pool.uuid])["all"]
-      all_right_clue = client.get_clues(roles: [@all_right_role], pool_uuids: [@all_pool.uuid])["all"]
-      passing_clue =   client.get_clues(roles: [@passing_role],   pool_uuids: [@all_pool.uuid])["all"]
+      all_wrong_clue = client.get_clues(
+        roles: [@all_wrong_role], pool_uuids: [@all_pool.uuid]
+      )["all"]
+      all_right_clue = client.get_clues(
+        roles: [@all_right_role], pool_uuids: [@all_pool.uuid]
+      )["all"]
+      passing_clue = client.get_clues(roles: [@passing_role], pool_uuids: [@all_pool.uuid])["all"]
 
       expect(all_wrong_clue[:value]).to be < passing_clue[:value]
       expect(passing_clue[:value]).to be < all_right_clue[:value]
@@ -153,19 +159,35 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     end
 
     it "filters to the right tasked exercises" do
-      expect(
-        client.completed_tasked_exercises_by(
-          pool_uuids: [@all_pool.uuid],
-          roles: [@all_wrong_role, @all_right_role, @passing_role]
-        )[@all_pool.uuid].map(&:id)
-      ).to contain_exactly(*@te_ids)
+      individual_all_tes = client.completed_tasked_exercises_by(
+        pool_uuids: [@all_pool.uuid],
+        roles: [@all_wrong_role, @all_right_role, @passing_role]
+      )
+      expect(individual_all_tes[@all_pool.uuid].map(&:id)).to contain_exactly(*@te_ids)
 
-      expect(
-        client.completed_tasked_exercises_by(
-          pool_uuids: [@first_two_pool.uuid],
-          roles: [@all_right_role, @passing_role]
-        )[@first_two_pool.uuid].map(&:id)
-      ).to contain_exactly(*@te_ids[4..5], *@te_ids[8..9])
+      individual_first_two_tes = client.completed_tasked_exercises_by(
+        pool_uuids: [@first_two_pool.uuid],
+        roles: [@all_right_role, @passing_role]
+      )
+      expect(individual_first_two_tes[@first_two_pool.uuid].map(&:id)).to(
+        contain_exactly(*@te_ids[4..5], *@te_ids[8..9])
+      )
+
+      combined_all_tes = client.completed_tasked_exercises_by(
+        pool_uuids: [@all_pool.uuid, @first_two_pool.uuid],
+        roles: [@all_wrong_role, @all_right_role, @passing_role]
+      )
+      expect(combined_all_tes[@all_pool.uuid]).to(
+        contain_exactly *individual_all_tes[@all_pool.uuid]
+      )
+
+      combined_first_two_tes = client.completed_tasked_exercises_by(
+        pool_uuids: [@all_pool.uuid, @first_two_pool.uuid],
+        roles: [@all_right_role, @passing_role]
+      )
+      expect(combined_first_two_tes[@first_two_pool.uuid]).to(
+        contain_exactly *individual_first_two_tes[@first_two_pool.uuid]
+      )
     end
 
     it "filters to the right tasked exercises even with old and new exercises" do

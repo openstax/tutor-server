@@ -59,7 +59,6 @@ module OpenStax::Biglearn::V1
 
       hash = {}
       tasked_exercises_by_pool_uuid.each do |uuid, tasked_exercises|
-        tasked_exercises = tasked_exercises_by_pool_uuid[uuid]
         responses = tasked_exercises.map{ |te| te.is_correct? ? 1.0 : 0.0 }
 
         local_clue = LocalClue.new(responses: responses)
@@ -98,12 +97,12 @@ module OpenStax::Biglearn::V1
                                                       .select([:id, :number])
                                                       .index_by(&:id)
 
-      pool_uuids_by_exercise_number = {}
+      pool_uuids_by_exercise_number = Hash.new{ |hash, key| hash[key] = [] }
       content_pools.each do |pool|
         exercise_ids = pool.content_exercise_ids
         exercise_ids.each do |exercise_id|
           exercise_number = pool_exercises_by_id[exercise_id].number
-          pool_uuids_by_exercise_number[exercise_number] = pool.uuid
+          pool_uuids_by_exercise_number[exercise_number] << pool.uuid
         end
       end
 
@@ -112,17 +111,21 @@ module OpenStax::Biglearn::V1
       tasked_exercises_by_pool_uuid = {}
       pool_uuids.each{ |pool_uuid| tasked_exercises_by_pool_uuid[pool_uuid] = [] }
 
-      tasked_exercises_by_pool_uuid.merge(
-        Tasks::Models::TaskedExercise
-          .joins{[task_step.task.taskings, exercise]}
-          .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
-          .where{task_step.first_completed_at != nil}
-          .where{exercise.number.in all_pool_exercise_numbers}
-          .select do
-            [Tasks::Models::TaskedExercise.arel_table[Arel.star],
-             exercise.number.as(:exercise_number)]
-          end.group_by{ |te| pool_uuids_by_exercise_number[te.exercise_number] }
-      )
+      Tasks::Models::TaskedExercise
+        .joins{[task_step.task.taskings, exercise]}
+        .where{task_step.task.taskings.entity_role_id.in roles.map(&:id)}
+        .where{task_step.first_completed_at != nil}
+        .where{exercise.number.in all_pool_exercise_numbers}
+        .select do
+          [Tasks::Models::TaskedExercise.arel_table[Arel.star],
+           exercise.number.as(:exercise_number)]
+        end.each do |tasked_exercise|
+          pool_uuids_by_exercise_number[tasked_exercise.exercise_number].each do |pool_uuid|
+            tasked_exercises_by_pool_uuid[pool_uuid] << tasked_exercise
+          end
+        end
+
+      tasked_exercises_by_pool_uuid
     end
   end
 
