@@ -102,7 +102,7 @@ module Tasks
     end
 
     def get_student_cc_data(page_cc_tasks_map_for_role, sorted_pages)
-      return [] if page_cc_tasks_map_for_role.nil?
+      return [nil]*sorted_pages.size if page_cc_tasks_map_for_role.nil?
 
       tasks = sorted_pages.map do |page|
         cc_tasks = page_cc_tasks_map_for_role[page]

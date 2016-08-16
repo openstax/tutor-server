@@ -38,14 +38,23 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
   end
 
-  let(:expected_periods)   { 2 }
-  let(:expected_students)  { 2 }
+  let(:expected_periods)              { 2 }
+  let(:expected_students)             { 2 }
 
-  let(:expected_tasks)     { [2, 1] }
-  let(:expected_task_type) { 'concept_coach' }
+  let(:expected_tasks)                { [2, 1] }
+  let(:expected_task_type)            { 'concept_coach' }
+
+  let(:first_period)                  { @course.periods.first }
+  let(:first_student_of_first_period) do
+    first_period.latest_enrollments.preload(student: {role: {role_user: :profile}})
+                .map(&:student).sort_by do |student|
+      sort_name = "#{student.role.last_name} #{student.role.first_name}"
+      (sort_name.blank? ? student.role.name : sort_name).downcase
+    end.first
+  end
 
   context 'on the happy path' do
-    let(:reports) { described_class[course: @course] }
+    let(:reports)                     { described_class[course: @course] }
 
     it 'has the proper structure' do
       expect(reports.size).to eq expected_periods
@@ -64,7 +73,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
 
         report.students.each do |student|
           expect(student.data.size).to be <= expected_tasks[rindex]
-          student.data.map(&:type).each do |data_type|
+          student.data.compact.map(&:type).each do |data_type|
             expect(data_type).to eq expected_task_type
           end
         end
@@ -84,11 +93,16 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     end
   end
 
-  it 'does not blow up when a student did not work a particular task' do
-    @course.students.first.role.taskings.first.task.destroy
-    expect {
-      described_class[course: @course]
-    }.not_to raise_error
+  it 'returns nil when a student did not work a particular task' do
+    first_student_of_first_period.role.taskings.first.task.destroy
+    expect(described_class[course: @course].first[:students].first[:data]).to include nil
+  end
+
+  it 'returns several nils when a student did not work any tasks' do
+    first_student_of_first_period.role.taskings.each{ |tasking| tasking.task.really_destroy! }
+    expect(described_class[course: @course].first[:students].first[:data]).to(
+      eq [nil]*expected_tasks.first
+    )
   end
 
   it 'does not blow up when a student has no first_name' do
