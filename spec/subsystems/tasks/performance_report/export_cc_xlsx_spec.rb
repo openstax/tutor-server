@@ -26,7 +26,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
         end
 
         # Uncomment this to open the file for visual inspection
-        #`open "#{filepath}"` and sleep(0.5)
+        # `open "#{filepath}"` and sleep(0.5)
 
         expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
       end
@@ -68,6 +68,12 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
       expect(cell(13,6,0)).to eq 0
       expect(cell(13,6,1)).to eq 0
       expect(cell(13,7,1)).to eq 0
+    end
+
+    it 'puts dropped students at the bottom' do
+      expect(cell(23,1,0)).to eq "Droppy"
+      expect(cell(23,2,0)).to eq "McDropface"
+      expect(cell(23,10,0).strftime("%-m/%-d/%Y")).to eq "3/2/2016"
     end
   end
 
@@ -165,6 +171,29 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
                 actual_and_placeholder_exercise_count: 9,
                 completed_exercise_count: 8,
                 correct_exercise_count: 8,
+                recovered_exercise_count: 0
+              }
+            ]
+          },
+          {
+            name: "Droppy McDropface",
+            first_name: "Droppy",
+            last_name: "McDropface",
+            student_identifier: "SID4000",
+            is_dropped: true,
+            role: nil,
+            data: [
+              nil,
+              {
+                late: false,
+                status: 'in_progress',
+                type: 'concept_coach',
+                id: 44,
+                due_at: Chronic.parse("3/15/2016 1PM"),
+                last_worked_at: Chronic.parse("3/2/2016 3PM"),
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count: 7,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0
               }
             ]

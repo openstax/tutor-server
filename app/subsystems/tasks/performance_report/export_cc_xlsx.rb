@@ -321,75 +321,81 @@ module Tasks
         out_of_enable_range =
           range([first_data_column, out_of_enable_row, last_data_column, out_of_enable_row])
 
-        report[:students].each_with_index do |student, ss|
-          student_columns = [
-            student[:first_name],
-            student[:last_name],
-            student[:student_identifier],
-          ]
+        student_data_writer = ->(students) do
+          students.each_with_index do |student, ss|
+            student_columns = [
+              student[:first_name],
+              student[:last_name],
+              student[:student_identifier],
+            ]
 
-          student_row = first_student_row + ss
+            student_row = first_student_row + ss
 
-          data_range =
-            range([first_data_column, student_row, last_data_column, student_row])
+            data_range =
+              range([first_data_column, student_row, last_data_column, student_row])
 
-          if format == :counts
-            student_columns.push(
-              ["#{@eq}IFERROR(SUMIF(#{score_enable_range}, \">0\", #{data_range}),NA())",
-               style: @count_L],
-              ["#{@eq}IFERROR(SUMIF(#{out_of_enable_range}, \">0\", #{data_range}),NA())",
-               style: @count]
-            )
-          else
-            student_columns.push(
-              ["#{@eq}IFERROR(AVERAGEIF(#{score_enable_range},\">0\",#{data_range}),NA())",
-               style: @pct_L]
-            )
-          end
-
-          student[:data].each_with_index do |data,ss|
-            if data
-              correct_count = data[:correct_exercise_count]
-              completed_count = data[:completed_exercise_count]
-              total_count = data[:actual_and_placeholder_exercise_count]
-
-              correct_pct = correct_count * 1.0 / total_count
-              completed_pct = completed_count * 1.0 / total_count
-
-              if format == :counts
-                student_columns.push([
-                  correct_count,
-                  {
-                    style: @normal_L,
-                  }
-                ])
-                student_columns.push(completed_count)
-                student_columns.push(total_count)
-              else
-                student_columns.push([
-                  correct_pct,
-                  {
-                    style: @pct_L,
-                  }
-                ])
-                student_columns.push([
-                  completed_pct,
-                  {style: @pct}
-                ])
-              end
-              student_columns.push([data[:last_worked_at], {style: @date_R}])
+            if format == :counts
+              student_columns.push(
+                ["#{@eq}IFERROR(SUMIF(#{score_enable_range}, \">0\", #{data_range}),NA())",
+                 style: @count_L],
+                ["#{@eq}IFERROR(SUMIF(#{out_of_enable_range}, \">0\", #{data_range}),NA())",
+                 style: @count]
+              )
             else
-              if format == :counts
-                student_columns.push([0, {style: @normal_L}], 0, report[:data_headings][ss][:average_actual_and_placeholder_exercise_count])
-              else
-                student_columns.push([0, {style: @pct_L}], [0, {style: @pct}])
-              end
-              student_columns.push(["Not Started", {style: @right_R}])
+              student_columns.push(
+                ["#{@eq}IFERROR(AVERAGEIF(#{score_enable_range},\">0\",#{data_range}),NA())",
+                 style: @pct_L]
+              )
             end
-          end
 
-          @helper.add_row(sheet, student_columns)
+            student[:data].each_with_index do |data,ss|
+              if data
+                correct_count = data[:correct_exercise_count]
+                completed_count = data[:completed_exercise_count]
+                total_count = data[:actual_and_placeholder_exercise_count]
+
+                correct_pct = correct_count * 1.0 / total_count
+                completed_pct = completed_count * 1.0 / total_count
+
+                if format == :counts
+                  student_columns.push([
+                    correct_count,
+                    {
+                      style: @normal_L,
+                    }
+                  ])
+                  student_columns.push(completed_count)
+                  student_columns.push(total_count)
+                else
+                  student_columns.push([
+                    correct_pct,
+                    {
+                      style: @pct_L,
+                    }
+                  ])
+                  student_columns.push([
+                    completed_pct,
+                    {style: @pct}
+                  ])
+                end
+                student_columns.push([data[:last_worked_at], {style: @date_R}])
+              else
+                if format == :counts
+                  student_columns.push([0, {style: @normal_L}], 0, report[:data_headings][ss][:average_actual_and_placeholder_exercise_count])
+                else
+                  student_columns.push([0, {style: @pct_L}], [0, {style: @pct}])
+                end
+                student_columns.push(["Not Started", {style: @right_R}])
+              end
+            end
+
+            @helper.add_row(sheet, student_columns)
+          end
         end
+
+        dropped_students, active_students = report[:students].partition{|student| student[:is_dropped]}
+
+        student_data_writer.call(active_students)
 
         last_student_row = sheet.rows.count
 
@@ -445,6 +451,31 @@ module Tasks
         end
 
         @helper.add_row(sheet, average_columns)
+
+        # Dropped students
+
+        5.times { sheet.add_row }
+
+        dropped_heading_style =
+          style!(border: { edges: [:bottom], :color => '000000', :style => :thin},
+                 alignment: {horizontal: :left},
+                 b: true)
+        dropped_heading_columns =
+          [["DROPPED", {style: dropped_heading_style}]] +
+          (format == :counts ? 4 : 3).times.map{["", {style: dropped_heading_style}]} +
+          (report[:data_headings].count*(format == :counts ? 4 : 3)).times.map {
+            ["", {style: dropped_heading_style}]
+          }
+        @helper.add_row(sheet, dropped_heading_columns)
+
+        student_data_writer.call(dropped_students)
+
+        dropped_footer_style = style!(border: { edges: [:top], :color => '000000', :style => :thin})
+        dropped_footer_columns =
+          (report[:data_headings].count*(format == :counts ? 4 : 3) + (format == :counts ? 5 : 4)).times.map {
+            ["", {style: dropped_footer_style}]
+          }
+        @helper.add_row(sheet, dropped_footer_columns)
 
         # Now it is time to add the meta info rows that we skipped at the top of
         # this method.  The trickiness here is that in order to insert the rows
