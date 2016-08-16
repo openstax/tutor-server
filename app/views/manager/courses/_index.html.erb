@@ -7,28 +7,6 @@
 <% page ||= 1 %>
 <% per_page ||= 25 %>
 
-<ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active">
-    <a href="#main" aria-controls="main" role="tab" data-toggle="tab">
-      List of Courses
-    </a>
-  </li>
-  <% unless incomplete_jobs.empty? %>
-    <li>
-      <a href="#incomplete" aria-controls="main" role="tab" data-toggle="tab">
-        Incomplete Bulk Ecosystem Update Jobs
-      </a>
-    </li>
-  <% end %>
-  <% unless failed_jobs.empty? %>
-    <li>
-      <a href="#failed" aria-controls="main" role="tab" data-toggle="tab">
-        Failed Bulk Ecosystem Update Jobs
-      </a>
-    </li>
-  <% end %>
-</ul>
-
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="main">
 
