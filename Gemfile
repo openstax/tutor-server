@@ -184,6 +184,9 @@ group :development, :test do
   # Run specs in parallel
   gem 'parallel_tests'
 
+  # Show failing parallel specs instantly
+  gem 'rspec-instafail'
+
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 
