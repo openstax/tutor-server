@@ -454,6 +454,19 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
           api_get :index, student_1_token, parameters: { id: course.id }
         }.to raise_error SecurityTransgression
       end
+
+      it 'marks dropped students and excludes them from averages' do
+        CourseMembership::InactivateStudent.call(student: student_2.to_model.roles.first.student)
+
+        Timecop.freeze(Time.current + 1.1.days) do
+          api_get :index, teacher_token, parameters: { id: course.id }
+        end
+
+        expect(response.body_as_hash[0]).to include(
+          overall_average_score: 1.0,
+          students: a_collection_including(a_hash_including(name: 'Student Two', is_dropped: true))
+        )
+      end
     end
   end
 
