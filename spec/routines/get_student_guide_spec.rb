@@ -66,11 +66,11 @@ RSpec.describe GetStudentGuide, type: :routine do
 
     it 'gets the completed task step counts for the role' do
       result = described_class[role: @role]
-      total_count = result['children'].map{ |cc| cc['questions_answered_count'] }.reduce(:+)
+      total_count = result['children'].map{ |cc| cc['questions_answered_count'] }.reduce(0, :+)
       expect(total_count).to eq 9
 
       result = described_class[role: @second_role]
-      total_count = result['children'].map{ |cc| cc['questions_answered_count'] }.reduce(:+)
+      total_count = result['children'].map{ |cc| cc['questions_answered_count'] }.reduce(0, :+)
       expect(total_count).to eq 10
     end
 

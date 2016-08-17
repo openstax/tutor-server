@@ -48,10 +48,10 @@ module CourseGuideMethods
         title: chapter.title,
         book_location: chapter.book_location,
         questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids
-                                    .values_at(*mapped_relevant_page_ids).reduce(:+),
+                                    .values_at(*mapped_relevant_page_ids).reduce(0, :+),
         clue: clues_by_pool_uuids[chapter.all_exercises_pool.uuid],
         practice_count: practice_counts_by_mapped_relevant_page_ids
-                          .values_at(*mapped_relevant_page_ids).reduce(:+),
+                          .values_at(*mapped_relevant_page_ids).reduce(0, :+),
         page_ids: mapped_relevant_page_ids,
         children: get_page_guides(mapped_relevant_pages,
                                   clues_by_pool_uuids,

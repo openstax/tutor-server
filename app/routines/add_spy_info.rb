@@ -18,7 +18,7 @@ class AddSpyInfo
   def values_from(val)
     case val
     when Array
-      val.map{ |value| values_from(value) }.reduce(&:merge) || {}
+      val.map{ |value| values_from(value) }.reduce({}, :merge)
     when Hash
       val.each_with_object({}) { |(key, value), hash| hash[key] = values_from(value) }
     else

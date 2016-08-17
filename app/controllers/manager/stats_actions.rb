@@ -10,6 +10,11 @@ module Manager::StatsActions
                     periods_with_deleted: :latest_enrollments_with_deleted }
       ]
     ).order{ profile.name }.to_a
+    @total_students = @courses.map do |course|
+      course.periods_with_deleted.map do |period|
+        period.latest_enrollments_with_deleted.length
+      end.reduce(0, :+)
+    end.reduce(0, :+)
     @course_url_proc = course_url_proc
 
     render 'manager/stats/courses'
@@ -79,10 +84,10 @@ module Manager::StatsActions
     in_progress = tasks.select(&:in_progress?).length
     completed = tasks.select(&:completed?).length
     not_started = total - (in_progress + completed)
-    exercises = tasks.map(&:exercise_steps_count).reduce(:+)
-    completed_exercises = tasks.map(&:completed_exercise_steps_count).reduce(:+)
+    exercises = tasks.map(&:exercise_steps_count).reduce(0, :+)
+    completed_exercises = tasks.map(&:completed_exercise_steps_count).reduce(0, :+)
     incomplete_exercises = exercises - completed_exercises
-    correct_exercises = tasks.map(&:correct_exercise_steps_count).reduce(:+)
+    correct_exercises = tasks.map(&:correct_exercise_steps_count).reduce(0, :+)
 
     {
       tasks: total,

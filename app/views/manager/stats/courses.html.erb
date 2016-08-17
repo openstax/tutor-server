@@ -25,15 +25,10 @@
       <td><%= course.periods_with_deleted.length %></td>
       <td><%= course.periods_with_deleted.map do |period|
                 period.latest_enrollments_with_deleted.length
-              end.reduce(:+) %></td>
+              end.reduce(0, :+) %></td>
     </tr>
   <% end %>
   </tbody>
 </table>
 
-Total courses: <%= @courses.length %>
-Total students: <%= @courses.map do |course|
-                      course.periods_with_deleted.map do |period|
-                        period.latest_enrollments_with_deleted.length
-                      end.reduce(:+)
-                    end.reduce(:+) %>
+Total: <%= pluralize @total_students, 'student' %> in <%= pluralize @courses.length, 'course' %>

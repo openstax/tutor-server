@@ -117,10 +117,10 @@ module Content
         end
 
         def merge_maps(maps:)
-          @page_id_to_page_id_map = maps.map(&:page_id_to_page_id_map).reduce(&:merge)
-          @exercise_id_to_page_id_map = maps.map(&:exercise_id_to_page_id_map).reduce(&:merge)
+          @page_id_to_page_id_map = maps.map(&:page_id_to_page_id_map).reduce({}, :merge)
+          @exercise_id_to_page_id_map = maps.map(&:exercise_id_to_page_id_map).reduce({}, :merge)
           @page_id_to_pool_type_exercise_ids_map = maps.map(&:page_id_to_pool_type_exercise_ids_map)
-                                                       .reduce(&:merge)
+                                                       .reduce({}, :merge)
           merge_map_validities(maps: maps)
         end
 
