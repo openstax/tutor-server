@@ -37,19 +37,22 @@ class Api::V1::StudentsController < Api::V1::ApiController
     #{json_schema(Api::V1::StudentRepresenter, include: :writeable)}
   EOS
   def update
-    @period_update_result = nil
+    period_update_result = nil
     @student.with_lock do
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
-      payload = consume!(@student, represent_with: Api::V1::StudentRepresenter)
       consume!(@student, represent_with: Api::V1::StudentTeacherUpdateRepresenter)
+
+      payload = consume!(Hashie::Mash.new, represent_with: Api::V1::StudentRepresenter)
       if @student.save && payload['course_membership_period_id']
         period = CourseMembership::Models::Period.find(payload['course_membership_period_id'])
-        @period_update_result = MoveStudent.call(student: @student, period: period)
+        period_update_result = MoveStudent.call(student: @student, period: period)
+        # re-check access to ensure the requesting user has permission to move student to the new period
+        OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
       end
     end
 
-    if @period_update_result && @period_update_result.errors.any?
-      render_api_errors(@period_update_result.errors)
+    if period_update_result && period_update_result.errors.any?
+      render_api_errors(period_update_result.errors)
     elsif @student.errors.any?
       render_api_errors(@student.errors)
     else
