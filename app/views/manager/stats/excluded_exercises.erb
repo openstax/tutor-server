@@ -1,4 +1,4 @@
-<% @page_header = "Excluded Exercises" %>
+<% @page_header = "Excluded Exercise Stats" %>
 
 Total exercise exclusions: <%= @excluded_exercises.length %>
 
@@ -20,9 +20,10 @@ Total exercise exclusions: <%= @excluded_exercises.length %>
       <td><%= course.name %></td>
       <td><%= course.teachers.map{ |teacher| teacher.role.name }.join(', ') %></td>
       <td><%= excluded_exercises.length %></td>
-      <td><%= excluded_exercises.map do |excluded_exercise|
-                link_to number, OpenStax::Exercises::V1.uri_for("/exercises/#{number}")
-              end.join(', ') %></td>
+      <td><%= excluded_exercises.sort_by(&:exercise_number).map do |excluded_exercise|
+                number = excluded_exercise.exercise_number
+                link_to number, @exercise_links[number]
+              end.join(', ').html_safe %></td>
     </tr>
   <% end %>
   </tbody>
@@ -40,7 +41,7 @@ Total exercise exclusions: <%= @excluded_exercises.length %>
   <tbody>
   <% @excluded_exercises.group_by(&:exercise_number).each do |number, excluded_exercises| %>
     <tr>
-      <td><%= link_to number, OpenStax::Exercises::V1.uri_for("/exercises/#{number}") %></td>
+      <td><%= link_to number, @exercise_links[number] %></td>
       <td><%= excluded_exercises.length %></td>
     </tr>
   <% end %>

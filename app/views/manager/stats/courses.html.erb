@@ -1,4 +1,4 @@
-<% @page_header = "Course Statistics" %>
+<% @page_header = "Course Stats" %>
 
 <table class="table table-striped">
   <thead>
@@ -18,10 +18,10 @@
     <tr>
       <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
       <td><%= course.name %></td>
-      <td><%= course.profile.school.name %></td>
+      <td><%= course.profile.school.try(:name) %></td>
       <td><%= course.is_concept_coach ? 'Yes' : 'No' %></td>
       <td><%= course.is_college ? 'Yes' : 'No' %></td>
-      <td><%= course.teachers.map{ |teacher| teacher.role.name }.join(', ') %></td>
+      <td><%= course.teachers.map(&:name).join(', ') %></td>
       <td><%= course.periods_with_deleted.length %></td>
       <td><%= course.periods_with_deleted.map do |period|
                 period.latest_enrollments_with_deleted.length

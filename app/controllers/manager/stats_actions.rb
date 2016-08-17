@@ -6,9 +6,8 @@ module Manager::StatsActions
   def courses
     @courses = Entity::Course.joins(:profile).preload(
       [
-        :profile,
-        { teachers: { role: { role_user: :profile } },
-        { periods_with_deleted: :latest_enrollments_with_deleted }
+        :profile, { teachers: { role: { role_user: :profile } },
+                    periods_with_deleted: :latest_enrollments_with_deleted }
       ]
     ).order{ profile.name }.to_a
     @course_url_proc = course_url_proc
@@ -19,10 +18,17 @@ module Manager::StatsActions
   def excluded_exercises
     @excluded_exercises = CourseContent::Models::ExcludedExercise.preload(
       course: [
-        :profile,
-        { teachers: { role: { role_user: :profile } }
+        :profile, { teachers: { role: { role_user: :profile } } }
       ]
     )
+    @exercise_links = {}
+    @excluded_exercises.each do |excluded_exercise|
+      number = excluded_exercise.exercise_number
+      @exercise_links[number] = OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+    end
+    @course_url_proc = course_url_proc
+
+    render 'manager/stats/excluded_exercises'
   end
 
   def concept_coach
