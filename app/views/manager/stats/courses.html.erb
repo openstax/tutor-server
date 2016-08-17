@@ -1,11 +1,13 @@
-<% @page_header = "Number of courses in Tutor: #{@courses.length}" %>
+<% @page_header = "Course Statistics" %>
 
 <table class="table table-striped">
   <thead>
     <tr>
       <th>ID</th>
       <th>Name</th>
+      <th>School</th>
       <th>CC?</th>
+      <th>College?</th>
       <th>Teachers</th>
       <th># Sections</th>
       <th># Students</th>
@@ -16,13 +18,22 @@
     <tr>
       <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
       <td><%= course.name %></td>
+      <td><%= course.profile.school.name %></td>
       <td><%= course.is_concept_coach ? 'Yes' : 'No' %></td>
-      <td>
-        <%= course.teachers.map{ |teacher| teacher.role.role_user.profile.name }.join(', ') %>
-      </td>
-      <td><%= course.periods.length %></td>
-      <td><%= course.periods.flat_map(&:latest_enrollments).length %></td>
+      <td><%= course.is_college ? 'Yes' : 'No' %></td>
+      <td><%= course.teachers.map{ |teacher| teacher.role.name }.join(', ') %></td>
+      <td><%= course.periods_with_deleted.length %></td>
+      <td><%= course.periods_with_deleted.map do |period|
+                period.latest_enrollments_with_deleted.length
+              end.reduce(:+) %></td>
     </tr>
   <% end %>
   </tbody>
 </table>
+
+Total courses: <%= @courses.length %>
+Total students: <%= @courses.map do |course|
+                      course.periods_with_deleted.map do |period|
+                        period.latest_enrollments_with_deleted.length
+                      end.reduce(:+)
+                    end.reduce(:+) %>

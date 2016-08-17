@@ -1,0 +1,48 @@
+<% @page_header = "Excluded Exercises" %>
+
+Total exercise exclusions: <%= @excluded_exercises.length %>
+
+<h3>By Course:</h3>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Course Name</th>
+      <th>Teachers</th>
+      <th># Exclusions</th>
+      <th>Excluded Exercise Numbers</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @excluded_exercises.group_by(&:course).each do |course, excluded_exercises| %>
+    <tr>
+      <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
+      <td><%= course.name %></td>
+      <td><%= course.teachers.map{ |teacher| teacher.role.name }.join(', ') %></td>
+      <td><%= excluded_exercises.length %></td>
+      <td><%= excluded_exercises.map do |excluded_exercise|
+                link_to number, OpenStax::Exercises::V1.uri_for("/exercises/#{number}")
+              end.join(', ') %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>By Exercise:</h3>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Exercise Number</th>
+      <th># Exclusions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @excluded_exercises.group_by(&:exercise_number).each do |number, excluded_exercises| %>
+    <tr>
+      <td><%= link_to number, OpenStax::Exercises::V1.uri_for("/exercises/#{number}") %></td>
+      <td><%= excluded_exercises.length %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

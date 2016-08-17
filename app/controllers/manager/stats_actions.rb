@@ -5,11 +5,24 @@ module Manager::StatsActions
 
   def courses
     @courses = Entity::Course.joins(:profile).preload(
-      [:profile, :teachers, {periods: :latest_enrollments}]
+      [
+        :profile,
+        { teachers: { role: { role_user: :profile } },
+        { periods_with_deleted: :latest_enrollments_with_deleted }
+      ]
     ).order{ profile.name }.to_a
     @course_url_proc = course_url_proc
 
     render 'manager/stats/courses'
+  end
+
+  def excluded_exercises
+    @excluded_exercises = CourseContent::Models::ExcludedExercise.preload(
+      course: [
+        :profile,
+        { teachers: { role: { role_user: :profile } }
+      ]
+    )
   end
 
   def concept_coach
@@ -20,7 +33,7 @@ module Manager::StatsActions
     @cc_stats = {
       books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }.map do |book_title, book_cc_tasks|
         candidate_books = book_cc_tasks.map{ |cc| cc.page.chapter.book }.uniq
-        latest_book = candidate_books.max_by{ |bb| bb.version }
+        latest_book = candidate_books.max_by(&:version)
 
         {
           title: book_title,
@@ -40,20 +53,20 @@ module Manager::StatsActions
                 {
                   title: page_title,
                   number: page_number
-                }.merge(get_task_stats(page_cc_tasks))
+                }.merge(get_cc_task_stats(page_cc_tasks))
               end.sort_by{ |pg| pg[:number] || Float::INFINITY }
-            }.merge(get_task_stats(chapter_cc_tasks))
+            }.merge(get_cc_task_stats(chapter_cc_tasks))
           end.sort_by{ |ch| ch[:number] || Float::INFINITY }
-        }.merge(get_task_stats(book_cc_tasks))
+        }.merge(get_cc_task_stats(book_cc_tasks))
       end.sort_by{ |bk| bk[:title] }
-    }.merge(get_task_stats(cc_tasks))
+    }.merge(get_cc_task_stats(cc_tasks))
 
     render 'manager/stats/concept_coach'
   end
 
   protected
 
-  def get_task_stats(cc_tasks)
+  def get_cc_task_stats(cc_tasks)
     tasks = cc_tasks.map(&:task)
     total = tasks.length
     students = tasks.flat_map{ |task| task.taskings.map{ |tg| tg.role.profile } }.uniq.length

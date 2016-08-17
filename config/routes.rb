@@ -225,9 +225,10 @@ Rails.application.routes.draw do
       put :update_salesforce
     end
 
-    resources :stats, only: [] do
-      get :courses, on: :collection
-      get :concept_coach, on: :collection
+    scope :stats, controller: :stats do
+      get :courses
+      get :excluded_exercises
+      get :concept_coach
     end
 
     mount RailsSettingsUi::Engine, at: 'settings'
@@ -263,9 +264,10 @@ Rails.application.routes.draw do
       post :import_courses
     end
 
-    resources :stats, only: [] do
-      get :courses, on: :collection
-      get :concept_coach, on: :collection
+    scope :stats, controller: :stats do
+      get :courses
+      get :excluded_exercises
+      get :concept_coach
     end
   end
 
