@@ -37,18 +37,23 @@ class Api::V1::StudentsController < Api::V1::ApiController
     #{json_schema(Api::V1::StudentRepresenter, include: :writeable)}
   EOS
   def update
+    @period_update_result = nil
     @student.with_lock do
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
-      payload = consume!(Hashie::Mash.new, represent_with: Api::V1::StudentRepresenter)
-      period = CourseMembership::Models::Period.find(payload['course_membership_period_id'])
-      @result = MoveStudent.call(student: @student, period: period)
-      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
+      payload = consume!(@student, represent_with: Api::V1::StudentRepresenter)
+      consume!(@student, represent_with: Api::V1::StudentTeacherUpdateRepresenter)
+      if @student.save && payload['course_membership_period_id']
+        period = CourseMembership::Models::Period.find(payload['course_membership_period_id'])
+        @period_update_result = MoveStudent.call(student: @student, period: period)
+      end
     end
 
-    if @result.errors.any?
-      render_api_errors(@result.errors)
+    if @period_update_result && @period_update_result.errors.any?
+      render_api_errors(@period_update_result.errors)
+    elsif @student.errors.any?
+      render_api_errors(@student.errors)
     else
-      respond_with @result.outputs.student,
+      respond_with @student,
                    represent_with: Api::V1::StudentRepresenter,
                    responder: ResponderWithPutPatchDeleteContent
     end
