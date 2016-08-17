@@ -57,13 +57,14 @@ class GetHistory
         end
       end
       homework_exercise_ids = homework_exercise_id_to_task_plan_id_map.keys.flatten
-      homework_exercises = Content::Models::Exercise.where(id: homework_exercise_ids)
-                                                    .select([:id, :content_page_id])
-      homework_exercises.each do |exercise|
-        task_plan_ids = homework_exercise_id_to_task_plan_id_map[exercise.id]
+      Content::Models::Exercise.where(id: homework_exercise_ids)
+                               .pluck(:id, :content_page_id)
+                               .each do |exercise_id, content_page_id|
+        task_plan_ids = homework_exercise_id_to_task_plan_id_map[exercise_id]
+
         task_plan_ids.each do |task_plan_id|
           homework_task_plan_id_to_page_ids_map[task_plan_id] ||= []
-          homework_task_plan_id_to_page_ids_map[task_plan_id] << exercise.content_page_id
+          homework_task_plan_id_to_page_ids_map[task_plan_id] << content_page_id
         end
       end
 
@@ -91,11 +92,19 @@ class GetHistory
                             Tasks::Models::Task.arel_table[:created_at],
                             Tasks::Models::Task.arel_table[:opens_at_ntz],
                             Tasks::Models::Task.arel_table[:due_at_ntz],
-                            Tasks::Models::TaskPlan.arel_table[:id].as('task_plan_id'),
+                            Tasks::Models::Task.arel_table[:tasks_task_plan_id],
                             Tasks::Models::TaskPlan.arel_table[:content_ecosystem_id],
                             Tasks::Models::ConceptCoachTask.arel_table[:content_page_id],
                             Tasks::Models::Tasking.arel_table[:entity_role_id]])
-                   .preload([:time_zone, {tasked_exercises: :exercise}])
+                   .preload(:time_zone)
+
+      tasked_exercises_by_task_id = Tasks::Models::TaskedExercise
+        .joins(:task_step, :exercise)
+        .where(task_step: { tasks_task_id: tasks.map(&:id) })
+        .select([Tasks::Models::TaskStep.arel_table[:tasks_task_id],
+                 Content::Models::Exercise.arel_table[:number],
+                 Content::Models::Exercise.arel_table[:content_page_id]])
+        .group_by(&:tasks_task_id)
 
       tasks.each do |task|
         role = roles_by_id[task.entity_role_id]
@@ -109,20 +118,22 @@ class GetHistory
 
         history.ecosystem_ids << task.content_ecosystem_id
 
+        tasked_exercises = tasked_exercises_by_task_id[task.id]
+
         # The core page ids exclude spaced practice/personalized pages
         history.core_page_ids << case task.task_type.to_sym
         when :reading
-          reading_task_plan_id_to_page_ids_map[task.task_plan_id]
+          reading_task_plan_id_to_page_ids_map[task.tasks_task_plan_id]
         when :homework
-          homework_task_plan_id_to_page_ids_map[task.task_plan_id]
+          homework_task_plan_id_to_page_ids_map[task.tasks_task_plan_id]
         when :concept_coach
           [task.content_page_id]
         else
-          task.tasked_exercises.map{ |te| te.exercise.content_page_id }.uniq
+          tasked_exercises.map(&:content_page_id).uniq
         end
 
-        # The exercise numbers include spaced practice/personalized exercises
-        history.exercise_numbers << task.tasked_exercises.map{ |te| te.exercise.number }
+        # The exercise numbers include core, spaced practice and personalized exercises
+        history.exercise_numbers << tasked_exercises.map(&:number)
 
         # Store some useful dates
         history.created_ats << task.created_at # Date task was assigned
