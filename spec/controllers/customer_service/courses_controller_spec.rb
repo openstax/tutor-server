@@ -14,9 +14,33 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
       expect(assigns[:course_infos].first.name).to eq('Hello World')
     end
 
-    it 'passes the query param to SearchCourses' do
-      expect(SearchCourses).to receive(:[]).with(query: 'test').once
-      get :index, query: 'test'
+    it 'passes the query param to SearchCourses along with order_by params' do
+      expect(SearchCourses).to receive(:[]).with(query: 'test', order_by: 'name').once
+      get :index, query: 'test', order_by: 'name'
+    end
+
+    context "pagination" do
+      context "when the are any results" do
+        it "paginates the results" do
+          4.times {FactoryGirl.create(:course_profile_profile, name: "Algebra #{rand(1000)}")}
+          expect(CourseProfile::Models::Profile.count).to eq(4)
+
+          get :index, page: 1, per_page: 2
+          expect(assigns[:course_infos].count).to eq(2)
+
+          get :index, page: 2, per_page: 2
+          expect(assigns[:course_infos].count).to eq(2)
+        end
+      end
+
+      context "when there are no results" do
+        it "doesn't blow up" do
+          expect(CourseProfile::Models::Profile.count).to eq(0)
+
+          get :index, page: 1
+          expect(response).to have_http_status :ok
+        end
+      end
     end
   end
 
