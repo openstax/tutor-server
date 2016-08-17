@@ -23,6 +23,10 @@ class TaskExercise
         current_step = Tasks::Models::TaskStep.new(number: next_step_number)
       end
 
+      # Mark the step as incomplete just in case it had been marked as complete before
+      current_step.first_completed_at = nil
+      current_step.last_completed_at = nil
+
       current_step.tasked = Tasks::Models::TaskedExercise.new(
         exercise: exercise.to_model,
         url: exercise.url,
