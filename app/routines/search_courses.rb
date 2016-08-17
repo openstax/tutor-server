@@ -19,7 +19,12 @@ class SearchCourses
 
   def exec(params = {}, options = {})
     params[:ob] ||= :name
-    relation = Entity::Course.joins(:profile)
+    relation = Entity::Course.joins{
+            [profile.school.outer,
+             profile.offering.outer,
+             teachers.outer.role.outer.profile.outer.account.outer,
+             ecosystems.outer]
+          }
 
     run(:search, relation: relation, sortable_fields: SORTABLE_FIELDS, params: params) do |with|
 
@@ -30,12 +35,7 @@ class SearchCourses
           sanitized_queries = to_string_array(query, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_queries.empty?
 
-          @items = @items.joins{
-            [profile.school.outer,
-             profile.offering.outer,
-             teachers.outer.role.outer.profile.outer.account.outer,
-             ecosystems.outer]
-          }.where{
+          @items = @items.where{
             (profile.name.like_any sanitized_queries) | \
             (profile.school.name.like_any sanitized_queries) | \
             (profile.offering.salesforce_book_name.like_any sanitized_queries) | \

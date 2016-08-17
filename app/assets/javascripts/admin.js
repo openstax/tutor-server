@@ -69,6 +69,31 @@ $(document).ready(function() {
     $('a[href="' + tab + '"]').click();
   }
 
+  //========== Courses table ordering =============//
+  $(".courses-table th:not(:first-child)").on("click", function(e){
+    var oldSearch = window.location.search;
+    var locationSearch = {}
+    location.search.substr(1).split("&").forEach(function(item) {locationSearch[item.split("=")[0]] = item.split("=")[1]})
+
+    var field = e.target.textContent.toLowerCase();
+    if(field.includes("teacher")){
+      field = "teacher";
+    }
+
+    var toggleOrderBy = function(){
+      if(locationSearch.order_by && locationSearch.order_by.includes("desc")){
+        locationSearch.order_by = field + " asc";
+      } else {
+        locationSearch.order_by = field + " desc";
+      }
+    };
+
+    toggleOrderBy();
+
+    locationSearch.utf8 = "✓";
+    window.location.search = $.param(locationSearch);
+  });
+
   //========== Changes the course form when a course offering is selected ==========//
   function updateCourseForm() {
     var offering = $('#course_catalog_offering_id option:selected').first();
