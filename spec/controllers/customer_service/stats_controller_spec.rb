@@ -39,7 +39,7 @@ RSpec.describe CustomerService::StatsController, type: :controller do
     end
 
     it "returns http success" do
-      controller.sign_in admin
+      controller.sign_in customer_service
 
       get :excluded_exercises
       expect(response).to have_http_status(:success)

@@ -25,11 +25,25 @@ module Manager::StatsActions
       course: [
         :profile, { teachers: { role: { role_user: :profile } } }
       ]
-    )
-    @exercise_links = {}
-    @excluded_exercises.each do |excluded_exercise|
-      number = excluded_exercise.exercise_number
-      @exercise_links[number] = OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+    ).sort_by(&:exercise_number)
+    all_excluded_exercise_numbers = @excluded_exercises.map(&:exercise_number).uniq
+
+    @page_uuids_by_exercise_numbers = Hash.new{ |hash, key| hash[key] = [] }
+    @page_urls_by_page_uuids = {}
+    Content::Models::Exercise.where(number: all_excluded_exercise_numbers)
+                             .preload(:page).group_by{ |ex| ex.page.uuid }
+                             .each do |page_uuid, exercises|
+      page_url = OpenStax::Cnx::V1.webview_url_for(page_uuid)
+      exercises.map(&:number).uniq.each do |number|
+        @page_uuids_by_exercise_numbers[number] << page_uuid
+      end
+      @page_urls_by_page_uuids[page_uuid] = page_url
+    end
+
+    @exercise_urls_by_exercise_numbers = {}
+    all_excluded_exercise_numbers.each do |number|
+      exercise_url = OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+      @exercise_urls_by_exercise_numbers[number] = exercise_url
     end
     @course_url_proc = course_url_proc
 
@@ -42,22 +56,23 @@ module Manager::StatsActions
     ]).to_a
 
     @cc_stats = {
-      books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }.map do |book_title, book_cc_tasks|
+      books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }
+                     .map do |book_title, book_cc_tasks|
         candidate_books = book_cc_tasks.map{ |cc| cc.page.chapter.book }.uniq
         latest_book = candidate_books.max_by(&:version)
 
         {
           title: book_title,
-          chapters: book_cc_tasks.group_by{ |cc| cc.page.chapter.title }.map do |chapter_title,
-                                                                                 chapter_cc_tasks|
+          chapters: book_cc_tasks.group_by{ |cc| cc.page.chapter.title }
+                                 .map do |chapter_title, chapter_cc_tasks|
             latest_chapter = latest_book.chapters.find{ |ch| ch.title == chapter_title }
             chapter_number = latest_chapter.try(:number)
 
             {
               title: chapter_title,
               number: chapter_number,
-              pages: chapter_cc_tasks.group_by{ |cc| cc.page.title }.map do |page_title,
-                                                                             page_cc_tasks|
+              pages: chapter_cc_tasks.group_by{ |cc| cc.page.title }
+                                     .map do |page_title, page_cc_tasks|
                 latest_page = latest_chapter.pages.find{ |pg| pg.title == page_title }
                 page_number = latest_page.try(:number)
 

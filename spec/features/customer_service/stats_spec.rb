@@ -42,8 +42,14 @@ RSpec.feature CustomerService::StatsController do
     let(:teacher_user)        { FactoryGirl.create :user }
     let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
+    let(:exercises) do
+      5.times.map{ FactoryGirl.create :content_exercise }.sort_by(&:number)
+    end
     let!(:excluded_exercises) do
-      5.times.map { FactoryGirl.create :course_content_excluded_exercise, course: course }
+      exercises.map do |exercise|
+        FactoryGirl.create :course_content_excluded_exercise, course: course,
+                                                              exercise_number: exercise.number
+      end
     end
 
     scenario 'displays excluded exercise statistics' do
@@ -55,12 +61,14 @@ RSpec.feature CustomerService::StatsController do
       expect(page).to have_content(course.id)
       expect(page).to have_content(course.name)
       expect(page).to have_content(teacher_user.name)
-      expect(page).to have_content(excluded_exercises.size)
-      expect(page).to have_content(excluded_exercises.map(&:exercise_number).sort.join(', '))
+      expect(page).to have_content(exercises.size)
+      expect(page).to have_content(exercises.map(&:number).join(', '))
+      expect(page).to have_content(exercises.flat_map{ |ex| ex.page.uuid }.join(', '))
 
       expect(page).to have_content('By Exercise:')
-      excluded_exercises.map(&:exercise_number).each do |number|
-        expect(page).to have_content(number)
+      exercises.each do |exercise|
+        expect(page).to have_content(exercise.number)
+        expect(page).to have_content(exercise.page.uuid)
       end
       expect(page).to have_content(1)
     end
