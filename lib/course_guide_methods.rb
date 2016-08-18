@@ -86,7 +86,7 @@ module CourseGuideMethods
     all_relevant_page_ids = (all_core_page_ids + all_worked_page_ids).uniq
 
     all_relevant_pages_by_id = {}
-    Content::Models::Page.where(id: all_relevant_page_ids).each do |content_page|
+    Content::Models::Page.where(id: all_relevant_page_ids).select(:id).each do |content_page|
       all_relevant_pages_by_id[content_page.id] = Content::Page.new strategy: content_page.wrap
     end
 
@@ -97,9 +97,15 @@ module CourseGuideMethods
 
     all_mapped_page_ids = page_map.values.flatten.map(&:id)
     mapped_relevant_pages_by_chapter = Content::Models::Page
+      .joins(:all_exercises_pool)
       .where(id: all_mapped_page_ids)
+      .where{all_exercises_pool.content_exercise_ids != '[]'} # Skip intro pages
+      .select([Content::Models::Page.arel_table[:id],
+               Content::Models::Page.arel_table[:title],
+               Content::Models::Page.arel_table[:book_location],
+               Content::Models::Page.arel_table[:content_all_exercises_pool_id],
+               Content::Models::Page.arel_table[:content_chapter_id]])
       .preload([:all_exercises_pool, {chapter: :all_exercises_pool}])
-      .reject{ |page| page.all_exercises_pool.empty? } # Skip intro pages
       .sort_by(&:book_location)
       .group_by(&:chapter)
     mapped_relevant_page_ids_with_exercises = \

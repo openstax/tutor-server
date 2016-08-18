@@ -118,7 +118,7 @@ class GetHistory
 
         history.ecosystem_ids << task.content_ecosystem_id
 
-        tasked_exercises = tasked_exercises_by_task_id[task.id]
+        tasked_exercises = tasked_exercises_by_task_id[task.id] || []
 
         # The core page ids exclude spaced practice/personalized pages
         history.core_page_ids << case task.task_type.to_sym
