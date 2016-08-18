@@ -1,5 +1,5 @@
 class GetHistory
-  TASK_BATCH_SIZE = 1000
+  TASK_BATCH_SIZE = 10000
 
   lev_routine express_output: :history
 
