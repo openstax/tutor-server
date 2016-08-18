@@ -1,10 +1,13 @@
 <%= form_tag '', method: :get do %>
 
-<div class="input-group form-group">
-   <%= text_field_tag :query, query, class: 'form-control', placeholder: 'Search here' %>
-   <span class="input-group-btn">
-     <%= submit_tag 'Search', class: "btn btn-primary"  %>
-   </span>
-</div>
+  <div class="input-group form-group">
+     <%= text_field_tag :query, query, class: 'form-control', id: "search-courses", placeholder: 'Search here' %>
+     <span class="input-group-btn">
+       <%= submit_tag 'Search', class: "btn btn-primary"  %>
+     </span>
+  </div>
 
+  <div><b>Use advanced search with keywords like</b> name:physics <b>or </b> teacher:charles</div>
+
+  <br>
 <% end %>
