@@ -1,4 +1,4 @@
-<%= form_tag '', method: :get do %>
+<%= form_tag '', id: "search-courses-form", method: :get do %>
 
   <div class="input-group form-group">
      <%= text_field_tag :query, query, class: 'form-control', id: "search-courses", placeholder: 'Search here' %>

@@ -48,4 +48,12 @@ $(function(){
 $(document).ready(function() {
   $('[data-toggle="popover"]').popover();
   $('table.concept-coach-stats').stickyTableHeaders();
+
+  //========== Searh bar show only on List of Courses tab =============//
+  var locationHash = window.location.hash;
+  if (locationHash === "" || locationHash === "#main"){
+    $("#search-courses-form").show();
+  } else {
+    $("#search-courses-form").hide();
+  }
 });
