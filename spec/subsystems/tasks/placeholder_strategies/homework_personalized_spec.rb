@@ -60,4 +60,22 @@ RSpec.describe Tasks::PlaceholderStrategies::HomeworkPersonalized, type: :placeh
     expect(task.exercise_steps_count).to eq 2
     expect(task.placeholder_steps_count).to eq 0
   end
+
+  it 'does not blow up if placeholder steps have been marked as completed' do
+    task.task_steps.each{ |ts| ts.complete.save! }
+
+    expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return(pool_exercises).once
+
+    expect(task.exercise_steps_count).to eq 2
+    expect(task.placeholder_steps_count).to eq 2
+
+    strategy.populate_placeholders(task: task)
+    task.update_step_counts!
+
+    expect(task.exercise_steps_count).to eq 4
+    expect(task.placeholder_steps_count).to eq 0
+
+    new_exercises = task.exercise_steps.last(2).map{ |step| step.tasked.exercise }
+    expect(Set.new new_exercises).to eq Set.new pool_exercises
+  end
 end
