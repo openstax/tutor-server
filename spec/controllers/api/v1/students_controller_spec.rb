@@ -164,6 +164,18 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
           })
           expect(student.reload.period).to eq period_2.to_model
         end
+
+        it 'updates student identifier' do
+          new_id = '123456789'
+          api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body.merge({
+            student_identifier: new_id
+          })
+          expect(response).to have_http_status(:ok)
+          expect(response.body_as_hash[:student_identifier]).to eq(new_id)
+          expect(student.reload.student_identifier).to eq(new_id)
+          expect(student.reload.period).to eq period_2.to_model
+        end
+
       end
 
       context 'caller is not a course teacher' do
