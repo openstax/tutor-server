@@ -25,7 +25,7 @@ class CalculateTaskStats
   end
 
   def average_step_number(taskeds)
-    taskeds.map{ |tasked| tasked.task_step.number }.reduce(:+) / Float(taskeds.size)
+    taskeds.map{ |tasked| tasked.task_step.number }.reduce(0, :+) / Float(taskeds.size)
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)

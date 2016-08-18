@@ -5,11 +5,49 @@ module Manager::StatsActions
 
   def courses
     @courses = Entity::Course.joins(:profile).preload(
-      [:profile, :teachers, {periods: :latest_enrollments}]
+      [
+        :profile, { teachers: { role: { role_user: :profile } },
+                    periods_with_deleted: :latest_enrollments_with_deleted }
+      ]
     ).order{ profile.name }.to_a
+    @total_students = @courses.map do |course|
+      course.periods_with_deleted.map do |period|
+        period.latest_enrollments_with_deleted.length
+      end.reduce(0, :+)
+    end.reduce(0, :+)
     @course_url_proc = course_url_proc
 
     render 'manager/stats/courses'
+  end
+
+  def excluded_exercises
+    @excluded_exercises = CourseContent::Models::ExcludedExercise.preload(
+      course: [
+        :profile, { teachers: { role: { role_user: :profile } } }
+      ]
+    ).sort_by(&:exercise_number)
+    all_excluded_exercise_numbers = @excluded_exercises.map(&:exercise_number).uniq
+
+    @page_uuids_by_exercise_numbers = Hash.new{ |hash, key| hash[key] = [] }
+    @page_urls_by_page_uuids = {}
+    Content::Models::Exercise.where(number: all_excluded_exercise_numbers)
+                             .preload(:page).group_by{ |ex| ex.page.uuid }
+                             .each do |page_uuid, exercises|
+      page_url = OpenStax::Cnx::V1.webview_url_for(page_uuid)
+      exercises.map(&:number).uniq.each do |number|
+        @page_uuids_by_exercise_numbers[number] << page_uuid
+      end
+      @page_urls_by_page_uuids[page_uuid] = page_url
+    end
+
+    @exercise_urls_by_exercise_numbers = {}
+    all_excluded_exercise_numbers.each do |number|
+      exercise_url = OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+      @exercise_urls_by_exercise_numbers[number] = exercise_url
+    end
+    @course_url_proc = course_url_proc
+
+    render 'manager/stats/excluded_exercises'
   end
 
   def concept_coach
@@ -18,52 +56,53 @@ module Manager::StatsActions
     ]).to_a
 
     @cc_stats = {
-      books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }.map do |book_title, book_cc_tasks|
+      books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }
+                     .map do |book_title, book_cc_tasks|
         candidate_books = book_cc_tasks.map{ |cc| cc.page.chapter.book }.uniq
-        latest_book = candidate_books.max_by{ |bb| bb.version }
+        latest_book = candidate_books.max_by(&:version)
 
         {
           title: book_title,
-          chapters: book_cc_tasks.group_by{ |cc| cc.page.chapter.title }.map do |chapter_title,
-                                                                                 chapter_cc_tasks|
+          chapters: book_cc_tasks.group_by{ |cc| cc.page.chapter.title }
+                                 .map do |chapter_title, chapter_cc_tasks|
             latest_chapter = latest_book.chapters.find{ |ch| ch.title == chapter_title }
             chapter_number = latest_chapter.try(:number)
 
             {
               title: chapter_title,
               number: chapter_number,
-              pages: chapter_cc_tasks.group_by{ |cc| cc.page.title }.map do |page_title,
-                                                                             page_cc_tasks|
+              pages: chapter_cc_tasks.group_by{ |cc| cc.page.title }
+                                     .map do |page_title, page_cc_tasks|
                 latest_page = latest_chapter.pages.find{ |pg| pg.title == page_title }
                 page_number = latest_page.try(:number)
 
                 {
                   title: page_title,
                   number: page_number
-                }.merge(get_task_stats(page_cc_tasks))
+                }.merge(get_cc_task_stats(page_cc_tasks))
               end.sort_by{ |pg| pg[:number] || Float::INFINITY }
-            }.merge(get_task_stats(chapter_cc_tasks))
+            }.merge(get_cc_task_stats(chapter_cc_tasks))
           end.sort_by{ |ch| ch[:number] || Float::INFINITY }
-        }.merge(get_task_stats(book_cc_tasks))
+        }.merge(get_cc_task_stats(book_cc_tasks))
       end.sort_by{ |bk| bk[:title] }
-    }.merge(get_task_stats(cc_tasks))
+    }.merge(get_cc_task_stats(cc_tasks))
 
     render 'manager/stats/concept_coach'
   end
 
   protected
 
-  def get_task_stats(cc_tasks)
+  def get_cc_task_stats(cc_tasks)
     tasks = cc_tasks.map(&:task)
     total = tasks.length
     students = tasks.flat_map{ |task| task.taskings.map{ |tg| tg.role.profile } }.uniq.length
     in_progress = tasks.select(&:in_progress?).length
     completed = tasks.select(&:completed?).length
     not_started = total - (in_progress + completed)
-    exercises = tasks.map(&:exercise_steps_count).reduce(:+)
-    completed_exercises = tasks.map(&:completed_exercise_steps_count).reduce(:+)
+    exercises = tasks.map(&:exercise_steps_count).reduce(0, :+)
+    completed_exercises = tasks.map(&:completed_exercise_steps_count).reduce(0, :+)
     incomplete_exercises = exercises - completed_exercises
-    correct_exercises = tasks.map(&:correct_exercise_steps_count).reduce(:+)
+    correct_exercises = tasks.map(&:correct_exercise_steps_count).reduce(0, :+)
 
     {
       tasks: total,

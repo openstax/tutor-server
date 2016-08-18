@@ -28,6 +28,24 @@ RSpec.describe CustomerService::StatsController, type: :controller do
     end
   end
 
+  context "GET #excluded_exercises" do
+    let(:course)              { Entity::Course.create! }
+
+    let(:teacher_user)        { FactoryGirl.create :user }
+    let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
+
+    let!(:excluded_exercises) do
+      5.times.map { FactoryGirl.create :course_content_excluded_exercise, course: course }
+    end
+
+    it "returns http success" do
+      controller.sign_in customer_service
+
+      get :excluded_exercises
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   context "GET #concept_coach" do
     let!(:tasks)    { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
     let!(:cc_tasks) { tasks.map{ |task| FactoryGirl.create :tasks_concept_coach_task, task: task } }

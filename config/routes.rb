@@ -226,8 +226,11 @@ Rails.application.routes.draw do
     end
 
     resources :stats, only: [] do
-      get :courses, on: :collection
-      get :concept_coach, on: :collection
+      collection do
+        get :courses
+        get :excluded_exercises
+        get :concept_coach
+      end
     end
 
     mount RailsSettingsUi::Engine, at: 'settings'
@@ -264,8 +267,11 @@ Rails.application.routes.draw do
     end
 
     resources :stats, only: [] do
-      get :courses, on: :collection
-      get :concept_coach, on: :collection
+      collection do
+        get :courses
+        get :excluded_exercises
+        get :concept_coach
+      end
     end
   end
 

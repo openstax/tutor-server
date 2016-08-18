@@ -1,0 +1,62 @@
+<% @page_header = "Excluded Exercise Stats" %>
+
+<h3>Total exercise exclusions: <%= @excluded_exercises.length %></h3>
+
+<h3>By Course:</h3>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Course ID</th>
+      <th>Course Name</th>
+      <th>Teachers</th>
+      <th># Exclusions</th>
+      <th>Excluded Numbers</th>
+      <th>CNX Section UUID(s) with Exclusions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @excluded_exercises.group_by(&:course).each do |course, excluded_exercises| %>
+    <tr>
+      <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
+      <td><%= course.name %></td>
+      <td><%= course.teachers.map{ |teacher| teacher.role.name }.join(', ') %></td>
+      <td><%= excluded_exercises.length %></td>
+      <td><%= excluded_exercises.map do |excluded_exercise|
+                number = excluded_exercise.exercise_number
+                link_to number, @exercise_urls_by_exercise_numbers[number]
+              end.join(', ').html_safe %></td>
+      <td><%= excluded_exercises.flat_map do |excluded_exercise|
+                number = excluded_exercise.exercise_number
+                page_uuids = @page_uuids_by_exercise_numbers[number]
+                page_uuids.map do |page_uuid|
+                  link_to page_uuid, @page_urls_by_page_uuids[page_uuid]
+                end
+              end.join(', ').html_safe %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>By Exercise:</h3>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Exercise Number</th>
+      <th># Exclusions</th>
+      <th>CNX Section UUID(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @excluded_exercises.group_by(&:exercise_number).each do |number, excluded_exercises| %>
+    <tr>
+      <td><%= link_to number, @exercise_urls_by_exercise_numbers[number] %></td>
+      <td><%= excluded_exercises.length %></td>
+      <td><%= @page_uuids_by_exercise_numbers[number].map do |page_uuid|
+                link_to page_uuid, @page_urls_by_page_uuids[page_uuid]
+              end.join(', ').html_safe %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

@@ -10,7 +10,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
       .select{ |k_ago, ex_count| (k_ago == :random && index >= 4) || \
                                  (k_ago != :random && k_ago <= index) }
-      .map{ |k_ago, ex_count| ex_count }.reduce(:+) || 0
+      .map{ |k_ago, ex_count| ex_count }.reduce(0, :+)
   end
 
   def exercises_count(index)

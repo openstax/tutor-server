@@ -868,7 +868,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     }
                   end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
                           .select{ |k_ago, ex_count| k_ago != :random && k_ago <= 2 }
-                          .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
+                          .map{ |k_ago, ex_count| ex_count }.reduce(0, :+).times.map do
                     {
                       "id" => a_kind_of(String),
                       "is_completed" => true,
