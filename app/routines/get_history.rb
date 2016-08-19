@@ -19,32 +19,8 @@ class GetHistory
     roles_by_id = roles.index_by(&:id)
     role_ids = roles_by_id.keys
 
-    if type == :all || type == :reading
-      # Exclude reading tasks that only have pages without dynamic exercises
-      reading_task_plan_id_to_page_ids_map = {}
-      Tasks::Models::TaskPlan.joins(tasks: :taskings)
-                             .where(type: 'reading', tasks: {taskings: {entity_role_id: role_ids}})
-                             .uniq.pluck(:id, :settings).each do |task_plan_id, settings|
-        page_ids = (settings['page_ids'] || []).compact.map(&:to_i).uniq
-
-        reading_task_plan_id_to_page_ids_map[task_plan_id] = page_ids
-      end
-
-      reading_page_ids = reading_task_plan_id_to_page_ids_map.values.flatten
-      non_dynamic_reading_page_ids = Content::Models::Page
-                                       .joins(:reading_dynamic_pool)
-                                       .where(id: reading_page_ids)
-                                       .where{reading_dynamic_pool.content_exercise_ids == '[]'}
-                                       .pluck(:id)
-
-      excluded_reading_task_plan_ids = reading_task_plan_id_to_page_ids_map
-                                         .select do |task_plan_id, page_ids|
-        page_ids.all?{ |page_id| non_dynamic_reading_page_ids.include? page_id }
-      end.map(&:first)
-    end
-
     if type == :all || type == :homework
-      # Since getting page_ids for homework task plans requires DB access, get them all at once
+      # Get core_page_ids for all homework task plans at once to minimize DB access
       homework_task_plan_id_to_page_ids_map = {}
       homework_exercise_id_to_task_plan_id_map = {}
       Tasks::Models::TaskPlan.joins(tasks: :taskings)
@@ -73,10 +49,37 @@ class GetHistory
       end
     end
 
+    if type == :all || type == :reading
+      # Get core_page_ids for all reading task plans
+      reading_task_plan_id_to_page_ids_map = {}
+      Tasks::Models::TaskPlan.joins(tasks: :taskings)
+                             .where(type: 'reading', tasks: {taskings: {entity_role_id: role_ids}})
+                             .uniq.pluck(:id, :settings).each do |task_plan_id, settings|
+        page_ids = (settings['page_ids'] || []).compact.map(&:to_i).uniq
+
+        reading_task_plan_id_to_page_ids_map[task_plan_id] = page_ids
+      end
+    end
+
+    if type == :reading
+      # Exclude reading tasks that only have pages without dynamic exercises (intro modules)
+      reading_page_ids = reading_task_plan_id_to_page_ids_map.values.flatten
+      non_dynamic_reading_page_ids = Content::Models::Page
+                                       .joins(:reading_dynamic_pool)
+                                       .where(id: reading_page_ids)
+                                       .where{reading_dynamic_pool.content_exercise_ids == '[]'}
+                                       .pluck(:id)
+
+      excluded_reading_task_plan_ids = reading_task_plan_id_to_page_ids_map
+                                         .select do |task_plan_id, page_ids|
+        page_ids.all?{ |page_id| non_dynamic_reading_page_ids.include? page_id }
+      end.map(&:first)
+    end
+
     query = Tasks::Models::Task.joins{[task_plan.outer, concept_coach_task.outer, taskings]}
                                .where(taskings: {entity_role_id: role_ids})
-    query = query.where{task_plan.id.not_in excluded_reading_task_plan_ids} \
-      if type == :all || type == :reading
+    query = query.where{tasks_task_plan_id.not_in excluded_reading_task_plan_ids} \
+      if type == :reading
     query = query.where(task_type: Tasks::Models::Task.task_types[type]) unless type == :all
 
     task_count = query.count
