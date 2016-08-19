@@ -95,7 +95,7 @@ module CourseGuideMethods
     # Map pages in tasks to the newest ecosystem
     page_map = ecosystems_map.map_pages_to_pages(pages: all_relevant_pages)
 
-    all_mapped_page_ids = page_map.values.flatten.map(&:id)
+    all_mapped_page_ids = page_map.values.flatten.compact.map(&:id)
     mapped_relevant_pages_by_chapter = Content::Models::Page
       .joins(:all_exercises_pool)
       .where(id: all_mapped_page_ids)
