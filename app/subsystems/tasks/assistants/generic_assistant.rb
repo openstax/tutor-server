@@ -8,14 +8,13 @@ class Tasks::Assistants::GenericAssistant
     @individualized_tasking_plans = individualized_tasking_plans
     role_ids = individualized_tasking_plans.map(&:target_id)
     @students_by_role_id = CourseMembership::Models::Student
-                            .where(entity_role_id: role_ids)
-                            .preload(enrollments: :period)
-                            .to_a.index_by(&:entity_role_id)
+                             .where(entity_role_id: role_ids)
+                             .preload(enrollments: :period)
+                             .to_a.index_by(&:entity_role_id)
     @ecosystems_map = {}
     @page_cache = {}
     @tag_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
     @pool_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
-    @spaced_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
   end
 
   protected
@@ -29,15 +28,15 @@ class Tasks::Assistants::GenericAssistant
     @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   end
 
-  def map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
+  def get_spaced_ecosystems_map(spaced_ecosystem_id:)
     # Reuse Ecosystems map when possible
-    return @ecosystems_map[spaced_ecosystem_id] if @ecosystems_map.has_key?(spaced_ecosystem_id)
+    @ecosystems_map[spaced_ecosystem_id] ||= begin
+      spaced_ecosystem = Content::Ecosystem.find(spaced_ecosystem_id)
 
-    spaced_ecosystem = Content::Ecosystem.find(spaced_ecosystem_id)
-
-    Content::Map.find_or_create_by(
-      from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
-    )
+      Content::Map.find_or_create_by(
+        from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
+      )
+    end
   end
 
   def reset_used_exercises
@@ -47,13 +46,13 @@ class Tasks::Assistants::GenericAssistant
   def add_exercise_step!(task:, exercise:, group_type:, title: nil, labels: nil)
     related_content = exercise.page.related_content
 
+    @used_exercise_numbers << exercise.number
+
     TaskExercise.call(task: task, exercise: exercise) do |step|
       step.group_type = group_type
       step.add_related_content(related_content) if related_content.present?
       step.add_labels(labels) if labels.present?
-    end
-
-    @used_exercise_numbers << exercise.number
+    end.outputs.task_step
   end
 
   def get_all_page_exercises_with_tags(page:, tags:)
@@ -70,7 +69,7 @@ class Tasks::Assistants::GenericAssistant
     @pool_exercise_cache[page.id][pool_type] ||= page.send(pool_method).exercises
   end
 
-  def get_random_unused_page_exercises_with_tags(page:, tags:, count: 1)
+  def get_random_unused_page_exercises_with_tags(page:, tags:, count:)
     raise 'You must call reset_used_exercises before get_random_unused_page_exercises_with_tags' \
       if @used_exercise_numbers.nil?
 
@@ -79,7 +78,7 @@ class Tasks::Assistants::GenericAssistant
     exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }.sample(count)
   end
 
-  def get_random_unused_pool_exercises(page:, pool_type:, count: 1)
+  def get_random_unused_pool_exercises(page:, pool_type:, count:)
     raise 'You must call reset_used_exercises before get_random_unused_pool_exercises' \
       if @used_exercise_numbers.nil?
 
@@ -129,14 +128,18 @@ class Tasks::Assistants::GenericAssistant
     history
   end
 
-  def get_pages(page_ids, already_sorted: false)
-    page_ids = [page_ids].flatten.uniq.sort unless already_sorted
-    return @page_cache[page_ids] if @page_cache.has_key?(page_ids)
+  def get_pages(page_ids:)
+    page_ids = [page_ids].flatten
+    cached_page_ids = @page_cache.keys
+    uncached_page_ids = page_ids - cached_page_ids
 
-    page_models = Content::Models::Page.where(id: page_ids)
-    pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
+    unless uncached_page_ids.empty?
+      page_models = Content::Models::Page.where(id: uncached_page_ids)
+      pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
+      pages.each{ |page| @page_cache[page.id] = page }
+    end
 
-    @page_cache[page_ids] = pages
+    @page_cache.values_at(*page_ids)
   end
 
   def build_task(type:, default_title:, individualized_tasking_plan:)
@@ -160,7 +163,7 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def add_spaced_practice_exercise_steps!(task:, core_page_ids:, pool_type:,
-                                          history:, k_ago_map:, event_based: false)
+                                          history:, k_ago_map:, for_each_core_page: false)
     raise 'You must call reset_used_exercises before add_spaced_practice_exercise_steps!' \
       if @used_exercise_numbers.nil?
 
@@ -172,7 +175,7 @@ class Tasks::Assistants::GenericAssistant
 
     k_ago_map.each do |k_ago, number|
       if k_ago.nil?
-        k_ago ||= SecureRandom.random_number(history.total_count)
+        k_ago = SecureRandom.random_number(history.total_count)
         k_ago_name = "random:#{k_ago}"
       else
         k_ago_name = k_ago.to_s
@@ -185,38 +188,51 @@ class Tasks::Assistants::GenericAssistant
       end
 
       spaced_ecosystem_id = history.ecosystem_ids[k_ago]
-      sorted_spaced_page_ids = history.core_page_ids[k_ago].uniq.sort
+      spaced_page_ids = history.core_page_ids[k_ago].uniq
 
-      @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids] ||= begin
+      cached_page_ids = @pool_exercise_cache.keys
+      uncached_spaced_page_ids = spaced_page_ids - cached_page_ids
+
+      unless uncached_spaced_page_ids.empty?
         # Get the ecosystems map
-        ecosystems_map = map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
+        ecosystems_map = get_spaced_ecosystems_map(spaced_ecosystem_id: spaced_ecosystem_id)
 
-        # Get core pages from the history
-        spaced_pages = get_pages(sorted_spaced_page_ids, already_sorted: true)
+        # Get the spaced pages
+        uncached_spaced_pages = get_pages(page_ids: uncached_spaced_page_ids)
 
         # Map the pages to exercises in the new ecosystem
-        ecosystems_map.map_pages_to_exercises(
-          pages: spaced_pages, pool_type: pool_type
-        ).values.flatten.uniq
+        uncached_pool_exercises_by_pages = ecosystems_map.map_pages_to_exercises(
+          pages: uncached_spaced_pages, pool_type: pool_type
+        )
+
+        uncached_pool_exercises_by_pages.each do |uncached_spaced_page, exercises|
+          @pool_exercise_cache[uncached_spaced_page.id][pool_type] = exercises
+        end
       end
 
-      filtered_exercises = FilterExcludedExercises[
-        exercises: @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids],
-        course: course, additional_excluded_numbers: @used_exercise_numbers
-      ]
+      event_spaced_page_ids = for_each_core_page ? spaced_page_ids : spaced_page_ids.sample(1)
 
-      chosen_exercises = ChooseExercises[
-        exercises: filtered_exercises, count: number, history: history
-      ]
+      chosen_exercise_steps = event_spaced_page_ids.map do |spaced_page_id|
+        candidate_exercises = @pool_exercise_cache[spaced_page_id][pool_type]
 
-      # Set related_content and add the exercises to the task
-      chosen_exercises.each do |chosen_exercise|
-        add_exercise_step!(task: task, exercise: chosen_exercise,
-                           group_type: :spaced_practice_group)
+        filtered_exercises = FilterExcludedExercises[
+          exercises: candidate_exercises, course: course,
+          additional_excluded_numbers: @used_exercise_numbers
+        ]
+
+        chosen_exercises = ChooseExercises[
+          exercises: filtered_exercises, count: number, history: history
+        ]
+
+        # Set related_content and add the exercises to the task
+        chosen_exercises.map do |chosen_exercise|
+          add_exercise_step!(task: task, exercise: chosen_exercise,
+                             group_type: :spaced_practice_group)
+        end
       end
 
       spaced_practice_status << "Could not completely fill the #{k_ago_name}-ago slot" \
-        if chosen_exercises.size < number
+        if chosen_exercise_steps.any?{ |steps| steps.size < number }
     end
 
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?

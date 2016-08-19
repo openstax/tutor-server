@@ -64,12 +64,12 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     unless skip_dynamic
       add_spaced_practice_exercise_steps!(
         task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
-        history: history, k_ago_map: k_ago_map, event_based: true
+        history: history, k_ago_map: k_ago_map, for_each_core_page: true
       )
 
       add_spaced_practice_exercise_steps!(
         task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
-        history: history, k_ago_map: random_ago_map, event_based: false
+        history: history, k_ago_map: random_ago_map, for_each_core_page: false
       )
     end
 
