@@ -159,7 +159,8 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
+  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, pool_type:,
+                                          history:, k_ago_map:, event_based: false)
     raise 'You must call reset_used_exercises before add_spaced_practice_exercise_steps!' \
       if @used_exercise_numbers.nil?
 
@@ -170,9 +171,16 @@ class Tasks::Assistants::GenericAssistant
     spaced_practice_status = []
 
     k_ago_map.each do |k_ago, number|
+      if k_ago.nil?
+        k_ago ||= SecureRandom.random_number(history.total_count)
+        k_ago_name = "random:#{k_ago}"
+      else
+        k_ago_name = k_ago.to_s
+      end
+
       # Not enough history
       if k_ago >= history.total_count
-        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
+        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago_name}-ago slot"
         next
       end
 
@@ -207,7 +215,7 @@ class Tasks::Assistants::GenericAssistant
                            group_type: :spaced_practice_group)
       end
 
-      spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
+      spaced_practice_status << "Could not completely fill the #{k_ago_name}-ago slot" \
         if chosen_exercises.size < number
     end
 

@@ -43,10 +43,14 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
   protected
 
+  ## Entries in the list have the form:
+  ##   [from-this-many-events-ago, choose-this-many-exercises]
   def k_ago_map
-    ## Entries in the list have the form:
-    ##   [from-this-many-events-ago, choose-this-many-exercises]
-    [ [2,1], [4,1] ]
+    [ [2, 1], [4, 1] ]
+  end
+
+  def random_ago_map
+    [ [nil, 1] ]
   end
 
   def build_reading_task(pages:, history:, individualized_tasking_plan:, skip_dynamic:)
@@ -59,8 +63,13 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     unless skip_dynamic
       add_spaced_practice_exercise_steps!(
-        task: task, core_page_ids: @pages.map(&:id),
-        history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
+        task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
+        history: history, k_ago_map: k_ago_map, event_based: true
+      )
+
+      add_spaced_practice_exercise_steps!(
+        task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
+        history: history, k_ago_map: random_ago_map, event_based: false
       )
     end
 
