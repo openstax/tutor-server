@@ -13,8 +13,14 @@ class Content::Models::Pool < Tutor::SubSystems::BaseModel
   validates :pool_type, presence: true
   validates :uuid, presence: true, uniqueness: true
 
+  def initialize
+    super
+
+    @exercises = {}
+  end
+
   def exercises
-    Content::Models::Exercise.where(id: content_exercise_ids)
+    @exercises[content_exercise_ids] ||= Content::Models::Exercise.where(id: content_exercise_ids)
   end
 
   # This method checks only the array of ids, not the DB records, in order to save time

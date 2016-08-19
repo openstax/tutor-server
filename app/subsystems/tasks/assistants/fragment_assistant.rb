@@ -57,14 +57,16 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:)
-    exercise = get_random_unused_page_exercise_with_tags(page, exercise_fragment.embed_tags)
+    exercise = get_random_unused_page_exercises_with_tags(
+      page: page, tags: exercise_fragment.embed_tags
+    )
 
     if exercise.nil?
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
       feature_tag = "context-cnxfeature:#{node_id}"
-      exercise = get_random_unused_page_exercise_with_tags(page, feature_tag)
+      exercise = get_random_unused_page_exercise_with_tags(page: page, tags: feature_tag)
 
       return if exercise.nil?
     end

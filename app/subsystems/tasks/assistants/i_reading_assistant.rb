@@ -50,7 +50,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   end
 
   def num_personalized_exercises
-    1
+    0
   end
 
   def build_reading_task(pages:, history:, individualized_tasking_plan:, skip_dynamic:)
