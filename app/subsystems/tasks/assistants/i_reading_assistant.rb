@@ -49,10 +49,6 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     [ [2,1], [4,1] ]
   end
 
-  def num_personalized_exercises
-    0
-  end
-
   def build_reading_task(pages:, history:, individualized_tasking_plan:, skip_dynamic:)
     task = build_task(type: :reading, default_title: 'Reading',
                       individualized_tasking_plan: individualized_tasking_plan)
@@ -66,11 +62,6 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
         task: task, core_page_ids: @pages.map(&:id),
         history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
       )
-
-      add_personalized_exercise_steps!(
-        task: task, num_personalized_exercises: num_personalized_exercises,
-        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized
-      )
     end
 
     task
@@ -81,8 +72,16 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.chapter.title : page.title
       related_content = page.related_content(title: page_title)
+
+      # Reading content
       task_fragments(task: task, fragments: page.fragments, page_title: page_title,
                      page: page, related_content: related_content)
+
+      # "Personalized" exercises after each page
+      exercises = get_random_unused_pool_exercises page: page, pool_type: :reading_dynamic, count: 3
+      exercises.each do |exercise|
+        add_exercise_step!(task: task, exercise: exercise, group_type: :personalized_group)
+      end
     end
 
     task
