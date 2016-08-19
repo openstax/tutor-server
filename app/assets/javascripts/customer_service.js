@@ -7,9 +7,7 @@
 //========== Courses table ordering =============//
   $(document).ready(function(){
     $(".courses-table th").on("click", function(e){
-      var oldSearch = window.location.search;
-      var locationSearch = {}
-      location.search.substr(1).split("&").forEach(function(item) {locationSearch[item.split("=")[0]] = item.split("=")[1]})
+      var paramsObject = locationSearchInJSON();
 
       var field = e.target.textContent.toLowerCase();
       if(field.includes("teacher")){
@@ -17,16 +15,15 @@
       }
 
       var toggleOrderBy = function(){
-        if(locationSearch.order_by && locationSearch.order_by.includes("desc")){
-          locationSearch.order_by = field + " asc";
+        if(paramsObject.order_by && paramsObject.order_by.includes("desc")){
+          paramsObject.order_by = field + " asc";
         } else {
-          locationSearch.order_by = field + " desc";
+          paramsObject.order_by = field + " desc";
         }
       };
 
       toggleOrderBy();
 
-      locationSearch.utf8 = "✓";
-      window.location.search = $.param(locationSearch);
+      window.location.search = $.param(paramsObject);
     });
   })
