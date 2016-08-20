@@ -62,4 +62,25 @@ RSpec.describe XlsxHelper, type: :lib do
     end
   end
 
+  describe '#disjoin_range' do
+    it 'works for scalar vals' do
+      expect(described_class.disjoint_range(cols: "B", rows: "2")).to eq "B2"
+    end
+
+    it 'uses empty default' do
+      expect(described_class.disjoint_range(cols: [], rows: "2")).to eq "NA()"
+      expect(described_class.disjoint_range(cols: nil, rows: "2")).to eq "NA()"
+      expect(described_class.disjoint_range(cols: "B", rows: [])).to eq "NA()"
+      expect(described_class.disjoint_range(cols: "B", rows: nil)).to eq "NA()"
+    end
+
+    it 'works for scalar row' do
+      expect(described_class.disjoint_range(cols: ["B","D"], rows: "2")).to eq "B2,D2"
+    end
+
+    it 'works for scalar col' do
+      expect(described_class.disjoint_range(cols: "B", rows: ["2","4"])).to eq "B2,B4"
+    end
+  end
+
 end
