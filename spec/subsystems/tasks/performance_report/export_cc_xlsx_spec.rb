@@ -96,6 +96,26 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
     end
   end
 
+  context 'when a period has no data' do
+    before(:context) do
+      Dir.mktmpdir do |dir|
+        filepath = described_class.call(course_name: "Physics 101",
+                                        report: report_with_no_data,
+                                        filename: "#{dir}/testfile",
+                                        options: {stringify_formulas: false})
+
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
+
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+      end
+    end
+
+    it 'does not put in invalid formulas that explode when open in Excel' do
+      # it doesn't currently explode, leaving this context for ease of future testing
+    end
+  end
+
   def cell(row,col,sheet_number)
     @wb.cell(row,col,@wb.sheets[sheet_number])
   end
@@ -232,6 +252,43 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
           }
         ],
         students: []
+      }
+    ]
+  end
+
+  def report_with_no_data
+    [
+      {
+        period: {
+          name: "1st Period"
+        } ,
+        data_headings: [],
+        students: [
+          {
+            name: "Abby Gail",
+            first_name: "Abby",
+            last_name: "Gail",
+            student_identifier: "SID2",
+            role: nil,
+            data: []
+          },
+          {
+            name: "Jimmy John",
+            first_name: "Jimmy",
+            last_name: "John",
+            student_identifier: "SID3",
+            role: nil,
+            data: []
+          },
+          {
+            name: "Zeter Zymphony",
+            first_name: "Zeter",
+            last_name: "Zymphony",
+            student_identifier: "SID1",
+            role: nil,
+            data: []
+          }
+        ]
       }
     ]
   end
