@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 
+require 'xlsx_utils'
 require_relative '../../../../app/subsystems/tasks/performance_report/export_cc_xlsx'
 require 'active_support/all'
 require 'chronic'

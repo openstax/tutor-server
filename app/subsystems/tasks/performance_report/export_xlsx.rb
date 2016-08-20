@@ -1,7 +1,8 @@
 module Tasks
   module PerformanceReport
     class ExportXlsx
-      # include ActionView::Helpers::DateHelper
+
+      include ::XlsxUtils
 
       def self.call(course_name:, report:, filename:, options: {})
         filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
@@ -304,11 +305,11 @@ module Tasks
             student[:first_name],
             student[:last_name],
             [student[:student_identifier], {style: @normal_R}],
-            ["#{@eq}IFERROR(#{formula}(#{XlsxHelper.disjoint_range(cols: homework_score_columns, rows: first_student_row + ss)}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_score_columns, rows: first_student_row + ss)}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(#{formula}(#{XlsxHelper.disjoint_range(cols: homework_progress_columns, rows: first_student_row + ss)}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_progress_columns, rows: first_student_row + ss)}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(#{formula}(#{XlsxHelper.disjoint_range(cols: reading_progress_columns, rows: first_student_row + ss)}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: reading_progress_columns, rows: first_student_row + ss)}),NA())",
              style: (format == :counts ? nil : @pct)]
           ]
 
@@ -365,9 +366,9 @@ module Tasks
             ["Total Possible", {style: @total_style}],
             ["", {style: @total_style}],
             ["", {style: @total_R}],
-            ["#{@eq}SUM(#{XlsxHelper.disjoint_range(cols: homework_score_columns, rows: last_student_row + 2)})", {style: @total_style}],
-            ["#{@eq}SUM(#{XlsxHelper.disjoint_range(cols: homework_progress_columns, rows: last_student_row + 2)})", {style: @total_style}],
-            ["#{@eq}SUM(#{XlsxHelper.disjoint_range(cols: reading_progress_columns, rows: last_student_row + 2)})", {style: @total_R}]
+            ["#{@eq}SUM(#{disjoint_range(cols: homework_score_columns, rows: last_student_row + 2)})", {style: @total_style}],
+            ["#{@eq}SUM(#{disjoint_range(cols: homework_progress_columns, rows: last_student_row + 2)})", {style: @total_style}],
+            ["#{@eq}SUM(#{disjoint_range(cols: reading_progress_columns, rows: last_student_row + 2)})", {style: @total_R}]
           ]
 
           task_total_counts.each do |total_count|
@@ -402,23 +403,6 @@ module Tasks
         end
 
         sheet.column_widths(*data_widths)
-      end
-
-      def disjoint_range(cols:, rows:, default_if_empty: "NA()")
-        return default_if_empty if cols.empty? || rows.empty?
-
-        if cols.is_a?(Array) && rows.is_a?(Array)
-          raise "Dimensions don't match" if cols.length != rows.length
-        elsif cols.is_a?(Array)
-          rows = [rows] * cols.length
-        elsif rows.is_a?(Array)
-          cols = [cols] * rows.length
-        else
-          rows = [rows]
-          cols = [cols]
-        end
-
-        cols.map.with_index{|col, ii| "col#{rows[ii]}"}.join(",")
       end
 
       def late_accepted_comment(score)
