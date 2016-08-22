@@ -94,7 +94,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     )
 
     add_personalized_exercise_steps!(
-      task: task, num_personalized_exercises: num_personalized_exercises,
+      task: task, count: num_personalized_exercises,
       personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized
     )
   end

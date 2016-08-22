@@ -43,12 +43,18 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
   protected
 
+  def num_personalized_exercises_per_page
+    3
+  end
+
   ## Entries in the list have the form:
   ##   [from-this-many-events-ago, choose-this-many-exercises]
   def k_ago_map
     [ [2, 1], [4, 1] ]
   end
 
+  ## Entries in the list have the form:
+  ##   [nil, choose-this-many-exercises]
   def random_ago_map
     [ [nil, 1] ]
   end
@@ -97,7 +103,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       ]
 
       chosen_exercises = ChooseExercises[
-        exercises: filtered_exercises, count: 3, history: history
+        exercises: filtered_exercises, count: num_personalized_exercises_per_page, history: history
       ]
 
       chosen_exercises.each do |exercise|

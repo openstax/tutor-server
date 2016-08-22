@@ -1,13 +1,16 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer, speed: :medium do
+RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer do
 
-  let(:number_of_students){ 2 }
+  let(:number_of_students) { 2 }
 
   let(:task_plan) {
     allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
       receive(:k_ago_map) { [ [0, 2] ] }
+    )
+    allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+      receive(:num_personalized_exercises_per_page) { 0 }
     )
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
@@ -32,7 +35,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     task_step.tasked.save!
     MarkTaskStepCompleted.call(task_step: task_step)
 
-    expect(representation).to include(
+    expect(representation).to match(
       "id" => task_plan.id.to_s,
       "title" => task_plan.title,
       "type" => "reading",
