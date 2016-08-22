@@ -59,7 +59,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     reset_used_exercises
 
-    add_core_steps!(task: task, pages: pages)
+    add_core_steps!(task: task, pages: pages, history: history)
 
     unless skip_dynamic
       add_spaced_practice_exercise_steps!(
@@ -76,19 +76,31 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     task
   end
 
-  def add_core_steps!(task:, pages:)
+  def add_core_steps!(task:, pages:, history:)
+    course = task_plan.owner
+
     pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.chapter.title : page.title
       related_content = page.related_content(title: page_title)
 
       # Reading content
-      task_fragments(task: task, fragments: page.fragments, page_title: page_title,
-                     page: page, related_content: related_content)
+      task_fragments(task: task, fragments: page.fragments,
+                     page_title: page_title, page: page, related_content: related_content)
 
       # "Personalized" exercises after each page
-      exercises = get_random_unused_pool_exercises page: page, pool_type: :reading_dynamic, count: 3
-      exercises.each do |exercise|
+      candidate_exercises = get_unused_pool_exercises page: page, pool_type: :reading_dynamic
+
+      filtered_exercises = FilterExcludedExercises[
+        exercises: candidate_exercises, course: course,
+        additional_excluded_numbers: @used_exercise_numbers
+      ]
+
+      chosen_exercises = ChooseExercises[
+        exercises: filtered_exercises, count: 3, history: history
+      ]
+
+      chosen_exercises.each do |exercise|
         add_exercise_step!(task: task, exercise: exercise, group_type: :personalized_group)
       end
     end

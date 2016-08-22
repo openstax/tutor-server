@@ -69,22 +69,22 @@ class Tasks::Assistants::GenericAssistant
     @pool_exercise_cache[page.id][pool_type] ||= page.send(pool_method).exercises
   end
 
-  def get_random_unused_page_exercises_with_tags(page:, tags:, count:)
-    raise 'You must call reset_used_exercises before get_random_unused_page_exercises_with_tags' \
+  def get_unused_page_exercises_with_tags(page:, tags:)
+    raise 'You must call reset_used_exercises before get_unused_page_exercises_with_tags' \
       if @used_exercise_numbers.nil?
 
     exercises = get_all_page_exercises_with_tags(page: page, tags: tags)
 
-    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }.sample(count)
+    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
-  def get_random_unused_pool_exercises(page:, pool_type:, count:)
-    raise 'You must call reset_used_exercises before get_random_unused_pool_exercises' \
+  def get_unused_pool_exercises(page:, pool_type:)
+    raise 'You must call reset_used_exercises before get_unused_pool_exercises' \
       if @used_exercise_numbers.nil?
 
     exercises = get_pool_exercises(page: page, pool_type: pool_type)
 
-    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }.sample(count)
+    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
   # Limits the history to tasks open before the given task's open date
