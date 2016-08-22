@@ -86,7 +86,7 @@ describe GetHistory, type: :routine, speed: :slow do
     end
   end
 
-  let(:correct_exercise_number_sets)  do
+  let(:correct_exercise_number_sets) do
     correct_tasks.map{ |task| Set.new task.tasked_exercises.map{ |te| te.exercise.number } }
   end
 
@@ -153,7 +153,7 @@ describe GetHistory, type: :routine, speed: :slow do
     end
 
     context 'when some reading tasks don\'t have dynamic reading exercises' do
-      let(:correct_tasks) { [@homework_task_3, @homework_task_2,
+      let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
                              @reading_task_2, @homework_task_1, @reading_task_1] }
 
       before(:each) do
@@ -162,7 +162,7 @@ describe GetHistory, type: :routine, speed: :slow do
         end
       end
 
-      it 'does not return tasks with no dynamic reading exercises' do
+      it 'returns all tasks in history' do
         history = described_class.call(roles: @role, type: :all).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
@@ -189,7 +189,7 @@ describe GetHistory, type: :routine, speed: :slow do
     end
 
     context 'when some reading tasks don\'t have dynamic reading exercises' do
-      let(:correct_tasks) { [@homework_task_3, @homework_task_2,
+      let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
                              @reading_task_2, @homework_task_1, @reading_task_1] }
 
       before(:each) do
@@ -198,7 +198,7 @@ describe GetHistory, type: :routine, speed: :slow do
         end
       end
 
-      it 'does not return tasks with no dynamic reading exercises' do
+      it 'returns all tasks in history' do
         history = described_class.call(roles: @role, type: :all).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
