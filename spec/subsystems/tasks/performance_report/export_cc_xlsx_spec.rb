@@ -101,7 +101,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
     before(:context) do
       Dir.mktmpdir do |dir|
         filepath = described_class.call(course_name: "Physics 101",
-                                        report: report_with_no_data,
+                                        report: report_with_empty_data,
                                         filename: "#{dir}/testfile",
                                         options: {stringify_formulas: false})
 
@@ -112,9 +112,10 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
       end
     end
 
-    it 'does not put in invalid formulas that explode when open in Excel' do
-      # it doesn't currently explode, leaving this context for ease of future testing
-    end
+    # it 'does not put in invalid formulas that explode when open in Excel (requires manual testing)' do
+    #   # uncomment this example and the `open` call above to manually test that the file
+    #   # opens in Excel (no way to test this automatically)
+    # end
   end
 
   def cell(row,col,sheet_number)
@@ -257,7 +258,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
     ]
   end
 
-  def report_with_no_data
+  def report_with_empty_data
     [
       {
         period: {

@@ -1,6 +1,9 @@
 module XlsxUtils
 
   def cell_ref(row:, column:)
+    raise(IllegalArgument, "`row` must be non-nil") if row.nil?
+    raise(IllegalArgument, "`column` must be non-nil") if column.nil?
+
     # There is http://www.rubydoc.info/github/randym/axlsx/Axlsx#col_ref-class_method
     # but this massive interpolated string makes me one-line-of-ruby happy.
     "#{Axlsx.col_ref(column)}#{row}"

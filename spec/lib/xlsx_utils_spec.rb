@@ -16,9 +16,14 @@ RSpec.describe XlsxUtils, type: :lib do
       expect(dummy.cell_ref(row: 69, column: 27)).to eq('AB69')
       expect(dummy.cell_ref(row: 420, column: 57)).to eq('BF420')
     end
+
+    it 'requires non-nil input' do
+      expect{dummy.cell_ref(row: nil, column: 2)}.to raise_error IllegalArgument
+      expect{dummy.cell_ref(row: 2, column: nil)}.to raise_error IllegalArgument
+    end
   end
 
-  describe '#disjoin_range' do
+  describe '#disjoint_range' do
     it 'works for scalar vals' do
       expect(dummy.disjoint_range(cols: "B", rows: "2")).to eq "B2"
     end

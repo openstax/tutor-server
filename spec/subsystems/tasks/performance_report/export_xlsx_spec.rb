@@ -122,7 +122,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     before(:context) do
       Dir.mktmpdir do |dir|
         filepath = described_class.call(course_name: "Physics 101",
-                                        report: report_with_no_data,
+                                        report: report_with_empty_data,
                                         filename: "#{dir}/testfile",
                                         options: {stringify_formulas: false})
 
@@ -314,7 +314,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     ]
   end
 
-  def report_with_no_data
+  def report_with_empty_data
     [
       {
         period: {
