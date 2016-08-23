@@ -48,18 +48,4 @@ RSpec.describe XlsxHelper, type: :lib do
     end
   end
 
-  describe '#cell_ref' do
-    it 'finds simple cells' do
-      expect(described_class.cell_ref(row: 5, column: 0)).to eq('A5')
-      expect(described_class.cell_ref(row: 99, column: 2)).to eq('C99')
-      expect(described_class.cell_ref(row: 137, column: 25)).to eq('Z137')
-    end
-
-    it 'finds double-letter cells' do
-      expect(described_class.cell_ref(row: 5, column: 26)).to eq('AA5')
-      expect(described_class.cell_ref(row: 69, column: 27)).to eq('AB69')
-      expect(described_class.cell_ref(row: 420, column: 57)).to eq('BF420')
-    end
-  end
-
 end

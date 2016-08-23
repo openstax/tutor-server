@@ -88,12 +88,6 @@ class XlsxHelper
     end
   end
 
-  def self.cell_ref(row:, column:)
-    # There is http://www.rubydoc.info/github/randym/axlsx/Axlsx#col_ref-class_method
-    # but this massive interpolated string makes me one-line-of-ruby happy.
-    "#{Axlsx.col_ref(column)}#{row}"
-  end
-
   def merge_and_style(sheet, range, styles)
     if range.is_a?(Array)
       # assume columns are 1-indexed, to match row numbers
@@ -102,10 +96,6 @@ class XlsxHelper
 
     sheet.merge_cells(range)
     sheet[range].each{|cell| cell.style = styles} unless styles.blank?
-  end
-
-  def self.range(array)
-    "#{Axlsx::col_ref(array[0]-1)}#{array[1]}:#{Axlsx::col_ref(array[2]-1)}#{array[3]}"
   end
 
   private

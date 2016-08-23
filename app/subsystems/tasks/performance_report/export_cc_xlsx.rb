@@ -2,6 +2,8 @@ module Tasks
   module PerformanceReport
     class ExportCcXlsx
 
+      include ::XlsxUtils
+
       def self.call(course_name:, report:, filename:, options: {})
         filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
         export = new(course_name: course_name, report: report, filepath: filename, options: options)
@@ -314,10 +316,10 @@ module Tasks
         last_data_column = first_data_column+num_tasks*cols_per_task-1
 
         score_enable_range =
-          XlsxHelper.range([first_data_column, score_enable_row, last_data_column, score_enable_row])
+          range([first_data_column, score_enable_row, last_data_column, score_enable_row])
 
         out_of_enable_range =
-          XlsxHelper.range([first_data_column, out_of_enable_row, last_data_column, out_of_enable_row])
+          range([first_data_column, out_of_enable_row, last_data_column, out_of_enable_row])
 
         report[:students].each_with_index do |student, ss|
           student_columns = [
@@ -329,7 +331,7 @@ module Tasks
           student_row = first_student_row + ss
 
           data_range =
-            XlsxHelper.range([first_data_column, student_row, last_data_column, student_row])
+            range([first_data_column, student_row, last_data_column, student_row])
 
           if format == :counts
             student_columns.push(
@@ -421,20 +423,20 @@ module Tasks
           average_style = format == :counts ? @average_style : @average_pct
 
           correct_range =
-            XlsxHelper.cell_ref(row: first_student_row, column: first_column) + ":" +
-            XlsxHelper.cell_ref(row: last_student_row, column: first_column)
+            cell_ref(row: first_student_row, column: first_column) + ":" +
+            cell_ref(row: last_student_row, column: first_column)
 
           completed_range =
-            XlsxHelper.cell_ref(row: first_student_row, column: first_column+1) + ":" +
-            XlsxHelper.cell_ref(row: last_student_row, column: first_column+1)
+            cell_ref(row: first_student_row, column: first_column+1) + ":" +
+            cell_ref(row: last_student_row, column: first_column+1)
 
           average_columns.push(["#{@eq}IFERROR(AVERAGE(#{correct_range}),NA())", {style: average_style}])
           average_columns.push(["#{@eq}IFERROR(AVERAGE(#{completed_range}),NA())", {style: average_style}])
 
           if format == :counts
             total_range =
-              XlsxHelper.cell_ref(row: first_student_row, column: first_column+2) + ":" +
-              XlsxHelper.cell_ref(row: last_student_row, column: first_column+2)
+              cell_ref(row: first_student_row, column: first_column+2) + ":" +
+              cell_ref(row: last_student_row, column: first_column+2)
 
             average_columns.push(["#{@eq}IFERROR(AVERAGE(#{total_range}),NA())", {style: average_style}])
           end

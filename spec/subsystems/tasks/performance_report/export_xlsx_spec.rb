@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 
+require 'xlsx_utils'
 require_relative '../../../../app/subsystems/tasks/performance_report/export_xlsx'
 require 'active_support/all'
 require 'chronic'
@@ -114,6 +115,30 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
         expect(cell(11,2,sheet_number)).to eq 'EMPTY'
         expect(cell(11,3,sheet_number)).to eq '---'
       end
+    end
+  end
+
+  context "when no HWs or Reading cols" do
+    before(:context) do
+      Dir.mktmpdir do |dir|
+        filepath = described_class.call(course_name: "Physics 101",
+                                        report: report_with_empty_data,
+                                        filename: "#{dir}/testfile",
+                                        options: {stringify_formulas: false})
+
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
+
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+      end
+    end
+
+    it 'does not put in invalid formulas, e.g. "AVERAGE()" and "SUM()"' do
+      invalid_formula = /AVERAGE\(\)|SUM\(\)/
+
+      (4..6).to_a.each{|col| expect(cell(11,col,0)).not_to match(invalid_formula)}
+      (4..6).to_a.each{|col| expect(cell(11,col,1)).not_to match(invalid_formula)}
+      (4..6).to_a.each{|col| expect(cell(14,col,1)).not_to match(invalid_formula)}
     end
   end
 
@@ -285,6 +310,34 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
           }
         ],
         students: []
+      }
+    ]
+  end
+
+  def report_with_empty_data
+    [
+      {
+        period: {
+          name: "1st"
+        },
+        overall_average_score: 0.8,
+        data_headings: [],
+        students: [
+          {
+            name: "Zeter Zymphony",
+            first_name: "Zeter",
+            last_name: "Zymphony",
+            student_identifier: "SID1",
+            data: [],
+          },
+          {
+            name: "Abby Gail",
+            first_name: "Abby",
+            last_name: "Gail",
+            student_identifier: "SID2",
+            data: [],
+          }
+        ]
       }
     ]
   end

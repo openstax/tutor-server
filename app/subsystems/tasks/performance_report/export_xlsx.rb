@@ -1,7 +1,8 @@
 module Tasks
   module PerformanceReport
     class ExportXlsx
-      # include ActionView::Helpers::DateHelper
+
+      include ::XlsxUtils
 
       def self.call(course_name:, report:, filename:, options: {})
         filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
@@ -299,15 +300,16 @@ module Tasks
 
         students.each_with_index do |student,ss|
           formula = format == :counts ? "SUM" : "AVERAGE"
+
           student_columns = [
             student[:first_name],
             student[:last_name],
             [student[:student_identifier], {style: @normal_R}],
-            ["#{@eq}IFERROR(#{formula}(#{homework_score_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_score_columns, rows: first_student_row + ss)}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(#{formula}(#{homework_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: homework_progress_columns, rows: first_student_row + ss)}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(#{formula}(#{reading_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{disjoint_range(cols: reading_progress_columns, rows: first_student_row + ss)}),NA())",
              style: (format == :counts ? nil : @pct)]
           ]
 
@@ -364,9 +366,9 @@ module Tasks
             ["Total Possible", {style: @total_style}],
             ["", {style: @total_style}],
             ["", {style: @total_R}],
-            ["#{@eq}SUM(#{homework_score_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
-            ["#{@eq}SUM(#{homework_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
-            ["#{@eq}SUM(#{reading_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_R}]
+            ["#{@eq}SUM(#{disjoint_range(cols: homework_score_columns, rows: last_student_row + 2)})", {style: @total_style}],
+            ["#{@eq}SUM(#{disjoint_range(cols: homework_progress_columns, rows: last_student_row + 2)})", {style: @total_style}],
+            ["#{@eq}SUM(#{disjoint_range(cols: reading_progress_columns, rows: last_student_row + 2)})", {style: @total_R}]
           ]
 
           task_total_counts.each do |total_count|
