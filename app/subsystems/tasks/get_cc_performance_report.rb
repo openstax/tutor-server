@@ -2,6 +2,8 @@ module Tasks
   class GetCcPerformanceReport
     include PerformanceReportMethods
 
+    # Overall average score and heading stats do not include dropped student data
+
     lev_routine express_output: :performance_report
 
     protected
@@ -13,8 +15,13 @@ module Tasks
 
       outputs[:performance_report] = course.periods.map do |period|
         period_cc_tasks_map = cc_tasks_map[period] || {}
-        sorted_period_pages = period_cc_tasks_map
-          .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
+
+        sorted_period_pages =
+          period_cc_tasks_map.values                 # ignore the roles keys
+                             .flat_map(&:keys)       # ignore the values of page and is_dropped keys
+                             .keep_if{|key| key.is_a? Content::Page} # ignore is_dropped
+                             .uniq
+                             .sort{ |a, b| b.book_location <=> a.book_location }
 
         period_students = period.latest_enrollments
                                 .preload(student: {role: {profile: :account}})
@@ -32,7 +39,8 @@ module Tasks
             student_identifier: student.student_identifier,
             role: student.role.id,
             data: data,
-            average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil})
+            average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil}),
+            is_dropped: student.deleted_at.present?
           }
         end.sort_by do |hash|
           sort_name = "#{hash[:last_name]} #{hash[:first_name]}"
@@ -41,7 +49,9 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          overall_average_score: average(student_data.map{|sd| sd[:average_score]}),
+          overall_average_score: average(
+            student_data.map{|sd| sd[:is_dropped] ? nil : sd[:average_score]}
+          ),
           data_headings: data_headings,
           students: student_data
         })
@@ -78,25 +88,32 @@ module Tasks
             map_cc_task_to_page(page_to_page_map, tasking.task.concept_coach_task)
           end.each_with_object({}) do |(page, taskings), hash|
             hash[page] = taskings.map{ |tasking| tasking.task.concept_coach_task }
+            hash[:is_dropped] = role.student.deleted_at.present?
           end
         end
       end
     end
 
     def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
+      # Only include non-dropped students in the heading stats
+
       sorted_period_pages.map do |page|
-        page_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }.compact.map(&:task)
+        non_dropped_page_tasks =
+          period_cc_tasks_map_array.select{|hash| !hash[:is_dropped]}
+                                   .flat_map{ |hash| hash[page] }
+                                   .compact
+                                   .map(&:task)
 
         {
           cnx_page_id: page.uuid,
           title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
-          average_score: average_scores(page_tasks),
+          average_score: average_scores(non_dropped_page_tasks),
           average_actual_and_placeholder_exercise_count: average(
-            page_tasks,
+            non_dropped_page_tasks,
             ->(tt) {tt.actual_and_placeholder_exercise_count}
           ),
-          completion_rate: completion_fraction(page_tasks)
+          completion_rate: completion_fraction(non_dropped_page_tasks)
         }
       end
     end
