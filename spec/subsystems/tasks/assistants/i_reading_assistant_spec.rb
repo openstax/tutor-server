@@ -26,9 +26,29 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       @core_step_gold_data = [
         @intro_step_gold_data,
-        { klass: Tasks::Models::TaskedReading,
+        {
+          klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}] }
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
+        }
+      ]
+
+      @personalized_step_gold_data = [
+        {
+          klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
+        },
+        {
+          klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
+        },
+        {
+          klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
+        }
       ]
 
       @spaced_practice_step_gold_data = [
@@ -40,12 +60,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           related_content: [{'title' => "Force", 'book_location' => [8, 2]}] }
       ]
 
-      @personalized_step_gold_data = [
-        { klass: Tasks::Models::TaskedPlaceholder, title: nil, related_content: [] }
-      ]
-
-      @task_step_gold_data = \
-        @core_step_gold_data + @spaced_practice_step_gold_data + @personalized_step_gold_data
+      @task_step_gold_data = @core_step_gold_data + @personalized_step_gold_data +
+                             @spaced_practice_step_gold_data
 
       cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
 
@@ -161,9 +177,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         end
 
-        expect(task.spaced_practice_task_steps.count).to eq(@spaced_practice_step_gold_data.count)
-
         expect(task.personalized_task_steps.count).to eq(@personalized_step_gold_data.count)
+
+        expect(task.spaced_practice_task_steps.count).to eq(@spaced_practice_step_gold_data.count)
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
@@ -224,12 +240,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       tasks.each do |task|
         task_steps = task.task_steps
 
-        expect(task_steps.count).to eq(@core_step_gold_data.count + 1)
+        expect(task_steps.count).to eq(@core_step_gold_data.count)
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to(
-            eq((@core_step_gold_data + @personalized_step_gold_data)[ii][:klass])
+            eq((@core_step_gold_data)[ii][:klass])
           )
-          next if task_step.placeholder?
 
           expect(task_step.tasked.title).to eq(@core_step_gold_data[ii][:title])
           expect(task_step.related_content).to eq(@core_step_gold_data[ii][:related_content])
@@ -238,7 +253,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task.spaced_practice_task_steps.count).to eq 0
 
-        expect(task.personalized_task_steps.count).to eq 1
+        expect(task.personalized_task_steps.count).to eq 0
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
@@ -246,6 +261,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'does not assign the same spaced practice exercise twice in the same assignment' do
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
+        receive(:num_personalized_exercises_per_page) { 0 }
+      )
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
         receive(:k_ago_map) { [[0, 2], [0, 2]] }
       )
@@ -269,7 +287,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.spaced_practice_task_steps.count).to eq 1
         expect(task.spaced_practice_task_steps.first.tasked.exercise).to eq unexcluded_exercise
 
-        expect(task.personalized_task_steps.count).to eq 1
+        expect(task.personalized_task_steps.count).to eq 0
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
@@ -289,21 +307,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           title: "Newton's First Law of Motion: Inertia" },
         { klass: Tasks::Models::TaskedVideo,
           title: "Newton’s First Law of Motion" },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil },
+        { klass: Tasks::Models::TaskedExercise, title: nil },
         { klass: Tasks::Models::TaskedInteractive,
           title: "Virtual Physics: Forces and Motion: Basics" },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil }
+        { klass: Tasks::Models::TaskedExercise, title: nil }
       ]
     }
 
     let(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil },
+        { klass: Tasks::Models::TaskedExercise, title: nil },
+        { klass: Tasks::Models::TaskedExercise, title: nil }
       ]
     }
 
@@ -374,10 +388,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     it 'is split into different task steps with immediate feedback' do
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
+        receive(:num_personalized_exercises_per_page) { 0 }
       )
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises) { 0 }
+        receive(:k_ago_map) { [[0, 2]] }
       )
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
@@ -490,12 +504,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise, title: nil, related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise, title: nil, related_exercise_ids: [] }
       ]
     }
 
@@ -505,10 +515,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     it 'is split into different task steps with immediate feedback and a "try another" exercise' do
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
+        receive(:num_personalized_exercises_per_page) { 0 }
       )
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises) { 0 }
+        receive(:k_ago_map) { [[0, 2]] }
       )
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
@@ -639,10 +649,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'combines exercises with context with the previous step when possible' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [] }
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises) { 0 }
+        receive(:num_personalized_exercises_per_page) { 0 }
       )
+      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [] }
 
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [

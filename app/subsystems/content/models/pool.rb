@@ -14,7 +14,8 @@ class Content::Models::Pool < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true, uniqueness: true
 
   def exercises
-    Content::Models::Exercise.where(id: content_exercise_ids)
+    @exercises ||= {}
+    @exercises[content_exercise_ids] ||= Content::Models::Exercise.where(id: content_exercise_ids)
   end
 
   # This method checks only the array of ids, not the DB records, in order to save time

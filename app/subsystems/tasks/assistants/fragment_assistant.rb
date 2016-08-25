@@ -56,15 +56,18 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                      content: reading_fragment.to_html)
   end
 
+  # Exercise exclusions are ignored here
   def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:)
-    exercise = get_random_unused_page_exercise_with_tags(page, exercise_fragment.embed_tags)
+    exercise = get_unused_page_exercises_with_tags(
+      page: page, tags: exercise_fragment.embed_tags
+    ).sample
 
     if exercise.nil?
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
       feature_tag = "context-cnxfeature:#{node_id}"
-      exercise = get_random_unused_page_exercise_with_tags(page, feature_tag)
+      exercise = get_unused_page_exercises_with_tags(page: page, tags: feature_tag).sample
 
       return if exercise.nil?
     end
@@ -93,8 +96,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     end
 
     # Assign the exercise
-    add_exercise_step!(task: task, exercise: exercise, title: title, group_type: :core_group,
-                       labels: exercise_fragment.labels)
+    add_exercise_step!(task: task, exercise: exercise, title: title,
+                       group_type: :core_group, labels: exercise_fragment.labels)
   end
 
   def store_related_exercises(exercise_fragment:, page:, previous_step:, title: nil)

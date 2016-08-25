@@ -43,14 +43,20 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
   protected
 
-  def k_ago_map
-    ## Entries in the list have the form:
-    ##   [from-this-many-events-ago, choose-this-many-exercises]
-    [ [2,1], [4,1] ]
+  def num_personalized_exercises_per_page
+    3
   end
 
-  def num_personalized_exercises
-    1
+  ## Entries in the list have the form:
+  ##   [from-this-many-events-ago, choose-this-many-exercises]
+  def k_ago_map
+    [ [2, 1], [4, 1] ]
+  end
+
+  ## Entries in the list have the form:
+  ##   [nil, choose-this-many-exercises]
+  def random_ago_map
+    [ [nil, 1] ]
   end
 
   def build_reading_task(pages:, history:, individualized_tasking_plan:, skip_dynamic:)
@@ -59,30 +65,50 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     reset_used_exercises
 
-    add_core_steps!(task: task, pages: pages)
+    add_core_steps!(task: task, pages: pages, history: history)
 
     unless skip_dynamic
       add_spaced_practice_exercise_steps!(
-        task: task, core_page_ids: @pages.map(&:id),
-        history: history, k_ago_map: k_ago_map, pool_type: :reading_dynamic
+        task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
+        history: history, k_ago_map: k_ago_map, for_each_core_page: true
       )
 
-      add_personalized_exercise_steps!(
-        task: task, num_personalized_exercises: num_personalized_exercises,
-        personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::IReadingPersonalized
+      add_spaced_practice_exercise_steps!(
+        task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
+        history: history, k_ago_map: random_ago_map, for_each_core_page: false
       )
     end
 
     task
   end
 
-  def add_core_steps!(task:, pages:)
+  def add_core_steps!(task:, pages:, history:)
+    course = task_plan.owner
+
     pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.chapter.title : page.title
       related_content = page.related_content(title: page_title)
-      task_fragments(task: task, fragments: page.fragments, page_title: page_title,
-                     page: page, related_content: related_content)
+
+      # Reading content
+      task_fragments(task: task, fragments: page.fragments,
+                     page_title: page_title, page: page, related_content: related_content)
+
+      # "Personalized" exercises after each page
+      candidate_exercises = get_unused_pool_exercises page: page, pool_type: :reading_dynamic
+
+      filtered_exercises = FilterExcludedExercises[
+        exercises: candidate_exercises, course: course,
+        additional_excluded_numbers: @used_exercise_numbers
+      ]
+
+      chosen_exercises = ChooseExercises[
+        exercises: filtered_exercises, count: num_personalized_exercises_per_page, history: history
+      ]
+
+      chosen_exercises.each do |exercise|
+        add_exercise_step!(task: task, exercise: exercise, group_type: :personalized_group)
+      end
     end
 
     task

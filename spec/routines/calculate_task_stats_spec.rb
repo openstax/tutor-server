@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   before(:all) do
     @number_of_students = 8
@@ -13,7 +13,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         receive(:k_ago_map) { [ [0, 2] ] }
       )
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises) { 0 }
+        receive(:num_personalized_exercises_per_page) { 0 }
       )
 
       @task_plan = FactoryGirl.create :tasked_task_plan, number_of_students: @number_of_students

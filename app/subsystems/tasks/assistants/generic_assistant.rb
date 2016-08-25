@@ -8,13 +8,13 @@ class Tasks::Assistants::GenericAssistant
     @individualized_tasking_plans = individualized_tasking_plans
     role_ids = individualized_tasking_plans.map(&:target_id)
     @students_by_role_id = CourseMembership::Models::Student
-                            .where(entity_role_id: role_ids)
-                            .preload(enrollments: :period)
-                            .to_a.index_by(&:entity_role_id)
+                             .where(entity_role_id: role_ids)
+                             .preload(enrollments: :period)
+                             .to_a.index_by(&:entity_role_id)
     @ecosystems_map = {}
     @page_cache = {}
-    @exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
-    @spaced_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
+    @tag_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
+    @pool_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
   end
 
   protected
@@ -28,23 +28,15 @@ class Tasks::Assistants::GenericAssistant
     @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   end
 
-  def map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
+  def get_spaced_ecosystems_map(spaced_ecosystem_id:)
     # Reuse Ecosystems map when possible
-    return @ecosystems_map[spaced_ecosystem_id] if @ecosystems_map.has_key?(spaced_ecosystem_id)
+    @ecosystems_map[spaced_ecosystem_id] ||= begin
+      spaced_ecosystem = Content::Ecosystem.find(spaced_ecosystem_id)
 
-    spaced_ecosystem = Content::Ecosystem.find(spaced_ecosystem_id)
-
-    Content::Map.find_or_create_by(
-      from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
-    )
-  end
-
-  def get_all_page_exercises_with_tags(page, tags)
-    sorted_tags = [tags].flatten.uniq.sort
-
-    @exercise_cache[page.id][sorted_tags] ||= ecosystem.exercises_with_tags(
-      sorted_tags, pages: page
-    )
+      Content::Map.find_or_create_by(
+        from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
+      )
+    end
   end
 
   def reset_used_exercises
@@ -54,22 +46,45 @@ class Tasks::Assistants::GenericAssistant
   def add_exercise_step!(task:, exercise:, group_type:, title: nil, labels: nil)
     related_content = exercise.page.related_content
 
+    @used_exercise_numbers << exercise.number
+
     TaskExercise.call(task: task, exercise: exercise) do |step|
       step.group_type = group_type
       step.add_related_content(related_content) if related_content.present?
       step.add_labels(labels) if labels.present?
-    end
-
-    @used_exercise_numbers << exercise.number
+    end.outputs.task_step
   end
 
-  def get_random_unused_page_exercise_with_tags(page, tags)
-    raise 'You must call reset_used_exercises before get_random_unused_page_exercise_with_tags' \
+  def get_all_page_exercises_with_tags(page:, tags:)
+    sorted_tags = [tags].flatten.uniq.sort
+
+    @tag_exercise_cache[page.id][sorted_tags] ||= ecosystem.exercises_with_tags(
+      sorted_tags, pages: page
+    )
+  end
+
+  def get_pool_exercises(page:, pool_type:)
+    pool_method = "#{pool_type}_pool".to_sym
+
+    @pool_exercise_cache[page.id][pool_type] ||= page.send(pool_method).exercises
+  end
+
+  def get_unused_page_exercises_with_tags(page:, tags:)
+    raise 'You must call reset_used_exercises before get_unused_page_exercises_with_tags' \
       if @used_exercise_numbers.nil?
 
-    exercises = get_all_page_exercises_with_tags(page, tags)
+    exercises = get_all_page_exercises_with_tags(page: page, tags: tags)
 
-    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }.sample
+    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
+  end
+
+  def get_unused_pool_exercises(page:, pool_type:)
+    raise 'You must call reset_used_exercises before get_unused_pool_exercises' \
+      if @used_exercise_numbers.nil?
+
+    exercises = get_pool_exercises(page: page, pool_type: pool_type)
+
+    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
   # Limits the history to tasks open before the given task's open date
@@ -113,14 +128,18 @@ class Tasks::Assistants::GenericAssistant
     history
   end
 
-  def get_pages(page_ids, already_sorted: false)
-    page_ids = [page_ids].flatten.uniq.sort unless already_sorted
-    return @page_cache[page_ids] if @page_cache.has_key?(page_ids)
+  def get_pages(page_ids:)
+    page_ids = [page_ids].flatten
+    cached_page_ids = @page_cache.keys
+    uncached_page_ids = page_ids - cached_page_ids
 
-    page_models = Content::Models::Page.where(id: page_ids)
-    pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
+    unless uncached_page_ids.empty?
+      page_models = Content::Models::Page.where(id: uncached_page_ids)
+      pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
+      pages.each{ |page| @page_cache[page.id] = page }
+    end
 
-    @page_cache[page_ids] = pages
+    @page_cache.values_at(*page_ids)
   end
 
   def build_task(type:, default_title:, individualized_tasking_plan:)
@@ -143,7 +162,17 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, history:, k_ago_map:, pool_type:)
+  def filter_and_choose_exercises(exercises:, course:, count:, history:)
+    filtered_exercises = FilterExcludedExercises[
+      exercises: exercises, course: course,
+      additional_excluded_numbers: @used_exercise_numbers
+    ]
+
+    ChooseExercises[exercises: filtered_exercises, count: count, history: history]
+  end
+
+  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, pool_type:,
+                                          history:, k_ago_map:, for_each_core_page: false)
     raise 'You must call reset_used_exercises before add_spaced_practice_exercise_steps!' \
       if @used_exercise_numbers.nil?
 
@@ -154,45 +183,77 @@ class Tasks::Assistants::GenericAssistant
     spaced_practice_status = []
 
     k_ago_map.each do |k_ago, number|
+      if k_ago.nil?
+        num_previous_tasks = history.total_count
+
+        # Skip if no previous tasks
+        next if num_previous_tasks == 0
+
+        # Random-ago does not include 0-ago
+        k_ago = SecureRandom.random_number(num_previous_tasks - 1) + 1
+
+        k_ago_name = "random:#{k_ago}"
+      else
+        k_ago_name = k_ago.to_s
+      end
+
       # Not enough history
       if k_ago >= history.total_count
-        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
+        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago_name}-ago slot"
         next
       end
 
       spaced_ecosystem_id = history.ecosystem_ids[k_ago]
-      sorted_spaced_page_ids = history.core_page_ids[k_ago].uniq.sort
+      spaced_page_ids = history.core_page_ids[k_ago].uniq
 
-      @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids] ||= begin
+      cached_page_ids = @pool_exercise_cache.keys
+      uncached_spaced_page_ids = spaced_page_ids - cached_page_ids
+
+      unless uncached_spaced_page_ids.empty?
         # Get the ecosystems map
-        ecosystems_map = map_spaced_ecosystem_id_to_ecosystem(spaced_ecosystem_id)
+        ecosystems_map = get_spaced_ecosystems_map(spaced_ecosystem_id: spaced_ecosystem_id)
 
-        # Get core pages from the history
-        spaced_pages = get_pages(sorted_spaced_page_ids, already_sorted: true)
+        # Get the spaced pages
+        uncached_spaced_pages = get_pages(page_ids: uncached_spaced_page_ids)
 
         # Map the pages to exercises in the new ecosystem
-        ecosystems_map.map_pages_to_exercises(
-          pages: spaced_pages, pool_type: pool_type
-        ).values.flatten.uniq
+        uncached_pool_exercises_by_pages = ecosystems_map.map_pages_to_exercises(
+          pages: uncached_spaced_pages, pool_type: pool_type
+        )
+
+        uncached_pool_exercises_by_pages.each do |uncached_spaced_page, exercises|
+          @pool_exercise_cache[uncached_spaced_page.id][pool_type] = exercises
+        end
       end
 
-      filtered_exercises = FilterExcludedExercises[
-        exercises: @spaced_exercise_cache[spaced_ecosystem_id][sorted_spaced_page_ids],
-        course: course, additional_excluded_numbers: @used_exercise_numbers
-      ]
+      dynamic_spaced_page_ids = spaced_page_ids.reject do |spaced_page_id|
+        @pool_exercise_cache[spaced_page_id][pool_type].empty?
+      end
 
-      chosen_exercises = ChooseExercises[
-        exercises: filtered_exercises, count: number, history: history
-      ]
+      chosen_exercises = if for_each_core_page
+        dynamic_spaced_page_ids.map do |spaced_page_id|
+          candidate_exercises = @pool_exercise_cache[spaced_page_id][pool_type]
+
+          filter_and_choose_exercises(exercises: candidate_exercises, course: course,
+                                      count: number, history: history)
+        end
+      else
+        candidate_exercises = dynamic_spaced_page_ids.flat_map do |spaced_page_id|
+          @pool_exercise_cache[spaced_page_id][pool_type]
+        end
+
+        [filter_and_choose_exercises(exercises: candidate_exercises, course: course,
+                                     count: number, history: history)]
+      end
 
       # Set related_content and add the exercises to the task
-      chosen_exercises.each do |chosen_exercise|
+      chosen_exercises.flatten.map do |chosen_exercise|
         add_exercise_step!(task: task, exercise: chosen_exercise,
                            group_type: :spaced_practice_group)
       end
 
-      spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
-        if chosen_exercises.size < number
+      spaced_practice_status << "Could not completely fill the #{k_ago_name}-ago slot" \
+        if chosen_exercises.any?{ |exercises| exercises.size < number }
     end
 
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
@@ -202,13 +263,12 @@ class Tasks::Assistants::GenericAssistant
     task
   end
 
-  def add_personalized_exercise_steps!(task:, num_personalized_exercises:,
-                                       personalized_placeholder_strategy_class:)
-    return task if num_personalized_exercises == 0
+  def add_personalized_exercise_steps!(task:, count:, personalized_placeholder_strategy_class:)
+    return task if count == 0
 
     task.personalized_placeholder_strategy = personalized_placeholder_strategy_class.new
 
-    num_personalized_exercises.times do
+    count.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type
