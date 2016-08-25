@@ -48,4 +48,45 @@ $(function(){
 $(document).ready(function() {
   $('[data-toggle="popover"]').popover();
   $('table.concept-coach-stats').stickyTableHeaders();
+
+  //========== Searh bar show only on List of Courses tab =============//
+  var locationHash = window.location.hash;
+  if (locationHash === "" || locationHash === "#main"){
+    $("#search-courses-form").show();
+  } else {
+    $("#search-courses-form").hide();
+  }
+
+  $("#search-courses-results-pp").change(function(e){
+    e.preventDefault();
+
+    var perPage = $("#search-courses-results-pp option:selected").text();
+
+    var setPerPage = function(val){
+      var paramsObj = locationSearchInJSON();
+      paramsObj.per_page = val;
+
+      window.location.search = $.param(paramsObj);
+    }
+
+    setPerPage(perPage);
+  });
 });
+
+function locationSearchInJSON(){
+  if (window.location.search && window.location.search.startsWith("?")){
+    var params = window.location.search.substr(1);
+  } else {
+    return {};
+  }
+
+  var paramsJSON = {}
+  params.split("&").forEach(function(item) {
+     var keyValues = item.split("=");
+     paramsJSON[keyValues[0]] = keyValues[1]
+  })
+
+  paramsJSON.utf8 = "✓";
+
+  return paramsJSON;
+}
