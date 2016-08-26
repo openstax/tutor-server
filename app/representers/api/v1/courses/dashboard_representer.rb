@@ -160,10 +160,10 @@ module Api::V1::Courses
     collection :tasks,
                readable: true,
                writeable: false,
-               skip_render: ->(input:, **) {
+               skip_render: ->(input:, **) do
                  !['reading','homework','external','event'].include?(input.task_type.to_s)
-               },
-               decorator: ->(input:, **) {
+               end,
+               decorator: ->(input:, **) do
                  case input.task_type.to_s
                  when 'reading'
                    ReadingTask
@@ -172,7 +172,7 @@ module Api::V1::Courses
                  else
                    TaskBase
                  end
-               }
+               end
 
     property :role,
              readable: true,
