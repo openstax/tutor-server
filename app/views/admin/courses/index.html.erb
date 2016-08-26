@@ -14,9 +14,10 @@ Results per page:
              locals: { course_infos: @course_infos,
                        bulk_actions: true,
                        extra_headers: ['Actions'],
-                       page: params[:page],
-                       per_page: @per_page,
-                       total_count: @total_courses,
+                       page: params.fetch(:page, 1),
+                       per_page: params.fetch(:per_page, 25),
+                       incomplete_jobs: @incomplete_jobs,
+                                                      failed_jobs: @failed_jobs,
                        extra_fields_procs: [lambda do |course_info| %>
     <td>
       <%= link_to 'List Students', admin_course_students_path(course_info.id),

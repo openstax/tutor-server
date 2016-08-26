@@ -8,14 +8,14 @@ class Admin::CoursesController < Admin::BaseController
   def index
     @query = params[:query]
     params_for_pagination = {page: params.fetch(:page, 1), per_page: params.fetch(:per_page, 25)}
-    @course_infos = Entity::Course.joins(:profile).preload(
+
+    courses = SearchCourses[query: params[:query], order_by: params[:order_by]]
+    @course_infos = courses.preload(
       [
-        :profile, {
-        teachers: { role: { role_user: :profile } },
-        periods_with_deleted: :latest_enrollments_with_deleted }
+        :profile, { teachers: { role: [:role_user, :profile] }, periods_with_deleted: :latest_enrollments_with_deleted }
       ],
       [ ecosystems: [:books] ],
-      [ :periods ],
+      [ :periods ]
     ).try(:paginate, params_for_pagination)
     @ecosystems = Content::ListEcosystems[]
     @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
