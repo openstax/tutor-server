@@ -21,12 +21,12 @@ RSpec.feature 'Admin editing a course' do
     click_link 'Edit'
 
     expect(page).to have_content('Edit Course')
-    fill_in 'Name', with: 'Changed'
+    fill_in 'Name', with: 'Changed777888'
     click_button 'Save'
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
-    expect(page).to have_css('tr td', text: 'Changed')
+    expect(page).to have_text('Changed777888')
   end
 
   scenario 'Changing "Is College"' do
@@ -43,15 +43,15 @@ RSpec.feature 'Admin editing a course' do
   end
 
   scenario 'Assigning a school' do
-    FactoryGirl.create(:school_district_school, name: 'School name')
+    FactoryGirl.create(:school_district_school, name: 'High high hi school')
     visit admin_courses_path
     click_link 'Edit'
 
-    select 'School name', from: 'School'
+    select 'High high hi school', from: 'School'
     click_button 'Save'
 
     expect(current_path).to eq(admin_courses_path)
-    expect(page).to have_css('tr td', text: 'School name')
+    expect(page).to have_text('High high hi school')
   end
 
   scenario 'Adding a period' do

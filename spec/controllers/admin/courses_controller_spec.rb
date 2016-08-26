@@ -22,14 +22,14 @@ RSpec.describe Admin::CoursesController, type: :controller do
     context "pagination" do
       context "when the are any results" do
         it "paginates the results" do
-          4.times {FactoryGirl.create(:course_profile_profile, name: "Algebra #{rand(1000)}")}
-          expect(CourseProfile::Models::Profile.count).to eq(4)
+          3.times {FactoryGirl.create(:course_profile_profile, name: "Algebra #{rand(1000)}")}
+          expect(CourseProfile::Models::Profile.count).to eq(3)
 
           get :index, page: 1, per_page: 2
-          expect(assigns[:course_infos].count).to eq(2)
+          expect(assigns[:course_infos].length).to eq(2)
 
           get :index, page: 2, per_page: 2
-          expect(assigns[:course_infos].count).to eq(2)
+          expect(assigns[:course_infos].length).to eq(1)
         end
       end
 
