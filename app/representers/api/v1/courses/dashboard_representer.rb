@@ -147,7 +147,7 @@ module Api::V1::Courses
       collection :teachers,
                  readable: true,
                  writeable: false,
-                 decorator: Teacher
+                 extend: Teacher
     end
 
     # Actual attributes below
@@ -155,7 +155,7 @@ module Api::V1::Courses
     collection :plans,
                readable: true,
                writeable: false,
-               decorator: ::Api::V1::TaskPlanRepresenter
+               extend: ::Api::V1::TaskPlanRepresenter
 
     collection :tasks,
                readable: true,
@@ -163,7 +163,7 @@ module Api::V1::Courses
                skip_render: ->(input:, **) do
                  !['reading','homework','external','event'].include?(input.task_type.to_s)
                end,
-               decorator: ->(input:, **) do
+               extend: ->(input:, **) do
                  case input.task_type.to_s
                  when 'reading'
                    ReadingTask
@@ -177,12 +177,12 @@ module Api::V1::Courses
     property :role,
              readable: true,
              writeable: false,
-             decorator: Role
+             extend: Role
 
     property :course,
              readable: true,
              writeable: false,
-             decorator: Course
+             extend: Course
 
   end
 

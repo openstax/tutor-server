@@ -3,7 +3,7 @@ module Api::V1
 
     collection :items, inherit: true,
                        class: ::Tasks::Models::Task,
-                       decorator: TaskRepresenter
+                       extend: TaskRepresenter
 
   end
 end

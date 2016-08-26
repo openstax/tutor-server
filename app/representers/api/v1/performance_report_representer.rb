@@ -152,7 +152,7 @@ module Api::V1
 
       collection :data,
                  readable: true,
-                 decorator: ->(input:, **) { input.nil? ? Null : StudentData }
+                 extend: ->(input:, **) { input.nil? ? Null : StudentData }
 
     end
 
@@ -202,11 +202,11 @@ module Api::V1
 
       collection :data_headings,
                  readable: true,
-                 decorator: DataHeadings
+                 extend: DataHeadings
 
       collection :students,
                  readable: true,
-                 decorator: Students
+                 extend: Students
     end
 
     items extend: ReportPerPeriod

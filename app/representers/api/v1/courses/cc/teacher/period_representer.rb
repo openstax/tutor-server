@@ -24,7 +24,7 @@ module Api::V1::Courses::Cc::Teacher
     collection :chapters,
                readable: true,
                writeable: false,
-               decorator: Api::V1::Courses::Cc::Teacher::ChapterRepresenter,
+               extend: Api::V1::Courses::Cc::Teacher::ChapterRepresenter,
                schema_info: {
                  required: true
                }

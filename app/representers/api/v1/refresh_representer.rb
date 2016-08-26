@@ -15,7 +15,7 @@ module Api::V1
     property :recovery_step,
              writeable: false,
              readable: true,
-             decorator: Api::V1::TaskStepRepresenter,
+             extend: Api::V1::TaskStepRepresenter,
              schema_info: {
                required: true,
                description: 'The exercise to be used for "try another"'

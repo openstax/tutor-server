@@ -17,13 +17,13 @@ module Api::V1
 
     property :from_period,
              as: :from,
-             decorator: Api::V1::Enrollment::PeriodWithCourseRepresenter,
+             extend: Api::V1::Enrollment::PeriodWithCourseRepresenter,
              readable: true,
              writeable: false
 
     property :to_period,
              as: :to,
-             decorator: Api::V1::Enrollment::PeriodWithCourseRepresenter,
+             extend: Api::V1::Enrollment::PeriodWithCourseRepresenter,
              readable: true,
              writeable: false,
              schema_info: { required: true }

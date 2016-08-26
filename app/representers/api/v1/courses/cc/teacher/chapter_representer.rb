@@ -33,7 +33,7 @@ module Api::V1::Courses::Cc::Teacher
     collection :pages,
                readable: true,
                writeable: false,
-               decorator: Api::V1::Courses::Cc::Teacher::PageRepresenter,
+               extend: Api::V1::Courses::Cc::Teacher::PageRepresenter,
                schema_info: {
                  required: true
                }

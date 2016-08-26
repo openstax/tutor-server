@@ -49,7 +49,7 @@ module Api::V1::Courses::Cc::Student
     collection :exercises,
                readable: true,
                writeable: false,
-               decorator: Api::V1::Courses::Cc::Student::ExerciseRepresenter,
+               extend: Api::V1::Courses::Cc::Student::ExerciseRepresenter,
                schema_info: {
                  required: true
                }

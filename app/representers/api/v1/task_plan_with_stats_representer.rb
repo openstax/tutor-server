@@ -25,7 +25,7 @@ module Api::V1
              writeable: true
 
     collection :stats,
-               decorator: Api::V1::Tasks::Stats::StatRepresenter,
+               extend: Api::V1::Tasks::Stats::StatRepresenter,
                getter: ->(*) { CalculateTaskStats[tasks: tasks] },
                readable: true,
                writable: false

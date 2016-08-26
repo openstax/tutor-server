@@ -16,7 +16,7 @@ module Api::V1
     collection :books,
                readable: true,
                writable: false,
-               decorator: EcosystemBookRepresenter
+               extend: EcosystemBookRepresenter
   end
 
 

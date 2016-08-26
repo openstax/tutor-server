@@ -25,6 +25,6 @@ module Api::V1
     collection :children,
                readable: true,
                writeable: false,
-               decorator: CourseGuideChildRepresenter
+               extend: CourseGuideChildRepresenter
   end
 end

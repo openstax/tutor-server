@@ -72,7 +72,7 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
 
     property :publish_job,
-             decorator: JobRepresenter,
+             extend: JobRepresenter,
              readable: true,
              writeable: false,
              getter: ->(*) { Jobba.find(publish_job_uuid) },
@@ -104,7 +104,7 @@ module Api::V1
 
     collection :tasking_plans,
                instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
-               decorator: TaskingPlanRepresenter,
+               extend: TaskingPlanRepresenter,
                setter: RailsCollectionSetter,
                readable: true,
                writeable: true

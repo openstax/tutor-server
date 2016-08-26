@@ -14,7 +14,7 @@ module Api::V1
     collection :teachers,
                readable: true,
                writeable: false,
-               decorator: TeacherRepresenter
+               extend: TeacherRepresenter
 
     collection :students,
                writeable: false,
