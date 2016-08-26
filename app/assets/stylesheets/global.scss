@@ -1,6 +1,3 @@
-
-
-
 @mixin tutor-button(){
   @extend .btn-lg;
   @extend .btn-primary;
@@ -144,13 +141,13 @@ header {
 
       &, &.tutor {
         width: 217px;
-        background: image-url("OST-Horiz-TM-CMYK.svg") no-repeat;
+        background: image-url("ost-horiz-tm-logo.svg") no-repeat;
         background-size: 100%;
       }
 
       &.openstax {
         width: 148px;
-        background: image-url("OS-Horiz-TM-CMYK.svg") no-repeat;
+        background: image-url("ost-horiz-tm-logo.svg") no-repeat;
         background-size: 103%;
       }
     }
@@ -193,7 +190,7 @@ header {
 
   .logo {
     height: 60px;
-    background: image-url("OS-Horiz-TM-CMYK.svg") no-repeat;
+    background: image-url("ost-horiz-tm-logo.svg") no-repeat;
   }
 
   h1 {
