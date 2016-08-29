@@ -28,7 +28,7 @@ RSpec.describe CollectImportJobsData, type: :routine do
 
       it "returns a hash with the specified keys for each item in the array" do
         job = Jobba.find(incomplete_jobs.first.id)
-        expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: course.name }
+        expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: "LCHS" }
         expect(incomplete_jobs.first).to match expected_result
       end
     end
@@ -53,7 +53,7 @@ RSpec.describe CollectImportJobsData, type: :routine do
 
       it "returns a hash with the specified keys for each item in the array" do
         job = Jobba.find(failed_jobs.first.id)
-        expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: course.name }
+        expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: "LCHS" }
         expect(failed_jobs.first).to match expected_result
       end
     end
