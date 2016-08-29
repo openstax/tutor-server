@@ -99,18 +99,35 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
   describe '#update_self' do
     let(:valid_params) { { course_id: course.id } }
-    let(:valid_body)   { { student_identifier: 'new identifier' } }
+    let(:new_id)       { '123456789' }
+    let(:valid_body)   { { student_identifier: new_id } }
 
     context 'caller has an authorization token' do
       context 'caller is a course student' do
-        it 'updates the student\'s identifier' do
-          api_patch :update_self, student_token, parameters: valid_params,
-                                                 raw_post_data: valid_body
-          expect(response).to have_http_status(:ok)
-          expect(response.body_as_hash).to eq({
-            student_identifier: 'new identifier'
-          })
-          expect(student.reload.student_identifier).to eq 'new identifier'
+        context 'updating the student\'s identifier' do
+          it 'succeeds if the identifier is available' do
+            api_patch :update_self, student_token, parameters: valid_params,
+                                                   raw_post_data: valid_body
+            expect(response).to have_http_status(:ok)
+            expect(response.body_as_hash[:student_identifier]).to eq new_id
+            expect(student.reload.student_identifier).to eq new_id
+          end
+
+          it 'fails if the identifier has already been taken' do
+            FactoryGirl.create :course_membership_student, course: course,
+                                                           student_identifier: new_id
+            api_patch :update_self, student_token, parameters: valid_params,
+                                                   raw_post_data: valid_body
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response.body_as_hash[:status]).to eq 422
+            expect(response.body_as_hash[:errors].first[:code]).to(
+              eq 'student_identifier_has_already_been_taken'
+            )
+            expect(response.body_as_hash[:errors].first[:message]).to(
+              eq 'Student identifier has already been taken'
+            )
+            expect(student.reload.student_identifier).to be_nil
+          end
         end
       end
 
@@ -148,34 +165,54 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
-        it 'moves the student to another period' do
-          api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
-          expect(response).to have_http_status(:ok)
-          new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
-          expect(response.body_as_hash).to eq({
-            id: student.id.to_s,
-            first_name: student.first_name,
-            last_name: student.last_name,
-            name: student.name,
-            period_id: period_2.id.to_s,
-            role_id: student.entity_role_id.to_s,
-            deidentifier: student.deidentifier,
-            is_active: true
-          })
-          expect(student.reload.period).to eq period_2.to_model
-        end
+        context 'moving the student to another period' do
+          it 'succeeds' do
+            api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
+            expect(response).to have_http_status(:ok)
+            new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
+            expect(response.body_as_hash).to eq({
+              id: student.id.to_s,
+              first_name: student.first_name,
+              last_name: student.last_name,
+              name: student.name,
+              period_id: period_2.id.to_s,
+              role_id: student.entity_role_id.to_s,
+              deidentifier: student.deidentifier,
+              is_active: true
+            })
+            expect(student.reload.period).to eq period_2.to_model
+          end
 
-        it 'updates student identifier' do
-          new_id = '123456789'
-          api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body.merge({
-            student_identifier: new_id
-          })
-          expect(response).to have_http_status(:ok)
-          expect(response.body_as_hash[:student_identifier]).to eq(new_id)
-          expect(student.reload.student_identifier).to eq(new_id)
-          expect(student.reload.period).to eq period_2.to_model
-        end
+          context 'and updating the student\'s identifier' do
+            let(:new_id) { '123456789' }
 
+            it 'succeeds if the identifier is available' do
+              api_patch :update, teacher_token, parameters: valid_params,
+                                 raw_post_data: valid_body.merge({ student_identifier: new_id })
+              expect(response).to have_http_status(:ok)
+              expect(response.body_as_hash[:student_identifier]).to eq(new_id)
+              expect(student.reload.student_identifier).to eq(new_id)
+              expect(student.reload.period).to eq period_2.to_model
+            end
+
+            it 'fails if the identifier has already been taken' do
+              FactoryGirl.create :course_membership_student, course: course,
+                                                             student_identifier: new_id
+              api_patch :update, teacher_token, parameters: valid_params,
+                                 raw_post_data: valid_body.merge({ student_identifier: new_id })
+              expect(response).to have_http_status(:unprocessable_entity)
+              expect(response.body_as_hash[:status]).to eq 422
+              expect(response.body_as_hash[:errors].first[:code]).to(
+                eq 'student_identifier_has_already_been_taken'
+              )
+              expect(response.body_as_hash[:errors].first[:message]).to(
+                eq 'Student identifier has already been taken'
+              )
+              expect(student.reload.student_identifier).to be_nil
+              expect(student.reload.period).to eq period.to_model
+            end
+          end
+        end
       end
 
       context 'caller is not a course teacher' do
