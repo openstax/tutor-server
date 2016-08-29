@@ -6,32 +6,52 @@ RSpec.describe CollectJobsData, type: :routine do
     let!(:course) { FactoryGirl.create :course_profile_profile, school: school }
 
     context "incomplete (queued) jobs" do
-      let(:result) { described_class[state: :incomplete] }
-
       before(:each) do
-        3.times{
+        Jobba.all.delete_all!
+        2.times{
           job = Jobba.create!
           job.save({ course_id: course.id })
           Jobba.find(job.id).queued!
         }
+        expect(Jobba.where(state: :incomplete).to_a.count).to eq 2
       end
 
+      let(:incomplete_jobs) { described_class[state: :incomplete] }
+
       it "returns the incomplete jobs with their associated data as an array of hashes" do
-        expect(result.count).to eq 3
-        expect(result).to be_a Array
-        expect(result.first).to be_a Hash
+        expect(incomplete_jobs).to be_a Array
+        expect(incomplete_jobs.first).to be_a Hash
       end
 
       it "returns a hash with the specified keys for each item in the array" do
-        first_jobba = Jobba.find(1)
-        expected_hash = { id: first_jobba.id, state_name: first_jobba.state.name }
-        expect(result.first).to include(:id, :state_name, :course_ecosystem, :course_profile_profile_name)
+        job = Jobba.find(incomplete_jobs.first.id)
+        expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: course.name }
+        expect(incomplete_jobs.first).to match expected_result
       end
     end
 
     context "failed jobs" do
-      it "returns the failed jobs with their associated data as an array of hashes" do
+      let(:failed_jobs) { described_class[state: :failed] }
 
+      before do
+        2.times{
+          job = Jobba.create!
+          job.save({ course_id: course.id })
+          Jobba.find(job.id).failed!
+        }
+        expect(Jobba.where(state: :incomplete).to_a.count).to eq 2
+      end
+
+      it "returns the failed jobs with their associated data as an array of hashes" do
+        expect(failed_jobs.count).to eq 2
+        expect(failed_jobs).to be_a Array
+        expect(failed_jobs.first).to be_a Hash
+      end
+
+      it "returns a hash with the specified keys for each item in the array" do
+        job = Jobba.find(failed_jobs.first.id)
+        expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: course.name }
+        expect(failed_jobs.first).to match expected_result
       end
     end
   end
