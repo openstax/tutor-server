@@ -19,8 +19,8 @@ class Admin::CoursesController < Admin::BaseController
       [ :periods ]
     ).try(:paginate, params_for_pagination)
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = CollectJobsData[state: :incomplete]
-    @failed_jobs = CollectJobsData[state: :failed]
+    @incomplete_jobs = CollectImportJobsData[state: :incomplete]
+    @failed_jobs = CollectImportJobsData[state: :failed]
 
     @job_path_proc = ->(job_id) { admin_job_path(job_id) }
   end
