@@ -50,12 +50,16 @@ $(document).ready(function() {
   $('table.concept-coach-stats').stickyTableHeaders();
 
   //========== Searh bar show only on List of Courses tab =============//
-  var locationHash = window.location.hash;
-  if (locationHash === "" || locationHash === "#main"){
-    $("#search-courses-form").show();
-  } else {
-    $("#search-courses-form").hide();
-  }
+  $(".admin ul li a").click(function(e){
+    var href = e.target.href;
+    if (href.includes("#incomplete") || href.includes("#failed")){
+      $("#search-courses-form").hide();
+      $("#search-courses-results-pp").hide();
+    } else {
+      $("#search-courses-form").show();
+      $("#search-courses-results-pp").show();
+    }
+  });
 
   $("#search-courses-results-pp").change(function(e){
     e.preventDefault();
