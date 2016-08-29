@@ -54,25 +54,32 @@ RSpec.describe TaskExercise, type: :routine do
     placeholder_step = task.task_steps.second
     exercise_step = task.task_steps.third
 
+    placeholder_step.update_attributes(
+      group_type: :personalized_group, related_content: [{test: true}], labels: ['test']
+    )
+
     TaskExercise[exercise: multipart_exercise, task_step: placeholder_step, task: task]
 
     question_ids = multipart_exercise.content_as_independent_questions.map{ |qq| qq[:id] }
 
     expect(task.task_steps.length).to eq 4
     expect(task.task_steps[0]).to eq reading_step
+
     expect(task.task_steps[1]).to eq placeholder_step
-    expect(task.task_steps[1].tasked).to be_a Tasks::Models::TaskedExercise
+    task.task_steps[1..2].each do |task_step|
+      expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
+      expect(task_step.tasked.is_in_multipart).to be_truthy
+      expect(task_step.group_type).to eq 'personalized_group'
+      expect(task_step.related_content).to eq [{'test' => true}]
+      expect(task_step.labels).to eq ['test']
+    end
     expect(task.task_steps[1].tasked.question_id).to eq question_ids[0]
-    expect(task.task_steps[2].tasked).to be_a Tasks::Models::TaskedExercise
     expect(task.task_steps[2].tasked.question_id).to eq question_ids[1]
-    expect(task.task_steps[3]).to eq exercise_step
-
-    expect(task.task_steps[1].tasked.is_in_multipart).to be_truthy
-    expect(task.task_steps[2].tasked.is_in_multipart).to be_truthy
-    expect(task.task_steps[3].tasked.is_in_multipart).to be_falsy
-
     expect(task.task_steps[1].tasked.content).to match("(0)")
     expect(task.task_steps[2].tasked.content).to match("(1)")
+
+    expect(task.task_steps[3]).to eq exercise_step
+    expect(task.task_steps[3].tasked.is_in_multipart).to be_falsy
   end
 
 end

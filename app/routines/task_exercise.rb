@@ -14,13 +14,21 @@ class TaskExercise
     current_step = task_step
     current_step ||= Tasks::Models::TaskStep.new
 
+    group_type = current_step.group_type
+    related_content = current_step.related_content
+    labels = current_step.labels
+
     questions = exercise.content_as_independent_questions
 
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
       if ii > 0
         next_step_number = current_step.number.nil? ? nil : current_step.number + 1
-        current_step = Tasks::Models::TaskStep.new(number: next_step_number)
+
+        current_step = Tasks::Models::TaskStep.new(
+          number: next_step_number, group_type: group_type,
+          related_content: related_content, labels: labels
+        )
       end
 
       # Mark the step as incomplete just in case it had been marked as complete before
