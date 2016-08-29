@@ -297,6 +297,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
         api_delete :destroy, teacher_token, parameters: valid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'already_inactive'
+        expect(response.body_as_hash[:errors].first[:message]).to eq 'Student is already inactive'
 
         student.reload
         expect(student.persisted?).to eq true
@@ -313,14 +314,37 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
       context 'caller has an authorization token' do
         context 'caller is a course teacher' do
-          it 'undrops the student from the course' do
-            api_put :undrop, teacher_token, parameters: valid_params
-            expect(response).to have_http_status(:ok)
-            expect(response.body_as_hash[:is_active]).to eq true
+          context 'undropping the student from the course' do
+            it 'succeeds if the student identifier is available' do
+              api_put :undrop, teacher_token, parameters: valid_params
+              expect(response).to have_http_status(:ok)
+              expect(response.body_as_hash[:is_active]).to eq true
 
-            student.reload
-            expect(student.persisted?).to eq true
-            expect(student.deleted?).to eq false
+              student.reload
+              expect(student.persisted?).to eq true
+              expect(student.deleted?).to eq false
+            end
+
+            it 'fails if the student\'s identifier is taken by someone else' do
+              student_id = '123456789'
+              student.update_attribute :student_identifier, student_id
+              FactoryGirl.create :course_membership_student, course: course,
+                                                             student_identifier: student_id
+
+              api_put :undrop, teacher_token, parameters: valid_params
+              expect(response).to have_http_status(:unprocessable_entity)
+              expect(response.body_as_hash[:status]).to eq 422
+              expect(response.body_as_hash[:errors].first[:code]).to(
+                eq 'student_identifier_has_already_been_taken'
+              )
+              expect(response.body_as_hash[:errors].first[:message]).to(
+                eq 'Student identifier has already been taken'
+              )
+
+              student.reload
+              expect(student.persisted?).to eq true
+              expect(student.deleted?).to eq true
+            end
           end
         end
 
@@ -358,6 +382,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
         api_put :undrop, teacher_token, parameters: valid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'already_active'
+        expect(response.body_as_hash[:errors].first[:message]).to eq 'Student is already active'
 
         student.reload
         expect(student.persisted?).to eq true
