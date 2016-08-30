@@ -2,10 +2,9 @@ require 'rails_helper'
 
 RSpec.describe CollectImportJobsData, type: :routine do
   context "when there are any" do
-    let(:school) { FactoryGirl.create :school_district_school }
-    let(:entity_course) { FactoryGirl.create :entity_course }
-    let(:course_profile) { FactoryGirl.create :course_profile_profile, course: entity_course, school: school }
-    let(:the_course_name) { entity_course.name }
+    let!(:school) { FactoryGirl.build :school_district_school }
+    let!(:entity_course) { FactoryGirl.create :entity_course }
+    let!(:course_profile) { FactoryGirl.build :course_profile_profile, entity_course_id: entity_course.id, school: school }
 
     before(:each) do
       Jobba.all.delete_all!
@@ -22,7 +21,7 @@ RSpec.describe CollectImportJobsData, type: :routine do
         expect(Jobba.where(state: :incomplete).to_a.count).to eq 2
       end
 
-      let(:incomplete_jobs) { described_class[state: :incomplete] }
+      let!(:incomplete_jobs) { described_class[state: :incomplete] }
 
       it "returns the incomplete jobs with their associated data as an array of hashes" do
         expect(incomplete_jobs).to be_a Array
@@ -32,14 +31,12 @@ RSpec.describe CollectImportJobsData, type: :routine do
       it "returns a hash with the specified keys for each item in the array" do
         job = Jobba.find(incomplete_jobs.first.id)
         expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"],
-                            course_profile_profile_name: the_course_name }
+                            course_profile_profile_name: entity_course.name }
         expect(incomplete_jobs.first).to match expected_result
       end
     end
 
     context "failed jobs" do
-      let(:failed_jobs) { described_class[state: :failed] }
-
       before(:each) do
         2.times{
           job = Jobba.create!
@@ -48,6 +45,7 @@ RSpec.describe CollectImportJobsData, type: :routine do
         }
         expect(Jobba.where(state: :failed).to_a.count).to eq 2
       end
+      let!(:failed_jobs) { described_class[state: :failed] }
 
       it "returns the failed jobs with their associated data as an array of hashes" do
         expect(failed_jobs.count).to eq 2
@@ -58,13 +56,18 @@ RSpec.describe CollectImportJobsData, type: :routine do
       it "returns a hash with the specified keys for each item in the array" do
         job = Jobba.find(failed_jobs.first.id)
         expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"],
-                            course_profile_profile_name: the_course_name }
+                            course_profile_profile_name: entity_course.name }
         expect(failed_jobs.first).to match expected_result
       end
     end
   end
 
   context "when there are no results" do
+    before(:each) do
+      Jobba.all.delete_all!
+      expect(Jobba.all.count).to eq 0
+    end
+
     it "doesn't blow up" do
       expect{described_class[state: :incomplete]}.to_not raise_error
     end
@@ -76,7 +79,10 @@ RSpec.describe CollectImportJobsData, type: :routine do
   end
 
   context "when the results have no data hash" do
-    before(:all) do
+    before(:each) do
+      Jobba.all.delete_all!
+      expect(Jobba.all.count).to eq 0
+
       2.times {
         job = Jobba.create!
         Jobba.find(job.id).queued!
