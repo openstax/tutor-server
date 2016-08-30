@@ -26,7 +26,7 @@ class Admin::CoursesController < Admin::BaseController
     @failed_jobs = Jobba.where(state: :failed).to_a.select do |job|
       job.data.try :[], 'course_ecosystem'
     end
-    @job_path_proc = ->(job_id) { admin_job_path(job_id) }
+    @job_path_proc = ->(job) { admin_job_path(job.id) }
   end
 
   def new
