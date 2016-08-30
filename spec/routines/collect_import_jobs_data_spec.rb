@@ -12,15 +12,13 @@ RSpec.describe CollectImportJobsData, type: :routine do
 
     context "incomplete (queued) jobs" do
       before(:each) do
-        2.times{
-          job = Jobba.create!
-          job.save({ course_id: course_profile.entity_course_id, course_ecosystem: "Physics (334f8b61-30eb-4475-8e05-5260a4866b4b@7.42) - 2016-08-10 18:10:50 UTC" })
-          Jobba.find!(job.id).queued!
-        }
-        expect(Jobba.where(state: :incomplete).to_a.count).to eq 2
+        job = Jobba.create!
+        job.save({ course_id: course_profile.entity_course_id, course_ecosystem: "Physics (334f8b61-30eb-4475-8e05-5260a4866b4b@7.42) - 2016-08-10 18:10:50 UTC" })
+        job.queued!
+        expect(Jobba.where(state: :incomplete).to_a.count).to eq 1
       end
 
-      let!(:incomplete_jobs) { described_class[state: :incomplete] }
+      let(:incomplete_jobs) { described_class[state: :incomplete] }
 
       it "returns the incomplete jobs with their associated data as an array of hashes" do
         expect(incomplete_jobs).to be_a Array
@@ -28,35 +26,33 @@ RSpec.describe CollectImportJobsData, type: :routine do
       end
 
       it "returns a hash with the specified keys for each item in the array" do
-        job =Jobba.where(state: :incomplete).to_a.last
+        job =Jobba.where(state: :incomplete).to_a.first
         expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"],
                             course_profile_profile_name: course_profile.name }
-        expect(incomplete_jobs.last).to match expected_result
+        expect(incomplete_jobs.first).to match expected_result
       end
     end
 
     context "failed jobs" do
       before(:each) do
-        2.times{
-          job = Jobba.create!
-          job.save({ course_id: course_profile.entity_course_id, course_ecosystem: "Physics (334f8b61-30eb-4475-8e05-5260a4866b4b@7.42) - 2016-08-10 18:10:50 UTC" })
-          Jobba.find!(job.id).failed!
-        }
-        expect(Jobba.where(state: :failed).to_a.count).to eq 2
+        job = Jobba.create!
+        job.save({ course_id: course_profile.entity_course_id, course_ecosystem: "Physics (334f8b61-30eb-4475-8e05-5260a4866b4b@7.42) - 2016-08-10 18:10:50 UTC" })
+        job.failed!
+        expect(Jobba.where(state: :failed).to_a.count).to eq 1
       end
-      let!(:failed_jobs) { described_class[state: :failed] }
+      let(:failed_jobs) { described_class[state: :failed] }
 
       it "returns the failed jobs with their associated data as an array of hashes" do
-        expect(failed_jobs.count).to eq 2
+        expect(failed_jobs.count).to eq 1
         expect(failed_jobs).to be_a Array
         expect(failed_jobs.first).to be_a Hash
       end
 
       it "returns a hash with the specified keys for each item in the array" do
-        job = Jobba.where(state: :failed).to_a.last
+        job = Jobba.where(state: :failed).to_a.first
         expected_result = { id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"],
                             course_profile_profile_name: course_profile.name }
-        expect(failed_jobs.last).to match expected_result
+        expect(failed_jobs.first).to match expected_result
       end
     end
   end

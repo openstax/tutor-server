@@ -5,11 +5,17 @@ class CustomerService::CoursesController < CustomerService::BaseController
 
   def index
     @query = params[:query]
+    courses = SearchCourses.call(query: params[:query], order_by: params[:order_by]).outputs
+    params[:per_page] = courses.total_count if params[:per_page] == "all"
     params_for_pagination = {page: params.fetch(:page, 1), per_page: params.fetch(:per_page, 25)}
-    courses = SearchCourses[query: @query, order_by: params[:order_by]].try(:paginate, params_for_pagination)
-    @total_courses = courses.try(:count)
-    @course_infos = CollectCourseInfo[courses: courses,
-                                      with: [:teacher_names, :ecosystem_book]]
+    @total_courses = courses.try(:total_count)
+    @course_infos = courses.items.preload(
+      [
+        :profile, { teachers: { role: [:role_user, :profile] }, periods_with_deleted: :latest_enrollments_with_deleted }
+      ],
+      [ ecosystems: [:books] ],
+      [ :periods ]
+    ).try(:paginate, params_for_pagination)
   end
 
   def show
