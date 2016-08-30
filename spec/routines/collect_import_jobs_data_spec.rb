@@ -3,10 +3,12 @@ require 'rails_helper'
 RSpec.describe CollectImportJobsData, type: :routine do
   context "when there are any" do
     let!(:school) { FactoryGirl.build :school_district_school }
+    let!(:course_profile) { FactoryGirl.create :course_profile_profile, school: school }
     let!(:entity_course) { FactoryGirl.create :entity_course }
-    let!(:course_profile) { FactoryGirl.build :course_profile_profile, entity_course_id: entity_course.id, school: school }
 
     before(:each) do
+      course_profile.entity_course_id = entity_course.id
+      course_profile.save
       Jobba.all.delete_all!
       expect(Jobba.all.count).to eq 0
     end
