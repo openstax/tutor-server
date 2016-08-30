@@ -25,7 +25,13 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
-  after_save { task.update_step_counts! }
+  after_touch        :update_task_step_counts!
+  after_save         :update_task_step_counts!
+  after_real_destroy :update_task_step_counts!
+
+  def update_task_step_counts!
+    task.update_step_counts!
+  end
 
   def exercise?
     tasked_type == Tasks::Models::TaskedExercise.name
@@ -36,8 +42,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   end
 
   def is_correct?
-    return nil unless has_correctness?
-    tasked.is_correct?
+    has_correctness? ? tasked.is_correct? : nil
   end
 
   def can_be_recovered?
@@ -69,7 +74,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   end
 
   def group_name
-    group_type.gsub(/_group\z/, '').gsub('_', ' ')
+    group_type.sub(/_group\z/, '').gsub('_', ' ')
   end
 
   def add_related_content(related_content_hash)
