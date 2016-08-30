@@ -51,13 +51,15 @@ $(document).ready(function() {
 
   //========== Searh bar show only on List of Courses tab =============//
   $(".admin ul li a").click(function(e){
-    var href = e.target.href;
-    if (href.includes("#incomplete") || href.includes("#failed")){
-      $("#search-courses-form").hide();
-      $("#search-courses-results-pp").hide();
-    } else {
-      $("#search-courses-form").show();
-      $("#search-courses-results-pp").show();
+    if(window.location.pathname === "/admin/courses"){
+      var href = e.target.href;
+      if (href.includes("#incomplete") || href.includes("#failed")){
+        $("#search-courses-form").hide();
+        $("#search-courses-results-pp").hide();
+      } else {
+        $("#search-courses-form").show();
+        $("#search-courses-results-pp").show();
+      }
     }
   });
 
