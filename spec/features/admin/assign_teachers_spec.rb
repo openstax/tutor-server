@@ -19,9 +19,8 @@ RSpec.describe 'Administration', js: true do
 
     fill_in 'Name', with: 'A Course'
     click_button 'Save'
-
     # Edit the course
-    first(:link, 'Edit').click
+    click_link 'Edit'
 
     # Click on the "Teachers" tab
     click_link 'Teachers'
@@ -29,14 +28,14 @@ RSpec.describe 'Administration', js: true do
 
   scenario 'adds a teacher to a course' do
     # Check that the teacher has not been added yet
-    expect(page).not_to have_css('#teachers td', text: 'imateacher')
+    expect(page).not_to have_text('imateacher')
 
     # Search for the user and add the user to the course
     autocomplete '#course_teacher', with: 'imatea'
     expect(page).to have_css('.flash_notice', text: 'Teachers updated.')
 
     # Check that the teacher is now in the list of teachers
-    expect(page).to have_css('#teachers td', text: 'imateacher')
+    expect(page).to have_text('imateacher')
   end
 
   scenario 'removes a teacher from a course' do
@@ -49,6 +48,6 @@ RSpec.describe 'Administration', js: true do
     expect(page).to have_css('.flash_notice', text: 'Teacher "Ima Teacher" removed from course.')
 
     # Check that the teacher is now not in the list of teachers
-    expect(page).not_to have_css('#teachers td', text: 'imateacher')
+    expect(page).not_to have_text('imateacher')
   end
 end

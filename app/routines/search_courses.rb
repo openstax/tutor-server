@@ -24,7 +24,10 @@ class SearchCourses
              profile.offering.outer,
              teachers.outer.role.outer.profile.outer.account.outer,
              ecosystems.outer]
-          }
+          }.select([Entity::Course.arel_table[Arel.star],
+                    CourseProfile::Models::Profile.arel_table[:name],
+                    SchoolDistrict::Models::School.arel_table[:name],
+                    Catalog::Models::Offering.arel_table[:salesforce_book_name]]).uniq
 
     run(:search, relation: relation, sortable_fields: SORTABLE_FIELDS, params: params) do |with|
 

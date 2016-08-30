@@ -15,21 +15,21 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     it 'passes the query params to SearchCourses along with order_by params' do
-      expect(SearchCourses).to receive(:[]).with(query: 'test', order_by: 'name').once
+      expect(SearchCourses).to receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
       get :index, query: 'test', order_by: 'name'
     end
 
     context "pagination" do
       context "when the are any results" do
         it "paginates the results" do
-          4.times {FactoryGirl.create(:course_profile_profile, name: "Algebra #{rand(1000)}")}
-          expect(CourseProfile::Models::Profile.count).to eq(4)
+          3.times {FactoryGirl.create(:course_profile_profile, name: "Algebra #{rand(1000)}")}
+          expect(CourseProfile::Models::Profile.count).to eq(3)
 
           get :index, page: 1, per_page: 2
-          expect(assigns[:course_infos].count).to eq(2)
+          expect(assigns[:course_infos].length).to eq(2)
 
           get :index, page: 2, per_page: 2
-          expect(assigns[:course_infos].count).to eq(2)
+          expect(assigns[:course_infos].length).to eq(1)
         end
       end
 

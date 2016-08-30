@@ -9,12 +9,8 @@
 }
 
 #search_by_id {
-  position: relative;
   span {
     display: block;
-    position: absolute;
-    top: -2.3em;
-    left: 1em;
     background: #4b3725;
     color: #fff;
     padding: 0.5em 1em;
@@ -36,4 +32,65 @@ nav.navbar.production {
 
 .concept-coach-stats .chapter {
   background-color: #f9f9f9;
+}
+
+/* Courses Stats */
+
+.stats-card {
+  width: 100%;
+  min-height: 130px;
+  height: auto;
+  border: #777 3px solid;
+  margin-bottom: 35px;
+  /*overflow: auto;*/
+  border-radius: 8px;
+
+  .card-header {
+    border-bottom: #777 3px solid;
+    padding: 5px;
+
+    .bread-crumb {
+
+    }
+  }
+
+  .card-content {
+    position: relative;
+    padding: 10px;
+
+    .content-top {
+    }
+    .content-top {
+      float: left;
+    }
+    .content-middle {
+      float: left;
+      clear: left;
+      width: 50%;
+      margin-left: 40px;
+      color: #666;
+    }
+    .content-bottom {
+      float: left;
+      clear: left;
+      margin-top: 10px;
+      padding-bottom: 15px;
+
+      .bread-crumb {
+
+      }
+    }
+    .card-content-right {
+      position: absolute;
+      right: 0;
+      button {
+        float: right;
+        clear: right;
+      }
+    }
+  }
+
+  .course-stats-button {
+    display: block;
+  }
 }

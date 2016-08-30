@@ -21,57 +21,55 @@
 
     <%= pagination %>
 
-    <table class="table table-striped courses-table">
-      <thead>
-        <tr>
+    <div style="margin-bottom: 10px;">
+    <% if bulk_actions %>
+        <%= check_box_tag 'courses_select_all', nil, checked = true, id: 'courses_select_all' %>
+         Select All
+    <% end %>
+    </div>
+
+    <% course_infos.each do |course_info| %>
+      <div class="stats-card">
+        <div class="card-header">
           <% if bulk_actions %>
-            <th>
-              <%= check_box_tag 'courses_select_all', nil, checked = true, id: 'courses_select_all' %>
-            </th>
-          <% end %>
-          <th>Name</th>
-          <th>School</th>
-          <th>Teacher(s)</th>
-          <th>Ecosystem</th>
-          <% [extra_headers].flatten.each do |extra_header| %>
-          <th><%= extra_header %></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% course_infos.each do |course_info| %>
-          <tr>
-            <% if bulk_actions %>
-              <td>
-                <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
-                <%= check_box_tag 'course_id[]',
-                                  course_info.id,
-                                  checked = course_selected,
-                                  class: 'course_id_select',
-                                  id: "course_id_#{course_info.id}" %>
-              </td>
+              <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
+              <%= check_box_tag 'course_id[]',
+                                course_info.id,
+                                checked = course_selected,
+                                class: 'course_id_select',
+                                id: "course_id_#{course_info.id}" %>
             <% end %>
-            <td><%= course_info.name %></td>
-            <td><%= course_info.school_name %></td>
-            <td><%= course_info.teacher_names.to_sentence %></td>
-            <td>
-              <% book = course_info.ecosystem_book %>
-              <% title = "#{book.title} (#{book.uuid}@#{book.version})" unless book.nil? %>
-              <%= link_to truncate(title), '#',
-                            role: 'button',
-                            data: { toggle: 'popover',
-                                    trigger: 'focus',
-                                    placement: 'top',
-                                    content: title,
-                                    container: 'body' },
-                            class: 'btn btn-xs btn-secondary' %></td>
+
+          <%= "#{course_info.id}" %><%= " #{course_info.name}" %><%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
+          <%= " / #{course_info.profile.school.try(:name)}" unless course_info.profile.school.blank? %>
+        </div>
+        <div class="card-content">
+          <div class="content-top">
+            <% ecosystem = course_info.ecosystems.first %>
+            <% book = ecosystem.nil? ? '' : ecosystem.books.first %>
+
+            <% unless book.blank? %>
+              <%= "(ID #{book.id})" %> <%= book.title %> <%= "(#{book.uuid}@#{book.version})" %>
+            <% end %>
+            <%= "(#{ecosystem.created_at})" if ecosystem %>
+          </div>
+          <div class="content-middle">
+            <%= ecosystem.try(:comments) %>
+          </div>
+          <div class="content-bottom">
+            <%= "CC / " if course_info.is_concept_coach %> <%= "College / " if course_info.is_college %>
+            <%= "#{course_info.periods_with_deleted.map{|p| p.latest_enrollments_with_deleted.length}.reduce(0, :+)} students" %> <%= " / #{course_info.periods_with_deleted.length} periods" %>
+          </div>
+          <div class="card-content-right">
             <% [extra_fields_procs].flatten.each do |extra_fields_proc| %>
-              <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+              <span>
+                <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+              </span>
             <% end %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
 
     <%= pagination %>
 
