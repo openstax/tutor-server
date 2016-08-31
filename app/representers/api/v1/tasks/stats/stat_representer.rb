@@ -44,12 +44,12 @@ module Api::V1
         collection :current_pages,
                    readable: true,
                    writable: false,
-                   decorator: Api::V1::Tasks::Stats::PageRepresenter
+                   extend: Api::V1::Tasks::Stats::PageRepresenter
 
         collection :spaced_pages,
                    readable: true,
                    writable: false,
-                   decorator: Api::V1::Tasks::Stats::PageRepresenter
+                   extend: Api::V1::Tasks::Stats::PageRepresenter
 
         property :trouble,
                  as: :is_trouble,

@@ -85,7 +85,7 @@ module Api::V1
                as: :children,
                writeable: false,
                readable: true,
-               decorator: ChapterTocRepresenter,
+               extend: ChapterTocRepresenter,
                schema_info: {
                  required: false,
                  description: "The chapters of the book"

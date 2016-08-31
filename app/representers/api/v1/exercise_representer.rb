@@ -44,7 +44,7 @@ module Api::V1
                writeable: false,
                # We really only need :prepare here, but for some reason representable
                # will not run :prepare without :decorator (or :extend) being present
-               decorator: TagRepresenter,
+               extend: TagRepresenter,
                prepare: ->(input:, **) do
                  (input.is_a?(Content::Models::Tag) || input.is_a?(Content::Tag)) ?
                    TagRepresenter.new(input) : input

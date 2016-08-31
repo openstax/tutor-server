@@ -18,12 +18,12 @@ module Api::V1
         collection :answers,
                    writeable: false,
                    readable: true,
-                   decorator: Api::V1::Tasks::Stats::AnswerRepresenter
+                   extend: Api::V1::Tasks::Stats::AnswerRepresenter
 
         collection :answer_stats,
                    writeable: false,
                    readable: true,
-                   decorator: Api::V1::Tasks::Stats::AnswerStatsRepresenter
+                   extend: Api::V1::Tasks::Stats::AnswerStatsRepresenter
 
       end
     end

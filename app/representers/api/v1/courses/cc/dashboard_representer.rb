@@ -98,12 +98,12 @@ module Api::V1::Courses::Cc
       collection :teachers,
                  readable: true,
                  writeable: false,
-                 decorator: Teacher
+                 extend: Teacher
 
       collection :periods,
                  readable: true,
                  writeable: false,
-                 decorator: Api::V1::Courses::Cc::Teacher::PeriodRepresenter
+                 extend: Api::V1::Courses::Cc::Teacher::PeriodRepresenter
     end
 
     # Actual attributes below
@@ -114,22 +114,22 @@ module Api::V1::Courses::Cc
                skip_render: ->(input:, **) {
                  input.task_type.to_s != 'concept_coach'
                },
-               decorator: TaskBase
+               extend: TaskBase
 
     property :role,
              readable: true,
              writeable: false,
-             decorator: Role
+             extend: Role
 
     property :course,
              readable: true,
              writeable: false,
-             decorator: Course
+             extend: Course
 
     collection :chapters,
                readable: true,
                writeable: false,
-               decorator: Api::V1::Courses::Cc::Student::ChapterRepresenter
+               extend: Api::V1::Courses::Cc::Student::ChapterRepresenter
 
   end
 

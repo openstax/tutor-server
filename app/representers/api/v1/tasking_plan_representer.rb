@@ -22,8 +22,8 @@ module Api::V1
              readable: true,
              writeable: true,
              getter: ->(*) { TARGET_TYPE_TO_API_MAP[target_type] },
-             setter: ->(fragment:, represented:, **) do
-               represented.target_type = TARGET_TYPE_TO_CLASS_MAP[fragment]
+             setter: ->(input:, represented:, **) do
+               represented.target_type = TARGET_TYPE_TO_CLASS_MAP[input]
              end,
              schema_info: {
                required: true

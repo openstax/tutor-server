@@ -43,7 +43,7 @@ module Api::V1::Enrollment
                  readable: true,
                  getter: ->(*) { teacher_roles.map{|role| role} },
                  writeable: false,
-                 decorator: Teacher
+                 extend: Teacher
     end
 
     nested :period do

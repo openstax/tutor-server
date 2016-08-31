@@ -92,7 +92,7 @@ module Api::V1::Tasks
                getter: ->(*) {
                  task_step.related_content.map{ |rc| Hashie::Mash.new(rc) }
                },
-               decorator: ::Api::V1::RelatedContentRepresenter,
+               extend: ::Api::V1::RelatedContentRepresenter,
                schema_info: {
                  required: true,
                  description: "Misc content related to this step"

@@ -21,7 +21,7 @@ module Api::V1
              schema_info: { required: true }
 
     property :clue,
-             decorator: ClueRepresenter,
+             extend: ClueRepresenter,
              readable: true,
              writeable: false,
              schema_info: { required: true }
@@ -44,6 +44,6 @@ module Api::V1
     collection :children,
                readable: true,
                writeable: false,
-               decorator: CourseGuideChildRepresenter
+               extend: CourseGuideChildRepresenter
   end
 end

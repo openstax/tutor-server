@@ -40,7 +40,7 @@ module Api::V1
                as: :children,
                writeable: false,
                readable: true,
-               decorator: PageTocRepresenter,
+               extend: PageTocRepresenter,
                schema_info: {
                  required: false,
                  description: "The pages of the book"

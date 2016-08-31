@@ -64,7 +64,7 @@ module Api::V1
                as: :steps,
                writeable: false,
                readable: true,
-               decorator: TaskStepRepresenter,
+               extend: TaskStepRepresenter,
                schema_info: {
                  required: true,
                  description: "The steps which this Task is composed of"

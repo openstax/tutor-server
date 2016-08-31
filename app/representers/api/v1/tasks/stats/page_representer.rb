@@ -44,13 +44,13 @@ module Api::V1
                    type: Object,
                    writeable: false,
                    readable: true,
-                   decorator: Api::V1::Tasks::Stats::ExerciseRepresenter
+                   extend: Api::V1::Tasks::Stats::ExerciseRepresenter
 
         property :previous_attempt,
                  type: Object,
                  writeable: false,
                  readable: true,
-                 decorator: self
+                 extend: self
 
         property :trouble,
                  as: :is_trouble,
