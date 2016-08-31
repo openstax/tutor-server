@@ -29,7 +29,7 @@ class CalculateTaskStats
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.group_by{ |te| te.exercise }.map do |exercise, tasked_exercises|
+    tasked_exercises.group_by(&:exercise).map do |exercise, tasked_exercises|
 
       {
         content: exercise.content,
@@ -65,19 +65,17 @@ class CalculateTaskStats
 
         average_step_number: average_step_number(tasked_exercises)
       }
-    end.sort_by do |exercise_stats|
-      exercise_stats[:average_step_number]
-    end
+    end.sort_by{ |exercise_stats| exercise_stats[:average_step_number] }
   end
 
   def page_stats_for_tasked_exercises(tasked_exercises)
-    completed = tasked_exercises.select{ |te| te.completed? }
+    completed = tasked_exercises.select(&:completed?)
 
     some_completed_role_ids = completed.map do |tasked_exercise|
       tasked_exercise.task_step.task.taskings.map(&:entity_role_id)
     end.flatten.uniq
 
-    correct_count = completed.count{ |te| te.is_correct? }
+    correct_count = completed.count(&:is_correct?)
     incorrect_count = completed.length - correct_count
 
     trouble = (incorrect_count > correct_count) && (completed.size > 0.25*tasked_exercises.size)

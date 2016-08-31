@@ -13,6 +13,7 @@ module Tasks
 
       exercises.each_with_index do |exercise, ii|
         TaskExercise.call(exercise: exercise, task: outputs.task) do |step|
+          step.group_type = :personalized_group
           step.add_related_content(related_content_array[ii])
         end
       end
