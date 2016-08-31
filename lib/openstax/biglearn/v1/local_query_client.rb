@@ -54,11 +54,13 @@ module OpenStax::Biglearn::V1
     end
 
     def get_clues(roles:, pool_uuids:, force_cache_miss: 'ignored')
-      tasked_exercises_by_pool_uuid = completed_tasked_exercises_by(pool_uuids: pool_uuids,
-                                                                    roles: roles)
+      tasked_exercises_by_pool_uuid_and_role = completed_tasked_exercises_by(
+        pool_uuids: pool_uuids, roles: roles
+      )
 
       hash = {}
-      tasked_exercises_by_pool_uuid.each do |uuid, tasked_exercises|
+      tasked_exercises_by_pool_uuid_and_role.each do |uuid, tasked_exercises_by_role|
+        tasked_exercises = tasked_exercises_by_role.values.flatten
         responses = tasked_exercises.map{ |te| te.is_correct? ? 1.0 : 0.0 }
 
         local_clue = LocalClue.new(responses: responses)
@@ -73,7 +75,7 @@ module OpenStax::Biglearn::V1
           confidence_interval_interpretation: local_clue.confidence.to_s,
           sample_size: responses.size,
           sample_size_interpretation: local_clue.threshold.to_s,
-          unique_learner_count: roles.size
+          unique_learner_count: tasked_exercises_by_role.keys.size
         }
       end
       hash
@@ -108,8 +110,12 @@ module OpenStax::Biglearn::V1
 
       all_pool_exercise_numbers = pool_uuids_by_exercise_number.keys
 
-      tasked_exercises_by_pool_uuid = {}
-      pool_uuids.each{ |pool_uuid| tasked_exercises_by_pool_uuid[pool_uuid] = [] }
+      tasked_exercises_by_pool_uuid_and_role_id = {}
+      pool_uuids.each do |pool_uuid|
+        tasked_exercises_by_pool_uuid_and_role_id[pool_uuid] = Hash.new do |hash, key|
+          hash[key] = []
+        end
+      end
 
       Tasks::Models::TaskedExercise
         .joins{[task_step.task.taskings, exercise]}
@@ -118,14 +124,17 @@ module OpenStax::Biglearn::V1
         .where{exercise.number.in all_pool_exercise_numbers}
         .select do
           [Tasks::Models::TaskedExercise.arel_table[Arel.star],
+           task_step.task.taskings.entity_role_id,
            exercise.number.as(:exercise_number)]
         end.each do |tasked_exercise|
+          role_id = tasked_exercise.entity_role_id
+
           pool_uuids_by_exercise_number[tasked_exercise.exercise_number].each do |pool_uuid|
-            tasked_exercises_by_pool_uuid[pool_uuid] << tasked_exercise
+            tasked_exercises_by_pool_uuid_and_role_id[pool_uuid][role_id] << tasked_exercise
           end
         end
 
-      tasked_exercises_by_pool_uuid
+      tasked_exercises_by_pool_uuid_and_role_id
     end
   end
 

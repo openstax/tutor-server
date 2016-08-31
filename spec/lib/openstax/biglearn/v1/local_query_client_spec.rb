@@ -159,34 +159,46 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     end
 
     it "filters to the right tasked exercises" do
+      roles = [@all_wrong_role, @all_right_role, @passing_role]
       individual_all_tes = client.completed_tasked_exercises_by(
         pool_uuids: [@all_pool.uuid],
-        roles: [@all_wrong_role, @all_right_role, @passing_role]
+        roles: roles
       )
-      expect(individual_all_tes[@all_pool.uuid].map(&:id)).to contain_exactly(*@te_ids)
+      expect(individual_all_tes[@all_pool.uuid].keys).to contain_exactly(*roles.map(&:id))
+      expect(individual_all_tes[@all_pool.uuid].values.flatten.map(&:id)).to(
+        contain_exactly(*@te_ids)
+      )
 
+      roles = [@all_right_role, @passing_role]
       individual_first_two_tes = client.completed_tasked_exercises_by(
         pool_uuids: [@first_two_pool.uuid],
-        roles: [@all_right_role, @passing_role]
+        roles: roles
       )
-      expect(individual_first_two_tes[@first_two_pool.uuid].map(&:id)).to(
+      expect(individual_first_two_tes[@first_two_pool.uuid].keys).to(
+        contain_exactly(*roles.map(&:id))
+      )
+      expect(individual_first_two_tes[@first_two_pool.uuid].values.flatten.map(&:id)).to(
         contain_exactly(*@te_ids[4..5], *@te_ids[8..9])
       )
 
+      roles = [@all_wrong_role, @all_right_role, @passing_role]
       combined_all_tes = client.completed_tasked_exercises_by(
         pool_uuids: [@all_pool.uuid, @first_two_pool.uuid],
-        roles: [@all_wrong_role, @all_right_role, @passing_role]
+        roles: roles
       )
-      expect(combined_all_tes[@all_pool.uuid]).to(
-        contain_exactly *individual_all_tes[@all_pool.uuid]
+      expect(combined_all_tes[@all_pool.uuid].keys).to contain_exactly(*roles.map(&:id))
+      expect(combined_all_tes[@all_pool.uuid].values.flatten).to(
+        contain_exactly *individual_all_tes[@all_pool.uuid].values.flatten
       )
 
+      roles = [@all_right_role, @passing_role]
       combined_first_two_tes = client.completed_tasked_exercises_by(
         pool_uuids: [@all_pool.uuid, @first_two_pool.uuid],
-        roles: [@all_right_role, @passing_role]
+        roles: roles
       )
-      expect(combined_first_two_tes[@first_two_pool.uuid]).to(
-        contain_exactly *individual_first_two_tes[@first_two_pool.uuid]
+      expect(combined_first_two_tes[@first_two_pool.uuid].keys).to contain_exactly(*roles.map(&:id))
+      expect(combined_first_two_tes[@first_two_pool.uuid].values.flatten).to(
+        contain_exactly *individual_first_two_tes[@first_two_pool.uuid].values.flatten
       )
     end
 
@@ -210,19 +222,21 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
       new_first_two_pool = new_pool("new_first_two", new_exercises, [0,1])
       new_all_pool = new_pool("new_all", new_exercises, [0,1,2,3])
 
-      expect(
-        client.completed_tasked_exercises_by(
-          pool_uuids: [new_all_pool.uuid],
-          roles: [@all_wrong_role, @all_right_role, @passing_role]
-        )[new_all_pool.uuid].map(&:id)
-      ).to contain_exactly(*@te_ids, *new_te_ids)
+      roles = [@all_wrong_role, @all_right_role, @passing_role]
+      new_all_pool_tes = client.completed_tasked_exercises_by(
+        pool_uuids: [new_all_pool.uuid], roles: roles
+      )[new_all_pool.uuid]
+      expect(new_all_pool_tes.keys).to contain_exactly(*roles.map(&:id))
+      expect(new_all_pool_tes.values.flatten.map(&:id)).to contain_exactly(*@te_ids, *new_te_ids)
 
-      expect(
-        client.completed_tasked_exercises_by(
-          pool_uuids: [new_first_two_pool.uuid],
-          roles: [@all_right_role, @passing_role]
-        )[new_first_two_pool.uuid].map(&:id)
-      ).to contain_exactly(*@te_ids[4..5], *@te_ids[8..9], *new_te_ids[4..5], *new_te_ids[8..9])
+      roles = [@all_right_role, @passing_role]
+      new_first_two_pool_tes = client.completed_tasked_exercises_by(
+        pool_uuids: [new_first_two_pool.uuid], roles: roles
+      )[new_first_two_pool.uuid]
+      expect(new_first_two_pool_tes.keys).to contain_exactly(*roles.map(&:id))
+      expect(new_first_two_pool_tes.values.flatten.map(&:id)).to(
+        contain_exactly(*@te_ids[4..5], *@te_ids[8..9], *new_te_ids[4..5], *new_te_ids[8..9])
+      )
     end
   end
 
