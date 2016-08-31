@@ -69,7 +69,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task1.is_shared?).to be_truthy
   end
 
-  xit 'returns core task steps' do
+  it 'returns core task steps' do
     core_step1            = instance_double('TaskStep', :core_group? => true)
     core_step2            = instance_double('TaskStep', :core_group? => true)
     core_step3            = instance_double('TaskStep', :core_group? => true)
@@ -87,7 +87,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
   end
 
-  xit 'returns spaced_practice task steps' do
+  it 'returns spaced_practice task steps' do
     core_step1            = instance_double('TaskStep', :spaced_practice_group? => false)
     core_step2            = instance_double('TaskStep', :spaced_practice_group? => false)
     core_step3            = instance_double('TaskStep', :spaced_practice_group? => false)
@@ -105,7 +105,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
   end
 
-  xit 'returns personalized task steps' do
+  it 'returns personalized task steps' do
     core_step1         = instance_double('TaskStep', :personalized_group? => false)
     core_step2         = instance_double('TaskStep', :personalized_group? => false)
     core_step3         = instance_double('TaskStep', :personalized_group? => false)
@@ -123,30 +123,20 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
   end
 
-  xit 'determines if its core task steps are completed' do
-    core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
+  it 'determines if its core task steps are completed' do
     task = Tasks::Models::Task.new
-    allow(task).to receive(:task_steps).and_return(task_steps)
+    allow(task).to receive(:core_steps_count).and_return(3)
+    allow(task).to receive(:completed_core_steps_count).and_return(3)
 
-    expect(task.core_task_steps_completed?).to be_truthy
+    expect(task.core_task_steps_completed?).to eq true
   end
 
-  xit 'determines if its core task steps are not completed' do
-    core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => false)
-    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
+  it 'determines if its core task steps are not completed' do
     task = Tasks::Models::Task.new
-    allow(task).to receive(:task_steps).and_return(task_steps)
+    allow(task).to receive(:core_steps_count).and_return(3)
+    allow(task).to receive(:completed_core_steps_count).and_return(2)
 
-    expect(task.core_task_steps_completed?).to be_falsy
+    expect(task.core_task_steps_completed?).to eq false
   end
 
   it 'can store and retrieve a personalized placeholder strategy object' do
