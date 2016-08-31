@@ -11,10 +11,14 @@ module ActsAsTasked
 
         has_one :task_step, -> { with_deleted }, as: :tasked, inverse_of: :tasked
 
-        after_update { task_step.try(:touch) if task_step.try(:persisted?) }
+        after_update :touch_task_step
 
         delegate :first_completed_at, :last_completed_at, :completed?, :complete,
                  :can_be_recovered?, to: :task_step, allow_nil: true
+
+        def touch_task_step
+          task_step.touch if task_step.try(:persisted?)
+        end
 
         def has_correctness?
           false

@@ -34,7 +34,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :due_at_on_or_after_opens_at
 
-  after_update :update_counts_if_needed!
+  after_update :update_step_counts_if_due_at_changed!
 
   def add_step(step)
     self.task_steps << step
@@ -90,6 +90,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def set_last_worked_at(time:)
     self.last_worked_at = time
+    self
   end
 
   def status
@@ -139,17 +140,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.current)
-    set_last_worked_at(time: completion_time)
-    update_step_counts!
-
     if core_task_steps_completed? && placeholder_steps_count > 0
       strategy = personalized_placeholder_strategy
       unless strategy.nil?
         strategy.populate_placeholders(task: self)
       end
-
-      update_step_counts!
     end
+
+    set_last_worked_at(time: completion_time).save!
   end
 
   def update_step_counts
@@ -172,13 +170,13 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts!(*args)
-    self.class.skip_callback(:update, :after, :update_counts_if_needed!)
+    self.class.skip_callback(:update, :after, :update_step_counts_if_due_at_changed!)
     update_step_counts.save!(*args)
   ensure
-    self.class.set_callback(:update, :after, :update_counts_if_needed!)
+    self.class.set_callback(:update, :after, :update_step_counts_if_due_at_changed!)
   end
 
-  def update_counts_if_needed!
+  def update_step_counts_if_due_at_changed!
     update_step_counts! if due_at_changed?
     true
   end
