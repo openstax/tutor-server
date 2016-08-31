@@ -11,7 +11,6 @@ module ActsAsTasked
 
         has_one :task_step, -> { with_deleted }, as: :tasked, inverse_of: :tasked
 
-        after_touch  :touch_task_step
         after_update :touch_task_step
 
         delegate :first_completed_at, :last_completed_at, :completed?, :complete,

@@ -90,6 +90,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def set_last_worked_at(time:)
     self.last_worked_at = time
+    self
   end
 
   def status
@@ -139,14 +140,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.current)
-    set_last_worked_at(time: completion_time)
-
     if core_task_steps_completed? && placeholder_steps_count > 0
       strategy = personalized_placeholder_strategy
       unless strategy.nil?
         strategy.populate_placeholders(task: self)
       end
     end
+
+    set_last_worked_at(time: completion_time).save!
   end
 
   def update_step_counts
