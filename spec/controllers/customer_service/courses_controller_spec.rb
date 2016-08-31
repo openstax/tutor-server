@@ -15,7 +15,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     end
 
     it 'passes the query param to SearchCourses along with order_by params' do
-      expect(SearchCourses).to receive(:[]).with(query: 'test', order_by: 'name').once
+      expect(SearchCourses).to receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
       get :index, query: 'test', order_by: 'name'
     end
 
@@ -26,10 +26,10 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
           expect(CourseProfile::Models::Profile.count).to eq(4)
 
           get :index, page: 1, per_page: 2
-          expect(assigns[:course_infos].count).to eq(2)
+          expect(assigns[:course_infos].length).to eq(2)
 
           get :index, page: 2, per_page: 2
-          expect(assigns[:course_infos].count).to eq(2)
+          expect(assigns[:course_infos].length).to eq(2)
         end
       end
 

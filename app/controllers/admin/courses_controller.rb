@@ -20,13 +20,9 @@ class Admin::CoursesController < Admin::BaseController
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
-      job.data.try :[], 'course_ecosystem'
-    end
-    @failed_jobs = Jobba.where(state: :failed).to_a.select do |job|
-      job.data.try :[], 'course_ecosystem'
-    end
-    @job_path_proc = ->(job) { admin_job_path(job.id) }
+    @incomplete_jobs = CollectImportJobsData[state: :incomplete]
+    @failed_jobs = CollectImportJobsData[state: :failed]
+    @job_path_proc = ->(job_id) { admin_job_path(job_id) }
   end
 
   def new
