@@ -69,7 +69,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task1.is_shared?).to be_truthy
   end
 
-  xit 'returns core task steps' do
+  it 'returns core task steps' do
     core_step1            = instance_double('TaskStep', :core_group? => true)
     core_step2            = instance_double('TaskStep', :core_group? => true)
     core_step3            = instance_double('TaskStep', :core_group? => true)
@@ -87,7 +87,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
   end
 
-  xit 'returns spaced_practice task steps' do
+  it 'returns spaced_practice task steps' do
     core_step1            = instance_double('TaskStep', :spaced_practice_group? => false)
     core_step2            = instance_double('TaskStep', :spaced_practice_group? => false)
     core_step3            = instance_double('TaskStep', :spaced_practice_group? => false)
@@ -105,7 +105,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
   end
 
-  xit 'returns personalized task steps' do
+  it 'returns personalized task steps' do
     core_step1         = instance_double('TaskStep', :personalized_group? => false)
     core_step2         = instance_double('TaskStep', :personalized_group? => false)
     core_step3         = instance_double('TaskStep', :personalized_group? => false)
@@ -123,30 +123,20 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
   end
 
-  xit 'determines if its core task steps are completed' do
-    core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
+  it 'determines if its core task steps are completed' do
     task = Tasks::Models::Task.new
-    allow(task).to receive(:task_steps).and_return(task_steps)
+    allow(task).to receive(:core_steps_count).and_return(3)
+    allow(task).to receive(:completed_core_steps_count).and_return(3)
 
-    expect(task.core_task_steps_completed?).to be_truthy
+    expect(task.core_task_steps_completed?).to eq true
   end
 
-  xit 'determines if its core task steps are not completed' do
-    core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
-    core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => false)
-    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false, :completed? => false)
-    task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
+  it 'determines if its core task steps are not completed' do
     task = Tasks::Models::Task.new
-    allow(task).to receive(:task_steps).and_return(task_steps)
+    allow(task).to receive(:core_steps_count).and_return(3)
+    allow(task).to receive(:completed_core_steps_count).and_return(2)
 
-    expect(task.core_task_steps_completed?).to be_falsy
+    expect(task.core_task_steps_completed?).to eq false
   end
 
   it 'can store and retrieve a personalized placeholder strategy object' do
@@ -308,149 +298,226 @@ RSpec.describe Tasks::Models::Task, type: :model do
     }
 
     context "steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.steps_count).to eq(0)
+      context "total" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.steps_count).to eq(0)
+        end
+
+        it "works with multiple steps" do
+          allow(task).to receive(:task_steps).and_return([step, step])
+          task.update_step_counts!
+          expect(task.steps_count).to eq(2)
+        end
       end
 
-      it "works with multiple steps" do
-        allow(task).to receive(:task_steps).and_return([step, step])
-        task.update_step_counts!
-        expect(task.steps_count).to eq(2)
-      end
-    end
+      context "completed steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.completed_steps_count).to eq(0)
+        end
 
-    context "completed steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.completed_steps_count).to eq(0)
-      end
-
-      it "works with multiple completed steps" do
-        allow(task).to receive(:task_steps).and_return([completed_step, step, completed_step])
-        task.update_step_counts!
-        expect(task.completed_steps_count).to eq(2)
-      end
-    end
-
-    context "core steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.core_steps_count).to eq(0)
+        it "works with multiple completed steps" do
+          allow(task).to receive(:task_steps).and_return([completed_step, step, completed_step])
+          task.update_step_counts!
+          expect(task.completed_steps_count).to eq(2)
+        end
       end
 
-      it "works with multiple core steps" do
-        allow(task).to receive(:task_steps).and_return([core_step, step, core_step])
-        task.update_step_counts!
-        expect(task.core_steps_count).to eq(2)
-      end
-    end
+      context "core steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.core_steps_count).to eq(0)
+        end
 
-    context "completed core steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.completed_core_steps_count).to eq(0)
-      end
-
-      it "works with multiple completed core steps" do
-        allow(task).to receive(:task_steps).and_return([completed_core_step, step, core_step, completed_core_step])
-        task.update_step_counts!
-        expect(task.completed_core_steps_count).to eq(2)
-      end
-    end
-
-    context "exercise steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.exercise_steps_count).to eq(0)
+        it "works with multiple core steps" do
+          allow(task).to receive(:task_steps).and_return([core_step, step, core_step])
+          task.update_step_counts!
+          expect(task.core_steps_count).to eq(2)
+        end
       end
 
-      it "works with multiple exercise steps" do
-        allow(task).to receive(:task_steps).and_return([exercise_step, step, exercise_step])
-        task.update_step_counts!
-        expect(task.exercise_steps_count).to eq(2)
-      end
-    end
+      context "completed core steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.completed_core_steps_count).to eq(0)
+        end
 
-    context "completed exercise steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.completed_exercise_steps_count).to eq(0)
-      end
-
-      it "works with multiple completed exercise steps" do
-        allow(task).to receive(:task_steps).and_return([completed_exercise_step, exercise_step, step, completed_exercise_step])
-        task.update_step_counts!
-        expect(task.completed_exercise_steps_count).to eq(2)
-      end
-    end
-
-    context "correct exercise steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.correct_exercise_steps_count).to eq(0)
+        it "works with multiple completed core steps" do
+          allow(task).to receive(:task_steps).and_return([completed_core_step, step, core_step, completed_core_step])
+          task.update_step_counts!
+          expect(task.completed_core_steps_count).to eq(2)
+        end
       end
 
-      it "works with multiple correct exercise steps" do
-        allow(task).to receive(:task_steps).and_return([correct_exercise_step, completed_exercise_step, correct_exercise_step])
-        task.update_step_counts!
-        expect(task.correct_exercise_steps_count).to eq(2)
-      end
-    end
+      context "exercise steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.exercise_steps_count).to eq(0)
+        end
 
-    context "placeholder steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.placeholder_steps_count).to eq(0)
-      end
-
-      it "works with multiple placeholder steps" do
-        allow(task).to receive(:task_steps).and_return([placeholder_step, step, placeholder_step])
-        task.update_step_counts!
-        expect(task.placeholder_steps_count).to eq(2)
-      end
-    end
-
-    context "placeholder exercise steps count" do
-      it "works with no steps" do
-        allow(task).to receive(:task_steps).and_return([])
-        task.update_step_counts!
-        expect(task.placeholder_exercise_steps_count).to eq(0)
+        it "works with multiple exercise steps" do
+          allow(task).to receive(:task_steps).and_return([exercise_step, step, exercise_step])
+          task.update_step_counts!
+          expect(task.exercise_steps_count).to eq(2)
+        end
       end
 
-      it "works with multiple placeholder exercise steps" do
-        allow(task).to receive(:task_steps).and_return([placeholder_exercise_step, placeholder_step, placeholder_exercise_step])
-        task.update_step_counts!
-        expect(task.placeholder_exercise_steps_count).to eq(2)
+      context "completed exercise steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.completed_exercise_steps_count).to eq(0)
+        end
+
+        it "works with multiple completed exercise steps" do
+          allow(task).to receive(:task_steps).and_return([completed_exercise_step, exercise_step, step, completed_exercise_step])
+          task.update_step_counts!
+          expect(task.completed_exercise_steps_count).to eq(2)
+        end
       end
-    end
 
-    it "updates on_time counts when the due date changes" do
-      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
-                                             due_at: Time.current - 1.day)
+      context "correct exercise steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.correct_exercise_steps_count).to eq(0)
+        end
 
-      allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.current)
-      allow(task).to receive(:task_steps).and_return([correct_exercise_step])
+        it "works with multiple correct exercise steps" do
+          allow(task).to receive(:task_steps).and_return([correct_exercise_step, completed_exercise_step, correct_exercise_step])
+          task.update_step_counts!
+          expect(task.correct_exercise_steps_count).to eq(2)
+        end
+      end
 
-      task.update_step_counts!
+      context "placeholder steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.placeholder_steps_count).to eq(0)
+        end
 
-      expect(task.completed_on_time_steps_count).to eq 0
-      expect(task.completed_on_time_exercise_steps_count).to eq 0
-      expect(task.correct_on_time_exercise_steps_count).to eq 0
+        it "works with multiple placeholder steps" do
+          allow(task).to receive(:task_steps).and_return([placeholder_step, step, placeholder_step])
+          task.update_step_counts!
+          expect(task.placeholder_steps_count).to eq(2)
+        end
+      end
 
-      task.update_attributes(due_at: 1.day.from_now)
+      context "placeholder exercise steps count" do
+        it "works with no steps" do
+          allow(task).to receive(:task_steps).and_return([])
+          task.update_step_counts!
+          expect(task.placeholder_exercise_steps_count).to eq(0)
+        end
 
-      expect(task.completed_on_time_steps_count).to eq 1
-      expect(task.completed_on_time_exercise_steps_count).to eq 1
-      expect(task.correct_on_time_exercise_steps_count).to eq 1
+        it "works with multiple placeholder exercise steps" do
+          allow(task).to receive(:task_steps).and_return([placeholder_exercise_step, placeholder_step, placeholder_exercise_step])
+          task.update_step_counts!
+          expect(task.placeholder_exercise_steps_count).to eq(2)
+        end
+      end
+
+      it "updates on_time counts when the due date changes" do
+        task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+                                               due_at: Time.current - 1.day)
+
+        allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.current)
+        allow(task).to receive(:task_steps).and_return([correct_exercise_step])
+
+        task.update_step_counts!
+
+        expect(task.completed_on_time_steps_count).to eq 0
+        expect(task.completed_on_time_exercise_steps_count).to eq 0
+        expect(task.correct_on_time_exercise_steps_count).to eq 0
+
+        task.update_attributes(due_at: 1.day.from_now)
+
+        expect(task.completed_on_time_steps_count).to eq 1
+        expect(task.completed_on_time_exercise_steps_count).to eq 1
+        expect(task.correct_on_time_exercise_steps_count).to eq 1
+      end
+
+      it "updates counts after any change to the task" do
+        task = FactoryGirl.create :tasks_task, step_types: [
+          :tasks_tasked_exercise, :tasks_tasked_exercise,
+          :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
+        ]
+
+        expect(task.steps_count).to eq 5
+        expect(task.exercise_steps_count).to eq 4
+        expect(task.placeholder_steps_count).to eq 1
+
+        expect(task.completed_steps_count).to eq 0
+        expect(task.completed_exercise_steps_count).to eq 0
+        expect(task.correct_exercise_steps_count).to eq 0
+
+        Demo::AnswerExercise[task_step: task.task_steps.first, is_correct: true, completed: true]
+        task.reload
+
+        expect(task.completed_steps_count).to eq 1
+        expect(task.completed_exercise_steps_count).to eq 1
+        expect(task.correct_exercise_steps_count).to eq 1
+
+        Demo::AnswerExercise[task_step: task.task_steps.second, is_correct: false, completed: true]
+        task.reload
+
+        expect(task.completed_steps_count).to eq 2
+        expect(task.completed_exercise_steps_count).to eq 2
+        expect(task.correct_exercise_steps_count).to eq 1
+
+        Demo::AnswerExercise[task_step: task.task_steps.third, is_correct: true, completed: false]
+        task.reload
+
+        expect(task.completed_steps_count).to eq 2
+        expect(task.completed_exercise_steps_count).to eq 2
+        expect(task.correct_exercise_steps_count).to eq 2
+
+        Demo::AnswerExercise[task_step: task.task_steps.fourth, is_correct: false, completed: false]
+        task.reload
+
+        expect(task.completed_steps_count).to eq 2
+        expect(task.completed_exercise_steps_count).to eq 2
+        expect(task.correct_exercise_steps_count).to eq 2
+
+        MarkTaskStepCompleted[task_step: task.task_steps.third]
+        task.reload
+
+        expect(task.completed_steps_count).to eq 3
+        expect(task.completed_exercise_steps_count).to eq 3
+        expect(task.correct_exercise_steps_count).to eq 2
+
+        expect(task.steps_count).to eq 5
+        expect(task.exercise_steps_count).to eq 4
+        expect(task.placeholder_steps_count).to eq 1
+
+        MarkTaskStepCompleted[task_step: task.task_steps.fourth]
+        # Simulate the placeholder step being removed due to no available personalized exercises
+        task.task_steps.last.really_destroy!
+        task.reload
+
+        expect(task.steps_count).to eq 4
+        expect(task.exercise_steps_count).to eq 4
+        expect(task.placeholder_steps_count).to eq 0
+
+        expect(task.completed_steps_count).to eq 4
+        expect(task.completed_exercise_steps_count).to eq 4
+        expect(task.correct_exercise_steps_count).to eq 2
+
+        second_exercise = task.task_steps.second.tasked
+        second_exercise.update_attribute :answer_id, second_exercise.correct_answer_id
+        task.reload
+
+        expect(task.completed_steps_count).to eq 4
+        expect(task.completed_exercise_steps_count).to eq 4
+        expect(task.correct_exercise_steps_count).to eq 3
+      end
     end
 
     it 'is hidden only if it has been hidden after being deleted for the last time' do

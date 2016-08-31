@@ -25,14 +25,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
-  after_touch        :update_task_step_counts!
-  after_save         :update_task_step_counts!
-  after_real_destroy :update_task_step_counts!
-
-  def update_task_step_counts!
-    task.update_step_counts!
-  end
-
   def exercise?
     tasked_type == Tasks::Models::TaskedExercise.name
   end

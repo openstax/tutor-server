@@ -3,6 +3,9 @@ require_relative '../placeholder_strategies/i_reading_personalized'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
+  class_attribute :skip_update_step_counts_if_due_at_changed
+  self.skip_update_step_counts_if_due_at_changed = false
+
   acts_as_paranoid
 
   enum task_type: [:homework, :reading, :chapter_practice,
@@ -20,7 +23,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   sortable_has_many :task_steps, -> { with_deleted.order(:number) },
                                  on: :number, dependent: :destroy, inverse_of: :task
   has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,
-                                                  source_type: 'Tasks::Models::TaskedExercise'
+                                                   source_type: 'Tasks::Models::TaskedExercise'
 
   has_many :taskings, -> { with_deleted }, dependent: :destroy, inverse_of: :task
   has_one :concept_coach_task, -> { with_deleted }, dependent: :destroy, inverse_of: :task
@@ -34,7 +37,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :due_at_on_or_after_opens_at
 
-  after_update :update_step_counts_if_due_at_changed!
+  before_update :update_step_counts_if_due_at_changed
+
+  def touch
+    update_step_counts
+
+    # super is not needed here when there are changes because save! will update the timestamp
+    changed? ? save_without_update_step_counts_callback!(validate: false) : super
+  end
 
   def add_step(step)
     self.task_steps << step
@@ -169,16 +179,23 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self
   end
 
-  def update_step_counts!(*args)
-    self.class.skip_callback(:update, :after, :update_step_counts_if_due_at_changed!)
-    update_step_counts.save!(*args)
+  def save_without_update_step_counts_callback!(*args)
+    self.skip_update_step_counts_if_due_at_changed = true
+    save!(*args)
   ensure
-    self.class.set_callback(:update, :after, :update_step_counts_if_due_at_changed!)
+    self.skip_update_step_counts_if_due_at_changed = false
   end
 
-  def update_step_counts_if_due_at_changed!
-    update_step_counts! if due_at_changed?
-    true
+  def update_step_counts!(*args)
+    update_step_counts
+
+    save_without_update_step_counts_callback!(*args)
+  end
+
+  def update_step_counts_if_due_at_changed
+    return true if skip_update_step_counts_if_due_at_changed || !due_at_changed?
+
+    update_step_counts
   end
 
   def exercise_count
