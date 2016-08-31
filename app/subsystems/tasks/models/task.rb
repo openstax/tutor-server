@@ -20,7 +20,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   sortable_has_many :task_steps, -> { with_deleted.order(:number) },
                                  on: :number, dependent: :destroy, inverse_of: :task
   has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,
-                                                  source_type: 'Tasks::Models::TaskedExercise'
+                                                   source_type: 'Tasks::Models::TaskedExercise'
 
   has_many :taskings, -> { with_deleted }, dependent: :destroy, inverse_of: :task
   has_one :concept_coach_task, -> { with_deleted }, dependent: :destroy, inverse_of: :task
@@ -35,6 +35,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   validate :due_at_on_or_after_opens_at
 
   after_update :update_step_counts_if_due_at_changed!
+
+  def touch
+    update_step_counts!(validate: false)
+  end
 
   def add_step(step)
     self.task_steps << step
@@ -177,7 +181,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts_if_due_at_changed!
-    update_step_counts! if due_at_changed?
+    update_step_counts!(validate: false) if due_at_changed?
     true
   end
 
