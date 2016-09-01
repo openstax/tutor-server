@@ -11,7 +11,7 @@ module Rails
 
     alias :default_options_alias :default_options
     def default_options
-      default_options_alias.merge!(:Port => DEV_PORT)
+      default_options_alias.merge!(Port: DEV_PORT)
     end
 
   end

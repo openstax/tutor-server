@@ -2,6 +2,7 @@ default: &default
   adapter: postgresql
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
+  pool: <%= ENV['RAILS_MAX_THREADS'] || 5 %>
 
 development:
   <<: *default

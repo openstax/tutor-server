@@ -6,17 +6,17 @@ source 'https://rubygems.org'
 # Rails framework
 gem 'rails', '4.2.4'
 
-# Bootstrap front-end framework
-gem 'bootstrap-sass', '~> 3.2.0'
+# PostgreSQL database
+gem 'pg'
+
+# Use Puma as the app server
+gem 'puma', '~> 3.0'
+
+# Use Puma worker killer to prevent memory fragmentation
+gem 'puma_worker_killer'
 
 # SCSS stylesheets
 gem 'sass-rails', '~> 5.0.0'
-
-# Compass stylesheets
-gem 'compass-rails'
-
-# Automatically add browser-specific CSS prefixes
-gem 'autoprefixer-rails'
 
 # JavaScript asset compressor
 gem 'uglifier', '>= 1.3.0'
@@ -33,20 +33,36 @@ gem 'jquery-rails'
 # Automatically ajaxify links
 gem 'turbolinks'
 
+# Key-value store for caching
+gem 'redis', '~> 3.2'
+gem 'redis-rails'
+
 # Rails 5 HTML sanitizer
 gem 'rails-html-sanitizer', '~> 1.0'
+
+# Bootstrap front-end framework
+gem 'bootstrap-sass', '~> 3.2.0'
+
+# Compass stylesheets
+gem 'compass-rails'
+
+# Automatically add browser-specific CSS prefixes
+gem 'autoprefixer-rails'
 
 # URI replacement
 gem 'addressable'
 
-# Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.2.0'
-
 # Cron job scheduling
 gem 'whenever'
 
-# Talks to Accounts (latest version is broken)
+# Datetime parsing
+gem 'chronic'
+
+# Talks to OAuth providers (latest version is broken)
 gem 'omniauth-oauth2', '~> 1.3.1'
+
+# Utilities for OpenStax websites
+gem 'openstax_utilities', '~> 4.2.0'
 
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 6.4.1'
@@ -54,12 +70,8 @@ gem 'openstax_accounts', '~> 6.4.1'
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
 
-# Datetime parsing
-gem 'chronic'
-
 # API versioning and documentation
 gem 'openstax_api', '~> 8.0.0'
-
 gem 'apipie-rails'
 gem 'maruku'
 
@@ -111,14 +123,8 @@ gem 'httparty'
 # Ordered models
 gem 'sortability'
 
-# PostgreSQL database
-gem 'pg'
-
 # Lorem Ipsum
 gem 'faker'
-
-# Key-value store for caching
-gem 'redis-rails'
 
 # Background job queueing
 gem 'delayed_job_active_record'
@@ -178,6 +184,9 @@ gem 'oj'
 gem 'oj_mimic_json'
 
 group :development, :test do
+  # Call 'debugger' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platform: :mri
+
   # Get env variables from .env file
   gem 'dotenv-rails'
 
@@ -190,12 +199,6 @@ group :development, :test do
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 
-  # Thin development server
-  gem 'thin'
-
-  # Call 'debugger' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
-
   # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry' # needed when debugging without 'rails_helper'
   gem 'pry-nav'
@@ -204,9 +207,6 @@ group :development, :test do
 
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
-
-  # Access an IRB console on exceptions page and /console in development
-  gem 'web-console', '~> 2.0.0'
 
   # Mute asset pipeline log messages
   gem 'quiet_assets'
@@ -256,10 +256,13 @@ group :development, :test do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'guard-rspec'
-
 end
 
 group :development do
+  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
+  gem 'web-console'
+  gem 'listen', '~> 3.0.5'
+
   # Trace AR queries
   gem 'active_record_query_trace'
 end
@@ -276,12 +279,6 @@ group :test do
 end
 
 group :production do
-  # Unicorn production server
-  gem 'unicorn'
-
-  # Unicorn worker killer
-  gem 'unicorn-worker-killer'
-
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 
