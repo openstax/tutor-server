@@ -22,24 +22,45 @@ class Content::Routines::ImportExercises
       MutableWrapper.new(item)
     end
 
-    # Reject all exercises that have any free response questions, as we can't handle them.
-    # Could use `free-response` format, but let's cut to chase and look for no M/C answers.
-
-    wrappers.reject!{|wrapper| wrapper.content_hash["questions"].any?{|qq| qq["answers"].empty?} }
-
     # Go through wrappers and build a map of wrappers to pages
 
-    wrapper_to_exercise_page_map = wrappers.reduce({}) do |hash, wrapper|
+    wrapper_to_exercise_page_map = {}
+
+    wrappers.each do |wrapper|
+      # Skip excluded_exercise_numbers (duplicates)
+      # Necessary because we split queries to Exercises into smaller queries to avoid timeouts
+
+      next if excluded_exercise_numbers.include? wrapper.number
+
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
-      hash[wrapper] = exercise_page
-      hash
-    end
 
-    # Go through wrappers, find their corresponding page, and add `lo:page_uuid`
-    # style tags for those missing other LOs
+      # Skip exercises that don't belong to any of the available pages
+      # This could happen, for example, if a manifest for a different environment is imported
 
-    wrapper_to_exercise_page_map.each do |wrapper, exercise_page|
+      next if exercise_page.nil?
+
+      # Skip exercises that have any free response questions, as we can't handle them.
+      # Could use `free-response` format, but let's cut to chase and look for no M/C answers.
+
+      next if wrapper.content_hash["questions"].any?{ |qq| qq["answers"].empty? }
+
+      # Add `lo:page_uuid` style tags for wrappers missing other LOs
+
       wrapper.add_lo("lo:#{exercise_page.uuid}") if wrapper.los.none? && wrapper.aplos.none?
+
+      # Assign exercise context if required
+
+      if wrapper.requires_context?
+        feature_ids = wrapper.feature_ids(exercise_page.uuid)
+        wrapper.context = exercise_page.context_for_feature_ids(feature_ids)
+
+        Rails.logger.warn do
+          "Exercise #{wrapper.uid} requires context, but feature ID(s) [#{
+            feature_ids.join(', ')}] could not be found on #{exercise_page.url}"
+        end if wrapper.context.blank?
+      end
+
+      wrapper_to_exercise_page_map[wrapper] = exercise_page
     end
 
     # Pre-build all tags we are going to need in one shot
@@ -49,18 +70,6 @@ class Content::Routines::ImportExercises
     tag_map = tags.index_by(&:value)
 
     wrapper_to_exercise_page_map.each do |wrapper, exercise_page|
-      next if excluded_exercise_numbers.include? wrapper.number
-      next if exercise_page.nil?
-
-      if wrapper.requires_context?
-        feature_ids = wrapper.feature_ids(exercise_page.uuid)
-        wrapper.context = exercise_page.context_for_feature_ids(feature_ids)
-        Rails.logger.warn do
-          "Exercise #{wrapper.uid} requires context, but feature ID(s) [#{
-            feature_ids.join(', ')}] could not be found on #{exercise_page.url}"
-        end if wrapper.context.blank?
-      end
-
       exercise = Content::Models::Exercise.new(page: exercise_page,
                                                url: wrapper.url,
                                                number: wrapper.number,

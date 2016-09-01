@@ -51,7 +51,7 @@ class Content::Routines::ImportBookPart
       chapter_tracker.advance!
     else
       cnx_book_part.parts.each do |part|
-        # skip all the pages at the book level
+        # Skip all the pages at the book level (prefaces/appendices)
         next if cnx_book_part.is_root && part.is_a?(OpenStax::Cnx::V1::Page)
 
         raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::BookPart)
