@@ -23,6 +23,13 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 #
 workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 
+# After a shutdown is requested (for example, when a worker exceeds the memory limit),
+# the worker has this many seconds to finish the request
+# Currently set to 90 seconds so we can import Physics with Courseware
+# in local dev without background jobs enabled
+#
+worker_shutdown_timeout 90
+
 # Use the `preload_app!` method when specifying a `workers` number.
 # This directive tells Puma to first boot the application and load code
 # before forking the application. This takes advantage of Copy On Write
@@ -38,16 +45,16 @@ preload_app!
 # are forked to prevent connection leakage.
 #
 before_fork do
+  ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
+
   PumaWorkerKiller.config do |config|
     config.ram           = 2048 # mb
-    config.frequency     = 5    # seconds
+    config.frequency     = 10   # seconds
     config.percent_usage = 0.5
     config.rolling_restart_frequency = 12 * 3600 # 12 hours in seconds
   end
 
   PumaWorkerKiller.start
-
-  ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
 end
 
 # The code in the `on_worker_boot` will be called if you are using
