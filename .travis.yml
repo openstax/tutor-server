@@ -14,9 +14,11 @@ env:
     - OXT_TEST_DB=travis_ci_test
     - PARALLEL_TEST_PROCESSORS=2
     - DEMO_MAX_PROCESSES=0
+    - DISPLAY=:99.0
 cache: bundler
 bundler_args: --without production --retry=6
 before_script:
+  - sh -e /etc/init.d/xvfb start
   - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
 script:
   - bundle exec parallel_rspec ./spec
