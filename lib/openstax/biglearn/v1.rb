@@ -82,6 +82,7 @@ module OpenStax::Biglearn::V1
     yield configuration
   end
 
+  # Note: thread-safe only if @configuration already set (must call it in initializers once)
   def self.configuration
     @configuration ||= Configuration.new
   end
@@ -103,19 +104,23 @@ module OpenStax::Biglearn::V1
     new_client_call { LocalQueryClient.new(new_real_client) }
   end
 
+  # Note: not thread-safe, use only in initializers
   def self.use_real_client
     use_client_named(:real)
   end
 
+  # Note: not thread-safe, use only in initializers
   def self.use_fake_client
     use_client_named(:fake)
   end
 
+  # Note: not thread-safe, use only in initializers
   def self.use_client_named(client_name)
     @forced_client_in_use = true
     @client = new_client(client_name)
   end
 
+  # Note: changing Settings::Biglearn.client is not thread-safe
   def self.default_client_name
     # The default Biglearn client is set via an admin console setting.  The
     # default value for this setting is environment-specific in config/initializers/
@@ -127,6 +132,8 @@ module OpenStax::Biglearn::V1
     Settings::Biglearn.client
   end
 
+  # Note: thread-safe only if @client already set and
+  # @forced_client_in_use is true or @client.name == default_client_name
   def self.client
     # We normally keep a cached version of the client in use.  If a caller
     # (normally a spec) has said to use a specific client, we don't want to
