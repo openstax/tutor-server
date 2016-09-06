@@ -87,16 +87,16 @@ class Tasks::Assistants::GenericAssistant
     exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
-  # Limits the history to tasks open before the given task's open date
+  # Limits the history to tasks due before the given task's due date
   # Adds the given task to the history
   def history_for_task(task:, core_page_ids:, history:)
     history = history.dup
 
-    task_sort_array = [task.opens_at, task.due_at, task.created_at, task.id]
+    task_sort_array = [task.due_at, task.opens_at, task.created_at, task.id]
 
     history_indices = 0.upto(history.total_count)
     history_indices_to_keep = history_indices.select do |index|
-      ([history.opens_ats[index], history.due_ats[index],
+      ([history.due_ats[index], history.opens_ats[index],
         history.created_ats[index], history.task_ids[index]] <=> task_sort_array) == -1
     end
 

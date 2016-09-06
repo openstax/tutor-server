@@ -87,7 +87,7 @@ class GetHistory
     # http://stackoverflow.com/a/15190294
     # This logic works because we don't modify the tasks at all here
     (0..[task_count - TASK_BATCH_SIZE, 0].max).step(TASK_BATCH_SIZE) do |offset|
-      tasks = query.order{[opens_at_ntz.desc, due_at_ntz.desc, created_at.desc, id.desc]}
+      tasks = query.order{[due_at_ntz.desc, opens_at_ntz.desc, created_at.desc, id.desc]}
                    .limit(TASK_BATCH_SIZE).offset(offset)
                    .select([Tasks::Models::Task.arel_table[:id],
                             Tasks::Models::Task.arel_table[:task_type],
