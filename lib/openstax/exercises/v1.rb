@@ -6,6 +6,8 @@ require_relative './v1/real_client'
 
 module OpenStax::Exercises::V1
 
+  extend Configurable
+
   class << self
 
     #
@@ -23,17 +25,8 @@ module OpenStax::Exercises::V1
       exercises_hash
     end
 
-    #
-    # Configuration
-    #
-
-    def configure
-      yield configuration
-    end
-
-    # Note: thread-safe only if @configuration already set (must call it in initializers once)
-    def configuration
-      @configuration ||= Configuration.new
+    def new_configuration
+      Configuration.new
     end
 
     # Accessor for the fake client, which has some extra fake methods on it
@@ -45,14 +38,12 @@ module OpenStax::Exercises::V1
       RealClient.new(configuration)
     end
 
-    # Note: not thread-safe, use only in initializers
     def use_real_client
-      @client = real_client
+      self.client = real_client
     end
 
-    # Note: not thread-safe, use only in initializers
     def use_fake_client
-      @client = fake_client
+      self.client = fake_client
     end
 
     def server_url
@@ -65,9 +56,12 @@ module OpenStax::Exercises::V1
 
     private
 
-    # Note: thread-safe only if @client already set (must call it in initializers once)
-    def client
-      @client ||= real_client
+    def new_configuration
+      OpenStax::Exercises::V1::Configuration.new
+    end
+
+    def new_client
+      configuration.stub ? fake_client : real_client
     rescue StandardError => error
       raise ClientError.new("initialization failure", error)
     end
