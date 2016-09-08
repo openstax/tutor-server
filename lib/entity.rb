@@ -11,6 +11,7 @@ class Entity
     # Lists class and instance methods that are part of the API
     # If the :from_class option is specified, class methods are exposed
     # Otherwise, instance methods are exposed
+    # Not thread-safe: call only during initialization
     def exposes(*method_names)
       options = method_names.last.is_a?(Hash) ? method_names.pop : {}
       klass = options[:from_class]
@@ -51,6 +52,7 @@ class Entity
 
     # Lists the classes that are wrapped by this Entity
     # Required for the Entity to function
+    # Not thread-safe: call only during initialization
     def wraps(*klasses)
       _unwrapped_classes[name] += klasses
 

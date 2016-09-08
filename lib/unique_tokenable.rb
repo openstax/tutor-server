@@ -16,6 +16,7 @@ module UniqueTokenable
   end
 
   private
+
   def generate_unique_token(field, options)
     return unless send(field).blank?
 
