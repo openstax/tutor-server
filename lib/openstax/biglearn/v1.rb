@@ -110,13 +110,14 @@ module OpenStax::Biglearn::V1
     end
 
     def use_client_named(client_name)
+      RequestStore.store[:biglearn_v1_forced_client_in_use] = true
       self.client = new_client(client_name)
     end
 
     def default_client_name
       # The default Biglearn client is set via an admin console setting.  The
       # default value for this setting is environment-specific in config/initializers/
-      # 02-settings.rb.  Developers will need to use the admin console to change
+      # 02-settings.rb. Developers will need to use the admin console to change
       # the setting if they want during development.  During testing, devs can
       # use the `use_fake_client`, `use_real_client`, and `use_client_named`
       # methods.
@@ -128,6 +129,11 @@ module OpenStax::Biglearn::V1
     alias :threadsafe_client :client
 
     def client
+      # We normally keep a cached version of the client in use.  If a caller
+      # (normally a spec) has said to use a specific client, we don't want to
+      # change the client. However if this is not the case and the client's
+      # name no longer matches the admin DB setting, change it out.
+
       synchronize do
         if threadsafe_client.nil? ||
            (!RequestStore.store[:biglearn_v1_forced_client_in_use] &&

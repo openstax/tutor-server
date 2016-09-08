@@ -10,7 +10,9 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
                   .remove('.rb').classify }
 
       # Get all the models in the mapper
-      registered_tasked_models = Set.new(described_class.model_class_names.map(&:demodulize).sort)
+      registered_tasked_models = Set.new(
+        described_class::REPRESENTER_MAP.keys.map(&:demodulize).sort
+      )
 
       expect(registered_tasked_models).to eq(expected_tasked_models)
     end
@@ -26,7 +28,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
 
       # Get all the representers in the mapper
       registered_tasked_representers = Set.new(
-        described_class.representer_class_names.map(&:demodulize).sort
+        described_class::REPRESENTER_MAP.values.map(&:demodulize).sort
       )
 
       expect(registered_tasked_representers).to eq(expected_tasked_representers)

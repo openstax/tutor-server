@@ -12,23 +12,12 @@ module Api::V1
 
     include Uber::Callable
 
-    class << self
-
-      def model_class_names
-        representer_map.keys
-      end
-
-      def representer_class_names
-        representer_map.values
-      end
-
-      def representer_for(task_step_or_tasked)
-        tasked_class = task_step_or_tasked.is_a?(::Tasks::Models::TaskStep) ?
-                         task_step_or_tasked.tasked.class :
-                         task_step_or_tasked.class
-        representer = representer_map[tasked_class.name].constantize
-        representer || (raise NotYetImplemented)
-      end
+    def self.representer_for(task_step_or_tasked)
+      tasked_class = task_step_or_tasked.is_a?(::Tasks::Models::TaskStep) ?
+                       task_step_or_tasked.tasked.class :
+                       task_step_or_tasked.class
+      representer = REPRESENTER_MAP[tasked_class.name].constantize
+      representer || (raise NotYetImplemented)
     end
 
     def call(*args)

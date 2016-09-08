@@ -1,13 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe OpenStax::Biglearn::V1, type: :external do
-  before(:each) do
-    @initial_client = OpenStax::Biglearn::V1.send :client
-  end
-
-  after(:each) do
-    OpenStax::Biglearn::V1.instance_variable_set('@client', @initial_client)
-  end
+  before(:each) { RequestStore.clear! }
+  after(:all)   { RequestStore.clear! }
 
   it 'can be configured' do
     configuration = OpenStax::Biglearn::V1.configuration
@@ -36,9 +31,15 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
   end
 
   context "#default_client_name" do
-    it "returns whatever is in the settings" do
+    it "returns whatever is in the settings and caches it until the end of the request" do
       allow(Settings::Biglearn).to receive(:client) { "blah" }
       expect(described_class.default_client_name).to eq "blah"
+      allow(Settings::Biglearn).to receive(:client) { :fake }
+      expect(described_class.default_client_name).to eq "blah"
+
+      RequestStore.clear!
+
+      expect(described_class.default_client_name).to eq :fake
     end
   end
 
@@ -55,7 +56,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     let(:dummy_difficulty)        { 'some difficulty' }
     let(:dummy_allow_repetitions) { 'some allow repetitions' }
 
-    let(:client_double) {
+    let(:client_double) do
       double.tap do |dbl|
         allow(dbl).to receive(:get_clues)
                   .with(roles: dummy_roles, pool_uuids: dummy_pools.map(&:uuid), force_cache_miss: false)
@@ -73,10 +74,11 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
                     allow_repetitions: dummy_allow_repetitions
                   ).and_return(dummy_exercises)
       end
-    }
+    end
 
     before(:each) do
-      OpenStax::Biglearn::V1.instance_variable_set('@client', client_double)
+      RequestStore.store[:biglearn_v1_forced_client_in_use] = true
+      OpenStax::Biglearn::V1.client = client_double
     end
 
     it 'delegates get_clues to the client' do
