@@ -1,6 +1,8 @@
 require 'addressable/uri'
 require 'open-uri'
 
+require_relative './v1/configuration'
+
 require_relative './v1/custom_css'
 
 require_relative './v1/fragment'
@@ -18,57 +20,54 @@ require_relative './v1/page'
 
 module OpenStax::Cnx::V1
 
-  extend MonitorMixin
+  extend Configurable
 
   class << self
 
-    def configure
-      yield self
+    def new_configuration
+      OpenStax::Cnx::V1::Configuration.new
     end
 
-    # Sets the archive URL base. Forces https. Not thread-safe, use with_archive_url instead.
-    def archive_url_base=(url)
-      synchronize do
-        uri = Addressable::URI.parse(url)
-        uri.scheme = 'https'
-
-        @@archive_url_base = uri.to_s
-      end
-    end
-
-    # Reads the archive URL base. Thread-safe.
     def archive_url_base
-      synchronize{ @@archive_url_base }
-    end
-
-    # Temporarily sets the archive URL base. Thread-safe due to monitors.
-    def with_archive_url(url)
-      synchronize do
-        begin
-          old_url = archive_url_base
-          self.archive_url_base = url
-
-          yield
-        ensure
-          self.archive_url_base = old_url
-        end
-      end
+      configuration.archive_url_base
     end
 
     def webview_url_base
-      archive_url_base.sub(/archive[\.-]?/, '')
+      configuration.webview_url_base
+    end
+
+    def with_archive_url(url)
+      begin
+        old_url = archive_url_base
+        self.configuration.archive_url_base = url
+
+        yield
+      ensure
+        self.configuration.archive_url_base = old_url
+      end
+    end
+
+    def with_webview_url(url)
+      begin
+        old_url = webview_url_base
+        self.configuration.webview_url_base = url
+
+        yield
+      ensure
+        self.configuration.webview_url_base = old_url
+      end
     end
 
     # Archive url for the given path
     # Forces /contents/ to be prepended to the path, unless the path begins with /
     def archive_url_for(path)
-      Addressable::URI.join(archive_url_base, '/contents/', path).to_s
+      Addressable::URI.join(configuration.archive_url_base, '/contents/', path).to_s
     end
 
     # Webview url for the given path
     # Forces /contents/ to be prepended to the path, unless the path begins with /
     def webview_url_for(path)
-      Addressable::URI.join(webview_url_base, '/contents/', path).to_s
+      Addressable::URI.join(configuration.webview_url_base, '/contents/', path).to_s
     end
 
     def fetch(id)

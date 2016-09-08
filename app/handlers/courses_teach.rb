@@ -23,9 +23,7 @@ class CoursesTeach
   end
 
   def self.handled_exceptions
-    @@handled_exceptions ||= {
-      profile_not_found: InvalidTeachToken
-    }
+    { profile_not_found: InvalidTeachToken }
   end
 end
 

@@ -30,7 +30,7 @@ module Api::V1
     protected
 
     def self.representer_map
-      @@representer_map ||= {
+      {
         ::Tasks::Models::TaskedExercise    => ->(*) {Api::V1::Tasks::TaskedExerciseRepresenter},
         ::Tasks::Models::TaskedInteractive => ->(*) {Api::V1::Tasks::TaskedInteractiveRepresenter},
         ::Tasks::Models::TaskedPlaceholder => ->(*) {Api::V1::Tasks::TaskedPlaceholderRepresenter},

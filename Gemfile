@@ -177,6 +177,9 @@ gem 'oj'
 # Replace JSON with Oj
 gem 'oj_mimic_json'
 
+# Per-request global storage
+gem 'request_store'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

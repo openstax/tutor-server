@@ -7,6 +7,7 @@ require_relative './v1/real_client'
 module OpenStax::Exercises::V1
 
   extend Configurable
+  extend Configurable::ClientMethods
 
   class << self
 
