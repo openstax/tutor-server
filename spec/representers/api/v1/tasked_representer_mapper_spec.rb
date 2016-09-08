@@ -1,9 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
-  let(:mapper) { Api::V1::TaskedRepresenterMapper }
-
-  describe '.models' do
+RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
+  context '.models' do
     it 'returns all tasked models' do
       # Get all the Tasked.* classes
       expected_tasked_models = Set.new Dir[
@@ -12,13 +10,13 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
                   .remove('.rb').classify }
 
       # Get all the models in the mapper
-      registered_tasked_models = Set.new(mapper.models.map{ |model| model.name.demodulize }.sort)
+      registered_tasked_models = Set.new(described_class.model_class_names.map(&:demodulize).sort)
 
       expect(registered_tasked_models).to eq(expected_tasked_models)
     end
   end
 
-  describe '.representers' do
+  context '.representers' do
     it 'returns all tasked representers' do
       # Get all the Tasked.*Representer classes
       expected_tasked_representers = Set.new Dir[
@@ -28,20 +26,18 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
 
       # Get all the representers in the mapper
       registered_tasked_representers = Set.new(
-        mapper.representers.map { |repr|
-          repr.name.demodulize
-        }.sort
+        described_class.representer_class_names.map(&:demodulize).sort
       )
 
       expect(registered_tasked_representers).to eq(expected_tasked_representers)
     end
   end
 
-  describe '.representer_for' do
+  context '.representer_for' do
     it 'returns a tasked representer for a task step' do
       task_step = FactoryGirl.create :tasks_task_step
 
-      expect(mapper.representer_for(task_step)).to(
+      expect(described_class.representer_for(task_step)).to(
         eq(Api::V1::Tasks::TaskedReadingRepresenter)
       )
     end
@@ -49,7 +45,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
     it 'returns a tasked representer for a tasked' do
       tasked_video = FactoryGirl.create :tasks_tasked_video
 
-      expect(mapper.representer_for(tasked_video)).to(
+      expect(described_class.representer_for(tasked_video)).to(
         eq(Api::V1::Tasks::TaskedVideoRepresenter)
       )
     end
