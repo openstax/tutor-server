@@ -18,11 +18,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     end
 
     it 'imports all exercises' do
-      result = nil
-      expect {
-        result = described_class.call(ecosystem: ecosystem, page: page,
-                                      query_hash: {tag: 'k12phys-ch04-s01-lo02'})
-      }.to change{ Content::Models::Exercise.count }.by(16)
+      expect do
+        described_class.call(ecosystem: ecosystem, page: page,
+                             query_hash: {tag: 'k12phys-ch04-s01-lo02'})
+      end.to change{ Content::Models::Exercise.count }.by(16)
 
       exercises = ecosystem.exercises.order(:created_at).to_a
       exercises[-16..-1].each do |exercise|
@@ -49,8 +48,9 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
     it 'imports all exercises' do
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-      expect { described_class.call(ecosystem: ecosystem, page: page, query_hash: {tag: tags}) }
-        .to change{ Content::Models::Exercise.count }.by(33)
+      expect do
+        described_class.call(ecosystem: ecosystem, page: page, query_hash: {tag: tags})
+      end.to change{ Content::Models::Exercise.count }.by(33)
 
       exercises = ecosystem.exercises.order(:created_at).to_a
       exercises[-33..-1].each do |exercise|
@@ -61,9 +61,9 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     it 'assigns all available tags to the imported exercises' do
       result = nil
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-      expect {
+      expect do
         result = described_class.call(ecosystem: ecosystem, page: page, query_hash: {tag: tags})
-      }.to change{ Content::Models::Tag.count }.by(59)
+      end.to change{ Content::Models::Tag.count }.by(59)
 
       exercises = ecosystem.exercises.order(:created_at).to_a
       exercises[-33..-1].each do |exercise|
@@ -84,10 +84,12 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     it 'does not import exercises whose numbers appear in excluded_exercise_numbers' do
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
       excluded_exercise_numbers = Set[175, 250, 310]
-      expect { described_class.call(
-        ecosystem: ecosystem, page: page, query_hash: {tag: tags},
-        excluded_exercise_numbers: excluded_exercise_numbers
-      ) }.to change{ Content::Models::Exercise.count }.by(30)
+      expect do
+        described_class.call(
+          ecosystem: ecosystem, page: page, query_hash: {tag: tags},
+          excluded_exercise_numbers: excluded_exercise_numbers
+        )
+      end.to change{ Content::Models::Exercise.count }.by(30)
 
       exercises = ecosystem.exercises.order(:created_at).to_a
       exercises[-30..-1].each do |exercise|
@@ -146,9 +148,9 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
     it 'assigns context for exercises that require context' do
       tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
-      expect { described_class.call(
-        ecosystem: @ecosystem, page: @page, query_hash: {tag: tags}
-      ) }.to change{ Content::Models::Exercise.count }.by(4)
+      expect do
+        described_class.call ecosystem: @ecosystem, page: @page, query_hash: {tag: tags}
+      end.to change{ Content::Models::Exercise.count }.by(4)
 
       imported_exercises = @ecosystem.exercises.order(:number).to_a
       imported_exercises.each_with_index do |exercise, index|
@@ -161,6 +163,14 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
           expect(context_node.attr('id')).to eq expected_context_node_id
         end
       end
+    end
+
+    it 'skips import of exercises that don\'t map to the available pages' do
+      page_block = ->(wrapper) { nil }
+      tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
+      expect do
+        described_class.call ecosystem: @ecosystem, page: page_block, query_hash: {tag: tags}
+      end.not_to change{ Content::Models::Exercise.count }
     end
   end
 
@@ -218,9 +228,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
     it 'skips import of any exercise with no answers' do
       stub_exercise_query([{tags: ['some-id-tag'], remove_answers: true}])
-      expect{
-        described_class.call(ecosystem: @ecosystem, page: @page, query_hash: {tags: ['some-id-tag']})
-      }.to change{Content::Models::Exercise.count}.by(0)
+      expect do
+        described_class.call(ecosystem: @ecosystem, page: @page,
+                             query_hash: {tags: ['some-id-tag']})
+      end.to change{Content::Models::Exercise.count}.by(0)
     end
   end
 
