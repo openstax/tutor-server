@@ -19,7 +19,7 @@ RSpec.describe "Students in archived old period sign up in new term",
   #   student works another CC
   #   show my progress API endpoint has two tasks
 
-  context "when a student takes a reused course again" do
+  context "CC course" do
 
     before(:all) do
       @course = CreateCourse[name: 'Physics', is_concept_coach: true]
@@ -77,12 +77,6 @@ RSpec.describe "Students in archived old period sign up in new term",
       )
     end
 
-    it 'shows no work initially' do
-      # "My Progress" screen pulls data from the CC dashboard endpoint
-      api_get("/api/courses/#{@course.id}/cc/dashboard", @student_token)
-      expect(response.body_as_hash[:tasks].size).to eq 0
-    end
-
     it 'lets the student work a CC from scratch that he did in the first semester' do
       cc_task_sem_2_page_0 = GetConceptCoach[
         user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[0].uuid
@@ -90,32 +84,49 @@ RSpec.describe "Students in archived old period sign up in new term",
       expect(cc_task_sem_2_page_0).not_to be_completed
     end
 
-    it 'shows only and all 2nd semester CCs on "my progress" screen after working them' do
-      cc_task_sem_2_page_2 = GetConceptCoach[
-        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[2].uuid
-      ]
-      Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
+    context 'student dashboard' do
+      it 'shows no work initially' do
+        # "My Progress" screen pulls data from the CC dashboard endpoint
+        api_get("/api/courses/#{@course.id}/cc/dashboard", @student_token)
+        expect(response.body_as_hash[:tasks].size).to eq 0
+      end
 
-      cc_task_sem_2_page_3 = GetConceptCoach[
-        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[3].uuid
-      ]
-      Demo::AnswerExercise[task_step: cc_task_sem_2_page_3.task_steps[0], is_correct: true]
+      it 'shows only and all 2nd semester CCs' do
+        cc_task_sem_2_page_2 = GetConceptCoach[
+          user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[2].uuid
+        ]
+        Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
 
-      # "My Progress" screen pulls data from the CC dashboard endpoint
-      api_get("/api/courses/#{@course.id}/cc/dashboard", @student_token)
-      expect(response.body_as_hash[:tasks].size).to eq 2
+        cc_task_sem_2_page_3 = GetConceptCoach[
+          user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[3].uuid
+        ]
+        Demo::AnswerExercise[task_step: cc_task_sem_2_page_3.task_steps[0], is_correct: true]
+
+        # "My Progress" screen pulls data from the CC dashboard endpoint
+        api_get("/api/courses/#{@course.id}/cc/dashboard", @student_token)
+        expect(response.body_as_hash[:tasks].size).to eq 2
+      end
     end
 
-    it 'shows only and all the 2nd semester CCs on the teacher\'s scores report' do
-      cc_task_sem_2_page_2 = GetConceptCoach[
-        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[2].uuid
-      ]
-      Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
+    context 'teacher scores report' do
+      it 'shows no work initially' do
+        api_get("/api/courses/#{@course.id}/performance", @teacher_token)
 
-      api_get("/api/courses/#{@course.id}/performance", @teacher_token)
+        expect(response.body_as_hash[0][:data_headings].size).to eq 0
+        expect(response.body_as_hash[0][:students][0][:data].size).to eq 0
+      end
 
-      expect(response.body_as_hash[0][:data_headings].size).to eq 1
-      expect(response.body_as_hash[0][:students][0][:data].size).to eq 1
+      it 'shows only and all the 2nd semester CCs' do
+        cc_task_sem_2_page_2 = GetConceptCoach[
+          user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[2].uuid
+        ]
+        Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
+
+        api_get("/api/courses/#{@course.id}/performance", @teacher_token)
+
+        expect(response.body_as_hash[0][:data_headings].size).to eq 1
+        expect(response.body_as_hash[0][:students][0][:data].size).to eq 1
+      end
     end
 
   end
