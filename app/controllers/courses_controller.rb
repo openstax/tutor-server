@@ -32,7 +32,7 @@ class CoursesController < ApplicationController
     when :user_is_already_a_course_student
       send_to_student_dashboard(notice: "You are already enrolled in this course.")
     when :user_is_an_inactive_student
-      send_to_dashboard(notice: "Your membership in the course is inactive.")
+      send_to_dashboard(notice: "Your membership in the course is inactive.  Please contact the instructor for assistance.")
     when :enrollment_code_not_found
       enrollment_code_not_found
     when :taken
