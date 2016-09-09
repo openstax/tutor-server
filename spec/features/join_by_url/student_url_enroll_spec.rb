@@ -65,6 +65,25 @@ RSpec.describe 'Students enrolling via URL' do
 
       end
 
+      context 'when a student of a different course that uses same ecosystem' do
+        let(:other_course) { CreateCourse[name: 'Biology'] }
+        let(:other_period) { CreatePeriod[course: other_course, name: '1st'] }
+
+        before {
+          AddUserAsPeriodStudent[period: other_period, user: user, student_identifier: '12345']
+        }
+
+        it 'registers for new course and stays in current' do
+          visit token_enroll_path(period1.enrollment_code_for_url)
+          fill_in 'enroll_student_id', with: '12345'
+          click_button 'Continue'
+          # member of new course
+          expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
+          # and still a member of other course
+          expect(UserIsCourseStudent[course: other_course, user: user]).to be_truthy
+        end
+      end
+
       context 'when dropped' do
         before { AddUserAsPeriodStudent.call(user: user, period: period1).outputs.student.destroy }
 
