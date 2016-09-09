@@ -5,7 +5,7 @@ class CourseMembership::CreateEnrollmentChange
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   def exec(user:, period:, book_uuid: nil, requires_enrollee_approval: true)
-    user_student_role_ids = run(:get_roles, user, 'student').outputs.roles.map(&:id)
+    user_role_ids = run(:get_roles, user, 'student').outputs.roles.map(&:id)
 
     ecosystem = run(:get_ecosystem, course: period.course).outputs.ecosystem
     # Assumes 1 book in the ecosystem
@@ -15,33 +15,23 @@ class CourseMembership::CreateEnrollmentChange
                 message: 'The given enrollment code does not match the current book') \
       if book_uuid.present? && book_uuid != period_book_uuid
 
-    user_enrollments = \
-      CourseMembership::Models::Enrollment
-        .with_deleted
-        .latest
-        .joins{
-          CourseMembership::Models::Student.unscoped.as(:student)
-                                           .on{student.id == ~course_membership_student_id}
-        }.joins(
-          period: { course: { ecosystems: :books } }
-        ).where(
-          period: { course: { ecosystems: { books: { uuid: period_book_uuid } } } },
-          student: { entity_role_id: user_student_role_ids }
-        ).uniq.to_a
+    course = period.course
+
+    user_students = course.students.with_deleted.where(entity_role_id: user_role_ids).to_a
 
     # This code does NOT support users with multiple "students" (teachers) trying to change periods
     fatal_error(code: :multiple_roles,
                 message: 'Users with multiple roles in a course cannot use self-enrollment') \
-      if user_enrollments.size > 1
+      if user_students.size > 1
 
-    enrollment = user_enrollments.first
+    student = user_students.first
 
-    if enrollment.present?
-      student = enrollment.student
-
+    if student.present?
       fatal_error(code: :dropped_student,
                   message: 'User cannot re-enroll in a course from which they were dropped') \
         if student.deleted?
+
+      enrollment = student.latest_enrollment
 
       fatal_error(code: :already_enrolled,
                   message: 'User is already enrolled in the course') \
