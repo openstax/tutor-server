@@ -111,7 +111,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
           .not_to change{ CourseMembership::Models::EnrollmentChange.count }
         expect(result.errors.first.code).to eq :concept_coach_conflict
         expect(result.errors.first.message).to(
-          eq 'You are already enrolled for a Concept Coach course for this book. ' +
+          eq 'You are already enrolled in a Concept Coach course for this book. ' +
              'If you are trying to transfer between courses, ' +
              'please contact customer service for assistance.'
         )
