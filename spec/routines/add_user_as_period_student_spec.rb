@@ -32,6 +32,31 @@ describe AddUserAsPeriodStudent, type: :routine do
         expect(result.errors).to_not be_empty
       end
     end
+
+    context "and is a previously dropped student" do
+      before(:each) do
+        student = AddUserAsPeriodStudent.call(user: user, period: period)
+                  .outputs.student
+        student.destroy
+      end
+      it "has inactive student error" do
+        result = AddUserAsPeriodStudent.call(user: user, period: period)
+        expect(result.errors).to_not be_empty
+        expect(result.errors.map(&:code).first).to be :user_is_an_inactive_student
+      end
+    end
+
+    context "and the period is archived" do
+      before(:each) do
+        AddUserAsPeriodStudent.call(user: user, period: period)
+        period.to_model.destroy
+      end
+      fit "has inactive student error" do
+        result = AddUserAsPeriodStudent.call(user: user, period: period)
+        expect(result.errors).to_not be_empty
+        expect(result.errors.map(&:code).first).to be :user_is_an_inactive_student
+      end
+    end
   end
 
   context "when the given user is a teacher in the given course" do
