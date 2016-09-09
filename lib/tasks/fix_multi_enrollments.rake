@@ -43,7 +43,13 @@ task :fix_multi_enrollments, [:run_mode] => :environment do |t, args|
         active_enrollment = existing_enrollments.max_by(&:created_at)
         tasking.period = active_enrollment.period
 
-        tasking.save! if real_run
+        concept_coach_task = tasking.task.concept_coach_task
+        concept_coach_task.role = tasking.role if concept_coach_task.present?
+
+        if real_run
+          tasking.save!
+          concept_coach_task.save! if concept_coach_task.present?
+        end
       end
 
       active_role = roles.max_by(&:created_at)
