@@ -23,6 +23,13 @@ class CourseMembership::ProcessEnrollmentChange
       run(:add_student, user: enrollment_change.user,
                         period: enrollment_change.to_period,
                         student_identifier: student_identifier)
+    elsif enrollment.deleted?
+      # Student in archived period re-taking the course
+      enrollment.student.role.role_user.destroy
+
+      run(:add_student, user: enrollment_change.user,
+                        period: enrollment_change.to_period,
+                        student_identifier: student_identifier)
     else
       # Existing student
       student = enrollment.student
