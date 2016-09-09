@@ -170,9 +170,10 @@ class GetConceptCoach
 
     ecosystem_id = page_model.book.content_ecosystem_id
     roles = ecosystem_id_role_map[ecosystem_id]
-    # If roles.size > 1, the user is in 2 courses with the same CC book (not allowed)
     # We are guaranteed to have at least one role here, since we already filtered the page above
-    role = roles.first
+    # If there is more than one role, something funky is happening,
+    # but the most correct thing to do seems to be getting the latest role
+    role = roles.max_by(&:created_at)
 
     page = Content::Page.new(strategy: page_model.wrap)
 
