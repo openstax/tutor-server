@@ -14,8 +14,16 @@ class CoursesEnroll
     fatal_error(code: :enrollment_code_not_found) if outputs.period.nil?
     outputs.course = outputs.period.course
 
+    user_test = UserIsCourseStudent.call(
+      course: outputs.period.course, user: caller,
+      include_dropped: true, include_archived: true
+    ).outputs
+
+    fatal_error(code: :user_is_an_inactive_student) \
+               if user_test.is_dropped || user_test.is_archived
+
     fatal_error(code: :user_is_already_a_course_student) \
-      if UserIsCourseStudent[course: outputs.period.course, user: caller]
+               unless user_test.is_course_student
 
     run(:collect_course_info, courses: outputs.period.course, with: [:teacher_names])
   end

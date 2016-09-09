@@ -8,14 +8,7 @@ class CoursesController < ApplicationController
     handle_with(CoursesEnroll,
                 success: -> {},
                 failure: -> {
-                  case @handler_result.errors.map(&:code).first
-                  when :user_is_already_a_course_student
-                    send_to_student_dashboard(notice: "You are already enrolled in this course.")
-                  when :enrollment_code_not_found
-                    enrollment_code_not_found
-                  else
-                    raise StandardError, "Student URL enrollment failed: #{@handler_result.errors}"
-                  end
+                  handle_enrollment_failures(@handler_result.errors.map(&:code).first)
                 })
   end
 
@@ -28,21 +21,31 @@ class CoursesController < ApplicationController
                   )
                 },
                 failure: -> {
-                  case @handler_result.errors.map(&:code).first
-                  when :user_is_already_a_course_student
-                    send_to_student_dashboard(notice: "You are already enrolled in this course.")
-                  when :enrollment_code_not_found
-                    enrollment_code_not_found
-                  when :taken
-                    flash[:error] = "That school-issued ID is already in use."
-                    redirect_to token_enroll_path(params[:enroll][:enrollment_token])
-                  else
-                    raise StandardError, "Student URL enrollment confirmation failed: #{@handler_result.errors}"
-                  end
+                  handle_enrollment_failures(@handler_result.errors.map(&:code).first)
                 })
   end
 
   private
+
+  def handle_enrollment_failures(error_code)
+    case error_code
+    when :user_is_already_a_course_student
+      send_to_student_dashboard(notice: "You are already enrolled in this course.")
+    when :user_is_an_inactive_student
+      send_to_dashboard(notice: "Your membership in the course is inactive.")
+    when :enrollment_code_not_found
+      enrollment_code_not_found
+    when :taken
+      flash[:error] = "That school-issued ID is already in use."
+      redirect_to token_enroll_path(params[:enroll][:enrollment_token])
+    else
+      raise StandardError, "Student URL enrollment failed: #{@handler_result.errors}"
+    end
+  end
+
+  def send_to_dashboard(notice: nil)
+    redirect_to dashboard_path, webview_notice: notice
+  end
 
   def send_to_student_dashboard(notice: nil)
     course = @handler_result.outputs.course
