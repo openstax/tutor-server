@@ -51,7 +51,7 @@ describe AddUserAsPeriodStudent, type: :routine do
         AddUserAsPeriodStudent.call(user: user, period: period)
         period.to_model.destroy
       end
-      fit "has inactive student error" do
+      it "has inactive student error" do
         result = AddUserAsPeriodStudent.call(user: user, period: period)
         expect(result.errors).to_not be_empty
         expect(result.errors.map(&:code).first).to be :user_is_an_inactive_student
