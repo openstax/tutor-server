@@ -1,16 +1,13 @@
 require 'rails_helper'
 
 describe CourseMembership::ProcessEnrollmentChange, type: :routine do
-  let(:course_1)          { Entity::Course.create! }
-  let(:course_2)          { Entity::Course.create! }
-
-  let(:course_3)          { Entity::Course.create! }
+  let(:course_1)          { FactoryGirl.create :entity_course }
+  let(:course_2)          { FactoryGirl.create :entity_course }
+  let(:course_3)          { FactoryGirl.create :entity_course }
 
   let(:period_1)          { CreatePeriod[course: course_1] }
   let(:period_2)          { CreatePeriod[course: course_1] }
-
   let(:period_3)          { CreatePeriod[course: course_2] }
-
   let(:period_4)          { CreatePeriod[course: course_3] }
 
   let(:book)              { FactoryGirl.create :content_book }
@@ -131,7 +128,7 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
     end
 
-    context 'different course with the same book' do
+    context 'different course' do
       let!(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
       let(:enrollment_change)  {
@@ -175,13 +172,16 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
         expect(enrollment_change_2.status).to eq :rejected
       end
 
-      it 'changes the course the student belongs to' do
+      it 'creates new role and student objects for the new course' do
+        old_roles = user.to_model.roles.to_a
         result = nil
         expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+          .to change{ CourseMembership::Models::Student.count }.by(1)
         expect(result.errors).to be_empty
         expect(result.outputs.enrollment_change.status).to eq :processed
-        expect(student.reload.course).to eq course_2
+        expect(student.reload.course).to eq course_1
+        new_role = (user.to_model.reload.roles - old_roles).first
+        expect(new_role.student.course).to eq course_2
       end
     end
   end
