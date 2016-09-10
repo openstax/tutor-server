@@ -51,13 +51,6 @@ task :fix_multi_enrollments, [:run_mode] => :environment do |t, args|
           concept_coach_task.save! if concept_coach_task.present?
         end
       end
-
-      active_role = roles.max_by(&:created_at)
-      (roles - [active_role]).each do |old_role|
-        role_user = old_role.role_user
-
-        role_user.destroy if real_run
-      end
     end
   end
 end
