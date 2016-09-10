@@ -38,13 +38,9 @@ class CourseMembership::CreateEnrollmentChange
                            'please contact customer service for assistance.') if conflicts_exist
     end
 
-    # This code does NOT support users with multiple "students" (teachers) trying to change periods
-    fatal_error(code: :multiple_roles,
-                message: 'Users with multiple roles in a course cannot use self-enrollment') \
-      if course_roles.size > 1
-
     if course_roles.any?
-      student = course_roles.first.student
+      # We consider that your most recent role is always the active one
+      student = course_roles.max_by(&:created_at).student
 
       fatal_error(code: :dropped_student,
                   message: 'You cannot re-enroll in a course from which you were dropped') \
@@ -55,6 +51,8 @@ class CourseMembership::CreateEnrollmentChange
       fatal_error(code: :already_enrolled,
                   message: 'You are already enrolled in the course') \
         if enrollment.period.id == period.id
+    else
+      enrollment = nil
     end
 
     enrollment_change_model = CourseMembership::Models::EnrollmentChange.create(
