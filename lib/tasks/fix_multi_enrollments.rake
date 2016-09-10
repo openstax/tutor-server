@@ -18,7 +18,8 @@ task :fix_multi_enrollments, [:run_mode] => :environment do |t, args|
         double_enrollments = students_by_course.keep_if{ |course, students| students.size > 1 }
 
         double_enrollments.each do |course, students|
-          csv << [format_names(user), format_names(course.teachers), course.profile.school.name]
+          csv << [format_names(user), format_names(course.teachers),
+                  course.profile.school.try(:name) || '']
 
           double_enrollments_array << students
         end
