@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160909003318) do
+ActiveRecord::Schema.define(version: 20160830235417) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -489,10 +489,8 @@ ActiveRecord::Schema.define(version: 20160909003318) do
     t.integer  "entity_role_id",  null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.datetime "deleted_at"
   end
 
-  add_index "role_role_users", ["deleted_at"], name: "index_role_role_users_on_deleted_at", using: :btree
   add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
   create_table "salesforce_attached_records", force: :cascade do |t|
