@@ -41,7 +41,7 @@
             <% end %>
 
           <%= "#{course_info.id}" %><%= " #{course_info.name}" %><%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
-          <%= " / #{course_info.profile.school.try(:name)}" unless course_info.profile.school.blank? %>
+          <%= " / #{course_info.profile.school.name}" if course_info.profile.try(:school) %>
         </div>
         <div class="card-content">
           <div class="content-top">
