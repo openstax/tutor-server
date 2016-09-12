@@ -7,8 +7,10 @@ class CourseMembership::IsCourseStudent
     relation = course.students
     relation = relation.preload(enrollments: :period) unless include_archived
     relation = relation.with_deleted if include_dropped
-    student = relation.find_by(entity_role_id: roles)
+    students = relation.where(entity_role_id: roles)
 
-    outputs[:is_course_student] = student.present? && (include_archived || !student.period.deleted?)
+    outputs[:is_course_student] = students.any? do |student|
+      student.present? && (include_archived || !student.period.deleted?)
+    end
   end
 end
