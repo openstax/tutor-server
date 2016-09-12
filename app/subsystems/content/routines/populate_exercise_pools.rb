@@ -48,14 +48,14 @@ class Content::Routines::PopulateExercisePools
               tags.include?('apbio') && tags.include?('ost-chapter-review') && \
               tags.include?('review') && (
                 tags.include?('time:short') || tags.include?('time-short')
-            ))) || (!use_old_logic && \
-            tags.include?('type:conceptual') || tags.include?('type:recall') ||
-            tags.include?('type:conceptual-or-recall'))
+            ))) || (!use_old_logic && (
+              tags.include?('type:conceptual') || tags.include?('type:recall') ||
+              tags.include?('type:conceptual-or-recall')
+            ) && !exercise.is_multipart?)
 
           # Reading Context-Dependent
           page.reading_context_pool.content_exercise_ids << exercise.id \
-            if (use_old_logic && tags.include?('os-practice-problems')) ||
-               !use_old_logic
+            if (use_old_logic && tags.include?('os-practice-problems')) || !use_old_logic
 
           # Homework Core (Assignment Builder)
           page.homework_core_pool.content_exercise_ids << exercise.id \
@@ -64,7 +64,7 @@ class Content::Routines::PopulateExercisePools
 
           # Homework Dynamic
           page.homework_dynamic_pool.content_exercise_ids << exercise.id \
-            if use_old_logic && ((
+            if (use_old_logic && ((
               tags.include?('k12phys') && (
                 tags.include?('os-practice-problems') || (
                   tags.include?('ost-chapter-review') && (
@@ -83,7 +83,7 @@ class Content::Routines::PopulateExercisePools
                   )
                 )
               )
-            )) || !use_old_logic && tags.include?('type:practice')
+            ))) || (!use_old_logic && tags.include?('type:practice') && !exercise.is_multipart?)
 
           # Practice Widget
           page.practice_widget_pool.content_exercise_ids << exercise.id \
