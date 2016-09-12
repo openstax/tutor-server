@@ -90,7 +90,7 @@ RSpec.describe 'Students enrolling via URL' do
         it "redirects to dashboard and displays an error" do
           visit token_enroll_path(period1.enrollment_code_for_url)
           expect(current_path).to eq(dashboard_path)
-          expect(page.body).to match have_content '"notice":"Your membership in the course is inactive."'
+          expect(page.body).to have_content '"notice":"Your membership in the course is inactive.'
         end
 
       end
@@ -104,7 +104,7 @@ RSpec.describe 'Students enrolling via URL' do
         it "redirects to dashboard and displays an error" do
           visit token_enroll_path(period1.enrollment_code_for_url)
           expect(current_path).to eq(dashboard_path)
-          expect(page.body).to match have_content '"notice":"Your membership in the course is inactive."'
+          expect(page.body).to have_content '"notice":"Your membership in the course is inactive.'
         end
 
       end
