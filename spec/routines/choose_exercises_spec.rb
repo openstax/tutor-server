@@ -2,24 +2,26 @@ require 'rails_helper'
 
 describe ChooseExercises, type: :routine do
 
-  let(:exercises)          { 5.times.map{ FactoryGirl.create :content_exercise } }
-  let(:worked_exercises)   { exercises.first(3) }
-  let(:unworked_exercises) { exercises - worked_exercises }
+  let(:exercises)           { 5.times.map{ FactoryGirl.create :content_exercise } }
+  let(:worked_exercises)    { exercises.first(3) }
+  let(:unworked_exercises)  { exercises - worked_exercises }
+  let(:allow_multipart)     { true }
+  let(:allow_repeats)       { true }
+  let(:randomize_exercises) { true }
+  let(:randomize_order)     { true }
 
   let(:count)    { 3 }
   let(:history)  { Hashie::Mash.new(exercise_numbers: [worked_exercises.map(&:number)]) }
 
   let(:args) { { exercises: exercises, count: count, history: history, allow_repeats: allow_repeats,
-                 randomize_exercises: randomize_exercises, randomize_order: randomize_order } }
+    randomize_exercises: randomize_exercises, randomize_order: randomize_order, allow_multipart: allow_multipart
+ } }
 
   context 'allow repeats' do
-    let(:allow_repeats) { true }
 
     context 'random exercises' do
-      let(:randomize_exercises) { true }
 
       context 'random order' do
-        let(:randomize_order) { true }
 
         it 'returns random unworked (higher priority) and worked exercises in a random order' do
           result = described_class[**args]
@@ -45,7 +47,6 @@ describe ChooseExercises, type: :routine do
       let(:randomize_exercises) { false }
 
       context 'random order' do
-        let(:randomize_order) { true }
 
         it 'returns set unworked (higher priority) and worked exercises in a random order' do
           result = described_class[**args]
@@ -64,12 +65,27 @@ describe ChooseExercises, type: :routine do
     end
   end
 
+  context 'allow_multipart = false' do
+    let(:allow_multipart){ false }
+    let(:non_mp) { exercises[1] }
+
+    before(:each) do
+      exercises.each{ |ex|
+        allow(ex).to receive(:is_multipart?).and_return(true) unless ex == non_mp
+      }
+    end
+    it 'excludes multi part exercises' do
+      result = described_class[**args]
+      expect(result.size).to eq 1
+      expect(result[0]).to eq non_mp
+    end
+
+  end
+
   context 'disallow repeats' do
     let(:allow_repeats) { false }
 
     context 'randomize' do
-      let(:randomize_exercises) { true }
-      let(:randomize_order) { true }
 
       it 'returns random unworked exercises in a random order' do
         result = described_class[**args]
