@@ -1,6 +1,7 @@
 require 'rails_helper'
+require 'fork_with_connection'
 
-RSpec.describe DistributeTasks, type: :routine do
+RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
   let(:course)    { FactoryGirl.create :entity_course }
   let(:period)    { CreatePeriod[course: course] }
@@ -20,6 +21,56 @@ RSpec.describe DistributeTasks, type: :routine do
     task_plan.save!
     task_plan
   }
+
+  context 'a homework' do
+    let(:assistant) { FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant') }
+    let(:homework_plan) {
+      task_plan = FactoryGirl.build(
+        :tasks_task_plan, assistant: assistant, owner: course, type: 'homework', ecosystem: @ecosystem.to_model,
+        settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
+      )
+      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.save!
+      task_plan
+    }
+    let(:core_pools) { @ecosystem.homework_core_pools(pages: @pages) }
+    let(:exercise_ids) {
+      core_pools.flat_map(&:exercises).map{|e| e.id.to_s}
+    }
+
+    before {
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to( receive(:k_ago_map) { [ [2, 4] ] } )
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to( receive(:num_personalized_exercises) { 3 } )
+      generate_test_exercise_content
+    }
+
+    it 'distributes the steps' do
+      results = DistributeTasks.call(homework_plan)
+      expect(results.errors).to be_empty
+      step_types = ["core_group", "core_group", "core_group", "core_group", "core_group",
+                    "core_group", "personalized_group", "personalized_group", "personalized_group"]
+      homework_plan.tasks.each do | task |
+        expect(task.task_steps.map(&:group_type)).to eq(step_types)
+      end
+
+    end
+
+    it 'cannot be distributed concurrently' do
+      plan = homework_plan
+      0.upto(5) do
+        Tutor.fork_with_connection do
+          begin
+            DistributeTasks.call(plan)
+            0 # all we care about for this spec is isolation conflicts, anything else is considered passing
+          rescue ActiveRecord::TransactionIsolationConflict
+            99 # arbitrary exit status to indicate failure
+          end
+        end
+      end
+      status = Process.waitall
+      expect(status.detect{|pid, process| process.exitstatus == 99 }).not_to be_nil
+    end
+  end
 
   context 'unpublished task_plan' do
     it 'creates tasks for the task_plan' do
