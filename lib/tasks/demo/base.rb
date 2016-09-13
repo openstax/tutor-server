@@ -1,5 +1,6 @@
 require 'hashie/mash'
 
+require 'fork_with_connection'
 require_relative 'answer_exercise'
 require_relative 'content_configuration'
 
@@ -157,29 +158,9 @@ class Demo::Base
       sliced_args.map{ |sliced_arg| sliced_arg.next } + [process_index*slice_size]
     end
 
-    #log("Processes: #{num_processes} - Slice size: #{slice_size}")
-
-    # We have to clear all connections before forking (and open a new connection after forking)
-    # because the different processes cannot share connections
-    ActiveRecord::Base.clear_all_connections!
 
     child_processes = 0.upto(num_processes - 1).map do |process_index|
-      # Start a new process
-      # Threading does not work well with MRI due to the GIL
-      fork do
-        # Reconnect to Redis
-
-        # demo uses the Settings to look up admin exercise exclusions
-        # settings are cached in Redis by rails-settings-cached
-        Rails.cache.reconnect
-
-        # demo work uses jobs to send info to Exchange
-        Jobba.redis.client.reconnect
-
-        # demo uses the Biglearn fake client if Biglearn stubbing is enabled
-        OpenStax::Biglearn::V1.client.store.reconnect \
-          if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
-
+      Tutor.fork_with_connection do
         if transaction
           ActiveRecord::Base.transaction do
             yield *process_args[process_index]

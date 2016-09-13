@@ -12,8 +12,14 @@ module Tutor
 
       begin
         ActiveRecord::Base.establish_connection(ar_connection_config)
+        # settings are cached in Redis by rails-settings-cached
+        Rails.cache.reconnect
 
         Jobba.redis.client.reconnect
+
+        # reconnect fake client if Biglearn stubbing is enabled
+        OpenStax::Biglearn::V1.client.store.reconnect \
+          if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
 
         # This is needed to re-initialize the random number generator after forking (if you want diff random numbers generated in the forks)
         srand
