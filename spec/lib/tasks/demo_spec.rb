@@ -5,7 +5,7 @@ require 'tasks/demo/tasks'
 require 'tasks/demo/work'
 require 'tasks/demo/show'
 
-RSpec.describe Demo, type: :request, version: :v1, speed: :slow,
+RSpec.describe Demo, type: :routine, version: :v1, speed: :slow,
                      truncation: true, vcr: VCR_OPTS do
 
   context 'with the stable book version' do

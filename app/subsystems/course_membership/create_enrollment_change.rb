@@ -5,47 +5,54 @@ class CourseMembership::CreateEnrollmentChange
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   def exec(user:, period:, book_uuid: nil, requires_enrollee_approval: true)
-    user_student_role_ids = run(:get_roles, user, 'student').outputs.roles.map(&:id)
+    student_roles = run(:get_roles, user, 'student').outputs.roles
 
-    ecosystem = run(:get_ecosystem, course: period.course).outputs.ecosystem
+    course = period.course
+
+    ecosystem = run(:get_ecosystem, course: course).outputs.ecosystem
     # Assumes 1 book in the ecosystem
-    period_book_uuid = ecosystem.nil? ? nil : ecosystem.books.first.uuid
+    course_book_uuid = ecosystem.nil? ? nil : ecosystem.books.first.uuid
 
     fatal_error(code: :enrollment_code_does_not_match_book,
                 message: 'The given enrollment code does not match the current book') \
-      if book_uuid.present? && book_uuid != period_book_uuid
+      if book_uuid.present? && book_uuid != course_book_uuid
 
-    user_enrollments = \
-      CourseMembership::Models::Enrollment
-        .with_deleted
-        .latest
-        .joins{
-          CourseMembership::Models::Student.unscoped.as(:student)
-                                           .on{student.id == ~course_membership_student_id}
-        }.joins(
-          period: { course: { ecosystems: :books } }
-        ).where(
-          period: { course: { ecosystems: { books: { uuid: period_book_uuid } } } },
-          student: { entity_role_id: user_student_role_ids }
-        ).uniq.to_a
+    course_roles, other_roles = student_roles.partition{ |role| role.student.course == course }
 
-    # This code does NOT support users with multiple "students" (teachers) trying to change periods
-    fatal_error(code: :multiple_roles,
-                message: 'Users with multiple roles in a course cannot use self-enrollment') \
-      if user_enrollments.size > 1
+    if course.profile.is_concept_coach
+      # Detect conflicting concept coach courses (other CC courses that use the same book)
+      # If any conflicts are detected, simply display an error message
+      conflicts_exist = other_roles.any? do |role|
+        other_course = role.student.course
+        next unless other_course.is_concept_coach
 
-    enrollment = user_enrollments.first
+        other_ecosystem = run(:get_ecosystem, course: other_course).outputs.ecosystem
+        next if other_ecosystem.nil?
 
-    if enrollment.present?
-      student = enrollment.student
+        other_ecosystem.books.first.uuid == course_book_uuid
+      end
+
+      fatal_error(code: :concept_coach_conflict,
+                  message: 'You are already enrolled in a Concept Coach course for this book. ' +
+                           'If you are trying to transfer between courses, ' +
+                           'please contact customer service for assistance.') if conflicts_exist
+    end
+
+    if course_roles.any?
+      # We consider that your most recent role is always the active one
+      student = course_roles.max_by(&:created_at).student
 
       fatal_error(code: :dropped_student,
-                  message: 'User cannot re-enroll in a course from which they were dropped') \
+                  message: 'You cannot re-enroll in a course from which you were dropped') \
         if student.deleted?
 
+      enrollment = student.latest_enrollment
+
       fatal_error(code: :already_enrolled,
-                  message: 'User is already enrolled in the course') \
+                  message: 'You are already enrolled in the course') \
         if enrollment.period.id == period.id
+    else
+      enrollment = nil
     end
 
     enrollment_change_model = CourseMembership::Models::EnrollmentChange.create(
