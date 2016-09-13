@@ -35,6 +35,7 @@ RSpec.configure do |config|
   config.include CaptureStdoutHelper
   config.include WithoutException
   config.include SigninHelper
+  config.include PopulateExerciseContent
   config.extend VcrConfigurationHelper
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
