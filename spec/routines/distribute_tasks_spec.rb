@@ -57,8 +57,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
     it 'cannot be distributed concurrently' do
       plan = homework_plan
+      pids = []
       0.upto(5) do
-        Tutor.fork_with_connection do
+        pids << Tutor.fork_with_connection do
           begin
             DistributeTasks.call(plan)
             0 # all we care about for this spec is isolation conflicts, anything else is considered passing
@@ -67,8 +68,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
           end
         end
       end
-      status = Process.waitall
-      expect(status.detect{|pid, process| process.exitstatus == 99 }).not_to be_nil
+      failed = []
+      pids.each do |pid|
+        Process.wait(pid)
+        failed << pid if $?.exitstatus == 99
+      end
+      expect(failed).not_to be_empty
     end
   end
 
