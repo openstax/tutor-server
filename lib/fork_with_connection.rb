@@ -35,7 +35,7 @@ module Tutor
 
       ensure
         ActiveRecord::Base.remove_connection
-        Process.exit! exit_status.to_i
+        Process.exit! exit_status.is_a?(Fixnum) ? exit_status : 0
       end
     end
 
