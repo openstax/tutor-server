@@ -14,7 +14,8 @@ class Content::Routines::PopulateExercisePools
     # Use preload here instead of eager_load here to avoid a memory usage spike
     chapters = book.chapters.preload(pages: { exercises: { exercise_tags: :tag } })
 
-    use_old_logic = HS_UUIDS.include?(book.uuid)
+    hs_logic = HS_UUIDS.include?(book.uuid)
+    college_logic = !hs_logic
 
     outputs[:pools] = chapters.flat_map do |chapter|
       ecosystem = chapter.ecosystem
@@ -40,62 +41,80 @@ class Content::Routines::PopulateExercisePools
         page.exercises.each do |exercise|
           tags = exercise.exercise_tags.map{ |et| et.tag.value }
 
-          # Reading Dynamic (Concept Coach)
-          page.reading_dynamic_pool.content_exercise_ids << exercise.id \
-            if (use_old_logic && (
-              tags.include?('k12phys') && tags.include?('os-practice-concepts')
-            ) || (
-              tags.include?('apbio') && tags.include?('ost-chapter-review') && \
-              tags.include?('review') && (
-                tags.include?('time:short') || tags.include?('time-short')
-            ))) || (!use_old_logic && \
-            tags.include?('type:conceptual') || tags.include?('type:recall') ||
-            tags.include?('type:conceptual-or-recall'))
-
-          # Reading Context-Dependent
-          page.reading_context_pool.content_exercise_ids << exercise.id \
-            if (use_old_logic && tags.include?('os-practice-problems')) ||
-               !use_old_logic
+          # All Exercises
+          page.all_exercises_pool.content_exercise_ids << exercise.id
 
           # Homework Core (Assignment Builder)
           page.homework_core_pool.content_exercise_ids << exercise.id \
-            if (use_old_logic && tags.include?('ost-chapter-review')) ||
-               (!use_old_logic && tags.include?('type:practice'))
+            if (hs_logic && tags.include?('ost-chapter-review')) ||
+               (college_logic && tags.include?('type:practice'))
 
-          # Homework Dynamic
-          page.homework_dynamic_pool.content_exercise_ids << exercise.id \
-            if use_old_logic && ((
-              tags.include?('k12phys') && (
-                tags.include?('os-practice-problems') || (
-                  tags.include?('ost-chapter-review') && (
-                    tags.include?('concept') || \
-                    tags.include?('problem') || \
-                    tags.include?('critical-thinking')
+          # Multiparts can only be in the All Exercises and Homework Core pools
+          next if exercise.is_multipart?
+
+          # Reading Dynamic (Concept Coach)
+          page.reading_dynamic_pool.content_exercise_ids << exercise.id \
+            if (
+              hs_logic && (
+                (
+                  tags.include?('k12phys') && tags.include?('os-practice-concepts')
+                ) || (
+                  tags.include?('apbio') &&
+                  tags.include?('ost-chapter-review') &&
+                  tags.include?('review') && (
+                    tags.include?('time:short') || tags.include?('time-short')
                   )
                 )
               )
             ) || (
-              tags.include?('apbio') && tags.include?('ost-chapter-review') && (
-                tags.include?('critical-thinking') || tags.include?('ap-test-prep') || (
-                  tags.include?('review') && (
-                    tags.include?('time:medium') || tags.include?('time:long') ||
-                    tags.include?('time-medium') || tags.include?('time-long')
+              college_logic && (
+                tags.include?('type:conceptual') ||
+                tags.include?('type:recall') ||
+                tags.include?('type:conceptual-or-recall')
+              )
+            )
+
+          # Reading Context-Dependent
+          page.reading_context_pool.content_exercise_ids << exercise.id \
+            if (hs_logic && tags.include?('os-practice-problems')) || college_logic
+
+          # Homework Dynamic
+          page.homework_dynamic_pool.content_exercise_ids << exercise.id \
+            if (
+              hs_logic && (
+                (
+                  tags.include?('k12phys') && (
+                    tags.include?('os-practice-problems') || (
+                      tags.include?('ost-chapter-review') && (
+                        tags.include?('concept') || \
+                        tags.include?('problem') || \
+                        tags.include?('critical-thinking')
+                      )
+                    )
+                  )
+                ) || (
+                  tags.include?('apbio') && tags.include?('ost-chapter-review') && (
+                    tags.include?('critical-thinking') ||
+                    tags.include?('ap-test-prep') || (
+                      tags.include?('review') && (
+                        tags.include?('time:medium') || tags.include?('time:long') ||
+                        tags.include?('time-medium') || tags.include?('time-long')
+                      )
+                    )
                   )
                 )
               )
-            )) || !use_old_logic && tags.include?('type:practice')
-
-          # Practice Widget
-          page.practice_widget_pool.content_exercise_ids << exercise.id \
-            if use_old_logic ||
-               (!use_old_logic && !exercise.is_multipart? && !exercise.requires_context?)
+            ) || (
+              college_logic && tags.include?('type:practice')
+            )
 
           # Concept Coach
           page.concept_coach_pool.content_exercise_ids << exercise.id \
             if tags.include?('ost-type:concept-coach')
 
-          # All Exercises
-          page.all_exercises_pool.content_exercise_ids << exercise.id
+          # Practice Widget
+          page.practice_widget_pool.content_exercise_ids << exercise.id \
+            unless exercise.requires_context?
         end
 
         [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
