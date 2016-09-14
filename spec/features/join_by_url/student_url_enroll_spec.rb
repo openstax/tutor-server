@@ -95,18 +95,35 @@ RSpec.describe 'Students enrolling via URL' do
 
       end
 
-      context 'when period is archived' do
+      context 'when a period is archived' do
         before {
           AddUserAsPeriodStudent[user: user, period: period1]
           period1.to_model.destroy
         }
 
-        it "redirects to dashboard and displays an error" do
-          visit token_enroll_path(period1.enrollment_code_for_url)
-          expect(current_path).to eq(dashboard_path)
-          expect(page.body).to have_content '"notice":"Your membership in the course is inactive.'
+        context 'and a different period is joined' do
+          before {
+            AddUserAsPeriodStudent[user: user, period: period2]
+          }
+
+          it 'works when student ID is supplied' do
+            visit token_enroll_path(period2.enrollment_code_for_url)
+            expect(page).to have_content('school-issued')
+            fill_in 'enroll_student_id', with: '12345'
+            click_button 'Continue'
+            expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
+            expect(CourseMembership::Models::Enrollment.last.period).to eq period2.to_model
+          end
         end
 
+        context 'and is joined' do
+          it 'redirects to dashboard and displays an error' do
+            visit token_enroll_path(period1.enrollment_code_for_url)
+            expect(current_path).to eq(dashboard_path)
+            expect(page.body).to have_content '"notice":"Your membership in the course is inactive.'
+          end
+
+        end
       end
 
       context 'when already a student of targeted period' do
