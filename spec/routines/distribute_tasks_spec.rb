@@ -55,6 +55,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
     end
 
+    # Note - this isn't 100% guaranteed to fail.  There's still a chance that the forked children will process
+    # distribution in a way that doesn't trigger IsolationConflict exceptions.
+    # If this spec starts to fail in indeterminate ways and can't be fixed it can be removed
     it 'cannot be distributed concurrently' do
       plan = homework_plan
       pids = []
