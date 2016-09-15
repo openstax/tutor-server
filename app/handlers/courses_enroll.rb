@@ -1,11 +1,9 @@
 class CoursesEnroll
   lev_handler
 
-  uses_routine CourseMembership::GetPeriod,             as: :get_period,       translations: { outputs: { type: :verbatim } }
-
-  uses_routine CollectCourseInfo,                       as: :get_course_info,  translations: { outputs: {type: :verbatim  } }
-
-  uses_routine UserIsCourseStudent,                     as: :is_student,       translations: { outputs: {type: :verbatim  } }
+  uses_routine CourseMembership::GetPeriod, as: :get_period,       translations: { outputs: { type: :verbatim } }
+  uses_routine CollectCourseInfo,           as: :get_course_info,  translations: { outputs: { type: :verbatim } }
+  uses_routine UserIsCourseStudent,         as: :is_student,       translations: { outputs: { type: :verbatim } }
 
   protected
 
