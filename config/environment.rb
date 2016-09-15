@@ -26,6 +26,7 @@ require 'xlsx_helper'
 require 'axlsx_modifications'
 require 'default_time_validations'
 require 'json_serialize'
+require 'configurable'
 
 %w(biglearn cnx exercises).each do |oxlib|
   Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }

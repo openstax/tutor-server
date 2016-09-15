@@ -2,16 +2,12 @@
 
 class Rack::Attack
 
-  def self.routes
-    if @routes.nil?
-      Rails.application.reload_routes!
-      @routes = UrlGenerator.new
-    end
-    @routes
-  end
+  Rails.application.reload_routes!
 
-  throttle(routes.api_log_entry_path, limit: 50, period: 1.day) do |req|
-    req.ip if req.path.starts_with?(routes.api_log_entry_path) && req.post?
+  ROUTES = UrlGenerator.new
+
+  throttle(ROUTES.api_log_entry_path, limit: 50, period: 1.day) do |req|
+    req.ip if req.path.starts_with?(ROUTES.api_log_entry_path) && req.post?
   end
 
 end
@@ -37,8 +33,10 @@ class Rack::Attack::Request
   end
 
   def log_throttled!
-    Rails.logger.info "Throttled #{ip} on #{matched_path}. Throttling continues (without further " \
-                      "logging) until the next #{period} second interval."
+    Rails.logger.info do
+      "Throttled #{ip} on #{matched_path}. Throttling continues (without further " \
+      "logging) until the next #{period} second interval."
+    end
   end
 
   protected

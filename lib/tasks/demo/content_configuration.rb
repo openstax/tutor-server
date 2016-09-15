@@ -36,9 +36,9 @@ class Demo::ContentConfiguration
 
   def self.[](name)
     # The directory for the config files can be either set using either
-    # config_directory block (which sets it's value using Thread.current),
+    # config_directory block (which sets it's value using RequestStore.store),
     # the CONFIG environmental variable or the default
-    config_directory = Thread.current[:config_directory] ||
+    config_directory = RequestStore.store[:config_directory] ||
                        ENV['CONFIG'] || DEFAULT_CONFIG_DIR
 
     all_files = Dir[File.join(config_directory, '**/*.yml')]
@@ -108,10 +108,11 @@ class Demo::ContentConfiguration
   end
 
   def self.with_config_directory( directory )
-    prev_config, Thread.current[:config_directory] = Thread.current[:config_directory], directory
+    prev_config = RequestStore.store[:config_directory]
+    RequestStore.store[:config_directory] = directory
     yield self
   ensure
-    Thread.current[:config_directory] = prev_config
+    RequestStore.store[:config_directory] = prev_config
   end
 
   def get_period(id)

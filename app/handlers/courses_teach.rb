@@ -1,4 +1,7 @@
 class CoursesTeach
+
+  class InvalidTeachToken < StandardError; end
+
   lev_handler
 
   uses_routine GetCourseProfile, translations: { outputs: { type: :verbatim } }
@@ -7,6 +10,7 @@ class CoursesTeach
                                        ignored_errors: [:user_is_already_teacher_of_course]
 
   protected
+
   def authorized?; true; end
 
   def handle
@@ -18,15 +22,9 @@ class CoursesTeach
   end
 
   private
+
   def raise_handled_exceptions!
-    raise self.class.handled_exceptions[errors.first.code] if errors.any?
+    raise InvalidTeachToken if errors.any?{ |err| err.code == :profile_not_found }
   end
 
-  def self.handled_exceptions
-    @@handled_exceptions ||= {
-      profile_not_found: InvalidTeachToken
-    }
-  end
 end
-
-class InvalidTeachToken < StandardError; end

@@ -52,13 +52,5 @@ module Wrapper
       end
     end
 
-    def self.with_strategy_class(strategy_class, &block)
-      original_strategy_class = self.strategy_class
-      self.strategy_class = strategy_class
-      result = yield
-      self.strategy_class = original_strategy_class
-      result
-    end
-
   end
 end
