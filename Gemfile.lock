@@ -490,6 +490,8 @@ GEM
     pkg-config (1.1.7)
     polyamorous (1.1.0)
       activerecord (>= 3.0)
+    postgresql_cursor (0.6.1)
+      activerecord (>= 3.1.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -804,6 +806,7 @@ DEPENDENCIES
   paranoia (~> 2.1.3)
   pg
   pilfer (~> 1.0.0)
+  postgresql_cursor
   pry
   pry-nav
   pry-rails

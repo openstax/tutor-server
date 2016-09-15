@@ -180,6 +180,9 @@ gem 'oj_mimic_json'
 # Per-request global storage
 gem 'request_store'
 
+# Use PostgreSQL cursors with ActiveRecord
+gem 'postgresql_cursor'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

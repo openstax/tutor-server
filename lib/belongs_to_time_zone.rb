@@ -17,9 +17,8 @@ module BelongsToTimeZone
             if options[:default].present?
               # Use `before_save` and `create` instead of `before_validations` and `new`
               # because the former causes a duplicate `save` call on the record with the
-              # belongs_to call, which erases dirty info.  Don't check presence validation
+              # belongs_to call, which erases dirty info. Don't check presence validation
               # if we know we are making a default time zone.
-
               before_validation { self.time_zone ||= ::TimeZone.create(name: options[:default]) }
             end
 
