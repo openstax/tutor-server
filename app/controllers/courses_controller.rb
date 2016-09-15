@@ -29,10 +29,12 @@ class CoursesController < ApplicationController
 
   def handle_enrollment_failures(error_code)
     case error_code
+    when :period_is_archived
+      render :archived_enrollment
     when :user_is_already_a_course_student
       send_to_student_dashboard(notice: "You are already enrolled in this course.")
-    when :user_is_an_inactive_student
-      send_to_dashboard(notice: "Your membership in the course is inactive.  Please contact the instructor for assistance.")
+    when :user_is_dropped
+      render :dropped_student
     when :enrollment_code_not_found
       enrollment_code_not_found
     when :taken

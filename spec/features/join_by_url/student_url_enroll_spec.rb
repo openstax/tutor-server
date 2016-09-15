@@ -33,7 +33,7 @@ RSpec.describe 'Students enrolling via URL' do
           expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
           expect(CourseMembership::Models::Enrollment.last.period).to eq period1.to_model
           expect(current_path).to eq(student_course_dashboard_path(course))
-          expect(page.body).to match /notice\":\"Enrollment successful! It may take/
+          expect(page.body).to match(/notice\":\"Enrollment successful! It may take/)
           expect(CourseMembership::Models::Student.last.student_identifier).to eq '12345'
         end
 
@@ -62,7 +62,6 @@ RSpec.describe 'Students enrolling via URL' do
           expect(page).to have_content 'Enter your school-issued'
           expect(UserIsCourseStudent[course: course, user: user]).to be_falsy
         end
-
       end
 
       context 'when a student of a different course that uses same ecosystem' do
@@ -89,8 +88,7 @@ RSpec.describe 'Students enrolling via URL' do
 
         it "redirects to dashboard and displays an error" do
           visit token_enroll_path(period1.enrollment_code_for_url)
-          expect(current_path).to eq(dashboard_path)
-          expect(page.body).to have_content '"notice":"Your membership in the course is inactive.'
+          expect(page.body).to have_content 'dropped'
         end
 
       end
@@ -102,10 +100,6 @@ RSpec.describe 'Students enrolling via URL' do
         }
 
         context 'and a different period is joined' do
-          before {
-            AddUserAsPeriodStudent[user: user, period: period2]
-          }
-
           it 'works when student ID is supplied' do
             visit token_enroll_path(period2.enrollment_code_for_url)
             expect(page).to have_content('school-issued')
@@ -119,11 +113,11 @@ RSpec.describe 'Students enrolling via URL' do
         context 'and is joined' do
           it 'redirects to dashboard and displays an error' do
             visit token_enroll_path(period1.enrollment_code_for_url)
-            expect(current_path).to eq(dashboard_path)
-            expect(page.body).to have_content '"notice":"Your membership in the course is inactive.'
+            expect(page.body).to have_content 'inactive'
           end
-
         end
+
+
       end
 
       context 'when already a student of targeted period' do
