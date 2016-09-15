@@ -42,7 +42,7 @@ describe AddUserAsPeriodStudent, type: :routine do
       it "has inactive student error" do
         result = AddUserAsPeriodStudent.call(user: user, period: period)
         expect(result.errors).to_not be_empty
-        expect(result.errors.map(&:code).first).to be :user_is_an_inactive_student
+        expect(result.errors.map(&:code).first).to be :user_is_already_a_course_student
       end
     end
 
@@ -54,7 +54,7 @@ describe AddUserAsPeriodStudent, type: :routine do
       it "has inactive student error" do
         result = AddUserAsPeriodStudent.call(user: user, period: period)
         expect(result.errors).to_not be_empty
-        expect(result.errors.map(&:code).first).to be :user_is_an_inactive_student
+        expect(result.errors.map(&:code).first).to be :period_is_archived
       end
     end
   end
