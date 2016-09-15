@@ -2,8 +2,7 @@ class Tasks::AddRelatedExerciseAfterStep
 
   lev_routine
 
-  uses_routine TaskExercise, as: :task_exercise,
-                             translations: { outputs: { type: :verbatim } }
+  uses_routine TaskExercise, as: :task_exercise, translations: { outputs: { type: :verbatim } }
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
   uses_routine GetHistory, as: :get_history
   uses_routine FilterExcludedExercises, as: :filter
@@ -12,7 +11,8 @@ class Tasks::AddRelatedExerciseAfterStep
   protected
 
   def exec(task_step:)
-    # This lock is here to prevent double clicks on the Try Another/Try One buttons
+    # These locks are here to prevent double clicks on the Try Another/Try One buttons
+    task_step.task.lock!
     fatal_error(code: :related_exercise_not_available) unless task_step.lock!.can_be_recovered?
 
     related_exercise = get_related_exercise_for(task_step: task_step)

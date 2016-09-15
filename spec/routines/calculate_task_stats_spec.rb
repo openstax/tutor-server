@@ -23,6 +23,11 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     end
   end
 
+  # Workaround for PostgreSQL bug where the task records
+  # stop existing in SELECT FOR UPDATE queries (but not in regular SELECTs)
+  # after the transaction rollback that happens in between spec examples
+  before(:each) { @task_plan.tasks.each(&:touch) }
+
   context "with an unworked plan" do
 
     let(:stats) { described_class.call(tasks: @task_plan.tasks).outputs.stats }
@@ -47,7 +52,8 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     it 'does not break if an exercise has more than one tag' do
       cnx_page = OpenStax::Cnx::V1::Page.new(hash: {
         'id' => 'e26d1433-f8e4-41db-a757-0e061d6d2737',
-        'title' => 'Prokaryotic Cells'})
+        'title' => 'Prokaryotic Cells'
+      })
       page = Content::Routines::ImportPage.call(
         cnx_page: cnx_page, chapter: FactoryGirl.create(:content_chapter),
         book_location: [1, 1]
