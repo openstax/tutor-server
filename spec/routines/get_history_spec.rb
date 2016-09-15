@@ -90,11 +90,28 @@ describe GetHistory, type: :routine, speed: :slow do
     correct_tasks.map{ |task| Set.new task.tasked_exercises.map{ |te| te.exercise.number } }
   end
 
+  context "when there are more than #{GetHistory::TASK_BATCH_SIZE} tasks" do
+    before do
+      tasks = GetHistory::TASK_BATCH_SIZE.times.map do |index|
+        task = Tasks::Models::Task.new(title: "Task #{index + 1}", task_type: :extra)
+        task.taskings = [Tasks::Models::Tasking.new(task: task, role: @role)]
+        task
+      end
+
+      Tasks::Models::Task.import tasks, recursive: true, validate: false
+    end
+
+    it 'returns the correct number of tasks' do
+      history = described_class.call(roles: @role, type: :all).outputs.history[@role]
+      expect(history.total_count).to eq GetHistory::TASK_BATCH_SIZE + 6
+    end
+  end
+
   context 'when creating a new reading task' do
     context 'when all tasks have dynamic reading exercises' do
       let(:correct_tasks) { [@reading_task_3, @reading_task_2, @reading_task_1] }
 
-      it 'returns the correct history' do
+      it 'returns all reading tasks in history' do
         history = described_class.call(roles: @role, type: :reading).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
@@ -113,7 +130,7 @@ describe GetHistory, type: :routine, speed: :slow do
         end
       end
 
-      it 'does not return tasks with no dynamic reading exercises' do
+      it 'does only reading tasks with dynamic reading exercises' do
         history = described_class.call(roles: @role, type: :reading).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
@@ -127,7 +144,7 @@ describe GetHistory, type: :routine, speed: :slow do
   context 'when creating a new homework task' do
     let(:correct_tasks) { [@homework_task_3, @homework_task_2, @homework_task_1] }
 
-    it 'returns the correct history' do
+    it 'returns all homework tasks in history' do
         history = described_class.call(roles: @role, type: :homework).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
@@ -142,7 +159,7 @@ describe GetHistory, type: :routine, speed: :slow do
       let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
                              @reading_task_2, @homework_task_1, @reading_task_1] }
 
-      it 'returns the correct history' do
+      it 'returns all tasks in history' do
         history = described_class.call(roles: @role, type: :all).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
@@ -178,7 +195,7 @@ describe GetHistory, type: :routine, speed: :slow do
       let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
                              @reading_task_2, @homework_task_1, @reading_task_1] }
 
-      it 'returns the correct history' do
+      it 'returns all tasks in history' do
         history = described_class.call(roles: @role, type: :all).outputs.history[@role]
         expect(history.total_count).to eq correct_total_count
         expect(history.ecosystem_ids).to eq correct_ecosystem_ids
