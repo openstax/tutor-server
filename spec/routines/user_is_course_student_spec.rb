@@ -36,23 +36,49 @@ describe UserIsCourseStudent, type: :routine do
       expect(result.outputs.user_is_course_teacher).to be_falsey
     end
   end
+
   context "when the user is a student for the given course" do
-    it "returns true" do
-      ## Make the target user a student for the target course
-      target_user = FactoryGirl.create(:user)
+    let(:target_user){ FactoryGirl.create(:user) }
 
-      target_student_role = Entity::Role.create!
+    let(:target_student_role) { Entity::Role.create! }
 
-      target_course       = Entity::Course.create!
-      target_period       = CreatePeriod[course: target_course]
+    let(:target_course){  Entity::Course.create! }
+    let(:target_period){ CreatePeriod[course: target_course] }
 
+    before {
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       CourseMembership::AddStudent.call(period: target_period, role: target_student_role)
+    }
 
-      ## Perform test
+    it "returns true" do
       result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
       expect(result.outputs.user_is_course_student).to be_truthy
     end
+    context "and period is archived" do
+      before {
+        target_period.to_model.destroy
+      }
+      it "returns false" do
+        result = UserIsCourseStudent.call(user: target_user, course: target_course)
+        expect(result.errors).to be_empty
+        expect(result.outputs.user_is_course_student).to be_falsey
+      end
+    end
+
+    context "and is also a member of a non-archived period" do
+      let(:new_period){ CreatePeriod[course: target_course] }
+      let(:new_student_role) { Entity::Role.create! }
+      before {
+        Role::AddUserRole.call(user: target_user, role: new_student_role)
+        CourseMembership::AddStudent.call(period: new_period, role: new_student_role)
+      }
+      it "returns true" do
+        result = UserIsCourseStudent.call(user: target_user, course: target_course)
+        expect(result.errors).to be_empty
+        expect(result.outputs.user_is_course_student).to be_truthy
+      end
+    end
+
   end
 end
