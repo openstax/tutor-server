@@ -4,7 +4,7 @@ class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
 
   belongs_to_time_zone :opens_at, :due_at, suffix: :ntz
 
-  belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasking_plans
+  belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasking_plans, touch: true
   belongs_to :target, -> { respond_to?(:with_deleted) ? with_deleted : all }, polymorphic: true
 
   validates :target, presence: true
