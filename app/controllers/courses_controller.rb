@@ -1,5 +1,7 @@
 class CoursesController < ApplicationController
 
+  skip_before_filter :authenticate_user!, if: :period_is_archived?
+
   def teach
     handle_with(CoursesTeach, complete: -> { send_to_teacher_dashboard })
   end
@@ -26,6 +28,12 @@ class CoursesController < ApplicationController
   end
 
   private
+
+  def period_is_archived?
+    return false if params[:enroll_token].blank?
+    period = CourseMembership::GetPeriod[ enrollment_code: params[:enroll_token] ]
+    period.nil? || period.deleted?
+  end
 
   def handle_enrollment_failures(error_code)
     case error_code

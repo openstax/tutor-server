@@ -14,6 +14,13 @@ RSpec.describe 'Students enrolling via URL' do
       visit token_enroll_path(period1.enrollment_code_for_url)
       expect(current_path).to eq(openstax_accounts.dev_accounts_path)
     end
+    context 'when period is archived' do
+      before { period1.to_model.destroy }
+      it 'displayes error page' do
+        visit token_enroll_path(period1.enrollment_code_for_url)
+        expect(page.body).to have_content 'inactive'
+      end
+    end
   end
 
   context 'authenticated' do
