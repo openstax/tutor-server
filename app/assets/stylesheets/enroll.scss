@@ -60,3 +60,27 @@
     margin-top: 15px;
   }
 }
+
+.enrollment-failure {
+  .explain {
+    font-size: 25px;
+    max-width: 600px;
+    margin: 30px auto;
+  }
+  .continue {
+    text-align: center;
+    font-size: 16px;
+  }
+  &.archived {
+    .continue .btn {
+      background-color: $btn-primary-bg;
+      color: $btn-primary-color;
+    }
+  }
+  &.dropped {
+    .continue .btn {
+      background-color: $btn-success-bg;
+      color: $btn-success-color;
+    }
+  }
+}

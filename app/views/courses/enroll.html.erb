@@ -1,8 +1,9 @@
-<% course = @handler_result.outputs.courses.first %>
-<% period = @handler_result.outputs.period %>
-
 <div id="enroll" class="well">
-  <h2>You are joining<br/><%= course.name %> (<%= period.name %>)<br/><%= "Instructor".pluralize(course.teacher_names.count) %>: <%= course.teacher_names.to_sentence %></h2>
+  <h2>
+    You are joining
+    <br/>
+    <%= render partial: 'course_identifier_sentence', locals: @handler_result.outputs.to_hash.symbolize_keys.slice(:courses, :period) %>
+  </h2>
   <hr/>
 
   <%= lev_form_for :enroll, url: confirm_token_enroll_path, method: 'post', html: {class: 'form-inline'} do |f| %>

@@ -19,6 +19,7 @@ RSpec.describe 'Students enrolling via URL' do
       it 'displayes error page' do
         visit token_enroll_path(period1.enrollment_code_for_url)
         expect(page.body).to have_content 'inactive'
+        expect(find_link('Sign in')[:href]).to eq(openstax_accounts.login_path)
       end
     end
   end
@@ -92,10 +93,27 @@ RSpec.describe 'Students enrolling via URL' do
 
       context 'when dropped' do
         before { AddUserAsPeriodStudent.call(user: user, period: period1).outputs.student.destroy }
-
-        it "redirects to dashboard and displays an error" do
+        it "displays a help page" do
           visit token_enroll_path(period1.enrollment_code_for_url)
-          expect(page.body).to have_content 'dropped'
+          expect(page.body).to have_content 'you have been dropped'
+        end
+        context 'when user has no other course' do
+          it "links to account profile" do
+            visit token_enroll_path(period1.enrollment_code_for_url)
+            expect(find_link('Continue')[:href]).to eq(openstax_accounts.profile_path)
+          end
+        end
+        context 'when user belongs to other courses' do
+          before(:each) {
+              AddUserAsPeriodStudent[
+                user: user, student_identifier: '12345',
+                period: CreatePeriod[course: CreateCourse[name: 'New Course'], name: 'New Period']
+              ]
+          }
+          it "links to dashboard" do
+            visit token_enroll_path(period1.enrollment_code_for_url)
+            expect(find_link('Continue')[:href]).to eq(dashboard_path)
+          end
         end
 
       end
@@ -118,13 +136,29 @@ RSpec.describe 'Students enrolling via URL' do
         end
 
         context 'and is joined' do
-          it 'redirects to dashboard and displays an error' do
+          it "displays a help page" do
             visit token_enroll_path(period1.enrollment_code_for_url)
-            expect(page.body).to have_content 'inactive'
+            expect(page.body).to have_content 'past course or one that is inactive'
+          end
+
+          it 'links to profile' do
+            visit token_enroll_path(period1.enrollment_code_for_url)
+            expect(find_link('Continue')[:href]).to eq(openstax_accounts.profile_path)
+          end
+
+          context 'when user belongs to other courses' do
+            before(:each) {
+              AddUserAsPeriodStudent[
+                user: user, student_identifier: '12345',
+                period: CreatePeriod[course: CreateCourse[name: 'New Course'], name: 'New Period']
+              ]
+            }
+            it "links to dashboard" do
+              visit token_enroll_path(period1.enrollment_code_for_url)
+              expect(find_link('Continue')[:href]).to eq(dashboard_path)
+            end
           end
         end
-
-
       end
 
       context 'when already a student of targeted period' do

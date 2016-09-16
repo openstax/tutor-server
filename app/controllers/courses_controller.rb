@@ -59,12 +59,12 @@ class CoursesController < ApplicationController
 
   def send_to_student_dashboard(notice: nil)
     course = @handler_result.outputs.course
-    redirect_to student_course_dashboard_path(course), webview_notice: notice
+    redirect_to student_course_dashboard_path(course.id), webview_notice: notice
   end
 
   def send_to_teacher_dashboard(notice: nil)
     course = @handler_result.outputs.course
-    redirect_to course_dashboard_path(course), notice: notice
+    redirect_to course_dashboard_path(course.id), notice: notice
   end
 
   def enrollment_code_not_found
