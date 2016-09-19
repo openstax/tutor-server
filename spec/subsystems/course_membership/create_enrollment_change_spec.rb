@@ -47,6 +47,20 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
 
       let(:enrollment) { role.student.latest_enrollment }
 
+      context 'when other period is archived' do
+          before{ period_2.to_model.destroy }
+
+          it 'does not mention previous period' do
+              result = nil
+              expect{ result = described_class.call(args) }
+                  .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+              expect(result.errors).to be_empty
+              expect(result.outputs.enrollment_change.from_period).to be_nil
+              expect(result.outputs.enrollment_change.status).to eq :pending
+              expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
+          end
+      end
+
       it 'creates an EnrollmentChange with a from_period' do
         result = nil
         expect{ result = described_class.call(args) }
