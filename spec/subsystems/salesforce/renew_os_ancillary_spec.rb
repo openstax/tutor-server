@@ -31,7 +31,8 @@ RSpec.describe Salesforce::RenewOsAncillary do
     expect(Salesforce::Remote::Opportunity).to receive(:where).with({
       contact_id: "123",
       book_name: "A & P",
-      term_year: "2015 - 16 Fall"
+      term_year: "2015 - 16 Fall",
+      new: true
     })
 
     described_class.call(based_on: based_on, renew_for_term_year: term_year) rescue StandardError
