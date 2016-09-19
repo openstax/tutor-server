@@ -37,4 +37,12 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
           'last_name'  => teacher_role.last_name
         }])
   end
+
+  it 'hides deleted from periods' do
+    deleted_period = ::CreatePeriod[course: course]
+    AddUserAsPeriodStudent[user: user, period: deleted_period]
+    deleted_period.to_model.destroy
+    expect(representation['from']).to be_nil
+  end
+
 end

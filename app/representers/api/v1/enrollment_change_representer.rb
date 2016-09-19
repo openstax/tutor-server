@@ -18,6 +18,7 @@ module Api::V1
     property :from_period,
              as: :from,
              extend: Api::V1::Enrollment::PeriodWithCourseRepresenter,
+             if: ->(*) { from_period.try(:deleted?) == false },
              readable: true,
              writeable: false
 
