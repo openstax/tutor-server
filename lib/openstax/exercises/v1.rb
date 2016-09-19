@@ -26,17 +26,13 @@ module OpenStax::Exercises::V1
       exercises_hash
     end
 
-    def new_configuration
-      Configuration.new
-    end
-
     # Accessor for the fake client, which has some extra fake methods on it
     def fake_client
-      FakeClient.instance
+      OpenStax::Exercises::V1::FakeClient.instance
     end
 
     def real_client
-      RealClient.new(configuration)
+      OpenStax::Exercises::V1::RealClient.new(configuration)
     end
 
     def use_real_client
@@ -64,7 +60,7 @@ module OpenStax::Exercises::V1
     def new_client
       configuration.stub ? fake_client : real_client
     rescue StandardError => error
-      raise ClientError.new("initialization failure", error)
+      raise OpenStax::Exercises::ClientError.new("initialization failure", error)
     end
 
   end
