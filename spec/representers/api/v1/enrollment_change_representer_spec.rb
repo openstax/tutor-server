@@ -37,4 +37,14 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
           'last_name'  => teacher_role.last_name
         }])
   end
+  context "when other section is archived" do
+    # If a "from" period is included in the output, the FE will display it as a transfer
+    # If the previous period is archived, then the enrollment should be considered a fresh join
+    it 'is not included as a "from" source' do
+      deleted_period = ::CreatePeriod[course: course]
+      AddUserAsPeriodStudent[user: user, period: deleted_period]
+      deleted_period.to_model.destroy
+      expect(representation['from']).to be_nil
+    end
+  end
 end

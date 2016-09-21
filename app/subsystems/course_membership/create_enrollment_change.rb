@@ -5,7 +5,7 @@ class CourseMembership::CreateEnrollmentChange
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   def exec(user:, period:, book_uuid: nil, requires_enrollee_approval: true)
-    student_roles = run(:get_roles, user, 'student').outputs.roles
+    student_roles = run(:get_roles, user, 'student').outputs.roles.reject{ |r| r.student.period.deleted? }
 
     course = period.course
 
