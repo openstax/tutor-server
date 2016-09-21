@@ -23,7 +23,7 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     task_step = tasked_reading.task_step
     task = task_step.task
 
-    expect(task_step).to receive(:complete)
+    expect(task_step).to receive(:complete).and_call_original
     expect(task_step).to receive(:save)
     allow(task_step).to receive(:task).and_return(task)
     expect(task).to receive(:handle_task_step_completion!)
@@ -35,6 +35,7 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
 
   it 'instructs the associated Tasked to handle completion-related activities' do
     # lock! calls reload, which reloads the instances of task_step's associations
+    # this is why we use expect_any_instance_of
     expect_any_instance_of(tasked_exercise.class).to receive(:handle_task_step_completion!)
     result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
     expect(result.errors).to be_empty

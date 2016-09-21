@@ -2,8 +2,7 @@ class Tasks::AddRelatedExerciseAfterStep
 
   lev_routine
 
-  uses_routine TaskExercise, as: :task_exercise,
-                             translations: { outputs: { type: :verbatim } }
+  uses_routine TaskExercise, as: :task_exercise, translations: { outputs: { type: :verbatim } }
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
   uses_routine GetHistory, as: :get_history
   uses_routine FilterExcludedExercises, as: :filter

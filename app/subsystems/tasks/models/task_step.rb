@@ -25,6 +25,12 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
+  def lock!(*args)
+    task.try! :lock!, *args
+
+    super
+  end
+
   def exercise?
     tasked_type == Tasks::Models::TaskedExercise.name
   end
