@@ -101,5 +101,64 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       # Trigger the data export
       capture_stdout{ described_class.call }
     end
+
+
+  end
+
+  context "data to export can be filtered" do
+    before(:each) do
+      2.times {FactoryGirl.create :tasks_task, task_type: :concept_coach, step_types: [:tasks_tasked_reading], num_random_taskings: 1}
+      FactoryGirl.create :tasks_task, task_type: :reading, step_types: [:tasks_tasked_reading], num_random_taskings: 1
+    end
+
+    specify "by date range" do
+      date_range = (Date.today - 10)..(Date.tomorrow)
+
+      Timecop.freeze(Date.today - 30) {
+        FactoryGirl.create :tasks_task, step_types: [:tasks_tasked_reading], num_random_taskings: 1
+      }
+
+      expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
+        filepath = routine.send :filepath
+        rows = CSV.read(filepath)
+
+        expect(Tasks::Models::TaskStep.count).to eq 4
+        expect(rows.count - 1).to eq(3)
+      end
+
+      capture_stdout{ described_class.call(date_range: date_range) }
+    end
+
+    context "by application" do
+      specify "only Concept Coach" do
+        expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
+          filepath = routine.send :filepath
+          expect(File.exists?(filepath)).to be true
+          expect(filepath.ends_with? '.csv').to be true
+
+          rows = CSV.read(filepath)
+
+          expect(Tasks::Models::TaskStep.count).to eq 3
+          expect(rows.count - 1).to eq(2)
+        end
+
+        capture_stdout{ described_class.call(include_concept_coach: true) }
+      end
+
+      specify "only Tutor" do
+        expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
+          filepath = routine.send :filepath
+          expect(File.exists?(filepath)).to be true
+          expect(filepath.ends_with? '.csv').to be true
+
+          rows = CSV.read(filepath)
+
+          expect(Tasks::Models::TaskStep.count).to eq 3
+          expect(rows.count - 1).to eq(1)
+        end
+
+        capture_stdout{ described_class.call(include_tutor: true) }
+      end
+    end
   end
 end

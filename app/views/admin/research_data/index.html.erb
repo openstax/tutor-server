@@ -5,4 +5,21 @@
 <p>Use the button below to trigger an export of research data into the OwnCloud Research Data
    folder. The export will take several minutes, so check back later.</p>
 
-<%= button_to "Export Data", admin_research_data_path, class: 'btn btn-primary' %>
+<%= lev_form_for :export_research_data, url: admin_research_data_path, method: :post do |f| %>
+    <div>
+      <%= label_tag :from %>
+      <%= f.text_field :from, class: "datepicker" %>
+
+      <%= label_tag :to %>
+      <%= f.text_field :to, class: "datepicker" %>
+
+      <div>
+        <%= label_tag "Include Tutor" %>
+        <%= f.check_box :tutor, {checked: true}, "true", "false" %>
+        <%= label_tag "Include Concept Coach" %>
+        <%= f.check_box :concept_coach, {checked: true}, "true", "false" %>
+      </div>
+
+    </div>
+    <%= submit_tag "Export Data", class: "btn btn-primary" %>
+  <% end %>
