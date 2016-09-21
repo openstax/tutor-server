@@ -16,10 +16,8 @@ Settings::Db.store.defaults[:biglearn_client] =
   case Rails.env
   when "test"
     :fake
-  when "development"
+  when "development", "production"
     :local_query_with_fake
-  when "production"
-    :local_query_with_real
   end
 
 redis_secrets = Rails.application.secrets['redis']
