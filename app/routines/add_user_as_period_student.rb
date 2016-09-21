@@ -18,6 +18,9 @@ class AddUserAsPeriodStudent
 
       fatal_error(code: :user_is_already_a_course_student, offending_inputs: [user, course]) \
         if result.outputs.user_is_course_student
+
+      fatal_error(code: :period_is_archived, offending_inputs: [user, course]) \
+        if period.deleted?
     end
 
     run(Role::CreateUserRole, user, :student)

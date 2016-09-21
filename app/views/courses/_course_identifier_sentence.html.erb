@@ -1,0 +1,4 @@
+<% teacher_names = courses.find{|c| c['id'] == period.course.id}['teacher_names'] %>
+<%= period.course.name %> (<%= period.name %>)
+<br />
+<%= "Instructor".pluralize(teacher_names.count) %>: <%= teacher_names.to_sentence %>

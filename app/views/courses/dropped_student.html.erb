@@ -1,0 +1,18 @@
+<div class="enrollment-failure dropped">
+  <p class="explain">
+
+    Our records show you have been dropped from
+    <br />
+    <%= render partial: 'course_identifier_sentence', locals: @handler_result.outputs.to_hash.symbolize_keys.slice(:courses, :period) %>
+    <br />
+    Please contact the instructor of the course you would like to enroll in for assistance.
+  </p>
+
+  <p class="continue">
+    <% if @handler_result.outputs.current_courses.any? %>
+      <%= link_to 'Continue', dashboard_path, class: 'btn' %> to view your current courses
+    <% else %>
+      <%= link_to 'Continue', openstax_accounts.profile_path, class: 'btn' %> to your account info
+    <% end %>
+  </p>
+</div>
