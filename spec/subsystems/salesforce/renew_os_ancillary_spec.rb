@@ -26,15 +26,17 @@ RSpec.describe Salesforce::RenewOsAncillary do
     term_year = Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
 
     # Cause early termination
-    allow(Salesforce::Remote::Opportunity).to receive(:where) { [] }
-
     expect(Salesforce::Remote::Opportunity).to receive(:where).with({
       contact_id: "123",
       book_name: "A & P",
-      term_year: "2015 - 16 Fall"
-    })
+      term_year: "2015 - 16 Fall",
+      new: true
+    }).and_return([])
 
-    described_class.call(based_on: based_on, renew_for_term_year: term_year) rescue StandardError
+    begin
+      described_class.call(based_on: based_on, renew_for_term_year: term_year)
+    rescue Salesforce::OsAncillaryRenewalError
+    end
   end
 
   it "reuses an existing OSA if available" do

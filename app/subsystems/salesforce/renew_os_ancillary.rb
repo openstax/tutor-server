@@ -11,7 +11,8 @@ module Salesforce
       target_opportunity_criteria = {
         contact_id: based_on_opportunity.contact_id,
         book_name: based_on_opportunity.book_name,
-        term_year: renew_for_term_year.to_s
+        term_year: renew_for_term_year.to_s,
+        new: true
       }
 
       target_opportunities = Salesforce::Remote::Opportunity.where(target_opportunity_criteria).to_a
