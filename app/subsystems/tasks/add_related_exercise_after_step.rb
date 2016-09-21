@@ -11,8 +11,7 @@ class Tasks::AddRelatedExerciseAfterStep
   protected
 
   def exec(task_step:)
-    # These locks are here to prevent double clicks on the Try Another/Try One buttons
-    task_step.task.lock!
+    # This lock is here to prevent double clicks on the Try Another/Try One buttons
     fatal_error(code: :related_exercise_not_available) unless task_step.lock!.can_be_recovered?
 
     related_exercise = get_related_exercise_for(task_step: task_step)

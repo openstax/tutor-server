@@ -6,7 +6,6 @@ class MarkTaskStepCompleted
 
   def exec(task_step:, completion_time: Time.current)
     # Pessimistic locking to prevent race conditions with the update logic
-    task_step.task.lock!
     task_step.lock!
 
     # The task_step save causes the task to be updated (touched), as required for the lock to work
