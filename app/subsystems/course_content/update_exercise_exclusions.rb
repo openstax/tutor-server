@@ -40,26 +40,11 @@ class CourseContent::UpdateExerciseExclusions
       exercise_representation
     end
 
-    # Create a new Biglearn excluded pool for the course
-    excluded_exercise_numbers = CourseContent::Models::ExcludedExercise
-                                  .where(course_profile_course_id: course.id)
-                                  .pluck(:exercise_number)
-    exercises_base_url = Addressable::URI.parse(OpenStax::Exercises::V1.server_url)
-    exercises_base_url.scheme = nil
-    exercises_base_url.path = 'exercises'
-    excluded_exercise_question_ids = excluded_exercise_numbers.map do |number|
-      "#{exercises_base_url}/#{number}"
-    end
-    bl_excluded_exercises = excluded_exercise_question_ids.map do |question_id|
-      # version 1 is the default according to the Biglearn API docs...
-      # what we really want here is to exclude all versions
-      OpenStax::Biglearn::V1::Exercise.new(question_id: question_id, version: 1, tags: [])
-    end
-    bl_excluded_pool = OpenStax::Biglearn::V1::Pool.new(exercises: bl_excluded_exercises)
-    bl_excluded_pool_with_uuid = OpenStax::Biglearn::V1.add_pools([bl_excluded_pool]).first
+    # Send the exercise exclusions to Biglearn
+    # TODO: API call to send the exclusions
 
-    # This update ensures that transactions trying to lock the same course will retry
-    course.update_attribute(:biglearn_excluded_pool_uuid, bl_excluded_pool_with_uuid.uuid)
+    # This touch ensures that transactions trying to lock the same course profile will retry
+    course.profile.touch
 
   end
 

@@ -32,33 +32,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1] }
 
     before(:each) do
-      outs = Content::Routines::PopulateExercisePools.call(book: page.book, save: false).outputs
-      chapters = outs.chapters
-      pages = outs.pages
-      pools = outs.pools
+      outs = Content::Routines::PopulateExercisePools.call(book: page.book).outputs
 
-      biglearn_exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5].map do |ex|
-        OpenStax::Biglearn::V1::Exercise.new(
-          question_id: ex.number.to_s,
-          version: ex.version,
-          tags: ex.tags.map(&:value)
-        )
-      end
-      OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
-
-      biglearn_pools = pools.map do |pool|
-        question_ids = pool.exercises.map { |ex| ex.number.to_s }
-        exercises = biglearn_exercises.select{ |ex| question_ids.include?(ex.question_id) }
-        OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
-      end
-      biglearn_pools_with_uuids = OpenStax::Biglearn::V1.add_pools(biglearn_pools)
-      pools.each_with_index do |pool, ii|
-        pool.uuid = biglearn_pools_with_uuids[ii].uuid
-      end
-
-      Content::Models::Pool.import pools, validate: false
-      pages.each{ |page| page.save! }
-      chapters.each{ |chapter| chapter.save! }
+      OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
     end
 
     it 'returns the practice task data' do
@@ -104,7 +80,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it "returns error when no exercises can scrounged" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
 
-      expect(OpenStax::Biglearn::V1).to(
+      expect(OpenStax::Biglearn::Api).to(
         receive(:get_projection_exercises).once { [] }
       )
 

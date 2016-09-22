@@ -25,7 +25,7 @@ RSpec.describe ResetPracticeWidget, type: :routine do
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
     ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-    allow(OpenStax::Biglearn::V1).to receive(:get_projection_exercises) { ['dummy_id'] }
+    allow(OpenStax::Biglearn::Api).to receive(:get_projection_exercises) { ['dummy_id'] }
     result = described_class.call(role: role, exercise_source: :biglearn, page_ids: [page.id])
     expect(result.errors.first.code).to eq :missing_local_exercises
   end

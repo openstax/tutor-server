@@ -27,7 +27,7 @@ RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
 
   context 'success' do
     it 'gets exercises from Biglearn then translates them to local exercises by number' do
-      expect(OpenStax::Biglearn::V1).to(
+      expect(OpenStax::Biglearn::Api).to(
         receive(:get_projection_exercises).once { exercises.map(&:url) }
       )
       expect(ExceptionNotifier).not_to receive(:notify_exception)
@@ -43,9 +43,9 @@ RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
       user = FactoryGirl.create(:user)
       student_role = AddUserAsPeriodStudent[user: user, period: period]
 
-      expect(OpenStax::Biglearn::V1).to receive(:get_projection_exercises).once do |args|
+      expect(OpenStax::Biglearn::Api).to receive(:get_projection_exercises).once do |args|
         excluded_pools = args[:pool_exclusions].map{ |pool_exclusion| pool_exclusion[:pool] }
-        expect(excluded_pools).to include(a_kind_of(OpenStax::Biglearn::V1::Pool))
+        expect(excluded_pools).to include(a_kind_of(OpenStax::Biglearn::Api::Pool))
         expect(excluded_pools.map(&:uuid)).to include(course.biglearn_excluded_pool_uuid)
         []
       end
@@ -57,7 +57,7 @@ RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
 
   context 'failure' do
     it 'retries the request a few times then gets the exercises locally' do
-      expect(OpenStax::Biglearn::V1).to(
+      expect(OpenStax::Biglearn::Api).to(
         receive(:get_projection_exercises)
           .exactly(GetEcosystemExercisesFromBiglearn::MAX_ATTEMPTS).times do
           raise OAuth2::Error, OpenStruct.new(status: 502)
@@ -70,7 +70,7 @@ RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
     end
 
     it 'logs a warning if Biglearn returns less exercises than requested' do
-      expect(OpenStax::Biglearn::V1).to(
+      expect(OpenStax::Biglearn::Api).to(
         receive(:get_projection_exercises).once { exercises.first(2).map(&:url) }
       )
 

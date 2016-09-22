@@ -1,12 +1,10 @@
-require_relative './v1/configuration'
-require_relative './v1/pool'
-require_relative './v1/exercise'
-require_relative './v1/fake_client'
-require_relative './v1/real_client'
-require_relative './v1/local_clue'
-require_relative './v1/local_query_client'
+require_relative './api/configuration'
+require_relative './api/fake_client'
+require_relative './api/real_client'
+require_relative './api/local_clue'
+require_relative './api/local_query_client'
 
-module OpenStax::Biglearn::V1
+module OpenStax::Biglearn::Api
 
   extend Configurable
   extend Configurable::ClientMethods
@@ -18,48 +16,64 @@ module OpenStax::Biglearn::V1
     # API Wrappers
     #
 
-    # Adds the given array of OpenStax::Biglearn::V1::Exercise to Biglearn
-    def add_exercises(exercises)
-      client.add_exercises(exercises)
+    # Adds the given Content::Ecosystem to Biglearn
+    def create_ecosystem(ecosystem:)
+      client.create_ecosystem(ecosystem: ecosystem)
     end
 
-    # Adds the given array of OpenStax::Biglearn::V1::Pool to Biglearn
-    def add_pools(pools)
-      uuids = client.add_pools(pools)
-      pools.each_with_index{ |pool, ii| pool.uuid = uuids[ii] }
-      pools
+    # Prepares Biglearn for Course Ecosystem updates
+    # Updates is an array of { course: Entity::Course, ecosystem: Content::Ecosystem }
+    def prepare_course_ecosystems(updates:)
+      client.prepare_course_ecosystems(updates: updates)
     end
 
-    # Creates a new OpenStax::Biglearn::V1::Pool in Biglearn
-    # by combining the exercises in all of the given pool uuids
-    def combine_pools(pool_uuids)
-      OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pool_uuids))
+    # Finalizes a Course Ecosystem update in Biglearn,
+    # causing it to stop computing CLUes for the old one
+    def update_course_ecosystem(course:)
+      client.update_course_ecosystem(course: course)
     end
 
-    # Returns a number of recommended exercises for the given role and pools.
-    # Pools are combined into a single pool before the call to Biglearn.
-    # May return less than the desired number if allow_repetitions is false.
-    def get_projection_exercises(role:, pools:, pool_exclusions: [],
-                                 count: 1, difficulty: 0.5, allow_repetitions: true)
-      pool_uuids = pools.map(&:uuid)
-      exercises = client.get_projection_exercises(role: role,
-                                                  pool_uuids: pool_uuids,
-                                                  pool_exclusions: pool_exclusions,
-                                                  count: count, difficulty: difficulty,
-                                                  allow_repetitions: allow_repetitions)
+    # Updates Course rosters in Biglearn
+    # Updates is an array of {
+    #   period: CourseMembership::Period,
+    #   student: CourseMembership::Models::Student,
+    #   action: 'add' OR 'remove'
+    # }
+    def update_rosters(updates:)
+      client.update_rosters(updates: updates)
+    end
 
-      num_exercises = (exercises || []).size
+    # Creates or updates an Assignment (Task) in Biglearn
+    def create_or_update_assignment(assignment:)
+      client.create_or_update_assignment(assignment: assignment)
+    end
 
-      if num_exercises != count
-        Rails.logger.warn {
-          "Biglearn.get_projection_exercises only returned #{num_exercises} of #{count} " +
-          "requested exercises [role: #{role}, pools: #{(pools || []).map{ |pl| pl.uuid }}, " +
-          "difficulty: #{difficulty}, " +
-          "allow_repetitions: #{allow_repetitions}] exercises = #{exercises}"
-        }
-      end
+    # Returns a number of recommended exercises for the given Assignment (Task)
+    # May return less than the given number if there aren't enough exercises
+    def fetch_assignment_pes(assignment:, max_exercises_to_return:)
+      client.fetch_assignment_pes(assignment: assignment,
+                                  max_exercises_to_return: max_exercises_to_return)
+    end
 
-      exercises
+    # Returns a number of recommended exercises for the given Student and Book Container
+    # Book Container is a Content::Chapter or Content::Page
+    # May return less than the given number if there aren't enough exercises
+    def fetch_topic_pes(student:, book_container:, max_exercises_to_return:)
+      client.fetch_topic_pes(student: student, book_container: book_container,
+                             max_exercises_to_return: max_exercises_to_return)
+    end
+
+    # Returns a number of recommended exercises for the given Student and Ecosystem
+    # May return less than the given number if there aren't enough exercises
+    def fetch_weakest_topics_pes(student:, ecosystem:, max_exercises_to_return:)
+      client.fetch_weakest_topics_pes(student: student, ecosystem: ecosystem,
+                                      max_exercises_to_return: max_exercises_to_return)
+    end
+
+    # Returns the CLUes for the given students
+    def fetch_learner_clues(student:, ecosystem:, max_exercises_to_return:)
+      client.fetch_weakest_topics_pes(student: student, ecosystem: ecosystem,
+                                      max_exercises_to_return: max_exercises_to_return)
     end
 
     # Return a CLUe value for the specified set of roles and pools.
@@ -149,7 +163,7 @@ module OpenStax::Biglearn::V1
     protected
 
     def new_configuration
-      OpenStax::Biglearn::V1::Configuration.new
+      OpenStax::Biglearn::Api::Configuration.new
     end
 
     def new_client(name = default_client_name)

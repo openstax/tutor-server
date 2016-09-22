@@ -1,4 +1,4 @@
-class OpenStax::Biglearn::V1::RealClient
+class OpenStax::Biglearn::Api::RealClient
 
   # CLUe duration
   # We update CLUes in the background every minute, so we let the cache basically last forever
@@ -85,7 +85,7 @@ class OpenStax::Biglearn::V1::RealClient
   def get_projection_exercises(role:, pool_uuids:, pool_exclusions:,
                                count:, difficulty:, allow_repetitions:)
     # If we have more than one pool uuid, we must first combine them all into a single pool
-    pool_uuid = [pool_uuids].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pool_uuids) : pool_uuids.first
+    pool_uuid = [pool_uuids].flatten.size > 1 ? OpenStax::Biglearn::Api.combine_pools(pool_uuids) : pool_uuids.first
 
     excluded_pools = pool_exclusions.map do |hash|
       { pool_id: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
