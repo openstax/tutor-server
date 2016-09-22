@@ -5,6 +5,8 @@
 <% failed_jobs ||= [] %>
 <% total_count ||= course_infos.try(:count) %>
 
+<div>Showing <%= total_count %> total</div>
+
 <% page ||= 1 %>
 <% per_page ||= 25 %>
 

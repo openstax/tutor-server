@@ -12,12 +12,10 @@
 
       <%= label_tag :to %>
       <%= f.text_field :to, class: "datepicker" %>
-
       <div>
-        <%= label_tag "Include Tutor" %>
-        <%= f.check_box :tutor, {checked: true}, "true", "false" %>
-        <%= label_tag "Include Concept Coach" %>
-        <%= f.check_box :concept_coach, {checked: true}, "true", "false" %>
+        <%= f.collection_check_boxes :task_types, \
+              [["tutor", "Include Tutor"], ["concept_coach", "Include Concept Coach"]], \
+              :first, :second %>
       </div>
 
     </div>

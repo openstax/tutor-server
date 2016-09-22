@@ -29,6 +29,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
                                               last_name: 'Four',
                                               full_name: 'Student Four') }
 
+  let(:all_task_types) { Tasks::Models::Task.task_types.values }
+
   context 'with book' do
     before(:all) do
       VCR.use_cassette("Api_V1_PerformanceReportsController/with_book", VCR_OPTS) do
@@ -52,12 +54,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
 
     it 'exports research data as a csv file' do
       # We replace the uploading of the research data with the test case itself
-      expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
-        filepath = routine.send :filepath
-        expect(File.exists?(filepath)).to be true
-        expect(filepath.ends_with? '.csv').to be true
-
-        rows = CSV.read(filepath)
+      with_export_rows(all_task_types) do |rows|
         headers = rows.first
         values = rows.second
         data = Hash[headers.zip(values)]
@@ -81,9 +78,6 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
         expect(data['Free Response']).to eq(nil)
         expect(data['Tags']).to eq(nil)
       end
-
-      # Trigger the data export
-      capture_stdout{ described_class.call }
     end
 
     it 'uploads the exported data to owncloud' do
@@ -99,7 +93,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       ).and_return OpenStruct.new(success?: true)
 
       # Trigger the data export
-      capture_stdout{ described_class.call }
+      capture_stdout{ described_class.call(task_types: all_task_types) }
     end
 
 
@@ -112,53 +106,52 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
     end
 
     specify "by date range" do
-      date_range = (Date.today - 10)..(Date.tomorrow)
-
       Timecop.freeze(Date.today - 30) {
         FactoryGirl.create :tasks_task, step_types: [:tasks_tasked_reading], num_random_taskings: 1
       }
 
-      expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
-        filepath = routine.send :filepath
-        rows = CSV.read(filepath)
-
+      with_export_rows(all_task_types, Date.today - 10, Date.tomorrow) do |rows|
         expect(Tasks::Models::TaskStep.count).to eq 4
         expect(rows.count - 1).to eq(3)
       end
-
-      capture_stdout{ described_class.call(date_range: date_range) }
     end
 
     context "by application" do
+      let(:tutor_task_types) { Tasks::Models::Task.task_types.values_at(:homework, :reading, :chapter_practice,
+                            :page_practice, :mixed_practice, :external, :event, :extra) }
+      let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
+
       specify "only Concept Coach" do
-        expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
-          filepath = routine.send :filepath
-          expect(File.exists?(filepath)).to be true
-          expect(filepath.ends_with? '.csv').to be true
-
-          rows = CSV.read(filepath)
-
+        with_export_rows(cc_task_types) do |rows|
           expect(Tasks::Models::TaskStep.count).to eq 3
           expect(rows.count - 1).to eq(2)
         end
-
-        capture_stdout{ described_class.call(include_concept_coach: true) }
       end
 
       specify "only Tutor" do
-        expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
-          filepath = routine.send :filepath
-          expect(File.exists?(filepath)).to be true
-          expect(filepath.ends_with? '.csv').to be true
-
-          rows = CSV.read(filepath)
-
+        with_export_rows(tutor_task_types) do |rows|
           expect(Tasks::Models::TaskStep.count).to eq 3
           expect(rows.count - 1).to eq(1)
         end
+      end
 
-        capture_stdout{ described_class.call(include_tutor: true) }
+      specify "Tutor and Concept Coach" do
+        with_export_rows(all_task_types) do |rows|
+          expect(Tasks::Models::TaskStep.count).to eq 3
+          expect(rows.count - 1).to eq(3)
+        end
       end
     end
   end
+end
+
+def with_export_rows(task_types = [], from = nil, to = nil, &block)
+  expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
+    filepath = routine.send :filepath
+    expect(File.exists?(filepath)).to be true
+    expect(filepath.ends_with? '.csv').to be true
+    rows = CSV.read(filepath)
+    block.call(rows)
+  end
+  capture_stdout{ described_class.call(task_types: task_types, from: from, to: to) }
 end
