@@ -18,11 +18,11 @@ Rails.application.config.to_prepare do
 
   # Automatically create the admin Biglearn exclusion pool when settings are saved
   RailsSettingsUi::ApplicationController.class_exec do
-    around_action :create_biglearn_excluded_pool, only: :update_all
+    around_action :send_exercise_exclusions_to_biglearn, only: :update_all
 
     protected
 
-    def create_biglearn_excluded_pool
+    def send_exercise_exclusions_to_biglearn
       old_excluded_uids = Settings::Exercises.excluded_uids
 
       yield
@@ -30,19 +30,7 @@ Rails.application.config.to_prepare do
       new_excluded_uids = Settings::Exercises.excluded_uids
       return if new_excluded_uids == old_excluded_uids
 
-      excluded_exercises = new_excluded_uids.split(',').map do |excluded_uid|
-        excluded_number, excluded_version = excluded_uid.strip.split('@')
-        # version 1 is the default according to the Biglearn API docs...
-        # what we really want here is to exclude all versions
-        excluded_version ||= 1
-        OpenStax::Biglearn::V1::Exercise.new(question_id: excluded_number,
-                                             version: excluded_version.to_i,
-                                             tags: [])
-      end
-
-      excluded_pool = OpenStax::Biglearn::V1::Pool.new(exercises: excluded_exercises)
-      excluded_pool = OpenStax::Biglearn::V1.add_pools([excluded_pool]).first
-      Settings::Exercises.excluded_pool_uuid = excluded_pool.uuid
+      # TODO: Api call to send exercise exclusions to Biglearn
     end
   end
 

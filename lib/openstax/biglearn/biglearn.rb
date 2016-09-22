@@ -1,7 +1,7 @@
 module OpenStax
   module Biglearn
-    module V1; end
+    module Api; end
   end
 end
 
-require_relative 'v1'
+require_relative 'api'

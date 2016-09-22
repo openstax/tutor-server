@@ -15,7 +15,7 @@ module CourseGuideMethods
       [chapter.all_exercises_pool] + mapped_relevant_pages.map(&:all_exercises_pool)
     end
 
-    OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
+    OpenStax::Biglearn::Api.get_clues(roles: roles, pools: pools)
   end
 
   def get_page_guides(mapped_relevant_pages,

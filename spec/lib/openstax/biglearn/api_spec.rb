@@ -1,33 +1,33 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Biglearn::V1, type: :external do
+RSpec.describe OpenStax::Biglearn::Api, type: :external do
   before(:each) { RequestStore.clear! }
   after(:all)   { RequestStore.clear! }
 
   it 'can be configured' do
-    configuration = OpenStax::Biglearn::V1.configuration
-    expect(configuration).to be_a(OpenStax::Biglearn::V1::Configuration)
+    configuration = OpenStax::Biglearn::Api.configuration
+    expect(configuration).to be_a(OpenStax::Biglearn::Api::Configuration)
 
-    OpenStax::Biglearn::V1.configure do |config|
+    OpenStax::Biglearn::Api.configure do |config|
       expect(config).to eq configuration
     end
   end
 
   it 'can use the fake client or the real client or the local query client with real or fake' do
-    OpenStax::Biglearn::V1.use_fake_client
-    expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::FakeClient)
+    OpenStax::Biglearn::Api.use_fake_client
+    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
 
-    OpenStax::Biglearn::V1.use_real_client
-    expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::RealClient)
+    OpenStax::Biglearn::Api.use_real_client
+    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::RealClient)
 
-    OpenStax::Biglearn::V1.use_client_named(:local_query_with_fake)
-    expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::LocalQueryClient)
+    OpenStax::Biglearn::Api.use_client_named(:local_query_with_fake)
+    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::LocalQueryClient)
 
-    OpenStax::Biglearn::V1.use_client_named(:local_query_with_real)
-    expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::LocalQueryClient)
+    OpenStax::Biglearn::Api.use_client_named(:local_query_with_real)
+    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::LocalQueryClient)
 
-    OpenStax::Biglearn::V1.use_fake_client
-    expect(OpenStax::Biglearn::V1.send :client).to be_a(OpenStax::Biglearn::V1::FakeClient)
+    OpenStax::Biglearn::Api.use_fake_client
+    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
   end
 
   context "#default_client_name" do
@@ -78,31 +78,31 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
 
     before(:each) do
       RequestStore.store[:biglearn_v1_forced_client_in_use] = true
-      OpenStax::Biglearn::V1.client = client_double
+      OpenStax::Biglearn::Api.client = client_double
     end
 
     it 'delegates get_clues to the client' do
-      response = OpenStax::Biglearn::V1.get_clues(roles: dummy_roles, pools: dummy_pools)
+      response = OpenStax::Biglearn::Api.get_clues(roles: dummy_roles, pools: dummy_pools)
       expect(response).to eq('client get_clues response')
     end
 
     it 'returns an empty hash if pools is empty' do
-      response = OpenStax::Biglearn::V1.get_clues(roles: dummy_roles, pools: [])
+      response = OpenStax::Biglearn::Api.get_clues(roles: dummy_roles, pools: [])
       expect(response).to eq({})
     end
 
     it 'returns a hash that maps all given pool uuids to nil if roles is empty' do
-      response = OpenStax::Biglearn::V1.get_clues(roles: [], pools: dummy_pools)
+      response = OpenStax::Biglearn::Api.get_clues(roles: [], pools: dummy_pools)
       expect(response).to eq({'some uuid' => nil})
     end
 
     it 'delegates add_exercises to the client' do
-      response = OpenStax::Biglearn::V1.add_exercises(exercises: dummy_exercises)
+      response = OpenStax::Biglearn::Api.add_exercises(exercises: dummy_exercises)
       expect(response).to eq('client add_exercises response')
     end
 
     it 'delegates get_projection_exercises to the client' do
-      response = OpenStax::Biglearn::V1.get_projection_exercises(
+      response = OpenStax::Biglearn::Api.get_projection_exercises(
         role:              dummy_role,
         pools:             dummy_pools,
         pool_exclusions:   dummy_pool_exclusions,
@@ -116,7 +116,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     it 'logs a warning and does not explode when client does not return expected number of exercises' do
       allow(client_double).to receive(:get_projection_exercises).and_return(['only exercise'])
       expect(Rails.logger).to receive(:warn)
-      response = OpenStax::Biglearn::V1.get_projection_exercises(
+      response = OpenStax::Biglearn::Api.get_projection_exercises(
         role:              dummy_role,
         pools:             dummy_pools,
         count:             2,
