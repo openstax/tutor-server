@@ -233,8 +233,9 @@ class Demo::Base
         task_step.tasked_type.demodulize.sub('Tasked', '').first.downcase
       end
 
-      raise "Steps in config (#{@step_types}) don't match actual steps (#{actual_step_types})" \
-        if !@step_types.nil? && @step_types != actual_step_types
+      Rails.logger.warn do
+        "Steps in config (#{@step_types}) don't match actual steps (#{actual_step_types})"
+      end if !@step_types.nil? && @step_types != actual_step_types
 
       responses = self[task].responses
 

@@ -1,7 +1,8 @@
 class Content::ImportBook
 
   # Kind of a hack to limit how many exercises we request at a time and avoid timeouts
-  MAX_EXERCISES_REQUEST_LENGTH = 1000
+  # It is set to 2020 in the test environment so as to not break basically all the cassettes
+  MAX_EXERCISES_REQUEST_LENGTH = Rails.env.test? ? 2020 : 1000
 
   lev_routine
 
