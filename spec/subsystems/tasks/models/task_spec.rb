@@ -425,11 +425,18 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates on_time counts when the due date changes" do
+        class ArrayWithReload < Array
+          def reload
+            each(&:reload)
+          end
+        end
+
         task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
                                                due_at: Time.current - 1.day)
 
         allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.current)
-        allow(task).to receive(:task_steps).and_return([correct_exercise_step])
+        allow(correct_exercise_step).to receive(:reload).and_return(correct_exercise_step)
+        allow(task).to receive(:task_steps).and_return(ArrayWithReload[correct_exercise_step])
 
         task.update_step_counts!
 
@@ -445,10 +452,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates counts after any change to the task" do
-        task = FactoryGirl.create :tasks_task, step_types: [
+        task = FactoryGirl.create :tasks_task, tasked_to: [Entity::Role.create!], step_types: [
           :tasks_tasked_exercise, :tasks_tasked_exercise,
           :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
-        ]
+        ], personalized_placeholder_strategy: Tasks::PlaceholderStrategies::HomeworkPersonalized.new
+        exercise_ids = [task.tasked_exercises.first.content_exercise_id]
+        task.task_plan.update_attribute :settings, { 'exercise_ids' => exercise_ids}
+        task.task_steps.first(4).each{ |ts| ts.update_attribute :group_type, :core_group }
 
         expect(task.steps_count).to eq 5
         expect(task.exercise_steps_count).to eq 4
@@ -497,11 +507,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
         expect(task.exercise_steps_count).to eq 4
         expect(task.placeholder_steps_count).to eq 1
 
+        # The placeholder step is removed due to no available personalized exercises
+        expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return([])
         MarkTaskStepCompleted[task_step: task.task_steps.fourth]
-        # Simulate the placeholder step being removed due to no available personalized exercises
-        task.task_steps.last.really_destroy!
+
         task.reload
 
+        expect(task.task_steps.size).to eq 4
         expect(task.steps_count).to eq 4
         expect(task.exercise_steps_count).to eq 4
         expect(task.placeholder_steps_count).to eq 0
