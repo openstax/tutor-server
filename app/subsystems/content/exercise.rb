@@ -77,6 +77,10 @@ module Content
       !!@strategy.is_excluded
     end
 
+    def is_multipart?
+      !!@strategy.is_multipart?
+    end
+
     def has_interactive
       !!@strategy.has_interactive
     end

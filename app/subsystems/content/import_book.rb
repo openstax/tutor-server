@@ -1,6 +1,8 @@
 class Content::ImportBook
 
-  MAX_URL_LENGTH = 2020
+  # Kind of a hack to limit how many exercises we request at a time and avoid timeouts
+  # It is set to 2020 in the test environment so as to not break basically all the cassettes
+  MAX_EXERCISES_REQUEST_LENGTH = Rails.env.test? ? 2020 : 1000
 
   lev_routine
 
@@ -52,7 +54,7 @@ class Content::ImportBook
     if exercise_uids.nil?
       # Split the tag queries to avoid exceeding the URL limit
       max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max || 1
-      tags_per_query = MAX_URL_LENGTH/max_tag_length
+      tags_per_query = MAX_EXERCISES_REQUEST_LENGTH/max_tag_length
       import_page_tags.each_slice(tags_per_query) do |page_tags|
         query_hash = { tag: page_tags.map{ |pt| pt.tag.value } }
 
@@ -66,7 +68,7 @@ class Content::ImportBook
     else
       # Split the uid queries to avoid exceeding the URL limit
       max_uid_length = exercise_uids.map(&:size).max || 1
-      uids_per_query = MAX_URL_LENGTH/max_uid_length
+      uids_per_query = MAX_EXERCISES_REQUEST_LENGTH/max_uid_length
       exercise_uids.each_slice(uids_per_query) do |uids|
         query_hash = { id: uids }
 

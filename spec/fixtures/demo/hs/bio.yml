@@ -18,7 +18,7 @@ periods:
 
 assignments:
   - type: reading
-    step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
+    step_types: [ r, r, r, r, r, e, e, e, r, r, r, r, r, r, e, r, r, e, r, e, r, e, e, e ]
     book_locations: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
     periods:

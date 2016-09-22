@@ -3,14 +3,15 @@ content_analyst: Content Analyst
 customer_service: Customer Service
 
 teachers:
-  cm: {name: Charles Morris, username: teacher01 }
-  rb: {name: Redmond Blake,  username: teacher02 }
-  ct: {name: C. E. Tripp,    username: teacher03 }
-  jb: {name: J. D. Ballard,  username: teacher04 }
-  td: {name: Trent Deckow,   username: teacher05 }
-  ak: {name: Adah Kuhn,      username: teacher06 }
-  yr: {name: Yoshiko Roob,   username: teacher07 }
-  og: {name: Okey Gottlieb,  username: teacher08 }
+  cm: {name: Charles Morris,           username: teacher01 }
+  rb: {name: Redmond Blake,            username: teacher02 }
+  ct: {name: C. E. Tripp,              username: teacher03 }
+  jb: {name: J. D. Ballard,            username: teacher04 }
+  td: {name: Trent Deckow,             username: teacher05 }
+  ak: {name: Adah Kuhn,                username: teacher06 }
+  yr: {name: Yoshiko Roob,             username: teacher07 }
+  og: {name: Okey Gottlieb,            username: teacher08 }
+  rt: {name: Review Teacher,           username: reviewteacher }
 
 students:
   af:  { name: Atticus Finch,          username: student01  }
@@ -163,3 +164,9 @@ students:
   ms1: { name: Matt Shively,           username: student148 }
   dc1: { name: Diego Catano,           username: student149 }
   cs3: { name: Carly Schroeder,        username: student150 }
+  rs1: { name: Review Student1,        username: reviewstudent1 }
+  rs2: { name: Review Student2,        username: reviewstudent2 }
+  rs3: { name: Review Student3,        username: reviewstudent3 }
+  rs4: { name: Review Student4,        username: reviewstudent4 }
+  rs5: { name: Review Student5,        username: reviewstudent5 }
+  rs6: { name: Review Student6,        username: reviewstudent6 }

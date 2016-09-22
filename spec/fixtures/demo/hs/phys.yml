@@ -17,7 +17,7 @@ assignments:
   - type: reading
     title: Read 3.1 Acceleration Pt1
     book_locations: [[3, 0], [3, 1]]
-    step_types: [ r, r, r, i, e, r, e, v, e, p ]
+    step_types: [ r, r, i, e, r, r, e, v, e, e, e, e ]
     periods:
       - id: p1
         opens_at: <%= open_three_days_ago %>
@@ -27,13 +27,13 @@ assignments:
   - type: reading
     title: Read 3.2 Acceleration Pt2
     book_locations: [[3, 2]]
-    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, p]
+    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, e, e, e ]
     periods:
       - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
-          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
+          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1 ]
           vw: ns
 
   - type: homework

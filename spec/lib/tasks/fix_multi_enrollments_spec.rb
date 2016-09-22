@@ -59,7 +59,7 @@ describe "fix_multi_enrollments", type: :rake do
     @task_3.taskings.first.update_attribute :created_at, Time.now
   end
 
-  after(:all)  { FileUtils.rm_f 'multi-enrollments.csv' }
+  after(:all)  { FileUtils.rm_f 'tmp/multi-enrollments.csv' }
 
   context 'dry run' do
     it "does not modify any tasks or taskings" do
@@ -75,7 +75,7 @@ describe "fix_multi_enrollments", type: :rake do
     it "writes fixed user, teacher and school names to a csv file" do
       expect(capture_stdout{call}).to be_blank
 
-      content = File.open('multi-enrollments.csv', 'r').read
+      content = File.open('tmp/multi-enrollments.csv', 'r').read
       expect(content).to include(@user_1.name.strip)
       expect(content).to include(@user_3.name.strip)
       expect(content).to include(@school.name)
@@ -98,7 +98,7 @@ describe "fix_multi_enrollments", type: :rake do
     it "writes fixed user, teacher and school names to a csv file" do
       expect(capture_stdout{call('real')}).to be_blank
 
-      content = File.open('multi-enrollments.csv', 'r').read
+      content = File.open('tmp/multi-enrollments.csv', 'r').read
       expect(content).to include(@user_1.name.strip)
       expect(content).to include(@user_3.name.strip)
       expect(content).to include(@school.name)
