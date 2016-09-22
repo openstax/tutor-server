@@ -40,14 +40,14 @@ class Demo::Base
   def build_tasks_profile(assignment_type:, students:, step_types:)
     user_responses = students.map do | initials, score |
       user = get_student_user(initials) ||
-                raise("Unable to find student for initials #{initials}")
+               raise("Unable to find student for initials #{initials}")
       [initials, user, score]
     end
 
     TasksProfile.new(assignment_type: assignment_type,
-                      user_responses: user_responses,
-                      step_types: step_types,
-                      randomizer: randomizer)
+                     user_responses: user_responses,
+                     step_types: step_types,
+                     randomizer: randomizer)
   end
 
   def auto_assign_students_for_period(period)
@@ -70,13 +70,13 @@ class Demo::Base
         book_locations = nil
         step_types = nil
       else
-      book_locations = content.course.ecosystems.first.pages.map(&:book_location)
-                                                            .sample(settings.steps)
-      step_types = if settings.type == 'homework'
-                     (['e'] * settings.steps) + ['p']
-                   else
-                     1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
-                   end
+        book_locations = content.course.ecosystems.first.pages.map(&:book_location)
+                                                              .sample(settings.steps)
+        step_types = if settings.type == 'homework'
+                       (['e'] * settings.steps) + ['p']
+                     else
+                       1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
+                     end
       end
 
       1.upto(settings.generate).map do | number |
@@ -207,9 +207,8 @@ class Demo::Base
   class TasksProfile
     def initialize(assignment_type:, user_responses:, step_types:, randomizer:)
 
-      raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
-        unless [:homework,:reading].include?(assignment_type)
-      raise "Must have at least one step" if step_types.length == 0
+      raise ":assignment_type (#{assignment_type}) must be one of [:homework, :reading]" \
+        unless [:homework, :reading].include?(assignment_type)
 
       @assignment_type = assignment_type
 
@@ -219,39 +218,50 @@ class Demo::Base
 
       user_responses.each do |initials, user, responses|
         @users[user.id] = OpenStruct.new(
-          responses:  get_explicit_responses(responses),
+          responses:  responses,
           initials: initials
         )
       end
     end
 
-    def [](user_id)
-      @users[user_id]
+    def [](task)
+      @users[task.taskings.first.role.profile.id]
     end
 
-    private
+    def explicit_responses(task:)
+      actual_step_types = task.task_steps.map do |task_step|
+        task_step.tasked_type.demodulize.sub('Tasked', '').first.downcase
+      end
 
-    def get_explicit_responses(entry)
+      raise "Steps in config (#{@step_types}) don't match actual steps (#{actual_step_types})" \
+        if !@step_types.nil? && @step_types != actual_step_types
 
-      result = case entry
+      responses = self[task].responses
+
+      result = case responses
       when Array
-        raise "Number of explicit responses (#{entry.length}) doesn't match number of steps (#{@step_types.length}) " \
-          if @step_types.length != entry.length
-        entry
+        raise("Number of explicit responses (#{responses.length
+              }) doesn't match number of steps (#{actual_step_types.length})") \
+          if actual_step_types.length != responses.length
+        responses
       when Integer, Float
         # The goal here is to take a grade, e.g. "78" and generate an explicit
         # set of responses that gets us as close to that as possible.
 
-        raise "Maximum grade is 100" if entry > 100
+        raise "Maximum grade is 100" if responses > 100
 
-        num_exercises = @step_types.count('e')
+        num_exercises = actual_step_types.count('e')
+        # Avoid division by 0 - Mark all non-exercise steps as completed
+        return actual_step_types.map{ 1 } if num_exercises == 0
+
         points_per_exercise = 100.0/num_exercises
-        num_correct = [100, (entry/points_per_exercise).round].min # just to make sure not too many
+        num_correct = (responses/points_per_exercise).round
 
-        exercise_correctness = num_correct.times.map{1} + (num_exercises - num_correct).times.map{0}
+        exercise_correctness = num_correct.times.map{1} +
+                               (num_exercises - num_correct).times.map{0}
         exercise_correctness.shuffle!(random: @randomizer)
 
-        @step_types.map do |type|
+        actual_step_types.map do |type|
           case type
           when 'e'
             exercise_correctness.pop
@@ -260,9 +270,9 @@ class Demo::Base
           end
         end
       when 'ns'
-        @step_types.count.times.map{nil}
+        actual_step_types.count.times.map{nil}
       when 'i'
-        responses = @step_types.count.times.map{ [1,0,nil].sample }
+        responses = actual_step_types.count.times.map{ [1,0,nil].sample }
 
         # incomplete is more than not_started, so make sure we have started by setting
         # the first response to complete/correct. always make last step incomplete to
@@ -361,7 +371,7 @@ class Demo::Base
       content_ecosystem_id: ecosystem.id,
       type: 'reading',
       assistant: get_assistant(course: course, task_plan_type: 'reading'),
-      settings: { page_ids: pages.map{|page| page.id.to_s} }
+      settings: { page_ids: pages.map{|page| page.id.to_s } }
     )
   end
 
@@ -384,7 +394,7 @@ class Demo::Base
       settings: {
         page_ids: pages.map{|page| page.id.to_s},
         exercise_ids: exercise_ids,
-        exercises_count_dynamic: rand(3)+2
+        exercises_count_dynamic: 4
       }
     )
 
@@ -428,10 +438,8 @@ class Demo::Base
     tasks
   end
 
-  # `responses` is an array of 1 (or true), 0 (or false), or nil; nil means
-  # not completed; any non-nil means completed. 1/0 (true/false) is for
-  # exercise correctness
-  def work_task(task:, responses:[])
+  def work_task(tasks_profile:, task:)
+    responses = tasks_profile.explicit_responses(task: task)
 
     core_task_steps = task.core_task_steps(preload_tasked: true)
 
@@ -452,7 +460,6 @@ class Demo::Base
     personalized_task_steps.each_with_index do |step, index|
       work_step(step, responses[index + core_task_steps.size + spaced_practice_task_steps.size])
     end
-
   end
 
   # Works a step with the given response; for exercise steps, response can be

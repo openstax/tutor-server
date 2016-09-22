@@ -38,8 +38,7 @@ class Demo::ContentConfiguration
     # The directory for the config files can be either set using either
     # config_directory block (which sets it's value using RequestStore.store),
     # the CONFIG environmental variable or the default
-    config_directory = RequestStore.store[:config_directory] ||
-                       ENV['CONFIG'] || DEFAULT_CONFIG_DIR
+    config_directory = RequestStore.store[:config_directory] || ENV['CONFIG'] || DEFAULT_CONFIG_DIR
 
     all_files = Dir[File.join(config_directory, '**/*.yml')]
 
@@ -131,10 +130,12 @@ class Demo::ContentConfiguration
       assignment.periods.each_with_index do | period, index |
         period_config = get_period(period.id)
         if period_config.nil?
-          raise "Unable to find period # #{index} id #{period.id} for assignment #{assignment.title}"
+          raise "Unable to find period # #{index} id #{
+                period.id} for assignment #{assignment.title}"
         end
-        if period_config.students.sort != period.students.keys.sort
-          raise "Students assignments for #{course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
+        if period.students.nil? || period_config.students.sort != period.students.keys.sort
+          raise "Students assignments for #{course_name} period #{period_config.name
+                } do not match for assignment #{assignment.title}"
         end
       end
     end

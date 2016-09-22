@@ -32,9 +32,7 @@ class Demo::Work < Demo::Base
       end
 
       in_parallel(content.course.students, transaction: true) do |students, initial_index|
-        students.each do |student|
-          work_cc_assignments(student)
-        end
+        students.each{ |student| work_cc_assignments(student) }
       end
     end
 
@@ -44,7 +42,7 @@ class Demo::Work < Demo::Base
 
   def work_tp_assignment(content, assignment)
     task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title)
-                  .order(created_at: :desc).first!
+                                       .order(created_at: :desc).first!
 
     tasks_profile = build_tasks_profile(
       students: assignment.periods.flat_map{ |period| period.students.map(&:to_a) },
@@ -52,23 +50,21 @@ class Demo::Work < Demo::Base
       step_types: assignment.step_types,
     )
     log("Working assignment: #{assignment.title}")
-    task_plan.tasks.preload([{taskings: {role: {profile: :account}}},
-                             {task_steps: [:tasked, :task]}])
-      .each_with_index do | task, index |
+    task_plan.tasks
+             .preload([{taskings: {role: {profile: :account}}}, {task_steps: [:tasked, :task]}])
+             .each_with_index do | task, index |
 
-      profile = task.taskings.first.role.profile
-      strategy = User::Strategies::Direct::User.new(profile)
-      user = User::User.new(strategy: strategy)
-      task_profile = tasks_profile[user.id]
+      task_profile = tasks_profile[task]
 
       unless task_profile
-        raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.id} #{user.username}"
+        raise "#{assignment.title} period #{period.id} has no responses for task #{
+              index} for user #{user.id} #{user.username}"
       end
       lateness = assignment.late ? assignment.late[task_profile.initials] : nil
       worked_at = task.due_at + (lateness ? lateness : -60)
 
       Timecop.freeze(worked_at) do
-        work_task(task: task, responses: task_profile.responses)
+        work_task(tasks_profile: tasks_profile, task: task)
       end
     end
   end
@@ -80,9 +76,7 @@ class Demo::Work < Demo::Base
       task = tasking.task
       next unless task.concept_coach?
 
-      task.task_steps.each do |task_step|
-        work_step(task_step, Random.rand < 0.5)
-      end
+      task.task_steps.each{ |task_step| work_step(task_step, Random.rand < 0.5) }
     end
   end
 end

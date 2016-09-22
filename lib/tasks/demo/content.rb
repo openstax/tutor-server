@@ -40,11 +40,13 @@ class Demo::Content < Demo::Base
     run(:set_customer_service, user: cs_user, customer_service: true)
     log("Customer Service user: #{cs_user.name}")
 
-    (0..99).to_a.each do |ii|
-      username = "zz_#{ii.to_s.rjust(2,"0")}"
-      user_for_username(username) || new_user(username: username, name: username.gsub('_',' '))
-    end
-    log("Made 100 extra 'zz' users who are not in any course.")
+    new_zz_users = (0..99).map do |ii|
+      username = "zz_#{ii.to_s.rjust(2, "0")}"
+      next if user_for_username(username)
+      new_user(username: username, name: username.gsub('_', ' '))
+    end.compact
+    log("Made #{new_zz_users.size} extra 'zz' users who are not in any course.") \
+      unless new_zz_users.empty?
   end
 
   def configure_course_teacher(course, teacher)

@@ -7,7 +7,7 @@ task :fix_multi_enrollments, [:run_mode] => :environment do |t, args|
   double_enrollments_array = []
 
   ActiveRecord::Base.transaction do
-    CSV.open('multi-enrollments.csv', 'w+') do |csv|
+    CSV.open('tmp/multi-enrollments.csv', 'w+') do |csv|
       csv << ['Student Name', 'Teacher(s)', 'School']
 
       User::Models::Profile.preload(roles: [:teacher, {student: :course}]).find_each do |user|
