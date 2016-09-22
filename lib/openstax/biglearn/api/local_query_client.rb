@@ -1,4 +1,4 @@
-module OpenStax::Biglearn::V1
+module OpenStax::Biglearn::Api
   class LocalQueryClient
 
     def initialize(write_client)

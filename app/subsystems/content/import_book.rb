@@ -81,7 +81,7 @@ class Content::ImportBook
       end
     end
 
-    outs = run(:populate_exercise_pools, book: book, save: false).outputs
+    outs = run(:populate_exercise_pools, book: book).outputs
     pools = outs.pools
     chapters = outs.chapters
     pages = outs.pages
@@ -91,38 +91,8 @@ class Content::ImportBook
     outputs[:chapters] = chapters
     outputs[:pages] = pages
 
-    #
-    # Send exercise and pool info to Biglearn and get back the pool UUID's
-    #
-    # First, build up local lists of the exercises and tags, then
-    # send those lists all at once to one call each in the BL API.
-    #
-
-    biglearn_exercises_by_ids = outputs[:exercises].each_with_object({}) do |ex, hash|
-      exercise_url = Addressable::URI.parse(ex.url)
-      exercise_url.scheme = nil
-      exercise_url.path = exercise_url.path.split('@').first
-      hash[ex.id] = OpenStax::Biglearn::V1::Exercise.new(
-        question_id: exercise_url.to_s,
-        version: ex.version,
-        tags: ex.exercise_tags.map{ |ex| ex.tag.value }
-      )
-    end
-    biglearn_exercises = biglearn_exercises_by_ids.values
-
-    OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
-
-    biglearn_pools = pools.map do |pool|
-      exercise_ids = pool.content_exercise_ids
-      exercises = exercise_ids.map{ |id| biglearn_exercises_by_ids[id] }
-      OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
-    end
-    biglearn_pools_with_uuids = OpenStax::Biglearn::V1.add_pools(biglearn_pools)
-    pools.each_with_index do |pool, ii|
-      pool.uuid = biglearn_pools_with_uuids[ii].uuid
-    end
-
-    Content::Models::Pool.import pools, validate: false
+    # Send ecosystem information to Biglearn
+    OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
 
     # Save ids in page/chapter tables and clear associations so pools get reloaded next time
     pages.each do |page|

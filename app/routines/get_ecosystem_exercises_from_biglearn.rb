@@ -12,16 +12,16 @@ class GetEcosystemExercisesFromBiglearn
   protected
 
   def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: false)
-    biglearn_pools = pools.map{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
+    biglearn_pools = pools.map{ |pl| OpenStax::Biglearn::Api::Pool.new(uuid: pl.uuid) }
 
     course = role.student.try!(:course)
 
     admin_excluded_pool_uuid = Settings::Exercises.excluded_pool_uuid
-    admin_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: admin_excluded_pool_uuid) \
+    admin_excluded_pool = OpenStax::Biglearn::Api::Pool.new(uuid: admin_excluded_pool_uuid) \
       unless admin_excluded_pool_uuid.blank?
 
     course_excluded_pool_uuid = course.try!(:biglearn_excluded_pool_uuid)
-    course_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: course_excluded_pool_uuid) \
+    course_excluded_pool = OpenStax::Biglearn::Api::Pool.new(uuid: course_excluded_pool_uuid) \
       unless course_excluded_pool_uuid.nil?
 
     pool_exclusions = []
@@ -32,7 +32,7 @@ class GetEcosystemExercisesFromBiglearn
 
     attempts = 0
     begin
-      urls = OpenStax::Biglearn::V1.get_projection_exercises(
+      urls = OpenStax::Biglearn::Api.get_projection_exercises(
         role:              role,
         pools:             biglearn_pools,
         pool_exclusions:   pool_exclusions,

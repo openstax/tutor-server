@@ -1,4 +1,4 @@
-class OpenStax::Biglearn::V1::FakeClient
+class OpenStax::Biglearn::Api::FakeClient
 
   attr_reader :store
 

@@ -1,34 +1,34 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
+RSpec.describe OpenStax::Biglearn::Api::LocalQueryClient do
 
   context "delegation to the real client" do
-    let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
+    let(:client) { OpenStax::Biglearn::Api.new_local_query_client_with_real }
 
     it "delegates #add_exercises to the real client" do
-      expect_any_instance_of(OpenStax::Biglearn::V1::RealClient).to receive(:add_exercises).with("blah")
+      expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to receive(:add_exercises).with("blah")
       client.add_exercises("blah")
     end
 
     it "delegates #add_pools to the real client" do
-      expect_any_instance_of(OpenStax::Biglearn::V1::RealClient).to receive(:add_pools).with("blah")
+      expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to receive(:add_pools).with("blah")
       client.add_pools("blah")
     end
 
     it "delegates #combine_pools to the real client" do
-      expect_any_instance_of(OpenStax::Biglearn::V1::RealClient).to receive(:combine_pools).with("blah")
+      expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to receive(:combine_pools).with("blah")
       client.combine_pools("blah")
     end
   end
 
   it "has a name depending on the wrapped client" do
-    expect(OpenStax::Biglearn::V1.new_local_query_client_with_real.name).to eq :local_query_with_real
-    expect(OpenStax::Biglearn::V1.new_local_query_client_with_fake.name).to eq :local_query_with_fake
+    expect(OpenStax::Biglearn::Api.new_local_query_client_with_real.name).to eq :local_query_with_real
+    expect(OpenStax::Biglearn::Api.new_local_query_client_with_fake.name).to eq :local_query_with_fake
   end
 
   context "#get_projection_exercises" do
-    let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
+    let(:client) { OpenStax::Biglearn::Api.new_local_query_client_with_real }
 
     before(:each) do
       @role = FactoryGirl.create :entity_role
@@ -91,7 +91,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
   end
 
   context "#get_clues" do
-    let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
+    let(:client) { OpenStax::Biglearn::Api.new_local_query_client_with_real }
 
     before(:all) do
       @all_wrong_role = FactoryGirl.create :entity_role
@@ -245,7 +245,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     # pool = Content::Models::Pool.homework_dynamic.new(uuid: uuid)
     [indices].flatten.each{|idx| pool.content_exercise_ids << exercises[idx].id}
     pool.save!
-    OpenStax::Biglearn::V1::Pool.new(uuid: uuid)
+    OpenStax::Biglearn::Api::Pool.new(uuid: uuid)
   end
 
 end

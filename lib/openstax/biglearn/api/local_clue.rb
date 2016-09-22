@@ -1,4 +1,4 @@
-class OpenStax::Biglearn::V1::LocalClue
+class OpenStax::Biglearn::Api::LocalClue
   attr_reader :aggregate
   attr_reader :left
   attr_reader :right
