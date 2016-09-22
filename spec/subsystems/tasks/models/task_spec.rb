@@ -445,10 +445,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates counts after any change to the task" do
-        task = FactoryGirl.create :tasks_task, step_types: [
+        task = FactoryGirl.create :tasks_task, tasked_to: [Entity::Role.create!], step_types: [
           :tasks_tasked_exercise, :tasks_tasked_exercise,
           :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
-        ]
+        ], personalized_placeholder_strategy: Tasks::PlaceholderStrategies::HomeworkPersonalized.new
+        exercise_ids = [task.tasked_exercises.first.content_exercise_id]
+        task.task_plan.update_attribute :settings, { 'exercise_ids' => exercise_ids}
+        task.task_steps.first(4).each{ |ts| ts.update_attribute :group_type, :core_group }
 
         expect(task.steps_count).to eq 5
         expect(task.exercise_steps_count).to eq 4
@@ -497,11 +500,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
         expect(task.exercise_steps_count).to eq 4
         expect(task.placeholder_steps_count).to eq 1
 
+        # The placeholder step is removed due to no available personalized exercises
+        expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return([])
         MarkTaskStepCompleted[task_step: task.task_steps.fourth]
-        # Simulate the placeholder step being removed due to no available personalized exercises
-        task.task_steps.last.really_destroy!
+
         task.reload
 
+        expect(task.task_steps.size).to eq 4
         expect(task.steps_count).to eq 4
         expect(task.exercise_steps_count).to eq 4
         expect(task.placeholder_steps_count).to eq 0
