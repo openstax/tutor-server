@@ -1,4 +1,9 @@
+// the enrollment page displays the flash itself
+.courses-enroll .application-flash { display: none; }
+
 #enroll {
+  margin-top: 20px;
+
   &.well {
     margin-bottom: 0px;
   }

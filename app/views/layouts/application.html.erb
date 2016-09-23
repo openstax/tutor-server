@@ -10,19 +10,15 @@
     <%= csrf_meta_tags %>
   </head>
 
-  <body id="home">
+  <body id="home" class="<%= controller.controller_name %>-<%= controller.action_name %>">
     <div class="body">
 
       <%= render 'layouts/header' %>
 
-
-
-
-
       <div class="container" style="margin: 60px auto 20px">
         <div class="row">
 
-          <div style="margin-top: 20px">
+          <div class="application-flash">
             <%= render 'layouts/flash_messages' %>
           </div>
 
@@ -38,10 +34,3 @@
   </body>
 
 </html>
-
-
-
-
-
-
-

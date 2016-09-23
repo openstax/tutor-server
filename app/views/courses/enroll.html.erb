@@ -6,6 +6,8 @@
   </h2>
   <hr/>
 
+  <%= render 'layouts/flash_messages' %>
+
   <%= lev_form_for :enroll, url: confirm_token_enroll_path, method: 'post', html: {class: 'form-inline'} do |f| %>
 
     <%= f.hidden_field :enrollment_token, value: params[:enroll_token] %>
