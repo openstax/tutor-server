@@ -6,10 +6,12 @@
 
   lev_routine express_output: :filename
 
-  def exec(filename = nil)
+  def exec(filename: nil, task_types: [], from: nil, to: nil)
+    fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") if task_types.blank?
     outputs[:filename] = FilenameSanitizer.sanitize(filename) || \
                          "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
-    create_export_file
+    date_range = (Chronic.parse(from))..(Chronic.parse(to)) unless to.blank? || from.blank?
+    create_export_file(task_types, date_range)
     upload_export_file
     remove_export_file
   end
@@ -20,7 +22,7 @@
     File.join 'tmp', 'exports', outputs[:filename]
   end
 
-  def create_export_file
+  def create_export_file(task_types, date_range)
     CSV.open(filepath, 'w') do |file|
       file << [
         "Student",
@@ -49,6 +51,9 @@
 
       steps = Tasks::Models::TaskStep.joins(task: :taskings)
                                      .preload([{task: :taskings}, :tasked])
+
+      steps = steps.where(task: { created_at: date_range }) if date_range
+      steps = steps.where(task: { task_type: task_types })
 
       total_count = steps.count
       current_count = 0
@@ -122,6 +127,7 @@
     @role_info ||=
       CourseMembership::Models::Student
         .select([:entity_role_id, :deidentifier, :entity_course_id])
+        .with_deleted
         .each_with_object({}) do |student, hsh|
           hsh[student.entity_role_id] = {
             deidentifier: student.deidentifier,
@@ -135,7 +141,7 @@
       CourseProfile::Models::Profile
         .select([:entity_course_id, :is_concept_coach])
         .each_with_object({}) do |profile, hsh|
-          hsh[profile.entity_course_id] = profile.is_concept_coach
+          hsh[profile.entity_course_id] = profile.is_concept_coach.try(:capitalize)
         end
 
     @is_cc_map[course_id]
