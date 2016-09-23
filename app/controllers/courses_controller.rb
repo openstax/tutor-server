@@ -46,7 +46,9 @@ class CoursesController < ApplicationController
     when :enrollment_code_not_found
       enrollment_code_not_found
     when :taken
-      flash[:error] = "That school-issued ID is already in use."
+      flash[:error] = 'That school-issued ID is already in use. ' \
+                      'If you already have an account, please do not create ' \
+                      'a duplicate or you may lose work.'
       redirect_to token_enroll_path(params[:enroll][:enrollment_token])
     else
       raise StandardError, "Student URL enrollment failed: #{@handler_result.errors}"
