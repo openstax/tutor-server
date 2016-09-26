@@ -20,8 +20,8 @@ class OpenStax::Exercises::V1::Exercise
     @content_hash
   end
 
-  def uid
-    @uid ||= content_hash['uid']
+  def uuid
+    @uuid ||= content_hash['uuid']
   end
 
   def number
@@ -30,6 +30,10 @@ class OpenStax::Exercises::V1::Exercise
 
   def version
     @version ||= content_hash['version']
+  end
+
+  def uid
+    @uid ||= content_hash['uid']
   end
 
   def url
