@@ -5,9 +5,9 @@
     <%= render partial: 'course_identifier_sentence', locals: @handler_result.outputs.to_hash.symbolize_keys.slice(:courses, :period) %>
   </h2>
   <hr/>
-
+  <div class="enrollment-flash">
   <%= render 'layouts/flash_messages' %>
-
+  </div>
   <%= lev_form_for :enroll, url: confirm_token_enroll_path, method: 'post', html: {class: 'form-inline'} do |f| %>
 
     <%= f.hidden_field :enrollment_token, value: params[:enroll_token] %>
