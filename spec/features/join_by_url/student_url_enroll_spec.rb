@@ -67,7 +67,7 @@ RSpec.describe 'Students enrolling via URL' do
           click_button 'Continue'
 
           expect(page).to have_content 'is already in use'
-          expect(page).to have_content 'do not create a duplicate'
+          expect(page).to have_content 'do not create another account'
           expect(page).to have_content 'Enter your school-issued'
           expect(UserIsCourseStudent[course: course, user: user]).to be_falsy
         end
