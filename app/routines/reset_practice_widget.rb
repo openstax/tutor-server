@@ -48,8 +48,13 @@ class ResetPracticeWidget
       exercises = get_local_exercises(ecosystem: ecosystem, pages: pages, role: role,
                                       count: EXERCISES_COUNT, randomize: randomize)
     when :biglearn
-      exercises = OpenStax::Biglearn::Api.fetch_topic_pes(
-        students: role.student, book_containers: pages, max_exercises_to_return: EXERCISES_COUNT
+      # TODO: Create task to send to Biglearn
+      task = nil
+
+      OpenStax::Biglearn::Api.create_or_update_assignments(task: task)
+
+      exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
+        task: task, max_exercises_to_return: EXERCISES_COUNT
       )
     else
       raise ArgumentError, "exercise_source: must be one of [:local, :biglearn]"

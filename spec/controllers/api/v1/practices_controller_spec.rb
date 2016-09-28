@@ -35,7 +35,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     before(:each) do
       outs = Content::Routines::PopulateExercisePools.call(book: page.book).outputs
 
-      OpenStax::Biglearn::Api.create_ecosystems(ecosystems: ecosystem)
+      OpenStax::Biglearn::Api.create_ecosystems(ecosystem: ecosystem)
     end
 
     it 'returns the practice task data' do
@@ -81,7 +81,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it "returns error when no exercises can scrounged" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
 
-      expect(OpenStax::Biglearn::Api).to receive(:fetch_topic_pes).and_return([])
+      expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([])
 
       expect_any_instance_of(ResetPracticeWidget).to receive(:get_local_exercises).and_return([])
 

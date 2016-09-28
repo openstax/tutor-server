@@ -1,4 +1,5 @@
 require_relative './api/configuration'
+require_relative './api/malformed_request'
 require_relative './api/fake_client'
 require_relative './api/real_client'
 require_relative './api/local_clue'
@@ -25,78 +26,90 @@ module OpenStax::Biglearn::Api
     # period is a CourseMembership::Period or CourseMembership::Models::Period
     # max_exercises_to_return is an integer
 
-    # Adds the given Content::Ecosystems to Biglearn
-    def create_ecosystems(ecosystems:)
-      #client.create_ecosystems(ecosystems: ecosystems)
+    # Adds the given ecosystems to Biglearn
+    # Requests are hashes containing the following keys: :ecosystem
+    def create_ecosystems(requests)
+      api_request method: :create_ecosystems, requests: requests, keys: :ecosystem
     end
 
-    # Prepares Biglearn for Entity::Course ecosystem updates
-    # Updates are constructed by matching items in the array with the same index
-    def prepare_course_ecosystems(courses:, ecosystems:)
-      #client.prepare_course_ecosystems(updates: updates)
+    # Prepares Biglearn for course ecosystem updates
+    # Requests are hashes containing the following keys: :course and :ecosystem
+    def prepare_course_ecosystems(requests)
+      api_request method: :prepare_course_ecosystems,
+                  requests: requests,
+                  keys: [:course, :ecosystem]
     end
 
-    # Finalizes an Entity::Course ecosystem update in Biglearn,
+    # Finalizes a course ecosystem update in Biglearn,
     # causing it to stop computing CLUes for the old one
-    def update_course_ecosystems(courses:)
-      #client.update_course_ecosystems(courses: courses)
+    # Requests are hashes containing the following key: :course
+    def update_course_ecosystems(requests)
+      api_request method: :update_course_ecosystems, requests: requests, keys: :course
     end
 
     # Updates Course rosters in Biglearn
-    def update_rosters(courses:)
-      #client.update_rosters(courses: courses)
+    # Requests are hashes containing the following key: :course
+    def update_rosters(requests)
+      api_request method: :update_rosters, requests: requests, keys: :course
     end
 
     # Updates global exercise exclusions
-    def update_global_exercise_exclusions(exercise_ids:)
-      #client.update_global_exercise_exclusions(exercise_ids: exercise_ids)
+    # Request is a hash containing the following key: :exercise_ids
+    def update_global_exercise_exclusions(request)
+      api_request method: :update_global_exercise_exclusions,
+                  requests: request,
+                  keys: :exercise_ids
     end
 
-    # Updates exercise exclusions for the given course
-    def update_course_exercise_exclusions(course:)
-      #client.update_course_exercise_exclusions(course: course)
+    # Updates exercise exclusions for the given courses
+    # Requests are hashes containing the following key: :course
+    def update_course_exercise_exclusions(requests)
+      api_request method: :update_course_exercise_exclusions,
+                  requests: requests,
+                  keys: :course
     end
 
-    # Creates or updates a Tasks::Models::Task in Biglearn
-    def create_or_update_assignments(tasks:)
-      #client.create_or_update_assignments(tasks: tasks)
+    # Creates or updates a task in Biglearn
+    # Requests are hashes containing the following key: :task
+    def create_or_update_assignments(requests)
+      api_request method: :create_or_update_assignments,
+                  requests: requests,
+                  keys: :task
     end
 
     # Returns a number of recommended exercises for the given tasks
     # May return less than the given number if there aren't enough exercises
-    def fetch_assignment_pes(tasks:, max_exercises_to_return:)
-      #client.fetch_assignment_pes(tasks: tasks, max_exercises_to_return: max_exercises_to_return)
-      []
-    end
-
-    # Returns a number of recommended exercises for the given students and book containers
-    # One clue is returned for each student, book_container pair
-    # Book container is a Content::Chapter or Content::Page
-    # May return less than the given number if there aren't enough exercises
-    def fetch_topic_pes(students:, book_containers:, max_exercises_to_return:)
-      #client.fetch_topic_pes(students: students, book_containers: book_containers,
-      #                       max_exercises_to_return: max_exercises_to_return)
-      []
+    # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+    def fetch_assignment_pes(requests)
+      api_request method: :fetch_assignment_pes,
+                  requests: requests,
+                  keys: [:task, :max_exercises_to_return]
     end
 
     # Returns a number of recommended exercises for the given students and ecosystems
     # May return less than the given number if there aren't enough exercises
-    def fetch_weakest_topics_pes(students:, ecosystems:, max_exercises_to_return:)
-      #client.fetch_weakest_topics_pes(students: students, ecosystems: ecosystems,
-      #                                max_exercises_to_return: max_exercises_to_return)
-      []
+    # Requests are hashes containing the following keys:
+    # :student, :ecosystem and max_exercises_to_return
+    def fetch_weakest_topics_pes(requests)
+      api_request method: :fetch_weakest_topics_pes,
+                  requests: requests,
+                  keys: [:student, :ecosystem, :max_exercises_to_return]
     end
 
     # Returns the CLUes for the given book containers and students
-    def fetch_learner_clues(book_containers:, students:)
-      #client.fetch_learner_clues(book_containers: book_containers, students: students)
-      []
+    # Requests are hashes containing the following keys: :book_container and :student
+    def fetch_learner_clues(requests)
+      api_request method: :fetch_learner_clues,
+                  requests: requests,
+                  keys: [:book_container, :student]
     end
 
     # Returns the CLUes for the given book containers and periods
-    def fetch_teacher_clues(book_containers:, periods:)
-      #client.fetch_teacher_clues(book_containers: book_containers, periods: periods)
-      []
+    # Requests are hashes containing the following keys: :book_container and :period
+    def fetch_teacher_clues(requests)
+      api_request method: :fetch_teacher_clues,
+                  requests: requests,
+                  keys: [:book_container, :period]
     end
 
     #
@@ -121,16 +134,16 @@ module OpenStax::Biglearn::Api
     end
 
     def use_real_client
-      use_client_named(:real)
+      use_client(name: :real)
     end
 
     def use_fake_client
-      use_client_named(:fake)
+      use_client(name: :fake)
     end
 
-    def use_client_named(client_name)
+    def use_client(name:)
       RequestStore.store[:biglearn_v1_forced_client_in_use] = true
-      self.client = new_client(client_name)
+      self.client = new_client(name: name)
     end
 
     def default_client_name
@@ -171,7 +184,7 @@ module OpenStax::Biglearn::Api
       OpenStax::Biglearn::Api::Configuration.new
     end
 
-    def new_client(name = default_client_name)
+    def new_client(name: default_client_name)
       case name
       when :local_query_with_fake
         new_local_query_client_with_fake
@@ -192,6 +205,32 @@ module OpenStax::Biglearn::Api
       rescue StandardError => e
         raise "Biglearn client initialization error: #{e.message}"
       end
+    end
+
+    def api_request(method:, requests:, keys:)
+      keys_array = [keys].flatten
+
+      requests_array = [requests].flatten.map do |request|
+        missing_keys = keys_array.reject{ |key| request.has_key? key }
+
+        raise(
+          OpenStax::Biglearn::Api::MalformedRequest,
+          "Invalid request: #{request.inspect} is missing these key(s): #{missing_keys.inspect}",
+          caller
+        ) if missing_keys.any?
+
+        request.slice(*keys_array)
+      end
+
+      result = {}
+
+      client.send(method, requests_array).each_with_index do |response, index|
+        result[requests_array[index]] = response
+      end
+
+      # If given a Hash, we are in single request mode, so return the first and only response
+      # Otherwise, return a hash or responses keyed by each request given
+      requests.is_a?(Hash) ? result[requests] : result
     end
 
   end
