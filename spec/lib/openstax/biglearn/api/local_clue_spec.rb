@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Biglearn::Api::LocalClue do
+RSpec.xdescribe OpenStax::Biglearn::Api::LocalClue do
   let(:local_clue) { described_class.new(responses: responses) }
 
   context 'no learners or responses' do

@@ -16,14 +16,17 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
+  validates :uuid, presence: true
   validates :number, presence: true
   validates :version, presence: true
 
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) {
-    joins{ scope.as(:later_version).on{ (later_version.number == ~number) & \
-                                        (later_version.version > ~version) }.outer }
-      .where{later_version.id == nil}
+    joins do
+      scope.as(:later_version).on do
+        (later_version.number == ~number) & (later_version.version > ~version)
+      end.outer
+    end.where{later_version.id == nil}
   }
 
   def uid

@@ -21,7 +21,7 @@ class OpenStax::Exercises::V1::RealClient
   end
 
   def sanitize(vals)
-    vals = [vals].flatten
+    vals = [vals].flatten.map(&:to_s)
 
     # Remove , and "
     value_str = vals.map{ |val| val.gsub(/(?:,|"|%2C|%22)/, '') }.join(',')

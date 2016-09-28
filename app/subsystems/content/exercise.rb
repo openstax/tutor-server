@@ -11,8 +11,8 @@ module Content
       verify_and_return @strategy.url, klass: String, error: StrategyError
     end
 
-    def uid
-      verify_and_return @strategy.uid, klass: String, error: StrategyError
+    def uuid
+      verify_and_return @strategy.uuid, klass: String, error: StrategyError
     end
 
     def number
@@ -21,6 +21,10 @@ module Content
 
     def version
       verify_and_return @strategy.version, klass: Integer, error: StrategyError
+    end
+
+    def uid
+      verify_and_return @strategy.uid, klass: String, error: StrategyError
     end
 
     def title

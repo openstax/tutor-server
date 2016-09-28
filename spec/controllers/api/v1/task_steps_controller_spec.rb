@@ -4,33 +4,34 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
   let(:application)        { FactoryGirl.create :doorkeeper_application }
   let(:user_1)             { FactoryGirl.create(:user) }
-  let(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: user_1.id }
+  let(:user_1_token)       do
+    FactoryGirl.create :doorkeeper_access_token, application: application,
+                                                 resource_owner_id: user_1.id
+  end
   let(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
 
   let(:user_2)             { FactoryGirl.create(:user) }
-  let(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: user_2.id }
+  let(:user_2_token)       do
+    FactoryGirl.create :doorkeeper_access_token, application: application,
+                                                 resource_owner_id: user_2.id
+  end
 
   let(:userless_token)     { FactoryGirl.create :doorkeeper_access_token, application: application }
 
-  let(:task_step)          { FactoryGirl.create :tasks_task_step,
-                                                title: 'title',
-                                                url: 'http://u.rl',
-                                                content: 'content' }
+  let(:task_step)          do
+    FactoryGirl.create :tasks_task_step, title: 'title', url: 'http://u.rl', content: 'content'
+  end
 
   let(:task)               { task_step.task.reload }
 
   let!(:tasking)           { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task }
 
-  let!(:tasked_exercise)   {
+  let!(:tasked_exercise)   do
     te = FactoryGirl.build :tasks_tasked_exercise
     te.task_step.task = task
     te.save!
     te
-  }
+  end
 
   let(:course)              { FactoryGirl.create :course_profile_course }
   let(:period)              { FactoryGirl.create :course_membership_period, course: course }
@@ -51,7 +52,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     te
   end
 
-  describe "#show" do
+  context "#show" do
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
       expect(response).to have_http_status(:success)
@@ -80,7 +81,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  describe "PATCH update" do
+  context "PATCH update" do
 
     let(:tasked)        { create_tasked(:tasked_exercise, user_1_role) }
     let(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
@@ -134,7 +135,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
   end
 
-  describe "#recovery" do
+  context "#recovery" do
     it "should allow owner to add related exercises after steps that have related_exercise_ids" do
       expect {
         api_put :recovery, user_1_token, parameters: {
@@ -182,7 +183,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  describe "#completed" do
+  context "#completed" do
     it "should allow marking completion of reading steps by the owner" do
       tasked = create_tasked(:tasked_reading, user_1_role)
       api_put :completed, user_1_token, parameters: { id: tasked.task_step.id }
@@ -236,10 +237,17 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  describe "practice task update step" do
-    it "allows updating of a step (needed to test access to legacy and SS taskings)" do
+  context "practice task update step" do
+    it "allows updating of a step" do
+      page = tasked_exercise.exercise.page
+      page.practice_widget_pool.update_attribute :content_exercise_ids,
+                                                 [tasked_exercise.content_exercise_id]
+
       AddUserAsPeriodStudent[period: period, user: user_1]
-      task = ResetPracticeWidget[role: Entity::Role.last, exercise_source: :fake]
+
+      task = ResetPracticeWidget[
+        role: Entity::Role.last, exercise_source: :local, page_ids: [page.id]
+      ]
 
       step = task.task_steps.first
 
@@ -249,7 +257,6 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       expect(response).to have_http_status(:success)
     end
   end
-
 
   # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples
   def create_tasked(type, owner)

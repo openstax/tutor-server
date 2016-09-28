@@ -138,11 +138,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
       end
     end
 
-    before do
-      expect(OpenStax::Exercises::V1).to receive(:exercises) do |*args|
-        { 'items' => wrappers }
-      end.once
-    end
+    before { expect(OpenStax::Exercises::V1).to receive(:exercises).and_return(wrappers).once }
 
     it 'assigns context for exercises that require context' do
       tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
@@ -276,9 +272,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
       OpenStax::Exercises::V1::Exercise.new(content: content_hash.to_json)
     end
 
-    expect(OpenStax::Exercises::V1).to receive(:exercises) do |*args|
-      { 'items' => wrappers }
-    end.once
+    expect(OpenStax::Exercises::V1).to receive(:exercises).and_return(wrappers).once
   end
 
 end

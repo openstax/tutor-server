@@ -53,7 +53,7 @@ module OpenStax::Biglearn::Api
       chosen_exercises.map(&:url)
     end
 
-    def get_clues(roles:, pool_uuids:, force_cache_miss: 'ignored')
+    def get_clues(roles:, pool_uuids:)
       tasked_exercises_by_pool_uuid_and_role = completed_tasked_exercises_by(
         pool_uuids: pool_uuids, roles: roles
       )

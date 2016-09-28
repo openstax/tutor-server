@@ -41,7 +41,7 @@ class CourseContent::UpdateExerciseExclusions
     end
 
     # Send the exercise exclusions to Biglearn
-    # TODO: API call to send the exclusions
+    OpenStax::Biglearn::Api.update_course_exercise_exclusions(course: course)
 
     # This touch ensures that transactions trying to lock the same course profile will retry
     course.profile.touch

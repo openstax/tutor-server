@@ -16,82 +16,87 @@ module OpenStax::Biglearn::Api
     # API Wrappers
     #
 
-    # Adds the given Content::Ecosystem to Biglearn
-    def create_ecosystem(ecosystem:)
-      client.create_ecosystem(ecosystem: ecosystem)
+    # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
+    # course is an Entity::Course
+    # task is a Tasks::Models::Task
+    # student is a CourseMembership::Models::Student
+    # book_container is a Content::Chapter or Content::Page or one of their models
+    # exercise_id is a String containing an Exercise uuid, number or uid
+    # period is a CourseMembership::Period or CourseMembership::Models::Period
+    # max_exercises_to_return is an integer
+
+    # Adds the given Content::Ecosystems to Biglearn
+    def create_ecosystems(ecosystems:)
+      #client.create_ecosystems(ecosystems: ecosystems)
     end
 
-    # Prepares Biglearn for Course Ecosystem updates
-    # Updates is an array of { course: Entity::Course, ecosystem: Content::Ecosystem }
-    def prepare_course_ecosystems(updates:)
-      client.prepare_course_ecosystems(updates: updates)
+    # Prepares Biglearn for Entity::Course ecosystem updates
+    # Updates are constructed by matching items in the array with the same index
+    def prepare_course_ecosystems(courses:, ecosystems:)
+      #client.prepare_course_ecosystems(updates: updates)
     end
 
-    # Finalizes a Course Ecosystem update in Biglearn,
+    # Finalizes an Entity::Course ecosystem update in Biglearn,
     # causing it to stop computing CLUes for the old one
-    def update_course_ecosystem(course:)
-      client.update_course_ecosystem(course: course)
+    def update_course_ecosystems(courses:)
+      #client.update_course_ecosystems(courses: courses)
     end
 
     # Updates Course rosters in Biglearn
-    # Updates is an array of {
-    #   period: CourseMembership::Period,
-    #   student: CourseMembership::Models::Student,
-    #   action: 'add' OR 'remove'
-    # }
-    def update_rosters(updates:)
-      client.update_rosters(updates: updates)
+    def update_rosters(courses:)
+      #client.update_rosters(courses: courses)
     end
 
-    # Creates or updates an Assignment (Task) in Biglearn
-    def create_or_update_assignment(assignment:)
-      client.create_or_update_assignment(assignment: assignment)
+    # Updates global exercise exclusions
+    def update_global_exercise_exclusions(exercise_ids:)
+      #client.update_global_exercise_exclusions(exercise_ids: exercise_ids)
     end
 
-    # Returns a number of recommended exercises for the given Assignment (Task)
+    # Updates exercise exclusions for the given course
+    def update_course_exercise_exclusions(course:)
+      #client.update_course_exercise_exclusions(course: course)
+    end
+
+    # Creates or updates a Tasks::Models::Task in Biglearn
+    def create_or_update_assignments(tasks:)
+      #client.create_or_update_assignments(tasks: tasks)
+    end
+
+    # Returns a number of recommended exercises for the given tasks
     # May return less than the given number if there aren't enough exercises
-    def fetch_assignment_pes(assignment:, max_exercises_to_return:)
-      client.fetch_assignment_pes(assignment: assignment,
-                                  max_exercises_to_return: max_exercises_to_return)
+    def fetch_assignment_pes(tasks:, max_exercises_to_return:)
+      #client.fetch_assignment_pes(tasks: tasks, max_exercises_to_return: max_exercises_to_return)
+      []
     end
 
-    # Returns a number of recommended exercises for the given Student and Book Container
-    # Book Container is a Content::Chapter or Content::Page
+    # Returns a number of recommended exercises for the given students and book containers
+    # One clue is returned for each student, book_container pair
+    # Book container is a Content::Chapter or Content::Page
     # May return less than the given number if there aren't enough exercises
-    def fetch_topic_pes(student:, book_container:, max_exercises_to_return:)
-      client.fetch_topic_pes(student: student, book_container: book_container,
-                             max_exercises_to_return: max_exercises_to_return)
+    def fetch_topic_pes(students:, book_containers:, max_exercises_to_return:)
+      #client.fetch_topic_pes(students: students, book_containers: book_containers,
+      #                       max_exercises_to_return: max_exercises_to_return)
+      []
     end
 
-    # Returns a number of recommended exercises for the given Student and Ecosystem
+    # Returns a number of recommended exercises for the given students and ecosystems
     # May return less than the given number if there aren't enough exercises
-    def fetch_weakest_topics_pes(student:, ecosystem:, max_exercises_to_return:)
-      client.fetch_weakest_topics_pes(student: student, ecosystem: ecosystem,
-                                      max_exercises_to_return: max_exercises_to_return)
+    def fetch_weakest_topics_pes(students:, ecosystems:, max_exercises_to_return:)
+      #client.fetch_weakest_topics_pes(students: students, ecosystems: ecosystems,
+      #                                max_exercises_to_return: max_exercises_to_return)
+      []
     end
 
-    # Returns the CLUes for the given students
-    def fetch_learner_clues(student:, ecosystem:, max_exercises_to_return:)
-      client.fetch_weakest_topics_pes(student: student, ecosystem: ecosystem,
-                                      max_exercises_to_return: max_exercises_to_return)
+    # Returns the CLUes for the given book containers and students
+    def fetch_learner_clues(book_containers:, students:)
+      #client.fetch_learner_clues(book_containers: book_containers, students: students)
+      []
     end
 
-    # Return a CLUe value for the specified set of roles and pools.
-    # A map of pool uuids to CLUe values is returned. Each pool is associated with one CLUe.
-    # Each CLUe refers to one specific pool, but uses all roles given.
-    # May return nil if no CLUe is available
-    # (e.g. no exercises in the pools or confidence too low).
-    def get_clues(roles:, pools:, force_cache_miss: false)
-      roles = [roles].flatten.compact
-      pool_uuids = [pools].flatten.compact.map(&:uuid)
-
-      # No pools given: empty map
-      return {} if pool_uuids.empty?
-
-      # No roles given: map all pools to nil
-      return pool_uuids.each_with_object({}) { |uuid, hash| hash[uuid] = nil } if roles.empty?
-
-      clue = client.get_clues(roles: roles, pool_uuids: pool_uuids, force_cache_miss: force_cache_miss)
+    # Returns the CLUes for the given book containers and periods
+    def fetch_teacher_clues(book_containers:, periods:)
+      #client.fetch_teacher_clues(book_containers: book_containers, periods: periods)
+      []
     end
 
     #
