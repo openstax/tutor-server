@@ -14,6 +14,7 @@ module User
       has_many :roles, through: :role_users, subsystem: :entity
 
       has_many :enrollment_changes, subsystem: :course_membership
+      has_many :tour_views
 
       has_one :administrator, dependent: :destroy, inverse_of: :profile
       has_one :customer_service, dependent: :destroy, inverse_of: :profile
