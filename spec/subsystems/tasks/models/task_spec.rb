@@ -501,7 +501,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         expect(task.placeholder_steps_count).to eq 1
 
         # The placeholder step is removed due to no available personalized exercises
-        expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return([])
+        expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([]).once
         MarkTaskStepCompleted[task_step: task.task_steps.fourth]
 
         task.reload

@@ -3,27 +3,13 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
   def populate_placeholders(task:)
     personalized_placeholder_task_steps = task.personalized_task_steps(preload_tasked: true)
                                               .select(&:placeholder?)
-    return if personalized_placeholder_task_steps.none?
+    num_placeholders = personalized_placeholder_task_steps.length
 
-    # Gather relevant pages
-    exercise_ids = task.task_plan.settings['exercise_ids']
-    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_ids]
-    exercises = ecosystem.exercises_by_ids(exercise_ids)
-    pages = exercises.map(&:page).uniq
+    return if num_placeholders == 0
 
-    # Gather exercise pools
-    pools = ecosystem.homework_dynamic_pools(pages: pages)
-
-    num_placeholders = personalized_placeholder_task_steps.count
-
-    role = task.taskings.first.role
-
-    chosen_exercises = GetEcosystemExercisesFromBiglearn[ecosystem:         ecosystem,
-                                                         role:              role,
-                                                         pools:             pools,
-                                                         count:             num_placeholders,
-                                                         difficulty:        0.5,
-                                                         allow_repetitions: false]
+    chosen_exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
+      tasks: task, max_exercises_to_return: num_placeholders
+    )
 
     task_step_chosen_exercise_pairs = personalized_placeholder_task_steps.zip(chosen_exercises)
     task_step_chosen_exercise_pairs.each do |step, exercise|

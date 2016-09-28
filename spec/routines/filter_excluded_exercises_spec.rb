@@ -5,20 +5,20 @@ RSpec.describe FilterExcludedExercises, type: :routine do
   let(:exercises) { 5.times.map{ FactoryGirl.create :content_exercise } }
 
   before do
-    Settings::Exercises.excluded_uids = excluded_uids
-    Settings::Db.store.object('excluded_uids').expire_cache
+    Settings::Exercises.excluded_ids = excluded_ids
+    Settings::Db.store.object('excluded_ids').expire_cache
   end
 
   after do
-    Settings::Exercises.excluded_uids = ''
-    Settings::Db.store.object('excluded_uids').expire_cache
+    Settings::Exercises.excluded_ids = ''
+    Settings::Db.store.object('excluded_ids').expire_cache
   end
 
   let(:args) { { exercises: exercises, course: course,
                  additional_excluded_numbers: additional_excluded_numbers } }
 
   context 'with admin exclusions' do
-    let(:excluded_uids) { [exercises.first.uid, exercises.second.number].join(', ') }
+    let(:excluded_ids) { [exercises.first.uid, exercises.second.number].join(', ') }
 
     context 'with a course with excluded exercises' do
       let(:course)             { FactoryGirl.create :course_profile_course }
@@ -70,7 +70,7 @@ RSpec.describe FilterExcludedExercises, type: :routine do
   end
 
   context 'without admin exclusions' do
-    let(:excluded_uids) { '' }
+    let(:excluded_ids) { '' }
 
     context 'with a course with excluded exercises' do
       let(:course)             { FactoryGirl.create :course_profile_course }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Biglearn::Api, type: :external do
+RSpec.xdescribe OpenStax::Biglearn::Api, type: :external do
   before(:each) { RequestStore.clear! }
   after(:all)   { RequestStore.clear! }
 
@@ -123,6 +123,18 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         difficulty:        dummy_difficulty,
         allow_repetitions: dummy_allow_repetitions
       )
+    end
+
+    it 'errors when biglearn returns exercises not present locally' do
+      course = role.student.course
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
+      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+      AddEcosystemToCourse[ecosystem: ecosystem, course: course]
+      allow(OpenStax::Biglearn::Api).to receive(:fetch_topic_pes) do
+        [OpenStruct.new(number: 'dummy')]
+      end
+      result = ResetPracticeWidget.call role: role, exercise_source: :biglearn, page_ids: [page.id]
+      expect(result.errors.first.code).to eq :missing_local_exercises
     end
   end
 end

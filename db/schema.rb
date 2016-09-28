@@ -102,12 +102,14 @@ ActiveRecord::Schema.define(version: 20170323195331) do
     t.text     "context"
     t.boolean  "has_interactive", default: false, null: false
     t.boolean  "has_video",       default: false, null: false
+    t.uuid     "uuid",                            null: false
   end
 
   add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
   add_index "content_exercises", ["number", "version"], name: "index_content_exercises_on_number_and_version", using: :btree
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", using: :btree
+  add_index "content_exercises", ["uuid", "version"], name: "index_content_exercises_on_uuid_and_version", using: :btree
 
   create_table "content_lo_teks_tags", force: :cascade do |t|
     t.integer  "lo_id",      null: false

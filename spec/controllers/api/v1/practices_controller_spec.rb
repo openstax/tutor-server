@@ -14,13 +14,14 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
+  let(:page) { FactoryGirl.create :content_page }
+
   context "POST #create" do
-    let(:page) do
-      page = FactoryGirl.create :content_page
+    let!(:ecosystem) do
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
-      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      page
+      ::Content::Ecosystem.new(strategy: ecosystem_strategy).tap do |ecosystem|
+        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      end
     end
 
     let!(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
@@ -34,7 +35,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     before(:each) do
       outs = Content::Routines::PopulateExercisePools.call(book: page.book).outputs
 
-      OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
+      OpenStax::Biglearn::Api.create_ecosystems(ecosystems: ecosystem)
     end
 
     it 'returns the practice task data' do
@@ -80,9 +81,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it "returns error when no exercises can scrounged" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
 
-      expect(OpenStax::Biglearn::Api).to(
-        receive(:get_projection_exercises).once { [] }
-      )
+      expect(OpenStax::Biglearn::Api).to receive(:fetch_topic_pes).and_return([])
 
       expect_any_instance_of(ResetPracticeWidget).to receive(:get_local_exercises).and_return([])
 
@@ -99,34 +98,35 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   context "GET #show" do
     it "returns nothing when practice widget not yet set" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
-      api_get :show, user_1_token, parameters: { id: course.id,
-                                                 role_id: Entity::Role.last.id }
+      api_get :show, user_1_token, parameters: { id: course.id, role_id: Entity::Role.last.id }
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a practice widget" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
-      ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
-      ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
+      ResetPracticeWidget.call(
+        role: Entity::Role.last, exercise_source: :local, page_ids: [page.id]
+      )
+      ResetPracticeWidget.call(
+        role: Entity::Role.last, exercise_source: :local, page_ids: [page.id]
+      )
 
-      api_get :show, user_1_token, parameters: { id: course.id,
-                                                 role_id: Entity::Role.last.id }
+      api_get :show, user_1_token, parameters: { id: course.id, role_id: Entity::Role.last.id }
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body_as_hash).to include(id: be_kind_of(String),
-                                               title: "Practice",
-                                               steps: have(5).items)
+      expect(response.body_as_hash).to(
+        include(id: be_kind_of(String), title: "Practice", steps: have(5).items)
+      )
     end
 
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1)
       student_role = AddUserAsPeriodStudent[period: period, user: user_2]
-      ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
+      ResetPracticeWidget.call(role: student_role, exercise_source: :local, page_ids: [page.id])
 
-      api_get :show, user_1_token, parameters: { id: course.id,
-                                                 role_id: student_role.id }
+      api_get :show, user_1_token, parameters: { id: course.id, role_id: student_role.id }
 
       expect(response).to have_http_status(:success)
     end

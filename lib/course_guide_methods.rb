@@ -9,13 +9,23 @@ module CourseGuideMethods
     base.uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
   end
 
-  def get_clues_by_pool_uuids(roles, mapped_relevant_pages_by_chapter, type)
-    # Flatten the array of pools at the end so we can send it to Biglearn
-    pools = mapped_relevant_pages_by_chapter.flat_map do |chapter, mapped_relevant_pages|
-      [chapter.all_exercises_pool] + mapped_relevant_pages.map(&:all_exercises_pool)
+  def get_clues_by_book_container_uuids(roles, mapped_relevant_pages_by_chapter, type)
+    book_containers = mapped_relevant_pages_by_chapter.flat_map do |chapter, mapped_relevant_pages|
+      [chapter] + mapped_relevant_pages
     end
 
-    OpenStax::Biglearn::Api.get_clues(roles: roles, pools: pools)
+    if roles.size == 1
+      # Student guide
+      OpenStax::Biglearn::Api.fetch_learner_clues(book_containers: book_containers,
+                                                  students: roles.first.student)
+    else
+      # Teacher guide
+      periods = roles.map(&:student).map(&:period).uniq
+      raise "Cannot call Biglearn with multiple periods" if periods.size != 1
+
+      OpenStax::Biglearn::Api.fetch_teacher_clues(period: periods.first,
+                                                  book_containers: book_containers)
+    end
   end
 
   def get_page_guides(mapped_relevant_pages,
@@ -63,6 +73,8 @@ module CourseGuideMethods
 
   def get_role_guides(roles, history, ecosystems_map, type)
     roles = [roles].flatten
+    return [] if roles.size == 0
+
     relevant_role_histories = history.values_at(*roles)
 
     all_core_page_ids = relevant_role_histories.map do |role_history|
@@ -111,7 +123,9 @@ module CourseGuideMethods
     mapped_relevant_page_ids_with_exercises = \
       mapped_relevant_pages_by_chapter.values.flatten.map(&:id)
 
-    clues_by_pool_uuids = get_clues_by_pool_uuids(roles, mapped_relevant_pages_by_chapter, type)
+    clues_by_book_container_uuids = get_clues_by_book_container_uuids(
+      roles, mapped_relevant_pages_by_chapter, type
+    )
 
     practice_counts_by_mapped_relevant_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
     relevant_role_histories.each do |role_history|
@@ -147,7 +161,7 @@ module CourseGuideMethods
       title: book.title,
       page_ids: mapped_relevant_page_ids_with_exercises,
       children: get_chapter_guides(mapped_relevant_pages_by_chapter,
-                                   clues_by_pool_uuids,
+                                   clues_by_book_container_uuids,
                                    practice_counts_by_mapped_relevant_page_ids,
                                    completed_exercises_count_by_mapped_relevant_page_ids)
     }

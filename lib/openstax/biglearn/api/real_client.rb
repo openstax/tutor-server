@@ -1,22 +1,5 @@
 class OpenStax::Biglearn::Api::RealClient
 
-  # CLUe duration
-  # We update CLUes in the background every minute, so we let the cache basically last forever
-  CLUE_CACHE_DURATION = 1.year
-
-  # The maximum number of (pools*students) allowed to be sent in each CLUe call to Biglearn
-  # At least one pool will always be sent in each request, regardless of this value
-  # Setting this value too low will make requests slower.
-  # Setting this value too high will cause timeouts.
-  # Default is 100 (for example, 50 students and 2 pools on each request)
-  CLUE_MAX_POOL_STUDENT_PRODUCT = 100
-
-  # The maximum number of exercises to send to Biglearn on each request
-  MAX_EXERCISES_PER_REQUEST = 1500
-
-  # The maximum number of pools to create on Biglearn on each request
-  MAX_POOLS_PER_REQUEST = 100
-
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
     @client_id    = biglearn_configuration.client_id
@@ -25,8 +8,9 @@ class OpenStax::Biglearn::Api::RealClient
     # Make Faraday (used by Oauth2) encode arrays without the [], since Biglearn uses CGI
     connection_opts = { request: { params_encoder: Faraday::FlatParamsEncoder } }
 
-    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url,
-                                                            connection_opts: connection_opts)
+    @oauth_client = OAuth2::Client.new(
+      @client_id, @secret, site: @server_url, connection_opts: connection_opts
+    )
 
     @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end

@@ -92,7 +92,7 @@ class Content::ImportBook
     outputs[:pages] = pages
 
     # Send ecosystem information to Biglearn
-    OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
+    OpenStax::Biglearn::Api.create_ecosystems(ecosystems: ecosystem)
 
     # Save ids in page/chapter tables and clear associations so pools get reloaded next time
     pages.each do |page|
