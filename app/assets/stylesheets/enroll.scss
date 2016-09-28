@@ -1,4 +1,9 @@
+// the enrollment page displays the flash itself
+.courses-enroll .application-flash { display: none; }
+
 #enroll {
+  margin-top: 20px;
+
   &.well {
     margin-bottom: 0px;
   }
@@ -50,7 +55,10 @@
       }
     }
   }
-
+  .enrollment-flash {
+    max-width: 800px;
+    margin: 20px auto;
+  }
   span.help {
     display: block;
     font-size: 12px;
