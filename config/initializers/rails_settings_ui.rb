@@ -23,14 +23,14 @@ Rails.application.config.to_prepare do
     protected
 
     def send_exercise_exclusions_to_biglearn
-      old_excluded_uids = Settings::Exercises.excluded_uids
+      old_excluded_ids = Settings::Exercises.excluded_ids
 
       yield
 
-      new_excluded_uids = Settings::Exercises.excluded_uids
-      return if new_excluded_uids == old_excluded_uids
+      new_excluded_ids = Settings::Exercises.excluded_ids
+      return if new_excluded_ids == old_excluded_ids
 
-      # TODO: Api call to send exercise exclusions to Biglearn
+      OpenStax::Biglearn::Api.update_global_exercise_exclusions(exercise_ids: new_excluded_ids)
     end
   end
 
@@ -44,7 +44,8 @@ Rails.application.config.to_prepare do
       end
 
       help_block_content = I18n.t("settings.attributes.#{setting_name}.help_block", default: '')
-      field + (help_block_content.presence && content_tag(:span, help_block_content, class: 'help-block'))
+      field + (help_block_content.presence &&
+               content_tag(:span, help_block_content, class: 'help-block'))
     end
   end
 end

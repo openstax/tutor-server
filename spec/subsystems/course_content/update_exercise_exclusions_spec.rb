@@ -21,28 +21,22 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
 
     let(:exercise) { @ecosystem.exercises.first }
 
-    it 'can exclude an exercise' do
+    it 'can exclude and reinclude an exercise' do
       expect{
         @exclusions = CourseContent::UpdateExerciseExclusions[
           course: course, updates_array: [{ id: exercise.id.to_s, is_excluded: true }]
         ]
-      }.to change{ course.reload.biglearn_excluded_pool_uuid }
-
-      expect(course.biglearn_excluded_pool_uuid).to be_a(String)
+      }.to change{ CourseContent::Models::ExcludedExercise.count }.by(1)
 
       expect(@exclusions).to be_an Array
       expect(@exclusions.first[:id]).to eq exercise.id.to_s
       expect(@exclusions.first[:is_excluded]).to eq true
-    end
 
-    it 'can reinclude an exercise' do
       expect{
         @exclusions = CourseContent::UpdateExerciseExclusions[
           course: course, updates_array: [{ id: exercise.id.to_s, is_excluded: false }]
         ]
-      }.to change{ course.reload.biglearn_excluded_pool_uuid }
-
-      expect(course.biglearn_excluded_pool_uuid).to be_a(String)
+      }.to change{ CourseContent::Models::ExcludedExercise.count }.by(-1)
 
       expect(@exclusions).to be_an Array
       expect(@exclusions.first[:id]).to eq exercise.id.to_s

@@ -150,9 +150,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
             api_patch :update, user_1_token,
                       parameters: { course_id: course.id },
                       raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
-          }.to change{ course.reload.biglearn_excluded_pool_uuid }
-
-          expect(course.biglearn_excluded_pool_uuid).to be_a(String)
+          }.to change{ CourseContent::Models::ExcludedExercise.count }.by(1)
 
           expect(response).to have_http_status(:success)
           exclusions = response.body_as_hash
@@ -169,9 +167,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
             api_patch :update, user_1_token,
                       parameters: { course_id: course.id },
                       raw_post_data: [{ id: exercise.id, is_excluded: false }].to_json
-          }.to change{ course.reload.biglearn_excluded_pool_uuid }
-
-          expect(course.biglearn_excluded_pool_uuid).to be_a(String)
+          }.to change{ CourseContent::Models::ExcludedExercise.count }.by(-1)
 
           expect(response).to have_http_status(:success)
           exclusions = response.body_as_hash

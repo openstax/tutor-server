@@ -5,8 +5,7 @@ end
 
 Settings::Db.store = Settings::Db::Store
 
-Settings::Db.store.defaults[:excluded_uids] = ''
-Settings::Db.store.defaults[:excluded_pool_uuid] = ''
+Settings::Db.store.defaults[:excluded_ids] = ''
 Settings::Db.store.defaults[:import_real_salesforce_courses] = false
 Settings::Db.store.defaults[:default_open_time] = '00:01'
 Settings::Db.store.defaults[:default_due_time] = '07:00'

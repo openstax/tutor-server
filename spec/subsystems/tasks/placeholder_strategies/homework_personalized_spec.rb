@@ -17,10 +17,12 @@ RSpec.describe Tasks::PlaceholderStrategies::HomeworkPersonalized, type: :placeh
     end
   end
 
-  let(:task_plan) { FactoryGirl.create :tasks_task_plan,
-                                        type: :homework,
-                                        owner: period.course,
-                                        ecosystem: page.ecosystem }
+  let(:task_plan) do
+    FactoryGirl.create :tasks_task_plan, type: :homework,
+                                         owner: period.course,
+                                         ecosystem: page.ecosystem
+  end
+
   let(:task)     do
     FactoryGirl.create(:tasks_task, task_plan: task_plan, task_type: :homework,
                        step_types: step_types, tasked_to: [taskee_role],
@@ -33,7 +35,9 @@ RSpec.describe Tasks::PlaceholderStrategies::HomeworkPersonalized, type: :placeh
   end
 
   it 'replaces Placeholder steps with Exercise steps from the page\'s reading_dynamic_pool' do
-    expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return(pool_exercises).once
+    expect(OpenStax::Biglearn::Api).to(
+      receive(:fetch_assignment_pes).and_return(pool_exercises).once
+    )
 
     expect(task.exercise_steps_count).to eq 2
     expect(task.placeholder_steps_count).to eq 2
@@ -49,7 +53,7 @@ RSpec.describe Tasks::PlaceholderStrategies::HomeworkPersonalized, type: :placeh
   end
 
   it 'removes all Placeholder steps even if not enough Exercises available' do
-    expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return([]).once
+    expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([]).once
 
     expect(task.exercise_steps_count).to eq 2
     expect(task.placeholder_steps_count).to eq 2
@@ -64,7 +68,9 @@ RSpec.describe Tasks::PlaceholderStrategies::HomeworkPersonalized, type: :placeh
   it 'does not blow up if placeholder steps have been marked as completed' do
     task.task_steps.each{ |ts| ts.complete.save! }
 
-    expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return(pool_exercises).once
+    expect(OpenStax::Biglearn::Api).to(
+      receive(:fetch_assignment_pes).and_return(pool_exercises).once
+    )
 
     expect(task.exercise_steps_count).to eq 2
     expect(task.placeholder_steps_count).to eq 2

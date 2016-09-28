@@ -4,8 +4,6 @@ FactoryGirl.define do
 
     sequence(:number) { |n| -n }
     version           1
-    url               { wrapper.url }
-    title             { wrapper.title }
 
     transient do
       uid       nil
@@ -19,5 +17,9 @@ FactoryGirl.define do
         number: number, version: version, uid: uid, tags: tags, num_parts: num_parts
       ).to_json
     end
+
+    uuid      { wrapper.uuid    }
+    url       { wrapper.url     }
+    title     { wrapper.title   }
   end
 end
