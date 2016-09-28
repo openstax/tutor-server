@@ -18,123 +18,84 @@ class OpenStax::Biglearn::Api::FakeClient
   # API methods
   #
 
-  def add_exercises(exercises)
-    return [] if exercises.empty?
+  # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
+  # course is an Entity::Course
+  # task is a Tasks::Models::Task
+  # student is a CourseMembership::Models::Student
+  # book_container is a Content::Chapter or Content::Page or one of their models
+  # exercise_id is a String containing an Exercise uuid, number or uid
+  # period is a CourseMembership::Period or CourseMembership::Models::Period
+  # max_exercises_to_return is an integer
 
-    # Iterate through the exercises, storing each in the store,
-    # overwriting any with the same ID
-
-    exercise_key_to_exercise_map = {}
-    [exercises].flatten.each do |exercise|
-      exercise_key = "exercises/#{exercise.question_id}"
-      exercise_key_to_exercise_map[exercise_key] = exercise
-    end
-
-    exercise_keys = exercise_key_to_exercise_map.keys
-
-    exercise_key_to_version_json_map = store.read_multi(*exercise_keys)
-
-    exercise_keys.each do |exercise_key|
-      exercise = exercise_key_to_exercise_map[exercise_key]
-      version_json = exercise_key_to_version_json_map[exercise_key]
-      version_hash = JSON.parse(version_json || '{}')
-      version_hash[exercise.version.to_s] = exercise.tags
-      store.write(exercise_key, version_hash.to_json)
-    end
-
-    [{'message' => 'Question tags saved.'}]
+  # Adds the given ecosystems to Biglearn
+  # Requests are hashes containing the following keys: :ecosystem
+  def create_ecosystems(requests)
+    requests.map{ |request| {} }
   end
 
-  def add_pools(pools)
-    # Add the given pools to the store, overwriting any with the same UUID
-
-    pools.map do |pool|
-      pool.uuid ||= SecureRandom.uuid
-      json = pool.exercises.map do |ex|
-        { question_id: ex.question_id.to_s, version: ex.version }
-      end.to_json
-      store.write "pools/#{pool.uuid}", json
-      pool.uuid
-    end
+  # Prepares Biglearn for course ecosystem updates
+  # Requests are hashes containing the following keys: :course and :ecosystem
+  def prepare_course_ecosystems(requests)
+    requests.map{ |request| {} }
   end
 
-  def combine_pools(pool_uuids)
-    # Combine the given pools into one
-
-    pool_keys = pool_uuids.map{ |uuid| "pools/#{uuid}" }
-    questions = store.read_multi(*pool_keys).values.flatten.uniq
-    uuid = SecureRandom.uuid
-
-    store.write("pools/#{uuid}", questions)
-
-    uuid
+  # Finalizes a course ecosystem update in Biglearn,
+  # causing it to stop computing CLUes for the old one
+  # Requests are hashes containing the following key: :course
+  def update_course_ecosystems(requests)
+    requests.map{ |request| {} }
   end
 
-  # Since the FakeClient doesn't know which questions have been answered,
-  # allow_repetitions is ignored
-  def get_projection_exercises(role:, pool_uuids:, pool_exclusions:,
-                               count:, difficulty:, allow_repetitions:)
-    # Get the exercises in the pools
-    pool_keys = pool_uuids.map{ |uuid| "pools/#{uuid}" }
-    pool_questions = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
-
-    unless pool_exclusions.empty?
-      excluded_pools_to_keys_map = {}
-      pool_exclusions.each do |hash|
-        pl = hash[:pool]
-        excluded_pools_to_keys_map[pl] = "pools/#{pl.uuid}"
-      end
-      excluded_pool_keys = excluded_pools_to_keys_map.values
-      excluded_key_to_json_map = store.read_multi(*excluded_pool_keys)
-      pool_exclusions.each_with_index do |pool_exclusion, index|
-        excluded_pool = pool_exclusion[:pool]
-        ignore_versions = pool_exclusion[:ignore_versions]
-        excluded_pool_key = excluded_pools_to_keys_map[excluded_pool]
-        excluded_json = excluded_key_to_json_map[excluded_pool_key]
-        excluded_questions = JSON.parse excluded_json
-
-        if ignore_versions
-          excluded_question_ids = excluded_questions.map{ |question| question['question_id'] }
-          pool_questions = pool_questions.reject do |pool_question|
-            pool_question['question_id'].in? excluded_question_ids
-          end
-        else
-          pool_questions = pool_questions - excluded_questions
-        end
-      end
-    end
-
-    question_ids = pool_questions.map{ |question| question['question_id'] }
-
-    # Limit the results to the desired number
-    question_ids.first(count)
+  # Updates Course rosters in Biglearn
+  # Requests are hashes containing the following key: :course
+  def update_rosters(requests)
+    requests.map{ |request| {} }
   end
 
-  def get_clues(roles:, pool_uuids:, force_cache_miss: 'ignored')
-    # The fake client CLUe results are completely random
-    pool_uuids.each_with_object({}) do |uuid, hash|
-      aggregate = rand(0.0..1.0)
-      confidence_left  = [aggregate - 0.1, 0.0].max
-      confidence_right = [aggregate + 0.1, 1.0].min
-      level = aggregate >= 0.8 ? 'high' : (aggregate >= 0.3 ? 'medium' : 'low')
-      confidence = ['good', 'bad'].sample
-      samples = 6
-      threshold = 'above'
-      unique_learner_count = roles.size
+  # Updates global exercise exclusions
+  # Request is a hash containing the following key: :exercise_ids
+  def update_global_exercise_exclusions(request)
+    request = request.first
+    [{}]
+  end
 
-      hash[uuid] = {
-        value: aggregate,
-        value_interpretation: level,
-        confidence_interval: [
-          confidence_left,
-          confidence_right
-        ],
-        confidence_interval_interpretation: confidence,
-        sample_size: samples,
-        sample_size_interpretation: threshold,
-        unique_learner_count: unique_learner_count
-      }
-    end
+  # Updates exercise exclusions for the given courses
+  # Requests are hashes containing the following key: :course
+  def update_course_exercise_exclusions(requests)
+    requests.map{ |request| {} }
+  end
+
+  # Creates or updates a task in Biglearn
+  # Requests are hashes containing the following key: :task
+  def create_or_update_assignments(requests)
+    requests.map{ |request| {} }
+  end
+
+  # Returns a number of recommended exercises for the given tasks
+  # May return less than the given number if there aren't enough exercises
+  # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+  def fetch_assignment_pes(requests)
+    requests.map{ |request| [] }
+  end
+
+  # Returns a number of recommended exercises for the given students and ecosystems
+  # May return less than the given number if there aren't enough exercises
+  # Requests are hashes containing the following keys:
+  # :student, :ecosystem and max_exercises_to_return
+  def fetch_weakest_topics_pes(requests)
+    requests.map{ |request| {} }
+  end
+
+  # Returns the CLUes for the given book containers and students
+  # Requests are hashes containing the following keys: :book_container and :student
+  def fetch_learner_clues(requests)
+    requests.map{ |request| {} }
+  end
+
+  # Returns the CLUes for the given book containers and periods
+  # Requests are hashes containing the following keys: :book_container and :period
+  def fetch_teacher_clues(requests:)
+    client.fetch_teacher_clues(requests: requests)
   end
 
 end

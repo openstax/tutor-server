@@ -3,8 +3,6 @@ require 'vcr_helper'
 
 RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  let(:biglearn_client) { OpenStax::Biglearn::Api.client }
-
   let(:phys_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
   let(:bio_cnx_book)   { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
   let(:bio_cc_book)    { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
@@ -12,7 +10,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   let(:ecosystem)      { FactoryGirl.create :content_ecosystem }
 
   it 'creates a new Book structure and Pages and sets their attributes' do
-    expect(biglearn_client).to receive(:add_exercises)
+    expect(OpenStax::Biglearn::Api).to receive(:create_ecosystems)
 
     result = nil
     expect {

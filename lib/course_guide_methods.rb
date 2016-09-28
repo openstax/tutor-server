@@ -14,17 +14,27 @@ module CourseGuideMethods
       [chapter] + mapped_relevant_pages
     end
 
-    if roles.size == 1
+    responses = if roles.size == 1
       # Student guide
-      OpenStax::Biglearn::Api.fetch_learner_clues(book_containers: book_containers,
-                                                  students: roles.first.student)
+      requests = book_containers.map do |book_container|
+        { book_container: book_container, student: roles.first.student }
+      end
+
+      OpenStax::Biglearn::Api.fetch_learner_clues(requests)
     else
       # Teacher guide
       periods = roles.map(&:student).map(&:period).uniq
       raise "Cannot call Biglearn with multiple periods" if periods.size != 1
 
-      OpenStax::Biglearn::Api.fetch_teacher_clues(period: periods.first,
-                                                  book_containers: book_containers)
+      requests = book_containers.map do |book_container|
+        { book_container: book_container, period: periods.first }
+      end
+
+      OpenStax::Biglearn::Api.fetch_teacher_clues(requests)
+    end
+
+    {}.tap do |result|
+      responses.each{ |request, response| result[request[:book_container].uuid] = response }
     end
   end
 
