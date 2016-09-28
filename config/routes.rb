@@ -47,6 +47,7 @@ Rails.application.routes.draw do
 
     resource :user, only: [:show] do
       get 'tasks', on: :collection
+      put 'tours', on: :member
     end
 
     resources :tasks, only: [:show, :destroy] do
