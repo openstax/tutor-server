@@ -73,7 +73,14 @@ class CreateStudentHistory
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
-      Preview::AnswerExercise[task_step: step.reload, is_correct: true]
+      begin
+        step.reload
+      rescue ActiveRecord::RecordNotFound
+        raise "Tried to answer a #{step.group_name} step, but it was removed " +
+              '(probably because Biglearn returned no PEs)'
+      end
+
+      Preview::AnswerExercise[task_step: step, is_correct: true]
     end
   end
 

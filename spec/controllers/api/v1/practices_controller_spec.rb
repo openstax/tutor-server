@@ -16,28 +16,28 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
   let(:page) { FactoryGirl.create :content_page }
 
+  let!(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
+  let!(:exercise_2) { FactoryGirl.create :content_exercise, page: page }
+  let!(:exercise_3) { FactoryGirl.create :content_exercise, page: page }
+  let!(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
+  let!(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
+
+  let!(:ecosystem) do
+    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
+    ::Content::Ecosystem.new(strategy: ecosystem_strategy).tap do |ecosystem|
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+    end
+  end
+
+  let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1] }
+
+  before(:each) do
+    Content::Routines::PopulateExercisePools[book: page.book]
+
+    OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
+  end
+
   context "POST #create" do
-    let!(:ecosystem) do
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
-      ::Content::Ecosystem.new(strategy: ecosystem_strategy).tap do |ecosystem|
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      end
-    end
-
-    let!(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
-    let!(:exercise_2) { FactoryGirl.create :content_exercise, page: page }
-    let!(:exercise_3) { FactoryGirl.create :content_exercise, page: page }
-    let!(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
-    let!(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
-
-    let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1] }
-
-    before(:each) do
-      outs = Content::Routines::PopulateExercisePools.call(book: page.book).outputs
-
-      OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
-    end
-
     it 'returns the practice task data' do
       api_post :create,
                user_1_token,
@@ -78,7 +78,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       }.to raise_error(SecurityTransgression)
     end
 
-    it "returns error when no exercises can scrounged" do
+    it "returns error when no exercises can be scrounged" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
 
       expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([])
@@ -92,7 +92,6 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(response).to have_http_status(422)
     end
-
   end
 
   context "GET #show" do
@@ -105,14 +104,12 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
     it "returns a practice widget" do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
-      ResetPracticeWidget.call(
-        role: Entity::Role.last, exercise_source: :local, page_ids: [page.id]
-      )
-      ResetPracticeWidget.call(
-        role: Entity::Role.last, exercise_source: :local, page_ids: [page.id]
-      )
+      role = Entity::Role.last
 
-      api_get :show, user_1_token, parameters: { id: course.id, role_id: Entity::Role.last.id }
+      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
+      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
+
+      api_get :show, user_1_token, parameters: { id: course.id, role_id: role.id }
 
       expect(response).to have_http_status(:success)
 
@@ -124,7 +121,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1)
       student_role = AddUserAsPeriodStudent[period: period, user: user_2]
-      ResetPracticeWidget.call(role: student_role, exercise_source: :local, page_ids: [page.id])
+      ResetPracticeWidget[role: student_role, exercise_source: :local, page_ids: [page.id]]
 
       api_get :show, user_1_token, parameters: { id: course.id, role_id: student_role.id }
 

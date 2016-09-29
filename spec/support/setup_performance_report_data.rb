@@ -188,8 +188,12 @@ class SetupPerformanceReportData
       Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[1].reload
-    Preview::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.first, is_correct: true]
-    Preview::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.last, is_correct: false]
+    Preview::AnswerExercise[
+      task_step: student_1_tasks[1].non_core_task_steps.first, is_correct: true
+    ]
+    Preview::AnswerExercise[
+      task_step: student_1_tasks[1].non_core_task_steps.last, is_correct: false
+    ]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in first CC
     student_2_tasks = student_tasks[1]
@@ -215,7 +219,7 @@ class SetupPerformanceReportData
   end
 
   def answer_tp_tasks(student_tasks)
-    # User 1 answered everything in homework task plan correctly
+    # User 1 answered everything in homework correctly
     student_1_tasks = student_tasks[0]
     student_1_tasks[0].core_task_steps.each do |ts|
       Preview::AnswerExercise[task_step: ts, is_correct: true]
@@ -224,7 +228,7 @@ class SetupPerformanceReportData
       Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
 
-    # User 1 completed the reading task plan
+    # User 1 completed the reading
     student_1_tasks[1].core_task_steps.each do |ts|
       ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                      MarkTaskStepCompleted[task_step: ts]
@@ -238,13 +242,18 @@ class SetupPerformanceReportData
       Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[2].reload
-    Preview::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
-                          is_correct: true]
-    Preview::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last,
-                          is_correct: false]
+    raise 'Personalized steps were unexpectedly removed from homework ' +
+          '(probably because Biglearn returned no PEs)' \
+      if student_1_tasks[2].non_core_task_steps.size < 2
 
-    # User 2 answered 2 questions correctly and 2 incorrectly in
-    # homework task plan
+    Preview::AnswerExercise[
+      task_step: student_1_tasks[2].non_core_task_steps.first, is_correct: true
+    ]
+    Preview::AnswerExercise[
+      task_step: student_1_tasks[2].non_core_task_steps.last, is_correct: false
+    ]
+
+    # User 2 answered 2 questions correctly and 2 incorrectly in homework
     student_2_tasks = student_tasks[1]
     core_task_steps = student_2_tasks[0].core_task_steps
     core_task_steps.first(2).each do |ts|
@@ -254,14 +263,14 @@ class SetupPerformanceReportData
       Preview::AnswerExercise[task_step: ts, is_correct: false]
     end
 
-    # User 2 started the reading task plan
+    # User 2 started the reading
     MarkTaskStepCompleted[task_step: student_2_tasks[1].task_steps.first]
 
     # User 2 answered 1 correct in 2nd homework
     Preview::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first,
                           is_correct: true]
 
-    # User 3 answered everything in homework task plan correctly
+    # User 3 answered everything in homework correctly
     student_3_tasks = student_tasks[2]
     student_3_tasks[0].core_task_steps.each do |ts|
       Preview::AnswerExercise[task_step: ts, is_correct: true]
