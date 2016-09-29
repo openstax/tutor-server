@@ -42,9 +42,11 @@ module OpenStax::Biglearn::Api
 
     # Finalizes a course ecosystem update in Biglearn,
     # causing it to stop computing CLUes for the old one
-    # Requests are hashes containing the following key: :course
+    # Requests are hashes containing the following keys: :request_uuid and :preparation_uuid
     def update_course_ecosystems(requests)
-      api_request method: :update_course_ecosystems, requests: requests, keys: :course
+      api_request method: :update_course_ecosystems,
+                  requests: requests,
+                  keys: [:request_uuid, :preparation_uuid]
     end
 
     # Updates Course rosters in Biglearn
@@ -71,8 +73,8 @@ module OpenStax::Biglearn::Api
 
     # Creates or updates a task in Biglearn
     # Requests are hashes containing the following key: :task
-    def create_or_update_assignments(requests)
-      api_request method: :create_or_update_assignments,
+    def create_update_assignments(requests)
+      api_request method: :create_update_assignments,
                   requests: requests,
                   keys: :task
     end
@@ -81,35 +83,31 @@ module OpenStax::Biglearn::Api
     # May return less than the given number if there aren't enough exercises
     # Requests are hashes containing the following keys: :task and :max_exercises_to_return
     def fetch_assignment_pes(requests)
-      api_request method: :fetch_assignment_pes,
+      api_request(method: :fetch_assignment_pes,
                   requests: requests,
-                  keys: [:task, :max_exercises_to_return]
-    end
-
-    # Returns a number of recommended exercises for the given students and ecosystems
-    # May return less than the given number if there aren't enough exercises
-    # Requests are hashes containing the following keys:
-    # :student, :ecosystem and max_exercises_to_return
-    def fetch_weakest_topics_pes(requests)
-      api_request method: :fetch_weakest_topics_pes,
-                  requests: requests,
-                  keys: [:student, :ecosystem, :max_exercises_to_return]
+                  keys: [:task, :max_exercises_to_return]) do |response|
+        response[:exercise_uuids]
+      end
     end
 
     # Returns the CLUes for the given book containers and students
     # Requests are hashes containing the following keys: :book_container and :student
-    def fetch_learner_clues(requests)
-      api_request method: :fetch_learner_clues,
+    def fetch_student_clues(requests)
+      api_request(method: :fetch_student_clues,
                   requests: requests,
-                  keys: [:book_container, :student]
+                  keys: [:book_container, :student]) do |response|
+        response[:clue_data]
+      end
     end
 
     # Returns the CLUes for the given book containers and periods
     # Requests are hashes containing the following keys: :book_container and :period
     def fetch_teacher_clues(requests)
-      api_request method: :fetch_teacher_clues,
+      api_request(method: :fetch_teacher_clues,
                   requests: requests,
-                  keys: [:book_container, :period]
+                  keys: [:book_container, :period]) do |response|
+        response[:clue_data]
+      end
     end
 
     #
@@ -211,7 +209,9 @@ module OpenStax::Biglearn::Api
       keys_array = [keys].flatten
 
       requests_array = [requests].flatten.map do |request|
-        missing_keys = keys_array.reject{ |key| request.has_key? key }
+        ind_req = request.with_indifferent_access
+
+        missing_keys = keys_array.reject{ |key| ind_req.has_key? key }
 
         raise(
           OpenStax::Biglearn::Api::MalformedRequest,
@@ -219,18 +219,20 @@ module OpenStax::Biglearn::Api
           caller
         ) if missing_keys.any?
 
-        request.slice(*keys_array)
+        ind_req.slice(*keys_array)
       end
 
-      result = {}
+      responses = {}
 
       client.send(method, requests_array).each_with_index do |response, index|
-        result[requests_array[index]] = response
+        ind_resp = response.with_indifferent_access
+
+        responses[requests_array[index]] = block_given? ? yield(ind_resp) : ind_resp
       end
 
       # If given a Hash, we are in single request mode, so return the first and only response
       # Otherwise, return a hash or responses keyed by each request given
-      requests.is_a?(Hash) ? result[requests] : result
+      requests.is_a?(Hash) ? responses[requests] : responses
     end
 
   end
