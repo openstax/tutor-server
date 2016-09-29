@@ -10,7 +10,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   let(:ecosystem)      { FactoryGirl.create :content_ecosystem }
 
   it 'creates a new Book structure and Pages and sets their attributes' do
-    expect(OpenStax::Biglearn::Api).to receive(:create_ecosystems)
+    expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem)
 
     result = nil
     expect {
