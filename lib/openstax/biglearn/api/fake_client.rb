@@ -30,13 +30,13 @@ class OpenStax::Biglearn::Api::FakeClient
   # Adds the given ecosystems to Biglearn
   # Request is a hash containing the following key: :ecosystem
   def create_ecosystem(request)
-    request[:ecosystem].try(:uuid)
+    { created_ecosystem_uuid: request[:ecosystem].try(:uuid) }
   end
 
   # Prepares Biglearn for course ecosystem updates
   # Request is a hash containing the following keys: :course and :ecosystem
   def prepare_course_ecosystem(request)
-    :accepted
+    { prepare_status: :accepted }
   end
 
   # Finalizes a course ecosystem update in Biglearn,
@@ -60,13 +60,13 @@ class OpenStax::Biglearn::Api::FakeClient
   # Updates global exercise exclusions
   # Request is a hash containing the following key: :exercise_ids
   def update_global_exercise_exclusions(request)
-    request[:exercise_ids]
+    { updated_exercise_ids: request[:exercise_ids] }
   end
 
   # Updates exercise exclusions for the given courses
   # Requests are hashes containing the following key: :course
   def update_course_exercise_exclusions(request)
-    request[:course].try(:uuid)
+    { updated_course_uuid: request[:course].try(:uuid) }
   end
 
   # Creates or updates a task in Biglearn
