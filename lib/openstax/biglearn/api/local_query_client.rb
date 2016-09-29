@@ -3,6 +3,7 @@ module OpenStax::Biglearn::Api
 
     def initialize(write_client)
       raise "Write client must be set" if write_client.nil?
+
       @write_client = write_client
     end
 
