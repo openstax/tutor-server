@@ -92,7 +92,7 @@ class Content::ImportBook
     outputs[:pages] = pages
 
     # Send ecosystem information to Biglearn
-    OpenStax::Biglearn::Api.create_ecosystems(ecosystem: ecosystem)
+    OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
   end
 
 end

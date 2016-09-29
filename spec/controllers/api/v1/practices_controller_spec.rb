@@ -35,7 +35,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     before(:each) do
       outs = Content::Routines::PopulateExercisePools.call(book: page.book).outputs
 
-      OpenStax::Biglearn::Api.create_ecosystems(ecosystem: ecosystem)
+      OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
     end
 
     it 'returns the practice task data' do

@@ -5,12 +5,7 @@ class OpenStax::Biglearn::Api::RealClient
     @client_id    = biglearn_configuration.client_id
     @secret       = biglearn_configuration.secret
 
-    # Make Faraday (used by Oauth2) encode arrays without the [], since Biglearn uses CGI
-    connection_opts = { request: { params_encoder: Faraday::FlatParamsEncoder } }
-
-    @oauth_client = OAuth2::Client.new(
-      @client_id, @secret, site: @server_url, connection_opts: connection_opts
-    )
+    @oauth_client = OAuth2::Client.new @client_id, @secret, site: @server_url
 
     @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
