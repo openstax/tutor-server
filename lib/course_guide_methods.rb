@@ -20,7 +20,7 @@ module CourseGuideMethods
         { book_container: book_container, student: roles.first.student }
       end
 
-      OpenStax::Biglearn::Api.fetch_learner_clues(requests)
+      OpenStax::Biglearn::Api.fetch_student_clues(requests)
     else
       # Teacher guide
       periods = roles.map(&:student).map(&:period).uniq

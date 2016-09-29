@@ -51,7 +51,7 @@ class ResetPracticeWidget
       # TODO: Create task to send to Biglearn
       task = nil
 
-      OpenStax::Biglearn::Api.create_or_update_assignments(task: task)
+      OpenStax::Biglearn::Api.create_update_assignments(task: task)
 
       exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
         task: task, max_exercises_to_return: EXERCISES_COUNT
