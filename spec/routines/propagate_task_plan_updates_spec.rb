@@ -76,8 +76,8 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq old_title
           expect(task.description).to eq old_description
-          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
-          expect(task.due_at).to      be_within(1.second).of(old_due_at)
+          expect(task.opens_at).to    be_within(1e-6).of(old_opens_at)
+          expect(task.due_at).to      be_within(1e-6).of(old_due_at)
         end
         allow(task_plan.assistant).to(
           receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
@@ -91,8 +91,8 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq new_title
           expect(task.description).to eq new_description
-          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
-          expect(task.due_at).to      be_within(1.second).of(new_due_at)
+          expect(task.opens_at).to    be_within(1e-6).of(old_opens_at)
+          expect(task.due_at).to      be_within(1e-6).of(new_due_at)
           expect(task.feedback_at).to eq task.due_at
         end
       end
@@ -117,8 +117,8 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq old_title
           expect(task.description).to eq old_description
-          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
-          expect(task.due_at).to      be_within(1.second).of(old_due_at)
+          expect(task.opens_at).to    be_within(1e-6).of(old_opens_at)
+          expect(task.due_at).to      be_within(1e-6).of(old_due_at)
         end
 
         expect do
@@ -129,8 +129,8 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq new_title
           expect(task.description).to eq new_description
-          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
-          expect(task.due_at).to      be_within(1.second).of(new_due_at)
+          expect(task.opens_at).to    be_within(1e-6).of(old_opens_at)
+          expect(task.due_at).to      be_within(1e-6).of(new_due_at)
           expect(task.feedback_available?).to be_truthy
         end
       end

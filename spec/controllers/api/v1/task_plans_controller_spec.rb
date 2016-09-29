@@ -504,7 +504,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         expect(@task_plan.reload.publish_last_requested_at).not_to(
           be_within(1).of(publish_last_requested_at)
         )
-        expect(@task_plan.first_published_at).to be_within(1).of(published_at)
+        expect(@task_plan.first_published_at).to be_within(1e-6).of(published_at)
         expect(@task_plan.last_published_at).not_to be_within(1).of(published_at)
         expect(@task_plan.publish_job_uuid).not_to eq publish_job_uuid
 
@@ -556,19 +556,19 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         expect(response).to have_http_status(:ok)
 
         expect(@task_plan.reload.publish_last_requested_at).to(
-          be_within(1).of(publish_last_requested_at)
+          be_within(1e-6).of(publish_last_requested_at)
         )
         expect(@task_plan.last_published_at).to be_within(1).of(published_at)
         expect(@task_plan.publish_job_uuid).to eq publish_job_uuid
         expect(@task_plan.title).to eq 'Canceled'
         expect(@task_plan.description).to eq 'Canceled Assignment'
         @task_plan.tasking_plans.each do |tp|
-          expect(tp.opens_at).to be_within(1).of(opens_at)
-          expect(tp.due_at).to be_within(1).of(new_due_at)
+          expect(tp.opens_at).to be_within(1e-6).of(opens_at)
+          expect(tp.due_at).to be_within(1e-6).of(new_due_at)
         end
         @task_plan.tasks.each do |task|
-          expect(task.opens_at).to be_within(1).of(opens_at)
-          expect(task.due_at).to be_within(1).of(new_due_at)
+          expect(task.opens_at).to be_within(1e-6).of(opens_at)
+          expect(task.due_at).to be_within(1e-6).of(new_due_at)
         end
 
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan).to_json

@@ -240,6 +240,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
   context "practice task update step" do
     it "allows updating of a step" do
       page = tasked_exercise.exercise.page
+
+      Content::Routines::PopulateExercisePools[book: page.book]
+
       page.practice_widget_pool.update_attribute :content_exercise_ids,
                                                  [tasked_exercise.content_exercise_id]
 
