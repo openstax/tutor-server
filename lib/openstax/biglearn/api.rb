@@ -227,18 +227,22 @@ module OpenStax::Biglearn::Api
     end
 
     def bulk_api_request(method:, requests:, keys:)
-      requests_array = [requests].flatten.map do |request|
-        verify_and_slice_request request: request, keys: keys
+      requests_map = {}
+      [requests].flatten.map do |request|
+        requests_map[SecureRandom.uuid] = verify_and_slice_request request: request, keys: keys
       end
 
-      responses = {}
+      requests_array = requests_map.map{ |uuid, request| request.merge request_uuid: uuid }
 
-      client.send(method, requests_array).each_with_index do |response, index|
-        responses[requests_array[index]] = block_given? ? yield(response) : response
+      responses = {}
+      client.send(method, requests_array).each do |response|
+        request = requests_map[response[:request_uuid]]
+
+        responses[request] = block_given? ? yield(response) : response
       end
 
       # If given a Hash instead of an Array, return the response directly
-      requests.is_a?(Hash) ? responses[requests] : responses
+      requests.is_a?(Hash) ? responses.values.first : responses
     end
 
   end
