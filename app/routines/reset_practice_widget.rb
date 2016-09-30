@@ -48,11 +48,12 @@ class ResetPracticeWidget
       exercises = get_local_exercises(ecosystem: ecosystem, pages: pages, role: role,
                                       count: EXERCISES_COUNT, randomize: randomize)
     when :biglearn
-      # TODO: Send assignment topic to Biglearn properly
-      task = Tasks::Models::Task.new
+      # Is this too hacky?
+      task = OpenStruct.new(uuid: SecureRandom.uuid,
+                            task_plan: OpenStruct.new(type: 'practice',
+                                                      settings: { 'page_ids' => pages.map(&:id) }))
 
       OpenStax::Biglearn::Api.create_update_assignments(task: task)
-
       exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
         task: task, max_exercises_to_return: EXERCISES_COUNT
       )
