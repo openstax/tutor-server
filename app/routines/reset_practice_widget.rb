@@ -48,8 +48,8 @@ class ResetPracticeWidget
       exercises = get_local_exercises(ecosystem: ecosystem, pages: pages, role: role,
                                       count: EXERCISES_COUNT, randomize: randomize)
     when :biglearn
-      # TODO: Create task to send to Biglearn
-      task = nil
+      # TODO: Send assignment topic to Biglearn properly
+      task = Tasks::Models::Task.new
 
       OpenStax::Biglearn::Api.create_update_assignments(task: task)
 
