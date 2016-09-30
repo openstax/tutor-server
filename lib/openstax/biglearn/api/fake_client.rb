@@ -102,8 +102,7 @@ class OpenStax::Biglearn::Api::FakeClient
           reading_page_id_to_task_plans_map[page_id] << task_plan
         end
       else
-        raise NotImplementedError,
-              "Biglearn FakeClient does not yet support #{task_plan_type} task_plans"
+        Rails.logger.warn{ "Biglearn FakeClient ignoring unsupported #{task_plan_type} task_plan" }
       end
     end
 
@@ -140,7 +139,8 @@ class OpenStax::Biglearn::Api::FakeClient
     all_pe_ids = task_plan_to_pe_ids_map.values.flatten
 
     # Get the uuids for each dynamic exercise id
-    pe_id_to_pe_uuid_map = Content::Models::Exercise.where(id: all_pe_ids).pluck(:id, :uuid).to_h
+    pe_id_to_pe_uuid_map = Content::Models::Exercise.where(id: all_pe_ids)
+                                                    .pluck(:id, :tutor_uuid).to_h
 
     task_plan_to_pe_uuids_map = {}
     task_plan_to_pe_ids_map.each do |task_plan, pe_ids|
