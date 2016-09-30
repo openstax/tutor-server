@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree
   add_index "content_books", ["title"], name: "index_content_books_on_title", using: :btree
+  add_index "content_books", ["tutor_uuid"], name: "index_content_books_on_tutor_uuid", unique: true, using: :btree
   add_index "content_books", ["url"], name: "index_content_books_on_url", using: :btree
 
   create_table "content_chapters", force: :cascade do |t|
@@ -71,6 +72,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
 
   add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
   add_index "content_chapters", ["title"], name: "index_content_chapters_on_title", using: :btree
+  add_index "content_chapters", ["tutor_uuid"], name: "index_content_chapters_on_tutor_uuid", unique: true, using: :btree
 
   create_table "content_ecosystems", force: :cascade do |t|
     t.string   "title",                                     null: false
@@ -82,6 +84,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
 
   add_index "content_ecosystems", ["created_at"], name: "index_content_ecosystems_on_created_at", using: :btree
   add_index "content_ecosystems", ["title"], name: "index_content_ecosystems_on_title", using: :btree
+  add_index "content_ecosystems", ["tutor_uuid"], name: "index_content_ecosystems_on_tutor_uuid", unique: true, using: :btree
 
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -113,6 +116,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
   add_index "content_exercises", ["number", "version"], name: "index_content_exercises_on_number_and_version", using: :btree
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
+  add_index "content_exercises", ["tutor_uuid"], name: "index_content_exercises_on_tutor_uuid", unique: true, using: :btree
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", using: :btree
   add_index "content_exercises", ["uuid", "version"], name: "index_content_exercises_on_uuid_and_version", using: :btree
 
@@ -176,6 +180,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree
   add_index "content_pages", ["title"], name: "index_content_pages_on_title", using: :btree
+  add_index "content_pages", ["tutor_uuid"], name: "index_content_pages_on_tutor_uuid", unique: true, using: :btree
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", using: :btree
 
   create_table "content_pools", force: :cascade do |t|
@@ -276,6 +281,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "course_membership_periods", ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true, using: :btree
   add_index "course_membership_periods", ["entity_teacher_student_role_id"], name: "index_c_m_periods_on_e_teacher_student_role_id", unique: true, using: :btree
   add_index "course_membership_periods", ["name", "course_profile_course_id"], name: "index_c_m_periods_on_name_and_c_p_course_id", using: :btree
+  add_index "course_membership_periods", ["uuid"], name: "index_course_membership_periods_on_uuid", unique: true, using: :btree
 
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "course_profile_course_id",                                null: false
@@ -290,6 +296,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
   add_index "course_membership_students", ["deleted_at"], name: "index_course_membership_students_on_deleted_at", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
+  add_index "course_membership_students", ["uuid"], name: "index_course_membership_students_on_uuid", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "course_profile_course_id", null: false
@@ -826,6 +833,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
   add_index "tasks_tasks", ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id", using: :btree
+  add_index "tasks_tasks", ["uuid"], name: "index_tasks_tasks_on_uuid", unique: true, using: :btree
 
   create_table "time_zones", force: :cascade do |t|
     t.string   "name",       null: false
