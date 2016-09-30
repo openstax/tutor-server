@@ -7,9 +7,9 @@ module Content
 
         exposes :chapter, :reading_dynamic_pool, :reading_context_pool, :homework_core_pool,
                 :homework_dynamic_pool, :practice_widget_pool, :concept_coach_pool,
-                :all_exercises_pool, :exercises, :tags, :los, :aplos, :url, :uuid, :version,
-                :cnx_id, :title, :content, :book_location, :is_intro?, :fragments, :snap_labs,
-                :snap_labs_with_page_id, :short_id
+                :all_exercises_pool, :exercises, :tags, :los, :aplos, :tutor_uuid, :url, :uuid,
+                :version, :cnx_id, :title, :content, :book_location, :is_intro?, :fragments,
+                :snap_labs, :snap_labs_with_page_id, :short_id
 
         alias_method :entity_chapter, :chapter
         def chapter
@@ -71,6 +71,11 @@ module Content
         alias_method :entity_aplos, :aplos
         def aplos
           entity_aplos.map{ |ea| ::Content::Tag.new(strategy: ea) }
+        end
+
+        alias_method :string_tutor_uuid, :tutor_uuid
+        def tutor_uuid
+          ::Content::Uuid.new(string_tutor_uuid)
         end
 
         alias_method :string_uuid, :uuid

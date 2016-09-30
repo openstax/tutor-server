@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+  enable_extension "uuid-ossp"
 
   create_table "catalog_offerings", force: :cascade do |t|
     t.string   "salesforce_book_name",                 null: false
@@ -40,16 +41,17 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "catalog_offerings", ["title"], name: "index_catalog_offerings_on_title", using: :btree
 
   create_table "content_books", force: :cascade do |t|
-    t.string   "url",                                            null: false
+    t.string   "url",                                                            null: false
     t.text     "content"
-    t.integer  "content_ecosystem_id",                           null: false
-    t.string   "title",                                          null: false
-    t.string   "uuid",                                           null: false
-    t.string   "version",                                        null: false
-    t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.integer  "content_ecosystem_id",                                           null: false
+    t.string   "title",                                                          null: false
+    t.string   "uuid",                                                           null: false
+    t.string   "version",                                                        null: false
+    t.datetime "created_at",                                                     null: false
+    t.datetime "updated_at",                                                     null: false
     t.string   "short_id"
-    t.text     "reading_processing_instructions", default: "[]", null: false
+    t.text     "reading_processing_instructions", default: "[]",                 null: false
+    t.uuid     "tutor_uuid",                      default: "uuid_generate_v4()"
   end
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree
@@ -57,23 +59,25 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "content_books", ["url"], name: "index_content_books_on_url", using: :btree
 
   create_table "content_chapters", force: :cascade do |t|
-    t.integer  "content_book_id",                              null: false
-    t.integer  "number",                                       null: false
-    t.string   "title",                                        null: false
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.integer  "content_book_id",                                              null: false
+    t.integer  "number",                                                       null: false
+    t.string   "title",                                                        null: false
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
     t.integer  "content_all_exercises_pool_id"
-    t.text     "book_location",                 default: "[]", null: false
+    t.text     "book_location",                 default: "[]",                 null: false
+    t.uuid     "tutor_uuid",                    default: "uuid_generate_v4()"
   end
 
   add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
   add_index "content_chapters", ["title"], name: "index_content_chapters_on_title", using: :btree
 
   create_table "content_ecosystems", force: :cascade do |t|
-    t.string   "title",      null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "title",                                     null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
     t.text     "comments"
+    t.uuid     "tutor_uuid", default: "uuid_generate_v4()"
   end
 
   add_index "content_ecosystems", ["created_at"], name: "index_content_ecosystems_on_created_at", using: :btree
@@ -90,19 +94,20 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "content_exercise_tags", ["content_tag_id"], name: "index_content_exercise_tags_on_content_tag_id", using: :btree
 
   create_table "content_exercises", force: :cascade do |t|
-    t.string   "url",                             null: false
+    t.string   "url",                                            null: false
     t.text     "content"
-    t.integer  "content_page_id",                 null: false
-    t.integer  "number",                          null: false
-    t.integer  "version",                         null: false
+    t.integer  "content_page_id",                                null: false
+    t.integer  "number",                                         null: false
+    t.integer  "version",                                        null: false
     t.string   "title"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
     t.text     "preview"
     t.text     "context"
-    t.boolean  "has_interactive", default: false, null: false
-    t.boolean  "has_video",       default: false, null: false
-    t.uuid     "uuid",                            null: false
+    t.boolean  "has_interactive", default: false,                null: false
+    t.boolean  "has_video",       default: false,                null: false
+    t.uuid     "uuid",                                           null: false
+    t.uuid     "tutor_uuid",      default: "uuid_generate_v4()"
   end
 
   add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
@@ -146,26 +151,27 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id", using: :btree
 
   create_table "content_pages", force: :cascade do |t|
-    t.string   "url",                                             null: false
+    t.string   "url",                                                             null: false
     t.text     "content"
-    t.integer  "content_chapter_id",                              null: false
+    t.integer  "content_chapter_id",                                              null: false
     t.integer  "content_reading_dynamic_pool_id"
     t.integer  "content_reading_context_pool_id"
     t.integer  "content_homework_core_pool_id"
     t.integer  "content_homework_dynamic_pool_id"
     t.integer  "content_practice_widget_pool_id"
-    t.integer  "number",                                          null: false
-    t.string   "title",                                           null: false
-    t.string   "uuid",                                            null: false
-    t.string   "version",                                         null: false
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.integer  "number",                                                          null: false
+    t.string   "title",                                                           null: false
+    t.string   "uuid",                                                            null: false
+    t.string   "version",                                                         null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
     t.integer  "content_all_exercises_pool_id"
     t.integer  "content_concept_coach_pool_id"
     t.string   "short_id"
-    t.text     "book_location",                    default: "[]", null: false
-    t.text     "fragments",                        default: "[]", null: false
-    t.text     "snap_labs",                        default: "[]", null: false
+    t.text     "book_location",                    default: "[]",                 null: false
+    t.text     "fragments",                        default: "[]",                 null: false
+    t.text     "snap_labs",                        default: "[]",                 null: false
+    t.uuid     "tutor_uuid",                       default: "uuid_generate_v4()"
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree
@@ -253,15 +259,16 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "course_membership_enrollments", ["deleted_at"], name: "index_course_membership_enrollments_on_deleted_at", using: :btree
 
   create_table "course_membership_periods", force: :cascade do |t|
-    t.integer  "course_profile_course_id",       null: false
-    t.string   "name",                           null: false
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
-    t.string   "enrollment_code",                null: false
+    t.integer  "course_profile_course_id",                                      null: false
+    t.string   "name",                                                          null: false
+    t.datetime "created_at",                                                    null: false
+    t.datetime "updated_at",                                                    null: false
+    t.string   "enrollment_code",                                               null: false
     t.datetime "deleted_at"
     t.string   "default_open_time"
     t.string   "default_due_time"
-    t.integer  "entity_teacher_student_role_id", null: false
+    t.uuid     "uuid",                           default: "uuid_generate_v4()"
+    t.integer  "entity_teacher_student_role_id",                                null: false
   end
 
   add_index "course_membership_periods", ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id", using: :btree
@@ -271,12 +278,13 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "course_membership_periods", ["name", "course_profile_course_id"], name: "index_c_m_periods_on_name_and_c_p_course_id", using: :btree
 
   create_table "course_membership_students", force: :cascade do |t|
-    t.integer  "course_profile_course_id", null: false
-    t.integer  "entity_role_id",           null: false
+    t.integer  "course_profile_course_id",                                null: false
+    t.integer  "entity_role_id",                                          null: false
     t.datetime "deleted_at"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.string   "student_identifier"
+    t.uuid     "uuid",                     default: "uuid_generate_v4()"
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
@@ -774,38 +782,40 @@ ActiveRecord::Schema.define(version: 20170323195331) do
 
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
-    t.integer  "task_type",                                                   null: false
-    t.string   "title",                                                       null: false
+    t.integer  "task_type",                                                                   null: false
+    t.string   "title",                                                                       null: false
     t.text     "description"
     t.datetime "opens_at_ntz"
     t.datetime "due_at_ntz"
     t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
-    t.integer  "tasks_taskings_count",                         default: 0,    null: false
+    t.integer  "tasks_taskings_count",                         default: 0,                    null: false
     t.text     "personalized_placeholder_strategy"
-    t.integer  "steps_count",                                  default: 0,    null: false
-    t.integer  "completed_steps_count",                        default: 0,    null: false
-    t.integer  "core_steps_count",                             default: 0,    null: false
-    t.integer  "completed_core_steps_count",                   default: 0,    null: false
-    t.integer  "exercise_steps_count",                         default: 0,    null: false
-    t.integer  "completed_exercise_steps_count",               default: 0,    null: false
-    t.integer  "recovered_exercise_steps_count",               default: 0,    null: false
-    t.integer  "correct_exercise_steps_count",                 default: 0,    null: false
-    t.integer  "placeholder_steps_count",                      default: 0,    null: false
-    t.integer  "placeholder_exercise_steps_count",             default: 0,    null: false
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
-    t.integer  "correct_on_time_exercise_steps_count",         default: 0,    null: false
-    t.integer  "completed_on_time_exercise_steps_count",       default: 0,    null: false
-    t.integer  "completed_on_time_steps_count",                default: 0,    null: false
+    t.integer  "steps_count",                                  default: 0,                    null: false
+    t.integer  "completed_steps_count",                        default: 0,                    null: false
+    t.integer  "core_steps_count",                             default: 0,                    null: false
+    t.integer  "completed_core_steps_count",                   default: 0,                    null: false
+    t.integer  "exercise_steps_count",                         default: 0,                    null: false
+    t.integer  "completed_exercise_steps_count",               default: 0,                    null: false
+    t.integer  "recovered_exercise_steps_count",               default: 0,                    null: false
+    t.integer  "correct_exercise_steps_count",                 default: 0,                    null: false
+    t.integer  "placeholder_steps_count",                      default: 0,                    null: false
+    t.integer  "placeholder_exercise_steps_count",             default: 0,                    null: false
+    t.datetime "created_at",                                                                  null: false
+    t.datetime "updated_at",                                                                  null: false
+    t.integer  "correct_on_time_exercise_steps_count",         default: 0,                    null: false
+    t.integer  "completed_on_time_exercise_steps_count",       default: 0,                    null: false
+    t.integer  "completed_on_time_steps_count",                default: 0,                    null: false
     t.datetime "accepted_late_at"
-    t.integer  "correct_accepted_late_exercise_steps_count",   default: 0,    null: false
-    t.integer  "completed_accepted_late_exercise_steps_count", default: 0,    null: false
-    t.integer  "completed_accepted_late_steps_count",          default: 0,    null: false
+    t.integer  "correct_accepted_late_exercise_steps_count",   default: 0,                    null: false
+    t.integer  "completed_accepted_late_exercise_steps_count", default: 0,                    null: false
+    t.integer  "completed_accepted_late_steps_count",          default: 0,                    null: false
     t.integer  "time_zone_id"
     t.datetime "deleted_at"
     t.datetime "hidden_at"
-    t.text     "spy",                                          default: "{}", null: false
+    t.text     "spy",                                          default: "{}",                 null: false
+    t.uuid     "uuid",                                         default: "uuid_generate_v4()"
+    t.integer  "sequence_number",                              default: 0,                    null: false
   end
 
   add_index "tasks_tasks", ["deleted_at"], name: "index_tasks_tasks_on_deleted_at", using: :btree

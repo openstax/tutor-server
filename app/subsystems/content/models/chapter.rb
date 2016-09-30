@@ -2,6 +2,8 @@ class Content::Models::Chapter < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Content::Strategies::Direct::Chapter
 
+  auto_uuid :tutor_uuid
+
   json_serialize :book_location, Integer, array: true
 
   belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
