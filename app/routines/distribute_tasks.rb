@@ -106,6 +106,9 @@ class DistributeTasks
       task.tasked_exercises.reset
       task.taskings.reset
     end
+
+    requests = tasks.map{ |task| { task: task } }
+    OpenStax::Biglearn::Api.create_update_assignments(requests)
   end
 
 end
