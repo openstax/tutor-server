@@ -54,7 +54,12 @@ class OpenStax::Biglearn::Api::FakeClient
   # Updates Course rosters in Biglearn
   # Requests are hashes containing the following key: :course
   def update_rosters(requests)
-    requests.map{ |request| request[:course].uuid }
+    requests.map do |request|
+      {
+        request_uuid: request[:request_uuid],
+        updated_course_uuid: request[:course].uuid
+      }
+    end
   end
 
   # Updates global exercise exclusions
@@ -76,6 +81,7 @@ class OpenStax::Biglearn::Api::FakeClient
       task = request[:task]
 
       {
+        request_uuid: request[:request_uuid],
         assignment_uuid: task.uuid,
         sequence_number: task.sequence_number
       }
@@ -88,6 +94,7 @@ class OpenStax::Biglearn::Api::FakeClient
   def fetch_assignment_pes(requests)
     requests.map do |request|
       {
+        request_uuid: request[:request_uuid],
         assignment_uuid: request[:task].uuid,
         exercise_uuids: [],
         assignment_status: :assignment_ready
