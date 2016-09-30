@@ -1,5 +1,8 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
+
   acts_as_paranoid
+
+  auto_uuid
 
   belongs_to :course, subsystem: :course_profile
   belongs_to :role, subsystem: :entity
@@ -15,4 +18,5 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   def latest_enrollment
     enrollments.last
   end
+
 end

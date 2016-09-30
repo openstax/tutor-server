@@ -8,6 +8,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   acts_as_paranoid
 
+  auto_uuid
+
   enum task_type: [:homework, :reading, :chapter_practice,
                    :page_practice, :mixed_practice, :external,
                    :event, :extra, :concept_coach]

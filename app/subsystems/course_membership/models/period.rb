@@ -6,6 +6,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   wrapped_by CourseMembership::Strategies::Direct::Period
 
+  auto_uuid
+
   belongs_to :course, subsystem: :course_profile
 
   # Roles don't have soft-delete so we don't destroy them when the period is archived

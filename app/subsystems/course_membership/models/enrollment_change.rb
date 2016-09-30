@@ -1,4 +1,5 @@
 class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
+
   wrapped_by CourseMembership::Strategies::Direct::EnrollmentChange
 
   acts_as_paranoid
@@ -81,4 +82,5 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
     errors.add(:conflicting_enrollment, 'is invalid')
     false
   end
+
 end

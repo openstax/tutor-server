@@ -2,9 +2,11 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   attr_accessor :pool_types, :is_excluded
 
+  wrapped_by ::Content::Strategies::Direct::Exercise
+
   acts_as_resource
 
-  wrapped_by ::Content::Strategies::Direct::Exercise
+  auto_uuid :tutor_uuid
 
   belongs_to :page, inverse_of: :exercises
   has_one :chapter, through: :page

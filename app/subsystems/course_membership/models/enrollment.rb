@@ -1,4 +1,5 @@
 class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
+
   acts_as_paranoid
 
   belongs_to :period, -> { with_deleted }
@@ -26,4 +27,5 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
     errors.add(:base, 'must have a student and a period that belong to the same course')
     false
   end
+
 end

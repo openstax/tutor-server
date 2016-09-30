@@ -30,7 +30,7 @@ class OpenStax::Biglearn::Api::FakeClient
   # Adds the given ecosystems to Biglearn
   # Request is a hash containing the following key: :ecosystem
   def create_ecosystem(request)
-    { created_ecosystem_uuid: request[:ecosystem].try(:uuid) }
+    { created_ecosystem_uuid: request[:ecosystem].tutor_uuid }
   end
 
   # Prepares Biglearn for course ecosystem updates
@@ -54,7 +54,7 @@ class OpenStax::Biglearn::Api::FakeClient
   # Updates Course rosters in Biglearn
   # Requests are hashes containing the following key: :course
   def update_rosters(requests)
-    requests.map{ |request| request[:course].try(:uuid) }
+    requests.map{ |request| request[:course].uuid }
   end
 
   # Updates global exercise exclusions
@@ -66,7 +66,7 @@ class OpenStax::Biglearn::Api::FakeClient
   # Updates exercise exclusions for the given courses
   # Requests are hashes containing the following key: :course
   def update_course_exercise_exclusions(request)
-    { updated_course_uuid: request[:course].try(:uuid) }
+    { updated_course_uuid: request[:course].uuid }
   end
 
   # Creates or updates a task in Biglearn
@@ -76,8 +76,8 @@ class OpenStax::Biglearn::Api::FakeClient
       task = request[:task]
 
       {
-        assignment_uuid: task.try(:uuid),
-        sequence_number: task.try(:sequence_number)
+        assignment_uuid: task.uuid,
+        sequence_number: task.sequence_number
       }
     end
   end
@@ -88,7 +88,7 @@ class OpenStax::Biglearn::Api::FakeClient
   def fetch_assignment_pes(requests)
     requests.map do |request|
       {
-        assignment_uuid: request[:task].try(:uuid),
+        assignment_uuid: request[:task].uuid,
         exercise_uuids: [],
         assignment_status: :assignment_ready
       }
