@@ -34,12 +34,12 @@ module CourseGuideMethods
     end
 
     {}.tap do |result|
-      responses.each{ |request, response| result[request[:book_container].uuid] = response }
+      responses.each{ |request, response| result[request[:book_container].tutor_uuid] = response }
     end
   end
 
   def get_page_guides(mapped_relevant_pages,
-                      clues_by_pool_uuids,
+                      clues_by_book_container_uuids,
                       practice_counts_by_mapped_relevant_page_ids,
                       completed_exercises_count_by_mapped_relevant_page_ids)
     mapped_relevant_pages.map do |mapped_relevant_page|
@@ -49,7 +49,7 @@ module CourseGuideMethods
         title: mapped_relevant_page.title,
         book_location: mapped_relevant_page.book_location,
         questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids[page_id],
-        clue: clues_by_pool_uuids[mapped_relevant_page.all_exercises_pool.uuid],
+        clue: clues_by_book_container_uuids[mapped_relevant_page.tutor_uuid],
         practice_count: practice_counts_by_mapped_relevant_page_ids[page_id],
         page_ids: [page_id]
       }
@@ -57,7 +57,7 @@ module CourseGuideMethods
   end
 
   def get_chapter_guides(mapped_relevant_pages_by_chapter,
-                         clues_by_pool_uuids,
+                         clues_by_book_container_uuids,
                          practice_counts_by_mapped_relevant_page_ids,
                          completed_exercises_count_by_mapped_relevant_page_ids)
 
@@ -69,12 +69,12 @@ module CourseGuideMethods
         book_location: chapter.book_location,
         questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids
                                     .values_at(*mapped_relevant_page_ids).reduce(0, :+),
-        clue: clues_by_pool_uuids[chapter.all_exercises_pool.uuid],
+        clue: clues_by_book_container_uuids[chapter.tutor_uuid],
         practice_count: practice_counts_by_mapped_relevant_page_ids
                           .values_at(*mapped_relevant_page_ids).reduce(0, :+),
         page_ids: mapped_relevant_page_ids,
         children: get_page_guides(mapped_relevant_pages,
-                                  clues_by_pool_uuids,
+                                  clues_by_book_container_uuids,
                                   practice_counts_by_mapped_relevant_page_ids,
                                   completed_exercises_count_by_mapped_relevant_page_ids)
       }
@@ -123,11 +123,11 @@ module CourseGuideMethods
       .where(id: all_mapped_page_ids)
       .where{all_exercises_pool.content_exercise_ids != '[]'} # Skip intro pages
       .select([Content::Models::Page.arel_table[:id],
+               Content::Models::Page.arel_table[:tutor_uuid],
                Content::Models::Page.arel_table[:title],
                Content::Models::Page.arel_table[:book_location],
-               Content::Models::Page.arel_table[:content_all_exercises_pool_id],
                Content::Models::Page.arel_table[:content_chapter_id]])
-      .preload([:all_exercises_pool, {chapter: :all_exercises_pool}])
+      .preload(:chapter)
       .sort_by(&:book_location)
       .group_by(&:chapter)
     mapped_relevant_page_ids_with_exercises = \

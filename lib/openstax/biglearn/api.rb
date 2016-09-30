@@ -83,10 +83,12 @@ module OpenStax::Biglearn::Api
     # May return less than the given number if there aren't enough exercises
     # Requests are hashes containing the following keys: :task and :max_exercises_to_return
     def fetch_assignment_pes(requests)
-      bulk_api_request(method: :fetch_assignment_pes,
-                       requests: requests,
-                       keys: [:task, :max_exercises_to_return]) do |response|
-        response[:exercise_uuids]
+      bulk_api_request(
+        method: :fetch_assignment_pes,
+        requests: requests,
+        keys: [:task, :max_exercises_to_return]
+      ) do |response|
+        Content::Models::Exercise.where(tutor_uuid: response[:exercise_uuids])
       end
     end
 

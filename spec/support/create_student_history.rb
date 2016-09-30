@@ -137,6 +137,7 @@ class CreateStudentHistory
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       title: 'Homework',
+      type: 'homework',
       settings: {
         exercise_ids: exercise_ids,
         exercises_count_dynamic: 2
