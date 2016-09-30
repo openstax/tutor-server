@@ -233,17 +233,15 @@ class SetupPerformanceReportData
       Demo::AnswerExercise[task_step: ts, is_correct: false]
     end
 
-    # User 1 answered 3 correct, 1 incorrect in 2nd homework
+    # User 1 answered 2 correct, 1 incorrect in 2nd homework
     student_1_tasks[2].core_task_steps.each do |ts|
       Demo::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[2].reload
-    raise 'Personalized steps were unexpectedly removed from homework ' +
+    raise 'A personalized step were unexpectedly removed from homework ' +
           '(probably because Biglearn returned no PEs)' \
-      if student_1_tasks[2].non_core_task_steps.size < 2
-
-    Demo::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first, is_correct: true]
-    Demo::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last, is_correct: false]
+      if student_1_tasks[2].non_core_task_steps.empty?
+    Demo::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first, is_correct: false]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in homework
     student_2_tasks = student_tasks[1]
