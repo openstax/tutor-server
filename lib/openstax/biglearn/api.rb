@@ -2,8 +2,6 @@ require_relative './api/configuration'
 require_relative './api/malformed_request'
 require_relative './api/fake_client'
 require_relative './api/real_client'
-require_relative './api/local_clue'
-require_relative './api/local_query_client'
 
 module OpenStax::Biglearn::Api
 
@@ -168,34 +166,25 @@ module OpenStax::Biglearn::Api
       new_client_call { RealClient.new(configuration) }
     end
 
-    def new_local_query_client_with_fake
-      new_client_call { LocalQueryClient.new(new_fake_client) }
-    end
-
-    def new_local_query_client_with_real
-      new_client_call { LocalQueryClient.new(new_real_client) }
-    end
-
     def use_real_client
-      use_client(name: :real)
+      use_client new_real_client
     end
 
     def use_fake_client
-      use_client(name: :fake)
+      use_client new_fake_client
     end
 
-    def use_client(name:)
+    def use_client(client)
       RequestStore.store[:biglearn_v1_forced_client_in_use] = true
-      self.client = new_client(name: name)
+      self.client = client
     end
 
     def default_client_name
-      # The default Biglearn client is set via an admin console setting.  The
+      # The default Biglearn client is set via an admin console setting. The
       # default value for this setting is environment-specific in config/initializers/
       # 02-settings.rb. Developers will need to use the admin console to change
-      # the setting if they want during development.  During testing, devs can
-      # use the `use_fake_client`, `use_real_client`, and `use_client_named`
-      # methods.
+      # the setting if they want during development. During testing, devs can
+      # use the `use_fake_client` and `use_real_client` methods.
 
       # We only read this setting once per request to prevent it from changing mid-request
       RequestStore.store[:biglearn_v1_default_client_name] ||= Settings::Biglearn.client
@@ -229,10 +218,6 @@ module OpenStax::Biglearn::Api
 
     def new_client(name: default_client_name)
       case name
-      when :local_query_with_fake
-        new_local_query_client_with_fake
-      when :local_query_with_real
-        new_local_query_client_with_real
       when :real
         new_real_client
       when :fake
