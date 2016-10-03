@@ -7,11 +7,12 @@ class CourseContent::AddEcosystemToCourse
   def exec(course:, ecosystem:,
            ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
            map_strategy_class: ::Content::Strategies::Generated::Map)
-    ecosystem = Content::Ecosystem.new(strategy: ecosystem.wrap) \
-      if ecosystem.is_a?(Content::Models::Ecosystem)
     fatal_error(code: :ecosystem_already_set,
                 message: 'The given ecosystem is already active for the given course') \
-      if course.reload.ecosystems.first.try!(:id) == ecosystem.id
+      if course.lock!.ecosystems.first.try!(:id) == ecosystem.id
+
+    ecosystem = Content::Ecosystem.new(strategy: ecosystem.wrap) \
+      if ecosystem.is_a?(Content::Models::Ecosystem)
 
     course_ecosystem = CourseContent::Models::CourseEcosystem.create(
       course: course, content_ecosystem_id: ecosystem.id
@@ -28,6 +29,18 @@ class CourseContent::AddEcosystemToCourse
     outputs[:ecosystem_map] = ::Content::Map.find_or_create_by!(from_ecosystems: from_ecosystems,
                                                                 to_ecosystem: ecosystem,
                                                                 strategy_class: map_strategy_class)
+
+    course.touch
+
+    if course.course_ecosystems.size == 1
+      OpenStax::Biglearn::Api.create_course(course: course, ecosystem: ecosystem)
+      OpenStax::Biglearn::Api.update_rosters(course: course)
+    else
+      preparation_uuid = OpenStax::Biglearn::Api.prepare_course_ecosystem(
+        course: course, ecosystem: ecosystem
+      )
+      OpenStax::Biglearn::Api.update_course_ecosystems(preparation_uuid: preparation_uuid)
+    end
   end
 
 end

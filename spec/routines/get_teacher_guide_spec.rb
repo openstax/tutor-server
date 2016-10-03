@@ -21,22 +21,12 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
   context 'without work' do
 
-    # Automatic cleanup is only done for top-level describe/context blocks
-    # We need the cleanup here so this context will not interfere with the other context block
     before(:all) do
-      DatabaseCleaner.start
+      create_new_course_and_roles
 
       book = FactoryGirl.create :content_book, title: 'Physics (Demo)'
       ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
-
-      # For whatever reason we need to reload the teacher role
-      # or else it won't properly see the transaction rollback
-      @teacher_role.reload
     end
 
     it 'does not blow up' do
@@ -62,24 +52,14 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
   context 'with work' do
 
-    # Automatic cleanup is only done for top-level describe/context blocks
-    # We need the cleanup here so this context will not interfere with the other context block
     before(:all) do
-      DatabaseCleaner.start
+      create_new_course_and_roles
 
       VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
         capture_stdout do
           CreateStudentHistory[course: @course, roles: [@role, @second_role]]
         end
       end
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
-
-      # For whatever reason we need to reload the teacher role
-      # or else it won't properly see the transaction rollback
-      @teacher_role.reload
     end
 
     it 'returns all course guide periods for teachers' do
@@ -393,6 +373,23 @@ RSpec.describe GetTeacherGuide, type: :routine do
       ]
     end
 
+  end
+
+  protected
+
+  def create_new_course_and_roles
+    @course = FactoryGirl.create :entity_course
+
+    @period = CreatePeriod[course: @course]
+    @second_period = CreatePeriod[course: @course]
+
+    @teacher = FactoryGirl.create(:user)
+    @student = FactoryGirl.create(:user)
+    @second_student = FactoryGirl.create(:user)
+
+    @role = AddUserAsPeriodStudent[period: @period, user: @student]
+    @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
+    @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
   end
 
 end

@@ -12,6 +12,10 @@ module CourseMembership
       student.restore(recursive: true)
       student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
+
+      course = student.course
+      OpenStax::Biglearn::Api.update_rosters(course: course) if course.course_ecosystems.any?
+
       ReassignPublishedPeriodTaskPlans[period: student.period]
       outputs[:student] = student
     end

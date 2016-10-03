@@ -23,14 +23,16 @@ Rails.application.config.to_prepare do
     protected
 
     def send_exercise_exclusions_to_biglearn
-      old_excluded_ids = Settings::Exercises.excluded_ids
+      ActiveRecord::Base.transaction do
+        old_excluded_ids = Settings::Exercises.excluded_ids
 
-      yield
+        yield
 
-      new_excluded_ids = Settings::Exercises.excluded_ids
-      return if new_excluded_ids == old_excluded_ids
+        new_excluded_ids = Settings::Exercises.excluded_ids
+        return if new_excluded_ids == old_excluded_ids
 
-      OpenStax::Biglearn::Api.update_global_exercise_exclusions(exercise_ids: new_excluded_ids)
+        OpenStax::Biglearn::Api.update_global_exercise_exclusions(exercise_ids: new_excluded_ids)
+      end
     end
   end
 
