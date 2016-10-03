@@ -1,5 +1,6 @@
 require_relative './api/configuration'
 require_relative './api/malformed_request'
+require_relative './api/exercises_error'
 require_relative './api/fake_client'
 require_relative './api/real_client'
 
@@ -54,7 +55,7 @@ module OpenStax::Biglearn::Api
     def update_course_ecosystems(requests)
       bulk_api_request(method: :update_course_ecosystems,
                        requests: requests,
-                       keys: :preparation_uuid) do |response|
+                       keys: :preparation_uuid) do |request, response|
         response[:prepare_status]
       end
     end
@@ -98,8 +99,9 @@ module OpenStax::Biglearn::Api
         method: :fetch_assignment_pes,
         requests: requests,
         keys: [:task, :max_exercises_to_return]
-      ) do |response|
-        Content::Models::Exercise.where(tutor_uuid: response[:exercise_uuids])
+      ) do |request, response|
+        get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
+                                     max_exercises_to_return: request[:max_exercises_to_return]
       end
     end
 
@@ -112,8 +114,9 @@ module OpenStax::Biglearn::Api
         method: :fetch_assignment_spes,
         requests: requests,
         keys: [:task, :max_exercises_to_return]
-      ) do |response|
-        Content::Models::Exercise.where(tutor_uuid: response[:exercise_uuids])
+      ) do |request, response|
+        get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
+                                     max_exercises_to_return: request[:max_exercises_to_return]
       end
     end
 
@@ -126,8 +129,9 @@ module OpenStax::Biglearn::Api
         method: :fetch_practice_worst_areas_pes,
         requests: requests,
         keys: [:student, :max_exercises_to_return]
-      ) do |response|
-        Content::Models::Exercise.where(tutor_uuid: response[:exercise_uuids])
+      ) do |request, response|
+        get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
+                                     max_exercises_to_return: request[:max_exercises_to_return]
       end
     end
 
@@ -137,7 +141,7 @@ module OpenStax::Biglearn::Api
     def fetch_student_clues(requests)
       bulk_api_request(method: :fetch_student_clues,
                        requests: requests,
-                       keys: [:book_container, :student]) do |response|
+                       keys: [:book_container, :student]) do |request, response|
         response[:clue_data]
       end
     end
@@ -148,7 +152,7 @@ module OpenStax::Biglearn::Api
     def fetch_teacher_clues(requests)
       bulk_api_request(method: :fetch_teacher_clues,
                        requests: requests,
-                       keys: [:book_container, :period]) do |response|
+                       keys: [:book_container, :period]) do |request, response|
         response[:clue_data]
       end
     end
@@ -271,11 +275,32 @@ module OpenStax::Biglearn::Api
       client.send(method, requests_array).each do |response|
         request = requests_map[response[:request_uuid]]
 
-        responses[request] = block_given? ? yield(response) : response
+        responses[request] = block_given? ? yield(request, response) : response
       end
 
       # If given a Hash instead of an Array, return the response directly
       requests.is_a?(Hash) ? responses.values.first : responses
+    end
+
+    def get_exercises_by_tutor_uuids(tutor_uuids:, max_exercises_to_return:)
+      number_returned = tutor_uuids.length
+
+      raise(OpenStax::Biglearn::Api::ExercisesError,
+            "Biglearn returned more exercises than requested") \
+        if number_returned > max_exercises_to_return
+
+      Rails.logger.warn do
+        "Biglearn returned less exercises than requested (#{
+        number_returned} instead of #{max_exercises_to_return})"
+      end if number_returned < max_exercises_to_return
+
+      Content::Models::Exercise.where(tutor_uuid: tutor_uuids)
+                               .first(max_exercises_to_return)
+                               .tap do |exercises|
+        raise(OpenStax::Biglearn::Api::ExercisesError,
+              "Biglearn returned exercises not present locally") \
+          if exercises.length < number_returned
+      end
     end
 
   end
