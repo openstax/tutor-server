@@ -30,6 +30,9 @@ class PropagateTaskPlanUpdates
     end
 
     task_plan.tasks.reset
+
+    requests = task_plan.tasks.map{ |task| { task: task } }
+    OpenStax::Biglearn::Api.create_update_assignments(requests)
   end
 
 end

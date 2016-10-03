@@ -10,5 +10,7 @@ class CourseMembership::CreatePeriod
     transfer_errors_from(period, {type: :verbatim}, true)
     strategy = CourseMembership::Strategies::Direct::Period.new(period)
     outputs[:period] = CourseMembership::Period.new(strategy: strategy)
+
+    OpenStax::Biglearn::Api.update_rosters(course: course) if course.course_ecosystems.any?
   end
 end
