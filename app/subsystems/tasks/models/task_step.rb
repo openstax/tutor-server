@@ -25,6 +25,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
+  # Lock the task instead, but don't explode if task is nil
   def lock!(*args)
     task.try! :lock!, *args
 

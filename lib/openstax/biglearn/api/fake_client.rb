@@ -27,21 +27,27 @@ class OpenStax::Biglearn::Api::FakeClient
   # period is a CourseMembership::Period or CourseMembership::Models::Period
   # max_exercises_to_return is an integer
 
-  # Adds the given ecosystems to Biglearn
-  # Request is a hash containing the following key: :ecosystem
+  # Adds the given ecosystem to Biglearn
+  # Ignored in the FakeClient
   def create_ecosystem(request)
     { created_ecosystem_uuid: request[:ecosystem].tutor_uuid }
   end
 
-  # Prepares Biglearn for course ecosystem updates
-  # Request is a hash containing the following keys: :course and :ecosystem
+  # Adds the given course to Biglearn
+  # Ignored in the FakeClient
+  def create_course(request)
+    { created_course_uuid: request[:course].uuid }
+  end
+
+  # Prepares Biglearn for a course ecosystem update
+  # Ignored in the FakeClient
   def prepare_course_ecosystem(request)
     { prepare_status: :accepted }
   end
 
-  # Finalizes a course ecosystem update in Biglearn,
+  # Finalizes course ecosystem updates in Biglearn,
   # causing it to stop computing CLUes for the old one
-  # Requests are hashes containing the following keys: :request_uuid and :preparation_uuid
+  # Ignored in the FakeClient
   def update_course_ecosystems(requests)
     requests.map do |request|
       {
@@ -52,7 +58,7 @@ class OpenStax::Biglearn::Api::FakeClient
   end
 
   # Updates Course rosters in Biglearn
-  # Requests are hashes containing the following key: :course
+  # Ignored in the FakeClient
   def update_rosters(requests)
     requests.map do |request|
       {
@@ -62,20 +68,18 @@ class OpenStax::Biglearn::Api::FakeClient
     end
   end
 
-  # Updates global exercise exclusions
-  # Request is a hash containing the following key: :exercise_ids
+  # Ignored in the FakeClient
   def update_global_exercise_exclusions(request)
     { updated_exercise_ids: request[:exercise_ids] }
   end
 
-  # Updates exercise exclusions for the given courses
-  # Requests are hashes containing the following key: :course
+  # Ignored in the FakeClient
   def update_course_exercise_exclusions(request)
     { updated_course_uuid: request[:course].uuid }
   end
 
-  # Creates or updates a task in Biglearn
-  # Requests are hashes containing the following key: :task
+  # Creates or updates tasks in Biglearn
+  # In FakeClient, stores the (correct) list of PEs for the task for later use
   def create_update_assignments(requests)
     task_plans = requests.map{ |request| request[:task].task_plan }
 
@@ -166,9 +170,8 @@ class OpenStax::Biglearn::Api::FakeClient
     end
   end
 
-  # Returns a number of recommended exercises for the given tasks
-  # May return less than the given number if there aren't enough exercises
-  # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+  # Returns a number of recommended personalized exercises for the given tasks
+  # In the FakeClient, always returns random PEs from the (correct) list of possible PEs
   def fetch_assignment_pes(requests)
     request_task_keys_map = {}
     requests.each do |request|
@@ -201,8 +204,34 @@ class OpenStax::Biglearn::Api::FakeClient
     end
   end
 
-  # Returns the CLUes for the given book containers and students
-  # Requests are hashes containing the following keys: :book_container and :student
+  # Returns a number of recommended spaced practice exercises for the given tasks
+  # NotYetImplemented in FakeClient (always returns empty result)
+  def fetch_assignment_spes(requests)
+    requests.map do |request|
+      {
+        request_uuid: request[:request_uuid],
+        assignment_uuid: request[:task].uuid,
+        exercise_uuids: [],
+        assignment_status: :assignment_unknown
+      }
+    end
+  end
+
+  # Returns a number of recommended personalized exercises for the student's worst topics
+  # NotYetImplemented in FakeClient (always returns empty result)
+  def fetch_practice_worst_areas_pes(requests)
+    requests.map do |request|
+      {
+        request_uuid: request[:request_uuid],
+        student_uuid: request[:student].uuid,
+        exercise_uuids: [],
+        assignment_status: :student_unknown
+      }
+    end
+  end
+
+  # Returns the CLUes for the given book containers and students (for students)
+  # Always returns randomized CLUes in the FakeClient
   def fetch_student_clues(requests)
     requests.map do |request|
       {
@@ -213,8 +242,8 @@ class OpenStax::Biglearn::Api::FakeClient
     end
   end
 
-  # Returns the CLUes for the given book containers and periods
-  # Requests are hashes containing the following keys: :book_container and :period
+  # Returns the CLUes for the given book containers and periods (for teachers)
+  # Always returns randomized CLUes in the FakeClient
   def fetch_teacher_clues(requests)
     requests.map do |request|
       {

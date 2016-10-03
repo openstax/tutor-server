@@ -79,7 +79,7 @@ class Content::Routines::ImportExercises
                                                content: wrapper.content,
                                                has_interactive: wrapper.has_interactive?,
                                                has_video: wrapper.has_video?)
-      # Hack so we don't have to regenerate all the cassettes
+      # Hack so we don't have to regenerate all the cassettes to include the UUID
       exercise.uuid ||= SecureRandom.uuid if Rails.env.test?
 
       relevant_tags = wrapper.tags.map{ |tag| tag_map[tag] }.compact

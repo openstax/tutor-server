@@ -26,27 +26,39 @@ module OpenStax::Biglearn::Api
     # period is a CourseMembership::Period or CourseMembership::Models::Period
     # max_exercises_to_return is an integer
 
-    # Adds the given ecosystems to Biglearn
+    # Adds the given ecosystem to Biglearn
     # Requests is a hash containing the following key: :ecosystem
     def create_ecosystem(request)
       single_api_request method: :create_ecosystem, request: request, keys: :ecosystem
     end
 
-    # Prepares Biglearn for course ecosystem updates
+    # Adds the given course to Biglearn
     # Requests is a hash containing the following keys: :course and :ecosystem
-    def prepare_course_ecosystem(request)
-      single_api_request method: :prepare_course_ecosystem,
-                         request: request,
-                         keys: [:course, :ecosystem]
+    def create_course(request)
+      single_api_request method: :create_course, request: request, keys: [:course, :ecosystem]
     end
 
-    # Finalizes a course ecosystem update in Biglearn,
+    # Prepares Biglearn for a course ecosystem update
+    # Requests is a hash containing the following keys: :course and :ecosystem
+    # Returns a preparation_uuid to be used in the call to update_course_ecosystems
+    def prepare_course_ecosystem(request)
+      SecureRandom.uuid.tap do |preparation_uuid|
+        single_api_request method: :prepare_course_ecosystem,
+                           request: request.merge(preparation_uuid: preparation_uuid),
+                           keys: [:course, :ecosystem]
+      end
+    end
+
+    # Finalizes course ecosystem updates in Biglearn,
     # causing it to stop computing CLUes for the old one
-    # Requests are hashes containing the following keys: :request_uuid and :preparation_uuid
+    # Requests are hashes containing the following key: :preparation_uuid
+    # Returns a hash mapping request objects to their update status (Symbol)
     def update_course_ecosystems(requests)
-      bulk_api_request method: :update_course_ecosystems,
+      bulk_api_request(method: :update_course_ecosystems,
                        requests: requests,
-                       keys: [:request_uuid, :preparation_uuid]
+                       keys: :preparation_uuid) do |response|
+        response[:prepare_status]
+      end
     end
 
     # Updates Course rosters in Biglearn
@@ -63,7 +75,7 @@ module OpenStax::Biglearn::Api
                          keys: :exercise_ids
     end
 
-    # Updates exercise exclusions for the given courses
+    # Updates exercise exclusions for the given course
     # Request is a hash containing the following key: :course
     def update_course_exercise_exclusions(request)
       single_api_request method: :update_course_exercise_exclusions,
@@ -71,7 +83,7 @@ module OpenStax::Biglearn::Api
                          keys: :course
     end
 
-    # Creates or updates a task in Biglearn
+    # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following key: :task
     def create_update_assignments(requests)
       bulk_api_request method: :create_update_assignments,
@@ -79,9 +91,10 @@ module OpenStax::Biglearn::Api
                        keys: :task
     end
 
-    # Returns a number of recommended exercises for the given tasks
+    # Returns a number of recommended personalized exercises for the given tasks
     # May return less than the given number if there aren't enough exercises
     # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+    # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_pes(requests)
       bulk_api_request(
         method: :fetch_assignment_pes,
@@ -92,8 +105,37 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    # Returns the CLUes for the given book containers and students
+    # Returns a number of recommended spaced practice exercises for the given tasks
+    # May return less than the given number if there aren't enough exercises
+    # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+    # Returns a hash mapping request objects to Content::Models::Exercises
+    def fetch_assignment_spes(requests)
+      bulk_api_request(
+        method: :fetch_assignment_spes,
+        requests: requests,
+        keys: [:task, :max_exercises_to_return]
+      ) do |response|
+        Content::Models::Exercise.where(tutor_uuid: response[:exercise_uuids])
+      end
+    end
+
+    # Returns a number of recommended personalized exercises for the student's worst topics
+    # May return less than the given number if there aren't enough exercises
+    # Requests are hashes containing the following keys: :student and :max_exercises_to_return
+    # Returns a hash mapping request objects to Content::Models::Exercises
+    def fetch_practice_worst_areas_pes(requests)
+      bulk_api_request(
+        method: :fetch_practice_worst_areas_pes,
+        requests: requests,
+        keys: [:student, :max_exercises_to_return]
+      ) do |response|
+        Content::Models::Exercise.where(tutor_uuid: response[:exercise_uuids])
+      end
+    end
+
+    # Returns the CLUes for the given book containers and students (for students)
     # Requests are hashes containing the following keys: :book_container and :student
+    # Returns a hash mapping request objects to a CLUe hash
     def fetch_student_clues(requests)
       bulk_api_request(method: :fetch_student_clues,
                        requests: requests,
@@ -102,8 +144,9 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    # Returns the CLUes for the given book containers and periods
+    # Returns the CLUes for the given book containers and periods (for teachers)
     # Requests are hashes containing the following keys: :book_container and :period
+    # Returns a hash mapping request objects to a CLUe hash
     def fetch_teacher_clues(requests)
       bulk_api_request(method: :fetch_teacher_clues,
                        requests: requests,
@@ -207,21 +250,22 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    def verify_and_slice_request(request:, keys:)
+    def verify_and_slice_request(method:, request:, keys:)
       keys_array = [keys].flatten
 
       missing_keys = keys_array.reject{ |key| request.has_key? key }
 
       raise(
         OpenStax::Biglearn::Api::MalformedRequest,
-        "Invalid request: #{request.inspect} is missing these key(s): #{missing_keys.inspect}"
+        "Invalid request: #{method} request #{request.inspect
+        } is missing these key(s): #{missing_keys.inspect}"
       ) if missing_keys.any?
 
       request.slice(*keys_array)
     end
 
     def single_api_request(method:, request:, keys:)
-      verified_request = verify_and_slice_request request: request, keys: keys
+      verified_request = verify_and_slice_request method: method, request: request, keys: keys
 
       response = client.send(method, verified_request)
 
@@ -231,7 +275,9 @@ module OpenStax::Biglearn::Api
     def bulk_api_request(method:, requests:, keys:)
       requests_map = {}
       [requests].flatten.map do |request|
-        requests_map[SecureRandom.uuid] = verify_and_slice_request request: request, keys: keys
+        requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
+                                                                   request: request,
+                                                                   keys: keys
       end
 
       requests_array = requests_map.map{ |uuid, request| request.merge request_uuid: uuid }

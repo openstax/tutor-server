@@ -8,6 +8,7 @@ class CreateCourse
 
   uses_routine SchoolDistrict::ProcessSchoolChange, as: :process_school_change
 
+<<<<<<< ee0d025cdbbbf4340c7647830efa65dd82242ae8
   uses_routine Tasks::CreateCourseAssistants, as: :create_course_assistants
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
@@ -22,6 +23,12 @@ class CreateCourse
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
     is_concept_coach = catalog_offering.try!(:is_concept_coach) if is_concept_coach.nil?
+=======
+  def exec(name:, appearance_code: nil, school: nil, catalog_offering: nil,
+           is_concept_coach: false, is_college: false, time_zone: nil)
+    # TODO eventually, making a course part of a school should be done independently
+    # with separate admin controller interfaces and all work done in the SchoolDistrict SS
+>>>>>>> Added missing API calls
 
     fatal_error(
       code: :is_concept_coach_blank,
