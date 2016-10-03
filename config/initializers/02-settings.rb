@@ -11,13 +11,7 @@ Settings::Db.store.defaults[:default_open_time] = '00:01'
 Settings::Db.store.defaults[:default_due_time] = '07:00'
 Settings::Db.store.defaults[:term_years_to_import] = ''
 
-Settings::Db.store.defaults[:biglearn_client] =
-  case Rails.env
-  when "test"
-    :fake
-  when "development", "production"
-    :local_query_with_fake
-  end
+Settings::Db.store.defaults[:biglearn_client] = Rails.env.production? ? :real : :fake
 
 redis_secrets = Rails.application.secrets['redis']
 Settings::Redis.store = Redis::Store.new(
