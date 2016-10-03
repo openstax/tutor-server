@@ -1,5 +1,6 @@
 require_relative './api/configuration'
 require_relative './api/malformed_request'
+require_relative './api/result_type_error'
 require_relative './api/exercises_error'
 require_relative './api/fake_client'
 require_relative './api/real_client'
@@ -55,8 +56,9 @@ module OpenStax::Biglearn::Api
     def update_course_ecosystems(requests)
       bulk_api_request(method: :update_course_ecosystems,
                        requests: requests,
-                       keys: :preparation_uuid) do |request, response|
-        response[:prepare_status]
+                       keys: :preparation_uuid,
+                       result_class: Symbol) do |request, response|
+        response[:update_status]
       end
     end
 
@@ -98,7 +100,8 @@ module OpenStax::Biglearn::Api
       bulk_api_request(
         method: :fetch_assignment_pes,
         requests: requests,
-        keys: [:task, :max_exercises_to_return]
+        keys: [:task, :max_exercises_to_return],
+        result_class: Content::Exercise
       ) do |request, response|
         get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
                                      max_exercises_to_return: request[:max_exercises_to_return]
@@ -113,7 +116,8 @@ module OpenStax::Biglearn::Api
       bulk_api_request(
         method: :fetch_assignment_spes,
         requests: requests,
-        keys: [:task, :max_exercises_to_return]
+        keys: [:task, :max_exercises_to_return],
+        result_class: Content::Exercise
       ) do |request, response|
         get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
                                      max_exercises_to_return: request[:max_exercises_to_return]
@@ -128,7 +132,8 @@ module OpenStax::Biglearn::Api
       bulk_api_request(
         method: :fetch_practice_worst_areas_pes,
         requests: requests,
-        keys: [:student, :max_exercises_to_return]
+        keys: [:student, :max_exercises_to_return],
+        result_class: Content::Exercise
       ) do |request, response|
         get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
                                      max_exercises_to_return: request[:max_exercises_to_return]
@@ -253,15 +258,30 @@ module OpenStax::Biglearn::Api
       request.slice(*keys_array)
     end
 
-    def single_api_request(method:, request:, keys:)
+    def verify_result(result:, result_class: Hash)
+      results_array = [result].flatten
+
+      results_array.each do |result|
+        raise(
+          OpenStax::Biglearn::Api::ResultTypeError,
+          "Invalid result: #{result} has type #{result.class.name
+          } but expected type was #{result_class.name}"
+        ) if result.class != result_class
+      end
+
+      result
+    end
+
+    def single_api_request(method:, request:, keys:, result_class: Hash)
       verified_request = verify_and_slice_request method: method, request: request, keys: keys
 
       response = client.send(method, verified_request)
 
-      block_given? ? yield(response) : response
+      verify_result(result: block_given? ? yield(request, response) : response,
+                    result_class: result_class)
     end
 
-    def bulk_api_request(method:, requests:, keys:)
+    def bulk_api_request(method:, requests:, keys:, result_class: Hash)
       requests_map = {}
       [requests].flatten.map do |request|
         requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
@@ -275,7 +295,9 @@ module OpenStax::Biglearn::Api
       client.send(method, requests_array).each do |response|
         request = requests_map[response[:request_uuid]]
 
-        responses[request] = block_given? ? yield(request, response) : response
+        responses[request] = verify_result(
+          result: block_given? ? yield(request, response) : response, result_class: result_class
+        )
       end
 
       # If given a Hash instead of an Array, return the response directly
@@ -294,13 +316,14 @@ module OpenStax::Biglearn::Api
         number_returned} instead of #{max_exercises_to_return})"
       end if number_returned < max_exercises_to_return
 
-      Content::Models::Exercise.where(tutor_uuid: tutor_uuids)
-                               .first(max_exercises_to_return)
-                               .tap do |exercises|
-        raise(OpenStax::Biglearn::Api::ExercisesError,
-              "Biglearn returned exercises not present locally") \
-          if exercises.length < number_returned
-      end
+      exercises = Content::Models::Exercise.where(tutor_uuid: tutor_uuids)
+                                           .first(max_exercises_to_return)
+
+      raise(OpenStax::Biglearn::Api::ExercisesError,
+            "Biglearn returned exercises not present locally") \
+        if exercises.length < number_returned
+
+      exercises.map{ |exercise| Content::Exercise.new strategy: exercise.wrap }
     end
 
   end

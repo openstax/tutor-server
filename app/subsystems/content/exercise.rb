@@ -7,6 +7,10 @@ module Content
       verify_and_return @strategy.id, klass: Integer, error: StrategyError
     end
 
+    def tutor_uuid
+      verify_and_return @strategy.tutor_uuid, klass: ::Content::Uuid, error: StrategyError
+    end
+
     def url
       verify_and_return @strategy.url, klass: String, error: StrategyError
     end
