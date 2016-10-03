@@ -1,6 +1,12 @@
 require 'rails_helper'
+require 'webmock/rspec'
 
 describe GetExcludedExercises, type: :routine do
+  before(:each) do
+    WebMock.disable_net_connect!
+    stub_request(:put, /remote.php/).to_return(status: 200)
+  end
+
   context "with data" do
     let!(:course){ FactoryGirl.create :entity_course }
     let(:teacher_user)   { FactoryGirl.create :user, first_name: "Bob", last_name: "Martin" }
@@ -20,7 +26,7 @@ describe GetExcludedExercises, type: :routine do
         expect(output).to include(:course_id, :course_name, :teachers, :ee_count, :ee_numbers_with_urls, :page_uuids_with_urls)
       end
 
-      context "returns a (Hashie Mash) hash with the correct" do
+      context "returns a (Hashie Mash) hash with the correct data" do
         specify do
           expect(output).to be_a Hashie::Mash
         end
@@ -65,6 +71,44 @@ describe GetExcludedExercises, type: :routine do
           end
         end
       end
+
+      context "as csv" do
+        it "includes all the correct data" do
+          ee_numbers = course.excluded_exercises.map(&:exercise_number)
+          ee_numbers_urls = ee_numbers.map{|number| OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s }
+
+          with_rows_from_csv("by_course") do |rows|
+            headers = rows.first
+            values = rows.second
+            data = Hash[headers.zip(values)]
+
+            expect(data["Course ID"]).to eq ee_1.course.id.to_s
+            expect(data["Course Name"]).to eq ee_1.course.name
+            expect(data["Teachers"]).to eq ee_1.course.teachers.map(&:name).join(", ")
+            expect(data["# Exclusions"]).to eq "3"
+            expect(data["Excluded Numbers"].split(", ")).to match_array ee_numbers.map{|numb| "#{numb}"}
+            expect(data["Excluded Numbers URLs"].split(", ")).to match_array ee_numbers_urls
+            expect(data["CNX Section UUID"]).to eq exercise.page.uuid
+            expect(data["CNX Section UUID URLs"]).to eq OpenStax::Cnx::V1.webview_url_for(exercise.page.uuid)
+          end
+        end
+
+        it 'uploads the exported data to owncloud' do
+          file_regex_string = 'excluded_exercises_stats_by_course_\d+T\d+Z.csv'
+          webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+
+          # We simply test that the call to HTTParty is made properly
+          expect(HTTParty).to receive(:put).with(
+            webdav_url_regex,
+            basic_auth: { username: a_kind_of(String).or(be_nil),
+                          password: a_kind_of(String).or(be_nil) },
+            body_stream: a_kind_of(File),
+            headers: { 'Transfer-Encoding' => 'chunked' }
+          ).and_return OpenStruct.new(success?: true)
+
+          described_class.call(export_as_csv: true, export_by_course: true)
+        end
+      end
     end
 
     context "output by exercise" do
@@ -75,6 +119,10 @@ describe GetExcludedExercises, type: :routine do
       end
 
       context "returns a (Hashie Mash) hash with the correct" do
+        specify do
+          expect(output).to be_a Hashie::Mash
+        end
+
         specify "exercise number" do
           expect(output[:ee_number]).to eq ee_1.exercise_number
         end
@@ -99,11 +147,57 @@ describe GetExcludedExercises, type: :routine do
           end
         end
       end
+
+      context "as csv" do
+        it "includes all the correct data" do
+          with_rows_from_csv("by_exercise") do |rows|
+            headers = rows.first
+            values = rows.second
+            data = Hash[headers.zip(values)]
+
+            expect(data["Exercise Number"]).to eq "#{exercise.number}"
+            expect(data["Exercise Number URL"]).to eq OpenStax::Exercises::V1.uri_for("/exercises/#{exercise.number}").to_s
+            expect(data["# Exclusions"]).to eq "1"
+            expect(data["CNX Section UUID(s)"]).to eq exercise.page.uuid
+            expect(data["CNX Section UUID(s) URLs"]).to eq OpenStax::Cnx::V1.webview_url_for(exercise.page.uuid)
+          end
+        end
+
+        it 'uploads the exported data to owncloud' do
+          file_regex_string = 'excluded_exercises_stats_by_exercise_\d+T\d+Z.csv'
+          webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+
+          # We simply test that the call to HTTParty is made properly
+          expect(HTTParty).to receive(:put).with(
+            webdav_url_regex,
+            basic_auth: { username: a_kind_of(String).or(be_nil),
+                          password: a_kind_of(String).or(be_nil) },
+            body_stream: a_kind_of(File),
+            headers: { 'Transfer-Encoding' => 'chunked' }
+          ).and_return OpenStruct.new(success?: true)
+
+          described_class.call(export_as_csv: true, export_by_exercise: true)
+        end
+      end
     end
   end
   context "without data" do
     it "does not raise an exception" do
-      expect{described_class.call}.to_not raise_exception(StandardError)
+      expect{described_class.call}.to_not raise_error
     end
   end
+end
+
+def with_rows_from_csv(by_type, &block)
+  expect_any_instance_of(described_class).to receive(:remove_exported_files) do |routine|
+    filepath = routine.send "filepath_#{by_type}".to_sym
+    expect(File.exists?(filepath)).to be true
+    expect(filepath.ends_with? '.csv').to be true
+    rows = CSV.read(filepath)
+    block.call(rows)
+  end
+
+  by_course = by_type == "by_course"
+  by_exercise = by_type == "by_exercise"
+  described_class.call(export_as_csv: true, export_by_course: by_course, export_by_exercise: by_exercise)
 end

@@ -30,6 +30,14 @@ module Manager::StatsActions
     render 'manager/stats/excluded_exercises'
   end
 
+  def excluded_exercises_to_csv
+    by_course = params.fetch(:export).fetch(:by).include? "by_course"
+    by_exercise = params.fetch(:export).fetch(:by).include? "by_exercise"
+    GetExcludedExercises.perform_later(export_as_csv: true, export_by_course: by_course, export_by_exercise: by_exercise)
+    flash[:success] = "The export should be available in a few minutes in ownCloud."
+    redirect_to excluded_exercises_admin_stats_path
+  end
+
   def concept_coach
     cc_tasks = Tasks::Models::ConceptCoachTask.preload([
       {page: {chapter: {book: {chapters: :pages}}}}, {task: {taskings: {role: :profile}}}

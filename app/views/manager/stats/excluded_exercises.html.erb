@@ -57,3 +57,15 @@
   <% end %>
   </tbody>
 </table>
+
+<div class="excluded-exercises-export-form">
+  <h4>Export to CSV file</h4>
+  <%= lev_form_for :export, url: excluded_exercises_to_csv_admin_stats_path, method: :put do |form| %>
+    <%= form.collection_check_boxes :by, \
+                [["by_course", "By Course"], ["by_exercise", "By Exercise"]], \
+                :first, :second, {}, {checked: true} %>
+    <div>
+      <%= submit_tag "Export Data", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>
