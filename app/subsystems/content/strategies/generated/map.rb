@@ -110,7 +110,7 @@ module Content
         end
 
         def create_maps(from_ecosystems:, to_ecosystem:)
-          from_ecosystems.map do |from_ecosystem|
+          from_ecosystems.uniq.map do |from_ecosystem|
             Content::Models::Map.create from_ecosystem: from_ecosystem.to_model,
                                         to_ecosystem: to_ecosystem.to_model
           end
