@@ -1,35 +1,37 @@
 require 'rails_helper'
 
-RSpec.xdescribe OpenStax::Biglearn::Api, type: :external do
+RSpec.describe OpenStax::Biglearn::Api, type: :external do
   before(:each) { RequestStore.clear! }
   after(:all)   { RequestStore.clear! }
 
-  it 'can be configured' do
-    configuration = OpenStax::Biglearn::Api.configuration
-    expect(configuration).to be_a(OpenStax::Biglearn::Api::Configuration)
+  context 'configuration' do
+    it 'can be configured' do
+      configuration = OpenStax::Biglearn::Api.configuration
+      expect(configuration).to be_a(OpenStax::Biglearn::Api::Configuration)
 
-    OpenStax::Biglearn::Api.configure do |config|
-      expect(config).to eq configuration
+      OpenStax::Biglearn::Api.configure do |config|
+        expect(config).to eq configuration
+      end
+    end
+
+    it 'can use the fake client or the real client' do
+      OpenStax::Biglearn::Api.use_fake_client
+      expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
+
+      OpenStax::Biglearn::Api.use_real_client
+      expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::RealClient)
+
+      OpenStax::Biglearn::Api.use_fake_client
+      expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
     end
   end
 
-  it 'can use the fake client or the real client' do
-    OpenStax::Biglearn::Api.use_fake_client
-    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
-
-    OpenStax::Biglearn::Api.use_real_client
-    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::RealClient)
-
-    OpenStax::Biglearn::Api.use_fake_client
-    expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
-  end
-
-  context "#default_client_name" do
-    it "returns whatever is in the settings and caches it until the end of the request" do
-      allow(Settings::Biglearn).to receive(:client) { "blah" }
-      expect(described_class.default_client_name).to eq "blah"
+  context '#default_client_name' do
+    it 'returns whatever is in the settings and caches it until the end of the request' do
+      allow(Settings::Biglearn).to receive(:client) { 'blah' }
+      expect(described_class.default_client_name).to eq 'blah'
       allow(Settings::Biglearn).to receive(:client) { :fake }
-      expect(described_class.default_client_name).to eq "blah"
+      expect(described_class.default_client_name).to eq 'blah'
 
       RequestStore.clear!
 
@@ -38,97 +40,116 @@ RSpec.xdescribe OpenStax::Biglearn::Api, type: :external do
   end
 
   context 'api calls' do
-    let(:dummy_role)              { 'some role' }
-    let(:dummy_roles)             { [dummy_role] }
-    let(:dummy_exercises)         { ['some exercises'] }
-    let(:dummy_pools)             { [double(uuid: 'some uuid')] }
-    let(:dummy_excluded_pools)    { [double(uuid: 'some excluded uuid')] }
-    let(:dummy_pool_exclusions)   do
-      dummy_excluded_pools.map{ |pool| { pool_id: pool.uuid, ignore_versions: true } }
-    end
-    let(:dummy_count)             { 'some count' }
-    let(:dummy_difficulty)        { 'some difficulty' }
-    let(:dummy_allow_repetitions) { 'some allow repetitions' }
+    dummy_ecosystem = OpenStruct.new tutor_uuid: SecureRandom.uuid
+    dummy_course = OpenStruct.new uuid: SecureRandom.uuid
+    dummy_period = OpenStruct.new uuid: SecureRandom.uuid
+    dummy_task = OpenStruct.new uuid: SecureRandom.uuid
+    dummy_student = OpenStruct.new uuid: SecureRandom.uuid
+    dummy_book_container = OpenStruct.new tutor_uuid: SecureRandom.uuid
+    dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
+    max_exercises_to_return = 5
 
-    let(:client_double) do
-      double.tap do |dbl|
-        allow(dbl).to receive(:get_clues)
-                  .with(roles: dummy_roles, pool_uuids: dummy_pools.map(&:uuid), force_cache_miss: false)
-                  .and_return('client get_clues response')
-        allow(dbl).to receive(:add_exercises)
-                  .with(exercises: dummy_exercises)
-                  .and_return('client add_exercises response')
-        allow(dbl).to receive(:get_projection_exercises)
-                  .with(
-                    role:              dummy_role,
-                    pool_uuids:        dummy_pools.map(&:uuid),
-                    pool_exclusions:   dummy_pool_exclusions,
-                    count:             dummy_count,
-                    difficulty:        dummy_difficulty,
-                    allow_repetitions: dummy_allow_repetitions
-                  ).and_return(dummy_exercises)
+    {
+      create_ecosystem: { ecosystem: dummy_ecosystem },
+      create_course: { course: dummy_course, ecosystem: dummy_ecosystem },
+      prepare_course_ecosystem: { course: dummy_course, ecosystem: dummy_ecosystem },
+      update_course_ecosystems: [{ preparation_uuid: SecureRandom.uuid }],
+      update_rosters: [{ course: dummy_course }],
+      update_global_exercise_exclusions: { exercise_ids: dummy_exercise_ids },
+      update_course_exercise_exclusions: { course: dummy_course },
+      create_update_assignments: [{ task: dummy_task }],
+      fetch_assignment_pes: [{ task: dummy_task,
+                               max_exercises_to_return: max_exercises_to_return }],
+      fetch_assignment_spes: [{ task: dummy_task,
+                                max_exercises_to_return: max_exercises_to_return }],
+      fetch_practice_worst_areas_pes: [{ student: dummy_student,
+                                         max_exercises_to_return: max_exercises_to_return }],
+      fetch_student_clues: [{ book_container: dummy_book_container, student: dummy_student }],
+      fetch_teacher_clues: [{ book_container: dummy_book_container, period: dummy_period }]
+    }.each do |method, args|
+      it "delegates #{method} to the client implementation" do
+        expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
+
+        OpenStax::Biglearn::Api.send(method, args)
       end
     end
 
-    before(:each) do
-      RequestStore.store[:biglearn_v1_forced_client_in_use] = true
-      OpenStax::Biglearn::Api.client = client_double
+    it 'converts returned exercise uuids to exercise objects' do
+      dummy_exercises = max_exercises_to_return.times.map{ FactoryGirl.create :content_exercise }
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: dummy_exercises.map(&:tutor_uuid)
+          }
+        end
+      end
+      expect(Rails.logger).not_to receive(:warn)
+
+      result = nil
+      expect do
+        result = OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: dummy_task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.not_to raise_error
+      expect(result).to match_array(dummy_exercises)
     end
 
-    it 'delegates get_clues to the client' do
-      response = OpenStax::Biglearn::Api.get_clues(roles: dummy_roles, pools: dummy_pools)
-      expect(response).to eq('client get_clues response')
+    it 'errors when client returns more exercises than expected' do
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: (max_exercises_to_return + 1).times.map{ SecureRandom.uuid }
+          }
+        end
+      end
+      expect(Rails.logger).not_to receive(:warn)
+
+      expect do
+        OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: dummy_task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
     end
 
-    it 'returns an empty hash if pools is empty' do
-      response = OpenStax::Biglearn::Api.get_clues(roles: dummy_roles, pools: [])
-      expect(response).to eq({})
-    end
-
-    it 'returns a hash that maps all given pool uuids to nil if roles is empty' do
-      response = OpenStax::Biglearn::Api.get_clues(roles: [], pools: dummy_pools)
-      expect(response).to eq({'some uuid' => nil})
-    end
-
-    it 'delegates add_exercises to the client' do
-      response = OpenStax::Biglearn::Api.add_exercises(exercises: dummy_exercises)
-      expect(response).to eq('client add_exercises response')
-    end
-
-    it 'delegates get_projection_exercises to the client' do
-      response = OpenStax::Biglearn::Api.get_projection_exercises(
-        role:              dummy_role,
-        pools:             dummy_pools,
-        pool_exclusions:   dummy_pool_exclusions,
-        count:             dummy_count,
-        difficulty:        dummy_difficulty,
-        allow_repetitions: dummy_allow_repetitions
-      )
-      expect(response).to eq(dummy_exercises)
-    end
-
-    it 'logs a warning and does not explode when client does not return expected number of exercises' do
-      allow(client_double).to receive(:get_projection_exercises).and_return(['only exercise'])
+    it 'logs a warning when client returns less exercises than expected' do
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: (max_exercises_to_return - 1).times.map{ SecureRandom.uuid }
+          }
+        end
+      end
       expect(Rails.logger).to receive(:warn)
-      response = OpenStax::Biglearn::Api.get_projection_exercises(
-        role:              dummy_role,
-        pools:             dummy_pools,
-        count:             2,
-        difficulty:        dummy_difficulty,
-        allow_repetitions: dummy_allow_repetitions
+      expect(Content::Models::Exercise).to(
+        receive(:where).and_return((1.upto(max_exercises_to_return - 1).to_a))
       )
+
+      expect do
+        OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: dummy_task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.not_to raise_error
     end
 
-    it 'errors when biglearn returns exercises not present locally' do
-      course = role.student.course
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
-      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-      AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-      allow(OpenStax::Biglearn::Api).to receive(:fetch_topic_pes) do
-        [OpenStruct.new(number: 'dummy')]
+    it 'errors when client returns exercises not present locally' do
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: max_exercises_to_return.times.map{ SecureRandom.uuid }
+          }
+        end
       end
-      result = ResetPracticeWidget.call role: role, exercise_source: :biglearn, page_ids: [page.id]
-      expect(result.errors.first.code).to eq :missing_local_exercises
+      expect(Rails.logger).not_to receive(:warn)
+
+      expect do
+        OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: dummy_task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
     end
   end
 end
