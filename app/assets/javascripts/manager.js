@@ -70,9 +70,8 @@ $(document).ready(function() {
 
     var setPerPage = function(val){
       var paramsObj = locationSearchInJSON();
-      paramsObj.per_page = val;
-
-      window.location.search = $.param(paramsObj);
+      paramsObj.per_page = Number(val);
+      window.location.search = decodeURIComponent($.param(paramsObj));
     }
 
     setPerPage(perPage);
@@ -91,7 +90,6 @@ function locationSearchInJSON(){
      var keyValues = item.split("=");
      paramsJSON[keyValues[0]] = keyValues[1]
   })
-
   paramsJSON.utf8 = "✓";
 
   return paramsJSON;
