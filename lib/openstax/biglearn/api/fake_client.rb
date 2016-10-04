@@ -212,7 +212,7 @@ class OpenStax::Biglearn::Api::FakeClient
         request_uuid: request[:request_uuid],
         assignment_uuid: request[:task].uuid,
         exercise_uuids: [],
-        assignment_status: :assignment_unknown
+        assignment_status: :assignment_ready
       }
     end
   end
@@ -225,7 +225,7 @@ class OpenStax::Biglearn::Api::FakeClient
         request_uuid: request[:request_uuid],
         student_uuid: request[:student].uuid,
         exercise_uuids: [],
-        assignment_status: :student_unknown
+        assignment_status: :assignment_ready
       }
     end
   end
@@ -254,17 +254,15 @@ class OpenStax::Biglearn::Api::FakeClient
     end
   end
 
-  protected
-
   def random_clue(options = {})
     options[:value] ||= rand(0.0..1.0)
     options[:value_interpretation] ||= options[:value] >= 0.8 ?
-                                         'high' : (options[:value] >= 0.3 ? 'medium' : 'low')
+                                         :high : (options[:value] >= 0.3 ? :medium : :low)
     options[:confidence_interval_left]  ||= [options[:value] - 0.1, 0.0].max
     options[:confidence_interval_right] ||= [options[:value] + 0.1, 1.0].min
-    options[:confidence_interval_interpretation] = ['good', 'bad'].sample
+    options[:confidence_interval_interpretation] = [:good, :bad].sample
     options[:sample_size] = 7
-    options[:sample_size_interpretation] = 'above'
+    options[:sample_size_interpretation] = :above
     options[:unique_learner_count] = 1
 
     {
