@@ -10,8 +10,7 @@ module CourseMembership
       transfer_errors_from(student, { type: :verbatim }, true)
       outputs[:student] = student
 
-      course = student.course
-      OpenStax::Biglearn::Api.update_rosters(course: course) if course.course_ecosystems.any?
+      OpenStax::Biglearn::Api.create_update_course(course: student.course)
     end
   end
 end

@@ -32,6 +32,34 @@ module OpenStax::Biglearn::Api
       single_api_request method: :create_ecosystem, request: request, keys: :ecosystem
     end
 
+    # Creates or updates the given course in Biglearn, including ecosystem and roster
+    # Requests is a hash containing the following key: :course
+    def create_update_course(request)
+      Entity::Course.transaction do
+        course = request[:course]
+        course.lock! if course.persisted?
+
+        ecosystem = course.course_ecosystems.first.try! :ecosystem
+
+        # Don't send course to Biglearn if it has no ecosystems
+        return if ecosystem.nil?
+
+        if course.sequence_number.nil? || course.sequence_number == 0
+          # New course, so create it in Biglearn
+          create_course(course: course, ecosystem: ecosystem)
+        else
+          # Course already exists in Biglearn, so update
+          preparation_uuid = prepare_course_ecosystem(course: course, ecosystem: ecosystem)
+
+          update_course_ecosystems(preparation_uuid: preparation_uuid)
+        end
+
+        # This call will update the course's sequence number, making the lock! work
+        # Since we already locked the course above, don't need to lock! it again
+        update_rosters(course: course, lock: false)
+      end
+    end
+
     # Adds the given course to Biglearn
     # Requests is a hash containing the following keys: :course and :ecosystem
     def create_course(request)
@@ -64,16 +92,18 @@ module OpenStax::Biglearn::Api
 
     # Updates Course rosters in Biglearn
     # Requests are hashes containing the following key: :course
+    # They may also contain the following optional key: :lock (default: true)
+    # The course records' sequence numbers are increased by 1
     def update_rosters(requests)
       courses = [requests].flatten.map do |request|
-        request[:course].tap do |course|
-          course.lock! if course.persisted?
-        end
+        lock = request.has_key?(:lock) ? request[:lock] : true
+
+        request[:course].tap{ |course| course.lock! if lock && course.persisted? }
       end
 
       bulk_api_request(method: :update_rosters, requests: requests, keys: :course).tap do
         courses.each do |course|
-          course.sequence_number += 1
+          course.sequence_number = (course.sequence_number || 0) + 1
           course.save!(validate: false) if course.persisted?
         end
       end
@@ -97,20 +127,22 @@ module OpenStax::Biglearn::Api
 
     # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following key: :task
-    # The record's
+    # The task records' sequence numbers are increased by 1
     def create_update_assignments(requests)
-      tasks = [requests].flatten.map do |request|
-        request[:task].tap do |task|
-          task.lock! if task.persisted?
+      Tasks::Models::Task.transaction do
+        tasks = [requests].flatten.map do |request|
+          request[:task].tap do |task|
+            task.lock! if task.persisted?
+          end
         end
-      end
 
-      bulk_api_request(method: :create_update_assignments,
-                       requests: requests,
-                       keys: :task).tap do
-        tasks.each do |task|
-          task.sequence_number += 1
-          task.save!(validate: false) if task.persisted?
+        bulk_api_request(method: :create_update_assignments,
+                         requests: requests,
+                         keys: :task).tap do
+          tasks.each do |task|
+            task.sequence_number = (task.sequence_number || 0) + 1
+            task.save!(validate: false) if task.persisted?
+          end
         end
       end
     end
