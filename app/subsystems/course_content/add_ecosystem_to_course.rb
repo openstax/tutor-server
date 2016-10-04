@@ -30,17 +30,7 @@ class CourseContent::AddEcosystemToCourse
                                                                 to_ecosystem: ecosystem,
                                                                 strategy_class: map_strategy_class)
 
-    course.touch
-
-    if course.course_ecosystems.size == 1
-      OpenStax::Biglearn::Api.create_course(course: course, ecosystem: ecosystem)
-      OpenStax::Biglearn::Api.update_rosters(course: course)
-    else
-      preparation_uuid = OpenStax::Biglearn::Api.prepare_course_ecosystem(
-        course: course, ecosystem: ecosystem
-      )
-      OpenStax::Biglearn::Api.update_course_ecosystems(preparation_uuid: preparation_uuid)
-    end
+    OpenStax::Biglearn::Api.create_update_course(course: course)
   end
 
 end
