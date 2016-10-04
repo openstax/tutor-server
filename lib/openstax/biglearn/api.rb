@@ -65,7 +65,18 @@ module OpenStax::Biglearn::Api
     # Updates Course rosters in Biglearn
     # Requests are hashes containing the following key: :course
     def update_rosters(requests)
-      bulk_api_request method: :update_rosters, requests: requests, keys: :course
+      courses = [requests].flatten.map do |request|
+        request[:course].tap do |course|
+          course.lock! if course.persisted?
+        end
+      end
+
+      bulk_api_request(method: :update_rosters, requests: requests, keys: :course).tap do
+        courses.each do |course|
+          course.sequence_number += 1
+          course.save!(validate: false) if course.persisted?
+        end
+      end
     end
 
     # Updates global exercise exclusions
@@ -86,10 +97,22 @@ module OpenStax::Biglearn::Api
 
     # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following key: :task
+    # The record's
     def create_update_assignments(requests)
-      bulk_api_request method: :create_update_assignments,
+      tasks = [requests].flatten.map do |request|
+        request[:task].tap do |task|
+          task.lock! if task.persisted?
+        end
+      end
+
+      bulk_api_request(method: :create_update_assignments,
                        requests: requests,
-                       keys: :task
+                       keys: :task).tap do
+        tasks.each do |task|
+          task.sequence_number += 1
+          task.save!(validate: false) if task.persisted?
+        end
+      end
     end
 
     # Returns a number of recommended personalized exercises for the given tasks

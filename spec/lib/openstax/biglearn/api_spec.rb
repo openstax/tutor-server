@@ -42,9 +42,9 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
   context 'api calls' do
     dummy_ecosystem = OpenStruct.new tutor_uuid: SecureRandom.uuid
     dummy_book_container = OpenStruct.new tutor_uuid: SecureRandom.uuid
-    dummy_course = OpenStruct.new uuid: SecureRandom.uuid
-    dummy_period = OpenStruct.new uuid: SecureRandom.uuid
-    dummy_task = OpenStruct.new uuid: SecureRandom.uuid
+    dummy_course = OpenStruct.new uuid: SecureRandom.uuid, sequence_number: 21
+    dummy_course_container = OpenStruct.new uuid: SecureRandom.uuid
+    dummy_task = OpenStruct.new uuid: SecureRandom.uuid, sequence_number: 42
     dummy_student = OpenStruct.new uuid: SecureRandom.uuid
     dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
     max_exercises_to_return = 5
@@ -54,10 +54,10 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       [ :create_course, { course: dummy_course, ecosystem: dummy_ecosystem } ],
       [ :prepare_course_ecosystem, { course: dummy_course, ecosystem: dummy_ecosystem }, String ],
       [ :update_course_ecosystems, [ { preparation_uuid: SecureRandom.uuid } ], Symbol ],
-      [ :update_rosters, [ { course: dummy_course } ] ],
+      [ :update_rosters, [ { course: dummy_course } ], Hash, dummy_course ],
       [ :update_global_exercise_exclusions, { exercise_ids: dummy_exercise_ids } ],
       [ :update_course_exercise_exclusions, { course: dummy_course } ],
-      [ :create_update_assignments, [ { task: dummy_task } ] ],
+      [ :create_update_assignments, [ { task: dummy_task } ], Hash, dummy_task ],
       [ :fetch_assignment_pes,
         [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
         Content::Exercise ],
@@ -70,9 +70,11 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       [ :fetch_student_clues,
         [ { book_container: dummy_book_container, student: dummy_student } ] ],
       [ :fetch_teacher_clues,
-        [ { book_container: dummy_book_container, course_container: dummy_period } ] ]
-    ].each do |method, requests, result_class|
+        [ { book_container: dummy_book_container, course_container: dummy_course_container } ] ]
+    ].each do |method, requests, result_class, sequence_number_record|
       it "delegates #{method} to the client implementation" do
+        sequence_number = sequence_number_record.sequence_number if sequence_number_record.present?
+
         expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
 
         result_class ||= Hash
@@ -84,6 +86,9 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [results].flatten.each do |result|
           expect(result).to be_a result_class
         end
+
+        expect(sequence_number_record.sequence_number).to(eq(sequence_number + 1)) \
+          if sequence_number_record.present?
       end
     end
 
