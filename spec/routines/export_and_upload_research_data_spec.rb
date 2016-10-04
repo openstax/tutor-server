@@ -63,6 +63,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
 
         expect(data['Student']).to eq(student.deidentifier)
         expect(data['Course ID']).to eq(course.id.to_s)
+        expect(data['CC?']).to eq("FALSE")
         expect(data['Period ID']).to eq(period.id.to_s)
         expect(data['Step ID']).to eq(step.id.to_s)
         expect(data['Step Type']).to eq('Reading')

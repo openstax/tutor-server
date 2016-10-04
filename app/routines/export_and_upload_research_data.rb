@@ -141,7 +141,7 @@
       CourseProfile::Models::Profile
         .select([:entity_course_id, :is_concept_coach])
         .each_with_object({}) do |profile, hsh|
-          hsh[profile.entity_course_id] = profile.is_concept_coach.try(:capitalize)
+          hsh[profile.entity_course_id] = profile.is_concept_coach.to_s.upcase
         end
 
     @is_cc_map[course_id]
