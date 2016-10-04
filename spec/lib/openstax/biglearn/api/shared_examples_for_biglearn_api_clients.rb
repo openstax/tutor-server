@@ -19,7 +19,7 @@ RSpec.shared_examples 'a biglearn api client' do
   dummy_ecosystem = OpenStruct.new tutor_uuid: SecureRandom.uuid
   dummy_book_container = OpenStruct.new tutor_uuid: SecureRandom.uuid
   dummy_course = OpenStruct.new uuid: SecureRandom.uuid
-  dummy_period = OpenStruct.new uuid: SecureRandom.uuid
+  dummy_course_container = OpenStruct.new uuid: SecureRandom.uuid
   dummy_task = OpenStruct.new uuid: SecureRandom.uuid
   dummy_student = OpenStruct.new uuid: SecureRandom.uuid
   dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
@@ -71,7 +71,7 @@ RSpec.shared_examples 'a biglearn api client' do
       [ { book_container: dummy_book_container, student: dummy_student } ],
       [ ->{ { clue_data: clue_matcher, clue_status: :clue_ready } } ] ],
     [ :fetch_teacher_clues,
-      [ { book_container: dummy_book_container, course_container: dummy_period } ],
+      [ { book_container: dummy_book_container, course_container: dummy_course_container } ],
       [ ->{ { clue_data: clue_matcher, clue_status: :clue_ready } } ] ]
   ].group_by(&:first).each do |method, examples|
     context "##{method}" do
