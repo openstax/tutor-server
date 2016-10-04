@@ -1,6 +1,6 @@
 <% @page_header = "Excluded Exercise Stats" %>
 
-<h3>Total exercise exclusions: <%= @ee_by_course.length %></h3>
+<h3>Total exercise exclusions: <%= @excluded_exercises_by_course.length %></h3>
 
 <h3>By Course:</h3>
 
@@ -16,14 +16,14 @@
     </tr>
   </thead>
   <tbody>
-  <% @ee_by_course.each do |ee| %>
+  <% @excluded_exercises_by_course.each do |ee| %>
     <tr>
       <td><%= link_to ee.course_id, edit_admin_course_path(ee.course_id) %></td>
       <td><%= ee.course_name %></td>
       <td><%= ee.teachers %></td>
-      <td><%= ee.ee_count %></td>
-      <td><%= ee.ee_numbers_with_urls.map{|nu|
-                link_to nu.ee_number, nu.ee_url
+      <td><%= ee.excluded_exercises_count %></td>
+      <td><%= ee.excluded_exercises_numbers_with_urls.map{|num|
+                link_to num.ee_number, num.ee_url
               }.join(", ").html_safe %>
       </td>
       <td><%= ee.page_uuids_with_urls.map{|pg|
@@ -45,10 +45,10 @@
     </tr>
   </thead>
   <tbody>
-  <% @ee_by_exercise.each do |ee| %>
+  <% @excluded_exercises_by_exercise.each do |ee| %>
     <tr>
-      <td><%= link_to ee.ee_number, ee.ee_url %></td>
-      <td><%= ee.ee_count %></td>
+      <td><%= link_to ee.exercise_number, ee.exercise_url %></td>
+      <td><%= ee.excluded_exercises_count %></td>
       <td><%= ee.pages_with_uuids_and_urls.map { |pg|
                 link_to pg.page_uuid, pg.page_url
               }.join(', ').html_safe %>

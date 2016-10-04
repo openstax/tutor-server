@@ -9,7 +9,7 @@ describe GetExcludedExercises, type: :routine do
 
   context "with data" do
     let!(:course){ FactoryGirl.create :entity_course }
-    let(:teacher_user)   { FactoryGirl.create :user, first_name: "Bob", last_name: "Martin" }
+    let!(:teacher_user)   { FactoryGirl.create :user, first_name: "Bob", last_name: "Martin" }
     let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
     let!(:exercise) { FactoryGirl.create :content_exercise }
@@ -23,7 +23,7 @@ describe GetExcludedExercises, type: :routine do
       let!(:output){ outputs.by_course.first }
 
       it "includes the correct keys" do
-        expect(output).to include(:course_id, :course_name, :teachers, :ee_count, :ee_numbers_with_urls, :page_uuids_with_urls)
+        expect(output).to include(:course_id, :course_name, :teachers, :excluded_exercises_count, :excluded_exercises_numbers_with_urls, :page_uuids_with_urls)
       end
 
       context "returns a (Hashie Mash) hash with the correct data" do
@@ -40,24 +40,24 @@ describe GetExcludedExercises, type: :routine do
         end
 
         specify "course teachers" do
-          expect(output).to include(teachers: ee_1.course.teachers.map(&:name).join(", "))
+          expect(output).to include(teachers: "Bob Martin")
         end
 
-        specify "excluded exercises count (length)" do
-          expect(output).to include(ee_count: 3)
+        specify "excluded exercises count" do
+          expect(output).to include(excluded_exercises_count: 3)
         end
 
         context "excluded exercises numbers" do
           specify do
             ee_numbers = course.excluded_exercises.map(&:exercise_number)
             expect(ee_numbers).to_not be_empty
-            expect(output[:ee_numbers_with_urls].map(&:ee_number)).to match_array ee_numbers
+            expect(output[:excluded_exercises_numbers_with_urls].map(&:ee_number)).to match_array ee_numbers
           end
 
           specify "with urls" do
             ee_numbers = course.excluded_exercises.map(&:exercise_number)
             ee_numbers_urls = ee_numbers.map{|number| OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s }
-            expect(output[:ee_numbers_with_urls].map(&:ee_url)).to match_array ee_numbers_urls
+            expect(output[:excluded_exercises_numbers_with_urls].map(&:ee_url)).to match_array ee_numbers_urls
           end
         end
 
@@ -84,7 +84,7 @@ describe GetExcludedExercises, type: :routine do
 
             expect(data["Course ID"]).to eq ee_1.course.id.to_s
             expect(data["Course Name"]).to eq ee_1.course.name
-            expect(data["Teachers"]).to eq ee_1.course.teachers.map(&:name).join(", ")
+            expect(data["Teachers"]).to eq "Bob Martin"
             expect(data["# Exclusions"]).to eq "3"
             expect(data["Excluded Numbers"].split(", ")).to match_array ee_numbers.map{|numb| "#{numb}"}
             expect(data["Excluded Numbers URLs"].split(", ")).to match_array ee_numbers_urls
@@ -106,7 +106,7 @@ describe GetExcludedExercises, type: :routine do
             headers: { 'Transfer-Encoding' => 'chunked' }
           ).and_return OpenStruct.new(success?: true)
 
-          described_class.call(export_as_csv: true, export_by_course: true)
+          described_class.call(export_by_course: true)
         end
       end
     end
@@ -115,7 +115,7 @@ describe GetExcludedExercises, type: :routine do
       let!(:output){ outputs.by_exercise.first }
 
       it "includes the correct keys" do
-        expect(output).to include(:ee_number, :ee_url, :ee_count, :pages_with_uuids_and_urls)
+        expect(output).to include(:exercise_number, :exercise_url, :excluded_exercises_count, :pages_with_uuids_and_urls)
       end
 
       context "returns a (Hashie Mash) hash with the correct" do
@@ -124,16 +124,16 @@ describe GetExcludedExercises, type: :routine do
         end
 
         specify "exercise number" do
-          expect(output[:ee_number]).to eq ee_1.exercise_number
+          expect(output[:exercise_number]).to eq ee_1.exercise_number
         end
 
         specify "exercise url" do
           expected_uri = OpenStax::Exercises::V1.uri_for("/exercises/#{ee_1.exercise_number}").to_s
-          expect(output[:ee_url]).to eq expected_uri
+          expect(output[:exercise_url]).to eq expected_uri
         end
 
         specify "exclusions count" do
-          expect(output).to include(ee_count: 1)
+          expect(output).to include(excluded_exercises_count: 1)
         end
 
         context "pages with uuids and urls" do
@@ -176,7 +176,7 @@ describe GetExcludedExercises, type: :routine do
             headers: { 'Transfer-Encoding' => 'chunked' }
           ).and_return OpenStruct.new(success?: true)
 
-          described_class.call(export_as_csv: true, export_by_exercise: true)
+          described_class.call(export_by_exercise: true)
         end
       end
     end
@@ -199,5 +199,5 @@ def with_rows_from_csv(by_type, &block)
 
   by_course = by_type == "by_course"
   by_exercise = by_type == "by_exercise"
-  described_class.call(export_as_csv: true, export_by_course: by_course, export_by_exercise: by_exercise)
+  described_class.call(export_by_course: by_course, export_by_exercise: by_exercise)
 end

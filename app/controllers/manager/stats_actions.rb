@@ -22,10 +22,8 @@ module Manager::StatsActions
 
   def excluded_exercises
     excluded_exercises = GetExcludedExercises.call.outputs
-    @ee_by_course = excluded_exercises.by_course
-    @ee_by_exercise = excluded_exercises.by_exercise
-
-    @course_url_proc = course_url_proc
+    @excluded_exercises_by_course = excluded_exercises.by_course
+    @excluded_exercises_by_exercise = excluded_exercises.by_exercise
 
     render 'manager/stats/excluded_exercises'
   end
@@ -33,7 +31,13 @@ module Manager::StatsActions
   def excluded_exercises_to_csv
     by_course = params.fetch(:export).fetch(:by).include? "by_course"
     by_exercise = params.fetch(:export).fetch(:by).include? "by_exercise"
-    GetExcludedExercises.perform_later(export_as_csv: true, export_by_course: by_course, export_by_exercise: by_exercise)
+
+    unless by_course || by_exercise
+      flash[:alert] = "You must select at least one of two options to export"
+      redirect_to excluded_exercises_admin_stats_path and return
+    end
+
+    GetExcludedExercises.perform_later(export_by_course: by_course, export_by_exercise: by_exercise)
     flash[:success] = "The export should be available in a few minutes in ownCloud."
     redirect_to excluded_exercises_admin_stats_path
   end
