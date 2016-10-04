@@ -127,13 +127,14 @@ module OpenStax::Biglearn::Api
 
     # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following key: :task
+    # They may also contain the following optional key: :lock (default: true)
     # The task records' sequence numbers are increased by 1
     def create_update_assignments(requests)
       Tasks::Models::Task.transaction do
         tasks = [requests].flatten.map do |request|
-          request[:task].tap do |task|
-            task.lock! if task.persisted?
-          end
+          lock = request.has_key?(:lock) ? request[:lock] : true
+
+          request[:task].tap{ |task| task.lock! if lock && task.persisted? }
         end
 
         bulk_api_request(method: :create_update_assignments,
