@@ -27,7 +27,7 @@ module CourseGuideMethods
       raise "Cannot call Biglearn with multiple periods" if periods.size != 1
 
       requests = book_containers.map do |book_container|
-        { book_container: book_container, period: periods.first }
+        { book_container: book_container, course_container: periods.first }
       end
 
       OpenStax::Biglearn::Api.fetch_teacher_clues(requests)
