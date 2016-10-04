@@ -11,6 +11,6 @@ class CourseMembership::CreatePeriod
     strategy = CourseMembership::Strategies::Direct::Period.new(period)
     outputs[:period] = CourseMembership::Period.new(strategy: strategy)
 
-    OpenStax::Biglearn::Api.update_rosters(course: course) if course.course_ecosystems.any?
+    OpenStax::Biglearn::Api.create_update_course(course: course)
   end
 end
