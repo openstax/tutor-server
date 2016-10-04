@@ -152,12 +152,12 @@ module OpenStax::Biglearn::Api
     end
 
     # Returns the CLUes for the given book containers and periods (for teachers)
-    # Requests are hashes containing the following keys: :book_container and :period
+    # Requests are hashes containing the following keys: :book_container and :course_container
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_teacher_clues(requests)
       bulk_api_request(method: :fetch_teacher_clues,
                        requests: requests,
-                       keys: [:book_container, :period]) do |request, response|
+                       keys: [:book_container, :course_container]) do |request, response|
         response[:clue_data]
       end
     end

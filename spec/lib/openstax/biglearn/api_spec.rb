@@ -69,7 +69,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         Content::Exercise ],
       [ :fetch_student_clues,
         [ { book_container: dummy_book_container, student: dummy_student } ] ],
-      [ :fetch_teacher_clues, [ { book_container: dummy_book_container, period: dummy_period } ] ]
+      [ :fetch_teacher_clues,
+        [ { book_container: dummy_book_container, course_container: dummy_period } ] ]
     ].each do |method, requests, result_class|
       it "delegates #{method} to the client implementation" do
         expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
