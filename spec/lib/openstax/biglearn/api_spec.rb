@@ -50,25 +50,26 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
     max_exercises_to_return = 5
 
     [
-      [:create_ecosystem, { ecosystem: dummy_ecosystem }],
-      [:create_course, { course: dummy_course, ecosystem: dummy_ecosystem }],
-      [:prepare_course_ecosystem, { course: dummy_course, ecosystem: dummy_ecosystem }, String],
-      [:update_course_ecosystems, [{ preparation_uuid: SecureRandom.uuid }], Symbol],
-      [:update_rosters, [{ course: dummy_course }]],
-      [:update_global_exercise_exclusions, { exercise_ids: dummy_exercise_ids }],
-      [:update_course_exercise_exclusions, { course: dummy_course }],
-      [:create_update_assignments, [{ task: dummy_task }]],
-      [:fetch_assignment_pes,
-       [{ task: dummy_task, max_exercises_to_return: max_exercises_to_return }],
-       Content::Exercise],
-      [:fetch_assignment_spes,
-       [{ task: dummy_task, max_exercises_to_return: max_exercises_to_return }],
-       Content::Exercise],
-      [:fetch_practice_worst_areas_pes,
-       [{ student: dummy_student, max_exercises_to_return: max_exercises_to_return }],
-       Content::Exercise],
-      [:fetch_student_clues, [{ book_container: dummy_book_container, student: dummy_student }]],
-      [:fetch_teacher_clues, [{ book_container: dummy_book_container, period: dummy_period }]]
+      [ :create_ecosystem, { ecosystem: dummy_ecosystem } ],
+      [ :create_course, { course: dummy_course, ecosystem: dummy_ecosystem } ],
+      [ :prepare_course_ecosystem, { course: dummy_course, ecosystem: dummy_ecosystem }, String ],
+      [ :update_course_ecosystems, [ { preparation_uuid: SecureRandom.uuid } ], Symbol ],
+      [ :update_rosters, [ { course: dummy_course } ] ],
+      [ :update_global_exercise_exclusions, { exercise_ids: dummy_exercise_ids } ],
+      [ :update_course_exercise_exclusions, { course: dummy_course } ],
+      [ :create_update_assignments, [ { task: dummy_task } ] ],
+      [ :fetch_assignment_pes,
+        [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
+        Content::Exercise ],
+      [ :fetch_assignment_spes,
+        [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
+        Content::Exercise ],
+      [ :fetch_practice_worst_areas_pes,
+        [ { student: dummy_student, max_exercises_to_return: max_exercises_to_return } ],
+        Content::Exercise ],
+      [ :fetch_student_clues,
+        [ { book_container: dummy_book_container, student: dummy_student } ] ],
+      [ :fetch_teacher_clues, [ { book_container: dummy_book_container, period: dummy_period } ] ]
     ].each do |method, requests, result_class|
       it "delegates #{method} to the client implementation" do
         expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
