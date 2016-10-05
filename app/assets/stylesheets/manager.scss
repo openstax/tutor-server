@@ -54,43 +54,49 @@ nav.navbar.production {
     }
   }
 
-  .card-content {
+  .card-body {
+    width: 100%;
     position: relative;
     padding: 10px;
+    float: left;
+    display: inline-block;
 
-    .content-top {
-    }
-    .content-top {
+    .card-content-left {
+      max-width: 80%;
       float: left;
-    }
-    .content-middle {
-      float: left;
-      clear: left;
-      width: 50%;
-      margin-left: 40px;
-      color: #666;
-    }
-    .content-bottom {
-      float: left;
-      clear: left;
-      margin-top: 10px;
-      padding-bottom: 15px;
 
-      .bread-crumb {
+      .card-body-left {
 
+        .content-top {
+          float: left;
+        }
+        .content-middle {
+          float: left;
+          clear: left;
+          width: 50%;
+          margin-left: 40px;
+          color: #666;
+        }
+        .content-bottom {
+          float: left;
+          clear: left;
+          margin-top: 10px;
+          padding-bottom: 15px;
+
+          .bread-crumb {
+
+          }
+        }
       }
     }
     .card-content-right {
-      position: absolute;
-      right: 0;
-      button {
-        float: right;
-        clear: right;
-      }
+      max-width: 20%;
+      float: right;
     }
   }
 
   .course-stats-button {
     display: block;
+    overflow: auto;
   }
 }
