@@ -12,6 +12,7 @@ class AddNewBiglearnFields < ActiveRecord::Migration
     add_column :course_membership_periods, :uuid, :uuid, null: false, default: 'uuid_generate_v4()'
     add_column :course_membership_students, :uuid, :uuid, null: false, default: 'uuid_generate_v4()'
     add_column :tasks_tasks, :uuid, :uuid, null: false, default: 'uuid_generate_v4()'
+    add_column :tasks_tasked_exercises, :uuid, :uuid, null: false, default: 'uuid_generate_v4()'
 
     add_column :entity_courses, :sequence_number, :integer, null: false, default: '0'
     add_column :tasks_tasks, :sequence_number, :integer, null: false, default: '0'
@@ -26,5 +27,6 @@ class AddNewBiglearnFields < ActiveRecord::Migration
     add_index :course_membership_periods, :uuid, unique: true
     add_index :course_membership_students, :uuid, unique: true
     add_index :tasks_tasks, :uuid, unique: true
+    add_index :tasks_tasked_exercises, :uuid, unique: true
   end
 end
