@@ -11,7 +11,6 @@ class SearchCourses
     'name' => CourseProfile::Models::Profile.arel_table[:name],
     'school' => SchoolDistrict::Models::School.arel_table[:name],
     'offering' => Catalog::Models::Offering.arel_table[:salesforce_book_name],
-    'ecosystem' => Content::Models::Ecosystem.arel_table[:title],
     'created_at' => :created_at,
     'updated_at' => :updated_at
   }
@@ -19,7 +18,7 @@ class SearchCourses
   protected
 
   def exec(params = {}, options = {})
-    params[:order_by] ||= :id
+    params[:order_by] ||= :name
     relation = Entity::Course.joins{
             [profile.school.outer,
              profile.offering.outer,

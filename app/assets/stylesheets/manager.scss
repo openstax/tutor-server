@@ -42,7 +42,7 @@ nav.navbar.production {
   height: auto;
   border: #777 3px solid;
   margin-bottom: 35px;
-  /*overflow: auto;*/
+  overflow-y: auto;
   border-radius: 8px;
 
   .card-header {
@@ -97,6 +97,6 @@ nav.navbar.production {
 
   .course-stats-button {
     display: block;
-    overflow: auto;
+    overflow: hidden;
   }
 }

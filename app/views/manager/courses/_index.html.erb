@@ -42,8 +42,14 @@
                                 id: "course_id_#{course_info.id}" %>
             <% end %>
 
-          <%= "#{course_info.id}" %><%= " #{course_info.name}" %><%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
-          <%= " / #{course_info.profile.school.name}" if course_info.profile.try(:school) %>
+          <span class="course-info-id">
+            <%= "#{course_info.id}" %>
+          </span>
+          <span class="course-info-name"><%= " #{course_info.name}" %></span>
+          <%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
+          <span class="course-info-profile-school">
+            <%= " / #{course_info.profile.school.name}" if course_info.profile.try(:school) %>
+          </span>
         </div>
         <div class="card-body">
           <div class="card-content-left">
@@ -54,7 +60,7 @@
               <% unless book.blank? %>
                 <%= "(ID #{book.id})" %> <%= book.title %> <%= "(#{book.uuid}@#{book.version})" %>
               <% end %>
-              <span style="white-space: nowrap;">
+              <span class="ecosystem-created-at" style="white-space: nowrap;">
                 <%= "(#{ecosystem.created_at})" if ecosystem %>
               </span>
             </div>

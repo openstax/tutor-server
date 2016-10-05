@@ -63,6 +63,33 @@ $(document).ready(function() {
     }
   });
 
+  //========== Order by selected =============//
+  $(".course-info-name").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "name";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+  $(".ecosystem-created-at").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "created_at";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+  $(".course-info-id").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "id";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+  $(".course-info-profile-school").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "school";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+
+  //========== Change results per page =============//
   $("#search-courses-results-pp").change(function(e){
     e.preventDefault();
 
