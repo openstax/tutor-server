@@ -682,24 +682,26 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true, using: :btree
 
   create_table "tasks_tasked_exercises", force: :cascade do |t|
-    t.integer  "content_exercise_id",                 null: false
-    t.string   "url",                                 null: false
-    t.text     "content",                             null: false
+    t.integer  "content_exercise_id",                                null: false
+    t.string   "url",                                                null: false
+    t.text     "content",                                            null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "correct_answer_id",                   null: false
-    t.boolean  "is_in_multipart",     default: false, null: false
-    t.string   "question_id",                         null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.string   "correct_answer_id",                                  null: false
+    t.boolean  "is_in_multipart",     default: false,                null: false
+    t.string   "question_id",                                        null: false
     t.datetime "deleted_at"
     t.text     "context"
+    t.uuid     "uuid",                default: "uuid_generate_v4()"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
   add_index "tasks_tasked_exercises", ["deleted_at"], name: "index_tasks_tasked_exercises_on_deleted_at", using: :btree
   add_index "tasks_tasked_exercises", ["question_id"], name: "index_tasks_tasked_exercises_on_question_id", using: :btree
+  add_index "tasks_tasked_exercises", ["uuid"], name: "index_tasks_tasked_exercises_on_uuid", unique: true, using: :btree
 
   create_table "tasks_tasked_external_urls", force: :cascade do |t|
     t.string   "url",        null: false
