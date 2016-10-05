@@ -1,5 +1,7 @@
 class OpenStax::Biglearn::Api::RealClient
 
+  HEADER_OPTIONS = { headers: { 'Content-Type' => 'application/json' } }.freeze
+
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
     @client_id    = biglearn_configuration.client_id
@@ -14,246 +16,127 @@ class OpenStax::Biglearn::Api::RealClient
     :real
   end
 
-  def add_exercises(exercises)
-    exercises.each_slice(MAX_EXERCISES_PER_REQUEST).map do |exercises|
-      options = { body: construct_exercises_payload(exercises).to_json }
-      response = request(:post, add_exercises_uri, with_content_type_header(options))
-      handle_response(response)
+  #
+  # API methods
+  #
+
+  # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
+  # course is an Entity::Course
+  # task is a Tasks::Models::Task
+  # student is a CourseMembership::Models::Student
+  # book_container is a Content::Chapter or Content::Page or one of their models
+  # exercise_id is a String containing an Exercise uuid, number or uid
+  # period is a CourseMembership::Period or CourseMembership::Models::Period
+  # max_exercises_to_return is an integer
+
+  # Adds the given ecosystem to Biglearn
+  def create_ecosystem(request)
+    single_api_request url: :create_ecosystem, request: biglearn_request
+  end
+
+  # Adds the given course to Biglearn
+  def create_course(request)
+    single_api_request url: :create_course, request: biglearn_request
+  end
+
+  # Prepares Biglearn for a course ecosystem update
+  def prepare_course_ecosystem(request)
+    single_api_request url: :prepare_course_ecosystem, request: biglearn_request
+  end
+
+  # Finalizes course ecosystem updates in Biglearn,
+  # causing it to stop computing CLUes for the old one
+  def update_course_ecosystems(requests)
+    bulk_api_request url: :update_course_ecosystems, requests: biglearn_requests,
+                     requests_key: :update_requests, responses_key: :update_responses
+  end
+
+  # Updates Course rosters in Biglearn
+  def update_rosters(requests)
+    bulk_api_request url: :update_rosters, requests: biglearn_requests,
+                     requests_key: :rosters, responses_key: :updated_course_uuids, max_requests: 100
+  end
+
+  # Updates global exercise exclusions
+  def update_global_exercise_exclusions(request)
+    single_api_request url: :update_global_exercise_exclusions, request: request
+  end
+
+  # Updates exercise exclusions for the given course
+  def update_course_exercise_exclusions(request)
+    single_api_request url: :update_course_exercise_exclusions, request: biglearn_request
+  end
+
+  # Creates or updates tasks in Biglearn
+  def create_update_assignments(requests)
+    bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
+                     requests_key: :assignments, responses_key: :updated_assignments
+  end
+
+  # Returns a number of recommended personalized exercises for the given tasks
+  def fetch_assignment_pes(requests)
+    bulk_api_request url: :fetch_assignment_pes, requests: biglearn_requests,
+                     requests_key: :pe_requests, responses_key: :pe_responses
+  end
+
+  # Returns a number of recommended spaced practice exercises for the given tasks
+  def fetch_assignment_spes(requests)
+    bulk_api_request url: :fetch_assignment_spes, requests: biglearn_requests,
+                     requests_key: :spe_requests, responses_key: :spe_responses
+  end
+
+  # Returns a number of recommended personalized exercises for the student's worst topics
+  def fetch_practice_worst_areas_pes(requests)
+    bulk_api_request url: :fetch_practice_worst_areas_pes, requests: biglearn_requests,
+                     requests_key: :worst_areas_requests, responses_key: :worst_areas_responses
+  end
+
+  # Returns the CLUes for the given book containers and students (for students)
+  def fetch_student_clues(requests)
+    bulk_api_request url: :fetch_student_clues, requests: biglearn_requests,
+                     requests_key: :student_clue_requests, responses_key: :student_clue_responses
+  end
+
+  # Returns the CLUes for the given book containers and periods (for teachers)
+  def fetch_teacher_clues(requests)
+    bulk_api_request url: :fetch_student_clues, requests: biglearn_requests,
+                     requests_key: :teacher_clue_requests, responses_key: :teacher_clue_responses
+  end
+
+  protected
+
+  def absolutize_url(url)
+    Addressable::URI.join @server_url, url.to_s
+  end
+
+  def single_api_request(method: :post, url:, request:)
+    absolute_uri = absolutize_url(url)
+
+    request_options = HEADER_OPTIONS.merge { body: request.to_json }
+
+    response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+
+    response_hash = JSON.parse(response.body).deep_symbolize_keys
+
+    block_given? ? yield(response_hash) : response_hash
+  end
+
+  def bulk_api_request(method: :post, url:, requests:,
+                       requests_key:, responses_key:, max_requests: 1000)
+    absolute_uri = absolutize_url(url)
+    max_requests ||= requests.size
+
+    requests.each_slice(max_requests) do |requests|
+      requests_json = requests.map(&:to_json)
+
+      request_options = HEADER_OPTIONS.merge { body: { requests_key => requests_json } }
+
+      response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+
+      response_hashes = JSON.parse(response.body).deep_symbolize_keys[responses_key]
+
+      response_hashes.map{ |response_hash| block_given? ? yield(response_hash) : response_hash }
     end
-  end
-
-  def add_pools(pools)
-    pools.each_slice(MAX_POOLS_PER_REQUEST).flat_map do |pools|
-      options = { body: construct_add_pools_payload(pools).to_json }
-
-      response = request(:post, add_pools_uri, with_content_type_header(options))
-      body_hash = handle_response(response)
-
-      uuids = body_hash['pool_ids']
-      raise "Biglearn returned wrong number of uuids " \
-            "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
-        unless uuids.count == pools.count
-
-      nil_uuid_count = uuids.count(&:nil?)
-      raise "Biglearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
-
-      blank_uuid_count = uuids.count(&:blank?)
-      raise "Biglearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
-
-      uuids
-    end
-  end
-
-  def combine_pools(pool_uuids)
-    options = { body: construct_combine_pools_payload(pool_uuids).to_json }
-    response = request(:post, add_pools_uri, with_content_type_header(options))
-    body_hash = handle_response(response)
-
-    uuids = body_hash['pool_ids']
-    raise "Biglearn returned (#{uuids.count} != 1) uuids " unless uuids.count == 1
-
-    nil_uuid_count = uuids.count(&:nil?)
-    raise "Biglearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
-
-    blank_uuid_count = uuids.count(&:blank?)
-    raise "Biglearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
-
-    uuids.first
-  end
-
-  def get_projection_exercises(role:, pool_uuids:, pool_exclusions:,
-                               count:, difficulty:, allow_repetitions:)
-    # If we have more than one pool uuid, we must first combine them all into a single pool
-    pool_uuid = [pool_uuids].flatten.size > 1 ? OpenStax::Biglearn::Api.combine_pools(pool_uuids) : pool_uuids.first
-
-    excluded_pools = pool_exclusions.map do |hash|
-      { pool_id: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
-    end
-
-    payload = {
-      learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
-      number_of_questions: count,
-      allow_repetition: allow_repetitions ? 'true' : 'false',
-      pool_id: pool_uuid,
-      excluded_pools: excluded_pools
-    }
-
-    options = { body: payload.to_json }
-    response = request(:post, projection_exercises_uri, with_content_type_header(options))
-
-    result = handle_response(response)
-
-    # Return the UIDs
-    result["questions"].map { |q| q["question"] }
-  end
-
-  def get_clues(roles:, pool_uuids:, force_cache_miss: false)
-    learners = get_exchange_read_identifiers_for_roles(roles: roles)
-
-    # No learners: map all pools to nil
-    return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?
-
-    fetch_clues(learners: learners, pool_ids: pool_uuids, force_cache_miss: force_cache_miss)
-  end
-
-  private
-
-  def get_exchange_read_identifiers_for_roles(roles:)
-    [roles].flatten.compact.map{ |role| role.profile.exchange_read_identifier }
-  end
-
-  # Get all the CLUEs from the cache, calling Biglearn only if needed
-  def fetch_clues(learners:, pool_ids:, force_cache_miss:)
-    key_prefix = 'biglearn/clues'
-
-    # XOR the learner hashes
-    learner_cache_key = learners.map{ |learner| Integer(learner, 16) }.reduce(:^).to_s(16)
-
-    # The CLUEs returned refer to all given learners at once
-    # Each CLUE refers to a single pool, so each pool corresponds to a different cache key
-    cache_key_to_pool_id_map = pool_ids.each_with_object({}) do |pool_id, hash|
-      cache_key = "#{key_prefix}/#{learner_cache_key}/#{pool_id}"
-      hash[cache_key] = pool_id
-    end
-    cache_keys = cache_key_to_pool_id_map.keys
-
-    # Read CLUEs for all pools from the cache unless force_cache_miss is true
-    cache_key_to_clue_map = force_cache_miss ? {} : Rails.cache.read_multi(*cache_keys)
-
-    # Initialize result set for all cache hits
-    pool_id_to_clue_map = cache_key_to_clue_map.each_with_object({}) do |(cache_key, clue), hash|
-      pool_id = cache_key_to_pool_id_map[cache_key]
-      hash[pool_id] = clue
-    end
-
-    # Figure out which cache keys we missed in the cache
-    missed_cache_keys = cache_keys - cache_key_to_clue_map.keys
-
-    # Don't call Biglearn if we hit the cache for all the CLUes
-    return pool_id_to_clue_map if missed_cache_keys.empty?
-
-    # Figure out which pools we missed in the cache
-    missed_pool_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
-      pool_id = cache_key_to_pool_id_map[cache_key]
-      hash[pool_id] = cache_key
-    end
-    missed_pool_ids = missed_pool_id_to_cache_key_map.keys
-
-    # Call Biglearn to get the missing CLUEs
-    max_pools_per_request = [CLUE_MAX_POOL_STUDENT_PRODUCT/learners.size, 1].max
-
-    if missed_pool_ids.size > max_pools_per_request
-      # Make several requests to Biglearn in parallel
-      threads = missed_pool_ids.each_slice(max_pools_per_request).map do |pool_ids|
-        Thread.new do
-          request_clues(learners: learners, pool_ids: pool_ids,
-                        pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
-                        result_map: pool_id_to_clue_map)
-        end
-      end
-
-      threads.each(&:join)
-    else
-      # Just make one inline request
-      request_clues(learners: learners, pool_ids: missed_pool_ids,
-                    pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
-                    result_map: pool_id_to_clue_map)
-    end
-
-    pool_id_to_clue_map
-  end
-
-  def request_clues(learners:, pool_ids:, pool_id_to_cache_key_map:, result_map:)
-    query = { learners: learners, pool_ids: pool_ids }
-    response = request(:get, clue_uri, params: query)
-    result = handle_response(response) || {}
-    missed_clues = result['aggregates'] || []
-
-    # Iterate to the CLUes returned, filling in the cache and the result map
-    missed_clues.each do |clue|
-      next if clue.blank? # Ignore blank CLUes
-
-      pool_id   = clue['pool_id']
-      cache_key = pool_id_to_cache_key_map[pool_id]
-
-      next if cache_key.blank? # Ignore unknown pool_ids
-
-      aggregate      = clue['aggregate']
-      interpretation = clue['interpretation'] || {}
-      confidence     = clue['confidence'] || {}
-
-      clue_hash = {
-        value: aggregate,
-        value_interpretation: interpretation['level'],
-        confidence_interval: [
-          confidence['left'],
-          confidence['right']
-        ],
-        confidence_interval_interpretation: interpretation['confidence'],
-        sample_size: confidence['sample_size'],
-        sample_size_interpretation: interpretation['threshold'],
-        unique_learner_count: confidence['unique_learner_count']
-      }
-
-      Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
-
-      result_map[pool_id] = clue_hash
-    end
-  end
-
-  def with_content_type_header(options = {})
-    options[:headers] ||= {}
-    options[:headers].merge!('Content-Type' => 'application/json')
-    options
-  end
-
-  def request(*args)
-    (@oauth_token || @oauth_client).request(*args)
-  end
-
-  def add_exercises_uri
-    Addressable::URI.join(@server_url, '/facts/questions')
-  end
-
-  def add_pools_uri
-    Addressable::URI.join(@server_url, '/facts/pools')
-  end
-
-  def projection_exercises_uri
-    Addressable::URI.join(@server_url, '/projections/questions')
-  end
-
-  def clue_uri
-    Addressable::URI.join(@server_url, '/knowledge/clue')
-  end
-
-  def construct_exercises_payload(exercises)
-    { question_tags: [exercises].flatten.map do |exercise|
-      { question_id: exercise.question_id.to_s,
-        version: Integer(exercise.version),
-        tags: exercise.tags }
-    end }
-  end
-
-  def construct_add_pools_payload(pools)
-    { sources: pools.map do |pool|
-      { questions: pool.exercises.map do |exercise|
-        { question_id: exercise.question_id.to_s,
-          version:     Integer(exercise.version) }
-      end }
-    end }
-  end
-
-  def construct_combine_pools_payload(pool_uuids)
-    { sources: [
-      { pools: pool_uuids }
-    ] }
-  end
-
-  def handle_response(response)
-    raise "BiglearnError #{response.status}:\n#{response.body}" if response.status != 200
-
-    JSON.parse(response.body)
   end
 
 end

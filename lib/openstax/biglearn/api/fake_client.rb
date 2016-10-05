@@ -68,12 +68,13 @@ class OpenStax::Biglearn::Api::FakeClient
     end
   end
 
+  # Updates global exercise exclusions
   # Ignored in the FakeClient
   def update_global_exercise_exclusions(request)
     { updated_exercise_ids: request[:exercise_ids] }
   end
 
-  # Ignored in the FakeClient
+  # Updates exercise exclusions for the given course
   def update_course_exercise_exclusions(request)
     { updated_course_uuid: request[:course].uuid }
   end
