@@ -10,6 +10,8 @@ class GetTaskCorePageIds
 
     task_id_to_core_page_ids_map = {}
 
+    tasks.each{ |task| task_id_to_core_page_ids_map[task.id] = [] }
+
     # Get core page ids for homework tasks
     unless tasks_by_type[:homework].blank?
       homework_task_ids = tasks_by_type[:homework].map(&:id)
@@ -32,7 +34,6 @@ class GetTaskCorePageIds
         task_ids = homework_exercise_id_to_task_ids_map[exercise_id]
 
         task_ids.each do |task_id|
-          task_id_to_core_page_ids_map[task_id] ||= []
           task_id_to_core_page_ids_map[task_id] << content_page_id
         end
       end
