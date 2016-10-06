@@ -36,6 +36,17 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
 
+  api :PUT, '/clone', 'Clones a course'
+  description <<-EOS
+    Creates a copy of a course
+    #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
+  EOS
+  def clone
+    OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, Entity::Course)
+    course_info = CloneCourse[teacher: current_human_user, course: @course]
+    respond_with course_info, represent_with: Api::V1::CoursesRepresenter
+  end
+
   api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
   description <<-EOS
     Returns information about a specific course, including periods and roles
