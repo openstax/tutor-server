@@ -12,6 +12,8 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   validates :course, :time_zone, presence: true, uniqueness: true
   validates :name, presence: true
+  validates :starts_at, presence: true
+  validates :ends_at, presence: true
 
   validate :default_times_have_good_values
 
@@ -23,5 +25,9 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   def default_open_time
     read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
+  end
+
+  def is_active?(current_time = Time.current)
+    starts_at <= current_time && current_time <= ends_at
   end
 end
