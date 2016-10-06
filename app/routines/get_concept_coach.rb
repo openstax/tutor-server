@@ -129,6 +129,8 @@ class GetConceptCoach
     run(:add_spy_info, to: outputs.task,
                        from: [ecosystem, { history: history.core_page_ids,
                                            spaced_practice: spaced_practice_status }])
+
+    OpenStax::Biglearn::Api.create_update_assignments(task: outputs.task)
   end
 
   def get_role_and_book(user:, book_uuid:)

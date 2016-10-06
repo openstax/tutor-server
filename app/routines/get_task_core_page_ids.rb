@@ -6,7 +6,7 @@ class GetTaskCorePageIds
 
   # The core page ids exclude spaced practice/personalized pages
   def exec(tasks:)
-    tasks_by_type = tasks.group_by{ |task| task.task_type.to_sym }
+    tasks_by_type = tasks.group_by{ |task| task.task_type.try!(:to_sym) }
 
     task_id_to_core_page_ids_map = {}
 

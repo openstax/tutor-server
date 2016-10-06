@@ -127,7 +127,7 @@ module OpenStax::Biglearn::Api
 
     # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following key: :task
-    # They may also contain the following optional key: :lock (default: true)
+    # They may also contain the following optional keys: :lock (default: true) and :core_page_ids
     # The task records' sequence numbers are increased by 1
     def create_update_assignments(requests)
       Tasks::Models::Task.transaction do
@@ -139,7 +139,8 @@ module OpenStax::Biglearn::Api
 
         bulk_api_request(method: :create_update_assignments,
                          requests: requests,
-                         keys: :task).tap do
+                         keys: :task,
+                         optional_keys: :core_page_ids).tap do
           tasks.each do |task|
             task.sequence_number = (task.sequence_number || 0) + 1
             task.save!(validate: false) if task.persisted?
@@ -300,18 +301,20 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    def verify_and_slice_request(method:, request:, keys:)
-      keys_array = [keys].flatten
-
-      missing_keys = keys_array.reject{ |key| request.has_key? key }
+    def verify_and_slice_request(method:, request:, keys:, optional_keys: [])
+      required_keys = [keys].flatten
+      missing_keys = required_keys.reject{ |key| request.has_key? key }
 
       raise(
         OpenStax::Biglearn::Api::MalformedRequest,
         "Invalid request: #{method} request #{request.inspect
-        } is missing these key(s): #{missing_keys.inspect}"
+        } is missing these required key(s): #{missing_keys.inspect}"
       ) if missing_keys.any?
 
-      request.slice(*keys_array)
+      optional_keys = [optional_keys].flatten
+      request_keys = required_keys + optional_keys
+
+      request.slice(*request_keys)
     end
 
     def verify_result(result:, result_class: Hash)
@@ -328,8 +331,11 @@ module OpenStax::Biglearn::Api
       result
     end
 
-    def single_api_request(method:, request:, keys:, result_class: Hash)
-      verified_request = verify_and_slice_request method: method, request: request, keys: keys
+    def single_api_request(method:, request:, keys:, optional_keys: [], result_class: Hash)
+      verified_request = verify_and_slice_request method: method,
+                                                  request: request,
+                                                  keys: keys,
+                                                  optional_keys: optional_keys
 
       response = client.send(method, verified_request)
 
@@ -337,12 +343,13 @@ module OpenStax::Biglearn::Api
                     result_class: result_class)
     end
 
-    def bulk_api_request(method:, requests:, keys:, result_class: Hash)
+    def bulk_api_request(method:, requests:, keys:, optional_keys: [], result_class: Hash)
       requests_map = {}
       [requests].flatten.map do |request|
         requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
                                                                    request: request,
-                                                                   keys: keys
+                                                                   keys: keys,
+                                                                   optional_keys: optional_keys
       end
 
       requests_array = requests_map.map{ |uuid, request| request.merge request_uuid: uuid }
