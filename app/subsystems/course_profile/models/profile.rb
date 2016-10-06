@@ -3,7 +3,6 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   belongs_to_time_zone default: 'Central Time (US & Canada)', dependent: :destroy, autosave: true
 
-
   belongs_to :school, subsystem: :school_district
   belongs_to :course, subsystem: :entity, dependent: :delete
   belongs_to :offering, subsystem: :catalog
@@ -11,9 +10,7 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   unique_token :teach_token
 
   validates :course, :time_zone, presence: true, uniqueness: true
-  validates :name, presence: true
-  validates :starts_at, presence: true
-  validates :ends_at, presence: true
+  validates :name, :starts_at, :ends_at, presence: true
 
   validate :default_times_have_good_values
 
