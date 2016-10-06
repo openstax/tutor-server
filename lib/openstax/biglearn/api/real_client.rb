@@ -226,9 +226,24 @@ class OpenStax::Biglearn::Api::RealClient
 
   # Creates or updates tasks in Biglearn
   def create_update_assignments(requests)
+    all_tasks = requests.map{ |request| request[:task] }
+
+    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: all_tasks]
+    all_core_page_ids = task_id_to_core_page_ids_map.values.flatten
+    page_id_to_page_uuid_map = Content::Models::Page.where(id: all_core_page_ids)
+                                                    .pluck(:id, :tutor_uuid)
+                                                    .to_h
+    task_id_to_core_page_uuids_map = {}
+    task_id_to_core_page_ids_map.each do |task_id, core_page_ids|
+      task_id_to_core_page_uuids_map[task_id] = core_page_ids.map do |page_id|
+        page_id_to_page_uuid_map[page_id]
+      end
+    end
+
+
     biglearn_requests = requests.map do |request|
       task = request[:task]
-      assigned_book_container_uuids = [] #TODO: Extract code from GetHistory routine
+      assigned_book_container_uuids = task_id_to_core_page_uuids_map[task.id]
       goal_num_tutor_assigned_spes = task.task_steps.select(&:spaced_practice_group?).length
       spes_are_assigned = true
       goal_num_tutor_assigned_pes = task.task_steps.select(&:personalized_group?).length
@@ -247,7 +262,7 @@ class OpenStax::Biglearn::Api::RealClient
         assignment_uuid: task.uuid,
         sequence_number: task.sequence_number,
         is_deleted: task.deleted?,
-        ecosystem_uuid: task.ecosystem.tutor_uuid,
+        ecosystem_uuid: request[:task].ecosystem.tutor_uuid, # TODO: Add this field?
         student_uuid: task.taskings.first.role.student.uuid,
         assignment_type: task.task_type,
         assigned_book_container_uuids: assigned_book_container_uuids,
