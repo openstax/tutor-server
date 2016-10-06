@@ -20,7 +20,7 @@ RSpec.shared_examples 'a biglearn api client' do
   dummy_book_container = OpenStruct.new tutor_uuid: SecureRandom.uuid
   dummy_course = OpenStruct.new uuid: SecureRandom.uuid
   dummy_course_container = OpenStruct.new uuid: SecureRandom.uuid
-  dummy_task = OpenStruct.new uuid: SecureRandom.uuid
+  dummy_task = OpenStruct.new uuid: SecureRandom.uuid, task_type: 'practice'
   dummy_student = OpenStruct.new uuid: SecureRandom.uuid
   dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
   max_exercises_to_return = 5
