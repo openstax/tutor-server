@@ -82,86 +82,56 @@ class OpenStax::Biglearn::Api::FakeClient
   # Creates or updates tasks in Biglearn
   # In FakeClient, stores the (correct) list of PEs for the task for later use
   def create_update_assignments(requests)
-    task_plans = requests.map{ |request| request[:task].task_plan }
+    all_tasks = requests.map{ |request| request[:task] }
 
-    # The following code mimics GetHistory to get the core pages for each task
-    homework_exercise_id_to_task_plans_map = {}
-    reading_page_id_to_task_plans_map = {}
-
-    # Collect all exercise and page ids first
-    task_plans.each do |task_plan|
-      task_plan_type = task_plan.try!(:type) || 'nil'
-
-      case task_plan_type
-      when 'homework'
-        exercise_ids = (task_plan.settings['exercise_ids'] || []).compact.map(&:to_i)
-        exercise_ids.each do |exercise_id|
-          homework_exercise_id_to_task_plans_map[exercise_id] ||= []
-          homework_exercise_id_to_task_plans_map[exercise_id] << task_plan
-        end
-      when 'reading', 'practice'
-        page_ids = (task_plan.settings['page_ids'] || []).compact.map(&:to_i).uniq
-
-        page_ids.each do |page_id|
-          reading_page_id_to_task_plans_map[page_id] ||= []
-          reading_page_id_to_task_plans_map[page_id] << task_plan
-        end
-      else
-        Rails.logger.warn{ "Biglearn FakeClient ignoring unsupported #{task_plan_type} task_plan" }
-      end
-    end
-
-    homework_exercise_ids = homework_exercise_id_to_task_plans_map.keys.flatten
-    reading_page_ids = reading_page_id_to_task_plans_map.keys.flatten
+    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: all_tasks]
+    all_core_page_ids = task_id_to_core_page_ids_map.values.flatten
+    page_id_to_page_map = Content::Models::Page.where(id: all_core_page_ids)
+                                               .preload([:reading_dynamic_pool,
+                                                         :homework_dynamic_pool,
+                                                         :practice_widget_pool,
+                                                         :concept_coach_pool])
+                                               .index_by(&:id)
 
     # Do some queries to get the dynamic exercises for each assignment type
-    task_plan_to_pe_ids_map = {}
+    task_to_pe_ids_map = {}
+    all_tasks.each do |task|
+      pe_pool_method = case task.task_type.to_sym
+      when :reading
+        :reading_dynamic_pool
+      when :homework
+        :homework_dynamic_pool
+      when :concept_coach
+        :concept_coach_pool
+      else # Assuming it is one of the different types of practice tasks
+        :practice_widget_pool
+      end
 
-    Content::Models::Exercise.joins(page: :homework_dynamic_pool)
-                             .where(id: homework_exercise_ids)
-                             .select([:id, Content::Models::Pool.arel_table[:content_exercise_ids]])
-                             .find_each do |exercise|
-      task_plans = homework_exercise_id_to_task_plans_map[exercise.id]
+      core_page_ids = task_id_to_core_page_ids_map[task.id]
 
-      task_plans.each do |task_plan|
-        task_plan_to_pe_ids_map[task_plan] ||= []
-        task_plan_to_pe_ids_map[task_plan] += JSON.parse(exercise.content_exercise_ids)
+      task_to_pe_ids_map[task] = core_page_ids.flat_map do |page_id|
+        page = page_id_to_page_map[page_id]
+
+        page.send(pe_pool_method).content_exercise_ids
       end
     end
 
-    Content::Models::Page.joins(:reading_dynamic_pool)
-                         .where(id: reading_page_ids)
-                         .select([:id, Content::Models::Pool.arel_table[:content_exercise_ids]])
-                         .each do |page|
-      task_plans = reading_page_id_to_task_plans_map[page.id]
-
-      task_plans.each do |task_plan|
-        task_plan_to_pe_ids_map[task_plan] ||= []
-        task_plan_to_pe_ids_map[task_plan] += JSON.parse(page.content_exercise_ids)
-      end
-    end
-
-    all_pe_ids = task_plan_to_pe_ids_map.values.flatten
+    all_pe_ids = task_to_pe_ids_map.values.flatten
 
     # Get the uuids for each dynamic exercise id
     pe_id_to_pe_uuid_map = Content::Models::Exercise.where(id: all_pe_ids)
                                                     .pluck(:id, :tutor_uuid).to_h
 
-    task_plan_to_pe_uuids_map = {}
-    task_plan_to_pe_ids_map.each do |task_plan, pe_ids|
-      task_plan_to_pe_uuids_map[task_plan] = []
+    task_to_pe_ids_map.each do |task, pe_ids|
+      task_key = "tasks/#{task.uuid}/pe_uuids"
 
-      pe_ids.each do |pe_id|
-        task_plan_to_pe_uuids_map[task_plan] << pe_id_to_pe_uuid_map[pe_id]
-      end
+      pe_uuids = pe_ids.map{ |pe_id| pe_id_to_pe_uuid_map[pe_id] }
+
+      store.write task_key, pe_uuids.to_json
     end
 
     requests.map do |request|
       task = request[:task]
-      task_key = "tasks/#{task.uuid}/pe_uuids"
-      exercise_uuids = task_plan_to_pe_uuids_map[task.task_plan] || []
-
-      store.write task_key, exercise_uuids.to_json
 
       {
         request_uuid: request[:request_uuid],
