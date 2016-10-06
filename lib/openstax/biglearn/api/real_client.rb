@@ -362,33 +362,34 @@ class OpenStax::Biglearn::Api::RealClient
     Addressable::URI.join @server_url, url.to_s
   end
 
-  def single_api_request(method: :post, url:, request:)
+  def request(method:, url:, body:)
     absolute_uri = absolutize_url(url)
 
-    request_options = HEADER_OPTIONS.merge({ body: request.to_json })
+    request_options = HEADER_OPTIONS.merge({ body: body.to_json })
 
     response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
 
-    response_hash = JSON.parse(response.body).deep_symbolize_keys
+    JSON.parse(response.body).deep_symbolize_keys
+  end
+
+  def single_api_request(method: :post, url:, request:)
+    response_hash = request(method: method, url: url, body: request)
 
     block_given? ? yield(response_hash) : response_hash
   end
 
   def bulk_api_request(method: :post, url:, requests:,
                        requests_key:, responses_key:, max_requests: 1000)
-    absolute_uri = absolutize_url(url)
     max_requests ||= requests.size
 
     requests.each_slice(max_requests) do |requests|
-      requests_json = requests.map(&:to_json)
+      body = { requests_key => requests }
 
-      request_options = HEADER_OPTIONS.merge({ body: { requests_key => requests_json } })
+      response_hash = request(method: method, url: url, body: body)
 
-      response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+      responses_array = response_hash[responses_key]
 
-      response_hashes = JSON.parse(response.body).deep_symbolize_keys[responses_key]
-
-      response_hashes.map{ |response_hash| block_given? ? yield(response_hash) : response_hash }
+      responses_array.map{ |response| block_given? ? yield(response) : response }
     end
   end
 
