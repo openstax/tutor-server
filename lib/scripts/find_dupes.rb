@@ -1,7 +1,10 @@
 class FindDupes
 
+  STUDENT_EXPORT_PATH = 'tmp/exports/student_work_info.csv'
+  TEACHER_EXPORT_PATH = 'tmp/exports/teacher_accounts.csv'
+
   def self.call
-    CSV.open('/tmp/student_work_info.csv','w+') do |csv|
+    CSV.open(STUDENT_EXPORT_PATH,'w+') do |csv|
 
       csv << ["AccountID", "CourseID", "PeriodID", "NumStepsComplete", "LatestWorkedAt", "Deleted?", "EnrollmentCreatedAt"]
 
@@ -25,7 +28,9 @@ class FindDupes
       end
     end
 
-    CSV.open('/tmp/teacher_accounts.csv','w+') do |csv|
+    puts "Wrote student data to #{STUDENT_EXPORT_PATH}"
+
+    CSV.open(TEACHER_EXPORT_PATH,'w+') do |csv|
       csv << ["AccountID", "CourseID", "TeacherID", "TeacherCreatedAt"]
 
       CourseMembership::Models::Teacher.includes{role.role_user.profile}.find_each do |teacher|
@@ -36,6 +41,8 @@ class FindDupes
       end
 
     end
+
+    puts "Wrote teacher data to #{TEACHER_EXPORT_PATH}"
 
   end
 
