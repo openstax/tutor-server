@@ -83,7 +83,7 @@ RSpec.describe Admin::StatsController, type: :controller do
     end
   end
 
-  context "PUT #excluded_exercises_to_csv" do
+  context "POST #excluded_exercises_to_csv" do
     before {
       WebMock.disable_net_connect!
       stub_request(:put, /remote.php/).to_return(status: 200)
@@ -99,37 +99,37 @@ RSpec.describe Admin::StatsController, type: :controller do
     context "with by_course and by_exercise params" do
       it "creates a background job" do
         expect{
-          put :excluded_exercises_to_csv, export: { by: ["by_course", "by_exercise"] }
+          post :excluded_exercises_to_csv, export: { by: ["course", "exercise"] }
         }.to change{
           Jobba.all.count
         }.by (1)
       end
 
       it "does a redirect" do
-        put :excluded_exercises_to_csv, export: { by: ["by_course", "by_exercise"] }
+        post :excluded_exercises_to_csv, export: { by: ["course", "exercise"] }
         expect(response).to redirect_to excluded_exercises_admin_stats_path
       end
 
       it "renders a flash success" do
-        put :excluded_exercises_to_csv, export: { by: ["by_course", "by_exercise"] }
+        post :excluded_exercises_to_csv, export: { by: ["course", "exercise"] }
         expect(flash[:success]).to be_present
       end
     end
 
     context "without by_course or by_exercise params" do
       it "does a redirect" do
-        put :excluded_exercises_to_csv, export: { by: [""] }
+        post :excluded_exercises_to_csv, export: { by: [""] }
         expect(response).to redirect_to excluded_exercises_admin_stats_path
       end
 
       it "renders a flash alert" do
-        put :excluded_exercises_to_csv, export: { by: [""] }
+        post :excluded_exercises_to_csv, export: { by: [""] }
         expect(flash[:alert]).to be_present
       end
 
       it "doesn't create a background job" do
         expect{
-          put :excluded_exercises_to_csv, export: { by: [""] }
+          post :excluded_exercises_to_csv, export: { by: [""] }
         }.to change{
           Jobba.all.count
         }.by (0)

@@ -29,8 +29,8 @@ module Manager::StatsActions
   end
 
   def excluded_exercises_to_csv
-    by_course = params.fetch(:export).fetch(:by).include? "by_course"
-    by_exercise = params.fetch(:export).fetch(:by).include? "by_exercise"
+    by_course = params.fetch(:export).fetch(:by).include? "course"
+    by_exercise = params.fetch(:export).fetch(:by).include? "exercise"
 
     unless by_course || by_exercise
       flash[:alert] = "You must select at least one of two options to export"

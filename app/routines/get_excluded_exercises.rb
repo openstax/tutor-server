@@ -1,6 +1,6 @@
 class GetExcludedExercises
   owncloud_secrets = Rails.application.secrets['owncloud']
-  EE_STATS_FOLDER = owncloud_secrets['excluded_exercises_stats'] || "excluded_exercises_stats"
+  EE_STATS_FOLDER = owncloud_secrets['excluded_exercises_stats_folder'] || "excluded_exercises_stats"
   WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{EE_STATS_FOLDER}"
 
   lev_routine
@@ -9,11 +9,11 @@ class GetExcludedExercises
     def exec(export_by_course: false, export_by_exercise: false)
       if export_by_course
         generate_by_course_csv
-        updload_by_course_csv
+        upload_by_course_csv
       end
       if export_by_exercise
         generate_by_exercise_csv
-        updload_by_exercise_csv
+        upload_by_exercise_csv
       end
       unless export_by_course || export_by_exercise
         outputs[:by_course] = ee_by_course
@@ -212,7 +212,7 @@ class GetExcludedExercises
       File.join 'tmp', 'exports'
     end
 
-    def updload_by_course_csv
+    def upload_by_course_csv
       own_cloud_secrets = Rails.application.secrets['owncloud']
       auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
 
@@ -223,7 +223,7 @@ class GetExcludedExercises
       end
     end
 
-    def updload_by_exercise_csv
+    def upload_by_exercise_csv
       own_cloud_secrets = Rails.application.secrets['owncloud']
       auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
 
