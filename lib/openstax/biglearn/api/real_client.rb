@@ -226,9 +226,20 @@ class OpenStax::Biglearn::Api::RealClient
 
   # Creates or updates tasks in Biglearn
   def create_update_assignments(requests)
-    all_tasks = requests.map{ |request| request[:task] }
+    task_id_to_core_page_ids_overrides = {}
+    tasks_without_core_page_ids_override = []
+    requests.each do |request|
+      task = request[:task]
 
-    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: all_tasks]
+      if request.has_key?(:core_page_ids)
+        task_id_to_core_page_ids_overrides[task.id] = request[:core_page_ids]
+      else
+        tasks_without_core_page_ids_override << task
+      end
+    end
+
+    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: tasks_without_core_page_ids_override]
+                                     .merge(task_id_to_core_page_ids_overrides)
     all_core_page_ids = task_id_to_core_page_ids_map.values.flatten
     page_id_to_page_uuid_map = Content::Models::Page.where(id: all_core_page_ids)
                                                     .pluck(:id, :tutor_uuid)
