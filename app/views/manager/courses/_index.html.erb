@@ -42,25 +42,35 @@
                                 id: "course_id_#{course_info.id}" %>
             <% end %>
 
-          <%= "#{course_info.id}" %><%= " #{course_info.name}" %><%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
-          <%= " / #{course_info.profile.school.name}" if course_info.profile.try(:school) %>
+          <span class="course-info-id">
+            <%= "#{course_info.id}" %>
+          </span>
+          <span class="course-info-name"><%= " #{course_info.name}" %></span>
+          <%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
+          <span class="course-info-profile-school">
+            <%= " / #{course_info.profile.school.name}" if course_info.profile.try(:school) %>
+          </span>
         </div>
-        <div class="card-content">
-          <div class="content-top">
-            <% ecosystem = course_info.ecosystems.first %>
-            <% book = ecosystem.nil? ? '' : ecosystem.books.first %>
+        <div class="card-body">
+          <div class="card-content-left">
+            <div class="content-top">
+              <% ecosystem = course_info.ecosystems.first %>
+              <% book = ecosystem.nil? ? '' : ecosystem.books.first %>
 
-            <% unless book.blank? %>
-              <%= "(ID #{book.id})" %> <%= book.title %> <%= "(#{book.uuid}@#{book.version})" %>
-            <% end %>
-            <%= "(#{ecosystem.created_at})" if ecosystem %>
-          </div>
-          <div class="content-middle">
-            <%= ecosystem.try(:comments) %>
-          </div>
-          <div class="content-bottom">
-            <%= "CC / " if course_info.is_concept_coach %> <%= "College / " if course_info.is_college %>
-            <%= "#{course_info.periods_with_deleted.map{|p| p.latest_enrollments_with_deleted.length}.reduce(0, :+)} students" %> <%= " / #{course_info.periods_with_deleted.length} periods" %>
+              <% unless book.blank? %>
+                <%= "(ID #{book.id})" %> <%= book.title %> <%= "(#{book.uuid}@#{book.version})" %>
+              <% end %>
+              <span class="ecosystem-created-at" style="white-space: nowrap;">
+                <%= "(#{ecosystem.created_at})" if ecosystem %>
+              </span>
+            </div>
+            <div class="content-middle">
+              <%= ecosystem.try(:comments) %>
+            </div>
+            <div class="content-bottom">
+              <%= "CC / " if course_info.is_concept_coach %> <%= "College / " if course_info.is_college %>
+              <%= "#{course_info.periods_with_deleted.map{|p| p.latest_enrollments_with_deleted.length}.reduce(0, :+)} students" %> <%= " / #{course_info.periods_with_deleted.length} periods" %>
+            </div>
           </div>
           <div class="card-content-right">
             <% [extra_fields_procs].flatten.each do |extra_fields_proc| %>

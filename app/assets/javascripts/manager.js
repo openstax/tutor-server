@@ -63,6 +63,33 @@ $(document).ready(function() {
     }
   });
 
+  //========== Order by selected =============//
+  $(".course-info-name").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "name";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+  $(".ecosystem-created-at").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "created_at";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+  $(".course-info-id").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "id";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+  $(".course-info-profile-school").click(function(){
+    var paramsObj = locationSearchInJSON();
+    paramsObj.order_by = "school";
+    window.location.search = decodeURIComponent($.param(paramsObj));
+  });
+
+
+  //========== Change results per page =============//
   $("#search-courses-results-pp").change(function(e){
     e.preventDefault();
 
@@ -70,9 +97,8 @@ $(document).ready(function() {
 
     var setPerPage = function(val){
       var paramsObj = locationSearchInJSON();
-      paramsObj.per_page = val;
-
-      window.location.search = $.param(paramsObj);
+      paramsObj.per_page = Number(val);
+      window.location.search = decodeURIComponent($.param(paramsObj));
     }
 
     setPerPage(perPage);
@@ -91,7 +117,6 @@ function locationSearchInJSON(){
      var keyValues = item.split("=");
      paramsJSON[keyValues[0]] = keyValues[1]
   })
-
   paramsJSON.utf8 = "✓";
 
   return paramsJSON;
