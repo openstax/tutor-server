@@ -82,9 +82,20 @@ class OpenStax::Biglearn::Api::FakeClient
   # Creates or updates tasks in Biglearn
   # In FakeClient, stores the (correct) list of PEs for the task for later use
   def create_update_assignments(requests)
-    all_tasks = requests.map{ |request| request[:task] }
+    tasks_without_core_page_ids_override = []
+    task_id_to_core_page_ids_overrides = {}
+    requests.each do |request|
+      task = request[:task]
 
-    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: all_tasks]
+      if request.has_key?(:core_page_ids)
+        task_id_to_core_page_ids_overrides[task.id] = request[:core_page_ids]
+      else
+        tasks_without_core_page_ids_override << task
+      end
+    end
+
+    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: tasks_without_core_page_ids_override]
+                                     .merge(task_id_to_core_page_ids_overrides)
     all_core_page_ids = task_id_to_core_page_ids_map.values.flatten
     page_id_to_page_map = Content::Models::Page.where(id: all_core_page_ids)
                                                .preload([:reading_dynamic_pool,
@@ -95,8 +106,10 @@ class OpenStax::Biglearn::Api::FakeClient
 
     # Do some queries to get the dynamic exercises for each assignment type
     task_to_pe_ids_map = {}
-    all_tasks.each do |task|
-      pe_pool_method = case task.task_type.to_sym
+    requests.each do |request|
+      task = request[:task]
+
+      pe_pool_method = case task.task_type.try!(:to_sym)
       when :reading
         :reading_dynamic_pool
       when :homework

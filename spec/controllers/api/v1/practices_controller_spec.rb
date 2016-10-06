@@ -83,7 +83,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([])
 
-      expect_any_instance_of(ResetPracticeWidget).to receive(:get_local_exercises).and_return([])
+      expect_any_instance_of(CreatePracticeWidgetTask).to(
+        receive(:get_local_exercises).and_return([])
+      )
 
       api_post :create,
                user_1_token,
