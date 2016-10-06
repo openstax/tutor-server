@@ -9,6 +9,8 @@ class CourseAccessPolicy
        UserIsCourseTeacher[user: requestor, course: course])
     when :export, :roster, :add_period, :update, :stats, :exercises
       requestor.is_human? && UserIsCourseTeacher[user: requestor, course: course]
+    when :clone
+      UserIsCourseTeacher[user: requestor, course: course]
     else
       false
     end
