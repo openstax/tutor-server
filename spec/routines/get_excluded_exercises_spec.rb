@@ -194,7 +194,7 @@ end
 def with_rows_from_csv(by_type, &block)
   expect_any_instance_of(described_class).to receive(:remove_exported_files) do |routine|
     filepath = routine.send "filepath_#{by_type}".to_sym
-    expect(File.exists?(filepath)).to be true
+    expect(File.exist?(filepath)).to be true
     expect(filepath.ends_with? '.csv').to be true
     rows = CSV.read(filepath)
     block.call(rows)

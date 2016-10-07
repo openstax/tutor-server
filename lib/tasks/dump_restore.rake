@@ -32,7 +32,7 @@ namespace :db do
 
       dump_file = dump_file(name)
 
-      abort("Failed! The file you are dumping to (#{dump_file}) already exists.") if File.exists?(dump_file)
+      abort("Failed! The file you are dumping to (#{dump_file}) already exists.") if File.exist?(dump_file)
 
       "mkdir -p #{dumps_dir}; " \
       "pg_dump --host #{host} --username #{user} " \

@@ -149,7 +149,7 @@ end
 def with_export_rows(task_types = [], from = nil, to = nil, &block)
   expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
     filepath = routine.send :filepath
-    expect(File.exists?(filepath)).to be true
+    expect(File.exist?(filepath)).to be true
     expect(filepath.ends_with? '.csv').to be true
     rows = CSV.read(filepath)
     block.call(rows)

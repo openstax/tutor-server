@@ -239,7 +239,7 @@ class GetExcludedExercises
     end
 
     def remove_exported_files
-      File.delete(filepath_by_course) if File.exists?(filepath_by_course)
-      File.delete(filepath_by_exercise) if File.exists?(filepath_by_exercise)
+      File.delete(filepath_by_course) if File.exist?(filepath_by_course)
+      File.delete(filepath_by_exercise) if File.exist?(filepath_by_exercise)
     end
 end
