@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe "fix_multi_enrollments", type: :rake do
+RSpec.describe "fix_multi_enrollments", type: :rake do
   include_context "rake"
 
   before(:all) do
@@ -55,8 +55,8 @@ describe "fix_multi_enrollments", type: :rake do
     @new_role = AddUserAsPeriodStudent[user: @user_1, period: new_period_wrapper]
 
     # Let's pretend @task_3 happened after the new registration but got assigned to @old_role_1
-    @task_3.update_attribute :created_at, Time.now
-    @task_3.taskings.first.update_attribute :created_at, Time.now
+    @task_3.update_attribute :created_at, Time.current
+    @task_3.taskings.first.update_attribute :created_at, Time.current
   end
 
   after(:all)  { FileUtils.rm_f 'tmp/multi-enrollments.csv' }

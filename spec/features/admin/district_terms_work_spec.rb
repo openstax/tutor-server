@@ -40,9 +40,9 @@ RSpec.feature 'DistrictTermsWork' do
     check 'targeted_contract_is_proxy_signed'
     click_button 'Submit'
 
-    user = FactoryGirl.create(:user)
-    course = Entity::Course.first
-    period = CreatePeriod[course: course]
+    user   = FactoryGirl.create :user
+    course = Entity::Course.last
+    period = FactoryGirl.create :course_membership_period, course: course
 
     # AddUserAsPeriodStudent[user: user, period: period]
 
@@ -57,8 +57,11 @@ RSpec.feature 'DistrictTermsWork' do
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
     school_d = SchoolDistrict::CreateSchool[name: 'SchoolD', district: district_b]
 
-    course_e = CreateCourse[name: 'CourseE', school: school_c]
-    course_f = CreateCourse[name: 'CourseF', school: school_d]
+    course_e = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseE',
+                                                                          school: school_c
+
+    course_f = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseF',
+                                                                          school: school_d
 
     FinePrint::Contract.create(
       name: 'district_a_terms',
@@ -79,34 +82,35 @@ RSpec.feature 'DistrictTermsWork' do
     create_targeted_terms(contract_name: 'district_b_terms', target_name: district_b.name)
 
     # Basic checks to provide a baseline
-    expect(Legal::GetTargetedContracts[applicable_to: course_e]
-          .map(&:contract_name))
-          .to eq ['district_a_terms']
+    expect(
+      Legal::GetTargetedContracts[applicable_to: course_e].map(&:contract_name)
+    ).to eq ['district_a_terms']
 
-    expect(Legal::GetTargetedContracts[applicable_to: course_f]
-          .map(&:contract_name))
-          .to eq ['district_b_terms']
+    expect(
+      Legal::GetTargetedContracts[applicable_to: course_f].map(&:contract_name)
+    ).to eq ['district_b_terms']
 
     # Move a course
     CourseProfile::UpdateProfile[course_e.id, {school_district_school_id: school_d.id }]
 
-    expect(Legal::GetTargetedContracts[applicable_to: course_e]
-          .map(&:contract_name))
-          .to eq ['district_b_terms']
+    expect(
+      Legal::GetTargetedContracts[applicable_to: course_e].map(&:contract_name)
+    ).to eq ['district_b_terms']
 
     # Move a school
     SchoolDistrict::UpdateSchool[school: school_d, name: school_d.name, district: district_a]
 
-    expect(Legal::GetTargetedContracts[applicable_to: course_f]
-          .map(&:contract_name))
-          .to eq ['district_a_terms']
+    expect(
+      Legal::GetTargetedContracts[applicable_to: course_f].map(&:contract_name)
+    ).to eq ['district_a_terms']
   end
 
   scenario 'blah' do
     district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
-    course_e = CreateCourse[name: 'CourseE', school: school_c]
-    course_f = CreateCourse[name: 'CourseF']
+    course_e = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseE',
+                                                                          school: school_c
+    course_f = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseF'
 
     FinePrint::Contract.create(name: 'district_a_terms', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::CourseExercisesController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::CourseExercisesController, type: :routing, api: true, version: :v1 do
 
   describe "/api/courses/:course_id/exercises(/:pool_types)" do
     it "routes to #show when the pool_types are not given" do

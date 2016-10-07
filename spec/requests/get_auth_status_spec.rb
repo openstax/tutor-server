@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Get authentication status", type: :request, version: :v1 do
+RSpec.describe "Get authentication status", type: :request, version: :v1 do
 
   let(:application) { FactoryGirl.create :doorkeeper_application }
   let(:user)        { FactoryGirl.create(:user) }

@@ -8,7 +8,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   let(:result)       { described_class[task_plan] }
 
   context 'entity_role' do
-    let(:role)  { Entity::Role.create! }
+    let(:role)  { FactoryGirl.create :entity_role }
 
     before      { tasking_plan.update_attribute(:target, role) }
 

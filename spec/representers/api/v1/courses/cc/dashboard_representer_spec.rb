@@ -222,7 +222,7 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
         "type" => "teacher"
       },
       "course" => {
-        "name" => "Physics 101",
+        "name" => 'Physics 101',
         "teachers" => [
           { "id" => "42",
             "role_id" => "43",

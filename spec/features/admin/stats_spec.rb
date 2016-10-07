@@ -8,7 +8,8 @@ RSpec.feature Admin::StatsController do
 
   context 'visiting the course stats page' do
     let(:school)         { SchoolDistrict::CreateSchool[name: 'Statistical School'] }
-    let(:course)         { CreateCourse[name: 'Statistical Course', school: school] }
+    let(:course)         { FactoryGirl.create :entity_course, name: 'Statistical Course',
+                                                              school: school }
     let(:periods)        do
       3.times.map { FactoryGirl.create :course_membership_period, course: course }
     end
@@ -37,12 +38,12 @@ RSpec.feature Admin::StatsController do
   end
 
   context 'visiting the excluded exercise stats page' do
-    let(:course)              { CreateCourse[name: 'Exclusive Course'] }
+    let(:course)              { FactoryGirl.create :entity_course, name: 'Exclusive Course' }
 
     let(:teacher_user)        { FactoryGirl.create :user }
     let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
-    let(:exercises) do
+    let(:exercises)           do
       5.times.map{ FactoryGirl.create :content_exercise }.sort_by(&:number)
     end
     let!(:excluded_exercises) do

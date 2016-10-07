@@ -15,7 +15,7 @@ RSpec.describe Tasks::Models::ConceptCoachTask, type: :model do
   it { is_expected.to validate_uniqueness_of(:task) }
 
   it 'requires the role to match the role the task is assigned to' do
-    concept_coach_task.task.taskings.first.role = Entity::Role.create!
+    concept_coach_task.task.taskings.first.role = FactoryGirl.create :entity_role
     expect(concept_coach_task).not_to be_valid
     expect(concept_coach_task.errors.first).to(
       eq [:role, 'must match the role the task is assigned to']

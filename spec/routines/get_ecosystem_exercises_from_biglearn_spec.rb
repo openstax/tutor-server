@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetEcosystemExercisesFromBiglearn, type: :routine do
+RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
 
   let(:pool_model)      { FactoryGirl.create :content_pool }
   let(:page_model)      { FactoryGirl.create :content_page, all_exercises_pool: pool_model }
@@ -21,7 +21,7 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
 
   let(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.reload.wrap) }
 
-  let(:role)            { Entity::Role.create! }
+  let(:role)            { FactoryGirl.create :entity_role }
 
   let(:count)           { 3 }
 
@@ -37,9 +37,9 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
     end
 
     it 'sends the course\'s biglearn_excluded_pool_uuid to Biglearn if the role is a student' do
-      course = CreateCourse[name: 'Physics 101']
+      course = FactoryGirl.create :entity_course
       course.profile.update_attribute :biglearn_excluded_pool_uuid, SecureRandom.uuid
-      period = CreatePeriod[course: course]
+      period = FactoryGirl.create :course_membership_period, course: course
       user = FactoryGirl.create(:user)
       student_role = AddUserAsPeriodStudent[user: user, period: period]
 

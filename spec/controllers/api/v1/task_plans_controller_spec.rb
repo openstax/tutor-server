@@ -1,9 +1,9 @@
 require "rails_helper"
 
-describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
-  let(:course)    { CreateCourse[name: 'Anything'] }
-  let(:period)    { CreatePeriod[course: course] }
+  let(:course)    { FactoryGirl.create :entity_course, :with_assistants }
+  let(:period)    { FactoryGirl.create :course_membership_period, course: course }
 
   let(:user)      { FactoryGirl.create(:user) }
   let(:teacher)   { FactoryGirl.create(:user) }

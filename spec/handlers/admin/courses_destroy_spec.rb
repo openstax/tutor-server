@@ -16,7 +16,7 @@ RSpec.describe Admin::CoursesDestroy, type: :handler do
   end
 
   context 'non-destroyable course' do
-    before{ CreatePeriod[course: course] }
+    before{ FactoryGirl.create :course_membership_period, course: course }
 
     it 'returns an error' do
       result = described_class.call(params: {id: course.id})

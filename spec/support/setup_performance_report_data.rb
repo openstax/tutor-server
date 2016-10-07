@@ -14,8 +14,9 @@ class SetupPerformanceReportData
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
     AddUserAsCourseTeacher[course: course, user: teacher]
-    period_1 = course.periods.empty? ? CreatePeriod[course: course] : course.periods.first
-    period_2 = CreatePeriod[course: course]
+    period_1 = course.periods.any? ? course.periods.first :
+                                     FactoryGirl.create(:course_membership_period, course: course)
+    period_2 = FactoryGirl.create(:course_membership_period, course: course)
     # Add first 2 students to period 1
     students[0..1].each_with_index do |student, index|
       AddUserAsPeriodStudent[period: period_1, user: student, student_identifier: "S#{index + 1}"]

@@ -5,12 +5,12 @@ RSpec.describe CustomerService::StatsController, type: :controller do
   let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
 
   context "GET #courses" do
-    let(:course)        { Entity::Course.create! }
-    let(:periods)       do
+    let(:course)         { FactoryGirl.create :entity_course }
+    let(:periods)        do
       3.times.map { FactoryGirl.create :course_membership_period, course: course }
     end
 
-    let(:teacher_user)  { FactoryGirl.create :user }
+    let(:teacher_user)   { FactoryGirl.create :user }
     let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
     let!(:student_roles) do
@@ -29,7 +29,7 @@ RSpec.describe CustomerService::StatsController, type: :controller do
   end
 
   context "GET #excluded_exercises" do
-    let(:course)              { Entity::Course.create! }
+    let(:course)              { FactoryGirl.create :entity_course }
 
     let(:teacher_user)        { FactoryGirl.create :user }
     let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }

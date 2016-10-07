@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CollectCourseInfo, type: :routine do
+RSpec.describe CollectCourseInfo, type: :routine do
   let(:course_1)        { FactoryGirl.create(:course_profile_profile, :with_offering).course }
   let(:course_2)        { FactoryGirl.create(:course_profile_profile, :with_offering).course }
 
@@ -35,7 +35,7 @@ describe CollectCourseInfo, type: :routine do
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
           is_concept_coach: false,
-          is_college: false
+          is_college: true
         }
       )
     end
@@ -67,7 +67,7 @@ describe CollectCourseInfo, type: :routine do
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
           is_concept_coach: false,
-          is_college: false,
+          is_college: true,
           ecosystem: ecosystem_1,
           ecosystem_book: ecosystem_1.books.first
         },
@@ -82,7 +82,7 @@ describe CollectCourseInfo, type: :routine do
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code,
           is_concept_coach: false,
-          is_college: false,
+          is_college: true,
           ecosystem: ecosystem_2,
           ecosystem_book: ecosystem_2.books.first
         }
@@ -108,7 +108,7 @@ describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code,
             is_concept_coach: false,
-            is_college: false
+            is_college: true
           }
         )
       end
@@ -127,7 +127,7 @@ describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code,
             is_concept_coach: false,
-            is_college: false,
+            is_college: true,
             periods: a_collection_containing_exactly(period_1, period_2)
           }
         )
@@ -154,7 +154,7 @@ describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code,
             is_concept_coach: false,
-            is_college: false
+            is_college: true
           }
         )
       end
@@ -173,7 +173,7 @@ describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code,
             is_concept_coach: false,
-            is_college: false,
+            is_college: true,
             periods: [ period_1 ]
           }
         )
@@ -218,7 +218,7 @@ describe CollectCourseInfo, type: :routine do
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
           is_concept_coach: false,
-          is_college: false
+          is_college: true
         },
         {
           id: course_2.id,
@@ -231,7 +231,7 @@ describe CollectCourseInfo, type: :routine do
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code,
           is_concept_coach: false,
-          is_college: false
+          is_college: true
         }
       )
     end

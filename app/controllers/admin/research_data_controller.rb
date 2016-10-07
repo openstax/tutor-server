@@ -5,7 +5,7 @@ module Admin
     end
 
     def create
-      filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+      filename = "export_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
       mapping = {
         "tutor" => Tasks::Models::Task.task_types.values_at(:homework, :reading, :chapter_practice,
                    :page_practice, :mixed_practice, :external, :event, :extra),
@@ -25,7 +25,7 @@ module Admin
       }
 
       from_date = params[:export_research_data][:from] || "1/1/1970"
-      to_date = params[:export_research_data][:to] || Time.now.to_s
+      to_date = params[:export_research_data][:to] || Time.current.to_s
       ExportAndUploadResearchData.perform_later(filename: filename, from: from_date, to: to_date, task_types: task_types)
       redirect_to admin_research_data_path,
                   notice: "#{ExportAndUploadResearchData::RESEARCH_FOLDER}/#{filename} should be available in a few minutes in ownCloud (does not refresh automatically)"

@@ -6,15 +6,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
   let(:user_1)         { FactoryGirl.create(:user) }
-  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_1.id }
+  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                            resource_owner_id: user_1.id }
 
   let(:user_2)         { FactoryGirl.create(:user) }
-  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_2.id }
+  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                            resource_owner_id: user_2.id }
 
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course)         { CreateCourse[name: 'Physics 101'] }
-  let!(:period)        { CreatePeriod[course: course] }
+  let(:course)         { FactoryGirl.create :entity_course, name: 'Physics 101' }
+  let!(:period)        { FactoryGirl.create :course_membership_period, course: course }
 
   def add_book_to_course(course:)
     book = FactoryGirl.create(:content_book, :standard_contents_1)
@@ -30,7 +32,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:roles)          { Role::GetUserRoles.call(user_1).outputs.roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
-    let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
+    let!(:zeroth_period) do
+      FactoryGirl.create :course_membership_period, course: course, name: '0th'
+    end
 
     before { zeroth_period.to_model.destroy! }
 
@@ -66,7 +70,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           default_due_time: '07:00',
           ecosystem_id: "#{ecosystem.id}",
           is_concept_coach: false,
-          is_college: false,
+          is_college: true,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s,
                       name: zeroth_period.name,
@@ -134,8 +138,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe '#roster' do
     let(:application)        { FactoryGirl.create :doorkeeper_application }
 
-    let(:course)             { CreateCourse[name: 'Rosterify'] }
-    let!(:period_2)          { CreatePeriod[course: course] }
+    let(:course)             { FactoryGirl.create :entity_course, name: 'Physics 101' }
+    let!(:period_2)          { FactoryGirl.create :course_membership_period, course: course }
 
     let(:student_user)       { FactoryGirl.create(:user) }
     let(:student_role)       { AddUserAsPeriodStudent[user: student_user, period: period] }
@@ -242,7 +246,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:roles)          { Role::GetUserRoles.call(user_1).outputs.roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
-    let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
+    let!(:zeroth_period) { FactoryGirl.create :course_membership_period, course: course }
 
     context 'course does not exist' do
       it 'raises RecordNotFound' do
@@ -421,11 +425,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'updates is_college' do
-        expect(course.is_college).to be_falsy
+        expect(course.is_college).to eq true
         api_patch :update, user_1_token,
                   parameters: { id: course.id },
-                  raw_post_data: { is_college: true }.to_json
-        expect(course.reload.is_college).to be_truthy
+                  raw_post_data: { is_college: false }.to_json
+        expect(course.reload.is_college).to eq false
       end
     end
   end
@@ -525,7 +529,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "title" => reading_task.title,
               "opens_at" => be_kind_of(String),
               "due_at" => be_kind_of(String),
-              "type" => "reading",
+              "type" => 'reading',
               "complete" => false,
               "exercise_count" => 2,
               "complete_exercise_count" => 0
@@ -535,7 +539,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "title" => hw1_task.title,
               "opens_at" => be_kind_of(String),
               "due_at" => be_kind_of(String),
-              "type" => "homework",
+              "type" => 'homework',
               "complete" => false,
               "exercise_count" => 3,
               "complete_exercise_count" => 2
@@ -545,7 +549,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "title" => hw2_task.title,
               "opens_at" => be_kind_of(String),
               "due_at" => be_kind_of(String),
-              "type" => "homework",
+              "type" => 'homework',
               "complete" => true,
               "exercise_count" => 3,
               "complete_exercise_count" => 3,
@@ -556,7 +560,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "title" => hw3_task.title,
               "opens_at" => be_kind_of(String),
               "due_at" => be_kind_of(String),
-              "type" => "homework",
+              "type" => 'homework',
               "complete" => true,
               "exercise_count" => 3,
               "complete_exercise_count" => 3,
@@ -564,10 +568,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           ),
           "role" => {
             "id" => student_role.id.to_s,
-            "type" => "student"
+            "type" => 'student'
           },
           "course" => {
-            "name" => "Physics 101",
+            "name" => 'Physics 101',
             "teachers" => [
               { 'id' => teacher_role.teacher.id.to_s,
                 'role_id' => teacher_role.id.to_s,
@@ -617,10 +621,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
           "role" => {
             "id" => teacher_role.id.to_s,
-            "type" => "teacher"
+            "type" => 'teacher'
           },
           "course" => {
-            "name" => "Physics 101",
+            "name" => 'Physics 101',
             "teachers" => [
               { 'id' => teacher_role.teacher.id.to_s,
                 'role_id' => teacher_role.id.to_s,
@@ -632,7 +636,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           "plans" => a_collection_including(
             a_hash_including(
               "id" => plan.id.to_s,
-              "type" => "reading",
+              "type" => 'reading',
               "first_published_at" => be_kind_of(String),
               "last_published_at" => be_kind_of(String),
               "tasking_plans" => [
@@ -816,30 +820,30 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "id" => @task_1.id.to_s,
               "title" => @task_1.title,
               "last_worked_at" => be_kind_of(String),
-              "type" => "concept_coach",
+              "type" => 'concept_coach',
               "complete" => true
             ),
             a_hash_including(
               "id" => @task_2.id.to_s,
               "title" => @task_2.title,
               "last_worked_at" => be_kind_of(String),
-              "type" => "concept_coach",
+              "type" => 'concept_coach',
               "complete" => true
             ),
             a_hash_including(
               "id" => @task_3.id.to_s,
               "title" => @task_3.title,
               "last_worked_at" => be_kind_of(String),
-              "type" => "concept_coach",
+              "type" => 'concept_coach',
               "complete" => true
             )
           ),
           "role" => {
             "id" => student_role.id.to_s,
-            "type" => "student"
+            "type" => 'student'
           },
           "course" => {
-            "name" => "Biology 101",
+            "name" => 'Biology 101',
             "teachers" => [
               { 'id' => teacher_role.teacher.id.to_s,
                 'role_id' => teacher_role.id.to_s,
@@ -934,10 +938,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
           "role" => {
             "id" => teacher_role.id.to_s,
-            "type" => "teacher"
+            "type" => 'teacher'
           },
           "course" => {
-            "name" => "Biology 101",
+            "name" => 'Biology 101',
             "teachers" => [
               { 'id' => teacher_role.teacher.id.to_s,
                 'role_id' => teacher_role.id.to_s,

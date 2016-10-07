@@ -92,6 +92,8 @@ class Demo::Content < Demo::Base
   def configure_course(content)
      course = find_course(name: content.course_name) ||
               create_course(name: content.course_name,
+                            starts_at: Time.current - 1.month,
+                            ends_at: Time.current + 100.years,
                             appearance_code: content.appearance_code,
                             is_concept_coach: content.is_concept_coach,
                             is_college: content.is_college)

@@ -67,7 +67,7 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   end
 
   context 'time_zone updates' do
-    let(:task) { FactoryGirl.build :tasks_task,         time_zone: time_zone }
+    let(:task) { FactoryGirl.build :tasks_task, time_zone: time_zone }
 
     it 'updates all associated times automagically' do
       task_tz = time_zone.to_tz
@@ -95,8 +95,8 @@ RSpec.describe BelongsToTimeZone, type: :lib do
 
   it 'preserves previous_changes when no time zone set' do
     tz = ::TimeZone.create(name: 'Central Time (US & Canada)')
-    course = Entity::Course.create
-    profile = CourseProfile::Models::Profile.create(name: 'Blah', entity_course_id: course.id, is_concept_coach: false)
+    course = FactoryGirl.create :entity_course
+    profile = course.profile
     expect(profile).to be_persisted
     expect(profile.previous_changes).not_to be_empty
   end

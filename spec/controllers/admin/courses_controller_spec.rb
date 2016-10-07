@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe Admin::CoursesController, type: :controller do
   let(:admin) { FactoryGirl.create(:user, :administrator) }
 
-  before { controller.sign_in(admin) }
+  before      { controller.sign_in(admin) }
 
   describe 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      CreateCourse[name: 'Hello World']
+      FactoryGirl.create :entity_course, name: 'Hello World'
+
       get :index
 
       expect(assigns[:course_infos].count).to eq(1)
@@ -45,29 +46,35 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'POST #create' do
-    before do
-      post :create, course: { name: 'Hello World' }
+    let(:request) do
+      post :create, course: {
+        name: 'Hello World',
+        starts_at: Time.current, ends_at: Time.current + 1.week,
+        is_concept_coach: false, is_college: true
+      }
     end
 
     it 'creates a blank course profile' do
-      expect(CourseProfile::Models::Profile.count).to eq(1)
+      expect{request}.to change{CourseProfile::Models::Profile.count}.by(1)
     end
 
     it 'sets a flash notice' do
+      request
       expect(flash[:notice]).to eq('The course has been created.')
     end
 
     it 'redirects to /admin/courses' do
+      request
       expect(response).to redirect_to(admin_courses_path)
     end
   end
 
   describe 'POST #students' do
-    let(:physics)        { CreateCourse[name: 'Physics'] }
-    let(:physics_period) { CreatePeriod[course: physics, name: '1st'] }
+    let(:physics)        { FactoryGirl.create :entity_course }
+    let(:physics_period) { FactoryGirl.create :course_membership_period, course: physics }
 
-    let(:biology)        { CreateCourse[name: 'Biology'] }
-    let(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
+    let(:biology)        { FactoryGirl.create :entity_course }
+    let(:biology_period) { FactoryGirl.create :course_membership_period, course: biology }
 
     let(:file_1) do
       fixture_file_upload('roster/test_courses_post_students_1.csv', 'text/csv')
@@ -154,7 +161,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'GET #edit' do
-    let(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let(:course)    { FactoryGirl.create :entity_course, name: 'Physics I' }
     let!(:eco_1)    {
       model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
@@ -196,7 +203,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let(:course) { FactoryGirl.create :entity_course }
 
     context 'destroyable course' do
       it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
@@ -209,7 +216,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     context 'non-destroyable course' do
-      before { CreatePeriod[course: course] }
+      before { FactoryGirl.create :course_membership_period, course: course }
 
       it 'delegates to the Admin::CoursesDestroy handler and displays a failure message' do
         expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
@@ -224,7 +231,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'POST #set_ecosystem' do
-    let(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let(:course) { FactoryGirl.create(:entity_course, name: 'Physics I') }
     let(:eco_1)     {
       model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)

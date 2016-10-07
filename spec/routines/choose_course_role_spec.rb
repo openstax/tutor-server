@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-describe ChooseCourseRole, type: :routine do
+RSpec.describe ChooseCourseRole, type: :routine do
 
-  let(:teacher)       { FactoryGirl.create(:user) }
-  let(:student)       { FactoryGirl.create(:user) }
-  let(:interloper)    { FactoryGirl.create(:user) }
-  let(:course)        { Entity::Course.create! }
-  let(:period)        { CreatePeriod[course: course] }
+  let(:teacher)       { FactoryGirl.create :user }
+  let(:student)       { FactoryGirl.create :user }
+  let(:interloper)    { FactoryGirl.create :user }
+  let(:course)        { FactoryGirl.create :entity_course }
+  let(:period)        { FactoryGirl.create :course_membership_period, course: course }
 
   let!(:teacher_role) {
     AddUserAsCourseTeacher[user: teacher, course: course]
@@ -176,7 +176,7 @@ describe ChooseCourseRole, type: :routine do
 
       it "fails with an error if one is not a teacher" do
         # Bypass AddUserAsPeriodStudent's error checking
-        role = Entity::Role.create(role_type: :student)
+        role = FactoryGirl.create :entity_role, role_type: :student
         Role::AddUserRole[user: student, role: role]
         CourseMembership::AddStudent[period: period, role: role]
 

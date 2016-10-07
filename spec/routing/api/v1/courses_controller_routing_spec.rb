@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::CoursesController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::CoursesController, type: :routing, api: true, version: :v1 do
 
   describe "/api/courses/:course_id/dashboard" do
     it "routes to #dashboard" do

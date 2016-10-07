@@ -18,7 +18,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     before(:context) do
       Dir.mktmpdir do |dir|
         filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: "Physics 101",
+          described_class.call(course_name: 'Physics 101',
                                report: report_1,
                                filename: "#{dir}/testfile")
         end
@@ -82,7 +82,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     before(:context) do
       Dir.mktmpdir do |dir|
         filepath = Timecop.freeze(Chronic.parse("8/1/2016 1:30PM")) do
-          described_class.call(course_name: "Physics 101",
+          described_class.call(course_name: 'Physics 101',
                                report: report_1,
                                filename: "#{dir}/testfile",
                                options: {stringify_formulas: true}) # so we can inspect formulas
@@ -102,7 +102,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     before(:context) do
       Dir.mktmpdir do |dir|
         filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: "Physics 101",
+          described_class.call(course_name: 'Physics 101',
                                report: report_with_empty_students,
                                filename: "#{dir}/testfile",
                                options: {stringify_formulas: false})
@@ -127,7 +127,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
   context "when no HWs or Reading cols" do
     before(:context) do
       Dir.mktmpdir do |dir|
-        filepath = described_class.call(course_name: "Physics 101",
+        filepath = described_class.call(course_name: 'Physics 101',
                                         report: report_with_empty_data,
                                         filename: "#{dir}/testfile",
                                         options: {stringify_formulas: false})

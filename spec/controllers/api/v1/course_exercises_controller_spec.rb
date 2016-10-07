@@ -14,7 +14,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course)         { CreateCourse[name: 'Physics 101'] }
+  let(:course)         { FactoryGirl.create :entity_course }
 
   context 'with a real book' do
     before(:all) do

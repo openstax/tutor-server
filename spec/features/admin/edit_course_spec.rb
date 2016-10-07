@@ -13,7 +13,7 @@ RSpec.feature 'Admin editing a course' do
     click_on 'Save'
 
     @course = Entity::Course.order(:id).last
-    CreatePeriod[course: @course, name: '1st']
+    FactoryGirl.create :course_membership_period, course: @course
   end
 
   scenario 'Editing the name of a course' do

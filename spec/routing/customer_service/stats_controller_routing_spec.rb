@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe CustomerService::StatsController, type: :routing do
+RSpec.describe CustomerService::StatsController, type: :routing do
 
   describe "/customer_service/stats/courses" do
     it "routes to #courses" do

@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PeriodsController do
-  let(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin)  { FactoryGirl.create(:user, :administrator) }
 
-  let(:course) { Entity::Course.create! }
-  let(:period) { CreatePeriod[course: course, name: '1st'] }
+  let(:course) { FactoryGirl.create :entity_course }
+  let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
-  before { controller.sign_in(admin) }
+  before       { controller.sign_in(admin) }
 
   context 'DELETE #destroy' do
     let(:student)       { FactoryGirl.create(:user) }

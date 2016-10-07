@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
 
   let(:application)    { FactoryGirl.create :doorkeeper_application }
   let(:user_1)         { FactoryGirl.create(:user) }

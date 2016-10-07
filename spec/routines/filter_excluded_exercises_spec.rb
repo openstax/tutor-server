@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe FilterExcludedExercises, type: :routine do
+RSpec.describe FilterExcludedExercises, type: :routine do
 
   let(:exercises) { 5.times.map{ FactoryGirl.create :content_exercise } }
 

@@ -43,7 +43,7 @@ module Tasks
       exporter = klass.constantize
       filename = [FilenameSanitizer.sanitize(outputs.profile.name),
                   'Scores',
-                  Time.now.utc.strftime("%Y%m%d-%H%M%S")].join('_')
+                  Time.current.utc.strftime("%Y%m%d-%H%M%S")].join('_')
 
       exporter[profile: outputs.profile,
                report: outputs.performance_report,

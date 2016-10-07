@@ -3,11 +3,11 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine do
-  let(:course) { CreateCourse[
-    name: 'Physics 101',
-    time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
-  ] }
-  let!(:period) { CreatePeriod[course: course] }
+  let(:course) do
+    FactoryGirl.create :entity_course, :with_assistants,
+                                       time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
+  end
+  let!(:period) { FactoryGirl.create :course_membership_period, course: course }
   let(:teacher) { FactoryGirl.create(:user) }
   let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                                            resource_owner_id: teacher.id }

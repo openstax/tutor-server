@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe EcosystemAccessPolicy, type: :access_policy do
-  let(:course)            { CreateCourse[name: 'Physics 401'] }
-  let(:period)            { CreatePeriod[course: course] }
+  let(:course)            { FactoryGirl.create :entity_course }
+  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
 
   let(:student)           { FactoryGirl.create(:user) }
   let(:teacher)           { FactoryGirl.create(:user) }

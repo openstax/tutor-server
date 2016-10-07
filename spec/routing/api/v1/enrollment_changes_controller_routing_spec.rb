@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::EnrollmentChangesController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::EnrollmentChangesController, type: :routing, api: true, version: :v1 do
 
   context '/api/enrollment_changes' do
     it 'routes to #create' do

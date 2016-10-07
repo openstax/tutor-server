@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-describe GetCourseRoster, type: :routine do
-  let(:course) { CreateCourse[name: 'Physics 101'] }
-  let(:period_1) { CreatePeriod[course: course] }
-  let(:period_2) { CreatePeriod[course: course] }
+RSpec.describe GetCourseRoster, type: :routine do
+  let(:course)   { FactoryGirl.create :entity_course }
+  let(:period_1) { FactoryGirl.create :course_membership_period, course: course }
+  let(:period_2) { FactoryGirl.create :course_membership_period, course: course }
 
-  let(:other_course) { CreateCourse[name: 'Other Course'] }
-  let(:other_period) { CreatePeriod[course: other_course] }
+  let(:other_course) { FactoryGirl.create :entity_course }
+  let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
 
   let(:student_1) { FactoryGirl.create(:user) }
   let!(:student_1_role) {
