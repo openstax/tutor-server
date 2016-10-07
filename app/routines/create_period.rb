@@ -7,7 +7,6 @@ class CreatePeriod
   uses_routine Tasks::AssignCoursewideTaskPlansToNewPeriod, as: :assign_coursewide_task_plans
 
   def exec(course:, name: nil, enrollment_code: nil)
-    name ||= (course.periods.count + 1).ordinalize
     run(:create_period, course: course, name: name, enrollment_code: enrollment_code)
     run(:assign_coursewide_task_plans, period: outputs.period)
   end

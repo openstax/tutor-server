@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::StudentsController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::StudentsController, type: :routing, api: true, version: :v1 do
 
   describe 'PATCH /api/user/courses/:course_id/student' do
     it 'routes to #update_self' do

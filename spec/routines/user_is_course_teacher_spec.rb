@@ -1,22 +1,22 @@
 require 'rails_helper'
 
-describe UserIsCourseTeacher, type: :routine do
+RSpec.describe UserIsCourseTeacher, type: :routine do
 
   context "when the user is not a teacher for the given course" do
     it "returns false" do
-      target_user = FactoryGirl.create(:user)
+      target_user         = FactoryGirl.create :user
 
-      target_student_role = Entity::Role.create!
-      target_teacher_role = Entity::Role.create!
+      target_student_role = FactoryGirl.create :entity_role
+      target_teacher_role = FactoryGirl.create :entity_role
 
-      other_user = FactoryGirl.create(:user)
+      other_user          = FactoryGirl.create :user
 
-      other_teacher_role  = Entity::Role.create!
+      other_teacher_role  = FactoryGirl.create :entity_role
 
-      target_course       = Entity::Course.create!
-      target_period       = CreatePeriod[course: target_course]
+      target_course       = FactoryGirl.create :entity_course
+      target_period       = FactoryGirl.create :course_membership_period, course: target_course
 
-      other_course        = Entity::Course.create!
+      other_course        = FactoryGirl.create :entity_course
 
       Role::AddUserRole.call(user: target_user, role: target_teacher_role)
       Role::AddUserRole.call(user: target_user, role: target_student_role)
@@ -39,11 +39,11 @@ describe UserIsCourseTeacher, type: :routine do
   context "when the user a teacher for the given course" do
     it "returns true" do
       ## Make the target user a teacher for the target course
-      target_user = FactoryGirl.create(:user)
+      target_user         = FactoryGirl.create(:user)
 
-      target_teacher_role = Entity::Role.create!
+      target_teacher_role = FactoryGirl.create :entity_role
 
-      target_course       = Entity::Course.create!
+      target_course       = FactoryGirl.create :entity_course
       Role::AddUserRole.call(user: target_user, role: target_teacher_role)
       CourseMembership::AddTeacher.call(course: target_course, role: target_teacher_role)
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
   let(:application)        { FactoryGirl.create :doorkeeper_application }
   let(:user_1)             { FactoryGirl.create(:user) }
@@ -82,7 +82,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
   end
 
   context "#reject_late_work" do
-    before { task_1.update_attribute :accepted_late_at, Time.now }
+    before { task_1.update_attribute :accepted_late_at, Time.current }
 
     context 'deleted task' do
       before{ task_1.destroy! }

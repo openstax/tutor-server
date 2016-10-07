@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "migrate_salesforce_class_sizes", type: :rake do
+RSpec.describe "migrate_salesforce_class_sizes", type: :rake do
   include_context "rake"
 
   let(:class_size) { Salesforce::Remote::ClassSize.new(os_ancillary_id: "osa_id", id: "id") }

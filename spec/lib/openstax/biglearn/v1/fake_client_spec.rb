@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module OpenStax::Biglearn
-  RSpec.describe V1::FakeClient, type: :external do
+  describe V1::FakeClient, type: :external do
 
     let(:redis_secrets) { Rails.application.secrets['redis'] }
 

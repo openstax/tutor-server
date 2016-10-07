@@ -3,8 +3,8 @@ require 'vcr_helper'
 
 RSpec.feature 'Admin changing course Salesforce settings' do
   background do
-    @course = CreateCourse[name: "Physics"]
-    @period_1 = CreatePeriod[course: @course, name: '1st'].to_model
+    @course = FactoryGirl.create :entity_course
+    @period_1 = FactoryGirl.create :course_membership_period, course: @course
 
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
@@ -91,7 +91,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
 
   context "when there are two SF objects on a course with different periods on each" do
     before(:each) do
-      period_2 = CreatePeriod[course: @course, name: '2nd'].to_model
+      period_2 = FactoryGirl.create :course_membership_period, course: @course
       sf_object_a = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'sfoa')
       sf_object_b = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'sfob')
 

@@ -11,7 +11,7 @@ RSpec.describe ContentAnalyst::EcosystemsController, type: :controller,
   let(:book_2)       { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
 
-  let(:course)       { CreateCourse[name: 'AP Biology'] }
+  let(:course)       { FactoryGirl.create :entity_course }
 
   before { controller.sign_in(content_analyst) }
 

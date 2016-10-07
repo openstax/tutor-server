@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe CustomerService::CoursesController, type: :controller do
   let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
 
-  before { controller.sign_in(customer_service) }
+  before                 { controller.sign_in(customer_service) }
 
   describe 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      CreateCourse[name: 'Hello World']
+      FactoryGirl.create :entity_course, name: 'Hello World'
+
       get :index
 
       expect(assigns[:course_infos].count).to eq(1)
@@ -46,7 +47,8 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
   describe 'GET #show' do
     it 'assigns extra course info' do
-      course = CreateCourse[name: 'Hello World']
+      course = FactoryGirl.create :entity_course, name: 'Hello World'
+
       get :show, id: course.id
 
       expect(assigns[:profile].entity_course_id).to eq course.id

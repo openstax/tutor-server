@@ -31,7 +31,7 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
     before(:each) do
-      @role = Entity::Role.create!
+      @role = FactoryGirl.create :entity_role
 
       @exercises = 3.times.map { FactoryGirl.create(:content_exercise) }
 
@@ -94,9 +94,9 @@ RSpec.describe OpenStax::Biglearn::V1::LocalQueryClient do
     let(:client) { OpenStax::Biglearn::V1.new_local_query_client_with_real }
 
     before(:all) do
-      @all_wrong_role = Entity::Role.create!
-      @all_right_role = Entity::Role.create!
-      @passing_role = Entity::Role.create!
+      @all_wrong_role = FactoryGirl.create :entity_role
+      @all_right_role = FactoryGirl.create :entity_role
+      @passing_role   = FactoryGirl.create :entity_role
 
       @exercises = 4.times.map { FactoryGirl.create(:content_exercise) }
 

@@ -9,7 +9,7 @@
   def exec(filename: nil, task_types: [], from: nil, to: nil)
     fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") if task_types.blank?
     outputs[:filename] = FilenameSanitizer.sanitize(filename) || \
-                         "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+                         "export_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
     date_range = (Chronic.parse(from))..(Chronic.parse(to)) unless to.blank? || from.blank?
     create_export_file(task_types, date_range)
     upload_export_file

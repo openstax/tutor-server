@@ -8,12 +8,15 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
                                                     pdf_url: 'pdf_url',
                                                     description: 'desc',
                                                     ecosystem: ecosystem] }
-  let(:course)           { CreateCourse[name: 'Test course',
-                                         appearance_code: 'appearance override',
-                                         catalog_offering: catalog_offering,
-                                         is_concept_coach: true] }
+  let(:course)           do
+    FactoryGirl.create :entity_course, name: 'Test course',
+                                       appearance_code: 'appearance override',
+                                       catalog_offering: catalog_offering,
+                                       is_concept_coach: true,
+                                       is_college: false
+  end
 
-  subject(:represented) { described_class.new(course).to_hash }
+  subject(:represented)  { described_class.new(course).to_hash }
 
   it 'shows the course id' do
     expect(represented['id']).to eq course.id.to_s
@@ -62,12 +65,14 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['is_concept_coach']).to eq true
   end
 
-  it 'shows students' do
-    output = described_class.new(Hashie::Mash.new({students: [{id: 32}, {id: 65}]})).to_hash
-    expect(output["students"]).to match [a_hash_including("id" => "32"), a_hash_including("id" => "65")]
-  end
-
   it 'shows whether or not it is a college course' do
     expect(represented['is_college']).to eq false
+  end
+
+  it 'shows students' do
+    output = described_class.new(Hashie::Mash.new({students: [{id: 32}, {id: 65}]})).to_hash
+    expect(output["students"]).to(
+      match [a_hash_including("id" => "32"), a_hash_including("id" => "65")]
+    )
   end
 end

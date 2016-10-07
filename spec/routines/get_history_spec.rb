@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetHistory, type: :routine, speed: :slow do
+RSpec.describe GetHistory, type: :routine, speed: :slow do
   before(:all) do
     homework_assistant = FactoryGirl.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'

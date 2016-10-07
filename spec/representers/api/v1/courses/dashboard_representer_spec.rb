@@ -150,9 +150,9 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
       "plans" => [
         a_hash_including(
           "id" => '23',
-          "title" => "HW1",
+          "title" => 'HW1',
           "is_trouble" => false,
-          "type" => "homework",
+          "type" => 'homework',
           "is_draft" => false,
           "is_publishing" => true,
           "is_published" => true,
@@ -173,11 +173,11 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
       "tasks" => a_collection_containing_exactly(
         a_hash_including(
           "id" => '34',
-          "title" => "HW2",
+          "title" => 'HW2',
           "opens_at" => api_opens_at,
           "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "homework",
+          "type" => 'homework',
           "complete" => false,
           "exercise_count" => 5,
           "complete_exercise_count" => 4,
@@ -185,10 +185,10 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         ),
         a_hash_including(
           "id" => '37',
-          "title" => "Reading 1",
+          "title" => 'Reading 1',
           "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "reading",
+          "type" => 'reading',
           "complete" => false,
           "exercise_count" => 7,
           "complete_exercise_count" => 6,
@@ -196,11 +196,11 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         ),
         a_hash_including(
           "id" => '89',
-          "title" => "HW3",
+          "title" => 'HW3',
           "opens_at" => api_opens_at,
           "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "homework",
+          "type" => 'homework',
           "complete" => true,
           "exercise_count" => 8,
           "complete_exercise_count" => 8,
@@ -209,30 +209,30 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         ),
         a_hash_including(
           "id" => '99',
-          "title" => "Ext1",
+          "title" => 'Ext1',
           "opens_at" => api_opens_at,
           "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "external",
+          "type" => 'external',
           "complete" => true,
           "is_deleted" => false
         ),
       ),
       "role" => {
         "id" => '34',
-        "type" => "teacher"
+        "type" => 'teacher'
       },
       "course" => {
-        "name" => "Physics 101",
+        "name" => 'Physics 101',
         "teachers" => [
-          { "id" => "42",
-            "role_id" => "43",
-            "first_name" => "Andrew",
-            "last_name" => "Garcia" },
-          { "id" => "44",
-            "role_id" => "45",
-            "first_name" => "Bob",
-            "last_name" => "Newhart" }
+          { "id" => '42',
+            "role_id" => '43',
+            "first_name" => 'Andrew',
+            "last_name" => 'Garcia' },
+          { "id" => '44',
+            "role_id" => '45',
+            "first_name" => 'Bob',
+            "last_name" => 'Newhart' }
         ]
       }
     )

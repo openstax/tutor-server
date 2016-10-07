@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe GetCourseTeacherUsers, type: :routine do
+RSpec.describe GetCourseTeacherUsers, type: :routine do
 
   context "when a course has no teachers" do
-    let(:target_course) { CreateCourse[name: 'target'] }
-    let(:other_course)  { CreateCourse[name: 'other'] }
+    let(:target_course) { FactoryGirl.create :entity_course }
+    let(:other_course)  { FactoryGirl.create :entity_course }
     let(:other_user)    { FactoryGirl.create(:user) }
 
     before(:each) do
@@ -20,8 +20,8 @@ describe GetCourseTeacherUsers, type: :routine do
   end
 
   context "when a course has one teacher" do
-    let(:target_course) { CreateCourse[name: 'target 2'] }
-    let(:other_course)  { CreateCourse[name: 'other 2'] }
+    let(:target_course) { FactoryGirl.create :entity_course }
+    let(:other_course)  { FactoryGirl.create :entity_course }
     let(:target_user)   { FactoryGirl.create(:user) }
     let(:other_user)    { FactoryGirl.create(:user) }
 
@@ -41,8 +41,8 @@ describe GetCourseTeacherUsers, type: :routine do
   end
 
   context "when a course has multiple teachers" do
-    let(:target_course) { CreateCourse[name: 'target 3'] }
-    let(:other_course)  { CreateCourse[name: 'other 3'] }
+    let(:target_course) { FactoryGirl.create :entity_course }
+    let(:other_course)  { FactoryGirl.create :entity_course }
     let(:target_user1)  { FactoryGirl.create(:user) }
     let(:target_user2)  { FactoryGirl.create(:user) }
     let(:other_user)    { FactoryGirl.create(:user) }

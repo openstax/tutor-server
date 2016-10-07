@@ -452,7 +452,8 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates counts after any change to the task" do
-        task = FactoryGirl.create :tasks_task, tasked_to: [Entity::Role.create!], step_types: [
+        tasked_to = [FactoryGirl.create(:entity_role)]
+        task = FactoryGirl.create :tasks_task, tasked_to: tasked_to, step_types: [
           :tasks_tasked_exercise, :tasks_tasked_exercise,
           :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
         ], personalized_placeholder_strategy: Tasks::PlaceholderStrategies::HomeworkPersonalized.new
@@ -553,13 +554,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
 
     it 'holds on to accepted late stats regardless of future work' do
-      task = FactoryGirl.create(:tasks_task, opens_at: Time.now - 1.week,
-                                             due_at: Time.now,
+      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+                                             due_at: Time.current,
                                              step_types: [:tasks_tasked_exercise,
                                                           :tasks_tasked_exercise,
                                                           :tasks_tasked_exercise])
 
-      Timecop.freeze(Time.now - 1.day) do
+      Timecop.freeze(Time.current - 1.day) do
         Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
@@ -568,7 +569,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.completed_exercise_count).to eq 1
       expect(task.score).to eq 1/3.0
 
-      Timecop.freeze(Time.now + 1.day) do
+      Timecop.freeze(Time.current + 1.day) do
         Demo::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
@@ -587,7 +588,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 2/3.0
       expect(task.accepted_late_at).not_to be_nil
 
-      Timecop.freeze(Time.now + 1.day) do
+      Timecop.freeze(Time.current + 1.day) do
         Demo::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
@@ -614,13 +615,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
 
     it 'holds on to accepted late stats regardless of future work' do
-      task = FactoryGirl.create(:tasks_task, opens_at: Time.now - 1.week,
-                                             due_at: Time.now,
+      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+                                             due_at: Time.current,
                                              step_types: [:tasks_tasked_exercise,
                                                           :tasks_tasked_exercise,
                                                           :tasks_tasked_exercise])
 
-      Timecop.freeze(Time.now - 1.day) do
+      Timecop.freeze(Time.current - 1.day) do
         Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
@@ -629,7 +630,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.completed_exercise_count).to eq 1
       expect(task.score).to eq 1/3.0
 
-      Timecop.freeze(Time.now + 1.day) do
+      Timecop.freeze(Time.current + 1.day) do
         Demo::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
@@ -648,7 +649,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 2/3.0
       expect(task.accepted_late_at).not_to be_nil
 
-      Timecop.freeze(Time.now + 1.day) do
+      Timecop.freeze(Time.current + 1.day) do
         Demo::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end

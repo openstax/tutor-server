@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::EnrollmentChange, type: :wrapper do
   let(:course)               { FactoryGirl.create :entity_course }
-  let(:period_1)             { CreatePeriod[course: course] }
-  let(:period_2)             { CreatePeriod[course: course] }
+  let(:period_1)             { FactoryGirl.create :course_membership_period, course: course }
+  let(:period_2)             { FactoryGirl.create :course_membership_period, course: course }
 
   let(:user)                 { FactoryGirl.create :user }
 
@@ -23,8 +23,8 @@ RSpec.describe CourseMembership::EnrollmentChange, type: :wrapper do
 
     expect(enrollment_change.id).to be_a Integer
     expect(enrollment_change.user).to eq user
-    expect(enrollment_change.from_period).to eq period_1
-    expect(enrollment_change.to_period).to eq period_2
+    expect(enrollment_change.from_period.to_model).to eq period_1
+    expect(enrollment_change.to_period.to_model).to eq period_2
     expect(enrollment_change.status).to eq :pending
     expect(enrollment_change.pending?).to eq true
     expect(enrollment_change.approved?).to eq false

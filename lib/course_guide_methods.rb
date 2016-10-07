@@ -69,7 +69,7 @@ module CourseGuideMethods
       # Exclude unopened tasks in history
       opens_ats = role_history.opens_ats
       open_task_indices = opens_ats.each_index.select do |index|
-        opens_ats[index].nil? || opens_ats[index] <= Time.now
+        opens_ats[index].nil? || opens_ats[index] <= Time.current
       end
       role_history.core_page_ids.values_at(*open_task_indices)
     end.flatten

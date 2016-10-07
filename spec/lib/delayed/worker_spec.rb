@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module Delayed
-  RSpec.describe Worker, type: :lib do
+  describe Worker, type: :lib do
     let(:job)            { ::ActiveJob::Base.new }
     let(:delayed_job)    { ::Delayed::Job.create!(payload_object: job) }
     let(:delayed_worker) { ::Delayed::Worker.new }

@@ -9,7 +9,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = CreateCourse[name: 'Physics']
+    @course = FactoryGirl.create :entity_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
     @teacher = FactoryGirl.create(:user)

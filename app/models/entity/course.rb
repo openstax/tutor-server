@@ -17,9 +17,11 @@ class Entity::Course < Tutor::SubSystems::BaseModel
 
   has_many :taskings, through: :periods, subsystem: :tasks
 
-  delegate :name, :appearance_code, :is_concept_coach, :offering, :teach_token,
+  delegate :name, :offering, :appearance_code, :school,
+           :is_concept_coach, :is_college, :teach_token,
+           :starts_at, :ends_at, :active?,
            :time_zone, :default_open_time, :default_due_time,
-           :name=, :default_open_time=, :default_due_time=, :is_college,
+           :name=, :default_open_time=, :default_due_time=,
            to: :profile
 
   def deletable?

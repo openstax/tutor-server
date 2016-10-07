@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
-  let(:course) { CreateCourse[name: 'Course'] }
-  let(:period) { CreatePeriod[course: course, name: 'Period I'] }
+  let(:course) { FactoryGirl.create :entity_course }
+  let(:period) { FactoryGirl.create :course_membership_period, course: course }
+
   subject(:represented) { described_class.new(period).to_hash }
 
   it 'includes the enrollment code' do

@@ -5,13 +5,10 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
   let(:user_2)               { FactoryGirl.create :user }
 
-  let(:course)               do
-    FactoryGirl.create(:entity_course).tap do |course|
-      course.profile.update_attribute(:is_concept_coach, true)
-    end
-  end
-  let(:period)               { ::CreatePeriod[course: course] }
-  let(:period_2)             { ::CreatePeriod[course: course] }
+  let(:course)               { FactoryGirl.create(:entity_course, is_concept_coach: true) }
+
+  let(:period)               { FactoryGirl.create :course_membership_period, course: course }
+  let(:period_2)             { FactoryGirl.create :course_membership_period, course: course }
 
   let(:book)                 { FactoryGirl.create :content_book }
 

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::Cc::TasksController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::Cc::TasksController, type: :routing, api: true, version: :v1 do
 
   describe '/api/cc/tasks/:cnx_book_id/:cnx_page_id' do
     it "routes to #show" do

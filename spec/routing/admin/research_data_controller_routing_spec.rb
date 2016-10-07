@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Admin::ResearchDataController, type: :routing do
+RSpec.describe Admin::ResearchDataController, type: :routing do
 
   describe "GET /admin/research_data" do
     it "routes to #index" do

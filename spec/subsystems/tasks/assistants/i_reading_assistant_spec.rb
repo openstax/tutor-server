@@ -101,7 +101,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
     end
 
-    let(:period) { CreatePeriod[course: course] }
+    let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
     let(:num_taskees) { 3 }
 
@@ -360,7 +360,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
     }
 
-    let(:period) { CreatePeriod[course: course] }
+    let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
     let(:num_taskees) { 3 }
 
@@ -454,7 +454,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
     }
 
-    let(:period) { CreatePeriod[course: course] }
+    let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
     let(:num_taskees) { 3 }
 
@@ -618,7 +618,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       task_plan.owner.tap{ |course| AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
     end
 
-    let(:period) { CreatePeriod[course: course] }
+    let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
     let(:taskee_user) do
       FactoryGirl.create(:user_profile).tap do |profile|

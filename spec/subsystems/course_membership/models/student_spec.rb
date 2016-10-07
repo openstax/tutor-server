@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Student, type: :model do
-  let(:period)     { CreatePeriod[course: Entity::Course.create!].to_model }
-  let(:user)       { FactoryGirl.create(:user) }
+  let(:course)     { FactoryGirl.create :entity_course }
+  let(:period)     { FactoryGirl.create :course_membership_period, course: course }
+  let(:user)       { FactoryGirl.create :user }
   subject(:student) { AddUserAsPeriodStudent[user: user, period: period,
                                              student_identifier: 'N0B0DY'].student }
 

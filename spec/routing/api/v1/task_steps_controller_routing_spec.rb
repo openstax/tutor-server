@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TaskStepsController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::TaskStepsController, type: :routing, api: true, version: :v1 do
 
   describe "/api/tasks/:task_id/steps/:id" do
     it "routes to #show" do

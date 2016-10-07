@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::UsersController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::UsersController, type: :routing, api: true, version: :v1 do
 
   describe "/api/user" do
     it "routes to #show" do

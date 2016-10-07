@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::PeriodsController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::PeriodsController, type: :routing, api: true, version: :v1 do
 
   context 'DELETE /api/periods/:id' do
     it 'routes to #destroy' do

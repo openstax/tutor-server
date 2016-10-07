@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
   context "full test" do
-    # Includes 1 deleted period, 2 orphaned periods (one of which requires a new
-    # SF object), 1 dropped student
+    # Includes 1 deleted period, 2 orphaned periods
+    # (one of which requires a new SF object), 1 dropped student
 
-    let(:course_1) { Entity::Course.create! }
+    let(:course_1) { FactoryGirl.create :entity_course }
 
-    let(:period_1) { CreatePeriod[course: course_1] }
-    let(:period_2) { CreatePeriod[course: course_1] }
-    let(:period_3) { CreatePeriod[course: course_1] }
+    let(:period_1) { FactoryGirl.create :course_membership_period, course: course_1 }
+    let(:period_2) { FactoryGirl.create :course_membership_period, course: course_1 }
+    let(:period_3) { FactoryGirl.create :course_membership_period, course: course_1 }
 
     let!(:student_1_role) do
       AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1]
@@ -138,10 +138,10 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "#attach_orphaned_periods_to_sf_objects" do
-    let(:course)          { Entity::Course.create! }
-    let(:period_1)        { CreatePeriod[course: course] }
-    let(:period_2)        { CreatePeriod[course: course] }
-    let(:period_3)        { CreatePeriod[course: course] }
+    let(:course)          { FactoryGirl.create :entity_course }
+    let(:period_1)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_3)        { FactoryGirl.create :course_membership_period, course: course }
     let(:sf_object)       { OpenStruct.new(changed?: true, save: nil) }
     let(:attached_record) { OpenStruct.new(record: sf_object) }
 
@@ -217,9 +217,9 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "#write_stats_to_salesforce" do
-    let(:course)          { Entity::Course.create! }
-    let(:period_1)        { CreatePeriod[course: course] }
-    let(:period_2)        { CreatePeriod[course: course] }
+    let(:course)          { FactoryGirl.create :entity_course }
+    let(:period_1)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
     let(:record)          { OpenStruct.new(changed?: true, save: nil) }
     let(:attached_record) { OpenStruct.new(record: record) }
 
@@ -320,10 +320,10 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "preloading deleted periods" do
-    let(:course_1) { Entity::Course.create! }
+    let(:course_1) { FactoryGirl.create :entity_course }
+    let(:period_1) { FactoryGirl.create :course_membership_period, course: course_1 }
+    let(:period_2) { FactoryGirl.create :course_membership_period, course: course_1 }
 
-    let(:period_1) { CreatePeriod[course: course_1] }
-    let(:period_2) { CreatePeriod[course: course_1] }
     let(:user_1)   { FactoryGirl.create :user }
     let(:user_2)   { FactoryGirl.create :user }
 

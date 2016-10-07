@@ -5,8 +5,8 @@ require 'database_cleaner'
 RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: true,
                                                       version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let(:course) { CreateCourse[name: 'Physics 101'] }
-  let(:period) { CreatePeriod[course: course] }
+  let(:course) { FactoryGirl.create :entity_course, :with_assistants }
+  let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   context 'with book' do
     before(:all) do
@@ -511,7 +511,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
       it 'does not blow up when period names collide for the first 31 characters' do
         period.to_model.update_attributes(name: 'Super duper long period name number 1')
-        CreatePeriod[course: course, name: 'Super duper long period name number 2']
+        FactoryGirl.create :course_membership_period, course: course,
+                                                      name: 'Super duper long period name number 2'
         api_post :export, teacher_token, parameters: { id: course.id }
         expect(response.status).to eq(202)
       end

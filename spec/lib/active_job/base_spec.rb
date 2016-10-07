@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module ActiveJob
-  RSpec.describe Base, type: :lib do
+  describe Base, type: :lib do
     let(:job)            { ::ActiveJob::Base.new }
     let(:exception_class) { ActiveRecord::RecordNotFound }
 
