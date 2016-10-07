@@ -21,33 +21,25 @@ module Manager::StatsActions
   end
 
   def excluded_exercises
-    @excluded_exercises = CourseContent::Models::ExcludedExercise.preload(
-      course: [
-        :profile, { teachers: { role: { role_user: :profile } } }
-      ]
-    ).sort_by(&:exercise_number)
-    all_excluded_exercise_numbers = @excluded_exercises.map(&:exercise_number).uniq
-
-    @page_uuids_by_exercise_numbers = Hash.new{ |hash, key| hash[key] = [] }
-    @page_urls_by_page_uuids = {}
-    Content::Models::Exercise.where(number: all_excluded_exercise_numbers)
-                             .preload(:page).group_by{ |ex| ex.page.uuid }
-                             .each do |page_uuid, exercises|
-      page_url = OpenStax::Cnx::V1.webview_url_for(page_uuid)
-      exercises.map(&:number).uniq.each do |number|
-        @page_uuids_by_exercise_numbers[number] << page_uuid
-      end
-      @page_urls_by_page_uuids[page_uuid] = page_url
-    end
-
-    @exercise_urls_by_exercise_numbers = {}
-    all_excluded_exercise_numbers.each do |number|
-      exercise_url = OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
-      @exercise_urls_by_exercise_numbers[number] = exercise_url
-    end
-    @course_url_proc = course_url_proc
+    excluded_exercises = GetExcludedExercises.call.outputs
+    @excluded_exercises_by_course = excluded_exercises.by_course
+    @excluded_exercises_by_exercise = excluded_exercises.by_exercise
 
     render 'manager/stats/excluded_exercises'
+  end
+
+  def excluded_exercises_to_csv
+    by_course = params.fetch(:export).fetch(:by).include? "course"
+    by_exercise = params.fetch(:export).fetch(:by).include? "exercise"
+
+    unless by_course || by_exercise
+      flash[:alert] = "You must select at least one of two options to export"
+      redirect_to excluded_exercises_admin_stats_path and return
+    end
+
+    GetExcludedExercises.perform_later(export_by_course: by_course, export_by_exercise: by_exercise)
+    flash[:success] = "The export should be available in a few minutes in ownCloud."
+    redirect_to excluded_exercises_admin_stats_path
   end
 
   def concept_coach

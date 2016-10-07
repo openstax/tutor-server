@@ -7,11 +7,16 @@ class Admin::CoursesController < Admin::BaseController
 
   def index
     @query = params[:query]
-    courses = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id').outputs
-    params[:per_page] = courses.total_count if params[:per_page] == "all"
+    courses = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
+    params[:per_page] = courses.outputs.total_count if params[:per_page] == "all"
     params_for_pagination = {page: params.fetch(:page, 1), per_page: params.fetch(:per_page, 25)}
 
-    @course_infos = courses.items.preload(
+    if courses.errors.any?
+      flash[:error] = "Invalid search"
+      redirect_to admin_courses_path and return
+    end
+
+    @course_infos = courses.outputs.items.preload(
       [
         :profile, { teachers: { role: [:role_user, :profile] }, periods_with_deleted: :latest_enrollments_with_deleted }
       ],

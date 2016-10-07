@@ -229,6 +229,7 @@ Rails.application.routes.draw do
       collection do
         get :courses
         get :excluded_exercises
+        post :excluded_exercises_to_csv
         get :concept_coach
       end
     end

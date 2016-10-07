@@ -1,6 +1,6 @@
 <% @page_header = "Excluded Exercise Stats" %>
 
-<h3>Total exercise exclusions: <%= @excluded_exercises.length %></h3>
+<h3>Total exercise exclusions: <%= @excluded_exercises_by_course.length %></h3>
 
 <h3>By Course:</h3>
 
@@ -16,23 +16,19 @@
     </tr>
   </thead>
   <tbody>
-  <% @excluded_exercises.group_by(&:course).each do |course, excluded_exercises| %>
+  <% @excluded_exercises_by_course.each do |ee| %>
     <tr>
-      <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
-      <td><%= course.name %></td>
-      <td><%= course.teachers.map{ |teacher| teacher.role.name }.join(', ') %></td>
-      <td><%= excluded_exercises.length %></td>
-      <td><%= excluded_exercises.map do |excluded_exercise|
-                number = excluded_exercise.exercise_number
-                link_to number, @exercise_urls_by_exercise_numbers[number]
-              end.join(', ').html_safe %></td>
-      <td><%= excluded_exercises.flat_map do |excluded_exercise|
-                number = excluded_exercise.exercise_number
-                page_uuids = @page_uuids_by_exercise_numbers[number]
-                page_uuids.map do |page_uuid|
-                  link_to page_uuid, @page_urls_by_page_uuids[page_uuid]
-                end
-              end.join(', ').html_safe %></td>
+      <td><%= link_to ee.course_id, edit_admin_course_path(ee.course_id) %></td>
+      <td><%= ee.course_name %></td>
+      <td><%= ee.teachers %></td>
+      <td><%= ee.excluded_exercises_count %></td>
+      <td><%= ee.excluded_exercises_numbers_with_urls.map{|num|
+                link_to num.ee_number, num.ee_url
+              }.join(", ").html_safe %>
+      </td>
+      <td><%= ee.page_uuids_with_urls.map{|pg|
+                link_to pg.page_uuid, pg.page_url
+              }.join(', ').html_safe %></td>
     </tr>
   <% end %>
   </tbody>
@@ -49,14 +45,27 @@
     </tr>
   </thead>
   <tbody>
-  <% @excluded_exercises.group_by(&:exercise_number).each do |number, excluded_exercises| %>
+  <% @excluded_exercises_by_exercise.each do |ee| %>
     <tr>
-      <td><%= link_to number, @exercise_urls_by_exercise_numbers[number] %></td>
-      <td><%= excluded_exercises.length %></td>
-      <td><%= @page_uuids_by_exercise_numbers[number].map do |page_uuid|
-                link_to page_uuid, @page_urls_by_page_uuids[page_uuid]
-              end.join(', ').html_safe %></td>
+      <td><%= link_to ee.exercise_number, ee.exercise_url %></td>
+      <td><%= ee.excluded_exercises_count %></td>
+      <td><%= ee.pages_with_uuids_and_urls.map { |pg|
+                link_to pg.page_uuid, pg.page_url
+              }.join(', ').html_safe %>
+      </td>
     </tr>
   <% end %>
   </tbody>
 </table>
+
+<div class="excluded-exercises-export-form">
+  <h4>Export to CSV file</h4>
+  <%= lev_form_for :export, url: excluded_exercises_to_csv_admin_stats_path, method: :post do |form| %>
+    <%= form.collection_check_boxes :by, \
+                [["course", "By Course"], ["exercise", "By Exercise"]], \
+                :first, :second, {}, {checked: true} %>
+    <div>
+      <%= submit_tag "Export Data", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>
