@@ -33,6 +33,25 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
   end
 
   it 'knows if it is active' do
-    
+    expect(profile).to be_active
+
+    profile.starts_at = Time.current.tomorrow
+    expect(profile).not_to be_active
+
+    profile.starts_at = Time.current - 1.week
+    profile.ends_at = Time.current.yesterday
+    expect(profile).not_to be_active
+
+    profile.ends_at = Time.current + 1.week
+    expect(profile).to be_active
+  end
+
+  it 'cannot end before it starts' do
+    expect(profile).to be_valid
+
+    profile.starts_at = Time.current.tomorrow
+    profile.ends_at = Time.current.yesterday
+
+    expect(profile).not_to be_valid
   end
 end
