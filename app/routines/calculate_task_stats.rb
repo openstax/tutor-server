@@ -68,7 +68,7 @@ class CalculateTaskStats
     end.sort_by{ |exercise_stats| exercise_stats[:average_step_number] }
   end
 
-  def page_stats_for_tasked_exercises(tasked_exercises)
+  def page_stats_for_tasked_exercises(tasked_exercises, details)
     completed = tasked_exercises.select(&:completed?)
 
     some_completed_role_ids = completed.map do |tasked_exercise|
@@ -86,18 +86,18 @@ class CalculateTaskStats
       incorrect_count: incorrect_count,
       trouble: trouble
     }
-    stats[:exercises] = exercise_stats_for_tasked_exercises(tasked_exercises) if @details
+    stats[:exercises] = exercise_stats_for_tasked_exercises(tasked_exercises) if details
     stats
   end
 
-  def generate_page_stats(page, tasked_exercises, include_previous=false)
+  def generate_page_stats(page, tasked_exercises, details, include_previous=false)
     stats = {
       id:              page.id,
       title:           page.title,
       chapter_section: page.book_location
     }
 
-    stats.merge page_stats_for_tasked_exercises(tasked_exercises)
+    stats.merge page_stats_for_tasked_exercises(tasked_exercises, details)
   end
 
   def get_task_grade(task)
@@ -124,31 +124,29 @@ class CalculateTaskStats
     tasked_exercises.group_by{ |te| te.exercise.page }
   end
 
-  def generate_page_stats_for_task_steps(task_steps)
+  def generate_page_stats_for_task_steps(task_steps, details)
     page_hash = group_tasked_exercises_by_pages(
       get_tasked_exercises_from_task_steps(task_steps)
     )
 
-    page_hash.map{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
+    page_hash.map{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises, details) }
              .sort_by{ |page_stats| page_stats[:chapter_section] }
   end
 
-  def generate_period_stat_data
-    tasks = @tasks.preload([:task_steps, {taskings: :period}]).to_a
+  def generate_period_stat_data(tasks, details)
+    active_tasks = tasks.joins(taskings: [:period, {role: :student}])
+                        .where(taskings: { role: { student: { deleted_at: nil } },
+                                           period: { deleted_at: nil } })
+                        .preload([:task_steps, { taskings: :period }])
 
-    grouped_tasks = tasks.group_by do |task|
-      task.taskings.first.try(:period)
-    end
+    grouped_tasks = active_tasks.to_a.group_by{ |task| task.taskings.first.try!(:period) }
 
     grouped_tasks.map do |period, period_tasks|
-      next if period.nil? || period.deleted?
+      current_task_steps = period_tasks.map{ |t| t.core_task_steps + t.personalized_task_steps }
+      current_page_stats = generate_page_stats_for_task_steps(current_task_steps, details)
 
-      current_page_stats = generate_page_stats_for_task_steps(
-                             period_tasks.map{ |t| t.core_task_steps + t.personalized_task_steps }
-                           )
-      spaced_page_stats = generate_page_stats_for_task_steps(
-                            period_tasks.map(&:spaced_practice_task_steps)
-                          )
+      spaced_task_steps = period_tasks.map(&:spaced_practice_task_steps)
+      spaced_page_stats = generate_page_stats_for_task_steps(spaced_task_steps, details)
 
       Hashie::Mash.new(
         period_id: period.id,
@@ -174,10 +172,7 @@ class CalculateTaskStats
   end
 
   def exec(tasks:, details: false)
-    @tasks = tasks
-    @details = details
-
-    outputs[:stats] = generate_period_stat_data
+    outputs[:stats] = generate_period_stat_data(tasks, details)
   end
 
 end
