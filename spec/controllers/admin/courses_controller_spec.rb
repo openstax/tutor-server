@@ -20,21 +20,43 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     context "pagination" do
-      context "when the are any results" do
-        it "paginates the results" do
-          3.times {FactoryGirl.create(:course_profile_profile, name: "Algebra #{rand(1000)}")}
-          expect(CourseProfile::Models::Profile.count).to eq(3)
+      it "paginates the results" do
+        3.times { FactoryGirl.create(:course_profile_profile) }
 
-          get :index, page: 1, per_page: 2
-          expect(assigns[:course_infos].length).to eq(2)
+        get :index, page: 1, per_page: 2
+        expect(assigns[:course_infos].length).to eq(2)
 
-          get :index, page: 2, per_page: 2
-          expect(assigns[:course_infos].length).to eq(1)
+        get :index, page: 2, per_page: 2
+        expect(assigns[:course_infos].length).to eq(1)
+      end
+
+      context "with more than 25 courses" do
+        before(:each) do
+          26.times { FactoryGirl.create(:course_profile_profile) }
+        end
+
+        context "with per_page param" do
+          context "equal to \"all\"" do
+            it "assigns all courses" do
+              get :index, page: 1, per_page: "all"
+              expect(assigns[:course_infos].length).to eq(26)
+            end
+          end
+
+          context "equal to nil" do
+            it "assigns 25 courses per page" do
+              get :index, page: 1, per_page: nil
+              expect(assigns[:course_infos].length).to eq(25)
+
+              get :index, page: 2, per_page: nil
+              expect(assigns[:course_infos].length).to eq(1)
+            end
+          end
         end
       end
 
       context "when there are no results" do
-        it "doesn't blow up" do
+        it "returns http status OK" do
           expect(CourseProfile::Models::Profile.count).to eq(0)
 
           get :index, page: 1

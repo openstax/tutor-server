@@ -97,7 +97,7 @@ $(document).ready(function() {
 
     var setPerPage = function(val){
       var paramsObj = locationSearchInJSON();
-      paramsObj.per_page = Number(val);
+      paramsObj.per_page = Number(val) || val;
       window.location.search = decodeURIComponent($.param(paramsObj));
     }
 
