@@ -7,11 +7,15 @@ module Api
         #{json_schema(Api::V1::PracticeRepresenter, include: :writeable)}
       EOS
       def create
+        role = get_practice_role
+
+        OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
+
         practice = OpenStruct.new
         consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
         result = ResetPracticeWidget.call(
-          role: get_practice_role, exercise_source: :biglearn,
+          role: role, exercise_source: :biglearn,
           page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
         if result.errors.any?
@@ -32,10 +36,12 @@ module Api
                     respond_with(task, represent_with: Api::V1::TaskRepresenter)
       end
 
-      private
+      protected
+
       def get_practice_role
+        @course = Entity::Course.find(params[:id])
         result = ChooseCourseRole.call(user: current_human_user,
-                                       course: Entity::Course.find(params[:id]),
+                                       course: @course,
                                        allowed_role_type: :student,
                                        role_id: params[:role_id])
         if result.errors.any?
