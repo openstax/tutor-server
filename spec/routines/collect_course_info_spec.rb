@@ -27,6 +27,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          starts_at: be_within(1e-6).of(course_1.starts_at),
+          ends_at: be_within(1e-6).of(course_1.ends_at),
+          active?: course_1.active?,
           time_zone: course_1.profile.time_zone.name,
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
@@ -59,6 +62,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          starts_at: be_within(1e-6).of(course_1.starts_at),
+          ends_at: be_within(1e-6).of(course_1.ends_at),
+          active?: course_1.active?,
           time_zone: course_1.profile.time_zone.name,
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
@@ -74,6 +80,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
         {
           id: course_2.id,
           name: course_2.profile.name,
+          starts_at: be_within(1e-6).of(course_2.starts_at),
+          ends_at: be_within(1e-6).of(course_2.ends_at),
+          active?: course_2.active?,
           time_zone: course_2.profile.time_zone.name,
           default_open_time: course_2.profile.default_open_time,
           default_due_time: course_2.profile.default_due_time,
@@ -100,6 +109,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
+            starts_at: be_within(1e-6).of(course_1.starts_at),
+            ends_at: be_within(1e-6).of(course_1.ends_at),
+            active?: course_1.active?,
             time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
@@ -119,6 +131,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
+            starts_at: be_within(1e-6).of(course_1.starts_at),
+            ends_at: be_within(1e-6).of(course_1.ends_at),
+            active?: course_1.active?,
             time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
@@ -146,6 +161,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
+            starts_at: be_within(1e-6).of(course_1.starts_at),
+            ends_at: be_within(1e-6).of(course_1.ends_at),
+            active?: course_1.active?,
             time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
@@ -165,6 +183,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
+            starts_at: be_within(1e-6).of(course_1.starts_at),
+            ends_at: be_within(1e-6).of(course_1.ends_at),
+            active?: course_1.active?,
             time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
@@ -210,6 +231,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          starts_at: be_within(1e-6).of(course_1.starts_at),
+          ends_at: be_within(1e-6).of(course_1.ends_at),
+          active?: course_1.active?,
           time_zone: course_1.profile.time_zone.name,
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
@@ -223,6 +247,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
         {
           id: course_2.id,
           name: course_2.profile.name,
+          starts_at: be_within(1e-6).of(course_2.starts_at),
+          ends_at: be_within(1e-6).of(course_2.ends_at),
+          active?: course_2.active?,
           time_zone: course_2.profile.time_zone.name,
           default_open_time: course_2.profile.default_open_time,
           default_due_time: course_2.profile.default_due_time,

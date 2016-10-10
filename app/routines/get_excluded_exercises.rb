@@ -193,7 +193,7 @@ class GetExcludedExercises
     end
 
     def current_time
-      @current_time ||= Time.current.strftime("%Y%m%dT%H%M%SZ")
+      @current_time ||= Time.now.utc.strftime("%Y%m%dT%H%M%SZ")
     end
 
     def filename_by_course

@@ -3,7 +3,7 @@ require 'webmock/rspec'
 
 RSpec.describe Admin::StatsController, type: :controller do
   context "with an admin signed in" do
-    let(:admin) { FactoryGirl.create(:user, :administrator) }
+    let(:admin)   { FactoryGirl.create(:user, :administrator) }
 
     before(:each) { controller.sign_in admin }
 
