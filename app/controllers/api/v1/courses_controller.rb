@@ -1,6 +1,6 @@
 class Api::V1::CoursesController < Api::V1::ApiController
 
-  before_filter :get_course, only: [:roster, :show, :update, :tasks, :dashboard, :cc_dashboard]
+  before_filter :get_course, only: [:roster, :show, :update, :tasks, :clone, :dashboard, :cc_dashboard]
 
   resource_description do
     api_versions "v1"
@@ -36,15 +36,15 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
 
-  api :PUT, '/clone', 'Clones a course'
+  api :POST, '/clone', 'Clones a course'
   description <<-EOS
     Creates a copy of a course
-    #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
+    #{json_schema(Api::V1::CourseRepresenter, include: :writable)}
   EOS
   def clone
-    OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, Entity::Course)
-    course_info = CloneCourse[teacher: current_human_user, course: @course]
-    respond_with course_info, represent_with: Api::V1::CoursesRepresenter
+    OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, @course)
+    course_info = CloneCourse[teacher: current_human_user, course: @course, **consumed(Api::V1::CourseRepresenter)]
+    respond_with course_info, represent_with: Api::V1::CourseRepresenter, location: nil
   end
 
   api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
