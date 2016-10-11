@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-describe CloneCourse, type: :routine do
+RSpec.describe CloneCourse, type: :routine do
 
-  let(:source)  { CreateCourse[name: 'source'] }
-  let(:user)    { FactoryGirl.create(:user) }
+  let(:course) { FactoryGirl.create :entity_course }
+  let(:user)   { FactoryGirl.create :user }
 
-  it "creates a copy of a course" do
+  it 'creates a copy of a course' do
 
-    result = CloneCourse.call(course: source, teacher: user)
+    result = described_class.call(course: course, teacher_user: user)
 
     expect(result.errors).to be_empty
 
@@ -15,9 +15,8 @@ describe CloneCourse, type: :routine do
 
     expect(course).to be_a Entity::Course
     expect(course.course_assistants.count).to eq 4
-    expect(UserIsCourseTeacher[user: user, course: course]).to be_truthy
+    expect(UserIsCourseTeacher[user: user, course: course]).to eq true
 
   end
-
 
 end

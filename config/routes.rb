@@ -80,12 +80,10 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :courses, only: [:show, :update] do
+    resources :courses, only: [:create, :show, :update] do
       member do
         get 'dashboard(/role/:role_id)', action: :dashboard
         get 'cc/dashboard(/role/:role_id)', action: :cc_dashboard
-        get 'plans'
-        get 'tasks'
         get 'roster'
         post 'clone'
 

@@ -11,10 +11,10 @@ ActionController::Base.class_exec do
 
   protected
 
-  def consumed(representer)
-    OpenStruct.new({}).tap{|hash|
+  def consumed(representer, **attributes)
+    OpenStruct.new(attributes).tap do |hash|
       consume!(hash, represent_with: representer)
-    }.marshal_dump
+    end.marshal_dump
   end
 
   def load_time

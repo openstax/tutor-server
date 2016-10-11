@@ -72,9 +72,8 @@ module Api::V1
     property :offering_id,
              type: String,
              readable: true,
-             writeable: false,
-             if: ->(*) { respond_to?(:offering) and offering },
-             getter: ->(*) { offering.id },
+             writeable: ->(*) { new_record? },
+             getter: ->(*) { offering.try!(:id) },
              schema_info: {
                description: "The ID of the course's offering, if available."
              }
