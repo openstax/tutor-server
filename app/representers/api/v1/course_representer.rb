@@ -92,6 +92,16 @@ module Api::V1
                description: "The UUID of the book for the course's content ecosystem, if available."
              }
 
+    property :offering_id,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: ->(*) { respond_to?(:offering) and offering },
+             getter: ->(*) { offering.id },
+             schema_info: {
+               description: "The ID of the course's offering, if available."
+             }
+
     property :book_pdf_url,
              type: String,
              readable: true,
