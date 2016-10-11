@@ -28,7 +28,7 @@ RSpec.describe Api::V1::CoursesController, type: :routing, api: true, version: :
 
   context '/api/courses/:course_id/clone' do
     it 'routes to #clone' do
-      expect(get '/api/courses/42/clone').to(
+      expect(post '/api/courses/42/clone').to(
         route_to('api/v1/courses#clone', format: 'json', id: '42')
       )
     end
