@@ -192,12 +192,16 @@ class GetExcludedExercises
       File.join EE_STATS_FOLDER, filename_by_exercise
     end
 
+    def current_time
+      @current_time ||= Time.current.strftime("%Y%m%dT%H%M%SZ")
+    end
+
     def filename_by_course
-      "excluded_exercises_stats_by_course_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+      "excluded_exercises_stats_by_course_#{current_time}.csv"
     end
 
     def filename_by_exercise
-      "excluded_exercises_stats_by_exercise_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+      "excluded_exercises_stats_by_exercise_#{current_time}.csv"
     end
 
     def filepath_by_course
