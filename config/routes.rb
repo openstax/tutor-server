@@ -87,7 +87,7 @@ Rails.application.routes.draw do
         get 'plans'
         get 'tasks'
         get 'roster'
-        put 'clone'
+        post 'clone'
 
         scope :performance, controller: :performance_reports do
           get '(/role/:role_id)', action: :index

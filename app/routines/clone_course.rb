@@ -14,9 +14,9 @@ class CloneCourse
 
   protected
 
-  def exec(teacher: nil, course: nil)
+  def exec(teacher: nil, course: nil, name: course.name)
 
-    run(:create_course, name: course.name, appearance_code: course.appearance_code,
+    run(:create_course, name: name, appearance_code: course.appearance_code,
         school: course.profile.school, catalog_offering: course.profile.offering,
         is_concept_coach: course.profile.is_concept_coach)
 
