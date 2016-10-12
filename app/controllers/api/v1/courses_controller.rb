@@ -33,6 +33,17 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
+    required_attributes = [:name]
+
+    required_attributes.each do |attr_sym|
+      next if attributes.has_key?(attr_sym)
+
+      render_api_errors(
+        {code: :missing_attribute, message: "The #{attr_sym} attribute must be provided"}
+      )
+      return
+    end
+
     course = CreateCourse[attributes]
 
     respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil

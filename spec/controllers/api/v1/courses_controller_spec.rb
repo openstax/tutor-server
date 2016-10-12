@@ -145,11 +145,37 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'verified faculty' do
-      # TODO
-      before {}
+      let(:expected_response) do
+        {
+          id: a_kind_of(String),
+          default_due_time: '07:00',
+          default_open_time: '00:01',
+          is_college: false,
+          is_concept_coach: false,
+          name: 'A Course',
+          periods: [],
+          students: [],
+          time_zone: 'Central Time (US & Canada)'
+        }
+      end
 
-      xit 'creates a new course for the faculty' do
+      before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
+      it 'creates a new course for the faculty if a name is specified' do
+        expect{ api_post :create, user_1_token, raw_post_data: { name: 'A Course' }.to_json }.to(
+          change{ Entity::Course.count }.by(1)
+        )
+        expect(response).to have_http_status :success
+        expect(response.body_as_hash).to match expected_response
+      end
+
+      it 'returns an error if a name is not specified' do
+        expect{ api_post :create, user_1_token }.not_to change{ Entity::Course.count }
+        expect(response).to have_http_status :unprocessable_entity
+        expect(response.body_as_hash).to eq(
+          errors: [{code: "missing_attribute", message: "The name attribute must be provided"}],
+          status: 422
+        )
       end
     end
   end
