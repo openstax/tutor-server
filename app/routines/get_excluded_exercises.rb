@@ -193,11 +193,11 @@ class GetExcludedExercises
     end
 
     def filename_by_course
-      "excluded_exercises_stats_by_course_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+      "excluded_exercises_stats_by_course_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
     end
 
     def filename_by_exercise
-      "excluded_exercises_stats_by_exercise_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+      "excluded_exercises_stats_by_exercise_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
     end
 
     def filepath_by_course

@@ -5,7 +5,7 @@ module Admin
     end
 
     def create
-      filename = "export_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+      filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
       mapping = {
         "tutor" => Tasks::Models::Task.task_types.values_at(:homework, :reading, :chapter_practice,
                    :page_practice, :mixed_practice, :external, :event, :extra),

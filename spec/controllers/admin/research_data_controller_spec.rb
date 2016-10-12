@@ -24,7 +24,7 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
       specify "with invalid 'from' and 'to' parameters" do
         right_now = Time.current
         Timecop.freeze(right_now) do
-          filename = "export_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+          filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
           expect(ExportAndUploadResearchData).to receive(:perform_later)
                                                  .with( filename: filename, from: "1/1/1970", to: right_now.to_s, task_types: [*0..7] )
 
@@ -35,7 +35,7 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
       specify "with blank 'from' and 'to' parameters" do
         right_now = Time.current
         Timecop.freeze(right_now) do
-          filename = "export_#{Time.current.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+          filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
           expect(ExportAndUploadResearchData).to receive(:perform_later)
                                                  .with( filename: filename, from: "1/1/1970", to: right_now.to_s, task_types: [*0..7] )
 
