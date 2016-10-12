@@ -33,7 +33,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
-    required_attributes = [:name]
+    required_attributes = [:name, :is_concept_coach, :is_college, :starts_at, :ends_at]
 
     required_attributes.each do |attr_sym|
       next if attributes.has_key?(attr_sym)
