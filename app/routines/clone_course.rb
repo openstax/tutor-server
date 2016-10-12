@@ -16,11 +16,14 @@ class CloneCourse
 
     attrs = {
       name: course.profile.name,
+      is_college: course.profile.is_college,
+      is_concept_coach: course.profile.is_concept_coach,
+      starts_at: course.profile.starts_at,
+      ends_at: course.profile.ends_at,
       school: course.profile.school,
       catalog_offering: course.profile.offering,
       appearance_code: course.appearance_code,
-      is_college: course.profile.is_college,
-      is_concept_coach: course.profile.is_concept_coach
+      time_zone: course.profile.time_zone
     }.merge(attributes)
 
     run(:create_course, **attrs)
