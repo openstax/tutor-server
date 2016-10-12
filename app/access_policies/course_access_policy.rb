@@ -15,8 +15,7 @@ class CourseAccessPolicy
     when :export, :roster, :add_period, :update, :stats, :exercises, :clone
       UserIsCourseTeacher[user: requestor, course: course]
     when :create
-      # TODO: verified faculty
-      false
+      requestor.try!(:account).try!(:confirmed_faculty?)
     else
       false
     end
