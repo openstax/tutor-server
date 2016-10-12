@@ -35,14 +35,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     required_attributes = [:name, :is_concept_coach, :is_college, :starts_at, :ends_at]
 
-    required_attributes.each do |attr_sym|
-      next if attributes.has_key?(attr_sym)
-
-      render_api_errors(
-        {code: :missing_attribute, message: "The #{attr_sym} attribute must be provided"}
-      )
-      return
+    errors = required_attributes.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
+      {code: :missing_attribute, message: "The #{sym} attribute must be provided"}
     end
+
+    render_api_errors(errors) and return if errors.any?
 
     course = CreateCourse[attributes]
 

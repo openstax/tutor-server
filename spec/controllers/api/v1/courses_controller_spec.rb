@@ -139,15 +139,31 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   context '#create' do
+    let(:current_time) { Time.current }
+
+    let(:valid_body) do
+      {
+        name: 'A Course',
+        is_college: true,
+        is_concept_coach: false,
+        starts_at: current_time,
+        ends_at: current_time + 6.months,
+      }.to_json
+    end
+
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
-        expect{ api_post :create, nil }.to raise_error(SecurityTransgression)
+        expect{ api_post :create, nil, raw_post_data: valid_body }.to(
+          raise_error(SecurityTransgression)
+        )
       end
     end
 
     context 'normal user' do
       it 'raises SecurityTransgression' do
-        expect{ api_post :create, user_1_token }.to raise_error(SecurityTransgression)
+        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+          raise_error(SecurityTransgression)
+        )
       end
     end
 
@@ -157,8 +173,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: a_kind_of(String),
           default_due_time: '07:00',
           default_open_time: '00:01',
-          is_college: false,
+          is_college: true,
           is_concept_coach: false,
+          starts_at: current_time,
+          ends_at: current_time + 6.months,
           name: 'A Course',
           periods: [],
           students: [],
@@ -169,20 +187,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
       it 'creates a new course for the faculty if a name is specified' do
-        expect{ api_post :create, user_1_token, raw_post_data: { name: 'A Course' }.to_json }.to(
+        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
           change{ Entity::Course.count }.by(1)
         )
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to match expected_response
       end
 
-      it 'returns an error if a name is not specified' do
+      it 'returns errors if required attributes are not specified' do
         expect{ api_post :create, user_1_token }.not_to change{ Entity::Course.count }
         expect(response).to have_http_status :unprocessable_entity
-        expect(response.body_as_hash).to eq(
-          errors: [{code: "missing_attribute", message: "The name attribute must be provided"}],
-          status: 422
-        )
+        expect(response.body_as_hash[:status]).to eq 422
+        [:name, :is_concept_coach, :is_college, :starts_at, :ends_at].each do |required_attr|
+          expect(response.body_as_hash[:errors]).to include(
+            {code: "missing_attribute", message: "The #{required_attr} attribute must be provided"}
+          )
+        end
       end
     end
   end
@@ -1132,6 +1152,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           default_open_time: course.profile.default_open_time,
           is_college: course.profile.is_college,
           is_concept_coach: course.profile.is_concept_coach,
+          starts_at: DateTimeUtilities.to_api_s(course.profile.starts_at),
+          ends_at: DateTimeUtilities.to_api_s(course.profile.ends_at),
+          is_active: course.profile.active?,
           name: course.profile.name,
           periods: [],
           students: [],
