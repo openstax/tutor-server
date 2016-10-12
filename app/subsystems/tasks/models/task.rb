@@ -251,7 +251,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
       completed_exercise_steps_count - completed_on_time_exercise_steps_count
     self.completed_accepted_late_steps_count =
       completed_steps_count - completed_on_time_steps_count
-    self.accepted_late_at = Time.now
+    self.accepted_late_at = Time.current
   end
 
   def reject_late_work

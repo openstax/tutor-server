@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Login with explicit return_to", type: :request do
+RSpec.describe "Login with explicit return_to", type: :request do
   let(:user)        { FactoryGirl.create(:user) }
 
   good_return_tos = %w(http://www.cnx.org?blah http://localhost:3001 http://openstax.org)

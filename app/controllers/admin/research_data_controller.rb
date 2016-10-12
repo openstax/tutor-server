@@ -25,7 +25,7 @@ module Admin
       }
 
       from_date = params[:export_research_data][:from] || "1/1/1970"
-      to_date = params[:export_research_data][:to] || Time.now.to_s
+      to_date = params[:export_research_data][:to] || Time.current.to_s
       ExportAndUploadResearchData.perform_later(filename: filename, from: from_date, to: to_date, task_types: task_types)
       redirect_to admin_research_data_path,
                   notice: "#{ExportAndUploadResearchData::RESEARCH_FOLDER}/#{filename} should be available in a few minutes in ownCloud (does not refresh automatically)"

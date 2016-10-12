@@ -4,7 +4,7 @@ require 'database_cleaner'
 require 'support/biglearn_real_client_vcr_helper'
 
 module OpenStax::Biglearn
-  RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
+  describe V1::RealClient, type: :external, vcr: VCR_OPTS do
 
     # If you need to regenerate some cassettes and biglearn-dev is giving you errors,
     # regenerate the OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette

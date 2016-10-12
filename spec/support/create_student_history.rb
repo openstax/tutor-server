@@ -3,7 +3,6 @@ class CreateStudentHistory
 
   uses_routine AddEcosystemToCourse
   uses_routine AddUserAsPeriodStudent
-  uses_routine CreatePeriod
   uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
   uses_routine FetchAndImportBookAndCreateEcosystem,
                translations: { outputs: { type: :verbatim } }
@@ -35,15 +34,13 @@ class CreateStudentHistory
 
   def setup_student_role
     puts "=== Creating a course period ==="
-    run(:create_period, course: course)
+    outputs.period = FactoryGirl.create :course_membership_period, course: course
 
     puts "=== Creating a student ==="
     student = FactoryGirl.create(:user)
 
     puts "=== Add student to course ==="
-    run(:add_user_as_period_student, period: outputs.period, user: student)
-
-    Entity::Role.last
+    run(:add_user_as_period_student, period: outputs.period, user: student).outputs.role
   end
 
   def setup_course_book(course, book_id)

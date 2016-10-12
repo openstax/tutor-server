@@ -2,8 +2,7 @@ class Admin::CoursesController < Admin::BaseController
   include Manager::CourseDetails
   include Lev::HandleWith
 
-  before_action :get_schools, only: [:new, :edit]
-  before_action :get_catalog_offerings, only: [:new, :edit]
+  before_action :get_schools, :get_catalog_offerings, only: [:new, :edit]
 
   def index
     @query = params[:query]
@@ -31,14 +30,21 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def new
-    @profile = CourseProfile::Models::Profile.new
+    get_new_course_profile
   end
 
   def create
     handle_with(Admin::CoursesCreate,
-                complete: ->(*) {
-                  flash[:notice] = 'The course has been created.'
+                success: ->(*) {
+                  flash.notice = 'The course has been created.'
                   redirect_to admin_courses_path
+                },
+                failure: ->(*) {
+                  flash[:error] = @handler_result.errors.full_messages
+                  @profile = @handler_result.outputs.profile || get_new_course_profile
+                  get_schools
+                  get_catalog_offerings
+                  render :new
                 })
   end
 
@@ -170,15 +176,26 @@ class Admin::CoursesController < Admin::BaseController
 
   private
 
+  def get_new_course_profile
+    @profile = CourseProfile::Models::Profile.new(
+      is_concept_coach: false, is_college: true,
+      starts_at: Time.current, ends_at: Time.current + 6.months
+    )
+  end
+
   def course_params
-    { id: params[:id], course: params.require(:course)
-                                     .permit(:name,
+    {
+      id: params[:id],
+      course: params.require(:course).permit(:name,
+                                             :catalog_offering_id,
                                              :appearance_code,
                                              :school_district_school_id,
-                                             :catalog_offering_id,
                                              :is_concept_coach,
                                              :is_college,
-                                             teacher_ids: []) }
+                                             :starts_at,
+                                             :ends_at,
+                                             teacher_ids: [])
+    }
   end
 
   def get_schools

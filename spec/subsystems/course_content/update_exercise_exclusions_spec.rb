@@ -3,8 +3,8 @@ require 'vcr_helper'
 
 RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
 
-  let(:course)         { CreateCourse[name: 'Physics 101'] }
-  let(:period)         { CreatePeriod[course: course] }
+  let(:course)         { FactoryGirl.create :entity_course }
+  let(:period)         { FactoryGirl.create :course_membership_period, course: course }
 
   context 'with a real book' do
     before(:all) do

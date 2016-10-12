@@ -1,7 +1,7 @@
 class CreateCourse
   lev_routine express_output: :course
 
-  uses_routine CourseProfile::Routines::CreateCourseProfile,
+  uses_routine CourseProfile::CreateCourseProfile,
                translations: { outputs: { type: :verbatim } },
                as: :create_course_profile
 
@@ -11,23 +11,23 @@ class CreateCourse
   uses_routine Tasks::CreateCourseAssistants,
                as: :create_course_assistants
 
-  def exec(name:, appearance_code: nil, school: nil,
-           catalog_offering: nil, is_concept_coach: false, is_college: false,
-           time_zone: nil)
+  def exec(name:, catalog_offering: nil, appearance_code: nil, school: nil,
+           is_concept_coach:, is_college:, time_zone: nil, starts_at:, ends_at:)
     # TODO eventually, making a course part of a school should be done independently
-    # with separate admin controller interfaces and all work done in the SchoolDistrict
-    # SS
+    # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
     outputs[:course] = Entity::Course.create!
     run(:create_course_profile,
-        name: name,
-        appearance_code: appearance_code,
         course: outputs.course,
-        catalog_offering_id: catalog_offering.try(:id),
-        school_district_school_id: school.try(:id),
+        name: name,
+        offering: catalog_offering.try!(:to_model),
+        appearance_code: appearance_code,
+        school: school,
         is_concept_coach: is_concept_coach,
         is_college: is_college,
-        time_zone: time_zone)
+        time_zone: time_zone,
+        starts_at: starts_at,
+        ends_at: ends_at)
 
     run(:create_course_assistants, course: outputs.course)
 

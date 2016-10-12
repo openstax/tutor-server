@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Teachers' do
-  let(:course) { CreateCourse[name: 'Access me'] }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:course) { FactoryGirl.create :entity_course }
+  let(:user)   { FactoryGirl.create(:user) }
 
   describe 'joining their courses' do
     context 'unauthenticated' do

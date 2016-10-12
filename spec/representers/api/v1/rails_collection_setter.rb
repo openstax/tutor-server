@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::RailsCollectionSetter, type: :representer do
+RSpec.describe Api::V1::RailsCollectionSetter, type: :representer do
   let(:represented) { Tasks::Models::TaskPlan.new }
   let(:input)       { 3.times.map{ Tasks::Models::TaskingPlan.new } }
   let(:binding)     { OpenStruct.new getter: 'tasking_plans' }

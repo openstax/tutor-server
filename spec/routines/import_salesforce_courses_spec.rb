@@ -6,7 +6,9 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   let(:cs_class)  { Salesforce::Remote::ClassSize }
 
   let(:target_term_year) { '2015 - 16 Spring'}
-  before(:each) { allow(Settings::Salesforce).to receive(:term_years_to_import) { target_term_year } }
+  before(:each) do
+    allow(Settings::Salesforce).to receive(:term_years_to_import) { target_term_year }
+  end
 
   it 'restricts to Denver University when asked to not run on real data' do
     allow(osa_class).to receive(:where).and_return([])
@@ -29,7 +31,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     ImportSalesforceCourses.call(include_real_salesforce_data: false)
   end
 
-  it 'restricts to Denver University when told to include real data but global secrets flag false' do
+  it 'restricts to Denver University when told to include real data but secrets flag false' do
     allow(osa_class).to receive(:where).and_return([])
     allow(cs_class).to receive(:where).and_return([])
     allow(Rails.application.secrets.salesforce).to(
@@ -123,7 +125,8 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     disable_sfdc_client
 
-    offering = FactoryGirl.create(:catalog_offering,
+    offering = FactoryGirl.create(
+      :catalog_offering,
       salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
     )
 
@@ -136,16 +139,20 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     # undefined method `something here' for nil:NilClass
     stub_candidates(osa: [sf_record, nil])
 
-    expect {
-      ImportSalesforceCourses.call rescue NoMethodError
-    }.to change{Entity::Course.count}.by(1)
+    expect do
+      begin
+        ImportSalesforceCourses.call
+      rescue NoMethodError
+      end
+    end.to change{Entity::Course.count}.by(1)
   end
 
   it 'rolls back creation if there is a problem' do
     # This is checking that each candidate is handled within a transaction
     disable_sfdc_client
 
-    offering = FactoryGirl.create(:catalog_offering,
+    offering = FactoryGirl.create(
+      :catalog_offering,
       salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
     )
 
@@ -170,8 +177,12 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     end
 
     it 'handles multiple' do
-      allow(Settings::Salesforce).to receive(:term_years_to_import) { ' 2015 - 16 Spring, 2016 - 17 Fall ' }
-      expect(described_class.new.candidate_term_years_array).to eq ['2015 - 16 Spring', '2016 - 17 Fall']
+      allow(Settings::Salesforce).to(
+        receive(:term_years_to_import) { ' 2015 - 16 Spring, 2016 - 17 Fall ' }
+      )
+      expect(described_class.new.candidate_term_years_array).to(
+        eq ['2015 - 16 Spring', '2016 - 17 Fall']
+      )
     end
   end
 

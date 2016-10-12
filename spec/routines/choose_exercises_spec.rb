@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ChooseExercises, type: :routine do
+RSpec.describe ChooseExercises, type: :routine do
 
   let(:exercises)          { 5.times.map{ FactoryGirl.create :content_exercise } }
   let(:worked_exercises)   { exercises.first(3) }

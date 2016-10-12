@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TaskPlansController, type: :routing, api: true, version: :v1 do
+RSpec.describe Api::V1::TaskPlansController, type: :routing, api: true, version: :v1 do
 
   context 'DELETE /api/task_plans/:id' do
     it "routes to #destroy" do

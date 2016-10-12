@@ -19,7 +19,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
       Dir.mktmpdir do |dir|
         filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
           # stringify formulas otherwise formulas are read as nil by roo
-          described_class.call(course_name: "Physics 101",
+          described_class.call(course_name: 'Physics 101',
                                report: report_1,
                                filename: "#{dir}/testfile",
                                options: {stringify_formulas: true})
@@ -81,7 +81,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
     before(:context) do
       Dir.mktmpdir do |dir|
         filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: "Physics 101",
+          described_class.call(course_name: 'Physics 101',
                                report: report_with_empty_period,
                                filename: "#{dir}/testfile",
                                options: {stringify_formulas: false})
@@ -106,7 +106,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
   context 'when a period has no data' do
     before(:context) do
       Dir.mktmpdir do |dir|
-        filepath = described_class.call(course_name: "Physics 101",
+        filepath = described_class.call(course_name: 'Physics 101',
                                         report: report_with_empty_data,
                                         filename: "#{dir}/testfile",
                                         options: {stringify_formulas: false})
@@ -325,7 +325,3 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
   end
 
 end
-
-
-
-

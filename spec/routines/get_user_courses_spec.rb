@@ -5,8 +5,8 @@ RSpec.describe GetUserCourses, type: :routine do
   it 'gets courses, not duped' do
     user = FactoryGirl.create(:user)
 
-    course = Entity::Course.create!
-    period = CreatePeriod[course: course]
+    course = FactoryGirl.create :entity_course
+    period = FactoryGirl.create :course_membership_period, course: course
 
     AddUserAsCourseTeacher[user: user, course: course]
     AddUserAsPeriodStudent[user: user, period: period]
@@ -19,11 +19,11 @@ RSpec.describe GetUserCourses, type: :routine do
   it 'gets multiple courses for a user' do
     user = FactoryGirl.create(:user)
 
-    course_1 = Entity::Course.create!
-    course_1_period = CreatePeriod[course: course_1]
-    course_2 = Entity::Course.create!
-    course_3 = Entity::Course.create!
-    course_3_period = CreatePeriod[course: course_3]
+    course_1 = FactoryGirl.create :entity_course
+    course_1_period = FactoryGirl.create :course_membership_period, course: course_1
+    course_2 = FactoryGirl.create :entity_course
+    course_3 = FactoryGirl.create :entity_course
+    course_3_period = FactoryGirl.create :course_membership_period, course: course_3
 
     AddUserAsCourseTeacher[user: user, course: course_2]
     AddUserAsPeriodStudent[user: user, period: course_3_period]
@@ -37,11 +37,11 @@ RSpec.describe GetUserCourses, type: :routine do
   it 'does not return courses where the user is an inactive student' do
     user = FactoryGirl.create(:user)
 
-    course_1 = Entity::Course.create!
-    course_1_period = CreatePeriod[course: course_1]
-    course_2 = Entity::Course.create!
-    course_3 = Entity::Course.create!
-    course_3_period = CreatePeriod[course: course_3]
+    course_1 = FactoryGirl.create :entity_course
+    course_1_period = FactoryGirl.create :course_membership_period, course: course_1
+    course_2 = FactoryGirl.create :entity_course
+    course_3 = FactoryGirl.create :entity_course
+    course_3_period = FactoryGirl.create :course_membership_period, course: course_3
 
     AddUserAsPeriodStudent[user: user, period: course_1_period]
     AddUserAsCourseTeacher[user: user, course: course_2]

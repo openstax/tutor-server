@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::GetRedirectUrl, type: :routine do
-  let(:course) { CreateCourse[name: 'Test Task Redirection'] }
-  let(:period) { CreatePeriod[course: course, name: 'Period I'] }
+  let(:course) { FactoryGirl.create :entity_course }
+  let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
   let(:task_plan_gid) { task_plan.to_global_id.to_s }

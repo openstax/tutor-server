@@ -5,7 +5,7 @@ RSpec.describe Tasks::GetConceptCoachTask, type: :routine do
   let!(:concept_coach_task) { FactoryGirl.create :tasks_concept_coach_task }
 
   let(:role)                { concept_coach_task.role }
-  let(:another_role)        { Entity::Role.create! }
+  let(:another_role)        { FactoryGirl.create :entity_role }
 
   let(:page)                { Content::Page.new(strategy: concept_coach_task.page.wrap) }
   let(:another_page)        do

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
-describe CourseMembership::ProcessEnrollmentChange, type: :routine do
+RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
   let(:course_1)          { FactoryGirl.create :entity_course }
   let(:course_2)          { FactoryGirl.create :entity_course }
   let(:course_3)          { FactoryGirl.create :entity_course }
 
-  let(:period_1)          { CreatePeriod[course: course_1] }
-  let(:period_2)          { CreatePeriod[course: course_1] }
-  let(:period_3)          { CreatePeriod[course: course_2] }
-  let(:period_4)          { CreatePeriod[course: course_3] }
+  let(:period_1)          { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_2)          { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_3)          { FactoryGirl.create :course_membership_period, course: course_2 }
+  let(:period_4)          { FactoryGirl.create :course_membership_period, course: course_3 }
 
   let(:book)              { FactoryGirl.create :content_book }
 

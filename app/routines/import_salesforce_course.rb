@@ -51,6 +51,8 @@ class ImportSalesforceCourse
     course = run(
       :create_course,
       name: candidate.course_name,
+      starts_at: Time.current,          # TODO: fix
+      ends_at: Time.current + 6.months, # TODO: fix
       school: school,
       catalog_offering: offering,
       is_concept_coach: candidate.is_concept_coach?,

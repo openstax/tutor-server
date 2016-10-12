@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-describe MoveStudent, type: :routine do
+RSpec.describe MoveStudent, type: :routine do
   context "when moving an existing student role to another period in the same course" do
     it "succeeds" do
-      role = Entity::Role.create!
-      course = Entity::Course.create!
-      period_1 = CreatePeriod[course: course]
-      period_2 = CreatePeriod[course: course]
+      role = FactoryGirl.create :entity_role
+      course = FactoryGirl.create :entity_course
+      period_1 = FactoryGirl.create :course_membership_period, course: course
+      period_2 = FactoryGirl.create :course_membership_period, course: course
       student = CourseMembership::AddStudent[period: period_1, role: role]
 
       result = nil
@@ -30,11 +30,11 @@ describe MoveStudent, type: :routine do
 
   context "when adding an existing student role to another period in a different course" do
     it "fails" do
-      role = Entity::Role.create!
-      course_1 = Entity::Course.create!
-      course_2 = Entity::Course.create!
-      period_1 = CreatePeriod[course: course_1]
-      period_2 = CreatePeriod[course: course_2]
+      role = FactoryGirl.create :entity_role
+      course_1 = FactoryGirl.create :entity_course
+      course_2 = FactoryGirl.create :entity_course
+      period_1 = FactoryGirl.create :course_membership_period, course: course_1
+      period_2 = FactoryGirl.create :course_membership_period, course: course_2
       student = CourseMembership::AddStudent[period: period_1, role: role]
 
       result = nil

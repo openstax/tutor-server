@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
+RSpec.describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
   let(:content_page_1) { FactoryGirl.create :content_page }
   let(:content_page_2) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
   let(:content_page_3) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }

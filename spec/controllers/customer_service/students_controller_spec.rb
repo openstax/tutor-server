@@ -1,35 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::StudentsController do
-  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryGirl.create :user, :customer_service }
 
-  before { controller.sign_in(customer_service) }
+  before                 { controller.sign_in customer_service }
 
   describe 'GET #index' do
-    let(:course) { CreateCourse[name: 'Physics'] }
-    let(:course_2) { CreateCourse[name: 'Biology'] }
+    let(:course)         { FactoryGirl.create :entity_course, name: 'Physics' }
+    let(:course_2)       { FactoryGirl.create :entity_course }
 
-    let(:periods) { [
-      CreatePeriod[course: course],
-      CreatePeriod[course: course]
-    ] }
-    let(:periods_2) { [CreatePeriod[course: course_2]] }
+    let(:periods)        do
+      [FactoryGirl.create(:course_membership_period, course: course),
+       FactoryGirl.create(:course_membership_period, course: course)]
+    end
+    let(:periods_2)      { [FactoryGirl.create(:course_membership_period, course: course_2)] }
 
-    let(:user_1) { FactoryGirl.create(:user, username: 'benjamin') }
-    let(:user_2) { FactoryGirl.create(:user, username: 'nicolai') }
-    let(:user_3) { FactoryGirl.create(:user, username: 'freja') }
-    let(:user_4) { FactoryGirl.create(:user, username: 'oskar') }
+    let(:user_1)         { FactoryGirl.create(:user, username: 'benjamin') }
+    let(:user_2)         { FactoryGirl.create(:user, username: 'nicolai') }
+    let(:user_3)         { FactoryGirl.create(:user, username: 'freja') }
+    let(:user_4)         { FactoryGirl.create(:user, username: 'oskar') }
 
-    let!(:student_1) {
+    let!(:student_1)     {
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student
     }
-    let!(:student_2) {
+    let!(:student_2)     {
       AddUserAsPeriodStudent.call(user: user_2, period: periods[0]).outputs.student
     }
-    let!(:student_3) {
+    let!(:student_3)     {
       AddUserAsPeriodStudent.call(user: user_3, period: periods[1]).outputs.student
     }
-    let!(:student_4) {
+    let!(:student_4)     {
       AddUserAsPeriodStudent.call(user: user_4, period: periods_2[0]).outputs.student
     }
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Admin::CoursesController, type: :routing do
+RSpec.describe Admin::CoursesController, type: :routing do
 
   describe "DELETE /admin/courses/:course_id" do
     it "routes to #destroy" do

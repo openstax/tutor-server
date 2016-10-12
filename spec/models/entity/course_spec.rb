@@ -14,11 +14,14 @@ RSpec.describe Entity::Course, type: :model do
 
   it { is_expected.to have_many(:taskings) }
 
-  it { is_expected.to delegate_method(:name).to(:profile) }
-  it { is_expected.to delegate_method(:appearance_code).to(:profile) }
-  it { is_expected.to delegate_method(:is_concept_coach).to(:profile) }
-  it { is_expected.to delegate_method(:offering).to(:profile) }
-  it { is_expected.to delegate_method(:teach_token).to(:profile) }
+  [
+    :name, :offering, :appearance_code, :school,
+    :is_concept_coach, :is_college, :teach_token,
+    :starts_at, :ends_at, :active?,
+    :time_zone, :default_open_time, :default_due_time
+  ].each do |method_name|
+    it { is_expected.to delegate_method(method_name).to(:profile) }
+  end
 
   it 'knows if it is deletable' do
     course = FactoryGirl.create :entity_course

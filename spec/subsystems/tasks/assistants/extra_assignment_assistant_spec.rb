@@ -14,7 +14,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   end
 
   let(:course)           { FactoryGirl.create :entity_course }
-  let(:period)           { CreatePeriod[course: course] }
+  let(:period)           { FactoryGirl.create :course_membership_period, course: course }
 
   let(:ecosystem)        do
     VCR.use_cassette('Tasks_Assistants_ExtraAssignmentAssistant/with_book', VCR_OPTS) do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CourseMembership::InactivateStudent, type: :routine do
+RSpec.describe CourseMembership::InactivateStudent, type: :routine do
   let(:student)  { FactoryGirl.create(:course_membership_student) }
   let!(:course)  { student.course }
 

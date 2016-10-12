@@ -16,6 +16,29 @@ module Api::V1
              writeable: true,
              schema_info: { required: true }
 
+    property :starts_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true },
+             getter: ->(*) { DateTimeUtilities.to_api_s(starts_at) }
+
+    property :ends_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true },
+             getter: ->(*) { DateTimeUtilities.to_api_s(ends_at) }
+
+    property :active?,
+             as: :is_active,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true,
+               type: 'boolean'
+             }
+
     property :time_zone,
              type: String,
              readable: true,

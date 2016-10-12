@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe JsonSerialize, type: :lib do
+RSpec.describe JsonSerialize, type: :lib do
   context 'serializes and deserializes' do
     context 'single' do
       it 'hashes' do

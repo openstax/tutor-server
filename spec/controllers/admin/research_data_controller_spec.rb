@@ -22,7 +22,7 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
 
     context "assigns default dates" do
       specify "with invalid 'from' and 'to' parameters" do
-        right_now = Time.now
+        right_now = Time.current
         Timecop.freeze(right_now) do
           filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
           expect(ExportAndUploadResearchData).to receive(:perform_later)
@@ -33,7 +33,7 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
       end
 
       specify "with blank 'from' and 'to' parameters" do
-        right_now = Time.now
+        right_now = Time.current
         Timecop.freeze(right_now) do
           filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
           expect(ExportAndUploadResearchData).to receive(:perform_later)
