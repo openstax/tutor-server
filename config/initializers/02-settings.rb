@@ -19,7 +19,6 @@ Settings::Redis.store = Redis::Store.new(
   namespace: redis_secrets['namespaces']['settings']
 )
 
-
 Settings::Db.store.defaults[:course_appearance_codes] = {
     hs_physics:           'Physics',
     ap_biology:           'AP Biology',
