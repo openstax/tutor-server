@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'feature_js_helper'
 
-RSpec.describe 'Administration', js: true do
+RSpec.feature 'Administration', js: true do
   before do
     # Log in as admin
     admin = FactoryGirl.create(:user, :administrator)
