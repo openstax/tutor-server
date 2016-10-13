@@ -7,8 +7,14 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :term %>
-    <%= f.text_field :term, class: 'form-control' %>
+    <%= f.label :term, 'Term (do NOT use "Demo" in production)' %>
+    <%= term_select_options = CourseProfile::Models::Profile.terms.keys.map do |term|
+         term_string = term.to_s
+
+         [term_string.humanize, term_string.downcase]
+       end
+
+       f.select :term, term_select_options, {}, class: 'form-control' %>
   </div>
 
   <div class="form-group">
@@ -37,13 +43,15 @@
 
   <div class="form-group">
     <%= f.label :catalog_offering_id, 'Catalog Offering' %>
-    <%= f.select :catalog_offering_id,
-                 @catalog_offerings.map { |co|
-                   attrs = [co.salesforce_book_name, co.id,
-                            {'data-appearance_code' => co.appearance_code}]
-                   attrs.last.merge!('data-is_concept_coach' => 1) if co.is_concept_coach
-                   attrs
-                 },
+    <%= catalog_offering_select_options = @catalog_offerings.map do |co|
+          attrs = [co.salesforce_book_name, co.id,
+                   {'data-appearance_code' => co.appearance_code}]
+          attrs.last.merge!('data-is_concept_coach' => 1) if co.is_concept_coach
+          attrs
+        end
+
+        f.select :catalog_offering_id,
+                 catalog_offering_select_options,
                  { include_blank: true },
                  class: 'form-control' %>
   </div>
