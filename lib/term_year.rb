@@ -11,7 +11,7 @@ class TermYear
   }
 
   TERM_END_DATES = {
-    legacy: ->(year) { LEGACY_TERM_ENDS_AT },
+    legacy: ->(year) { LEGACY_TERM_ENDS_AT    },
     demo:   ->(year) { DateTime.new(year + 1) }, # January 1st of next year
     spring: ->(year) { DateTime.new(year, 7 ) }, # July 1st of the year
     summer: ->(year) { DateTime.new(year, 9 ) }, # September 1st of the year

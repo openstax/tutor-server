@@ -4,7 +4,7 @@ RSpec.describe TermYear, type: :lib do
 
   TESTED_YEARS = 2015..2017
 
-  subject(:term_year) { TermYear.new(term, year) }
+  subject(:term_year) { described_class.new(term, year) }
 
   context 'legacy' do
     let(:term) { 'legacy'  }
