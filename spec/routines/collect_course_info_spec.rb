@@ -38,6 +38,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
           offering: course_1.profile.offering,
+          catalog_offering_id: course_1.profile.offering.id,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code
@@ -75,6 +76,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
           offering: course_1.profile.offering,
+          catalog_offering_id: course_1.profile.offering.id,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
@@ -95,6 +97,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           default_open_time: course_2.profile.default_open_time,
           default_due_time: course_2.profile.default_due_time,
           offering: course_2.profile.offering,
+          catalog_offering_id: course_2.profile.offering.id,
           school_name: course_2.profile.school_name,
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code,
@@ -126,6 +129,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
+            catalog_offering_id: course_1.profile.offering.id,
             school_name: course_1.profile.school_name,
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code
@@ -150,6 +154,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
+            catalog_offering_id: course_1.profile.offering.id,
             school_name: course_1.profile.school_name,
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code,
@@ -182,6 +187,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
+            catalog_offering_id: course_1.profile.offering.id,
             school_name: course_1.profile.school_name,
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code
@@ -206,6 +212,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
+            catalog_offering_id: course_1.profile.offering.id,
             school_name: course_1.profile.school_name,
             salesforce_book_name: course_1.profile.offering.salesforce_book_name,
             appearance_code: course_1.profile.offering.appearance_code,
@@ -256,6 +263,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
           offering: course_1.profile.offering,
+          catalog_offering_id: course_1.profile.offering.id,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code
@@ -274,6 +282,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           default_open_time: course_2.profile.default_open_time,
           default_due_time: course_2.profile.default_due_time,
           offering: course_2.profile.offering,
+          catalog_offering_id: course_2.profile.offering.id,
           school_name: course_2.profile.school_name,
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code

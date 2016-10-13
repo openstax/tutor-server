@@ -50,8 +50,11 @@ class CreateCourse
 
     run(:process_school_change, course_profile: outputs.profile)
 
-    run(:add_ecosystem, course: outputs.course, ecosystem: catalog_offering.ecosystem) \
-      if catalog_offering.present?
+    return if catalog_offering.blank?
+
+    ecosystem = Content::Ecosystem.new(strategy: catalog_offering.ecosystem.to_model.wrap)
+
+    run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
   end
 
 end

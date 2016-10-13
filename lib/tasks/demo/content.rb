@@ -150,14 +150,13 @@ class Demo::Content < Demo::Base
 
         log("Book import complete")
 
-        course = configure_course(content, ecosystem)
-        run(:add_ecosystem, ecosystem: ecosystem, course: course)
+        configure_course(content, ecosystem)
 
         index += 1
 
       end # book
 
-    end # thread
+    end # process
 
     wait_for_parallel_completion
 
