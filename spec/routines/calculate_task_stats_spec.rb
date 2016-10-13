@@ -540,6 +540,53 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       end
     end
 
+    context "if the students where dropped after working the assignment" do
+      it "does not show dropped students" do
+        tasks = @task_plan.tasks.to_a
+        first_task = tasks.first
+        first_task.task_steps.each do |ts|
+          ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+                         MarkTaskStepCompleted[task_step: ts]
+        end
+        stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+
+        expect(stats.first.mean_grade_percent).to eq 100
+        expect(stats.first.complete_count).to eq 1
+        expect(stats.first.partially_complete_count).to eq 0
+        expect(stats.first.trouble).to eq false
+
+        page = stats.first.current_pages[0]
+        expect(page.student_count).to eq 1
+        expect(page.incorrect_count).to eq 0
+        expect(page.correct_count).to eq 2
+        expect(page.trouble).to eq false
+
+        spaced_page = stats.first.spaced_pages[0]
+        expect(spaced_page).to eq page
+
+        first_task.taskings.first.role.student.destroy
+
+        stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+
+        expect(stats.first.mean_grade_percent).to be_nil
+        expect(stats.first.total_count).to eq @task_plan.tasks.length - 1
+        expect(stats.first.complete_count).to eq 0
+        expect(stats.first.partially_complete_count).to eq 0
+        expect(stats.first.trouble).to eq false
+
+        page = stats.first.current_pages[0]
+        expect(page.student_count).to eq 0
+        expect(page.incorrect_count).to eq 0
+        expect(page.correct_count).to eq 0
+        expect(page.trouble).to eq false
+
+        spaced_page = stats.first.spaced_pages[0]
+        expect(spaced_page).to eq page
+
+        expect(stats.second).to be_nil
+      end
+    end
+
   end
 
   def get_assistant(course:, task_plan_type:)
