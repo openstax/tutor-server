@@ -19,7 +19,6 @@ class Demo::Content < Demo::Base
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine UserIsCourseStudent, as: :is_student
   uses_routine UserIsCourseTeacher, as: :is_teacher
-  uses_routine CourseProfile::SetCatalogOffering, as: :set_offering
 
   protected
 
@@ -89,14 +88,18 @@ class Demo::Content < Demo::Base
     end
   end
 
-  def configure_course(content)
-     course = find_course(name: content.course_name) ||
-              create_course(name: content.course_name,
-                            starts_at: Time.current - 1.month,
-                            ends_at: Time.current + 100.years,
-                            appearance_code: content.appearance_code,
-                            is_concept_coach: content.is_concept_coach,
-                            is_college: content.is_college)
+  def configure_course(content, ecosystem, current_time = Time.current)
+    offering = find_or_create_catalog_offering(content, ecosystem)
+    course = find_course(name: content.course_name) ||
+             create_course(name: content.course_name,
+                           term: CourseProfile::Models::Profile.terms[:demo],
+                           year: current_time.year,
+                           starts_at: current_time - 1.month,
+                           ends_at: current_time + 10.years,
+                           catalog_offering: offering,
+                           appearance_code: content.appearance_code,
+                           is_concept_coach: content.is_concept_coach,
+                           is_college: content.is_college)
 
     log("Course: #{content.course_name}")
 
@@ -126,13 +129,7 @@ class Demo::Content < Demo::Base
     set_random_seed(random_seed)
 
     # Serial step
-    courses = []
-    ActiveRecord::Base.transaction do
-      setup_staff_user_accounts
-      Demo::ContentConfiguration[config].each do | content |
-        courses.push configure_course(content)
-      end
-    end
+    ActiveRecord::Base.transaction { setup_staff_user_accounts }
 
     # Parallel step
     in_parallel(Demo::ContentConfiguration[config], transaction: true) do |contents, idx_start|
@@ -142,9 +139,8 @@ class Demo::Content < Demo::Base
       contents.each do | content |
 
         book = content.cnx_book(version)
-        course = courses[index]
-        log("Starting book import for #{course.name} from #{
-            content.archive_url_base}#{book}")
+        log("Starting book import for #{content.course_name
+            } from #{content.archive_url_base}#{book}")
         ecosystem = run(
           :import_book,
           book_cnx_id: book,
@@ -153,10 +149,9 @@ class Demo::Content < Demo::Base
         ).outputs.ecosystem
 
         log("Book import complete")
-        run(:add_ecosystem, ecosystem: ecosystem, course: course)
 
-        offering = find_or_create_catalog_offering(content, ecosystem)
-        run(:set_offering, entity_course: course, catalog_offering: offering)
+        course = configure_course(content, ecosystem)
+        run(:add_ecosystem, ecosystem: ecosystem, course: course)
 
         index += 1
 

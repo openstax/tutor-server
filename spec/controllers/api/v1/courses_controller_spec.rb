@@ -65,20 +65,29 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash.first).to match({
           id: course.id.to_s,
           name: course.profile.name,
-          time_zone: course.time_zone.name,
+          term: course.profile.term,
+          year: course.profile.year,
           starts_at: a_kind_of(String),
           ends_at: a_kind_of(String),
-          default_open_time: '00:01',
-          default_due_time: '07:00',
-          ecosystem_id: ecosystem.id.to_s,
           is_active: true,
           is_college: true,
           is_concept_coach: false,
+          offering_id: course.profile.offering.id.to_s,
+          appearance_code: course.profile.offering.appearance_code,
+          salesforce_book_name: course.profile.offering.salesforce_book_name,
+          webview_url: course.profile.offering.webview_url,
+          book_pdf_url: course.profile.offering.pdf_url,
+          time_zone: course.time_zone.name,
+          default_open_time: '00:01',
+          default_due_time: '07:00',
+          ecosystem_id: ecosystem.id.to_s,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s,
                       name: zeroth_period.name,
                       enrollment_code: zeroth_period.enrollment_code,
-                      enrollment_url: a_string_matching(/enroll\/#{zeroth_period.enrollment_code_for_url}/),
+                      enrollment_url: a_string_matching(
+                        /enroll\/#{zeroth_period.enrollment_code_for_url}/
+                      ),
                       default_open_time: '00:01',
                       default_due_time: '07:00',
                       is_archived: true,
@@ -139,15 +148,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   context '#create' do
-    let(:current_time) { Time.current }
+    let(:term)             { CourseProfile::Models::Profile.terms.keys.sample }
+    let(:year)             { Time.current.year }
+    let(:catalog_offering) { FactoryGirl.create :catalog_offering }
 
     let(:valid_body) do
       {
         name: 'A Course',
+        term: term,
+        year: year,
         is_college: true,
-        is_concept_coach: false,
-        starts_at: current_time,
-        ends_at: current_time + 6.months,
+        offering_id: catalog_offering.id
       }.to_json
     end
 
@@ -171,16 +182,24 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let(:expected_response) do
         {
           id: a_kind_of(String),
-          default_due_time: '07:00',
-          default_open_time: '00:01',
+          name: 'A Course',
+          term: term,
+          year: year,
+          starts_at: a_kind_of(String),
+          ends_at: a_kind_of(String),
+          is_active: be_in([true, false]),
           is_college: true,
           is_concept_coach: false,
-          starts_at: current_time,
-          ends_at: current_time + 6.months,
-          name: 'A Course',
+          offering_id: catalog_offering.id.to_s,
+          appearance_code: catalog_offering.appearance_code,
+          salesforce_book_name: catalog_offering.salesforce_book_name,
+          webview_url: catalog_offering.webview_url,
+          book_pdf_url: catalog_offering.pdf_url,
+          time_zone: 'Central Time (US & Canada)',
+          default_due_time: '07:00',
+          default_open_time: '00:01',
           periods: [],
-          students: [],
-          time_zone: 'Central Time (US & Canada)'
+          students: []
         }
       end
 
@@ -198,7 +217,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect{ api_post :create, user_1_token }.not_to change{ Entity::Course.count }
         expect(response).to have_http_status :unprocessable_entity
         expect(response.body_as_hash[:status]).to eq 422
-        [:name, :is_concept_coach, :is_college, :starts_at, :ends_at].each do |required_attr|
+        [:name, :term, :year, :is_college, :catalog_offering_id].each do |required_attr|
           expect(response.body_as_hash[:errors]).to include(
             {code: "missing_attribute", message: "The #{required_attr} attribute must be provided"}
           )
@@ -1148,17 +1167,24 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let(:expected_response) do
         {
           id: a_kind_of(String),
-          default_due_time: course.profile.default_due_time,
-          default_open_time: course.profile.default_open_time,
+          term: course.profile.term,
+          year: course.profile.year + 1,
+          starts_at: a_kind_of(String),
+          ends_at: a_kind_of(String),
+          is_active: false,
           is_college: course.profile.is_college,
           is_concept_coach: course.profile.is_concept_coach,
-          starts_at: DateTimeUtilities.to_api_s(course.profile.starts_at),
-          ends_at: DateTimeUtilities.to_api_s(course.profile.ends_at),
-          is_active: course.profile.active?,
+          offering_id: course.profile.offering.id.to_s,
+          appearance_code: course.profile.offering.appearance_code,
+          salesforce_book_name: course.profile.offering.salesforce_book_name,
+          webview_url: course.profile.offering.webview_url,
+          book_pdf_url: course.profile.offering.pdf_url,
+          time_zone: course.profile.time_zone.name,
+          default_due_time: course.profile.default_due_time,
+          default_open_time: course.profile.default_open_time,
           name: course.profile.name,
           periods: [],
-          students: [],
-          time_zone: course.profile.time_zone.name
+          students: []
         }
       end
 

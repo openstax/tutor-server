@@ -12,6 +12,8 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
   it { is_expected.to validate_presence_of(:course) }
 
   it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:term) }
+  it { is_expected.to validate_presence_of(:year) }
   it { is_expected.to validate_presence_of(:starts_at) }
   it { is_expected.to validate_presence_of(:ends_at) }
 
@@ -52,6 +54,16 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
     profile.starts_at = Time.current.tomorrow
     profile.ends_at = Time.current.yesterday
 
+    expect(profile).not_to be_valid
+  end
+
+  it 'cannot be too far in the past or future' do
+    expect(profile).to be_valid
+
+    profile.year = CourseProfile::Models::Profile::MIN_YEAR - 1
+    expect(profile).not_to be_valid
+
+    profile.year = Time.current.year + CourseProfile::Models::Profile::MAX_FUTURE_YEARS + 1
     expect(profile).not_to be_valid
   end
 end

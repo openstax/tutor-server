@@ -6,10 +6,9 @@ FactoryGirl.define do
       is_college       nil
       starts_at        nil
       ends_at          nil
-      catalog_offering nil
+      offering         nil
       appearance_code  nil
       time_zone        nil
-      offering         nil
       school           nil
     end
 
@@ -32,6 +31,8 @@ FactoryGirl.define do
       starts_at        = evaluator.starts_at || Time.current
       ends_at          = evaluator.ends_at   || Time.current + 1.week
 
+      offering = evaluator.offering.try!(:to_model) || build(:catalog_offering)
+
       course.profile ||= build(:course_profile_profile,
                                course: course,
                                name: name,
@@ -39,7 +40,7 @@ FactoryGirl.define do
                                is_college: is_college,
                                starts_at: starts_at,
                                ends_at: ends_at,
-                               offering: evaluator.catalog_offering.try!(:to_model),
+                               offering: offering,
                                appearance_code: evaluator.appearance_code,
                                school: evaluator.school,
                                time_zone: evaluator.time_zone)

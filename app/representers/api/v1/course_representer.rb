@@ -16,19 +16,32 @@ module Api::V1
              writeable: true,
              schema_info: { required: true }
 
+    property :term,
+             type: String,
+             readable: true,
+             writeable: ->(*) { new_record? },
+             schema_info: { required: true }
+
+    property :year,
+             type: Integer,
+             readable: true,
+             writeable: ->(*) { new_record? },
+             schema_info: { required: true }
+
     property :starts_at,
              type: String,
              readable: true,
              writeable: false,
-             schema_info: { required: true },
-             getter: ->(*) { DateTimeUtilities.to_api_s(starts_at) }
+             getter: ->(*) { DateTimeUtilities.to_api_s(starts_at) },
+             schema_info: { required: true }
+
 
     property :ends_at,
              type: String,
              readable: true,
              writeable: false,
-             schema_info: { required: true },
-             getter: ->(*) { DateTimeUtilities.to_api_s(ends_at) }
+             getter: ->(*) { DateTimeUtilities.to_api_s(ends_at) },
+             schema_info: { required: true }
 
     property :active?,
              as: :is_active,
@@ -92,11 +105,11 @@ module Api::V1
                description: "The UUID of the book for the course's content ecosystem, if available."
              }
 
-    property :offering_id,
+    property :catalog_offering_id,
+             as: :offering_id,
              type: String,
              readable: true,
              writeable: ->(*) { new_record? },
-             getter: ->(*) { offering.try!(:id) },
              schema_info: {
                description: "The ID of the course's offering, if available."
              }

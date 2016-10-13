@@ -1,15 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe CreateCourse, type: :routine do
-  let(:starts_at)        { Time.current }
-  let(:ends_at)          { Time.current + 1.week }
+  let(:term)             { CourseProfile::Models::Profile.terms.keys.sample }
+  let(:year)             { Time.current.year }
   let(:is_college)       { true }
-  let(:is_concept_coach) { false }
+  let(:catalog_offering) { FactoryGirl.create :catalog_offering }
 
   it "creates a new course" do
     result = described_class.call(
-      name: 'Unnamed', starts_at: starts_at, ends_at: ends_at,
-      is_college: is_college, is_concept_coach: is_concept_coach
+      name: 'Unnamed',
+      term: term,
+      year: year,
+      is_college: is_college,
+      catalog_offering: catalog_offering
     )
     expect(result.errors).to be_empty
 
@@ -23,8 +26,11 @@ RSpec.describe CreateCourse, type: :routine do
     allow(SecureRandom).to receive(:hex) { 'abc123' }
 
     course = described_class.call(
-      name: 'Reg Code Course', starts_at: starts_at, ends_at: ends_at,
-      is_college: is_college, is_concept_coach: is_concept_coach
+      name: 'Reg Code Course',
+      term: term,
+      year: year,
+      is_college: is_college,
+      catalog_offering: catalog_offering
     ).outputs.course
 
     expect(course.teach_token).to eq('abc123')

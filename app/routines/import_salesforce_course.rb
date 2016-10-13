@@ -45,14 +45,22 @@ class ImportSalesforceCourse
       return
     end
 
+    term_year = candidate.term_year_object
+
+    if term_year.blank?
+      error!(candidate, "A term_year is required.")
+      return
+    end
+
     school = run(:get_school, name: candidate.school, district: nil).outputs.school ||
              run(:create_school, name: candidate.school).outputs.school
 
     course = run(
       :create_course,
       name: candidate.course_name,
-      starts_at: Time.current,          # TODO: fix
-      ends_at: Time.current + 6.months, # TODO: fix
+      term: term_year.term,
+      year: term_year.start_year,
+      starts_at: candidate.try(:course_start_date),
       school: school,
       catalog_offering: offering,
       is_concept_coach: candidate.is_concept_coach?,

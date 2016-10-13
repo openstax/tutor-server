@@ -7,6 +7,9 @@ RSpec.describe 'Administration', js: true do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
+    # Create a catalog offering for the new course
+    catalog_offering = FactoryGirl.create :catalog_offering
+
     # Create a user to add as a teacher
     FactoryGirl.create(
       :user_profile, username: 'imateacher', first_name: 'Ima',
@@ -18,6 +21,8 @@ RSpec.describe 'Administration', js: true do
     click_link 'Add Course'
 
     fill_in 'Name', with: 'A Course'
+    select catalog_offering.salesforce_book_name, from: 'Catalog Offering'
+
     click_button 'Save'
     # Edit the course
     click_link 'Edit'

@@ -11,10 +11,12 @@ ActionController::Base.class_exec do
 
   protected
 
-  def consumed(representer, **attributes)
-    OpenStruct.new(attributes).tap do |hash|
+  def consumed(representer, **options)
+    opts = { new_record?: true, persisted?: false }.merge(options)
+
+    OpenStruct.new(opts).tap do |hash|
       consume!(hash, represent_with: representer)
-    end.marshal_dump
+    end.marshal_dump.except(*opts.keys)
   end
 
   def load_time

@@ -33,7 +33,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
-    required_attributes = [:name, :is_concept_coach, :is_college, :starts_at, :ends_at]
+    required_attributes = [:name, :term, :year, :is_college, :catalog_offering_id]
 
     errors = required_attributes.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
       {code: :missing_attribute, message: "The #{sym} attribute must be provided"}
@@ -41,7 +41,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     render_api_errors(errors) and return if errors.any?
 
-    course = CreateCourse[attributes]
+    catalog_offering = Catalog::Models::Offering.find(attributes[:catalog_offering_id])
+
+    attributes_with_catalog_offering = attributes.except(:catalog_offering_id)
+                                                 .merge(catalog_offering: catalog_offering)
+
+    course = CreateCourse[attributes_with_catalog_offering]
 
     respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil
   end

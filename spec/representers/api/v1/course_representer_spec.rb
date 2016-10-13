@@ -11,7 +11,7 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   let(:course)           do
     FactoryGirl.create :entity_course, name: 'Test course',
                                        appearance_code: 'appearance override',
-                                       catalog_offering: catalog_offering,
+                                       offering: catalog_offering,
                                        is_concept_coach: true,
                                        is_college: false
   end

@@ -5,10 +5,13 @@ FactoryGirl.define do
     is_concept_coach      false
     is_college            true
 
+    term                  { CourseProfile::Models::Profile.terms.keys.sample }
+    year                  { Time.current.year }
+
     starts_at             { Time.current }
     ends_at               { Time.current + 1.week }
 
-    trait(:with_offering) { association :offering, factory: :catalog_offering }
+    association :offering, factory: :catalog_offering
 
     after(:build)         do |profile, evaluator|
       profile.course ||= build(:entity_course, profile: profile)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161011212156) do
+ActiveRecord::Schema.define(version: 20161012204350) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -301,6 +301,8 @@ ActiveRecord::Schema.define(version: 20161011212156) do
     t.boolean  "is_college",                  default: false, null: false
     t.datetime "starts_at",                                   null: false
     t.datetime "ends_at",                                     null: false
+    t.integer  "term",                                        null: false
+    t.integer  "year",                                        null: false
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree
@@ -309,6 +311,7 @@ ActiveRecord::Schema.define(version: 20161011212156) do
   add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
   add_index "course_profile_profiles", ["teach_token"], name: "index_course_profile_profiles_on_teach_token", unique: true, using: :btree
   add_index "course_profile_profiles", ["time_zone_id"], name: "index_course_profile_profiles_on_time_zone_id", unique: true, using: :btree
+  add_index "course_profile_profiles", ["year", "term"], name: "index_course_profile_profiles_on_year_and_term", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false

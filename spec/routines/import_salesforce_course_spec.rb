@@ -123,14 +123,16 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
   end
 
   def new_osa(args={})
-    # All SF objects we get from SF will have an ID
+    # All SF objects we get from SF will have an ID and a term_year
     args[:id] = (@new_sf_id += 1).to_s
+    args[:term_year] ||= '2015 - 16 Spring'
     Salesforce::Remote::OsAncillary.new(args)
   end
 
   def new_cs(args={})
-    # All SF objects we get from SF will have an ID
+    # All SF objects we get from SF will have an ID and a term_year
     args[:id] = (@new_sf_id += 1).to_s
+    args[:term_year] ||= '2015 - 16 Spring'
     Salesforce::Remote::ClassSize.new(args)
   end
 

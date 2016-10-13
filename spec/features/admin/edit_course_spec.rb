@@ -6,10 +6,13 @@ RSpec.feature 'Admin editing a course' do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
+    @catalog_offering = FactoryGirl.create :catalog_offering
+
     visit admin_courses_path
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics I'
+    select @catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_on 'Save'
 
     @course = Entity::Course.order(:id).last
@@ -102,6 +105,7 @@ RSpec.feature 'Admin editing a course' do
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics II'
+    select @catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_on 'Save'
 
     course_2 = Entity::Course.order(:id).last

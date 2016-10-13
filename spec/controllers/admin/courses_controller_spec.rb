@@ -5,7 +5,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
   before      { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
       FactoryGirl.create :entity_course, name: 'Hello World'
 
@@ -67,16 +67,19 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'POST #create' do
+  context 'POST #create' do
     let(:request) do
       post :create, course: {
         name: 'Hello World',
-        starts_at: Time.current, ends_at: Time.current + 1.week,
-        is_concept_coach: false, is_college: true
+        term: CourseProfile::Models::Profile.terms.keys.sample,
+        year: Time.current.year,
+        is_concept_coach: false,
+        is_college: true,
+        catalog_offering_id: FactoryGirl.create(:catalog_offering).id
       }
     end
 
-    it 'creates a blank course profile' do
+    it 'creates a course profile' do
       expect{request}.to change{CourseProfile::Models::Profile.count}.by(1)
     end
 
@@ -91,7 +94,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'POST #students' do
+  context 'POST #students' do
     let(:physics)        { FactoryGirl.create :entity_course }
     let(:physics_period) { FactoryGirl.create :course_membership_period, course: physics }
 
@@ -182,24 +185,28 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'GET #edit' do
-    let(:course)    { FactoryGirl.create :entity_course, name: 'Physics I' }
-    let!(:eco_1)    {
+  context 'GET #edit' do
+    let!(:eco_1)            {
       model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let(:book_1)    { eco_1.books.first }
-    let(:uuid_1)    { book_1.uuid }
-    let(:version_1) { book_1.version }
-    let!(:eco_2)    {
+    let(:catalog_offering)  {
+      FactoryGirl.create :catalog_offering, ecosystem: eco_1.to_model
+    }
+    let(:course)            { FactoryGirl.create :entity_course, name: 'Physics I',
+                                                                 offering: catalog_offering }
+    let(:book_1)            { eco_1.books.first }
+    let(:uuid_1)            { book_1.uuid }
+    let(:version_1)         { book_1.version }
+    let!(:eco_2)            {
       model = FactoryGirl.create(:content_book, title: 'Biology').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let(:book_2)    { eco_2.books.first }
-    let(:uuid_2)    { book_2.uuid }
-    let(:version_2) { book_2.version }
+    let(:book_2)            { eco_2.books.first }
+    let(:uuid_2)            { book_2.uuid }
+    let(:version_2)         { book_2.version }
     let!(:course_ecosystem) {
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       CourseContent::Models::CourseEcosystem.where { entity_course_id == my { course.id } }
@@ -224,7 +231,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'DELETE #destroy' do
+  context 'DELETE #destroy' do
     let(:course) { FactoryGirl.create :entity_course }
 
     context 'destroyable course' do
@@ -252,7 +259,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'POST #set_ecosystem' do
+  context 'POST #set_ecosystem' do
     let(:course) { FactoryGirl.create(:entity_course, name: 'Physics I') }
     let(:eco_1)     {
       model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem

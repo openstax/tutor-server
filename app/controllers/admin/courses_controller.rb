@@ -177,24 +177,34 @@ class Admin::CoursesController < Admin::BaseController
   private
 
   def get_new_course_profile
+    current_time = Time.current
+
     @profile = CourseProfile::Models::Profile.new(
-      is_concept_coach: false, is_college: true,
-      starts_at: Time.current, ends_at: Time.current + 6.months
+      is_concept_coach: false,
+      is_college: true,
+      term: 'demo',
+      year: current_time.year,
+      starts_at: current_time,
+      ends_at: current_time + 6.months
     )
   end
 
   def course_params
     {
       id: params[:id],
-      course: params.require(:course).permit(:name,
-                                             :catalog_offering_id,
-                                             :appearance_code,
-                                             :school_district_school_id,
-                                             :is_concept_coach,
-                                             :is_college,
-                                             :starts_at,
-                                             :ends_at,
-                                             teacher_ids: [])
+      course: params.require(:course).permit(
+        :name,
+        :term,
+        :year,
+        :starts_at,
+        :ends_at,
+        :is_concept_coach,
+        :is_college,
+        :catalog_offering_id,
+        :appearance_code,
+        :school_district_school_id,
+        teacher_ids: []
+      )
     }
   end
 

@@ -5,6 +5,8 @@ RSpec.feature 'DistrictTermsWork' do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
+    catalog_offering = FactoryGirl.create :catalog_offering
+
     visit admin_districts_path
     click_link 'Add district'
 
@@ -23,6 +25,7 @@ RSpec.feature 'DistrictTermsWork' do
 
     fill_in 'Name', with: 'Hello World'
     select 'JFK', from: 'School'
+    select catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_button 'Save'
 
     contract = FinePrint::Contract.create(

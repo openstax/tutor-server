@@ -493,17 +493,22 @@ class Demo::Base
     CourseProfile::Models::Profile.where(name: name).first.try(:course)
   end
 
-  def create_course(name:, catalog_offering: nil, appearance_code: nil, school: nil,
-                    is_concept_coach:, is_college:, time_zone: nil, starts_at:, ends_at:)
-    course = run(:create_course, name: name,
+  def create_course(name:, term:, year:, starts_at: nil, ends_at: nil,
+                    catalog_offering:, appearance_code: nil,
+                    is_concept_coach: nil, is_college:,
+                    school: nil, time_zone: nil)
+    course = run(:create_course,
+                 name: name,
+                 term: term,
+                 year: year,
+                 starts_at: starts_at,
+                 ends_at: ends_at,
+                 is_concept_coach: is_concept_coach,
+                 is_college: is_college,
                  catalog_offering: catalog_offering,
                  appearance_code: appearance_code,
                  school: school,
-                 is_concept_coach: is_concept_coach,
-                 is_college: is_college,
-                 time_zone: time_zone,
-                 starts_at: starts_at,
-                 ends_at: ends_at).outputs.course
+                 time_zone: time_zone).outputs.course
     log("Created a course named '#{name}'.")
     course
   end

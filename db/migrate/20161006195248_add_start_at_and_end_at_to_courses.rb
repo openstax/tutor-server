@@ -1,7 +1,4 @@
 class AddStartAtAndEndAtToCourses < ActiveRecord::Migration
-  LEGACY_COURSE_START_DATE = DateTime.parse('July 1st, 2015')
-  LEGACY_COURSE_END_DATE   = DateTime.parse('July 1st, 2017') - 1.second
-
   def change
     add_column :course_profile_profiles, :starts_at, :datetime
     add_column :course_profile_profiles, :ends_at,   :datetime
@@ -9,7 +6,7 @@ class AddStartAtAndEndAtToCourses < ActiveRecord::Migration
     reversible do |dir|
       dir.up do
         CourseProfile::Models::Profile.update_all(
-          starts_at: LEGACY_COURSE_START_DATE, ends_at: LEGACY_COURSE_END_DATE
+          starts_at: TermYear::LEGACY_TERM_STARTS_AT, ends_at: TermYear::LEGACY_TERM_ENDS_AT
         )
       end
     end

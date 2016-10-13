@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesCreate, type: :handler do
+  let(:catalog_offering)   { FactoryGirl.create :catalog_offering }
   let(:handler_result)     { described_class.handle(params: @params) }
   subject(:course_profile) { handler_result.outputs["[:create_course, :profile]"] }
 
@@ -8,10 +9,11 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
     @params = {
       course: {
         name: 'Hello course' ,
-        starts_at: Time.current,
-        ends_at: Time.current + 1.week,
+        term: CourseProfile::Models::Profile.terms.keys.sample,
+        year: Time.current.year,
         is_concept_coach: false,
-        is_college: true
+        is_college: true,
+        catalog_offering_id: catalog_offering.id
       }
     }
 
@@ -31,14 +33,36 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
     @params = {
       course: {
         name: 'Hello course' ,
-        starts_at: Time.current,
-        ends_at: Time.current + 1.week,
+        term: CourseProfile::Models::Profile.terms.keys.sample,
+        year: Time.current.year,
         is_concept_coach: false,
         is_college: true,
+        catalog_offering_id: catalog_offering.id,
         school_district_school_id: school.id
       }
     }
 
     expect(course_profile.school_name).to eq('Hello school')
+  end
+
+  it 'can directly assign the course start and end dates' do
+    starts_at = Time.current
+    ends_at = starts_at + 1.hour
+
+    @params = {
+      course: {
+        name: 'Hello course' ,
+        term: CourseProfile::Models::Profile.terms.keys.sample,
+        year: Time.current.year,
+        starts_at: starts_at,
+        ends_at: ends_at,
+        is_concept_coach: false,
+        is_college: true,
+        catalog_offering_id: catalog_offering.id
+      }
+    }
+
+    expect(course_profile.starts_at).to eq starts_at
+    expect(course_profile.ends_at  ).to eq ends_at
   end
 end

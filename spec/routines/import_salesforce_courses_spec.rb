@@ -5,7 +5,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   let(:osa_class) { Salesforce::Remote::OsAncillary }
   let(:cs_class)  { Salesforce::Remote::ClassSize }
 
-  let(:target_term_year) { '2015 - 16 Spring'}
+  let(:target_term_year) { '2015 - 16 Spring' }
   before(:each) do
     allow(Settings::Salesforce).to receive(:term_years_to_import) { target_term_year }
   end
@@ -81,11 +81,17 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     disable_sfdc_client
 
     sf_record = osa_class.new(
-      book_name: "jimmy", course_name: "Jimmyness 101",
-      school: "Jimmy U", id: 'booyah', product: "Concept Coach"
+      book_name: "jimmy",
+      course_name: "Jimmyness 101",
+      school: "Jimmy U",
+      id: 'booyah',
+      product: "Concept Coach",
+      term_year: target_term_year
     )
     offering = FactoryGirl.create(:catalog_offering,
-      salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
+      salesforce_book_name: "jimmy",
+      default_course_name: nil,
+      is_concept_coach: true
     )
 
     stub_candidates(osa: sf_record)
@@ -131,8 +137,12 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     )
 
     sf_record = osa_class.new(
-      book_name: "jimmy", course_name: "Jimmyness 101",
-      school: "Jimmy U", id: 'booyah', product: "Concept Coach"
+      book_name: "jimmy",
+      course_name: "Jimmyness 101",
+      school: "Jimmy U",
+      id: 'booyah',
+      product: "Concept Coach",
+      term_year: target_term_year
     )
 
     # 2nd candidate here is going to force a blow up with NoMethodError:
@@ -153,12 +163,18 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     offering = FactoryGirl.create(
       :catalog_offering,
-      salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
+      salesforce_book_name: "jimmy",
+      default_course_name: nil,
+      is_concept_coach: true
     )
 
     sf_record = osa_class.new(
-      book_name: "jimmy", course_name: "Jimmyness 101",
-      school: "Jimmy U", id: 'booyah', product: "Concept Coach"
+      book_name: "jimmy",
+      course_name: "Jimmyness 101",
+      school: "Jimmy U",
+      id: 'booyah',
+      product: "Concept Coach",
+      term_year: target_term_year
     )
 
     stub_candidates(osa: sf_record)

@@ -30,6 +30,8 @@ class CollectCourseInfo
       info = Hashie::Mash.new(
         id: entity_course.id,
         name: profile.name,
+        term: profile.term,
+        year: profile.year,
         starts_at: profile.starts_at,
         ends_at: profile.ends_at,
         active?: profile.active?,
@@ -37,6 +39,7 @@ class CollectCourseInfo
         default_open_time: profile.default_open_time,
         default_due_time: profile.default_due_time,
         offering: offering,
+        catalog_offering_id: offering.try!(:id),
         is_concept_coach: profile.is_concept_coach,
         is_college: profile.is_college,
         school_name: profile.school_name,
