@@ -11,13 +11,21 @@ class CreateCourse
   uses_routine Tasks::CreateCourseAssistants,
                as: :create_course_assistants
 
-  def exec(name:, term:, year:, is_college:, catalog_offering:, is_concept_coach: nil,
+  uses_routine AddEcosystemToCourse,
+               as: :add_ecosystem
+
+  def exec(name:, term:, year:, is_college:, is_concept_coach: nil, catalog_offering: nil,
            appearance_code: nil, starts_at: nil, ends_at: nil, school: nil, time_zone: nil)
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
-    fatal_error(code: :no_catalog_offering, message: 'A catalog offering must be provided') \
-      if catalog_offering.nil?
+    is_concept_coach = catalog_offering.try!(:is_concept_coach) if is_concept_coach.nil?
+
+    fatal_error(
+      code: :is_concept_coach_blank,
+      message: 'You must provide at least one of the following 2 options: ' +
+               ':is_concept_coach or :catalog_offering'
+    ) if is_concept_coach.nil?
 
     # If the given time_zone already has an associated course,
     # make a copy to avoid linking the 2 courses' time_zones to the same record
@@ -27,13 +35,13 @@ class CreateCourse
     run(:create_course_profile,
         course: outputs.course,
         name: name,
-        is_concept_coach: is_concept_coach || catalog_offering.is_concept_coach,
+        is_concept_coach: is_concept_coach,
         is_college: is_college,
         term: term,
         year: year,
         starts_at: starts_at,
         ends_at: ends_at,
-        offering: catalog_offering.to_model,
+        offering: catalog_offering.try!(:to_model),
         appearance_code: appearance_code,
         school: school,
         time_zone: time_zone)
@@ -41,6 +49,9 @@ class CreateCourse
     run(:create_course_assistants, course: outputs.course)
 
     run(:process_school_change, course_profile: outputs.profile)
+
+    run(:add_ecosystem, course: outputs.course, ecosystem: catalog_offering.ecosystem) \
+      if catalog_offering.present?
   end
 
 end
