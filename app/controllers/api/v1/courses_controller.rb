@@ -1,6 +1,6 @@
 class Api::V1::CoursesController < Api::V1::ApiController
 
-  before_filter :get_course, only: [:roster, :show, :update, :tasks, :dashboard, :cc_dashboard]
+  before_filter :get_course, only: [:show, :update, :dashboard, :cc_dashboard, :roster, :clone]
 
   resource_description do
     api_versions "v1"
@@ -23,18 +23,31 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
   end
 
-  api :GET, '/courses/:course_id/roster', 'Returns the roster for a given course'
+  api :POST, '/courses', 'Creates a new course'
   description <<-EOS
-    Returns the roster for a given course
-    #{json_schema(Api::V1::RosterRepresenter, include: :readable)}
+    Creates a new course for the current (verified teacher) human user
+    #{json_schema(Api::V1::CourseRepresenter, include: :writeable)}
   EOS
-  def roster
-    OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, @course)
+  def create
+    OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, Entity::Course)
 
-    roster = GetCourseRoster[course: @course]
-    respond_with(roster, represent_with: Api::V1::RosterRepresenter)
+    attributes = consumed(Api::V1::CourseRepresenter)
+
+    required_attributes = [:name]
+
+    required_attributes.each do |attr_sym|
+      next if attributes.has_key?(attr_sym)
+
+      render_api_errors(
+        {code: :missing_attribute, message: "The #{attr_sym} attribute must be provided"}
+      )
+      return
+    end
+
+    course = CreateCourse[attributes]
+
+    respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil
   end
-
 
   api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
   description <<-EOS
@@ -118,6 +131,33 @@ class Api::V1::CoursesController < Api::V1::ApiController
     else
       respond_with result.outputs, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
     end
+  end
+
+  api :GET, '/courses/:course_id/roster', 'Returns the roster for a given course'
+  description <<-EOS
+    Returns the roster for a given course
+    #{json_schema(Api::V1::RosterRepresenter, include: :readable)}
+  EOS
+  def roster
+    OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, @course)
+
+    roster = GetCourseRoster[course: @course]
+    respond_with(roster, represent_with: Api::V1::RosterRepresenter)
+  end
+
+  api :POST, '/courses/:course_id/clone', 'Clones the course with the given ID'
+  description <<-EOS
+    Creates a copy of the course with the given ID
+    All JSON attributes in the schema are optional
+    They will default to the given course's attributes if ommitted
+    #{json_schema(Api::V1::CourseRepresenter, include: :writeable)}
+  EOS
+  def clone
+    OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, @course)
+    attributes = consumed(Api::V1::CourseRepresenter)
+                   .merge(course: @course, teacher_user: current_human_user)
+    course = CloneCourse[attributes]
+    respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil
   end
 
   protected
