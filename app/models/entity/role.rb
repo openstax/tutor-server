@@ -1,5 +1,5 @@
 class Entity::Role < Tutor::SubSystems::BaseModel
-  enum role_type: [:unassigned, :default, :teacher, :student]
+  enum role_type: [:unassigned, :default, :teacher, :student, :teacher_student]
 
   has_many :taskings, -> { with_deleted }, subsystem: :tasks, dependent: :destroy
 

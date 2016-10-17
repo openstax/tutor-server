@@ -245,19 +245,21 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "course_membership_enrollments", ["deleted_at"], name: "index_course_membership_enrollments_on_deleted_at", using: :btree
 
   create_table "course_membership_periods", force: :cascade do |t|
-    t.integer  "course_profile_course_id", null: false
-    t.string   "name",                     null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "enrollment_code",          null: false
+    t.integer  "course_profile_course_id",       null: false
+    t.string   "name",                           null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.string   "enrollment_code",                null: false
     t.datetime "deleted_at"
     t.string   "default_open_time"
     t.string   "default_due_time"
+    t.integer  "entity_teacher_student_role_id", null: false
   end
 
   add_index "course_membership_periods", ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id", using: :btree
   add_index "course_membership_periods", ["deleted_at"], name: "index_course_membership_periods_on_deleted_at", using: :btree
   add_index "course_membership_periods", ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true, using: :btree
+  add_index "course_membership_periods", ["entity_teacher_student_role_id"], name: "index_c_m_periods_on_e_teacher_student_role_id", unique: true, using: :btree
   add_index "course_membership_periods", ["name", "course_profile_course_id"], name: "index_c_m_periods_on_name_and_c_p_course_id", using: :btree
 
   create_table "course_membership_students", force: :cascade do |t|
