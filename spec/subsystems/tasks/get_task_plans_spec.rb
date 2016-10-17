@@ -21,15 +21,17 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:trouble_plan_ids]).to be_empty
 
     # 10 tasks in total
-    tasks = task_plan_1.tasks.preload(task_steps: :tasked).to_a
+    student_tasks = task_plan_1.tasks.joins(taskings: {role: :student})
+                                     .preload(task_steps: :tasked)
+                                     .to_a
 
     # Remove placeholder steps since they can sometimes be deleted, messing up our counting
-    tasks.each do |task|
+    student_tasks.each do |task|
       task.task_steps.select(&:placeholder?).each(&:really_destroy!)
       task.reload.update_step_counts!
     end
 
-    tasks.first(2).each do |task|
+    student_tasks.first(2).each do |task|
       task.task_steps.each do |task_step|
         if task_step.exercise?
           Demo::AnswerExercise[task_step: task_step, is_correct: false]
@@ -45,7 +47,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
 
-    tasks[2].task_steps.each do |task_step|
+    student_tasks[2].task_steps.each do |task_step|
       if task_step.exercise?
         Demo::AnswerExercise[task_step: task_step, is_correct: false]
       else
@@ -59,7 +61,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
 
-    tasks[3..5].each do |task|
+    student_tasks[3..5].each do |task|
       task.task_steps.each do |task_step|
         if task_step.exercise?
           Demo::AnswerExercise[task_step: task_step, is_correct: true]
@@ -75,7 +77,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
 
-    tasks[6].task_steps.each do |task_step|
+    student_tasks[6].task_steps.each do |task_step|
       if task_step.exercise?
         Demo::AnswerExercise[task_step: task_step, is_correct: false]
       else
@@ -89,7 +91,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
 
-    tasks[7].task_steps.each do |task_step|
+    student_tasks[7].task_steps.each do |task_step|
       if task_step.exercise?
         Demo::AnswerExercise[task_step: task_step, is_correct: true]
       else
@@ -103,7 +105,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
 
-    tasks[8].task_steps.each do |task_step|
+    student_tasks[8].task_steps.each do |task_step|
       if task_step.exercise?
         Demo::AnswerExercise[task_step: task_step, is_correct: false]
       else
@@ -117,7 +119,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
 
-    tasks[9].task_steps.each do |task_step|
+    student_tasks[9].task_steps.each do |task_step|
       if task_step.exercise?
         Demo::AnswerExercise[task_step: task_step, is_correct: true]
       else

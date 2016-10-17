@@ -24,7 +24,8 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
   scenario 'new students added after assignments published get those assignments' do
     # Publish the assignment, and no one around to get it...
     DistributeTasks.call(task_plan_1)
-    expect(Tasks::Models::Tasking.count).to eq 0
+    # TeacherStudent role still gets it
+    expect(Tasks::Models::Tasking.count).to eq 1
 
     # The student signs up...
     stub_current_user(student_user)
@@ -32,7 +33,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
          enroll: {enrollment_token: period.enrollment_code_for_url})
 
     # ... and they have the assignment
-    expect(Tasks::Models::Tasking.count).to eq 1
+    expect(Tasks::Models::Tasking.count).to eq 2
     expect(student_user.to_model.roles.first.taskings.count).to eq 1
   end
 
@@ -51,13 +52,14 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
     # The teacher publishes an assignment, and no one gets it...
     DistributeTasks.call(task_plan_1)
-    expect(Tasks::Models::Tasking.count).to eq 0
+    # TeacherStudent role still gets it
+    expect(Tasks::Models::Tasking.count).to eq 1
 
     # The teacher undrops the student...
     api_put("/api/students/#{student.id}/undrop", teacher_token)
 
     # ... and the student has the missing task
-    expect(Tasks::Models::Tasking.count).to eq 1
+    expect(Tasks::Models::Tasking.count).to eq 2
     expect(student_user.to_model.roles.first.taskings.count).to eq 1
   end
 

@@ -28,13 +28,17 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
   # after the transaction rollback that happens in between spec examples
   before(:each) { @task_plan.tasks.each(&:touch) }
 
+  let(:student_tasks) do
+    @task_plan.tasks.joins(taskings: {role: :student}).to_a
+  end
+
   context "with an unworked plan" do
 
-    let(:stats) { described_class.call(tasks: @task_plan.tasks).outputs.stats }
+    let(:stats)         { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
     it "is all nil or zero for an unworked task_plan" do
       expect(stats.first.mean_grade_percent).to be_nil
-      expect(stats.first.total_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.total_count).to eq(student_tasks.length)
       expect(stats.first.complete_count).to eq(0)
       expect(stats.first.partially_complete_count).to eq(0)
       expect(stats.first.trouble).to eq false
@@ -84,8 +88,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
   context "after task steps are marked as completed" do
 
     it "records partial/complete status" do
-      tasks = @task_plan.tasks.to_a
-      first_task = tasks.first
+      first_task = student_tasks.first
       step = first_task.task_steps.where(
         tasked_type: "Tasks::Models::TaskedReading"
       ).first
@@ -109,7 +112,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.partially_complete_count).to eq(0)
       expect(stats.first.trouble).to eq false
 
-      last_task = tasks.last
+      last_task = student_tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (0)
@@ -123,8 +126,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
   context "after task steps are marked as correct or incorrect" do
 
     it "records them" do
-      tasks = @task_plan.tasks.to_a
-      first_task = tasks.first
+      first_task = student_tasks.first
       first_task.task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
@@ -150,7 +152,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page['incorrect_count']).to eq(0)
       expect(spaced_page['trouble']).to eq false
 
-      second_task = tasks.second
+      second_task = student_tasks.second
       second_task.task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
@@ -177,7 +179,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page['chapter_section']).to eq([1, 1])
       expect(spaced_page['trouble']).to eq false
 
-      third_task = tasks.third
+      third_task = student_tasks.third
       third_task.task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
@@ -204,7 +206,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page['chapter_section']).to eq([1, 1])
       expect(spaced_page['trouble']).to eq false
 
-      fourth_task = tasks.fourth
+      fourth_task = student_tasks.fourth
       fourth_task.task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
@@ -244,8 +246,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page.trouble).to eq false
 
-      tasks = @task_plan.tasks.to_a
-      tasks.first(2).each do |task|
+      student_tasks.first(2).each do |task|
         task.task_steps.each do |ts|
           ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                          MarkTaskStepCompleted[task_step: ts]
@@ -262,7 +263,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page.trouble).to eq false
 
-      tasks.third.task_steps.each do |ts|
+      student_tasks.third.task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
@@ -277,7 +278,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page.trouble).to eq true
 
-      tasks[3..4].each do |task|
+      student_tasks[3..4].each do |task|
         task.task_steps.each do |ts|
           ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                          MarkTaskStepCompleted[task_step: ts]
@@ -294,7 +295,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page.trouble).to eq true
 
-      tasks[5].task_steps.each do |ts|
+      student_tasks[5].task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
@@ -309,7 +310,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page.trouble).to eq false
 
-      tasks[6].task_steps.each do |ts|
+      student_tasks[6].task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
@@ -324,7 +325,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page.trouble).to eq true
 
-      tasks[7].task_steps.each do |ts|
+      student_tasks[7].task_steps.each do |ts|
         ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
@@ -341,7 +342,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     end
 
     it "returns detailed stats if :details is true" do
-      tasks = @task_plan.tasks.to_a[0..2]
+      tasks = student_tasks[0..2]
 
       task_data = {
         selected_answers: [],
@@ -378,30 +379,30 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
           expect(question_stats.question_id).to be_kind_of(String)
           expect(question_stats.answered_count).to eq 3
           expect(question_stats.answers.length).to eq 3
-          expect(Set.new question_stats.answers).to eq(Set[
+          expect(question_stats.answers).to match_array([
             {
-              'student_names' => task_data[:names][0],
-              'free_response' => 'A sentence explaining all the things!',
-              'answer_id' => task_data[:selected_answers][0][ii]
+              student_names: task_data[:names][0],
+              free_response: 'A sentence explaining all the things!',
+              answer_id: task_data[:selected_answers][0][ii]
             },
             {
-              'student_names' => task_data[:names][1],
-              'free_response' => 'A sentence explaining all the wrong things...',
-              'answer_id' => task_data[:selected_answers][1][ii]
+              student_names: task_data[:names][1],
+              free_response: 'A sentence explaining all the wrong things...',
+              answer_id: task_data[:selected_answers][1][ii]
             },
             {
-              'student_names' => task_data[:names][2],
-              'free_response' => 'A sentence explaining all the things!',
-              'answer_id' => task_data[:selected_answers][2][ii]
+              student_names: task_data[:names][2],
+              free_response: 'A sentence explaining all the things!',
+              answer_id: task_data[:selected_answers][2][ii]
             }
           ])
 
           question_answer_ids = answer_ids(exercise.content, qq)
 
-          expect(question_stats.answer_stats).to eq (question_answer_ids.map do |aid|
+          expect(question_stats.answer_stats).to match (question_answer_ids.map do |aid|
             {
-              "answer_id" => aid.to_s,
-              "selected_count" => task_data[:selected_answers].flatten.count(aid.to_s)
+              answer_id: aid.to_s,
+              selected_count: task_data[:selected_answers].flatten.count(aid.to_s)
             }
           end)
         end
@@ -416,7 +417,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
     before do
-      @task_plan.tasks.last(@number_of_students/2).each do |task|
+      student_tasks.last(@number_of_students/2).each do |task|
         task.taskings.each do |tasking|
           ::MoveStudent.call(period: period_2, student: tasking.role.student)
         end
@@ -425,7 +426,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
     context "if the students were already in the periods before the assignment" do
       before do
-        @task_plan.tasks.last(@number_of_students/2).each do |task|
+        student_tasks.last(@number_of_students/2).each do |task|
           task.taskings.each do |tasking|
             tasking.period = period_2.to_model
             tasking.save!
@@ -435,7 +436,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       it "splits the students into their periods" do
         expect(stats.first.mean_grade_percent).to be_nil
-        expect(stats.first.total_count).to eq(@task_plan.tasks.length/2)
+        expect(stats.first.total_count).to eq(student_tasks.length/2)
         expect(stats.first.complete_count).to eq(0)
         expect(stats.first.partially_complete_count).to eq(0)
         expect(stats.first.trouble).to eq false
@@ -450,7 +451,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         expect(spaced_page).to eq page
 
         expect(stats.second.mean_grade_percent).to be_nil
-        expect(stats.second.total_count).to eq(@task_plan.tasks.length/2)
+        expect(stats.second.total_count).to eq(student_tasks.length/2)
         expect(stats.second.complete_count).to eq(0)
         expect(stats.second.partially_complete_count).to eq(0)
         expect(stats.second.trouble).to eq false
@@ -470,7 +471,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
         it 'does not show the archived period' do
           expect(stats.first.mean_grade_percent).to be_nil
-          expect(stats.first.total_count).to eq(@task_plan.tasks.length/2)
+          expect(stats.first.total_count).to eq(student_tasks.length/2)
           expect(stats.first.complete_count).to eq(0)
           expect(stats.first.partially_complete_count).to eq(0)
           expect(stats.first.trouble).to eq false
@@ -492,7 +493,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     context "if the students changed periods after the assignment was distributed" do
       it "shows students that changed periods in their original period" do
         expect(stats.first.mean_grade_percent).to be_nil
-        expect(stats.first.total_count).to eq(@task_plan.tasks.length)
+        expect(stats.first.total_count).to eq(student_tasks.length)
         expect(stats.first.complete_count).to eq(0)
         expect(stats.first.partially_complete_count).to eq(0)
         expect(stats.first.trouble).to eq false
@@ -522,7 +523,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
         it "shows students that changed periods in their original period" do
           expect(stats.first.mean_grade_percent).to be_nil
-          expect(stats.first.total_count).to eq(@task_plan.tasks.length)
+          expect(stats.first.total_count).to eq(student_tasks.length)
           expect(stats.first.complete_count).to eq(0)
           expect(stats.first.partially_complete_count).to eq(0)
           expect(stats.first.trouble).to eq false
@@ -543,8 +544,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
     context "if the students where dropped after working the assignment" do
       it "does not show dropped students" do
-        tasks = @task_plan.tasks.to_a
-        first_task = tasks.first
+        first_task = student_tasks.first
         first_task.task_steps.each do |ts|
           ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
                          MarkTaskStepCompleted[task_step: ts]
@@ -570,7 +570,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
         expect(stats.first.mean_grade_percent).to be_nil
-        expect(stats.first.total_count).to eq @task_plan.tasks.length - 1
+        expect(stats.first.total_count).to eq student_tasks.length - 1
         expect(stats.first.complete_count).to eq 0
         expect(stats.first.partially_complete_count).to eq 0
         expect(stats.first.trouble).to eq false

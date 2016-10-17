@@ -7,10 +7,18 @@ class Tasks::Assistants::GenericAssistant
     @task_plan = task_plan
     @individualized_tasking_plans = individualized_tasking_plans
     role_ids = individualized_tasking_plans.map(&:target_id)
-    @students_by_role_id = CourseMembership::Models::Student
-                             .where(entity_role_id: role_ids)
-                             .preload(enrollments: :period)
-                             .to_a.index_by(&:entity_role_id)
+
+    periods_by_student_role_id = CourseMembership::Models::Period
+      .joins(enrollments: :student)
+      .where(enrollments: { student: { entity_role_id: role_ids } })
+      .select(
+        [:id, CourseMembership::Models::Student.arel_table[:entity_role_id]]
+      ).index_by(&:entity_role_id)
+    periods_by_teacher_student_role_id = CourseMembership::Models::Period
+      .select([:id, :entity_teacher_student_role_id])
+      .index_by(&:entity_teacher_student_role_id)
+    @periods_by_role_id = periods_by_student_role_id.merge(periods_by_teacher_student_role_id)
+
     @ecosystems_map = {}
     @page_cache = {}
     @tag_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
@@ -144,7 +152,6 @@ class Tasks::Assistants::GenericAssistant
 
   def build_task(type:, default_title:, individualized_tasking_plan:)
     role = individualized_tasking_plan.target
-    student = @students_by_role_id[role.id]
 
     Tasks::BuildTask[
       task_plan:   task_plan,
@@ -157,7 +164,7 @@ class Tasks::Assistants::GenericAssistant
       feedback_at: task_plan.is_feedback_immediate ? nil : individualized_tasking_plan.due_at
     ].tap do |task|
       task.taskings << Tasks::Models::Tasking.new(task: task, role: role,
-                                                  period: student.try(:period))
+                                                  period: @periods_by_role_id[role.id])
       AddSpyInfo[to: task, from: ecosystem]
     end
   end

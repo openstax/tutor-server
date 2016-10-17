@@ -134,12 +134,12 @@ class CalculateTaskStats
   end
 
   def generate_period_stat_data(tasks, details)
-    active_tasks = tasks.joins(taskings: [:period, {role: :student}])
-                        .where(taskings: { role: { student: { deleted_at: nil } },
-                                           period: { deleted_at: nil } })
-                        .preload([:task_steps, { taskings: :period }])
+    active_student_tasks = tasks.joins(taskings: [:period, {role: :student}])
+                                .where(taskings: { role: { student: { deleted_at: nil } },
+                                                   period: { deleted_at: nil } })
+                                .preload([:task_steps, { taskings: :period }])
 
-    grouped_tasks = active_tasks.to_a.group_by{ |task| task.taskings.first.try!(:period) }
+    grouped_tasks = active_student_tasks.group_by{ |task| task.taskings.first.try!(:period) }
 
     grouped_tasks.map do |period, period_tasks|
       current_task_steps = period_tasks.map{ |t| t.core_task_steps + t.personalized_task_steps }

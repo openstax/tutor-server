@@ -52,14 +52,14 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   context 'published task_plan' do
     it 'assigns tasks to the new student but does not modify existing tasks' do
-      expect(task_plan_1.tasks.size).to eq 1
+      expect(task_plan_1.tasks.size).to eq 2
       old_task = task_plan_1.tasks.first
       result = nil
       expect do
         result = ReassignPublishedPeriodTaskPlans.call(period: period.to_model)
       end.not_to change{task_plan_1.last_published_at}
       expect(result.errors).to be_empty
-      expect(task_plan_1.tasks.size).to eq 2
+      expect(task_plan_1.tasks.size).to eq 3
       expect(task_plan_1.tasks).to include old_task
       new_task = task_plan_1.tasks.reject{ |task| task == old_task }.first
       expect(new_task.taskings.first.role.profile).to eq new_user.to_model

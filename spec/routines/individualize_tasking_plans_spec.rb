@@ -46,28 +46,33 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'course_profile_course' do
-    let(:period_1)        { FactoryGirl.create :course_membership_period }
-    let(:course)          { period_1.course }
-    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_1)               { FactoryGirl.create :course_membership_period }
+    let(:course)                 { period_1.course }
+    let(:period_2)               { FactoryGirl.create :course_membership_period, course: course }
 
-    let(:user_1)          { FactoryGirl.create :user }
-    let(:user_2)          { FactoryGirl.create :user }
-    let(:user_3)          { FactoryGirl.create :user }
+    let(:teacher_student_role_1) { period_1.teacher_student_role }
+    let(:teacher_student_role_2) { period_2.teacher_student_role }
 
-    let!(:student_role_1) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
-    let!(:student_role_2) { AddUserAsPeriodStudent[user: user_2, period: period_1] }
-    let!(:student_role_3) { AddUserAsPeriodStudent[user: user_3, period: period_2] }
+    let(:user_1)                 { FactoryGirl.create :user }
+    let(:user_2)                 { FactoryGirl.create :user }
+    let(:user_3)                 { FactoryGirl.create :user }
+
+    let!(:student_role_1)        { AddUserAsPeriodStudent[user: user_1, period: period_1] }
+    let!(:student_role_2)        { AddUserAsPeriodStudent[user: user_2, period: period_1] }
+    let!(:student_role_3)        { AddUserAsPeriodStudent[user: user_3, period: period_2] }
 
     before do
       tasking_plan.update_attribute(:target, course)
     end
 
-    it 'returns tasking plans pointing to the course\'s student roles' do
-      expect(result.size).to eq 3
+    it 'returns tasking plans pointing to the course\'s student and teacher_student roles' do
+      expect(result.size).to eq 5
+      acceptable_roles = [student_role_1, student_role_2, student_role_3,
+                          teacher_student_role_1, teacher_student_role_2]
 
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
-        expect(new_tasking_plan.target).to be_in [student_role_1, student_role_2, student_role_3]
+        expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
         expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
       end
@@ -78,7 +83,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       task_plan.reload
       tasking_plan.reload
 
-      expect(result.size).to eq 1
+      expect(result.size).to eq 2
 
       new_tasking_plan = result.first
 
@@ -90,28 +95,29 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'course_membership_period' do
-    let(:period_1)        { FactoryGirl.create :course_membership_period }
-    let(:course)          { period_1.course }
-    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_1)               { FactoryGirl.create :course_membership_period }
+    let(:course)                 { period_1.course }
+    let(:period_2)               { FactoryGirl.create :course_membership_period, course: course }
 
-    let(:user_1)          { FactoryGirl.create :user }
-    let(:user_2)          { FactoryGirl.create :user }
-    let(:user_3)          { FactoryGirl.create :user }
+    let(:teacher_student_role_1) { period_1.teacher_student_role }
 
-    let!(:student_role_1) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
-    let!(:student_role_2) { AddUserAsPeriodStudent[user: user_2, period: period_1] }
-    let!(:student_role_3) { AddUserAsPeriodStudent[user: user_3, period: period_2] }
+    let(:user_1)                 { FactoryGirl.create :user }
+    let(:user_2)                 { FactoryGirl.create :user }
+    let(:user_3)                 { FactoryGirl.create :user }
 
-    before do
-      tasking_plan.update_attribute(:target, period_1)
-    end
+    let!(:student_role_1)        { AddUserAsPeriodStudent[user: user_1, period: period_1] }
+    let!(:student_role_2)        { AddUserAsPeriodStudent[user: user_2, period: period_1] }
+    let!(:student_role_3)        { AddUserAsPeriodStudent[user: user_3, period: period_2] }
 
-    it 'returns tasking plans pointing to the period\'s student roles' do
-      expect(result.size).to eq 2
+    before                       { tasking_plan.update_attribute(:target, period_1) }
+
+    it 'returns tasking plans pointing to the period\'s student and teacher_student roles' do
+      expect(result.size).to eq 3
+      acceptable_roles = [student_role_1, student_role_2, teacher_student_role_1]
 
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
-        expect(new_tasking_plan.target).to be_in [student_role_1, student_role_2]
+        expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
         expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
       end

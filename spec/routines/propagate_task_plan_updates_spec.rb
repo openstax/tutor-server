@@ -12,9 +12,12 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let(:old_title)       { 'Old Title' }
   let(:old_description) { 'Old description' }
 
-  let(:task_plan)       { FactoryGirl.create(:tasks_task_plan, owner: course,
-                                                               title: old_title,
-                                                               description: old_description) }
+  let(:task_plan)       do
+    FactoryGirl.create(:tasks_task_plan, owner: course,
+                                         title: old_title,
+                                         description: old_description)
+  end
+
   let!(:tasking_plan)    do
     task_plan.tasking_plans.first.tap do |tasking_plan|
       tasking_plan.update_attribute(:target, period.to_model)
@@ -41,9 +44,9 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
     it 'does nothing' do
       expect(task_plan.tasks).to be_empty
 
-      expect {
+      expect do
         PropagateTaskPlanUpdates.call(task_plan: task_plan)
-      }.not_to change{ Tasks::Models::Task.count }
+      end.not_to change{ Tasks::Models::Task.count }
 
       expect(task_plan.tasks).to be_empty
     end
@@ -80,9 +83,9 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
         )
 
-        expect {
+        expect do
           PropagateTaskPlanUpdates.call(task_plan: task_plan)
-        }.not_to change{ Tasks::Models::Task.count }
+        end.not_to change{ Tasks::Models::Task.count }
 
         expect(task_plan.tasks).not_to be_empty
         task_plan.tasks.each do |task|
@@ -118,9 +121,9 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           expect(task.due_at).to      be_within(1.second).of(old_due_at)
         end
 
-        expect {
+        expect do
           PropagateTaskPlanUpdates.call(task_plan: task_plan)
-        }.not_to change{ Tasks::Models::Task.count }
+        end.not_to change{ Tasks::Models::Task.count }
 
         expect(task_plan.tasks).not_to be_empty
         task_plan.tasks.each do |task|

@@ -27,7 +27,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
 
     tasks = DistributeTasks.call(task_plan).outputs.tasks
 
-    expect(tasks.length).to eq num_taskees
+    expect(tasks.length).to eq num_taskees + 1
     expect(tasks.flat_map(&:task_type).uniq).to eq(['event'])
     expect(tasks.flat_map(&:title).uniq).to eq(['No class'])
     expect(tasks.flat_map(&:description).uniq).to eq(['No class today, kiddos'])

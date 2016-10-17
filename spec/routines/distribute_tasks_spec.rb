@@ -85,7 +85,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       expect(task_plan.tasks).to be_empty
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
-      expect(task_plan.tasks.size).to eq 2
+      expect(task_plan.tasks.size).to eq 3
     end
 
     it 'sets the published_at fields' do
@@ -126,12 +126,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
 
       it 'rebuilds the tasks for the task_plan' do
-        expect(task_plan.tasks.size).to eq 1
+        expect(task_plan.tasks.size).to eq 2
         old_task = task_plan.tasks.first
 
         result = DistributeTasks.call(task_plan)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.tasks.size).to eq 2
+        expect(task_plan.reload.tasks.size).to eq 3
         expect(task_plan.tasks).not_to include old_task
       end
 
@@ -153,12 +153,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
 
       it 'does not rebuild existing tasks for the task_plan' do
-        expect(task_plan.tasks.size).to eq 1
+        expect(task_plan.tasks.size).to eq 2
         old_task = task_plan.tasks.first
 
         result = DistributeTasks.call(task_plan)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.tasks.size).to eq 2
+        expect(task_plan.reload.tasks.size).to eq 3
         expect(task_plan.tasks).to include old_task
       end
 

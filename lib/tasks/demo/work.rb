@@ -51,6 +51,7 @@ class Demo::Work < Demo::Base
     )
     log("Working assignment: #{assignment.title}")
     task_plan.tasks
+             .joins(taskings: {role: :student})
              .preload([{taskings: {role: {profile: :account}}}, {task_steps: [:tasked, :task]}])
              .each_with_index do | task, index |
 
@@ -72,10 +73,9 @@ class Demo::Work < Demo::Base
   def work_cc_assignments(student)
     user = User::User.new(strategy: student.role.profile.wrap)
     log("Working concept coach assignments for: #{user.name}")
-    student.role.taskings.preload(task: { task_steps: :tasked }).each do |tasking|
-      task = tasking.task
-      next unless task.concept_coach?
-
+    cc_task_type = Tasks::Models::Task.task_types[:concept_coach]
+    student.role.taskings.joins(:task).where(task: { task_type: cc_task_type })
+                         .preload(task: { task_steps: :tasked }).each do |tasking|
       task.task_steps.each{ |task_step| work_step(task_step, Random.rand < 0.5) }
     end
   end
