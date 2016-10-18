@@ -4,7 +4,7 @@ class AddEntityTeacherStudentRoleIdToPeriods < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        print "Migrating #{CourseMembership::Models::Period.with_deleted.count} periods"
+        print "\nMigrating #{CourseMembership::Models::Period.with_deleted.count} periods"
 
         CourseMembership::Models::Period.with_deleted.find_each do |period|
           teacher_student_role = Entity::Role.create!(role_type: :teacher_student)
@@ -13,7 +13,7 @@ class AddEntityTeacherStudentRoleIdToPeriods < ActiveRecord::Migration
           print '.'
         end
 
-        print "\n"
+        print "\n\n"
       end
     end
 

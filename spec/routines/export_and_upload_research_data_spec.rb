@@ -61,7 +61,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
         step = Tasks::Models::TaskStep.first
         student = CourseMembership::Models::Student.first
 
-        expect(data['Student']).to eq(student.deidentifier)
+        expect(data['Student']).to eq(student.role.research_identifier)
         expect(data['Course ID']).to eq(course.id.to_s)
         expect(data['CC?']).to eq("FALSE")
         expect(data['Period ID']).to eq(period.id.to_s)

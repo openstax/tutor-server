@@ -7,7 +7,8 @@
   lev_routine express_output: :filename
 
   def exec(filename: nil, task_types: [], from: nil, to: nil)
-    fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") if task_types.blank?
+    fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") \
+      if task_types.blank?
     outputs[:filename] = FilenameSanitizer.sanitize(filename) || \
                          "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
     date_range = (Chronic.parse(from))..(Chronic.parse(to)) unless to.blank? || from.blank?
@@ -74,7 +75,7 @@
           url = tasked.respond_to?(:url) ? tasked.url : nil
 
           row = [
-            role_info[role_id].try(:[],:deidentifier),
+            role_info[role_id].try(:[], :research_identifier),
             course_id,
             is_cc?(course_id),
             step.task.taskings.first.course_membership_period_id,
@@ -100,7 +101,8 @@
                 tasked.correct_answer_id,
                 tasked.answer_id,
                 tasked.is_correct?,
-                tasked.free_response.try(:gsub, /\A=/,"'="), # escape so Excel doesn't see as formula
+                # escape so Excel doesn't see as formula
+                tasked.free_response.try(:gsub, /\A=/,"'="),
                 tasked.tags.join(',')
               ]
             when 'Reading'
@@ -126,11 +128,14 @@
   def role_info
     @role_info ||=
       CourseMembership::Models::Student
-        .select([:entity_role_id, :deidentifier, :course_profile_course_id])
+        .joins(:role)
+        .select([ :entity_role_id,
+                  :course_profile_course_id,
+                  Entity::Role.arel_table[:research_identifier] ])
         .with_deleted
         .each_with_object({}) do |student, hsh|
           hsh[student.entity_role_id] = {
-            deidentifier: student.deidentifier,
+            research_identifier: student.research_identifier,
             course_id: student.course_profile_course_id
           }
         end

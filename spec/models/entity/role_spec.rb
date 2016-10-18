@@ -1,0 +1,31 @@
+require 'rails_helper'
+
+RSpec.describe Entity::Role, type: :model do
+  subject(:role) { FactoryGirl.create :entity_role }
+
+  it { is_expected.to have_many(:taskings).dependent(:destroy) }
+
+  it { is_expected.to have_one(:student).dependent(:destroy) }
+  it { is_expected.to have_one(:teacher).dependent(:destroy) }
+
+  it { is_expected.to have_one(:role_user).dependent(:destroy) }
+
+  [:username, :first_name, :last_name, :full_name, :name].each do |delegated_method|
+    it { is_expected.to delegate_method(delegated_method).to(:profile) }
+  end
+
+  it { is_expected.to validate_uniqueness_of(:research_identifier) }
+
+  context 'research_identifier' do
+    it 'is generated before save and is 8 characters long' do
+      expect(role.research_identifier.length).to eq 8
+    end
+
+    it 'stays the same after multiple saves' do
+      old_research_identifier = role.research_identifier
+      role.updated_at = Time.now
+      role.save!
+      expect(role.research_identifier).to eq old_research_identifier
+    end
+  end
+end

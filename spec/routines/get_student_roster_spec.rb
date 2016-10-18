@@ -41,7 +41,6 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
         'student_identifier' => student_1_role.student.student_identifier,
-        'deidentifier' => student_1_role.student.deidentifier,
         'deleted?' => false
       },
       {
@@ -53,7 +52,6 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
         'student_identifier' => student_2_role.student.student_identifier,
-        'deidentifier' => student_2_role.student.deidentifier,
         'deleted?' => false
       },
       {
@@ -65,7 +63,6 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
         'student_identifier' => student_3_role.student.student_identifier,
-        'deidentifier' => student_3_role.student.deidentifier,
         'deleted?' => false
       }
     ])
@@ -90,7 +87,6 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
         'student_identifier' => student_1_role.student.student_identifier,
-        'deidentifier' => student_1_role.student.deidentifier,
         'deleted?' => false
       },
       {
@@ -102,7 +98,6 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
         'student_identifier' => student_2_role.student.student_identifier,
-        'deidentifier' => student_2_role.student.deidentifier,
         'deleted?' => false
       },
       {
@@ -114,7 +109,6 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
         'student_identifier' => student_3_role.student.student_identifier,
-        'deidentifier' => student_3_role.student.deidentifier,
         'deleted?' => true
       }
     ])

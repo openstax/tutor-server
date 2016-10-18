@@ -265,7 +265,6 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "course_profile_course_id", null: false
     t.integer  "entity_role_id",           null: false
-    t.string   "deidentifier",             null: false
     t.datetime "deleted_at"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
@@ -273,7 +272,6 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
-  add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
   add_index "course_membership_students", ["deleted_at"], name: "index_course_membership_students_on_deleted_at", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
 
@@ -333,11 +331,13 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "entity_roles", force: :cascade do |t|
-    t.integer  "role_type",  default: 0, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer  "role_type",           default: 0, null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.string   "research_identifier"
   end
 
+  add_index "entity_roles", ["research_identifier"], name: "index_entity_roles_on_research_identifier", unique: true, using: :btree
   add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type", using: :btree
 
   create_table "fine_print_contracts", force: :cascade do |t|

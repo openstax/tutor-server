@@ -99,7 +99,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     { id: period.id.to_s,
                       name: period.name,
                       enrollment_code: period.enrollment_code,
-                      enrollment_url: a_string_matching(/enroll\/#{period.enrollment_code_for_url}/),
+                      enrollment_url: a_string_matching(
+                        /enroll\/#{period.enrollment_code_for_url}/
+                      ),
                       default_open_time: '00:01',
                       default_due_time: '07:00',
                       is_archived: false }],
@@ -1084,7 +1086,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 name: student.name,
                 period_id: period.id.to_s,
                 role_id: student_role.id.to_s,
-                deidentifier: student.deidentifier,
                 is_active: true
               },
               {
@@ -1094,7 +1095,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 name: student_2.name,
                 period_id: period.id.to_s,
                 role_id: student_role_2.id.to_s,
-                deidentifier: student_2.deidentifier,
                 is_active: true
               },
               {
@@ -1104,7 +1104,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 name: student_3.name,
                 period_id: period_2.id.to_s,
                 role_id: student_role_3.id.to_s,
-                deidentifier: student_3.deidentifier,
                 is_active: true
               }
             )
