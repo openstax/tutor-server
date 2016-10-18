@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
-  let(:course)    { FactoryGirl.create :course_profile_course }
-  let(:period)    { FactoryGirl.create :course_membership_period, course: course }
-  let!(:user)      do
+  let(:course)       { FactoryGirl.create :course_profile_course }
+  let(:period)       { FactoryGirl.create :course_membership_period, course: course }
+  let!(:user)        do
     FactoryGirl.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
@@ -53,15 +53,15 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
   context 'published task_plan' do
     it 'assigns tasks to the new student but does not modify existing tasks' do
       expect(task_plan_1.tasks.size).to eq 2
-      old_task = task_plan_1.tasks.first
+      old_tasks = task_plan_1.tasks.to_a
       result = nil
       expect do
         result = ReassignPublishedPeriodTaskPlans.call(period: period.to_model)
       end.not_to change{task_plan_1.last_published_at}
       expect(result.errors).to be_empty
-      expect(task_plan_1.tasks.size).to eq 3
-      expect(task_plan_1.tasks).to include old_task
-      new_task = task_plan_1.tasks.reject{ |task| task == old_task }.first
+      expect(task_plan_1.tasks.reload.length).to eq 3
+      old_tasks.each{ |old_task| expect(task_plan_1.tasks).to include old_task }
+      new_task = task_plan_1.tasks.find{ |task| !old_tasks.include?(task) }
       expect(new_task.taskings.first.role.profile).to eq new_user.to_model
     end
   end
