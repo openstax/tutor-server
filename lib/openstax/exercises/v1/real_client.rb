@@ -38,7 +38,7 @@ class OpenStax::Exercises::V1::RealClient
     uri.path = "/api/exercises"
     uri.query = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query
 
-    request(:get, uri, with_accept_header(options)).body
+    JSON.parse(request(:get, uri, with_accept_header(options)).body)
   end
 
   private

@@ -1,7 +1,13 @@
 class OpenStax::Biglearn::V1::FakeClient
 
+  attr_reader :store
+
   def initialize(biglearn_configuration)
-    @fake_store = biglearn_configuration.fake_store
+    @store = biglearn_configuration.fake_store
+  end
+
+  def reset!
+    store.clear
   end
 
   def name
@@ -129,10 +135,6 @@ class OpenStax::Biglearn::V1::FakeClient
         unique_learner_count: unique_learner_count
       }
     end
-  end
-
-  def store
-    @fake_store
   end
 
 end

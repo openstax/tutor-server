@@ -18,29 +18,19 @@ module OpenStax::Exercises::V1
     # GET /api/exercises
     # options can have :tag, :id, :number, :version keys
     def exercises(options={})
-      exercises_json = client.exercises(options)
-      exercises_hash = JSON.parse(exercises_json)
+      exercises_hash = client.exercises(options)
       exercises_hash['items'] = exercises_hash['items'].map do |ex|
         OpenStax::Exercises::V1::Exercise.new(content: ex.to_json, server_url: client.server_url)
       end
       exercises_hash
     end
 
-    # Accessor for the fake client, which has some extra fake methods on it
-    def fake_client
-      OpenStax::Exercises::V1::FakeClient.instance
-    end
-
-    def real_client
-      OpenStax::Exercises::V1::RealClient.new(configuration)
+    def use_fake_client
+      self.client = new_fake_client
     end
 
     def use_real_client
-      self.client = real_client
-    end
-
-    def use_fake_client
-      self.client = fake_client
+      self.client = new_real_client
     end
 
     def server_url
@@ -51,14 +41,22 @@ module OpenStax::Exercises::V1
       Addressable::URI.join(configuration.server_url, path)
     end
 
-    private
+    protected
+
+    def new_fake_client
+      OpenStax::Exercises::V1::FakeClient.new(configuration)
+    end
+
+    def new_real_client
+      OpenStax::Exercises::V1::RealClient.new(configuration)
+    end
 
     def new_configuration
       OpenStax::Exercises::V1::Configuration.new
     end
 
     def new_client
-      configuration.stub ? fake_client : real_client
+      configuration.stub ? new_fake_client : new_real_client
     rescue StandardError => error
       raise OpenStax::Exercises::ClientError.new("initialization failure", error)
     end
