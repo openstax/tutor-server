@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161012204350) do
+ActiveRecord::Schema.define(version: 20161027183650) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -429,16 +429,17 @@ ActiveRecord::Schema.define(version: 20161012204350) do
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
 
   create_table "openstax_accounts_accounts", force: :cascade do |t|
-    t.integer  "openstax_uid",               null: false
-    t.string   "username",                   null: false
+    t.integer  "openstax_uid",                      null: false
+    t.string   "username",                          null: false
     t.string   "access_token"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "full_name"
     t.string   "title"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.integer  "faculty_status", default: 0, null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.integer  "faculty_status",        default: 0, null: false
+    t.string   "salesforce_contact_id"
   end
 
   add_index "openstax_accounts_accounts", ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true, using: :btree
@@ -447,6 +448,7 @@ ActiveRecord::Schema.define(version: 20161012204350) do
   add_index "openstax_accounts_accounts", ["full_name"], name: "index_openstax_accounts_accounts_on_full_name", using: :btree
   add_index "openstax_accounts_accounts", ["last_name"], name: "index_openstax_accounts_accounts_on_last_name", using: :btree
   add_index "openstax_accounts_accounts", ["openstax_uid"], name: "index_openstax_accounts_accounts_on_openstax_uid", unique: true, using: :btree
+  add_index "openstax_accounts_accounts", ["salesforce_contact_id"], name: "index_openstax_accounts_accounts_on_salesforce_contact_id", using: :btree
   add_index "openstax_accounts_accounts", ["username"], name: "index_openstax_accounts_accounts_on_username", unique: true, using: :btree
 
   create_table "openstax_accounts_group_members", force: :cascade do |t|
