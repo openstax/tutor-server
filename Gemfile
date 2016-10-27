@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.1.0'
+gem 'openstax_accounts', git: 'https://github.com/openstax/accounts-rails', ref: '62423d2'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
@@ -152,7 +152,7 @@ gem 'paranoia', '~> 2.1.3'
 gem 'restforce'
 gem 'omniauth-salesforce'
 # Fork that supports Ruby >= 2.1
-gem 'active_force', github: 'openstax/active_force', ref: '9695896f5'
+gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9695896f5'
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'
