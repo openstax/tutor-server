@@ -18,7 +18,9 @@ class TermYear
     fall:   ->(year) { DateTime.new(year + 1) }  # January 1st of next year
   }
 
-  attr_reader :starts_at, :ends_at
+  VISIBLE_TERMS = [:spring, :summer, :fall]
+
+  attr_reader :term, :year, :starts_at, :ends_at
 
   def initialize(term, year)
     term_sym = term.to_sym
@@ -27,7 +29,27 @@ class TermYear
 
     raise ArgumentError, "Invalid term: #{term}", caller if start_proc.nil? || end_proc.nil?
 
+    @term = term
+    @year = year
     @starts_at = start_proc.call(year)
     @ends_at   = end_proc.call(year) - 1.second
+  end
+
+  def name
+    "#{term} #{year}"
+  end
+
+  def self.visible_term_years(current_time = Time.current)
+    current_year = current_time.year
+
+    current_year_visible_term_years = VISIBLE_TERMS.map do |term|
+      TermYear.new(term, current_year)
+    end.select{ |term_year| term_year.ends_at > current_time }
+
+    next_year_visible_term_years = VISIBLE_TERMS.map do |term|
+      TermYear.new(term, current_year + 1)
+    end.select{ |term_year| term_year.starts_at <= current_time }
+
+    current_year_visible_term_years + next_year_visible_term_years
   end
 end
