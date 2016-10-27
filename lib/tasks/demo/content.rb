@@ -51,7 +51,8 @@ class Demo::Content < Demo::Base
   def configure_course_teacher(course, teacher)
     teacher_user = get_teacher_user(teacher) ||
                    new_user(username: people.teachers[teacher].username,
-                            name: people.teachers[teacher].name)
+                            name: people.teachers[teacher].name,
+                            faculty_status: :confirmed_faculty)
     log("Teacher: #{people.teachers[teacher].name}")
     unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
       run(:add_teacher, course: course, user: teacher_user)

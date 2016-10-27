@@ -30,6 +30,7 @@ module User
       validate  :validate_ui_settings_change_history , on: :update
 
       delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
+               :salesforce_contact_id, :faculty_status,
                :first_name=, :last_name=, :full_name=, :title=, to: :account
 
       def self.anonymous
