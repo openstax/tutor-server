@@ -119,6 +119,7 @@ class Demo::Base
                  content.cnx_book + '.pdf',
         is_concept_coach: content.is_concept_coach,
         is_tutor: !content.is_concept_coach,
+        is_available: true,
         content_ecosystem_id: ecosystem.id
       ]
   end
