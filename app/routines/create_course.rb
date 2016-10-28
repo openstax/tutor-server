@@ -5,6 +5,9 @@ class CreateCourse
                translations: { outputs: { type: :verbatim } },
                as: :create_course_profile
 
+  uses_routine CourseMembership::CreatePeriod,
+               as: :create_period
+
   uses_routine SchoolDistrict::ProcessSchoolChange,
                as: :process_school_change
 
@@ -14,8 +17,9 @@ class CreateCourse
   uses_routine AddEcosystemToCourse,
                as: :add_ecosystem
 
-  def exec(name:, term:, year:, is_college:, is_concept_coach: nil, catalog_offering: nil,
-           appearance_code: nil, starts_at: nil, ends_at: nil, school: nil, time_zone: nil)
+  def exec(name:, term:, year:, is_college:, is_concept_coach: nil, num_sections: 0,
+           catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
+           school: nil, time_zone: nil)
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
@@ -45,6 +49,8 @@ class CreateCourse
         appearance_code: appearance_code,
         school: school,
         time_zone: time_zone)
+
+    num_sections.times{ run(:create_period, course: outputs.course) }
 
     run(:create_course_assistants, course: outputs.course)
 

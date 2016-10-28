@@ -28,6 +28,15 @@ module Api::V1
              writeable: ->(*) { new_record? },
              schema_info: { required: true }
 
+    property :num_sections,
+             type: Integer,
+             readable: true,
+             writeable: ->(*) { new_record? },
+             schema_info: {
+               required: true,
+               minimum: 0
+             }
+
     property :starts_at,
              type: String,
              readable: true,
@@ -56,20 +65,17 @@ module Api::V1
              type: String,
              readable: true,
              writeable: true,
-             schema_info: { required: false },
              getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
 
     property :default_open_time,
              type: String,
              readable: true,
-             writeable: true,
-             schema_info: { required: false }
+             writeable: true
 
     property :default_due_time,
              type: String,
              readable: true,
-             writeable: true,
-             schema_info: { required: false }
+             writeable: true
 
     property :salesforce_book_name,
              type: String,
@@ -154,20 +160,17 @@ module Api::V1
                extend: Api::V1::RoleRepresenter,
                readable: true,
                writeable: false,
-               if: ->(*) { respond_to?(:roles) },
-               schema_info: { required: false }
+               if: ->(*) { respond_to?(:roles) }
 
     collection :periods,
                extend: Api::V1::PeriodRepresenter,
                readable: true,
-               writeable: false,
-               schema_info: { required: false }
+               writeable: false
 
     collection :students,
                readable: true,
                writeable: false,
-               extend: Api::V1::StudentRepresenter,
-               schema_info: { required: false }
+               extend: Api::V1::StudentRepresenter
 
   end
 end

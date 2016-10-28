@@ -5,7 +5,7 @@ class OfferingAccessPolicy
     case action.to_sym
     when :index
       requestor.account.confirmed_faculty?
-    when :read
+    when :read, :create_course
       requestor.account.confirmed_faculty? && offering.is_available
     else
       false

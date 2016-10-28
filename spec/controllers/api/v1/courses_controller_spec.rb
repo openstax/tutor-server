@@ -67,6 +67,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           name: course.profile.name,
           term: course.profile.term,
           year: course.profile.year,
+          num_sections: course.num_sections,
           starts_at: a_kind_of(String),
           ends_at: a_kind_of(String),
           is_active: true,
@@ -151,6 +152,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:term)             { CourseProfile::Models::Profile.terms.keys.sample }
     let(:year)             { Time.current.year }
     let(:catalog_offering) { FactoryGirl.create :catalog_offering }
+    let(:num_sections)     { 2 }
 
     let(:valid_body) do
       {
@@ -158,6 +160,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         term: term,
         year: year,
         is_college: true,
+        num_sections: num_sections,
         offering_id: catalog_offering.id
       }.to_json
     end
@@ -190,6 +193,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           is_active: be_in([true, false]),
           is_college: true,
           is_concept_coach: false,
+          num_sections: num_sections,
           offering_id: catalog_offering.id.to_s,
           appearance_code: catalog_offering.appearance_code,
           salesforce_book_name: catalog_offering.salesforce_book_name,
@@ -198,14 +202,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           time_zone: 'Central Time (US & Canada)',
           default_due_time: '07:00',
           default_open_time: '00:01',
-          periods: [],
+          periods: [a_kind_of(Hash)]*num_sections,
           students: []
         }
       end
 
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
-      it 'creates a new course for the faculty if a name is specified' do
+      it 'creates a new course for the faculty if all required attributes are specified' do
         expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
           change{ Entity::Course.count }.by(1)
         )
@@ -1131,7 +1135,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       FactoryGirl.create :course_membership_period, course: course, name: '0th'
     end
 
-    let(:valid_params) { { id: course.id } }
+    let(:valid_params) { { id: course.id                } }
+    let(:valid_body)   { { copy_question_library: false } }
 
     before { zeroth_period.to_model.destroy! }
 
@@ -1174,6 +1179,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           is_active: be_in([true, false]),
           is_college: course.profile.is_college,
           is_concept_coach: course.profile.is_concept_coach,
+          num_sections: course.num_sections,
           offering_id: course.profile.offering.id.to_s,
           appearance_code: course.profile.offering.appearance_code,
           salesforce_book_name: course.profile.offering.salesforce_book_name,
@@ -1183,7 +1189,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           default_due_time: course.profile.default_due_time,
           default_open_time: course.profile.default_open_time,
           name: course.profile.name,
-          periods: [],
+          periods: [a_kind_of(Hash)]*course.num_sections,
           students: []
         }
       end
@@ -1193,7 +1199,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'clones the course for the user' do
-        api_post :clone, user_1_token, parameters: valid_params
+        api_post :clone, user_1_token, parameters: valid_params, raw_post_data: valid_body
 
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash).to match expected_response

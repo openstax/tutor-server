@@ -7,7 +7,7 @@ RSpec.describe CloneCourse, type: :routine do
 
   it 'creates a copy of a course' do
 
-    result = described_class.call(course: course, teacher_user: user)
+    result = described_class.call(course: course, teacher_user: user, copy_question_library: false)
 
     expect(result.errors).to be_empty
 

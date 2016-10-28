@@ -74,9 +74,15 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   end
 
   it 'shows students' do
-    output = described_class.new(Hashie::Mash.new({students: [{id: 32}, {id: 65}]})).to_hash
-    expect(output["students"]).to(
-      match [a_hash_including("id" => "32"), a_hash_including("id" => "65")]
+    period = FactoryGirl.create :course_membership_period, course: course
+    student_1_user = FactoryGirl.create :user
+    student_2_user = FactoryGirl.create :user
+    AddUserAsPeriodStudent[user: student_1_user, period: period]
+    AddUserAsPeriodStudent[user: student_2_user, period: period]
+
+    expect(represented["students"]).to(
+      match_array [a_hash_including("id" => student_1_user.id.to_s),
+                   a_hash_including("id" => student_2_user.id.to_s)]
     )
   end
 end

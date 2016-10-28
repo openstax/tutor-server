@@ -21,6 +21,7 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 
   delegate :name, to: :school, prefix: true, allow_nil: true
+  delegate :num_sections, to: :course, allow_nil: true
 
   before_validation :set_starts_at_and_ends_at, on: :create
 

@@ -32,6 +32,7 @@ class CollectCourseInfo
         name: profile.name,
         term: profile.term,
         year: profile.year,
+        num_sections: profile.num_sections,
         starts_at: profile.starts_at,
         ends_at: profile.ends_at,
         active?: profile.active?,

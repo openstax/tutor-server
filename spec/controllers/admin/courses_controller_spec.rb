@@ -68,6 +68,8 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   context 'POST #create' do
+    let(:num_sections) { 2 }
+
     let(:request) do
       post :create, course: {
         name: 'Hello World',
@@ -75,12 +77,21 @@ RSpec.describe Admin::CoursesController, type: :controller do
         year: Time.current.year,
         is_concept_coach: false,
         is_college: true,
+        num_sections: num_sections,
         catalog_offering_id: FactoryGirl.create(:catalog_offering).id
       }
     end
 
+    it 'creates an entity course' do
+      expect{request}.to change{Entity::Course.count}.by(1)
+    end
+
     it 'creates a course profile' do
       expect{request}.to change{CourseProfile::Models::Profile.count}.by(1)
+    end
+
+    it 'creates the specified number of sections' do
+      expect{request}.to change{CourseMembership::Models::Period.count}.by(num_sections)
     end
 
     it 'sets a flash notice' do

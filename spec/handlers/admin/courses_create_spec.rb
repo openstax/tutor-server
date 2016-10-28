@@ -13,6 +13,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         year: Time.current.year,
         is_concept_coach: false,
         is_college: true,
+        num_sections: 0,
         catalog_offering_id: catalog_offering.id
       }
     }
@@ -37,6 +38,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         year: Time.current.year,
         is_concept_coach: false,
         is_college: true,
+        num_sections: 0,
         catalog_offering_id: catalog_offering.id,
         school_district_school_id: school.id
       }
@@ -58,11 +60,28 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         ends_at: ends_at,
         is_concept_coach: false,
         is_college: true,
+        num_sections: 0,
         catalog_offering_id: catalog_offering.id
       }
     }
 
     expect(course_profile.starts_at).to eq starts_at
     expect(course_profile.ends_at  ).to eq ends_at
+  end
+
+  it 'creates the specified number of sections for the course' do
+    @params = {
+      course: {
+        name: 'Hello course' ,
+        term: CourseProfile::Models::Profile.terms.keys.sample,
+        year: Time.current.year,
+        is_concept_coach: false,
+        is_college: true,
+        num_sections: 2,
+        catalog_offering_id: catalog_offering.id
+      }
+    }
+
+    expect(course.num_sections).to eq 2
   end
 end

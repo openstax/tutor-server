@@ -12,10 +12,13 @@ class CourseAccessPolicy
       course.active? &&
       UserIsCourseStudent[user: requestor, course: course] ||
       UserIsCourseTeacher[user: requestor, course: course]
-    when :export, :roster, :add_period, :update, :stats, :exercises, :clone
+    when :export, :roster, :add_period, :update, :stats, :exercises
       UserIsCourseTeacher[user: requestor, course: course]
     when :create
       requestor.try!(:account).try!(:confirmed_faculty?)
+    when :clone
+      UserIsCourseTeacher[user: requestor, course: course] &&
+      course.offering.is_available
     else
       false
     end

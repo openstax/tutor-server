@@ -33,7 +33,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
-    required_attributes = [:name, :term, :year, :is_college, :catalog_offering_id]
+    required_attributes = [:name, :term, :year, :num_sections, :is_college, :catalog_offering_id]
 
     errors = required_attributes.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
       {code: :missing_attribute, message: "The #{sym} attribute must be provided"}
@@ -42,6 +42,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     render_api_errors(errors) and return if errors.any?
 
     catalog_offering = Catalog::Models::Offering.find(attributes[:catalog_offering_id])
+
+    OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
     attributes_with_catalog_offering = attributes.except(:catalog_offering_id)
                                                  .merge(catalog_offering: catalog_offering)
@@ -156,7 +158,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def clone
     OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, @course)
-    attributes = consumed(Api::V1::CourseRepresenter)
+    attributes = consumed(Api::V1::CourseCloneRepresenter)
                    .merge(course: @course, teacher_user: current_human_user)
     course = CloneCourse[attributes]
     respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil

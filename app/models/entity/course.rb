@@ -27,4 +27,8 @@ class Entity::Course < Tutor::SubSystems::BaseModel
   def deletable?
     periods.empty? && teachers.empty? && students.empty?
   end
+
+  def num_sections
+    periods.size
+  end
 end
