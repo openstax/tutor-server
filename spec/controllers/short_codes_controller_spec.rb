@@ -8,7 +8,7 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:relative_url) { FactoryGirl.create(:short_code_short_code,
                                           uri: 'dashboard') }
 
-  let(:course) { FactoryGirl.create :entity_course }
+  let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }

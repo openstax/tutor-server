@@ -17,10 +17,11 @@ class Admin::CoursesController < Admin::BaseController
 
     @course_infos = courses.outputs.items.preload(
       [
-        :profile, { teachers: { role: [:role_user, :profile] }, periods_with_deleted: :latest_enrollments_with_deleted }
-      ],
-      [ ecosystems: [:books] ],
-      [ :periods ]
+        { teachers: { role: [:role_user, :profile] },
+          periods_with_deleted: :latest_enrollments_with_deleted,
+          ecosystems: :books },
+        :periods
+      ]
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
@@ -30,7 +31,7 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def new
-    get_new_course_profile
+    get_new_course
   end
 
   def create
@@ -41,7 +42,7 @@ class Admin::CoursesController < Admin::BaseController
                 },
                 failure: ->(*) {
                   flash[:error] = @handler_result.errors.full_messages
-                  @profile = @handler_result.outputs.profile || get_new_course_profile
+                  @course = @handler_result.outputs.course || get_new_course
                   get_schools
                   get_catalog_offerings
                   render :new
@@ -120,9 +121,9 @@ class Admin::CoursesController < Admin::BaseController
     else
       course_ids = params[:course_id]
       ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
-      courses = Entity::Course
+      courses = CourseProfile::Models::Course
         .where { id.in course_ids }
-        .includes(:ecosystems)
+        .preload(:ecosystems)
         .select { |course|
           course.ecosystems.first.try(:id) != ecosystem.id
         }
@@ -157,17 +158,18 @@ class Admin::CoursesController < Admin::BaseController
     if params[:ecosystem_id].blank?
       flash[:error] = 'Please select a course ecosystem'
     else
-      course = Entity::Course.find(params[:id])
+      course = CourseProfile::Models::Course.find(params[:id])
       ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
 
       if GetCourseEcosystem[course: course] == ecosystem
-        flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
+        flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.name}\""
       else
         CourseContent::AddEcosystemToCourse.perform_later(
           course: Marshal.dump(course.reload),
           ecosystem: Marshal.dump(ecosystem)
         )
-        flash[:notice] = "Course ecosystem update to \"#{ecosystem.title}\" queued for \"#{course.profile.name}\""
+        flash[:notice] = "Course ecosystem update to \"#{ecosystem.title
+                         }\" queued for \"#{course.name}\""
       end
     end
 
@@ -176,10 +178,10 @@ class Admin::CoursesController < Admin::BaseController
 
   private
 
-  def get_new_course_profile
+  def get_new_course
     current_time = Time.current
 
-    @profile = CourseProfile::Models::Profile.new(
+    @course = CourseProfile::Models::Course.new(
       is_concept_coach: false,
       is_college: true,
       term: 'demo',

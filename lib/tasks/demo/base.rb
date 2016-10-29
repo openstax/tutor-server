@@ -492,7 +492,7 @@ class Demo::Base
   end
 
   def find_course(name:)
-    CourseProfile::Models::Profile.where(name: name).first.try(:course)
+    CourseProfile::Models::Course.where(name: name).first.try(:course)
   end
 
   def create_course(name:, term:, year:, starts_at: nil, ends_at: nil,

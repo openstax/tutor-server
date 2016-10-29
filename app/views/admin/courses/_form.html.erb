@@ -1,6 +1,6 @@
 <% method ||= :post %>
 
-<%= form_for @profile, as: :course, url: url, method: method do |f| %>
+<%= form_for @course, as: :course, url: url, method: method do |f| %>
   <div class="form-group">
     <%= f.label :name %>
     <%= f.text_field :name, class: 'form-control' %>
@@ -8,7 +8,7 @@
 
   <div class="form-group">
     <%= f.label :term, 'Term (do NOT use "Demo" in production)' %>
-    <%= term_select_options = CourseProfile::Models::Profile.terms.keys.map do |term|
+    <%= term_select_options = CourseProfile::Models::Course.terms.keys.map do |term|
          term_string = term.to_s
 
          [term_string.humanize, term_string.downcase]

@@ -68,7 +68,7 @@ class Admin::PeriodsController < Admin::BaseController
   private
 
   def get_course
-    @course = Entity::Course.find(params[:course_id])
+    @course = CourseProfile::Models::Course.find(params[:course_id])
   end
 
   def get_period

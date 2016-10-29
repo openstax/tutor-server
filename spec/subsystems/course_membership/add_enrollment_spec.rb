@@ -4,7 +4,7 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
   context "when adding a new student role to a period" do
     it "succeeds" do
       role    = FactoryGirl.create :entity_role
-      course  = FactoryGirl.create :entity_course
+      course  = FactoryGirl.create :course_profile_course
       period  = FactoryGirl.create :course_membership_period, course: course
       student = FactoryGirl.create :course_membership_student, role: role, course: course
 
@@ -19,7 +19,7 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
   context "when moving an existing student role to another period in the same course" do
     it "succeeds" do
       role     = FactoryGirl.create :entity_role
-      course   = FactoryGirl.create :entity_course
+      course   = FactoryGirl.create :course_profile_course
       period_1 = FactoryGirl.create :course_membership_period, course: course
       period_2 = FactoryGirl.create :course_membership_period, course: course
       student  = CourseMembership::AddStudent[period: period_1, role: role]
@@ -46,8 +46,8 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
   context "when adding an existing student role to another period in a different course" do
     it "fails" do
       role     = FactoryGirl.create :entity_role
-      course_1 = FactoryGirl.create :entity_course
-      course_2 = FactoryGirl.create :entity_course
+      course_1 = FactoryGirl.create :course_profile_course
+      course_2 = FactoryGirl.create :course_profile_course
       period_1 = FactoryGirl.create :course_membership_period, course: course_1
       period_2 = FactoryGirl.create :course_membership_period, course: course_2
       student  = CourseMembership::AddStudent[period: period_1, role: role]

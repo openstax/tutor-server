@@ -22,7 +22,7 @@ RSpec.describe "Students in archived old period sign up in new term",
   context "CC course" do
 
     before(:all) do
-      @course = FactoryGirl.create :entity_course, is_concept_coach: true
+      @course = FactoryGirl.create :course_profile_course, is_concept_coach: true
       semester_1_period = FactoryGirl.create :course_membership_period, course: @course
 
       @student_user = FactoryGirl.create(:user)

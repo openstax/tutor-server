@@ -10,11 +10,13 @@ class CollectImportJobsData
     course_ids = jobbas_with_course_ecosystem.map{|job| job.data["course_id"]}
 
 
-    courses =  course_ids.blank? ? {} : CourseProfile::Models::Profile.where(entity_course_id: course_ids).pluck(:entity_course_id, :name).to_h
+    course_names_by_id = course_ids.blank? ?
+      {} : CourseProfile::Models::Course.where(id: course_ids).pluck(:id, :name).to_h
     jobbas_with_course_ecosystem.each do |job|
       course_id = job.data["course_id"]
-      course_name = courses[course_id]
-      data << {id: job.id, state_name: job.state.name, course_ecosystem: job.data["course_ecosystem"], course_profile_profile_name: course_name}
+      course_name = course_names_by_id[course_id]
+      data << { id: job.id, state_name: job.state.name,
+                course_ecosystem: job.data["course_ecosystem"], course_name: course_name }
     end
 
     outputs[:import_jobs_data] = data

@@ -21,7 +21,7 @@ task find_dupes: :environment do
       end.compact.max
 
       csv << [ ee.student.role.role_user.profile.account_id,
-               ee.student.entity_course_id,
+               ee.student.course_profile_course_id,
                ee.course_membership_period_id,
                completed_steps_count,
                latest_worked_at,
@@ -38,7 +38,7 @@ task find_dupes: :environment do
 
     CourseMembership::Models::Teacher.includes{role.role_user.profile}.find_each do |teacher|
       csv << [ teacher.role.role_user.profile.account_id,
-               teacher.entity_course_id,
+               teacher.course_profile_course_id,
                teacher.id,
                teacher.created_at ]
     end

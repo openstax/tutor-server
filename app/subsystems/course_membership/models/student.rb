@@ -1,7 +1,7 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   acts_as_paranoid
 
-  belongs_to :course, subsystem: :entity
+  belongs_to :course, subsystem: :course_profile
   belongs_to :role, subsystem: :entity
 
   has_many :enrollments, -> { with_deleted }, dependent: :destroy

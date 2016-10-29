@@ -23,7 +23,7 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     period_model = FactoryGirl.create(:course_membership_period)
     @period = CourseMembership::Period.new(strategy: period_model.wrap)
     @course = @period.course
-    @course.profile.update_attribute(:is_concept_coach, true)
+    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 

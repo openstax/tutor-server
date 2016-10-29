@@ -4,7 +4,7 @@ module Manager::StudentActions
   end
 
   def index
-    @students = GetCourseRoster.call(course: @entity_course).outputs.roster[:students]
+    @students = GetCourseRoster.call(course: @course).outputs.roster[:students]
     @students.sort! { |a, b| a.username <=> b.username }
     render 'manager/students/index'
   end
@@ -12,7 +12,6 @@ module Manager::StudentActions
   protected
 
   def get_course
-    @entity_course = Entity::Course.find(params[:course_id])
-    @course = GetCourseProfile[course: @entity_course]
+    @course = CourseProfile::Models::Course.find(params[:course_id])
   end
 end

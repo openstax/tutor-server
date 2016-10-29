@@ -15,16 +15,16 @@ class CloneCourse
   def exec(course:, teacher_user:, copy_question_library:, **attributes)
 
     attrs = {
-      name: course.profile.name,
-      term: course.profile.term,
-      year: course.profile.year + 1,
-      is_college: course.profile.is_college,
-      is_concept_coach: course.profile.is_concept_coach,
+      name: course.name,
+      term: course.term,
+      year: course.year + 1,
+      is_college: course.is_college,
+      is_concept_coach: course.is_concept_coach,
       num_sections: course.num_sections,
-      school: course.profile.school,
-      catalog_offering: course.profile.offering,
+      school: course.school,
+      catalog_offering: course.offering,
       appearance_code: course.appearance_code,
-      time_zone: course.profile.time_zone
+      time_zone: course.time_zone
     }.merge(attributes)
 
     run(:create_course, **attrs)

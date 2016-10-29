@@ -28,13 +28,13 @@ RSpec.describe SearchCourses, type: :routine do
   end
 
   let!(:course_1) { FactoryGirl.create(
-    :course_profile_profile, name: 'Physics', school: tutor_school, offering: offering_1
+    :course_profile_course, name: 'Physics', school: tutor_school, offering: offering_1
   ).course }
   let!(:course_2) { FactoryGirl.create(
-    :course_profile_profile, name: 'Biology', school: tutor_school, offering: offering_2
+    :course_profile_course, name: 'Biology', school: tutor_school, offering: offering_2
   ).course }
   let!(:course_3) { FactoryGirl.create(
-    :course_profile_profile, name: 'Concept Coach', school: cc_school, offering: offering_1
+    :course_profile_course, name: 'Concept Coach', school: cc_school, offering: offering_1
   ).course }
 
   let(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
-  let(:course)    { FactoryGirl.create :entity_course, :with_assistants }
+  let(:course)    { FactoryGirl.create :course_profile_course, :with_assistants }
   let(:period)    { FactoryGirl.create :course_membership_period, course: course }
 
   let(:user)      { FactoryGirl.create(:user) }

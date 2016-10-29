@@ -18,7 +18,7 @@
     <tr>
       <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
       <td><%= course.name %></td>
-      <td><%= course.profile.school.try(:name) %></td>
+      <td><%= course.school_name %></td>
       <td><%= course.is_concept_coach ? 'Yes' : 'No' %></td>
       <td><%= course.is_college ? 'Yes' : 'No' %></td>
       <td><%= course.teachers.map(&:name).join(', ') %></td>

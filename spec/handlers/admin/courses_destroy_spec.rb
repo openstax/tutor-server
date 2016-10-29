@@ -1,17 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesDestroy, type: :handler do
-  let!(:course) { FactoryGirl.create :entity_course }
+  let!(:course) { FactoryGirl.create :course_profile_course }
 
   context 'destroyable course' do
-    it 'deletes the course and the course profile' do
-      courses_count = Entity::Course.count
-      profiles_count = CourseProfile::Models::Profile.count
-
-      result = described_class.call(params: {id: course.id})
+    it 'deletes the course' do
+      result = nil
+      expect do
+        result = described_class.call(params: {id: course.id})
+      end.to change{ CourseProfile::Models::Course.count }.by(-1)
       expect(result.errors).to be_empty
-      expect(Entity::Course.count).to eq courses_count - 1
-      expect(CourseProfile::Models::Profile.count).to eq profiles_count - 1
     end
   end
 

@@ -13,7 +13,7 @@ class Admin::CoursesAddSalesforce
   end
 
   def handle
-    course = Entity::Course.find(params[:id])
+    course = CourseProfile::Models::Course.find(params[:id])
 
     sf_object = get_salesforce_object_for_id(add_salesforce_params.salesforce_id)
     fatal_error(code: :salesforce_object_does_not_exist) if sf_object.nil?

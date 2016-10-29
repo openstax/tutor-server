@@ -5,7 +5,7 @@ require 'database_cleaner'
 RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: true,
                                                       version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let(:course) { FactoryGirl.create :entity_course, :with_assistants }
+  let(:course) { FactoryGirl.create :course_profile_course, :with_assistants }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   context 'with book' do

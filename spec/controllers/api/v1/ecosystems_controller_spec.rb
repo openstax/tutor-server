@@ -20,7 +20,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
   let(:ca_user_token)   { FactoryGirl.create :doorkeeper_access_token,
                                              resource_owner_id: content_analyst.id }
 
-  let(:course)          { FactoryGirl.create :entity_course }
+  let(:course)          { FactoryGirl.create :course_profile_course }
   let(:period)          { FactoryGirl.create :course_membership_period, course: course }
 
   context 'with a fake book' do

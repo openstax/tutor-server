@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
-  let(:course_1)  { FactoryGirl.create :entity_course }
-  let(:course_2)  { FactoryGirl.create :entity_course }
+  let(:course_1)  { FactoryGirl.create :course_profile_course }
+  let(:course_2)  { FactoryGirl.create :course_profile_course }
 
   let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
   let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version: :v1 do
-  let(:course)        { FactoryGirl.create :entity_course }
-  let(:other_course)  { FactoryGirl.create :entity_course }
+  let(:course)        { FactoryGirl.create :course_profile_course }
+  let(:other_course)  { FactoryGirl.create :course_profile_course }
 
   let(:teacher_user)  { FactoryGirl.create(:user) }
 

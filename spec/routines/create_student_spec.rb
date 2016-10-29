@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreateStudent, type: :routine do
-  let(:course) { FactoryGirl.create :entity_course }
+  let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   it 'creates a new student in the given period with a username and a password' do

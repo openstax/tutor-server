@@ -37,8 +37,8 @@ RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
     end
 
     it 'sends the course\'s biglearn_excluded_pool_uuid to Biglearn if the role is a student' do
-      course = FactoryGirl.create :entity_course
-      course.profile.update_attribute :biglearn_excluded_pool_uuid, SecureRandom.uuid
+      course = FactoryGirl.create :course_profile_course
+      course.update_attribute :biglearn_excluded_pool_uuid, SecureRandom.uuid
       period = FactoryGirl.create :course_membership_period, course: course
       user = FactoryGirl.create(:user)
       student_role = AddUserAsPeriodStudent[user: user, period: period]
@@ -46,7 +46,7 @@ RSpec.describe GetEcosystemExercisesFromBiglearn, type: :routine do
       expect(OpenStax::Biglearn::V1).to receive(:get_projection_exercises).once do |args|
         excluded_pools = args[:pool_exclusions].map{ |pool_exclusion| pool_exclusion[:pool] }
         expect(excluded_pools).to include(a_kind_of(OpenStax::Biglearn::V1::Pool))
-        expect(excluded_pools.map(&:uuid)).to include(course.profile.biglearn_excluded_pool_uuid)
+        expect(excluded_pools.map(&:uuid)).to include(course.biglearn_excluded_pool_uuid)
         []
       end
       expect(ExceptionNotifier).not_to receive(:notify_exception)

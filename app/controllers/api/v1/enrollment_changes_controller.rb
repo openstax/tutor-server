@@ -65,9 +65,9 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
 
     # Find only CC periods
-    period = CourseMembership::Models::Period.joins(course: :profile).find_by(
+    period = CourseMembership::Models::Period.joins(:course).find_by(
       enrollment_code: enrollment_params.enrollment_code,
-      course: { profile: { is_concept_coach: true } }
+      course: { is_concept_coach: true }
     )
 
     if period.nil?

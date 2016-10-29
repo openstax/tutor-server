@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe GetCcDashboard, type: :routine do
 
   before(:all) do
-    @course   = FactoryGirl.create :entity_course, is_concept_coach: true, name: 'Biology 101'
+    @course   = FactoryGirl.create :course_profile_course, is_concept_coach: true, name: 'Biology 101'
     @period   = FactoryGirl.create :course_membership_period, course: @course
     @period_2 = FactoryGirl.create :course_membership_period, course: @course
 

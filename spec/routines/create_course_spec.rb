@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreateCourse, type: :routine do
-  let(:term)             { CourseProfile::Models::Profile.terms.keys.sample }
+  let(:term)             { CourseProfile::Models::Course.terms.keys.sample }
   let(:year)             { Time.current.year }
   let(:is_college)       { true }
   let(:catalog_offering) { FactoryGirl.create :catalog_offering }
@@ -18,7 +18,7 @@ RSpec.describe CreateCourse, type: :routine do
 
     course = result.outputs.course
 
-    expect(course).to be_a Entity::Course
+    expect(course).to be_a CourseProfile::Models::Course
     expect(course.course_assistants.count).to eq 4
   end
 

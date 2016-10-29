@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Teachers' do
-  let(:course) { FactoryGirl.create :entity_course }
+  let(:course) { FactoryGirl.create :course_profile_course }
   let(:user)   { FactoryGirl.create(:user) }
 
   describe 'joining their courses' do

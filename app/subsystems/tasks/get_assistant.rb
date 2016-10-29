@@ -25,7 +25,7 @@ class Tasks::GetAssistant
     outputs[:assistant] = Tasks::Models::Assistant
                             .joins(:course_assistants)
                             .where(course_assistants: {
-                              entity_course_id: course.id,
+                              course_profile_course_id: course.id,
                               tasks_task_plan_type: task_plan.type
                             }).first
   end

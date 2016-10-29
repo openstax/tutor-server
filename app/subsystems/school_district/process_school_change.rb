@@ -3,21 +3,18 @@ class SchoolDistrict::ProcessSchoolChange
 
   protected
 
-  def exec(course_profile:)
+  def exec(course:)
 
-    # TODO eventually SchoolDistrict SS should have its own concept of courses so we don't
-    # have to store and interact with a school ID in CourseProfile::Models::Profile
-
-    old_school_id, new_school_id = course_profile.previous_changes['school_district_school_id']
+    old_school_id, new_school_id = course.previous_changes['school_district_school_id']
 
     if old_school_id
       old_school = SchoolDistrict::Models::School.find(old_school_id)
-      Legal::MakeChildNotGetParentContracts[child: course_profile.course, parent: old_school]
+      Legal::MakeChildNotGetParentContracts[child: course, parent: old_school]
     end
 
     if new_school_id
       new_school = SchoolDistrict::Models::School.find(new_school_id)
-      Legal::MakeChildGetParentContracts[child: course_profile.course, parent: new_school]
+      Legal::MakeChildGetParentContracts[child: course, parent: new_school]
     end
   end
 

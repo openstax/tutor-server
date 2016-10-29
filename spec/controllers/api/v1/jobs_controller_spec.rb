@@ -77,7 +77,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
       it 'works end-2-end for ExportPerformanceReport' do
         user = FactoryGirl.create(:user)
-        course = FactoryGirl.create :entity_course
+        course = FactoryGirl.create :course_profile_course
         user_token = FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user.id
 
         AddUserAsCourseTeacher[course: course, user: user]

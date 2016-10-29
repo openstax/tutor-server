@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Admin::PeriodsController do
   let(:admin)  { FactoryGirl.create(:user, :administrator) }
 
-  let(:course) { FactoryGirl.create :entity_course }
+  let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   before       { controller.sign_in(admin) }

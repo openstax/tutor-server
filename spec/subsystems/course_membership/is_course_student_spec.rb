@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe CourseMembership::IsCourseStudent do
 
   context "when not a student of the given course" do
-    let(:target_course) { FactoryGirl.create :entity_course }
+    let(:target_course) { FactoryGirl.create :course_profile_course }
     let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
-    let(:other_course)  { FactoryGirl.create :entity_course }
+    let(:other_course)  { FactoryGirl.create :course_profile_course }
     let(:other_period)  { FactoryGirl.create :course_membership_period, course: other_course }
 
     let(:target_student_role) { FactoryGirl.create :entity_role }
@@ -46,7 +46,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
   end
 
   context "when a student of the given course" do
-    let(:target_course)       { FactoryGirl.create :entity_course }
+    let(:target_course)       { FactoryGirl.create :course_profile_course }
     let(:target_period)       { FactoryGirl.create :course_membership_period,
                                                    course: target_course }
     let(:target_student_role) { FactoryGirl.create :entity_role }

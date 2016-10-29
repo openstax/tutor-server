@@ -9,7 +9,7 @@ describe GetExcludedExercises, type: :routine do
 
   context "with data" do
     before(:all) do
-      @course = FactoryGirl.create :entity_course
+      @course = FactoryGirl.create :course_profile_course
       @teacher_user = FactoryGirl.create :user, first_name: "Bob", last_name: "Martin"
       @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher_user]
 

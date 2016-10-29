@@ -12,8 +12,8 @@ module Tasks
       end
 
       # So can be called like other exporters
-      def self.[](profile:, report:, filename:, options: {})
-        call(course_name: profile.name, report: report, filename: filename, options: options)
+      def self.[](course:, report:, filename:, options: {})
+        call(course_name: course.name, report: report, filename: filename, options: options)
       end
 
       def initialize(course_name:, report:, filepath:, options:)

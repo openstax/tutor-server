@@ -49,8 +49,8 @@
           </span>
           <span class="course-info-name"><%= " #{course_info.name}" %></span>
           <%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
-          <span class="course-info-profile-school">
-            <%= " / #{course_info.profile.school.name}" if course_info.profile.try(:school) %>
+          <span class="course-info-school">
+            <%= " / #{course_info.school_name}" if course_info.school %>
           </span>
         </div>
         <div class="card-body">
@@ -118,7 +118,7 @@
           <tr>
             <td><%= link_to(job["id"], @job_path_proc.call(job["id"])) %></td>
             <td><%= job["state_name"] %></td>
-            <td><%= job["course_profile_profile_name"] %></td>
+            <td><%= job["course_name"] %></td>
             <td><%= job["course_ecosystem"] %></td>
           </tr>
         <% end %>
@@ -144,7 +144,7 @@
           <tr>
             <td><%= link_to(job["id"], @job_path_proc.call(job["id"])) %></td>
             <td><%= job["state_name"] %></td>
-            <td><%= job["course_profile_profile_name"] %></td>
+            <td><%= job["course_name"] %></td>
             <td><%= job["course_ecosystem"] %></td>
           </tr>
         <% end %>

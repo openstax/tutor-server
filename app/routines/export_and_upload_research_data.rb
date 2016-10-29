@@ -126,25 +126,20 @@
   def role_info
     @role_info ||=
       CourseMembership::Models::Student
-        .select([:entity_role_id, :deidentifier, :entity_course_id])
+        .select([:entity_role_id, :deidentifier, :course_profile_course_id])
         .with_deleted
         .each_with_object({}) do |student, hsh|
           hsh[student.entity_role_id] = {
             deidentifier: student.deidentifier,
-            course_id: student.entity_course_id
+            course_id: student.course_profile_course_id
           }
         end
   end
 
   def is_cc?(course_id)
-    @is_cc_map ||=
-      CourseProfile::Models::Profile
-        .select([:entity_course_id, :is_concept_coach])
-        .each_with_object({}) do |profile, hsh|
-          hsh[profile.entity_course_id] = profile.is_concept_coach.to_s.upcase
-        end
+    @is_cc_map ||= CourseProfile::Models::Course.pluck(:id, :is_concept_coach).to_h
 
-    @is_cc_map[course_id]
+    @is_cc_map[course_id].to_s.upcase
   end
 
   def format_time(time)

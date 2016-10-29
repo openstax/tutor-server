@@ -29,7 +29,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
     @course = period.course
-    @course.profile.update_attribute(:is_concept_coach, true)
+    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
@@ -99,7 +99,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code :not_a_cc_student if the user is not in a CC course' do
-        @course.profile.update_attribute(:is_concept_coach, false)
+        @course.update_attribute(:is_concept_coach, false)
 
         expect{ show_api_call(@user_1_token) }.not_to(
           change{ Tasks::Models::Task.count }

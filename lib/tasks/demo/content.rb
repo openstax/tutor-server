@@ -93,7 +93,7 @@ class Demo::Content < Demo::Base
     offering = find_or_create_catalog_offering(content, ecosystem)
     course = find_course(name: content.course_name) ||
              create_course(name: content.course_name,
-                           term: CourseProfile::Models::Profile.terms[:demo],
+                           term: CourseProfile::Models::Course.terms[:demo],
                            year: current_time.year,
                            starts_at: current_time - 1.month,
                            ends_at: current_time + 10.years,

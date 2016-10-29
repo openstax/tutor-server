@@ -1,9 +1,9 @@
 class CreateCourse
   lev_routine express_output: :course
 
-  uses_routine CourseProfile::CreateCourseProfile,
+  uses_routine CourseProfile::CreateCourse,
                translations: { outputs: { type: :verbatim } },
-               as: :create_course_profile
+               as: :create_course
 
   uses_routine CourseMembership::CreatePeriod,
                as: :create_period
@@ -33,11 +33,9 @@ class CreateCourse
 
     # If the given time_zone already has an associated course,
     # make a copy to avoid linking the 2 courses' time_zones to the same record
-    time_zone = time_zone.dup if time_zone.present? && time_zone.profile.try!(:persisted?)
+    time_zone = time_zone.dup if time_zone.present? && time_zone.course.try!(:persisted?)
 
-    outputs.course = Entity::Course.create!
-    run(:create_course_profile,
-        course: outputs.course,
+    run(:create_course,
         name: name,
         is_concept_coach: is_concept_coach,
         is_college: is_college,
@@ -54,7 +52,7 @@ class CreateCourse
 
     run(:create_course_assistants, course: outputs.course)
 
-    run(:process_school_change, course_profile: outputs.profile)
+    run(:process_school_change, course: outputs.course)
 
     return if catalog_offering.blank?
 

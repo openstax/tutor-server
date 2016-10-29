@@ -11,7 +11,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course) { FactoryGirl.create :entity_course }
+  let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   context "POST #create" do

@@ -8,7 +8,7 @@ class GetTeacherNames
   protected
 
   def exec(course_id)
-    course = Entity::Course.find(course_id)
+    course = CourseProfile::Models::Course.find(course_id)
     run(:get_teacher_users, course)
     outputs[:teacher_names] = outputs[:teachers].map(&:name).sort
   end

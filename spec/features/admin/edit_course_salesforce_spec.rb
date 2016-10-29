@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.feature 'Admin changing course Salesforce settings' do
   background do
-    @course = FactoryGirl.create :entity_course
+    @course = FactoryGirl.create :course_profile_course
     @period_1 = FactoryGirl.create :course_membership_period, course: @course
 
     admin = FactoryGirl.create(:user, :administrator)

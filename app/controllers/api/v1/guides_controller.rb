@@ -15,7 +15,7 @@ module Api
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        course = Entity::Course.find(params[:id])
+        course = CourseProfile::Models::Course.find(params[:id])
         guide = GetStudentGuide[role: role(course, :student)]
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
@@ -26,7 +26,7 @@ module Api
         #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
-        course = Entity::Course.find(params[:id])
+        course = CourseProfile::Models::Course.find(params[:id])
         guide = GetTeacherGuide[role: role(course, :teacher)]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end

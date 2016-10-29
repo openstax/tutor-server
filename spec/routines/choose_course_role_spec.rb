@@ -5,7 +5,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
   let(:teacher)       { FactoryGirl.create :user }
   let(:student)       { FactoryGirl.create :user }
   let(:interloper)    { FactoryGirl.create :user }
-  let(:course)        { FactoryGirl.create :entity_course }
+  let(:course)        { FactoryGirl.create :course_profile_course }
   let(:period)        { FactoryGirl.create :course_membership_period, course: course }
 
   let!(:teacher_role) {

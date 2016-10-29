@@ -32,7 +32,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     te
   }
 
-  let(:course)              { FactoryGirl.create :entity_course }
+  let(:course)              { FactoryGirl.create :course_profile_course }
   let(:period)              { FactoryGirl.create :course_membership_period, course: course }
 
   let(:lo)                  { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }

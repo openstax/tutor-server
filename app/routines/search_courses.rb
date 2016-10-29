@@ -7,8 +7,8 @@ class SearchCourses
                translations: { outputs: { type: :verbatim } }
 
   SORTABLE_FIELDS = {
-    'id' => Entity::Course.arel_table[:id],
-    'name' => CourseProfile::Models::Profile.arel_table[:name],
+    'id' => :id,
+    'name' => :name,
     'school' => SchoolDistrict::Models::School.arel_table[:name],
     'offering' => Catalog::Models::Offering.arel_table[:salesforce_book_name],
     'created_at' => :created_at,
@@ -19,13 +19,15 @@ class SearchCourses
 
   def exec(params = {}, options = {})
     params[:order_by] ||= :name
-    relation = Entity::Course.joins{
-            [profile.school.outer,
-             profile.offering.outer,
+    relation = CourseProfile::Models::Course.joins{
+            [school.outer,
+             offering.outer,
              teachers.outer.role.outer.profile.outer.account.outer,
              ecosystems.outer]
-          }.select([Entity::Course.arel_table[Arel.star],
-                    CourseProfile::Models::Profile.arel_table[:name],
+          }.select([CourseProfile::Models::Course.arel_table[:id],
+                    CourseProfile::Models::Course.arel_table[:name],
+                    CourseProfile::Models::Course.arel_table[:created_at],
+                    CourseProfile::Models::Course.arel_table[:updated_at],
                     SchoolDistrict::Models::School.arel_table[:name],
                     Catalog::Models::Offering.arel_table[:salesforce_book_name]]).uniq
 
@@ -39,10 +41,10 @@ class SearchCourses
           next @items = @items.none if sanitized_queries.empty?
 
           @items = @items.where{
-            (profile.name.like_any sanitized_queries) | \
-            (profile.school.name.like_any sanitized_queries) | \
-            (profile.offering.salesforce_book_name.like_any sanitized_queries) | \
-            (profile.offering.description.like_any sanitized_queries) | \
+            (name.like_any sanitized_queries) | \
+            (school.name.like_any sanitized_queries) | \
+            (offering.salesforce_book_name.like_any sanitized_queries) | \
+            (offering.description.like_any sanitized_queries) | \
             (teachers.role.profile.account.username.like_any sanitized_queries) | \
             (teachers.role.profile.account.first_name.like_any sanitized_queries) | \
             (teachers.role.profile.account.last_name.like_any sanitized_queries) | \
@@ -57,7 +59,7 @@ class SearchCourses
           sanitized_names = to_string_array(name, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_names.empty?
 
-          @items = @items.where{profile.name.like_any sanitized_names}
+          @items = @items.where{name.like_any sanitized_names}
         end
       end
 
@@ -66,8 +68,7 @@ class SearchCourses
           sanitized_names = to_string_array(name, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_names.empty?
 
-          @items = @items.joins(profile: :school)
-                         .where{profile.school.name.like_any sanitized_names}
+          @items = @items.joins(:school).where{school.name.like_any sanitized_names}
         end
       end
 
@@ -76,11 +77,11 @@ class SearchCourses
           sanitized_queries = to_string_array(query, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_queries.empty?
 
-          @items = @items.joins(profile: :offering)
-                         .where{
-            (profile.offering.salesforce_book_name.like_any sanitized_queries) | \
-            (profile.offering.description.like_any sanitized_queries)
-          }
+          @items = @items.joins(:offering)
+                         .where do
+            (offering.salesforce_book_name.like_any sanitized_queries) | \
+            (offering.description.like_any sanitized_queries)
+          end
         end
       end
 

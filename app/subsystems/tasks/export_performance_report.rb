@@ -2,17 +2,12 @@ module Tasks
   class ExportPerformanceReport
     lev_routine express_output: :filepath
 
-    uses_routine GetCourseProfile,
-      translations: { outputs: { type: :verbatim } },
-      as: :get_course_profile
-
     uses_routine GetPerformanceReport,
       translations: { outputs: { type: :verbatim } },
       as: :get_performance_report
 
     protected
     def exec(role:, course:, format: :xlsx)
-      run(:get_course_profile, course: course)
       run(:get_performance_report, course: course, role: role)
 
       begin
@@ -41,11 +36,11 @@ module Tasks
     def generate_temp_export_file!(format, is_cc)
       klass = "Tasks::PerformanceReport::Export#{is_cc ? 'Cc' : ''}#{format.to_s.camelize}"
       exporter = klass.constantize
-      filename = [FilenameSanitizer.sanitize(outputs.profile.name),
+      filename = [FilenameSanitizer.sanitize(outputs.course.name),
                   'Scores',
                   Time.now.utc.strftime("%Y%m%d-%H%M%S")].join('_')
 
-      exporter[profile: outputs.profile,
+      exporter[course: outputs.course,
                report: outputs.performance_report,
                filename: "./tmp/#{filename}"]
     end

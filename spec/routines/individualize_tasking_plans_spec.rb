@@ -45,7 +45,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     end
   end
 
-  context 'entity_course' do
+  context 'course_profile_course' do
     let(:period_1)        { FactoryGirl.create :course_membership_period }
     let(:course)          { period_1.course }
     let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }

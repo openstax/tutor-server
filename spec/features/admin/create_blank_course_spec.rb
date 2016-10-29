@@ -31,7 +31,7 @@ RSpec.feature 'Administration' do
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been created.')
     expect(page).to have_text('Hello hi ciao Hey World')
-    course = Entity::Course.order(:created_at).last
+    course = CourseProfile::Models::Course.order(:created_at).last
     expect(course.offering).to eq catalog_offering
     expect(course.ecosystems.first).to eq catalog_offering.ecosystem
   end

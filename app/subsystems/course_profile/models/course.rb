@@ -1,4 +1,4 @@
-class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
+class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   include DefaultTimeValidations
 
@@ -8,20 +8,34 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   belongs_to_time_zone default: 'Central Time (US & Canada)', dependent: :destroy, autosave: true
 
   belongs_to :school, subsystem: :school_district
-  belongs_to :course, subsystem: :entity, dependent: :delete
   belongs_to :offering, subsystem: :catalog
+
+  has_many :periods, subsystem: :course_membership, dependent: :destroy
+  has_many :periods_with_deleted, -> { with_deleted }, subsystem: :course_membership,
+           dependent: :destroy, class_name: 'CourseMembership::Models::Period'
+
+  has_many :teachers, subsystem: :course_membership, dependent: :destroy
+  has_many :students, subsystem: :course_membership, dependent: :destroy
+
+  has_many :excluded_exercises, subsystem: :course_content, dependent: :destroy
+
+  has_many :course_ecosystems, subsystem: :course_content, dependent: :destroy
+  has_many :ecosystems, through: :course_ecosystems, subsystem: :content
+
+  has_many :course_assistants, subsystem: :tasks, dependent: :destroy
+
+  has_many :taskings, through: :periods, subsystem: :tasks
 
   unique_token :teach_token
 
   enum term: [ :legacy, :demo, :spring, :summer, :fall ]
 
-  validates :course, :time_zone, presence: true, uniqueness: true
+  validates :time_zone, presence: true, uniqueness: true
   validates :name, :term, :year, :starts_at, :ends_at, presence: true
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 
   delegate :name, to: :school, prefix: true, allow_nil: true
-  delegate :num_sections, to: :course, allow_nil: true
 
   before_validation :set_starts_at_and_ends_at, on: :create
 
@@ -33,14 +47,22 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
     read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
   end
 
-  def active?(current_time = Time.current)
-    starts_at <= current_time && current_time <= ends_at
-  end
-
   def term_year
     return if term.nil? || year.nil?
 
     TermYear.new(term, year)
+  end
+
+  def num_sections
+    periods.size
+  end
+
+  def active?(current_time = Time.current)
+    starts_at <= current_time && current_time <= ends_at
+  end
+
+  def deletable?
+    periods.empty? && teachers.empty? && students.empty?
   end
 
   protected

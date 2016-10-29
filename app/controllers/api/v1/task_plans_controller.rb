@@ -68,7 +68,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def create
     # Modified standard_create code
     Tasks::Models::TaskPlan.transaction do
-      course = Entity::Course.find(params[:course_id])
+      course = CourseProfile::Models::Course.find(params[:course_id])
       task_plan = BuildTaskPlan[course: course]
       consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]

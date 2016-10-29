@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Students enrolling via URL' do
-  let(:course)  { FactoryGirl.create :entity_course }
+  let(:course)  { FactoryGirl.create :course_profile_course }
   let(:period1) { FactoryGirl.create :course_membership_period, course: course }
   let(:period2) { FactoryGirl.create :course_membership_period, course: course }
 
@@ -74,7 +74,7 @@ RSpec.describe 'Students enrolling via URL' do
       end
 
       context 'when a student of a different course that uses same ecosystem' do
-        let(:other_course) { FactoryGirl.create :entity_course }
+        let(:other_course) { FactoryGirl.create :course_profile_course }
         let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
 
         before {
@@ -105,7 +105,7 @@ RSpec.describe 'Students enrolling via URL' do
           end
         end
         context 'when user belongs to other courses' do
-          let(:other_course) { FactoryGirl.create :entity_course }
+          let(:other_course) { FactoryGirl.create :course_profile_course }
           let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
 
           before(:each) {
@@ -151,7 +151,7 @@ RSpec.describe 'Students enrolling via URL' do
           end
 
           context 'when user belongs to other courses' do
-            let(:other_course) { FactoryGirl.create :entity_course }
+            let(:other_course) { FactoryGirl.create :course_profile_course }
             let(:other_period) { FactoryGirl.create :course_membership_period,
                                                     course: other_course }
 

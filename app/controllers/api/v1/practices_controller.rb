@@ -39,7 +39,7 @@ module Api
       protected
 
       def get_practice_role
-        @course = Entity::Course.find(params[:id])
+        @course = CourseProfile::Models::Course.find(params[:id])
         result = ChooseCourseRole.call(user: current_human_user,
                                        course: @course,
                                        allowed_role_type: :student,

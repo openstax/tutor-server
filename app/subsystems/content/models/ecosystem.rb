@@ -5,7 +5,7 @@ module Content
       wrapped_by ::Content::Strategies::Direct::Ecosystem
 
       has_many :course_ecosystems, dependent: :destroy, subsystem: :course_content
-      has_many :courses, through: :course_ecosystems, subsystem: :entity
+      has_many :courses, through: :course_ecosystems, subsystem: :course_profile
 
       has_many :task_plans, subsystem: :tasks, dependent: :destroy
 

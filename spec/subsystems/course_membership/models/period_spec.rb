@@ -13,7 +13,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:name) }
 
-  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:entity_course_id) }
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }
 
   it 'can be deleted and restored even if it has active students' do
     student_user = FactoryGirl.create(:user)

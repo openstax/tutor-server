@@ -13,10 +13,10 @@ RSpec.describe UserIsCourseStudent, type: :routine do
 
       other_student_role  = FactoryGirl.create :entity_role
 
-      target_course       = FactoryGirl.create :entity_course
+      target_course       = FactoryGirl.create :course_profile_course
       target_period       = FactoryGirl.create :course_membership_period, course: target_course
 
-      other_course        = FactoryGirl.create :entity_course
+      other_course        = FactoryGirl.create :course_profile_course
       other_period        = FactoryGirl.create :course_membership_period, course: other_course
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
@@ -41,7 +41,7 @@ RSpec.describe UserIsCourseStudent, type: :routine do
     let(:target_user)         { FactoryGirl.create(:user) }
     let(:target_student_role) { FactoryGirl.create :entity_role }
 
-    let(:target_course) { FactoryGirl.create :entity_course }
+    let(:target_course) { FactoryGirl.create :course_profile_course }
     let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
 
     before {

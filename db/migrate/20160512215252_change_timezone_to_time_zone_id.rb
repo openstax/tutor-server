@@ -11,61 +11,6 @@ class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
     rename_column :tasks_tasks, :due_at, :due_at_ntz
     rename_column :tasks_tasks, :feedback_at, :feedback_at_ntz
 
-    reversible do |dir|
-      dir.up do
-        time_zones = {}
-
-        CourseProfile::Models::Profile.find_each do |course_profile|
-          time_zone = ::TimeZone.create!(name: course_profile.timezone)
-          course_profile.update_attribute :time_zone, time_zone
-          time_zones[course_profile.entity_course_id] = time_zone
-        end
-
-        Tasks::Models::TaskingPlan.unscoped.preload(task_plan: :owner).find_each do |tasking_plan|
-          time_zone = time_zones[tasking_plan.task_plan.try(:owner).try(:id)]
-          next if time_zone.nil?
-
-          tasking_plan.time_zone = time_zone
-          tasking_plan.opens_at = tasking_plan.opens_at_ntz
-          tasking_plan.due_at = tasking_plan.due_at_ntz
-          tasking_plan.save!
-        end
-
-        Tasks::Models::Task.unscoped.uniq.find_each do |task|
-          tasking = Tasks::Models::Tasking.unscoped
-                                          .where(entity_task_id: task.entity_task_id)
-                                          .preload(:period).first
-          time_zone = time_zones[tasking.try(:period).try(:entity_course_id)]
-          next if time_zone.nil?
-
-          task.time_zone = time_zone
-          task.opens_at = task.opens_at_ntz
-          task.due_at = task.due_at_ntz
-          task.feedback_at = task.feedback_at_ntz
-          task.save!
-        end
-      end
-
-      dir.down do
-        Tasks::Models::Task.unscoped.uniq.find_each do |task|
-          task.opens_at_ntz = task.opens_at.utc
-          task.due_at_ntz = task.due_at.utc
-          task.feedback_at_ntz = task.feedback_at.utc
-          task.save!
-        end
-
-        Tasks::Models::TaskingPlan.unscoped.find_each do |tasking_plan|
-          tasking_plan.opens_at_ntz = tasking_plan.opens_at
-          tasking_plan.due_at_ntz = tasking_plan.due_at
-          tasking_plan.save!
-        end
-
-        CourseProfile::Models::Profile.update_all(
-          'timezone = time_zones.name FROM time_zones WHERE time_zones.id = time_zone_id'
-        )
-      end
-    end
-
     change_column_null :course_profile_profiles, :time_zone_id, false
     add_index :course_profile_profiles, :time_zone_id, unique: true
     add_foreign_key :course_profile_profiles, :time_zones, on_update: :cascade, on_delete: :nullify

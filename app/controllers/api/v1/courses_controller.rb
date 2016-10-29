@@ -17,7 +17,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
-    OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
+    OSU::AccessPolicy.require_action_allowed!(
+      :index, current_api_user, CourseProfile::Models::Course
+    )
     course_infos = CollectCourseInfo[user: current_human_user,
                                      with: [:roles, :periods, :ecosystem, :students]]
     respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
@@ -29,7 +31,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CourseRepresenter, include: :writeable)}
   EOS
   def create
-    OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, Entity::Course)
+    OSU::AccessPolicy.require_action_allowed!(
+      :create, current_api_user, CourseProfile::Models::Course
+    )
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
@@ -109,7 +113,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     end_at = DateTimeUtilities.from_s(params[:end_at])
     end_at_ntz = DateTimeUtilities.remove_tz(end_at)
 
-    result = GetNonCcDashboard.call(course: @course, role: get_course_role,
+    result = GetNonCcDashboard.call(course: @course, role: get_course_role(course: @course),
                                     start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
 
     if result.errors.any?
@@ -128,7 +132,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::Courses::Cc::DashboardRepresenter, include: :readable)}
   EOS
   def cc_dashboard
-    result = GetCcDashboard.call(course: @course, role: get_course_role)
+    result = GetCcDashboard.call(course: @course, role: get_course_role(course: @course))
 
     if result.errors.any?
       render_api_errors(result.errors)
@@ -167,12 +171,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
   protected
 
   def get_course
-    @course = Entity::Course.find(params[:id])
+    @course = CourseProfile::Models::Course.find(params[:id])
   end
 
-  def get_course_role(types: :any)
+  def get_course_role(course:, types: :any)
     result = ChooseCourseRole.call(user: current_human_user,
-                                   course: Entity::Course.find(params[:id]),
+                                   course: course,
                                    allowed_role_type: types,
                                    role_id: params[:role_id])
     if result.errors.any?

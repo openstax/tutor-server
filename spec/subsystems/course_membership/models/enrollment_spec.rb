@@ -3,7 +3,7 @@ require 'rails_helper'
 module CourseMembership
   module Models
     describe Enrollment, type: :model do
-      let(:course) { FactoryGirl.create :entity_course }
+      let(:course) { FactoryGirl.create :course_profile_course }
       let(:period) { FactoryGirl.create :course_membership_period, course: course }
       let(:role)   { FactoryGirl.create :entity_role }
 

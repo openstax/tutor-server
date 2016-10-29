@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::GetCoursePeriods do
-  let(:target_course) { FactoryGirl.create :entity_course }
+  let(:target_course) { FactoryGirl.create :course_profile_course }
 
   context "when there are no periods for the target course" do
     it "returns an empty enumerable" do

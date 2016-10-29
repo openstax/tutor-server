@@ -20,10 +20,10 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
 
     course = outputs.course
 
-    expect(course.profile.name).to eq "Yo"
-    expect(course.profile.school.name).to eq "Rice"
-    expect(course.profile.is_concept_coach).to be_truthy
-    expect(course.profile.is_college).to be_truthy
+    expect(course.name).to eq "Yo"
+    expect(course.school.name).to eq "Rice"
+    expect(course.is_concept_coach).to be_truthy
+    expect(course.is_college).to be_truthy
 
     attached_record = Salesforce::Models::AttachedRecord.first
     expect(attached_record.attached_to).to eq course
@@ -119,7 +119,7 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
       described_class[candidate: new_osa(book_name: "jimmy",
                                          product: "Concept Coach",
                                          school: "Rice U")]
-    }.to change{SchoolDistrict::Models::School.count}.by(0)
+    }.not_to change{SchoolDistrict::Models::School.count}
   end
 
   def new_osa(args={})
@@ -139,7 +139,7 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
   def expect_import_error(candidate, error_message)
     expect{
       described_class[candidate: candidate]
-    }.to change{Entity::Course.count}.by(0)
+    }.not_to change{ CourseProfile::Models::Course.count }
 
     expect(candidate.error).to eq error_message
   end

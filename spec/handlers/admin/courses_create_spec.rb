@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesCreate, type: :handler do
-  let(:catalog_offering)   { FactoryGirl.create :catalog_offering }
-  let(:handler_result)     { described_class.handle(params: @params) }
-  subject(:course_profile) { handler_result.outputs["[:create_course, :profile]"] }
+  let(:catalog_offering) { FactoryGirl.create :catalog_offering }
+  let(:handler_result)   { described_class.handle(params: @params) }
+  subject(:course)       { handler_result.outputs["[:create_course, :course]"] }
 
   it 'names the course' do
     @params = {
       course: {
         name: 'Hello course' ,
-        term: CourseProfile::Models::Profile.terms.keys.sample,
+        term: CourseProfile::Models::Course.terms.keys.sample,
         year: Time.current.year,
         is_concept_coach: false,
         is_college: true,
@@ -18,7 +18,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
       }
     }
 
-    expect(course_profile.name).to eq('Hello course')
+    expect(course.name).to eq('Hello course')
   end
 
   it 'requires a name' do
@@ -34,7 +34,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
     @params = {
       course: {
         name: 'Hello course' ,
-        term: CourseProfile::Models::Profile.terms.keys.sample,
+        term: CourseProfile::Models::Course.terms.keys.sample,
         year: Time.current.year,
         is_concept_coach: false,
         is_college: true,
@@ -44,7 +44,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
       }
     }
 
-    expect(course_profile.school_name).to eq('Hello school')
+    expect(course.school_name).to eq('Hello school')
   end
 
   it 'can directly assign the course start and end dates' do
@@ -54,7 +54,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
     @params = {
       course: {
         name: 'Hello course' ,
-        term: CourseProfile::Models::Profile.terms.keys.sample,
+        term: CourseProfile::Models::Course.terms.keys.sample,
         year: Time.current.year,
         starts_at: starts_at,
         ends_at: ends_at,
@@ -65,15 +65,15 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
       }
     }
 
-    expect(course_profile.starts_at).to eq starts_at
-    expect(course_profile.ends_at  ).to eq ends_at
+    expect(course.starts_at).to eq starts_at
+    expect(course.ends_at  ).to eq ends_at
   end
 
   it 'creates the specified number of sections for the course' do
     @params = {
       course: {
         name: 'Hello course' ,
-        term: CourseProfile::Models::Profile.terms.keys.sample,
+        term: CourseProfile::Models::Course.terms.keys.sample,
         year: Time.current.year,
         is_concept_coach: false,
         is_college: true,

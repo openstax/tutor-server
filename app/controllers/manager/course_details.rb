@@ -2,8 +2,7 @@ module Manager::CourseDetails
   protected
 
   def get_course_details
-    @course = Entity::Course.find(params[:id])
-    @profile = GetCourseProfile[course: @course]
+    @course = CourseProfile::Models::Course.find(params[:id])
     @periods = @course.periods
     @teachers = @course.teachers.includes(role: { profile: :account })
     @ecosystems = Content::ListEcosystems[]

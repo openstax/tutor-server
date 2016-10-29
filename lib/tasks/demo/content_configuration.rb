@@ -102,8 +102,8 @@ class Demo::ContentConfiguration
   end
 
   def course
-    @course ||= CourseProfile::Models::Profile.where(name: course_name)
-                                              .order{created_at.desc}.first!.course
+    @course ||= CourseProfile::Models::Course.where(name: course_name)
+                                             .order{created_at.desc}.first!.course
   end
 
   def self.with_config_directory( directory )

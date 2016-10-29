@@ -23,7 +23,7 @@ module CourseMembership
       end
 
       expect(period.id).to be_a Integer
-      expect(period.course).to be_a Entity::Course
+      expect(period.course).to be_a CourseProfile::Models::Course
       expect(period.name).to be_a String
       expect(Set.new period.student_roles).to eq(Set.new [student_1, student_2])
       expect(period.teacher_roles).to eq [teacher]

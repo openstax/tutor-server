@@ -41,7 +41,7 @@ RSpec.feature 'DistrictTermsWork' do
     click_button 'Submit'
 
     user   = FactoryGirl.create :user
-    course = Entity::Course.last
+    course = CourseProfile::Models::Course.last
     period = FactoryGirl.create :course_membership_period, course: course
 
     # AddUserAsPeriodStudent[user: user, period: period]
@@ -57,10 +57,10 @@ RSpec.feature 'DistrictTermsWork' do
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
     school_d = SchoolDistrict::CreateSchool[name: 'SchoolD', district: district_b]
 
-    course_e = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseE',
+    course_e = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseE',
                                                                           school: school_c
 
-    course_f = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseF',
+    course_f = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseF',
                                                                           school: school_d
 
     FinePrint::Contract.create(
@@ -91,7 +91,7 @@ RSpec.feature 'DistrictTermsWork' do
     ).to eq ['district_b_terms']
 
     # Move a course
-    CourseProfile::UpdateProfile[course_e.id, {school_district_school_id: school_d.id }]
+    CourseProfile::UpdateCourse[course_e.id, {school_district_school_id: school_d.id }]
 
     expect(
       Legal::GetTargetedContracts[applicable_to: course_e].map(&:contract_name)
@@ -108,9 +108,9 @@ RSpec.feature 'DistrictTermsWork' do
   scenario 'blah' do
     district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
-    course_e = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseE',
+    course_e = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseE',
                                                                           school: school_c
-    course_f = FactoryGirl.create :entity_course, :process_school_change, name: 'CourseF'
+    course_f = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseF'
 
     FinePrint::Contract.create(name: 'district_a_terms', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish

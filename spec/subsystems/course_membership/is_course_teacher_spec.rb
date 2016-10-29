@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe CourseMembership::IsCourseTeacher do
 
   context "when not a teacher of the given course" do
-    let(:target_course)       { FactoryGirl.create :entity_course }
-    let(:other_course)        { FactoryGirl.create :entity_course }
+    let(:target_course)       { FactoryGirl.create :course_profile_course }
+    let(:other_course)        { FactoryGirl.create :course_profile_course }
     let(:target_teacher_role) { FactoryGirl.create :entity_role }
     let(:other_teacher_role)  { FactoryGirl.create :entity_role }
 
@@ -40,7 +40,7 @@ RSpec.describe CourseMembership::IsCourseTeacher do
   end
 
   context "when a teacher of the given course" do
-    let(:target_course)       { FactoryGirl.create :entity_course }
+    let(:target_course)       { FactoryGirl.create :course_profile_course }
     let(:target_teacher_role) { FactoryGirl.create :entity_role }
 
     before(:each) do

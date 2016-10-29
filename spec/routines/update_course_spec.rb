@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UpdateCourse do
-  let(:course) { FactoryGirl.create :entity_course }
+  let(:course) { FactoryGirl.create :course_profile_course }
 
   it 'updates the course name' do
     UpdateCourse.call(course.id, { name: 'Physics' })

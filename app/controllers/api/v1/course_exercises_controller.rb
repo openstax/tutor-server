@@ -60,7 +60,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   protected
 
   def get_course
-    @course = Entity::Course.find(params[:course_id])
+    @course = CourseProfile::Models::Course.find(params[:course_id])
   end
 
 end

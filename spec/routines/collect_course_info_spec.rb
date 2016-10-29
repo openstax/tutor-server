@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe CollectCourseInfo, type: :routine do
-  let(:course_1)        { FactoryGirl.create(:entity_course) }
-  let(:course_2)        { FactoryGirl.create(:entity_course) }
+  let(:course_1)        { FactoryGirl.create(:course_profile_course) }
+  let(:course_2)        { FactoryGirl.create(:course_profile_course) }
 
   let!(:period_model_1) { FactoryGirl.create :course_membership_period, course: course_1 }
   let!(:period_model_2) { FactoryGirl.create :course_membership_period, course: course_1 }
@@ -26,23 +26,23 @@ RSpec.describe CollectCourseInfo, type: :routine do
       expect(result).to contain_exactly(
         {
           id: course_1.id,
-          name: course_1.profile.name,
-          term: course_1.profile.term,
-          year: course_1.profile.year,
+          name: course_1.name,
+          term: course_1.term,
+          year: course_1.year,
           num_sections: course_1.num_sections,
           starts_at: be_within(1e-6).of(course_1.starts_at),
           ends_at: be_within(1e-6).of(course_1.ends_at),
           active?: course_1.active?,
           is_concept_coach: false,
           is_college: true,
-          time_zone: course_1.profile.time_zone.name,
-          default_open_time: course_1.profile.default_open_time,
-          default_due_time: course_1.profile.default_due_time,
-          offering: course_1.profile.offering,
-          catalog_offering_id: course_1.profile.offering.id,
-          school_name: course_1.profile.school_name,
-          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-          appearance_code: course_1.profile.offering.appearance_code
+          time_zone: course_1.time_zone.name,
+          default_open_time: course_1.default_open_time,
+          default_due_time: course_1.default_due_time,
+          offering: course_1.offering,
+          catalog_offering_id: course_1.offering.id,
+          school_name: course_1.school_name,
+          salesforce_book_name: course_1.offering.salesforce_book_name,
+          appearance_code: course_1.offering.appearance_code
         }
       )
     end
@@ -65,45 +65,45 @@ RSpec.describe CollectCourseInfo, type: :routine do
       expect(result).to contain_exactly(
         {
           id: course_1.id,
-          name: course_1.profile.name,
-          term: course_1.profile.term,
-          year: course_1.profile.year,
+          name: course_1.name,
+          term: course_1.term,
+          year: course_1.year,
           num_sections: course_1.num_sections,
           starts_at: be_within(1e-6).of(course_1.starts_at),
           ends_at: be_within(1e-6).of(course_1.ends_at),
           active?: course_1.active?,
           is_concept_coach: false,
           is_college: true,
-          time_zone: course_1.profile.time_zone.name,
-          default_open_time: course_1.profile.default_open_time,
-          default_due_time: course_1.profile.default_due_time,
-          offering: course_1.profile.offering,
-          catalog_offering_id: course_1.profile.offering.id,
-          school_name: course_1.profile.school_name,
-          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-          appearance_code: course_1.profile.offering.appearance_code,
+          time_zone: course_1.time_zone.name,
+          default_open_time: course_1.default_open_time,
+          default_due_time: course_1.default_due_time,
+          offering: course_1.offering,
+          catalog_offering_id: course_1.offering.id,
+          school_name: course_1.school_name,
+          salesforce_book_name: course_1.offering.salesforce_book_name,
+          appearance_code: course_1.offering.appearance_code,
           ecosystem: ecosystem_1,
           ecosystem_book: ecosystem_1.books.first
         },
         {
           id: course_2.id,
-          name: course_2.profile.name,
-          term: course_2.profile.term,
-          year: course_2.profile.year,
+          name: course_2.name,
+          term: course_2.term,
+          year: course_2.year,
           num_sections: course_2.num_sections,
           starts_at: be_within(1e-6).of(course_2.starts_at),
           ends_at: be_within(1e-6).of(course_2.ends_at),
           active?: course_2.active?,
           is_concept_coach: false,
           is_college: true,
-          time_zone: course_2.profile.time_zone.name,
-          default_open_time: course_2.profile.default_open_time,
-          default_due_time: course_2.profile.default_due_time,
-          offering: course_2.profile.offering,
-          catalog_offering_id: course_2.profile.offering.id,
-          school_name: course_2.profile.school_name,
-          salesforce_book_name: course_2.profile.offering.salesforce_book_name,
-          appearance_code: course_2.profile.offering.appearance_code,
+          time_zone: course_2.time_zone.name,
+          default_open_time: course_2.default_open_time,
+          default_due_time: course_2.default_due_time,
+          offering: course_2.offering,
+          catalog_offering_id: course_2.offering.id,
+          school_name: course_2.school_name,
+          salesforce_book_name: course_2.offering.salesforce_book_name,
+          appearance_code: course_2.offering.appearance_code,
           ecosystem: ecosystem_2,
           ecosystem_book: ecosystem_2.books.first
         }
@@ -120,23 +120,23 @@ RSpec.describe CollectCourseInfo, type: :routine do
         expect(result).to contain_exactly(
           {
             id: course_1.id,
-            name: course_1.profile.name,
-            term: course_1.profile.term,
-            year: course_1.profile.year,
+            name: course_1.name,
+            term: course_1.term,
+            year: course_1.year,
             num_sections: course_1.num_sections,
             starts_at: be_within(1e-6).of(course_1.starts_at),
             ends_at: be_within(1e-6).of(course_1.ends_at),
             active?: course_1.active?,
             is_concept_coach: false,
             is_college: true,
-            time_zone: course_1.profile.time_zone.name,
-            default_open_time: course_1.profile.default_open_time,
-            default_due_time: course_1.profile.default_due_time,
-            offering: course_1.profile.offering,
-            catalog_offering_id: course_1.profile.offering.id,
-            school_name: course_1.profile.school_name,
-            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-            appearance_code: course_1.profile.offering.appearance_code
+            time_zone: course_1.time_zone.name,
+            default_open_time: course_1.default_open_time,
+            default_due_time: course_1.default_due_time,
+            offering: course_1.offering,
+            catalog_offering_id: course_1.offering.id,
+            school_name: course_1.school_name,
+            salesforce_book_name: course_1.offering.salesforce_book_name,
+            appearance_code: course_1.offering.appearance_code
           }
         )
       end
@@ -146,23 +146,23 @@ RSpec.describe CollectCourseInfo, type: :routine do
         expect(result).to contain_exactly(
           {
             id: course_1.id,
-            name: course_1.profile.name,
-            term: course_1.profile.term,
-            year: course_1.profile.year,
+            name: course_1.name,
+            term: course_1.term,
+            year: course_1.year,
             num_sections: course_1.num_sections,
             starts_at: be_within(1e-6).of(course_1.starts_at),
             ends_at: be_within(1e-6).of(course_1.ends_at),
             active?: course_1.active?,
             is_concept_coach: false,
             is_college: true,
-            time_zone: course_1.profile.time_zone.name,
-            default_open_time: course_1.profile.default_open_time,
-            default_due_time: course_1.profile.default_due_time,
-            offering: course_1.profile.offering,
-            catalog_offering_id: course_1.profile.offering.id,
-            school_name: course_1.profile.school_name,
-            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-            appearance_code: course_1.profile.offering.appearance_code,
+            time_zone: course_1.time_zone.name,
+            default_open_time: course_1.default_open_time,
+            default_due_time: course_1.default_due_time,
+            offering: course_1.offering,
+            catalog_offering_id: course_1.offering.id,
+            school_name: course_1.school_name,
+            salesforce_book_name: course_1.offering.salesforce_book_name,
+            appearance_code: course_1.offering.appearance_code,
             periods: a_collection_containing_exactly(period_1, period_2)
           }
         )
@@ -180,23 +180,23 @@ RSpec.describe CollectCourseInfo, type: :routine do
         expect(result).to contain_exactly(
           {
             id: course_1.id,
-            name: course_1.profile.name,
-            term: course_1.profile.term,
-            year: course_1.profile.year,
+            name: course_1.name,
+            term: course_1.term,
+            year: course_1.year,
             num_sections: course_1.num_sections,
             starts_at: be_within(1e-6).of(course_1.starts_at),
             ends_at: be_within(1e-6).of(course_1.ends_at),
             active?: course_1.active?,
             is_concept_coach: false,
             is_college: true,
-            time_zone: course_1.profile.time_zone.name,
-            default_open_time: course_1.profile.default_open_time,
-            default_due_time: course_1.profile.default_due_time,
-            offering: course_1.profile.offering,
-            catalog_offering_id: course_1.profile.offering.id,
-            school_name: course_1.profile.school_name,
-            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-            appearance_code: course_1.profile.offering.appearance_code
+            time_zone: course_1.time_zone.name,
+            default_open_time: course_1.default_open_time,
+            default_due_time: course_1.default_due_time,
+            offering: course_1.offering,
+            catalog_offering_id: course_1.offering.id,
+            school_name: course_1.school_name,
+            salesforce_book_name: course_1.offering.salesforce_book_name,
+            appearance_code: course_1.offering.appearance_code
           }
         )
       end
@@ -206,23 +206,23 @@ RSpec.describe CollectCourseInfo, type: :routine do
         expect(result).to contain_exactly(
           {
             id: course_1.id,
-            name: course_1.profile.name,
-            term: course_1.profile.term,
-            year: course_1.profile.year,
+            name: course_1.name,
+            term: course_1.term,
+            year: course_1.year,
             num_sections: course_1.num_sections,
             starts_at: be_within(1e-6).of(course_1.starts_at),
             ends_at: be_within(1e-6).of(course_1.ends_at),
             active?: course_1.active?,
             is_concept_coach: false,
             is_college: true,
-            time_zone: course_1.profile.time_zone.name,
-            default_open_time: course_1.profile.default_open_time,
-            default_due_time: course_1.profile.default_due_time,
-            offering: course_1.profile.offering,
-            catalog_offering_id: course_1.profile.offering.id,
-            school_name: course_1.profile.school_name,
-            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-            appearance_code: course_1.profile.offering.appearance_code,
+            time_zone: course_1.time_zone.name,
+            default_open_time: course_1.default_open_time,
+            default_due_time: course_1.default_due_time,
+            offering: course_1.offering,
+            catalog_offering_id: course_1.offering.id,
+            school_name: course_1.school_name,
+            salesforce_book_name: course_1.offering.salesforce_book_name,
+            appearance_code: course_1.offering.appearance_code,
             periods: [ period_1 ]
           }
         )
@@ -258,43 +258,43 @@ RSpec.describe CollectCourseInfo, type: :routine do
       expect(result).to contain_exactly(
         {
           id: course_1.id,
-          name: course_1.profile.name,
-          term: course_1.profile.term,
-          year: course_1.profile.year,
+          name: course_1.name,
+          term: course_1.term,
+          year: course_1.year,
           num_sections: course_1.num_sections,
           starts_at: be_within(1e-6).of(course_1.starts_at),
           ends_at: be_within(1e-6).of(course_1.ends_at),
           active?: course_1.active?,
           is_concept_coach: false,
           is_college: true,
-          time_zone: course_1.profile.time_zone.name,
-          default_open_time: course_1.profile.default_open_time,
-          default_due_time: course_1.profile.default_due_time,
-          offering: course_1.profile.offering,
-          catalog_offering_id: course_1.profile.offering.id,
-          school_name: course_1.profile.school_name,
-          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-          appearance_code: course_1.profile.offering.appearance_code
+          time_zone: course_1.time_zone.name,
+          default_open_time: course_1.default_open_time,
+          default_due_time: course_1.default_due_time,
+          offering: course_1.offering,
+          catalog_offering_id: course_1.offering.id,
+          school_name: course_1.school_name,
+          salesforce_book_name: course_1.offering.salesforce_book_name,
+          appearance_code: course_1.offering.appearance_code
         },
         {
           id: course_2.id,
-          name: course_2.profile.name,
-          term: course_2.profile.term,
-          year: course_2.profile.year,
+          name: course_2.name,
+          term: course_2.term,
+          year: course_2.year,
           num_sections: course_2.num_sections,
           starts_at: be_within(1e-6).of(course_2.starts_at),
           ends_at: be_within(1e-6).of(course_2.ends_at),
           active?: course_2.active?,
           is_concept_coach: false,
           is_college: true,
-          time_zone: course_2.profile.time_zone.name,
-          default_open_time: course_2.profile.default_open_time,
-          default_due_time: course_2.profile.default_due_time,
-          offering: course_2.profile.offering,
-          catalog_offering_id: course_2.profile.offering.id,
-          school_name: course_2.profile.school_name,
-          salesforce_book_name: course_2.profile.offering.salesforce_book_name,
-          appearance_code: course_2.profile.offering.appearance_code
+          time_zone: course_2.time_zone.name,
+          default_open_time: course_2.default_open_time,
+          default_due_time: course_2.default_due_time,
+          offering: course_2.offering,
+          catalog_offering_id: course_2.offering.id,
+          school_name: course_2.school_name,
+          salesforce_book_name: course_2.offering.salesforce_book_name,
+          appearance_code: course_2.offering.appearance_code
         }
       )
     end

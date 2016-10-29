@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
-  let(:course)            { FactoryGirl.create :entity_course }
+  let(:course)            { FactoryGirl.create :course_profile_course }
   let(:period)            { FactoryGirl.create :course_membership_period, course: course }
 
   let(:user)              {

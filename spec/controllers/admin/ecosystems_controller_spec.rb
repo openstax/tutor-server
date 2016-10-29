@@ -9,7 +9,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr
   let(:book_2)       { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
 
-  let(:course)       { FactoryGirl.create :entity_course }
+  let(:course)       { FactoryGirl.create :course_profile_course }
 
   before { controller.sign_in(admin) }
 

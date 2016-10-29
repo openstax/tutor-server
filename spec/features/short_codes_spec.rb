@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "short codes" do
 
   context "students accessing tasks via short code" do
-    let(:course)           { FactoryGirl.create :entity_course }
+    let(:course)           { FactoryGirl.create :course_profile_course }
     let(:period)           { FactoryGirl.create :course_membership_period, course: course }
 
     let(:task_plan_1)      { FactoryGirl.create(:tasks_task_plan, owner: course) }

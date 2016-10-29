@@ -4,7 +4,7 @@ class Tasks::CreateCourseAssistants
   protected
 
   def exec(course:)
-    return if course.profile.is_concept_coach
+    return if course.is_concept_coach
 
     create_course_assistant(
       course: course,

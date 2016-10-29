@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PropagateTaskPlanUpdates, type: :routine do
-  let(:course)          { FactoryGirl.create :entity_course }
+  let(:course)          { FactoryGirl.create :course_profile_course }
   let(:period)          { FactoryGirl.create :course_membership_period, course: course }
   let!(:user)           do
     FactoryGirl.create(:user).tap do |user|

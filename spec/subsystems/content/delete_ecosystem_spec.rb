@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::DeleteEcosystem, type: :routine do
-  let(:course)      { FactoryGirl.create :entity_course }
+  let(:course)      { FactoryGirl.create :course_profile_course }
   let(:ecosystem_1) {
     Content::Ecosystem.find(FactoryGirl.create(:content_ecosystem).id)
   }

@@ -98,18 +98,18 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     expect(sf_record).to receive(:save)
 
-    before_course_ids = Entity::Course.all.map(&:id)
+    before_course_ids = CourseProfile::Models::Course.all.map(&:id)
 
     result = nil
     expect {
       result = ImportSalesforceCourses.call
-    }.to change{Entity::Course.count}.by(1)
-     .and change{Salesforce::Models::AttachedRecord.count}.by(1)
+    }.to change{ CourseProfile::Models::Course.count }.by(1)
+     .and change{ Salesforce::Models::AttachedRecord.count }.by(1)
 
-    after_course_ids = Entity::Course.all.map(&:id)
+    after_course_ids = CourseProfile::Models::Course.all.map(&:id)
     new_course_id = (after_course_ids - before_course_ids).first
 
-    created_course = Entity::Course.find(new_course_id)
+    created_course = CourseProfile::Models::Course.find(new_course_id)
 
     expect(sf_record.course_id).to eq created_course.id
     expect(sf_record.created_at).to be_a String
@@ -154,7 +154,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
         ImportSalesforceCourses.call
       rescue NoMethodError
       end
-    end.to change{Entity::Course.count}.by(1)
+    end.to change{ CourseProfile::Models::Course.count }.by(1)
   end
 
   it 'rolls back creation if there is a problem' do
@@ -183,7 +183,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     expect {
       ImportSalesforceCourses.call rescue NoMethodError
-    }.to change{Entity::Course.count}.by(0)
+    }.not_to change{ CourseProfile::Models::Course.count }
   end
 
   context '#candidate_term_years_array' do

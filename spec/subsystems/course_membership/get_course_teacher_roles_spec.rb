@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::GetCourseTeacherRoles do
-  let(:target_course) { FactoryGirl.create :entity_course }
+  let(:target_course) { FactoryGirl.create :course_profile_course }
   let(:course_period) { FactoryGirl.create :course_membership_period, course: target_course }
 
-  let(:other_course)  { FactoryGirl.create :entity_course }
+  let(:other_course)  { FactoryGirl.create :course_profile_course }
   let(:other_period)  { FactoryGirl.create :course_membership_period, course: other_course }
 
   let!(:other_student_role) {

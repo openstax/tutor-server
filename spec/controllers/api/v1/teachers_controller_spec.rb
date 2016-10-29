@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::TeachersController, type: :controller, api: true, version: :v1 do
   let(:application)       { FactoryGirl.create :doorkeeper_application }
 
-  let(:course)            { FactoryGirl.create :entity_course }
+  let(:course)            { FactoryGirl.create :course_profile_course }
   let(:period)            { FactoryGirl.create :course_membership_period, course: course }
 
   let(:student_user)      { FactoryGirl.create(:user) }

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   let(:task_plan)     { FactoryGirl.create(:tasks_task_plan) }
 
-  let(:course)        { FactoryGirl.create :entity_course }
+  let(:course)        { FactoryGirl.create :course_profile_course }
   let(:teacher)       { FactoryGirl.create(:user) }
   let(:not_teaching)  { FactoryGirl.create(:user) }
   let(:owner)         { FactoryGirl.create(:user) }

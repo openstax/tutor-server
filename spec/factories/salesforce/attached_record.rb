@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :salesforce_attached_record, class: 'Salesforce::Models::AttachedRecord' do
     transient do
-      tutor_object      { FactoryGirl.create :entity_course }
+      tutor_object      { FactoryGirl.create :course_profile_course }
       salesforce_object { Salesforce::Remote::OsAncillary.new(id: "foo") }
     end
 

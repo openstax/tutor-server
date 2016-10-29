@@ -8,7 +8,7 @@ RSpec.describe Admin::StatsController, type: :controller do
     before(:each) { controller.sign_in admin }
 
     context "GET #courses" do
-      let(:course)         { FactoryGirl.create :entity_course }
+      let(:course)         { FactoryGirl.create :course_profile_course }
       let(:periods)        do
         3.times.map { FactoryGirl.create :course_membership_period, course: course }
       end
@@ -31,7 +31,7 @@ RSpec.describe Admin::StatsController, type: :controller do
 
     context "GET #excluded_exercises" do
       context "with excluded exercises in the database" do
-        let(:course)         { FactoryGirl.create :entity_course }
+        let(:course)         { FactoryGirl.create :course_profile_course }
 
         let(:teacher_user)   { FactoryGirl.create :user }
         let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
@@ -80,7 +80,7 @@ RSpec.describe Admin::StatsController, type: :controller do
     end
 
     context "POST #excluded_exercises_to_csv" do
-      let(:course)              { FactoryGirl.create :entity_course }
+      let(:course)              { FactoryGirl.create :course_profile_course }
       let!(:excluded_exercises) do
         5.times.map { FactoryGirl.create :course_content_excluded_exercise, course: course }
       end

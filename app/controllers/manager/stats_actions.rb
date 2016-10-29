@@ -4,12 +4,10 @@ module Manager::StatsActions
   end
 
   def courses
-    @courses = Entity::Course.joins(:profile).preload(
-      [
-        :profile, { teachers: { role: { role_user: :profile } },
-                    periods_with_deleted: :latest_enrollments_with_deleted }
-      ]
-    ).order{ profile.name }.to_a
+    @courses = CourseProfile::Models::Course.preload(
+      teachers: { role: { role_user: :profile } },
+      periods_with_deleted: :latest_enrollments_with_deleted
+    ).order(:name).to_a
     @total_students = @courses.map do |course|
       course.periods_with_deleted.map do |period|
         period.latest_enrollments_with_deleted.length

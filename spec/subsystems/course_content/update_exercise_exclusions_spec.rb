@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
 
-  let(:course)         { FactoryGirl.create :entity_course }
+  let(:course)         { FactoryGirl.create :course_profile_course }
   let(:period)         { FactoryGirl.create :course_membership_period, course: course }
 
   context 'with a real book' do
@@ -26,9 +26,9 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
         @exclusions = CourseContent::UpdateExerciseExclusions[
           course: course, updates_array: [{ id: exercise.id.to_s, is_excluded: true }]
         ]
-      }.to change{ course.profile.reload.biglearn_excluded_pool_uuid }
+      }.to change{ course.reload.biglearn_excluded_pool_uuid }
 
-      expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
+      expect(course.biglearn_excluded_pool_uuid).to be_a(String)
 
       expect(@exclusions).to be_an Array
       expect(@exclusions.first[:id]).to eq exercise.id.to_s
@@ -40,9 +40,9 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
         @exclusions = CourseContent::UpdateExerciseExclusions[
           course: course, updates_array: [{ id: exercise.id.to_s, is_excluded: false }]
         ]
-      }.to change{ course.profile.reload.biglearn_excluded_pool_uuid }
+      }.to change{ course.reload.biglearn_excluded_pool_uuid }
 
-      expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
+      expect(course.biglearn_excluded_pool_uuid).to be_a(String)
 
       expect(@exclusions).to be_an Array
       expect(@exclusions.first[:id]).to eq exercise.id.to_s

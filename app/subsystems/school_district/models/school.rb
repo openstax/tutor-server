@@ -1,7 +1,7 @@
 module SchoolDistrict
   module Models
     class School < Tutor::SubSystems::BaseModel
-      has_many :profiles, subsystem: :course_profile
+      has_many :courses, subsystem: :course_profile
 
       belongs_to :district
 
@@ -14,7 +14,7 @@ module SchoolDistrict
       protected
 
       def check_no_courses
-        profiles.empty?
+        courses.empty?
       end
     end
   end

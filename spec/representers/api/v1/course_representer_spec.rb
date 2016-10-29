@@ -13,7 +13,7 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   end
 
   let(:course)           do
-    FactoryGirl.create :entity_course, name: 'Test course',
+    FactoryGirl.create :course_profile_course, name: 'Test course',
                                        appearance_code: 'appearance override',
                                        offering: catalog_offering,
                                        is_concept_coach: true,
@@ -35,12 +35,12 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   end
 
   it 'shows the course default open time' do
-    course.profile.default_open_time = '16:08'
+    course.default_open_time = '16:08'
     expect(represented['default_open_time']).to eq '16:08'
   end
 
   it 'shows the course default due time' do
-    course.profile.default_due_time = '16:09'
+    course.default_due_time = '16:09'
     expect(represented['default_due_time']).to eq '16:09'
   end
 
@@ -48,12 +48,12 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['salesforce_book_name']).to eq 'book'
   end
 
-  it 'shows the profile appearance_code' do
+  it 'shows the course appearance_code' do
     expect(represented['appearance_code']).to eq 'appearance override'
   end
 
-  it 'shows the offering appearance_code if the profile appearance_code is blank' do
-    course.profile.update_attribute(:appearance_code, nil)
+  it 'shows the offering appearance_code if the course appearance_code is blank' do
+    course.update_attribute(:appearance_code, nil)
     expect(represented['appearance_code']).to eq 'appearance'
   end
 

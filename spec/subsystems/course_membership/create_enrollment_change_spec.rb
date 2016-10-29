@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
-  let(:course_1)  { FactoryGirl.create :entity_course }
-  let(:course_2)  { FactoryGirl.create :entity_course }
-  let(:course_3)  { FactoryGirl.create :entity_course }
+  let(:course_1)  { FactoryGirl.create :course_profile_course }
+  let(:course_2)  { FactoryGirl.create :course_profile_course }
+  let(:course_3)  { FactoryGirl.create :course_profile_course }
 
   let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
   let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }
@@ -117,8 +117,8 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
       end
 
       before      do
-        course_1.profile.update_attribute :is_concept_coach, true
-        course_2.profile.update_attribute :is_concept_coach, true
+        course_1.update_attribute :is_concept_coach, true
+        course_2.update_attribute :is_concept_coach, true
       end
 
       it 'returns an error message' do
@@ -140,8 +140,8 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
       end
 
       before      do
-        course_1.profile.update_attribute :is_concept_coach, true
-        course_3.profile.update_attribute :is_concept_coach, true
+        course_1.update_attribute :is_concept_coach, true
+        course_3.update_attribute :is_concept_coach, true
       end
 
       it 'creates an EnrollmentChange with a nil from_period' do

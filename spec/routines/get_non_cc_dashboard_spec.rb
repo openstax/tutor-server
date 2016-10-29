@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe GetNonCcDashboard, type: :routine do
 
-  let(:course)         { FactoryGirl.create :entity_course, name: 'Physics 101' }
+  let(:course)         { FactoryGirl.create :course_profile_course, name: 'Physics 101' }
   let(:period)         { FactoryGirl.create :course_membership_period, course: course }
 
   let(:student_user)   { FactoryGirl.create(:user) }

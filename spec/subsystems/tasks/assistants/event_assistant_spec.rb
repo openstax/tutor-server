@@ -4,7 +4,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
 
   let(:num_taskees) { 3 }
 
-  let(:course)      { FactoryGirl.create :entity_course }
+  let(:course)      { FactoryGirl.create :course_profile_course }
   let(:period)      { FactoryGirl.create :course_membership_period, course: course }
 
   subject(:event_assistant) do

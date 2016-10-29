@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GetTeacherNames, type: :routine do
-  let(:course)        { FactoryGirl.create :entity_course }
+  let(:course)        { FactoryGirl.create :course_profile_course }
   let(:teacher)       { FactoryGirl.create(:user, first_name: 'Teacher', last_name: 'Jim') }
   let(:other_teacher) { FactoryGirl.create(:user, first_name: 'Teacher', last_name: 'Bob') }
   let(:not_teacher)   { FactoryGirl.create(:user, first_name: 'Somebody', last_name: 'Else') }

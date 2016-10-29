@@ -13,7 +13,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
       code_class_name: 'Tasks::Assistants::ExtraAssignmentAssistant')
   end
 
-  let(:course)           { FactoryGirl.create :entity_course }
+  let(:course)           { FactoryGirl.create :course_profile_course }
   let(:period)           { FactoryGirl.create :course_membership_period, course: course }
 
   let(:ecosystem)        do

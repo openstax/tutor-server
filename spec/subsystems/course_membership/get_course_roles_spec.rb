@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::GetCourseRoles do
-  let(:target_course) { FactoryGirl.create :entity_course }
+  let(:target_course) { FactoryGirl.create :course_profile_course }
   let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
 
-  let(:other_course) { FactoryGirl.create :entity_course }
+  let(:other_course) { FactoryGirl.create :course_profile_course }
   let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
 
   let!(:other_student_role) {
@@ -212,7 +212,7 @@ RSpec.describe CourseMembership::GetCourseRoles do
 
   context "when types: :student" do
     let(:types)         { :student }
-    let(:target_course) { FactoryGirl.create :entity_course }
+    let(:target_course) { FactoryGirl.create :course_profile_course }
     let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
 
     context "and there are no roles for the target course" do

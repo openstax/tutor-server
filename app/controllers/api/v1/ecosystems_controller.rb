@@ -56,7 +56,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   EOS
   def exercises
     ecosystem = ::Content::Ecosystem.find(params[:id])
-    course = ::Entity::Course.find(params[:course_id]) if params[:course_id].present?
+    course = CourseProfile::Models::Course.find(params[:course_id]) if params[:course_id].present?
 
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 

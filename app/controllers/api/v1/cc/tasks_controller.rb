@@ -53,7 +53,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     #{json_schema(Api::V1::ConceptCoachStatsRepresenter, include: :readable)}
   EOS
   def stats
-    course = Entity::Course.find(params[:course_id])
+    course = CourseProfile::Models::Course.find(params[:course_id])
     OSU::AccessPolicy.require_action_allowed!(:stats, current_human_user, course)
 
     ecosystem_id = GetCourseEcosystem[course: course].id

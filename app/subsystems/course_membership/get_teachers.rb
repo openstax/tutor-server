@@ -4,7 +4,7 @@ class CourseMembership::GetTeachers
   protected
 
   def exec(course)
-    ss_maps = CourseMembership::Models::Teacher.where{entity_course_id == course.id}
+    ss_maps = CourseMembership::Models::Teacher.where{course_profile_course_id == course.id}
     outputs[:teachers] = ss_maps.map(&:role)
   end
 end

@@ -6,8 +6,8 @@ RSpec.describe Admin::StudentsController do
   before             { controller.sign_in(admin) }
 
   describe 'GET #index' do
-    let(:course)     { FactoryGirl.create :entity_course, name: 'Physics' }
-    let(:course_2)   { FactoryGirl.create :entity_course }
+    let(:course)     { FactoryGirl.create :course_profile_course, name: 'Physics' }
+    let(:course_2)   { FactoryGirl.create :course_profile_course }
 
     let(:periods)    do
       [

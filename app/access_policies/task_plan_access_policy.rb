@@ -6,7 +6,7 @@ class TaskPlanAccessPolicy
 
     owner = task_plan.owner
 
-    if owner.is_a?(Entity::Course)
+    if owner.is_a?(CourseProfile::Models::Course)
       return false if action == :create && !owner.active?
 
       UserIsCourseTeacher[user: requestor, course: owner]
