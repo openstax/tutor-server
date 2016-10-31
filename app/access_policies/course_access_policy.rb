@@ -15,7 +15,7 @@ class CourseAccessPolicy
     when :read_task_plans, :export, :roster, :add_period, :update, :stats, :exercises
       UserIsCourseTeacher[user: requestor, course: course]
     when :create
-      requestor.try!(:account).try!(:confirmed_faculty?)
+      requestor.account.confirmed_faculty?
     when :clone
       UserIsCourseTeacher[user: requestor, course: course] &&
       course.offering.is_available

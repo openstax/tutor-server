@@ -25,6 +25,8 @@ RSpec.describe Demo, type: :routine, version: :v1, speed: :slow,
           ENV['DEMO_MAX_PROCESSES'] = old_max_processes
         end
 
+        expect(OpenStax::Accounts::Account.find_by(username: 'teacher01')).to be_confirmed_faculty
+
         expect(Demo::Tasks.call(print_logs: false).errors).to be_empty
 
         expect(Demo::Work.call(print_logs: false).errors).to be_empty

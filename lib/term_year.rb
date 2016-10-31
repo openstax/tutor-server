@@ -1,4 +1,4 @@
-class TermYear
+TermYear = Struct.new(:term, :year) do
   LEGACY_TERM_STARTS_AT = DateTime.parse('July 1st, 2015')
   LEGACY_TERM_ENDS_AT   = DateTime.parse('July 1st, 2017')
 
@@ -20,23 +20,21 @@ class TermYear
 
   VISIBLE_TERMS = [:spring, :summer, :fall]
 
-  attr_reader :term, :year, :starts_at, :ends_at
+  attr_reader :starts_at, :ends_at
 
   def initialize(term, year)
+    year_int = Integer(year) rescue raise(ArgumentError, "Invalid year: #{year}", caller)
+
     term_sym = term.to_sym
     start_proc = TERM_START_DATES[term_sym]
     end_proc = TERM_END_DATES[term_sym]
 
-    raise ArgumentError, "Invalid term: #{term}", caller if start_proc.nil? || end_proc.nil?
+    raise(ArgumentError, "Invalid term: #{term}", caller) if start_proc.nil? || end_proc.nil?
 
-    @term = term
-    @year = year
+    super(term_sym, year_int)
+
     @starts_at = start_proc.call(year)
     @ends_at   = end_proc.call(year) - 1.second
-  end
-
-  def name
-    "#{term} #{year}"
   end
 
   def self.visible_term_years(current_time = Time.current)
@@ -48,7 +46,7 @@ class TermYear
 
     next_year_visible_term_years = VISIBLE_TERMS.map do |term|
       TermYear.new(term, current_year + 1)
-    end.select{ |term_year| term_year.starts_at <= current_time }
+    end.select{ |term_year| term_year.starts_at <= current_time + 1.year }
 
     current_year_visible_term_years + next_year_visible_term_years
   end

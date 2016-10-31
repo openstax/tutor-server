@@ -7,7 +7,7 @@ RSpec.describe TermYear, type: :lib do
   subject(:term_year) { described_class.new(term, year) }
 
   context 'legacy' do
-    let(:term) { 'legacy'  }
+    let(:term) { 'legacy' }
 
     TESTED_YEARS.each do |year|
       context year.to_s do
@@ -104,5 +104,36 @@ RSpec.describe TermYear, type: :lib do
         end
       end
     end
+  end
+
+  it 'returns the correct visible_term_years' do
+    current_year = Time.current.year
+
+    spring_date_time        = DateTime.parse("March 1st, #{current_year}"   )
+    spring_summer_date_time = DateTime.parse("June 1st, #{current_year}"    )
+    summer_fall_date_time   = DateTime.parse("July 1st, #{current_year}"    )
+    fall_date_time          = DateTime.parse("November 1st, #{current_year}")
+
+    expect(TermYear.visible_term_years(spring_date_time)).to eq [
+      TermYear.new(:spring, current_year), TermYear.new(:summer, current_year    ),
+      TermYear.new(:fall,   current_year), TermYear.new(:spring, current_year + 1)
+    ]
+
+    expect(TermYear.visible_term_years(spring_summer_date_time)).to eq [
+      TermYear.new(:spring, current_year    ), TermYear.new(:summer, current_year    ),
+      TermYear.new(:fall,   current_year    ), TermYear.new(:spring, current_year + 1),
+      TermYear.new(:summer, current_year + 1)
+    ]
+
+    expect(TermYear.visible_term_years(summer_fall_date_time)).to eq [
+      TermYear.new(:summer, current_year    ), TermYear.new(:fall,   current_year    ),
+      TermYear.new(:spring, current_year + 1), TermYear.new(:summer, current_year + 1),
+      TermYear.new(:fall,   current_year + 1)
+    ]
+
+    expect(TermYear.visible_term_years(fall_date_time)).to eq [
+      TermYear.new(:fall,   current_year    ), TermYear.new(:spring, current_year + 1),
+      TermYear.new(:summer, current_year + 1), TermYear.new(:fall,   current_year + 1)
+    ]
   end
 end
