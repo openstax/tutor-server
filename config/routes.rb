@@ -106,8 +106,7 @@ Rails.application.routes.draw do
         get '(/:pool_types)', action: :show
       end
 
-      resources :task_plans, only: :index
-      resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
+      resources :task_plans, path: '/plans', shallow: true, except: [:new, :edit] do
         member do
           get 'stats'
           get 'review'

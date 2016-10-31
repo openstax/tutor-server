@@ -8,6 +8,8 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to belong_to(:school) }
   it { is_expected.to belong_to(:offering) }
 
+  it { is_expected.to belong_to(:cloned_from) }
+
   it { is_expected.to have_many(:periods).dependent(:destroy) }
   it { is_expected.to have_many(:teachers).dependent(:destroy) }
   it { is_expected.to have_many(:students).dependent(:destroy) }

@@ -15,13 +15,13 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/courses/:course_id/plans', 'Retrieve course TaskPlans according to params'
   description <<-EOS
    Valid params:
-   original == true  -> returns only task plans that are original
-   original == false -> returns only task plans that are clones of task_plans from another course
-
    cloned   == true  -> if the current course was cloned from another, returns only
                         task plans in the origin course that have been cloned
    cloned   == false -> if the current course was cloned from another, returns only
                         task plans in the origin course that have not been cloned
+
+   original == true  -> returns only task plans that are original
+   original == false -> returns only task plans that are clones of task_plans from another course
 
    ### Example JSON response
    #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :readable)}
@@ -34,22 +34,23 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       orig_course = course.cloned_from
 
       if orig_course.nil?
-        []
+        Tasks::Models::TaskPlan.none
       else
-        cloned_task_plan_ids = course.task_plans.map(&:cloned_from_id)
+        cloned_task_plan_ids = Tasks::Models::TaskPlan.where(owner: course).pluck(:cloned_from_id)
+        tps = Tasks::Models::TaskPlan.where(owner: orig_course)
 
-        params[:cloned] ? orig_course.task_plans.where{id.in cloned_task_plan_ids} :
-                          orig_course.task_plans.where{id.not_in cloned_task_plan_ids}
+        params[:cloned] ? tps.where{id.in cloned_task_plan_ids} :
+                          tps.where{id.not_in cloned_task_plan_ids}
       end
     else
-      tps = course.task_plans
+      tps = Tasks::Models::TaskPlan.where(owner: course)
 
       if !params[:original].nil?
         params[:original] ? tps.where{cloned_from_id == nil} : tps.where{cloned_from_id != nil}
       else
         tps
       end
-    end.to_a
+    end
 
     standard_index(task_plans, Api::V1::TaskPlanSearchRepresenter)
   end

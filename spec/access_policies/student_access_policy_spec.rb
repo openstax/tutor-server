@@ -21,20 +21,20 @@ RSpec.describe StudentAccessPolicy, type: :access_policy do
         context 'and the requestor is a course teacher' do
           before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
 
-          it { should be true }
+          it { should eq true }
         end
 
         context 'and the requestor is not a course teacher' do
           before { allow(UserIsCourseTeacher).to receive(:[]) { false } }
 
-          it { should be false }
+          it { should eq false }
         end
       end
 
       context 'and the requestor is not human' do
         before { allow(requestor).to receive(:is_human?) { false } }
 
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -42,6 +42,6 @@ RSpec.describe StudentAccessPolicy, type: :access_policy do
   context "when the action is :made_up" do
     let(:action) { :made_up }
 
-    it { should be false }
+    it { should eq false }
   end
 end

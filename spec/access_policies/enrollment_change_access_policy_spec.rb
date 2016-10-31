@@ -32,7 +32,7 @@ RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
     [:create, :approve].each do |test_action|
       context test_action.to_s do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -43,7 +43,7 @@ RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
     [:create, :approve].each do |test_action|
       context test_action.to_s do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
   end
@@ -53,12 +53,12 @@ RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
 
     context 'create' do
       let(:action) { :create }
-      it { should be true }
+      it { should eq true }
     end
 
     context 'approve' do
       let(:action) { :approve }
-      it { should be false }
+      it { should eq false }
     end
   end
 end

@@ -29,7 +29,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
      :update, :stats, :exercises, :clone, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -39,14 +39,14 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
     context ":index" do
       let(:action) { :index }
-      it { should be true }
+      it { should eq true }
     end
 
     [:read, :read_task_plans, :export, :roster, :add_period,
      :update, :stats, :exercises, :clone, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -57,7 +57,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     [:index, :read].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
 
@@ -65,7 +65,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
      :stats, :exercises, :clone, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -77,7 +77,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
      :add_period, :update, :stats, :exercises, :clone].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
   end
@@ -88,7 +88,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     [:index, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
 
@@ -96,7 +96,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
      :add_period, :update, :stats, :exercises, :clone].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end

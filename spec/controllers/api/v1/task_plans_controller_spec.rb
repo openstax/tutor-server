@@ -9,29 +9,32 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
   let(:teacher)   { FactoryGirl.create(:user) }
   let(:student)   { FactoryGirl.create(:user) }
 
-  let!(:published_task_plan) { FactoryGirl.create(:tasked_task_plan,
-                                                  number_of_students: 0,
-                                                  owner: course,
-                                                  assistant: get_assistant(
-                                                    course: course, task_plan_type: 'reading'),
-                                                  published_at: Time.current) }
+  let!(:published_task_plan) do
+    FactoryGirl.create(:tasked_task_plan,
+                       number_of_students: 0,
+                       owner: course,
+                       assistant: get_assistant(course: course, task_plan_type: 'reading'),
+                       published_at: Time.current)
+  end
   let(:ecosystem)  { published_task_plan.ecosystem }
   let(:page)       { ecosystem.pages.first }
 
-  let(:task_plan)  { FactoryGirl.build(:tasks_task_plan,
-                                       owner: course,
-                                       assistant: get_assistant(
-                                         course: course, task_plan_type: 'reading'
-                                       ),
-                                       content_ecosystem_id: ecosystem.id,
-                                       settings: { page_ids: [page.id.to_s] },
-                                       type: 'reading',
-                                       num_tasking_plans: 0) }
+  let(:task_plan)  do
+    FactoryGirl.build(:tasks_task_plan,
+                      owner: course,
+                      assistant: get_assistant(course: course, task_plan_type: 'reading'),
+                      content_ecosystem_id: ecosystem.id,
+                      settings: { page_ids: [page.id.to_s] },
+                      type: 'reading',
+                      num_tasking_plans: 0)
+  end
 
-  let!(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan,
-                                           task_plan: task_plan,
-                                           target: period.to_model,
-                                           opens_at: Time.current.tomorrow }
+  let!(:tasking_plan) do
+    FactoryGirl.create :tasks_tasking_plan,
+                       task_plan: task_plan,
+                       target: period.to_model,
+                       opens_at: Time.current.tomorrow
+  end
 
   let(:unaffiliated_teacher) { FactoryGirl.create(:user) }
 
@@ -41,11 +44,157 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     AddUserAsPeriodStudent.call(period: period, user: student)
   end
 
-  context '#show' do
-    before(:each) do
-      task_plan.save!
+  context '#index' do
+    before do
+      task_plan.destroy!
+
+      controller.sign_in teacher
     end
 
+    let!(:orig_course)      { course }
+    let!(:orig_task_plan_1) { published_task_plan }
+
+    let!(:cloned_course) do
+      CloneCourse[course: course, teacher_user: teacher, copy_question_library: false]
+    end
+
+    let!(:orig_task_plan_2) do
+      FactoryGirl.create(:tasks_task_plan,
+                         owner: orig_course,
+                         assistant: get_assistant(course: orig_course, task_plan_type: 'reading'),
+                         content_ecosystem_id: ecosystem.id,
+                         settings: { page_ids: [page.id.to_s] },
+                         type: 'reading')
+    end
+
+    let!(:cloned_task_plan) do
+      FactoryGirl.create(:tasks_task_plan,
+                         owner: cloned_course,
+                         assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
+                         content_ecosystem_id: ecosystem.id,
+                         settings: { page_ids: [page.id.to_s] },
+                         type: 'reading',
+                         cloned_from: orig_task_plan_1)
+    end
+
+    let!(:orig_task_plan_3) do
+      FactoryGirl.create(:tasks_task_plan,
+                         owner: cloned_course,
+                         assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
+                         content_ecosystem_id: ecosystem.id,
+                         settings: { page_ids: [page.id.to_s] },
+                         type: 'reading')
+    end
+
+    context 'cloned == true' do
+      let(:params_base) { { cloned: true } }
+
+      context 'original course' do
+        let(:params) { params_base.merge(course_id: orig_course.id) }
+
+        it 'returns no results' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to eq []
+        end
+      end
+
+      context 'cloned course' do
+        let(:params) { params_base.merge(course_id: cloned_course.id) }
+
+        it 'returns task_plans from the original course that have been cloned' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to match_array(
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json.deep_symbolize_keys ]
+          )
+        end
+      end
+    end
+
+    context 'cloned == false' do
+      let(:params_base) { { cloned: false } }
+
+      context 'original course' do
+        let(:params) { params_base.merge(course_id: orig_course.id) }
+
+        it 'returns no results' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to eq []
+        end
+      end
+
+      context 'cloned course' do
+        let(:params) { params_base.merge(course_id: cloned_course.id) }
+
+        it 'returns task_plans from the original course that have not been cloned' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to match_array(
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json.deep_symbolize_keys ]
+          )
+        end
+      end
+    end
+
+    context 'original == true' do
+      let(:params_base) { { original: true } }
+
+      context 'original course' do
+        let(:params) { params_base.merge(course_id: orig_course.id) }
+
+        it 'returns task_plans from the given course that are not clones' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to match_array(
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json.deep_symbolize_keys,
+              Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json.deep_symbolize_keys ]
+          )
+        end
+      end
+
+      context 'cloned course' do
+        let(:params) { params_base.merge(course_id: cloned_course.id) }
+
+        it 'returns task_plans from the given course that are not clones' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to match_array(
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_3).as_json.deep_symbolize_keys ]
+          )
+        end
+      end
+    end
+
+    context 'original == false' do
+      let(:params_base) { { original: false } }
+
+      context 'original course' do
+        let(:params) { params_base.merge(course_id: orig_course.id) }
+
+        it 'returns task_plans from the given course that are clones' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to eq []
+        end
+      end
+
+      context 'cloned course' do
+        let(:params) { params_base.merge(course_id: cloned_course.id) }
+
+        it 'returns task_plans from the given course that are clones' do
+          api_get :index, nil, parameters: params
+
+          expect(response.body_as_hash[:items]).to match_array(
+            [ Api::V1::TaskPlanRepresenter.new(cloned_task_plan).as_json.deep_symbolize_keys ]
+          )
+        end
+      end
+    end
+  end
+
+  context '#show' do
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in unaffiliated_teacher
       expect {
@@ -193,10 +342,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
   end
 
   context '#update' do
-    before(:each) do
-      task_plan.save!
-    end
-
     it 'allows a teacher to update a task_plan for their course' do
       controller.sign_in teacher
       api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
@@ -379,8 +524,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
   end
 
   context '#destroy' do
-    before(:each) { task_plan.save! }
-
     it 'allows a teacher to destroy a task_plan for their course' do
       controller.sign_in teacher
       expect{ api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
@@ -411,10 +554,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
   end
 
   context '#restore' do
-    before(:each) do
-      task_plan.save!
-      task_plan.destroy!
-    end
+    before(:each) { task_plan.destroy! }
 
     it 'allows a teacher to restore a destroyed task_plan for their course' do
       controller.sign_in teacher

@@ -31,7 +31,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
     [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -42,7 +42,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
     [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -52,13 +52,13 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
 
     context 'readings' do
       let(:action) { :readings }
-      it { should be true }
+      it { should eq true }
     end
 
     [:index, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -69,13 +69,13 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
     [:readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
 
     context 'index' do
       let(:action) { :index }
-      it { should be false }
+      it { should eq false }
     end
   end
 
@@ -85,7 +85,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
     [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
   end
@@ -96,7 +96,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
     [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
   end

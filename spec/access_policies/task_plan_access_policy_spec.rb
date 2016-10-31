@@ -35,7 +35,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       task_plan.save!
     end
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq true }
@@ -51,7 +51,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       task_plan.save!
     end
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq false }
@@ -67,7 +67,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       task_plan.save!
     end
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq true }
@@ -78,7 +78,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   context 'non-owners' do
     let(:requestor) { non_owner }
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq false }
