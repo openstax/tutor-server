@@ -2,10 +2,11 @@ class TaskPlanAccessPolicy
   VALID_ACTIONS = [:index, :read, :create, :update, :destroy, :restore]
 
   def self.action_allowed?(action, requestor, task_plan)
-    return false if !VALID_ACTIONS.include?(action)
-    # In principle, anyone is allowed to call index
-    # The course it is called on will restrict index permissions
-    return true if action == :index
+    return false unless VALID_ACTIONS.include?(action)
+
+    # In principle, any logged in user is allowed to call index
+    # The course it is called on will further restrict index permissions
+    return requestor.is_human? && !requestor.is_anonymous? if action == :index
 
     owner = task_plan.owner
 

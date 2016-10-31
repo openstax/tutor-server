@@ -1,17 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
-  let(:task_plan)     { FactoryGirl.create(:tasks_task_plan) }
+  let(:task_plan)    { FactoryGirl.create(:tasks_task_plan) }
 
-  let(:course)        { FactoryGirl.create :course_profile_course }
-  let(:teacher)       { FactoryGirl.create(:user) }
-  let(:not_teaching)  { FactoryGirl.create(:user) }
-  let(:owner)         { FactoryGirl.create(:user) }
-  let(:non_owner)     { FactoryGirl.create(:user) }
+  let(:course)       { FactoryGirl.create :course_profile_course }
+  let(:teacher)      { FactoryGirl.create(:user) }
+  let(:not_teaching) { FactoryGirl.create(:user) }
+  let(:owner)        { FactoryGirl.create(:user) }
+  let(:non_owner)    { FactoryGirl.create(:user) }
 
-  before do
-    AddUserAsCourseTeacher[course: course, user: teacher]
-  end
+  before             { AddUserAsCourseTeacher[course: course, user: teacher] }
 
   # action, requestor are set in contexts
   subject(:allowed) { described_class.action_allowed?(action, requestor, task_plan) }
@@ -20,8 +18,9 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     let(:requestor) { User::User.anonymous }
 
     [:index, :read, :create, :update, :destroy].each do |test_action|
-      context "#{test_action}" do
+      context test_action.to_s do
         let(:action) { test_action }
+
         it { should eq false }
       end
     end
@@ -36,8 +35,9 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     end
 
     [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-      context "#{test_action}" do
+      context test_action.to_s do
         let(:action) { test_action }
+
         it { should eq true }
       end
     end
@@ -51,9 +51,16 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       task_plan.save!
     end
 
-    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-      context "#{test_action}" do
+    context 'index' do
+      let(:action) { :index }
+
+      it { should eq true }
+    end
+
+    [:read, :create, :update, :destroy, :restore].each do |test_action|
+      context test_action.to_s do
         let(:action) { test_action }
+
         it { should eq false }
       end
     end
@@ -68,8 +75,9 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     end
 
     [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-      context "#{test_action}" do
+      context test_action.to_s do
         let(:action) { test_action }
+
         it { should eq true }
       end
     end
@@ -78,9 +86,16 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   context 'non-owners' do
     let(:requestor) { non_owner }
 
-    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-      context "#{test_action}" do
+    context 'index' do
+      let(:action) { :index }
+
+      it { should eq true }
+    end
+
+    [:read, :create, :update, :destroy, :restore].each do |test_action|
+      context test_action.to_s do
         let(:action) { test_action }
+
         it { should eq false }
       end
     end
