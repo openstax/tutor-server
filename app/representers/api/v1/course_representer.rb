@@ -156,6 +156,11 @@ module Api::V1
                type: 'boolean'
              }
 
+    property :cloned_from_id,
+             type: Integer,
+             readable: true,
+             writeable: false
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,

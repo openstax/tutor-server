@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161028232416) do
+ActiveRecord::Schema.define(version: 20161031181743) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -303,9 +303,11 @@ ActiveRecord::Schema.define(version: 20161028232416) do
     t.datetime "ends_at",                                     null: false
     t.integer  "term",                                        null: false
     t.integer  "year",                                        null: false
+    t.integer  "cloned_from_id"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
+  add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
   add_index "course_profile_courses", ["name"], name: "index_course_profile_courses_on_name", using: :btree
   add_index "course_profile_courses", ["school_district_school_id"], name: "index_course_profile_courses_on_school_district_school_id", using: :btree
   add_index "course_profile_courses", ["teach_token"], name: "index_course_profile_courses_on_teach_token", unique: true, using: :btree
@@ -623,8 +625,10 @@ ActiveRecord::Schema.define(version: 20161028232416) do
     t.boolean  "is_feedback_immediate",     default: true, null: false
     t.datetime "deleted_at"
     t.datetime "last_published_at"
+    t.integer  "cloned_from_id"
   end
 
+  add_index "tasks_task_plans", ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id", using: :btree
   add_index "tasks_task_plans", ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id", using: :btree
   add_index "tasks_task_plans", ["deleted_at"], name: "index_tasks_task_plans_on_deleted_at", using: :btree
   add_index "tasks_task_plans", ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type", using: :btree
@@ -901,6 +905,7 @@ ActiveRecord::Schema.define(version: 20161028232416) do
   add_foreign_key "course_membership_teachers", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_courses", "catalog_offerings", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
@@ -915,6 +920,7 @@ ActiveRecord::Schema.define(version: 20161028232416) do
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_plans", "tasks_task_plans", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade

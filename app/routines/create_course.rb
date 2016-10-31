@@ -19,7 +19,7 @@ class CreateCourse
 
   def exec(name:, term:, year:, is_college:, is_concept_coach: nil, num_sections: 0,
            catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
-           school: nil, time_zone: nil)
+           school: nil, time_zone: nil, cloned_from: nil)
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 

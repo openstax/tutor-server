@@ -102,6 +102,11 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :cloned_from_id,
+             type: Integer,
+             readable: true,
+             writeable: true
+
     collection :tasking_plans,
                instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
                extend: TaskingPlanRepresenter,

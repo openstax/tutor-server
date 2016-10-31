@@ -7,6 +7,8 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   belongs_to_time_zone default: 'Central Time (US & Canada)', dependent: :destroy, autosave: true
 
+  belongs_to :cloned_from, class_name: 'CourseProfile::Models::Course'
+
   belongs_to :school, subsystem: :school_district
   belongs_to :offering, subsystem: :catalog
 

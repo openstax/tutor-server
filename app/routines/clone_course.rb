@@ -26,6 +26,7 @@ class CloneCourse
       appearance_code: course.appearance_code,
       time_zone: course.time_zone
     }.merge(attributes)
+     .merge(cloned_from: course)
 
     run(:create_course, **attrs)
 
