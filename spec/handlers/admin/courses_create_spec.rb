@@ -65,8 +65,8 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
       }
     }
 
-    expect(course.starts_at).to eq starts_at
-    expect(course.ends_at  ).to eq ends_at
+    expect(course.starts_at).to be_within(1e-6).of(starts_at)
+    expect(course.ends_at  ).to be_within(1e-6).of(ends_at)
   end
 
   it 'creates the specified number of sections for the course' do
