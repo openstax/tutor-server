@@ -12,7 +12,7 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:id=)
-      expect{ described_class.new(offering).from_hash(id: '42') }.not_to change{ offering.id }
+      expect{ described_class.new(offering).from_hash('id' => '42') }.not_to change{ offering.id }
     end
   end
 
@@ -23,7 +23,7 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:is_concept_coach=)
-      expect{ described_class.new(offering).from_hash(is_concept_coach: false) }.not_to(
+      expect{ described_class.new(offering).from_hash('is_concept_coach' => false) }.not_to(
         change{ offering.is_concept_coach }
       )
     end
@@ -36,7 +36,7 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:is_tutor=)
-      expect{ described_class.new(offering).from_hash(is_tutor: false) }.not_to(
+      expect{ described_class.new(offering).from_hash('is_tutor' => false) }.not_to(
         change{ offering.is_tutor }
       )
     end
@@ -49,7 +49,7 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:appearance_code=)
-      expect{ described_class.new(offering).from_hash(appearance_code: 'sociology') }.not_to(
+      expect{ described_class.new(offering).from_hash('appearance_code' => 'sociology') }.not_to(
         change{ offering.appearance_code }
       )
     end
@@ -65,8 +65,21 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
     end
 
     it 'cannot be written (attempts are silently ignored)' do
-      expect{ described_class.new(offering).from_hash(active_term_years: []) }.not_to(
+      expect{ described_class.new(offering).from_hash('active_term_years' => []) }.not_to(
         change{ TermYear.visible_term_years }
+      )
+    end
+  end
+
+  context 'default_course_name' do
+    it 'can be read' do
+      expect(representation['default_course_name']).to eq offering.default_course_name
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:default_course_name=)
+      expect{ described_class.new(offering).from_hash('default_course_name' => 'Test') }.not_to(
+        change{ offering.default_course_name }
       )
     end
   end

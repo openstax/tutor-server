@@ -11,11 +11,30 @@ RSpec.describe CloneCourse, type: :routine do
 
     expect(result.errors).to be_empty
 
-    course = result.outputs.course
+    clone = result.outputs.course
 
-    expect(course).to be_a CourseProfile::Models::Course
-    expect(course.course_assistants.count).to eq 4
-    expect(UserIsCourseTeacher[user: user, course: course]).to eq true
+    expect(clone).to be_a CourseProfile::Models::Course
+    expect(clone.course_assistants.count).to eq 4
+    expect(UserIsCourseTeacher[user: user, course: clone]).to eq true
+
+  end
+
+  it "copies the course's question library if requested" do
+
+    10.times{ FactoryGirl.create :course_content_excluded_exercise, course: course }
+
+    result = described_class.call(course: course, teacher_user: user, copy_question_library: true)
+
+    expect(result.errors).to be_empty
+
+    clone = result.outputs.course
+
+    expect(clone).to be_a CourseProfile::Models::Course
+    expect(clone.course_assistants.count).to eq 4
+    expect(UserIsCourseTeacher[user: user, course: clone]).to eq true
+    expect(clone.excluded_exercises.map(&:exercise_number)).to(
+      match_array(course.excluded_exercises.map(&:exercise_number))
+    )
 
   end
 

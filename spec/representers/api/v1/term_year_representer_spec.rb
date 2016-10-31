@@ -15,7 +15,7 @@ RSpec.describe Api::V1::TermYearRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(term_year).not_to receive(:term=)
-      described_class.new(term_year).from_hash(term: 'test')
+      described_class.new(term_year).from_hash('term' => 'test')
       expect(term_year.term).to eq term
     end
   end
@@ -27,7 +27,7 @@ RSpec.describe Api::V1::TermYearRepresenter, type: :representer do
 
     it 'can be written' do
       expect(term_year).not_to receive(:year=)
-      described_class.new(term_year).from_hash(year: 1988)
+      described_class.new(term_year).from_hash('year' => 1988)
       expect(term_year.year).to eq year
     end
   end

@@ -34,7 +34,7 @@ class CloneCourse
 
     if copy_question_library
       course.excluded_exercises.each do |ex|
-        outputs.course.excluded_exercises << ExcludedExercise.new(
+        outputs.course.excluded_exercises << CourseContent::Models::ExcludedExercise.new(
           course: outputs.course, exercise_number: ex.exercise_number
         )
       end
