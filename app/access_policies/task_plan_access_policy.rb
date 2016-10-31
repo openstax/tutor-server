@@ -1,5 +1,5 @@
 class TaskPlanAccessPolicy
-  VALID_ACTIONS = [:read, :create, :update, :destroy, :restore]
+  VALID_ACTIONS = [:index, :read, :create, :update, :destroy, :restore]
 
   def self.action_allowed?(action, requestor, task_plan)
     return false if !VALID_ACTIONS.include?(action)

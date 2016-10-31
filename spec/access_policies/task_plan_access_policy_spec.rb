@@ -19,7 +19,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   context 'anonymous users' do
     let(:requestor) { User::User.anonymous }
 
-    [:read, :create, :update, :destroy].each do |test_action|
+    [:index, :read, :create, :update, :destroy].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq false }

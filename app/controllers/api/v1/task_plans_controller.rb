@@ -8,7 +8,51 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     EOS
   end
 
-  # TODO fix up the use of Tasks::Models throughout
+  ###############################################################
+  # index
+  ###############################################################
+
+  api :GET, '/courses/:course_id/plans', 'Retrieve course TaskPlans according to params'
+  description <<-EOS
+   Valid params:
+   original == true  -> returns only task plans that are original
+   original == false -> returns only task plans that are clones of task_plans from another course
+
+   cloned   == true  -> if the current course was cloned from another, returns only
+                        task plans in the origin course that have been cloned
+   cloned   == false -> if the current course was cloned from another, returns only
+                        task plans in the origin course that have not been cloned
+
+   ### Example JSON response
+   #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :readable)}
+  EOS
+  def index
+    course = CourseProfile::Models::Course.find(params[:course_id])
+    OSU::AccessPolicy.require_action_allowed!(:read_task_plans, current_api_user, course)
+
+    task_plans = if !params[:cloned].nil?
+      orig_course = course.cloned_from
+
+      if orig_course.nil?
+        []
+      else
+        cloned_task_plan_ids = course.task_plans.map(&:cloned_from_id)
+
+        params[:cloned] ? orig_course.task_plans.where{id.in cloned_task_plan_ids} :
+                          orig_course.task_plans.where{id.not_in cloned_task_plan_ids}
+      end
+    else
+      tps = course.task_plans
+
+      if !params[:original].nil?
+        params[:original] ? tps.where{cloned_from_id == nil} : tps.where{cloned_from_id != nil}
+      else
+        tps
+      end
+    end.to_a
+
+    standard_index(task_plans, Api::V1::TaskPlanSearchRepresenter)
+  end
 
   ###############################################################
   # show
@@ -17,15 +61,6 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/plans/:id', "Retrieve a TaskPlan"
   description <<-EOS
    ### Example JSON response
-   ```json
-   {
-     "id": 1,
-     "type": "reading",
-     "opens_at": "2015-03-10T21:29:35.260Z",
-     "due_at": "2015-03-17T21:29:35.260Z",
-     "settings": {}
-   }
-   ```
    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def show

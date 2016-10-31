@@ -25,7 +25,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       User::User.new(strategy: strategy)
     }
 
-    [:index, :read, :task_plans, :export, :roster, :add_period,
+    [:index, :read, :read_task_plans, :export, :roster, :add_period,
      :update, :stats, :exercises, :clone, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
@@ -42,7 +42,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       it { should be true }
     end
 
-    [:read, :task_plans, :export, :roster, :add_period,
+    [:read, :read_task_plans, :export, :roster, :add_period,
      :update, :stats, :exercises, :clone, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
@@ -54,14 +54,14 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   context 'student' do
     let(:requestor) { student }
 
-    [:index, :read, :task_plans].each do |test_action|
+    [:index, :read].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be true }
       end
     end
 
-    [:export, :roster, :add_period, :update,
+    [:read_task_plans, :export, :roster, :add_period, :update,
      :stats, :exercises, :clone, :create].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
@@ -73,7 +73,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   context 'verified faculty teacher' do
     let(:requestor) { teacher }
 
-    [:index, :create, :read, :task_plans, :export, :roster,
+    [:index, :create, :read, :read_task_plans, :export, :roster,
      :add_period, :update, :stats, :exercises, :clone].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
@@ -92,7 +92,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       end
     end
 
-    [:read, :task_plans, :export, :roster,
+    [:read, :read_task_plans, :export, :roster,
      :add_period, :update, :stats, :exercises, :clone].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }

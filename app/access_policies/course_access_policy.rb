@@ -5,14 +5,14 @@ class CourseAccessPolicy
     case action.to_sym
     when :index
       true
-    when :read, :task_plans
+    when :read
       UserIsCourseStudent[user: requestor, course: course] ||
       UserIsCourseTeacher[user: requestor, course: course]
     when :create_practice
       course.active? &&
       UserIsCourseStudent[user: requestor, course: course] ||
       UserIsCourseTeacher[user: requestor, course: course]
-    when :export, :roster, :add_period, :update, :stats, :exercises
+    when :read_task_plans, :export, :roster, :add_period, :update, :stats, :exercises
       UserIsCourseTeacher[user: requestor, course: course]
     when :create
       requestor.try!(:account).try!(:confirmed_faculty?)
