@@ -103,7 +103,7 @@ module Api::V1
              writeable: true
 
     property :cloned_from_id,
-             type: Integer,
+             type: String,
              readable: true,
              writeable: true
 

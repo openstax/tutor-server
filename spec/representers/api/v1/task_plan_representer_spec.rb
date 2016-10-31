@@ -154,4 +154,16 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
   end
 
+  context 'cloned_from_id' do
+    it 'can be read' do
+      allow(task_plan).to receive(:cloned_from_id).and_return('42')
+      expect(representation).to include('cloned_from_id' => '42')
+    end
+
+    it 'can be written' do
+      described_class.new(task_plan).from_hash('cloned_from_id' => '84')
+      expect(task_plan).to have_received(:cloned_from_id=).with('84')
+    end
+  end
+
 end

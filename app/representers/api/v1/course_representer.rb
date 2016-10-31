@@ -157,7 +157,7 @@ module Api::V1
              }
 
     property :cloned_from_id,
-             type: Integer,
+             type: String,
              readable: true,
              writeable: false
 

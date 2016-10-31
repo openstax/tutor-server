@@ -13,12 +13,15 @@ module Api::V1
                                             ecosystem: ecosystem
     end
 
+    let(:original_course)  { FactoryGirl.create :course_profile_course }
+
     let(:course)           do
       FactoryGirl.create :course_profile_course, name: 'Test course',
-                                         appearance_code: 'appearance override',
-                                         offering: catalog_offering,
-                                         is_concept_coach: true,
-                                         is_college: false
+                                                 appearance_code: 'appearance override',
+                                                 offering: catalog_offering,
+                                                 is_concept_coach: true,
+                                                 is_college: false,
+                                                 cloned_from: original_course
     end
 
     subject(:represented)  { described_class.new(course).to_hash }
@@ -72,6 +75,10 @@ module Api::V1
 
     it 'shows whether or not it is a college course' do
       expect(represented['is_college']).to eq false
+    end
+
+    it 'shows the id of the course it was cloned from' do
+      expect(represented['cloned_from_id']).to eq original_course.id.to_s
     end
 
     it 'shows students' do

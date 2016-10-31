@@ -1191,6 +1191,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           default_due_time: course.default_due_time,
           default_open_time: course.default_open_time,
           name: course.name,
+          cloned_from_id: course.id.to_s,
           periods: [a_kind_of(Hash)]*course.num_sections,
           students: []
         }
