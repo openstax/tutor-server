@@ -19,17 +19,12 @@ class SearchCourses
 
   def exec(params = {}, options = {})
     params[:order_by] ||= :name
-    relation = CourseProfile::Models::Course.joins{
-            [school.outer,
-             offering.outer,
-             teachers.outer.role.outer.profile.outer.account.outer,
-             ecosystems.outer]
-          }.select([CourseProfile::Models::Course.arel_table[:id],
-                    CourseProfile::Models::Course.arel_table[:name],
-                    CourseProfile::Models::Course.arel_table[:created_at],
-                    CourseProfile::Models::Course.arel_table[:updated_at],
-                    SchoolDistrict::Models::School.arel_table[:name],
-                    Catalog::Models::Offering.arel_table[:salesforce_book_name]]).uniq
+    relation = CourseProfile::Models::Course.joins do
+      [school.outer,
+       offering.outer,
+       teachers.outer.role.outer.profile.outer.account.outer,
+       ecosystems.outer]
+    end.uniq
 
     run(:search, relation: relation, sortable_fields: SORTABLE_FIELDS, params: params) do |with|
 
@@ -59,7 +54,7 @@ class SearchCourses
           sanitized_names = to_string_array(name, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_names.empty?
 
-          @items = @items.where{name.like_any sanitized_names}
+          @items = @items.where{self.name.like_any sanitized_names}
         end
       end
 

@@ -44,8 +44,11 @@ RSpec.describe 'Teachers' do
             visit teach_course_path('invalid-no-way-it-will-work')
           end
 
-          expect(page).to have_css('.rescue-from',
-                                   text: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')
+          expect(page).to have_css(
+            '.rescue-from',
+             text: 'You are trying to join a class as a teacher, but the information you ' +
+                   'provided is either out of date or does not correspond to an existing course.'
+          )
         end
       end
     end

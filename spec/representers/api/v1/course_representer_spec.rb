@@ -77,12 +77,12 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     period = FactoryGirl.create :course_membership_period, course: course
     student_1_user = FactoryGirl.create :user
     student_2_user = FactoryGirl.create :user
-    AddUserAsPeriodStudent[user: student_1_user, period: period]
-    AddUserAsPeriodStudent[user: student_2_user, period: period]
+    student_1 = AddUserAsPeriodStudent[user: student_1_user, period: period].student
+    student_2 = AddUserAsPeriodStudent[user: student_2_user, period: period].student
 
     expect(represented["students"]).to(
-      match_array [a_hash_including("id" => student_1_user.id.to_s),
-                   a_hash_including("id" => student_2_user.id.to_s)]
+      match_array [a_hash_including("id" => student_1.id.to_s),
+                   a_hash_including("id" => student_2.id.to_s)]
     )
   end
 end

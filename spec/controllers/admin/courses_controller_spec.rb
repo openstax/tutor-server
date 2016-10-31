@@ -16,7 +16,9 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     it 'passes the query params to SearchCourses along with order_by params' do
-      expect(SearchCourses).to receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
+      expect(SearchCourses).to(
+        receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
+      )
       get :index, query: 'test', order_by: 'name'
     end
 

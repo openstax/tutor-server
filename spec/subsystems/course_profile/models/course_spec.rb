@@ -25,7 +25,6 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to validate_presence_of(:starts_at) }
   it { is_expected.to validate_presence_of(:ends_at) }
 
-  it { is_expected.to validate_uniqueness_of(:course) }
   it { is_expected.to validate_uniqueness_of(:time_zone) }
 
   it 'validates format of default times' do
