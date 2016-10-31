@@ -12,7 +12,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   # Allow use of 'type' column without STI
   self.inheritance_column = nil
 
-  belongs_to :cloned_from, class_name: 'Tasks::Models::TaskPlan'
+  belongs_to :cloned_from, foreign_key: 'cloned_from_id', class_name: 'Tasks::Models::TaskPlan'
 
   belongs_to :assistant
   belongs_to :owner, polymorphic: true

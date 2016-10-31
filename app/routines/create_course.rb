@@ -46,7 +46,8 @@ class CreateCourse
         offering: catalog_offering.try!(:to_model),
         appearance_code: appearance_code,
         school: school,
-        time_zone: time_zone)
+        time_zone: time_zone,
+        cloned_from: cloned_from)
 
     num_sections.times{ run(:create_period, course: outputs.course) }
 

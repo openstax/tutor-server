@@ -14,6 +14,7 @@ RSpec.describe CloneCourse, type: :routine do
     clone = result.outputs.course
 
     expect(clone).to be_a CourseProfile::Models::Course
+    expect(clone.cloned_from).to eq course
     expect(clone.course_assistants.count).to eq 4
     expect(UserIsCourseTeacher[user: user, course: clone]).to eq true
 
@@ -30,6 +31,7 @@ RSpec.describe CloneCourse, type: :routine do
     clone = result.outputs.course
 
     expect(clone).to be_a CourseProfile::Models::Course
+    expect(clone.cloned_from).to eq course
     expect(clone.course_assistants.count).to eq 4
     expect(UserIsCourseTeacher[user: user, course: clone]).to eq true
     expect(clone.excluded_exercises.map(&:exercise_number)).to(
