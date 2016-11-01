@@ -67,6 +67,12 @@ module Api::V1
                description: 'When the period was deleted'
              }
 
+    property :entity_teacher_student_role_id,
+             as: :teacher_student_role_id,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
 
   end
 end

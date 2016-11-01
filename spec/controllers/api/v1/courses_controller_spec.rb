@@ -94,8 +94,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                       default_open_time: '00:01',
                       default_due_time: '07:00',
                       is_archived: true,
-                      archived_at: DateTimeUtilities.to_api_s(zeroth_period.deleted_at)
-                    },
+                      archived_at: DateTimeUtilities.to_api_s(zeroth_period.deleted_at),
+                      teacher_student_role_id: zeroth_period.entity_teacher_student_role_id.to_s },
                     { id: period.id.to_s,
                       name: period.name,
                       enrollment_code: period.enrollment_code,
@@ -104,7 +104,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                       ),
                       default_open_time: '00:01',
                       default_due_time: '07:00',
-                      is_archived: false }],
+                      is_archived: false,
+                      teacher_student_role_id: period.entity_teacher_student_role_id.to_s }],
           students: []
         })
       end
