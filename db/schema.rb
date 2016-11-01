@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160910012934) do
+ActiveRecord::Schema.define(version: 20160923180438) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -845,6 +845,23 @@ ActiveRecord::Schema.define(version: 20160910012934) do
   add_index "user_profiles", ["exchange_read_identifier"], name: "index_user_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profiles", ["exchange_write_identifier"], name: "index_user_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
+  create_table "user_tour_views", force: :cascade do |t|
+    t.integer "view_count",      default: 0, null: false
+    t.integer "user_profile_id",             null: false
+    t.integer "user_tour_id",                null: false
+  end
+
+  add_index "user_tour_views", ["user_profile_id", "user_tour_id"], name: "index_user_tour_views_on_user_profile_id_and_user_tour_id", unique: true, using: :btree
+  add_index "user_tour_views", ["user_tour_id"], name: "index_user_tour_views_on_user_tour_id", using: :btree
+
+  create_table "user_tours", force: :cascade do |t|
+    t.text     "identifier", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "user_tours", ["identifier"], name: "index_user_tours_on_identifier", unique: true, using: :btree
+
   add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_chapters", "content_books", on_update: :cascade, on_delete: :cascade
@@ -908,4 +925,6 @@ ActiveRecord::Schema.define(version: 20160910012934) do
   add_foreign_key "user_content_analysts", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_tour_views", "user_profiles"
+  add_foreign_key "user_tour_views", "user_tours"
 end

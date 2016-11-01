@@ -85,4 +85,17 @@ describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
 
   end
 
+
+  describe '#tours' do
+
+    it 'records tour as viewed' do
+      expect {
+        api_put :tours, user_1_token, parameters: {id: 'the-grand-tour'}
+        expect(response.code).to eq('200')
+      }.to change { User::Models::TourView.count }.by(1)
+    end
+
+  end
+
+
 end
