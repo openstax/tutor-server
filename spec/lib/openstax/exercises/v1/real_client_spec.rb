@@ -16,20 +16,20 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OP
     @config.secret = @secret
   end
 
-  let(:client) { OpenStax::Exercises::V1.real_client }
+  subject(:real_client) { described_class.new(@config) }
 
   context "exercises search" do
 
     context "single match" do
       it "returns an Exercise matching some content" do
-        results = JSON.parse(client.exercises(content: 'WhAt Is KiNeMaTiCs?'))
+        results = real_client.exercises(content: 'WhAt Is KiNeMaTiCs?')
 
         expect(results['total_count']).to eq 1
         expect(results['items'].length).to eq 1
       end
 
       it "returns an Exercise matching a tag" do
-        results = JSON.parse(client.exercises(tag: 'k12phys-ch04-ex002'))
+        results = real_client.exercises(tag: 'k12phys-ch04-ex002')
 
         expect(results['total_count']).to eq 1
         expect(results['items'].length).to eq 1
@@ -38,14 +38,14 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OP
 
     context "multiple matches" do
       it "returns Exercises matching some content" do
-        results = JSON.parse(client.exercises(content: 'FoRcE'))
+        results = real_client.exercises(content: 'FoRcE')
 
         expect(results['total_count']).to eq 298
         expect(results['items'].length).to eq 298
       end
 
       it "returns Exercises matching a tag" do
-        results = JSON.parse(client.exercises(tag: 'k12phys-ch04-s01-lo01'))
+        results = real_client.exercises(tag: 'k12phys-ch04-s01-lo01')
 
         expect(results['total_count']).to eq 16
         expect(results['items'].length).to eq 16
@@ -53,9 +53,7 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OP
     end
 
     it "sorts by multiple fields in different directions" do
-      results = JSON.parse(client.exercises(
-        content: 'fOrCe', order_by: 'number DESC, version ASC'
-      ))
+      results = real_client.exercises(content: 'fOrCe', order_by: 'number DESC, version ASC')
 
       expect(results['total_count']).to eq 298
       expect(results['items'].length).to eq 298

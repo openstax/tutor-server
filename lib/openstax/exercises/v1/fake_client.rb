@@ -1,17 +1,13 @@
 class OpenStax::Exercises::V1::FakeClient
 
-  include Singleton
+  attr_reader :store
 
-  attr_reader :exercises_array
-
-  def reset!
-    @exercises_array = []
-    @uid = 0
-    @exercise_number = 0
+  def initialize(exercises_configuration)
+    @store = exercises_configuration.fake_store
   end
 
-  def initialize
-    reset!
+  def reset!
+    store.clear
   end
 
   def server_url
@@ -23,103 +19,89 @@ class OpenStax::Exercises::V1::FakeClient
   #
 
   def exercises(params = {}, options={})
-    arrayify(params, :number)
-    arrayify(params, :version)
-    arrayify(params, :id)
-    arrayify(params, :uid)
-    arrayify(params, :tag)
+    match_sets = params.map do |key, values|
+      next if values.nil?
 
-    match_sets = []
-    uids = (params[:id] || []) + (params[:uid] || [])
-    match_sets.push( @exercises_array.select{|ee| uids.include?(ee[:uid])}           ) if !uids.blank?
-    match_sets.push( @exercises_array.select{|ee| (params[:tag] & ee[:tags]).any?}         ) if params[:tag]
-    match_sets.push( @exercises_array.select{|ee| params[:number].include?(ee[:number])}   ) if params[:number]
-    match_sets.push( @exercises_array.select{|ee| params[:version].include?(ee[:version])} ) if params[:version]
+      store_keys = [values].flatten.map{ |value| "exercises/#{key}/#{value}" }
+      match_json_array = store.read_multi(*store_keys).values
+      match_hash_array = match_json_array.map{ |value| JSON.parse(value || '[]') }
+      match_hash_array.flatten.uniq
+    end.compact
 
-    result = nil
+    results = match_sets.reduce(:&) || []
 
-    match_sets.each do |match_set|
-      if result.nil?
-        result = match_set
-      else
-        result = result & match_set
-      end
-    end
-    result ||= []
-
-    { total_count: result.length, items: result.map{|exercise| exercise[:content]} }.to_json
+    { 'total_count' => results.length, 'items' => results }
   end
 
   #
   # Methods to help fake the fake content
   #
 
-  def new_exercise_hash(options = {})
-    options[:number] ||= next_exercise_number
-    options[:version] ||= 1
-    options[:num_parts] ||= 1
+  def add_exercise(options = {})
+    options[:content] ||= self.class.new_exercise_hash(options)
+
+    uuid = options[:content][:uuid]
+    group_uuid = options[:content][:group_uuid]
+    number = options[:content][:number]
+    version = options[:content][:version]
+    tags = options[:content][:tags]
+    uid = options[:content][:uid]
+
+    options[:content].tap do |content|
+      store.write "exercises/uuid/#{uuid}", [content].to_json
+
+      same_group_uuid_exercises = JSON.parse(store.read("exercises/uuid/#{group_uuid}") || '[]')
+      store.write "exercises/uuid/#{group_uuid}",
+                  (same_group_uuid_exercises + [content]).uniq.to_json
+
+      same_number_exercises = JSON.parse(store.read("exercises/number/#{number}") || '[]')
+      store.write "exercises/number/#{number}", (same_number_exercises + [content]).uniq.to_json
+
+      same_version_exercises = JSON.parse(store.read("exercises/version/#{version}") || '[]')
+      store.write "exercises/version/#{version}", (same_version_exercises + [content]).uniq.to_json
+
+      store.write "exercises/id/#{uid}",  [content].to_json
+      store.write "exercises/uid/#{uid}", [content].to_json
+
+      tags.each do |tag|
+        same_tag_exercises = JSON.parse(store.read("exercises/tag/#{tag}") || '[]')
+        store.write "exercises/tag/#{tag}", (same_tag_exercises + [content]).uniq.to_json
+      end
+    end
+  end
+
+  def self.new_exercise_hash(uuid: SecureRandom.uuid, group_uuid: SecureRandom.uuid,
+                             number: -1, version: 1, uid: nil, tags: nil, num_parts: 1)
     {
-      uid: options[:uid] || "#{options[:number].to_s}@#{options[:version].to_s}",
-      tags: options[:tags] || [],
-      stimulus_html: "This is fake exercise #{options[:number]}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+      uuid: uuid,
+      group_uuid: group_uuid,
+      number: number,
+      version: version,
+      uid: uid || "#{number}@#{version}",
+      tags: tags || [],
+      stimulus_html: "This is fake exercise #{number}. " +
+                     "<span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       attachments: [
         {
-          id: "#{next_uid}",
+          id: "#{number}",
           asset: "https://somewhere.com/something.png"
         }
       ],
-      questions: options[:num_parts].times.map do |index|
+      questions: num_parts.times.map do |index|
         {
-          id: "#{next_uid}",
+          id: "#{number}",
           formats: ["multiple-choice", "free-response"],
           stem_html: "Select 10 N. (#{index})",
           answers: [
-            { id: "#{next_uid}", content_html: "10 N",
+            { id: "#{2*number + 1}", content_html: "10 N",
               correctness: 1.0, feedback_html: "Right!" },
-            { id: "#{next_uid}", content_html: "1 N",
+            { id: "#{2*number}", content_html: "1 N",
               correctness: 0.0, feedback_html: "Wrong!" }
           ],
-          solutions: [
-            {
-              content_html: "The first one."
-            }
-          ]
+          solutions: [ { content_html: "The first one." } ]
         }
       end
     }
-  end
-
-  def add_exercise(options={})
-    options[:number] ||= next_exercise_number
-    options[:version] ||= 1
-    options[:tags] ||= []
-    options[:uid] ||= options[:uid] || options[:id] || "#{options[:number]}@#{options[:version]}"
-    options[:content] ||= new_exercise_hash(options)
-
-    @exercises_array.push(
-      {
-        content: options[:content],
-        number: options[:number],
-        version: options[:version],
-        tags: options[:tags],
-        uid: options[:uid]
-      }
-    )
-  end
-
-  private
-
-  def next_uid
-    @uid -= 1
-  end
-
-  def next_exercise_number
-    @exercise_number -= 1
-  end
-
-  # Makes the value of hash[:key] an array if isn't already one and the key exists
-  def arrayify(hash, key)
-    hash[key] = [hash[key]].flatten if hash[key]
   end
 
 end

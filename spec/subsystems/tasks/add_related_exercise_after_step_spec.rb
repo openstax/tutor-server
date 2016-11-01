@@ -11,38 +11,32 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
 
   let!(:tasking)        { FactoryGirl.create :tasks_tasking, task: task }
 
-  let(:tasked_exercise) {
+  let(:tasked_exercise) do
     te = FactoryGirl.build(:tasks_tasked_exercise)
     te.task_step.task = task.reload
     te.save!
     te
-  }
+  end
 
-  let(:related_exercise) { FactoryGirl.create(
-    :content_exercise,
-    content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(
-                                      tags: [lo.value, pp.value]
-                                    ).to_json
-  ) }
+  let(:related_exercise) { FactoryGirl.create :content_exercise, tags: [lo.value, pp.value] }
 
-  let(:tasked_exercise_with_related) {
+  let(:tasked_exercise_with_related) do
     te = FactoryGirl.build(:tasks_tasked_exercise)
     te.task_step.task = task.reload
     te.task_step.related_exercise_ids = [related_exercise.id]
     te.save!
     te
-  }
+  end
 
   let(:step_after_exercise)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
 
-  let(:tasked_reading_with_related) {
+  let(:tasked_reading_with_related) do
     te = FactoryGirl.build(:tasks_tasked_reading)
     te.task_step.task = task.reload
     te.task_step.related_exercise_ids = [related_exercise.id]
     te.save!
     te
-  }
+  end
 
   let(:step_after_reading)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
 

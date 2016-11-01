@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
-  let(:title)    { 'Some Title' }
-  let(:context)  { 'Some Context' }
-  let(:hash)     { OpenStax::Exercises::V1.fake_client.new_exercise_hash.merge(title: title) }
-  let(:exercise) do
+  let(:title)     { 'Some Title' }
+  let(:context)   { 'Some Context' }
+  let(:hash)      { OpenStax::Exercises::V1::FakeClient.new_exercise_hash.merge(title: title) }
+  let(:exercise)  do
     described_class.new(content: content).tap{ |exercise| exercise.context = context }
   end
 

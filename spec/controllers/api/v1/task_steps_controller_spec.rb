@@ -38,23 +38,18 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
   let(:lo)                  { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let(:pp)                  { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
-  let(:related_exercise)    { FactoryGirl.create(
-    :content_exercise,
-    content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(tags: [lo.value, pp.value])
-                                    .to_json
-  ) }
+  let(:related_exercise)    { FactoryGirl.create :content_exercise, tags: [lo.value, pp.value] }
 
-  let!(:tasked_exercise_with_related) {
+  let!(:tasked_exercise_with_related) do
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
-      content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.value]).to_json
+      content: OpenStax::Exercises::V1::FakeClient.new_exercise_hash(tags: [lo.value]).to_json
     )
     te.task_step.task = task
     te.task_step.related_exercise_ids = [related_exercise.id]
     te.save!
     te
-  }
+  end
 
   describe "#show" do
     it "should work on the happy path" do

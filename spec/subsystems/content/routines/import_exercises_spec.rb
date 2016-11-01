@@ -113,10 +113,8 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
     let(:wrappers) do
       exercise_tags_array.each_with_index.map do |exercise_tags, index|
-        content_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
-        content_hash[:number] = index + 1
-        content_hash[:version] = 1
-        content_hash[:tags] = exercise_tags
+        options = { number: index + 1, version: 1, tags: exercise_tags }
+        content_hash = OpenStax::Exercises::V1::FakeClient.new_exercise_hash(options)
 
         OpenStax::Exercises::V1::Exercise.new(content: content_hash.to_json)
       end
@@ -243,7 +241,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
       new_lo = 'lo:somethingrandom'
       new_lo_hash = {value: new_lo, name: nil, type: :lo}
 
-      hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [original_lo])
+      hash = OpenStax::Exercises::V1::FakeClient.new_exercise_hash(tags: [original_lo])
       exercise = OpenStax::Exercises::V1::Exercise.new(content: hash.to_json)
       mutable = described_class::MutableWrapper.new(exercise)
 
@@ -269,16 +267,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
   def stub_exercise_query(array_of_exercise_options={})
     wrappers = array_of_exercise_options.map.with_index do |exercise_options, index|
-      content_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash.tap do |hash|
-        if exercise_options.delete(:remove_answers)
-          hash[:questions].last[:answers] = []
-        end
-
-        exercise_options.each do |key, value|
-          hash[key] = value
-        end
-        hash[:number] = index + 1
-        hash[:version] = 1
+      hash_options = exercise_options.except(:remove_answers).merge(number: index + 1, version: 1)
+      content_hash = OpenStax::Exercises::V1::FakeClient.new_exercise_hash(hash_options)
+                                                        .tap do |hash|
+        hash[:questions].last[:answers] = [] if exercise_options[:remove_answers]
       end
 
       OpenStax::Exercises::V1::Exercise.new(content: content_hash.to_json)
