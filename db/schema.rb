@@ -304,6 +304,7 @@ ActiveRecord::Schema.define(version: 20161108152717) do
     t.integer  "term",                                        null: false
     t.integer  "year",                                        null: false
     t.integer  "cloned_from_id"
+    t.boolean  "is_trial",                                    null: false
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree

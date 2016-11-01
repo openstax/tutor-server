@@ -62,6 +62,7 @@ class ImportSalesforceCourse
       starts_at: candidate.try(:course_start_date),
       school: school,
       catalog_offering: offering,
+      is_trial: true,
       is_concept_coach: candidate.is_concept_coach?,
       is_college: candidate.is_college?
     ).outputs.course

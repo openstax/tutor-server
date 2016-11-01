@@ -59,55 +59,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         AddUserAsCourseTeacher.call(course: course, user: user_1)
       end
 
-      it 'includes periods (even archived) and ecosystem_id for the course' do
+      it 'includes all fields from the CourseRepresenter' do
         ecosystem = add_book_to_course(course: course)[:ecosystem]
 
         api_get :index, user_1_token
 
-        expect(response.body_as_hash.first).to match({
-          id: course.id.to_s,
-          name: course.name,
-          term: course.term,
-          year: course.year,
-          num_sections: course.num_sections,
-          starts_at: a_kind_of(String),
-          ends_at: a_kind_of(String),
-          is_active: true,
-          is_college: true,
-          is_concept_coach: false,
-          offering_id: course.offering.id.to_s,
-          appearance_code: course.offering.appearance_code,
-          salesforce_book_name: course.offering.salesforce_book_name,
-          webview_url: course.offering.webview_url,
-          book_pdf_url: course.offering.pdf_url,
-          time_zone: course.time_zone.name,
-          default_open_time: '00:01',
-          default_due_time: '07:00',
-          ecosystem_id: ecosystem.id.to_s,
-          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
-          periods: [{ id: zeroth_period.id.to_s,
-                      name: zeroth_period.name,
-                      enrollment_code: zeroth_period.enrollment_code,
-                      enrollment_url: a_string_matching(
-                        /enroll\/#{zeroth_period.enrollment_code_for_url}/
-                      ),
-                      default_open_time: '00:01',
-                      default_due_time: '07:00',
-                      is_archived: true,
-                      archived_at: DateTimeUtilities.to_api_s(zeroth_period.deleted_at),
-                      teacher_student_role_id: zeroth_period.entity_teacher_student_role_id.to_s },
-                    { id: period.id.to_s,
-                      name: period.name,
-                      enrollment_code: period.enrollment_code,
-                      enrollment_url: a_string_matching(
-                        /enroll\/#{period.enrollment_code_for_url}/
-                      ),
-                      default_open_time: '00:01',
-                      default_due_time: '07:00',
-                      is_archived: false,
-                      teacher_student_role_id: period.entity_teacher_student_role_id.to_s }],
-          students: []
-        })
+        course_infos = CollectCourseInfo[
+          user: user_1, with: [:roles, :periods, :ecosystem, :students]
+        ]
+
+        expect(response.body_as_hash).to match_array(
+          Api::V1::CoursesRepresenter.new(course_infos).as_json.map(&:deep_symbolize_keys)
+        )
       end
     end
 
@@ -155,16 +118,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:catalog_offering) { FactoryGirl.create :catalog_offering }
     let(:num_sections)     { 2 }
 
-    let(:valid_body) do
+    let(:valid_body_hash) do
       {
         name: 'A Course',
         term: term,
         year: year,
         is_college: true,
         num_sections: num_sections,
-        offering_id: catalog_offering.id
-      }.to_json
+        offering_id: catalog_offering.id.to_s
+      }
     end
+    let(:valid_body) { valid_body_hash.to_json }
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
@@ -183,41 +147,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'verified faculty' do
-      let(:expected_response) do
-        {
-          id: a_kind_of(String),
-          name: 'A Course',
-          term: term,
-          year: year,
-          starts_at: a_kind_of(String),
-          ends_at: a_kind_of(String),
-          is_active: be_in([true, false]),
-          is_college: true,
-          is_concept_coach: false,
-          num_sections: num_sections,
-          offering_id: catalog_offering.id.to_s,
-          appearance_code: catalog_offering.appearance_code,
-          salesforce_book_name: catalog_offering.salesforce_book_name,
-          webview_url: catalog_offering.webview_url,
-          book_pdf_url: catalog_offering.pdf_url,
-          time_zone: 'Central Time (US & Canada)',
-          default_due_time: '07:00',
-          default_open_time: '00:01',
-          periods: [a_kind_of(Hash)]*num_sections,
-          students: [],
-          ecosystem_id: catalog_offering.content_ecosystem_id.to_s,
-          roles: [a_kind_of(Hash)]
-        }
-      end
-
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
-      it 'creates a new course for the faculty if all required attributes are specified' do
+      it 'creates a new trial course for the faculty if all required attributes are specified' do
         expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
           change{ CourseProfile::Models::Course.count }.by(1)
         )
         expect(response).to have_http_status :success
-        expect(response.body_as_hash).to match expected_response
+        expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
+        expect(response.body_as_hash[:is_trial]).to eq true
       end
 
       it 'makes the requesting faculty a teacher in the new course' do
@@ -1149,7 +1087,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:valid_params) { { id: course.id                } }
     let(:valid_body)   { { copy_question_library: false } }
 
-    before { zeroth_period.to_model.destroy! }
+    before do
+      course.update_attribute :is_trial, true
+
+      zeroth_period.to_model.destroy!
+    end
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
@@ -1180,37 +1122,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher in the course' do
-      let(:expected_response) do
-        {
+      let(:expected_year)      { course.year + 1 }
+      let(:expected_term_year) { TermYear.new(course.term, expected_year) }
+      let(:expected_response)  do
+        Api::V1::CourseRepresenter.new(course).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
-          term: course.term,
-          year: course.year + 1,
-          starts_at: a_kind_of(String),
-          ends_at: a_kind_of(String),
-          is_active: be_in([true, false]),
-          is_college: course.is_college,
-          is_concept_coach: course.is_concept_coach,
-          num_sections: course.num_sections,
-          offering_id: course.offering.id.to_s,
-          appearance_code: course.offering.appearance_code,
-          salesforce_book_name: course.offering.salesforce_book_name,
-          webview_url: course.offering.webview_url,
-          book_pdf_url: course.offering.pdf_url,
-          time_zone: course.time_zone.name,
-          default_due_time: course.default_due_time,
-          default_open_time: course.default_open_time,
-          name: course.name,
-          cloned_from_id: course.id.to_s,
+          year: expected_year,
+          is_trial: false,
+          starts_at: expected_term_year.starts_at,
+          ends_at: expected_term_year.ends_at,
+          is_active: false,
           periods: [a_kind_of(Hash)]*course.num_sections,
           students: [],
           roles: [a_kind_of(Hash)],
-          ecosystem_id: course.offering.content_ecosystem_id.to_s
-        }
+          ecosystem_id: course.offering.content_ecosystem_id.to_s,
+          cloned_from_id: course.id.to_s
+        )
       end
 
-      before do
-        AddUserAsCourseTeacher.call(course: course, user: user_1)
-      end
+      before { AddUserAsCourseTeacher.call(course: course, user: user_1) }
 
       it 'clones the course for the user' do
         api_post :clone, user_1_token, parameters: valid_params, raw_post_data: valid_body

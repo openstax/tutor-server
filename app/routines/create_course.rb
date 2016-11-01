@@ -17,7 +17,7 @@ class CreateCourse
   uses_routine AddEcosystemToCourse,
                as: :add_ecosystem
 
-  def exec(name:, term:, year:, is_college:, is_concept_coach: nil, num_sections: 0,
+  def exec(name:, term:, year:, is_trial:, is_college:, is_concept_coach: nil, num_sections: 0,
            catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
            school: nil, time_zone: nil, cloned_from: nil,
            default_open_time: nil, default_due_time: nil)
@@ -42,6 +42,7 @@ class CreateCourse
         year: year,
         is_college: is_college,
         is_concept_coach: is_concept_coach,
+        is_trial: is_trial,
         starts_at: starts_at,
         ends_at: ends_at,
         offering: catalog_offering.try!(:to_model),

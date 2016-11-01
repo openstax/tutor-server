@@ -22,8 +22,9 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
 
     expect(course.name).to eq "Yo"
     expect(course.school.name).to eq "Rice"
-    expect(course.is_concept_coach).to be_truthy
-    expect(course.is_college).to be_truthy
+    expect(course.is_trial).to eq true
+    expect(course.is_concept_coach).to eq true
+    expect(course.is_college).to eq true
 
     attached_record = Salesforce::Models::AttachedRecord.first
     expect(attached_record.attached_to).to eq course

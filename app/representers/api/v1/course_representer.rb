@@ -140,6 +140,14 @@ module Api::V1
                description: "The book's webview url, if available."
              }
 
+    property :is_trial,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               required: true
+             }
+
     property :is_concept_coach,
              readable: true,
              writeable: false,

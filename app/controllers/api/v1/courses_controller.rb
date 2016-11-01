@@ -51,10 +51,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
-    attributes_with_catalog_offering = attributes.except(:catalog_offering_id)
-                                                 .merge(catalog_offering: catalog_offering)
+    course_attributes = attributes.except(:catalog_offering_id)
+                                  .merge(catalog_offering: catalog_offering, is_trial: true)
 
-    course = CreateCourse[attributes_with_catalog_offering]
+    course = CreateCourse[course_attributes]
 
     AddUserAsCourseTeacher[course: course, user: current_human_user]
 
