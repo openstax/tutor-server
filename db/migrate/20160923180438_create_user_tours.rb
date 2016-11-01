@@ -8,9 +8,10 @@ class CreateUserTours < ActiveRecord::Migration
 
     create_table :user_tour_views do |t|
       t.integer :view_count, null: false, default: 0
-      t.belongs_to :user_profile, foreign_key: true, null: false, index: { unique: false }
-      t.belongs_to :user_tour,    foreign_key: true, null: false, index: { unique: false }
+      t.belongs_to :user_profile, foreign_key: true, null: false
+      t.belongs_to :user_tour,    foreign_key: true, null: false, index: true
     end
 
+    add_index :user_tour_views, [:user_profile, :user_tour], unique: true
   end
 end
