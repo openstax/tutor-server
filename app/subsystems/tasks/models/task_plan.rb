@@ -34,7 +34,9 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
 
-  scope :preloaded, -> { preload(:owner, :tasking_plans, tasks: [:taskings, task_steps: :tasked]) }
+  scope :preloaded, -> {
+    preload(:tasking_plans, owner: :time_zone, tasks: [:taskings, task_steps: :tasked])
+  }
 
   def tasks_past_open?
     tasks.any?(&:past_open?)
@@ -51,6 +53,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   def is_published?
     first_published_at.present? || last_published_at.present?
+  end
+
+  def publish_job
+    Jobba.find(publish_job_uuid) if publish_job_uuid.present?
   end
 
   protected

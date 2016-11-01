@@ -54,6 +54,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           last_published_at: published_at,
           publish_last_requested_at: published_at,
           publish_job_uuid: publish_job_uuid,
+          publish_job: publish_job,
           tasking_plans: [
             Hashie::Mash.new(
               target_id: 42,
@@ -142,8 +143,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
   }
 
   it "represents dashboard output" do
-    expect(Jobba).to receive(:find).with(publish_job_uuid).and_return(publish_job)
-
     representation = described_class.new(data).as_json
 
     expect(representation).to include(

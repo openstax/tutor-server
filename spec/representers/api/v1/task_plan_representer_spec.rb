@@ -2,12 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
+  let(:job) { Jobba::Status.create! }
+
   let(:task_plan) {
     instance_spy(Tasks::Models::TaskPlan).tap do |dbl|
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828
       allow(dbl).to receive(:as_json).and_return(dbl)
 
+      allow(dbl).to receive(:publish_job).and_return(job)
       allow(dbl).to receive(:tasking_plans).and_return([])
     end
   }
@@ -163,6 +166,71 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     it 'can be written' do
       described_class.new(task_plan).from_hash('cloned_from_id' => '84')
       expect(task_plan).to have_received(:cloned_from_id=).with('84')
+    end
+  end
+
+  context 'publish_job' do
+    it 'can be read' do
+      expect(task_plan).to receive(:publish_job).and_return(job)
+      expect(representation).to include 'publish_job' => Api::V1::JobRepresenter.new(job).as_json
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(task_plan).from_hash(
+        'publish_job' => Api::V1::JobRepresenter.new(job).as_json
+      )
+
+      expect(task_plan).not_to have_received(:publish_job_uuid=)
+    end
+
+    context 'exclude_job_info == true' do
+      let(:hash_options) { { user_options: { exclude_job_info: true } } }
+
+      it 'cannot be read' do
+        allow(task_plan).to receive(:publish_job).and_return(job)
+        rep = described_class.new(task_plan).to_hash(hash_options)
+        expect(rep).not_to have_key('publish_job')
+      end
+
+      it 'cannot be written (attempts are silently ignored)' do
+        described_class.new(task_plan).from_hash(
+          { 'publish_job' => Api::V1::JobRepresenter.new(job).as_json }, hash_options
+        )
+
+        expect(task_plan).not_to have_received(:publish_job_uuid=)
+      end
+    end
+  end
+
+  context 'publish_job_url' do
+    let(:uuid) { SecureRandom.uuid   }
+    let(:url)  { "/api/jobs/#{uuid}" }
+
+    it 'can be read' do
+      expect(task_plan).to receive(:publish_job_uuid).and_return(uuid).twice
+      expect(representation).to include 'publish_job_url' => url
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(task_plan).from_hash('publish_job_url' => url)
+
+      expect(task_plan).not_to have_received(:publish_job_uuid=)
+    end
+
+    context 'exclude_job_info == true' do
+      let(:hash_options) { { user_options: { exclude_job_info: true } } }
+
+      it 'cannot be read' do
+        allow(task_plan).to receive(:publish_job_uuid).and_return(uuid)
+        rep = described_class.new(task_plan).to_hash(hash_options)
+        expect(rep).not_to have_key('publish_job_url')
+      end
+
+      it 'cannot be written (attempts are silently ignored)' do
+        described_class.new(task_plan).from_hash({ 'publish_job_url' => url }, hash_options)
+
+        expect(task_plan).not_to have_received(:publish_job_uuid=)
+      end
     end
   end
 

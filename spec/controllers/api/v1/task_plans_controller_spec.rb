@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
@@ -50,6 +50,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
       controller.sign_in teacher
     end
+
+    let(:opts) { { exclude_job_info: true } }
 
     let!(:orig_course)      { course }
     let!(:orig_task_plan_1) { published_task_plan }
@@ -106,7 +108,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           api_get :index, nil, parameters: params
 
           expect(response.body_as_hash[:items]).to match_array(
-            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json.deep_symbolize_keys ]
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json(opts).deep_symbolize_keys ]
           )
         end
       end
@@ -132,7 +134,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           api_get :index, nil, parameters: params
 
           expect(response.body_as_hash[:items]).to match_array(
-            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json.deep_symbolize_keys ]
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json(opts).deep_symbolize_keys ]
           )
         end
       end
@@ -148,8 +150,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           api_get :index, nil, parameters: params
 
           expect(response.body_as_hash[:items]).to match_array(
-            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json.deep_symbolize_keys,
-              Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json.deep_symbolize_keys ]
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json(opts).deep_symbolize_keys,
+              Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json(opts).deep_symbolize_keys ]
           )
         end
       end
@@ -161,7 +163,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           api_get :index, nil, parameters: params
 
           expect(response.body_as_hash[:items]).to match_array(
-            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_3).as_json.deep_symbolize_keys ]
+            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_3).as_json(opts).deep_symbolize_keys ]
           )
         end
       end
@@ -187,7 +189,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           api_get :index, nil, parameters: params
 
           expect(response.body_as_hash[:items]).to match_array(
-            [ Api::V1::TaskPlanRepresenter.new(cloned_task_plan).as_json.deep_symbolize_keys ]
+            [ Api::V1::TaskPlanRepresenter.new(cloned_task_plan).as_json(opts).deep_symbolize_keys ]
           )
         end
       end

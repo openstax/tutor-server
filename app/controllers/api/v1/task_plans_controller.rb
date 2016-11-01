@@ -37,13 +37,13 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         Tasks::Models::TaskPlan.none
       else
         cloned_task_plan_ids = Tasks::Models::TaskPlan.where(owner: course).pluck(:cloned_from_id)
-        tps = Tasks::Models::TaskPlan.where(owner: orig_course)
+        tps = Tasks::Models::TaskPlan.preloaded.where(owner: orig_course)
 
         params[:cloned] ? tps.where{id.in cloned_task_plan_ids} :
                           tps.where{id.not_in cloned_task_plan_ids}
       end
     else
-      tps = Tasks::Models::TaskPlan.where(owner: course)
+      tps = Tasks::Models::TaskPlan.preloaded.where(owner: course)
 
       if !params[:original].nil?
         params[:original] ? tps.where{cloned_from_id == nil} : tps.where{cloned_from_id != nil}
@@ -52,7 +52,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       end
     end
 
-    standard_index(task_plans, Api::V1::TaskPlanSearchRepresenter)
+    standard_index(task_plans, Api::V1::TaskPlanSearchRepresenter, exclude_job_info: true)
   end
 
   ###############################################################
