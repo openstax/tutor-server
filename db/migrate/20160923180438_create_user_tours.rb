@@ -12,6 +12,6 @@ class CreateUserTours < ActiveRecord::Migration
       t.belongs_to :user_tour,    foreign_key: true, null: false, index: true
     end
 
-    add_index :user_tour_views, [:user_profile, :user_tour], unique: true
+    add_index :user_tour_views, [:user_profile_id, :user_tour_id], unique: true
   end
 end

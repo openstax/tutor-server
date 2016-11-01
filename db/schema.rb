@@ -851,7 +851,7 @@ ActiveRecord::Schema.define(version: 20160923180438) do
     t.integer "user_tour_id",                null: false
   end
 
-  add_index "user_tour_views", ["user_profile_id"], name: "index_user_tour_views_on_user_profile_id", using: :btree
+  add_index "user_tour_views", ["user_profile_id", "user_tour_id"], name: "index_user_tour_views_on_user_profile_id_and_user_tour_id", unique: true, using: :btree
   add_index "user_tour_views", ["user_tour_id"], name: "index_user_tour_views_on_user_tour_id", using: :btree
 
   create_table "user_tours", force: :cascade do |t|
