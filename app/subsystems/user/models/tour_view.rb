@@ -6,7 +6,7 @@ module User
 
       belongs_to :profile, -> { with_deleted }, inverse_of: :tour_views
 
-      validates :tour,       presence: true, uniqueness: { scope: :user_tour_id }
+      validates :tour,       presence: true, uniqueness: { scope: :user_profile_id }
       validates :view_count, presence: true
       validates :profile,    presence: true
 
