@@ -477,7 +477,7 @@ GEM
       rack
     pager (1.0.1)
     parallel (1.9.0)
-    parallel_tests (2.7.0)
+    parallel_tests (2.10.0)
       parallel
     paranoia (2.1.5)
       activerecord (~> 4.0)
@@ -607,7 +607,7 @@ GEM
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
-    rspec-instafail (0.4.0)
+    rspec-instafail (1.0.0)
       rspec
     rspec-mocks (3.4.1)
       diff-lcs (>= 1.2.0, < 2.0)
