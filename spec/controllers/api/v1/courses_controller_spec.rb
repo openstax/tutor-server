@@ -107,9 +107,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      before do
-        AddUserAsCourseTeacher.call(course: course, user: user_1)
-      end
+      before { AddUserAsCourseTeacher.call(course: course, user: user_1) }
 
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
@@ -120,9 +118,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a student' do
-      before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1)
-      end
+      before { AddUserAsPeriodStudent.call(period: period, user: user_1) }
 
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
@@ -133,7 +129,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is both a teacher and student' do
-      before(:each) do
+      before do
         AddUserAsPeriodStudent.call(period: period, user: user_1)
         AddUserAsCourseTeacher.call(course: course, user: user_1)
       end
@@ -215,6 +211,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to match expected_response
+      end
+
+      it 'makes the requesting faculty a teacher in the new course' do
+        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+          change{ CourseMembership::Models::Teacher.count }.by(1)
+        )
+        expect(response).to have_http_status :success
+        course = CourseProfile::Models::Course.order(:created_at).last
+        expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
       end
 
       it 'returns errors if required attributes are not specified' do

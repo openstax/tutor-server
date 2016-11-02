@@ -54,6 +54,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     course = CreateCourse[attributes_with_catalog_offering]
 
+    AddUserAsCourseTeacher[course: course, user: current_human_user]
+
     respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil
   end
 
