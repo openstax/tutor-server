@@ -20,8 +20,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(
       :index, current_api_user, CourseProfile::Models::Course
     )
+
     course_infos = CollectCourseInfo[user: current_human_user,
                                      with: [:roles, :periods, :ecosystem, :students]]
+
     respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
   end
 
@@ -56,7 +58,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     AddUserAsCourseTeacher[course: course, user: current_human_user]
 
-    respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil
+    respond_with collect_course_info(course: course),
+                 represent_with: Api::V1::CourseRepresenter,
+                 location: nil
   end
 
   api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
@@ -67,12 +71,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def show
     OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, @course)
 
-    # Use CollectCourseInfo instead of just representing the entity course so
-    # we can gather extra information
-    course_info = CollectCourseInfo[courses: @course,
-                                    user: current_human_user,
-                                    with: [:roles, :periods, :ecosystem, :students]].first
-    respond_with course_info, represent_with: Api::V1::CourseRepresenter
+    respond_with collect_course_info(course: @course), represent_with: Api::V1::CourseRepresenter
   end
 
   api :PATCH, '/courses/:course_id', 'Update course details'
@@ -87,14 +86,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      # Use CollectCourseInfo instead of just representing the entity course so
-      # we can gather extra information
-      course_info = CollectCourseInfo[courses: @course,
-                                      user: current_human_user,
-                                      with: [:roles, :periods, :ecosystem, :students]].first
-      respond_with course_info, represent_with: Api::V1::CourseRepresenter,
-                                location: nil,
-                                responder: ResponderWithPutPatchDeleteContent
+      respond_with collect_course_info(course: @course),
+                   represent_with: Api::V1::CourseRepresenter,
+                   location: nil,
+                   responder: ResponderWithPutPatchDeleteContent
     end
   end
 
@@ -152,6 +147,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, @course)
 
     roster = GetCourseRoster[course: @course]
+
     respond_with(roster, represent_with: Api::V1::RosterRepresenter)
   end
 
@@ -164,16 +160,27 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def clone
     OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, @course)
+
     attributes = consumed(Api::V1::CourseCloneRepresenter)
                    .merge(course: @course, teacher_user: current_human_user)
+
     course = CloneCourse[attributes]
-    respond_with course, represent_with: Api::V1::CourseRepresenter, location: nil
+
+    respond_with collect_course_info(course: course),
+                 represent_with: Api::V1::CourseRepresenter,
+                 location: nil
   end
 
   protected
 
   def get_course
     @course = CourseProfile::Models::Course.find(params[:id])
+  end
+
+  def collect_course_info(course:)
+    CollectCourseInfo[courses: course,
+                      user: current_human_user,
+                      with: [:roles, :periods, :ecosystem, :students]].first
   end
 
   def get_course_role(course:, types: :any)

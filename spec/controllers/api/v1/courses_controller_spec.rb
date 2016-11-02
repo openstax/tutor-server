@@ -18,11 +18,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let(:course)         { FactoryGirl.create :course_profile_course, name: 'Physics 101' }
   let!(:period)        { FactoryGirl.create :course_membership_period, course: course }
 
+  let(:book)           { FactoryGirl.create(:content_book, :standard_contents_1) }
+  let(:ecosystem)      do
+    strategy = Content::Strategies::Direct::Ecosystem.new(book.ecosystem.reload)
+    Content::Ecosystem.new(strategy: strategy)
+  end
+
   def add_book_to_course(course:)
-    book = FactoryGirl.create(:content_book, :standard_contents_1)
-    content_ecosystem = book.ecosystem.reload
-    strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-    ecosystem = Content::Ecosystem.new(strategy: strategy)
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
 
     { book: book, ecosystem: ecosystem }
@@ -199,7 +201,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           default_due_time: '07:00',
           default_open_time: '00:01',
           periods: [a_kind_of(Hash)]*num_sections,
-          students: []
+          students: [],
+          ecosystem_id: catalog_offering.content_ecosystem_id.to_s,
+          roles: [a_kind_of(Hash)]
         }
       end
 
@@ -1198,7 +1202,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           name: course.name,
           cloned_from_id: course.id.to_s,
           periods: [a_kind_of(Hash)]*course.num_sections,
-          students: []
+          students: [],
+          roles: [a_kind_of(Hash)],
+          ecosystem_id: course.offering.content_ecosystem_id.to_s
         }
       end
 

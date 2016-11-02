@@ -45,7 +45,8 @@ class CollectCourseInfo
         school_name: course.school_name,
         salesforce_book_name: offering.try(:salesforce_book_name),
         appearance_code: course.appearance_code.blank? ? \
-                           offering.try(:appearance_code) : course.appearance_code
+                           offering.try(:appearance_code) : course.appearance_code,
+        cloned_from_id: course.cloned_from_id
       )
 
       collect_extended_course_info(info, course, user, with)
