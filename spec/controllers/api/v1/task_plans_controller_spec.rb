@@ -88,8 +88,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
                          type: 'reading')
     end
 
-    context 'cloned == true' do
-      let(:params_base) { { cloned: true } }
+    context 'clone_status == used_source' do
+      let(:params_base) { { clone_status: 'used_source' } }
 
       context 'original course' do
         let(:params) { params_base.merge(course_id: orig_course.id) }
@@ -114,8 +114,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       end
     end
 
-    context 'cloned == false' do
-      let(:params_base) { { cloned: false } }
+    context 'clone_status == unused_source' do
+      let(:params_base) { { clone_status: 'unused_source' } }
 
       context 'original course' do
         let(:params) { params_base.merge(course_id: orig_course.id) }
@@ -140,8 +140,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       end
     end
 
-    context 'original == true' do
-      let(:params_base) { { original: true } }
+    context 'clone_status == original' do
+      let(:params_base) { { clone_status: 'original' } }
 
       context 'original course' do
         let(:params) { params_base.merge(course_id: orig_course.id) }
@@ -169,8 +169,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       end
     end
 
-    context 'original == false' do
-      let(:params_base) { { original: false } }
+    context 'clone_status == clone' do
+      let(:params_base) { { clone_status: 'clone' } }
 
       context 'original course' do
         let(:params) { params_base.merge(course_id: orig_course.id) }

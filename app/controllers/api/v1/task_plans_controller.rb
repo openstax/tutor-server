@@ -15,13 +15,15 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/courses/:course_id/plans', 'Retrieve course TaskPlans according to params'
   description <<-EOS
    Valid params:
-   cloned   == true  -> if the current course was cloned from another, returns only
-                        task plans in the origin course that have been cloned
-   cloned   == false -> if the current course was cloned from another, returns only
-                        task plans in the origin course that have not been cloned
 
-   original == true  -> returns only task plans that are original
-   original == false -> returns only task plans that are clones of task_plans from another course
+   clone_status == unused_source -> if the current course was cloned, returns only task plans
+                                    in the original course that have not been cloned into this one
+   clone_status == used_source   -> if the current course was cloned, returns only task plans
+                                    in the original course that have been cloned into this one
+   clone_status == original      -> returns only task plans in the current course
+                                    that are not clones of any other task plan
+   clone_status == clone         -> returns only task plans in the current course
+                                    that are clones of some other task plan
 
    ### Example JSON response
    #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :readable)}
@@ -30,25 +32,29 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     course = CourseProfile::Models::Course.find(params[:course_id])
     OSU::AccessPolicy.require_action_allowed!(:read_task_plans, current_api_user, course)
 
-    task_plans = if !params[:cloned].nil?
-      orig_course = course.cloned_from
-
-      if orig_course.nil?
-        Tasks::Models::TaskPlan.none
-      else
-        cloned_task_plan_ids = Tasks::Models::TaskPlan.where(owner: course).pluck(:cloned_from_id)
-        tps = Tasks::Models::TaskPlan.preloaded.where(owner: orig_course)
-
-        params[:cloned] ? tps.where{id.in cloned_task_plan_ids} :
-                          tps.where{id.not_in cloned_task_plan_ids}
-      end
+    case params[:clone_status]
+    when 'unused_source', 'used_source'
+      source_course = course.cloned_from
+      cloned_task_plan_ids = Tasks::Models::TaskPlan.where(owner: course).pluck(:cloned_from_id)
     else
-      tps = Tasks::Models::TaskPlan.preloaded.where(owner: course)
+      source_course = course
+    end
 
-      if !params[:original].nil?
-        params[:original] ? tps.where{cloned_from_id == nil} : tps.where{cloned_from_id != nil}
+    if source_course.nil?
+      task_plans = Tasks::Models::TaskPlan.none
+    else
+      tps = Tasks::Models::TaskPlan.preloaded.where(owner: source_course)
+
+      task_plans = case params[:clone_status]
+      when 'unused_source'
+        tps.where{id.not_in cloned_task_plan_ids}
+      when 'used_source'
+        tps.where{id.in cloned_task_plan_ids}
+      when 'original'
+        tps.where{cloned_from_id == nil}
+      when 'clone'
+        tps.where{cloned_from_id != nil}
       else
-        tps
       end
     end
 

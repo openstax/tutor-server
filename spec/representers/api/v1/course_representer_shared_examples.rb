@@ -24,7 +24,7 @@ module Api::V1
                                                  cloned_from: original_course
     end
 
-    subject(:represented)  { described_class.new(course).to_hash }
+    subject(:represented) { described_class.new(course).as_json }
 
     it 'shows the course id' do
       expect(represented['id']).to eq course.id.to_s
@@ -75,6 +75,10 @@ module Api::V1
 
     it 'shows whether or not it is a college course' do
       expect(represented['is_college']).to eq false
+    end
+
+    it "shows the id of the source course's catalog offering" do
+      expect(represented['offering_id']).to eq catalog_offering.id.to_s
     end
 
     it 'shows the id of the course it was cloned from' do
