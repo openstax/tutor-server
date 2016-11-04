@@ -428,7 +428,7 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
 
   create_table "openstax_accounts_accounts", force: :cascade do |t|
-    t.integer  "openstax_uid",                      null: false
+    t.integer  "openstax_uid"
     t.string   "username",                          null: false
     t.string   "access_token"
     t.string   "first_name"
