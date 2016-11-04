@@ -45,6 +45,16 @@ class DropEntityCourses < ActiveRecord::Migration
     Salesforce::Models::AttachedRecord.where{tutor_gid.like '%Entity::Course%'}.update_all(
       "tutor_gid = replace(tutor_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
     )
+    Legal::Models::TargetedContractRelationship.where do
+      parent_gid.like '%Entity::Course%'
+    end.update_all(
+      "parent_gid = replace(parent_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
+    )
+    Legal::Models::TargetedContractRelationship.where do
+      child_gid.like '%Entity::Course%'
+    end.update_all(
+      "child_gid = replace(child_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
+    )
 
     remove_index :course_profile_courses, :entity_course_id
     remove_column :course_profile_courses, :entity_course_id
