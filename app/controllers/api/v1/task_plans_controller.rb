@@ -8,7 +8,58 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     EOS
   end
 
-  # TODO fix up the use of Tasks::Models throughout
+  ###############################################################
+  # index
+  ###############################################################
+
+  api :GET, '/courses/:course_id/plans', 'Retrieve course TaskPlans according to params'
+  description <<-EOS
+   Valid params:
+
+   clone_status == unused_source -> if the current course was cloned, returns only task plans
+                                    in the original course that have not been cloned into this one
+   clone_status == used_source   -> if the current course was cloned, returns only task plans
+                                    in the original course that have been cloned into this one
+   clone_status == original      -> returns only task plans in the current course
+                                    that are not clones of any other task plan
+   clone_status == clone         -> returns only task plans in the current course
+                                    that are clones of some other task plan
+
+   ### Example JSON response
+   #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :readable)}
+  EOS
+  def index
+    course = CourseProfile::Models::Course.find(params[:course_id])
+    OSU::AccessPolicy.require_action_allowed!(:read_task_plans, current_api_user, course)
+
+    case params[:clone_status]
+    when 'unused_source', 'used_source'
+      source_course = course.cloned_from
+      cloned_task_plan_ids = Tasks::Models::TaskPlan.where(owner: course).pluck(:cloned_from_id)
+    else
+      source_course = course
+    end
+
+    if source_course.nil?
+      task_plans = Tasks::Models::TaskPlan.none
+    else
+      tps = Tasks::Models::TaskPlan.preloaded.where(owner: source_course)
+
+      task_plans = case params[:clone_status]
+      when 'unused_source'
+        tps.where{id.not_in cloned_task_plan_ids}
+      when 'used_source'
+        tps.where{id.in cloned_task_plan_ids}
+      when 'original'
+        tps.where{cloned_from_id == nil}
+      when 'clone'
+        tps.where{cloned_from_id != nil}
+      else
+      end
+    end
+
+    standard_index(task_plans, Api::V1::TaskPlanSearchRepresenter, exclude_job_info: true)
+  end
 
   ###############################################################
   # show
@@ -17,15 +68,6 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/plans/:id', "Retrieve a TaskPlan"
   description <<-EOS
    ### Example JSON response
-   ```json
-   {
-     "id": 1,
-     "type": "reading",
-     "opens_at": "2015-03-10T21:29:35.260Z",
-     "due_at": "2015-03-17T21:29:35.260Z",
-     "settings": {}
-   }
-   ```
    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def show
@@ -68,7 +110,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def create
     # Modified standard_create code
     Tasks::Models::TaskPlan.transaction do
-      course = Entity::Course.find(params[:course_id])
+      course = CourseProfile::Models::Course.find(params[:course_id])
       task_plan = BuildTaskPlan[course: course]
       consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]

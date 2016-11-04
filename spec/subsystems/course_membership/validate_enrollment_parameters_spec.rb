@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe CourseMembership::ValidateEnrollmentParameters, type: :routine do
+RSpec.describe CourseMembership::ValidateEnrollmentParameters, type: :routine do
 
-  let(:course)     { Entity::Course.create!           }
-  let(:period)     { CreatePeriod[course: course]     }
+  let(:course)     { FactoryGirl.create :course_profile_course }
+  let(:period)     { FactoryGirl.create :course_membership_period, course: course }
   let(:book)       { FactoryGirl.create :content_book }
   let!(:ecosystem) {
     ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)

@@ -3,15 +3,13 @@ require 'webmock/rspec'
 
 RSpec.describe Admin::StatsController, type: :controller do
   context "with an admin signed in" do
-    let(:admin) { FactoryGirl.create(:user, :administrator) }
+    let(:admin)   { FactoryGirl.create(:user, :administrator) }
 
-    before(:each) do
-      controller.sign_in admin
-    end
+    before(:each) { controller.sign_in admin }
 
     context "GET #courses" do
-      let(:course)         { Entity::Course.create! }
-      let(:periods)       do
+      let(:course)         { FactoryGirl.create :course_profile_course }
+      let(:periods)        do
         3.times.map { FactoryGirl.create :course_membership_period, course: course }
       end
 
@@ -33,7 +31,7 @@ RSpec.describe Admin::StatsController, type: :controller do
 
     context "GET #excluded_exercises" do
       context "with excluded exercises in the database" do
-        let(:course)         { Entity::Course.create! }
+        let(:course)         { FactoryGirl.create :course_profile_course }
 
         let(:teacher_user)   { FactoryGirl.create :user }
         let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
@@ -82,14 +80,17 @@ RSpec.describe Admin::StatsController, type: :controller do
     end
 
     context "POST #excluded_exercises_to_csv" do
-      let!(:course) { FactoryGirl.create :entity_course }
+      let(:course)              { FactoryGirl.create :course_profile_course }
       let!(:excluded_exercises) do
         5.times.map { FactoryGirl.create :course_content_excluded_exercise, course: course }
       end
 
       context "with by_course and by_exercise params" do
         before do
-          expect(GetExcludedExercises).to receive(:perform_later).with(export_by_course: true, export_by_exercise: true).and_return(true)
+          expect(GetExcludedExercises).to(
+            receive(:perform_later).with(export_by_course: true, export_by_exercise: true)
+                                   .and_return(true)
+          )
         end
 
         it "does a redirect" do
@@ -117,8 +118,10 @@ RSpec.describe Admin::StatsController, type: :controller do
     end
 
     context "GET #concept_coach" do
-      let!(:tasks)    { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
-      let!(:cc_tasks) { tasks.map{ |task| FactoryGirl.create :tasks_concept_coach_task, task: task } }
+      let(:tasks)     { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
+      let!(:cc_tasks) do
+        tasks.map{ |task| FactoryGirl.create :tasks_concept_coach_task, task: task }
+      end
 
       it "returns http success" do
         get :concept_coach

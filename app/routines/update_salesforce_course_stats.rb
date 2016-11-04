@@ -38,7 +38,7 @@ class UpdateSalesforceCourseStats
     # multiple times for the same SF object below
 
     course_attached_records =
-      attached_records.select{|ar| ar.attached_to_class_name == "Entity::Course"}
+      attached_records.select{|ar| ar.attached_to_class_name == "CourseProfile::Models::Course"}
 
     salesforce_ids_to_multiple_courses_map =
       course_attached_records.group_by{|car| car.salesforce_id}
@@ -66,7 +66,7 @@ class UpdateSalesforceCourseStats
       next if salesforce_ids_to_multiple_courses_map[ar.salesforce_id].present?
 
       case ar.attached_to_class_name
-      when "Entity::Course"
+      when "CourseProfile::Models::Course"
         organizer.set_course_id(salesforce_object: ar.salesforce_object,
                                 course_id: ar.attached_to_id)
       when "CourseMembership::Models::Period"
@@ -82,9 +82,9 @@ class UpdateSalesforceCourseStats
 
     # Load all of the model data at once (prevent N+1 queries later)
 
-    courses = Entity::Course.where(id: organizer.course_ids)
-                            .preload([:teachers,
-                                      { periods_with_deleted: :latest_enrollments_with_deleted }])
+    courses = CourseProfile::Models::Course
+      .where(id: organizer.course_ids)
+      .preload([:teachers, { periods_with_deleted: :latest_enrollments_with_deleted }])
 
     # Go through each course object and its period objects, telling the organizer about them (so it
     # can do efficient lookups later).  For all periods without an AR in the organizer, add them
@@ -112,7 +112,7 @@ class UpdateSalesforceCourseStats
 
         # Figure out what SF objects we already have for this period's course
 
-        course = organizer.get_course(period.entity_course_id)
+        course = organizer.get_course(period.course_profile_course_id)
         course_sf_objects = organizer.get_sf_objects(course_id: course.id)
 
         if course_sf_objects.none?

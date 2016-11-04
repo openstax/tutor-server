@@ -119,6 +119,7 @@ class Demo::Base
                  content.cnx_book + '.pdf',
         is_concept_coach: content.is_concept_coach,
         is_tutor: !content.is_concept_coach,
+        is_available: true,
         content_ecosystem_id: ecosystem.id
       ]
   end
@@ -300,7 +301,7 @@ class Demo::Base
     end
   end
 
-  def new_user(username:, name: nil, password: nil, sign_contracts: true)
+  def new_user(username:, name: nil, password: nil, sign_contracts: true, faculty_status: nil)
     password ||= Rails.application.secrets.demo_user_password
 
     first_name, last_name = name.split(' ')
@@ -310,7 +311,8 @@ class Demo::Base
     user ||= run(User::CreateUser, username: username,
                                    password: password,
                                    first_name: first_name,
-                                   last_name: last_name).outputs.user
+                                   last_name: last_name,
+                                   faculty_status: faculty_status).outputs.user
 
     if sign_contracts
       sign_contract(user: user, name: :general_terms_of_use)
@@ -490,16 +492,25 @@ class Demo::Base
   end
 
   def find_course(name:)
-    CourseProfile::Models::Profile.where(name: name).first.try(:course)
+    CourseProfile::Models::Course.where(name: name).first.try(:course)
   end
 
-  def create_course(name:, catalog_offering: nil, appearance_code:nil,
-                    is_concept_coach: false, is_college: false)
-    course = run(:create_course, name: name,
+  def create_course(name:, term:, year:, starts_at: nil, ends_at: nil,
+                    catalog_offering:, appearance_code: nil,
+                    is_concept_coach: nil, is_college:,
+                    school: nil, time_zone: nil)
+    course = run(:create_course,
+                 name: name,
+                 term: term,
+                 year: year,
+                 starts_at: starts_at,
+                 ends_at: ends_at,
+                 is_concept_coach: is_concept_coach,
+                 is_college: is_college,
                  catalog_offering: catalog_offering,
                  appearance_code: appearance_code,
-                 is_concept_coach: is_concept_coach,
-                 is_college: is_college).outputs.course
+                 school: school,
+                 time_zone: time_zone).outputs.course
     log("Created a course named '#{name}'.")
     course
   end

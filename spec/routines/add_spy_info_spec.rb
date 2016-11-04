@@ -11,7 +11,7 @@ RSpec.describe AddSpyInfo, type: :routine do
   end
 
   it 'sets spy info from any model' do
-    course = FactoryGirl.create(:entity_course)
+    course = FactoryGirl.create(:course_profile_course)
     dest = AddSpyInfo[to: {}, from: course]
     expect(dest.spy).to eq({'course_id' => course.id})
   end

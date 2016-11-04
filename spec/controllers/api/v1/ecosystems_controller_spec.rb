@@ -20,12 +20,12 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
   let(:ca_user_token)   { FactoryGirl.create :doorkeeper_access_token,
                                              resource_owner_id: content_analyst.id }
 
-  let(:course)          { CreateCourse[name: 'Physics 101'] }
-  let(:period)          { CreatePeriod[course: course] }
+  let(:course)          { FactoryGirl.create :course_profile_course }
+  let(:period)          { FactoryGirl.create :course_membership_period, course: course }
 
   context 'with a fake book' do
-    let(:book)             { FactoryGirl.create(:content_book, :standard_contents_1) }
-    let!(:ecosystem)       {
+    let(:book)          { FactoryGirl.create(:content_book, :standard_contents_1) }
+    let!(:ecosystem)    {
       strategy = Content::Strategies::Direct::Ecosystem.new(book.ecosystem.reload)
       ecosystem = Content::Ecosystem.new(strategy: strategy)
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)

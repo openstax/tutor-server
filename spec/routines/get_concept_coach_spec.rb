@@ -41,7 +41,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
     @course = period.course
-    @course.profile.update_attribute(:is_concept_coach, true)
+    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
@@ -92,7 +92,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     end
 
     it 'does not include non-cc courses' do
-      @course.profile.update_attribute(:is_concept_coach, false)
+      @course.update_attribute(:is_concept_coach, false)
 
       result = nil
       expect{ result = described_class.call(

@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe CourseMembership::AddStudent, type: :routine do
+RSpec.describe CourseMembership::AddStudent, type: :routine do
   context "when adding a new student role to a period" do
     it "succeeds" do
-      role = Entity::Role.create!
-      course = Entity::Course.create!
-      period = CreatePeriod[course: course]
+      role   = FactoryGirl.create :entity_role
+      course = FactoryGirl.create :course_profile_course
+      period = FactoryGirl.create :course_membership_period, course: course
 
       result = nil
       expect {
@@ -16,9 +16,9 @@ describe CourseMembership::AddStudent, type: :routine do
 
     it "allows a student_identifier to be specified" do
       sid = 'N0B0DY'
-      role = Entity::Role.create!
-      course = Entity::Course.create!
-      period = CreatePeriod[course: course]
+      role   = FactoryGirl.create :entity_role
+      course = FactoryGirl.create :course_profile_course
+      period = FactoryGirl.create :course_membership_period, course: course
 
       result = nil
       expect {
@@ -32,10 +32,10 @@ describe CourseMembership::AddStudent, type: :routine do
 
   context "when adding an existing student role to a course" do
     it "fails" do
-      role = Entity::Role.create!
-      course = Entity::Course.create!
-      period_1 = CreatePeriod[course: course]
-      period_2 = CreatePeriod[course: course]
+      role     = FactoryGirl.create :entity_role
+      course   = FactoryGirl.create :course_profile_course
+      period_1 = FactoryGirl.create :course_membership_period, course: course
+      period_2 = FactoryGirl.create :course_membership_period, course: course
 
       result = nil
       expect {

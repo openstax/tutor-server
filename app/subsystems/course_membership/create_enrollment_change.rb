@@ -19,7 +19,7 @@ class CourseMembership::CreateEnrollmentChange
 
     course_roles, other_roles = student_roles.partition{ |role| role.student.course == course }
 
-    if course.profile.is_concept_coach
+    if course.is_concept_coach
       # Detect conflicting concept coach courses (other CC courses that use the same book)
       # If any conflicts are detected, simply display an error message
       conflicts_exist = other_roles.any? do |role|

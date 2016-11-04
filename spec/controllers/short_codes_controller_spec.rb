@@ -8,8 +8,8 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:relative_url) { FactoryGirl.create(:short_code_short_code,
                                           uri: 'dashboard') }
 
-  let(:course) { CreateCourse[name: 'Test Task Redirection'] }
-  let(:period) { CreatePeriod[course: course, name: 'Period 1'] }
+  let(:course) { FactoryGirl.create :course_profile_course }
+  let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
   let(:task_plan_gid) { task_plan.to_global_id.to_s }

@@ -6,14 +6,17 @@ RSpec.feature 'Admin editing a course' do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
+    @catalog_offering = FactoryGirl.create :catalog_offering
+
     visit admin_courses_path
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics I'
+    select @catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_on 'Save'
 
-    @course = Entity::Course.order(:id).last
-    CreatePeriod[course: @course, name: '1st']
+    @course = CourseProfile::Models::Course.order(:id).last
+    FactoryGirl.create :course_membership_period, course: @course
   end
 
   scenario 'Editing the name of a course' do
@@ -39,7 +42,7 @@ RSpec.feature 'Admin editing a course' do
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
-    expect(Entity::Course.first.is_college).to be_truthy
+    expect(CourseProfile::Models::Course.first.is_college).to be_truthy
   end
 
   scenario 'Assigning a school' do
@@ -102,9 +105,10 @@ RSpec.feature 'Admin editing a course' do
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics II'
+    select @catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_on 'Save'
 
-    course_2 = Entity::Course.order(:id).last
+    course_2 = CourseProfile::Models::Course.order(:id).last
 
     find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
     click_on 'Set Ecosystem'

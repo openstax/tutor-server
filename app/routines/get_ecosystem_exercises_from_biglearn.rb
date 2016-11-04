@@ -14,14 +14,13 @@ class GetEcosystemExercisesFromBiglearn
   def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: false)
     biglearn_pools = pools.map{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
 
-    course = role.student.try(:course)
-    course_profile = course.try(:profile)
+    course = role.student.try!(:course)
 
     admin_excluded_pool_uuid = Settings::Exercises.excluded_pool_uuid
     admin_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: admin_excluded_pool_uuid) \
       unless admin_excluded_pool_uuid.blank?
 
-    course_excluded_pool_uuid = course_profile.try(:biglearn_excluded_pool_uuid)
+    course_excluded_pool_uuid = course.try!(:biglearn_excluded_pool_uuid)
     course_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: course_excluded_pool_uuid) \
       unless course_excluded_pool_uuid.nil?
 

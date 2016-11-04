@@ -11,8 +11,8 @@ class CourseContent::UpdateExerciseExclusions
                                         .map(&:content_page_id)
 
     # The course's biglearn_excluded_pool is updated at the end,
-    # so we can just lock the course profile to make this update atomic
-    course.profile.lock!
+    # so we can just lock the course to make this update atomic
+    course.lock!
 
     out = GetExercises.call(course: course, page_ids: page_ids).outputs
     exercises = out.exercises.index_by{ |ex| ex.id.to_s }
@@ -27,12 +27,12 @@ class CourseContent::UpdateExerciseExclusions
 
       if is_excluded # true
         CourseContent::Models::ExcludedExercise.find_or_create_by(
-          entity_course_id: course.id, exercise_number: exercise.number
+          course_profile_course_id: course.id, exercise_number: exercise.number
         )
         exercise_representation['is_excluded'] = true
       elsif !is_excluded.nil? # false
         excluded_exercise = CourseContent::Models::ExcludedExercise.find_by(
-          entity_course_id: course.id, exercise_number: exercise.number
+          course_profile_course_id: course.id, exercise_number: exercise.number
         ).try(:destroy)
         exercise_representation['is_excluded'] = false
       end
@@ -42,7 +42,8 @@ class CourseContent::UpdateExerciseExclusions
 
     # Create a new Biglearn excluded pool for the course
     excluded_exercise_numbers = CourseContent::Models::ExcludedExercise
-                                  .where(entity_course_id: course.id).pluck(:exercise_number)
+                                  .where(course_profile_course_id: course.id)
+                                  .pluck(:exercise_number)
     exercises_base_url = Addressable::URI.parse(OpenStax::Exercises::V1.server_url)
     exercises_base_url.scheme = nil
     exercises_base_url.path = 'exercises'
@@ -57,8 +58,8 @@ class CourseContent::UpdateExerciseExclusions
     bl_excluded_pool = OpenStax::Biglearn::V1::Pool.new(exercises: bl_excluded_exercises)
     bl_excluded_pool_with_uuid = OpenStax::Biglearn::V1.add_pools([bl_excluded_pool]).first
 
-    # This update ensures that transactions trying to lock the same course profile will retry
-    course.profile.update_attribute(:biglearn_excluded_pool_uuid, bl_excluded_pool_with_uuid.uuid)
+    # This update ensures that transactions trying to lock the same course will retry
+    course.update_attribute(:biglearn_excluded_pool_uuid, bl_excluded_pool_with_uuid.uuid)
 
   end
 

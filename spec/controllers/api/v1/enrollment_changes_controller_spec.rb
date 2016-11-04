@@ -5,13 +5,10 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
   let(:user_2)               { FactoryGirl.create :user }
 
-  let(:course)               do
-    FactoryGirl.create(:entity_course).tap do |course|
-      course.profile.update_attribute(:is_concept_coach, true)
-    end
-  end
-  let(:period)               { ::CreatePeriod[course: course] }
-  let(:period_2)             { ::CreatePeriod[course: course] }
+  let(:course)               { FactoryGirl.create(:course_profile_course, is_concept_coach: true) }
+
+  let(:period)               { FactoryGirl.create :course_membership_period, course: course }
+  let(:period_2)             { FactoryGirl.create :course_membership_period, course: course }
 
   let(:book)                 { FactoryGirl.create :content_book }
 
@@ -100,7 +97,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the enrollment code\'s course is not a CC course' do
-          course.profile.update_attribute(:is_concept_coach, false)
+          course.update_attribute(:is_concept_coach, false)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -177,7 +174,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the enrollment code\'s course is not a CC course' do
-          course.profile.update_attribute(:is_concept_coach, false)
+          course.update_attribute(:is_concept_coach, false)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Tasks::GetPerformanceReportExports, type: :routine do
   it 'returns the export info related to courses' do
-    course = Entity::Course.create!
+    course = FactoryGirl.create :course_profile_course
 
     profile = FactoryGirl.create(:user_profile)
     strategy = User::Strategies::Direct::User.new(profile)

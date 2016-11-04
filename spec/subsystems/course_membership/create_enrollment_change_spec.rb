@@ -1,14 +1,14 @@
 require 'rails_helper'
 
-describe CourseMembership::CreateEnrollmentChange, type: :routine do
-  let(:course_1)  { FactoryGirl.create :entity_course }
-  let(:course_2)  { FactoryGirl.create :entity_course }
-  let(:course_3)  { FactoryGirl.create :entity_course }
+RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
+  let(:course_1)  { FactoryGirl.create :course_profile_course }
+  let(:course_2)  { FactoryGirl.create :course_profile_course }
+  let(:course_3)  { FactoryGirl.create :course_profile_course }
 
-  let(:period_1)  { CreatePeriod[course: course_1] }
-  let(:period_2)  { CreatePeriod[course: course_1] }
-  let(:period_3)  { CreatePeriod[course: course_2] }
-  let(:period_4)  { CreatePeriod[course: course_3] }
+  let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_3)  { FactoryGirl.create :course_membership_period, course: course_2 }
+  let(:period_4)  { FactoryGirl.create :course_membership_period, course: course_3 }
 
   let(:book)      { FactoryGirl.create :content_book }
 
@@ -66,7 +66,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period).to eq period_2
+        expect(result.outputs.enrollment_change.from_period.to_model).to eq period_2
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
       end
@@ -79,7 +79,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
         expect{ result = described_class.call(args.merge(period: period_2)) }
           .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period).to eq period_1
+        expect(result.outputs.enrollment_change.from_period.to_model).to eq period_1
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
       end
@@ -117,8 +117,8 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       end
 
       before      do
-        course_1.profile.update_attribute :is_concept_coach, true
-        course_2.profile.update_attribute :is_concept_coach, true
+        course_1.update_attribute :is_concept_coach, true
+        course_2.update_attribute :is_concept_coach, true
       end
 
       it 'returns an error message' do
@@ -140,8 +140,8 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       end
 
       before      do
-        course_1.profile.update_attribute :is_concept_coach, true
-        course_3.profile.update_attribute :is_concept_coach, true
+        course_1.update_attribute :is_concept_coach, true
+        course_3.update_attribute :is_concept_coach, true
       end
 
       it 'creates an EnrollmentChange with a nil from_period' do

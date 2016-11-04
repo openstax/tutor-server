@@ -61,9 +61,10 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       Content::Routines::PopulateExercisePools[book: page.chapter.book]
 
-      course = CreateCourse[name: 'Biology']
+      course = FactoryGirl.create :course_profile_course, :with_assistants
+      period = FactoryGirl.create :course_membership_period, course: course
       student = FactoryGirl.create(:user)
-      AddUserAsPeriodStudent.call(user: student, period: CreatePeriod[course: course])
+      AddUserAsPeriodStudent.call(user: student, period: period)
 
       task_plan = FactoryGirl.create(
         :tasks_task_plan,
@@ -411,7 +412,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
   context "with multiple course periods" do
     let(:course)   { @task_plan.owner }
-    let(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
+    let(:period_2) { FactoryGirl.create :course_membership_period, course: course }
     let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
     before do

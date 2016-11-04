@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe Admin::CoursesController, type: :controller do
   let(:admin) { FactoryGirl.create(:user, :administrator) }
 
-  before { controller.sign_in(admin) }
+  before      { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      CreateCourse[name: 'Hello World']
+      FactoryGirl.create :course_profile_course, name: 'Hello World'
+
       get :index
 
       expect(assigns[:course_infos].count).to eq(1)
@@ -15,13 +16,15 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     it 'passes the query params to SearchCourses along with order_by params' do
-      expect(SearchCourses).to receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
+      expect(SearchCourses).to(
+        receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
+      )
       get :index, query: 'test', order_by: 'name'
     end
 
     context "pagination" do
       it "paginates the results" do
-        3.times { FactoryGirl.create(:course_profile_profile) }
+        3.times { FactoryGirl.create(:course_profile_course) }
 
         get :index, page: 1, per_page: 2
         expect(assigns[:course_infos].length).to eq(2)
@@ -32,7 +35,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
       context "with more than 25 courses" do
         before(:each) do
-          26.times { FactoryGirl.create(:course_profile_profile) }
+          26.times { FactoryGirl.create(:course_profile_course) }
         end
 
         context "with per_page param" do
@@ -57,7 +60,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
       context "when there are no results" do
         it "returns http status OK" do
-          expect(CourseProfile::Models::Profile.count).to eq(0)
+          expect(CourseProfile::Models::Course.count).to eq(0)
 
           get :index, page: 1
           expect(response).to have_http_status :ok
@@ -66,30 +69,46 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'POST #create' do
-    before do
-      post :create, course: { name: 'Hello World' }
+  context 'POST #create' do
+    let(:num_sections) { 2 }
+
+    let(:request) do
+      post :create, course: {
+        name: 'Hello World',
+        term: CourseProfile::Models::Course.terms.keys.sample,
+        year: Time.current.year,
+        is_concept_coach: false,
+        is_college: true,
+        num_sections: num_sections,
+        catalog_offering_id: FactoryGirl.create(:catalog_offering).id
+      }
     end
 
-    it 'creates a blank course profile' do
-      expect(CourseProfile::Models::Profile.count).to eq(1)
+    it 'creates a course' do
+      expect{request}.to change{CourseProfile::Models::Course.count}.by(1)
+    end
+
+    it 'creates the specified number of sections' do
+      expect{request}.to change{CourseMembership::Models::Period.count}.by(num_sections)
     end
 
     it 'sets a flash notice' do
+      request
       expect(flash[:notice]).to eq('The course has been created.')
     end
 
     it 'redirects to /admin/courses' do
+      request
       expect(response).to redirect_to(admin_courses_path)
     end
   end
 
-  describe 'POST #students' do
-    let(:physics)        { CreateCourse[name: 'Physics'] }
-    let(:physics_period) { CreatePeriod[course: physics, name: '1st'] }
+  context 'POST #students' do
+    let(:physics)        { FactoryGirl.create :course_profile_course }
+    let(:physics_period) { FactoryGirl.create :course_membership_period, course: physics }
 
-    let(:biology)        { CreateCourse[name: 'Biology'] }
-    let(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
+    let(:biology)        { FactoryGirl.create :course_profile_course }
+    let(:biology_period) { FactoryGirl.create :course_membership_period, course: biology }
 
     let(:file_1) do
       fixture_file_upload('roster/test_courses_post_students_1.csv', 'text/csv')
@@ -175,27 +194,31 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'GET #edit' do
-    let(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:eco_1)    {
+  context 'GET #edit' do
+    let!(:eco_1)            {
       model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let(:book_1)    { eco_1.books.first }
-    let(:uuid_1)    { book_1.uuid }
-    let(:version_1) { book_1.version }
-    let!(:eco_2)    {
+    let(:catalog_offering)  {
+      FactoryGirl.create :catalog_offering, ecosystem: eco_1.to_model
+    }
+    let(:course)            { FactoryGirl.create :course_profile_course, name: 'Physics I',
+                                                                 offering: catalog_offering }
+    let(:book_1)            { eco_1.books.first }
+    let(:uuid_1)            { book_1.uuid }
+    let(:version_1)         { book_1.version }
+    let!(:eco_2)            {
       model = FactoryGirl.create(:content_book, title: 'Biology').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     }
-    let(:book_2)    { eco_2.books.first }
-    let(:uuid_2)    { book_2.uuid }
-    let(:version_2) { book_2.version }
+    let(:book_2)            { eco_2.books.first }
+    let(:uuid_2)            { book_2.uuid }
+    let(:version_2)         { book_2.version }
     let!(:course_ecosystem) {
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
-      CourseContent::Models::CourseEcosystem.where { entity_course_id == my { course.id } }
+      CourseContent::Models::CourseEcosystem.where { course_profile_course_id == my { course.id } }
                                             .where { content_ecosystem_id == my { eco_1.id } }
                                             .first
     }
@@ -203,7 +226,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     it 'assigns extra course info' do
       get :edit, id: course.id
 
-      expect(assigns[:profile].entity_course_id).to eq course.id
+      expect(assigns[:course].id).to eq course.id
       expect(Set.new assigns[:periods]).to eq Set.new course.periods
       expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
       expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]
@@ -217,8 +240,8 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'DELETE #destroy' do
-    let(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+  context 'DELETE #destroy' do
+    let(:course) { FactoryGirl.create :course_profile_course }
 
     context 'destroyable course' do
       it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
@@ -231,7 +254,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     context 'non-destroyable course' do
-      before { CreatePeriod[course: course] }
+      before { FactoryGirl.create :course_membership_period, course: course }
 
       it 'delegates to the Admin::CoursesDestroy handler and displays a failure message' do
         expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
@@ -245,8 +268,8 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'POST #set_ecosystem' do
-    let(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+  context 'POST #set_ecosystem' do
+    let(:course) { FactoryGirl.create(:course_profile_course, name: 'Physics I') }
     let(:eco_1)     {
       model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)

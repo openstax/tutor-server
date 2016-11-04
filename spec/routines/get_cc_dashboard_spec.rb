@@ -1,12 +1,12 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe GetCcDashboard, type: :routine do
+RSpec.describe GetCcDashboard, type: :routine do
 
   before(:all) do
-    @course   = CreateCourse[name: 'Biology 101', is_concept_coach: true]
-    @period   = CreatePeriod[course: @course]
-    @period_2 = CreatePeriod[course: @course]
+    @course   = FactoryGirl.create :course_profile_course, is_concept_coach: true, name: 'Biology 101'
+    @period   = FactoryGirl.create :course_membership_period, course: @course
+    @period_2 = FactoryGirl.create :course_membership_period, course: @course
 
     @student_user = FactoryGirl.create(:user)
     @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
@@ -66,7 +66,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Biology 101",
+          name: 'Biology 101',
           teachers: [
             {
               id: @teacher_role.teacher.id.to_s,
@@ -134,7 +134,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Biology 101",
+          name: 'Biology 101',
           teachers: [
             { id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
@@ -227,7 +227,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Biology 101",
+          name: 'Biology 101',
           teachers: [
             {
               id: @teacher_role.teacher.id.to_s,
@@ -338,7 +338,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Biology 101",
+          name: 'Biology 101',
           teachers: [
             {
               id: @teacher_role.teacher.id.to_s,

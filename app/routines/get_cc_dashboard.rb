@@ -43,7 +43,7 @@ class GetCcDashboard
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(task: {taskings: :period})
       .preload(task: {taskings: [:period, :role]}, page: :chapter)
-      .where(task: {taskings: {period: {entity_course_id: course.id}}})
+      .where(task: {taskings: {period: {course_profile_course_id: course.id}}})
       .where{task.completed_exercise_steps_count > 0}
       .distinct.to_a
 

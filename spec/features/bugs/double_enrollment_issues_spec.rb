@@ -22,8 +22,8 @@ RSpec.describe "Students in archived old period sign up in new term",
   context "CC course" do
 
     before(:all) do
-      @course = CreateCourse[name: 'Physics', is_concept_coach: true]
-      semester_1_period = CreatePeriod[course: @course, name: '1st']
+      @course = FactoryGirl.create :course_profile_course, is_concept_coach: true
+      semester_1_period = FactoryGirl.create :course_membership_period, course: @course
 
       @student_user = FactoryGirl.create(:user)
 
@@ -66,7 +66,7 @@ RSpec.describe "Students in archived old period sign up in new term",
       # teacher, preparing to teach this course again in the current approach,
       # archives the period she has and makes a new one
       semester_1_period.to_model.destroy!
-      semester_2_period = CreatePeriod[course: @course, name: '1st again']
+      semester_2_period = FactoryGirl.create :course_membership_period, course: @course
 
       # the same student user signs up for the next semester in the same course
       # (maybe he failed or dropped in the first semester)

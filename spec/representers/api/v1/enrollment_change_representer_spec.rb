@@ -7,8 +7,8 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     ::User::User.new(strategy: strategy)
   end
 
-  let(:course)            { FactoryGirl.create(:entity_course) }
-  let(:period)            { ::CreatePeriod[course: course] }
+  let(:course)            { FactoryGirl.create(:course_profile_course) }
+  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
 
   let(:teacher_user)      { FactoryGirl.create(:user) }
   let!(:teacher_role)     { AddUserAsCourseTeacher[user: teacher_user, course: course] }
@@ -41,7 +41,7 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     # If a "from" period is included in the output, the FE will display it as a transfer
     # If the previous period is archived, then the enrollment should be considered a fresh join
     it 'is not included as a "from" source' do
-      deleted_period = ::CreatePeriod[course: course]
+      deleted_period = FactoryGirl.create :course_membership_period, course: course
       AddUserAsPeriodStudent[user: user, period: deleted_period]
       deleted_period.to_model.destroy
       expect(representation['from']).to be_nil

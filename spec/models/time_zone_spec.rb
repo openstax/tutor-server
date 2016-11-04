@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ::TimeZone, type: :model do
   subject(:time_zone) { FactoryGirl.create :time_zone }
 
-  it { is_expected.to have_one(:profile) }
+  it { is_expected.to have_one(:course) }
   it { is_expected.to have_many(:tasking_plans) }
   it { is_expected.to have_many(:tasks) }
 

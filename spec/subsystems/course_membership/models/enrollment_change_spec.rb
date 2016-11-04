@@ -1,19 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
-  let(:course_1)  { FactoryGirl.create :entity_course }
-  let(:course_2)  { FactoryGirl.create :entity_course }
+  let(:course_1)  { FactoryGirl.create :course_profile_course }
+  let(:course_2)  { FactoryGirl.create :course_profile_course }
 
-  let(:period_1)  { CreatePeriod[course: course_1] }
-  let(:period_2)  { CreatePeriod[course: course_1] }
-
-  let(:period_3)  { CreatePeriod[course: course_2] }
+  let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_3)  { FactoryGirl.create :course_membership_period, course: course_2 }
 
   let(:book)      { FactoryGirl.create :content_book }
 
   let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
-  let(:user)                 do
+  let(:user)                  do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
@@ -23,7 +22,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     AddUserAsPeriodStudent[user: user, period: period_1]
   end
 
-  let(:enrollment)           { role.student.latest_enrollment }
+  let(:enrollment)            { role.student.latest_enrollment }
 
   before { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 
@@ -39,7 +38,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   it { is_expected.to validate_presence_of(:period) }
 
   it 'knows the target period' do
-    expect(enrollment_change.to_period).to eq period_2.to_model
+    expect(enrollment_change.to_period).to eq period_2
   end
 
   it 'can be approved by the enrollee' do
@@ -49,7 +48,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
 
   context 'for an existing enrollment' do
     it 'knows the previous period' do
-      expect(enrollment_change.from_period).to eq period_1.to_model
+      expect(enrollment_change.from_period).to eq period_1
     end
 
     it 'requires the profile and the enrollment\'s student to refer to the same user' do
@@ -75,7 +74,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     it 'requires the period and the enrollment\'s period to use the same book' do
       expect(enrollment_change).to be_valid
 
-      enrollment_change.period = period_3.to_model
+      enrollment_change.period = period_3
       expect(enrollment_change).not_to be_valid
       expect(enrollment_change.errors[:base]).to include(
         'the given periods must belong to courses with the same book'

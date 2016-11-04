@@ -13,7 +13,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:name) }
 
-  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:entity_course_id) }
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }
 
   it 'can be deleted and restored even if it has active students' do
     student_user = FactoryGirl.create(:user)
@@ -21,22 +21,23 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
 
-    expect{ period.destroy! }.to change{CourseMembership::Models::Period.count}.by(-1)
+    expect{ period.destroy! }.to change{described_class.count}.by(-1)
     expect(period.errors).to be_empty
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq false
 
-    expect{ period.restore!(recursive: true) }.to(
-      change{CourseMembership::Models::Period.count}.by(1)
-    )
+    expect{ period.restore!(recursive: true) }.to change{described_class.count}.by(1)
     expect(period.errors).to be_empty
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
   end
 
   it 'does not collide in name with deleted periods' do
-    expect{ period.destroy! }.to change{CourseMembership::Models::Period.count}.by(-1)
-    CreatePeriod[course: period.course, name: period.name]
+    expect{ period.destroy! }.to change{described_class.count}.by(-1)
+    new_period = FactoryGirl.create :course_membership_period, course: period.course,
+                                                               name: period.name
+    expect(new_period).to be_valid
+    expect(new_period).to be_persisted
   end
 
   it 'validates format of default times' do

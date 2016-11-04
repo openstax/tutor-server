@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 module CourseMembership
-  RSpec.describe Period, type: :wrapper do
-    subject(:period)      { ::CreatePeriod[course: Entity::Course.create!] }
+  describe Period, type: :wrapper do
+    subject(:period)     { FactoryGirl.create :course_membership_period }
 
     let(:student_1_user) { FactoryGirl.create(:user) }
     let(:student_2_user) { FactoryGirl.create(:user) }
@@ -23,7 +23,7 @@ module CourseMembership
       end
 
       expect(period.id).to be_a Integer
-      expect(period.course).to be_a Entity::Course
+      expect(period.course).to be_a CourseProfile::Models::Course
       expect(period.name).to be_a String
       expect(Set.new period.student_roles).to eq(Set.new [student_1, student_2])
       expect(period.teacher_roles).to eq [teacher]

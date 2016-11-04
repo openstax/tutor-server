@@ -4,7 +4,7 @@ module Tasks::Models
 
     default_scope { order(created_at: :desc) }
 
-    belongs_to :course, subsystem: :entity
+    belongs_to :course, subsystem: :course_profile
     belongs_to :role, subsystem: :entity
 
     def filename

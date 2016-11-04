@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Admin::PeriodsController, type: :routing do
+RSpec.describe Admin::PeriodsController, type: :routing do
 
   context "DELETE /admin/periods/:id" do
     it "routes to #destroy" do

@@ -12,8 +12,8 @@ module Tasks
       end
 
       # So can be called like other exporters
-      def self.[](profile:, report:, filename:, options: {})
-        call(course_name: profile.name, report: report, filename: filename, options: options)
+      def self.[](course:, report:, filename:, options: {})
+        call(course_name: course.name, report: report, filename: filename, options: options)
       end
 
       def initialize(course_name:, report:, filepath:, options:)
@@ -49,7 +49,7 @@ module Tasks
           excluded_indices = []
 
           period_report[:data_headings].each_with_index do |heading, ii|
-            if heading[:due_at] > Time.now || !%w(homework reading concept_coach).include?(heading[:type])
+            if heading[:due_at] > Time.current || !%w(homework reading concept_coach).include?(heading[:type])
               excluded_indices.push(ii)
             end
           end

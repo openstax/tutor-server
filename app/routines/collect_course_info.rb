@@ -18,101 +18,105 @@ class CollectCourseInfo
   def collect_courses(courses: nil, user: nil)
     courses = [courses].flatten unless courses.nil?
     courses ||= run(:get_courses, user: user).outputs.courses unless user.nil?
-    courses || Entity::Course.all
+    courses || CourseProfile::Models::Course.all
   end
 
   def collect_course_info(courses, user, with)
-    entity_courses = Entity::Course.where(id: courses.map(&:id)).preload(profile: :offering)
-    entity_courses.map do |entity_course|
-      profile = entity_course.profile
-      offering = profile.offering
+    courses = CourseProfile::Models::Course.where(id: courses.map(&:id)).preload(:offering)
+    courses.map do |course|
+      offering = course.offering
 
       info = Hashie::Mash.new(
-        id: entity_course.id,
-        name: profile.name,
-        time_zone: profile.time_zone.name,
-        default_open_time: profile.default_open_time,
-        default_due_time: profile.default_due_time,
+        id: course.id,
+        name: course.name,
+        term: course.term,
+        year: course.year,
+        num_sections: course.num_sections,
+        starts_at: course.starts_at,
+        ends_at: course.ends_at,
+        active?: course.active?,
+        time_zone: course.time_zone.name,
+        default_open_time: course.default_open_time,
+        default_due_time: course.default_due_time,
         offering: offering,
-        is_concept_coach: profile.is_concept_coach,
-        is_college: profile.is_college,
-        school_name: profile.school_name,
+        catalog_offering_id: offering.try!(:id),
+        is_concept_coach: course.is_concept_coach,
+        is_college: course.is_college,
+        school_name: course.school_name,
         salesforce_book_name: offering.try(:salesforce_book_name),
-        appearance_code: profile.appearance_code.blank? ? \
-                           offering.try(:appearance_code) : profile.appearance_code
+        appearance_code: course.appearance_code.blank? ? \
+                           offering.try(:appearance_code) : course.appearance_code,
+        cloned_from_id: course.cloned_from_id
       )
 
-      collect_extended_course_info(info, entity_course, user, with)
+      collect_extended_course_info(info, course, user, with)
     end
   end
 
-  def collect_extended_course_info(info, entity_course, user, with)
+  def collect_extended_course_info(info, course, user, with)
     with.each do |option|
       case option
       when :teacher_names
-        set_teacher_names(info, entity_course)
+        set_teacher_names(info, course)
       when :roles
-        set_roles(info, entity_course, user)
+        set_roles(info, course, user)
       when :periods
-        set_periods(info, entity_course, user)
+        set_periods(info, course, user)
       when :ecosystem
-        set_ecosystem(info, entity_course)
+        set_ecosystem(info, course)
       when :ecosystem_book
-        set_ecosystem_book(info, entity_course)
+        set_ecosystem_book(info, course)
       when :students
-        set_students(info, entity_course, user)
+        set_students(info, course, user)
       end
     end
 
     info
   end
 
-  def set_teacher_names(info, entity_course)
-    info.teacher_names = run(:get_teacher_names, entity_course.id).outputs.teacher_names
+  def set_teacher_names(info, course)
+    info.teacher_names = run(:get_teacher_names, course.id).outputs.teacher_names
   end
 
-  def set_roles(info, entity_course, user)
-    roles = get_course_roles(entity_course: entity_course, user: user)
+  def set_roles(info, course, user)
+    roles = get_course_roles(course: course, user: user)
 
     info.roles = roles.map do |role|
       { id: role.id, type: role.role_type }
     end
   end
 
-  def set_periods(info, entity_course, user)
-    roles = get_course_roles(entity_course: entity_course, user: user)
+  def set_periods(info, course, user)
+    roles = get_course_roles(course: course, user: user)
 
-    info.periods = run(:get_course_periods, course: entity_course, roles: roles,
+    info.periods = run(:get_course_periods, course: course, roles: roles,
                                             include_archived: true).outputs.periods
   end
 
-  def set_ecosystem(info, entity_course)
-    info.ecosystem = get_course_ecosystem(entity_course: entity_course)
+  def set_ecosystem(info, course)
+    info.ecosystem = get_course_ecosystem(course: course)
   end
 
-  def set_ecosystem_book(info, entity_course)
-    ecosystem = get_course_ecosystem(entity_course: entity_course)
+  def set_ecosystem_book(info, course)
+    ecosystem = get_course_ecosystem(course: course)
 
     info.ecosystem_book = ecosystem.try(:books).try(:first)
   end
 
-  def set_students(info, entity_course, user)
-    roles = get_course_roles(entity_course: entity_course, user: user)
+  def set_students(info, course, user)
+    roles = get_course_roles(course: course, user: user)
 
     info.students = roles.map(&:student).compact
   end
 
-  def get_course_roles(entity_course:, user:)
+  def get_course_roles(course:, user:)
     @roles ||= {}
-    @roles[entity_course] ||= run(:get_course_roles, course: entity_course,
-                                                     user: user).outputs.roles
+    @roles[course] ||= run(:get_course_roles, course: course, user: user).outputs.roles
   end
 
-  def get_course_ecosystem(entity_course:)
+  def get_course_ecosystem(course:)
     @ecosystem ||= {}
-    @ecosystem[entity_course] ||= run(
-      :get_course_ecosystem, course: entity_course
-    ).outputs.ecosystem
+    @ecosystem[course] ||= run(:get_course_ecosystem, course: course).outputs.ecosystem
   end
 
 end

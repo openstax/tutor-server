@@ -8,7 +8,7 @@ class Admin::CoursesDestroy
   end
 
   def handle
-    course = Entity::Course.find(params[:id])
+    course = CourseProfile::Models::Course.find(params[:id])
 
     fatal_error(code: :course_not_empty, message: 'Can only delete completely empty courses') \
       unless course.deletable?

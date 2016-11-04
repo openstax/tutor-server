@@ -18,6 +18,7 @@ RSpec.describe 'Administration', js: true do
     click_link 'Add Course'
 
     fill_in 'Name', with: 'A Course'
+
     click_button 'Save'
     # Edit the course
     click_link 'Edit'

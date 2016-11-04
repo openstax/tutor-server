@@ -12,7 +12,7 @@ module Api::V1
                required: true
              }
 
-    property :entity_course_id,
+    property :course_profile_course_id,
              as: :course_id,
              type: String,
              writeable: true,

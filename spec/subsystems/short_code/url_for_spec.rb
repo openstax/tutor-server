@@ -10,9 +10,9 @@ RSpec.describe ShortCode::UrlFor, type: :routine do
   end
 
   it 'uses suffix if provided' do
-    course_profile = FactoryGirl.create :course_profile_profile
-    code = ShortCode::Create[course_profile.to_global_id.to_s]
-    url = described_class[course_profile, suffix: 'A Test Course']
+    course = FactoryGirl.create :course_profile_course
+    code = ShortCode::Create[course.to_global_id.to_s]
+    url = described_class[course, suffix: 'A Test Course']
     expect(url).to eq("/@/#{code}/a-test-course")
   end
 

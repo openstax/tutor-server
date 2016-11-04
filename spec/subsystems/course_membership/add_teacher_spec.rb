@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe CourseMembership::AddTeacher do
+RSpec.describe CourseMembership::AddTeacher do
   context "when adding a new teacher role to a course" do
     it "succeeds" do
-      role = Entity::Role.create!
-      course = Entity::Course.create!
+      role   = FactoryGirl.create :entity_role
+      course = FactoryGirl.create :course_profile_course
 
       result = nil
       expect {
@@ -13,10 +13,11 @@ describe CourseMembership::AddTeacher do
       expect(result.errors).to be_empty
     end
   end
+
   context "when adding a existing teacher role to a course" do
     it "fails" do
-      role = Entity::Role.create!
-      course = Entity::Course.create!
+      role   = FactoryGirl.create :entity_role
+      course = FactoryGirl.create :course_profile_course
 
       result = nil
       expect {

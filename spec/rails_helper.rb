@@ -5,10 +5,10 @@ require 'parallel_tests'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
-]) if ParallelTests.first_process?
+]) if ParallelTests.last_process?
 
 SimpleCov.at_exit do
-  ParallelTests.wait_for_other_processes_to_finish if ParallelTests.first_process?
+  ParallelTests.wait_for_other_processes_to_finish if ParallelTests.last_process?
   SimpleCov.result.format!
 end
 
@@ -66,7 +66,7 @@ RSpec.configure do |config|
   # You can disable this behaviour by removing the line below, and instead
   # explicitly tag your specs with their type, e.g.:
   #
-  #     RSpec.describe UsersController, type: :controller do
+  #     describe UsersController, type: :controller do
   #       # ...
   #     end
   #

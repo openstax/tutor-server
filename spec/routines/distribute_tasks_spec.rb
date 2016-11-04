@@ -3,8 +3,8 @@ require 'fork_with_connection'
 
 RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
-  let(:course)    { FactoryGirl.create :entity_course }
-  let(:period)    { CreatePeriod[course: course] }
+  let(:course)    { FactoryGirl.create :course_profile_course }
+  let(:period)    { FactoryGirl.create :course_membership_period, course: course }
   let!(:user)     {
     user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent.call(user: user, period: period)

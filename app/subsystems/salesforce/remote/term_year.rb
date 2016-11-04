@@ -3,7 +3,7 @@ class Salesforce::Remote::TermYear
   # TermYear strings in Salesforce look like:
   #   2015 - 16 Fall
   #   2015 - 16 Spring
-  # One day in the not-distant future we will probably be adding Summerlas term
+  # One day in the not-distant future we will probably be adding a Summer term
 
   TERMS = [:fall, :spring]
 

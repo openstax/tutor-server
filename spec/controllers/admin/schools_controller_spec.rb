@@ -116,7 +116,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
 
     context 'with courses' do
-      before { FactoryGirl.create :course_profile_profile, school: school }
+      before { FactoryGirl.create :course_profile_course, school: school }
 
       it 'redirects to #index and displays an error message' do
         expect { delete :destroy, id: school.id }.not_to(

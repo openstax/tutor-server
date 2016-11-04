@@ -27,18 +27,15 @@ class ChooseCourseRole
     # Don't include the user's own inactive student roles
     run(:get_roles, course: course, user: user, types: allowed_role_type,
                     include_inactive_students: false)
+    integer_role_id = Integer(role_id) rescue nil
 
-    if role_id
+    if integer_role_id
       extra_roles = get_course_student_roles(course: course, user: user)
-      outputs.roles = outputs.roles.select { |r| r.id == Integer(role_id) } +
-                      extra_roles.select { |r| r.id == Integer(role_id) }
-      outputs.roles.uniq!
-      if outputs.roles.none?
-        fatal_error(
-          code:    :invalid_role,
-          message: "The user does not have the specified role in the course"
-        )
-      end
+      outputs.roles = (outputs.roles + extra_roles).select{ |r| r.id == integer_role_id }.uniq
+      fatal_error(
+        code:    :invalid_role,
+        message: "The user does not have the specified role in the course"
+      ) if outputs.roles.none?
     end
 
     case allowed_role_type

@@ -53,7 +53,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
       end
     end
-    let(:period) { CreatePeriod[course: course] }
+    let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
     let(:num_taskees) { 3 }
 

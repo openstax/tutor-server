@@ -2,7 +2,7 @@
 #
 # Parameters:
 #
-#   course: an Entity::Course
+#   course: a CourseProfile::Models::Course
 #   user: a User::User
 #   types: can be `:any` or an array including one
 #     or more of `:student`, `:teacher`, `:any`

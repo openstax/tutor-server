@@ -4,14 +4,14 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   let(:time_zone) { FactoryGirl.create :time_zone }
 
   context 'default' do
-    let(:course_profile) { FactoryGirl.build :course_profile_profile }
+    let(:course) { FactoryGirl.build :course_profile_course }
 
     it 'creates a time zone on save' do
-      expect(course_profile.time_zone).to be_nil
-      expect(course_profile.valid?).to eq true
-      course_profile.save!
-      expect(course_profile.time_zone).to be_a(::TimeZone)
-      expect(course_profile.time_zone.name).to eq 'Central Time (US & Canada)'
+      expect(course.time_zone).to be_nil
+      expect(course.valid?).to eq true
+      course.save!
+      expect(course.time_zone).to be_a(::TimeZone)
+      expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
     end
   end
 
@@ -67,7 +67,7 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   end
 
   context 'time_zone updates' do
-    let(:task) { FactoryGirl.build :tasks_task,         time_zone: time_zone }
+    let(:task) { FactoryGirl.build :tasks_task, time_zone: time_zone }
 
     it 'updates all associated times automagically' do
       task_tz = time_zone.to_tz
@@ -95,10 +95,9 @@ RSpec.describe BelongsToTimeZone, type: :lib do
 
   it 'preserves previous_changes when no time zone set' do
     tz = ::TimeZone.create(name: 'Central Time (US & Canada)')
-    course = Entity::Course.create
-    profile = CourseProfile::Models::Profile.create(name: 'Blah', entity_course_id: course.id, is_concept_coach: false)
-    expect(profile).to be_persisted
-    expect(profile.previous_changes).not_to be_empty
+    course = FactoryGirl.create :course_profile_course
+    expect(course).to be_persisted
+    expect(course.previous_changes).not_to be_empty
   end
 
 end

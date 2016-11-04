@@ -32,8 +32,8 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       expect(representation).to include("target_type" => 'period')
     end
 
-    it "can be read ('Entity::Course' => 'course')" do
-      allow(tasking_plan).to receive(:target_type).and_return('Entity::Course')
+    it "can be read ('CourseProfile::Models::Course' => 'course')" do
+      allow(tasking_plan).to receive(:target_type).and_return('CourseProfile::Models::Course')
       expect(representation).to include("target_type" => 'course')
     end
 
@@ -42,9 +42,9 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       expect(tasking_plan).to have_received(:target_type=).with('CourseMembership::Models::Period')
     end
 
-    it "can be written ('course' => 'Entity::Course')" do
+    it "can be written ('course' => 'CourseProfile::Models::Course')" do
       Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "course"}.to_json)
-      expect(tasking_plan).to have_received(:target_type=).with('Entity::Course')
+      expect(tasking_plan).to have_received(:target_type=).with('CourseProfile::Models::Course')
     end
   end
 

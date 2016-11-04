@@ -24,9 +24,7 @@ class GetExcludedExercises
 
     def excluded_exercises
       @excluded_exercises ||= CourseContent::Models::ExcludedExercise.preload(
-                            course: [
-                              :profile, { teachers: { role: { role_user: :profile } } }
-                            ]
+                            course: { teachers: { role: { role_user: :profile } } }
                           ).sort_by(&:exercise_number)
     end
 
@@ -114,7 +112,7 @@ class GetExcludedExercises
       excluded_exercises.group_by(&:course).map do |course, course_excluded_exercises|
         Hashie::Mash.new({
             course_id: course.id,
-            course_name: course.profile.try(:name),
+            course_name: course.name,
             teachers: get_teachers_by_course(course),
             excluded_exercises_count: course_excluded_exercises.length,
             excluded_exercises_numbers_with_urls: get_ee_numbers_with_urls_by_ee(course_excluded_exercises.flat_map(&:exercise_number)),
@@ -193,7 +191,7 @@ class GetExcludedExercises
     end
 
     def current_time
-      @current_time ||= Time.current.strftime("%Y%m%dT%H%M%SZ")
+      @current_time ||= Time.now.utc.strftime("%Y%m%dT%H%M%SZ")
     end
 
     def filename_by_course

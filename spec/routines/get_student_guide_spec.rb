@@ -5,10 +5,10 @@ require 'database_cleaner'
 RSpec.describe GetStudentGuide, type: :routine do
 
   before(:all) do
-    @course = FactoryGirl.create :entity_course
+    @course = FactoryGirl.create :course_profile_course
 
-    @period = CreatePeriod[course: @course]
-    @second_period = CreatePeriod[course: @course]
+    @period = FactoryGirl.create :course_membership_period, course: @course
+    @second_period = FactoryGirl.create :course_membership_period, course: @course
 
     @teacher = FactoryGirl.create(:user)
     @student = FactoryGirl.create(:user)

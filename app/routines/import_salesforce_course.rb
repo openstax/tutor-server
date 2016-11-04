@@ -4,7 +4,6 @@ class ImportSalesforceCourse
   uses_routine CreateCourse, translations: { outputs: {type: :verbatim} }
   uses_routine SchoolDistrict::GetSchool, as: :get_school
   uses_routine SchoolDistrict::CreateSchool, as: :create_school
-  uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
   uses_routine Salesforce::AttachRecord, as: :attach_record
 
   # Candidate can be `OsAncillary` or `ClassSize`
@@ -45,12 +44,22 @@ class ImportSalesforceCourse
       return
     end
 
+    term_year = candidate.term_year_object
+
+    if term_year.blank?
+      error!(candidate, "A term_year is required.")
+      return
+    end
+
     school = run(:get_school, name: candidate.school, district: nil).outputs.school ||
              run(:create_school, name: candidate.school).outputs.school
 
     course = run(
       :create_course,
       name: candidate.course_name,
+      term: term_year.term,
+      year: term_year.start_year,
+      starts_at: candidate.try(:course_start_date),
       school: school,
       catalog_offering: offering,
       is_concept_coach: candidate.is_concept_coach?,
@@ -61,8 +70,6 @@ class ImportSalesforceCourse
     candidate.created_at = course.created_at.iso8601
     candidate.reset_stats
     candidate.teacher_join_url = UrlGenerator.teach_course_url(course.teach_token)
-
-    run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
 
     # Remember the candidate obj ID so we can write stats later
     run(:attach_record, record: candidate, to: course)

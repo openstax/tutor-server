@@ -2,12 +2,12 @@ require 'rails_helper'
 
 module CourseMembership
   module Models
-    RSpec.describe Enrollment, type: :model do
-      let(:period) { ::CreatePeriod[course: FactoryGirl.create(:entity_course)].to_model }
+    describe Enrollment, type: :model do
+      let(:course) { FactoryGirl.create :course_profile_course }
+      let(:period) { FactoryGirl.create :course_membership_period, course: course }
+      let(:role)   { FactoryGirl.create :entity_role }
 
-      subject(:enrollment) {
-        AddStudent[period: period, role: Entity::Role.create!].enrollments.first
-      }
+      subject(:enrollment) { AddStudent[period: period, role: role].enrollments.first }
 
       it { is_expected.to belong_to(:period) }
       it { is_expected.to belong_to(:student) }
@@ -18,7 +18,7 @@ module CourseMembership
       it 'requires student and period to belong to the same course' do
         expect(enrollment).to be_valid
 
-        enrollment.period = ::CreatePeriod[course: Entity::Course.create!].to_model
+        enrollment.period = FactoryGirl.create :course_membership_period
         expect(enrollment).not_to be_valid
         expect(enrollment.errors[:base]).to include(
           'must have a student and a period that belong to the same course'

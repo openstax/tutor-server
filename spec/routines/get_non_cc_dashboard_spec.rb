@@ -1,10 +1,10 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe GetNonCcDashboard, type: :routine do
+RSpec.describe GetNonCcDashboard, type: :routine do
 
-  let(:course)         { CreateCourse[name: 'Physics 101'] }
-  let(:period)         { CreatePeriod[course: course] }
+  let(:course)         { FactoryGirl.create :course_profile_course, name: 'Physics 101' }
+  let(:period)         { FactoryGirl.create :course_membership_period, course: course }
 
   let(:student_user)   { FactoryGirl.create(:user) }
   let(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period)
@@ -67,7 +67,7 @@ describe GetNonCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: course.id,
-          name: "Physics 101",
+          name: 'Physics 101',
           teachers: [
             { id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
@@ -91,7 +91,7 @@ describe GetNonCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: course.id,
-          name: "Physics 101",
+          name: 'Physics 101',
           teachers: [
             { id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
@@ -138,7 +138,7 @@ describe GetNonCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: course.id,
-          name: "Physics 101",
+          name: 'Physics 101',
           teachers: [
             { id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
@@ -163,7 +163,7 @@ describe GetNonCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: course.id,
-          name: "Physics 101",
+          name: 'Physics 101',
           teachers: [
             { id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,

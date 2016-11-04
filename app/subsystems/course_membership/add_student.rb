@@ -12,7 +12,7 @@ class CourseMembership::AddStudent
     student = CourseMembership::Models::Student.find_by(role: role)
     fatal_error(
       code: :already_a_student, message: "The provided role is already a student in #{
-        student.course.profile.try(:name) || 'some course'
+        student.course.name || 'some course'
       }."
     ) unless student.nil?
 

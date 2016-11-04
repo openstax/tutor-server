@@ -10,7 +10,7 @@ FactoryGirl.define do
       published_at nil
     end
 
-    association :owner, factory: :entity_course
+    association :owner, factory: :course_profile_course
     association :ecosystem, factory: :content_ecosystem
     title 'A task'
     settings { {} }

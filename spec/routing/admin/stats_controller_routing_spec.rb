@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Admin::StatsController, type: :routing do
+RSpec.describe Admin::StatsController, type: :routing do
 
   describe "/admin/stats/courses" do
     it "routes to #courses" do

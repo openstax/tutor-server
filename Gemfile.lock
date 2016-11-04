@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/openstax/active_force.git
+  remote: https://github.com/openstax/active_force
   revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
   ref: 9695896f5
   specs:
@@ -440,7 +440,7 @@ GEM
       representable (>= 2.0)
       roar (>= 1.0)
       squeel (>= 0.5.0)
-    openstax_accounts (6.4.2)
+    openstax_accounts (7.2.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -477,7 +477,7 @@ GEM
       rack
     pager (1.0.1)
     parallel (1.9.0)
-    parallel_tests (2.7.0)
+    parallel_tests (2.10.0)
       parallel
     paranoia (2.1.5)
       activerecord (~> 4.0)
@@ -607,7 +607,7 @@ GEM
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
-    rspec-instafail (0.4.0)
+    rspec-instafail (1.0.0)
       rspec
     rspec-mocks (3.4.1)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -786,7 +786,7 @@ DEPENDENCIES
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
   omniauth-salesforce
-  openstax_accounts (~> 6.4.2)
+  openstax_accounts (~> 7.2.0)
   openstax_api (~> 8.0.0)
   openstax_exchange (~> 0.2.1)
   openstax_rescue_from (~> 1.6.0)

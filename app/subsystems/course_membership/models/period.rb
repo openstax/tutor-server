@@ -6,7 +6,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   wrapped_by CourseMembership::Strategies::Direct::Period
 
-  belongs_to :course, subsystem: :entity
+  belongs_to :course, subsystem: :course_profile
 
   has_many :teachers, through: :course
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
@@ -24,7 +24,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   unique_token :enrollment_code, mode: :random_number, length: 6
 
   validates :course, presence: true
-  validates :name, presence: true, uniqueness: { scope: :entity_course_id,
+  validates :name, presence: true, uniqueness: { scope: :course_profile_course_id,
                                                  conditions: -> { where(deleted_at: nil) } }
   validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
 

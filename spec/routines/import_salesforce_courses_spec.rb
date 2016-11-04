@@ -5,8 +5,10 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
   let(:osa_class) { Salesforce::Remote::OsAncillary }
   let(:cs_class)  { Salesforce::Remote::ClassSize }
 
-  let(:target_term_year) { '2015 - 16 Spring'}
-  before(:each) { allow(Settings::Salesforce).to receive(:term_years_to_import) { target_term_year } }
+  let(:target_term_year) { '2015 - 16 Spring' }
+  before(:each) do
+    allow(Settings::Salesforce).to receive(:term_years_to_import) { target_term_year }
+  end
 
   it 'restricts to Denver University when asked to not run on real data' do
     allow(osa_class).to receive(:where).and_return([])
@@ -29,7 +31,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     ImportSalesforceCourses.call(include_real_salesforce_data: false)
   end
 
-  it 'restricts to Denver University when told to include real data but global secrets flag false' do
+  it 'restricts to Denver University when told to include real data but secrets flag false' do
     allow(osa_class).to receive(:where).and_return([])
     allow(cs_class).to receive(:where).and_return([])
     allow(Rails.application.secrets.salesforce).to(
@@ -79,29 +81,35 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     disable_sfdc_client
 
     sf_record = osa_class.new(
-      book_name: "jimmy", course_name: "Jimmyness 101",
-      school: "Jimmy U", id: 'booyah', product: "Concept Coach"
+      book_name: "jimmy",
+      course_name: "Jimmyness 101",
+      school: "Jimmy U",
+      id: 'booyah',
+      product: "Concept Coach",
+      term_year: target_term_year
     )
     offering = FactoryGirl.create(:catalog_offering,
-      salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
+      salesforce_book_name: "jimmy",
+      default_course_name: nil,
+      is_concept_coach: true
     )
 
     stub_candidates(osa: sf_record)
 
     expect(sf_record).to receive(:save)
 
-    before_course_ids = Entity::Course.all.map(&:id)
+    before_course_ids = CourseProfile::Models::Course.all.map(&:id)
 
     result = nil
     expect {
       result = ImportSalesforceCourses.call
-    }.to change{Entity::Course.count}.by(1)
-     .and change{Salesforce::Models::AttachedRecord.count}.by(1)
+    }.to change{ CourseProfile::Models::Course.count }.by(1)
+     .and change{ Salesforce::Models::AttachedRecord.count }.by(1)
 
-    after_course_ids = Entity::Course.all.map(&:id)
+    after_course_ids = CourseProfile::Models::Course.all.map(&:id)
     new_course_id = (after_course_ids - before_course_ids).first
 
-    created_course = Entity::Course.find(new_course_id)
+    created_course = CourseProfile::Models::Course.find(new_course_id)
 
     expect(sf_record.course_id).to eq created_course.id
     expect(sf_record.created_at).to be_a String
@@ -123,35 +131,50 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     disable_sfdc_client
 
-    offering = FactoryGirl.create(:catalog_offering,
+    offering = FactoryGirl.create(
+      :catalog_offering,
       salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
     )
 
     sf_record = osa_class.new(
-      book_name: "jimmy", course_name: "Jimmyness 101",
-      school: "Jimmy U", id: 'booyah', product: "Concept Coach"
+      book_name: "jimmy",
+      course_name: "Jimmyness 101",
+      school: "Jimmy U",
+      id: 'booyah',
+      product: "Concept Coach",
+      term_year: target_term_year
     )
 
     # 2nd candidate here is going to force a blow up with NoMethodError:
     # undefined method `something here' for nil:NilClass
     stub_candidates(osa: [sf_record, nil])
 
-    expect {
-      ImportSalesforceCourses.call rescue NoMethodError
-    }.to change{Entity::Course.count}.by(1)
+    expect do
+      begin
+        ImportSalesforceCourses.call
+      rescue NoMethodError
+      end
+    end.to change{ CourseProfile::Models::Course.count }.by(1)
   end
 
   it 'rolls back creation if there is a problem' do
     # This is checking that each candidate is handled within a transaction
     disable_sfdc_client
 
-    offering = FactoryGirl.create(:catalog_offering,
-      salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true
+    offering = FactoryGirl.create(
+      :catalog_offering,
+      salesforce_book_name: "jimmy",
+      default_course_name: nil,
+      is_concept_coach: true
     )
 
     sf_record = osa_class.new(
-      book_name: "jimmy", course_name: "Jimmyness 101",
-      school: "Jimmy U", id: 'booyah', product: "Concept Coach"
+      book_name: "jimmy",
+      course_name: "Jimmyness 101",
+      school: "Jimmy U",
+      id: 'booyah',
+      product: "Concept Coach",
+      term_year: target_term_year
     )
 
     stub_candidates(osa: sf_record)
@@ -160,7 +183,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     expect {
       ImportSalesforceCourses.call rescue NoMethodError
-    }.to change{Entity::Course.count}.by(0)
+    }.not_to change{ CourseProfile::Models::Course.count }
   end
 
   context '#candidate_term_years_array' do
@@ -170,8 +193,12 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     end
 
     it 'handles multiple' do
-      allow(Settings::Salesforce).to receive(:term_years_to_import) { ' 2015 - 16 Spring, 2016 - 17 Fall ' }
-      expect(described_class.new.candidate_term_years_array).to eq ['2015 - 16 Spring', '2016 - 17 Fall']
+      allow(Settings::Salesforce).to(
+        receive(:term_years_to_import) { ' 2015 - 16 Spring, 2016 - 17 Fall ' }
+      )
+      expect(described_class.new.candidate_term_years_array).to(
+        eq ['2015 - 16 Spring', '2016 - 17 Fall']
+      )
     end
   end
 

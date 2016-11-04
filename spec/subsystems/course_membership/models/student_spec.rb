@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Student, type: :model do
-  let(:period)     { CreatePeriod[course: Entity::Course.create!].to_model }
-  let(:user)       { FactoryGirl.create(:user) }
+  let(:course)     { FactoryGirl.create :course_profile_course }
+  let(:period)     { FactoryGirl.create :course_membership_period, course: course }
+  let(:user)       { FactoryGirl.create :user }
   subject(:student) { AddUserAsPeriodStudent[user: user, period: period,
                                              student_identifier: 'N0B0DY'].student }
 
@@ -15,7 +16,7 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
   it { is_expected.to validate_uniqueness_of(:role) }
   it { is_expected.to validate_uniqueness_of(:deidentifier) }
   it { is_expected.to validate_uniqueness_of(:student_identifier)
-                        .scoped_to(:entity_course_id).allow_nil }
+                        .scoped_to(:course_profile_course_id).allow_nil }
 
   [:username, :first_name, :last_name, :full_name].each do |method|
     it { is_expected.to delegate_method(method).to(:role) }

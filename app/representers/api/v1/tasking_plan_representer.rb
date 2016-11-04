@@ -5,9 +5,9 @@ module Api::V1
     include Representable::Coercion
 
     TARGET_TYPE_TO_API_MAP = { 'CourseMembership::Models::Period' => 'period',
-                               'Entity::Course' => 'course' }
+                               'CourseProfile::Models::Course' => 'course' }
     TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period',
-                                 'course' => 'Entity::Course' }
+                                 'course' => 'CourseProfile::Models::Course' }
 
     property :target_id,
              type: String,

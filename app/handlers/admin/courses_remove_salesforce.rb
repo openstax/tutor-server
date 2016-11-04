@@ -13,7 +13,7 @@ class Admin::CoursesRemoveSalesforce
   end
 
   def handle
-    course = Entity::Course.find(params[:id])
+    course = CourseProfile::Models::Course.find(params[:id])
 
     # Find the attached records for this course and periods that match
     # the provided SF ID
@@ -32,7 +32,7 @@ class Admin::CoursesRemoveSalesforce
     # Get rid of all the attached records
     existing_ars.each do |existing_ar|
       case existing_ar.attached_to_class_name
-      when 'Entity::Course'
+      when 'CourseProfile::Models::Course'
         existing_ar.destroy
       when 'CourseMembership::Models::Period'
         existing_ar.really_destroy! # only need soft delete on course ARs

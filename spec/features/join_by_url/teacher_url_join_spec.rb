@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Teachers' do
-  let(:course) { CreateCourse[name: 'Access me'] }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:course) { FactoryGirl.create :course_profile_course }
+  let(:user)   { FactoryGirl.create(:user) }
 
   describe 'joining their courses' do
     context 'unauthenticated' do
@@ -44,8 +44,11 @@ RSpec.describe 'Teachers' do
             visit teach_course_path('invalid-no-way-it-will-work')
           end
 
-          expect(page).to have_css('.rescue-from',
-                                   text: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')
+          expect(page).to have_css(
+            '.rescue-from',
+             text: 'You are trying to join a class as a teacher, but the information you ' +
+                   'provided is either out of date or does not correspond to an existing course.'
+          )
         end
       end
     end

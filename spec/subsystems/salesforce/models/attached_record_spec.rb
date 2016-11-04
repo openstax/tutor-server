@@ -5,7 +5,7 @@ RSpec.describe Salesforce::Models::AttachedRecord, type: :model do
   context "factory instance" do
     it "has good defaults" do
       ar = FactoryGirl.create :salesforce_attached_record
-      expect(ar.tutor_gid).to match /Entity::Course/
+      expect(ar.tutor_gid).to match /CourseProfile::Models::Course/
       expect(ar.salesforce_class).to eq Salesforce::Remote::OsAncillary
       expect(ar.salesforce_id).to eq "foo"
     end
@@ -26,14 +26,14 @@ RSpec.describe Salesforce::Models::AttachedRecord, type: :model do
 
   context "attached_to stuff" do
     let(:ar) { FactoryGirl.create :salesforce_attached_record,
-                                   tutor_object: Entity::Course.new(id: 432) }
+                                   tutor_object: CourseProfile::Models::Course.new(id: 432) }
 
     it "returns attached_to_id" do
       expect(ar.attached_to_id).to eq 432
     end
 
     it "returns attached_to_class_name" do
-      expect(ar.attached_to_class_name).to eq "Entity::Course"
+      expect(ar.attached_to_class_name).to eq "CourseProfile::Models::Course"
     end
   end
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 class Entity
-  RSpec.describe ClassMethods, type: :lib do
+  describe ClassMethods, type: :lib do
     class DummyClass
       extend Entity::ClassMethods
     end

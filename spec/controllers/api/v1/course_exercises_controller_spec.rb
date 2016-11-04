@@ -14,7 +14,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course)         { CreateCourse[name: 'Physics 101'] }
+  let(:course)         { FactoryGirl.create :course_profile_course }
 
   context 'with a real book' do
     before(:all) do
@@ -150,9 +150,9 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
             api_patch :update, user_1_token,
                       parameters: { course_id: course.id },
                       raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
-          }.to change{ course.profile.reload.biglearn_excluded_pool_uuid }
+          }.to change{ course.reload.biglearn_excluded_pool_uuid }
 
-          expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
+          expect(course.biglearn_excluded_pool_uuid).to be_a(String)
 
           expect(response).to have_http_status(:success)
           exclusions = response.body_as_hash
@@ -169,9 +169,9 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
             api_patch :update, user_1_token,
                       parameters: { course_id: course.id },
                       raw_post_data: [{ id: exercise.id, is_excluded: false }].to_json
-          }.to change{ course.profile.reload.biglearn_excluded_pool_uuid }
+          }.to change{ course.reload.biglearn_excluded_pool_uuid }
 
-          expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
+          expect(course.biglearn_excluded_pool_uuid).to be_a(String)
 
           expect(response).to have_http_status(:success)
           exclusions = response.body_as_hash

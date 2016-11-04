@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Students enrolling via URL' do
-  let(:course) { CreateCourse[name: 'Biology'] }
-  let(:period1) { CreatePeriod[course: course, name: '1st'] }
-  let(:period2) { CreatePeriod[course: course, name: '2nd'] }
+  let(:course)  { FactoryGirl.create :course_profile_course }
+  let(:period1) { FactoryGirl.create :course_membership_period, course: course }
+  let(:period2) { FactoryGirl.create :course_membership_period, course: course }
 
   let(:user) { FactoryGirl.create(:user) }
   let(:other_user) { FactoryGirl.create(:user) }
@@ -74,8 +74,8 @@ RSpec.describe 'Students enrolling via URL' do
       end
 
       context 'when a student of a different course that uses same ecosystem' do
-        let(:other_course) { CreateCourse[name: 'Biology'] }
-        let(:other_period) { CreatePeriod[course: other_course, name: '1st'] }
+        let(:other_course) { FactoryGirl.create :course_profile_course }
+        let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
 
         before {
           AddUserAsPeriodStudent[period: other_period, user: user, student_identifier: '12345']
@@ -105,10 +105,13 @@ RSpec.describe 'Students enrolling via URL' do
           end
         end
         context 'when user belongs to other courses' do
+          let(:other_course) { FactoryGirl.create :course_profile_course }
+          let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
+
           before(:each) {
               AddUserAsPeriodStudent[
                 user: user, student_identifier: '12345',
-                period: CreatePeriod[course: CreateCourse[name: 'New Course'], name: 'New Period']
+                period: other_period
               ]
           }
           it "links to dashboard" do
@@ -148,10 +151,13 @@ RSpec.describe 'Students enrolling via URL' do
           end
 
           context 'when user belongs to other courses' do
+            let(:other_course) { FactoryGirl.create :course_profile_course }
+            let(:other_period) { FactoryGirl.create :course_membership_period,
+                                                    course: other_course }
+
             before(:each) {
               AddUserAsPeriodStudent[
-                user: user, student_identifier: '12345',
-                period: CreatePeriod[course: CreateCourse[name: 'New Course'], name: 'New Period']
+                user: user, student_identifier: '12345', period: other_period
               ]
             }
             it "links to dashboard" do

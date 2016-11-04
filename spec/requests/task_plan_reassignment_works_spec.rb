@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Task plan reassignment works', type: :request, api: true, version: :v1 do
-  let(:course)       { CreateCourse[name: 'Physics'] }
-  let(:period)       { CreatePeriod[course: course, name: '1st'] }
+  let(:course) { FactoryGirl.create :course_profile_course }
+  let(:period) { FactoryGirl.create :course_membership_period, course: course }
+
   let(:student_user) { FactoryGirl.create(:user) }
   let(:teacher_user) { FactoryGirl.create(:user) }
 

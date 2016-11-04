@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreatePeriod, type: :routine do
-  let(:course)        { CreateCourse[name: 'Great course'] }
+  let(:course)        { FactoryGirl.create :course_profile_course }
   let(:time_zone)     { course.time_zone.to_tz }
   let!(:period)       { described_class[course: course, name: 'Original period'] }
   let!(:other_period) { described_class[course: course, name: 'Other period'] }

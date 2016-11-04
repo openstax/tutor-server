@@ -81,13 +81,14 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :courses, only: [:show, :update] do
+    resources :offerings, only: :index
+
+    resources :courses, only: [:create, :show, :update] do
       member do
         get 'dashboard(/role/:role_id)', action: :dashboard
         get 'cc/dashboard(/role/:role_id)', action: :cc_dashboard
-        get 'plans'
-        get 'tasks'
         get 'roster'
+        post 'clone'
 
         scope :performance, controller: :performance_reports do
           get '(/role/:role_id)', action: :index
@@ -105,7 +106,7 @@ Rails.application.routes.draw do
         get '(/:pool_types)', action: :show
       end
 
-      resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
+      resources :task_plans, path: '/plans', shallow: true, except: [:new, :edit] do
         member do
           get 'stats'
           get 'review'

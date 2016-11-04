@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
-  let(:course) { Entity::Course.create! }
-  let(:period_1) { CreatePeriod[course: course].to_model }
+  let(:course)   { FactoryGirl.create :course_profile_course }
+  let(:period_1) { FactoryGirl.create :course_membership_period, course: course }
 
   it 'freaks out if the requested salesforce ID is not attached to course' do
     expect(

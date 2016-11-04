@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Throttles", type: :request, version: :v1 do
+RSpec.describe "Throttles", type: :request, version: :v1 do
 
   describe '/api/log/entry' do
     let(:limit) { 50 }

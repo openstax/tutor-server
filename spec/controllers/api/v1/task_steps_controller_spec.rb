@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
 
   let(:application)        { FactoryGirl.create :doorkeeper_application }
   let(:user_1)             { FactoryGirl.create(:user) }
@@ -32,8 +32,8 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
     te
   }
 
-  let(:course)              { FactoryGirl.create :entity_course }
-  let(:period)              { CreatePeriod[course: course] }
+  let(:course)              { FactoryGirl.create :course_profile_course }
+  let(:period)              { FactoryGirl.create :course_membership_period, course: course }
 
   let(:lo)                  { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let(:pp)                  { FactoryGirl.create :content_tag, value: 'os-practice-problems' }

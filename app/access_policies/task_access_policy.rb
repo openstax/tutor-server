@@ -13,11 +13,11 @@ class TaskAccessPolicy
     end
   end
 
-  def self.get_entity_course(task)
+  def self.get_course(task)
     course = task.task_plan.try(:owner) ||  # normal course
              task.concept_coach_task.try(:task).try(:taskings).try(:first)
                                     .try(:period).try(:course) # cc course
-    course.is_a?(Entity::Course) ? course : nil
+    course.is_a?(CourseProfile::Models::Course) ? course : nil
   end
 
   def self.user_is_tasked?(user, task)
@@ -25,8 +25,9 @@ class TaskAccessPolicy
   end
 
   def self.user_is_teacher?(user, task)
-    (course = get_entity_course(task)).present? &&
-    UserIsCourseTeacher[user: user, course: course]
+    course = get_course(task)
+
+    course.present? && UserIsCourseTeacher[user: user, course: course]
   end
 
 end

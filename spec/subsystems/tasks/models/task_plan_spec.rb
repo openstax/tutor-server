@@ -3,10 +3,12 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskPlan, type: :model do
   subject(:task_plan) { FactoryGirl.create :tasks_task_plan }
 
-  let(:new_task) { FactoryGirl.build :tasks_task, opens_at: Time.current.yesterday }
+  let(:new_task)      { FactoryGirl.build :tasks_task, opens_at: Time.current.yesterday }
 
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }
+
+  it { is_expected.to belong_to(:cloned_from) }
 
   it { is_expected.to have_many(:tasking_plans).dependent(:destroy) }
   it { is_expected.to have_many(:tasks).dependent(:destroy) }
@@ -90,12 +92,21 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to_not be_valid
   end
 
-  it "trims title and description fields" do
+  it 'trims title and description fields' do
     task_plan.title = " hi\n\n\r\n "
     task_plan.description = " \tthere\t "
     task_plan.save
     expect(task_plan.title).to eq "hi"
     expect(task_plan.description).to eq "there"
+  end
+
+  it 'knows its publish job' do
+    uuid = SecureRandom.uuid
+    job = double('Job')
+
+    expect(Jobba).to receive(:find).with(uuid).and_return(job)
+    task_plan.publish_job_uuid = uuid
+    expect(task_plan.publish_job).to eq job
   end
 
 end

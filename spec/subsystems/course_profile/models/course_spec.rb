@@ -1,0 +1,104 @@
+require 'rails_helper'
+
+RSpec.describe CourseProfile::Models::Course, type: :model do
+  subject(:course) { FactoryGirl.create :course_profile_course }
+
+  it { is_expected.to belong_to(:time_zone).dependent(:destroy).autosave(true) }
+
+  it { is_expected.to belong_to(:school) }
+  it { is_expected.to belong_to(:offering) }
+
+  it { is_expected.to belong_to(:cloned_from) }
+
+  it { is_expected.to have_many(:periods).dependent(:destroy) }
+  it { is_expected.to have_many(:teachers).dependent(:destroy) }
+  it { is_expected.to have_many(:students).dependent(:destroy) }
+
+  it { is_expected.to have_many(:course_ecosystems).dependent(:destroy) }
+  it { is_expected.to have_many(:ecosystems) }
+
+  it { is_expected.to have_many(:course_assistants).dependent(:destroy) }
+
+  it { is_expected.to have_many(:taskings) }
+
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:term) }
+  it { is_expected.to validate_presence_of(:year) }
+  it { is_expected.to validate_presence_of(:starts_at) }
+  it { is_expected.to validate_presence_of(:ends_at) }
+
+  it { is_expected.to validate_uniqueness_of(:time_zone) }
+
+  it 'validates format of default times' do
+    course.default_open_time = '16:32'
+    expect(course).to be_valid
+
+    course.default_due_time = '16:'
+    expect(course).not_to be_valid
+
+    course.default_open_time = '24:00'
+    expect(course).not_to be_valid
+
+    course.default_due_time = '23:60'
+    expect(course).not_to be_valid
+  end
+
+  it 'knows if it is deletable' do
+    expect(course).to be_deletable
+
+    user = FactoryGirl.create :user
+    period = FactoryGirl.create(:course_membership_period, course: course)
+
+    expect(course.reload).not_to be_deletable
+
+    student = AddUserAsPeriodStudent[user: user, period: period].student
+
+    expect(course.reload).not_to be_deletable
+
+    student.destroy
+
+    expect(course.reload).not_to be_deletable
+
+    period.destroy
+
+    expect(course.reload).to be_deletable
+
+    teacher = AddUserAsCourseTeacher[user: user, course: course].teacher
+    expect(course.reload).not_to be_deletable
+    teacher.destroy
+    expect(course.reload).to be_deletable
+  end
+
+  it 'knows if it is active' do
+    expect(course).to be_active
+
+    course.starts_at = Time.current.tomorrow
+    expect(course).not_to be_active
+
+    course.starts_at = Time.current - 1.week
+    course.ends_at = Time.current.yesterday
+    expect(course).not_to be_active
+
+    course.ends_at = Time.current + 1.week
+    expect(course).to be_active
+  end
+
+  it 'cannot end before it starts' do
+    expect(course).to be_valid
+
+    course.starts_at = Time.current.tomorrow
+    course.ends_at = Time.current.yesterday
+
+    expect(course).not_to be_valid
+  end
+
+  it 'cannot be too far in the past or future' do
+    expect(course).to be_valid
+
+    course.year = CourseProfile::Models::Course::MIN_YEAR - 1
+    expect(course).not_to be_valid
+
+    course.year = Time.current.year + CourseProfile::Models::Course::MAX_FUTURE_YEARS + 1
+    expect(course).not_to be_valid
+  end
+end

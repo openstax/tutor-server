@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe StudentAccessPolicy, type: :access_policy do
   let(:requestor)    { FactoryGirl.create(:user) }
-  let(:course)       { Entity::Course.create }
-  let(:period)       { CreatePeriod[course: course] }
+  let(:course)       { FactoryGirl.create :course_profile_course }
+  let(:period)       { FactoryGirl.create :course_membership_period, course: course }
   let(:student_user) { FactoryGirl.create(:user) }
   let(:student)      { AddUserAsPeriodStudent[user: student_user, period: period].student }
 
@@ -21,20 +21,20 @@ RSpec.describe StudentAccessPolicy, type: :access_policy do
         context 'and the requestor is a course teacher' do
           before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
 
-          it { should be true }
+          it { should eq true }
         end
 
         context 'and the requestor is not a course teacher' do
           before { allow(UserIsCourseTeacher).to receive(:[]) { false } }
 
-          it { should be false }
+          it { should eq false }
         end
       end
 
       context 'and the requestor is not human' do
         before { allow(requestor).to receive(:is_human?) { false } }
 
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -42,6 +42,6 @@ RSpec.describe StudentAccessPolicy, type: :access_policy do
   context "when the action is :made_up" do
     let(:action) { :made_up }
 
-    it { should be false }
+    it { should eq false }
   end
 end

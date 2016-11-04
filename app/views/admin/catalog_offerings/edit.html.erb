@@ -12,8 +12,8 @@
 
     <% @offerings.each do |offering| %>
 
-      <%= render :partial => (offering == @offering) ? 'edit_row' : 'display_row',
-      locals: {offering: offering, form: form } %>
+      <%= render partial: (offering == @offering) ? 'edit_row' : 'display_row',
+                 locals: {offering: offering, form: form } %>
 
     <% end -%>
   </tbody>

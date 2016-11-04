@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::GetAssistant, type: :routine do
-  let(:course)            { CreateCourse[name: 'required'] }
+  let(:course)            { FactoryGirl.create :course_profile_course }
   let!(:assistant)        { FactoryGirl.create :tasks_assistant }
   let!(:course_assistant) {
     FactoryGirl.create :tasks_course_assistant, course: course,

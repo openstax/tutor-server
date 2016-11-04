@@ -2,26 +2,26 @@ class Admin::CoursesController < Admin::BaseController
   include Manager::CourseDetails
   include Lev::HandleWith
 
-  before_action :get_schools, only: [:new, :edit]
-  before_action :get_catalog_offerings, only: [:new, :edit]
+  before_action :get_schools, :get_catalog_offerings, only: [:new, :edit]
 
   def index
     @query = params[:query]
-    courses = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
-    params[:per_page] = courses.outputs.total_count if params[:per_page] == "all"
+    result = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
+    params[:per_page] = result.outputs.total_count if params[:per_page] == "all"
     params_for_pagination = { page: (params[:page] || 1), per_page: (params[:per_page] || 25) }
 
-    if courses.errors.any?
+    if result.errors.any?
       flash[:error] = "Invalid search"
       redirect_to admin_courses_path and return
     end
 
-    @course_infos = courses.outputs.items.preload(
+    @course_infos = result.outputs.items.preload(
       [
-        :profile, { teachers: { role: [:role_user, :profile] }, periods_with_deleted: :latest_enrollments_with_deleted }
-      ],
-      [ ecosystems: [:books] ],
-      [ :periods ]
+        { teachers: { role: [:role_user, :profile] },
+          periods_with_deleted: :latest_enrollments_with_deleted,
+          ecosystems: :books },
+        :periods
+      ]
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
@@ -31,14 +31,21 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def new
-    @profile = CourseProfile::Models::Profile.new
+    get_new_course
   end
 
   def create
     handle_with(Admin::CoursesCreate,
-                complete: ->(*) {
-                  flash[:notice] = 'The course has been created.'
+                success: ->(*) {
+                  flash.notice = 'The course has been created.'
                   redirect_to admin_courses_path
+                },
+                failure: ->(*) {
+                  flash[:error] = @handler_result.errors.full_messages
+                  @course = @handler_result.outputs.course || get_new_course
+                  get_schools
+                  get_catalog_offerings
+                  render :new
                 })
   end
 
@@ -114,9 +121,9 @@ class Admin::CoursesController < Admin::BaseController
     else
       course_ids = params[:course_id]
       ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
-      courses = Entity::Course
+      courses = CourseProfile::Models::Course
         .where { id.in course_ids }
-        .includes(:ecosystems)
+        .preload(:ecosystems)
         .select { |course|
           course.ecosystems.first.try(:id) != ecosystem.id
         }
@@ -151,17 +158,18 @@ class Admin::CoursesController < Admin::BaseController
     if params[:ecosystem_id].blank?
       flash[:error] = 'Please select a course ecosystem'
     else
-      course = Entity::Course.find(params[:id])
+      course = CourseProfile::Models::Course.find(params[:id])
       ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
 
       if GetCourseEcosystem[course: course] == ecosystem
-        flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
+        flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.name}\""
       else
         CourseContent::AddEcosystemToCourse.perform_later(
           course: Marshal.dump(course.reload),
           ecosystem: Marshal.dump(ecosystem)
         )
-        flash[:notice] = "Course ecosystem update to \"#{ecosystem.title}\" queued for \"#{course.profile.name}\""
+        flash[:notice] = "Course ecosystem update to \"#{ecosystem.title
+                         }\" queued for \"#{course.name}\""
       end
     end
 
@@ -170,15 +178,36 @@ class Admin::CoursesController < Admin::BaseController
 
   private
 
+  def get_new_course
+    current_time = Time.current
+
+    @course = CourseProfile::Models::Course.new(
+      is_concept_coach: false,
+      is_college: true,
+      term: 'demo',
+      year: current_time.year,
+      starts_at: current_time,
+      ends_at: current_time + 6.months
+    )
+  end
+
   def course_params
-    { id: params[:id], course: params.require(:course)
-                                     .permit(:name,
-                                             :appearance_code,
-                                             :school_district_school_id,
-                                             :catalog_offering_id,
-                                             :is_concept_coach,
-                                             :is_college,
-                                             teacher_ids: []) }
+    {
+      id: params[:id],
+      course: params.require(:course).permit(
+        :name,
+        :term,
+        :year,
+        :starts_at,
+        :ends_at,
+        :is_concept_coach,
+        :is_college,
+        :catalog_offering_id,
+        :appearance_code,
+        :school_district_school_id,
+        teacher_ids: []
+      )
+    }
   end
 
   def get_schools

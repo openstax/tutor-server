@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Concept Coach teacher logout", type: :request do
+RSpec.describe "Concept Coach teacher logout", type: :request do
   let(:user)        { FactoryGirl.create(:user) }
   let(:default) { OpenStax::Accounts.configuration.default_logout_redirect_url }
 

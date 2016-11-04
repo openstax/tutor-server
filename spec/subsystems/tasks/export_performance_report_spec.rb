@@ -9,7 +9,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = CreateCourse[name: 'Physics']
+    @course = FactoryGirl.create :course_profile_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
     @teacher = FactoryGirl.create(:user)
@@ -35,7 +35,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
   end
 
   it 'does not blow up if the course name has forbidden characters' do
-    @course.profile.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
+    @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
     expect {
       @output_filename = described_class[role: @role, course: @course]
     }.not_to raise_error

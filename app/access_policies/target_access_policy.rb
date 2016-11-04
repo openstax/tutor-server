@@ -3,7 +3,7 @@ class TargetAccessPolicy
     case action
     when :task
       course = case requestor
-      when Entity::Course
+      when CourseProfile::Models::Course
         requestor
       else
         raise NotYetImplemented
@@ -16,7 +16,7 @@ class TargetAccessPolicy
         strategy = ::User::Strategies::Direct::User.new(target)
         user = ::User::User.new(strategy: strategy)
         UserIsCourseStudent[user: user, course: course]
-      when Entity::Course
+      when CourseProfile::Models::Course
         target == course
       when CourseMembership::Models::Period
         course.periods.with_deleted.include?(target)

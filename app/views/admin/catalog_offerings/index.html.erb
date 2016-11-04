@@ -7,5 +7,5 @@
 <div style="clear:both; padding: 10px"></div>
 
 <% @offerings.each do |offering| %>
-  <%= render :partial => 'display_row', locals: {offering: offering} %>
+  <%= render partial: 'display_row', locals: {offering: offering} %>
 <% end -%>

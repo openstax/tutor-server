@@ -10,10 +10,11 @@ class CustomerService::CoursesController < CustomerService::BaseController
     @total_courses = courses.total_count
     @course_infos = courses.items.preload(
       [
-        :profile, { teachers: { role: [:role_user, :profile] }, periods_with_deleted: :latest_enrollments_with_deleted }
-      ],
-      [ ecosystems: [:books] ],
-      [ :periods ]
+        { teachers: { role: [:role_user, :profile] },
+          periods_with_deleted: :latest_enrollments_with_deleted,
+          ecosystems: :books },
+        :periods
+      ]
     ).paginate(page: params.fetch(:page, 1), per_page: params.fetch(:per_page, 25))
   end
 

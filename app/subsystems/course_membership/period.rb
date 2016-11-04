@@ -7,7 +7,7 @@ module CourseMembership
     end
 
     def course
-      verify_and_return @strategy.course, klass: Entity::Course, error: StrategyError
+      verify_and_return @strategy.course, klass: CourseProfile::Models::Course, error: StrategyError
     end
 
     def name
