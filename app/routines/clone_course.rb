@@ -12,23 +12,27 @@ class CloneCourse
 
   protected
 
-  def exec(course:, teacher_user:, copy_question_library:, **attributes)
+  def exec(course:, teacher_user:, copy_question_library:,
+           name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
+           time_zone: nil, default_open_time: nil, default_due_time: nil)
 
     attrs = {
-      name: course.name,
-      term: course.term,
-      year: course.year + 1,
-      is_college: course.is_college,
+      name: name || course.name,
+      is_college: is_college || course.is_college,
       is_concept_coach: course.is_concept_coach,
-      num_sections: course.num_sections,
+      term: term || course.term,
+      year: year || course.year + 1,
+      num_sections: num_sections || course.num_sections,
       school: course.school,
       catalog_offering: course.offering,
       appearance_code: course.appearance_code,
-      time_zone: course.time_zone
-    }.merge(attributes)
-     .merge(cloned_from: course)
+      time_zone: time_zone || course.time_zone,
+      default_open_time: default_open_time || course.default_open_time,
+      default_due_time: default_due_time || course.default_due_time,
+      cloned_from: course
+    }
 
-    run(:create_course, **attrs)
+    run(:create_course, attrs)
 
     run(:add_teacher, course: outputs.course, user: teacher_user)
 

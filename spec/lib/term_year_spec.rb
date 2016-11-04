@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TermYear, type: :lib do
 
+  CURRENT_YEAR = Time.current.year
   TESTED_YEARS = 2015..2017
 
   subject(:term_year) { described_class.new(term, year) }
@@ -13,13 +14,13 @@ RSpec.describe TermYear, type: :lib do
       context year.to_s do
         let(:year) { year }
 
-        it 'always returns July 1st, 2015 00:00:00 AM as the start date' do
+        it 'ignores the given year and returns July 1st, 2015 00:00:00 AM as the start date' do
           start_date = DateTime.parse('July 1st, 2015 00:00:00 AM')
           expect(term_year.starts_at).to eq start_date
         end
 
-        it 'always returns June 30th, 2017 11:59:59 PM as the end date' do
-          end_date = DateTime.parse('June 30th, 2017 11:59:59 PM')
+        it 'ignores the given year and returns Jan 31st, 2017 11:59:59 PM as the end date' do
+          end_date = DateTime.parse('Jan 31st, 2017 11:59:59 PM')
           expect(term_year.ends_at).to eq end_date
         end
       end
@@ -33,13 +34,15 @@ RSpec.describe TermYear, type: :lib do
       context year.to_s do
         let(:year) { year }
 
-        it "returns January 1st, #{year} 00:00:00 AM as the start date" do
-          start_date = DateTime.parse("January 1st, #{year} 00:00:00 AM")
+        it 'ignores the given year and returns July 1st, ' +
+           '(CURRENT_YEAR - 1) 00:00:00 AM as the start date' do
+          start_date = DateTime.parse("July 1st, #{CURRENT_YEAR - 1} 00:00:00 AM")
           expect(term_year.starts_at).to eq start_date
         end
 
-        it "returns December 31st, #{year} 11:59:59 PM as the end date" do
-          end_date = DateTime.parse("December 31st, #{year} 11:59:59 PM")
+        it 'ignores the given year and returns June 30th, ' +
+           '(CURRENT_YEAR + 1) 11:59:59 PM as the end date' do
+          end_date = DateTime.parse("June 30th, #{CURRENT_YEAR + 1} 11:59:59 PM")
           expect(term_year.ends_at).to eq end_date
         end
       end
