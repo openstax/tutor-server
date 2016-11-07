@@ -5,13 +5,15 @@ class SendTaskedExerciseAnswerToExchange
   protected
 
   def exec(tasked_exercise:)
-    url = tasked_exercise.url
-    roles = tasked_exercise.task_step.task.taskings.map(&:role)
-    users = Role::GetUsersForRoles[roles]
-    identifiers = users.map(&:exchange_write_identifier)
-
     # Currently assuming no group tasks
-    identifier = identifiers.first
+    role = tasked_exercise.task_step.task.taskings.first.role
+
+    # Don't send trial course info to Exchange
+    return if role.student.try!(:course).try!(:is_trial)
+
+    identifier = role.exchange_write_identifier
+
+    url = tasked_exercise.url
 
     # "trial" is currently set to the id of the task_step being answered
     trial = tasked_exercise.task_step.id.to_s
@@ -22,6 +24,7 @@ class SendTaskedExerciseAnswerToExchange
     OpenStax::Exchange.record_multiple_choice_answer(identifier, url, trial, answer_id)
 
     grade = tasked_exercise.is_correct? ? 1 : 0
+
     grader = 'tutor'
 
     OpenStax::Exchange.record_grade(identifier, url, trial, grade, grader)
