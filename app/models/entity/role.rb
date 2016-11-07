@@ -10,7 +10,7 @@ class Entity::Role < Tutor::SubSystems::BaseModel
   has_one :profile, through: :role_user, subsystem: :user
 
   delegate :username, :first_name, :last_name, :full_name, :name,
-           :exchange_read_identifier, :exchange_write_identifier, to: :profile
+           :exchange_read_identifier, :exchange_write_identifier, to: :profile, allow_nil: true
 
   unique_token :research_identifier, mode: :hex, length: 4
 end
