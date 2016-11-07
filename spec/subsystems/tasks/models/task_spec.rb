@@ -425,18 +425,10 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates on_time counts when the due date changes" do
-        class ArrayWithReload < Array
-          def reload
-            each(&:reload)
-          end
-        end
-
         task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
-                                               due_at: Time.current - 1.day)
-
-        allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.current)
-        allow(correct_exercise_step).to receive(:reload).and_return(correct_exercise_step)
-        allow(task).to receive(:task_steps).and_return(ArrayWithReload[correct_exercise_step])
+                                               due_at: Time.current - 1.day,
+                                               step_types: ['tasks_tasked_exercise'])
+        Demo::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
 
         task.update_step_counts!
 

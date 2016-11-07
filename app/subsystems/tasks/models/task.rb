@@ -161,9 +161,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts
-    task_steps.reload if persisted?
-
-    steps = task_steps.to_a
+    steps = persisted? ? task_steps.reload.preload(:tasked).to_a : task_steps.to_a
 
     update_steps_count(task_steps: steps)
     update_completed_steps_count(task_steps: steps)

@@ -7,7 +7,8 @@ module Demo
 
     protected
 
-    def exec(task_step:, is_correct:, free_response: nil, completed: true)
+    def exec(task_step:, is_correct:, free_response: nil,
+             completed: true, completion_time: Time.current)
       tasked = task_step.tasked
 
       if !tasked.is_a?(::Tasks::Models::TaskedExercise)
@@ -29,7 +30,7 @@ module Demo
 
       tasked.update_attributes(free_response: free_response, answer_id: answer_id)
 
-      run(:mark_completed, task_step: task_step) if completed
+      run(:mark_completed, task_step: task_step, completion_time: completion_time) if completed
     end
 
   end

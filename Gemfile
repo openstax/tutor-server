@@ -263,9 +263,6 @@ group :development, :test do
   gem 'spring-commands-rspec'
   gem 'guard-rspec'
 
-end
-
-group :development do
   # Trace AR queries
   gem 'active_record_query_trace'
 end
