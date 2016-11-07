@@ -1,5 +1,6 @@
 module Demo
   class AnswerExercise
+
     lev_routine
 
     uses_routine MarkTaskStepCompleted, as: :mark_completed
@@ -30,5 +31,6 @@ module Demo
 
       run(:mark_completed, task_step: task_step) if completed
     end
+
   end
 end
