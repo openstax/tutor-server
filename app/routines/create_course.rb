@@ -1,21 +1,18 @@
 class CreateCourse
   lev_routine express_output: :course
 
-  uses_routine CourseProfile::CreateCourse,
-               translations: { outputs: { type: :verbatim } },
-               as: :create_course
+  uses_routine CourseProfile::CreateCourse, translations: { outputs: { type: :verbatim } },
+                                            as: :create_course
 
-  uses_routine CourseMembership::CreatePeriod,
-               as: :create_period
+  uses_routine CourseMembership::CreatePeriod, as: :create_period
 
-  uses_routine SchoolDistrict::ProcessSchoolChange,
-               as: :process_school_change
+  uses_routine SchoolDistrict::ProcessSchoolChange, as: :process_school_change
 
-  uses_routine Tasks::CreateCourseAssistants,
-               as: :create_course_assistants
+  uses_routine Tasks::CreateCourseAssistants, as: :create_course_assistants
 
-  uses_routine AddEcosystemToCourse,
-               as: :add_ecosystem
+  uses_routine AddEcosystemToCourse, as: :add_ecosystem
+
+  uses_routine PopulateTrialCourseContent, as: :populate_trial_course_content
 
   def exec(name:, term:, year:, is_trial:, is_college:, is_concept_coach: nil, num_sections: 0,
            catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
@@ -64,6 +61,8 @@ class CreateCourse
     ecosystem = Content::Ecosystem.new(strategy: catalog_offering.ecosystem.to_model.wrap)
 
     run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
+
+    run(:populate_trial_course_content, course: outputs.course) if outputs.course.is_trial
   end
 
 end

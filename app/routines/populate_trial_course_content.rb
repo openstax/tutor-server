@@ -1,9 +1,5 @@
 class PopulateTrialCourseContent
 
-  NUM_PERIODS = 2
-
-  NUM_STUDENTS_PER_PERIOD = 3
-
   STUDENT_INFO = [
     { username: 'trialstudent1', title: 'Trial', first_name: 'Student', last_name: 'One'   },
     { username: 'trialstudent2', title: 'Trial', first_name: 'Student', last_name: 'Two'   },
@@ -40,11 +36,10 @@ class PopulateTrialCourseContent
       User::User.find_by_account_id(account.id) || run(:create_user, account_id: account.id)
     end
 
-    # Creating trial course periods
-    periods = NUM_PERIODS.times.map{ run(:create_period, course: course).outputs.period }
+    num_students_per_period = trial_student_users.size/course.num_sections
 
     # Adding trial students to periods
-    trial_student_users.each_slice(NUM_STUDENTS_PER_PERIOD).each_with_index do |users, index|
+    trial_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
       users.each{ |user| run(:add_student, user: user, period: periods[index]) }
     end
 
