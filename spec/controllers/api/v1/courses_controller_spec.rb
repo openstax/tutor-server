@@ -115,7 +115,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#create' do
     let(:term)             { CourseProfile::Models::Course.terms.keys.sample }
     let(:year)             { Time.current.year }
-    let(:catalog_offering) { FactoryGirl.create :catalog_offering }
+    let(:book)             { FactoryGirl.create :content_book }
+    let(:catalog_offering) { FactoryGirl.create :catalog_offering, ecosystem: book.ecosystem }
     let(:num_sections)     { 2 }
 
     let(:valid_body_hash) do

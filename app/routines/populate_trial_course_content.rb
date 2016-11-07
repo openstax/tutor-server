@@ -23,7 +23,7 @@ class PopulateTrialCourseContent
 
   STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.4
 
-  lev_routine express_output: :course
+  lev_routine
 
   uses_routine User::CreateUser, as: :create_user
   uses_routine CourseMembership::CreatePeriod, as: :create_period
@@ -34,26 +34,29 @@ class PopulateTrialCourseContent
 
   def exec(course:)
 
+    periods = course.periods.to_a
+
+    return if periods.size == 0
+
     # Find trial student accounts
     trial_student_accounts = STUDENT_INFO.map do |student_info|
-      account = OpenStax::Accounts::Account.find_or_create_by(
+      OpenStax::Accounts::Account.find_or_create_by(
         username: student_info[:username]
-      ) do |account|
-        account.title = student_info[:title]
-        account.first_name = student_info[:first_name]
-        account.last_name = student_info[:last_name]
-      end.tap do |account|
-        raise "Someone took the trial username #{account.username}!" \
-          if account.valid_openstax_uid?
+      ) do |acc|
+        acc.title = student_info[:title]
+        acc.first_name = student_info[:first_name]
+        acc.last_name = student_info[:last_name]
+      end.tap do |acc|
+        raise "Someone took the trial username #{acc.username}!" if acc.valid_openstax_uid?
       end
     end
 
     # Find trial student users
     trial_student_users = trial_student_accounts.map do |account|
-      User::User.find_by_account_id(account.id) || run(:create_user, account_id: account.id)
+      User::User.find_by_account_id(account.id) ||
+      run(:create_user, account_id: account.id).outputs.user
     end
 
-    periods = course.periods.to_a
     num_students_per_period = trial_student_users.size/periods.size
 
     # Add trial students to periods
@@ -101,11 +104,11 @@ class PopulateTrialCourseContent
 
     # Work tasks
     course.periods.each do |period|
-      students = period.students.to_a
+      student_roles = period.student_roles
 
-      great_student_role = students.first
-      average_student_roles = students[1..-2]
-      struggling_student_role = students.last
+      great_student_role = student_roles.first
+      average_student_roles = student_roles[1..-2]
+      struggling_student_role = student_roles.last
 
       work_tasks(role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY)
 
