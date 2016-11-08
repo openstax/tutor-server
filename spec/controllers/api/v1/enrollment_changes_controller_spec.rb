@@ -22,7 +22,6 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
   context '#prevalidate' do
     context 'anonymous user' do
-
       it 'does not raises any exceptions' do
         expect{ api_post :prevalidate, nil, raw_post_data: {
           enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -43,7 +42,6 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
       end
-
     end
 
   end
@@ -244,8 +242,9 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         expect(response).to have_http_status(:ok)
       end
 
-      it 'sets the student_identifier, if given' do
+      it 'sets the student_identifier, if given, even if it is already taken' do
         sid = 'N0B0DY'
+        AddUserAsPeriodStudent[user: user_2, period: period, student_identifier: sid]
 
         expect{ api_put :approve, nil, parameters: { id: enrollment_change.id },
                                        raw_post_data: { student_identifier: sid } }
@@ -254,17 +253,6 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
         enrollment = CourseMembership::Models::Enrollment.order(:created_at).last
         expect(enrollment.student.student_identifier).to eq sid
-      end
-
-      it 'returns an error if the student_identifier already exists in the same course' do
-        sid = 'N0B0DY'
-        AddUserAsPeriodStudent[user: user_2, period: period, student_identifier: sid]
-
-        expect{ api_put :approve, nil, parameters: { id: enrollment_change.id },
-                                       raw_post_data: { student_identifier: sid } }
-          .not_to change{ CourseMembership::Models::Enrollment.count }
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body_as_hash[:errors].first[:code]).to eq 'taken'
       end
 
       it 'returns an error if the EnrollmentChange request has already been rejected' do
