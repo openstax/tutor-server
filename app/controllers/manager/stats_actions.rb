@@ -4,7 +4,7 @@ module Manager::StatsActions
   end
 
   def courses
-    @courses = CourseProfile::Models::Course.preload(
+    @courses = CourseProfile::Models::Course.where(is_trial: false).preload(
       teachers: { role: { role_user: :profile } },
       periods_with_deleted: :latest_enrollments_with_deleted
     ).order(:name).to_a
@@ -41,9 +41,11 @@ module Manager::StatsActions
   end
 
   def concept_coach
-    cc_tasks = Tasks::Models::ConceptCoachTask.preload([
-      {page: {chapter: {book: {chapters: :pages}}}}, {task: {taskings: {role: :profile}}}
-    ]).to_a
+    cc_tasks = Tasks::Models::ConceptCoachTask
+      .joins(role: {student: :course})
+      .where(role: {student: {course: {is_trial: false}}})
+      .preload([{page: {chapter: {book: {chapters: :pages}}}}, {role: :profile}])
+      .to_a
 
     @cc_stats = {
       books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }
@@ -83,9 +85,9 @@ module Manager::StatsActions
   protected
 
   def get_cc_task_stats(cc_tasks)
+    students = cc_tasks.map{ |cc_task| cc_task.role.profile }.uniq.length
     tasks = cc_tasks.map(&:task)
     total = tasks.length
-    students = tasks.flat_map{ |task| task.taskings.map{ |tg| tg.role.profile } }.uniq.length
     in_progress = tasks.select(&:in_progress?).length
     completed = tasks.select(&:completed?).length
     not_started = total - (in_progress + completed)

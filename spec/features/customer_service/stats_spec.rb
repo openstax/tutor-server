@@ -42,7 +42,7 @@ RSpec.feature CustomerService::StatsController do
     let(:teacher_user)        { FactoryGirl.create :user }
     let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
-    let(:exercises) do
+    let(:exercises)           do
       5.times.map{ FactoryGirl.create :content_exercise }.sort_by(&:number)
     end
     let!(:excluded_exercises) do
@@ -75,8 +75,20 @@ RSpec.feature CustomerService::StatsController do
   end
 
   context 'visiting the concept coach stats page' do
-    let!(:tasks)    { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
-    let!(:cc_tasks) { tasks.map{ |task| FactoryGirl.create :tasks_concept_coach_task, task: task } }
+    let(:period)       { FactoryGirl.create :course_membership_period }
+
+    let(:student_role) do
+      user = FactoryGirl.create :user
+      AddUserAsPeriodStudent[period: period, user: user]
+    end
+
+    let(:tasks)        { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
+
+    let!(:cc_tasks)    do
+      tasks.map do |task|
+        FactoryGirl.create :tasks_concept_coach_task, task: task, role: student_role
+      end
+    end
 
     scenario 'displays concept coach statistics' do
       visit concept_coach_customer_service_stats_path

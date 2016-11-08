@@ -68,14 +68,17 @@
           end
           current_count += 1
 
+          role_id = step.task.taskings.first.entity_role_id
+          r_info = role_info[role_id]
+          next if r_info.nil?
+
           tasked = step.tasked
           type = step.tasked_type.match(/Tasked(.+)\z/).try(:[],1)
-          role_id = step.task.taskings.first.entity_role_id
-          course_id = role_info[role_id].try(:[],:course_id)
+          course_id = r_info[:course_id]
           url = tasked.respond_to?(:url) ? tasked.url : nil
 
           row = [
-            role_info[role_id].try(:[], :research_identifier),
+            r_info[:research_identifier],
             course_id,
             is_cc?(course_id),
             step.task.taskings.first.course_membership_period_id,
@@ -128,7 +131,8 @@
   def role_info
     @role_info ||=
       CourseMembership::Models::Student
-        .joins(:role)
+        .joins(:course, :role)
+        .where(course: { is_trial: false })
         .select([ :entity_role_id,
                   :course_profile_course_id,
                   Entity::Role.arel_table[:research_identifier] ])
