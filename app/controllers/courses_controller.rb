@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   skip_before_filter :authenticate_user!, if: :period_is_archived?
 
   def teach
-    handle_with(CoursesTeach, complete: -> { send_to_teacher_dashboard })
+    handle_with(CoursesTeach, complete: -> { send_to_course_dashboard })
   end
 
   def enroll
@@ -17,7 +17,7 @@ class CoursesController < ApplicationController
   def confirm_enrollment
     handle_with(CoursesConfirmEnrollment,
                 success: -> {
-                  send_to_student_dashboard(
+                  send_to_course_dashboard(
                     notice: "Enrollment successful! It may take a few " \
                             "minutes to build your assignments."
                   )
@@ -40,7 +40,7 @@ class CoursesController < ApplicationController
     when :period_is_archived
       render :archived_enrollment
     when :user_is_already_a_course_student
-      send_to_student_dashboard(notice: "You are already enrolled in this course.")
+      send_to_course_dashboard(notice: "You are already enrolled in this course.")
     when :user_is_dropped
       render :dropped_student
     when :enrollment_code_not_found
@@ -59,15 +59,11 @@ class CoursesController < ApplicationController
     redirect_to dashboard_path, webview_notice: notice
   end
 
-  def send_to_student_dashboard(notice: nil)
+  def send_to_course_dashboard(notice: nil)
     course = @handler_result.outputs.course
-    redirect_to student_course_dashboard_path(course.id), webview_notice: notice
+    redirect_to course_dashboard_path(course.id), webview_notice: notice
   end
 
-  def send_to_teacher_dashboard(notice: nil)
-    course = @handler_result.outputs.course
-    redirect_to course_dashboard_path(course.id), notice: notice
-  end
 
   def enrollment_code_not_found
     render 'static_pages/generic_error',

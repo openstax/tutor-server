@@ -40,7 +40,7 @@ RSpec.describe 'Students enrolling via URL' do
 
           expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
           expect(CourseMembership::Models::Enrollment.last.period).to eq period1.to_model
-          expect(current_path).to eq(student_course_dashboard_path(course))
+          expect(current_path).to eq(course_dashboard_path(course))
           expect(page.body).to match(/notice\":\"Enrollment successful! It may take/)
           expect(CourseMembership::Models::Student.last.student_identifier).to eq '12345'
         end
@@ -53,7 +53,7 @@ RSpec.describe 'Students enrolling via URL' do
 
           expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
           expect(CourseMembership::Models::Enrollment.last.period).to eq period1.to_model
-          expect(current_path).to eq(student_course_dashboard_path(course))
+          expect(current_path).to eq(course_dashboard_path(course))
           expect(CourseMembership::Models::Student.last.student_identifier).to be_nil
         end
 
@@ -173,7 +173,7 @@ RSpec.describe 'Students enrolling via URL' do
 
         it 'drops straight into course' do
           visit token_enroll_path(period1.enrollment_code_for_url)
-          expect(current_path).to eq(student_course_dashboard_path(course))
+          expect(current_path).to eq(course_dashboard_path(course))
           expect(page.body).to have_content "notice\":\"You are already enrolled"
         end
       end
@@ -182,7 +182,7 @@ RSpec.describe 'Students enrolling via URL' do
         it 'drops the user straight into the course' do
           AddUserAsPeriodStudent[period: period2, user: user]
           visit token_enroll_path(period1.enrollment_code_for_url)
-          expect(current_path).to eq(student_course_dashboard_path(course))
+          expect(current_path).to eq(course_dashboard_path(course))
         end
       end
 
@@ -230,7 +230,7 @@ RSpec.describe 'Students enrolling via URL' do
         click_button 'I Agree'
       end
 
-      expect(current_path).to eq(student_course_dashboard_path(course))
+      expect(current_path).to eq(course_dashboard_path(course))
       expect(page.body).to match /\"notice\":\"Enrollment successful! It may take/
     end
   end

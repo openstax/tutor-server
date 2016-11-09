@@ -284,8 +284,7 @@ Rails.application.routes.draw do
   get '/enroll/:enroll_token(/:ignore)' => 'courses#enroll', as: :token_enroll
   post '/enroll/confirm' => 'courses#confirm_enrollment', as: :confirm_token_enroll
 
-  get '/courses/:id', to: 'webview#index', as: :course_dashboard
-  get '/courses/:id/list', to: 'webview#index', as: :student_course_dashboard
+  get '/course/:id', to: 'webview#index', as: :course_dashboard
 
   namespace :content_analyst do
     root to: 'console#index'
