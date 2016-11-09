@@ -10,7 +10,6 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   validates :course, presence: true
   validates :role, presence: true, uniqueness: true
-  validates :student_identifier, uniqueness: { scope: :course, allow_nil: true }
 
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment

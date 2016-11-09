@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161031181743) do
+ActiveRecord::Schema.define(version: 20161108152717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -270,7 +270,7 @@ ActiveRecord::Schema.define(version: 20161031181743) do
     t.string   "student_identifier"
   end
 
-  add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_e_c_id_and_s_identifier", unique: true, where: "(deleted_at IS NULL)", using: :btree
+  add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
   add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
   add_index "course_membership_students", ["deleted_at"], name: "index_course_membership_students_on_deleted_at", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
