@@ -5,65 +5,57 @@ salesforce_book_name: Biology w Courseware
 appearance_code: college_biology
 cnx_book_id: 185cbf87-c72e-48f5-b51e-f14f21b5eabd
 
-periods:
-  - id: p1
-    name: 1st
-    students: [rs1, rs2, rs3]
-  - id: p2
-    name: 2nd
-    students: [rs4, rs5, rs6]
-
 assignments:
   - type: reading
     book_locations: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1
     periods:
       - id: p1
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_two_days_ago %>
+        opens_at: <%= open_last_monday - 2.week %>
+        due_at: <%= due_last_monday - 5.days %>
         students: {rs1: 100, rs2: 80, rs3: i}
       - id: p2
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_two_days_ago %>
-        students: {rs4: ns, rs5: ns, rs6: ns}
+        opens_at: <%= open_last_monday - 2.week %>
+        due_at: <%= due_last_monday - 5.days %>
+        students: {rs4: 100, rs5: 80, rs6: i}
 
   - type: reading
     book_locations: [[2, 0], [2, 1], [2, 2]]
     title: Read Chapter 2
     periods:
       - id: p1
-        opens_at: <%= open_two_days_ago %>
-        due_at: <%= due_yesterday %>
+        opens_at: <%= open_last_monday - 1.week %>
+        due_at: <%= due_last_monday + 2.days %>
         students: {rs1: 100, rs2: 80, rs3: i}
       - id: p2
-        opens_at: <%= open_two_days_ago %>
-        due_at: <%= due_yesterday %>
-        students: {rs4: ns, rs5: ns, rs6: ns}
+        opens_at: <%= open_last_monday - 1.week %>
+        due_at: <%= due_last_monday + 2.days %>
+        students: {rs4: 100, rs5: 80, rs6: i}
 
   - type: reading
     book_locations: [[3, 0], [3, 1], [3, 2]]
     title: Read Chapter 3
     periods:
       - id: p1
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_tomorrow %>
+        opens_at: <%= open_last_monday %>
+        due_at: <%= due_next_monday + 2.days %>
         students: {rs1: 100, rs2: 80, rs3: i}
       - id: p2
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_tomorrow %>
-        students: {rs4: ns, rs5: ns, rs6: ns}
+        opens_at: <%= open_last_monday %>
+        due_at: <%= due_next_monday + 2.days %>
+        students: {rs4: 100, rs5: 80, rs6: i}
 
   - type: reading
     book_locations: [[4, 0], [4, 1], [4, 2]]
     title: Read Chapter 4
     periods:
       - id: p1
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_two_days_from_now %>
-        students: {rs1: 100, rs2: 80, rs3: i}
+        opens_at: <%= open_next_monday %>
+        due_at: <%= due_next_monday + 9.days %>
+        students: {rs1: ns, rs2: ns, rs3: ns}
       - id: p2
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_two_days_from_now %>
+        opens_at: <%= open_next_monday %>
+        due_at: <%= due_next_monday + 9.days %>
         students: {rs4: ns, rs5: ns, rs6: ns}
 
   - type: homework
@@ -72,13 +64,13 @@ assignments:
     num_exercises: 3
     periods:
       - id: p1
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_two_days_ago %>
+        opens_at: <%= open_last_monday - 2.weeks %>
+        due_at: <%= due_last_monday - 3.days %>
         students: {rs1: 100, rs2: 80, rs3: i}
       - id: p2
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_two_days_ago %>
-        students: {rs4: ns, rs5: ns, rs6: ns}
+        opens_at: <%= open_last_monday - 2.weeks %>
+        due_at: <%= due_last_monday - 3.days %>
+        students: {rs4: 100, rs5: 80, rs6: i}
 
   - type: homework
     book_locations: [[2, 0], [2, 1], [2, 2]]
@@ -86,13 +78,13 @@ assignments:
     num_exercises: 3
     periods:
       - id: p1
-        opens_at: <%= open_two_days_ago %>
-        due_at: <%= due_yesterday %>
+        opens_at: <%= open_last_monday - 1.week %>
+        due_at: <%= due_last_monday + 4.days %>
         students: {rs1: 100, rs2: 80, rs3: i}
       - id: p2
-        opens_at: <%= open_two_days_ago %>
-        due_at: <%= due_yesterday %>
-        students: {rs4: ns, rs5: ns, rs6: ns}
+        opens_at: <%= open_last_monday - 1.week %>
+        due_at: <%= due_last_monday + 4.days %>
+        students: {rs4: 100, rs5: 80, rs6: i}
 
   - type: homework
     book_locations: [[3, 0], [3, 1], [3, 2]]
@@ -100,13 +92,13 @@ assignments:
     num_exercises: 3
     periods:
       - id: p1
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_tomorrow %>
+        opens_at: <%= open_last_monday %>
+        due_at: <%= due_next_monday + 4.days %>
         students: {rs1: 100, rs2: 80, rs3: i}
       - id: p2
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_tomorrow %>
-        students: {rs4: ns, rs5: ns, rs6: ns}
+        opens_at: <%= open_last_monday %>
+        due_at: <%= due_next_monday + 4.days %>
+        students: {rs4: 100, rs5: 80, rs6: i}
 
   - type: homework
     book_locations: [[4, 0], [4, 1], [4, 2]]
@@ -114,12 +106,12 @@ assignments:
     num_exercises: 3
     periods:
       - id: p1
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_two_days_from_now %>
-        students: {rs1: 100, rs2: 80, rs3: i}
+        opens_at: <%= open_next_monday %>
+        due_at: <%= due_next_monday + 11.days %>
+        students: {rs1: ns, rs2: ns, rs3: ns}
       - id: p2
-        opens_at: <%= open_yesterday %>
-        due_at: <%= due_two_days_from_now %>
+        opens_at: <%= open_next_monday %>
+        due_at: <%= due_next_monday + 11.days %>
         students: {rs4: ns, rs5: ns, rs6: ns}
 
 reading_processing_instructions:
