@@ -7,7 +7,7 @@ module Catalog
 
     wrap_attributes ::Catalog::Models::Offering,
       :id, :salesforce_book_name, :appearance_code, :is_tutor, :is_concept_coach,
-      :description, :webview_url, :pdf_url, :default_course_name
+      :is_available, :description, :webview_url, :pdf_url, :default_course_name
 
     def ecosystem
       verify_and_return @strategy.ecosystem, klass: ::Content::Ecosystem,
