@@ -11,8 +11,8 @@ class DropEntityCourses < ActiveRecord::Migration
 
     # Keep the old course IDs so we don't have to
     # change all the columns that used to point to entity_course_id
-    CourseProfile::Models::Course.update_all('id = -id')
-    CourseProfile::Models::Course.update_all('id = entity_course_id')
+    CourseProfile::Models::Course.unscoped.update_all('id = -id')
+    CourseProfile::Models::Course.unscoped.update_all('id = entity_course_id')
 
     rename_column :course_content_course_ecosystems, :entity_course_id, :course_profile_course_id
     rename_column :course_membership_students, :entity_course_id, :course_profile_course_id
@@ -38,19 +38,21 @@ class DropEntityCourses < ActiveRecord::Migration
               name: 'index_t_performance_report_exports_on_c_p_course_id'
 
     # Change other columns that reference courses in a polymorphic way
-    Tasks::Models::TaskPlan.where(owner_type: 'Entity::Course')
+    Tasks::Models::TaskPlan.unscoped
+                           .where(owner_type: 'Entity::Course')
                            .update_all(owner_type: 'CourseProfile::Models::Course')
-    Tasks::Models::TaskingPlan.where(target_type: 'Entity::Course')
+    Tasks::Models::TaskingPlan.unscoped
+                              .where(target_type: 'Entity::Course')
                               .update_all(target_type: 'CourseProfile::Models::Course')
-    Salesforce::Models::AttachedRecord.where{tutor_gid.like '%Entity::Course%'}.update_all(
+    Salesforce::Models::AttachedRecord.unscoped.where{tutor_gid.like '%Entity::Course%'}.update_all(
       "tutor_gid = replace(tutor_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
     )
-    Legal::Models::TargetedContractRelationship.where do
+    Legal::Models::TargetedContractRelationship.unscoped.where do
       parent_gid.like '%Entity::Course%'
     end.update_all(
       "parent_gid = replace(parent_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
     )
-    Legal::Models::TargetedContractRelationship.where do
+    Legal::Models::TargetedContractRelationship.unscoped.where do
       child_gid.like '%Entity::Course%'
     end.update_all(
       "child_gid = replace(child_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
