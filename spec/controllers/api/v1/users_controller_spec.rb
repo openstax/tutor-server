@@ -17,35 +17,13 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
                                             application: application,
                                             resource_owner_id: nil }
 
-  describe "#show" do
+  context "#show" do
     context "caller has an authorization token" do
       it "should return an ok (200) code" do
         api_get :show, user_1_token
         expect(response.code).to eq('200')
-        payload = JSON.parse(response.body)
-        expect(payload).to eq(
-          "name" => user_1.name,
-          'is_admin' => false,
-          'is_customer_service' => false,
-          'is_content_analyst' => false,
-          'profile_url' => Addressable::URI.join(
-            OpenStax::Accounts.configuration.openstax_accounts_url,
-            '/profile').to_s
-        )
-      end
-
-      it 'returns is_admin flag correctly' do
-        api_get :show, admin_token
-        expect(response.code).to eq('200')
-        payload = JSON.parse(response.body)
-        expect(payload).to eq(
-          "name" => admin.name,
-          'is_admin' => true,
-          'is_customer_service' => false,
-          'is_content_analyst' => false,
-          'profile_url' => Addressable::URI.join(
-            OpenStax::Accounts.configuration.openstax_accounts_url,
-            '/profile').to_s
+        expect(response.body_as_hash).to(
+          match Api::V1::UserRepresenter.new(user_1).as_json.deep_symbolize_keys
         )
       end
     end
@@ -65,10 +43,10 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
     end
   end
 
-  describe "#ui-settings" do
+  context "#ui-settings" do
     it 'returns api_error when previous is invalid' do
       api_put :ui_settings, user_1_token, raw_post_data: {
-                'ui_settings' => {is_open: false, answer: 42}
+                ui_settings: {is_open: false, answer: 42}
               }.to_json
       expect(response.code).to eq('422')
       expect(response.body).to include('out-of-band update detected')
@@ -76,26 +54,22 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
 
     it "saves to profile" do
       api_put :ui_settings, user_1_token, raw_post_data: {
-                'previous_ui_settings' => {},
-                'ui_settings' => {is_open: false, answer: 42}
+                previous_ui_settings: {},
+                ui_settings: {is_open: false, answer: 42}
               }.to_json
       expect(response.code).to eq('200')
       expect(user_1.to_model.reload.ui_settings).to eq({'is_open' => false, 'answer' => 42})
     end
-
   end
 
 
-  describe '#tours' do
-
+  context '#tours' do
     it 'records tour as viewed' do
       expect {
         api_put :tours, user_1_token, parameters: {id: 'the-grand-tour'}
         expect(response.code).to eq('200')
       }.to change { User::Models::TourView.count }.by(1)
     end
-
   end
-
 
 end

@@ -19,7 +19,8 @@ RSpec.describe User::Models::Profile, type: :model do
     expect(profile_2).to_not be_valid
   end
 
-  [:username, :first_name, :last_name, :full_name, :title, :name, :casual_name].each do |method|
+  [:username, :first_name, :last_name, :full_name, :title,
+   :name, :casual_name, :faculty_status].each do |method|
     it { is_expected.to delegate_method(method).to(:account) }
   end
 
