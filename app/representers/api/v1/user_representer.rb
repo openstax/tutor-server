@@ -16,6 +16,12 @@ module Api::V1
     property :is_content_analyst?,
              as: :is_content_analyst
 
+    property :faculty_status,
+             type: String,
+             schema_info: {
+               required: true
+             }
+
     property :profile_url,
              getter: ->(*) {
                Addressable::URI.join(
