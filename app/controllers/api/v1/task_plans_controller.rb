@@ -379,7 +379,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def update_task_plan!(task_plan)
     # If no tasks are open, just call Roar's consume! like usual
     return consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter) \
-      unless task_plan.tasks_past_open?
+      unless task_plan.available_to_students?
 
     # Store current open dates for each TaskingPlan that is already open in the TaskPlan
     opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
@@ -402,8 +402,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # Returns the job uuid, if any, or nil if the request was completed inline
   def distribute_or_update_tasks(task_plan)
     should_publish_or_update = task_plan.is_publish_requested || task_plan.is_published?
-    should_publish = should_publish_or_update && !task_plan.tasks_past_open?
-    # should_update = should_publish_or_update && task_plan.tasks_past_open?
+    should_publish = should_publish_or_update && !task_plan.available_to_students?
+    # should_update = should_publish_or_update && task_plan.available_to_students?
 
     task_plan.publish_last_requested_at = Time.current if should_publish
     task_plan.save

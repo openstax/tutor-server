@@ -5,44 +5,57 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
   let(:course)    { FactoryGirl.create :course_profile_course }
   let(:period)    { FactoryGirl.create :course_membership_period, course: course }
-  let!(:user)     {
-    user = FactoryGirl.create(:user)
-    AddUserAsPeriodStudent.call(user: user, period: period)
-    user
-  }
-  let!(:new_user) {
-    user = FactoryGirl.create(:user)
-    AddUserAsPeriodStudent.call(user: user, period: period)
-    user
-  }
-  let(:task_plan) {
+  let!(:user)     do
+    FactoryGirl.create(:user).tap do |user|
+      AddUserAsPeriodStudent.call(user: user, period: period)
+    end
+  end
+  let!(:new_user) do
+    FactoryGirl.create(:user).tap do |user|
+      AddUserAsPeriodStudent.call(user: user, period: period)
+    end
+  end
+  let(:task_plan) do
     task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
     task_plan.tasking_plans.first.target = period.to_model
     task_plan.save!
     task_plan
-  }
+  end
+
+  let(:teacher_student_role)  { FactoryGirl.create :entity_role, role_type: :teacher_student }
+  let!(:teacher_student_task) do
+    FactoryGirl.create :tasks_task, task_plan: task_plan, tasked_to: [teacher_student_role]
+  end
 
   context 'a homework' do
-    let(:assistant) { FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant') }
-    let(:homework_plan) {
+    let(:assistant)     do
+      FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+    end
+    let(:homework_plan) do
       task_plan = FactoryGirl.build(
-        :tasks_task_plan, assistant: assistant, owner: course, type: 'homework', ecosystem: @ecosystem.to_model,
+        :tasks_task_plan,
+        assistant: assistant,
+        owner: course,
+        type: 'homework',
+        ecosystem: @ecosystem.to_model,
         settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
       )
       task_plan.tasking_plans.first.target = period.to_model
       task_plan.save!
       task_plan
-    }
-    let(:core_pools) { @ecosystem.homework_core_pools(pages: @pages) }
-    let(:exercise_ids) {
-      core_pools.flat_map(&:exercises).map{|e| e.id.to_s}
-    }
+    end
+    let(:core_pools)   { @ecosystem.homework_core_pools(pages: @pages) }
+    let(:exercise_ids) { core_pools.flat_map(&:exercises).map{|e| e.id.to_s} }
 
-    before {
-      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to( receive(:k_ago_map) { [ [2, 4] ] } )
-      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to( receive(:num_personalized_exercises) { 3 } )
+    before do
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:k_ago_map) { [ [2, 4] ] }
+      )
+      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+        receive(:num_personalized_exercises) { 3 }
+      )
       generate_test_exercise_content
-    }
+    end
 
     it 'distributes the steps' do
       results = DistributeTasks.call(homework_plan)
@@ -52,7 +65,6 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       homework_plan.tasks.each do | task |
         expect(task.task_steps.map(&:group_type)).to eq(step_types)
       end
-
     end
 
     # Note - this isn't 100% guaranteed to fail.  There's still a chance that the forked children will process
@@ -81,31 +93,74 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
   end
 
   context 'unpublished task_plan' do
-    it 'creates tasks for the task_plan' do
-      expect(task_plan.tasks).to be_empty
-      result = DistributeTasks.call(task_plan)
-      expect(result.errors).to be_empty
-      expect(task_plan.tasks.size).to eq 3
-    end
-
-    it 'sets the published_at fields' do
-      result = DistributeTasks.call(task_plan)
-      expect(result.errors).to be_empty
-      expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
-      expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
-    end
-
-    it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
-      original_build_tasks = DummyAssistant.instance_method(:build_tasks)
-      allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
-        tasks = original_build_tasks.bind(receiver).call
-        tasks.each{ |task| task.task_type = :reading }
+    context 'before the open date' do
+      before(:each) do
+        opens_at = Time.current.tomorrow
+        task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
+        task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
       end
 
-      expect(task_plan.tasks).to be_empty
-      result = DistributeTasks.call(task_plan)
-      expect(result.errors.first.code).to eq :empty_tasks
-      expect(task_plan.tasks).to be_empty
+      it 'creates tasks for the task_plan' do
+        expect(task_plan.tasks).to be_empty
+        result = DistributeTasks.call(task_plan)
+        expect(result.errors).to be_empty
+        expect(task_plan.reload.tasks.size).to eq 3
+      end
+
+      it 'sets the published_at fields' do
+        result = DistributeTasks.call(task_plan)
+        expect(result.errors).to be_empty
+        expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
+        expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
+      end
+
+      it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
+        original_build_tasks = DummyAssistant.instance_method(:build_tasks)
+        allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
+          tasks = original_build_tasks.bind(receiver).call
+          tasks.each{ |task| task.task_type = :reading }
+        end
+
+        expect(task_plan.tasks).to be_empty
+        result = DistributeTasks.call(task_plan)
+        expect(result.errors.first.code).to eq :empty_tasks
+        expect(task_plan.tasks).to eq [teacher_student_task]
+      end
+    end
+
+    context 'after the open date' do
+      before(:each) do
+        opens_at = Time.current.yesterday
+        task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
+        task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
+      end
+
+      it 'creates tasks for the task_plan' do
+        expect(task_plan.tasks).to be_empty
+        result = DistributeTasks.call(task_plan)
+        expect(result.errors).to be_empty
+        expect(task_plan.reload.tasks.size).to eq 3
+      end
+
+      it 'sets the published_at fields' do
+        result = DistributeTasks.call(task_plan)
+        expect(result.errors).to be_empty
+        expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
+        expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
+      end
+
+      it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
+        original_build_tasks = DummyAssistant.instance_method(:build_tasks)
+        allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
+          tasks = original_build_tasks.bind(receiver).call
+          tasks.each{ |task| task.task_type = :reading }
+        end
+
+        expect(task_plan.tasks).to be_empty
+        result = DistributeTasks.call(task_plan)
+        expect(result.errors.first.code).to eq :empty_tasks
+        expect(task_plan.tasks).to eq [teacher_student_task]
+      end
     end
   end
 

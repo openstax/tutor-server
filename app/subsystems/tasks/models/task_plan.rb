@@ -40,8 +40,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     preload(:tasking_plans, owner: :time_zone, tasks: [:taskings, task_steps: :tasked])
   }
 
-  def tasks_past_open?
-    tasks.any?(&:past_open?)
+  def available_to_students?(current_time: Time.current)
+    tasks.any? do |task|
+      task.past_open?(current_time: current_time) && task.taskings.first.try!(:role).try!(:student?)
+    end
   end
 
   def is_draft?
@@ -103,7 +105,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def changes_allowed
-    return unless tasks_past_open?
+    return unless available_to_students?
     forbidden_attributes = changes.except(*UPDATABLE_ATTRIBUTES_AFTER_OPEN)
     return if forbidden_attributes.empty?
 
