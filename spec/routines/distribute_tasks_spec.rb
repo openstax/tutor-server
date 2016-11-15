@@ -22,11 +22,6 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
     task_plan
   end
 
-  let(:teacher_student_role)  { FactoryGirl.create :entity_role, role_type: :teacher_student }
-  let!(:teacher_student_task) do
-    FactoryGirl.create :tasks_task, task_plan: task_plan, tasked_to: [teacher_student_role]
-  end
-
   context 'a homework' do
     let(:assistant)     do
       FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
@@ -57,11 +52,24 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       generate_test_exercise_content
     end
 
-    it 'distributes the steps' do
-      results = DistributeTasks.call(task_plan: homework_plan)
-      expect(results.errors).to be_empty
+    it 'creates a preview and distributes the steps' do
       step_types = ["core_group", "core_group", "core_group", "core_group", "core_group",
                     "core_group", "personalized_group", "personalized_group", "personalized_group"]
+
+      results = DistributeTasks.call(task_plan: homework_plan, preview: true)
+      expect(results.errors).to be_empty
+
+      expect(homework_plan.reload.tasks.length).to eq 1
+
+      homework_plan.tasks.each do | task |
+        expect(task.task_steps.map(&:group_type)).to eq(step_types)
+      end
+
+      results = DistributeTasks.call(task_plan: homework_plan)
+      expect(results.errors).to be_empty
+
+      expect(homework_plan.reload.tasks.length).to eq 3
+
       homework_plan.tasks.each do | task |
         expect(task.task_steps.map(&:group_type)).to eq(step_types)
       end
@@ -100,6 +108,16 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
       end
 
+      it 'can create a preview task for the task_plan' do
+        expect(task_plan.tasks).to be_empty
+        result = DistributeTasks.call(task_plan: task_plan, preview: true)
+
+        expect(result.errors).to be_empty
+        expect(task_plan.reload.tasks.size).to eq 1
+        expect(task_plan.tasks.first.taskings.first.role).to eq period.teacher_student_role
+        expect(task_plan).not_to be_available_to_students
+      end
+
       it 'creates tasks for the task_plan' do
         expect(task_plan.tasks).to be_empty
         result = DistributeTasks.call(task_plan: task_plan)
@@ -124,7 +142,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         expect(task_plan.tasks).to be_empty
         result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors.first.code).to eq :empty_tasks
-        expect(task_plan.tasks).to eq [teacher_student_task]
+        expect(task_plan.tasks).to be_empty
       end
     end
 
@@ -159,7 +177,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         expect(task_plan.tasks).to be_empty
         result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors.first.code).to eq :empty_tasks
-        expect(task_plan.tasks).to eq [teacher_student_task]
+        expect(task_plan.tasks).to be_empty
       end
     end
   end

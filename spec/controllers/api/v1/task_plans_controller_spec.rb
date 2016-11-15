@@ -39,7 +39,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       opens_at: Time.current.tomorrow
     )
 
-    teacher_student_task = FactoryGirl.create :tasks_task, tasked_to: [period.teacher_student_role]
+    @teacher_student_role = period.teacher_student_role
+
+    teacher_student_task = FactoryGirl.create :tasks_task, tasked_to: [@teacher_student_role]
 
     @course.time_zone.update_attribute(:name, 'Pacific Time (US & Canada)')
 
@@ -266,6 +268,18 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       )
     end
 
+    it 'automatically creates preview tasks' do
+      controller.sign_in @teacher
+      expect { api_post :create,
+                        nil,
+                        parameters: { course_id: @course.id },
+                        raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+        .to change{ @teacher_student_role.taskings.count }.by(1)
+      expect(response).to have_http_status(:success)
+
+      expect(@task_plan).not_to be_available_to_students
+    end
+
     it 'does not allow an unauthorized user to create a task_plan' do
       controller.sign_in @user
       expect {
@@ -358,6 +372,24 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(@task_plan.reload).to_json)
       )
+    end
+
+    it 'automatically updates preview tasks' do
+      old_preview_task = FactoryGirl.create :tasks_task, task_plan: @task_plan,
+                                                         tasked_to: [@teacher_student_role]
+
+      controller.sign_in @teacher
+      api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
+              raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+      expect(response).to have_http_status(:success)
+
+      expect(Tasks::Models::Task.find_by(id: old_preview_task)).to be_nil
+
+      new_preview_task = @task_plan.reload.tasks.to_a.find do |task|
+        task.taskings.first.role == @teacher_student_role
+      end
+      expect(new_preview_task).to be_persisted
+      expect(@task_plan).not_to be_available_to_students
     end
 
     it 'does not allow an unauthorized user to update a task_plan' do

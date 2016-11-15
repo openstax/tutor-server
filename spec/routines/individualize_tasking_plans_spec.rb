@@ -6,6 +6,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   let(:tasking_plan) { task_plan.tasking_plans.first }
 
   let(:result)       { described_class[task_plan: task_plan] }
+  let(:ts_result)    { described_class[task_plan: task_plan, role_type: :teacher_student] }
 
   context 'entity_role' do
     let(:role)  { FactoryGirl.create :entity_role }
@@ -61,9 +62,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     let!(:student_role_2)        { AddUserAsPeriodStudent[user: user_2, period: period_1] }
     let!(:student_role_3)        { AddUserAsPeriodStudent[user: user_3, period: period_2] }
 
-    before do
-      tasking_plan.update_attribute(:target, course)
-    end
+    before                       { tasking_plan.update_attribute(:target, course) }
 
     it 'returns tasking plans pointing to the course\'s student and teacher_student roles' do
       expect(result.size).to eq 5
@@ -71,6 +70,18 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
                           teacher_student_role_1, teacher_student_role_2]
 
       result.each do |new_tasking_plan|
+        expect(new_tasking_plan.task_plan).to eq task_plan
+        expect(new_tasking_plan.target).to be_in acceptable_roles
+        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+      end
+    end
+
+    it 'limits results to the specified role_type, if given' do
+      expect(ts_result.size).to eq 2
+      acceptable_roles = [teacher_student_role_1, teacher_student_role_2]
+
+      ts_result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
@@ -116,6 +127,18 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       acceptable_roles = [student_role_1, student_role_2, teacher_student_role_1]
 
       result.each do |new_tasking_plan|
+        expect(new_tasking_plan.task_plan).to eq task_plan
+        expect(new_tasking_plan.target).to be_in acceptable_roles
+        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+      end
+    end
+
+    it 'limits results to the specified role_type, if given' do
+      expect(ts_result.size).to eq 1
+      acceptable_roles = [teacher_student_role_1]
+
+      ts_result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at

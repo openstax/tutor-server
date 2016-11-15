@@ -408,17 +408,21 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     task_plan.publish_last_requested_at = Time.current if should_publish
     task_plan.save
 
-    return if task_plan.errors.any? || !should_publish_or_update
+    return if task_plan.errors.any?
 
-    if should_publish
-      # Publish requested or already published but tasks not open: trigger publish
-      uuid = DistributeTasks.perform_later(task_plan: task_plan)
-      task_plan.update_attribute(:publish_job_uuid, uuid)
-      uuid
-    else # elsif should_update
-      # Tasks already open: propagate updates
-      PropagateTaskPlanUpdates.call(task_plan: task_plan)
-      nil
+    if should_publish_or_update
+      if should_publish
+        # Publish requested or already published but tasks not open: trigger publish
+        uuid = DistributeTasks.perform_later(task_plan: task_plan)
+        task_plan.update_attribute(:publish_job_uuid, uuid)
+        uuid
+      else # elsif should_update
+        # Tasks already open: propagate updates
+        PropagateTaskPlanUpdates.call(task_plan: task_plan)
+        nil
+      end
+    else #elsif !should_publish_or_update
+      DistributeTasks.call(task_plan: task_plan, preview: true)
     end
   end
 

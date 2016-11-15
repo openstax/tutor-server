@@ -40,7 +40,7 @@ class DistributeTasks
     itp_args = { task_plan: task_plan }
 
     # If preview is true, only assign to teacher_student roles
-    itp_args[:role_type] = :teacher_student_role if preview
+    itp_args[:role_type] = :teacher_student if preview
 
     # Convert tasking_plans to point to individual roles
     tasking_plans = run(:individualize_tasking_plans, itp_args).outputs.tasking_plans
