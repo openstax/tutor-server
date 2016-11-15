@@ -25,7 +25,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
                                    description: 'No class today, kiddos',
                                    owner: course)
 
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
 
     expect(tasks.length).to eq num_taskees + 1
     expect(tasks.flat_map(&:task_type).uniq).to eq(['event'])

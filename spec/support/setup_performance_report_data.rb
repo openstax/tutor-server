@@ -100,7 +100,7 @@ class SetupPerformanceReportData
 
     reading_taskplan.save!
 
-    DistributeTasks[reading_taskplan]
+    DistributeTasks[task_plan: reading_taskplan]
 
     homework_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Homework task plan',
@@ -122,7 +122,7 @@ class SetupPerformanceReportData
 
     homework_taskplan.save!
 
-    DistributeTasks[homework_taskplan]
+    DistributeTasks[task_plan: homework_taskplan]
 
     homework2_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Homework 2 task plan',
@@ -144,7 +144,7 @@ class SetupPerformanceReportData
 
     homework2_taskplan.save!
 
-    DistributeTasks[homework2_taskplan]
+    DistributeTasks[task_plan: homework2_taskplan]
 
     future_homework_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Future Homework task plan',
@@ -168,7 +168,7 @@ class SetupPerformanceReportData
 
     future_homework_taskplan.save!
 
-    DistributeTasks[future_homework_taskplan]
+    DistributeTasks[task_plan: future_homework_taskplan]
 
     roles.map{ |role| get_student_tasks(role) }
   end

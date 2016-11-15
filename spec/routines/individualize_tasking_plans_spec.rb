@@ -5,7 +5,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   let(:task_plan)    { FactoryGirl.create :tasks_task_plan }
   let(:tasking_plan) { task_plan.tasking_plans.first }
 
-  let(:result)       { described_class[task_plan] }
+  let(:result)       { described_class[task_plan: task_plan] }
 
   context 'entity_role' do
     let(:role)  { FactoryGirl.create :entity_role }

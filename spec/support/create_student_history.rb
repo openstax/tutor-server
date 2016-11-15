@@ -55,10 +55,10 @@ class CreateStudentHistory
 
   def create_assignments(ecosystem, course, periods)
     periods = [periods].flatten.compact
-    run(:distribute_tasks, create_ireading_task_plan(ecosystem, course, periods))
+    run(:distribute_tasks, task_plan: create_ireading_task_plan(ecosystem, course, periods))
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
-    tasks = run(:distribute_tasks, task_plan).outputs.tasks
+    tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
     tasks.each do |task|
       task = task.reload
       answer_correctly(task.task_steps(true), 2)
@@ -79,8 +79,9 @@ class CreateStudentHistory
   end
 
   def ireading_assistant
-    @ireading_assistant ||= FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::IReadingAssistant')
+    @ireading_assistant ||= FactoryGirl.create(
+      :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
+    )
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)

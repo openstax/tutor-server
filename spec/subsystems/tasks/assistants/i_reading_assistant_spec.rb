@@ -132,7 +132,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         receive(:k_ago_map) { [[0, 2]] }
       )
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
@@ -192,7 +192,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
 
       task_plan.update_attribute(:settings, { 'page_ids' => [@content_pages.first.id.to_s] })
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
@@ -234,7 +234,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         end
       end
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
@@ -278,7 +278,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         end
       end
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
@@ -394,7 +394,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         receive(:k_ago_map) { [[0, 2]] }
       )
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be_nil
@@ -521,7 +521,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         receive(:k_ago_map) { [[0, 2]] }
       )
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be_nil
@@ -685,7 +685,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         ]
       end
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.size).to eq 1
       task_steps = tasks.first.task_steps
 

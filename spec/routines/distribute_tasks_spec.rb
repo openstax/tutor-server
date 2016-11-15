@@ -58,7 +58,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
     end
 
     it 'distributes the steps' do
-      results = DistributeTasks.call(homework_plan)
+      results = DistributeTasks.call(task_plan: homework_plan)
       expect(results.errors).to be_empty
       step_types = ["core_group", "core_group", "core_group", "core_group", "core_group",
                     "core_group", "personalized_group", "personalized_group", "personalized_group"]
@@ -76,7 +76,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       0.upto(5) do
         pids << Tutor.fork_with_connection do
           begin
-            DistributeTasks.call(plan)
+            DistributeTasks.call(task_plan: plan)
             0 # all we care about for this spec is isolation conflicts, anything else is considered passing
           rescue ActiveRecord::TransactionIsolationConflict
             99 # arbitrary exit status to indicate failure
@@ -102,13 +102,13 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
       it 'creates tasks for the task_plan' do
         expect(task_plan.tasks).to be_empty
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
         expect(task_plan.reload.tasks.size).to eq 3
       end
 
       it 'sets the published_at fields' do
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
         expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
@@ -122,7 +122,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         end
 
         expect(task_plan.tasks).to be_empty
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors.first.code).to eq :empty_tasks
         expect(task_plan.tasks).to eq [teacher_student_task]
       end
@@ -137,13 +137,13 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
       it 'creates tasks for the task_plan' do
         expect(task_plan.tasks).to be_empty
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
         expect(task_plan.reload.tasks.size).to eq 3
       end
 
       it 'sets the published_at fields' do
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
         expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
@@ -157,7 +157,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         end
 
         expect(task_plan.tasks).to be_empty
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors.first.code).to eq :empty_tasks
         expect(task_plan.tasks).to eq [teacher_student_task]
       end
@@ -166,7 +166,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
   context 'published task_plan' do
     before(:each) do
-      DistributeTasks.call(task_plan)
+      DistributeTasks.call(task_plan: task_plan)
       new_user.to_model.roles.each do |role|
         role.taskings.each{ |tasking| tasking.task.really_destroy! }
       end
@@ -184,7 +184,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         expect(task_plan.tasks.size).to eq 2
         old_task = task_plan.tasks.first
 
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
         expect(task_plan.reload.tasks.size).to eq 3
         expect(task_plan.tasks).not_to include old_task
@@ -193,7 +193,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       it 'does not set the first_published_at field' do
         old_published_at = task_plan.first_published_at
         publish_time = Time.current
-        result = DistributeTasks.call(task_plan, publish_time)
+        result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to eq old_published_at
         expect(task_plan.last_published_at).to be_within(1).of(publish_time)
@@ -211,7 +211,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         expect(task_plan.tasks.size).to eq 2
         old_task = task_plan.tasks.first
 
-        result = DistributeTasks.call(task_plan)
+        result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
         expect(task_plan.reload.tasks.size).to eq 3
         expect(task_plan.tasks).to include old_task
@@ -220,7 +220,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       it 'does not set the first_published_at field' do
         old_published_at = task_plan.first_published_at
         publish_time = Time.current
-        result = DistributeTasks.call(task_plan, publish_time)
+        result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to eq old_published_at
         expect(task_plan.last_published_at).to be_within(1).of(publish_time)

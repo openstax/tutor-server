@@ -29,7 +29,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   before(:each) do
     # Publish task_plan_1
-    DistributeTasks.call(task_plan_1)
+    DistributeTasks.call(task_plan: task_plan_1)
 
     # We are pretending new_user is new to the period, so hard-delete their tasks
     new_user.to_model.roles.each do |role|

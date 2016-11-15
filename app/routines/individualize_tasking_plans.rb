@@ -4,11 +4,12 @@ class IndividualizeTaskingPlans
 
   protected
 
-  def exec(task_plan)
+  def exec(task_plan:, role_type: nil)
     tasking_plans = task_plan.tasking_plans
     tasking_plans = tasking_plans.preload(:time_zone) if task_plan.persisted?
     outputs[:tasking_plans] = tasking_plans.flat_map do |tasking_plan|
       target = tasking_plan.target
+
       # For example, a deleted period
       next [] if target.nil? || target.respond_to?(:deleted?) && target.deleted?
 
@@ -29,6 +30,8 @@ class IndividualizeTaskingPlans
       else
         raise NotYetImplemented
       end
+
+      roles = roles.select{ |role| role.role_type == role_type.to_s } unless role_type.nil?
 
       [roles].flatten.map do |role|
         Tasks::Models::TaskingPlan.new(task_plan: task_plan,

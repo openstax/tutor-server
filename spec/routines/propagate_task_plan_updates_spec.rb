@@ -54,7 +54,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
 
   context 'published task_plan' do
     before(:each) do
-      DistributeTasks.call(task_plan)
+      DistributeTasks.call(task_plan: task_plan)
 
       task_plan.reload
       task_plan.title = new_title

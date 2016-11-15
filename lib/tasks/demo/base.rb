@@ -433,7 +433,7 @@ class Demo::Base
   end
 
   def distribute_tasks(task_plan:)
-    tasks = run(DistributeTasks, task_plan).outputs.tasks
+    tasks = run(DistributeTasks, task_plan: task_plan).outputs.tasks
 
     log("Assigned #{task_plan.type} #{tasks.count} times")
     log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?

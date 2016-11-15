@@ -459,7 +459,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         @task_plan.update_attribute :publish_last_requested_at, publish_last_requested_at
         @task_plan.tasking_plans.first.update_attribute :opens_at, opens_at
 
-        DistributeTasks[@task_plan]
+        DistributeTasks[task_plan: @task_plan]
 
         published_at = @task_plan.reload.last_published_at
         publish_job_uuid = @task_plan.publish_job_uuid

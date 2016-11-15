@@ -412,7 +412,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     if should_publish
       # Publish requested or already published but tasks not open: trigger publish
-      uuid = DistributeTasks.perform_later(task_plan)
+      uuid = DistributeTasks.perform_later(task_plan: task_plan)
       task_plan.update_attribute(:publish_job_uuid, uuid)
       uuid
     else # elsif should_update

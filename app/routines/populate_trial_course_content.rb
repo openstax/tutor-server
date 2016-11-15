@@ -108,7 +108,7 @@ class PopulateTrialCourseContent
       end
       reading_tp.save!
 
-      run(:distribute_tasks, reading_tp)
+      run(:distribute_tasks, task_plan: reading_tp)
 
       exercises_count_dynamic = [4 - index/2, 2].max
 
@@ -130,7 +130,7 @@ class PopulateTrialCourseContent
       end
       homework_tp.save!
 
-      run(:distribute_tasks, homework_tp)
+      run(:distribute_tasks, task_plan: homework_tp)
     end
 
     # Work tasks

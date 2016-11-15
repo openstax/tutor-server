@@ -78,7 +78,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         assistant: get_assistant(course: course, task_plan_type: 'reading')
       )
 
-      DistributeTasks.call(task_plan)
+      DistributeTasks.call(task_plan: task_plan)
 
       expect(stats.first.complete_count).to eq 0
     end

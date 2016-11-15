@@ -37,7 +37,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   end
 
   it 'assigns tasked external urls to students' do
-    tasks = DistributeTasks.call(task_plan_1).outputs.tasks
+    tasks = DistributeTasks.call(task_plan: task_plan_1).outputs.tasks
     expect(tasks.length).to eq num_taskees + 1
 
     tasks.each do |task|
@@ -48,7 +48,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   end
 
   it 'assigns tasked external urls with templatized urls to students' do
-    tasks = DistributeTasks.call(task_plan_2).outputs.tasks
+    tasks = DistributeTasks.call(task_plan: task_plan_2).outputs.tasks
     expect(tasks.length).to eq num_taskees + 1
 
     tasks.each do |task|

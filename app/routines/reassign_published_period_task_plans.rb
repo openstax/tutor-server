@@ -19,7 +19,9 @@ class ReassignPublishedPeriodTaskPlans
 
     published_task_plans.each_with_index do |tp, ii|
       status.set_progress(ii, published_task_plans.size)
-      run(:distribute, tp, Time.current, protect_unopened_tasks)
+      run(:distribute, task_plan: tp,
+                       publish_time: Time.current,
+                       protect_unopened_tasks: protect_unopened_tasks)
     end
   end
 
