@@ -324,7 +324,7 @@ module Tasks
           task_total_counts
         end
 
-        students = report[:students].sort_by{|student| student[:last_name]}
+        students = report[:students].sort_by{|student| student[:last_name] || ''}
         dropped_students, active_students = students.partition{|student| student[:is_dropped]}
 
         task_total_counts = student_data_writer.call(active_students)

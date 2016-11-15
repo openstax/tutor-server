@@ -124,6 +124,31 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
   end
 
+  context 'with students who have nil names' do
+    before(:context) do
+      report_data = report_1
+      report_data[0][:students][2][:first_name] = nil
+      report_data[0][:students][2][:last_name] = nil
+
+      Dir.mktmpdir do |dir|
+        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course_name: 'Physics 101',
+                               report: report_data,
+                               filename: "#{dir}/testfile")
+        end
+
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+      end
+    end
+
+    it 'sorts them at the top (and does not blow up)' do
+      names = (11..12).map{|row| "#{cell(row,1,0)}:#{cell(row,2,0)}" }
+      expect(names).to eq([":", "Zeter:Zymphony"])
+    end
+  end
+
   context "when no HWs or Reading cols" do
     before(:context) do
       Dir.mktmpdir do |dir|
