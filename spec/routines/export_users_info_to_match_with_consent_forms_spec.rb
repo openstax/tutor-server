@@ -21,7 +21,15 @@ RSpec.describe ExportUsersInfoToMatchWithConsentForms, type: :routine do
     end
 
     it 'includes student\'s school id ("student identifier")' do
-      expect(first_output.student_identifiers).to match_array course.students.map(&:student_identifier)
+      expect(first_output.student_identifiers).to(
+        match_array course.students.map(&:student_identifier)
+      )
+    end
+
+    it 'includes student\'s research identifier' do
+      expect(first_output.research_identifiers).to(
+        match_array course.students.map{ |student| student.role.research_identifier }
+      )
     end
 
     it "includes name" do
