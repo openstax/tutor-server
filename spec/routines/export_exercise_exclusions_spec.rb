@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'webmock/rspec'
 
-describe GetExcludedExercises, type: :routine do
+RSpec.describe ExportExerciseExclusions, type: :routine do
   before(:each) do
     WebMock.disable_net_connect!
     stub_request(:put, /remote.php/).to_return(status: 200)
@@ -15,7 +15,8 @@ describe GetExcludedExercises, type: :routine do
 
       @exercise = FactoryGirl.create :content_exercise
 
-      @ee_1 = FactoryGirl.create :course_content_excluded_exercise, course: @course, exercise_number: @exercise.number
+      @ee_1 = FactoryGirl.create :course_content_excluded_exercise,
+                                 course: @course, exercise_number: @exercise.number
       @ee_2 = FactoryGirl.create :course_content_excluded_exercise, course: @course
       @ee_3 = FactoryGirl.create :course_content_excluded_exercise, course: @course
     end
@@ -26,7 +27,10 @@ describe GetExcludedExercises, type: :routine do
       let(:output){ outputs.by_course.first }
 
       it "includes the correct keys" do
-        expect(output).to include(:course_id, :course_name, :teachers, :excluded_exercises_count, :excluded_exercises_numbers_with_urls, :page_uuids_with_urls)
+        expect(output).to include(
+          :course_id, :course_name, :teachers, :excluded_exercises_count,
+          :excluded_exercises_numbers_with_urls, :page_uuids_with_urls
+        )
       end
 
       context "returns a (Hashie Mash) hash with the correct data" do
@@ -54,13 +58,19 @@ describe GetExcludedExercises, type: :routine do
           specify do
             ee_numbers = @course.excluded_exercises.map(&:exercise_number)
             expect(ee_numbers).to_not be_empty
-            expect(output[:excluded_exercises_numbers_with_urls].map(&:ee_number)).to match_array ee_numbers
+            expect(output[:excluded_exercises_numbers_with_urls].map(&:ee_number)).to(
+              match_array ee_numbers
+            )
           end
 
           specify "with urls" do
             ee_numbers = @course.excluded_exercises.map(&:exercise_number)
-            ee_numbers_urls = ee_numbers.map{|number| OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s }
-            expect(output[:excluded_exercises_numbers_with_urls].map(&:ee_url)).to match_array ee_numbers_urls
+            ee_numbers_urls = ee_numbers.map do |number|
+              OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+            end
+            expect(output[:excluded_exercises_numbers_with_urls].map(&:ee_url)).to(
+              match_array ee_numbers_urls
+            )
           end
         end
 
@@ -70,7 +80,9 @@ describe GetExcludedExercises, type: :routine do
           end
 
           specify "with urls" do
-            expect(output[:page_uuids_with_urls].map(&:page_url)).to include(OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid))
+            expect(output[:page_uuids_with_urls].map(&:page_url)).to(
+              include(OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid))
+            )
           end
         end
       end
@@ -78,7 +90,9 @@ describe GetExcludedExercises, type: :routine do
       context "as csv" do
         it "includes all the correct data" do
           ee_numbers = @course.excluded_exercises.map(&:exercise_number)
-          ee_numbers_urls = ee_numbers.map{|number| OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s }
+          ee_numbers_urls = ee_numbers.map do |number|
+            OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+          end
 
           with_rows_from_csv("by_course") do |rows|
             headers = rows.first
@@ -89,10 +103,14 @@ describe GetExcludedExercises, type: :routine do
             expect(data["Course Name"]).to eq @ee_1.course.name
             expect(data["Teachers"]).to eq "Bob Martin"
             expect(data["# Exclusions"]).to eq "3"
-            expect(data["Excluded Numbers"].split(", ")).to match_array ee_numbers.map{|numb| "#{numb}"}
+            expect(data["Excluded Numbers"].split(", ")).to(
+              match_array ee_numbers.map{|numb| "#{numb}"}
+            )
             expect(data["Excluded Numbers URLs"].split(", ")).to match_array ee_numbers_urls
             expect(data["CNX Section UUID"]).to eq @exercise.page.uuid
-            expect(data["CNX Section UUID URLs"]).to eq OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid)
+            expect(data["CNX Section UUID URLs"]).to(
+              eq OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid)
+            )
           end
         end
 
@@ -109,7 +127,7 @@ describe GetExcludedExercises, type: :routine do
             headers: { 'Transfer-Encoding' => 'chunked' }
           ).and_return OpenStruct.new(success?: true)
 
-          described_class.call(export_by_course: true)
+          described_class.call(upload_by_course_to_owncloud: true)
         end
       end
     end
@@ -118,7 +136,9 @@ describe GetExcludedExercises, type: :routine do
       let!(:output){ outputs.by_exercise.first }
 
       it "includes the correct keys" do
-        expect(output).to include(:exercise_number, :exercise_url, :excluded_exercises_count, :pages_with_uuids_and_urls)
+        expect(output).to include(
+          :exercise_number, :exercise_url, :excluded_exercises_count, :pages_with_uuids_and_urls
+        )
       end
 
       context "returns a (Hashie Mash) hash with the correct" do
@@ -141,12 +161,16 @@ describe GetExcludedExercises, type: :routine do
 
         context "pages with uuids and urls" do
           it "includes the appropriate uuids" do
-            expect(output[:pages_with_uuids_and_urls].map(&:page_uuid)).to include(@exercise.page.uuid)
+            expect(output[:pages_with_uuids_and_urls].map(&:page_uuid)).to(
+              include(@exercise.page.uuid)
+            )
           end
 
           specify "with urls" do
             expected_webview_url = OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid)
-            expect(output[:pages_with_uuids_and_urls].map(&:page_url)).to include(expected_webview_url)
+            expect(output[:pages_with_uuids_and_urls].map(&:page_url)).to(
+              include(expected_webview_url)
+            )
           end
         end
       end
@@ -159,10 +183,14 @@ describe GetExcludedExercises, type: :routine do
             data = Hash[headers.zip(values)]
 
             expect(data["Exercise Number"]).to eq "#{@exercise.number}"
-            expect(data["Exercise Number URL"]).to eq OpenStax::Exercises::V1.uri_for("/exercises/#{@exercise.number}").to_s
+            expect(data["Exercise Number URL"]).to(
+              eq OpenStax::Exercises::V1.uri_for("/exercises/#{@exercise.number}").to_s
+            )
             expect(data["# Exclusions"]).to eq "1"
             expect(data["CNX Section UUID(s)"]).to eq @exercise.page.uuid
-            expect(data["CNX Section UUID(s) URLs"]).to eq OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid)
+            expect(data["CNX Section UUID(s) URLs"]).to(
+              eq OpenStax::Cnx::V1.webview_url_for(@exercise.page.uuid)
+            )
           end
         end
 
@@ -179,7 +207,7 @@ describe GetExcludedExercises, type: :routine do
             headers: { 'Transfer-Encoding' => 'chunked' }
           ).and_return OpenStruct.new(success?: true)
 
-          described_class.call(export_by_exercise: true)
+          described_class.call(upload_by_exercise_to_owncloud: true)
         end
       end
     end
@@ -202,5 +230,7 @@ def with_rows_from_csv(by_type, &block)
 
   by_course = by_type == "by_course"
   by_exercise = by_type == "by_exercise"
-  described_class.call(export_by_course: by_course, export_by_exercise: by_exercise)
+  described_class.call(
+    upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
+  )
 end

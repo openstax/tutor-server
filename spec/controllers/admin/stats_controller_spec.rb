@@ -13,8 +13,8 @@ RSpec.describe Admin::StatsController, type: :controller do
         3.times.map { FactoryGirl.create :course_membership_period, course: course }
       end
 
-      let(:teacher_user)   { FactoryGirl.create :user }
-      let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
+      let(:teacher_user)        { FactoryGirl.create :user }
+      let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
       let!(:student_roles) do
         5.times.map do
@@ -87,9 +87,10 @@ RSpec.describe Admin::StatsController, type: :controller do
 
       context "with by_course and by_exercise params" do
         before do
-          expect(GetExcludedExercises).to(
-            receive(:perform_later).with(export_by_course: true, export_by_exercise: true)
-                                   .and_return(true)
+          expect(ExportExerciseExclusions).to(
+            receive(:perform_later).with(
+              upload_by_course_to_owncloud: true, upload_by_exercise_to_owncloud: true
+            ).and_return(true)
           )
         end
 

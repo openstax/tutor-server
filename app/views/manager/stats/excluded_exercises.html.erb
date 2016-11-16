@@ -9,6 +9,7 @@
     <tr>
       <th>Course ID</th>
       <th>Course Name</th>
+      <th>Course Type</th>
       <th>Teachers</th>
       <th># Exclusions</th>
       <th>Excluded Numbers</th>
@@ -20,15 +21,16 @@
     <tr>
       <td><%= link_to ee.course_id, edit_admin_course_path(ee.course_id) %></td>
       <td><%= ee.course_name %></td>
+      <td><%= ee.course_type %></td>
       <td><%= ee.teachers %></td>
       <td><%= ee.excluded_exercises_count %></td>
-      <td><%= ee.excluded_exercises_numbers_with_urls.map{|num|
+      <td><%= ee.excluded_exercises_numbers_with_urls.map do |num|
                 link_to num.ee_number, num.ee_url
-              }.join(", ").html_safe %>
+              end.join(", ").html_safe %>
       </td>
-      <td><%= ee.page_uuids_with_urls.map{|pg|
+      <td><%= ee.page_uuids_with_urls.map do |pg|
                 link_to pg.page_uuid, pg.page_url
-              }.join(', ').html_safe %></td>
+              end.join(', ').html_safe %></td>
     </tr>
   <% end %>
   </tbody>
@@ -49,9 +51,9 @@
     <tr>
       <td><%= link_to ee.exercise_number, ee.exercise_url %></td>
       <td><%= ee.excluded_exercises_count %></td>
-      <td><%= ee.pages_with_uuids_and_urls.map { |pg|
+      <td><%= ee.pages_with_uuids_and_urls.map do |pg|
                 link_to pg.page_uuid, pg.page_url
-              }.join(', ').html_safe %>
+              end.join(', ').html_safe %>
       </td>
     </tr>
   <% end %>
@@ -60,10 +62,12 @@
 
 <div class="excluded-exercises-export-form">
   <h4>Export to CSV file</h4>
-  <%= lev_form_for :export, url: excluded_exercises_to_csv_admin_stats_path, method: :post do |form| %>
-    <%= form.collection_check_boxes :by, \
-                [["course", "By Course"], ["exercise", "By Exercise"]], \
-                :first, :second, {}, {checked: true} %>
+  <%= lev_form_for :export, url: excluded_exercises_to_csv_admin_stats_path,
+                            method: :post do |form| %>
+    <%= form.collection_check_boxes
+          :by,
+          [["course", "By Course"], ["exercise", "By Exercise"]],
+          :first, :second, {}, {checked: true} %>
     <div>
       <%= submit_tag "Export Data", class: "btn btn-primary" %>
     </div>
