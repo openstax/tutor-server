@@ -29,6 +29,9 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   has_many :taskings, through: :periods, subsystem: :tasks
 
+  has_many :cloned_courses, foreign_key: 'cloned_from_id',
+                            class_name: 'CourseProfile::Models::Course'
+
   unique_token :teach_token
 
   enum term: [ :legacy, :demo, :spring, :summer, :fall ]

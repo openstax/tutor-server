@@ -4,14 +4,20 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   let(:course)           { FactoryGirl.create :course_profile_course }
   let(:period)           { FactoryGirl.create :course_membership_period, course: course }
 
+  let(:clone_course)     { FactoryGirl.create :course_profile_course, cloned_from: course }
+
   let(:student)          { FactoryGirl.create(:user) }
   let(:teacher)          { FactoryGirl.create(:user) }
+  let(:clone_teacher)    { FactoryGirl.create(:user) }
   let(:verified_faculty) { FactoryGirl.create(:user) }
 
   before do
     AddUserAsCourseTeacher[course: course, user: teacher]
     AddUserAsPeriodStudent[period: period, user: student]
+    AddUserAsCourseTeacher[course: clone_course, user: clone_teacher]
+
     teacher.account.update_attribute :faculty_status, :confirmed_faculty
+    clone_teacher.account.update_attribute :faculty_status, :confirmed_faculty
     verified_faculty.account.update_attribute :faculty_status, :confirmed_faculty
   end
 
@@ -81,6 +87,24 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       end
     end
   end
+
+context 'verified faculty in a cloned course' do
+  let(:requestor) { clone_teacher }
+
+  [:index, :create, :read_task_plans].each do |test_action|
+    context "#{test_action}" do
+      let(:action) { test_action }
+      it { should eq true }
+    end
+  end
+
+  [:read, :export, :roster, :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+    context "#{test_action}" do
+      let(:action) { test_action }
+      it { should eq false }
+    end
+  end
+end
 
   context 'verified faculty without a course' do
     let(:requestor) { verified_faculty }
