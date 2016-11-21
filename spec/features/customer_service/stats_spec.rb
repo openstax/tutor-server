@@ -42,9 +42,18 @@ RSpec.feature CustomerService::StatsController do
     let(:teacher_user)        { FactoryGirl.create :user }
     let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
-    let(:exercises)           do
-      5.times.map{ FactoryGirl.create :content_exercise }.sort_by(&:number)
+    let(:chapter)             { FactoryGirl.create :content_chapter }
+
+    let(:pages)               do
+      5.times.map do |ii|
+        FactoryGirl.create :content_page, chapter: chapter, book_location: [1, ii + 1]
+      end
     end
+
+    let(:exercises)           do
+      pages.map{ |page| FactoryGirl.create :content_exercise, page: page }.sort_by(&:number)
+    end
+
     let!(:excluded_exercises) do
       exercises.map do |exercise|
         FactoryGirl.create :course_content_excluded_exercise, course: course,
@@ -52,7 +61,14 @@ RSpec.feature CustomerService::StatsController do
       end
     end
 
+    let(:book)                { chapter.book }
+    let(:ecosystem)           { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+
+    background { AddEcosystemToCourse[ecosystem: ecosystem, course: course] }
+
     scenario 'displays excluded exercise statistics' do
+      pages = exercises.map(&:page)
+
       visit excluded_exercises_customer_service_stats_path
 
       expect(page).to have_content('Excluded Exercise Stats')
@@ -61,9 +77,12 @@ RSpec.feature CustomerService::StatsController do
       expect(page).to have_content(course.id)
       expect(page).to have_content(course.name)
       expect(page).to have_content(teacher_user.name)
+      expect(page).to have_content(book.title)
+      expect(page).to have_content(book.uuid)
       expect(page).to have_content(exercises.size)
       expect(page).to have_content(exercises.map(&:number).join(', '))
-      expect(page).to have_content(exercises.flat_map{ |ex| ex.page.uuid }.join(', '))
+      expect(page).to have_content(pages.map(&:uuid).join(', '))
+      expect(page).to have_content(pages.map{ |page| page.book_location.join('.') }.join(', '))
 
       expect(page).to have_content('By Exercise:')
       exercises.each do |exercise|

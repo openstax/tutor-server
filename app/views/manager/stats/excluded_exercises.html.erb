@@ -11,9 +11,12 @@
       <th>Course Name</th>
       <th>Course Type</th>
       <th>Teachers</th>
+      <th>Book Title</th>
+      <th>Book UUID</th>
       <th># Exclusions</th>
       <th>Excluded Numbers</th>
       <th>CNX Section UUID(s) with Exclusions</th>
+      <th>Book Locations</th>
     </tr>
   </thead>
   <tbody>
@@ -23,14 +26,17 @@
       <td><%= ee.course_name %></td>
       <td><%= ee.course_type %></td>
       <td><%= ee.teachers %></td>
+      <td><%= ee.book_hash[:book_title] %></td>
+      <td><%= ee.book_hash[:book_uuid] %></td>
       <td><%= ee.excluded_exercises_count %></td>
-      <td><%= ee.excluded_exercises_numbers_with_urls.map do |num|
-                link_to num.ee_number, num.ee_url
+      <td><%= ee.excluded_exercises_hash.map do |num|
+                link_to num.exercise_number, num.exercise_url
               end.join(", ").html_safe %>
       </td>
-      <td><%= ee.page_uuids_with_urls.map do |pg|
+      <td><%= ee.page_hashes.map do |pg|
                 link_to pg.page_uuid, pg.page_url
               end.join(', ').html_safe %></td>
+      <td><%= ee.page_hashes.map(&:book_location).join(', ') %></td>
     </tr>
   <% end %>
   </tbody>
@@ -51,7 +57,7 @@
     <tr>
       <td><%= link_to ee.exercise_number, ee.exercise_url %></td>
       <td><%= ee.excluded_exercises_count %></td>
-      <td><%= ee.pages_with_uuids_and_urls.map do |pg|
+      <td><%= ee.page_hashes.map do |pg|
                 link_to pg.page_uuid, pg.page_url
               end.join(', ').html_safe %>
       </td>

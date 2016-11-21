@@ -15,9 +15,11 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
       chapter = FactoryGirl.create :content_chapter
 
-      @page_1 = FactoryGirl.create :content_page, chapter: chapter
-      @page_2 = FactoryGirl.create :content_page, chapter: chapter
-      @page_3 = FactoryGirl.create :content_page, chapter: chapter
+      @book = chapter.book
+
+      @page_1 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 1]
+      @page_2 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 2]
+      @page_3 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 3]
 
       @exercise_1 = FactoryGirl.create :content_exercise, page: @page_1
       @exercise_2 = FactoryGirl.create :content_exercise, page: @page_2
@@ -44,8 +46,8 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
       it "includes the correct keys" do
         expect(output).to include(
-          :course_id, :course_name, :teachers, :excluded_exercises_count,
-          :excluded_exercises_numbers_with_urls, :page_uuids_with_urls
+          :course_id, :course_name, :teachers, :book_hash,
+          :excluded_exercises_count, :excluded_exercises_hash, :page_hashes
         )
       end
 
@@ -66,6 +68,10 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           expect(output).to include(teachers: @teacher_user.name)
         end
 
+        specify "book hash" do
+          expect(output).to include(book_hash: { book_title: @book.title, book_uuid: @book.uuid })
+        end
+
         specify "excluded exercises count" do
           expect(output).to include(excluded_exercises_count: 3)
         end
@@ -74,7 +80,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           specify do
             ee_numbers = @course.excluded_exercises.map(&:exercise_number)
             expect(ee_numbers).to_not be_empty
-            expect(output[:excluded_exercises_numbers_with_urls].map(&:exercise_number)).to(
+            expect(output[:excluded_exercises_hash].map(&:exercise_number)).to(
               match_array ee_numbers
             )
           end
@@ -84,7 +90,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             ee_numbers_urls = ee_numbers.map do |number|
               OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
             end
-            expect(output[:excluded_exercises_numbers_with_urls].map(&:exercise_url)).to(
+            expect(output[:excluded_exercises_hash].map(&:exercise_url)).to(
               match_array ee_numbers_urls
             )
           end
@@ -92,7 +98,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
         context "page uuids" do
           specify do
-            page_uuids = output[:page_uuids_with_urls].map(&:page_uuid)
+            page_uuids = output[:page_hashes].map(&:page_uuid)
             expect(page_uuids).to include(@exercise_1.page.uuid)
             expect(page_uuids).to include(@exercise_2.page.uuid)
             expect(page_uuids).to include(@exercise_3.page.uuid)
@@ -100,7 +106,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
 
           specify "with urls" do
-            page_urls = output[:page_uuids_with_urls].map(&:page_url)
+            page_urls = output[:page_hashes].map(&:page_url)
             expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@exercise_1.page.uuid))
             expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@exercise_2.page.uuid))
             expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@exercise_3.page.uuid))
@@ -160,7 +166,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
       it "includes the correct keys" do
         outputs_by_exercise.each do |output|
           expect(output).to include(
-            :exercise_number, :exercise_url, :excluded_exercises_count, :pages_with_uuids_and_urls
+            :exercise_number, :exercise_url, :excluded_exercises_count, :page_hashes
           )
         end
       end
@@ -195,7 +201,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             page_uuids = [@page_1, @page_2, @page_3, @exercise_another_eco.page].map(&:uuid)
 
             outputs_by_exercise.each do |output|
-              output[:pages_with_uuids_and_urls].map(&:page_uuid).each do |page_uuid|
+              output[:page_hashes].map(&:page_uuid).each do |page_uuid|
                 expect(page_uuid).to be_in page_uuids
               end
             end
@@ -207,7 +213,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             end
 
             outputs_by_exercise.each do |output|
-              output[:pages_with_uuids_and_urls].map(&:page_url).each do |page_url|
+              output[:page_hashes].map(&:page_url).each do |page_url|
                 expect(page_url).to be_in page_urls
               end
             end
