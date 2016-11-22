@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe GetNonCcDashboard, type: :routine do
+RSpec.describe GetTpDashboard, type: :routine do
 
   let(:course)         { FactoryGirl.create :course_profile_course, name: 'Physics 101' }
   let(:period)         { FactoryGirl.create :course_membership_period, course: course }

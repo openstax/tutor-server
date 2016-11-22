@@ -1,4 +1,5 @@
-class GetNonCcDashboard
+class GetTpDashboard
+
   include DashboardRoutineMethods
 
   uses_routine Tasks::GetTaskPlans, as: :get_plans
@@ -36,4 +37,5 @@ class GetNonCcDashboard
       })
     end
   end
+
 end

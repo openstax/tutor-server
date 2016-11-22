@@ -483,8 +483,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         :tasks_tasked_exercise],
                                            tasked_to: student_role)}
 
-    let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course,
-                                                       published_at: time_zone.now - 1.week)}
+    let!(:plan) do
+      FactoryGirl.create(:tasks_task_plan, owner: course,
+                                           published_at: time_zone.now - 1.week,
+                                           publish_job_uuid: SecureRandom.uuid)
+    end
 
     context 'anonymous' do
       it 'raises SecurityTransgression if user is anonymous or not in course' do
@@ -638,6 +641,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "type" => 'reading',
               "first_published_at" => be_kind_of(String),
               "last_published_at" => be_kind_of(String),
+              "publish_job_url" => be_kind_of(String),
               "tasking_plans" => [
                 a_hash_including(
                 { "target_id" => course.id.to_s,

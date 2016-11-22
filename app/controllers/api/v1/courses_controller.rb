@@ -110,13 +110,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     end_at = DateTimeUtilities.from_s(params[:end_at])
     end_at_ntz = DateTimeUtilities.remove_tz(end_at)
 
-    result = GetNonCcDashboard.call(course: @course, role: get_course_role(course: @course),
-                                    start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
+    result = GetTpDashboard.call(course: @course, role: get_course_role(course: @course),
+                                 start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
 
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter
+      respond_with result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter,
+                                   user_options: { exclude_job_info: true }
     end
   end
 
