@@ -77,12 +77,13 @@ RSpec.feature CustomerService::StatsController do
       expect(page).to have_content(course.id)
       expect(page).to have_content(course.name)
       expect(page).to have_content(teacher_user.name)
-      expect(page).to have_content(book.title)
-      expect(page).to have_content(book.uuid)
       expect(page).to have_content(exercises.size)
       expect(page).to have_content(exercises.map(&:number).join(', '))
-      expect(page).to have_content(pages.map(&:uuid).join(', '))
+      expect(page).to have_content(excluded_exercises.map(&:created_at).join(', '))
+      expect(page).to have_content(book.title)
+      expect(page).to have_content(book.uuid)
       expect(page).to have_content(pages.map{ |page| page.book_location.join('.') }.join(', '))
+      expect(page).to have_content(pages.map(&:uuid).join(', '))
 
       expect(page).to have_content('By Exercise:')
       exercises.each do |exercise|

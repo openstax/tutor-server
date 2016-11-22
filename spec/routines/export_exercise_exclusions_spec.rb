@@ -21,9 +21,10 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
       @page_2 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 2]
       @page_3 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 3]
 
-      @exercise_1 = FactoryGirl.create :content_exercise, page: @page_1
-      @exercise_2 = FactoryGirl.create :content_exercise, page: @page_2
+      # Creating them in reverse order so @exercise_1 gets the lowest number (order matters)
       @exercise_3 = FactoryGirl.create :content_exercise, page: @page_3
+      @exercise_2 = FactoryGirl.create :content_exercise, page: @page_2
+      @exercise_1 = FactoryGirl.create :content_exercise, page: @page_1
 
       @exercise_another_eco = FactoryGirl.create :content_exercise, number: @exercise_1.number
 
@@ -77,8 +78,9 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         end
 
         context "excluded exercises numbers" do
+          let(:ee_numbers) { @course.excluded_exercises.map(&:exercise_number) }
+
           specify do
-            ee_numbers = @course.excluded_exercises.map(&:exercise_number)
             expect(ee_numbers).to_not be_empty
             expect(output[:excluded_exercises_hash].map(&:exercise_number)).to(
               match_array ee_numbers
@@ -86,13 +88,20 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
 
           specify "with urls" do
-            ee_numbers = @course.excluded_exercises.map(&:exercise_number)
             ee_numbers_urls = ee_numbers.map do |number|
               OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
             end
             expect(output[:excluded_exercises_hash].map(&:exercise_url)).to(
               match_array ee_numbers_urls
             )
+          end
+        end
+
+        context "excluded_ats" do
+          let(:excluded_ats) { @course.excluded_exercises.map(&:created_at) }
+
+          specify do
+            expect(output[:excluded_ats]).to match_array excluded_ats
           end
         end
 
@@ -119,12 +128,16 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
       context "as csv" do
         it "includes all the correct data" do
-          ee_numbers = @course.excluded_exercises.map(&:exercise_number)
+          excluded_exercises = @course.excluded_exercises.sort_by(&:exercise_number)
+          ee_numbers = excluded_exercises.map(&:exercise_number)
           ee_numbers_urls = ee_numbers.map do |number|
             OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
           end
-          page_uuids = [@page_1, @page_2, @page_3].map(&:uuid)
+          exclusion_dates = excluded_exercises.map{ |ee| DateTimeUtilities.to_api_s(ee.created_at) }
+          pages = [@page_1, @page_2, @page_3]
+          page_uuids = pages.map(&:uuid)
           page_urls = page_uuids.map{ |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
+          book_locations = pages.map{ |page| page.book_location.join('.') }
 
           with_rows_from_csv("by_course") do |rows|
             headers = rows.first
@@ -135,10 +148,14 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             expect(data["Course Name"]).to eq @course.name
             expect(data["Teachers"]).to eq @teacher_user.name
             expect(data["# Exclusions"]).to eq "3"
-            expect(data["Excluded Numbers"].split(", ")).to match_array ee_numbers.map(&:to_s)
-            expect(data["Excluded Numbers URLs"].split(", ")).to match_array ee_numbers_urls
-            expect(data["CNX Section UUID"].split(", ")).to match_array page_uuids
-            expect(data["CNX Section UUID URLs"].split(", ")).to match_array page_urls
+            expect(data["Excluded Exercise Numbers"].split(", ")).to eq ee_numbers.map(&:to_s)
+            expect(data["Excluded Exercise URLs"].split(", ")).to eq ee_numbers_urls
+            expect(data["Exclusion Timestamps"].split(", ")).to eq exclusion_dates
+            expect(data["CNX Book Title"]).to eq @book.title
+            expect(data["CNX Book UUID"]).to eq @book.uuid
+            expect(data["CNX Book Locations"].split(", ")).to eq book_locations
+            expect(data["CNX Page UUIDs"].split(", ")).to eq page_uuids
+            expect(data["CNX Page URLs"].split(", ")).to eq page_urls
           end
         end
 
@@ -236,13 +253,13 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             value_rows.each do |values|
               data = Hash[headers.zip(values)]
 
-              expect(data["Exercise Number"]).to be_in exercise_numbers.map(&:to_s)
-              expect(data["Exercise Number URL"]).to be_in exercise_urls
+              expect(data["Excluded Exercise Number"]).to be_in exercise_numbers.map(&:to_s)
+              expect(data["Excluded Exercise URL"]).to be_in exercise_urls
               expect(data["# Exclusions"]).to eq "1"
-              data["CNX Section UUID(s)"].split(", ").each do |page_uuid|
+              data["CNX Page UUIDs"].split(", ").each do |page_uuid|
                 expect(page_uuid).to be_in page_uuids
               end
-              data["CNX Section UUID(s) URLs"].split(", ").each do |page_url|
+              data["CNX Page URLs"].split(", ").each do |page_url|
                 expect(page_url).to be_in page_urls
               end
             end
