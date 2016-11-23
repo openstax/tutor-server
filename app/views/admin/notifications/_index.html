@@ -1,0 +1,44 @@
+<%
+  # Client of this partial must provide the :type argument,
+  # which can be either :general or :faculty
+  raise ArgumentError, 'Invalid notification type', caller \
+    unless Settings::Notifications.valid_type?(type)
+
+  humanized_type = type.to_s.humanize
+%>
+
+<div>
+  <h2><%= humanized_type %> Notifications</h2>
+
+<% Settings::Notifications.messages(type).each do |id, message| -%>
+  <div class='row underlined-spaced-row'>
+    <div class='col-xs-12'>
+
+      <%= link_to 'Remove', { action: :destroy, type: type, id: id },
+          data: { confirm: 'Are you sure? Notifications can not be re-created once removed' },
+          method: :delete, class: 'btn btn-warning' %>
+
+      <%= message %>
+    </div>
+  </div>
+<% end -%>
+
+  <%= form_tag admin_notifications_path do  %>
+    <div class='row'>
+      <%= hidden_field_tag :type, type %>
+
+      <div class='col-xs-11'>
+        <%= label_tag :message, "New #{humanized_type} Notification" %>
+      </div>
+      <div class='col-xs-11'>
+        <div class='form-group'>
+          <%= text_field_tag :message, '', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class='col-xs-1'>
+        <input class='btn btn-default' type='submit' value='Add'>
+      </div>
+    </div>
+  <% end %>
+</div>

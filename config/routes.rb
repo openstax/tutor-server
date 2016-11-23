@@ -70,7 +70,6 @@ Rails.application.routes.draw do
       get 'tasks/:course_id/:cnx_page_id/stats', to: 'tasks#stats', as: :task_stats
     end
 
-
     get 'user/courses', to: 'courses#index', as: :courses
     patch 'user/courses/:course_id/student', to: 'students#update_self'
 

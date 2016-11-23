@@ -1,32 +1,5 @@
 <% @page_header = "Active Notifications" %>
 
-<div>
-<% Settings::Notifications.each do | notice | -%>
-<div class='row underlined-spaced-row'>
-  <div class='col-xs-12'>
+<%= render partial: 'index', locals: { type: :general } %>
 
-    <%= link_to 'Remove', {action: :destroy, id: notice['id']},
-        data: {:confirm => 'Are you sure?  Notifications can not be re-created once removed'},
-        method: :delete, class: 'btn btn-warning' %>
-
-    <%= notice['message'] %>
-  </div>
-</div>
-<% end -%>
-
-<%= form_tag admin_notifications_path do  %>
-<div class='row'>
-  <div class='col-xs-11'>
-    <%= label_tag :new_message, 'New Notification' %>
-  </div>
-  <div class='col-xs-11'>
-    <div class='form-group'>
-      <%= text_field_tag :new_message, '', class: 'form-control' %>
-    </div>
-  </div>
-  <div class='col-xs-1'>
-    <input class='btn btn-default' type='submit' value='Add'>
-  </div>
-</div>
-<% end %>
-</div>
+<%= render partial: 'index', locals: { type: :instructor } %>
