@@ -19,10 +19,11 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
       @page_1 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 1]
       @page_2 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 2]
-      @page_3 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 3]
+      @page_removed = FactoryGirl.create :content_page, book_location: [42, 1]
 
-      # Creating them in reverse order so @exercise_1 gets the lowest number (order matters)
-      @exercise_3 = FactoryGirl.create :content_exercise, page: @page_3
+      # Creating them in reverse order so @exercise_1 gets the lowest (negative) number
+      @exercise_removed = FactoryGirl.create :content_exercise, page: @page_removed
+      @exercise_3 = FactoryGirl.create :content_exercise, page: @page_2
       @exercise_2 = FactoryGirl.create :content_exercise, page: @page_2
       @exercise_1 = FactoryGirl.create :content_exercise, page: @page_1
 
@@ -38,6 +39,8 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
                                  course: @course, exercise_number: @exercise_2.number
       @ee_3 = FactoryGirl.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_3.number
+      @ee_removed = FactoryGirl.create :course_content_excluded_exercise,
+                                       course: @course, exercise_number: @exercise_removed.number
     end
 
     let(:outputs){ described_class.call.outputs }
@@ -74,7 +77,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         end
 
         specify "excluded exercises count" do
-          expect(output).to include(excluded_exercises_count: 3)
+          expect(output).to include(excluded_exercises_count: 4)
         end
 
         context "excluded exercises numbers" do
@@ -108,17 +111,19 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         context "page uuids" do
           specify do
             page_uuids = output[:page_hashes].map(&:page_uuid)
-            expect(page_uuids).to include(@exercise_1.page.uuid)
-            expect(page_uuids).to include(@exercise_2.page.uuid)
-            expect(page_uuids).to include(@exercise_3.page.uuid)
+            expect(page_uuids).to include(@page_1.uuid)
+            expect(page_uuids).to include(@page_2.uuid)
+            expect(page_uuids).not_to include(@page_removed.uuid)
             expect(page_uuids).not_to include(@exercise_another_eco.page.uuid)
           end
 
           specify "with urls" do
             page_urls = output[:page_hashes].map(&:page_url)
-            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@exercise_1.page.uuid))
-            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@exercise_2.page.uuid))
-            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@exercise_3.page.uuid))
+            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@page_1.uuid))
+            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@page_2.uuid))
+            expect(page_urls).not_to include(
+              OpenStax::Cnx::V1.webview_url_for(@page_removed.uuid)
+            )
             expect(page_urls).not_to include(
               OpenStax::Cnx::V1.webview_url_for(@exercise_another_eco.page.uuid)
             )
@@ -134,10 +139,10 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
           end
           exclusion_dates = excluded_exercises.map{ |ee| DateTimeUtilities.to_api_s(ee.created_at) }
-          pages = [@page_1, @page_2, @page_3]
-          page_uuids = pages.map(&:uuid)
-          page_urls = page_uuids.map{ |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
-          book_locations = pages.map{ |page| page.book_location.join('.') }
+          pages = [@page_1, @page_2, @page_2]
+          page_uuids = pages.map(&:uuid) + ['null']
+          page_urls = pages.map{ |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
+          book_locations = pages.map{ |page| page.book_location.join('.') } + ['null']
 
           with_rows_from_csv("by_course") do |rows|
             headers = rows.first
@@ -147,7 +152,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             expect(data["Course ID"]).to eq @course.id.to_s
             expect(data["Course Name"]).to eq @course.name
             expect(data["Teachers"]).to eq @teacher_user.name
-            expect(data["# Exclusions"]).to eq "3"
+            expect(data["# Exclusions"]).to eq "4"
             expect(data["Excluded Exercise Numbers"].split(", ")).to eq ee_numbers.map(&:to_s)
             expect(data["Excluded Exercise URLs"].split(", ")).to eq ee_numbers_urls
             expect(data["Exclusion Timestamps"].split(", ")).to eq exclusion_dates
@@ -194,14 +199,14 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         end
 
         specify "exercise number" do
-          exercise_numbers = [@ee_1, @ee_2, @ee_3].map(&:exercise_number)
+          exercise_numbers = [@ee_1, @ee_2, @ee_3, @ee_removed].map(&:exercise_number)
           outputs_by_exercise.each do |output|
             expect(output[:exercise_number]).to be_in exercise_numbers
           end
         end
 
         specify "exercise url" do
-          exercise_urls = [@ee_1, @ee_2, @ee_3].map do |ee|
+          exercise_urls = [@ee_1, @ee_2, @ee_3, @ee_removed].map do |ee|
             OpenStax::Exercises::V1.uri_for("/exercises/#{ee.exercise_number}").to_s
           end
           outputs_by_exercise.each{ |output| expect(output[:exercise_url]).to be_in exercise_urls }
@@ -215,7 +220,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
         context "pages with uuids and urls" do
           it "includes the appropriate uuids" do
-            page_uuids = [@page_1, @page_2, @page_3, @exercise_another_eco.page].map(&:uuid)
+            page_uuids = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map(&:uuid)
 
             outputs_by_exercise.each do |output|
               output[:page_hashes].map(&:page_uuid).each do |page_uuid|
@@ -225,7 +230,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
 
           specify "with urls" do
-            page_urls = [@page_1, @page_2, @page_3, @exercise_another_eco.page].map do |page|
+            page_urls = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map do |page|
               OpenStax::Cnx::V1.webview_url_for(page.uuid)
             end
 
@@ -240,11 +245,11 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
       context "as csv" do
         it "includes all the correct data" do
-          exercise_numbers = [@ee_1, @ee_2, @ee_3].map(&:exercise_number)
+          exercise_numbers = [@ee_1, @ee_2, @ee_3, @ee_removed].map(&:exercise_number)
           exercise_urls = exercise_numbers.map do |exercise_number|
             OpenStax::Exercises::V1.uri_for("/exercises/#{exercise_number}").to_s
           end
-          page_uuids = [@page_1, @page_2, @page_3, @exercise_another_eco.page].map(&:uuid)
+          page_uuids = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map(&:uuid)
           page_urls = page_uuids.map{ |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
 
           with_rows_from_csv("by_exercise") do |rows|
