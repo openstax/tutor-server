@@ -57,7 +57,11 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     let!(:orig_task_plan_1) { published_task_plan }
 
     let!(:cloned_course) do
-      CloneCourse[course: course, teacher_user: teacher, copy_question_library: false]
+      CloneCourse[course: course, teacher_user: teacher, copy_question_library: false].tap do |cc|
+        cc.year = course.year
+        cc.starts_at = course.starts_at
+        cc.ends_at = course.ends_at
+      end
     end
 
     let!(:orig_task_plan_2) do

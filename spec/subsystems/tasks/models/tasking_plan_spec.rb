@@ -34,6 +34,22 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
     expect(tasking_plan).not_to be_valid
   end
 
+  it "requires opens_at to be after the course's starts_at, if the owner is a course" do
+    expect(tasking_plan).to be_valid
+    tasking_plan.opens_at = course.starts_at - 1.day
+    expect(tasking_plan).not_to be_valid
+    tasking_plan.opens_at = course.starts_at + 1.day
+    expect(tasking_plan).to be_valid
+  end
+
+  it "requires due_at to be before the course's ends_at, if the owner is a course" do
+    expect(tasking_plan).to be_valid
+    tasking_plan.due_at = course.ends_at + 1.day
+    expect(tasking_plan).not_to be_valid
+    tasking_plan.due_at = course.ends_at - 1.day
+    expect(tasking_plan).to be_valid
+  end
+
   it "requires target to be unique for the task_plan" do
     expect(tasking_plan).to be_valid
 

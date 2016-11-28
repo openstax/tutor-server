@@ -13,9 +13,9 @@ class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
   validates :opens_at_ntz, :due_at_ntz, presence: true, timeliness: { type: :date }
   validates :time_zone, presence: true
 
-  validate :due_at_in_the_future, :due_at_on_or_after_opens_at
-
-  validate :owner_can_task_target
+  validate :due_at_in_the_future, :due_at_on_or_after_opens_at,
+           :opens_after_course_starts, :due_before_course_ends,
+           :owner_can_task_target
 
   def past_open?(current_time: Time.current)
     opens_at.nil? || current_time > opens_at
@@ -37,6 +37,20 @@ class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
   def due_at_on_or_after_opens_at
     return if due_at.nil? || opens_at.nil? || due_at > opens_at
     errors.add(:due_at, 'cannot be before opens_at')
+    false
+  end
+
+  def opens_after_course_starts
+    return if task_plan.try!(:owner_type) != 'CourseProfile::Models::Course' ||
+              ( opens_at.nil? || task_plan.owner.starts_at <= opens_at )
+    errors.add(:opens_at, 'cannot be before the course starts')
+    false
+  end
+
+  def due_before_course_ends
+    return if task_plan.try!(:owner_type) != 'CourseProfile::Models::Course' ||
+              ( due_at.nil? || task_plan.owner.ends_at >= due_at )
+    errors.add(:due_at, 'cannot be after the course ends')
     false
   end
 
