@@ -47,7 +47,7 @@ TermYear = Struct.new(:term, :year) do
 
     next_year_visible_term_years = VISIBLE_TERMS.map do |term|
       TermYear.new(term, current_year + 1)
-    end.select{ |term_year| term_year.starts_at <= current_time + 1.year }
+    end.select{ |term_year| term_year.ends_at <= current_time + 1.year }
 
     current_year_visible_term_years + next_year_visible_term_years
   end

@@ -119,24 +119,22 @@ RSpec.describe TermYear, type: :lib do
 
     expect(TermYear.visible_term_years(spring_date_time)).to eq [
       TermYear.new(:spring, current_year), TermYear.new(:summer, current_year    ),
-      TermYear.new(:fall,   current_year), TermYear.new(:spring, current_year + 1)
+      TermYear.new(:fall,   current_year)
     ]
 
     expect(TermYear.visible_term_years(spring_summer_date_time)).to eq [
       TermYear.new(:spring, current_year    ), TermYear.new(:summer, current_year    ),
-      TermYear.new(:fall,   current_year    ), TermYear.new(:spring, current_year + 1),
-      TermYear.new(:summer, current_year + 1)
+      TermYear.new(:fall,   current_year    )
     ]
 
     expect(TermYear.visible_term_years(summer_fall_date_time)).to eq [
       TermYear.new(:summer, current_year    ), TermYear.new(:fall,   current_year    ),
-      TermYear.new(:spring, current_year + 1), TermYear.new(:summer, current_year + 1),
-      TermYear.new(:fall,   current_year + 1)
+      TermYear.new(:spring, current_year + 1)
     ]
 
     expect(TermYear.visible_term_years(fall_date_time)).to eq [
       TermYear.new(:fall,   current_year    ), TermYear.new(:spring, current_year + 1),
-      TermYear.new(:summer, current_year + 1), TermYear.new(:fall,   current_year + 1)
+      TermYear.new(:summer, current_year + 1)
     ]
   end
 end
