@@ -156,7 +156,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
-        expect(response.body_as_hash[:is_trial]).to eq true
+        # Trial courses temporarily disabled
+        expect(response.body_as_hash[:is_trial]).to eq false
       end
 
       it 'makes the requesting faculty a teacher in the new course' do
