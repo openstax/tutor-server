@@ -59,6 +59,11 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
       AddUserAsPeriodStudent[user: user, period: period_3].student
     enrollment_change.conflicting_enrollment.period = period_3
     expect(enrollment_change).to be_valid
+
+    enrollment_change.conflicting_enrollment.period = period_1
+    expect(enrollment_change).not_to be_valid
+    enrollment_change.conflicting_enrollment.period = period_3
+    expect(enrollment_change).to be_valid
   end
 
   context 'for an existing enrollment' do
@@ -108,20 +113,6 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
 
       expect(enrollment_change).to be_valid
     end
-
-    it 'only accepts valid CC conflicts' do
-      course_1.update_attribute :is_concept_coach, true
-      course_2.update_attribute :is_concept_coach, true
-      expect(enrollment_change).to be_valid
-
-      conflicting_student = AddUserAsPeriodStudent[user: user, period: period_3].student
-      enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment,
-                                                                    period: period_3,
-                                                                    student: conflicting_student
-      expect(enrollment_change).to be_valid
-      enrollment_change.enrollment.created_at = Time.current
-      expect(enrollment_change).not_to be_valid
-    end
   end
 
   context 'for a new enrollment' do
@@ -129,22 +120,6 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
 
     it 'has no previous period' do
       expect(enrollment_change.from_period).to be_nil
-    end
-
-    it 'only accepts valid CC conflicts' do
-      course_1.update_attribute :is_concept_coach, true
-      course_2.update_attribute :is_concept_coach, true
-      expect(enrollment_change).to be_valid
-
-      conflicting_student = AddUserAsPeriodStudent[user: user, period: period_3].student
-      enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment,
-                                                                    period: period_3,
-                                                                    student: conflicting_student
-      expect(enrollment_change).to be_valid
-      enrollment_change.conflicting_enrollment.period = period_1
-      expect(enrollment_change).not_to be_valid
-      enrollment_change.conflicting_enrollment.period = period_3
-      expect(enrollment_change).to be_valid
     end
   end
 end

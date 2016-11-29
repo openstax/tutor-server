@@ -16,7 +16,11 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   validate :same_profile, :same_course, :different_period_unless_conflict, :valid_conflict
 
   def from_period
-    enrollment.try(:period)
+    enrollment.try!(:period)
+  end
+
+  def conflicting_period
+    conflicting_enrollment.try!(:period)
   end
 
   alias_method :to_period, :period
@@ -64,9 +68,7 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
                 ( profile.nil? || conflicting_enrollment.student.role.profile == profile ) &&
                 ( period.nil? ||
                   ( period.course != conflicting_enrollment.period.course &&
-                    period.course.is_concept_coach ) ) &&
-                ( enrollment.nil? ||
-                  enrollment.created_at <= conflicting_enrollment.created_at ) )
+                    period.course.is_concept_coach ) ) )
     errors.add(:conflicting_enrollment, 'is invalid')
     false
   end
