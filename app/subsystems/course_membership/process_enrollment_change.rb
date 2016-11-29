@@ -18,6 +18,7 @@ class CourseMembership::ProcessEnrollmentChange
     enrollment_change_model = enrollment_change.to_model
 
     enrollment = enrollment_change_model.enrollment
+
     if enrollment.nil? || enrollment.deleted?
       # New student or student in archived period re-taking the course
       run(:add_student, user: enrollment_change.user,
@@ -26,10 +27,6 @@ class CourseMembership::ProcessEnrollmentChange
     else
       # Existing student
       student = enrollment.student
-      if student.course != enrollment_change.to_period.course
-        # Course change
-        student.course = enrollment_change.to_period.course
-      end
       student.student_identifier = student_identifier unless student_identifier.nil?
       student.save!
       run(:add_enrollment, student: student, period: enrollment_change.to_period)

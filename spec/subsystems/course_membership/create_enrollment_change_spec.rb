@@ -100,7 +100,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         AddUserAsPeriodStudent[user: user, period: period_3]
       end
 
-      it 'creates an EnrollmentChange with a nil from_period' do
+      it 'creates an EnrollmentChange with a nil conflicting_enrollment' do
         result = nil
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
@@ -108,6 +108,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         expect(result.outputs.enrollment_change.from_period).to be_nil
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
+        expect(result.outputs.enrollment_change.conflicting_enrollment).to be_nil
       end
     end
 
@@ -121,15 +122,16 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         course_2.update_attribute :is_concept_coach, true
       end
 
-      it 'returns an error message' do
+      it 'creates an EnrollmentChange with a conflicting_enrollment' do
         result = nil
         expect{ result = described_class.call(args) }
-          .not_to change{ CourseMembership::Models::EnrollmentChange.count }
-        expect(result.errors.first.code).to eq :concept_coach_conflict
-        expect(result.errors.first.message).to(
-          eq 'You are already enrolled in a Concept Coach course for this book. ' +
-             'If you are trying to transfer between courses, ' +
-             'please contact customer service for assistance.'
+          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.from_period).to be_nil
+        expect(result.outputs.enrollment_change.status).to eq :pending
+        expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
+        expect(result.outputs.enrollment_change.conflicting_enrollment).to(
+          eq role.student.latest_enrollment
         )
       end
     end
@@ -144,7 +146,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         course_3.update_attribute :is_concept_coach, true
       end
 
-      it 'creates an EnrollmentChange with a nil from_period' do
+      it 'creates an EnrollmentChange with a nil conflicting_enrollment' do
         result = nil
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
@@ -152,6 +154,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         expect(result.outputs.enrollment_change.from_period).to be_nil
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
+        expect(result.outputs.enrollment_change.conflicting_enrollment).to be_nil
       end
     end
   end

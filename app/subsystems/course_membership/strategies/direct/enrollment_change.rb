@@ -2,8 +2,8 @@ class CourseMembership::Strategies::Direct::EnrollmentChange < Entity
 
   wraps CourseMembership::Models::EnrollmentChange
 
-  exposes :profile, :from_period, :to_period, :student_identifier,
-          :status, :pending?, :approved?, :rejected?, :processed?,
+  exposes :profile, :from_period, :to_period, :conflicting_enrollment,
+          :student_identifier, :status, :pending?, :approved?, :rejected?, :processed?,
           :requires_enrollee_approval, :enrollee_approved_at
 
   def user

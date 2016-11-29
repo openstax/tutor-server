@@ -20,6 +20,13 @@ module CourseMembership
                                              error: StrategyError
     end
 
+    def conflicting_enrollment
+      verify_and_return @strategy.conflicting_enrollment,
+                        klass: CourseMembership::Models::Enrollment,
+                        error: StrategyError,
+                        allow_nil: true
+    end
+
     def student_identifier
       verify_and_return @strategy.student_identifier, klass: String,
                                                       error: StrategyError, allow_nil: true
