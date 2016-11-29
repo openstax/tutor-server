@@ -30,8 +30,8 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     )
 
     result = GetConceptCoach.call(user: current_human_user,
-                                  cnx_book_id: params[:cnx_book_id],
-                                  cnx_page_id: params[:cnx_page_id])
+                                  book_uuid: params[:cnx_book_id],
+                                  page_uuid: params[:cnx_page_id])
 
     if result.errors.any?
       json_hash = { errors: result.errors, valid_books: result.outputs.valid_book_urls }

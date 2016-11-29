@@ -20,10 +20,15 @@ class GetConceptCoach
 
   protected
 
-  def exec(user:, cnx_book_id:, cnx_page_id:)
-    role, page = get_role_and_page(user: user, cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id)
+  def exec(user:, book_uuid:, page_uuid:)
+    role, book = get_role_and_book(user: user, book_uuid: book_uuid)
+    page = book.pages.find{ |page| page.uuid == page_uuid }
+    fatal_error(code: :invalid_page) if page.nil?
 
-    ecosystem, pool = get_ecosystem_and_pool(page)
+    course = role.student.course
+    ecosystem = book.ecosystem
+    pool = page.concept_coach_pool
+
     history = run(:get_history, roles: role, type: :concept_coach).outputs.history[role]
     existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.task
     unless existing_cc_task.nil?
@@ -34,12 +39,12 @@ class GetConceptCoach
     end
 
     pool_exercises = pool.exercises.uniq
-    course = role.student.try(:course)
     filtered_exercises = run(:filter, exercises: pool_exercises, course: course)
                            .outputs.exercises
     core_exercises = run(:choose, exercises: filtered_exercises,
                                   count: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT,
-                                  history: history, allow_repeats: false).outputs.exercises
+                                  history: history,
+                                  allow_repeats: false).outputs.exercises
 
     if core_exercises.empty?
       outputs.valid_book_urls = ecosystem.books.map(&:url)
@@ -126,63 +131,29 @@ class GetConceptCoach
                                            spaced_practice: spaced_practice_status }])
   end
 
-  def get_role_and_page(user:, cnx_book_id:, cnx_page_id:)
+  def get_role_and_book(user:, book_uuid:)
     roles = Role::GetUserRoles[user, :student]
-    ecosystem_id_role_map = roles.each_with_object({}) do |role, hash|
-      course = role.student.course
-      next unless course.is_concept_coach
 
-      ecosystem_id = run(:get_ecosystem, course: course).outputs.ecosystem.id
-      hash[ecosystem_id] ||= []
-      hash[ecosystem_id] << role
+    cc_roles = roles.select{ |role| role.student.try!(:course).try!(:is_concept_coach) }
+
+    valid_books = []
+    selected_role_book_array_array = []
+    cc_roles.each do |role|
+      books = run(:get_ecosystem, course: role.student.course).outputs.ecosystem.books
+      valid_books += books
+      selected_book = books.find{ |book| book.uuid == book_uuid }
+      selected_role_book_array_array << [role, selected_book] unless selected_book.nil?
     end
 
-    page_models = Content::Models::Page
-      .joins(:book)
-      .where(book: { uuid: cnx_book_id, content_ecosystem_id: ecosystem_id_role_map.keys },
-             uuid: cnx_page_id)
+    outputs.valid_book_urls = valid_books.map(&:url).uniq
 
-    # If page_models.size > 1, the user is in 2 courses with the same CC book (not allowed)
-    page_model = page_models.order(:created_at).last
+    fatal_error(code: :not_a_cc_student) if outputs.valid_book_urls.empty?
 
-    if page_model.blank?
-      valid_books = Content::Models::Book.where(
-        content_ecosystem_id: ecosystem_id_role_map.keys
-      ).to_a
-      valid_book_with_cnx_book_id = valid_books.select{ |book| book.uuid == cnx_book_id }.first
+    fatal_error(code: :invalid_book) if selected_role_book_array_array.empty?
 
-      if !valid_book_with_cnx_book_id.nil?
-        # Book is valid for the user, but page is invalid
-        outputs.valid_book_urls = [valid_book_with_cnx_book_id].map(&:url)
-        fatal_error(code: :invalid_page)
-      elsif !valid_books.empty?
-        # Book is invalid for the user, but there are other valid books
-        outputs.valid_book_urls = valid_books.map(&:url)
-        fatal_error(code: :invalid_book)
-      else
-        # Not a CC student
-        outputs.valid_book_urls = []
-        fatal_error(code: :not_a_cc_student)
-      end
-
-      return [nil, nil]
-    end
-
-    ecosystem_id = page_model.book.content_ecosystem_id
-    roles = ecosystem_id_role_map[ecosystem_id]
-    # We are guaranteed to have at least one role here, since we already filtered the page above
-    # If there is more than one role, something funky is happening,
-    # but the most correct thing to do seems to be getting the latest role
-    role = roles.max_by(&:created_at)
-
-    page = Content::Page.new(strategy: page_model.wrap)
-
-    [role, page]
-  end
-
-  def get_ecosystem_and_pool(page)
-    ecosystem = Content::Ecosystem.find_by_page_ids(page.id)
-    [ecosystem, page.concept_coach_pool]
+    # If we have more than 1 role, the user is in multiple CC courses with the same book
+    # In that case, select their latest enrollment as the active one
+    selected_role_book_array_array.max_by{ |role, book| role.student.latest_enrollment.created_at }
   end
 
 end

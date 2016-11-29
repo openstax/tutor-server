@@ -56,7 +56,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     it 'creates a new Task' do
       task = nil
       expect{ task = described_class[
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @user_1, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ] }.to change{ Tasks::Models::Task.count }.by(1)
       expect(task.task_steps.size).to eq exercises_count(0)
       task.task_steps.each do |task_step|
@@ -67,7 +67,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     it 'creates a new ConceptCoachTask' do
       task = nil
       expect{ task = described_class[
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @user_1, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ] }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       cc_task = Tasks::Models::ConceptCoachTask.order(:created_at).last
       expect(cc_task.task).to eq task
@@ -76,7 +76,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     it 'returns an error if the book is invalid' do
       result = nil
       expect{ result = described_class.call(
-        user: @user_1, cnx_book_id: 'invalid', cnx_page_id: @page_1.uuid
+        user: @user_1, book_uuid: 'invalid', page_uuid: @page_1.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_book]
       expect(result.outputs.valid_book_urls).to eq [@book.url]
@@ -85,7 +85,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     it 'returns an error if the page is invalid' do
       result = nil
       expect{ result = described_class.call(
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: 'invalid'
+        user: @user_1, book_uuid: @book.uuid, page_uuid: 'invalid'
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_page]
       expect(result.outputs.valid_book_urls).to eq [@book.url]
@@ -96,21 +96,21 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
 
       result = nil
       expect{ result = described_class.call(
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @user_1, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:not_a_cc_student]
     end
   end
 
   context 'existing task' do
-    let!(:existing_task) { described_class[user: @user_1,
-                                           cnx_book_id: @book.uuid,
-                                           cnx_page_id: @page_1.uuid] }
+    let!(:existing_task) do
+      described_class[user: @user_1, book_uuid: @book.uuid, page_uuid: @page_1.uuid]
+    end
 
     it 'should not create a new task for the same user and page' do
       task = nil
       expect{ task = described_class[
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @user_1, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ] }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(task).to eq existing_task
     end
@@ -118,7 +118,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     it 'should create a new task for a different user' do
       task = nil
       expect{ task = described_class[
-        user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @user_2, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ] }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq exercises_count(0)
@@ -130,7 +130,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
 it 'should create a new task for a different page and properly assign spaced practice' do
       task = nil
       expect{ task = described_class[
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+        user: @user_1, book_uuid: @book.uuid, page_uuid: @page_2.uuid
       ] }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq exercises_count(1)
@@ -146,7 +146,7 @@ it 'should create a new task for a different page and properly assign spaced pra
       task_pages = [@page_1, @page_2, @page_3, @page_4]
       tasks = task_pages.map do |page|
         described_class[
-          user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
+          user: @user_1, book_uuid: @book.uuid, page_uuid: page.uuid
         ]
       end
 
@@ -193,7 +193,7 @@ it 'should create a new task for a different page and properly assign spaced pra
     it 'returns an error if the book is invalid' do
       result = nil
       expect{ result = described_class.call(
-        user: @user_1, cnx_book_id: 'invalid', cnx_page_id: @page_1.uuid
+        user: @user_1, book_uuid: 'invalid', page_uuid: @page_1.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_book]
       expect(result.outputs.valid_book_urls).to eq [@book.url]
@@ -202,7 +202,7 @@ it 'should create a new task for a different page and properly assign spaced pra
     it 'returns an error if the page is invalid' do
       result = nil
       expect{ result = described_class.call(
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: 'invalid'
+        user: @user_1, book_uuid: @book.uuid, page_uuid: 'invalid'
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_page]
       expect(result.outputs.valid_book_urls).to eq [@book.url]
@@ -213,7 +213,7 @@ it 'should create a new task for a different page and properly assign spaced pra
       page = FactoryGirl.create :content_page, chapter: chapter_model
       result = nil
       expect{ result = described_class.call(
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
+        user: @user_1, book_uuid: @book.uuid, page_uuid: page.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:page_has_no_exercises]
       expect(result.outputs.valid_book_urls).to eq [@book.url]
