@@ -59,11 +59,14 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   end
 
   def valid_conflict
-    return if enrollment.nil? || conflicting_enrollment.nil? ||
-              ( ( enrollment.created_at <= conflicting_enrollment.created_at ) &&
-                ( enrollment.period.course != conflicting_enrollment.period.course ) &&
-                ( enrollment.period.course.is_concept_coach ) &&
-                ( conflicting_enrollment.period.course.is_concept_coach ) )
+    return if conflicting_enrollment.nil? ||
+              ( conflicting_enrollment.period.course.is_concept_coach &&
+                ( profile.nil? || conflicting_enrollment.student.role.profile == profile ) &&
+                ( period.nil? ||
+                  ( period.course != conflicting_enrollment.period.course &&
+                    period.course.is_concept_coach ) ) &&
+                ( enrollment.nil? ||
+                  enrollment.created_at <= conflicting_enrollment.created_at ) )
     errors.add(:conflicting_enrollment, 'is invalid')
     false
   end
