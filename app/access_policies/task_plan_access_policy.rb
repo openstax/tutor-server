@@ -11,8 +11,6 @@ class TaskPlanAccessPolicy
     owner = task_plan.owner
 
     if owner.is_a?(CourseProfile::Models::Course)
-      return false if action == :create && !owner.active?
-
       UserIsCourseTeacher[user: requestor, course: owner]
     elsif requestor.is_human?
       requestor == owner || requestor.to_model == owner

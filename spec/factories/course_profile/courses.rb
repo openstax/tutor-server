@@ -8,8 +8,8 @@ FactoryGirl.define do
     term                  { CourseProfile::Models::Course.terms.keys.sample }
     year                  { Time.current.year }
 
-    starts_at             { Time.current }
-    ends_at               { Time.current + 1.week }
+    starts_at             { Time.current - 3.months }
+    ends_at               { Time.current + 3.months }
 
     association :offering, factory: :catalog_offering
 
@@ -18,9 +18,7 @@ FactoryGirl.define do
     end
 
     trait(:process_school_change) do
-      after(:create) do |course|
-        SchoolDistrict::ProcessSchoolChange[course: course]
-      end
+      after(:create) { |course| SchoolDistrict::ProcessSchoolChange[course: course] }
     end
   end
 end
