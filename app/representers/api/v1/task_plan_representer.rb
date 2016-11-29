@@ -102,8 +102,7 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false,
-           getter: ->(*) { "/api/jobs/#{publish_job_uuid}" if publish_job_uuid.present? },
-           if: ->(user_options:, **) { !user_options.try!(:[], :exclude_job_info) }
+           getter: ->(*) { "/api/jobs/#{publish_job_uuid}" if publish_job_uuid.present? }
 
   collection :tasking_plans,
              instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },

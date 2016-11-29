@@ -220,10 +220,9 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     context 'exclude_job_info == true' do
       let(:hash_options) { { user_options: { exclude_job_info: true } } }
 
-      it 'cannot be read' do
-        allow(task_plan).to receive(:publish_job_uuid).and_return(uuid)
-        rep = described_class.new(task_plan).to_hash(hash_options)
-        expect(rep).not_to have_key('publish_job_url')
+      it 'can be read' do
+        expect(task_plan).to receive(:publish_job_uuid).and_return(uuid).twice
+        expect(representation).to include 'publish_job_url' => url
       end
 
       it 'cannot be written (attempts are silently ignored)' do
