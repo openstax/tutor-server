@@ -25,7 +25,7 @@ RSpec.feature Admin::StatsController do
     end
 
     scenario 'displays course statistics' do
-      visit courses_admin_stats_path
+      visit admin_stats_courses_path
 
       expect(page).to have_content('Course Stats')
       expect(page).to have_content(course.id)
@@ -68,9 +68,7 @@ RSpec.feature Admin::StatsController do
     background { AddEcosystemToCourse[ecosystem: ecosystem, course: course] }
 
     scenario 'displays excluded exercise statistics' do
-      pages = exercises.map(&:page)
-
-      visit excluded_exercises_customer_service_stats_path
+      visit admin_stats_excluded_exercises_path
 
       expect(page).to have_content('Excluded Exercise Stats')
 
@@ -112,7 +110,7 @@ RSpec.feature Admin::StatsController do
     end
 
     scenario 'displays concept coach statistics' do
-      visit concept_coach_admin_stats_path
+      visit admin_stats_concept_coach_path
 
       expect(page).to have_content('Concept Coach Stats')
       cc_tasks.each do |cc_task|

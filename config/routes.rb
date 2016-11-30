@@ -1,163 +1,203 @@
+# Try to list more often used routes first, although catch-all routes have to be at the end
 Rails.application.routes.draw do
 
-  root 'webview#home'
+  # Home page, course picker, course dashboard and student enrollment
+  scope controller: :webview do
+    root action: :home
 
-  get '/dashboard', to: 'webview#index'
+    # The routes below would be served by the webview catch-all route,
+    # but we define them so we can use them as helpers that point to certain FE pages
+    scope action: :index do
+      get :dashboard
+      get :'course/:id', as: :course_dashboard
 
-  scope module: 'static_pages' do
-    get 'about'
-    get 'contact'
-    post 'contact_form'
-    get 'copyright'
-    get 'developers'
-    get 'help'
-    get 'privacy'
-    get 'share'
-    get 'status'
-  end
-
-  get "terms/pose", to: "terms#pose", as: "pose_terms"
-  post "terms/agree", to: "terms#agree", as: "agree_to_terms"
-  get 'terms', to: 'terms#index'
-
-  mount OpenStax::Accounts::Engine, at: "/accounts"
-  mount OpenStax::Api::Engine, at: '/'
-  mount FinePrint::Engine => "/fine_print"
-
-  use_doorkeeper
-
-  apipie
-
-  # Fetch user information and log in/out in remotely
-  scope :auth, controller: :auth do
-    scope to: 'auth#cors_preflight_check', via: [:options] do
-      match 'status'
+      scope :enroll do
+        get :':enroll_token(/:ignore)', as: :token_enroll
+        post :confirm, as: :confirm_token_enroll
+      end
     end
-    get 'status'
-    get 'logout', as: 'logout_via_popup'
-    match 'popup', via: [:get, :post], as: 'authenticate_via_popup'
   end
 
+  # Static pages
+  scope controller: :static_pages do
+    get :about
+    get :contact
+    post :contact_form
+    get :copyright
+    get :developers
+    get :help
+    get :privacy
+    get :share
+    get :status
+    get :'auth/failure', action: :omniauth_failure
+  end
+
+  # User information and remote log in/out
+  namespace :auth do
+    match :status, action: :cors_preflight_check, via: [:options]
+    get :status
+    match :popup, via: [:get, :post], as: :authenticate_via_popup
+    get :logout, as: :logout_via_popup
+  end
+
+  # Short codes
+  get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
+
+  # Terms of use/Privacy policy
+  resources :terms, only: [:index] do
+    collection do
+      get :pose
+      post :agree
+    end
+  end
+
+  mount OpenStax::Accounts::Engine => :accounts
+  mount FinePrint::Engine => :fine_print
+
+  # All API routes
   api :v1, default: true do
-    resources :jobs, only: [:index, :show]
+    resources :users, only: [:index]
+    resource :user, only: [:show] do
+      get :tasks
+      put :tours
+      put :ui_settings
 
-    resources :users, only: [:index] do
-      put :ui_settings, on: :collection
+      resources :courses, only: [:index] do
+        patch :student, to: 'students#update_self'
+      end
     end
 
-    resource :user, only: [:show] do
-      get 'tasks', on: :collection
-      put 'tours', on: :member
+    resources :notifications, only: [:index]
+
+    namespace :log do
+      post :entry
     end
 
     resources :tasks, only: [:show, :destroy] do
       member do
-        put 'accept_late_work'
-        put 'reject_late_work'
+        put :accept_late_work
+        put :reject_late_work
       end
 
       resources :steps, controller: :task_steps, shallow: true, only: [:show, :update] do
         member do
-          put 'completed'
-          put 'recovery'
-          put 'refresh'
+          put :completed
+          put :recovery
+          put :refresh
         end
       end
     end
 
-    namespace 'cc' do
-      get 'tasks/:cnx_book_id/:cnx_page_id', to: 'tasks#show', as: :task
-      get 'tasks/:course_id/:cnx_page_id/stats', to: 'tasks#stats', as: :task_stats
-    end
-
-    get 'user/courses', to: 'courses#index', as: :courses
-    patch 'user/courses/:course_id/student', to: 'students#update_self'
-
-    resources :guides, path: 'courses', only: [] do
-      member do
-        get 'guide(/role/:role_id)', action: :student
-        get 'teacher_guide', action: :teacher
+    namespace :cc do
+      namespace :tasks do
+        get :':cnx_book_id/:cnx_page_id', action: :show
+        get :':course_id/:cnx_page_id/stats', action: :stats
       end
     end
-
-    resources :offerings, only: :index
 
     resources :courses, only: [:create, :show, :update] do
       member do
-        get 'dashboard(/role/:role_id)', action: :dashboard
-        get 'cc/dashboard(/role/:role_id)', action: :cc_dashboard
-        get 'roster'
-        post 'clone'
+        get :'dashboard(/role/:role_id)', action: :dashboard
+        get :'cc/dashboard(/role/:role_id)', action: :cc_dashboard
+        get :roster
+        post :clone
 
         scope :performance, controller: :performance_reports do
-          get '(/role/:role_id)', action: :index
-          post 'export'
-          get 'exports'
+          get :'(/role/:role_id)', action: :index
+          post :export
+          get :exports
         end
 
         scope :practice, controller: :practices do
-          post '(/role/:role_id)', action: :create
-          get '(/role/:role_id)', action: :show
+          get :'(/role/:role_id)', action: :show
+          post :'(/role/:role_id)', action: :create
         end
       end
 
-      resource :exercises, controller: :course_exercises, only: [:update] do
-        get '(/:pool_types)', action: :show
+      scope controller: :guides do
+        get :'guide(/role/:role_id)', action: :student
+        get :teacher_guide, action: :teacher
       end
 
-      resources :task_plans, path: '/plans', shallow: true, except: [:new, :edit] do
+      resource :exercises, controller: :course_exercises, only: [:update] do
+        get :'(/:pool_types)', action: :show
+      end
+
+      resources :task_plans, path: :plans, shallow: true, except: [:new, :edit] do
         member do
-          get 'stats'
-          get 'review'
-          put 'restore'
+          get :stats
+          get :review
+          put :restore
         end
       end
 
       resources :students, shallow: true, except: [:index, :create] do
-        member do
-          put 'undrop'
-        end
+        put :undrop, on: :member
       end
 
       resources :teachers, shallow: true, only: [:destroy]
 
       resources :periods, shallow: true, only: [:create, :update, :destroy] do
-        member do
-          put 'restore'
-        end
+        put :restore, on: :member
       end
+    end
+
+    namespace :pages do
+      get :':uuid@:version', action: :get_page
+      get :':uuid', action: :get_page
     end
 
     resources :ecosystems, only: [:index] do
       member do
-        get 'readings'
-        get 'exercises(/:pool_types)', action: :exercises
+        get :readings
+        get :'exercises(/:pool_types)', action: :exercises
       end
     end
 
-    scope :pages, controller: :pages, action: :get_page do
-      get ':uuid@:version'
-      get ':uuid'
+    resources :enrollment_changes, only: [:create] do
+      put :approve, on: :member
+      post :prevalidate, on: :collection
     end
 
-    resources :enrollment_changes, only: :create do
-      put 'approve', on: :member
-      post 'prevalidate', on: :collection
-    end
+    resources :offerings, only: [:index]
 
-    namespace 'log' do
-      post :entry
-    end
+    resources :jobs, only: [:index, :show]
 
-    resources :notifications, only: [:index]
+    match :'*all', action: :options, via: [:options]
   end
 
-  namespace 'admin' do
-    root to: 'console#index'
+  # Teacher enrollment
+  scope to: 'courses#teach' do
+    get :'teach/:teach_token(/:ignore)', as: :teach_course
+    get :'courses/join/:teach_token', as: :deprecated_teach_course
+  end
 
-    get 'raise(/:type)', to: 'console#test_raise', as: "raise"
+  # API docs
+  apipie
+
+  # All admin routes
+  namespace :admin do
+    scope controller: :console do
+      root action: :index
+
+      get :'raise(/:type)', action: :test_raise, as: :raise
+    end
+
+    resources :users, except: :destroy do
+      member do
+        post :become
+        patch :delete
+        patch :undelete
+      end
+    end
 
     resources :administrators, only: [:index, :create, :destroy]
+
+    resources :ecosystems, except: [:edit] do
+      get :manifest, on: :member
+    end
+
+    resources :catalog_offerings, except: [:show]
 
     resources :courses, except: :show do
       member do
@@ -178,43 +218,16 @@ Rails.application.routes.draw do
           put :change_salesforce
         end
       end
-      resources :students, only: [:index], shallow: true
+
+      resources :students, only: [:index]
       resources :teachers, only: [:destroy], shallow: true
     end
 
-    resources :districts, except: [:show]
-
     resources :schools, except: [:show]
 
-    resource :cron, only: [:update]
+    resources :districts, except: [:show]
 
-    resources :exceptions, only: [:show]
-
-    resources :jobs, only: [:index, :show]
-
-    resources :catalog_offerings, except: [:show]
-
-    resources :users, except: :destroy do
-      member do
-        post 'become'
-        patch 'delete'
-        patch 'undelete'
-      end
-    end
-
-    resources :tags, only: [:index, :edit, :update, :show]
     resources :notifications,  only: [:index, :create, :destroy]
-
-    get :timecop, controller: :timecop, action: :index
-    put :reset_time, controller: :timecop
-    post :freeze_time, controller: :timecop
-    post :time_travel, controller: :timecop
-
-    resources :ecosystems, except: [:edit] do
-      member do
-        get :manifest
-      end
-    end
 
     resources :targeted_contracts, except: [:show, :edit]
 
@@ -224,86 +237,88 @@ Rails.application.routes.draw do
       delete :destroy_user
       post :import_courses
       put :update_salesforce
+      match :'/auth/salesforce/callback', action: :callback, via: [:get, :post]
     end
 
-    resources :stats, only: [] do
-      collection do
-        get :courses
-        get :excluded_exercises
-        post :excluded_exercises_to_csv
-        get :concept_coach
-      end
-    end
+    mount RailsSettingsUi::Engine => :settings
 
-    mount RailsSettingsUi::Engine, at: 'settings'
-  end
+    resource :cron, only: [:update]
 
-  match '/auth/salesforce/callback', to: 'admin/salesforce#callback',
-                                     via: [:get, :post]
-  get '/auth/failure', to: 'static_pages#omniauth_failure'
-
-  namespace 'customer_service' do
-    root to: 'console#index'
-
-    resources :courses, only: [:index, :show] do
-      resources :periods, only: [:index], shallow: true
-      resources :students, only: [:index], shallow: true
-    end
+    resources :exceptions, only: [:show]
 
     resources :jobs, only: [:index, :show]
 
-    resources :users, only: :index
-
-    resources :tags, only: [:index, :show]
-
-    resources :ecosystems, only: [:index] do
-      member do
-        get :manifest
-      end
+    namespace :stats do
+      get :courses
+      get :excluded_exercises
+      post :excluded_exercises_to_csv
+      get :concept_coach
     end
 
-    resources :targeted_contracts, only: :index
+    resources :tags, only: [:index, :edit, :update, :show]
+
+    scope controller: :timecop do
+      get :timecop
+      put :reset_time
+      post :freeze_time
+      post :time_travel
+    end
+  end
+
+  # All CS routes
+  namespace :customer_service do
+    root 'console#index'
+
+    resources :users, only: [:index]
+
+    resources :ecosystems, only: [:index] do
+      get :manifest, on: :member
+    end
+
+    resources :courses, only: [:index, :show] do
+      resources :periods, only: [:index]
+      resources :students, only: [:index]
+    end
+
+    resources :targeted_contracts, only: [:index]
 
     resource :salesforce, only: [:show], controller: :salesforce do
       post :import_courses
     end
 
-    resources :stats, only: [] do
-      collection do
-        get :courses
-        get :excluded_exercises
-        get :concept_coach
-      end
+    resources :jobs, only: [:index, :show]
+
+    namespace :stats do
+      get :courses
+      get :excluded_exercises
+      get :concept_coach
     end
+
+    resources :tags, only: [:index, :show]
   end
 
-  get '/teach/:teach_token(/:ignore)' => 'courses#teach', as: :teach_course
-  get '/courses/join/:teach_token' => 'courses#teach', as: :deprecated_teach_course # deprecated
-
-  get '/enroll/:enroll_token(/:ignore)' => 'courses#enroll', as: :token_enroll
-  post '/enroll/confirm' => 'courses#confirm_enrollment', as: :confirm_token_enroll
-
-  get '/course/:id', to: 'webview#index', as: :course_dashboard
-
+  # All CM routes
   namespace :content_analyst do
-    root to: 'console#index'
-
-    resources :jobs, only: [:show]
+    root 'console#index'
 
     resources :ecosystems, except: [:edit] do
-      member do
-        get :manifest
-      end
+      get :manifest, on: :member
     end
+
+    resources :jobs, only: [:show]
   end
 
+  # Manage apps that use Tutor as an OAuth provider
+  use_doorkeeper
+
+  # Dev-only admin routes
   namespace :dev do
     resources :users, only: [:create] do
-      post 'generate', on: :collection
+      post :generate, on: :collection
     end
   end
 
-  get '/@/:short_code(/:human_readable)' => 'short_codes#redirect', as: 'short_code'
+  # Catch-all frontend route
+  match :'*other', to: 'webview#index', via: [:get, :post, :put, :patch, :delete]
 
-  match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
 end

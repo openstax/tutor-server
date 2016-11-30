@@ -32,14 +32,14 @@ module Manager::StatsActions
 
     unless by_course || by_exercise
       flash[:alert] = "You must select at least one of two options to export"
-      redirect_to excluded_exercises_admin_stats_path and return
+      redirect_to admin_stats_excluded_exercises_path and return
     end
 
     ExportExerciseExclusions.perform_later(
       upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
     )
     flash[:success] = "The export should be available in a few minutes in ownCloud."
-    redirect_to excluded_exercises_admin_stats_path
+    redirect_to admin_stats_excluded_exercises_path
   end
 
   def concept_coach

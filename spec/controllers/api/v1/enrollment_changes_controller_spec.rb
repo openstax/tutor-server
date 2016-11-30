@@ -94,16 +94,6 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
           expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
         end
 
-        it 'returns an error if the enrollment code\'s course is not a CC course' do
-          course.update_attribute(:is_concept_coach, false)
-
-          expect{ api_post :create, nil, raw_post_data: {
-            enrollment_code: period.enrollment_code, book_uuid: book.uuid
-          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
-        end
-
         it 'returns an error if the book_uuid does not match the course\'s book' do
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: SecureRandom.hex
@@ -166,16 +156,6 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         it 'returns an error if the enrollment code is invalid' do
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: SecureRandom.hex
-          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
-        end
-
-        it 'returns an error if the enrollment code\'s course is not a CC course' do
-          course.update_attribute(:is_concept_coach, false)
-
-          expect{ api_post :create, nil, raw_post_data: {
-            enrollment_code: period.enrollment_code
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
