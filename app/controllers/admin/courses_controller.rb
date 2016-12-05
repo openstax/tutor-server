@@ -41,7 +41,7 @@ class Admin::CoursesController < Admin::BaseController
                   redirect_to admin_courses_path
                 },
                 failure: ->(*) {
-                  flash[:error] = @handler_result.errors.full_messages
+                  flash.now[:error] = @handler_result.errors.full_messages
                   @course = @handler_result.outputs.course || get_new_course
                   get_schools
                   get_catalog_offerings
@@ -93,10 +93,11 @@ class Admin::CoursesController < Admin::BaseController
                   redirect_to admin_courses_path
                 },
                 failure: ->(*) {
-                  flash[:error] = @handler_result.errors.full_messages
+                  flash.now[:error] = @handler_result.errors.full_messages
                   @course = CourseProfile::Models::Course.find(params[:id])
                   get_schools
                   get_catalog_offerings
+                  get_course_details
                   render :edit
                 })
   end
