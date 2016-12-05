@@ -1,6 +1,6 @@
 TermYear = Struct.new(:term, :year) do
   LEGACY_TERM_STARTS_AT = DateTime.parse('July 1st, 2015')
-  LEGACY_TERM_ENDS_AT   = DateTime.parse('Feb 1st, 2017' )
+  LEGACY_TERM_ENDS_AT   = DateTime.parse('Jan 1st, 2017' )
 
   TERM_START_DATES = {
     legacy: ->(year) { LEGACY_TERM_STARTS_AT                  },
