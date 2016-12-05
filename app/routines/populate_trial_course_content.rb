@@ -1,12 +1,12 @@
 class PopulateTrialCourseContent
 
   STUDENT_INFO = [
-    { username: 'trialstudent1', title: 'Trial', first_name: 'Student', last_name: 'One'   },
-    { username: 'trialstudent2', title: 'Trial', first_name: 'Student', last_name: 'Two'   },
-    { username: 'trialstudent3', title: 'Trial', first_name: 'Student', last_name: 'Three' },
-    { username: 'trialstudent4', title: 'Trial', first_name: 'Student', last_name: 'Four'  },
-    { username: 'trialstudent5', title: 'Trial', first_name: 'Student', last_name: 'Five'  },
-    { username: 'trialstudent6', title: 'Trial', first_name: 'Student', last_name: 'Six'   }
+    { username: 'trialstudent1', first_name: 'Student', last_name: 'One'   },
+    { username: 'trialstudent2', first_name: 'Student', last_name: 'Two'   },
+    { username: 'trialstudent3', first_name: 'Student', last_name: 'Three' },
+    { username: 'trialstudent4', first_name: 'Student', last_name: 'Four'  },
+    { username: 'trialstudent5', first_name: 'Student', last_name: 'Five'  },
+    { username: 'trialstudent6', first_name: 'Student', last_name: 'Six'   }
   ]
 
   NUM_CHAPTERS = 4

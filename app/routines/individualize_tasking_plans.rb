@@ -20,8 +20,9 @@ class IndividualizeTaskingPlans
         user = ::User::User.new(strategy: strategy)
         Role::GetDefaultUserRole[user]
       when CourseProfile::Models::Course
-        CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles +
-        target.periods.map(&:teacher_student_role)
+        CourseMembership::GetCourseRoles.call(
+          course: target, types: [:student, :teacher_student]
+        ).outputs.roles
       when CourseMembership::Models::Period
         CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles +
         [target.teacher_student_role]

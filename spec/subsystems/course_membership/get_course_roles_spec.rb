@@ -4,45 +4,47 @@ RSpec.describe CourseMembership::GetCourseRoles do
   let(:target_course) { FactoryGirl.create :course_profile_course }
   let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
 
+  let(:target_teacher_student_role) { target_period.teacher_student_role }
+
   let(:other_course) { FactoryGirl.create :course_profile_course }
   let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
 
-  let!(:other_student_role) {
+  let!(:other_student_role) do
     other_role = FactoryGirl.create :entity_role
     CourseMembership::AddStudent.call(
       period: other_period,
       role:   other_role
     )
     other_role
-  }
+  end
 
-  let!(:other_teacher_role) {
+  let!(:other_teacher_role) do
     other_role = FactoryGirl.create :entity_role
     CourseMembership::AddTeacher.call(
       course: other_course,
       role:   other_role
     )
     other_role
-  }
+  end
 
   context "when an invalid :type is used" do
     let(:types) { :bogus_type }
-    let!(:student_role) {
+    let!(:student_role) do
       target_role = FactoryGirl.create :entity_role
       CourseMembership::AddStudent.call(
         period: target_period,
         role:   target_role
       )
       target_role
-    }
-    let!(:teacher_role) {
+    end
+    let!(:teacher_role) do
       target_role = FactoryGirl.create :entity_role
       CourseMembership::AddTeacher.call(
         course: target_course,
         role:   target_role
       )
       target_role
-    }
+    end
 
     it "returns an empty enumerable" do
       result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -54,78 +56,93 @@ RSpec.describe CourseMembership::GetCourseRoles do
   context "when types: :any" do
     let(:types) { :any }
 
-    context "and there are no roles for the target course" do
+    context "and there are no periods for the target course" do
       it "returns an empty enumerable" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
         expect(result.errors).to be_empty
         expect(result.outputs.roles).to be_empty
       end
-    end
 
-    context "and there is one student role for the target course" do
-      let!(:target_student_role) {
-        target_role = FactoryGirl.create :entity_role
-        CourseMembership::AddStudent.call(
-          period: target_period,
-          role:   target_role
-        )
-        target_role
-      }
+      context "and there is one teacher role for the target course" do
+        let!(:target_teacher_role) do
+          target_role = FactoryGirl.create :entity_role
+          CourseMembership::AddTeacher.call(
+            course: target_course,
+            role:   target_role
+          )
+          target_role
+        end
 
-      it "returns an enumerable containing that role" do
-        result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
-        expect(result.errors).to be_empty
-        expect(result.outputs.roles.count).to eq(1)
-        expect(result.outputs.roles).to include(target_student_role)
+        it "returns an enumerable containing that role" do
+          result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+          expect(result.errors).to be_empty
+          expect(result.outputs.roles.count).to eq(1)
+          expect(result.outputs.roles).to include(target_teacher_role)
+        end
       end
     end
 
-    context "and there is one teacher role for the target course" do
-      let!(:target_teacher_role) {
-        target_role = FactoryGirl.create :entity_role
-        CourseMembership::AddTeacher.call(
-          course: target_course,
-          role:   target_role
-        )
-        target_role
-      }
+    context "and there is one period for the target course" do
+      before { target_period }
 
-      it "returns an enumerable containing that role" do
-        result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
-        expect(result.errors).to be_empty
-        expect(result.outputs.roles.count).to eq(1)
-        expect(result.outputs.roles).to include(target_teacher_role)
+      context "with no students" do
+        it "returns an enumerable containing the teacher_student role" do
+          result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+          expect(result.errors).to be_empty
+          expect(result.outputs.roles.count).to eq(1)
+          expect(result.outputs.roles).to include(target_teacher_student_role)
+        end
       end
-    end
 
-    context "and there are multiple teacher/student roles for the target course" do
-      let!(:target_roles) {
-        target_role1 = FactoryGirl.create :entity_role
-        CourseMembership::AddTeacher.call(
-          course: target_course,
-          role:   target_role1
-        )
+      context "with one student" do
+        let!(:target_student_role) do
+          target_role = FactoryGirl.create :entity_role
+          CourseMembership::AddStudent.call(
+            period: target_period,
+            role:   target_role
+          )
+          target_role
+        end
 
-        target_role2 = FactoryGirl.create :entity_role
-        CourseMembership::AddStudent.call(
-          period: target_period,
-          role:   target_role2
-        )
+        it "returns an enumerable containing that role and the teacher_student role" do
+          result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+          expect(result.errors).to be_empty
+          expect(result.outputs.roles.count).to eq(2)
+          expect(result.outputs.roles).to include(target_student_role)
+          expect(result.outputs.roles).to include(target_teacher_student_role)
+        end
+      end
 
-        target_role3 = FactoryGirl.create :entity_role
-        CourseMembership::AddStudent.call(
-          period: target_period,
-          role:   target_role3
-        )
-        [target_role1, target_role2, target_role3]
-      }
+      context "and there are multiple teacher/student roles for the target course" do
+        let!(:target_roles) do
+          target_role1 = FactoryGirl.create :entity_role
+          CourseMembership::AddTeacher.call(
+            course: target_course,
+            role:   target_role1
+          )
 
-      it "returns an enumerable containing those roles" do
-        result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
-        expect(result.errors).to be_empty
-        expect(result.outputs.roles.count).to eq(target_roles.count)
-        target_roles.each do |target_role|
-          expect(result.outputs.roles).to include(target_role)
+          target_role2 = FactoryGirl.create :entity_role
+          CourseMembership::AddStudent.call(
+            period: target_period,
+            role:   target_role2
+          )
+
+          target_role3 = FactoryGirl.create :entity_role
+          CourseMembership::AddStudent.call(
+            period: target_period,
+            role:   target_role3
+          )
+          [target_role1, target_role2, target_role3]
+        end
+
+        it "returns an enumerable containing those roles and the teacher_student role" do
+          result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+          expect(result.errors).to be_empty
+          expect(result.outputs.roles.count).to eq(target_roles.count + 1)
+          target_roles.each do |target_role|
+            expect(result.outputs.roles).to include(target_role)
+          end
+          expect(result.outputs.roles).to include(target_teacher_student_role)
         end
       end
     end
@@ -143,14 +160,14 @@ RSpec.describe CourseMembership::GetCourseRoles do
     end
 
     context "and there is one student role for the target course" do
-      let!(:target_student_role) {
+      let!(:target_student_role) do
         target_role = FactoryGirl.create :entity_role
         CourseMembership::AddStudent.call(
           period: target_period,
           role:   target_role
         )
         target_role
-      }
+      end
 
       it "returns an empty enumerable" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -160,14 +177,14 @@ RSpec.describe CourseMembership::GetCourseRoles do
     end
 
     context "and there is one teacher role for the target course" do
-      let!(:target_teacher_role) {
+      let!(:target_teacher_role) do
         target_role = FactoryGirl.create :entity_role
         CourseMembership::AddTeacher.call(
           course: target_course,
           role:   target_role
         )
         target_role
-      }
+      end
 
       it "returns an enumerable containing that role" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -178,7 +195,7 @@ RSpec.describe CourseMembership::GetCourseRoles do
     end
 
     context "and there are multiple teacher/student roles for the target course" do
-      let!(:target_roles) {
+      let!(:target_roles) do
         target_role1 = FactoryGirl.create :entity_role
         CourseMembership::AddStudent.call(
           period: target_period,
@@ -197,7 +214,7 @@ RSpec.describe CourseMembership::GetCourseRoles do
           role:   target_role3
         )
         [target_role2]
-      }
+      end
 
       it "returns an enumerable containing only the teacher roles" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -224,14 +241,14 @@ RSpec.describe CourseMembership::GetCourseRoles do
     end
 
     context "and there is one student role for the target course" do
-      let!(:target_student_role) {
+      let!(:target_student_role) do
         target_role = FactoryGirl.create :entity_role
         CourseMembership::AddStudent.call(
           period: target_period,
           role:   target_role
         )
         target_role
-      }
+      end
 
       it "returns an enumerable containing that role" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -242,14 +259,14 @@ RSpec.describe CourseMembership::GetCourseRoles do
     end
 
     context "and there is one teacher role for the target course" do
-      let!(:target_teacher_role) {
+      let!(:target_teacher_role) do
         target_role = FactoryGirl.create :entity_role
         CourseMembership::AddTeacher.call(
           course: target_course,
           role:   target_role
         )
         target_role
-      }
+      end
 
       it "returns an empty enumerable" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -259,7 +276,7 @@ RSpec.describe CourseMembership::GetCourseRoles do
     end
 
     context "and there are multiple teacher/student roles for the target course" do
-      let!(:target_roles) {
+      let!(:target_roles) do
         target_role1 = FactoryGirl.create :entity_role
         CourseMembership::AddTeacher.call(
           course: target_course,
@@ -278,7 +295,7 @@ RSpec.describe CourseMembership::GetCourseRoles do
           role:   target_role3
         )
         [target_role2, target_role3]
-      }
+      end
 
       it "returns an enumerable containing only the student roles" do
         result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
@@ -286,6 +303,61 @@ RSpec.describe CourseMembership::GetCourseRoles do
         expect(result.outputs.roles.count).to eq(target_roles.count)
         target_roles.each do |target_role|
           expect(result.outputs.roles).to include(target_role)
+        end
+      end
+    end
+  end
+
+  context "when types: :teacher_student" do
+    let(:types) { :teacher_student }
+
+    context "and there are no periods for the target course" do
+      it "returns an empty enumerable" do
+        result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+        expect(result.errors).to be_empty
+        expect(result.outputs.roles).to be_empty
+      end
+    end
+
+    context "and there is one period for the target course" do
+      before { target_period }
+
+      context "with no students" do
+        it "returns an enumerable containing the teacher_student role" do
+          result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+          expect(result.errors).to be_empty
+          expect(result.outputs.roles.count).to eq(1)
+          expect(result.outputs.roles).to include(target_teacher_student_role)
+        end
+      end
+
+      context "and there are multiple teacher/student roles for the target course" do
+        let!(:target_roles) do
+          target_role1 = FactoryGirl.create :entity_role
+          CourseMembership::AddTeacher.call(
+            course: target_course,
+            role:   target_role1
+          )
+
+          target_role2 = FactoryGirl.create :entity_role
+          CourseMembership::AddStudent.call(
+            period: target_period,
+            role:   target_role2
+          )
+
+          target_role3 = FactoryGirl.create :entity_role
+          CourseMembership::AddStudent.call(
+            period: target_period,
+            role:   target_role3
+          )
+          [target_role1, target_role2, target_role3]
+        end
+
+        it "returns an enumerable containing only the teacher_student role" do
+          result = CourseMembership::GetCourseRoles.call(course: target_course, types: types)
+          expect(result.errors).to be_empty
+          expect(result.outputs.roles.count).to eq(1)
+          expect(result.outputs.roles).to include(target_teacher_student_role)
         end
       end
     end
