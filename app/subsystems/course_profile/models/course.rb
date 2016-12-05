@@ -43,7 +43,7 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at, on: :create
+  before_validation :set_starts_at_and_ends_at
 
   def default_due_time
     read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
@@ -74,6 +74,8 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
   protected
 
   def set_starts_at_and_ends_at
+    return if starts_at.present? && ends_at.present?
+
     ty = term_year
     self.starts_at ||= ty.try!(:starts_at)
     self.ends_at   ||= ty.try!(:ends_at)

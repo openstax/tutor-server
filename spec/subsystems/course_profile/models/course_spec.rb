@@ -24,8 +24,6 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:term) }
   it { is_expected.to validate_presence_of(:year) }
-  it { is_expected.to validate_presence_of(:starts_at) }
-  it { is_expected.to validate_presence_of(:ends_at) }
 
   it { is_expected.to validate_uniqueness_of(:time_zone) }
 
@@ -100,5 +98,26 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
     course.year = Time.current.year + CourseProfile::Models::Course::MAX_FUTURE_YEARS + 1
     expect(course).not_to be_valid
+  end
+
+  it 'automatically sets starts_at and ends_at based on the term and year' do
+    year = Time.current.year
+    course.term = 'fall'
+    course.year = year
+    course.starts_at = nil
+    course.ends_at = nil
+    expect(course).to be_valid
+    term_year = TermYear.new('fall', year)
+    expect(course.starts_at).to eq term_year.starts_at
+    expect(course.ends_at).to eq term_year.ends_at
+
+    course.term = 'spring'
+    course.year = year + 1
+    course.starts_at = nil
+    course.ends_at = nil
+    expect(course).to be_valid
+    term_year = TermYear.new('spring', year + 1)
+    expect(course.starts_at).to eq term_year.starts_at
+    expect(course.ends_at).to eq term_year.ends_at
   end
 end
