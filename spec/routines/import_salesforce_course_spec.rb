@@ -22,7 +22,7 @@ RSpec.describe ImportSalesforceCourse, type: :routine do
 
     expect(course.name).to eq "Yo"
     expect(course.school.name).to eq "Rice"
-    expect(course.is_trial).to eq true
+    expect(course.is_trial).to eq false
     expect(course.is_concept_coach).to eq true
     expect(course.is_college).to eq true
 
