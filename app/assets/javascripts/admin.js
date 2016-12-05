@@ -107,4 +107,12 @@ $(document).ready(function() {
   }
   $('#course_catalog_offering_id').change(updateCourseForm);
   updateCourseForm();
+
+  //========== Clears course start/end dates when a new Term or Year is selected ==========//
+  function clearCourseDates() {
+    $('#course_starts_at').prop('value', '');
+    $('#course_ends_at').prop('value', '');
+  }
+  $('#course_term').change(clearCourseDates);
+  $('#course_year').change(clearCourseDates);
 });

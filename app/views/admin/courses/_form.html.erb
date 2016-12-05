@@ -15,26 +15,31 @@
        end
 
        f.select :term, term_select_options, {}, class: 'form-control' %>
+    <small class="form-text text-muted">Changing this will clear the start/end dates</small>
   </div>
 
   <div class="form-group">
     <%= f.label :year %>
     <%= f.number_field :year, class: 'form-control' %>
+    <small class="form-text text-muted">Changing this will clear the start/end dates</small>
   </div>
 
   <div class="form-group">
     <%= f.label :num_sections, 'Number of sections' %>
-    <%= f.number_field :num_sections, min: 0, class: 'form-control' %>
+    <%= f.number_field :num_sections, min: 0, class: 'form-control',
+                                      disabled: !f.object.new_record? %>
   </div>
 
   <div class="form-group">
     <%= f.label :starts_at %>
     <%= f.text_field :starts_at, class: 'form-control datepicker' %>
+    <small class="form-text text-muted">Blank means use default date for the given Term/Year</small>
   </div>
 
   <div class="form-group">
     <%= f.label :ends_at %>
     <%= f.text_field :ends_at, class: 'form-control datepicker' %>
+    <small class="form-text text-muted">Blank means use default date for the given Term/Year</small>
   </div>
 
   <div class="form-group">
