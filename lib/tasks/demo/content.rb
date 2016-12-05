@@ -95,8 +95,6 @@ class Demo::Content < Demo::Base
              create_course(name: content.course_name,
                            term: CourseProfile::Models::Course.terms[:demo],
                            year: current_time.year,
-                           starts_at: current_time - 1.month,
-                           ends_at: current_time + 10.years,
                            catalog_offering: offering,
                            appearance_code: content.appearance_code,
                            is_concept_coach: content.is_concept_coach,

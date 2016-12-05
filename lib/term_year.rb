@@ -3,20 +3,19 @@ TermYear = Struct.new(:term, :year) do
   LEGACY_TERM_ENDS_AT   = DateTime.parse('Jan 1st, 2017' )
 
   TERM_START_DATES = {
-    legacy: ->(year) { LEGACY_TERM_STARTS_AT                  },
-    demo:   ->(year) { DateTime.new(Time.current.year - 1, 7) }, # July 1st of last year
-    spring: ->(year) { DateTime.new(             year       ) }, # January 1st of given year
-    summer: ->(year) { DateTime.new(             year    , 5) }, # May 1st of given year
-    fall:   ->(year) { DateTime.new(             year    , 7) }  # July 1st of given year
+    legacy: ->(year) { LEGACY_TERM_STARTS_AT     },
+    demo:   ->(year) { DateTime.new(year - 1, 7) }, # July 1st of the year before given year
+    spring: ->(year) { DateTime.new(year       ) }, # January 1st of given year
+    summer: ->(year) { DateTime.new(year    , 5) }, # May 1st of given year
+    fall:   ->(year) { DateTime.new(year    , 7) }  # July 1st of given year
   }
 
   TERM_END_DATES = {
-    legacy: ->(year) { LEGACY_TERM_ENDS_AT                    },
-    demo:   ->(year) { DateTime.new(Time.current.year + 1, 7) }, # July 1st of next year
-    spring: ->(year) { DateTime.new(             year    , 7) }, # July 1st of given year
-    summer: ->(year) { DateTime.new(             year    , 9) }, # September 1st of given year
-    fall:   ->(year) { DateTime.new(             year + 1   ) }  # January 1st of the year
-                                                                 # after given year
+    legacy: ->(year) { LEGACY_TERM_ENDS_AT       },
+    demo:   ->(year) { DateTime.new(year + 1, 7) }, # July 1st of the year after given year
+    spring: ->(year) { DateTime.new(year    , 7) }, # July 1st of given year
+    summer: ->(year) { DateTime.new(year    , 9) }, # September 1st of given year
+    fall:   ->(year) { DateTime.new(year + 1   ) }  # January 1st of the year after given year
   }
 
   VISIBLE_TERMS = [:spring, :summer, :fall]
