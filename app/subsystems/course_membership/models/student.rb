@@ -6,8 +6,6 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   has_many :enrollments, -> { with_deleted }, dependent: :destroy
 
-  unique_token :deidentifier, mode: :hex, length: 4
-
   validates :course, presence: true
   validates :role, presence: true, uniqueness: true
 

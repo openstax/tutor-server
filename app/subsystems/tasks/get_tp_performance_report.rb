@@ -24,7 +24,7 @@ module Tasks
         # Sort the students into the performance report rows by name
         role_taskings = taskings.group_by(&:role)
         period_role_taskings = role_taskings.select do |student_role, taskings|
-          student_role.student.period == period
+          student_role.student.try!(:period) == period
         end
         sorted_period_student_data = period_role_taskings.sort_by do |student_role, _|
           sort_name = "#{student_role.last_name} #{student_role.first_name}"

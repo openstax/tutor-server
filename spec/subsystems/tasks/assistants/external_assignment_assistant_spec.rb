@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant do
 
   let(:url)             { 'https://www.example.org/external-assignment-one.pdf' }
-  let(:templatized_url) { 'https://www.example.org/survey?id={{deidentifier}}' }
+  let(:templatized_url) { 'https://www.example.org/survey?id={{research_identifier}}' }
   let(:num_taskees)     { 3 }
 
   let(:assistant)      do
@@ -38,7 +38,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
 
   it 'assigns tasked external urls to students' do
     tasks = DistributeTasks.call(task_plan_1).outputs.tasks
-    expect(tasks.length).to eq num_taskees
+    expect(tasks.length).to eq num_taskees + 1
 
     tasks.each do |task|
       expect(task.task_type).to eq 'external'
@@ -49,34 +49,22 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
 
   it 'assigns tasked external urls with templatized urls to students' do
     tasks = DistributeTasks.call(task_plan_2).outputs.tasks
-    expect(tasks.length).to eq num_taskees
+    expect(tasks.length).to eq num_taskees + 1
 
     tasks.each do |task|
       expect(task.task_type).to eq 'external'
       expect(task.task_steps.length).to eq 1
     end
 
-    # check that the deidentifier is in the tasked urls
-    student_deidentifiers = students.map(&:deidentifier)
-    student_deidentifiers.sort! { |a, b| a <=> b }
-    tasked_urls = tasks.map { |t| t.task_steps.first.tasked.url }
-    tasked_urls.sort! { |a, b| a <=> b }
+    # check that the research_identifier is in the tasked urls
+    student_research_identifiers = students.map{ |student| student.role.research_identifier }
+    teacher_student_research_identifier = period.teacher_student_role.research_identifier
+    research_identifiers = (student_research_identifiers +
+                            [teacher_student_research_identifier]).sort
+    tasked_urls = tasks.map{ |task| task.task_steps.first.tasked.url }.sort
 
     tasked_urls.each_with_index do |tasked_url, i|
-      expect(tasked_url).to end_with(student_deidentifiers[i])
+      expect(tasked_url).to end_with(research_identifiers[i])
     end
-  end
-
-  it 'raises an error if taskees are not students' do
-    # If the target of a tasking plan is an entity user, taskee will be the
-    # user's default role, which is not a student role
-    FactoryGirl.create(:tasks_tasking_plan,
-                       task_plan: task_plan_2,
-                       target: students[0].role.profile)
-
-    expect {
-      DistributeTasks.call(task_plan_2)
-    }.to raise_error(StandardError).with_message(
-      /External assignment taskees must all be students/)
   end
 end

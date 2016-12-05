@@ -60,11 +60,10 @@ module Tasks
 
     def get_cc_taskings(course)
       # Return cc tasks for a student, ignoring not_started tasks
-      course.taskings.preload(task: {concept_coach_task: :page},
-                              role: [{student: {enrollments: :period}},
-                                     {profile: :account}])
-                     .joins(task: :concept_coach_task)
+      course.taskings.joins(task: :concept_coach_task, role: :student)
                      .where{task.completed_steps_count > 0}
+                     .preload(task: {concept_coach_task: :page},
+                              role: [{student: {enrollments: :period}}, {profile: :account}])
                      .to_a
     end
 

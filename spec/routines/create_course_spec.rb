@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe CreateCourse, type: :routine do
   let(:term)             { CourseProfile::Models::Course.terms.keys.sample }
   let(:year)             { Time.current.year }
+  let(:is_trial)         { false }
   let(:is_college)       { true }
   let(:catalog_offering) { FactoryGirl.create :catalog_offering }
 
@@ -11,6 +12,7 @@ RSpec.describe CreateCourse, type: :routine do
       name: 'Unnamed',
       term: term,
       year: year,
+      is_trial: is_trial,
       is_college: is_college,
       catalog_offering: catalog_offering
     )
@@ -29,6 +31,7 @@ RSpec.describe CreateCourse, type: :routine do
       name: 'Reg Code Course',
       term: term,
       year: year,
+      is_trial: is_trial,
       is_college: is_college,
       catalog_offering: catalog_offering
     ).outputs.course

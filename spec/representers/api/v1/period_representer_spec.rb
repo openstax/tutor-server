@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
+
   let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
@@ -36,4 +37,9 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
     period.to_model.restore!(recursive: true)
     expect(represented['is_archived']).to eq false
   end
+
+  it "includes the period\'s teacher_student role id" do
+    expect(represented['teacher_student_role_id']).to eq period.entity_teacher_student_role_id.to_s
+  end
+
 end

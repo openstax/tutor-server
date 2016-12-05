@@ -29,7 +29,8 @@ class CloneCourse
       time_zone: time_zone || course.time_zone,
       default_open_time: default_open_time || course.default_open_time,
       default_due_time: default_due_time || course.default_due_time,
-      cloned_from: course
+      cloned_from: course,
+      is_trial: false
     }
 
     run(:create_course, attrs)

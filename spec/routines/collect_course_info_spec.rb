@@ -43,7 +43,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
           appearance_code: course_1.offering.appearance_code,
-          cloned_from_id: course_1.cloned_from_id
+          cloned_from_id: course_1.cloned_from_id,
+          is_trial: course_1.is_trial
         }
       )
     end
@@ -85,7 +86,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           appearance_code: course_1.offering.appearance_code,
           ecosystem: ecosystem_1,
           ecosystem_book: ecosystem_1.books.first,
-          cloned_from_id: course_1.cloned_from_id
+          cloned_from_id: course_1.cloned_from_id,
+          is_trial: course_1.is_trial
         },
         {
           id: course_2.id,
@@ -108,7 +110,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           appearance_code: course_2.offering.appearance_code,
           ecosystem: ecosystem_2,
           ecosystem_book: ecosystem_2.books.first,
-          cloned_from_id: course_2.cloned_from_id
+          cloned_from_id: course_2.cloned_from_id,
+          is_trial: course_2.is_trial
         }
       )
     end
@@ -140,7 +143,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             school_name: course_1.school_name,
             salesforce_book_name: course_1.offering.salesforce_book_name,
             appearance_code: course_1.offering.appearance_code,
-            cloned_from_id: course_1.cloned_from_id
+            cloned_from_id: course_1.cloned_from_id,
+            is_trial: course_1.is_trial
           }
         )
       end
@@ -168,7 +172,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.offering.salesforce_book_name,
             appearance_code: course_1.offering.appearance_code,
             periods: a_collection_containing_exactly(period_1, period_2),
-            cloned_from_id: course_1.cloned_from_id
+            cloned_from_id: course_1.cloned_from_id,
+            is_trial: course_1.is_trial
           }
         )
       end
@@ -202,7 +207,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             school_name: course_1.school_name,
             salesforce_book_name: course_1.offering.salesforce_book_name,
             appearance_code: course_1.offering.appearance_code,
-            cloned_from_id: course_1.cloned_from_id
+            cloned_from_id: course_1.cloned_from_id,
+            is_trial: course_1.is_trial
           }
         )
       end
@@ -230,7 +236,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.offering.salesforce_book_name,
             appearance_code: course_1.offering.appearance_code,
             periods: [ period_1 ],
-            cloned_from_id: course_1.cloned_from_id
+            cloned_from_id: course_1.cloned_from_id,
+            is_trial: course_1.is_trial
           }
         )
       end
@@ -282,7 +289,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
           appearance_code: course_1.offering.appearance_code,
-          cloned_from_id: course_1.cloned_from_id
+          cloned_from_id: course_1.cloned_from_id,
+          is_trial: course_1.is_trial
         },
         {
           id: course_2.id,
@@ -303,7 +311,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           school_name: course_2.school_name,
           salesforce_book_name: course_2.offering.salesforce_book_name,
           appearance_code: course_2.offering.appearance_code,
-          cloned_from_id: course_2.cloned_from_id
+          cloned_from_id: course_2.cloned_from_id,
+          is_trial: course_2.is_trial
         }
       )
     end

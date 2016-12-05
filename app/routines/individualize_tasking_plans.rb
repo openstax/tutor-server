@@ -20,15 +20,19 @@ class IndividualizeTaskingPlans
         user = ::User::User.new(strategy: strategy)
         Role::GetDefaultUserRole[user]
       when CourseProfile::Models::Course
-        CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles
+        CourseMembership::GetCourseRoles.call(
+          course: target, types: [:student, :teacher_student]
+        ).outputs.roles
       when CourseMembership::Models::Period
-        CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles
+        CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles +
+        [target.teacher_student_role]
       else
         raise NotYetImplemented
       end
 
       [roles].flatten.map do |role|
-        Tasks::Models::TaskingPlan.new(task_plan: task_plan, target: role,
+        Tasks::Models::TaskingPlan.new(task_plan: task_plan,
+                                       target: role,
                                        opens_at: tasking_plan.opens_at,
                                        due_at: tasking_plan.due_at,
                                        time_zone: tasking_plan.time_zone)

@@ -43,14 +43,15 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
 
   it 'assigns tasked readings and exercises to students' do
     tasks = DistributeTasks.call(task_plan).outputs.tasks
-    expect(tasks.length).to eq(num_taskees)
+    expect(tasks.length).to eq(num_taskees + 1)
     tasks.each do |task|
       # We added 2 snap lab notes:
       # https://staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9/Acceleration
       # and
       # https://staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3/Newtons-Second-Law-of-Motion
       #
-      # There is one reading and one exercise for each snap lab note, so in total there are 4 task steps
+      # There is one reading and one exercise for each snap lab note,
+      # so in total there are 4 task steps
       expect(task.task_steps.length).to eq(4)
       taskeds = task.task_steps.map(&:tasked)
 

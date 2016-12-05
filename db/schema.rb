@@ -245,25 +245,26 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "course_membership_enrollments", ["deleted_at"], name: "index_course_membership_enrollments_on_deleted_at", using: :btree
 
   create_table "course_membership_periods", force: :cascade do |t|
-    t.integer  "course_profile_course_id", null: false
-    t.string   "name",                     null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "enrollment_code",          null: false
+    t.integer  "course_profile_course_id",       null: false
+    t.string   "name",                           null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.string   "enrollment_code",                null: false
     t.datetime "deleted_at"
     t.string   "default_open_time"
     t.string   "default_due_time"
+    t.integer  "entity_teacher_student_role_id", null: false
   end
 
   add_index "course_membership_periods", ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id", using: :btree
   add_index "course_membership_periods", ["deleted_at"], name: "index_course_membership_periods_on_deleted_at", using: :btree
   add_index "course_membership_periods", ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true, using: :btree
+  add_index "course_membership_periods", ["entity_teacher_student_role_id"], name: "index_c_m_periods_on_e_teacher_student_role_id", unique: true, using: :btree
   add_index "course_membership_periods", ["name", "course_profile_course_id"], name: "index_c_m_periods_on_name_and_c_p_course_id", using: :btree
 
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "course_profile_course_id", null: false
     t.integer  "entity_role_id",           null: false
-    t.string   "deidentifier",             null: false
     t.datetime "deleted_at"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
@@ -271,7 +272,6 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
-  add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
   add_index "course_membership_students", ["deleted_at"], name: "index_course_membership_students_on_deleted_at", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
 
@@ -304,6 +304,7 @@ ActiveRecord::Schema.define(version: 20161108152717) do
     t.integer  "term",                                        null: false
     t.integer  "year",                                        null: false
     t.integer  "cloned_from_id"
+    t.boolean  "is_trial",                                    null: false
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
@@ -331,11 +332,13 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "entity_roles", force: :cascade do |t|
-    t.integer  "role_type",  default: 0, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer  "role_type",           default: 0, null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.string   "research_identifier"
   end
 
+  add_index "entity_roles", ["research_identifier"], name: "index_entity_roles_on_research_identifier", unique: true, using: :btree
   add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type", using: :btree
 
   create_table "fine_print_contracts", force: :cascade do |t|
@@ -425,7 +428,7 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
 
   create_table "openstax_accounts_accounts", force: :cascade do |t|
-    t.integer  "openstax_uid",                      null: false
+    t.integer  "openstax_uid"
     t.string   "username",                          null: false
     t.string   "access_token"
     t.string   "first_name"

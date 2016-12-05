@@ -4,13 +4,16 @@ require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine do
   let(:course) do
-    FactoryGirl.create :course_profile_course, :with_assistants,
-                                       time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
+    FactoryGirl.create :course_profile_course,
+                       :with_assistants,
+                       time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
   end
   let!(:period) { FactoryGirl.create :course_membership_period, course: course }
+
   let(:teacher) { FactoryGirl.create(:user) }
   let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                                            resource_owner_id: teacher.id }
+
   let(:student_1) { FactoryGirl.create(:user, first_name: 'Student',
                                               last_name: 'One',
                                               full_name: 'Student One') }
@@ -61,7 +64,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
         step = Tasks::Models::TaskStep.first
         student = CourseMembership::Models::Student.first
 
-        expect(data['Student']).to eq(student.deidentifier)
+        expect(data['Student']).to eq(student.role.research_identifier)
         expect(data['Course ID']).to eq(course.id.to_s)
         expect(data['CC?']).to eq("FALSE")
         expect(data['Period ID']).to eq(period.id.to_s)
@@ -102,14 +105,32 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
 
   context "data to export can be filtered" do
     before(:each) do
-      2.times {FactoryGirl.create :tasks_task, task_type: :concept_coach, step_types: [:tasks_tasked_reading], num_random_taskings: 1}
-      FactoryGirl.create :tasks_task, task_type: :reading, step_types: [:tasks_tasked_reading], num_random_taskings: 1
+      cc_tasks = 2.times.map do
+        FactoryGirl.create :tasks_task, task_type: :concept_coach,
+                                        step_types: [:tasks_tasked_exercise],
+                                        num_random_taskings: 1
+      end
+
+      reading_task = FactoryGirl.create :tasks_task, task_type: :reading,
+                                                     step_types: [:tasks_tasked_reading],
+                                                     num_random_taskings: 1
+
+      (cc_tasks + [reading_task]).each do |task|
+        role = task.taskings.first.role
+
+        FactoryGirl.create :course_membership_student, course: course, role: role
+      end
     end
 
     specify "by date range" do
-      Timecop.freeze(Date.today - 30) {
-        FactoryGirl.create :tasks_task, step_types: [:tasks_tasked_reading], num_random_taskings: 1
-      }
+      Timecop.freeze(Date.today - 30) do
+        old_reading_task = FactoryGirl.create :tasks_task, step_types: [:tasks_tasked_reading],
+                                                           num_random_taskings: 1
+
+        role = old_reading_task.taskings.first.role
+
+        FactoryGirl.create :course_membership_student, course: course, role: role
+      end
 
       with_export_rows(all_task_types, Date.today - 10, Date.tomorrow) do |rows|
         expect(Tasks::Models::TaskStep.count).to eq 4
@@ -118,8 +139,12 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
     end
 
     context "by application" do
-      let(:tutor_task_types) { Tasks::Models::Task.task_types.values_at(:homework, :reading, :chapter_practice,
-                            :page_practice, :mixed_practice, :external, :event, :extra) }
+      let(:tutor_task_types) do
+        Tasks::Models::Task.task_types.values_at(
+          :homework, :reading, :chapter_practice, :page_practice,
+          :mixed_practice, :external, :event, :extra
+        )
+      end
       let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
 
       specify "only Concept Coach" do
@@ -154,5 +179,6 @@ def with_export_rows(task_types = [], from = nil, to = nil, &block)
     rows = CSV.read(filepath)
     block.call(rows)
   end
+
   capture_stdout{ described_class.call(task_types: task_types, from: from, to: to) }
 end

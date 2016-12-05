@@ -65,7 +65,6 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
   #           full_name: 'Dummy User',
   #           period_id: period.id.to_s,
   #           role_id: new_student.entity_role_id.to_s,
-  #           deidentifier: new_student.deidentifier,
   #           is_active: true
   #         })
   #       end
@@ -163,7 +162,6 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
               name: student.name,
               period_id: period_2.id.to_s,
               role_id: student.entity_role_id.to_s,
-              deidentifier: student.deidentifier,
               is_active: true
             })
             expect(student.reload.period).to eq period_2.to_model

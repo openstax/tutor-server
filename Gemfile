@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.2.0'
+gem 'openstax_accounts', git: 'https://github.com/openstax/accounts-rails', ref: '443d902'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
@@ -263,9 +263,6 @@ group :development, :test do
   gem 'spring-commands-rspec'
   gem 'guard-rspec'
 
-end
-
-group :development do
   # Trace AR queries
   gem 'active_record_query_trace'
 end

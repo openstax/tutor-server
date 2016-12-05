@@ -21,7 +21,6 @@ class GetCourseRoster
           entity_role_id: student.entity_role_id,
           username: student.username,
           student_identifier: student.student_identifier,
-          deidentifier: student.deidentifier,
           deleted?: student.deleted?
         })
       end

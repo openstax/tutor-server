@@ -19,14 +19,17 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
                                        raw_post_data: { name: '7th Period' }.to_json
 
       expect(response).to have_http_status(:created)
+
+      last_period = CourseMembership::Models::Period.last
       expect(response.body_as_hash).to match({
-        id: CourseMembership::Models::Period.last.id.to_s,
+        id: last_period.id.to_s,
         name: '7th Period',
         enrollment_code: '012345',
         enrollment_url: a_string_matching(/enroll\/012345/),
         default_open_time: '00:01',
         default_due_time: '07:00',
-        is_archived: false
+        is_archived: false,
+        teacher_student_role_id: last_period.entity_teacher_student_role_id.to_s
       })
     end
 

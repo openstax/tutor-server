@@ -1,6 +1,7 @@
 module User
   module Models
     class Profile < Tutor::SubSystems::BaseModel
+
       acts_as_paranoid
 
       wrapped_by Strategies::Direct::User
