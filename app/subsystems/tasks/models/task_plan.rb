@@ -34,6 +34,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
 
+  before_validation :set_ecosystem
+
   scope :preloaded, -> {
     preload(:tasking_plans, owner: :time_zone, tasks: [:taskings, task_steps: :tasked])
   }
@@ -60,6 +62,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   protected
+
+  def set_ecosystem
+    self.ecosystem ||= cloned_from.try!(:ecosystem) || owner.try(:ecosystems).try(:first)
+  end
 
   def valid_settings
     schema = assistant.try(:schema)

@@ -15,7 +15,6 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:assistant) }
-  it { is_expected.to validate_presence_of(:ecosystem) }
   it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:tasking_plans) }
 
@@ -50,17 +49,17 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       :tasks_assistant, code_class_name: '::Tasks::Assistants::HomeworkAssistant'
     )
     task_plan.settings = {
-      page_ids: ["1", "2"], exercise_ids: ["1", "2"], exercises_count_dynamic: 2
+      page_ids: ['1', '2'], exercise_ids: ['1', '2'], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: [page.id.to_s], exercise_ids: ["1", "2"], exercises_count_dynamic: 2
+      page_ids: [page.id.to_s], exercise_ids: ['1', '2'], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: ["1", "2"], exercise_ids: [exercise.id.to_s], exercises_count_dynamic: 2
+      page_ids: ['1', '2'], exercise_ids: [exercise.id.to_s], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
@@ -96,8 +95,8 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     task_plan.title = " hi\n\n\r\n "
     task_plan.description = " \tthere\t "
     task_plan.save
-    expect(task_plan.title).to eq "hi"
-    expect(task_plan.description).to eq "there"
+    expect(task_plan.title).to eq 'hi'
+    expect(task_plan.description).to eq 'there'
   end
 
   it 'knows its publish job' do
@@ -107,6 +106,24 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(Jobba).to receive(:find).with(uuid).and_return(job)
     task_plan.publish_job_uuid = uuid
     expect(task_plan.publish_job).to eq job
+  end
+
+  it "automatically sets its ecosystem to the original's if cloned_from is specified" do
+    clone = FactoryGirl.build :tasks_task_plan, cloned_from: task_plan
+    clone.ecosystem = nil
+    expect(clone.valid?).to eq true
+    expect(clone.ecosystem).to eq task_plan.ecosystem
+  end
+
+  it "automatically sets its ecosystem to the owner's if cloned_from is not specified" do
+    course = task_plan.owner
+    ecosystem_model = FactoryGirl.create :content_ecosystem
+    ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
+    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
+    new_task_plan = FactoryGirl.build :tasks_task_plan, owner: course
+    new_task_plan.ecosystem = nil
+    expect(new_task_plan.valid?).to eq true
+    expect(new_task_plan.ecosystem).to eq ecosystem_model
   end
 
 end
