@@ -111,7 +111,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     # Modified standard_create code
     Tasks::Models::TaskPlan.transaction do
       course = CourseProfile::Models::Course.find(params[:course_id])
-      task_plan = BuildTaskPlan[course: course]
+      task_plan = Tasks::Models::TaskPlan.new(owner: course)
       consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
