@@ -1,7 +1,6 @@
 require 'hashie/mash'
 
 require 'fork_with_connection'
-require_relative 'answer_exercise'
 require_relative 'content_configuration'
 
 class Demo::Base
