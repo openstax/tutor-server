@@ -6,26 +6,44 @@ class DistributeTasks
 
   protected
 
-  def exec(task_plan, publish_time = Time.current, protect_unopened_tasks = false)
+  def exec(task_plan:, publish_time: Time.current, protect_unopened_tasks: false, preview: false)
+    # Lock the plan to prevent concurrent publication
     task_plan.lock!
 
+    # Abort if it seems like someone already published this plan
     fatal_error(code: :publish_last_requested_at_must_be_in_the_past) \
       if task_plan.publish_last_requested_at.present? &&
          task_plan.publish_last_requested_at > publish_time
 
+    # Get all tasks for this plan
     tasks = task_plan.tasks.preload(:taskings)
 
-    # Delete pre-existing assignments only if
-    # no assignments are open and protect_unopened_tasks is false
-    tasks.each(&:really_destroy!) \
-      if !protect_unopened_tasks &&
-         tasks.none?{ |task| task.past_open?(current_time: publish_time) }
+    # Task deletion (re-publishing)
+    unless task_plan.out_to_students?(current_time: publish_time)
+      # Only delete anything if tasks are not yet available to students
+      if preview
+        # Delete preview tasks only if no assignments are open
+        tasks.select(&:preview?).each(&:really_destroy!)
+      elsif !protect_unopened_tasks
+        # Delete pre-existing assignments only if protect_unopened_tasks is false
+        tasks.each(&:really_destroy!)
+      end
+    end
 
+    # Make a list of all role_ids that still have tasks
     tasked_role_ids = tasks.reject(&:destroyed?).flat_map do |task|
       task.taskings.map(&:entity_role_id)
     end
 
-    tasking_plans = run(:individualize_tasking_plans, task_plan).outputs.tasking_plans
+    itp_args = { task_plan: task_plan }
+
+    # If preview is true, only assign to teacher_student roles
+    itp_args[:role_type] = :teacher_student if preview
+
+    # Convert tasking_plans to point to individual roles
+    tasking_plans = run(:individualize_tasking_plans, itp_args).outputs.tasking_plans
+
+    # Keep only the tasking_plans that point to roles that don't have a task from this plan
     untasked_tasking_plans = tasking_plans.reject do |tasking_plan|
       tasked_role_ids.include? tasking_plan.target_id
     end
@@ -37,14 +55,17 @@ class DistributeTasks
       task_plan: task_plan, individualized_tasking_plans: untasked_tasking_plans
     )
 
+    # Abort if the task type is supposed to have steps and any task has 0 steps
     fatal_error(
       code: :empty_tasks, message: 'Tasks could not be published because some tasks were empty'
     ) if tasks.any?{ |task| !task.stepless? && task.task_steps.empty? }
 
     save(tasks)
 
+    # Update last_published_at (and first_published_at if this is the first publication)
     task_plan.first_published_at = publish_time if task_plan.first_published_at.nil?
     task_plan.last_published_at = publish_time
+
     # We are only changing timestamps here, so no reason to validate the record
     task_plan.save(validate: false) if task_plan.persisted?
 

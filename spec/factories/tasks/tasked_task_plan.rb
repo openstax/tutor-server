@@ -59,6 +59,6 @@ FactoryGirl.define do
       task_plan.tasking_plans = [build(:tasks_tasking_plan, task_plan: task_plan, target: period)]
     end
 
-    after(:create) { |task_plan, evaluator| DistributeTasks.call(task_plan) }
+    after(:create) { |task_plan, evaluator| DistributeTasks.call(task_plan: task_plan) }
   end
 end

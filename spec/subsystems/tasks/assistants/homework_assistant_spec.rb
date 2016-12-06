@@ -88,7 +88,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         receive(:num_personalized_exercises) { personalized_exercise_count }
       )
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
 
       ## it "sets description, task type, and feedback_at"
       tasks.each do |task|
@@ -169,7 +169,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                                         exercise_number: exercise.number)
       end
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
 
       tasks.each do |task|
         core_task_steps = task.core_task_steps
@@ -216,7 +216,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                                         exercise_number: exercise.number)
       end
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
 
       tasks.each do |task|
         core_task_steps = task.core_task_steps

@@ -77,12 +77,6 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
-  it 'will not allow other fields to be updated after a task is open' do
-    task_plan.tasks << new_task
-    task_plan.settings = { due_at: Time.current.tomorrow }
-    expect(task_plan).not_to be_valid
-  end
-
   it 'requires all tasking_plan due_ats to be in the future when publishing' do
     task_plan.is_publish_requested = true
     expect(task_plan).to be_valid
@@ -124,6 +118,43 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     new_task_plan.ecosystem = nil
     expect(new_task_plan.valid?).to eq true
     expect(new_task_plan.ecosystem).to eq ecosystem_model
+  end
+
+  context 'with tasks assigned to students' do
+    let(:teacher_student_role) { FactoryGirl.create :entity_role, role_type: :teacher_student }
+    let(:teacher_student_task) do
+      FactoryGirl.create :tasks_task, task_plan: task_plan, tasked_to: [teacher_student_role]
+    end
+
+    let(:student_role) { FactoryGirl.create :entity_role, role_type: :student }
+    let(:student_task) do
+      FactoryGirl.create :tasks_task, task_plan: task_plan, tasked_to: [student_role]
+    end
+
+    it 'knows if tasks are available to students' do
+      expect(task_plan.out_to_students?).to eq false
+
+      teacher_student_task
+      expect(task_plan.reload.out_to_students?).to eq false
+
+      student_task
+      expect(task_plan.reload.out_to_students?).to eq true
+
+      future_time = Time.now.utc + 1.week
+      student_task.update_attribute :opens_at_ntz, future_time
+      expect(task_plan.reload.out_to_students?).to eq false
+      expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
+    end
+
+    it 'will not allow other fields to be updated after tasks are available to students' do
+      task_plan.reload.settings = { due_at: Time.current.tomorrow }
+      expect(task_plan).to be_valid
+
+      student_task
+
+      task_plan.reload.settings = { due_at: Time.current.tomorrow }
+      expect(task_plan).not_to be_valid
+    end
   end
 
 end

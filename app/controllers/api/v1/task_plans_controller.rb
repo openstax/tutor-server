@@ -379,7 +379,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def update_task_plan!(task_plan)
     # If no tasks are open, just call Roar's consume! like usual
     return consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter) \
-      unless task_plan.tasks_past_open?
+      unless task_plan.out_to_students?
 
     # Store current open dates for each TaskingPlan that is already open in the TaskPlan
     opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
@@ -401,24 +401,26 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any, or nil if the request was completed inline
   def distribute_or_update_tasks(task_plan)
-    should_publish_or_update = task_plan.is_publish_requested || task_plan.is_published?
-    should_publish = should_publish_or_update && !task_plan.tasks_past_open?
-    # should_update = should_publish_or_update && task_plan.tasks_past_open?
+    preview_only = !task_plan.is_publish_requested && !task_plan.is_published?
+    update_only = task_plan.out_to_students?
 
-    task_plan.publish_last_requested_at = Time.current if should_publish
+    task_plan.publish_last_requested_at = Time.current unless preview_only || update_only
     task_plan.save
+    return if task_plan.errors.any?
 
-    return if task_plan.errors.any? || !should_publish_or_update
-
-    if should_publish
-      # Publish requested or already published but tasks not open: trigger publish
-      uuid = DistributeTasks.perform_later(task_plan)
-      task_plan.update_attribute(:publish_job_uuid, uuid)
-      uuid
-    else # elsif should_update
+    if preview_only
+      # Task not published and publication not requested: preview only
+      DistributeTasks.call(task_plan: task_plan, preview: true)
+      nil
+    elsif update_only
       # Tasks already open: propagate updates
       PropagateTaskPlanUpdates.call(task_plan: task_plan)
       nil
+    else
+      # Tasks not open: trigger publication
+      uuid = DistributeTasks.perform_later(task_plan: task_plan)
+      task_plan.update_attribute(:publish_job_uuid, uuid)
+      uuid
     end
   end
 

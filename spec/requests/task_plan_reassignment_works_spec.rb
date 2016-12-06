@@ -23,7 +23,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
   scenario 'new students added after assignments published get those assignments' do
     # Publish the assignment, and no one around to get it...
-    DistributeTasks.call(task_plan_1)
+    DistributeTasks.call(task_plan: task_plan_1)
     # TeacherStudent role still gets it
     expect(Tasks::Models::Tasking.count).to eq 1
 
@@ -51,7 +51,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
     expect(CourseMembership::GetPeriodStudentRoles[periods: period]).to be_empty
 
     # The teacher publishes an assignment, and no one gets it...
-    DistributeTasks.call(task_plan_1)
+    DistributeTasks.call(task_plan: task_plan_1)
     # TeacherStudent role still gets it
     expect(Tasks::Models::Tasking.count).to eq 1
 
