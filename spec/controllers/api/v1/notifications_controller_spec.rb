@@ -1,16 +1,56 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe Api::V1::NotificationsController, type: :controller, api: true, version: :v1 do
 
-  describe "#index" do
-    after(:each) do
-      Settings::Redis.store.del(Settings::Notifications::KEY)
+  let(:course)           { FactoryGirl.create :course_profile_course }
+
+  let(:instructor_user)  { FactoryGirl.create(:user) }
+  let!(:instructor_role) { AddUserAsCourseTeacher[user: instructor_user, course: course] }
+  let(:instructor_token) do
+    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: instructor_user.id
+  end
+
+  context '#index' do
+
+    before do
+      3.times { |num| Settings::Notifications.add(:general, "General message #{num + 1}") }
+      3.times { |num| Settings::Notifications.add(:instructor, "Instructor message #{num + 1}") }
     end
 
-    it 'returns the contents of Settings::Notifications' do
-      1.upto(3){ | num | Settings::Notifications.add("message #{num}") }
-      api_get :index, nil
-      expect(response.body).to eq(Settings::Notifications.raw)
+    after  do
+      [:general, :instructor].each do |type|
+        Settings::Notifications.messages(type).each do |id, message|
+          Settings::Notifications.remove(type, id)
+        end
+      end
+    end
+
+    let(:general_notifications)         { Settings::Notifications.messages(:general) }
+    let(:instructor_notifications)      { Settings::Notifications.messages(:instructor) }
+
+    let(:general_notifications_hash)    do
+      general_notifications.map{ |id, message| { type: 'general', id: id, message: message } }
+    end
+    let(:instructor_notifications_hash) do
+      instructor_notifications.map{ |id, message| { type: 'instructor', id: id, message: message } }
+    end
+
+    context 'any non-instructor user' do
+      it 'returns the contents of the general notifications' do
+        api_get :index, nil
+
+        expect(response.body_as_hash).to match_array general_notifications_hash
+      end
+    end
+
+    context 'instructor user' do
+      it 'returns the contents of the general notifications' do
+        api_get :index, instructor_token
+
+        expect(response.body_as_hash).to(
+          match_array instructor_notifications_hash + general_notifications_hash
+        )
+      end
     end
 
   end

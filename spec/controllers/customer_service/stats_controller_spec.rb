@@ -47,7 +47,7 @@ RSpec.describe CustomerService::StatsController, type: :controller do
   end
 
   context "GET #concept_coach" do
-    let!(:tasks)    { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
+    let(:tasks)     { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
     let!(:cc_tasks) { tasks.map{ |task| FactoryGirl.create :tasks_concept_coach_task, task: task } }
 
     it "returns http success" do

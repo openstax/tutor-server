@@ -1,46 +1,43 @@
 module Settings
   module Notifications
 
-    KEY = 'system:notifications'
+    KEY_BASE = 'notifications'
+
+    VALID_TYPES = ['general', 'instructor']
 
     class << self
-
-      include Enumerable
-
-      # Returns a string that contains unparsed JSON which is
-      # intended to be sent directly to the user without parsing.
-      def raw
-        Settings::Redis.store.get(KEY) || '[]'
+      def valid_type?(type)
+        VALID_TYPES.include? type.to_s
       end
 
-      # Parsed JSON content of messages.
-      # yields objects with 'id' and 'message' keys
-      def each
-        messages.each{|notice| yield notice }
+      def add(type, message)
+        key = key(type)
+
+        RequestStore.store[key] = nil
+
+        SecureRandom.uuid.tap{ |uuid| Settings::Redis.store.hset(key, uuid, message) }
       end
 
-      def add(message)
-        message = {'id' => SecureRandom.uuid, 'message' => message}
-        update!( messages.push(message) )
-        message
+      def remove(type, uuid)
+        key = key(type)
+
+        RequestStore.store[key] = nil
+
+        Settings::Redis.store.hget(key, uuid).tap{ |message| Settings::Redis.store.hdel(key, uuid) }
       end
 
-      def remove(message_id)
-        update!(
-          messages.reject{|message| message['id'] == message_id }
-        )
+      # Messages hash, cached on a per-request basis
+      def messages(type)
+        key = key(type)
+
+        RequestStore.store[key] ||= Settings::Redis.store.hgetall(key)
       end
 
-      private
+      protected
 
-      def messages
-        ActiveSupport::JSON.decode(raw)
+      def key(type)
+        "#{KEY_BASE}/#{type}"
       end
-
-      def update!(json)
-        Settings::Redis.store.set(KEY, ActiveSupport::JSON.encode(json))
-      end
-
     end
 
   end

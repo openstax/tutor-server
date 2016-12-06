@@ -19,7 +19,7 @@ module Manager::StatsActions
   end
 
   def excluded_exercises
-    excluded_exercises = GetExcludedExercises.call.outputs
+    excluded_exercises = ExportExerciseExclusions.call.outputs
     @excluded_exercises_by_course = excluded_exercises.by_course
     @excluded_exercises_by_exercise = excluded_exercises.by_exercise
 
@@ -35,7 +35,9 @@ module Manager::StatsActions
       redirect_to excluded_exercises_admin_stats_path and return
     end
 
-    GetExcludedExercises.perform_later(export_by_course: by_course, export_by_exercise: by_exercise)
+    ExportExerciseExclusions.perform_later(
+      upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
+    )
     flash[:success] = "The export should be available in a few minutes in ownCloud."
     redirect_to excluded_exercises_admin_stats_path
   end
