@@ -40,9 +40,9 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     preload(:tasking_plans, owner: :time_zone, tasks: [:taskings, task_steps: :tasked])
   }
 
-  def available_to_students?(current_time: Time.current)
+  def out_to_students?(current_time: Time.current)
     tasks.any? do |task|
-      task.past_open?(current_time: current_time) && task.taskings.first.try!(:role).try!(:student?)
+      task.past_open?(current_time: current_time) && !task.preview?
     end
   end
 
@@ -105,7 +105,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def changes_allowed
-    return unless available_to_students?
+    return unless out_to_students?
     forbidden_attributes = changes.except(*UPDATABLE_ATTRIBUTES_AFTER_OPEN)
     return if forbidden_attributes.empty?
 

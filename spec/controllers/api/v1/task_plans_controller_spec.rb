@@ -277,7 +277,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         .to change{ @teacher_student_role.taskings.count }.by(1)
       expect(response).to have_http_status(:success)
 
-      expect(@task_plan).not_to be_available_to_students
+      expect(@task_plan).not_to be_out_to_students
     end
 
     it 'does not allow an unauthorized user to create a task_plan' do
@@ -389,7 +389,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         task.taskings.first.role == @teacher_student_role
       end
       expect(new_preview_task).to be_persisted
-      expect(@task_plan).not_to be_available_to_students
+      expect(@task_plan).not_to be_out_to_students
     end
 
     it 'does not allow an unauthorized user to update a task_plan' do

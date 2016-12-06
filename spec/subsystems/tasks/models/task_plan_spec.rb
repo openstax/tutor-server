@@ -132,18 +132,18 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     end
 
     it 'knows if tasks are available to students' do
-      expect(task_plan.available_to_students?).to eq false
+      expect(task_plan.out_to_students?).to eq false
 
       teacher_student_task
-      expect(task_plan.reload.available_to_students?).to eq false
+      expect(task_plan.reload.out_to_students?).to eq false
 
       student_task
-      expect(task_plan.reload.available_to_students?).to eq true
+      expect(task_plan.reload.out_to_students?).to eq true
 
       future_time = Time.now.utc + 1.week
       student_task.update_attribute :opens_at_ntz, future_time
-      expect(task_plan.reload.available_to_students?).to eq false
-      expect(task_plan.reload.available_to_students?(current_time: future_time + 2.days)).to eq true
+      expect(task_plan.reload.out_to_students?).to eq false
+      expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
     end
 
     it 'will not allow other fields to be updated after tasks are available to students' do

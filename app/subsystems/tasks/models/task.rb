@@ -125,6 +125,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     page_practice? || chapter_practice? || mixed_practice?
   end
 
+  def preview?
+    taskings.none?{ |tasking| tasking.role.try!(:student?) }
+  end
+
   def core_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
     task_steps.to_a.select(&:core_group?)

@@ -19,13 +19,11 @@ class DistributeTasks
     tasks = task_plan.tasks.preload(:taskings)
 
     # Task deletion (re-publishing)
-    unless task_plan.available_to_students?(current_time: publish_time)
+    unless task_plan.out_to_students?(current_time: publish_time)
       # Only delete anything if tasks are not yet available to students
       if preview
         # Delete preview tasks only if no assignments are open
-        tasks.select do |task|
-          task.taskings.all?{ |tasking| tasking.role.teacher_student? }
-        end.each(&:really_destroy!)
+        tasks.select(&:preview?).each(&:really_destroy!)
       elsif !protect_unopened_tasks
         # Delete pre-existing assignments only if protect_unopened_tasks is false
         tasks.each(&:really_destroy!)

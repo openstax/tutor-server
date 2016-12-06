@@ -115,7 +115,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         expect(result.errors).to be_empty
         expect(task_plan.reload.tasks.size).to eq 1
         expect(task_plan.tasks.first.taskings.first.role).to eq period.teacher_student_role
-        expect(task_plan).not_to be_available_to_students
+        expect(task_plan).not_to be_out_to_students
       end
 
       it 'creates tasks for the task_plan' do
