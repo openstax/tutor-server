@@ -14,7 +14,7 @@ class ExportUsersInfoToMatchWithConsentForms
       output_users << Hashie::Mash.new({
         user_id: user.account.openstax_uid,
         student_identifiers: user.roles.map(&:student).compact.map(&:student_identifier),
-        research_identifiers: user.roles.map(&:student).compact.map(&:deidentifier),
+        research_identifiers: user.roles.map(&:research_identifier),
         name: user.name,
         username: user.username
       })

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::NotificationsController, type: :controller, api: true, version: :v1 do
 
-  let(:course)           { FactoryGirl.create :entity_course }
+  let(:course)           { FactoryGirl.create :course_profile_course }
 
   let(:instructor_user)  { FactoryGirl.create(:user) }
   let!(:instructor_role) { AddUserAsCourseTeacher[user: instructor_user, course: course] }
