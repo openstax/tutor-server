@@ -108,14 +108,25 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
       end
 
-      it 'can create a preview task for the task_plan' do
-        expect(task_plan.tasks).to be_empty
-        result = DistributeTasks.call(task_plan: task_plan, preview: true)
+      context 'creating a preview task' do
 
-        expect(result.errors).to be_empty
-        expect(task_plan.reload.tasks.size).to eq 1
-        expect(task_plan.tasks.first.taskings.first.role).to eq period.teacher_student_role
-        expect(task_plan).not_to be_out_to_students
+        it 'can create a preview' do
+          expect(task_plan.tasks).to be_empty
+          result = DistributeTasks.call(task_plan: task_plan, preview: true)
+
+          expect(result.errors).to be_empty
+          expect(task_plan.reload.tasks.size).to eq 1
+          expect(task_plan.tasks.first.taskings.first.role).to eq period.teacher_student_role
+          expect(task_plan).not_to be_out_to_students
+        end
+
+        it 'does not save plan if it is new' do
+          new_plan = task_plan.dup
+          result = DistributeTasks.call(task_plan: new_plan, preview: true)
+          expect(result.errors).to be_empty
+          expect(new_plan).to be_new_record
+        end
+
       end
 
       it 'creates tasks for the task_plan' do
