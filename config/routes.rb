@@ -16,6 +16,7 @@ Rails.application.routes.draw do
         post :confirm, as: :confirm_token_enroll
       end
     end
+    get 'signup'
   end
 
   # Static pages
