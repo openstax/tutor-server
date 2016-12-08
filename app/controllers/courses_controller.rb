@@ -1,5 +1,6 @@
 class CoursesController < ApplicationController
 
+  skip_before_filter :block_sign_up, only: [:teach, :enroll]
   skip_before_filter :authenticate_user!, if: :period_is_archived?
 
   def teach

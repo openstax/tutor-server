@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     get :share
     get :status
     get :'auth/failure', action: :omniauth_failure
+    get :signup
   end
 
   # User information and remote log in/out

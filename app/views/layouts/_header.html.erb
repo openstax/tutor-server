@@ -15,7 +15,7 @@
         <ul class="nav navbar-nav links">
 
           <% if current_user.is_anonymous? %>
-            <li><%= link_to 'Login', openstax_accounts.login_path, class: 'btn' %></li>
+            <li><%= link_to 'Log in', openstax_accounts_login_path, class: 'btn' %></li>
           <% else %>
             <li><%= link_to 'Log Out', openstax_accounts.logout_path, method: :delete, class: 'btn' %></li>
           <% end %>
