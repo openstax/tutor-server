@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161108152717) do
+ActiveRecord::Schema.define(version: 20161206181028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -429,7 +429,7 @@ ActiveRecord::Schema.define(version: 20161108152717) do
 
   create_table "openstax_accounts_accounts", force: :cascade do |t|
     t.integer  "openstax_uid"
-    t.string   "username",                          null: false
+    t.string   "username"
     t.string   "access_token"
     t.string   "first_name"
     t.string   "last_name"
