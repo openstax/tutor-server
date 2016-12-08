@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     get :privacy
     get :share
     get :status
+    get :signup
     get :'auth/failure', action: :omniauth_failure
   end
 

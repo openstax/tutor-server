@@ -9,9 +9,15 @@ class ApplicationController < ActionController::Base
   add_flash_types *WEBVIEW_FLASH_TYPES
   prepend_before_filter :keep_webview_flash
 
+  before_filter :block_sign_up
   before_filter :authenticate_user!
 
   protected
+
+  def block_sign_up
+    # Must be called before `authenticate_user!`
+    login_params[:signup_at] = signup_url
+  end
 
   def require_contracts
     contract_names = current_users_contracts

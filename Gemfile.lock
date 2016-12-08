@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/openstax/accounts-rails
-  revision: 00817bb30e2fe1ae44eaeb236a4276385cc971d4
-  ref: 00817bb30e2
+  revision: 88d1b56f3a8d5d2595ab5533c2e70169a856e334
+  ref: 88d1b56f3a
   specs:
     openstax_accounts (7.2.0)
       action_interceptor (>= 1.0)
