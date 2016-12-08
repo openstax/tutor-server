@@ -60,7 +60,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'includes all fields from the CourseRepresenter' do
-        ecosystem = add_book_to_course(course: course)[:ecosystem]
+        add_book_to_course(course: course)[:ecosystem]
 
         api_get :index, user_1_token
 
@@ -75,38 +75,37 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      before { AddUserAsCourseTeacher.call(course: course, user: user_1) }
+      let!(:teacher){ AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
         expect(response.body_as_hash.first).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher' })
+          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at)  })
         )
       end
     end
 
     context 'user is a student' do
-      before { AddUserAsPeriodStudent.call(period: period, user: user_1) }
+      let!(:student){ AddUserAsPeriodStudent[period: period, user: user_1] }
 
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
         expect(response.body_as_hash.first).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' }),
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at)  }),
         )
       end
     end
 
     context 'user is both a teacher and student' do
-      before do
-        AddUserAsPeriodStudent.call(period: period, user: user_1)
-        AddUserAsCourseTeacher.call(course: course, user: user_1)
-      end
+
+      let!(:student){ AddUserAsPeriodStudent[period: period, user: user_1] }
+      let!(:teacher){ AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns both roles with the course' do
         api_get :index, user_1_token
         expect(response.body_as_hash.first).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', },
-                                                 { id: teacher.id.to_s, type: 'teacher' }),
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at) },
+                                                 { id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at) }),
         )
       end
     end
@@ -220,31 +219,31 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher' }),
+          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at) })
         )
       end
     end
 
     context 'user is a student' do
-      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1).outputs.role }
+      let!(:student) { AddUserAsPeriodStudent[period: period, user: user_1] }
 
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' }),
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at) }),
         )
       end
     end
 
     context 'user is both a teacher and student' do
-      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1).outputs.role }
-      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1).outputs.role }
+      let!(:student) { AddUserAsPeriodStudent[period: period, user: user_1] }
+      let!(:teacher) { AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' },
-                                                 { id: teacher.id.to_s, type: 'teacher' }),
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at) },
+                                                 { id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at) }),
         )
       end
     end
