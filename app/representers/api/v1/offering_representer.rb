@@ -9,6 +9,16 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true }
 
+  property :title,
+           type: String,
+           readable: true,
+           writeable: false
+
+  property :description,
+           type: String,
+           readable: true,
+           writeable: false
+
   property :is_concept_coach,
            readable: true,
            writeable: false,
