@@ -51,7 +51,9 @@ RSpec.feature CustomerService::StatsController do
     end
 
     let(:exercises)           do
-      pages.map{ |page| FactoryGirl.create :content_exercise, page: page }.sort_by(&:number)
+      pages.each_with_index.map do |page, ii|
+        FactoryGirl.create :content_exercise, page: page, number: ii - 5
+      end.sort_by(&:number)
     end
 
     let!(:excluded_exercises) do
