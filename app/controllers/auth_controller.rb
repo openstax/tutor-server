@@ -1,3 +1,6 @@
+# This is the only controller that allows CORS for a section user
+# API controllers only allow CORS if using an access token
+# We rely on the origin checking to prevent unauthorized sites from getting the user access token
 class AuthController < ApplicationController
 
   before_filter :require_contracts, only: :iframe, unless: -> { current_user.is_anonymous? }
@@ -22,14 +25,14 @@ class AuthController < ApplicationController
 
   layout false
 
-  def status
-    render json: user_status_update
-  end
-
-  # requested by an OPTIONS request type
+  # Requested by an OPTIONS request type
   def cors_preflight_check # the other CORS headers are set by the before_filter
     headers['Access-Control-Max-Age'] = '1728000'
-    render text: '', :content_type => 'text/plain'
+    render text: '', content_type: 'text/plain'
+  end
+
+  def status
+    render json: user_status_update
   end
 
   def popup
@@ -43,12 +46,11 @@ class AuthController < ApplicationController
 
   def logout
     sign_out!
-    unless stubbed_auth?
-      redirect_to OpenStax::Utilities.generate_url(
-                    OpenStax::Accounts.configuration.openstax_accounts_url,
-                    "logout", parent: params[:parent]
-                  )
-    end
+
+    redirect_to OpenStax::Utilities.generate_url(
+                  OpenStax::Accounts.configuration.openstax_accounts_url,
+                  "logout", parent: params[:parent]
+                ) unless stubbed_auth?
   end
 
   private
@@ -59,16 +61,14 @@ class AuthController < ApplicationController
 
   def user_status_update
     status = strategy.authorize.body.slice('access_token')
-    if !current_user.is_anonymous? && ( stubbed_auth? || terms_agreed? )
-      status.merge! Api::V1::BootstrapDataRepresenter.new(current_user).to_hash(
-                      user_options: { tutor_api_url: api_root_url }
-                    )
-    end
+    status = status.merge Api::V1::BootstrapDataRepresenter.new(current_user).to_hash(
+                            user_options: { tutor_api_url: api_root_url }
+                          ) if !current_user.is_anonymous? && ( stubbed_auth? || terms_agreed? )
     status[:endpoints] = {
       is_stubbed: stubbed_auth?,
-      login:  authenticate_via_popup_url,
-      logout: logout_via_popup_url,
-      accounts_iframe: stubbed_auth? ? authenticate_via_popup_url :
+      login:  auth_authenticate_via_popup_url,
+      logout: auth_logout_via_popup_url,
+      accounts_iframe: stubbed_auth? ? auth_authenticate_via_popup_url :
         OpenStax::Utilities.generate_url(
           OpenStax::Accounts.configuration.openstax_accounts_url, "remote/iframe"
         )
@@ -87,7 +87,8 @@ class AuthController < ApplicationController
     headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # No PUT/POST/DELETE access
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Credentials'] = 'true'
-    headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, ' +
+                                               'Content-Type, Accept, Authorization'
   end
 
   def strategy
@@ -95,7 +96,7 @@ class AuthController < ApplicationController
   end
 
   def validated_cors_origin
-    OpenStax::Api.configuration.validate_cors_origin[ request ] ? request.headers["HTTP_ORIGIN"] : ''
+    OpenStax::Api.configuration.validate_cors_origin[request] ? request.headers["HTTP_ORIGIN"] : ''
   end
 
   def redirect_to_login_url

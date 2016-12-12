@@ -9,29 +9,29 @@ module Api
         EOS
       end
 
-      api :GET, '/courses/:id/guide(/role/:role_id)',
+      api :GET, '/courses/:course_id/guide(/role/:role_id)',
                 'Returns a student course guide for Learning Guide'
       description <<-EOS
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        course = CourseProfile::Models::Course.find(params[:id])
+        course = CourseProfile::Models::Course.find(params[:course_id])
         guide = GetStudentGuide[role: role(course, :student)]
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 
-      api :GET, '/courses/:id/teacher_guide',
+      api :GET, '/courses/:course_id/teacher_guide',
                 'Returns course guide for Learning Guide for teachers'
       description <<-EOS
         #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
-        course = CourseProfile::Models::Course.find(params[:id])
+        course = CourseProfile::Models::Course.find(params[:course_id])
         guide = GetTeacherGuide[role: role(course, :teacher)]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end
 
-      private
+      protected
 
       def role(course, types = :any)
         result = ChooseCourseRole.call(user: current_human_user,

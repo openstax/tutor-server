@@ -96,7 +96,7 @@ RSpec.describe Admin::StatsController, type: :controller do
 
         it "does a redirect" do
           post :excluded_exercises_to_csv, export: { by: ["course", "exercise"] }
-          expect(response).to redirect_to excluded_exercises_admin_stats_path
+          expect(response).to redirect_to admin_stats_excluded_exercises_path
         end
 
         it "renders a flash success" do
@@ -108,7 +108,7 @@ RSpec.describe Admin::StatsController, type: :controller do
       context "without by_course or by_exercise params" do
         it "does a redirect" do
           post :excluded_exercises_to_csv, export: { by: [""] }
-          expect(response).to redirect_to excluded_exercises_admin_stats_path
+          expect(response).to redirect_to admin_stats_excluded_exercises_path
         end
 
         it "renders a flash alert" do

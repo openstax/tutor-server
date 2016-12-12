@@ -58,16 +58,16 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       dropped_student (Dropped students cannot re-enroll by themselves)
   EOS
   def create
-    OSU::AccessPolicy.require_action_allowed!(:create, current_api_user,
-                                              CourseMembership::EnrollmentChange)
+    OSU::AccessPolicy.require_action_allowed!(
+      :create, current_api_user, CourseMembership::EnrollmentChange
+    )
 
     enrollment_params = OpenStruct.new
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
 
     # Find only CC periods
     period = CourseMembership::Models::Period.joins(:course).find_by(
-      enrollment_code: enrollment_params.enrollment_code,
-      course: { is_concept_coach: true }
+      enrollment_code: enrollment_params.enrollment_code
     )
 
     if period.nil?

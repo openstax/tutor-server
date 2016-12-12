@@ -43,9 +43,9 @@ RSpec.describe "fix_multi_enrollments", type: :rake do
 
     @teacher_role = AddUserAsCourseTeacher[user: @user_3, course: @course]
 
-    @task_1 = GetConceptCoach[user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid]
-    @task_2 = GetConceptCoach[user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid]
-    @task_3 = GetConceptCoach[user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid]
+    @task_1 = GetConceptCoach[user: @user_1, book_uuid: @book.uuid, page_uuid: @page_1.uuid]
+    @task_2 = GetConceptCoach[user: @user_2, book_uuid: @book.uuid, page_uuid: @page_1.uuid]
+    @task_3 = GetConceptCoach[user: @user_1, book_uuid: @book.uuid, page_uuid: @page_2.uuid]
 
     @old_period.destroy
 

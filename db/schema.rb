@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161108152717) do
+ActiveRecord::Schema.define(version: 20161129003301) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -216,17 +216,19 @@ ActiveRecord::Schema.define(version: 20161108152717) do
   add_index "course_content_excluded_exercises", ["exercise_number", "course_profile_course_id"], name: "index_excluded_exercises_on_number_and_course_id", unique: true, using: :btree
 
   create_table "course_membership_enrollment_changes", force: :cascade do |t|
-    t.integer  "user_profile_id",                                null: false
+    t.integer  "user_profile_id",                                            null: false
     t.integer  "course_membership_enrollment_id"
-    t.integer  "course_membership_period_id",                    null: false
-    t.integer  "status",                          default: 0,    null: false
-    t.boolean  "requires_enrollee_approval",      default: true, null: false
+    t.integer  "course_membership_period_id",                                null: false
+    t.integer  "status",                                      default: 0,    null: false
+    t.boolean  "requires_enrollee_approval",                  default: true, null: false
     t.datetime "enrollee_approved_at"
-    t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
     t.datetime "deleted_at"
+    t.integer  "course_membership_conflicting_enrollment_id"
   end
 
+  add_index "course_membership_enrollment_changes", ["course_membership_conflicting_enrollment_id"], name: "index_c_m_enrollment_changes_on_c_m_conflicting_enrollment_id", using: :btree
   add_index "course_membership_enrollment_changes", ["course_membership_enrollment_id"], name: "index_course_membership_enrollments_on_enrollment_id", using: :btree
   add_index "course_membership_enrollment_changes", ["course_membership_period_id"], name: "index_course_membership_enrollment_changes_on_period_id", using: :btree
   add_index "course_membership_enrollment_changes", ["deleted_at"], name: "index_course_membership_enrollment_changes_on_deleted_at", using: :btree

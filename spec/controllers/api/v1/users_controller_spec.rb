@@ -9,13 +9,17 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
                                             resource_owner_id: user_1.id }
 
   let(:admin)          { FactoryGirl.create(:user, :administrator) }
-  let(:admin_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                            application: application,
-                                            resource_owner_id: admin.id }
+  let(:admin_token)    do
+    FactoryGirl.create :doorkeeper_access_token,
+                       application: application,
+                       resource_owner_id: admin.id
+  end
 
-  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token,
-                                            application: application,
-                                            resource_owner_id: nil }
+  let(:userless_token) do
+    FactoryGirl.create :doorkeeper_access_token,
+                       application: application,
+                       resource_owner_id: nil
+  end
 
   context "#show" do
     context "caller has an authorization token" do

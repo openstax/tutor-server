@@ -6,15 +6,21 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   belongs_to :profile, -> { with_deleted }, subsystem: :user
   belongs_to :enrollment, -> { with_deleted } # from
   belongs_to :period, -> { with_deleted }     # to
+  belongs_to :conflicting_enrollment, -> { with_deleted },
+                                      class_name: 'CourseMembership::Models::Enrollment'
 
   enum status: [ :pending, :approved, :rejected, :processed ]
 
   validates :profile, presence: true
   validates :period, presence: true
-  validate :same_profile, :different_period, :same_book
+  validate :same_profile, :same_course, :different_period_unless_conflict, :valid_conflict
 
   def from_period
-    enrollment.try(:period)
+    enrollment.try!(:period)
+  end
+
+  def conflicting_period
+    conflicting_enrollment.try!(:period)
   end
 
   alias_method :to_period, :period
@@ -43,23 +49,27 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
     false
   end
 
-  def different_period
-    return if enrollment.nil? || period.nil? || enrollment.period != period
+  def same_course
+    return if enrollment.nil? || period.nil? || period.course == enrollment.period.course
+    errors.add(:base, 'the given periods must belong to the same course')
+    false
+  end
+
+  def different_period_unless_conflict
+    return if enrollment.nil? || period.nil? || enrollment.period != period ||
+              conflicting_enrollment.present?
     errors.add(:base, 'the given user is already enrolled in the given period')
     false
   end
 
-  def same_book
-    return if enrollment.nil? || period.nil?
-    course_a = period.course
-    course_b = enrollment.period.course
-    return if course_a == course_b
-    ecosystem_a = GetCourseEcosystem[course: course_a]
-    ecosystem_b = GetCourseEcosystem[course: course_b]
-    uuid_a = ecosystem_a.nil? ? nil : ecosystem_a.books.first.uuid
-    uuid_b = ecosystem_b.nil? ? nil : ecosystem_b.books.first.uuid
-    return if uuid_a == uuid_b
-    errors.add(:base, 'the given periods must belong to courses with the same book')
+  def valid_conflict
+    return if conflicting_enrollment.nil? ||
+              ( conflicting_enrollment.period.course.is_concept_coach &&
+                ( profile.nil? || conflicting_enrollment.student.role.profile == profile ) &&
+                ( period.nil? ||
+                  ( period.course != conflicting_enrollment.period.course &&
+                    period.course.is_concept_coach ) ) )
+    errors.add(:conflicting_enrollment, 'is invalid')
     false
   end
 end

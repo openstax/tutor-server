@@ -113,8 +113,8 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
 
     context 'existing task' do
       let!(:cc_task) { GetConceptCoach[user: @user_1,
-                                       cnx_book_id: @book.uuid,
-                                       cnx_page_id: @page.uuid] }
+                                       book_uuid: @book.uuid,
+                                       page_uuid: @page.uuid] }
 
       it 'should not create a new task for the same user' do
         expect{ show_api_call(@user_1_token) }.not_to change{ Tasks::Models::Task.count }

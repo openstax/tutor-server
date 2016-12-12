@@ -7,7 +7,8 @@ class CreateStudentHistory
   uses_routine FetchAndImportBookAndCreateEcosystem,
                translations: { outputs: { type: :verbatim } }
 
-  protected
+  private
+
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     ecosystem = setup_course_book(course, book_id)
 
@@ -29,8 +30,6 @@ class CreateStudentHistory
       # Not started
     end
   end
-
-  private
 
   def setup_student_role
     puts "=== Creating a course period ==="

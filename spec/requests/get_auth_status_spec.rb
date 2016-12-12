@@ -66,9 +66,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
       integration_session.__send__ :process, 'OPTIONS', '/auth/status', nil, \
         {'HTTP_ORIGIN' => origin, 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET'}
       expect(response.headers['Access-Control-Allow-Origin']).to eq(origin)
-      expect(response.headers['Access-Control-Allow-Methods']).to eq(
-        'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS'
-      )
+      expect(response.headers['Access-Control-Allow-Methods']).to eq 'GET, OPTIONS'
     end
   end
 

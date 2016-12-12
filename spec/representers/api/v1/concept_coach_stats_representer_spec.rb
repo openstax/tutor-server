@@ -35,7 +35,7 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
 
     @tasks = [@page_1, @page_2, @page_3].flat_map do |page|
       [@user_1, @user_2].flat_map do |user|
-        GetConceptCoach[user: user, cnx_book_id: page.chapter.book.uuid, cnx_page_id: page.uuid]
+        GetConceptCoach[user: user, book_uuid: page.chapter.book.uuid, page_uuid: page.uuid]
       end
     end
   end

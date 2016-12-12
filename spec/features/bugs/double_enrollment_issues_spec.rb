@@ -54,12 +54,12 @@ RSpec.describe "Students in archived old period sign up in new term",
       )
 
       cc_task_sem_1_page_0 = GetConceptCoach[
-        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[0].uuid
+        user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[0].uuid
       ]
       Demo::AnswerExercise[task_step: cc_task_sem_1_page_0.task_steps[0], is_correct: true]
 
       cc_task_sem_1_page_1 = GetConceptCoach[
-        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[1].uuid
+        user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[1].uuid
       ]
       Demo::AnswerExercise[task_step: cc_task_sem_1_page_1.task_steps[0], is_correct: true]
 
@@ -79,7 +79,7 @@ RSpec.describe "Students in archived old period sign up in new term",
 
     it 'lets the student work a CC from scratch that he did in the first semester' do
       cc_task_sem_2_page_0 = GetConceptCoach[
-        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[0].uuid
+        user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[0].uuid
       ]
       expect(cc_task_sem_2_page_0).not_to be_completed
     end
@@ -93,12 +93,12 @@ RSpec.describe "Students in archived old period sign up in new term",
 
       it 'shows only and all 2nd semester CCs' do
         cc_task_sem_2_page_2 = GetConceptCoach[
-          user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[2].uuid
+          user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[2].uuid
         ]
         Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
 
         cc_task_sem_2_page_3 = GetConceptCoach[
-          user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[3].uuid
+          user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[3].uuid
         ]
         Demo::AnswerExercise[task_step: cc_task_sem_2_page_3.task_steps[0], is_correct: true]
 
@@ -118,7 +118,7 @@ RSpec.describe "Students in archived old period sign up in new term",
 
       it 'shows only and all the 2nd semester CCs' do
         cc_task_sem_2_page_2 = GetConceptCoach[
-          user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @book.pages[2].uuid
+          user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[2].uuid
         ]
         Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
 

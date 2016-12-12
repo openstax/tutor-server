@@ -1,7 +1,7 @@
 class Admin::TimecopController < Admin::BaseController
   before_filter :timecop_enabled
 
-  def index
+  def timecop
   end
 
   def reset_time
@@ -16,7 +16,7 @@ class Admin::TimecopController < Admin::BaseController
     redirect_to admin_timecop_path
   end
 
-  private
+  protected
 
   def timecop_enabled
     Timecop.enabled? || head(:not_found)

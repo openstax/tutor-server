@@ -412,8 +412,8 @@ class Demo::Base
     course.students.each do |student|
       user = User::User.new(strategy: student.role.profile.wrap)
       task = GetConceptCoach[user: user,
-                             cnx_book_id: book.uuid,
-                             cnx_page_id: acceptable_pages.sample.uuid]
+                             book_uuid: book.uuid,
+                             page_uuid: acceptable_pages.sample.uuid]
     end
   end
 

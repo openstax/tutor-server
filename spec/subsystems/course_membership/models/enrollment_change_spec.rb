@@ -24,11 +24,11 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
 
   let(:enrollment)            { role.student.latest_enrollment }
 
-  before { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
+  before                      { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 
-  subject(:enrollment_change) {
+  subject(:enrollment_change) do
     CourseMembership::CreateEnrollmentChange[user: user, period: period_2].to_model
-  }
+  end
 
   it { is_expected.to belong_to(:profile) }
   it { is_expected.to belong_to(:enrollment) }
@@ -46,6 +46,26 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     expect(enrollment_change.enrollee_approved_at).to be_present
   end
 
+  it 'only accepts valid CC conflicts' do
+    course_1.update_attribute :is_concept_coach, true
+    course_2.update_attribute :is_concept_coach, true
+    expect(enrollment_change).to be_valid
+
+    enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment
+    expect(enrollment_change).not_to be_valid
+    expect(enrollment_change.errors[:conflicting_enrollment]).to include 'is invalid'
+
+    enrollment_change.conflicting_enrollment.student = \
+      AddUserAsPeriodStudent[user: user, period: period_3].student
+    enrollment_change.conflicting_enrollment.period = period_3
+    expect(enrollment_change).to be_valid
+
+    enrollment_change.conflicting_enrollment.period = period_1
+    expect(enrollment_change).not_to be_valid
+    enrollment_change.conflicting_enrollment.period = period_3
+    expect(enrollment_change).to be_valid
+  end
+
   context 'for an existing enrollment' do
     it 'knows the previous period' do
       expect(enrollment_change.from_period).to eq period_1
@@ -61,26 +81,35 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
       )
     end
 
-    it 'requires the period and the enrollment\'s period to be different' do
+    it 'requires the period and the enrollment\'s period to be different' +
+       'unless there was a CC conflict' do
+      course_1.update_attribute :is_concept_coach, true
+      course_2.update_attribute :is_concept_coach, true
       expect(enrollment_change).to be_valid
 
-      enrollment_change.profile = FactoryGirl.create :user_profile
+      enrollment_change.period = enrollment_change.enrollment.period
       expect(enrollment_change).not_to be_valid
       expect(enrollment_change.errors[:base]).to include(
-        'the given user does not match the given enrollment'
+        'the given user is already enrolled in the given period'
       )
+
+      conflicting_student = AddUserAsPeriodStudent[user: user, period: period_3].student
+      enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment,
+                                                                    period: period_3,
+                                                                    student: conflicting_student
+      expect(enrollment_change).to be_valid
     end
 
-    it 'requires the period and the enrollment\'s period to use the same book' do
+    it 'requires the period and the enrollment\'s period to be in the same course' do
       expect(enrollment_change).to be_valid
 
       enrollment_change.period = period_3
       expect(enrollment_change).not_to be_valid
       expect(enrollment_change.errors[:base]).to include(
-        'the given periods must belong to courses with the same book'
+        'the given periods must belong to the same course'
       )
 
-      AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
+      enrollment_change.period = period_2
 
       expect(enrollment_change).to be_valid
     end

@@ -20,6 +20,11 @@ module CourseMembership
                                              error: StrategyError
     end
 
+    def conflicting_period
+      verify_and_return @strategy.conflicting_period, klass: CourseMembership::Period,
+                                                      error: StrategyError, allow_nil: true
+    end
+
     def student_identifier
       verify_and_return @strategy.student_identifier, klass: String,
                                                       error: StrategyError, allow_nil: true
