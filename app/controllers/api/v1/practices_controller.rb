@@ -18,6 +18,7 @@ module Api
           role: role, exercise_source: :biglearn,
           page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
+
         if result.errors.any?
           render_api_errors(result.errors)
         else

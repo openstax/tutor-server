@@ -14,8 +14,13 @@ module Tasks
     protected
 
     def exec(role:, page:, exercises:, group_types:, related_content_array: [])
+      course = role.student.course
+
+      fatal_error(code: :course_not_started) unless course.started?
+      fatal_error(code: :course_ended) if course.ended?
+
       period = role.student.period
-      time_zone = period.try(:course).try(:time_zone)
+      time_zone = course.time_zone
 
       run(:build_task, task_type: :concept_coach, title: 'Concept Coach', time_zone: time_zone)
 

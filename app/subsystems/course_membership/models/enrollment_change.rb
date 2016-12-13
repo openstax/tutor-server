@@ -13,7 +13,8 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
 
   validates :profile, presence: true
   validates :period, presence: true
-  validate :same_profile, :same_course, :different_period_unless_conflict, :valid_conflict
+  validate :same_profile, :same_course, :course_not_ended,
+           :different_period_unless_conflict, :valid_conflict
 
   def from_period
     enrollment.try!(:period)
@@ -52,6 +53,12 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   def same_course
     return if enrollment.nil? || period.nil? || period.course == enrollment.period.course
     errors.add(:base, 'the given periods must belong to the same course')
+    false
+  end
+
+  def course_not_ended
+    return if period.nil? || !period.course.ended?
+    errors.add(:period, 'is in a course that already ended')
     false
   end
 

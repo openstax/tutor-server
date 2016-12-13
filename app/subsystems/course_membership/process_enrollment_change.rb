@@ -5,6 +5,10 @@ class CourseMembership::ProcessEnrollmentChange
   uses_routine CourseMembership::AddEnrollment, as: :add_enrollment
 
   def exec(enrollment_change:, student_identifier: nil)
+    enrollment_change_model = enrollment_change.to_model
+    transfer_errors_from(enrollment_change_model, {type: :verbatim}, true) \
+      unless enrollment_change_model.valid?
+
     fatal_error(code: :already_processed,
                 message: 'The given enrollment change request has already been processed') \
       if enrollment_change.processed?

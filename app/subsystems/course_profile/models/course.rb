@@ -63,8 +63,16 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
     periods.size
   end
 
+  def started?(current_time = Time.current)
+    starts_at <= current_time
+  end
+
+  def ended?(current_time = Time.current)
+    ends_at < current_time
+  end
+
   def active?(current_time = Time.current)
-    starts_at <= current_time && current_time <= ends_at
+    started?(current_time) && !ended?(current_time)
   end
 
   def deletable?
