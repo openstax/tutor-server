@@ -58,7 +58,7 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
 
   def course_not_ended
     return if period.nil? || !period.course.ended?
-    errors.add(:period, 'is in a course that already ended')
+    errors.add(:period, 'belongs to a course that has already ended')
     false
   end
 

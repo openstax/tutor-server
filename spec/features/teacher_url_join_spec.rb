@@ -46,7 +46,7 @@ RSpec.feature 'Teachers' do
 
           expect(page).to have_css(
             '.rescue-from',
-             text: 'You are trying to join a class as a teacher, but the information you ' +
+             text: 'You are trying to join a course as an instructor, but the information you ' +
                    'provided is either out of date or does not correspond to an existing course.'
           )
         end

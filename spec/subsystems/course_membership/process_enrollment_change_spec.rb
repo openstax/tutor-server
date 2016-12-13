@@ -1,31 +1,31 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
-  let(:course_1)          { FactoryGirl.create :course_profile_course }
-  let(:course_2)          { FactoryGirl.create :course_profile_course }
-  let(:course_3)          { FactoryGirl.create :course_profile_course }
+  let(:course_1)  { FactoryGirl.create :course_profile_course }
+  let(:course_2)  { FactoryGirl.create :course_profile_course }
+  let(:course_3)  { FactoryGirl.create :course_profile_course }
 
-  let(:period_1)          { FactoryGirl.create :course_membership_period, course: course_1 }
-  let(:period_2)          { FactoryGirl.create :course_membership_period, course: course_1 }
-  let(:period_3)          { FactoryGirl.create :course_membership_period, course: course_2 }
-  let(:period_4)          { FactoryGirl.create :course_membership_period, course: course_3 }
+  let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:period_3)  { FactoryGirl.create :course_membership_period, course: course_2 }
+  let(:period_4)  { FactoryGirl.create :course_membership_period, course: course_3 }
 
-  let(:book)              { FactoryGirl.create :content_book }
+  let(:book)      { FactoryGirl.create :content_book }
 
-  let(:ecosystem)         { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
-  let(:user)              do
+  let(:user)      do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
 
-  before do
+  let(:args)      { { enrollment_change: enrollment_change } }
+
+  before          do
     AddEcosystemToCourse[course: course_1, ecosystem: ecosystem]
     AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
   end
-
-  let(:args)               { { enrollment_change: enrollment_change } }
 
   context 'approved enrollment_change' do
     context 'no existing courses' do
@@ -56,14 +56,10 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
 
       it 'rejects other pending EnrollmentChanges for the same user' do
-        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user,
-                                                                       period: period_1]
-        enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user,
-                                                                       period: period_2]
-        enrollment_change_4 = CourseMembership::CreateEnrollmentChange[user: user,
-                                                                       period: period_3]
-        enrollment_change_5 = CourseMembership::CreateEnrollmentChange[user: user,
-                                                                       period: period_4]
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period_1]
+        enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
+        enrollment_change_4 = CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
+        enrollment_change_5 = CourseMembership::CreateEnrollmentChange[user: user, period: period_4]
 
         result = nil
         expect{ result = described_class.call(args) }
@@ -113,8 +109,7 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
 
       it 'rejects other pending EnrollmentChanges for the same user' do
-        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user,
-                                                                       period: period_4]
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period_4]
 
         result = nil
         expect{ result = described_class.call(args) }
@@ -125,6 +120,22 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
         enrollment_change_2.to_model.reload
 
         expect(enrollment_change_2.status).to eq :rejected
+      end
+
+      it 'returns an error if the target course has already ended' do
+        current_time = Time.current
+        course_1.starts_at = current_time.last_month
+        course_1.ends_at = current_time.yesterday
+        course_1.save!
+
+        result = nil
+        expect{ result = described_class.call(args) }
+          .not_to change{ CourseMembership::Models::Enrollment.count }
+        expect(enrollment_change.to_model.errors.full_messages).to(
+          include('Period belongs to a course that has already ended')
+        )
+        enrollment_change.to_model.reload
+        expect(enrollment_change.status).to eq :approved
       end
     end
 
@@ -158,8 +169,7 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
 
       it 'rejects other pending EnrollmentChanges for the same user' do
-        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user,
-                                                                       period: period_4]
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period_4]
 
         result = nil
         expect{ result = described_class.call(args) }
@@ -183,13 +193,29 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
         new_role = (user.to_model.reload.roles - old_roles).first
         expect(new_role.student.course).to eq course_2
       end
+
+      it 'returns an error if the target course has already ended' do
+        current_time = Time.current
+        course_2.starts_at = current_time.last_month
+        course_2.ends_at = current_time.yesterday
+        course_2.save!
+
+        result = nil
+        expect{ result = described_class.call(args) }
+          .not_to change{ CourseMembership::Models::Enrollment.count }
+        expect(enrollment_change.to_model.errors.full_messages).to(
+          include('Period belongs to a course that has already ended')
+        )
+        enrollment_change.to_model.reload
+        expect(enrollment_change.status).to eq :approved
+      end
     end
   end
 
   context 'not approved enrollment_change' do
-    let(:enrollment_change) {
+    let(:enrollment_change) do
       CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
-    }
+    end
 
     it 'returns an error if the EnrollmentChange is pending' do
       result = nil
