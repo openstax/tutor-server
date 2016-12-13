@@ -5,12 +5,12 @@ module Catalog
     protected
 
     def exec(query)
-      offering = Models::Offering.where(query).first
-      if offering
-        outputs.offering = Catalog::Offering.new(
-          strategy: Catalog::Strategies::Direct::Offering.new(offering)
-        )
-      end
+      offering = Catalog::Models::Offering.find_by(query)
+      return if offering.nil?
+
+      outputs.offering = Catalog::Offering.new(
+        strategy: Catalog::Strategies::Direct::Offering.new(offering)
+      )
     end
 
   end

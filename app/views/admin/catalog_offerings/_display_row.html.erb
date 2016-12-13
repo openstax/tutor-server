@@ -1,19 +1,32 @@
 <div id='offering_<%= offering.id %>' class='underlined-spaced-row'>
-  <b>Book name:</b> <%= offering.salesforce_book_name %>
-  (<%= link_to 'List courses',
-               admin_courses_path(query: "offering:\"#{offering.salesforce_book_name}\"") %>)
-  <span style='float: right'>
-    <%= link_to 'Edit', edit_admin_catalog_offering_url(offering.id,
-                                                        anchor: "offering_#{offering.id}") %>
+  <span>
+    <b>ID:</b> <%= offering.id %>
   </span>
-  <div style='clear:both'>
-    <b>Appearance code:</b> <%= offering.appearance_code || 'not set' %>
+  <span style='float: right'>
+    <%= link_to 'List courses', admin_courses_path(query: "offering_id:\"#{offering.id}\"") %>
+
+    |
+
+    <%= link_to 'Edit',
+                edit_admin_catalog_offering_url(offering.id, anchor: "offering_#{offering.id}") %>
+  </span>
+  <div>
+    <b>Number:</b> <%= offering.number %>
   </div>
-  <div style='clear:both'>
-    <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.title : 'not set' %>
+  <div>
+    <b>Title:</b> <%= offering.title %>
   </div>
   <div>
     <b>Description:</b> <%= offering.description %>
+  </div>
+  <div>
+    <b>Book name:</b> <%= offering.salesforce_book_name %>
+  </div>
+  <div>
+    <b>Appearance code:</b> <%= offering.appearance_code || 'not set' %>
+  </div>
+  <div>
+    <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.title : 'not set' %>
   </div>
   <div>
     <b>PDF URL:</b> <%= link_to offering.pdf_url, offering.pdf_url %>
@@ -24,8 +37,8 @@
   <div>
     <b>Default Course Name:</b> <%= offering.default_course_name || '[not set]' %>
     <span style="float: right">
-      <b>Full Tutor?</b>&nbsp;&nbsp; <%= tf_to_yn(offering.is_tutor) %>&nbsp;&nbsp;&nbsp;&nbsp;
-      <b>CC?</b>&nbsp;&nbsp; <%= tf_to_yn(offering.is_concept_coach) %>
+      <b>Full Tutor?</b>&nbsp;&nbsp;&nbsp;<%= tf_to_yn(offering.is_tutor) %>&nbsp;&nbsp;&nbsp;&nbsp;
+      <b>CC?</b>&nbsp;&nbsp;&nbsp;<%= tf_to_yn(offering.is_concept_coach) %>
     </span>
   </div>
 </div>

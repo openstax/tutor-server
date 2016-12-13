@@ -16,6 +16,32 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
     end
   end
 
+  context 'title' do
+    it 'can be read' do
+      expect(representation['title']).to eq offering.title
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:title=)
+      expect{ described_class.new(offering).from_hash('title' => 'Something') }.not_to(
+        change{ offering.title }
+      )
+    end
+  end
+
+  context 'description' do
+    it 'can be read' do
+      expect(representation['description']).to eq offering.description
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:description=)
+      expect{ described_class.new(offering).from_hash('description' => 'Something') }.not_to(
+        change{ offering.description }
+      )
+    end
+  end
+
   context 'is_concept_coach' do
     it 'can be read' do
       expect(representation['is_concept_coach']).to eq offering.is_concept_coach

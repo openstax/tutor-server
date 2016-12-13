@@ -5,10 +5,11 @@ module Catalog
     protected
 
     def exec(attributes)
-      offering = Models::Offering.create(attributes)
+      offering = Catalog::Models::Offering.create(attributes)
       transfer_errors_from(offering, {type: :verbatim}, true)
+
       strategy = Strategies::Direct::Offering.new(offering)
-      outputs.offering = Offering.new(strategy: strategy)
+      outputs.offering = Catalog::Offering.new(strategy: strategy)
     end
 
   end

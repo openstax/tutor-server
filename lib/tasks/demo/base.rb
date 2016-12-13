@@ -111,6 +111,7 @@ class Demo::Base
       Catalog::CreateOffering[
         salesforce_book_name: content.salesforce_book_name,
         appearance_code: content.appearance_code,
+        title: content.course_name,
         description: content.course_name,
         webview_url: (content.webview_url_base ||
                       content.archive_url_base.sub(/archive\./,'')) + content.cnx_book,

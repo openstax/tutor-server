@@ -6,16 +6,15 @@
 
 <div style="clear:both; padding: 10px"></div>
 
-<%= lev_form_for( :offering,
-    url: @offering.id ? admin_catalog_offering_path(@offering.id) : admin_catalog_offerings_path,
-    method: @offering.id ? 'put' : 'post') do |form| %>
+<%= lev_form_for(:offering,
+      url: @offering.id ? admin_catalog_offering_path(@offering.id) : admin_catalog_offerings_path,
+      method: @offering.id ? 'put' : 'post') do |form| %>
 
-    <% @offerings.each do |offering| %>
+  <% @offerings.each do |offering| %>
 
-      <%= render partial: (offering == @offering) ? 'edit_row' : 'display_row',
-                 locals: {offering: offering, form: form } %>
+    <%= render partial: (offering == @offering) ? 'edit_row' : 'display_row',
+               locals: { offering: offering, form: form } %>
 
-    <% end -%>
-  </tbody>
+  <% end -%>
 
 <% end %>
