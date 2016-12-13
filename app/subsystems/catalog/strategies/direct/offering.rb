@@ -10,7 +10,7 @@ module Catalog
                 :webview_url, :pdf_url, :ecosystem, :content_ecosystem_id, :default_course_name
 
         def self.find_by(*args)
-          model = ::Catalog::Models::Offering.where(*args).take
+          model = ::Catalog::Models::Offering.find_by(*args)
           return if model.nil?
 
           ::Catalog::Offering.new(strategy: new(model))
