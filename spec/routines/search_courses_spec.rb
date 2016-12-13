@@ -12,6 +12,7 @@ RSpec.describe SearchCourses, type: :routine do
   let(:offering_1)   do
     FactoryGirl.create(:catalog_offering,
                        salesforce_book_name: 'College Physics (Algebra)',
+                       title: 'College Physics',
                        description: 'Introductory two-semester physics book',
                        ecosystem: ecosystem_1.to_model)
   end
@@ -145,5 +146,10 @@ RSpec.describe SearchCourses, type: :routine do
 
     courses = described_class[query: 'ecosystem:Biology'].to_a
     expect(courses).to eq [course_2]
+  end
+
+  it 'returns courses whose catalog offering id matches the given query' do
+    courses = described_class[query: "offering_id:#{offering_1.id}"].to_a
+    expect(courses).to eq [course_3, course_1]
   end
 end

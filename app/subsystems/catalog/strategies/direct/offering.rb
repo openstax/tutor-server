@@ -5,10 +5,9 @@ module Catalog
 
         wraps ::Catalog::Models::Offering
 
-        exposes :id, :salesforce_book_name, :appearance_code,
-                :is_tutor, :is_concept_coach, :is_available, :description,
-                :webview_url, :pdf_url, :ecosystem, :content_ecosystem_id,
-                :default_course_name
+        exposes :id, :number, :salesforce_book_name, :appearance_code,
+                :is_tutor, :is_concept_coach, :is_available, :title, :description,
+                :webview_url, :pdf_url, :ecosystem, :content_ecosystem_id, :default_course_name
 
         def self.find_by(*args)
           model = ::Catalog::Models::Offering.where(*args).take

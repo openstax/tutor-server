@@ -6,50 +6,68 @@
 </style>
 
 <div id='offering_<%= offering.id %>' class='underlined-spaced-row'>
-  <h4><%= offering.salesforce_book_name %></h4>
+  <div class="form-group">
+    <%= form.label :number %>
+    <%= form.number_field :number, min: "1", class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= form.label :description %>
+    <%= form.text_area :description, class: 'form-control', style: 'min-width: 300px' %>
+  </div>
   <div class="form-group">
     <%= form.label :salesforce_book_name %>
     <% if @salesforce_book_names.blank? %>
-      <%= form.text_field :salesforce_book_name,  {class: 'form-control'} %>
+      <%= form.text_field :salesforce_book_name, class: 'form-control' %>
     <% else %>
       <%= form.select :salesforce_book_name, @salesforce_book_names,
-                      { include_blank: true }, {class: 'form-control'} %>
+                      { include_blank: true }, class: 'form-control' %>
     <% end %>
   </div>
   <div class="form-group">
     <%= form.label :appearance_code %>
-    <%= form.text_field :appearance_code, {class: 'form-control'} %>
+    <%= form.text_field :appearance_code, class: 'form-control' %>
   </div>
   <div class="form-group">
-    <%= form.label :description %>
-    <%= form.text_area :description, {class: 'form-control', style: 'min-width: 300px'} %>
+    <%= form.label :default_course_name %>
+    <%= form.text_field :default_course_name, class: 'form-control' %>
   </div>
   <div class="form-group">
     <%= form.label "Ecosystem" %>
     <%= form.collection_select :content_ecosystem_id,
-        @ecosystems, :id, :title, { include_blank: true }, {class: 'form-control'} %>
+        @ecosystems, :id, :title, { include_blank: true }, class: 'form-control' %>
   </div>
   <div class="checkbox">
-    <label><%= form.check_box :is_tutor,  {class: 'form-control'}%><span class="checkbox-label">Works for full Tutor?</span></label>
+    <label>
+      <%= form.check_box :is_available, class: 'form-control' %>
+      <span class="checkbox-label">Available for teachers to select?</span>
+    </label>
   </div>
   <div class="checkbox">
-    <label style="vertical-align:middle"><%= form.check_box :is_concept_coach,  {class: 'form-control'}%><span class="checkbox-label">Works for Concept Coach?</span></label>
+    <label>
+      <%= form.check_box :is_tutor, class: 'form-control' %>
+      <span class="checkbox-label">Works for full Tutor?</span>
+    </label>
   </div>
   <div class="checkbox">
-    <label><%= form.check_box :is_available,  {class: 'form-control'}%><span class="checkbox-label">Available for teachers to select?</span></label>
+    <label style="vertical-align:middle">
+      <%= form.check_box :is_concept_coach, class: 'form-control' %>
+      <span class="checkbox-label">Works for Concept Coach?</span>
+    </label>
   </div>
   <div class="form-group">
     <%= form.label :pdf_url %>
-    <%= form.text_field :pdf_url,  {class: 'form-control'} %>
+    <%= form.text_field :pdf_url, class: 'form-control' %>
   </div>
   <div class="form-group">
     <%= form.label :webview_url %>
-    <%= form.text_field :webview_url,  {class: 'form-control'} %>
-  </div>
-    <div class="form-group">
-    <%= form.label :default_course_name %>
-    <%= form.text_field :default_course_name,  {class: 'form-control'} %>
+    <%= form.text_field :webview_url, class: 'form-control' %>
   </div>
 
-  <%= form.submit class: 'btn btn-primary', value:'Save' %>
+  <%= form.submit class: 'btn btn-primary', value: 'Save' %>
+
+  <%= link_to 'Cancel', admin_catalog_offerings_path, class: 'btn' %>
 </div>
