@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, version: :v1 do
 
-  let!(:available_offering)           { FactoryGirl.create :catalog_offering }
+  let!(:available_offering_1)         { FactoryGirl.create :catalog_offering, number: 2 }
+  let!(:available_offering_2)         { FactoryGirl.create :catalog_offering, number: 1 }
   let!(:unavailable_offering)         { FactoryGirl.create :catalog_offering, is_available: false }
 
   let(:anon)                          { User::User.anonymous }
@@ -23,11 +24,13 @@ RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, versi
       expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
     end
 
-    it 'lists all available offerings for verified faculty' do
+    it 'lists all available offerings for verified faculty, in order' do
       api_get :index, verified_faculty_access_token
       items = response.body_as_hash[:items].map(&:deep_stringify_keys)
-      expect(items).to include Api::V1::OfferingRepresenter.new(available_offering).as_json
-      expect(items).not_to include Api::V1::OfferingRepresenter.new(unavailable_offering).as_json
+      expect(items).to eq [
+        Api::V1::OfferingRepresenter.new(available_offering_2).as_json,
+        Api::V1::OfferingRepresenter.new(available_offering_1).as_json
+      ]
     end
   end
 
