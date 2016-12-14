@@ -1,13 +1,13 @@
 FactoryGirl.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
-      duration 1.week
-      time_zone { owner.time_zone.to_tz }
-      opens_at  { time_zone.now }
-      due_at    { opens_at + duration }
-      num_tasking_plans 1
+      duration                  1.week
+      time_zone                 { owner.try(:time_zone).try!(:to_tz) || Time.zone }
+      opens_at                  { time_zone.now }
+      due_at                    { opens_at + duration }
+      num_tasking_plans         1
       assistant_code_class_name 'DummyAssistant'
-      published_at nil
+      published_at              nil
     end
 
     association :owner, factory: :course_profile_course
@@ -32,7 +32,7 @@ FactoryGirl.define do
               task_plan: task_plan,
               opens_at: evaluator.opens_at,
               due_at: evaluator.due_at,
-              time_zone: task_plan.owner.time_zone)
+              time_zone: task_plan.owner.try(:time_zone))
       end
     end
   end

@@ -55,6 +55,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       when 'clone'
         tps.where{cloned_from_id != nil}
       else
+        tps
       end
     end
 

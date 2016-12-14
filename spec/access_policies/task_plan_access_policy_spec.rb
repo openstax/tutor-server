@@ -1,103 +1,287 @@
 require 'rails_helper'
 
 RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
-  let(:task_plan)    { FactoryGirl.create(:tasks_task_plan) }
 
-  let(:course)       { FactoryGirl.create :course_profile_course }
-  let(:teacher)      { FactoryGirl.create(:user) }
-  let(:not_teaching) { FactoryGirl.create(:user) }
-  let(:owner)        { FactoryGirl.create(:user) }
-  let(:non_owner)    { FactoryGirl.create(:user) }
+  before(:all) do
+    @course = FactoryGirl.create :course_profile_course
+    @period = FactoryGirl.create :course_membership_period, course: @course
 
-  before             { AddUserAsCourseTeacher[course: course, user: teacher] }
+    @task_plan = FactoryGirl.create(:tasks_task_plan, owner: @course)
 
-  # action, requestor are set in contexts
-  subject(:allowed) { described_class.action_allowed?(action, requestor, task_plan) }
+    @clone_course = FactoryGirl.create :course_profile_course, cloned_from: @course
+    @clone_period = FactoryGirl.create :course_membership_period, course: @clone_course
 
-  context 'anonymous users' do
-    let(:requestor) { User::User.anonymous }
+    @clone_task_plan = FactoryGirl.create(:tasks_task_plan, owner: @clone_course)
 
-    [:index, :read, :create, :update, :destroy].each do |test_action|
-      context test_action.to_s do
-        let(:action) { test_action }
+    @anonymous = User::User.anonymous
+    @user = FactoryGirl.create(:user)
+    @student = FactoryGirl.create(:user)
+    @teacher = FactoryGirl.create(:user)
+    @clone_student = FactoryGirl.create(:user)
+    @clone_teacher = FactoryGirl.create(:user)
 
-        it { should eq false }
+    @owner = FactoryGirl.create(:user)
+    # NotYetImplemented, but we can kid of simulate it by creating a task_plan and then updating it
+    @owned_task_plan = FactoryGirl.create(:tasks_task_plan)
+    @owned_task_plan.update_attribute :owner, @owner.to_model
+
+    AddUserAsPeriodStudent[user: @student, period: @period]
+    AddUserAsCourseTeacher[user: @teacher, course: @course]
+    AddUserAsPeriodStudent[user: @clone_student, period: @clone_period]
+    AddUserAsCourseTeacher[user: @clone_teacher, course: @clone_course]
+  end
+
+  context 'original task plans' do
+    context 'owned by the course' do
+      # action, requestor are set in contexts
+      subject(:allowed) { described_class.action_allowed?(action, requestor, @task_plan) }
+
+      context 'anonymous users' do
+        let(:requestor) { @anonymous }
+
+        [:index, :read, :create, :update, :destroy].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'random users' do
+        let(:requestor) { @user }
+
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'students in the original course' do
+        let(:requestor) { @student }
+
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'students in the cloned course' do
+        let(:requestor) { @clone_student }
+
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'teachers in the original course' do
+        let(:requestor) { @teacher }
+
+        [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
+      end
+
+      context 'teachers in the cloned course' do
+        let(:requestor) { @clone_teacher }
+
+        [:index, :read].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
+
+        [:create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+    end
+
+    context 'owned by the user' do
+      # action, requestor are set in contexts
+      subject(:allowed) { described_class.action_allowed?(action, requestor, @owned_task_plan) }
+
+      context 'anonymous users' do
+        let(:requestor) { @anonymous }
+
+        [:index, :read, :create, :update, :destroy].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'random users' do
+        let(:requestor) { @user }
+
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'task plan owners' do
+        let(:requestor) { @owner }
+
+        [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
       end
     end
   end
 
-  context 'course teachers' do
-    let(:requestor) { teacher }
+  context 'cloned task plans' do
+    # action, requestor are set in contexts
+    subject(:allowed) { described_class.action_allowed?(action, requestor, @clone_task_plan) }
 
-    before do
-      task_plan.owner = course
-      task_plan.save!
+    context 'anonymous users' do
+      let(:requestor) { @anonymous }
+
+      [:index, :read, :create, :update, :destroy].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
+
+          it { should eq false }
+        end
+      end
     end
 
-    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-      context test_action.to_s do
-        let(:action) { test_action }
+    context 'random users' do
+      let(:requestor) { @user }
+
+      context 'index' do
+        let(:action) { :index }
 
         it { should eq true }
       end
-    end
-  end
 
-  context 'not course teachers' do
-    let(:requestor) { not_teaching }
+      [:read, :create, :update, :destroy, :restore].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
 
-    before do
-      task_plan.owner = course
-      task_plan.save!
-    end
-
-    context 'index' do
-      let(:action) { :index }
-
-      it { should eq true }
-    end
-
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
-      context test_action.to_s do
-        let(:action) { test_action }
-
-        it { should eq false }
+          it { should eq false }
+        end
       end
     end
-  end
 
-  context 'human owners' do
-    let(:requestor) { owner }
+    context 'students in the original course' do
+      let(:requestor) { @student }
 
-    before do
-      task_plan.owner = owner.to_model
-      task_plan.save!
-    end
-
-    [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-      context test_action.to_s do
-        let(:action) { test_action }
+      context 'index' do
+        let(:action) { :index }
 
         it { should eq true }
       end
-    end
-  end
 
-  context 'non-owners' do
-    let(:requestor) { non_owner }
+      [:read, :create, :update, :destroy, :restore].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
 
-    context 'index' do
-      let(:action) { :index }
-
-      it { should eq true }
+          it { should eq false }
+        end
+      end
     end
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
-      context test_action.to_s do
-        let(:action) { test_action }
+    context 'students in the cloned course' do
+      let(:requestor) { @clone_student }
 
-        it { should eq false }
+      context 'index' do
+        let(:action) { :index }
+
+        it { should eq true }
+      end
+
+      [:read, :create, :update, :destroy, :restore].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
+
+          it { should eq false }
+        end
+      end
+    end
+
+    context 'teachers in the original course' do
+      let(:requestor) { @teacher }
+
+      context 'index' do
+        let(:action) { :index }
+
+        it { should eq true }
+      end
+
+      [:read, :create, :update, :destroy, :restore].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
+
+          it { should eq false }
+        end
+      end
+    end
+
+    context 'teachers in the cloned course' do
+      let(:requestor) { @clone_teacher }
+
+      [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
+
+          it { should eq true }
+        end
       end
     end
   end
+
 end
