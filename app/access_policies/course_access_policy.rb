@@ -9,7 +9,6 @@ class CourseAccessPolicy
       UserIsCourseStudent[user: requestor, course: course] ||
       UserIsCourseTeacher[user: requestor, course: course]
     when :create_practice
-      course.active? &&
       UserIsCourseStudent[user: requestor, course: course] ||
       UserIsCourseTeacher[user: requestor, course: course]
     when :read_task_plans

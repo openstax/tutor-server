@@ -66,6 +66,20 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     expect(enrollment_change).to be_valid
   end
 
+  it 'requires the target course to not have yet ended' do
+    current_time = Time.current
+    expect(enrollment_change).to be_valid
+
+    course_1.starts_at = current_time.last_month
+    course_1.ends_at = current_time.yesterday
+    course_1.save!
+
+    expect(enrollment_change).not_to be_valid
+    expect(enrollment_change.errors.first).to(
+      eq [:period, 'belongs to a course that has already ended']
+    )
+  end
+
   context 'for an existing enrollment' do
     it 'knows the previous period' do
       expect(enrollment_change.from_period).to eq period_1

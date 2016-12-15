@@ -21,6 +21,13 @@ class ResetPracticeWidget
   protected
 
   def exec(role:, exercise_source:, page_ids: nil, chapter_ids: nil, randomize: true)
+    course = role.student.try!(:course)
+
+    if course.present?
+      fatal_error(code: :course_not_started) unless course.started?
+      fatal_error(code: :course_ended) if course.ended?
+    end
+
     # Get the existing practice widget and hard-delete
     # incomplete exercises from it so they can be used in later practice
     existing_practice_task = run(:get_practice_widget, role: role).outputs.task

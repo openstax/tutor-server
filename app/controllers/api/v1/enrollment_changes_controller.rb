@@ -70,10 +70,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       enrollment_code: enrollment_params.enrollment_code
     )
 
-    if period.nil?
-      render_api_errors(:invalid_enrollment_code)
-      return
-    end
+    render_api_errors(:invalid_enrollment_code) && return if period.nil?
 
     result = CourseMembership::CreateEnrollmentChange.call(user: current_human_user,
                                                            period: period,

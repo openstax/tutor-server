@@ -115,9 +115,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
-      raise(IllegalState,
-        "No assistant for task plan of type #{task_plan.type}"
-      ) if task_plan.assistant.nil?
+      raise(IllegalState, "No assistant for task plan of type #{task_plan.type}") \
+        if task_plan.assistant.nil?
 
       OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
       uuid = distribute_or_update_tasks(task_plan)

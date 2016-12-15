@@ -48,4 +48,19 @@ RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
     expect(cc_task.task).to eq task
     expect(task.taskings.first.role).to eq role
   end
+
+  it 'errors if the course has ended' do
+    current_time = Time.current
+    course = role.student.course
+    course.starts_at = current_time.last_month
+    course.ends_at = current_time.yesterday
+    course.save!
+
+    result = nil
+    expect do
+      result = described_class.call(role: role, page: page, exercises: exercises,
+                                    group_types: group_types)
+    end.not_to change{ Tasks::Models::ConceptCoachTask.count }
+    expect(result.errors.first.code).to eq :course_ended
+  end
 end

@@ -67,6 +67,26 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     expect(course.reload).to be_deletable
   end
 
+  it 'knows if it has started' do
+    expect(course).to be_started
+
+    course.starts_at = Time.current.tomorrow
+    expect(course).not_to be_started
+
+    course.starts_at = Time.current - 1.week
+    expect(course).to be_started
+  end
+
+  it 'knows if it has ended' do
+    expect(course).not_to be_ended
+
+    course.ends_at = Time.current.yesterday
+    expect(course).to be_ended
+
+    course.ends_at = Time.current + 1.week
+    expect(course).not_to be_ended
+  end
+
   it 'knows if it is active' do
     expect(course).to be_active
 
