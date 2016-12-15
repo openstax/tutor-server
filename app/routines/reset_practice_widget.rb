@@ -24,8 +24,8 @@ class ResetPracticeWidget
     course = role.student.try!(:course)
 
     if course.present?
-      fatal_error(code: :course_not_started) && return unless course.started?
-      fatal_error(code: :course_ended) && return if course.ended?
+      fatal_error(code: :course_not_started) unless course.started?
+      fatal_error(code: :course_ended) if course.ended?
     end
 
     # Get the existing practice widget and hard-delete
