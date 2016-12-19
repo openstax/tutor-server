@@ -12,7 +12,7 @@ Rails.application.routes.draw do
       get :'course/:id', as: :course_dashboard
 
       scope :enroll do
-        get :':enroll_token(/:ignore)', as: :token_enroll
+        get :':enroll_token(/:ignore)', as: :token_enroll, block_sign_up: false
         post :confirm, as: :confirm_token_enroll
       end
     end

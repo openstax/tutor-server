@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   add_flash_types *WEBVIEW_FLASH_TYPES
   prepend_before_filter :keep_webview_flash
 
-  before_filter :block_sign_up
+  before_filter :block_sign_up, unless: -> { params[:block_sign_up] == false }
   before_filter :authenticate_user!
 
   protected
