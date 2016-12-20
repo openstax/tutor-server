@@ -50,7 +50,7 @@ Rails.application.routes.draw do
   resources :terms, only: [:index] do
     collection do
       get :pose
-      post :agree
+      post :agree, as: :agree_to
     end
   end
 
@@ -166,7 +166,7 @@ Rails.application.routes.draw do
 
     resources :jobs, only: [:index, :show]
 
-    match :'*all', action: :options, via: [:options]
+    match :'*all', to: 'api#options', via: [:options]
   end
 
   # Teacher enrollment
