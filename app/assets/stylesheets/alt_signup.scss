@@ -1,37 +1,48 @@
-#alt-signup {
-  .title {
-    background: #0dc0de;
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 200px 0 200px;
-    height: 420px;
+.static_pages-signup {
+ > .body > .container{
+    width: 100% !important;
+    margin: 60px 0 0 0 !important;
+ }
+ .application-flash { position: absolute; }
 
-    h2 {
-      color: white;
-      margin: 0 auto;
-    }
-  }
+ #alt-signup {
+   $title-height: 420px;
+   position: relative;
+   .title {
+     background: #0dc0de;
+     height: $title-height;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     flex-direction: column;
+     margin-bottom: 20px;
 
-  .strips {
+     h2 {
+       color: white;
+       margin: 0 auto;
+       flex: 1;
+       display: flex;
+       align-items: center;
+     }
+   }
+   .stripe {
+     height: 10px;
+     display: flex;
+     align-self: flex-end;
+     width: 100%;
+     // flex values are the relative amount each will take up
+     .orange { flex: 1;   background-color: #f27749; }
+     .blue   { flex: 0.6; background-color: #032769; }
+     .red    { flex: 0.4; background-color: #c02236; }
+     .yellow { flex: 0.5; background-color: #f4d036; }
+     .teal   { flex: 0.2; background-color: #0dc0de; }
+   }
+ }
 
+ .teacher-student {
+   display: flex;
+   .teacher { flex: 1; margin-left:  1rem; }
+   .student { flex: 1; maring-right: 1rem; }
+ }
 
-    width: 100%;
-    -ms-flex-align: stretch;
-    align-items: stretch;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-flow: row nowrap;
-    flex-flow: row nowrap;
-    height: 1rem;
-    // margin-bottom: 4rem;
-
-        left: 0;
-    margin-bottom: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
 }
-
