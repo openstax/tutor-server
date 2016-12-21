@@ -1,0 +1,37 @@
+#alt-signup {
+  .title {
+    background: #0dc0de;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 200px 0 200px;
+    height: 420px;
+
+    h2 {
+      color: white;
+      margin: 0 auto;
+    }
+  }
+
+  .strips {
+
+
+    width: 100%;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    height: 1rem;
+    // margin-bottom: 4rem;
+
+        left: 0;
+    margin-bottom: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
