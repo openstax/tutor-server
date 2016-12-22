@@ -1,0 +1,52 @@
+.static_pages-signup {
+ > .body > .container{
+    width: 100% !important;
+    margin: 60px 0 0 0 !important;
+ }
+ .application-flash { position: absolute; }
+
+ #alt-signup {
+   $title-height: 260px;
+   position: relative;
+   .title {
+     background: #0dc0de;
+     height: $title-height;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     flex-direction: column;
+     margin-bottom: 20px;
+
+     h2 {
+       color: white;
+       margin: 0 auto;
+       flex: 1;
+       display: flex;
+       align-items: center;
+       font-size: 36px;
+     }
+   }
+   .stripe {
+     height: 10px;
+     display: flex;
+     align-self: flex-end;
+     width: 100%;
+     // flex values are the relative amount each will take up
+     .orange { flex: 1;   background-color: #f27749; }
+     .blue   { flex: 0.6; background-color: #032769; }
+     .red    { flex: 0.4; background-color: #c02236; }
+     .yellow { flex: 0.5; background-color: #f4d036; }
+     .teal   { flex: 0.2; background-color: #0dc0de; }
+   }
+ }
+
+ .teacher-student {
+   margin-bottom: 60px;
+   margin-top: 40px;
+
+   display: flex;
+   .teacher { flex: 1; margin-left:  2rem; }
+   .student { flex: 1; margin-right: 2rem; }
+ }
+
+}

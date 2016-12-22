@@ -4,7 +4,10 @@ class StaticPagesController < ApplicationController
 
   skip_before_filter :authenticate_user!,
                      only: [:about, :contact, :contact_form, :copyright, :developers,
-                            :help, :privacy, :share, :status, :terms, :omniauth_failure]
+                            :help, :privacy, :share, :status, :terms, :omniauth_failure,
+                            :signup]
+
+  before_filter :use_openstax_logo
 
   # GET /status
   # Used by AWS (and others) to make sure the site is still up
@@ -19,5 +22,9 @@ class StaticPagesController < ApplicationController
   def omniauth_failure
     flash[:error] = "Authentication failure #{params[:message]}"
     redirect_to root_path
+  end
+
+  def use_openstax_logo
+    @use_openstax_logo = true
   end
 end

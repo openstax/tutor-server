@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', git: 'https://github.com/openstax/accounts-rails', ref: '443d902'
+gem 'openstax_accounts', '~> 7.3.0'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'

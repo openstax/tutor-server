@@ -435,7 +435,7 @@ ActiveRecord::Schema.define(version: 20161212211910) do
 
   create_table "openstax_accounts_accounts", force: :cascade do |t|
     t.integer  "openstax_uid"
-    t.string   "username",                          null: false
+    t.string   "username"
     t.string   "access_token"
     t.string   "first_name"
     t.string   "last_name"
