@@ -6,7 +6,7 @@
  .application-flash { position: absolute; }
 
  #alt-signup {
-   $title-height: 420px;
+   $title-height: 260px;
    position: relative;
    .title {
      background: #0dc0de;
@@ -23,6 +23,7 @@
        flex: 1;
        display: flex;
        align-items: center;
+       font-size: 36px;
      }
    }
    .stripe {
@@ -40,9 +41,12 @@
  }
 
  .teacher-student {
+   margin-bottom: 60px;
+   margin-top: 40px;
+
    display: flex;
-   .teacher { flex: 1; margin-left:  1rem; }
-   .student { flex: 1; maring-right: 1rem; }
+   .teacher { flex: 1; margin-left:  2rem; }
+   .student { flex: 1; margin-right: 2rem; }
  }
 
 }
