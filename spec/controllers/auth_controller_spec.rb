@@ -23,8 +23,8 @@ RSpec.describe AuthController, type: :controller do
       }
 
       it 'allows access to popup and redirects to accounts' do
-        get :popup
-        expect(response).to redirect_to(controller.openstax_accounts.login_url)
+        get :popup, go: 'faster'
+        expect(response).to redirect_to(controller.openstax_accounts.login_url(go: 'faster'))
       end
 
     end
