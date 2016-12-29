@@ -24,27 +24,31 @@ class Api::V1::LogController < Api::V1::ApiController
     #{json_schema(Api::V1::LogEntryRepresenter, include: :writeable)}
   EOS
   def entry
-    entry_params = OpenStruct.new
-    consume!(entry_params, represent_with: Api::V1::LogEntryRepresenter)
+    entry_params = OpenStruct.new(entries: [])
 
+    consume!(entry_params, represent_with: Api::V1::LogEntriesRepresenter)
     errors = []
+    entries = entry_params.entries.empty? ? [entry_params] : entry_params.entries
 
-    if entry_params.level.blank?
-      errors.push(:level_missing)
-    else
-      level = LOG_LEVELS[entry_params.level.try(:downcase)]
-      errors.push(:bad_level) if level.nil?
-    end
+    entries.each do |entry|
 
-    errors.push(:message_missing) if entry_params.message.blank?
+      if entry.level.blank?
+        errors.push(:level_missing)
+      else
+        level = LOG_LEVELS[entry.level.try(:downcase)]
+        errors.push(:bad_level) if level.nil?
+      end
 
-    if errors.any?
-      render_api_errors(errors)
-    else
-      message = entry_params.message[0..MAX_LOG_LENGTH]
+      errors.push(:message_missing) if entry.message.blank?
 
-      Rails.logger.log(level, "(ext) #{message}")
-      head :created
+      if errors.any?
+        render_api_errors(errors)
+        return
+      else
+        message = entry.message[0..MAX_LOG_LENGTH]
+        Rails.logger.log(level, "(ext) #{message}")
+        head :created
+      end
     end
   end
 

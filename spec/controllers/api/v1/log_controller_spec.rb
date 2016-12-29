@@ -40,6 +40,13 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
       expect(response).to have_http_status(:created)
     end
 
+    it 'can log an array of entries' do
+      expect(Rails.logger).to receive(:log).with(Logger::INFO, '(ext) hi')
+      expect(Rails.logger).to receive(:log).with(Logger::WARN, '(ext) take care!')
+      log(entries: [{level: 'info', message: 'hi'}, {level: 'warn', message: 'take care!'}])
+      expect(response).to have_http_status(:created)
+    end
+
   end
 
   def log(options)
