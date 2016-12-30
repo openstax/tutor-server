@@ -58,8 +58,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         tps
       end
     end
-
-    standard_index(task_plans, Api::V1::TaskPlanSearchRepresenter, exclude_job_info: true)
+    respond_with(Lev::Outputs.new(items: task_plans),
+                 user_options: { exclude_job_info: true },
+                 represent_with: Api::V1::TaskPlanSearchRepresenter)
   end
 
   ###############################################################
