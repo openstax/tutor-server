@@ -37,7 +37,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   before_validation :set_ecosystem
 
   scope :preloaded, -> {
-    preload(:tasking_plans, owner: :time_zone, tasks: [:taskings, task_steps: :tasked])
+    preload(tasking_plans: [:time_zone], tasks: [:taskings, task_steps: :tasked])
   }
 
   def out_to_students?(current_time: Time.current)
