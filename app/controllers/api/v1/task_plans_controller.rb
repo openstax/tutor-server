@@ -43,7 +43,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     if source_course.nil?
       task_plans = Tasks::Models::TaskPlan.none
     else
-      tps = Tasks::Models::TaskPlan.preloaded.where(owner: source_course)
+      tps = Tasks::Models::TaskPlan.preload_tasking_plans.where(owner: source_course)
 
       task_plans = case params[:clone_status]
       when 'unused_source'
@@ -58,6 +58,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         tps
       end
     end
+
     respond_with(Lev::Outputs.new(items: task_plans),
                  user_options: { exclude_job_info: true },
                  represent_with: Api::V1::TaskPlanSearchRepresenter)
@@ -73,7 +74,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def show
-    plan = Tasks::Models::TaskPlan.preloaded.find(params[:id])
+    plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
     standard_read(plan, Api::V1::TaskPlanRepresenter)
   end
 
@@ -146,7 +147,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def update
     Tasks::Models::TaskPlan.transaction do
       # Modified standard_update code
-      task_plan = Tasks::Models::TaskPlan.preloaded.lock.find(params[:id])
+      task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps
+                                         .lock.find(params[:id])
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       course = task_plan.owner
 
@@ -210,7 +212,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanWithStatsRepresenter, include: :readable)}
   EOS
   def stats
-    plan = Tasks::Models::TaskPlan.preloaded.find(params[:id])
+    plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps.find(params[:id])
     standard_read(plan, Api::V1::TaskPlanWithStatsRepresenter)
   end
 
@@ -338,7 +340,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanWithDetailedStatsRepresenter, include: :readable)}
   EOS
   def review
-    plan = Tasks::Models::TaskPlan.preloaded.find(params[:id])
+    plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps.find(params[:id])
     standard_read(plan, Api::V1::TaskPlanWithDetailedStatsRepresenter)
   end
 
@@ -355,7 +357,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def destroy
-    task_plan = Tasks::Models::TaskPlan.preloaded.with_deleted.find_by(id: params[:id])
+    task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps
+                                       .with_deleted.find_by(id: params[:id])
     # Some Task models have touch: true, so delay_touching is useful here
     ActiveRecord::Base.delay_touching { standard_destroy(task_plan, Api::V1::TaskPlanRepresenter) }
   end
@@ -369,7 +372,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def restore
-    task_plan = Tasks::Models::TaskPlan.preloaded.with_deleted.find_by(id: params[:id])
+    task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps
+                                       .with_deleted.find_by(id: params[:id])
     # Paranoia restore triggers .touch several times and some Task models have touch: true,
     # so delay_touching is useful here
     ActiveRecord::Base.delay_touching { standard_restore(task_plan, Api::V1::TaskPlanRepresenter) }
