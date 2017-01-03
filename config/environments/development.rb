@@ -14,7 +14,7 @@ Rails.application.configure do
                                                                        default: true)
   config.action_controller.perform_caching = false
 
-  config.serve_static_files  = false
+  config.serve_static_files  = true
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
