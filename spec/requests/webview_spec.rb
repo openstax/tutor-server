@@ -7,6 +7,11 @@ RSpec.describe "Webview", type: :request do
       get '/enroll/whatever'
       expect(redirect_query_hash).not_to have_key(:signup_at)
     end
+
+    it 'directs accounts to go straight to signup' do
+      get '/enroll/whatever'
+      expect(redirect_query_hash[:go]).to eq 'signup'
+    end
   end
 
 end
