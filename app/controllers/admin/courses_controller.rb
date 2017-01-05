@@ -7,8 +7,9 @@ class Admin::CoursesController < Admin::BaseController
   def index
     @query = params[:query]
     result = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
-    params[:per_page] = result.outputs.total_count if params[:per_page] == "all"
-    params_for_pagination = { page: (params[:page] || 1), per_page: (params[:per_page] || 25) }
+    per_page = params[:per_page] || 25
+    per_page = result.outputs.total_count if params[:per_page] == 'all'
+    params_for_pagination = { page: (params[:page] || 1), per_page: per_page }
 
     if result.errors.any?
       flash[:error] = "Invalid search"
