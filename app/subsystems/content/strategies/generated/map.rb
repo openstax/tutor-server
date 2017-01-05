@@ -102,17 +102,34 @@ module Content
             existing_from_ecosystems_ids.include?(ecosystem.id)
           end
 
-          new_maps = create_maps(
+          new_maps = create_or_find_maps(
             from_ecosystems: missing_from_ecosystems, to_ecosystem: to_ecosystem
           )
 
           existing_maps + new_maps
         end
 
-        def create_maps(from_ecosystems:, to_ecosystem:)
+        def create_or_find_maps(from_ecosystems:, to_ecosystem:)
+          # Safe find_or_create without Postgres 9.5 (find part already happened at this point)
+          # https://www.depesz.com/2012/06/10/why-is-upsert-so-complicated/
           from_ecosystems.uniq.map do |from_ecosystem|
-            Content::Models::Map.create from_ecosystem: from_ecosystem.to_model,
-                                        to_ecosystem: to_ecosystem.to_model
+            # We wrap each create in a transaction
+            # (requires_new ensures we get at least a savepoint)
+            new_map = Content::Models::Map.transaction(requires_new: true) do
+              # If this insert already happened in another transaction,
+              # it will block until the other transaction either rolls back or commits
+              # If the other transaction commits, this insert will raise a PG::UniqueViolation
+              # If the insert fails (with an exception), we rollback to the savepoint
+              # The outside transaction remains valid
+              # No need to retry the insert, since someone else succeeded
+              Content::Models::Map.create(
+                from_ecosystem: from_ecosystem.to_model, to_ecosystem: to_ecosystem.to_model
+              ) rescue raise ActiveRecord::Rollback
+            end
+
+            # Retry the find if the insert failed due to a Postgres exception
+            new_map || Content::Models::Map.find_by(from_ecosystem: from_ecosystem.to_model,
+                                                    to_ecosystem: to_ecosystem.to_model)
           end
         end
 
