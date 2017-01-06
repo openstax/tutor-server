@@ -17,10 +17,10 @@ RSpec.describe Admin::StudentsController do
     end
     let(:periods_2)  { [FactoryGirl.create(:course_membership_period, course: course_2)] }
 
-    let(:user_1)     { FactoryGirl.create(:user, username: 'benjamin') }
-    let(:user_2)     { FactoryGirl.create(:user, username: 'nicolai') }
-    let(:user_3)     { FactoryGirl.create(:user, username: 'freja') }
-    let(:user_4)     { FactoryGirl.create(:user, username: 'oskar') }
+    let(:user_1)     { FactoryGirl.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
+    let(:user_2)     { FactoryGirl.create(:user, first_name: 'Nicolai', last_name: 'Tesla') }
+    let(:user_3)     { FactoryGirl.create(:user, first_name: 'Freja', last_name: 'Asgard') }
+    let(:user_4)     { FactoryGirl.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
 
     let!(:student_1) {
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student
@@ -41,7 +41,7 @@ RSpec.describe Admin::StudentsController do
       expect(assigns[:students]).to eq([
         {
           'id' => student_1.id,
-          'username' => 'benjamin',
+          'username' => user_1.username,
           'first_name' => user_1.first_name,
           'last_name' => user_1.last_name,
           'name' => user_1.name,
@@ -52,7 +52,7 @@ RSpec.describe Admin::StudentsController do
         },
         {
           'id' => student_3.id,
-          'username' => 'freja',
+          'username' => user_3.username,
           'first_name' => user_3.first_name,
           'last_name' => user_3.last_name,
           'name' => user_3.name,
@@ -63,7 +63,49 @@ RSpec.describe Admin::StudentsController do
         },
         {
           'id' => student_2.id,
-          'username' => 'nicolai',
+          'username' => user_2.username,
+          'first_name' => user_2.first_name,
+          'last_name' => user_2.last_name,
+          'name' => user_2.name,
+          'entity_role_id' => student_2.entity_role_id,
+          'course_membership_period_id' => student_2.period.id,
+          'student_identifier' => student_2.student_identifier,
+          'deleted?' => false
+        }
+      ])
+    end
+
+    it 'works even if a student has a nil username' do
+      user_2.account.update_attribute :username, nil
+
+      get :index, course_id: course.id
+      expect(assigns[:course].name).to eq 'Physics'
+      expect(assigns[:students]).to eq([
+        {
+          'id' => student_1.id,
+          'username' => user_1.username,
+          'first_name' => user_1.first_name,
+          'last_name' => user_1.last_name,
+          'name' => user_1.name,
+          'entity_role_id' => student_1.entity_role_id,
+          'course_membership_period_id' => student_1.period.id,
+          'student_identifier' => student_1.student_identifier,
+          'deleted?' => false
+        },
+        {
+          'id' => student_3.id,
+          'username' => user_3.username,
+          'first_name' => user_3.first_name,
+          'last_name' => user_3.last_name,
+          'name' => user_3.name,
+          'entity_role_id' => student_3.entity_role_id,
+          'course_membership_period_id' => student_3.period.id,
+          'student_identifier' => student_3.student_identifier,
+          'deleted?' => false
+        },
+        {
+          'id' => student_2.id,
+          'username' => nil,
           'first_name' => user_2.first_name,
           'last_name' => user_2.last_name,
           'name' => user_2.name,
