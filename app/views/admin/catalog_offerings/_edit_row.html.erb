@@ -39,6 +39,9 @@
     <%= form.label "Ecosystem" %>
     <%= form.collection_select :content_ecosystem_id,
         @ecosystems, :id, :title, { include_blank: true }, class: 'form-control' %>
+    <p class="help-block">
+      Associated courses will be automatically updated if this setting is changed
+    </p>
   </div>
   <div class="checkbox">
     <label>
