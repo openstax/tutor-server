@@ -78,9 +78,11 @@ class CreateStudentHistory
   end
 
   def ireading_assistant
-    @ireading_assistant ||= FactoryGirl.create(
-      :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
-    )
+    @ireading_assistant ||= begin
+      args = { code_class_name: 'Tasks::Assistants::IReadingAssistant' }
+
+      Tasks::Models::Assistant.find_by(args) || FactoryGirl.create(:tasks_assistant, args)
+    end
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)
@@ -112,8 +114,11 @@ class CreateStudentHistory
   end
 
   def homework_assistant
-    @homework_assistant ||= FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+    @homework_assistant ||= begin
+      args = { code_class_name: 'Tasks::Assistants::HomeworkAssistant' }
+
+      Tasks::Models::Assistant.find_by(args) || FactoryGirl.create(:tasks_assistant, args)
+    end
   end
 
   def create_homework_task_plan(ecosystem, course, periods)
