@@ -122,6 +122,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         if task_plan.assistant.nil?
 
       OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
+
+      # If this is a cloned assignment, update its ecosystem during creation
+      current_ecosystem = course.ecosystems.first
+      task_plan = UpdateTaskPlanEcosystem[task_plan: task_plan, ecosystem: current_ecosystem] \
+        if task_plan.cloned_from_id.present?
+
       uuid = distribute_or_update_tasks(task_plan)
 
       if task_plan.errors.empty?
@@ -152,7 +158,27 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       course = task_plan.owner
 
-      update_task_plan!(task_plan)
+      if task_plan.out_to_students?
+        # Store current open dates for each TaskingPlan that is already open in the TaskPlan
+        opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
+        open_tasking_plans = task_plan.tasking_plans.select(&:past_open?)
+        open_tasking_plans.each do |tp|
+          opens_at_ntzs[tp.target_type][tp.target_id] = tp.opens_at_ntz
+        end
+
+        # Call Roar's consume! but force the TaskingPlans that were already open
+        # to the old open date in order to prevent their open dates from changing
+        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter).tap do |result|
+          task_plan.tasking_plans.each do |tp|
+            tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
+              if opens_at_ntzs[tp.target_type].has_key?(tp.target_id)
+          end
+        end
+      else
+        # If no tasks are open, just call Roar's consume! like usual
+        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      end
+
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       uuid = distribute_or_update_tasks(task_plan)
 
@@ -380,28 +406,6 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   end
 
   protected
-
-  def update_task_plan!(task_plan)
-    # If no tasks are open, just call Roar's consume! like usual
-    return consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter) \
-      unless task_plan.out_to_students?
-
-    # Store current open dates for each TaskingPlan that is already open in the TaskPlan
-    opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
-    open_tasking_plans = task_plan.tasking_plans.select(&:past_open?)
-    open_tasking_plans.each do |tp|
-      opens_at_ntzs[tp.target_type][tp.target_id] = tp.opens_at_ntz
-    end
-
-    # Call Roar's consume! but force the TaskingPlans that were already open
-    # to the old open date in order to prevent their open dates from changing
-    consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter).tap do |result|
-      task_plan.tasking_plans.each do |tp|
-        tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
-          if opens_at_ntzs[tp.target_type].has_key?(tp.target_id)
-      end
-    end
-  end
 
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any, or nil if the request was completed inline
