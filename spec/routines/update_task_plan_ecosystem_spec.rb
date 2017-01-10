@@ -23,12 +23,18 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
 
     it 'can be updated to a newer ecosystem' do
       expect(reading_plan.ecosystem).to eq @old_ecosystem.to_model
+      expect(reading_plan.settings['page_ids']).to eq page_ids
       expect(reading_plan).to be_valid
       updated_reading_plan = described_class[
         task_plan: reading_plan, ecosystem: @ecosystem.to_model
       ]
       expect(updated_reading_plan.ecosystem).to eq @ecosystem.to_model
+      expect(updated_reading_plan.settings['page_ids'].length).to eq page_ids.length
+      expect(updated_reading_plan.settings['page_ids']).not_to eq page_ids
       expect(updated_reading_plan).to be_valid
+
+      new_page_ids = updated_reading_plan.settings['page_ids']
+      expect(@ecosystem.pages_by_ids(*new_page_ids).length).to eq new_page_ids.length
     end
   end
 
@@ -47,12 +53,51 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
 
     it 'can be updated to a newer ecosystem' do
       expect(homework_plan.ecosystem).to eq @old_ecosystem.to_model
+      expect(homework_plan.settings['exercise_ids']).to eq exercise_ids
       expect(homework_plan).to be_valid
       updated_homework_plan = described_class[
         task_plan: homework_plan, ecosystem: @ecosystem.to_model
       ]
       expect(updated_homework_plan.ecosystem).to eq @ecosystem.to_model
+      expect(updated_homework_plan.settings['exercise_ids'].length).to eq exercise_ids.length
+      expect(updated_homework_plan.settings['exercise_ids']).not_to eq exercise_ids
       expect(updated_homework_plan).to be_valid
+
+      new_exercise_ids = updated_homework_plan.settings['exercise_ids']
+      expect(@ecosystem.exercises_by_ids(*new_exercise_ids).length).to eq new_exercise_ids.length
+    end
+  end
+
+  context 'extra task plan' do
+    let(:page_ids)     { @old_pages[0..2].map(&:id) }
+    let(:snap_lab_ids) { page_ids.map{ |page_id| "#{page_id}:fs-id#{SecureRandom.hex}" } }
+
+    let(:extra_plan) do
+      FactoryGirl.build(
+        :tasks_task_plan,
+        type: 'extra',
+        ecosystem: @old_ecosystem.to_model,
+        settings: { snap_lab_ids: snap_lab_ids }
+      )
+    end
+
+    it 'can be updated to a newer ecosystem' do
+      expect(extra_plan.ecosystem).to eq @old_ecosystem.to_model
+      expect(extra_plan.settings['snap_lab_ids']).to eq snap_lab_ids
+      expect(extra_plan).to be_valid
+      updated_extra_plan = described_class[
+        task_plan: extra_plan, ecosystem: @ecosystem.to_model
+      ]
+      expect(updated_extra_plan.ecosystem).to eq @ecosystem.to_model
+      expect(updated_extra_plan.settings['snap_lab_ids'].length).to eq snap_lab_ids.length
+      expect(updated_extra_plan.settings['snap_lab_ids']).not_to eq snap_lab_ids
+      expect(updated_extra_plan).to be_valid
+
+      new_snap_lab_ids = updated_extra_plan.settings['snap_lab_ids']
+      new_page_ids = new_snap_lab_ids.map do |page_id_snap_lab_id|
+        page_id_snap_lab_id.split(':').first
+      end
+      expect(@ecosystem.pages_by_ids(*new_page_ids).length).to eq new_snap_lab_ids.length
     end
   end
 

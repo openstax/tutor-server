@@ -1,11 +1,20 @@
 class UpdateTaskPlanEcosystem
 
+  # Readings, homeworks and extras are the only TaskPlan types that
+  # require changes to their settings to work with newer ecosystems
+  TPS_THAT_NEED_UPDATES = ['reading', 'homework', 'extra']
+
   lev_routine express_output: :task_plan
 
   protected
 
-  # Note: Does not save the task_plan, that's up to the caller
-  def exec(task_plan:, ecosystem:)
+  def exec(task_plan:, ecosystem:, save: true)
+    update_task_plan(task_plan: task_plan, ecosystem: ecosystem)
+
+    outputs.task_plan.save if save
+  end
+
+  def update_task_plan(task_plan:, ecosystem:)
     # Lock the plan to prevent concurrent publication
     outputs.task_plan = task_plan.lock!
 
@@ -17,7 +26,7 @@ class UpdateTaskPlanEcosystem
 
     outputs.task_plan.ecosystem = ecosystem
 
-    return if old_ecosystem.nil? || !['reading', 'homework'].include?(outputs.task_plan.type)
+    return if old_ecosystem.nil? || !TPS_THAT_NEED_UPDATES.include?(outputs.task_plan.type)
 
     old_wrapped_ecosystem = Content::Ecosystem.new(strategy: old_ecosystem.wrap)
     new_wrapped_ecosystem = Content::Ecosystem.new(strategy: ecosystem.wrap)
@@ -27,9 +36,14 @@ class UpdateTaskPlanEcosystem
 
     fatal_error(code: :invalid_mapping) unless map.is_valid
 
-    page_ids = outputs.task_plan.settings['page_ids']
+    if outputs.task_plan.type == 'extra'
+      snap_lab_ids = outputs.task_plan.settings['snap_lab_ids']
+      page_ids = snap_lab_ids.map{ |page_id_snap_lab_id| page_id_snap_lab_id.split(':').first }
+    else
+      page_ids = outputs.task_plan.settings['page_ids']
+    end
 
-    if page_ids.present?
+    unless page_ids.nil?
 
       wrapped_pages_by_id = {}
       Content::Models::Page.where(id: page_ids).each do |page_model|
@@ -38,14 +52,24 @@ class UpdateTaskPlanEcosystem
 
       page_map = map.map_pages_to_pages(pages: wrapped_pages_by_id.values)
 
-      updated_page_ids = page_ids.map do |page_id|
-        wrapped_page = wrapped_pages_by_id[page_id.to_i]
-        page_map[wrapped_page].try!(:id).try!(:to_s)
-      end.compact
+      if outputs.task_plan.type == 'extra'
+        outputs.task_plan.settings['snap_lab_ids'] = snap_lab_ids.each_with_index
+                                                                 .map do |page_id_snap_lab_id, idx|
+          page_id, snap_lab_id = page_id_snap_lab_id.split(':', 2)
+          wrapped_page = wrapped_pages_by_id[page_id.to_i]
+          updated_page_id = page_map[wrapped_page].try!(:id).try!(:to_s)
+          next if updated_page_id.nil?
+
+          "#{updated_page_id}:#{snap_lab_id}"
+        end.compact
+      else
+        outputs.task_plan.settings['page_ids'] = page_ids.map do |page_id|
+          wrapped_page = wrapped_pages_by_id[page_id.to_i]
+          page_map[wrapped_page].try!(:id).try!(:to_s)
+        end.compact
+      end
 
     end
-
-    outputs.task_plan.settings['page_ids'] = updated_page_ids
 
     return unless outputs.task_plan.type == 'homework'
 

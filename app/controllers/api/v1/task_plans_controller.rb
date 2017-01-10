@@ -125,8 +125,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
       # If this is a cloned assignment, update its ecosystem during creation
       current_ecosystem = course.ecosystems.first
-      task_plan = UpdateTaskPlanEcosystem[task_plan: task_plan, ecosystem: current_ecosystem] \
-        if task_plan.cloned_from_id.present?
+      task_plan = UpdateTaskPlanEcosystem[
+        task_plan: task_plan, ecosystem: current_ecosystem, save: false
+      ] if task_plan.cloned_from_id.present?
 
       uuid = distribute_or_update_tasks(task_plan)
 
