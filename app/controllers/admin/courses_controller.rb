@@ -138,7 +138,7 @@ class Admin::CoursesController < Admin::BaseController
         }
       courses.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
-          course: Marshal.dump(course.reload),
+          course: course.reload,
           ecosystem: Marshal.dump(ecosystem)
         )
         job = Jobba.find(job_id)
@@ -174,7 +174,7 @@ class Admin::CoursesController < Admin::BaseController
         flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.name}\""
       else
         CourseContent::AddEcosystemToCourse.perform_later(
-          course: Marshal.dump(course.reload),
+          course: course.reload,
           ecosystem: Marshal.dump(ecosystem)
         )
         flash[:notice] = "Course ecosystem update to \"#{ecosystem.title
