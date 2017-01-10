@@ -18,7 +18,7 @@ RSpec.describe Admin::StudentsController do
     let(:periods_2)  { [FactoryGirl.create(:course_membership_period, course: course_2)] }
 
     let(:user_1)     { FactoryGirl.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
-    let(:user_2)     { FactoryGirl.create(:user, first_name: 'Nicolai', last_name: 'Tesla') }
+    let(:user_2)     { FactoryGirl.create(:user, first_name: 'Nikola', last_name: 'Tesla') }
     let(:user_3)     { FactoryGirl.create(:user, first_name: 'Freja', last_name: 'Asgard') }
     let(:user_4)     { FactoryGirl.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
 
