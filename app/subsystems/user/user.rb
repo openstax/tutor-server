@@ -79,7 +79,7 @@ module User
     end
 
     def username
-      verify_and_return @strategy.username, klass: String, error: StrategyError
+      verify_and_return @strategy.username, klass: String, allow_nil: true, error: StrategyError
     end
 
     def first_name
