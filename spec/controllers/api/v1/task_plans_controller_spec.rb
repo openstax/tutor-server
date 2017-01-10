@@ -361,6 +361,48 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
       end
     end
+
+    context 'when cloned_from_id is set' do
+      let!(:source_task_plan) { FactoryGirl.create :tasks_task_plan, ecosystem: @ecosystem }
+      let(:valid_json)        do
+        Api::V1::TaskPlanRepresenter.new(@task_plan).to_hash
+                                    .merge('cloned_from_id' => source_task_plan.id.to_s).to_json
+      end
+
+      it 'calls UpdateTaskPlanEcosystem' do
+        controller.sign_in @teacher
+        expect(UpdateTaskPlanEcosystem).to receive(:call).and_call_original
+        expect do
+          api_post :create, nil, parameters: { course_id: @course.id },
+                                 raw_post_data: valid_json
+        end.to change{ Tasks::Models::TaskPlan.count }.by(1)
+        expect(response).to have_http_status(:success)
+
+        expect(response.body).to(
+          eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
+        )
+      end
+    end
+
+    context 'when cloned_from_id is not set' do
+      let(:valid_json) do
+        Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+      end
+
+      it 'does not call UpdateTaskPlanEcosystem' do
+        controller.sign_in @teacher
+        expect(UpdateTaskPlanEcosystem).not_to receive(:call)
+        expect do
+          api_post :create, nil, parameters: { course_id: @course.id },
+                                 raw_post_data: valid_json
+        end.to change{ Tasks::Models::TaskPlan.count }.by(1)
+        expect(response).to have_http_status(:success)
+
+        expect(response.body).to(
+          eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
+        )
+      end
+    end
   end
 
   context '#update' do
