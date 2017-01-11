@@ -20,7 +20,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
     ::User::User.new(strategy: strategy)
   end
 
-  let(:args)     { { user: user, period: period_1 } }
+  let(:args)     { { user: user, enrollment_code: period_1.enrollment_code } }
 
   before do
     AddEcosystemToCourse[course: course_1, ecosystem: ecosystem]

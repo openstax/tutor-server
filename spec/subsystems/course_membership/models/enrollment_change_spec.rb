@@ -27,7 +27,9 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   before                      { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 
   subject(:enrollment_change) do
-    CourseMembership::CreateEnrollmentChange[user: user, period: period_2].to_model
+    CourseMembership::CreateEnrollmentChange[
+      user: user, enrollment_code: period_2.enrollment_code
+    ].to_model
   end
 
   it { is_expected.to belong_to(:profile) }

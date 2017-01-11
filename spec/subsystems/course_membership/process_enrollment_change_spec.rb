@@ -29,11 +29,13 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
 
   context 'approved enrollment_change' do
     context 'no existing courses' do
-      let(:enrollment_change) {
-        CourseMembership::CreateEnrollmentChange[user: user, period: period_1]
-      }
+      let(:enrollment_change) do
+        CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_1.enrollment_code
+        ]
+      end
 
-      before(:each)            { enrollment_change.to_model.approve_by(user).save! }
+      before(:each)           { enrollment_change.to_model.approve_by(user).save! }
 
       it 'processes an approved EnrollmentChange' do
         result = nil
@@ -56,10 +58,18 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
 
       it 'rejects other pending EnrollmentChanges for the same user' do
-        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period_1]
-        enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
-        enrollment_change_4 = CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
-        enrollment_change_5 = CourseMembership::CreateEnrollmentChange[user: user, period: period_4]
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_1.enrollment_code
+        ]
+        enrollment_change_3 = CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_2.enrollment_code
+        ]
+        enrollment_change_4 = CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_3.enrollment_code
+        ]
+        enrollment_change_5 = CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_4.enrollment_code
+        ]
 
         result = nil
         expect{ result = described_class.call(args) }
@@ -82,11 +92,13 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
     context 'same course' do
       let(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
-      let(:enrollment_change) {
-        CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
-      }
+      let(:enrollment_change) do
+        CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_2.enrollment_code
+        ]
+      end
 
-      before(:each)            { enrollment_change.to_model.approve_by(user).save! }
+      before(:each)           { enrollment_change.to_model.approve_by(user).save! }
 
       it 'processes an approved EnrollmentChange' do
         result = nil
@@ -109,7 +121,9 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
 
       it 'rejects other pending EnrollmentChanges for the same user' do
-        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period_4]
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_4.enrollment_code
+        ]
 
         result = nil
         expect{ result = described_class.call(args) }
@@ -142,9 +156,11 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
     context 'different course' do
       let!(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
-      let(:enrollment_change)  {
-        CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
-      }
+      let(:enrollment_change)  do
+        CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_3.enrollment_code
+        ]
+      end
 
       before(:each)            { enrollment_change.to_model.approve_by(user).save! }
 
@@ -169,7 +185,9 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       end
 
       it 'rejects other pending EnrollmentChanges for the same user' do
-        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period_4]
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[
+          user: user, enrollment_code: period_4.enrollment_code
+        ]
 
         result = nil
         expect{ result = described_class.call(args) }
@@ -214,7 +232,9 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
 
   context 'not approved enrollment_change' do
     let(:enrollment_change) do
-      CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
+      CourseMembership::CreateEnrollmentChange[
+        user: user, enrollment_code: period_3.enrollment_code
+      ]
     end
 
     it 'returns an error if the EnrollmentChange is pending' do

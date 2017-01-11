@@ -9,31 +9,36 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
     EOS
   end
 
-  api :POST, '/prevalidate',
-             'Check if an enrollment code is valid for a given course uuid'
+  api :POST, '/prevalidate', 'Check if an enrollment code is valid for a given book uuid'
   description <<-EOS
-    Returns either true or false to indicate the validity of the enrollment code for the given course.
+    If the enrollment code is valid, returns the associated course and period.
+    Otherwise, returns an error code.
     May be called by an anonymous (non-logged in) user.
 
     Input:
     #{json_schema(Api::V1::NewEnrollmentChangeRepresenter, include: :writeable)}
 
     Output:
-    #{json_schema(Api::V1::BooleanResponseRepresenter, include: :readable)}
+    #{json_schema(Api::V1::Enrollment::PeriodWithCourseRepresenter, include: :readable)}
 
+    Possible error codes:
+      invalid_enrollment_code
+      course_ended
+      enrollment_code_does_not_match_book
   EOS
   def prevalidate
     enrollment_params = OpenStruct.new
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
 
     result = CourseMembership::ValidateEnrollmentParameters.call(
-      book_uuid: enrollment_params.book_uuid, enrollment_code: enrollment_params.enrollment_code
+      enrollment_code: enrollment_params.enrollment_code,
+      book_uuid: enrollment_params.book_uuid
     )
-    unless result.outputs.is_valid
-      render_api_errors(:invalid_enrollment_code)
+    if result.errors.any?
+      render_api_errors(result.errors)
     else
-      respond_with OpenStruct.new(response: result.outputs.is_valid),
-                   represent_with: Api::V1::BooleanResponseRepresenter,
+      respond_with result.outputs.period,
+                   represent_with: Api::V1::Enrollment::PeriodWithCourseRepresenter,
                    location: nil
     end
   end
@@ -52,6 +57,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
     Possible error codes:
       invalid_enrollment_code
+      course_ended
       enrollment_code_does_not_match_book
       already_enrolled
       multiple_roles (The user is a teacher with multiple roles - not supported)
@@ -65,16 +71,11 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
     enrollment_params = OpenStruct.new
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
 
-    # Find only CC periods
-    period = CourseMembership::Models::Period.joins(:course).find_by(
-      enrollment_code: enrollment_params.enrollment_code
+    result = CourseMembership::CreateEnrollmentChange.call(
+      user: current_human_user,
+      enrollment_code: enrollment_params.enrollment_code,
+      book_uuid: enrollment_params.book_uuid
     )
-
-    render_api_errors(:invalid_enrollment_code) && return if period.nil?
-
-    result = CourseMembership::CreateEnrollmentChange.call(user: current_human_user,
-                                                           period: period,
-                                                           book_uuid: enrollment_params.book_uuid)
 
     if result.errors.empty?
       respond_with result.outputs.enrollment_change,
