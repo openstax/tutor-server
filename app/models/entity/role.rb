@@ -13,4 +13,8 @@ class Entity::Role < Tutor::SubSystems::BaseModel
            :exchange_read_identifier, :exchange_write_identifier, to: :profile, allow_nil: true
 
   unique_token :research_identifier, mode: :hex, length: 4
+
+  def latest_enrollment_at
+    student.try!(:latest_enrollment).try!(:created_at)
+  end
 end

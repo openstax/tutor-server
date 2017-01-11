@@ -23,5 +23,12 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(created_at) },
              schema_info: { required: true }
 
+    property :latest_enrollment_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(latest_enrollment_at) },
+             schema_info: { required: true }
+
   end
 end
