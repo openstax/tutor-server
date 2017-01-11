@@ -252,9 +252,6 @@ group :development, :test do
   # Code Climate integration
   gem "codeclimate-test-reporter", require: false
 
-  # Coveralls integration
-  gem 'coveralls', require: false
-
   # Testing excel files
   gem 'roo'
 
