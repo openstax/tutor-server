@@ -35,12 +35,24 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
     expect(offering.reload.attributes.slice(*str_attributes.keys)).to eq str_attributes
   end
 
-  it "updates associated courses' ecosystems if the ecosystem is changed" do
-    courses.each{ |course| expect(course.ecosystems.first).to eq old_ecosystem }
+  context 'update_courses is true' do
+    it "updates associated courses' ecosystems if the ecosystem is changed" do
+      courses.each{ |course| expect(course.ecosystems.first).to eq old_ecosystem }
 
-    described_class.call(offering.id, ecosystem: new_ecosystem)
+      described_class.call(offering.id, {ecosystem: new_ecosystem}, true)
 
-    courses.each{ |course| expect(course.reload.ecosystems.first).to eq new_ecosystem }
+      courses.each{ |course| expect(course.reload.ecosystems.first).to eq new_ecosystem }
+    end
+  end
+
+  context 'update_courses is false' do
+    it "does not updates associated courses' ecosystems" do
+      courses.each{ |course| expect(course.ecosystems.first).to eq old_ecosystem }
+
+      described_class.call(offering.id, {ecosystem: new_ecosystem}, false)
+
+      courses.each{ |course| expect(course.reload.ecosystems.first).to eq old_ecosystem }
+    end
   end
 
 end
