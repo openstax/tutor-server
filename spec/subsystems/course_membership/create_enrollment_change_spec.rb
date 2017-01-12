@@ -14,13 +14,13 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
 
   let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
-  let(:user)     do
+  let(:user)      do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
 
-  let(:args)     { { user: user, enrollment_code: period_1.enrollment_code } }
+  let(:args)      { { user: user, enrollment_code: period_1.enrollment_code } }
 
   before do
     AddEcosystemToCourse[course: course_1, ecosystem: ecosystem]
@@ -76,8 +76,9 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         CourseMembership::AddStudent[period: period_1, role: second_role]
 
         result = nil
-        expect{ result = described_class.call(args.merge(period: period_2)) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+        expect do
+          result = described_class.call(args.merge(enrollment_code: period_2.enrollment_code))
+        end.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
         expect(result.errors).to be_empty
         expect(result.outputs.enrollment_change.from_period.to_model).to eq period_1
         expect(result.outputs.enrollment_change.status).to eq :pending

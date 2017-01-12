@@ -141,10 +141,12 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
         course_1.starts_at = current_time.last_month
         course_1.ends_at = current_time.yesterday
         course_1.save!
+        enrollment_change.to_model.reload
 
         result = nil
-        expect{ result = described_class.call(args) }
-          .not_to change{ CourseMembership::Models::Enrollment.count }
+        expect do
+          result = described_class.call(args)
+        end.not_to change{ CourseMembership::Models::Enrollment.count }
         expect(enrollment_change.to_model.errors.full_messages).to(
           include('Period belongs to a course that has already ended')
         )
@@ -217,6 +219,7 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
         course_2.starts_at = current_time.last_month
         course_2.ends_at = current_time.yesterday
         course_2.save!
+        enrollment_change.to_model.reload
 
         result = nil
         expect{ result = described_class.call(args) }
