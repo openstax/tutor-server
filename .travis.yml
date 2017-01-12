@@ -37,6 +37,3 @@ before_script:
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-after_script:
-  # Report coverage to codecov
-  - bash <(curl -s https://codecov.io/bash)

@@ -252,6 +252,9 @@ group :development, :test do
   # Code Climate integration
   gem "codeclimate-test-reporter", require: false
 
+  # Codecov integration
+  gem 'codecov', :require => false
+
   # Testing excel files
   gem 'roo'
 
