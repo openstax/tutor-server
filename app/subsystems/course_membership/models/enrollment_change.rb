@@ -21,7 +21,9 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   end
 
   def conflicting_period
-    conflicting_enrollment.try!(:period)
+    conflicting_enrollment.period unless conflicting_enrollment.nil? ||
+                                         conflicting_enrollment.deleted? ||
+                                         conflicting_enrollment.student.deleted?
   end
 
   alias_method :to_period, :period
