@@ -83,14 +83,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @course)
     result = UpdateCourse.call(params[:id], **consumed(Api::V1::CourseRepresenter))
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with collect_course_info(course: @course),
-                   represent_with: Api::V1::CourseRepresenter,
-                   location: nil,
-                   responder: ResponderWithPutPatchDeleteContent
-    end
+    render_api_errors(result.errors) || respond_with(
+      collect_course_info(course: @course),
+      represent_with: Api::V1::CourseRepresenter,
+      location: nil,
+      responder: ResponderWithPutPatchDeleteContent
+    )
   end
 
   api :GET, '/courses/:course_id/dashboard(/role/:role_id)',
@@ -113,12 +111,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     result = GetTpDashboard.call(course: @course, role: get_course_role(course: @course),
                                  start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter,
-                                   user_options: { exclude_job_info: true }
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter,
+                      user_options: { exclude_job_info: true }
+    )
   end
 
   api :GET, '/courses/:course_id/cc/dashboard(/role/:role_id)',
@@ -132,11 +128,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def cc_dashboard
     result = GetCcDashboard.call(course: @course, role: get_course_role(course: @course))
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
+    )
   end
 
   api :GET, '/courses/:course_id/roster', 'Returns the roster for a given course'

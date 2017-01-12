@@ -19,13 +19,11 @@ module Api
           page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
 
-        if result.errors.any?
-          render_api_errors(result.errors)
-        else
-          respond_with result.outputs[:task],
-                       represent_with: Api::V1::TaskRepresenter,
-                       location: nil
-        end
+        render_api_errors(result.errors) || respond_with(
+          result.outputs[:task],
+          represent_with: Api::V1::TaskRepresenter,
+          location: nil
+        )
       end
 
       api :GET, '/courses/:course_id/practice(/role/:role_id)',

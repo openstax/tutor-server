@@ -46,12 +46,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   EOS
   def tours
     result = User::RecordTourView.call(user: current_human_user, tour_identifier: params[:id])
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      render json: {} # empty response
-    end
-
+    render_api_errors(result.errors) || head(:no_content)
   end
 
 end

@@ -74,13 +74,11 @@ class Api::V1::StudentsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
     result = CourseMembership::InactivateStudent.call(student: @student)
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.student,
-                   represent_with: Api::V1::StudentRepresenter,
-                   responder: ResponderWithPutPatchDeleteContent
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.student,
+      represent_with: Api::V1::StudentRepresenter,
+      responder: ResponderWithPutPatchDeleteContent
+    )
   end
 
   api :PUT, '/students/:student_id/undrop', 'Undrops a student from their course'
@@ -93,13 +91,11 @@ class Api::V1::StudentsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
     result = CourseMembership::ActivateStudent.call(student: @student)
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.student,
-                   represent_with: Api::V1::StudentRepresenter,
-                   responder: ResponderWithPutPatchDeleteContent
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.student,
+      represent_with: Api::V1::StudentRepresenter,
+      responder: ResponderWithPutPatchDeleteContent
+    )
   end
 
   protected
