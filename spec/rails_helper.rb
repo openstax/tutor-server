@@ -1,8 +1,10 @@
 require 'simplecov'
+require 'codecov'
 require 'parallel_tests'
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::Codecov
 ]) if ParallelTests.last_process?
 
 SimpleCov.at_exit do
