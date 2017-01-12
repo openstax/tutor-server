@@ -46,24 +46,55 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     expect(enrollment_change.enrollee_approved_at).to be_present
   end
 
-  it 'only accepts valid CC conflicts' do
-    course_1.update_attribute :is_concept_coach, true
-    course_2.update_attribute :is_concept_coach, true
-    expect(enrollment_change).to be_valid
+  context 'conflicts' do
+    let(:conflicting_student) { AddUserAsPeriodStudent[user: user, period: period_3].student }
 
-    enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment
-    expect(enrollment_change).not_to be_valid
-    expect(enrollment_change.errors[:conflicting_enrollment]).to include 'is invalid'
+    before(:each) do
+      course_1.update_attribute :is_concept_coach, true
+      course_2.update_attribute :is_concept_coach, true
+      expect(enrollment_change).to be_valid
 
-    enrollment_change.conflicting_enrollment.student = \
-      AddUserAsPeriodStudent[user: user, period: period_3].student
-    enrollment_change.conflicting_enrollment.period = period_3
-    expect(enrollment_change).to be_valid
+      enrollment_change.update_attribute :conflicting_enrollment, FactoryGirl.create(
+        :course_membership_enrollment, period: period_3, student: conflicting_student
+      )
+      expect(enrollment_change).to be_valid
+    end
 
-    enrollment_change.conflicting_enrollment.period = period_1
-    expect(enrollment_change).not_to be_valid
-    enrollment_change.conflicting_enrollment.period = period_3
-    expect(enrollment_change).to be_valid
+    it 'only accepts valid CC conflicts' do
+      enrollment_change.conflicting_enrollment.period = period_1
+      expect(enrollment_change).not_to be_valid
+      expect(enrollment_change.errors[:conflicting_enrollment]).to include 'is invalid'
+      enrollment_change.conflicting_enrollment.period = period_3
+      expect(enrollment_change).to be_valid
+
+      enrollment_change.conflicting_enrollment.student = \
+        FactoryGirl.create :course_membership_student
+      expect(enrollment_change).not_to be_valid
+      expect(enrollment_change.errors[:conflicting_enrollment]).to include 'is invalid'
+      enrollment_change.conflicting_enrollment.student = conflicting_student
+      expect(enrollment_change).to be_valid
+
+      enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment
+      expect(enrollment_change).not_to be_valid
+    end
+
+    it 'returns the conflicting period, if there is one' do
+      expect(enrollment_change.conflicting_period).to eq period_3
+    end
+
+    it 'returns no conflict if the student has been dropped or the period has been archived' do
+      period_3.destroy
+      expect(enrollment_change.reload.conflicting_period).to be_nil
+
+      period_3.restore recursive: true
+      expect(enrollment_change.reload.conflicting_period).to eq period_3
+
+      conflicting_student.destroy
+      expect(enrollment_change.reload.conflicting_period).to be_nil
+
+      conflicting_student.restore recursive: true
+      expect(enrollment_change.reload.conflicting_period).to eq period_3
+    end
   end
 
   it 'requires the target course to not have yet ended' do
