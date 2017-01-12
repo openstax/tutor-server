@@ -75,37 +75,57 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      let!(:teacher){ AddUserAsCourseTeacher[course: course, user: user_1] }
+      let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
         expect(response.body_as_hash.first).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at)  })
+          roles: a_collection_containing_exactly(
+            id: teacher_role.id.to_s,
+            type: 'teacher',
+            joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
+          )
         )
       end
     end
 
     context 'user is a student' do
-      let!(:student){ AddUserAsPeriodStudent[period: period, user: user_1] }
+      let!(:student_role) { AddUserAsPeriodStudent[period: period, user: user_1] }
 
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
         expect(response.body_as_hash.first).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at)  }),
+          roles: a_collection_containing_exactly(
+            id: student_role.id.to_s,
+            type: 'student',
+            joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
+            latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
+          ),
         )
       end
     end
 
     context 'user is both a teacher and student' do
 
-      let!(:student){ AddUserAsPeriodStudent[period: period, user: user_1] }
-      let!(:teacher){ AddUserAsCourseTeacher[course: course, user: user_1] }
+      let!(:student_role) { AddUserAsPeriodStudent[period: period, user: user_1] }
+      let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns both roles with the course' do
         api_get :index, user_1_token
         expect(response.body_as_hash.first).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at) },
-                                                 { id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at) }),
+          roles: a_collection_containing_exactly(
+            {
+              id: student_role.id.to_s,
+              type: 'student',
+              joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
+              latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
+            },
+            {
+              id: teacher_role.id.to_s,
+              type: 'teacher',
+              joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
+            }
+          ),
         )
       end
     end
@@ -214,36 +234,56 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1).outputs.role }
+      let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at) })
+          roles: a_collection_containing_exactly(
+            id: teacher_role.id.to_s,
+            type: 'teacher',
+            joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
+          )
         )
       end
     end
 
     context 'user is a student' do
-      let!(:student) { AddUserAsPeriodStudent[period: period, user: user_1] }
+      let!(:student_role) { AddUserAsPeriodStudent[period: period, user: user_1] }
 
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at) }),
+          roles: a_collection_containing_exactly(
+            id: student_role.id.to_s,
+            type: 'student',
+            joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
+            latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
+          )
         )
       end
     end
 
     context 'user is both a teacher and student' do
-      let!(:student) { AddUserAsPeriodStudent[period: period, user: user_1] }
-      let!(:teacher) { AddUserAsCourseTeacher[course: course, user: user_1] }
+      let!(:student_role) { AddUserAsPeriodStudent[period: period, user: user_1] }
+      let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: user_1] }
 
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', joined_at: DateTimeUtilities.to_api_s(student.created_at) },
-                                                 { id: teacher.id.to_s, type: 'teacher', joined_at: DateTimeUtilities.to_api_s(teacher.created_at) }),
+          roles: a_collection_containing_exactly(
+            {
+              id: student_role.id.to_s,
+              type: 'student',
+              joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
+              latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
+            },
+            {
+              id: teacher_role.id.to_s,
+              type: 'teacher',
+              joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
+            }
+          )
         )
       end
     end

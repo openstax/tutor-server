@@ -83,7 +83,12 @@ class CollectCourseInfo
     roles = get_course_roles(course: course, user: user)
 
     info.roles = roles.map do |role|
-      { id: role.id, type: role.role_type, created_at: role.created_at }
+      {
+        id: role.id,
+        type: role.role_type,
+        latest_enrollment_at: role.latest_enrollment_at,
+        created_at: role.created_at
+      }
     end
   end
 
