@@ -1,11 +1,8 @@
 require 'simplecov'
-require 'coveralls'
+require 'codecov'
 require 'parallel_tests'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
-]) if ParallelTests.last_process?
+SimpleCov.formatter = SimpleCov::Formatter::Codecov
 
 SimpleCov.at_exit do
   ParallelTests.wait_for_other_processes_to_finish if ParallelTests.last_process?
@@ -179,4 +176,3 @@ def redirect_uri
   expect(response.code).to eq "302"
   uri = URI.parse(response.headers["Location"])
 end
-
