@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe Catalog::Offering do
+RSpec.describe Catalog::Offering, type: :model do
 
   let(:offering) { FactoryGirl.create :catalog_offering }
-  let(:wrapper)  { Catalog::Offering.new(strategy: offering) }
+  let(:wrapper)  { described_class.new(strategy: offering) }
 
   it 'proxies to object' do
     [:id, :salesforce_book_name, :appearance_code, :is_tutor, :is_concept_coach,

@@ -6,7 +6,9 @@
 <%= render partial: 'manager/courses/search', locals: { query: @query } %>
 
 Results per page:
-<%= select_tag "Results per page", options_for_select([25, 50, 100, 200, 400, "all"], params[:per_page]), id: "search-courses-results-pp" %>
+<%= select_tag "Results per page",
+               options_for_select([25, 50, 100, 200, 400, 'all'], params[:per_page]),
+               id: "search-courses-results-pp" %>
 
 
 <%= form_tag bulk_update_admin_courses_path, method: :post do |f| %>
@@ -14,8 +16,8 @@ Results per page:
              locals: { course_infos: @course_infos,
                        bulk_actions: true,
                        extra_headers: ['Actions'],
-                       page: params.fetch(:page, 1),
-                       per_page: params.fetch(:per_page, 25),
+                       page: params[:page],
+                       per_page: params[:per_page],
                        incomplete_jobs: @incomplete_jobs,
                        failed_jobs: @failed_jobs,
                        extra_fields_procs: [lambda do |course_info| %>

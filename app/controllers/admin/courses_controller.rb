@@ -7,8 +7,9 @@ class Admin::CoursesController < Admin::BaseController
   def index
     @query = params[:query]
     result = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
-    params[:per_page] = result.outputs.total_count if params[:per_page] == "all"
-    params_for_pagination = { page: (params[:page] || 1), per_page: (params[:per_page] || 25) }
+    per_page = params[:per_page] || 25
+    per_page = result.outputs.total_count if params[:per_page] == 'all'
+    params_for_pagination = { page: (params[:page] || 1), per_page: per_page }
 
     if result.errors.any?
       flash[:error] = "Invalid search"
@@ -137,7 +138,7 @@ class Admin::CoursesController < Admin::BaseController
         }
       courses.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
-          course: Marshal.dump(course.reload),
+          course: course.reload,
           ecosystem: Marshal.dump(ecosystem)
         )
         job = Jobba.find(job_id)
@@ -173,7 +174,7 @@ class Admin::CoursesController < Admin::BaseController
         flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.name}\""
       else
         CourseContent::AddEcosystemToCourse.perform_later(
-          course: Marshal.dump(course.reload),
+          course: course.reload,
           ecosystem: Marshal.dump(ecosystem)
         )
         flash[:notice] = "Course ecosystem update to \"#{ecosystem.title

@@ -3,7 +3,8 @@
     <b>ID:</b> <%= offering.id %>
   </span>
   <span style='float: right'>
-    <%= link_to 'List courses', admin_courses_path(query: "offering_id:\"#{offering.id}\"") %>
+    <%= link_to 'List courses',
+                admin_courses_path(query: "offering_id:\"#{offering.id}\"", per_page: 'all') %>
 
     |
 
