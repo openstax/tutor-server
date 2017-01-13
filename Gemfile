@@ -58,8 +58,7 @@ gem 'openstax_exchange', '~> 0.2.1'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 8.1.0', git: 'https://github.com/openstax/openstax_api.git',
-                                ref: '1283cf8c18b06889f914e43a53420c439bc9d34c'
+gem 'openstax_api', '~> 8.1.0'
 
 gem 'apipie-rails'
 gem 'maruku'
