@@ -17,14 +17,18 @@ class Tasks::GetRedirectUrl
 
     case outputs.role.role_type
     when 'teacher'
-      outputs[:uri] = "/courses/#{course.id}/t/#{task_plan.type.pluralize}/#{task_plan.id}"
+      outputs[:uri] = UrlGenerator.teacher_task_plan_review(
+        course_id: course.id,
+        due_at: task_plan.tasking_plans.first.due_at_ntz,
+        task_plan_id:task_plan.id
+      )
     when 'student'
       task = task_plan.tasks.joins(:taskings).find_by(taskings: { role: outputs.role })
 
       fatal_error(code: :plan_not_published) if task.nil?
       fatal_error(code: :task_not_open) if !task.past_open?
 
-      outputs[:uri] = "/courses/#{course.id}/tasks/#{task.id}"
+      outputs[:uri] = UrlGenerator.student_task(course_id: course.id, task_id: task.id)
     end
   end
 

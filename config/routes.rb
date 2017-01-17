@@ -8,8 +8,12 @@ Rails.application.routes.draw do
     # The routes below would be served by the webview catch-all route,
     # but we define them so we can use them as helpers that point to certain FE pages
     scope action: :index do
+
+      # routes that are handled by the FE
       get :dashboard
       get :'course/:id', as: :course_dashboard
+      get :'course/:course_id/task/:task_id', as: :student_task
+      get :'course/:course_id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
 
       scope :enroll do
         get :':enroll_token(/:ignore)', as: :token_enroll,

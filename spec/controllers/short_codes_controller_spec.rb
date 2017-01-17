@@ -31,6 +31,8 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:tasking_code) { FactoryGirl.create(:short_code_short_code,
                                           uri: tasking_gid) }
 
+  let(:task_plan_due_at) { task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d') }
+
   it 'redirects users to sign in before access' do
     get :redirect, short_code: absolute_url.code
     expect(response).to redirect_to(%r{/accounts/login})
@@ -50,14 +52,14 @@ RSpec.describe ShortCodesController, type: :controller do
 
   it 'redirects teachers to edit task plan page' do
     controller.sign_in(teacher)
-
     get :redirect, short_code: task_plan_code.code
-    expect(response).to redirect_to("/courses/#{course.id}/t/readings/#{task_plan.id}")
+
+    expect(response).to redirect_to("/course/#{course.id}/t/month/#{task_plan_due_at}/plan/#{task_plan.id}")
   end
 
   it 'redirects students to task page' do
     controller.sign_in(student)
-    expected_url = "/courses/#{course.id}/tasks/#{tasking.task.id}"
+    expected_url = "/course/#{course.id}/task/#{tasking.task.id}"
 
     get :redirect, short_code: task_plan_code.code
     expect(response).to redirect_to(expected_url)
