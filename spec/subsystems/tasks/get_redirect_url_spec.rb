@@ -22,13 +22,14 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
   it 'returns the edit task plan page for teachers' do
     result = described_class.call(gid: task_plan_gid, user: teacher)
     expect(result.errors).to be_empty
-    expect(result.outputs.uri).to eq("/courses/#{course.id}/t/readings/#{task_plan.id}")
+    due_at = task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d')
+    expect(result.outputs.uri).to eq("/course/#{course.id}/t/month/#{due_at}/plan/#{task_plan.id}")
   end
 
   it 'returns the task page for students' do
     result = described_class.call(gid: task_plan_gid, user: student)
     expect(result.errors).to be_empty
-    expect(result.outputs.uri).to eq("/courses/#{course.id}/tasks/#{task.id}")
+    expect(result.outputs.uri).to eq("/course/#{course.id}/task/#{task.id}")
   end
 
   it 'returns :authentication_required for anonomouse users' do

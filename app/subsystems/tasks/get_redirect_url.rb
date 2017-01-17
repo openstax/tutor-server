@@ -17,14 +17,15 @@ class Tasks::GetRedirectUrl
 
     case outputs.role.role_type
     when 'teacher'
-      outputs[:uri] = "/courses/#{course.id}/t/#{task_plan.type.pluralize}/#{task_plan.id}"
+      due_at = task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d')
+      outputs[:uri] = "/course/#{course.id}/t/month/#{due_at}/plan/#{task_plan.id}"
     when 'student'
       task = task_plan.tasks.joins(:taskings).find_by(taskings: { role: outputs.role })
 
       fatal_error(code: :plan_not_published) if task.nil?
       fatal_error(code: :task_not_open) if !task.past_open?
 
-      outputs[:uri] = "/courses/#{course.id}/tasks/#{task.id}"
+      outputs[:uri] = "/course/#{course.id}/task/#{task.id}"
     end
   end
 
