@@ -240,7 +240,6 @@ Rails.application.routes.draw do
       delete :destroy_user
       post :import_courses
       put :update_salesforce
-      match :'/auth/salesforce/callback', action: :callback, via: [:get, :post]
     end
 
     mount RailsSettingsUi::Engine => :settings
@@ -267,6 +266,8 @@ Rails.application.routes.draw do
       post :time_travel
     end
   end
+
+  match '/auth/salesforce/callback', to: 'admin/salesforce#callback', via: [:get, :post]
 
   # All CS routes
   namespace :customer_service do
