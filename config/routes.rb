@@ -12,8 +12,8 @@ Rails.application.routes.draw do
       # routes that are handled by the FE
       get :dashboard
       get :'course/:id', as: :course_dashboard
-      get :'course/:id/task/:task_id', as: :student_task
-      get :'course/:id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
+      get :'course/:course_id/task/:task_id', as: :student_task
+      get :'course/:course_id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
 
       scope :enroll do
         get :':enroll_token(/:ignore)', as: :token_enroll,
