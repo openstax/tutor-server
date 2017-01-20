@@ -3,6 +3,8 @@
 course_name: Sociology with Courseware Review
 salesforce_book_name: Sociology w Courseware
 appearance_code: intro_sociology
+archive_url_base: https://archive.cnx.org/contents/
+webview_url_base: https://qa.cnx.org/contents/
 cnx_book_id: 02040312-72c8-441e-a685-20e9333f3e1d
 
 assignments:

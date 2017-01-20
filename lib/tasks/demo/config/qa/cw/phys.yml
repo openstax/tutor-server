@@ -3,6 +3,8 @@
 course_name: Physics with Courseware Review
 salesforce_book_name: Physics w Courseware
 appearance_code: college_physics
+archive_url_base: https://archive.cnx.org/contents/
+webview_url_base: https://qa.cnx.org/contents/
 cnx_book_id: 405335a3-7cff-4df2-a9ad-29062a4af261
 
 assignments:

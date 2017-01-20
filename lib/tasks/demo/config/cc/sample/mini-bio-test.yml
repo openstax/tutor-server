@@ -1,4 +1,4 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
+<%= File.read(File.join(File.dirname(__FILE__), '../base.yml')) %>
 
 course_name: Mini Biology Test Collection with Concept Coach
 salesforce_book_name: Biology
