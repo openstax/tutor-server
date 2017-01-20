@@ -17,13 +17,11 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
     result = CreatePeriod.call(course: @course, **consumed(Api::V1::PeriodRepresenter))
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.period,
-                   represent_with: Api::V1::PeriodRepresenter,
-                   location: nil
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.period,
+      represent_with: Api::V1::PeriodRepresenter,
+      location: nil
+    )
   end
 
   api :PATCH, '/periods/:id', 'Returns an updated period for the given course'
@@ -38,14 +36,12 @@ class Api::V1::PeriodsController < Api::V1::ApiController
       **consumed(Api::V1::PeriodRepresenter)
     )
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.period,
-                   represent_with: Api::V1::PeriodRepresenter,
-                   location: nil,
-                   responder: ResponderWithPutPatchDeleteContent
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.period,
+      represent_with: Api::V1::PeriodRepresenter,
+      location: nil,
+      responder: ResponderWithPutPatchDeleteContent
+    )
   end
 
   api :DELETE, '/periods/:id', 'Archives a period for the teacher'

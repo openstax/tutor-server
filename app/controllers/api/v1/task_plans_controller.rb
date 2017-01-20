@@ -131,15 +131,13 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
       uuid = distribute_or_update_tasks(task_plan)
 
-      if task_plan.errors.empty?
-        ShortCode::Create[task_plan.to_global_id.to_s]
+      render_api_errors(task_plan.errors) && return
 
-        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                status: uuid.nil? ? :ok : :accepted,
-                                location: nil
-      else
-        render_api_errors(task_plan.errors)
-      end
+      ShortCode::Create[task_plan.to_global_id.to_s]
+
+      respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                              status: uuid.nil? ? :ok : :accepted,
+                              location: nil
     end
   end
 
@@ -183,14 +181,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       uuid = distribute_or_update_tasks(task_plan)
 
-      if task_plan.errors.empty?
-        # http://stackoverflow.com/a/27413178
-        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                responder: ResponderWithPutPatchDeleteContent,
-                                status: uuid.nil? ? :ok : :accepted
-      else
-        render_api_errors(task_plan.errors)
-      end
+      render_api_errors(task_plan.errors) || respond_with(
+        task_plan,
+        represent_with: Api::V1::TaskPlanRepresenter,
+        responder: ResponderWithPutPatchDeleteContent,
+        status: uuid.nil? ? :ok : :accepted
+      )
     end
   end
 

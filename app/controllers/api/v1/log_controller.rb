@@ -41,14 +41,11 @@ class Api::V1::LogController < Api::V1::ApiController
 
       errors.push(:message_missing) if entry.message.blank?
 
-      if errors.any?
-        render_api_errors(errors)
-        return
-      else
-        message = entry.message[0..MAX_LOG_LENGTH]
-        Rails.logger.log(level, "(ext) #{message}")
-        head :created
-      end
+      render_api_errors(errors) && return
+
+      message = entry.message[0..MAX_LOG_LENGTH]
+      Rails.logger.log(level, "(ext) #{message}")
+      head :created
     end
   end
 

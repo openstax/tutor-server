@@ -39,13 +39,11 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
     result = MarkTaskStepCompleted.call(task_step: @task_step)
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with @task_step.reload,
-                   responder: ResponderWithPutPatchDeleteContent,
-                   represent_with: Api::V1::TaskStepRepresenter
-    end
+    render_api_errors(result.errors) || respond_with(
+      @task_step.reload,
+      responder: ResponderWithPutPatchDeleteContent,
+      represent_with: Api::V1::TaskStepRepresenter
+    )
   end
 
   ###############################################################
@@ -59,13 +57,11 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
     result = Tasks::AddRelatedExerciseAfterStep.call(task_step: @task_step)
 
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.related_exercise_step,
-                   responder: ResponderWithPutPatchDeleteContent,
-                   represent_with: Api::V1::TaskStepRepresenter
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.related_exercise_step,
+      responder: ResponderWithPutPatchDeleteContent,
+      represent_with: Api::V1::TaskStepRepresenter
+    )
   end
 
   protected

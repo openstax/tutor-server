@@ -69,10 +69,10 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
 
   context '#tours' do
     it 'records tour as viewed' do
-      expect {
+      expect do
         api_put :tours, user_1_token, parameters: {id: 'the-grand-tour'}
-        expect(response.code).to eq('200')
-      }.to change { User::Models::TourView.count }.by(1)
+        expect(response).to have_http_status(:success)
+      end.to change { User::Models::TourView.count }.by(1)
     end
   end
 

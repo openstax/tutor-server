@@ -77,13 +77,11 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       book_uuid: enrollment_params.book_uuid
     )
 
-    if result.errors.empty?
-      respond_with result.outputs.enrollment_change,
-                   represent_with: Api::V1::EnrollmentChangeRepresenter,
-                   location: nil
-    else
-      render_api_errors(result.errors.first.code)
-    end
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.enrollment_change,
+      represent_with: Api::V1::EnrollmentChangeRepresenter,
+      location: nil
+    )
   end
 
   api :PUT, '/enrollment_changes/:enrollment_change_id/approve',
@@ -118,14 +116,11 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
         enrollment_change: enrollment_change, student_identifier: approve_params.student_identifier
       )
 
-      if result.errors.empty?
-        respond_with result.outputs.enrollment_change,
-                     represent_with: Api::V1::EnrollmentChangeRepresenter,
-                     responder: ResponderWithPutPatchDeleteContent
-      else
-        render_api_errors(result.errors.first.code)
-        raise ActiveRecord::Rollback
-      end
+      (render_api_errors(result.errors) && raise(ActiveRecord::Rollback)) || respond_with(
+        result.outputs.enrollment_change,
+        represent_with: Api::V1::EnrollmentChangeRepresenter,
+        responder: ResponderWithPutPatchDeleteContent
+      )
     end
   end
 
