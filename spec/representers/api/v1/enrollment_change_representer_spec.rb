@@ -15,7 +15,7 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   let!(:teacher_role)     { AddUserAsCourseTeacher[user: teacher_user, course: course] }
 
   let(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
-    user: user, period: period_2, requires_enrollee_approval: false
+    user: user, enrollment_code: period_2.enrollment_code, requires_enrollee_approval: false
   ] }
 
   let(:representation)    { described_class.new(enrollment_change).as_json }

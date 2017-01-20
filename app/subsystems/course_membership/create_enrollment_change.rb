@@ -4,7 +4,16 @@ class CourseMembership::CreateEnrollmentChange
   uses_routine Role::GetUserRoles, as: :get_roles
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
-  def exec(user:, period:, book_uuid: nil, requires_enrollee_approval: true)
+  def exec(user:, enrollment_code:, book_uuid: nil, requires_enrollee_approval: true)
+    period = CourseMembership::Models::Period.find_by(enrollment_code: enrollment_code)
+
+    fatal_error(code: :invalid_enrollment_code,
+                message: 'The given enrollment code is invalid') if period.nil?
+
+    fatal_error(code: :course_ended,
+                message: 'The course associated with the given enrollment code has ended') \
+      if period.course.ended?
+
     student_roles = run(:get_roles, user, 'student').outputs.roles.reject do |role|
       role.student.period.deleted?
     end

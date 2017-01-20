@@ -27,7 +27,9 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   before                      { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 
   subject(:enrollment_change) do
-    CourseMembership::CreateEnrollmentChange[user: user, period: period_2].to_model
+    CourseMembership::CreateEnrollmentChange[
+      user: user, enrollment_code: period_2.enrollment_code
+    ].to_model
   end
 
   it { is_expected.to belong_to(:profile) }
@@ -105,7 +107,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     course_1.ends_at = current_time.yesterday
     course_1.save!
 
-    expect(enrollment_change).not_to be_valid
+    expect(enrollment_change.reload).not_to be_valid
     expect(enrollment_change.errors.first).to(
       eq [:period, 'belongs to a course that has already ended']
     )
