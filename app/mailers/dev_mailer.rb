@@ -1,4 +1,4 @@
-class DevMailer < SiteMailer
+class DevMailer < ApplicationMailer
 
   def inspect_object(object:, to: nil, subject:)
     @object = object

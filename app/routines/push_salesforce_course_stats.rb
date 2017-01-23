@@ -84,7 +84,6 @@ class PushSalesforceCourseStats
           return
         end
 
-
         os_ancillary = candidate_os_ancillaries.first ||
           begin
             Salesforce::Remote::OsAncillary.new(os_ancillary_criteria).tap do |osa|
@@ -120,12 +119,16 @@ class PushSalesforceCourseStats
   end
 
   def best_sf_contact_id_for_course(course)
-    raise "not yet implemented"
+    course.teachers
+          .order(:created_at)
+          .map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
+          .compact
+          .first
   end
 
   def applicable_courses
     # Just get courses made in the era of not reusing courses semester to semester
-    @courses ||= CourseProfile::Models::Course.where{created_at.gt look_at_courses_after}
+    @courses ||= CourseProfile::Models::Course.where{created_at.gt my{look_at_courses_after}}
   end
 
   def look_at_courses_after
@@ -142,7 +145,7 @@ class PushSalesforceCourseStats
   end
 
   def log(&block)
-    Rails.logger.info { "[#{class.name}] #{block.call}" }
+    Rails.logger.info { "[#{self.class.name}] #{block.call}" }
   end
 
   def error!(exception: nil, message: nil, course: nil)
@@ -162,12 +165,12 @@ class PushSalesforceCourseStats
   def notify_errors
     return if @errors.empty?
 
-    Rails.logger.warn { "#{class.name} errors: " + @errors.inspect }
+    Rails.logger.warn { "#{self.class.name} errors: " + @errors.inspect }
 
     if @allow_error_email && is_real_production?
       DevMailer.inspect_object(
         object: @errors,
-        subject: "#{class.name} errors",
+        subject: "#{self.class.name} errors",
         to: Rails.application.secrets.salesforce['mail_recipients']
       ).deliver_later
     end

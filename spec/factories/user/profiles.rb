@@ -10,6 +10,7 @@ FactoryGirl.define do
       full_name { [first_name, last_name].join(' ') || SecureRandom.hex.to_s }
       skip_terms_agreement { false }
       title nil
+      salesforce_contact_id nil
     end
 
     after(:build) do |profile, evaluator|
@@ -18,7 +19,8 @@ FactoryGirl.define do
                                             first_name: evaluator.first_name,
                                             last_name: evaluator.last_name,
                                             full_name: evaluator.full_name,
-                                            title: evaluator.title)
+                                            title: evaluator.title,
+                                            salesforce_contact_id: evaluator.salesforce_contact_id)
     end
 
     trait :administrator do
