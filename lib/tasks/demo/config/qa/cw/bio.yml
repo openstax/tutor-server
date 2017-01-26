@@ -3,6 +3,8 @@
 course_name: Biology with Courseware Review
 salesforce_book_name: Biology w Courseware
 appearance_code: college_biology
+archive_url_base: https://archive.cnx.org/contents/
+webview_url_base: https://qa.cnx.org/contents/
 cnx_book_id: 185cbf87-c72e-48f5-b51e-f14f21b5eabd
 
 assignments:

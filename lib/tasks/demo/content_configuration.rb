@@ -12,7 +12,7 @@ class Demo::ContentConfiguration
   EXCLUDED_CONFIGURATIONS = ['base', 'people']
 
   # File paths including any of these words are excluded when running the "all" config
-  EXPLICIT_CONFIGURATIONS = ['large', 'ludicrous', 'mini', 'real', 'small', 'test']
+  EXPLICIT_CONFIGURATIONS = ['real', 'sample', 'test', 'mini', 'small', 'large', 'ludicrous']
 
   class ConfigFileParser
     def initialize(file_path)

@@ -386,7 +386,8 @@ class Demo::Base
     exercises = pools.map(&:exercises).flatten.uniq.shuffle(random: randomizer)
     exercise_ids = exercises.take(num_exercises).map{ |e| e.id.to_s }
 
-    raise "No exercises to assign" if exercise_ids.blank?
+    raise "No exercises to assign (using #{OpenStax::Exercises::V1.server_url})" \
+      if exercise_ids.blank?
 
     Tasks::Models::TaskPlan.new(
       title: title,
