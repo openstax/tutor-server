@@ -23,10 +23,14 @@ RSpec.describe AuthController, type: :controller do
       }
 
       it 'allows access to popup and redirects to accounts' do
-        get :popup, go: 'faster'
-        expect(response).to redirect_to(controller.openstax_accounts.login_url(go: 'faster'))
+        get :popup, go: 'faster' # "faster" isn't a valid option
+        expect(response).to redirect_to(controller.openstax_accounts.login_url)
       end
 
+      it 'allows access to popup and redirects to accounts signin' do
+        get :popup, go: 'signup'
+        expect(response).to redirect_to(controller.openstax_accounts.login_url(go: 'student_signup'))
+      end
     end
 
     context "when using stubbing" do

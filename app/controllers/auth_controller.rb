@@ -105,7 +105,9 @@ class AuthController < ApplicationController
       redirect_to openstax_accounts.dev_accounts_url
       session[:parent] = params[:parent]
     else
-      redirect_to openstax_accounts.login_url(go: params[:go])
+      redirect_to openstax_accounts.login_url(
+                    go: params[:go] == 'signup' ? 'student_signup' : nil
+                  )
     end
   end
 
