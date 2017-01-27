@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   prepend_before_filter :keep_webview_flash
 
   before_filter :block_sign_up, unless: -> { params[:block_sign_up] == false }
-  before_filter :straight_to_sign_up, if: -> { params[:straight_to_sign_up] == true }
+  before_filter :straight_to_student_sign_up, if: -> { params[:straight_to_student_sign_up] == true }
   before_filter :authenticate_user!
 
   protected
@@ -20,9 +20,9 @@ class ApplicationController < ActionController::Base
     login_params[:signup_at] = signup_url
   end
 
-  def straight_to_sign_up
+  def straight_to_student_sign_up
     # Must be called before `authenticate_user!`
-    login_params[:go] = 'signup'
+    login_params[:go] = 'student_signup'
   end
 
   def require_contracts
