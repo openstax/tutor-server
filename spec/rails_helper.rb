@@ -181,13 +181,15 @@ def load_salesforce_user
 
   clear_salesforce_user if Salesforce::Models::User.any?
 
+  secrets = Rails.application.secrets['salesforce']
+
   sf_user = Salesforce::Models::User.new
 
   sf_user.name = "some name"
   sf_user.uid = "whatever"
-  sf_user.oauth_token =   ENV["SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN"]
-  sf_user.refresh_token = ENV["SALESFORCE_TUTORSPECS_USER_REFRESH_TOKEN"]
-  sf_user.instance_url =  ENV["SALESFORCE_TUTORSPECS_USER_INSTANCE_URL"]
+  sf_user.oauth_token =   secrets['tutor_specs_oauth_token']
+  sf_user.refresh_token = secrets['tutor_specs_refresh_token']
+  sf_user.instance_url =  secrets['tutor_specs_instance_url']
 
   raise "Doesn't look like a sandbox URL!" if !sf_user.instance_url.match(/\/\/cs/)
 

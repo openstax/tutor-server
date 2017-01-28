@@ -1,261 +1,18 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kpsgQAA%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(TermYear__c%20=%20%272016%20-%2017%20Spring%27)
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Fri, 27 Jan 2017 23:43:47 GMT
-      Set-Cookie:
-      - BrowserId=M-atgVMER9iMrQS0xHp9OQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        28-Mar-2017 23:43:47 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=379/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":0,"done":true,"records":[]}'
-    http_version: 
-  recorded_at: Fri, 27 Jan 2017 23:43:47 GMT
-- request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name,%20FirstName,%20LastName,%20Email,%20Email_alt__c,%20Faculty_Confirmed_Date__c,%20Faculty_Verified__c,%20LastModifiedDate,%20AccountId%20FROM%20Contact%20WHERE%20(Id%20=%20%270033B000008kpsgQAA%27)%20LIMIT%201
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Fri, 27 Jan 2017 23:43:47 GMT
-      Set-Cookie:
-      - BrowserId=UCjx92FSQqaq1FWe9qe5RA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        28-Mar-2017 23:43:47 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=380/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v29.0/sobjects/Contact/0033B000008kpsgQAA"},"Id":"0033B000008kpsgQAA","Name":"Francis
-        Emmerich","FirstName":"Francis","LastName":"Emmerich","Email":null,"Email_alt__c":null,"Faculty_Confirmed_Date__c":null,"Faculty_Verified__c":null,"LastModifiedDate":"2017-01-27T23:43:46.000+0000","AccountId":"0013B000009vJrCQAU"}]}'
-    http_version: 
-  recorded_at: Fri, 27 Jan 2017 23:43:47 GMT
-- request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Account
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 28 Jan 2017 00:04:11 GMT
-      Set-Cookie:
-      - BrowserId=Qe4-zeyVTk-4YAIXn5ef0w;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:04:11 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=428/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0013B000009vJrCQAU"},"Id":"0013B000009vJrCQAU","Name":"JP
-        University"}]}'
-    http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:04:11 GMT
-- request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kpw9QAA%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(TermYear__c%20=%20%272016%20-%2017%20Spring%27)
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 28 Jan 2017 00:04:16 GMT
-      Set-Cookie:
-      - BrowserId=O2uj5NW7S-S6p0bBWi7wlw;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:04:16 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=428/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":0,"done":true,"records":[]}'
-    http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:04:16 GMT
-- request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name,%20FirstName,%20LastName,%20Email,%20Email_alt__c,%20Faculty_Confirmed_Date__c,%20Faculty_Verified__c,%20LastModifiedDate,%20AccountId%20FROM%20Contact%20WHERE%20(Id%20=%20%270033B000008kpw9QAA%27)%20LIMIT%201
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 28 Jan 2017 00:04:16 GMT
-      Set-Cookie:
-      - BrowserId=B0DVDLczQ7WaoMDD4DkK6Q;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:04:16 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=429/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v29.0/sobjects/Contact/0033B000008kpw9QAA"},"Id":"0033B000008kpw9QAA","Name":"Blaze
-        Collier","FirstName":"Blaze","LastName":"Collier","Email":null,"Email_alt__c":null,"Faculty_Confirmed_Date__c":null,"Faculty_Verified__c":null,"LastModifiedDate":"2017-01-28T00:04:15.000+0000","AccountId":"0013B000009vJrCQAU"}]}'
-    http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:04:16 GMT
-- request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Book__c
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 28 Jan 2017 00:04:17 GMT
-      Set-Cookie:
-      - BrowserId=8GPNh4KlSbGlX7fDOGDwkg;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:04:17 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=428/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAiCUAW"},"Id":"a0Z3B000000UAiCUAW","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAi7UAG"},"Id":"a0Z3B000000UAi7UAG","Name":"Chemistry"}]}'
-    http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:04:17 GMT
-- request:
     method: post
     uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/Contact
     body:
       encoding: UTF-8
-      string: '{"FirstName":"Sherman","LastName":"Huels","AccountId":"0013B000009vJrCQAU"}'
+      string: '{"FirstName":"Shawna","LastName":"Abbott","AccountId":"0013B000009vJrCQAU"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
+      - OAuth <tutor_specs_oauth_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -266,16 +23,16 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Sat, 28 Jan 2017 00:11:58 GMT
+      - Sat, 28 Jan 2017 22:35:48 GMT
       Set-Cookie:
-      - BrowserId=eUYu7FbFR-mmo-J0rCfHmA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:11:58 GMT
+      - BrowserId=LbaeEyCtQ0yILSIz9lcY-g;Path=/;Domain=.salesforce.com;Expires=Wed,
+        29-Mar-2017 22:35:48 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=468/48000
+      - api-usage=205/48000
       Location:
-      - "/services/data/v29.0/sobjects/Contact/0033B000008kpypQAA"
+      - "/services/data/v29.0/sobjects/Contact/0033B000008kt11QAA"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -284,12 +41,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0033B000008kpypQAA","success":true,"errors":[]}'
+      string: '{"id":"0033B000008kt11QAA","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:11:59 GMT
+  recorded_at: Sat, 28 Jan 2017 22:35:49 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kpypQAA%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(TermYear__c%20=%20%272016%20-%2017%20Spring%27)
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kt11QAA%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(TermYear__c%20=%20%272016%20-%2017%20Spring%27)
     body:
       encoding: US-ASCII
       string: ''
@@ -297,7 +54,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.2
       Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
+      - OAuth <tutor_specs_oauth_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -308,14 +65,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 00:11:59 GMT
+      - Sat, 28 Jan 2017 22:35:50 GMT
       Set-Cookie:
-      - BrowserId=rmEo9P4mS_2DF9WPRyorBA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:11:59 GMT
+      - BrowserId=yjguuk02SkCSnXOJVhHzrw;Path=/;Domain=.salesforce.com;Expires=Wed,
+        29-Mar-2017 22:35:50 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=463/48000
+      - api-usage=209/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -326,10 +83,10 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:11:59 GMT
+  recorded_at: Sat, 28 Jan 2017 22:35:50 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name,%20FirstName,%20LastName,%20Email,%20Email_alt__c,%20Faculty_Confirmed_Date__c,%20Faculty_Verified__c,%20LastModifiedDate,%20AccountId%20FROM%20Contact%20WHERE%20(Id%20=%20%270033B000008kpypQAA%27)%20LIMIT%201
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name,%20FirstName,%20LastName,%20Email,%20Email_alt__c,%20Faculty_Confirmed_Date__c,%20Faculty_Verified__c,%20LastModifiedDate,%20AccountId%20FROM%20Contact%20WHERE%20(Id%20=%20%270033B000008kt11QAA%27)%20LIMIT%201
     body:
       encoding: US-ASCII
       string: ''
@@ -337,7 +94,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.2
       Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
+      - OAuth <tutor_specs_oauth_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -348,14 +105,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 00:12:00 GMT
+      - Sat, 28 Jan 2017 22:35:50 GMT
       Set-Cookie:
-      - BrowserId=IlfhY0QUQ-C-irVoW_-wrQ;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:12:00 GMT
+      - BrowserId=d-Pu9hVVR26DiuO1-ichpQ;Path=/;Domain=.salesforce.com;Expires=Wed,
+        29-Mar-2017 22:35:50 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=465/48000
+      - api-usage=209/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -364,10 +121,10 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v29.0/sobjects/Contact/0033B000008kpypQAA"},"Id":"0033B000008kpypQAA","Name":"Sherman
-        Huels","FirstName":"Sherman","LastName":"Huels","Email":null,"Email_alt__c":null,"Faculty_Confirmed_Date__c":null,"Faculty_Verified__c":null,"LastModifiedDate":"2017-01-28T00:11:59.000+0000","AccountId":"0013B000009vJrCQAU"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v29.0/sobjects/Contact/0033B000008kt11QAA"},"Id":"0033B000008kt11QAA","Name":"Shawna
+        Abbott","FirstName":"Shawna","LastName":"Abbott","Email":null,"Email_alt__c":null,"Faculty_Confirmed_Date__c":null,"Faculty_Verified__c":null,"LastModifiedDate":"2017-01-28T22:35:49.000+0000","AccountId":"0013B000009vJrCQAU"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:12:00 GMT
+  recorded_at: Sat, 28 Jan 2017 22:35:50 GMT
 - request:
     method: get
     uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Book__c
@@ -378,7 +135,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.2
       Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
+      - OAuth <tutor_specs_oauth_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -389,14 +146,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 00:12:00 GMT
+      - Sat, 28 Jan 2017 22:35:51 GMT
       Set-Cookie:
-      - BrowserId=UjfdDVa0THGaWSMtYvcgSw;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:12:00 GMT
+      - BrowserId=q9MFrmEMRfqvBpz4tFELhA;Path=/;Domain=.salesforce.com;Expires=Wed,
+        29-Mar-2017 22:35:51 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=473/48000
+      - api-usage=210/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -407,20 +164,20 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAiCUAW"},"Id":"a0Z3B000000UAiCUAW","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAi7UAG"},"Id":"a0Z3B000000UAi7UAG","Name":"Chemistry"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:12:00 GMT
+  recorded_at: Sat, 28 Jan 2017 22:35:51 GMT
 - request:
     method: post
     uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/Individual_Adoption__c
     body:
       encoding: UTF-8
-      string: '{"Contact__c":"0033B000008kpypQAA","Class_Start_Date__c":"2017-01-01","Book__c":"a0Z3B000000UAi7UAG"}'
+      string: '{"Contact__c":"0033B000008kt11QAA","Class_Start_Date__c":"2017-01-01","Book__c":"a0Z3B000000UAi7UAG"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN>
+      - OAuth <tutor_specs_oauth_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -431,14 +188,14 @@ http_interactions:
       message: Bad Request
     headers:
       Date:
-      - Sat, 28 Jan 2017 00:12:01 GMT
+      - Sat, 28 Jan 2017 22:35:51 GMT
       Set-Cookie:
-      - BrowserId=ybnvu7VoQCi97y3b0j_y3Q;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 00:12:01 GMT
+      - BrowserId=iYpHzs7-QnaCNrQw1MpFKg;Path=/;Domain=.salesforce.com;Expires=Wed,
+        29-Mar-2017 22:35:51 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=469/48000
+      - api-usage=206/48000
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -447,5 +204,5 @@ http_interactions:
       encoding: UTF-8
       string: '[{"message":"Required fields are missing: [Account__c]","errorCode":"REQUIRED_FIELD_MISSING","fields":["Account__c"]}]'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 00:12:01 GMT
+  recorded_at: Sat, 28 Jan 2017 22:35:51 GMT
 recorded_with: VCR 2.9.3

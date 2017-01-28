@@ -237,7 +237,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.num_sections).to eq 2
     expect(osa.num_students).to eq 6
     expect(osa.num_teachers).to eq 1
-    expect(osa.course_id).to eq course.id.to_s
+    expect(osa.course_id).to be_a(String)
     expect(osa.created_at).to be_a(Date)
     expect(osa.teacher_join_url).to be_a(String)
     expect(osa.status).to be_a(String)

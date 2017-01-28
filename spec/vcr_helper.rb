@@ -8,11 +8,11 @@ VCR.configure do |c|
   c.ignore_localhost = true
 
   %w(
-    SALESFORCE_TUTORSPECS_USER_OAUTH_TOKEN
-    SALESFORCE_TUTORSPECS_USER_REFRESH_TOKEN
-  ).each do |env_var_name|
-    ENV[env_var_name].tap do |value|
-      c.filter_sensitive_data("<#{env_var_name}>") { value } if value.present?
+    tutor_specs_oauth_token
+    tutor_specs_refresh_token
+  ).each do |salesforce_secret_name|
+    Rails.application.secrets['salesforce'][salesforce_secret_name].tap do |value|
+      c.filter_sensitive_data("<#{salesforce_secret_name}>") { value } if value.present?
     end
   end
 end
