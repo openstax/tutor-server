@@ -151,8 +151,8 @@ gem 'paranoia', '~> 2.1.3'
 # Salesforce
 gem 'restforce'
 gem 'omniauth-salesforce'
-# Fork that supports Ruby >= 2.1
-gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9695896f5'
+# Fork that supports Ruby >= 2.1 and stubbable stdout
+gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '7caac17'
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'

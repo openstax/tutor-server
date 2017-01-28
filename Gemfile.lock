@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/openstax/active_force
-  revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
-  ref: 9695896f5
+  revision: 7caac1727d92206328e72ac9f7540805653f9d73
+  ref: 7caac17
   specs:
     active_force (0.7.1)
       active_attr (~> 0.8)

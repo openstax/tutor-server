@@ -21,7 +21,7 @@ class PushSalesforceCourseStats
   def call
     log { "Starting..." }
 
-    applicable_courses.find_each do |course|
+    applicable_courses.each do |course|
       catch(:course_error) do
         call_for_course(course)
       end
@@ -192,8 +192,9 @@ class PushSalesforceCourseStats
     # courses will get us going on courses made way in advance of the start date).
     # After July of a year, don't update courses from the preceding spring.
     @courses ||=
-      CourseProfile::Models::Course.where{year.gt my{Time.now.year - 1}}.tap do |courses|
-        courses.reject!{|cc| cc.year == Time.now.year && cc.spring?} if Time.now.month >= 7
+      CourseProfile::Models::Course.where{year.gte my{Time.now.year}}.to_a.tap do |courses|
+        courses.reject!{|cc| !cc.fall? && !cc.spring?}
+        courses.reject!{|cc| cc.year == Time.now.year && !cc.fall?} if Time.now.month >= 7
       end
   end
 
@@ -206,19 +207,11 @@ class PushSalesforceCourseStats
     end
   end
 
-  def book_names_to_sf_ids # TODO move these to SalesforceHelper (subclass that for spec helper stuff)?
+  def book_names_to_sf_ids
     @book_names_to_sf_ids ||= begin
       all_books = Salesforce::Remote::Book.all
       all_books.each_with_object({}) do |book, hash|
         hash[book.name] = book.id
-      end
-    end
-  end
-
-  def school_names_to_sf_ids
-    @school_names_to_sf_ids ||= begin
-      Salesforce::Remote::School.all.each_with_object({}) do |school, hash|
-        hash[school.name] = school.id
       end
     end
   end
@@ -228,21 +221,23 @@ class PushSalesforceCourseStats
   end
 
   def error!(exception: nil, message: nil, course: nil)
-    error = {}
+    begin
+      error = {}
 
-    error[:message] = message || exception.try(:message)
-    error[:exception] = {
-      class: exception.class.name,
-      message: exception.message,
-      first_backtrace_line: exception.backtrace.try(:first)
-    } if exception.present?
-    error[:course] = course.id if course.present?
+      error[:message] = message || exception.try(:message)
+      error[:exception] = {
+        class: exception.class.name,
+        message: exception.message,
+        first_backtrace_line: exception.backtrace.try(:first)
+      } if exception.present?
+      error[:course] = course.id if course.present?
 
-    @errors.push(error)
+      @errors.push(error)
 
-    @num_errors += 1
-
-    throw :course_error
+      @num_errors += 1
+    ensure
+      throw :course_error
+    end
   end
 
   def notify_errors

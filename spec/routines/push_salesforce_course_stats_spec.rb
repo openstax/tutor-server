@@ -40,16 +40,27 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
   end
 
   context "#applicable_courses" do
-    it 'limits by created_at' do
-      Timecop.travel(Chronic.parse("12/25/2016")) do
-        2.times { FactoryGirl.create :course_profile_course }
+    it 'limits by term and year' do
+      # Courses that are not applicable...
+      FactoryGirl.create(:course_profile_course, term: :demo, year: 2017)
+      FactoryGirl.create(:course_profile_course, term: :legacy, year: 2016)
+      FactoryGirl.create(:course_profile_course, term: :legacy, year: 2017)
+      FactoryGirl.create(:course_profile_course, term: :fall, year: 2016)
+
+      # Courses that are applicable
+      a = FactoryGirl.create(:course_profile_course, term: :fall, year: 2017)
+      b = FactoryGirl.create(:course_profile_course, term: :spring, year: 2018)
+
+      # Course that is applicable if not past July
+      c = FactoryGirl.create(:course_profile_course, term: :spring, year: 2017)
+
+      Timecop.freeze(Chronic.parse("6/31/2017")) do
+        expect(instance.applicable_courses).to contain_exactly(a,b,c)
       end
 
-      after_courses = Timecop.travel(Chronic.parse("12/27/2016")) do
-        2.times.map { FactoryGirl.create :course_profile_course }
+      Timecop.freeze(Chronic.parse("7/1/2017")) do
+        expect(instance.applicable_courses).to contain_exactly(a,b)
       end
-
-      expect(instance.applicable_courses).to eq after_courses
     end
   end
 
@@ -71,12 +82,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     it 'errors for legacy terms' do
       @term = :legacy; @year = 2015
-      expect(subject).to raise_error(IllegalState)
+      expect{subject}.to raise_error(RuntimeError)
     end
 
     it 'errors for summer terms b/c SF does not yet support' do
       @term = :summer; @year = 2015
-      expect(subject).to raise_error(IllegalState)
+      expect{subject}.to raise_error(RuntimeError)
     end
   end
 
@@ -87,19 +98,25 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     end
 
     context "when error email allowed" do
-      before(:each) { expect(Rails.logger).to receive(:warn) }
-
       it 'logs but does not email if not real production' do
         real_production!(false)
+        @instance = instance
+        expect(Rails.logger).to receive(:warn)
         expect(DevMailer).not_to receive(:inspect_object)
-        run_notify_errors('yo')
+        catch(:course_error) { @instance.error!(message: 'yo') }
+        @instance.notify_errors
       end
 
       it 'logs and emails if real production' do
         real_production!(true)
-        expect{
-          run_notify_errors('yo')
-        }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        @instance = instance
+        expect(Rails.logger).to receive(:warn)
+        catch(:course_error) { @instance.error!(message: 'yo') }
+        expect{ @instance.notify_errors }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      it 'throws course_error' do
+        expect{ run_notify_errors('yo') }.to throw_symbol(:course_error)
       end
     end
 
@@ -107,6 +124,19 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       @instance = instance
       @instance.error!(message: message) if message.present?
       @instance.notify_errors
+    end
+  end
+
+  context "#book_names_to_sf_ids" do
+    it 'works' do
+      allow(Salesforce::Remote::Book).to receive(:all) { [
+        OpenStruct.new(id: 1, name: 'foo'),
+        OpenStruct.new(id: 2, name: 'bob')
+      ]}
+
+      expect(instance.book_names_to_sf_ids['bob']).to eq 2
+      expect(instance.book_names_to_sf_ids['foo']).to eq 1
+      expect(instance.book_names_to_sf_ids['boo']).to eq nil
     end
   end
 

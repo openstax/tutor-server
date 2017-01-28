@@ -12,6 +12,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   let(:sf_contact_a) { @sfh.new_contact }
   let(:chemistry_offering) { FactoryGirl.create(:catalog_offering, salesforce_book_name: "Chemistry") }
   let(:user_sf_a) { FactoryGirl.create(:user, salesforce_contact_id: sf_contact_a.id)}
+  let(:user_no_sf) { FactoryGirl.create(:user)}
 
   let!(:course) {
     FactoryGirl.create :course_profile_course,
@@ -136,7 +137,83 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   end
 
+  context "errors happen" do
+    it 'continues processing later courses when an earlier one errors' do
+      AddUserAsCourseTeacher[course: course, user: user_sf_a]
+      allow_any_instance_of(PushSalesforceCourseStats).to receive(:applicable_courses) {
+        [nil, course]
+      }
+      expect_any_instance_of(PushSalesforceCourseStats).to receive(:call_for_course).twice.and_call_original
+
+      counts = call
+
+      expect(counts).to eq ({ num_courses: 2, num_updates: 1, num_errors: 1})
+    end
+
+    it 'errors when no teacher SF contact' do
+      AddUserAsCourseTeacher[course: course, user: user_no_sf]
+      call_expecting_errors
+    end
+
+    it 'errors when multiple IAs match' do
+      2.times {
+        Salesforce::Remote::IndividualAdoption.new(
+          contact_id: sf_contact_a.id,
+          class_start_date: "2017-01-01",
+          book_id: @sfh.book_id("Chemistry"),
+          school_id: @sfh.school_id("JP University")
+        ).tap do |ia|
+          if !ia.save
+            raise "didn't save IA"
+          end
+        end
+      }
+      AddUserAsCourseTeacher[course: course, user: user_sf_a]
+      call_expecting_errors
+    end
+
+    it 'errors when it cannot save a new IA' do
+      AddUserAsCourseTeacher[course: course, user: user_sf_a]
+      allow_any_instance_of(Salesforce::Remote::Contact).to receive(:school_id).and_return(nil)
+      capture_stdout{ call_expecting_errors }
+    end
+
+    it 'errors when multiple OSAs match' do
+      AddUserAsCourseTeacher[course: course, user: user_sf_a]
+
+      ia = create_chemistry_ia
+      2.times { create_osa(ia, course) }
+
+      call_expecting_errors
+    end
+  end
+
+
   #### HELPERS ####
+
+  def create_chemistry_ia
+    Salesforce::Remote::IndividualAdoption.new(
+      contact_id: sf_contact_a.id,
+      class_start_date: "2017-01-01",
+      book_id: @sfh.book_id("Chemistry"),
+      school_id: @sfh.school_id("JP University")
+    ).tap do |ia|
+      if !ia.save
+        raise "didn't save IA"
+      end
+    end
+  end
+
+  def create_osa(ia, course)
+    Salesforce::Remote::OsAncillary.new(
+      individual_adoption_id: ia.id,
+      product: course.is_concept_coach ? "Concept Coach" : "Tutor"
+    ).tap do |osa|
+      if !osa.save
+        raise "didn't save OSA"
+      end
+    end
+  end
 
   def call
     PushSalesforceCourseStats.call(allow_error_email: true)
@@ -144,6 +221,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   def call_expecting_no_errors
     expect_any_instance_of(PushSalesforceCourseStats).not_to receive(:error!)
+    call
+  end
+
+  def call_expecting_errors(num_errors=1)
+    raise "nyi" if num_errors != 1
+    expect_any_instance_of(PushSalesforceCourseStats).to receive(:error!).and_call_original
     call
   end
 
