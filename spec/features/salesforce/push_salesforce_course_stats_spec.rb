@@ -60,11 +60,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
         expect_osa_stats(osa)
         expect_osa_attachment(osa,course)
-        # expect(Salesforce::Models::AttachedRecord.count).to eq 1
-        # ar = Salesforce::Models::AttachedRecord.first
-        # expect(ar.salesforce_class_name).to eq 'Salesforce::Remote::OsAncillary'
-        # expect(ar.salesforce_id).to eq osa.id
-        # expect(ar.tutor_gid).to eq course.to_global_id.to_s
       end
     end
 
@@ -186,6 +181,22 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
       call_expecting_errors
     end
+
+    context "when there is an error (no teacher)" do
+      it 'does not send error email in non-production' do
+        expect{
+          call_expecting_errors
+        }.to change { ActionMailer::Base.deliveries.count }.by(0)
+      end
+
+      it 'does send error email in production' do
+        allow(Rails.application.secrets).to receive(:environment_name) { 'prodtutor' }
+        expect{
+          call_expecting_errors
+        }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+    end
+
   end
 
 

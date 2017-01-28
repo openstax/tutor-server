@@ -719,6 +719,8 @@ GEM
       crack (>= 0.3.2)
     whenever (0.9.4)
       chronic (>= 0.6.3)
+    whenever-test (1.0.1)
+      whenever
     will_paginate (3.0.7)
     xml-simple (1.1.5)
     xpath (2.0.0)
@@ -834,6 +836,7 @@ DEPENDENCIES
   web-console (~> 2.0.0)
   webmock
   whenever
+  whenever-test
   will_paginate (~> 3.0.6)
 
 BUNDLED WITH

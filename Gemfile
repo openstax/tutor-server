@@ -276,6 +276,8 @@ group :test do
   gem 'launchy'
   gem 'database_cleaner'
   gem 'db-query-matchers'
+
+  gem 'whenever-test'
 end
 
 group :production do
