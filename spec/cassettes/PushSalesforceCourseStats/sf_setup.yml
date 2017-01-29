@@ -21,14 +21,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 29 Jan 2017 00:09:30 GMT
+      - Sun, 29 Jan 2017 04:25:14 GMT
       Set-Cookie:
-      - BrowserId=Z6RjtBLlTgqkLvklD4HJZA;Path=/;Domain=.salesforce.com;Expires=Thu,
-        30-Mar-2017 00:09:30 GMT
+      - BrowserId=wnlPm7y7Tdirnf8JwNzSMQ;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 04:25:14 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=78/48000
+      - api-usage=213/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -39,7 +39,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAiCUAW"},"Id":"a0Z3B000000UAiCUAW","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAi7UAG"},"Id":"a0Z3B000000UAi7UAG","Name":"Chemistry"}]}'
     http_version: 
-  recorded_at: Sun, 29 Jan 2017 00:09:30 GMT
+  recorded_at: Sun, 29 Jan 2017 04:25:14 GMT
 - request:
     method: get
     uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Account
@@ -61,14 +61,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 29 Jan 2017 00:09:30 GMT
+      - Sun, 29 Jan 2017 04:25:14 GMT
       Set-Cookie:
-      - BrowserId=LvCpYXssQS2Re_407zJr2A;Path=/;Domain=.salesforce.com;Expires=Thu,
-        30-Mar-2017 00:09:30 GMT
+      - BrowserId=LTIpI_tpTD6Vc4dgY6sKWQ;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 04:25:14 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=79/48000
+      - api-usage=214/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -80,5 +80,5 @@ http_interactions:
       string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0013B000009vJrCQAU"},"Id":"0013B000009vJrCQAU","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Sun, 29 Jan 2017 00:09:30 GMT
+  recorded_at: Sun, 29 Jan 2017 04:25:14 GMT
 recorded_with: VCR 2.9.3

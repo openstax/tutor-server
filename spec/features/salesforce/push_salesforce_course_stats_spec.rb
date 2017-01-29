@@ -135,6 +135,16 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       expect_osa_stats(osa)
     end
 
+    it 'handle exceptions around saving final stats' do
+      # convenient to have the test here b/c of the setup that exists in this context
+      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:changed?) { raise "kaboom" }
+      call_expecting_errors
+    end
+
+    it 'handles final OSA save errors' do
+      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { false }
+      call_expecting_errors
+    end
   end
 
   context "errors happen" do
@@ -199,6 +209,21 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         expect{
           call_expecting_errors
         }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+    end
+
+    context "when there is an error in writing stats" do
+      it 'writes the error to the OSA' do
+        allow(UrlGenerator).to receive(:teach_course_url) { raise "kaboom" }
+        AddUserAsCourseTeacher[course: course, user: user_sf_a]
+        call_expecting_errors
+
+        ia = Salesforce::Remote::IndividualAdoption.where(
+          contact_id: user_sf_a.account.salesforce_contact_id
+        ).to_a.first
+        osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
+
+        expect(osa.error).to match /Unable to update stats: kaboom/
       end
     end
 

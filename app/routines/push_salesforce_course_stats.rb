@@ -89,7 +89,7 @@ class PushSalesforceCourseStats
               school_id: sf_contact.school_id
             ).tap do |ia|
               if !ia.save
-                error!(message: "Could not save new IndividualAdoption for inputs " \
+                error!(message: "Could not make new IndividualAdoption for inputs " \
                                 "#{individual_adoption_criteria}; errors: " \
                                 "#{ia.errors.full_messages.join(', ')}",
                        course: course)
@@ -115,7 +115,7 @@ class PushSalesforceCourseStats
           begin
             Salesforce::Remote::OsAncillary.new(os_ancillary_criteria).tap do |osa|
               if !osa.save
-                error!(message: "Could not save new OsAncillary for inputs #{os_ancillary_criteria}; " \
+                error!(message: "Could not make new OsAncillary for inputs #{os_ancillary_criteria}; " \
                                 "errors: #{osa.errors.full_messages.join(', ')}",
                        course: course)
               end
@@ -162,8 +162,10 @@ class PushSalesforceCourseStats
       os_ancillary.status = Salesforce::Remote::OsAncillary::STATUS_APPROVED
       os_ancillary.product = course.is_concept_coach ? "Concept Coach" : "Tutor"
     rescue Exception => ee
+      # Add the error to the OSA and `error!` but non fatally so the error can get saved
+      # to the OSA
       os_ancillary.error = "Unable to update stats: #{ee.message}"
-      error!(message: 'Unable to update stats', exception: ee, course: course)
+      error!(message: 'Unable to update stats', exception: ee, course: course, non_fatal: true)
     end
 
     begin
@@ -220,7 +222,7 @@ class PushSalesforceCourseStats
     Rails.logger.info { "[#{self.class.name}] #{block.call}" }
   end
 
-  def error!(exception: nil, message: nil, course: nil)
+  def error!(exception: nil, message: nil, course: nil, non_fatal: false)
     begin
       error = {}
 
@@ -236,7 +238,7 @@ class PushSalesforceCourseStats
 
       @num_errors += 1
     ensure
-      throw :course_error
+      throw :course_error unless non_fatal
     end
   end
 
