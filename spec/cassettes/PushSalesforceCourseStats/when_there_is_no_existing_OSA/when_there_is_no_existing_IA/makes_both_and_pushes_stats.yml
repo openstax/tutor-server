@@ -1,92 +1,11 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Book__c
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <tutor_specs_oauth_token>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 28 Jan 2017 22:34:48 GMT
-      Set-Cookie:
-      - BrowserId=Fv5fNLIqRs-s_Bz7ZZ4q-w;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:34:48 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=186/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAiCUAW"},"Id":"a0Z3B000000UAiCUAW","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAi7UAG"},"Id":"a0Z3B000000UAi7UAG","Name":"Chemistry"}]}'
-    http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:34:48 GMT
-- request:
-    method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Account
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <tutor_specs_oauth_token>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 28 Jan 2017 22:34:49 GMT
-      Set-Cookie:
-      - BrowserId=5H9TEJFET8OCSMzIz2APMA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:34:49 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=186/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0013B000009vJrCQAU"},"Id":"0013B000009vJrCQAU","Name":"JP
-        University"}]}'
-    http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:34:49 GMT
-- request:
     method: post
     uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/Contact
     body:
       encoding: UTF-8
-      string: '{"FirstName":"Esteban","LastName":"Mohr","AccountId":"0013B000009vJrCQAU"}'
+      string: '{"FirstName":"Tia","LastName":"Stehr","AccountId":"0013B000009vJrCQAU"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -104,16 +23,16 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:34:52 GMT
+      - Sun, 29 Jan 2017 00:09:33 GMT
       Set-Cookie:
-      - BrowserId=L3hYt0KpTAW4Kd0ij7vtUA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:34:52 GMT
+      - BrowserId=qIF41fUFQgOnOAayuRvrTQ;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:33 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=78/48000
       Location:
-      - "/services/data/v29.0/sobjects/Contact/0033B000008kt0XQAQ"
+      - "/services/data/v29.0/sobjects/Contact/0033B000008kt7sQAA"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -122,12 +41,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0033B000008kt0XQAQ","success":true,"errors":[]}'
+      string: '{"id":"0033B000008kt7sQAA","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:34:58 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:34 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kt0XQAQ%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(TermYear__c%20=%20%272016%20-%2017%20Spring%27)
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kt7sQAA%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(TermYear__c%20=%20%272016%20-%2017%20Spring%27)
     body:
       encoding: US-ASCII
       string: ''
@@ -146,14 +65,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:34:58 GMT
+      - Sun, 29 Jan 2017 00:09:35 GMT
       Set-Cookie:
-      - BrowserId=uEWdXc-fRqKLzJxpgDYAHg;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:34:58 GMT
+      - BrowserId=nF3dVcHAS96L9mbxnpwbrw;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:35 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=83/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -164,10 +83,10 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:34:59 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:35 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name,%20FirstName,%20LastName,%20Email,%20Email_alt__c,%20Faculty_Confirmed_Date__c,%20Faculty_Verified__c,%20LastModifiedDate,%20AccountId%20FROM%20Contact%20WHERE%20(Id%20=%20%270033B000008kt0XQAQ%27)%20LIMIT%201
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name,%20FirstName,%20LastName,%20Email,%20Email_alt__c,%20Faculty_Confirmed_Date__c,%20Faculty_Verified__c,%20LastModifiedDate,%20AccountId%20FROM%20Contact%20WHERE%20(Id%20=%20%270033B000008kt7sQAA%27)%20LIMIT%201
     body:
       encoding: US-ASCII
       string: ''
@@ -186,14 +105,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:34:59 GMT
+      - Sun, 29 Jan 2017 00:09:35 GMT
       Set-Cookie:
-      - BrowserId=eKDEcyttRg2m3AHfLKrzOA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:34:59 GMT
+      - BrowserId=jmo5kbmDTl2IxcEJw-VMVw;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:35 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=187/48000
+      - api-usage=80/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -202,10 +121,10 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v29.0/sobjects/Contact/0033B000008kt0XQAQ"},"Id":"0033B000008kt0XQAQ","Name":"Esteban
-        Mohr","FirstName":"Esteban","LastName":"Mohr","Email":null,"Email_alt__c":null,"Faculty_Confirmed_Date__c":null,"Faculty_Verified__c":null,"LastModifiedDate":"2017-01-28T22:34:57.000+0000","AccountId":"0013B000009vJrCQAU"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v29.0/sobjects/Contact/0033B000008kt7sQAA"},"Id":"0033B000008kt7sQAA","Name":"Tia
+        Stehr","FirstName":"Tia","LastName":"Stehr","Email":null,"Email_alt__c":null,"Faculty_Confirmed_Date__c":null,"Faculty_Verified__c":null,"LastModifiedDate":"2017-01-29T00:09:34.000+0000","AccountId":"0013B000009vJrCQAU"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:34:59 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:35 GMT
 - request:
     method: get
     uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Book__c
@@ -227,14 +146,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:34:59 GMT
+      - Sun, 29 Jan 2017 00:09:35 GMT
       Set-Cookie:
-      - BrowserId=N0_kbo4ISdCI0Mo0xkDDCg;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:34:59 GMT
+      - BrowserId=MfKtiFLsQEadLZbcDxbQNw;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:35 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=81/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -245,13 +164,13 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAiCUAW"},"Id":"a0Z3B000000UAiCUAW","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z3B000000UAi7UAG"},"Id":"a0Z3B000000UAi7UAG","Name":"Chemistry"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:00 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:35 GMT
 - request:
     method: post
     uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/Individual_Adoption__c
     body:
       encoding: UTF-8
-      string: '{"Contact__c":"0033B000008kt0XQAQ","Class_Start_Date__c":"2017-01-01","Book__c":"a0Z3B000000UAi7UAG","Account__c":"0013B000009vJrCQAU"}'
+      string: '{"Contact__c":"0033B000008kt7sQAA","Class_Start_Date__c":"2017-01-01","Book__c":"a0Z3B000000UAi7UAG","Account__c":"0013B000009vJrCQAU"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -269,16 +188,16 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:00 GMT
+      - Sun, 29 Jan 2017 00:09:36 GMT
       Set-Cookie:
-      - BrowserId=I3WPtXkbT2KM0FruLQSpgA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:00 GMT
+      - BrowserId=kreQlAAZQX-rK6HXfC9ysg;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:36 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=80/48000
       Location:
-      - "/services/data/v29.0/sobjects/Individual_Adoption__c/a1W3B000000VbEYUA0"
+      - "/services/data/v29.0/sobjects/Individual_Adoption__c/a1W3B000000VbFbUAK"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -287,12 +206,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"a1W3B000000VbEYUA0","success":true,"errors":[]}'
+      string: '{"id":"a1W3B000000VbFbUAK","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:01 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:36 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W3B000000VbEYUA0%27)%20AND%20(Product__c%20=%20%27Tutor%27)
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W3B000000VbFbUAK%27)%20AND%20(Product__c%20=%20%27Tutor%27)
     body:
       encoding: US-ASCII
       string: ''
@@ -311,14 +230,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:01 GMT
+      - Sun, 29 Jan 2017 00:09:37 GMT
       Set-Cookie:
-      - BrowserId=kRRrpcWtSSSUoa0gdpdLOA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:01 GMT
+      - BrowserId=tBtjxFysTB6Za0nfs99WQg;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:37 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=81/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -329,13 +248,13 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:01 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:37 GMT
 - request:
     method: post
     uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/OS_Ancillary__c
     body:
       encoding: UTF-8
-      string: '{"Product__c":"Tutor","Individual_Adoption__c":"a1W3B000000VbEYUA0"}'
+      string: '{"Product__c":"Tutor","Individual_Adoption__c":"a1W3B000000VbFbUAK"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -353,16 +272,16 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:02 GMT
+      - Sun, 29 Jan 2017 00:09:37 GMT
       Set-Cookie:
-      - BrowserId=L8QjJJ2VSZ2nYMWpyczFUQ;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:02 GMT
+      - BrowserId=5uaXonorR2GFt8TY2r9tLA;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:37 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=82/48000
       Location:
-      - "/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E15DUAS"
+      - "/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E166UAC"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -371,12 +290,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"a1S3B000000E15DUAS","success":true,"errors":[]}'
+      string: '{"id":"a1S3B000000E166UAC","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:02 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:37 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S3B000000E15DUAS%27)%20LIMIT%201
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S3B000000E166UAC%27)%20LIMIT%201
     body:
       encoding: US-ASCII
       string: ''
@@ -395,14 +314,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:03 GMT
+      - Sun, 29 Jan 2017 00:09:38 GMT
       Set-Cookie:
-      - BrowserId=yCVYaNDPTTeymRR1nKmhBg;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:03 GMT
+      - BrowserId=hX8Xim3MSTOEEItQA4eBBg;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=187/48000
+      - api-usage=79/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -411,17 +330,17 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E15DUAS"},"Id":"a1S3B000000E15DUAS","Status__c":null,"Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":null,"E_Created_Date__c":null,"Error__c":null,"General_Access_URL__c":null,"Teacher_Join_URL__c":null,"School_Name__c":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E166UAC"},"Id":"a1S3B000000E166UAC","Status__c":null,"Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":null,"E_Created_Date__c":null,"Error__c":null,"General_Access_URL__c":null,"Teacher_Join_URL__c":null,"School_Name__c":"JP
         University","Active_Teachers__c":null,"Sections__c":null,"Students_Using__c":null,"TermYear__c":"2016
-        - 17 Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W3B000000VbEYUA0"}]}'
+        - 17 Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W3B000000VbFbUAK"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:03 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:38 GMT
 - request:
     method: patch
-    uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E15DUAS
+    uri: https://cs50.salesforce.com/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E166UAC
     body:
       encoding: UTF-8
-      string: '{"Status__c":"Approved","External_ID__c":1,"E_Created_Date__c":"2017-01-28T22:34:50Z","Teacher_Join_URL__c":"http://localhost:3001/teach/51f9bb12df9a816b111ad34461283acc/DO_NOT_GIVE_TO_STUDENTS","Active_Teachers__c":1,"Sections__c":2,"Students_Using__c":6}'
+      string: '{"Status__c":"Approved","External_ID__c":1,"E_Created_Date__c":"2017-01-29T00:09:31Z","Teacher_Join_URL__c":"http://localhost:3001/teach/67d8402bc53fe9bdb86963f81bcde44d/DO_NOT_GIVE_TO_STUDENTS","Active_Teachers__c":1,"Sections__c":2,"Students_Using__c":6}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -439,22 +358,22 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:04 GMT
+      - Sun, 29 Jan 2017 00:09:38 GMT
       Set-Cookie:
-      - BrowserId=bAauiVdXRR2KT138eID4qA;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:04 GMT
+      - BrowserId=b1O7LZYJRwSU3FOBuPf_uw;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=80/48000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:05 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:38 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kt0XQAQ%27)
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20TermYear__c,%20Book_Text__c,%20Contact__c,%20Class_Start_Date__c,%20Book__c,%20Account__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270033B000008kt7sQAA%27)
     body:
       encoding: US-ASCII
       string: ''
@@ -473,14 +392,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:05 GMT
+      - Sun, 29 Jan 2017 00:09:39 GMT
       Set-Cookie:
-      - BrowserId=mv5yb9aZQ965WSWoaKDo2g;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:05 GMT
+      - BrowserId=4Z_RpXuISg2y6JaHgcavpw;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:39 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=186/48000
+      - api-usage=82/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -489,13 +408,13 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Individual_Adoption__c","url":"/services/data/v29.0/sobjects/Individual_Adoption__c/a1W3B000000VbEYUA0"},"Id":"a1W3B000000VbEYUA0","TermYear__c":"2016
-        - 17 Spring","Book_Text__c":"Chemistry","Contact__c":"0033B000008kt0XQAQ","Class_Start_Date__c":"2017-01-01","Book__c":"a0Z3B000000UAi7UAG","Account__c":"0013B000009vJrCQAU"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Individual_Adoption__c","url":"/services/data/v29.0/sobjects/Individual_Adoption__c/a1W3B000000VbFbUAK"},"Id":"a1W3B000000VbFbUAK","TermYear__c":"2016
+        - 17 Spring","Book_Text__c":"Chemistry","Contact__c":"0033B000008kt7sQAA","Class_Start_Date__c":"2017-01-01","Book__c":"a0Z3B000000UAi7UAG","Account__c":"0013B000009vJrCQAU"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:05 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:39 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W3B000000VbEYUA0%27)%20LIMIT%201
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W3B000000VbFbUAK%27)%20LIMIT%201
     body:
       encoding: US-ASCII
       string: ''
@@ -514,14 +433,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:06 GMT
+      - Sun, 29 Jan 2017 00:09:39 GMT
       Set-Cookie:
-      - BrowserId=G5XPA-0MQVGtCjigkKB63Q;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:06 GMT
+      - BrowserId=R32AeEdcT7CyfmJ-3F83Rw;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:39 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=187/48000
+      - api-usage=82/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -530,14 +449,14 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E15DUAS"},"Id":"a1S3B000000E15DUAS","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"1","E_Created_Date__c":"2017-01-28T22:34:50.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/1/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/51f9bb12df9a816b111ad34461283acc/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E166UAC"},"Id":"a1S3B000000E166UAC","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"1","E_Created_Date__c":"2017-01-29T00:09:31.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/1/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/67d8402bc53fe9bdb86963f81bcde44d/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
         University","Active_Teachers__c":1.0,"Sections__c":2.0,"Students_Using__c":6.0,"TermYear__c":"2016
-        - 17 Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W3B000000VbEYUA0"}]}'
+        - 17 Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W3B000000VbFbUAK"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:06 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:39 GMT
 - request:
     method: get
-    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S3B000000E15DUAS%27)%20LIMIT%201
+    uri: https://cs50.salesforce.com/services/data/v29.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Opportunity__c,%20Individual_Adoption__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S3B000000E166UAC%27)%20LIMIT%201
     body:
       encoding: US-ASCII
       string: ''
@@ -556,14 +475,14 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 28 Jan 2017 22:35:06 GMT
+      - Sun, 29 Jan 2017 00:09:40 GMT
       Set-Cookie:
-      - BrowserId=9DNL8qkhQyGzFzTuprDQUg;Path=/;Domain=.salesforce.com;Expires=Wed,
-        29-Mar-2017 22:35:06 GMT
+      - BrowserId=72cgDfVVT7m7PKAv-fuQwg;Path=/;Domain=.salesforce.com;Expires=Thu,
+        30-Mar-2017 00:09:40 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=187/48000
+      - api-usage=84/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -572,9 +491,9 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E15DUAS"},"Id":"a1S3B000000E15DUAS","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"1","E_Created_Date__c":"2017-01-28T22:34:50.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/1/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/51f9bb12df9a816b111ad34461283acc/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v29.0/sobjects/OS_Ancillary__c/a1S3B000000E166UAC"},"Id":"a1S3B000000E166UAC","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"1","E_Created_Date__c":"2017-01-29T00:09:31.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/1/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/67d8402bc53fe9bdb86963f81bcde44d/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
         University","Active_Teachers__c":1.0,"Sections__c":2.0,"Students_Using__c":6.0,"TermYear__c":"2016
-        - 17 Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W3B000000VbEYUA0"}]}'
+        - 17 Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W3B000000VbFbUAK"}]}'
     http_version: 
-  recorded_at: Sat, 28 Jan 2017 22:35:07 GMT
+  recorded_at: Sun, 29 Jan 2017 00:09:40 GMT
 recorded_with: VCR 2.9.3

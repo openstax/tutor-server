@@ -3,11 +3,16 @@ require 'vcr_helper'
 
 RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
-  before(:all) { @sfh = SalesforceHelper.new }
+  before(:all) do
+    VCR.use_cassette('PushSalesforceCourseStats/sf_setup', VCR_OPTS) do
+      @sfh = SalesforceHelper.new
+      load_salesforce_user
+      @sfh.ensure_books_exist(%w(Chemistry Physics))
+      @sfh.ensure_schools_exist(["JP University"])
+    end
+  end
 
   before(:each) { load_salesforce_user }
-  before(:each) { @sfh.ensure_books_exist(%w(Chemistry Physics)) }
-  before(:each) { @sfh.ensure_schools_exist(["JP University"])}
 
   let(:sf_contact_a) { @sfh.new_contact }
   let(:chemistry_offering) { FactoryGirl.create(:catalog_offering, salesforce_book_name: "Chemistry") }
