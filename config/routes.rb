@@ -196,6 +196,9 @@ Rails.application.routes.draw do
         patch :delete
         patch :undelete
       end
+      collection do
+        get :info
+      end
     end
 
     resources :administrators, only: [:index, :create, :destroy]

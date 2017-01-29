@@ -55,6 +55,9 @@ class Admin::UsersController < Admin::BaseController
     redirect_to root_path
   end
 
+  def info
+  end
+
   private
 
   def get_user

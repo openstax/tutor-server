@@ -1,0 +1,49 @@
+<% @page_header = "Misc User Info" %>
+
+<%
+  profile = if params[:openstax_uid]
+    profile = User::Models::Profile.joins{account}.where{account.openstax_uid.eq my{params[:openstax_uid]}}.first
+  elsif params[:id]
+    profile = User::Models::Profile.find(params[:id])
+  else
+    raise "Need 'id' or 'openstax_uid' parameter"
+  end
+
+  user = User::User.find(profile.id)
+%>
+
+<h3>Name</h3>
+
+<div style="float:right">
+<%= link_to "Profile on Accounts",
+             "#{Rails.application.secrets.openstax['accounts']['url']}/admin/users/#{profile.account.openstax_uid}/edit", class: "btn btn-xs btn-primary" %>
+
+              <%= link_to 'Edit in Tutor', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %>
+              <%= link_to 'Sign in as in Tutor', become_admin_user_path(user.id),
+                                        method: :post, class: "btn btn-xs btn-primary" %>
+</div>
+
+<%= profile.name %>
+
+<h3>Courses</h3>
+
+<% courses = GetUserCourses[user: user] %>
+
+<% courses.sort_by{|cc| [-cc.year, -CourseProfile::Models::Course.terms[cc.term], cc.name]}.each do |course| %>
+  <ol>
+    <li>
+      <%= link_to course.name, edit_admin_course_path(course) %> //
+      <%= course.term %> <%= course.year %> //
+      <%= course.is_concept_coach ? "Concept Coach" : "Tutor" %> //
+      <%= course.is_college ? "College" : "High School" %> //
+
+      <% roles = GetUserCourseRoles[course: course, user: user] %>
+
+      <% roles.each do |role| %>
+          [ <%= role.role_type %> |
+          <%= role.created_at.in_time_zone('Central Time (US & Canada)').strftime("%m/%d/%Y %H:%M:%S") %> Central |
+          <%= role.research_identifier %> ]
+      <% end %>
+    </li>
+  </ol>
+<% end %>
