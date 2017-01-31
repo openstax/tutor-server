@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
 
   def block_sign_up
     # Must be called before `authenticate_user!`
-    login_params[:signup_at] = signup_url
+    login_params[:signup_at] = main_app.signup_url
   end
 
   def straight_to_sign_up
