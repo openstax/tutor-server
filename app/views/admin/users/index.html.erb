@@ -12,6 +12,7 @@
               <%= link_to 'Edit', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %>
               <%= link_to 'Sign in as', become_admin_user_path(user.id),
                                         method: :post, class: "btn btn-xs btn-primary" %>
+              <%= link_to 'Info', info_admin_users_path(id: user.id), class: "btn btn-xs btn-primary" %>
           </td>
 <% end } %>
 
