@@ -58,7 +58,10 @@ class PushSalesforceCourseStats
 
         # Next see if there's an appropriate IndividualAdoption; if not, make one.
 
-        book_name = course.offering.salesforce_book_name
+        offering = course.offering
+        error!(message: "No offering for course", course: course) if offering.nil?
+
+        book_name = offering.salesforce_book_name
 
         individual_adoption_criteria = {
           contact_id: sf_contact_id,
@@ -78,8 +81,7 @@ class PushSalesforceCourseStats
         individual_adoption =
           candidate_individual_adoptions.first ||
           begin
-            # quickie iso8601 format
-            start_date = course.fall? ? "#{course.year}-08-01" : "#{course.year}-01-01"
+            start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
             sf_contact = Salesforce::Remote::Contact.where(id: sf_contact_id).first
 
             Salesforce::Remote::IndividualAdoption.new(
@@ -190,14 +192,11 @@ class PushSalesforceCourseStats
   end
 
   def applicable_courses
-    # Only update courses from this term and any term in the future (looking at future
-    # courses will get us going on courses made way in advance of the start date).
-    # After July of a year, don't update courses from the preceding spring.
-    @courses ||=
-      CourseProfile::Models::Course.where{year.gte my{Time.now.year}}.to_a.tap do |courses|
-        courses.reject!{|cc| !cc.fall? && !cc.spring?}
-        courses.reject!{|cc| cc.year == Time.now.year && !cc.fall?} if Time.now.month >= 7
-      end
+    # Don't update courses that have ended
+    @courses ||= CourseProfile::Models::Course
+                   .not_ended
+                   .where(is_excluded_from_salesforce: false)
+                   .to_a
   end
 
   def courses_to_attached_records

@@ -87,6 +87,19 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     expect(course).not_to be_ended
   end
 
+  it 'can get non-ended courses' do
+    described_class.destroy_all
+    a = FactoryGirl.create :course_profile_course, ends_at: 1.day.ago
+    b = FactoryGirl.create :course_profile_course, ends_at: 1.day.from_now
+
+    expect(described_class.not_ended.to_a).to eq [b]
+
+    # Make sure `not_ended` scope evaluates Time.now on each call
+    Timecop.freeze(2.days.ago) do
+      expect(described_class.not_ended.to_a).to contain_exactly(a,b)
+    end
+  end
+
   it 'knows if it is active' do
     expect(course).to be_active
 

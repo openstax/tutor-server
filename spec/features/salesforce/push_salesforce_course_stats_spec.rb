@@ -197,6 +197,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       call_expecting_errors
     end
 
+    it 'errors when no offering' do
+      AddUserAsCourseTeacher[course: course, user: user_sf_a]
+      course.offering = nil
+      course.save!
+      call_expecting_errors
+    end
+
     context "when there is an error (no teacher)" do
       it 'does not send error email in non-production' do
         expect{

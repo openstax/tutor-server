@@ -40,26 +40,28 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
   end
 
   context "#applicable_courses" do
-    it 'limits by term and year' do
-      # Courses that are not applicable...
-      FactoryGirl.create(:course_profile_course, term: :demo, year: 2017)
-      FactoryGirl.create(:course_profile_course, term: :legacy, year: 2016)
-      FactoryGirl.create(:course_profile_course, term: :legacy, year: 2017)
-      FactoryGirl.create(:course_profile_course, term: :fall, year: 2016)
-
-      # Courses that are applicable
-      a = FactoryGirl.create(:course_profile_course, term: :fall, year: 2017)
-      b = FactoryGirl.create(:course_profile_course, term: :spring, year: 2018)
-
-      # Course that is applicable if not past July
-      c = FactoryGirl.create(:course_profile_course, term: :spring, year: 2017)
+    it 'limits by ends_at' do
+      a = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("6/30/2017"))
+      b = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("7/2/2017"))
 
       Timecop.freeze(Chronic.parse("6/31/2017")) do
-        expect(instance.applicable_courses).to contain_exactly(a,b,c)
+        expect(instance.applicable_courses).to contain_exactly(a,b)
       end
 
+      Timecop.freeze(Chronic.parse("7/2/2017")) do
+        expect(instance.applicable_courses).to be_empty
+      end
+    end
+
+    it 'excludes excluded courses' do
+      a = FactoryGirl.create(:course_profile_course, consistent_times: true,
+                                                     term: :fall, year: 2018,
+                                                     is_excluded_from_salesforce: true)
+      b = FactoryGirl.create(:course_profile_course, consistent_times: true,
+                                                     term: :fall, year: 2018)
+
       Timecop.freeze(Chronic.parse("7/1/2017")) do
-        expect(instance.applicable_courses).to contain_exactly(a,b)
+        expect(instance.applicable_courses).to contain_exactly(b)
       end
     end
   end

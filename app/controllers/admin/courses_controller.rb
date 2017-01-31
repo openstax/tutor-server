@@ -214,6 +214,7 @@ class Admin::CoursesController < Admin::BaseController
         :catalog_offering_id,
         :appearance_code,
         :school_district_school_id,
+        :is_excluded_from_salesforce,
         teacher_ids: []
       )
     }

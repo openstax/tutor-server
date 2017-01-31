@@ -45,6 +45,8 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   before_validation :set_starts_at_and_ends_at
 
+  scope :not_ended, -> { where{ends_at.gt Time.now} }
+
   def default_due_time
     read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
   end
