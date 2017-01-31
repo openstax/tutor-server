@@ -45,4 +45,4 @@ OpenStax::RescueFrom.register_exception(
   notify: secrets['salesforce']['allow_use_of_real_data']
 )
 
-ExceptionNotifier.ignored_exceptions.reject!{|ee| ee == "ActionController::UrlGenerationError"}
+ExceptionNotifier.ignored_exceptions.delete("ActionController::UrlGenerationError")
