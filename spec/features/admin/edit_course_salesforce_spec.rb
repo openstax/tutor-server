@@ -10,6 +10,16 @@ RSpec.feature 'Admin changing course Salesforce settings' do
     stub_current_user(admin)
   end
 
+  scenario 'set excluded from salesforce' do
+    go_to_salesforce_tab
+    expect(page).to have_unchecked_field('course_is_excluded_from_salesforce')
+    find(:css, '#course_is_excluded_from_salesforce').set(true)
+    click_button 'exclusion_save'
+    expect(@course.reload.is_excluded_from_salesforce).to eq true
+    go_to_salesforce_tab
+    expect(page).to have_checked_field('course_is_excluded_from_salesforce')
+  end
+
   scenario 'setting blank SF record on periods' do
     go_to_salesforce_tab
     click_button 'Change'

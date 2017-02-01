@@ -173,3 +173,29 @@ def redirect_uri
   expect(response.code).to eq "302"
   uri = URI.parse(response.headers["Location"])
 end
+
+def load_salesforce_user
+  # The credentials for this user should be stored in environment variables
+  # and the SF app being connected to should be a sandbox app.  See JP
+  # for .env file support.
+
+  clear_salesforce_user if Salesforce::Models::User.any?
+
+  secrets = Rails.application.secrets['salesforce']
+
+  sf_user = Salesforce::Models::User.new
+
+  sf_user.name = "some name"
+  sf_user.uid = "whatever"
+  sf_user.oauth_token =   secrets['tutor_specs_oauth_token']
+  sf_user.refresh_token = secrets['tutor_specs_refresh_token']
+  sf_user.instance_url =  secrets['tutor_specs_instance_url']
+
+  raise "Doesn't look like a sandbox URL!" if !sf_user.instance_url.match(/\/\/cs/)
+
+  sf_user.save!
+end
+
+def clear_salesforce_user
+  Salesforce::Models::User.destroy_all
+end

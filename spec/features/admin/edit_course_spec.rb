@@ -25,7 +25,7 @@ RSpec.feature 'Admin editing a course' do
 
     expect(page).to have_content('Edit Course')
     fill_in 'Name', with: 'Changed777888'
-    click_button 'Save'
+    click_button 'edit-save'
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
@@ -38,7 +38,7 @@ RSpec.feature 'Admin editing a course' do
 
     expect(page).to have_content('Edit Course')
     check 'course_is_college'
-    click_button 'Save'
+    click_button 'edit-save'
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
@@ -51,7 +51,7 @@ RSpec.feature 'Admin editing a course' do
     click_link 'Edit'
 
     select 'High high hi school', from: 'School'
-    click_button 'Save'
+    click_button 'edit-save'
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_text('High high hi school')

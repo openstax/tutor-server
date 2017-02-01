@@ -90,6 +90,17 @@
   </tbody>
 </table>
 
+
+<%= form_for @course, as: :course, url: admin_course_path, method: :put, html: {class: 'form-inline'} do |f| %>
+  <div class="form-group">
+    Exclude from Salesforce?
+    <%= f.check_box :is_excluded_from_salesforce, class: 'form-control' %>
+  </div>
+
+  <%= f.submit 'Save', class: 'btn btn-primary btn-xs', id: 'exclusion_save' %>
+<% end %>
+
+
 <h4>Period Info</h4>
 
 <small>Grayed out means the period has been deleted / archived.</small>
