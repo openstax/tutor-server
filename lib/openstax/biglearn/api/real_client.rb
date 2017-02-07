@@ -21,7 +21,7 @@ class OpenStax::Biglearn::Api::RealClient
   #
 
   # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
-  # course is an Entity::Course
+  # course is a CourseProfile::Models::Course
   # task is a Tasks::Models::Task
   # student is a CourseMembership::Models::Student
   # book_container is a Content::Chapter or Content::Page or one of their models
@@ -39,13 +39,13 @@ class OpenStax::Biglearn::Api::RealClient
          page.homework_dynamic_pool, page.concept_coach_pool]
       end
     end
-    all_exercise_ids = all_pools.flat_map(&:content_exercise_ids)
+    all_exercise_ids = all_pools.flat_map(&:exercise_ids)
     exercise_uuids_by_id = Content::Models::Exercise.where(id: all_exercise_ids)
-                                                    .pluck(:id, :tutor_uuid)
-                                                    .index_by(&:first)
+                                                    .pluck(:id, :uuid)
+                                                    .to_h
     exercise_uuids_by_pool = {}
     all_pools.each do |pool|
-      exercise_uuids_by_pool[pool] = pool.content_exercise_ids.map do |exercise_id|
+      exercise_uuids_by_pool[pool] = pool.exercise_ids.map do |exercise_id|
         exercise_uuids_by_id[exercise_id]
       end
     end
@@ -70,7 +70,7 @@ class OpenStax::Biglearn::Api::RealClient
       contents << {
         container_uuid: chapter.tutor_uuid,
         container_parent_uuid: book.tutor_uuid,
-        container_cnx_identity: chapter.cnx_id,
+        container_cnx_identity: chapter.tutor_uuid,
         pools: pools
       }
 
@@ -114,8 +114,8 @@ class OpenStax::Biglearn::Api::RealClient
 
     exercises = ecosystem.exercises.map do |exercise|
       {
-        uuid: exercise.tutor_uuid,
-        exercises_uuid: exercise.uuid,
+        uuid: exercise.uuid,
+        exercises_uuid: exercise.group_uuid,
         exercises_version: exercise.version,
         los: exercise.los.map(&:value)
       }
@@ -191,7 +191,9 @@ class OpenStax::Biglearn::Api::RealClient
       students = course.periods.flat_map do |period|
         course_containers << { container_uuid: period.uuid, parent_container_uuid: course.uuid }
 
-        period.students.map{ |student| { student_uuid: student.uuid, container_uuid: period.uuid } }
+        period.latest_enrollments.map do |enrollment|
+          { student_uuid: enrollment.student.uuid, container_uuid: period.uuid }
+        end
       end
 
       {
@@ -248,7 +250,6 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_requests = requests.map do |request|
       task = request[:task]
       core_page_ids = task_id_to_core_page_ids_map[task.id]
-      ecosystem = Content::Ecosystem.find_by_page_ids(*core_page_ids)
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
       end
@@ -270,7 +271,7 @@ class OpenStax::Biglearn::Api::RealClient
         assignment_uuid: task.uuid,
         sequence_number: task.sequence_number,
         is_deleted: task.deleted?,
-        ecosystem_uuid: ecosystem.try!(:tutor_uuid),
+        ecosystem_uuid: task.ecosystem.try!(:tutor_uuid),
         student_uuid: task.taskings.first.role.student.uuid,
         assignment_type: task.task_type,
         assigned_book_container_uuids: assigned_book_container_uuids,

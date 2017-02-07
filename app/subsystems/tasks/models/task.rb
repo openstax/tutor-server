@@ -22,6 +22,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasks
 
+  belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
+
   sortable_has_many :task_steps, -> { with_deleted.order(:number) },
                                  on: :number, dependent: :destroy, inverse_of: :task
   has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,

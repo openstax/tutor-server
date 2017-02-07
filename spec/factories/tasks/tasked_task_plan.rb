@@ -15,6 +15,8 @@ FactoryGirl.define do
       number_of_students 10
     end
 
+    owner     { FactoryGirl.build :course_profile_course, offering: nil }
+
     ecosystem do
       require File.expand_path('../../../vcr_helper', __FILE__)
 
@@ -42,7 +44,7 @@ FactoryGirl.define do
       ecosystem_model
     end
 
-    settings { { page_ids: [ecosystem.pages.last.id.to_s] } }
+    settings  { { page_ids: [ecosystem.pages.last.id.to_s] } }
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner

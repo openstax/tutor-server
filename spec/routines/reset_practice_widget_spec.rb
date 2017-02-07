@@ -31,23 +31,6 @@ RSpec.describe ResetPracticeWidget, type: :routine do
     expect(practice_task.task_steps.reload.size).to eq 1
   end
 
-  it 'errors when biglearn does not return enough' do
-    course = role.student.course
-    page = FactoryGirl.create(:content_page)
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
-    ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-    allow(OpenStax::Biglearn::Api).to receive(:get_projection_exercises) { ['dummy_id'] }
-    result = described_class.call(role: role, exercise_source: :biglearn, page_ids: [page.id])
-    expect(result.errors.first.code).to eq :missing_local_exercises
-  end
-
-  it 'errors when there are not enough exercises returned for the widget' do
-    allow_any_instance_of(described_class).to receive(:get_local_exercises) { [] }
-    result = described_class.call(role: role, exercise_source: :local, page_ids: [])
-    expect(result.errors.first.code).to eq :no_exercises
-  end
-
   it 'errors when the course has ended' do
     current_time = Time.current
     course = role.student.course

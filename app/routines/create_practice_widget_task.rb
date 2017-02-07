@@ -23,6 +23,8 @@ class CreatePracticeWidgetTask
 
   def exec(role:, exercise_source:, page_ids: nil, chapter_ids: nil, randomize: true)
     ecosystem = run(:get_ecosystem, page_ids: page_ids, chapter_ids: chapter_ids).outputs.ecosystem
+    course = role.student.course
+    time_zone = course.time_zone
 
     # Gather relevant chapters and pages
     chapters = ecosystem.chapters_by_ids(chapter_ids)
@@ -33,17 +35,22 @@ class CreatePracticeWidgetTask
     task_type = :chapter_practice if chapter_ids.present? && page_ids.blank?
     task_type = :page_practice if chapter_ids.blank? && page_ids.present?
 
-    time_zone = role.student.try(:course).try(:time_zone)
-
     # Create the new practice widget task
-    run(:build_task, task_type: task_type, time_zone: time_zone, title: 'Practice')
+    run(
+      :build_task,
+      task_type: task_type,
+      time_zone: time_zone,
+      title: 'Practice',
+      ecosystem: ecosystem.to_model
+    )
 
     case exercise_source
     when :local
       exercises = get_local_exercises(ecosystem: ecosystem, pages: pages, role: role,
                                       count: EXERCISES_COUNT, randomize: randomize)
     when :biglearn
-      OpenStax::Biglearn::Api.create_update_assignments(task: outputs.task,
+      OpenStax::Biglearn::Api.create_update_assignments(course: course,
+                                                        task: outputs.task,
                                                         core_page_ids: pages.map(&:id))
       exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
         task: outputs.task, max_exercises_to_return: EXERCISES_COUNT
@@ -85,7 +92,7 @@ class CreatePracticeWidgetTask
 
     outputs.task.save!
 
-    OpenStax::Biglearn::Api.create_update_assignments(task: outputs.task)
+    OpenStax::Biglearn::Api.create_update_assignments(course: course, task: outputs.task)
   end
 
   def get_local_exercises(ecosystem:, pages:, role:, count:,

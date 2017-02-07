@@ -115,5 +115,9 @@ module Content
       verify_and_return @strategy.snap_labs_with_page_id, klass: Hash, error: StrategyError
     end
 
+    def to_model
+      @strategy.to_model
+    end
+
   end
 end

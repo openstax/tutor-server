@@ -4,13 +4,13 @@ FactoryGirl.define do
       duration 1.week
       step_types []
       tasked_to []
-      ecosystem { FactoryGirl.build(:content_ecosystem) }
       num_random_taskings 0
     end
 
-    association :task_plan, factory: :tasks_task_plan
-
     task_type :reading
+
+    ecosystem   { FactoryGirl.create(:content_ecosystem) }
+    task_plan   { build :tasks_task_plan, ecosystem: ecosystem }
     title       { task_plan.title }
     description { task_plan.description }
     time_zone   { task_plan.owner.time_zone }
@@ -18,7 +18,7 @@ FactoryGirl.define do
     due_at      { (opens_at || time_zone.to_tz.now) + duration }
 
     after(:build) do |task, evaluator|
-      AddSpyInfo[to: task, from: evaluator.ecosystem]
+      AddSpyInfo[to: task, from: task.ecosystem]
 
       evaluator.step_types.each_with_index do |type, i|
         tasked = FactoryGirl.build(type, skip_task: true)

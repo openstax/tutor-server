@@ -67,7 +67,7 @@ class GetHistory
                           Tasks::Models::Task.arel_table[:opens_at_ntz],
                           Tasks::Models::Task.arel_table[:due_at_ntz],
                           Tasks::Models::Task.arel_table[:tasks_task_plan_id],
-                          Tasks::Models::TaskPlan.arel_table[:content_ecosystem_id],
+                          Tasks::Models::Task.arel_table[:content_ecosystem_id],
                           Tasks::Models::Tasking.arel_table[:entity_role_id],
                           TimeZone.arel_table[:name].as('time_zone_name')])
                  .each_instance(block_size: TASK_BATCH_SIZE) do |task|

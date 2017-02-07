@@ -39,8 +39,7 @@ class GetConceptCoach
     end
 
     pool_exercises = pool.exercises.uniq
-    filtered_exercises = run(:filter, exercises: pool_exercises, course: course)
-                           .outputs.exercises
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course).outputs.exercises
     core_exercises = run(:choose, exercises: filtered_exercises,
                                   count: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT,
                                   history: history,
@@ -130,7 +129,7 @@ class GetConceptCoach
                        from: [ecosystem, { history: history.core_page_ids,
                                            spaced_practice: spaced_practice_status }])
 
-    OpenStax::Biglearn::Api.create_update_assignments(task: outputs.task)
+    OpenStax::Biglearn::Api.create_update_assignments(course: course, task: outputs.task)
   end
 
   def get_role_and_book(user:, book_uuid:)

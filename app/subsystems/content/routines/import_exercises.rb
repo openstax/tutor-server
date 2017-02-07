@@ -71,6 +71,7 @@ class Content::Routines::ImportExercises
       exercise = Content::Models::Exercise.new(page: exercise_page,
                                                url: wrapper.url,
                                                uuid: wrapper.uuid,
+                                               group_uuid: wrapper.group_uuid,
                                                number: wrapper.number,
                                                version: wrapper.version,
                                                title: wrapper.title,
@@ -79,8 +80,6 @@ class Content::Routines::ImportExercises
                                                content: wrapper.content,
                                                has_interactive: wrapper.has_interactive?,
                                                has_video: wrapper.has_video?)
-      # Hack so we don't have to regenerate all the cassettes to include the UUID
-      exercise.uuid ||= SecureRandom.uuid if Rails.env.test?
 
       relevant_tags = wrapper.tags.map{ |tag| tag_map[tag] }.compact
       run(:tag, exercise, relevant_tags, tagging_class: Content::Models::ExerciseTag, save: false)

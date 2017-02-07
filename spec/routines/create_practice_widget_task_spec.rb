@@ -24,7 +24,7 @@ RSpec.describe CreatePracticeWidgetTask, type: :routine do
     expect(practice_task.feedback_available?).to be_truthy
   end
 
-  it 'errors when there are not enough exercises returned for the widget' do
+  it 'errors when there are not enough local exercises for the widget' do
     allow_any_instance_of(described_class).to receive(:get_local_exercises) { [] }
     expect(result.errors.first.code).to eq :no_exercises
   end

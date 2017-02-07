@@ -1,10 +1,12 @@
 class AddMissingTimestamps < ActiveRecord::Migration
   MODELS_MISSING_TIMESTAMPS = [
-    Salesforce::Models::User, SchoolDistrict::Models::District,
-    ShortCode::Models::ShortCode, Tasks::Models::TaskedPlaceholder
+    SchoolDistrict::Models::District,
+    ShortCode::Models::ShortCode,
+    Tasks::Models::TaskedPlaceholder
   ]
   MODELS_WITH_NULLABLE_TIMESTAMPS = [
-    Salesforce::Models::AttachedRecord, Tasks::Models::PerformanceReportExport
+    Salesforce::Models::AttachedRecord,
+    Tasks::Models::PerformanceReportExport
   ]
 
   def up
