@@ -60,7 +60,7 @@ class DistributeTasks
       code: :empty_tasks, message: 'Tasks could not be published because some tasks were empty'
     ) if tasks.any?{ |task| !task.stepless? && task.task_steps.empty? }
 
-    save(tasks)
+    save_tasks(task_plan, tasks)
 
     if preview
       task_plan.touch if task_plan.persisted?
@@ -77,7 +77,7 @@ class DistributeTasks
   end
 
   # Efficiently save all task records
-  def save(tasks)
+  def save_tasks(task_plan, tasks)
     # Taskeds are not saved by recursive: true because they are a belongs_to association
     # So we handle them separately
     all_taskeds = tasks.map do |task|
@@ -107,7 +107,10 @@ class DistributeTasks
       task.taskings.reset
     end
 
-    requests = tasks.map{ |task| { task: task } }
+    requests = tasks.map{ |task| { course: task_plan.owner, task: task } }
+
+    task_plan.tasks.reset
+
     OpenStax::Biglearn::Api.create_update_assignments(requests)
   end
 

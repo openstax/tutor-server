@@ -6,8 +6,6 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   acts_as_resource
 
-  auto_uuid :tutor_uuid
-
   belongs_to :page, inverse_of: :exercises
   has_one :chapter, through: :page
   has_one :book, through: :chapter
@@ -19,6 +17,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
   validates :uuid, presence: true
+  validates :group_uuid, presence: true
   validates :number, presence: true
   validates :version, presence: true
 

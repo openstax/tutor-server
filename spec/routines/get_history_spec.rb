@@ -92,8 +92,14 @@ RSpec.describe GetHistory, type: :routine, speed: :slow do
 
   context "when there are more than #{GetHistory::TASK_BATCH_SIZE} tasks" do
     before do
+      ecosystem = FactoryGirl.create :content_ecosystem
+
       tasks = GetHistory::TASK_BATCH_SIZE.times.map do |index|
-        task = Tasks::Models::Task.new(title: "Task #{index + 1}", task_type: :extra)
+        task = Tasks::Models::Task.new(
+          title: "Task #{index + 1}",
+          task_type: :extra,
+          ecosystem: ecosystem
+        )
         task.taskings = [Tasks::Models::Tasking.new(task: task, role: @role)]
         task
       end

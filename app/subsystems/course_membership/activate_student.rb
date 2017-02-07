@@ -13,7 +13,7 @@ module CourseMembership
       student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
 
-      OpenStax::Biglearn::Api.create_update_course(course: student.course)
+      OpenStax::Biglearn::Api.update_rosters(course: student.course)
 
       ReassignPublishedPeriodTaskPlans[period: student.period]
       outputs[:student] = student

@@ -10,6 +10,7 @@ module Content
       has_many :courses, through: :course_ecosystems, subsystem: :course_profile
 
       has_many :task_plans, subsystem: :tasks, dependent: :destroy
+      has_many :tasks, subsystem: :tasks, dependent: :destroy
 
       has_many :books, dependent: :destroy, inverse_of: :ecosystem
       has_many :chapters, through: :books

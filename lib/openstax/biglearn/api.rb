@@ -18,7 +18,7 @@ module OpenStax::Biglearn::Api
     #
 
     # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
-    # course is an Entity::Course
+    # course is a CourseProfile::Models::Course
     # task is a Tasks::Models::Task
     # student is a CourseMembership::Models::Student
     # book_container is a Content::Chapter or Content::Page or one of their models
@@ -32,31 +32,36 @@ module OpenStax::Biglearn::Api
       single_api_request method: :create_ecosystem, request: request, keys: :ecosystem
     end
 
-    # Creates or updates the given course in Biglearn, including ecosystem and roster
+    # Creates or updates the given course in Biglearn,
+    # including ecosystem and roster (if roster update was skipped before)
     # Requests is a hash containing the following key: :course
-    def create_update_course(request)
-      Entity::Course.transaction do
+    def prepare_and_update_course_ecosystem(request)
+      CourseProfile::Models::Course.transaction do
         course = request[:course]
         course.lock! if course.persisted?
 
-        ecosystem = course.course_ecosystems.first.try! :ecosystem
-
         # Don't send course to Biglearn if it has no ecosystems
-        return if ecosystem.nil?
+        return if course.course_ecosystems.empty?
 
         if course.sequence_number.nil? || course.sequence_number == 0
+          initial_ecosystem = course.course_ecosystems.last.ecosystem
+
           # New course, so create it in Biglearn
-          create_course(course: course, ecosystem: ecosystem)
+          create_course(course: course, ecosystem: initial_ecosystem)
+
+          # Apply global exercise exclusions to the new course
+          update_global_exercise_exclusions(course: course)
+
+          # This call is in case we held off on roster updates due to no ecosystems
+          update_rosters(course: course)
         else
-          # Course already exists in Biglearn, so update
-          preparation_uuid = prepare_course_ecosystem(course: course, ecosystem: ecosystem)
+          current_ecosystem = course.course_ecosystems.first.ecosystem
 
-          update_course_ecosystems(preparation_uuid: preparation_uuid)
+          # Course already exists in Biglearn, so just send the latest update
+          preparation_uuid = prepare_course_ecosystem(course: course, ecosystem: current_ecosystem)
+
+          update_course_ecosystems(course: course, preparation_uuid: preparation_uuid)
         end
-
-        # This call will update the course's sequence number, making the lock! work
-        # Since we already locked the course above, don't need to lock! it again
-        update_rosters(course: course, lock: false)
       end
     end
 
@@ -79,12 +84,12 @@ module OpenStax::Biglearn::Api
 
     # Finalizes course ecosystem updates in Biglearn,
     # causing it to stop computing CLUes for the old one
-    # Requests are hashes containing the following key: :preparation_uuid
+    # Requests are hashes containing the following keys: :course and :preparation_uuid
     # Returns a hash mapping request objects to their update status (Symbol)
     def update_course_ecosystems(requests)
       bulk_api_request(method: :update_course_ecosystems,
                        requests: requests,
-                       keys: :preparation_uuid,
+                       keys: [:course, :preparation_uuid],
                        result_class: Symbol) do |request, response|
         response[:update_status]
       end
@@ -92,29 +97,19 @@ module OpenStax::Biglearn::Api
 
     # Updates Course rosters in Biglearn
     # Requests are hashes containing the following key: :course
-    # They may also contain the following optional key: :lock (default: true)
-    # The course records' sequence numbers are increased by 1
+    # Requests will not be sent if the course has not been created in Biglearn due to no ecosystem
     def update_rosters(requests)
-      courses = [requests].flatten.map do |request|
-        lock = request.has_key?(:lock) ? request[:lock] : true
-
-        request[:course].tap{ |course| course.lock! if lock && course.persisted? }
-      end
-
-      bulk_api_request(method: :update_rosters, requests: requests, keys: :course).tap do
-        courses.each do |course|
-          course.sequence_number = (course.sequence_number || 0) + 1
-          course.save!(validate: false) if course.persisted?
-        end
+      with_unique_gapless_course_sequence_numbers(requests) do |requests|
+        bulk_api_request(method: :update_rosters, requests: requests, keys: :course)
       end
     end
 
     # Updates global exercise exclusions
-    # Request is a hash containing the following key: :exercise_ids
+    # Request is a hash containing the following key: :course
     def update_global_exercise_exclusions(request)
       single_api_request method: :update_global_exercise_exclusions,
                          request: request,
-                         keys: :exercise_ids
+                         keys: :course
     end
 
     # Updates exercise exclusions for the given course
@@ -126,27 +121,14 @@ module OpenStax::Biglearn::Api
     end
 
     # Creates or updates tasks in Biglearn
-    # Requests are hashes containing the following key: :task
-    # They may also contain the following optional keys: :lock (default: true) and :core_page_ids
+    # Requests are hashes containing the following keys: :course and :task
+    # They may also contain the following optional key: :core_page_ids
     # The task records' sequence numbers are increased by 1
     def create_update_assignments(requests)
-      Tasks::Models::Task.transaction do
-        tasks = [requests].flatten.map do |request|
-          lock = request.has_key?(:lock) ? request[:lock] : true
-
-          request[:task].tap{ |task| task.lock! if lock && task.persisted? }
-        end
-
-        bulk_api_request(method: :create_update_assignments,
-                         requests: requests,
-                         keys: :task,
-                         optional_keys: :core_page_ids).tap do
-          tasks.each do |task|
-            task.sequence_number = (task.sequence_number || 0) + 1
-            task.save!(validate: false) if task.persisted?
-          end
-        end
-      end
+      bulk_api_request(method: :create_update_assignments,
+                       requests: requests,
+                       keys: [:course, :task],
+                       optional_keys: :core_page_ids)
     end
 
     # Returns a number of recommended personalized exercises for the given tasks
@@ -160,8 +142,9 @@ module OpenStax::Biglearn::Api
         keys: [:task, :max_exercises_to_return],
         result_class: Content::Exercise
       ) do |request, response|
-        get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
-                                     max_exercises_to_return: request[:max_exercises_to_return]
+        get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
+                                         exercise_uuids: response[:exercise_uuids],
+                                         max_exercises_to_return: request[:max_exercises_to_return]
       end
     end
 
@@ -176,8 +159,9 @@ module OpenStax::Biglearn::Api
         keys: [:task, :max_exercises_to_return],
         result_class: Content::Exercise
       ) do |request, response|
-        get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
-                                     max_exercises_to_return: request[:max_exercises_to_return]
+        get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
+                                         exercise_uuids: response[:exercise_uuids],
+                                         max_exercises_to_return: request[:max_exercises_to_return]
       end
     end
 
@@ -192,8 +176,9 @@ module OpenStax::Biglearn::Api
         keys: [:student, :max_exercises_to_return],
         result_class: Content::Exercise
       ) do |request, response|
-        get_exercises_by_tutor_uuids tutor_uuids: response[:exercise_uuids],
-                                     max_exercises_to_return: request[:max_exercises_to_return]
+        get_ecosystem_exercises_by_uuids ecosystem: request[:student].course.ecosystems.first,
+                                         exercise_uuids: response[:exercise_uuids],
+                                         max_exercises_to_return: request[:max_exercises_to_return]
       end
     end
 
@@ -367,26 +352,101 @@ module OpenStax::Biglearn::Api
       requests.is_a?(Hash) ? responses.values.first : responses
     end
 
-    def get_exercises_by_tutor_uuids(tutor_uuids:, max_exercises_to_return:)
-      number_returned = tutor_uuids.length
+    def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_exercises_to_return:)
+      number_returned = exercise_uuids.length
 
-      raise(OpenStax::Biglearn::Api::ExercisesError,
-            "Biglearn returned more exercises than requested") \
-        if number_returned > max_exercises_to_return
+      raise(
+        OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned more exercises than requested"
+      ) if number_returned > max_exercises_to_return
 
       Rails.logger.warn do
         "Biglearn returned less exercises than requested (#{
         number_returned} instead of #{max_exercises_to_return})"
       end if number_returned < max_exercises_to_return
 
-      exercises = Content::Models::Exercise.where(tutor_uuid: tutor_uuids)
-                                           .first(max_exercises_to_return)
+      exercises = ecosystem.exercises.where(uuid: exercise_uuids).first(max_exercises_to_return)
 
-      raise(OpenStax::Biglearn::Api::ExercisesError,
-            "Biglearn returned exercises not present locally") \
-        if exercises.length < number_returned
+      raise(
+        OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned exercises not present locally"
+      ) if exercises.length < number_returned
 
-      exercises.map{ |exercise| Content::Exercise.new strategy: exercise.wrap }
+      exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
+    end
+
+    # We attempt to make this wrapper code as fast as possible
+    # because it prevents any Biglearn calls that share the Course's sequence_number
+    # for the remaining duration of the transaction
+    def with_unique_gapless_course_sequence_numbers(requests, &block)
+      table_name = CourseProfile::Models::Course.table_name
+
+      req = [requests].flatten
+
+      course_id_counts = {}
+      req.map{ |request| request[:course].id }.compact.each do |course_id|
+        course_id_counts[course_id] = (course_id_counts[course_id] || 0) + 1
+      end
+      # We use a consistent ordering here to prevent deadlocks when locking the courses
+      course_ids = course_id_counts.keys.sort
+
+      cases = course_id_counts.map do |course_id, count|
+        "WHEN #{course_id} THEN #{count}"
+      end
+      increments = "CASE \"id\" #{cases.join(' ')} END"
+
+      CourseProfile::Models::Course.transaction do
+        # We use advisory locks to prevent rollbacks
+        # The advisory locks actually last until the end of the transaction,
+        # because we use transaction-based locks
+        course_ids.each do |course_id|
+          lock_name = "biglearn_sequence_number_course_#{course_id}"
+          CourseProfile::Models::Course.with_advisory_lock(lock_name)
+        end
+
+        # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
+        # Requests for courses that have not been created
+        # on the Biglearn side (sequence_number == 0) are suppressed
+        sequence_numbers_by_course_id = {}
+        CourseProfile::Models::Course.connection.execute(
+          "UPDATE #{table_name}" +
+          " SET \"sequence_number\" = \"sequence_number\" + #{increments}" +
+          " WHERE \"#{table_name}\".\"id\" IN (#{course_ids.join(', ')})" +
+          " AND \"sequence_number\" > 0" +
+          " RETURNING \"id\", \"sequence_number\""
+        ).each do |hash|
+          id = hash['id'].to_i
+          sequence_numbers_by_course_id[id] = hash['sequence_number'].to_i - course_id_counts[id]
+        end if course_ids.any?
+
+        requests_with_sequence_numbers = req.map do |request|
+          course = request[:course]
+
+          if course.new_record?
+            # Special case for unsaved records since no lock is needed
+            course.sequence_number = (course.sequence_number || 0) + 1
+            next request.merge(sequence_number: course.sequence_number - 1)
+          end
+
+
+          sequence_number = sequence_numbers_by_course_id[course.id]
+          # Requests for courses that have not been created
+          # on the Biglearn side (sequence_number == 0) are suppressed
+          next if sequence_number.nil?
+
+          next_sequence_number = sequence_number + 1
+          sequence_numbers_by_course_id[course.id] = next_sequence_number
+
+          # Make sure the provided record model has the new sequence_number
+          # and mark the attribute as persisted
+          course.sequence_number = next_sequence_number
+          course.previous_changes[:sequence_number] = course.changes[:sequence_number]
+          course.send :clear_attribute_changes, :sequence_number
+
+          # Call the given block with the previous sequence_number
+          request.merge(sequence_number: sequence_number)
+        end.compact
+
+        block.call requests_with_sequence_numbers
+      end
     end
 
   end

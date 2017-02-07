@@ -97,28 +97,28 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "content_exercise_tags", ["content_tag_id"], name: "index_content_exercise_tags_on_content_tag_id", using: :btree
 
   create_table "content_exercises", force: :cascade do |t|
-    t.string   "url",                                           null: false
+    t.string   "url",                             null: false
     t.text     "content"
-    t.integer  "content_page_id",                               null: false
-    t.integer  "number",                                        null: false
-    t.integer  "version",                                       null: false
+    t.integer  "content_page_id",                 null: false
+    t.integer  "number",                          null: false
+    t.integer  "version",                         null: false
     t.string   "title"
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.text     "preview"
     t.text     "context"
-    t.boolean  "has_interactive", default: false,               null: false
-    t.boolean  "has_video",       default: false,               null: false
-    t.uuid     "uuid",                                          null: false
-    t.uuid     "tutor_uuid",      default: "gen_random_uuid()"
+    t.boolean  "has_interactive", default: false, null: false
+    t.boolean  "has_video",       default: false, null: false
+    t.uuid     "uuid",                            null: false
+    t.uuid     "group_uuid",                      null: false
   end
 
   add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
+  add_index "content_exercises", ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version", using: :btree
   add_index "content_exercises", ["number", "version"], name: "index_content_exercises_on_number_and_version", using: :btree
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
-  add_index "content_exercises", ["tutor_uuid"], name: "index_content_exercises_on_tutor_uuid", unique: true, using: :btree
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", using: :btree
-  add_index "content_exercises", ["uuid", "version"], name: "index_content_exercises_on_uuid_and_version", using: :btree
+  add_index "content_exercises", ["uuid"], name: "index_content_exercises_on_uuid", using: :btree
 
   create_table "content_lo_teks_tags", force: :cascade do |t|
     t.integer  "lo_id",      null: false
@@ -272,8 +272,8 @@ ActiveRecord::Schema.define(version: 20170323195331) do
     t.datetime "deleted_at"
     t.string   "default_open_time"
     t.string   "default_due_time"
-    t.uuid     "uuid",                           default: "gen_random_uuid()"
     t.integer  "entity_teacher_student_role_id",                               null: false
+    t.uuid     "uuid",                           default: "gen_random_uuid()"
   end
 
   add_index "course_membership_periods", ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id", using: :btree
@@ -310,25 +310,27 @@ ActiveRecord::Schema.define(version: 20170323195331) do
 
   create_table "course_profile_courses", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.string   "name",                                        null: false
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
-    t.boolean  "is_concept_coach",                            null: false
-    t.string   "teach_token",                                 null: false
+    t.string   "name",                                                      null: false
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
+    t.boolean  "is_concept_coach",                                          null: false
+    t.string   "teach_token",                                               null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "biglearn_excluded_pool_uuid"
     t.string   "default_open_time"
     t.string   "default_due_time"
-    t.integer  "time_zone_id",                                null: false
-    t.boolean  "is_college",                  default: false, null: false
-    t.datetime "starts_at",                                   null: false
-    t.datetime "ends_at",                                     null: false
-    t.integer  "term",                                        null: false
-    t.integer  "year",                                        null: false
+    t.integer  "time_zone_id",                                              null: false
+    t.boolean  "is_college",                  default: false,               null: false
+    t.datetime "starts_at",                                                 null: false
+    t.datetime "ends_at",                                                   null: false
+    t.integer  "term",                                                      null: false
+    t.integer  "year",                                                      null: false
     t.integer  "cloned_from_id"
-    t.boolean  "is_preview",                                  null: false
-    t.boolean  "is_excluded_from_salesforce", default: false, null: false
+    t.boolean  "is_preview",                                                null: false
+    t.boolean  "is_excluded_from_salesforce", default: false,               null: false
+    t.uuid     "uuid",                        default: "gen_random_uuid()"
+    t.integer  "sequence_number",             default: 0,                   null: false
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
@@ -337,6 +339,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "course_profile_courses", ["school_district_school_id"], name: "index_course_profile_courses_on_school_district_school_id", using: :btree
   add_index "course_profile_courses", ["teach_token"], name: "index_course_profile_courses_on_teach_token", unique: true, using: :btree
   add_index "course_profile_courses", ["time_zone_id"], name: "index_course_profile_courses_on_time_zone_id", unique: true, using: :btree
+  add_index "course_profile_courses", ["uuid"], name: "index_course_profile_courses_on_uuid", unique: true, using: :btree
   add_index "course_profile_courses", ["year", "term"], name: "index_course_profile_courses_on_year_and_term", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -824,9 +827,10 @@ ActiveRecord::Schema.define(version: 20170323195331) do
     t.datetime "hidden_at"
     t.text     "spy",                                          default: "{}",                null: false
     t.uuid     "uuid",                                         default: "gen_random_uuid()"
-    t.integer  "sequence_number",                              default: 0,                   null: false
+    t.integer  "content_ecosystem_id",                                                       null: false
   end
 
+  add_index "tasks_tasks", ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id", using: :btree
   add_index "tasks_tasks", ["deleted_at"], name: "index_tasks_tasks_on_deleted_at", using: :btree
   add_index "tasks_tasks", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasks", ["hidden_at"], name: "index_tasks_tasks_on_hidden_at", using: :btree

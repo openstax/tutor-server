@@ -186,6 +186,9 @@ gem 'postgresql_cursor'
 # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
 gem 'awesome_print'
 
+# Advisory Locks
+gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

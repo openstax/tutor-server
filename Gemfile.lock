@@ -7,6 +7,15 @@ GIT
       active_attr (~> 0.8)
       restforce (~> 2.1.0)
 
+GIT
+  remote: https://github.com/procore/with_advisory_lock.git
+  revision: aba1583ce8127370ed7098b03ab5e1952020c295
+  ref: aba1583c
+  specs:
+    with_advisory_lock (3.0.2)
+      activerecord (>= 3.2)
+      thread_safe
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -838,6 +847,7 @@ DEPENDENCIES
   whenever
   whenever-test
   will_paginate (~> 3.0.6)
+  with_advisory_lock!
 
 BUNDLED WITH
    1.14.5

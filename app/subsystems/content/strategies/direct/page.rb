@@ -11,6 +11,10 @@ module Content
                 :version, :cnx_id, :title, :content, :book_location, :is_intro?, :fragments,
                 :snap_labs, :snap_labs_with_page_id, :short_id
 
+        def to_model
+          repository
+        end
+
         alias_method :entity_chapter, :chapter
         def chapter
           ::Content::Chapter.new(strategy: entity_chapter)
