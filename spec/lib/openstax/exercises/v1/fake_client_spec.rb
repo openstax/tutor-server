@@ -10,7 +10,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
     fake_client.add_exercise(number: 42)
     fake_client.add_exercise(number: 36)
 
-    expect(JSON.parse fake_client.exercises(number: 42)).to match(
+    expect(fake_client.exercises(number: 42)).to match(
       {
         total_count: 1,
         items: [{
@@ -52,7 +52,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
     expect(fake_client.exercises(tag: "tommy")['total_count']).to eq 0
     expect(fake_client.exercises(tag: "tommy")['items'].count).to eq 0
 
-    expect(JSON.parse fake_client.exercises(tag: "franky")).to match(
+    expect(fake_client.exercises(tag: "franky")).to match(
       {
         total_count: 1,
         items: [{

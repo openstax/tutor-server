@@ -11,13 +11,13 @@ FactoryGirl.define do
     end
 
     association :owner, factory: :course_profile_course
-    association :ecosystem, factory: :content_ecosystem
-    title 'A task'
-    settings { {} }
-    type 'reading'
+
+    title                 'A task'
+    settings              { {} }
+    type                  'reading'
     is_feedback_immediate { type != 'homework' }
-    first_published_at { published_at }
-    last_published_at  { published_at }
+    first_published_at    { published_at }
+    last_published_at     { published_at }
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }

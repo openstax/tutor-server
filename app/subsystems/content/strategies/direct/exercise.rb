@@ -5,8 +5,8 @@ module Content
 
         wraps ::Content::Models::Exercise
 
-        exposes :page, :tags, :los, :aplos, :tutor_uuid, :url, :title, :preview, :context,
-                :content, :uuid, :number, :version, :uid, :content_hash, :pool_types, :is_excluded,
+        exposes :page, :tags, :los, :aplos, :url, :title, :preview, :context, :content, :uuid,
+                :group_uuid, :number, :version, :uid, :content_hash, :pool_types, :is_excluded,
                 :is_multipart?, :has_interactive, :has_video, :content_as_independent_questions,
                 :feature_ids
 
@@ -34,14 +34,14 @@ module Content
           entity_aplos.map{ |ea| ::Content::Tag.new(strategy: ea) }
         end
 
-        alias_method :string_tutor_uuid, :tutor_uuid
-        def tutor_uuid
-          ::Content::Uuid.new(string_tutor_uuid)
-        end
-
         alias_method :string_uuid, :uuid
         def uuid
           ::Content::Uuid.new(string_uuid)
+        end
+
+        alias_method :string_group_uuid, :group_uuid
+        def group_uuid
+          ::Content::Uuid.new(string_group_uuid)
         end
 
       end

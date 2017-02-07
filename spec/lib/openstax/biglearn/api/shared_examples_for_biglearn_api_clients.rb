@@ -18,9 +18,9 @@ RSpec.shared_examples 'a biglearn api client' do
 
   dummy_ecosystem = OpenStruct.new tutor_uuid: SecureRandom.uuid
   dummy_book_container = OpenStruct.new tutor_uuid: SecureRandom.uuid
-  dummy_course = OpenStruct.new uuid: SecureRandom.uuid, sequence_number: 21
+  dummy_course = OpenStruct.new uuid: SecureRandom.uuid, sequence_number: 42
   dummy_course_container = OpenStruct.new uuid: SecureRandom.uuid
-  dummy_task = OpenStruct.new uuid: SecureRandom.uuid, task_type: 'practice', sequence_number: 42
+  dummy_task = OpenStruct.new uuid: SecureRandom.uuid, task_type: 'practice'
   dummy_student = OpenStruct.new uuid: SecureRandom.uuid
   dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
   max_exercises_to_return = 5
@@ -33,20 +33,19 @@ RSpec.shared_examples 'a biglearn api client' do
                          { created_ecosystem_uuid: dummy_ecosystem.tutor_uuid } ],
     [ :create_course, { course: dummy_course, ecosystem: dummy_ecosystem },
                       { created_course_uuid: dummy_course.uuid } ],
-    [ :prepare_course_ecosystem, { preparation_uuid: preparation_uuid,
-                                   course: dummy_course, ecosystem: dummy_ecosystem },
+    [ :prepare_course_ecosystem, { course: dummy_course,
+                                   preparation_uuid: preparation_uuid,
+                                   ecosystem: dummy_ecosystem },
                                  { prepare_status: :accepted } ],
-    [ :update_course_ecosystems, [ { preparation_uuid: preparation_uuid } ],
+    [ :update_course_ecosystems, [ { course: dummy_course, preparation_uuid: preparation_uuid } ],
                                  [ { update_status: :updated_and_ready } ] ],
     [ :update_rosters, [ { course: dummy_course } ],
                        [ { updated_course_uuid: dummy_course.uuid } ] ],
-    [ :update_global_exercise_exclusions, { exercise_ids: dummy_exercise_ids },
-                                          { updated_exercise_ids: dummy_exercise_ids } ],
-    [ :update_course_exercise_exclusions, { course: dummy_course },
-                                          { updated_course_uuid: dummy_course.uuid } ],
-    [ :create_update_assignments, [ { task: dummy_task } ],
+    [ :update_global_exercise_exclusions, { course: dummy_course }, { status: 'success' } ],
+    [ :update_course_exercise_exclusions, { course: dummy_course }, { status: 'success' } ],
+    [ :create_update_assignments, [ { course: dummy_course, task: dummy_task } ],
                                   [ { assignment_uuid: dummy_task.uuid,
-                                      sequence_number: dummy_task.sequence_number } ] ],
+                                      sequence_number: dummy_course.sequence_number } ] ],
     [ :fetch_assignment_pes,
       [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
       [ { assignment_uuid: dummy_task.uuid,

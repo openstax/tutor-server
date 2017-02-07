@@ -30,7 +30,7 @@ class CourseContent::AddEcosystemToCourse
                                                                 to_ecosystem: ecosystem,
                                                                 strategy_class: map_strategy_class)
 
-    OpenStax::Biglearn::Api.create_update_course(course: course)
+    OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)
   end
 
 end

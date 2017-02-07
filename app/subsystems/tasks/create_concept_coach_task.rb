@@ -22,7 +22,13 @@ module Tasks
       period = role.student.period
       time_zone = course.time_zone
 
-      run(:build_task, task_type: :concept_coach, title: 'Concept Coach', time_zone: time_zone)
+      run(
+        :build_task,
+        task_type: :concept_coach,
+        title: 'Concept Coach',
+        time_zone: time_zone,
+        ecosystem: page.to_model.ecosystem
+      )
 
       exercises.each_with_index do |exercise, ii|
         TaskExercise.call(exercise: exercise, task: outputs.task) do |step|

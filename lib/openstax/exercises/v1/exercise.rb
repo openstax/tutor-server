@@ -24,6 +24,10 @@ class OpenStax::Exercises::V1::Exercise
     @uuid ||= content_hash['uuid']
   end
 
+  def group_uuid
+    @uuid ||= content_hash['group_uuid']
+  end
+
   def number
     @number ||= content_hash['number']
   end

@@ -24,9 +24,14 @@ class ResetPracticeWidget
     existing_practice_task.task_steps.incomplete.each(&:really_destroy!) \
       unless existing_practice_task.nil?
 
-    run(:create_practice_widget_task, role: role, exercise_source: exercise_source,
-                                      page_ids: page_ids, chapter_ids: chapter_ids,
-                                      randomize: randomize)
+    run(
+      :create_practice_widget_task,
+      role: role,
+      exercise_source: exercise_source,
+      page_ids: page_ids,
+      chapter_ids: chapter_ids,
+      randomize: randomize
+    )
   end
 
 end

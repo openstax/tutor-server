@@ -19,7 +19,7 @@ class OpenStax::Biglearn::Api::FakeClient
   #
 
   # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
-  # course is an Entity::Course
+  # course is a CourseProfile::Models::Course
   # task is a Tasks::Models::Task
   # student is a CourseMembership::Models::Student
   # book_container is a Content::Chapter or Content::Page or one of their models
@@ -71,12 +71,12 @@ class OpenStax::Biglearn::Api::FakeClient
   # Updates global exercise exclusions
   # Ignored in the FakeClient
   def update_global_exercise_exclusions(request)
-    { updated_exercise_ids: request[:exercise_ids] }
+    { status: 'success' }
   end
 
   # Updates exercise exclusions for the given course
   def update_course_exercise_exclusions(request)
-    { updated_course_uuid: request[:course].uuid }
+    { status: 'success' }
   end
 
   # Creates or updates tasks in Biglearn
@@ -132,8 +132,7 @@ class OpenStax::Biglearn::Api::FakeClient
     all_pe_ids = task_to_pe_ids_map.values.flatten
 
     # Get the uuids for each dynamic exercise id
-    pe_id_to_pe_uuid_map = Content::Models::Exercise.where(id: all_pe_ids)
-                                                    .pluck(:id, :tutor_uuid).to_h
+    pe_id_to_pe_uuid_map = Content::Models::Exercise.where(id: all_pe_ids).pluck(:id, :uuid).to_h
 
     task_to_pe_ids_map.each do |task, pe_ids|
       task_key = "tasks/#{task.uuid}/pe_uuids"
@@ -144,12 +143,13 @@ class OpenStax::Biglearn::Api::FakeClient
     end
 
     requests.map do |request|
+      course = request[:course]
       task = request[:task]
 
       {
         request_uuid: request[:request_uuid],
         assignment_uuid: task.uuid,
-        sequence_number: task.sequence_number
+        sequence_number: course.sequence_number
       }
     end
   end

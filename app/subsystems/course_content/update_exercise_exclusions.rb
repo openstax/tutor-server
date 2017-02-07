@@ -40,8 +40,8 @@ class CourseContent::UpdateExerciseExclusions
       exercise_representation
     end
 
-    # This touch ensures that transactions trying to lock the same course profile will retry
-    course.profile.touch
+    # This touch ensures that transactions trying to lock the same course will retry
+    course.touch
 
     # Send the exercise exclusions to Biglearn
     OpenStax::Biglearn::Api.update_course_exercise_exclusions(course: course)
