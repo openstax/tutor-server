@@ -41,8 +41,7 @@ RSpec.feature 'Admin editing a course' do
     fill_in 'Starts at', with: '2016-01-01'
     fill_in 'Ends at', with: '2016-02-01'
     # capybara fails (only on Travis) with the Ambiguous match, found 2 elements matching button "Save"
-    click_button 'Save', :match => :first
-
+    click_button 'Save', match: :first
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
