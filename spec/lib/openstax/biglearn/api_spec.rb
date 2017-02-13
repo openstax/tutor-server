@@ -50,6 +50,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       @exercises = @page.exercises
       @course = task_plan.owner
       @task = task_plan.tasks.first
+      @tasked_exercise = @task.tasked_exercises.first
       tasking = @task.taskings.first
       @period = tasking.period
       @student = tasking.role.student
@@ -111,8 +112,22 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         1
       ],
       [
+        :update_course_active_dates,
+        -> { { course: @course.reload } },
+        Hash,
+        -> { @course },
+        1
+      ],
+      [
         :create_update_assignments,
         -> { [ { course: @course.reload, task: @task.reload } ] },
+        Hash,
+        -> { @course },
+        1
+      ],
+      [
+        :record_responses,
+        -> { [ { course: @course.reload, tasked_exercise: @tasked_exercise.reload } ] },
         Hash,
         -> { @course },
         1

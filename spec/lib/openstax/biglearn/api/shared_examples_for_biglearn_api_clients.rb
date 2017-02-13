@@ -21,6 +21,7 @@ RSpec.shared_examples 'a biglearn api client' do
   dummy_course = OpenStruct.new uuid: SecureRandom.uuid, sequence_number: 42
   dummy_course_container = OpenStruct.new uuid: SecureRandom.uuid
   dummy_task = OpenStruct.new uuid: SecureRandom.uuid, task_type: 'practice'
+  dummy_tasked_exercise = OpenStruct.new uuid: SecureRandom.uuid
   dummy_student = OpenStruct.new uuid: SecureRandom.uuid
   dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
   max_exercises_to_return = 5
@@ -43,9 +44,12 @@ RSpec.shared_examples 'a biglearn api client' do
                        [ { updated_course_uuid: dummy_course.uuid } ] ],
     [ :update_global_exercise_exclusions, { course: dummy_course }, { status: 'success' } ],
     [ :update_course_exercise_exclusions, { course: dummy_course }, { status: 'success' } ],
+    [ :update_course_active_dates, { course: dummy_course }, { status: 'success' } ],
     [ :create_update_assignments, [ { course: dummy_course, task: dummy_task } ],
                                   [ { assignment_uuid: dummy_task.uuid,
                                       sequence_number: dummy_course.sequence_number } ] ],
+    [ :record_responses, [ { course: dummy_course, tasked_exercise: dummy_tasked_exercise } ],
+                         [ {} ], :response_uuid ],
     [ :fetch_assignment_pes,
       [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
       [ { assignment_uuid: dummy_task.uuid,
@@ -54,7 +58,7 @@ RSpec.shared_examples 'a biglearn api client' do
     [ :fetch_assignment_pes,
       [ { task: task_with_pes, max_exercises_to_return: max_exercises_to_return } ],
       [ ->{ { assignment_uuid: task_with_pes.uuid,
-              exercise_uuids: [kind_of(String)]*max_exercises_to_return,
+              exercise_uuids: [kind_of(String)] * max_exercises_to_return,
               assignment_status: :assignment_ready } } ] ],
     [ :fetch_assignment_spes,
       [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
@@ -74,19 +78,20 @@ RSpec.shared_examples 'a biglearn api client' do
       [ ->{ { clue_data: clue_matcher, clue_status: :clue_ready } } ] ]
   ].group_by(&:first).each do |method, examples|
     context "##{method}" do
-      examples.each_with_index do |(method, requests, expected_responses), index|
+      examples.each_with_index do |(method, requests, expected_responses, uuid_key), index|
         it "returns the expected response for the #{(index + 1).ordinalize} set of requests" do
+          uuid_key ||= :request_uuid
           expected_responses = instance_exec(&expected_responses) if expected_responses.is_a?(Proc)
 
           if requests.is_a?(Array)
             request_uuids = requests.map{ SecureRandom.uuid }
             requests = requests.each_with_index.map do |request, index|
-              request.merge(request_uuid: request_uuids[index])
+              request.merge(uuid_key => request_uuids[index])
             end
             expected_responses = expected_responses.each_with_index
                                                    .map do |expected_response, index|
               expected_response = instance_exec(&expected_response) if expected_response.is_a?(Proc)
-              expected_response.merge(request_uuid: request_uuids[index])
+              expected_response.merge(uuid_key => request_uuids[index])
             end
           end
 
