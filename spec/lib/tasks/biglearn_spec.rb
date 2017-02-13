@@ -41,15 +41,16 @@ RSpec.describe 'biglearn:initialize', type: :rake do
     expect(OpenStax::Biglearn::Api).to receive(:prepare_course_ecosystem).twice
     expect(OpenStax::Biglearn::Api).to receive(:update_course_ecosystems).once
     expect(OpenStax::Biglearn::Api).to receive(:update_rosters).once
-    expect(OpenStax::Biglearn::Api).to receive(:create_update_assignments).twice
+    expect(OpenStax::Biglearn::Api).to receive(:create_update_assignments).once
 
     result
   end
 
   it 'prints progress information' do
+    expect(result).to include "Ecosystem and Course sequence numbers reset.\n"
     expect(result).to include "Creating 2 ecosystems..\n"
-    expect(result).to include "Creating 6 courses......\n"
-    expect(result).to include "Creating 2 assignment plans..\n"
+    expect(result).to include "Creating 6 courses.\n"
+    expect(result).to include "Creating 17 assignments.\n"
     expect(result).to include "Biglearn data transfer successful!\n"
   end
 end
