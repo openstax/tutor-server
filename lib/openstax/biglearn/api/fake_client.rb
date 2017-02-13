@@ -79,6 +79,11 @@ class OpenStax::Biglearn::Api::FakeClient
     { status: 'success' }
   end
 
+  # Updates the given course's active dates
+  def update_course_active_dates(request)
+    { status: 'success' }
+  end
+
   # Creates or updates tasks in Biglearn
   # In FakeClient, stores the (correct) list of PEs for the task for later use
   def create_update_assignments(requests)
@@ -152,6 +157,11 @@ class OpenStax::Biglearn::Api::FakeClient
         sequence_number: course.sequence_number
       }
     end
+  end
+
+  # Records the given student responses
+  def record_responses(requests)
+    requests.map { |request| request.slice :response_uuid }
   end
 
   # Returns a number of recommended personalized exercises for the given tasks

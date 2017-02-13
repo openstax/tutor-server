@@ -117,7 +117,7 @@ module OpenStax::Biglearn::Api
     # Requests will not be sent if the course has not been created in Biglearn due to no ecosystem
     def update_rosters(requests)
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
-        bulk_api_request(method: :update_rosters, requests: requests, keys: :course)
+        bulk_api_request method: :update_rosters, requests: requests, keys: :course
       end
     end
 
@@ -141,16 +141,37 @@ module OpenStax::Biglearn::Api
       end
     end
 
+    # Updates the given course's start/end dates
+    # Request is a hash containing the following key: :course
+    def update_course_active_dates(request)
+      with_unique_gapless_course_sequence_numbers(requests: request) do |request|
+        single_api_request method: :update_course_active_dates,
+                           request: request,
+                           keys: :course
+      end
+    end
+
     # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following keys: :course and :task
     # They may also contain the following optional key: :core_page_ids
     # The task records' sequence numbers are increased by 1
     def create_update_assignments(requests)
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
-        bulk_api_request(method: :create_update_assignments,
+        bulk_api_request method: :create_update_assignments,
                          requests: requests,
                          keys: [:course, :task],
-                         optional_keys: :core_page_ids)
+                         optional_keys: :core_page_ids
+      end
+    end
+
+    # Records a student's response for a given exercise
+    # Requests are hashes containing the following keys: :course and :tasked_exercise
+    def record_responses(requests)
+      with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
+        bulk_api_request method: :record_responses,
+                         requests: requests,
+                         keys: [:course, :tasked_exercise],
+                         uuid_key: :response_uuid
       end
     end
 
@@ -351,7 +372,8 @@ module OpenStax::Biglearn::Api
                     result_class: result_class)
     end
 
-    def bulk_api_request(method:, requests:, keys:, optional_keys: [], result_class: Hash)
+    def bulk_api_request(method:, requests:, keys:,
+                         optional_keys: [], result_class: Hash, uuid_key: :request_uuid)
       requests_map = {}
       [requests].flatten.map do |request|
         requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
@@ -360,11 +382,11 @@ module OpenStax::Biglearn::Api
                                                                    optional_keys: optional_keys
       end
 
-      requests_array = requests_map.map{ |uuid, request| request.merge request_uuid: uuid }
+      requests_array = requests_map.map{ |uuid, request| request.merge uuid_key => uuid }
 
       responses = {}
       client.send(method, requests_array).each do |response|
-        request = requests_map[response[:request_uuid]]
+        request = requests_map[response[uuid_key]]
 
         responses[request] = verify_result(
           result: block_given? ? yield(request, response) : response, result_class: result_class
