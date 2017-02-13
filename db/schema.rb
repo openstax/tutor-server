@@ -75,11 +75,12 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "content_chapters", ["tutor_uuid"], name: "index_content_chapters_on_tutor_uuid", unique: true, using: :btree
 
   create_table "content_ecosystems", force: :cascade do |t|
-    t.string   "title",                                    null: false
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.string   "title",                                         null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.text     "comments"
-    t.uuid     "tutor_uuid", default: "gen_random_uuid()"
+    t.uuid     "tutor_uuid",      default: "gen_random_uuid()"
+    t.integer  "sequence_number", default: 0,                   null: false
   end
 
   add_index "content_ecosystems", ["created_at"], name: "index_content_ecosystems_on_created_at", using: :btree

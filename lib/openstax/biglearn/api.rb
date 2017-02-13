@@ -9,6 +9,7 @@ module OpenStax::Biglearn::Api
 
   extend Configurable
   extend Configurable::ClientMethods
+  extend OpenStax::Biglearn::Locks
   extend MonitorMixin
 
   class << self
@@ -29,16 +30,22 @@ module OpenStax::Biglearn::Api
     # Adds the given ecosystem to Biglearn
     # Requests is a hash containing the following key: :ecosystem
     def create_ecosystem(request)
-      single_api_request method: :create_ecosystem, request: request, keys: :ecosystem
+      with_unique_gapless_ecosystem_sequence_numbers(requests: request, create: true) do |request|
+        raise 'Attempted to create Ecosystem in Biglearn twice' if request[:sequence_number] > 0
+
+        single_api_request method: :create_ecosystem, request: request, keys: :ecosystem
+      end
     end
 
     # Creates or updates the given course in Biglearn,
     # including ecosystem and roster (if roster update was skipped before)
     # Requests is a hash containing the following key: :course
     def prepare_and_update_course_ecosystem(request)
-      CourseProfile::Models::Course.transaction do
-        course = request[:course]
-        course.lock! if course.persisted?
+      course = request[:course]
+
+      with_course_locks(course.id) do
+        # Reload after locking
+        course.reload if course.persisted?
 
         # Don't send course to Biglearn if it has no ecosystems
         return if course.course_ecosystems.empty?
@@ -58,7 +65,9 @@ module OpenStax::Biglearn::Api
           current_ecosystem = course.course_ecosystems.first.ecosystem
 
           # Course already exists in Biglearn, so just send the latest update
-          preparation_uuid = prepare_course_ecosystem(course: course, ecosystem: current_ecosystem)
+          preparation_uuid = prepare_course_ecosystem(
+            course: course, ecosystem: current_ecosystem
+          )
 
           update_course_ecosystems(course: course, preparation_uuid: preparation_uuid)
         end
@@ -68,17 +77,23 @@ module OpenStax::Biglearn::Api
     # Adds the given course to Biglearn
     # Requests is a hash containing the following keys: :course and :ecosystem
     def create_course(request)
-      single_api_request method: :create_course, request: request, keys: [:course, :ecosystem]
+      with_unique_gapless_course_sequence_numbers(requests: request, create: true) do |request|
+        raise 'Attempted to create Course in Biglearn twice' if request[:sequence_number] > 0
+
+        single_api_request method: :create_course, request: request, keys: [:course, :ecosystem]
+      end
     end
 
     # Prepares Biglearn for a course ecosystem update
     # Requests is a hash containing the following keys: :course and :ecosystem
     # Returns a preparation_uuid to be used in the call to update_course_ecosystems
     def prepare_course_ecosystem(request)
-      SecureRandom.uuid.tap do |preparation_uuid|
-        single_api_request method: :prepare_course_ecosystem,
-                           request: request.merge(preparation_uuid: preparation_uuid),
-                           keys: [:course, :ecosystem]
+      with_unique_gapless_course_sequence_numbers(requests: request) do |request|
+        SecureRandom.uuid.tap do |preparation_uuid|
+          single_api_request method: :prepare_course_ecosystem,
+                             request: request.merge(preparation_uuid: preparation_uuid),
+                             keys: [:course, :ecosystem]
+        end
       end
     end
 
@@ -87,11 +102,13 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following keys: :course and :preparation_uuid
     # Returns a hash mapping request objects to their update status (Symbol)
     def update_course_ecosystems(requests)
-      bulk_api_request(method: :update_course_ecosystems,
-                       requests: requests,
-                       keys: [:course, :preparation_uuid],
-                       result_class: Symbol) do |request, response|
-        response[:update_status]
+      with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
+        bulk_api_request(method: :update_course_ecosystems,
+                         requests: requests,
+                         keys: [:course, :preparation_uuid],
+                         result_class: Symbol) do |request, response|
+          response[:update_status]
+        end
       end
     end
 
@@ -99,7 +116,7 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following key: :course
     # Requests will not be sent if the course has not been created in Biglearn due to no ecosystem
     def update_rosters(requests)
-      with_unique_gapless_course_sequence_numbers(requests) do |requests|
+      with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request(method: :update_rosters, requests: requests, keys: :course)
       end
     end
@@ -107,17 +124,21 @@ module OpenStax::Biglearn::Api
     # Updates global exercise exclusions
     # Request is a hash containing the following key: :course
     def update_global_exercise_exclusions(request)
-      single_api_request method: :update_global_exercise_exclusions,
-                         request: request,
-                         keys: :course
+      with_unique_gapless_course_sequence_numbers(requests: request) do |request|
+        single_api_request method: :update_global_exercise_exclusions,
+                           request: request,
+                           keys: :course
+      end
     end
 
     # Updates exercise exclusions for the given course
     # Request is a hash containing the following key: :course
     def update_course_exercise_exclusions(request)
-      single_api_request method: :update_course_exercise_exclusions,
-                         request: request,
-                         keys: :course
+      with_unique_gapless_course_sequence_numbers(requests: request) do |request|
+        single_api_request method: :update_course_exercise_exclusions,
+                           request: request,
+                           keys: :course
+      end
     end
 
     # Creates or updates tasks in Biglearn
@@ -125,10 +146,12 @@ module OpenStax::Biglearn::Api
     # They may also contain the following optional key: :core_page_ids
     # The task records' sequence numbers are increased by 1
     def create_update_assignments(requests)
-      bulk_api_request(method: :create_update_assignments,
-                       requests: requests,
-                       keys: [:course, :task],
-                       optional_keys: :core_page_ids)
+      with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
+        bulk_api_request(method: :create_update_assignments,
+                         requests: requests,
+                         keys: [:course, :task],
+                         optional_keys: :core_page_ids)
+      end
     end
 
     # Returns a number of recommended personalized exercises for the given tasks
@@ -373,10 +396,10 @@ module OpenStax::Biglearn::Api
       exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
     end
 
-    # We attempt to make this wrapper code as fast as possible
-    # because it prevents any Biglearn calls that share the Course's sequence_number
+    # We attempt to make these wrappers as fast as possible
+    # because it prevents any Biglearn calls that share the Course/Ecosystem's sequence_number
     # for the remaining duration of the transaction
-    def with_unique_gapless_course_sequence_numbers(requests, &block)
+    def with_unique_gapless_course_sequence_numbers(requests:, create: false, &block)
       table_name = CourseProfile::Models::Course.table_name
 
       req = [requests].flatten
@@ -385,23 +408,14 @@ module OpenStax::Biglearn::Api
       req.map{ |request| request[:course].id }.compact.each do |course_id|
         course_id_counts[course_id] = (course_id_counts[course_id] || 0) + 1
       end
-      # We use a consistent ordering here to prevent deadlocks when locking the courses
-      course_ids = course_id_counts.keys.sort
+      course_ids = course_id_counts.keys
 
       cases = course_id_counts.map do |course_id, count|
         "WHEN #{course_id} THEN #{count}"
       end
       increments = "CASE \"id\" #{cases.join(' ')} END"
 
-      CourseProfile::Models::Course.transaction do
-        # We use advisory locks to prevent rollbacks
-        # The advisory locks actually last until the end of the transaction,
-        # because we use transaction-based locks
-        course_ids.each do |course_id|
-          lock_name = "biglearn_sequence_number_course_#{course_id}"
-          CourseProfile::Models::Course.with_advisory_lock(lock_name)
-        end
-
+      with_course_locks(course_ids) do
         # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
         # Requests for courses that have not been created
         # on the Biglearn side (sequence_number == 0) are suppressed
@@ -410,7 +424,7 @@ module OpenStax::Biglearn::Api
           "UPDATE #{table_name}" +
           " SET \"sequence_number\" = \"sequence_number\" + #{increments}" +
           " WHERE \"#{table_name}\".\"id\" IN (#{course_ids.join(', ')})" +
-          " AND \"sequence_number\" > 0" +
+          " #{'AND "sequence_number" > 0' unless create}" +
           " RETURNING \"id\", \"sequence_number\""
         ).each do |hash|
           id = hash['id'].to_i
@@ -421,9 +435,12 @@ module OpenStax::Biglearn::Api
           course = request[:course]
 
           if course.new_record?
-            # Special case for unsaved records since no lock is needed
-            course.sequence_number = (course.sequence_number || 0) + 1
-            next request.merge(sequence_number: course.sequence_number - 1)
+            # Special case for unsaved records
+            sequence_number = course.sequence_number || 0
+            next if sequence_number == 0 && !create
+
+            course.sequence_number = sequence_number + 1
+            next request.merge(sequence_number: sequence_number)
           end
 
 
@@ -445,7 +462,87 @@ module OpenStax::Biglearn::Api
           request.merge(sequence_number: sequence_number)
         end.compact
 
-        block.call requests_with_sequence_numbers
+        # If an array was given, call the block with an array
+        # If another type of argument was given, extract the block argument from the array
+        modified_requests = requests.is_a?(Array) ? requests_with_sequence_numbers :
+                                                    requests_with_sequence_numbers.first
+
+        # nil can happen if the request got suppressed due to the course having no ecosystem
+        block.call(modified_requests) unless modified_requests.nil?
+      end
+    end
+
+    def with_unique_gapless_ecosystem_sequence_numbers(requests:, create: false, &block)
+      table_name = Content::Models::Ecosystem.table_name
+
+      req = [requests].flatten
+
+      ecosystem_id_counts = {}
+      req.map{ |request| request[:ecosystem].id }.compact.each do |ecosystem_id|
+        ecosystem_id_counts[ecosystem_id] = (ecosystem_id_counts[ecosystem_id] || 0) + 1
+      end
+      ecosystem_ids = ecosystem_id_counts.keys
+
+      cases = ecosystem_id_counts.map do |ecosystem_id, count|
+        "WHEN #{ecosystem_id} THEN #{count}"
+      end
+      increments = "CASE \"id\" #{cases.join(' ')} END"
+
+      with_ecosystem_locks(ecosystem_ids) do
+        # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
+        # Requests for ecosystems that have not been created
+        # on the Biglearn side (sequence_number == 0) are suppressed
+        sequence_numbers_by_ecosystem_id = {}
+        Content::Models::Ecosystem.connection.execute(
+          "UPDATE #{table_name}" +
+          " SET \"sequence_number\" = \"sequence_number\" + #{increments}" +
+          " WHERE \"#{table_name}\".\"id\" IN (#{ecosystem_ids.join(', ')})" +
+          " #{'AND "sequence_number" > 0' unless create}" +
+          " RETURNING \"id\", \"sequence_number\""
+        ).each do |hash|
+          id = hash['id'].to_i
+          sequence_numbers_by_ecosystem_id[id] = \
+            hash['sequence_number'].to_i - ecosystem_id_counts[id]
+        end if ecosystem_ids.any?
+
+        requests_with_sequence_numbers = req.map do |request|
+          ecosystem = request[:ecosystem].to_model
+
+          if ecosystem.new_record?
+            # Special case for unsaved records
+            sequence_number = ecosystem.sequence_number || 0
+            next if sequence_number == 0 && !create
+
+            ecosystem.sequence_number = sequence_number + 1
+            next request.merge(sequence_number: sequence_number)
+          end
+
+
+          sequence_number = sequence_numbers_by_ecosystem_id[ecosystem.id]
+          # Requests for courses that have not been created
+          # on the Biglearn side (sequence_number == 0) are suppressed
+          next if sequence_number.nil?
+
+          next_sequence_number = sequence_number + 1
+          sequence_numbers_by_ecosystem_id[ecosystem.id] = next_sequence_number
+
+          # Make sure the provided record model has the new sequence_number
+          # and mark the attribute as persisted
+          ecosystem.sequence_number = next_sequence_number
+          ecosystem.previous_changes[:sequence_number] = ecosystem.changes[:sequence_number]
+          ecosystem.send :clear_attribute_changes, :sequence_number
+
+          # Call the given block with the previous sequence_number
+          request.merge(sequence_number: sequence_number)
+        end.compact
+
+        # If an array was given, call the block with an array
+        # If another type of argument was given, extract the block argument from the array
+        modified_requests = requests.is_a?(Array) ? requests_with_sequence_numbers :
+                                                    requests_with_sequence_numbers.first
+
+        # nil can happen if the request got suppressed due to the course having no ecosystem
+        block.call(modified_requests) unless modified_requests.nil?
       end
     end
 

@@ -187,6 +187,8 @@ gem 'postgresql_cursor'
 gem 'awesome_print'
 
 # Advisory Locks
+# This version provides locks that unlock automatically at the end of the transaction,
+# which are required for the correct operation of the Biglearn client
 gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
 
 group :development, :test do
