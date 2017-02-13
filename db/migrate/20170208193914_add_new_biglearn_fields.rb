@@ -13,6 +13,7 @@ class AddNewBiglearnFields < ActiveRecord::Migration
     add_column :tasks_tasks, :uuid, :uuid, null: false, default: 'gen_random_uuid()'
     add_column :tasks_tasked_exercises, :uuid, :uuid, null: false, default: 'gen_random_uuid()'
 
+    add_column :content_ecosystems, :sequence_number, :integer, null: false, default: 0
     add_column :course_profile_courses, :sequence_number, :integer, null: false, default: 0
 
     add_index :content_ecosystems, :tutor_uuid, unique: true

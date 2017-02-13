@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'database_cleaner'
 
 RSpec.describe OpenStax::Biglearn::Api, type: :external do
   before(:each) { RequestStore.clear! }
@@ -40,105 +41,122 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
   end
 
   context 'api calls' do
-    dummy_exercise_association = Class.new do
-      def self.where(uuid:)
-        uuid.size.times.map{ OpenStruct.new }
-      end
+    before(:all) do
+      DatabaseCleaner.start
+
+      task_plan = FactoryGirl.create :tasked_task_plan
+      @ecosystem = task_plan.ecosystem
+      @page = @ecosystem.pages.first
+      @exercises = @page.exercises
+      @course = task_plan.owner
+      @task = task_plan.tasks.first
+      tasking = @task.taskings.first
+      @period = tasking.period
+      @student = tasking.role.student
     end
-    dummy_ecosystem = OpenStruct.new tutor_uuid: SecureRandom.uuid,
-                                     exercises: dummy_exercise_association
-    dummy_book_container = OpenStruct.new tutor_uuid: SecureRandom.uuid
-    dummy_course = OpenStruct.new uuid: SecureRandom.uuid,
-                                  sequence_number: 42,
-                                  ecosystems: [dummy_ecosystem]
-    dummy_course_container = OpenStruct.new uuid: SecureRandom.uuid
-    dummy_task = OpenStruct.new uuid: SecureRandom.uuid,
-                                task_type: 'practice',
-                                ecosystem: dummy_ecosystem
-    dummy_student = OpenStruct.new uuid: SecureRandom.uuid, course: dummy_course
-    dummy_exercise_ids = [SecureRandom.uuid, '4', "#{SecureRandom.uuid}@1", '4@2']
-    max_exercises_to_return = 5
+
+    after(:all) { DatabaseCleaner.clean }
+
+    let(:max_exercises_to_return) { 5 }
 
     [
       [
         :create_ecosystem,
-        { ecosystem: dummy_ecosystem },
-        Hash
+        -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
+        Hash,
+        -> { @ecosystem },
+        1
       ],
       [
         :create_course,
-        { course: dummy_course, ecosystem: dummy_ecosystem },
+        -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
+               ecosystem: @ecosystem } },
         Hash,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :prepare_course_ecosystem,
-        { course: dummy_course, ecosystem: dummy_ecosystem },
+        -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
         String,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :update_course_ecosystems,
-        [ { course: dummy_course, preparation_uuid: SecureRandom.uuid } ],
+        -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
         Symbol,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :update_rosters,
-        [ { course: dummy_course } ],
+        -> { [ { course: @course.reload } ] },
         Hash,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :update_global_exercise_exclusions,
-        { course: dummy_course },
+        -> { { course: @course.reload } },
         Hash,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :update_course_exercise_exclusions,
-        { course: dummy_course },
+        -> { { course: @course.reload } },
         Hash,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :create_update_assignments,
-        [ { course: dummy_course, task: dummy_task } ],
+        -> { [ { course: @course.reload, task: @task.reload } ] },
         Hash,
-        dummy_course
+        -> { @course },
+        1
       ],
       [
         :fetch_assignment_pes,
-        [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
+        -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
         Content::Exercise,
-        dummy_course
+        -> { @course },
+        0
       ],
       [
         :fetch_assignment_spes,
-        [ { task: dummy_task, max_exercises_to_return: max_exercises_to_return } ],
+        -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
         Content::Exercise,
-        dummy_course
+        -> { @course },
+        0
       ],
       [
         :fetch_practice_worst_areas_pes,
-        [ { student: dummy_student, max_exercises_to_return: max_exercises_to_return } ],
+        -> { [ { student: @student.reload, max_exercises_to_return: max_exercises_to_return } ] },
         Content::Exercise,
-        dummy_course
+        -> { @course },
+        0
       ],
       [
         :fetch_student_clues,
-        [ { book_container: dummy_book_container, student: dummy_student } ],
+        -> { [ { book_container: @page.reload, student: @student.reload } ] },
         Hash,
-        dummy_course
+        -> { @course },
+        0
       ],
       [
         :fetch_teacher_clues,
-        [ { book_container: dummy_book_container, course_container: dummy_course_container } ],
+        -> { [ { book_container: @page.reload, course_container: @period.reload } ] },
         Hash,
-        dummy_course
+        -> { @course },
+        0
       ]
-    ].each do |method, requests, result_class, sequence_number_record|
+    ].each do |method, requests_proc, result_class, sequence_number_record_proc, increment|
       it "delegates #{method} to the client implementation" do
+        requests = instance_exec &requests_proc
+        sequence_number_record = instance_exec &sequence_number_record_proc
+
         sequence_number = sequence_number_record.sequence_number if sequence_number_record.present?
 
         expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
@@ -149,104 +167,91 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
         [results].flatten.each { |result| expect(result).to be_a result_class }
 
-        expect(sequence_number_record.sequence_number).to(eq(sequence_number + 1)) \
+        expect(sequence_number_record.sequence_number).to(eq(sequence_number + increment)) \
           if sequence_number_record.present?
       end
     end
 
-    context 'with an ecosystem in the database' do
-      let(:page)      { FactoryGirl.create :content_page }
-      let(:ecosystem) { page.ecosystem }
-
-      before { dummy_task.ecosystem = ecosystem }
-
-      it 'converts returned exercise uuids to exercise objects' do
-        exercises = max_exercises_to_return.times.map do
-          exercise = FactoryGirl.create :content_exercise, page: page
-          Content::Exercise.new(strategy: exercise.wrap)
-        end
-        expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-          requests.map do |request|
-            {
-              request_uuid: request[:request_uuid],
-              exercise_uuids: exercises.map(&:uuid)
-            }
-          end
-        end
-        expect(Rails.logger).not_to receive(:warn)
-
-        result = nil
-        expect do
-          result = OpenStax::Biglearn::Api.fetch_assignment_pes(
-            task: dummy_task, max_exercises_to_return: max_exercises_to_return
-          )
-        end.not_to raise_error
-        expect(result).to match_array(exercises)
+    it 'converts returned exercise uuids to exercise objects' do
+      exercises = @exercises.first(max_exercises_to_return).map do |exercise|
+        Content::Exercise.new strategy: exercise.wrap
       end
-
-      it 'errors when client returns more exercises than expected' do
-        exercises = (max_exercises_to_return + 1).times.map do
-          exercise = FactoryGirl.create :content_exercise, page: page
-          Content::Exercise.new(strategy: exercise.wrap)
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: exercises.map(&:uuid)
+          }
         end
-        expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-          requests.map do |request|
-            {
-              request_uuid: request[:request_uuid],
-              exercise_uuids: (max_exercises_to_return + 1).times.map{ SecureRandom.uuid }
-            }
-          end
-        end
-        expect(Rails.logger).not_to receive(:warn)
-
-        expect do
-          OpenStax::Biglearn::Api.fetch_assignment_pes(
-            task: dummy_task, max_exercises_to_return: max_exercises_to_return
-          )
-        end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
       end
+      expect(Rails.logger).not_to receive(:warn)
 
-      it 'logs a warning when client returns less exercises than expected' do
-        exercises = (max_exercises_to_return - 1).times.map do
-          exercise = FactoryGirl.create :content_exercise, page: page
-          Content::Exercise.new(strategy: exercise.wrap)
-        end
-        expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-          requests.map do |request|
-            {
-              request_uuid: request[:request_uuid],
-              exercise_uuids: exercises.map(&:uuid)
-            }
-          end
-        end
-        expect(Rails.logger).to receive(:warn)
+      result = nil
+      expect do
+        result = OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: @task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.not_to raise_error
+      expect(result).to match_array(exercises)
+    end
 
-        result = nil
-        expect do
-          result = OpenStax::Biglearn::Api.fetch_assignment_pes(
-            task: dummy_task, max_exercises_to_return: max_exercises_to_return
-          )
-        end.not_to raise_error
-        expect(result).to match_array(exercises)
+    it 'errors when client returns more exercises than expected' do
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: (max_exercises_to_return + 1).times.map{ SecureRandom.uuid }
+          }
+        end
       end
+      expect(Rails.logger).not_to receive(:warn)
 
-      it 'errors when client returns exercises not present locally' do
-        expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-          requests.map do |request|
-            {
-              request_uuid: request[:request_uuid],
-              exercise_uuids: max_exercises_to_return.times.map{ SecureRandom.uuid }
-            }
-          end
-        end
-        expect(Rails.logger).not_to receive(:warn)
+      expect do
+        OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: @task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
+    end
 
-        expect do
-          OpenStax::Biglearn::Api.fetch_assignment_pes(
-            task: dummy_task, max_exercises_to_return: max_exercises_to_return
-          )
-        end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
+    it 'logs a warning when client returns less exercises than expected' do
+      exercises = @exercises.first(max_exercises_to_return - 1).map do |exercise|
+        Content::Exercise.new strategy: exercise.wrap
       end
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: exercises.map(&:uuid)
+          }
+        end
+      end
+      expect(Rails.logger).to receive(:warn)
+
+      result = nil
+      expect do
+        result = OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: @task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.not_to raise_error
+      expect(result).to match_array(exercises)
+    end
+
+    it 'errors when client returns exercises not present locally' do
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            exercise_uuids: max_exercises_to_return.times.map{ SecureRandom.uuid }
+          }
+        end
+      end
+      expect(Rails.logger).not_to receive(:warn)
+
+      expect do
+        OpenStax::Biglearn::Api.fetch_assignment_pes(
+          task: @task, max_exercises_to_return: max_exercises_to_return
+        )
+      end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
     end
   end
 end
