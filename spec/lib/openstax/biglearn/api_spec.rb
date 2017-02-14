@@ -14,18 +14,6 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         expect(config).to eq configuration
       end
     end
-
-    it 'can use the real client or the fake client' do
-      expect(described_class).to receive(:client=) do |client|
-        expect(client).to be_a OpenStax::Biglearn::Api::RealClient
-      end
-      described_class.use_real_client
-
-      expect(described_class).to receive(:client=) do |client|
-        expect(client).to be_a OpenStax::Biglearn::Api::FakeClient
-      end
-      described_class.use_fake_client
-    end
   end
 
   context '#default_client_name' do

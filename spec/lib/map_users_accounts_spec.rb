@@ -40,11 +40,6 @@ RSpec.describe MapUsersAccounts, type: :lib do
         expect(user).to be_a(User::User)
         expect(user.account).to eq(account)
       end
-
-      it "sets the user's exchange identifiers" do
-        expect(user.exchange_read_identifier).to match(/^[a-fA-F0-9]+$/)
-        expect(user.exchange_write_identifier).to match(/^[a-fA-F0-9]+$/)
-      end
     end
   end
 

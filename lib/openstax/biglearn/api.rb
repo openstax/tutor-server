@@ -62,7 +62,7 @@ module OpenStax::Biglearn::Api
           initial_ecosystem = course.course_ecosystems.last.ecosystem
 
           # New course, so create it in Biglearn
-          create_course(course: course, ecosystem: initial_ecosystem, perform_later: false)
+          create_course(course: course, ecosystem: initial_ecosystem, perform_later: perform_later)
 
           # Apply global exercise exclusions to the new course
           update_global_exercise_exclusions(course: course, perform_later: perform_later)
@@ -303,28 +303,14 @@ module OpenStax::Biglearn::Api
       new_client_call { RealClient.new(configuration) }
     end
 
-    def use_real_client
-      use_client new_real_client
-    end
-
-    def use_fake_client
-      use_client new_fake_client
-    end
-
-    def use_client(client)
-      RequestStore.store[:biglearn_api_forced_client_in_use] = true
-      self.client = client
-    end
-
     def default_client_name
       # The default Biglearn client is set via an admin console setting. The
       # default value for this setting is environment-specific in config/initializers/
       # 02-settings.rb. Developers will need to use the admin console to change
-      # the setting if they want during development. During testing, devs can
-      # use the `use_fake_client` and `use_real_client` methods.
+      # the setting if they want during development.
 
       # We only read this setting once per request to prevent it from changing mid-request
-      RequestStore.store[:biglearn_api_forced_client_in_use] ||= Settings::Biglearn.client
+      RequestStore.store[:biglearn_api_default_client_name] ||= Settings::Biglearn.client
     end
 
     alias :threadsafe_client :client

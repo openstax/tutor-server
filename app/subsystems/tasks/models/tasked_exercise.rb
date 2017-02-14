@@ -44,7 +44,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   def handle_task_step_completion!
     free_response_required
     answer_id_required
-    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
   end
 
   def make_correct!
