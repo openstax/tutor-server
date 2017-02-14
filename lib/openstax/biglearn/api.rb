@@ -1,4 +1,5 @@
 require_relative './api/configuration'
+require_relative './api/job'
 require_relative './api/malformed_request'
 require_relative './api/result_type_error'
 require_relative './api/exercises_error'
@@ -29,18 +30,25 @@ module OpenStax::Biglearn::Api
 
     # Adds the given ecosystem to Biglearn
     # Requests is a hash containing the following key: :ecosystem
-    def create_ecosystem(request)
+    def create_ecosystem(*request)
+      request, perform_later = extract_perform_later request
+
       with_unique_gapless_ecosystem_sequence_numbers(requests: request, create: true) do |request|
         raise 'Attempted to create Ecosystem in Biglearn twice' if request[:sequence_number] > 0
 
-        single_api_request method: :create_ecosystem, request: request, keys: :ecosystem
+        single_api_request method: :create_ecosystem,
+                           request: request.merge(ecosystem: request[:ecosystem].to_model),
+                           keys: :ecosystem,
+                           perform_later: perform_later
       end
     end
 
     # Creates or updates the given course in Biglearn,
     # including ecosystem and roster (if roster update was skipped before)
     # Requests is a hash containing the following key: :course
-    def prepare_and_update_course_ecosystem(request)
+    def prepare_and_update_course_ecosystem(*request)
+      request, perform_later = extract_perform_later request
+
       course = request[:course]
 
       with_course_locks(course.id) do
@@ -54,46 +62,56 @@ module OpenStax::Biglearn::Api
           initial_ecosystem = course.course_ecosystems.last.ecosystem
 
           # New course, so create it in Biglearn
-          create_course(course: course, ecosystem: initial_ecosystem)
+          create_course(course: course, ecosystem: initial_ecosystem, perform_later: false)
 
           # Apply global exercise exclusions to the new course
-          update_global_exercise_exclusions(course: course)
+          update_global_exercise_exclusions(course: course, perform_later: perform_later)
 
           # These calls are here in case we held off on them previously due to having no ecosystems
-          update_rosters(course: course)
-          update_course_active_dates(course: course)
+          update_rosters(course: course, perform_later: perform_later)
+          update_course_active_dates(course: course, perform_later: perform_later)
         else
           current_ecosystem = course.course_ecosystems.first.ecosystem
 
           # Course already exists in Biglearn, so just send the latest update
           preparation_uuid = prepare_course_ecosystem(
-            course: course, ecosystem: current_ecosystem
+            course: course, ecosystem: current_ecosystem, perform_later: perform_later
           )
 
-          update_course_ecosystems(course: course, preparation_uuid: preparation_uuid)
+          update_course_ecosystems(
+            course: course, preparation_uuid: preparation_uuid, perform_later: perform_later
+          )
         end
       end
     end
 
     # Adds the given course to Biglearn
     # Requests is a hash containing the following keys: :course and :ecosystem
-    def create_course(request)
+    def create_course(*request)
+      request, perform_later = extract_perform_later request
+
       with_unique_gapless_course_sequence_numbers(requests: request, create: true) do |request|
         raise 'Attempted to create Course in Biglearn twice' if request[:sequence_number] > 0
 
-        single_api_request method: :create_course, request: request, keys: [:course, :ecosystem]
+        single_api_request method: :create_course,
+                           request: request,
+                           keys: [:course, :ecosystem],
+                           perform_later: perform_later
       end
     end
 
     # Prepares Biglearn for a course ecosystem update
     # Requests is a hash containing the following keys: :course and :ecosystem
     # Returns a preparation_uuid to be used in the call to update_course_ecosystems
-    def prepare_course_ecosystem(request)
+    def prepare_course_ecosystem(*request)
+      request, perform_later = extract_perform_later request
+
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
         SecureRandom.uuid.tap do |preparation_uuid|
           single_api_request method: :prepare_course_ecosystem,
                              request: request.merge(preparation_uuid: preparation_uuid),
-                             keys: [:course, :ecosystem]
+                             keys: [:course, :ecosystem],
+                             perform_later: perform_later
         end
       end
     end
@@ -102,12 +120,15 @@ module OpenStax::Biglearn::Api
     # causing it to stop computing CLUes for the old one
     # Requests are hashes containing the following keys: :course and :preparation_uuid
     # Returns a hash mapping request objects to their update status (Symbol)
-    def update_course_ecosystems(requests)
+    def update_course_ecosystems(*requests)
+      requests, perform_later = extract_perform_later requests
+
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request(method: :update_course_ecosystems,
                          requests: requests,
                          keys: [:course, :preparation_uuid],
-                         result_class: Symbol) do |request, response|
+                         result_class: Symbol,
+                         perform_later: perform_later) do |request, response|
           response[:update_status]
         end
       end
@@ -116,39 +137,53 @@ module OpenStax::Biglearn::Api
     # Updates Course rosters in Biglearn
     # Requests are hashes containing the following key: :course
     # Requests will not be sent if the course has not been created in Biglearn due to no ecosystem
-    def update_rosters(requests)
+    def update_rosters(*requests)
+      requests, perform_later = extract_perform_later requests
+
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
-        bulk_api_request method: :update_rosters, requests: requests, keys: :course
+        bulk_api_request method: :update_rosters,
+                         requests: requests,
+                         keys: :course,
+                         perform_later: perform_later
       end
     end
 
     # Updates global exercise exclusions
     # Request is a hash containing the following key: :course
-    def update_global_exercise_exclusions(request)
+    def update_global_exercise_exclusions(*request)
+      request, perform_later = extract_perform_later request
+
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
         single_api_request method: :update_global_exercise_exclusions,
                            request: request,
-                           keys: :course
+                           keys: :course,
+                           perform_later: perform_later
       end
     end
 
     # Updates exercise exclusions for the given course
     # Request is a hash containing the following key: :course
-    def update_course_exercise_exclusions(request)
+    def update_course_exercise_exclusions(*request)
+      request, perform_later = extract_perform_later request
+
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
         single_api_request method: :update_course_exercise_exclusions,
                            request: request,
-                           keys: :course
+                           keys: :course,
+                           perform_later: perform_later
       end
     end
 
     # Updates the given course's start/end dates
     # Request is a hash containing the following key: :course
-    def update_course_active_dates(request)
+    def update_course_active_dates(*request)
+      request, perform_later = extract_perform_later request
+
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
         single_api_request method: :update_course_active_dates,
                            request: request,
-                           keys: :course
+                           keys: :course,
+                           perform_later: perform_later
       end
     end
 
@@ -156,23 +191,29 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following keys: :course and :task
     # They may also contain the following optional key: :core_page_ids
     # The task records' sequence numbers are increased by 1
-    def create_update_assignments(requests)
+    def create_update_assignments(*requests)
+      requests, perform_later = extract_perform_later requests
+
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request method: :create_update_assignments,
                          requests: requests,
                          keys: [:course, :task],
-                         optional_keys: :core_page_ids
+                         optional_keys: :core_page_ids,
+                         perform_later: perform_later
       end
     end
 
     # Records a student's response for a given exercise
     # Requests are hashes containing the following keys: :course and :tasked_exercise
-    def record_responses(requests)
+    def record_responses(*requests)
+      requests, perform_later = extract_perform_later requests
+
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request method: :record_responses,
                          requests: requests,
                          keys: [:course, :tasked_exercise],
-                         uuid_key: :response_uuid
+                         uuid_key: :response_uuid,
+                         perform_later: perform_later
       end
     end
 
@@ -271,7 +312,7 @@ module OpenStax::Biglearn::Api
     end
 
     def use_client(client)
-      RequestStore.store[:biglearn_v1_forced_client_in_use] = true
+      RequestStore.store[:biglearn_api_forced_client_in_use] = true
       self.client = client
     end
 
@@ -283,7 +324,7 @@ module OpenStax::Biglearn::Api
       # use the `use_fake_client` and `use_real_client` methods.
 
       # We only read this setting once per request to prevent it from changing mid-request
-      RequestStore.store[:biglearn_v1_default_client_name] ||= Settings::Biglearn.client
+      RequestStore.store[:biglearn_api_forced_client_in_use] ||= Settings::Biglearn.client
     end
 
     alias :threadsafe_client :client
@@ -296,7 +337,7 @@ module OpenStax::Biglearn::Api
 
       synchronize do
         if threadsafe_client.nil? ||
-           (!RequestStore.store[:biglearn_v1_forced_client_in_use] &&
+           (!RequestStore.store[:biglearn_api_forced_client_in_use] &&
             threadsafe_client.name != default_client_name)
           self.client = new_client
           save_static_client!
@@ -361,20 +402,25 @@ module OpenStax::Biglearn::Api
       result
     end
 
-    def single_api_request(method:, request:, keys:, optional_keys: [], result_class: Hash)
+    def single_api_request(method:, request:, keys:, optional_keys: [],
+                           result_class: Hash, perform_later: false)
       verified_request = verify_and_slice_request method: method,
                                                   request: request,
                                                   keys: keys,
                                                   optional_keys: optional_keys
 
-      response = client.send(method, verified_request)
+      if perform_later
+        OpenStax::Biglearn::Api::Job.perform_later method.to_s, verified_request
+      else
+        response = client.send(method, verified_request)
 
-      verify_result(result: block_given? ? yield(request, response) : response,
-                    result_class: result_class)
+        verify_result(result: block_given? ? yield(request, response) : response,
+                      result_class: result_class)
+      end
     end
 
-    def bulk_api_request(method:, requests:, keys:,
-                         optional_keys: [], result_class: Hash, uuid_key: :request_uuid)
+    def bulk_api_request(method:, requests:, keys:, optional_keys: [],
+                         result_class: Hash, uuid_key: :request_uuid, perform_later: false)
       requests_map = {}
       [requests].flatten.map do |request|
         requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
@@ -385,17 +431,21 @@ module OpenStax::Biglearn::Api
 
       requests_array = requests_map.map{ |uuid, request| request.merge uuid_key => uuid }
 
-      responses = {}
-      client.send(method, requests_array).each do |response|
-        request = requests_map[response[uuid_key]]
+      if perform_later
+        OpenStax::Biglearn::Api::Job.perform_later method.to_s, requests_array
+      else
+        responses = {}
+        client.send(method, requests_array).each do |response|
+          request = requests_map[response[uuid_key]]
 
-        responses[request] = verify_result(
-          result: block_given? ? yield(request, response) : response, result_class: result_class
-        )
+          responses[request] = verify_result(
+            result: block_given? ? yield(request, response) : response, result_class: result_class
+          )
+        end
+
+        # If given a Hash instead of an Array, return the response directly
+        requests.is_a?(Hash) ? responses.values.first : responses
       end
-
-      # If given a Hash instead of an Array, return the response directly
-      requests.is_a?(Hash) ? responses.values.first : responses
     end
 
     def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_exercises_to_return:)
@@ -566,6 +616,25 @@ module OpenStax::Biglearn::Api
 
         # nil can happen if the request got suppressed due to the course having no ecosystem
         block.call(modified_requests) unless modified_requests.nil?
+      end
+    end
+
+    def extract_perform_later(args, default = true)
+      if args.size == 1
+        args = args.first
+
+        case args
+        when Array
+          [args, default]
+        when Hash
+          [args.except(:perform_later), args.fetch(:perform_later, default)]
+        else
+          raise ArgumentError, caller
+        end
+      elsif args.size == 2
+        [args.first, args.last.fetch(:perform_later, default)]
+      else
+        raise ArgumentError, caller
       end
     end
 
