@@ -318,7 +318,6 @@ ActiveRecord::Schema.define(version: 20170323195331) do
     t.string   "teach_token",                                               null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
-    t.string   "biglearn_excluded_pool_uuid"
     t.string   "default_open_time"
     t.string   "default_due_time"
     t.integer  "time_zone_id",                                              null: false

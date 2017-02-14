@@ -59,8 +59,9 @@ module OpenStax::Biglearn::Api
           # Apply global exercise exclusions to the new course
           update_global_exercise_exclusions(course: course)
 
-          # This call is in case we held off on roster updates due to no ecosystems
+          # These calls are here in case we held off on them previously due to having no ecosystems
           update_rosters(course: course)
+          update_course_active_dates(course: course)
         else
           current_ecosystem = course.course_ecosystems.first.ecosystem
 

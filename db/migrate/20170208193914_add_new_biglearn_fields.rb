@@ -16,6 +16,8 @@ class AddNewBiglearnFields < ActiveRecord::Migration
     add_column :content_ecosystems, :sequence_number, :integer, null: false, default: 0
     add_column :course_profile_courses, :sequence_number, :integer, null: false, default: 0
 
+    remove_column :course_profile_courses, :biglearn_excluded_pool_uuid, :string
+
     add_index :content_ecosystems, :tutor_uuid, unique: true
     add_index :content_books, :tutor_uuid, unique: true
     add_index :content_chapters, :tutor_uuid, unique: true
