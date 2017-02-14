@@ -294,15 +294,6 @@ module OpenStax::Biglearn::Api
     # Configuration
     #
 
-    # Accessor for the fake client, which has some extra fake methods on it
-    def new_fake_client
-      new_client_call { FakeClient.new(configuration) }
-    end
-
-    def new_real_client
-      new_client_call { RealClient.new(configuration) }
-    end
-
     def default_client_name
       # The default Biglearn client is set via an admin console setting. The
       # default value for this setting is environment-specific in config/initializers/
@@ -310,7 +301,7 @@ module OpenStax::Biglearn::Api
       # the setting if they want during development.
 
       # We only read this setting once per request to prevent it from changing mid-request
-      RequestStore.store[:biglearn_api_default_client_name] ||= Settings::Biglearn.client
+      RequestStore.store[:biglearn_api_default_client_name] ||= Settings::Biglearn.client.to_sym
     end
 
     alias :threadsafe_client :client
@@ -322,10 +313,9 @@ module OpenStax::Biglearn::Api
       # name no longer matches the admin DB setting, change it out.
 
       synchronize do
-        if threadsafe_client.nil? ||
-           (!RequestStore.store[:biglearn_api_forced_client_in_use] &&
-            threadsafe_client.name != default_client_name)
+        if threadsafe_client.nil? || threadsafe_client.name != default_client_name
           self.client = new_client
+
           save_static_client!
         end
       end
@@ -340,19 +330,17 @@ module OpenStax::Biglearn::Api
     end
 
     def new_client(name: default_client_name)
-      case name
+      client_class = case name.to_sym
       when :real
-        new_real_client
+        RealClient
       when :fake
-        new_fake_client
+        FakeClient
       else
-        raise "Invalid client name (#{name}); don't know which Biglearn client to make"
+        raise "Invalid Biglearn client name (#{name})"
       end
-    end
 
-    def new_client_call
       begin
-        yield
+        client_class.new(configuration)
       rescue StandardError => e
         raise "Biglearn client initialization error: #{e.message}"
       end
