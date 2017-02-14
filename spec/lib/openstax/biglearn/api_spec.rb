@@ -15,15 +15,16 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       end
     end
 
-    it 'can use the fake client or the real client' do
-      OpenStax::Biglearn::Api.use_fake_client
-      expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
+    it 'can use the real client or the fake client' do
+      expect(described_class).to receive(:client=) do |client|
+        expect(client).to be_a OpenStax::Biglearn::Api::RealClient
+      end
+      described_class.use_real_client
 
-      OpenStax::Biglearn::Api.use_real_client
-      expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::RealClient)
-
-      OpenStax::Biglearn::Api.use_fake_client
-      expect(OpenStax::Biglearn::Api.send :client).to be_a(OpenStax::Biglearn::Api::FakeClient)
+      expect(described_class).to receive(:client=) do |client|
+        expect(client).to be_a OpenStax::Biglearn::Api::FakeClient
+      end
+      described_class.use_fake_client
     end
   end
 
@@ -31,6 +32,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
     it 'returns whatever is in the settings and caches it until the end of the request' do
       allow(Settings::Biglearn).to receive(:client) { 'blah' }
       expect(described_class.default_client_name).to eq 'blah'
+
       allow(Settings::Biglearn).to receive(:client) { :fake }
       expect(described_class.default_client_name).to eq 'blah'
 
@@ -60,130 +62,228 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     let(:max_exercises_to_return) { 5 }
 
-    [
+    context 'with default perform_later' do
       [
-        :create_ecosystem,
-        -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
-        Hash,
-        -> { @ecosystem },
-        1
-      ],
-      [
-        :create_course,
-        -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
-               ecosystem: @ecosystem } },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :prepare_course_ecosystem,
-        -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
-        String,
-        -> { @course },
-        1
-      ],
-      [
-        :update_course_ecosystems,
-        -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
-        Symbol,
-        -> { @course },
-        1
-      ],
-      [
-        :update_rosters,
-        -> { [ { course: @course.reload } ] },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :update_global_exercise_exclusions,
-        -> { { course: @course.reload } },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :update_course_exercise_exclusions,
-        -> { { course: @course.reload } },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :update_course_active_dates,
-        -> { { course: @course.reload } },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :create_update_assignments,
-        -> { [ { course: @course.reload, task: @task.reload } ] },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :record_responses,
-        -> { [ { course: @course.reload, tasked_exercise: @tasked_exercise.reload } ] },
-        Hash,
-        -> { @course },
-        1
-      ],
-      [
-        :fetch_assignment_pes,
-        -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
-        Content::Exercise,
-        -> { @course },
-        0
-      ],
-      [
-        :fetch_assignment_spes,
-        -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
-        Content::Exercise,
-        -> { @course },
-        0
-      ],
-      [
-        :fetch_practice_worst_areas_pes,
-        -> { [ { student: @student.reload, max_exercises_to_return: max_exercises_to_return } ] },
-        Content::Exercise,
-        -> { @course },
-        0
-      ],
-      [
-        :fetch_student_clues,
-        -> { [ { book_container: @page.reload, student: @student.reload } ] },
-        Hash,
-        -> { @course },
-        0
-      ],
-      [
-        :fetch_teacher_clues,
-        -> { [ { book_container: @page.reload, course_container: @period.reload } ] },
-        Hash,
-        -> { @course },
-        0
-      ]
-    ].each do |method, requests_proc, result_class, sequence_number_record_proc, increment|
-      it "delegates #{method} to the client implementation" do
-        requests = instance_exec &requests_proc
-        sequence_number_record = instance_exec &sequence_number_record_proc
+        [
+          :create_ecosystem,
+          -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
+          OpenStax::Biglearn::Api::Job,
+          -> { @ecosystem },
+          1
+        ],
+        [
+          :create_course,
+          -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
+                 ecosystem: @ecosystem } },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :prepare_course_ecosystem,
+          -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
+          String,
+          -> { @course },
+          1
+        ],
+        [
+          :update_course_ecosystems,
+          -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :update_rosters,
+          -> { [ { course: @course.reload } ] },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :update_global_exercise_exclusions,
+          -> { { course: @course.reload } },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :update_course_exercise_exclusions,
+          -> { { course: @course.reload } },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :update_course_active_dates,
+          -> { { course: @course.reload } },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :create_update_assignments,
+          -> { [ { course: @course.reload, task: @task.reload } ] },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :record_responses,
+          -> { [ { course: @course.reload, tasked_exercise: @tasked_exercise.reload } ] },
+          OpenStax::Biglearn::Api::Job,
+          -> { @course },
+          1
+        ],
+        [
+          :fetch_assignment_pes,
+          -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
+          Content::Exercise,
+          -> { @course },
+          0
+        ],
+        [
+          :fetch_assignment_spes,
+          -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
+          Content::Exercise,
+          -> { @course },
+          0
+        ],
+        [
+          :fetch_practice_worst_areas_pes,
+          -> { [ { student: @student.reload, max_exercises_to_return: max_exercises_to_return } ] },
+          Content::Exercise,
+          -> { @course },
+          0
+        ],
+        [
+          :fetch_student_clues,
+          -> { [ { book_container: @page.reload, student: @student.reload } ] },
+          Hash,
+          -> { @course },
+          0
+        ],
+        [
+          :fetch_teacher_clues,
+          -> { [ { book_container: @page.reload, course_container: @period.reload } ] },
+          Hash,
+          -> { @course },
+          0
+        ]
+      ].each do |method, requests_proc, result_class, sequence_number_record_proc, increment|
+        it "delegates #{method} to the client implementation and returns a job or response" do
+          requests = instance_exec &requests_proc
+          sequence_number_record = instance_exec &sequence_number_record_proc
 
-        sequence_number = sequence_number_record.sequence_number if sequence_number_record.present?
+          sequence_number = sequence_number_record.sequence_number \
+            if sequence_number_record.present?
 
-        expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
+          expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
 
-        results = OpenStax::Biglearn::Api.send(method, requests)
+          results = OpenStax::Biglearn::Api.send(method, requests)
 
-        results = results.values if requests.is_a?(Array)
+          results = results.values if requests.is_a?(Array) && results.is_a?(Hash)
 
-        [results].flatten.each { |result| expect(result).to be_a result_class }
+          [results].flatten.each { |result| expect(result).to be_a result_class }
 
-        expect(sequence_number_record.sequence_number).to(eq(sequence_number + increment)) \
-          if sequence_number_record.present?
+          expect(sequence_number_record.sequence_number).to(eq(sequence_number + increment)) \
+            if sequence_number_record.present?
+        end
+      end
+    end
+
+    context 'with perform_later: false' do
+      [
+        [
+          :create_ecosystem,
+          -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
+          Hash,
+          -> { @ecosystem },
+          1
+        ],
+        [
+          :create_course,
+          -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
+                 ecosystem: @ecosystem } },
+          Hash,
+          -> { @course },
+          1
+        ],
+        [
+          :prepare_course_ecosystem,
+          -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
+          String,
+          -> { @course },
+          1
+        ],
+        [
+          :update_course_ecosystems,
+          -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
+          Symbol,
+          -> { @course },
+          1
+        ],
+        [
+          :update_rosters,
+          -> { [ { course: @course.reload } ] },
+          Hash,
+          -> { @course },
+          1
+        ],
+        [
+          :update_global_exercise_exclusions,
+          -> { { course: @course.reload } },
+          Hash,
+          -> { @course },
+          1
+        ],
+        [
+          :update_course_exercise_exclusions,
+          -> { { course: @course.reload } },
+          Hash,
+          -> { @course },
+          1
+        ],
+        [
+          :update_course_active_dates,
+          -> { { course: @course.reload } },
+          Hash,
+          -> { @course },
+          1
+        ],
+        [
+          :create_update_assignments,
+          -> { [ { course: @course.reload, task: @task.reload } ] },
+          Hash,
+          -> { @course },
+          1
+        ],
+        [
+          :record_responses,
+          -> { [ { course: @course.reload, tasked_exercise: @tasked_exercise.reload } ] },
+          Hash,
+          -> { @course },
+          1
+        ]
+      ].each do |method, requests_proc, result_class, sequence_number_record_proc, increment|
+        it "delegates #{method} to the client implementation and returns the response" do
+          requests = instance_exec &requests_proc
+          sequence_number_record = instance_exec &sequence_number_record_proc
+
+          sequence_number = sequence_number_record.sequence_number \
+            if sequence_number_record.present?
+
+          expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
+
+          results = OpenStax::Biglearn::Api.send(method, requests, perform_later: false)
+
+          results = results.values if requests.is_a?(Array)
+
+          [results].flatten.each { |result| expect(result).to be_a result_class }
+
+          expect(sequence_number_record.sequence_number).to(eq(sequence_number + increment)) \
+            if sequence_number_record.present?
+        end
       end
     end
 

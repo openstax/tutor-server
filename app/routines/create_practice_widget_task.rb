@@ -49,9 +49,11 @@ class CreatePracticeWidgetTask
       exercises = get_local_exercises(ecosystem: ecosystem, pages: pages, role: role,
                                       count: EXERCISES_COUNT, randomize: randomize)
     when :biglearn
-      OpenStax::Biglearn::Api.create_update_assignments(course: course,
-                                                        task: outputs.task,
-                                                        core_page_ids: pages.map(&:id))
+      # NOTE: This call right here locks the course from further Biglearn interaction until
+      # the end of the transaction, so hopefully the rest of routine finishes pretty fast...
+      OpenStax::Biglearn::Api.create_update_assignments(
+        course: course, task: outputs.task, core_page_ids: pages.map(&:id), perform_later: false
+      )
       exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
         task: outputs.task, max_exercises_to_return: EXERCISES_COUNT
       )

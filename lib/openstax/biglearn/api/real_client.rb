@@ -39,13 +39,13 @@ class OpenStax::Biglearn::Api::RealClient
          page.homework_dynamic_pool, page.concept_coach_pool]
       end
     end
-    all_exercise_ids = all_pools.flat_map(&:exercise_ids)
+    all_exercise_ids = all_pools.flat_map(&:content_exercise_ids)
     exercise_uuids_by_id = Content::Models::Exercise.where(id: all_exercise_ids)
                                                     .pluck(:id, :uuid)
                                                     .to_h
     exercise_uuids_by_pool = {}
     all_pools.each do |pool|
-      exercise_uuids_by_pool[pool] = pool.exercise_ids.map do |exercise_id|
+      exercise_uuids_by_pool[pool] = pool.content_exercise_ids.map do |exercise_id|
         exercise_uuids_by_id[exercise_id]
       end
     end
