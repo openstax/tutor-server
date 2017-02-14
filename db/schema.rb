@@ -874,19 +874,15 @@ ActiveRecord::Schema.define(version: 20170323195331) do
   add_index "user_customer_services", ["user_profile_id"], name: "index_user_customer_services_on_user_profile_id", unique: true, using: :btree
 
   create_table "user_profiles", force: :cascade do |t|
-    t.integer  "account_id",                null: false
-    t.string   "exchange_read_identifier",  null: false
-    t.string   "exchange_write_identifier", null: false
+    t.integer  "account_id",  null: false
     t.datetime "deleted_at"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.text     "ui_settings"
   end
 
   add_index "user_profiles", ["account_id"], name: "index_user_profiles_on_account_id", unique: true, using: :btree
   add_index "user_profiles", ["deleted_at"], name: "index_user_profiles_on_deleted_at", using: :btree
-  add_index "user_profiles", ["exchange_read_identifier"], name: "index_user_profiles_on_exchange_read_identifier", unique: true, using: :btree
-  add_index "user_profiles", ["exchange_write_identifier"], name: "index_user_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
   create_table "user_tour_views", force: :cascade do |t|
     t.integer "view_count",      default: 0, null: false

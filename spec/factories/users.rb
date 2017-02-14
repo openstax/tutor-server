@@ -6,8 +6,6 @@ FactoryGirl.define do
       first_name { SecureRandom.hex.to_s }
       last_name { SecureRandom.hex.to_s }
       skip_terms_agreement { false }
-      exchange_write_identifier { SecureRandom.hex.to_s }
-      exchange_read_identifier { SecureRandom.hex.to_s }
       salesforce_contact_id { nil }
 
       profile { create(:user_profile,
@@ -16,8 +14,6 @@ FactoryGirl.define do
                        full_name: full_name,
                        username: username,
                        skip_terms_agreement: skip_terms_agreement,
-                       exchange_read_identifier: exchange_read_identifier,
-                       exchange_write_identifier: exchange_write_identifier,
                        salesforce_contact_id: salesforce_contact_id) }
       strategy { User::Strategies::Direct::User.new(profile) }
     end

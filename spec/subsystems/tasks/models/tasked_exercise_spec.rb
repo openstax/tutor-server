@@ -76,20 +76,4 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
   end
-
-  it 'calls SendTaskedExerciseAnswerToExchange when completed' do
-    expect(SendTaskedExerciseAnswerToExchange).to(
-      receive(:perform_later).with(tasked_exercise: tasked_exercise)
-    )
-    tasked_exercise.free_response = 'abc'
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
-    tasked_exercise.handle_task_step_completion!
-  end
-
-  it 'does not call SendTaskedExerciseAnswerToExchange when attributes are missing' do
-    expect(SendTaskedExerciseAnswerToExchange).not_to receive(:perform_later)
-    tasked_exercise.handle_task_step_completion!
-    expect(Set.new tasked_exercise.errors).to eq Set.new [[:free_response, 'is required'],
-                                                          [:answer_id, 'is required']]
-  end
 end
