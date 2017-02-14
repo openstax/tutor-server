@@ -7,34 +7,18 @@ module User
         verify_and_return strategy_class.all, klass: self, error: StrategyError
       end
 
-      def create(account_id:,
-                 exchange_read_identifier:,
-                 exchange_write_identifier:,
-                 strategy_class: ::User::Strategies::Direct::User)
+      def create(account_id:, strategy_class: ::User::Strategies::Direct::User)
         account_id = verify_and_return account_id, klass: Integer
-        exchange_read_identifier = verify_and_return exchange_read_identifier, klass: String
-        exchange_write_identifier = verify_and_return exchange_write_identifier, klass: String
 
-        verify_and_return strategy_class.create(
-          account_id: account_id,
-          exchange_read_identifier: exchange_read_identifier,
-          exchange_write_identifier: exchange_write_identifier
-        ), klass: self, error: StrategyError
+        verify_and_return strategy_class.create(account_id: account_id), klass: self,
+                                                                         error: StrategyError
       end
 
-      def create!(account_id:,
-                  exchange_read_identifier:,
-                  exchange_write_identifier:,
-                  strategy_class: ::User::Strategies::Direct::User)
+      def create!(account_id:, strategy_class: ::User::Strategies::Direct::User)
         account_id = verify_and_return account_id, klass: Integer
-        exchange_read_identifier = verify_and_return exchange_read_identifier, klass: String
-        exchange_write_identifier = verify_and_return exchange_write_identifier, klass: String
 
-        verify_and_return strategy_class.create!(
-          account_id: account_id,
-          exchange_read_identifier: exchange_read_identifier,
-          exchange_write_identifier: exchange_write_identifier
-        ), klass: self, error: StrategyError
+        verify_and_return strategy_class.create!(account_id: account_id), klass: self,
+                                                                          error: StrategyError
       end
 
       def find(*args, strategy_class: ::User::Strategies::Direct::User)
@@ -64,18 +48,6 @@ module User
 
     def account
       verify_and_return @strategy.account, klass: OpenStax::Accounts::Account, error: StrategyError
-    end
-
-    def exchange_read_identifier
-      verify_and_return @strategy.exchange_read_identifier, klass: String,
-                                                            allow_nil: true,
-                                                            error: StrategyError
-    end
-
-    def exchange_write_identifier
-      verify_and_return @strategy.exchange_write_identifier, klass: String,
-                                                             allow_nil: true,
-                                                             error: StrategyError
     end
 
     def username

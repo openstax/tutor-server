@@ -18,6 +18,9 @@ class AddNewBiglearnFields < ActiveRecord::Migration
 
     remove_column :course_profile_courses, :biglearn_excluded_pool_uuid, :string
 
+    remove_column :user_profiles, :exchange_read_identifier, :string
+    remove_column :user_profiles, :exchange_write_identifier, :string
+
     add_index :content_ecosystems, :tutor_uuid, unique: true
     add_index :content_books, :tutor_uuid, unique: true
     add_index :content_chapters, :tutor_uuid, unique: true

@@ -30,27 +30,20 @@ RSpec.feature 'Switching biglearn option' do
 
     real_option.select_option
 
-    begin
-      click_button 'Save'
-
-      # Expire the cached setting so we can see the change
-      expire_biglearn_client_setting_cache
-
-      expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to(
-        receive(:fetch_student_clues)
-      ).and_return([])
-      expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).not_to(
-        receive(:fetch_student_clues)
-      )
-
-      OpenStax::Biglearn::Api.fetch_student_clues([])
-    ensure
-      Settings::Db.store.biglearn_client = 'fake'
-      expire_biglearn_client_setting_cache
+    # We'll stub out the settings here so as to not mess up other specs
+    allow(Settings::Db.store).to receive(:[]=) do |key, value|
+      expect(value).to(eq(:real)) if key == 'biglearn_client'
     end
-  end
+    click_button 'Save'
+    allow(Settings::Biglearn).to receive(:client).and_return :real
 
-  def expire_biglearn_client_setting_cache
-    Settings::Db.store.object('biglearn_client').try!(:expire_cache)
+    expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to(
+      receive(:fetch_student_clues)
+    ).and_return([])
+    expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).not_to(
+      receive(:fetch_student_clues)
+    )
+
+    OpenStax::Biglearn::Api.fetch_student_clues([])
   end
 end

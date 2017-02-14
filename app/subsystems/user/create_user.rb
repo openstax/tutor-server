@@ -8,8 +8,7 @@ module User
 
     protected
 
-    def exec(account_id: nil, exchange_identifiers: nil,
-             email: nil, username: nil, password: nil,
+    def exec(account_id: nil, email: nil, username: nil, password: nil,
              first_name: nil, last_name: nil, full_name: nil, title: nil,
              faculty_status: nil, salesforce_contact_id: nil)
       raise ArgumentError, 'Requires either an email, a username or an account_id' \
@@ -22,19 +21,9 @@ module User
         faculty_status: faculty_status, salesforce_contact_id: salesforce_contact_id
       )
 
-      outputs.user = ::User::User.create(
-        exchange_read_identifier: (exchange_identifiers || new_identifiers).read,
-        exchange_write_identifier: (exchange_identifiers || new_identifiers).write,
-        account_id: account_id
-      )
+      outputs.user = ::User::User.create account_id: account_id
 
       transfer_errors_from(outputs.user.to_model, type: :verbatim)
-    end
-
-    private
-
-    def new_identifiers
-      @identifiers ||= OpenStax::Exchange.create_identifiers
     end
 
     def find_or_create_account_id(attrs)

@@ -51,9 +51,6 @@ gem 'omniauth-oauth2', '~> 1.3.1'
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 7.3.0'
 
-# OpenStax Exchange integration
-gem 'openstax_exchange', '~> 0.2.1'
-
 # Datetime parsing
 gem 'chronic'
 
