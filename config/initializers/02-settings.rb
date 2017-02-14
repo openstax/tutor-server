@@ -11,9 +11,12 @@ Settings::Db.store.defaults[:default_open_time] = '00:01'
 Settings::Db.store.defaults[:default_due_time] = '07:00'
 Settings::Db.store.defaults[:term_years_to_import] = ''
 
-Settings::Db.store.defaults[:biglearn_client] = Rails.env.production? ? :real : :fake
+secrets = Rails.application.secrets
 
-redis_secrets = Rails.application.secrets['redis']
+biglearn_secrets = secrets['openstax']['biglearn']
+Settings::Db.store.defaults[:biglearn_client] = biglearn_secrets.fetch('stub', true) ? :fake : :real
+
+redis_secrets = secrets['redis']
 Settings::Redis.store = Redis::Store.new(
   url: redis_secrets['url'],
   namespace: redis_secrets['namespaces']['settings']
