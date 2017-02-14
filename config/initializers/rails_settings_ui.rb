@@ -31,7 +31,9 @@ Rails.application.config.to_prepare do
         new_excluded_ids = Settings::Exercises.excluded_ids
         return if new_excluded_ids == old_excluded_ids
 
-        OpenStax::Biglearn::Api.update_global_exercise_exclusions(exercise_ids: new_excluded_ids)
+        CourseProfile::Models::Course.find_each do |course|
+          OpenStax::Biglearn::Api.update_global_exercise_exclusions course: course
+        end
       end
     end
   end

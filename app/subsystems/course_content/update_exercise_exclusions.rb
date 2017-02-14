@@ -5,13 +5,12 @@ class CourseContent::UpdateExerciseExclusions
   protected
 
   def exec(course:, updates_array:)
-
+    # TODO: Optimize this code so it doesn't cause serialization failures in production
     updates_array = updates_array.map(&:stringify_keys)
     page_ids = Content::Models::Exercise.find(updates_array.map{ |update| update['id'] })
                                         .map(&:content_page_id)
 
-    # The course's biglearn_excluded_pool is updated at the end,
-    # so we can just lock the course to make this update atomic
+    # The course is touched at the end, so we lock the course to make this update atomic
     course.lock!
 
     out = GetExercises.call(course: course, page_ids: page_ids).outputs
@@ -31,9 +30,9 @@ class CourseContent::UpdateExerciseExclusions
         )
         exercise_representation['is_excluded'] = true
       elsif !is_excluded.nil? # false
-        excluded_exercise = CourseContent::Models::ExcludedExercise.find_by(
+        excluded_exercise = CourseContent::Models::ExcludedExercise.where(
           course_profile_course_id: course.id, exercise_number: exercise.number
-        ).try(:destroy)
+        ).delete_all
         exercise_representation['is_excluded'] = false
       end
 
@@ -45,7 +44,6 @@ class CourseContent::UpdateExerciseExclusions
 
     # Send the exercise exclusions to Biglearn
     OpenStax::Biglearn::Api.update_course_exercise_exclusions(course: course)
-
   end
 
 end
