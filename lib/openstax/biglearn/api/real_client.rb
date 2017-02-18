@@ -27,7 +27,7 @@ class OpenStax::Biglearn::Api::RealClient
   # book_container is a Content::Chapter or Content::Page or one of their models
   # exercise_id is a String containing an Exercise uuid, number or uid
   # period is a CourseMembership::Period or CourseMembership::Models::Period
-  # max_exercises_to_return is an integer
+  # max_num_exercises is an integer
 
   # Adds the given ecosystem to Biglearn
   def create_ecosystem(request)
@@ -143,26 +143,27 @@ class OpenStax::Biglearn::Api::RealClient
   # Prepares Biglearn for a course ecosystem update
   def prepare_course_ecosystem(request)
     course = request[:course]
-    to_ecosystem = Content::Ecosystem.new strategy: request[:ecosystem].to_model.wrap
-    from_ecosystem = Content::Ecosystem.new(
-      strategy: course.ecosystems.find{ |ecosystem| ecosystem.id != to_ecosystem.id }.wrap
-    )
+    to_ecosystem_model = request[:ecosystem].to_model
+    to_ecosystem = Content::Ecosystem.new strategy: to_ecosystem_model.wrap
+    from_ecosystem_model = course.ecosystems.find{ |ecosystem| ecosystem.id != to_ecosystem.id }
+    from_ecosystem = Content::Ecosystem.new strategy: from_ecosystem_model.wrap
     content_map = Content::Map.find_or_create_by!(
       from_ecosystems: [from_ecosystem], to_ecosystem: to_ecosystem
     )
     cnx_pagemodule_mappings = content_map.map_pages_to_pages(pages: from_ecosystem.pages)
                                          .map do |from_page, to_page|
-      { from_cnx_pagemodule_identity: from_page.uuid, to_cnx_pagemodule_identity: to_page.uuid }
+      { from_cnx_pagemodule_identity: from_page.cnx_id, to_cnx_pagemodule_identity: to_page.cnx_id }
     end
     exercise_mappings = content_map.map_exercises_to_pages(exercises: from_ecosystem.exercises)
                                    .map do |exercise, page|
-      { from_exercise_uuid: exercise.tutor_uuid, to_cnx_pagemodule_identity: page.uuid }
+      { from_exercise_uuid: exercise.uuid, to_cnx_pagemodule_identity: page.cnx_id }
     end
 
     biglearn_request = {
       preparation_uuid: request[:preparation_uuid],
       course_uuid: course.uuid,
       sequence_number: request[:sequence_number],
+      next_ecosystem_uuid: to_ecosystem.tutor_uuid,
       ecosystem_map: {
         from_ecosystem_uuid: from_ecosystem.tutor_uuid,
         to_ecosystem_uuid: to_ecosystem.tutor_uuid,
@@ -195,8 +196,12 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_requests = requests.map do |request|
       course = request[:course]
       course_containers = []
-      students = course.periods.flat_map do |period|
-        course_containers << { container_uuid: period.uuid, parent_container_uuid: course.uuid }
+      students = course.periods_with_deleted.flat_map do |period|
+        course_containers << {
+          container_uuid: period.uuid,
+          parent_container_uuid: course.uuid,
+          is_archived: period.deleted?
+        }
 
         period.latest_enrollments.map do |enrollment|
           { student_uuid: enrollment.student.uuid, container_uuid: period.uuid }
@@ -213,14 +218,15 @@ class OpenStax::Biglearn::Api::RealClient
     end
 
     bulk_api_request url: :update_rosters, requests: biglearn_requests,
-                     requests_key: :rosters, responses_key: :updated_course_uuids, max_requests: 100
+                     requests_key: :rosters, responses_key: :updated_rosters, max_requests: 100
   end
 
   # Updates global exercise exclusions for the given course
-  def update_global_exercise_exclusions(request)
+  def update_globally_excluded_exercises(request)
     course = request[:course]
 
-    excluded_numbers_and_versions = Settings::Exercises.excluded_ids.map do |number_or_uid|
+    excluded_ids = Settings::Exercises.excluded_ids.split(',').map(&:strip)
+    excluded_numbers_and_versions = excluded_ids.map do |number_or_uid|
       number_or_uid.split('@')
     end
     group_numbers, uids = excluded_numbers_and_versions.partition { |ex| ex.second.nil? }
@@ -239,16 +245,17 @@ class OpenStax::Biglearn::Api::RealClient
     exclusions = group_exclusions + version_exclusions
 
     biglearn_request = {
+      request_uuid: SecureRandom.uuid,
       course_uuid: course.uuid,
       sequence_number: request[:sequence_number],
       exclusions: exclusions
     }
 
-    single_api_request url: :update_global_exercise_exclusions, request: biglearn_request
+    single_api_request url: :update_globally_excluded_exercises, request: biglearn_request
   end
 
   # Updates exercise exclusions for the given course
-  def update_course_exercise_exclusions(request)
+  def update_course_excluded_exercises(request)
     course = request[:course]
 
     group_numbers = course.excluded_exercises.map(&:exercise_number)
@@ -256,12 +263,13 @@ class OpenStax::Biglearn::Api::RealClient
     group_exclusions = group_uuids.map { |group_uuid| { exercise_group_uuid: group_uuid } }
 
     biglearn_request = {
+      request_uuid: SecureRandom.uuid,
       course_uuid: course.uuid,
       sequence_number: request[:sequence_number],
       exclusions: group_exclusions
     }
 
-    single_api_request url: :update_course_exercise_exclusions, request: biglearn_request
+    single_api_request url: :update_course_excluded_exercises, request: biglearn_request
   end
 
   # Updates the given course's start/end dates
@@ -269,6 +277,7 @@ class OpenStax::Biglearn::Api::RealClient
     course = request[:course]
 
     biglearn_request = {
+      request_uuid: SecureRandom.uuid,
       course_uuid: course.uuid,
       sequence_number: request[:sequence_number],
       starts_at: course.starts_at,
@@ -312,7 +321,7 @@ class OpenStax::Biglearn::Api::RealClient
       assigned_exercises = task.task_steps.select(&:exercise?).map do |exercise_step|
         {
           trial_uuid: exercise_step.tasked.uuid,
-          exercise_uuid: exercise_step.tasked.exercise.tutor_uuid,
+          exercise_uuid: exercise_step.tasked.exercise.uuid,
           is_spe: exercise_step.spaced_practice_group?,
           is_pe: exercise_step.personalized_group?
         }
@@ -350,15 +359,21 @@ class OpenStax::Biglearn::Api::RealClient
         course_uuid: request[:course].uuid,
         sequence_number: request[:sequence_number],
         trial_uuid: tasked_exercise.uuid,
-        student_uuid: tasked_exercise.task.taskings.first.role.student.uuid,
+        student_uuid: tasked_exercise.task_step.task.taskings.first.role.student.uuid,
         exercise_uuid: tasked_exercise.exercise.uuid,
         is_correct: tasked_exercise.is_correct?,
         responded_at: tasked_exercise.updated_at
       }
     end
 
-    bulk_api_request url: :record_responses, requests: biglearn_requests,
-                     requests_key: :responses, responses_key: :recorded_response_uuids
+    bulk_api_request(
+      url: :record_responses,
+      requests: biglearn_requests,
+      requests_key: :responses,
+      responses_key: :recorded_response_uuids
+    ) do |response|
+      { response_uuid: response }
+    end
   end
 
   # Returns a number of recommended personalized exercises for the given tasks
@@ -399,7 +414,7 @@ class OpenStax::Biglearn::Api::RealClient
       }
     end
 
-    bulk_api_request url: :fetch_practice_worst_areas_pes, requests: biglearn_requests,
+    bulk_api_request url: :fetch_practice_worst_areas_exercises, requests: biglearn_requests,
                      requests_key: :worst_areas_requests, responses_key: :worst_areas_responses
   end
 
@@ -427,7 +442,7 @@ class OpenStax::Biglearn::Api::RealClient
       }
     end
 
-    bulk_api_request url: :fetch_student_clues, requests: biglearn_requests,
+    bulk_api_request url: :fetch_teacher_clues, requests: biglearn_requests,
                      requests_key: :teacher_clue_requests, responses_key: :teacher_clue_responses
   end
 
@@ -437,7 +452,7 @@ class OpenStax::Biglearn::Api::RealClient
     Addressable::URI.join @server_url, url.to_s
   end
 
-  def request(method:, url:, body:)
+  def api_request(method:, url:, body:)
     absolute_uri = absolutize_url(url)
 
     request_options = HEADER_OPTIONS.merge({ body: body.to_json })
@@ -448,7 +463,7 @@ class OpenStax::Biglearn::Api::RealClient
   end
 
   def single_api_request(method: :post, url:, request:)
-    response_hash = request(method: method, url: url, body: request)
+    response_hash = api_request method: method, url: url, body: request
 
     block_given? ? yield(response_hash) : response_hash
   end
@@ -457,10 +472,10 @@ class OpenStax::Biglearn::Api::RealClient
                        requests_key:, responses_key:, max_requests: 1000)
     max_requests ||= requests.size
 
-    requests.each_slice(max_requests) do |requests|
+    requests.each_slice(max_requests).flat_map do |requests|
       body = { requests_key => requests }
 
-      response_hash = request(method: method, url: url, body: body)
+      response_hash = api_request method: method, url: url, body: body
 
       responses_array = response_hash[responses_key]
 
