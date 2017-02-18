@@ -5,7 +5,7 @@ VCR.configure do |c|
   c.hook_into :webmock
   c.configure_rspec_metadata!
   c.allow_http_connections_when_no_cassette = false
-  c.ignore_localhost = true
+  c.ignore_localhost = false
 
   %w(
     tutor_specs_oauth_token

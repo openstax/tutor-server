@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:3000/record_responses
+    body:
+      encoding: UTF-8
+      string: '{"responses":[{"response_uuid":"<RECORD_RESPONSES EXAMPLE 1 REQUEST
+        1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":25,"trial_uuid":"d9705ba7-0181-41b3-a0b8-518eb1f2ecb8","student_uuid":"<STUDENT
+        UUID>","exercise_uuid":"07c698e4-2c83-4b1e-adc7-f95b33d86eeb","is_correct":false,"responded_at":"2017-02-18T01:07:20.662Z"}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"3632115ba896574984d35a9df531a8fa"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 71861c64-5b56-4d85-be5a-634f23dfd5ce
+      X-Runtime:
+      - '0.045194'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"recorded_response_uuids":["<RECORD_RESPONSES EXAMPLE 1 REQUEST 1
+        UUID>"]}'
+    http_version: 
+  recorded_at: Sat, 18 Feb 2017 01:07:27 GMT
+recorded_with: VCR 2.9.3

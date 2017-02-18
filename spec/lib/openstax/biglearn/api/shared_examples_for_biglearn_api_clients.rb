@@ -44,21 +44,10 @@ RSpec.shared_examples 'a biglearn api client' do
 
   before(:all, when_tagged_with_vcr) do
     VCR.configure do |config|
-      config.define_cassette_placeholder('<ECOSYSTEM 1 UUID>'    ) { @ecosystem_1.tutor_uuid }
-      config.define_cassette_placeholder('<BOOK 1 UUID>'         ) { @book_1.tutor_uuid      }
-      config.define_cassette_placeholder('<CHAPTER 1 UUID>'      ) { @chapter_1.tutor_uuid   }
-      config.define_cassette_placeholder('<PAGE 1 UUID>'         ) { @page_1.tutor_uuid      }
-      config.define_cassette_placeholder('<EXERCISE 1 UUID>'     ) { @exercise_1.uuid        }
-      config.define_cassette_placeholder('<ECOSYSTEM 2 UUID>'    ) { @ecosystem_2.tutor_uuid }
-      config.define_cassette_placeholder('<BOOK 2 UUID>'         ) { @book_2.tutor_uuid      }
-      config.define_cassette_placeholder('<CHAPTER 2 UUID>'      ) { @chapter_2.tutor_uuid   }
-      config.define_cassette_placeholder('<PAGE 2 UUID>'         ) { @page_2.tutor_uuid      }
-      config.define_cassette_placeholder('<EXERCISE 2 UUID>'     ) { @exercise_2.uuid        }
-      config.define_cassette_placeholder('<COURSE UUID>'         ) { @course.uuid            }
-      config.define_cassette_placeholder('<PERIOD UUID>'         ) { @period.uuid            }
-      config.define_cassette_placeholder('<TASK UUID>'           ) { @task.uuid              }
-      config.define_cassette_placeholder('<TASKED EXERCISE UUID>') { @tasked_exercise.uuid   }
-      config.define_cassette_placeholder('<STUDENT UUID>'        ) { @student.uuid           }
+      config.define_cassette_placeholder('<ECOSYSTEM 1 UUID>') { @ecosystem_1.tutor_uuid }
+      config.define_cassette_placeholder('<COURSE UUID>'     ) { @course.uuid            }
+      config.define_cassette_placeholder('<TASK UUID>'       ) { @task.uuid              }
+      config.define_cassette_placeholder('<STUDENT UUID>'    ) { @student.uuid           }
     end
   end
 

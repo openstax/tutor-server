@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:3000/update_globally_excluded_exercises
+    body:
+      encoding: UTF-8
+      string: '{"request_uuid":"91616e69-9b84-4e75-ac9e-b0d207315d77","course_uuid":"<COURSE
+        UUID>","sequence_number":25,"exclusions":[{"exercise_uuid":"07c698e4-2c83-4b1e-adc7-f95b33d86eeb"},{"exercise_uuid":"d49e650b-792a-4a06-a86f-897c153705f9"},{"exercise_uuid":"81e92307-7fef-4443-a90e-260b9cd49c51"},{"exercise_uuid":"40bdbcff-3d6a-4410-a921-216bced4bc20"},{"exercise_uuid":"bee6a52f-50e7-47f1-b4e1-83dd77d8fe4b"},{"exercise_uuid":"a21bc601-f551-42fe-a24d-9a72e7550fe6"},{"exercise_uuid":"564c6fe6-a22b-49d5-ae5e-1ea83a89ed9a"},{"exercise_uuid":"5187e76c-6463-44cb-b202-b15b6bdfe89c"},{"exercise_uuid":"08e3f415-9aa3-4e4f-9f09-8c5cab6136b5"},{"exercise_uuid":"50554661-65bc-4394-bd2b-98035825ea85"},{"exercise_uuid":"df76d03b-26b6-4dab-bbfe-acf3d604b0ad"},{"exercise_uuid":"c1db5070-091c-442e-9bc8-2639e1d5cda9"},{"exercise_uuid":"166bfe41-22f9-4475-b18c-6739a269a874"},{"exercise_uuid":"b1700cf5-7367-4cc3-8777-b6a0e7b79738"},{"exercise_uuid":"97a9fa1e-32b8-4760-96fd-604d3c3d0196"},{"exercise_uuid":"93631a6c-2a84-4d97-aef7-88b808fc3785"},{"exercise_uuid":"f480bc8c-b2d0-4703-909e-f7f9a306d468"},{"exercise_uuid":"f3bb7dee-6916-44a4-a974-f67e5fc8684c"},{"exercise_uuid":"ffe30de5-4f5d-4f7d-9ab9-d7d10f8b1cad"},{"exercise_uuid":"69a6eae8-d456-41c6-9300-3f349d8f7709"},{"exercise_uuid":"f7b0786a-0349-4867-b545-9133dd808d06"},{"exercise_uuid":"af9844e9-796f-49db-9658-a85b6c9b585e"},{"exercise_uuid":"e7c33f28-dbe2-4f32-a4e0-a3e65bc8c31b"},{"exercise_uuid":"7a11b63e-ab4f-4837-ab1b-f6f522fbe9b1"},{"exercise_uuid":"47d1095c-5341-48c1-ae84-ec6219cb12ae"},{"exercise_uuid":"5477068d-d372-48c3-801d-99bdada80cfe"},{"exercise_uuid":"f6208fe4-c657-417d-9338-7ffb35614deb"},{"exercise_uuid":"e721812e-1ad3-4711-9f87-d0978d02519f"},{"exercise_uuid":"e14c7964-8540-4df4-8cbf-228e4b049cfa"},{"exercise_uuid":"92b1e848-b743-4d8a-9a88-7a0e69678c37"},{"exercise_uuid":"f4f049ab-ca23-4cbd-af64-1d799267eb3d"},{"exercise_uuid":"c58f7b3b-4740-42cb-833b-8d20db718cfd"},{"exercise_uuid":"1df8a2a6-5cb3-4b8a-8620-5921ec5f7e73"},{"exercise_uuid":"017d1838-b647-42c3-81c3-f6624da7ba91"},{"exercise_uuid":"f2fda400-1613-421e-90c9-520139c30d14"},{"exercise_uuid":"6f13ffe8-4a1c-4621-8989-c4c002604855"},{"exercise_uuid":"67d2bd0c-f374-4c7b-8a6e-52b3f46ad06f"},{"exercise_uuid":"7d1972ed-043e-44e2-9ab4-17a7e5634793"},{"exercise_uuid":"597102d8-20c1-4017-b94c-a2110a9c96c6"},{"exercise_uuid":"0110c827-373c-4529-b166-c4231b21246d"},{"exercise_uuid":"9256e04b-3311-41fb-bfdc-90f705afd5d1"},{"exercise_uuid":"da4f2b13-03d5-497b-adff-074c2ac8865d"},{"exercise_uuid":"17afd334-1c9e-4c1f-8791-00bceb868326"},{"exercise_uuid":"a376060d-c06b-4579-941a-bdd98e8bf1fb"},{"exercise_uuid":"e7d16f3e-3653-424b-9105-770c59e3cccc"},{"exercise_uuid":"1356726a-b026-4249-bfc1-17d18294d2fe"},{"exercise_uuid":"fae45f46-1286-4c42-889b-0dea5cccd189"},{"exercise_uuid":"2211f349-afd8-497b-9ebc-83e717f2f2d1"},{"exercise_uuid":"5d423e83-fec9-40fe-a79e-6e6980fcbc2a"},{"exercise_uuid":"b5831374-f5aa-4900-ad5b-5d2e11da8f56"},{"exercise_uuid":"3369a820-1807-45cc-8f8c-3a1f419780ef"},{"exercise_uuid":"bc726c60-03a6-4f76-b51b-67613037099f"},{"exercise_uuid":"d8a75d21-e893-4caf-bd73-b5127b698b5b"},{"exercise_uuid":"bdc5408e-73f6-4d46-81c4-8d0f6187091d"},{"exercise_uuid":"c9ff042a-ea92-48c2-a5e5-d3684cfcf244"},{"exercise_uuid":"28daf011-72c7-4440-bb67-6ec9b4b44185"},{"exercise_uuid":"7fdda99f-6ec7-4c56-a66a-c18921a85aa0"},{"exercise_uuid":"2ac09bbd-ce67-4720-bf2b-24dac8564fc9"},{"exercise_uuid":"1c243e15-dacc-4d60-9e18-dc88afed49f3"},{"exercise_uuid":"114064cb-1116-4ea1-86ec-7a20885db368"},{"exercise_uuid":"74af8761-51f7-498f-97f0-df98a355f2a9"},{"exercise_uuid":"89abb75d-a749-4982-a31c-c98b3921d558"},{"exercise_uuid":"56fd9662-b944-4497-be31-0be46afab736"},{"exercise_uuid":"caebd481-d89d-44d5-8b2d-203980c20a3a"},{"exercise_uuid":"aff802b1-e781-4228-ad01-38994fbc7f1b"},{"exercise_uuid":"9a416965-e799-4972-9ca7-a71dd4117197"},{"exercise_uuid":"55c5965b-31be-44f1-b1c9-80d347d7a418"},{"exercise_uuid":"7a77d6ea-bcff-4789-96fc-bc8b3d1d0220"}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"5820854f62a6eb3d38ba7ba0d1b3ea75"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - ce117b0a-600b-4a90-9d37-86e3b7427a7b
+      X-Runtime:
+      - '0.101159'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"status":"success"}'
+    http_version: 
+  recorded_at: Sat, 18 Feb 2017 01:07:27 GMT
+recorded_with: VCR 2.9.3
