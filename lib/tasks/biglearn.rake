@@ -32,9 +32,9 @@ namespace :biglearn do
 
               OpenStax::Biglearn::Api.create_course course: course, ecosystem: ecosystems.first
 
-              OpenStax::Biglearn::Api.update_global_exercise_exclusions course: course
+              OpenStax::Biglearn::Api.update_globally_excluded_exercises course: course
 
-              OpenStax::Biglearn::Api.update_course_exercise_exclusions course: course
+              OpenStax::Biglearn::Api.update_course_excluded_exercises course: course
 
               (ecosystems.slice(1..-1)).each do |ecosystem|
                 preparation_uuid = OpenStax::Biglearn::Api.prepare_course_ecosystem(

@@ -26,7 +26,7 @@ module OpenStax::Biglearn::Api
     # book_container is a Content::Chapter or Content::Page or one of their models
     # exercise_id is a String containing an Exercise uuid, number or uid
     # period is a CourseMembership::Period or CourseMembership::Models::Period
-    # max_exercises_to_return is an integer
+    # max_num_exercises is an integer
 
     # Adds the given ecosystem to Biglearn
     # Requests is a hash containing the following key: :ecosystem
@@ -65,7 +65,7 @@ module OpenStax::Biglearn::Api
           create_course(course: course, ecosystem: initial_ecosystem, perform_later: perform_later)
 
           # Apply global exercise exclusions to the new course
-          update_global_exercise_exclusions(course: course, perform_later: perform_later)
+          update_globally_excluded_exercises(course: course, perform_later: perform_later)
 
           # These calls are here in case we held off on them previously due to having no ecosystems
           update_rosters(course: course, perform_later: perform_later)
@@ -110,7 +110,7 @@ module OpenStax::Biglearn::Api
         SecureRandom.uuid.tap do |preparation_uuid|
           single_api_request method: :prepare_course_ecosystem,
                              request: request.merge(preparation_uuid: preparation_uuid),
-                             keys: [:course, :ecosystem],
+                             keys: [:course, :sequence_number, :ecosystem],
                              perform_later: perform_later
         end
       end
@@ -126,10 +126,10 @@ module OpenStax::Biglearn::Api
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request(method: :update_course_ecosystems,
                          requests: requests,
-                         keys: [:course, :preparation_uuid],
+                         keys: [:course, :sequence_number, :preparation_uuid],
                          result_class: Symbol,
                          perform_later: perform_later) do |request, response|
-          response[:update_status]
+          response[:update_status].to_sym
         end
       end
     end
@@ -143,33 +143,33 @@ module OpenStax::Biglearn::Api
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request method: :update_rosters,
                          requests: requests,
-                         keys: :course,
+                         keys: [:course, :sequence_number],
                          perform_later: perform_later
       end
     end
 
     # Updates global exercise exclusions
     # Request is a hash containing the following key: :course
-    def update_global_exercise_exclusions(*request)
+    def update_globally_excluded_exercises(*request)
       request, perform_later = extract_perform_later request
 
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
-        single_api_request method: :update_global_exercise_exclusions,
+        single_api_request method: :update_globally_excluded_exercises,
                            request: request,
-                           keys: :course,
+                           keys: [:course, :sequence_number],
                            perform_later: perform_later
       end
     end
 
     # Updates exercise exclusions for the given course
     # Request is a hash containing the following key: :course
-    def update_course_exercise_exclusions(*request)
+    def update_course_excluded_exercises(*request)
       request, perform_later = extract_perform_later request
 
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
-        single_api_request method: :update_course_exercise_exclusions,
+        single_api_request method: :update_course_excluded_exercises,
                            request: request,
-                           keys: :course,
+                           keys: [:course, :sequence_number],
                            perform_later: perform_later
       end
     end
@@ -182,7 +182,7 @@ module OpenStax::Biglearn::Api
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
         single_api_request method: :update_course_active_dates,
                            request: request,
-                           keys: :course,
+                           keys: [:course, :sequence_number],
                            perform_later: perform_later
       end
     end
@@ -197,7 +197,7 @@ module OpenStax::Biglearn::Api
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request method: :create_update_assignments,
                          requests: requests,
-                         keys: [:course, :task],
+                         keys: [:course, :sequence_number, :task],
                          optional_keys: :core_page_ids,
                          perform_later: perform_later
       end
@@ -211,7 +211,7 @@ module OpenStax::Biglearn::Api
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
         bulk_api_request method: :record_responses,
                          requests: requests,
-                         keys: [:course, :tasked_exercise],
+                         keys: [:course, :sequence_number, :tasked_exercise],
                          uuid_key: :response_uuid,
                          perform_later: perform_later
       end
@@ -219,52 +219,52 @@ module OpenStax::Biglearn::Api
 
     # Returns a number of recommended personalized exercises for the given tasks
     # May return less than the given number if there aren't enough exercises
-    # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+    # Requests are hashes containing the following keys: :task and :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_pes(requests)
       bulk_api_request(
         method: :fetch_assignment_pes,
         requests: requests,
-        keys: [:task, :max_exercises_to_return],
+        keys: [:task, :max_num_exercises],
         result_class: Content::Exercise
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
                                          exercise_uuids: response[:exercise_uuids],
-                                         max_exercises_to_return: request[:max_exercises_to_return]
+                                         max_num_exercises: request[:max_num_exercises]
       end
     end
 
     # Returns a number of recommended spaced practice exercises for the given tasks
     # May return less than the given number if there aren't enough exercises
-    # Requests are hashes containing the following keys: :task and :max_exercises_to_return
+    # Requests are hashes containing the following keys: :task and :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_spes(requests)
       bulk_api_request(
         method: :fetch_assignment_spes,
         requests: requests,
-        keys: [:task, :max_exercises_to_return],
+        keys: [:task, :max_num_exercises],
         result_class: Content::Exercise
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
                                          exercise_uuids: response[:exercise_uuids],
-                                         max_exercises_to_return: request[:max_exercises_to_return]
+                                         max_num_exercises: request[:max_num_exercises]
       end
     end
 
     # Returns a number of recommended personalized exercises for the student's worst topics
     # May return less than the given number if there aren't enough exercises
-    # Requests are hashes containing the following keys: :student and :max_exercises_to_return
+    # Requests are hashes containing the following keys: :student and :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_practice_worst_areas_pes(requests)
       bulk_api_request(
         method: :fetch_practice_worst_areas_pes,
         requests: requests,
-        keys: [:student, :max_exercises_to_return],
+        keys: [:student, :max_num_exercises],
         result_class: Content::Exercise
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:student].course.ecosystems.first,
                                          exercise_uuids: response[:exercise_uuids],
-                                         max_exercises_to_return: request[:max_exercises_to_return]
+                                         max_num_exercises: request[:max_num_exercises]
       end
     end
 
@@ -422,19 +422,19 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_exercises_to_return:)
+    def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_num_exercises:)
       number_returned = exercise_uuids.length
 
       raise(
         OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned more exercises than requested"
-      ) if number_returned > max_exercises_to_return
+      ) if number_returned > max_num_exercises
 
       Rails.logger.warn do
         "Biglearn returned less exercises than requested (#{
-        number_returned} instead of #{max_exercises_to_return})"
-      end if number_returned < max_exercises_to_return
+        number_returned} instead of #{max_num_exercises})"
+      end if number_returned < max_num_exercises
 
-      exercises = ecosystem.exercises.where(uuid: exercise_uuids).first(max_exercises_to_return)
+      exercises = ecosystem.exercises.where(uuid: exercise_uuids).first(max_num_exercises)
 
       raise(
         OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned exercises not present locally"

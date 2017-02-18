@@ -8,7 +8,7 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
     return if num_placeholders == 0
 
     chosen_exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
-      tasks: task, max_exercises_to_return: num_placeholders
+      tasks: task, max_num_exercises: num_placeholders
     )
 
     task_step_chosen_exercise_pairs = personalized_placeholder_task_steps.zip(chosen_exercises)

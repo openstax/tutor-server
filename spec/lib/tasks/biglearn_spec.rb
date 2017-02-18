@@ -36,8 +36,8 @@ RSpec.describe 'biglearn:initialize', type: :rake do
   it 'sends the correct number of records to Biglearn' do
     expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem).twice
     expect(OpenStax::Biglearn::Api).to receive(:create_course).exactly(6).times
-    expect(OpenStax::Biglearn::Api).to receive(:update_global_exercise_exclusions).exactly(6).times
-    expect(OpenStax::Biglearn::Api).to receive(:update_course_exercise_exclusions).exactly(6).times
+    expect(OpenStax::Biglearn::Api).to receive(:update_globally_excluded_exercises).exactly(6).times
+    expect(OpenStax::Biglearn::Api).to receive(:update_course_excluded_exercises).exactly(6).times
     expect(OpenStax::Biglearn::Api).to receive(:prepare_course_ecosystem).twice
     expect(OpenStax::Biglearn::Api).to receive(:update_course_ecosystems).once
     expect(OpenStax::Biglearn::Api).to receive(:update_rosters).once

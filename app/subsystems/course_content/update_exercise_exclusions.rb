@@ -43,7 +43,7 @@ class CourseContent::UpdateExerciseExclusions
     course.touch
 
     # Send the exercise exclusions to Biglearn
-    OpenStax::Biglearn::Api.update_course_exercise_exclusions(course: course)
+    OpenStax::Biglearn::Api.update_course_excluded_exercises(course: course)
   end
 
 end
