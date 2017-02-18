@@ -25,7 +25,7 @@ class OpenStax::Biglearn::Api::FakeClient
   # book_container is a Content::Chapter or Content::Page or one of their models
   # exercise_id is a String containing an Exercise uuid, number or uid
   # period is a CourseMembership::Period or CourseMembership::Models::Period
-  # max_exercises_to_return is an integer
+  # max_num_exercises is an integer
 
   # Adds the given ecosystem to Biglearn
   # Ignored in the FakeClient
@@ -42,7 +42,7 @@ class OpenStax::Biglearn::Api::FakeClient
   # Prepares Biglearn for a course ecosystem update
   # Ignored in the FakeClient
   def prepare_course_ecosystem(request)
-    { prepare_status: :accepted }
+    { status: 'accepted' }
   end
 
   # Finalizes course ecosystem updates in Biglearn,
@@ -52,7 +52,7 @@ class OpenStax::Biglearn::Api::FakeClient
     requests.map do |request|
       {
         request_uuid: request[:request_uuid],
-        update_status: :updated_and_ready
+        update_status: 'updated_and_ready'
       }
     end
   end
@@ -70,18 +70,18 @@ class OpenStax::Biglearn::Api::FakeClient
 
   # Updates global exercise exclusions
   # Ignored in the FakeClient
-  def update_global_exercise_exclusions(request)
+  def update_globally_excluded_exercises(request)
     { status: 'success' }
   end
 
   # Updates exercise exclusions for the given course
-  def update_course_exercise_exclusions(request)
+  def update_course_excluded_exercises(request)
     { status: 'success' }
   end
 
   # Updates the given course's active dates
   def update_course_active_dates(request)
-    { status: 'success' }
+    { updated_course_uuid: request[:course].uuid }
   end
 
   # Creates or updates tasks in Biglearn
@@ -153,8 +153,7 @@ class OpenStax::Biglearn::Api::FakeClient
 
       {
         request_uuid: request[:request_uuid],
-        assignment_uuid: task.uuid,
-        sequence_number: course.sequence_number
+        updated_assignment_uuid: task.uuid
       }
     end
   end
@@ -183,7 +182,7 @@ class OpenStax::Biglearn::Api::FakeClient
           request_uuid: request[:request_uuid],
           assignment_uuid: request[:task].uuid,
           exercise_uuids: [],
-          assignment_status: :assignment_unknown
+          assignment_status: 'assignment_unknown'
         }
       else
         all_exercise_uuids = JSON.parse all_exercise_uuids_json
@@ -191,8 +190,8 @@ class OpenStax::Biglearn::Api::FakeClient
         {
           request_uuid: request[:request_uuid],
           assignment_uuid: request[:task].uuid,
-          exercise_uuids: all_exercise_uuids.sample(request[:max_exercises_to_return]),
-          assignment_status: :assignment_ready
+          exercise_uuids: all_exercise_uuids.sample(request[:max_num_exercises]),
+          assignment_status: 'assignment_ready'
         }
       end
     end
@@ -206,7 +205,7 @@ class OpenStax::Biglearn::Api::FakeClient
         request_uuid: request[:request_uuid],
         assignment_uuid: request[:task].uuid,
         exercise_uuids: [],
-        assignment_status: :assignment_ready
+        assignment_status: 'assignment_ready'
       }
     end
   end
@@ -219,7 +218,7 @@ class OpenStax::Biglearn::Api::FakeClient
         request_uuid: request[:request_uuid],
         student_uuid: request[:student].uuid,
         exercise_uuids: [],
-        assignment_status: :assignment_ready
+        student_status: 'student_ready'
       }
     end
   end
@@ -228,10 +227,12 @@ class OpenStax::Biglearn::Api::FakeClient
   # Always returns randomized CLUes in the FakeClient
   def fetch_student_clues(requests)
     requests.map do |request|
+      ecosystem = request.fetch(:book_container).ecosystem
+
       {
         request_uuid: request[:request_uuid],
-        clue_data: random_clue,
-        clue_status: :clue_ready
+        clue_data: random_clue(ecosystem_uuid: ecosystem.tutor_uuid),
+        clue_status: 'clue_ready'
       }
     end
   end
@@ -240,37 +241,23 @@ class OpenStax::Biglearn::Api::FakeClient
   # Always returns randomized CLUes in the FakeClient
   def fetch_teacher_clues(requests)
     requests.map do |request|
+      ecosystem = request.fetch(:book_container).ecosystem
+
       {
         request_uuid: request[:request_uuid],
-        clue_data: random_clue,
-        clue_status: :clue_ready
+        clue_data: random_clue(ecosystem_uuid: ecosystem.tutor_uuid),
+        clue_status: 'clue_ready'
       }
     end
   end
 
   def random_clue(options = {})
-    options[:value] ||= rand(0.0..1.0)
-    options[:value_interpretation] ||= options[:value] >= 0.8 ?
-                                         :high : (options[:value] >= 0.3 ? :medium : :low)
-    options[:confidence_interval_left]  ||= [options[:value] - 0.1, 0.0].max
-    options[:confidence_interval_right] ||= [options[:value] + 0.1, 1.0].min
-    options[:confidence_interval_interpretation] = [:good, :bad].sample
-    options[:sample_size] = 7
-    options[:sample_size_interpretation] = :above
-    options[:unique_learner_count] = 1
+    options[:most_likely]    ||= rand
+    options[:minimum]        ||= rand * options[:most_likely]
+    options[:maximum]        ||= 1 - rand * (1 - options[:most_likely])
+    options[:is_real]        ||= [true, false].sample
 
-    {
-      value: options[:value],
-      value_interpretation: options[:value_interpretation],
-      confidence_interval: [
-        options[:confidence_interval_left],
-        options[:confidence_interval_right]
-      ],
-      confidence_interval_interpretation: options[:confidence_interval_interpretation],
-      sample_size: options[:sample_size],
-      sample_size_interpretation: options[:sample_size_interpretation],
-      unique_learner_count: options[:unique_learner_count]
-    }
+    options.slice(:minimum, :most_likely, :maximum, :is_real, :ecosystem_uuid)
   end
 
 end

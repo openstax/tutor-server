@@ -52,7 +52,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     after(:all) { DatabaseCleaner.clean }
 
-    let(:max_exercises_to_return) { 5 }
+    let(:max_num_exercises) { 5 }
 
     context 'with default perform_later' do
       [
@@ -93,14 +93,14 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           1
         ],
         [
-          :update_global_exercise_exclusions,
+          :update_globally_excluded_exercises,
           -> { { course: @course.reload } },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
-          :update_course_exercise_exclusions,
+          :update_course_excluded_exercises,
           -> { { course: @course.reload } },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
@@ -129,21 +129,21 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         ],
         [
           :fetch_assignment_pes,
-          -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
+          -> { [ { task: @task.reload, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },
           0
         ],
         [
           :fetch_assignment_spes,
-          -> { [ { task: @task.reload, max_exercises_to_return: max_exercises_to_return } ] },
+          -> { [ { task: @task.reload, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },
           0
         ],
         [
           :fetch_practice_worst_areas_pes,
-          -> { [ { student: @student.reload, max_exercises_to_return: max_exercises_to_return } ] },
+          -> { [ { student: @student.reload, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },
           0
@@ -223,14 +223,14 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           1
         ],
         [
-          :update_global_exercise_exclusions,
+          :update_globally_excluded_exercises,
           -> { { course: @course.reload } },
           Hash,
           -> { @course },
           1
         ],
         [
-          :update_course_exercise_exclusions,
+          :update_course_excluded_exercises,
           -> { { course: @course.reload } },
           Hash,
           -> { @course },
@@ -280,7 +280,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
     end
 
     it 'converts returned exercise uuids to exercise objects' do
-      exercises = @exercises.first(max_exercises_to_return).map do |exercise|
+      exercises = @exercises.first(max_num_exercises).map do |exercise|
         Content::Exercise.new strategy: exercise.wrap
       end
       expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
@@ -296,7 +296,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       result = nil
       expect do
         result = OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_exercises_to_return: max_exercises_to_return
+          task: @task, max_num_exercises: max_num_exercises
         )
       end.not_to raise_error
       expect(result).to match_array(exercises)
@@ -307,7 +307,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: (max_exercises_to_return + 1).times.map{ SecureRandom.uuid }
+            exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid }
           }
         end
       end
@@ -315,13 +315,13 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
       expect do
         OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_exercises_to_return: max_exercises_to_return
+          task: @task, max_num_exercises: max_num_exercises
         )
       end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
     end
 
     it 'logs a warning when client returns less exercises than expected' do
-      exercises = @exercises.first(max_exercises_to_return - 1).map do |exercise|
+      exercises = @exercises.first(max_num_exercises - 1).map do |exercise|
         Content::Exercise.new strategy: exercise.wrap
       end
       expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
@@ -337,7 +337,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       result = nil
       expect do
         result = OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_exercises_to_return: max_exercises_to_return
+          task: @task, max_num_exercises: max_num_exercises
         )
       end.not_to raise_error
       expect(result).to match_array(exercises)
@@ -348,7 +348,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: max_exercises_to_return.times.map{ SecureRandom.uuid }
+            exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid }
           }
         end
       end
@@ -356,7 +356,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
       expect do
         OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_exercises_to_return: max_exercises_to_return
+          task: @task, max_num_exercises: max_num_exercises
         )
       end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
     end

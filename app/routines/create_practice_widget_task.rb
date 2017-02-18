@@ -55,7 +55,7 @@ class CreatePracticeWidgetTask
         course: course, task: outputs.task, core_page_ids: pages.map(&:id), perform_later: false
       )
       exercises = OpenStax::Biglearn::Api.fetch_assignment_pes(
-        task: outputs.task, max_exercises_to_return: EXERCISES_COUNT
+        task: outputs.task, max_num_exercises: EXERCISES_COUNT
       )
     else
       raise ArgumentError, "exercise_source: must be one of [:local, :biglearn]"

@@ -32,7 +32,7 @@ Rails.application.config.to_prepare do
         return if new_excluded_ids == old_excluded_ids
 
         CourseProfile::Models::Course.find_each do |course|
-          OpenStax::Biglearn::Api.update_global_exercise_exclusions course: course
+          OpenStax::Biglearn::Api.update_globally_excluded_exercises course: course
         end
       end
     end
