@@ -20,15 +20,12 @@ RSpec.describe GetStudentGuide, type: :routine do
   end
 
   let(:clue_matcher) do
-    {
-      "value" => kind_of(Float),
-      "value_interpretation" => kind_of(Symbol),
-      "confidence_interval" => [kind_of(Float), kind_of(Float)],
-      "confidence_interval_interpretation" => kind_of(Symbol),
-      "sample_size" => kind_of(Integer),
-      "sample_size_interpretation" => kind_of(Symbol),
-      "unique_learner_count" => kind_of(Integer)
-    }
+    a_hash_including(
+      minimum: kind_of(Numeric),
+      most_likely: kind_of(Numeric),
+      maximum: kind_of(Numeric),
+      is_real: be_in([true, false])
+    )
   end
 
   context 'without work' do
