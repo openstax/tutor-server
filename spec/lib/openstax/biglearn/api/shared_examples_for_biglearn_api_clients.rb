@@ -44,12 +44,15 @@ RSpec.shared_examples 'a biglearn api client' do
 
   before(:all, when_tagged_with_vcr) do
     VCR.configure do |config|
+      config.ignore_localhost = false
       config.define_cassette_placeholder('<ECOSYSTEM 1 UUID>') { @ecosystem_1.tutor_uuid }
       config.define_cassette_placeholder('<COURSE UUID>'     ) { @course.uuid            }
       config.define_cassette_placeholder('<TASK UUID>'       ) { @task.uuid              }
       config.define_cassette_placeholder('<STUDENT UUID>'    ) { @student.uuid           }
     end
   end
+
+  after(:all, when_tagged_with_vcr) { VCR.configuration.ignore_localhost = true }
 
   [
     [ :create_ecosystem,
