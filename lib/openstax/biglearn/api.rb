@@ -59,24 +59,25 @@ module OpenStax::Biglearn::Api
         return if course.course_ecosystems.empty?
 
         if course.sequence_number.nil? || course.sequence_number == 0
-          initial_ecosystem = course.course_ecosystems.last.ecosystem
+          # The initial ecosystem is always course_ecosystems.last
+          ecosystem = course.course_ecosystems.last.ecosystem
 
           # New course, so create it in Biglearn
-          create_course(course: course, ecosystem: initial_ecosystem, perform_later: perform_later)
+          create_course(course: course, ecosystem: ecosystem, perform_later: perform_later).tap do
+            # Apply global exercise exclusions to the new course
+            update_globally_excluded_exercises(course: course, perform_later: perform_later)
 
-          # Apply global exercise exclusions to the new course
-          update_globally_excluded_exercises(course: course, perform_later: perform_later)
-
-          # These calls are here in case we held off on them previously due to having no ecosystems
-          update_rosters(course: course, perform_later: perform_later)
-          update_course_active_dates(course: course, perform_later: perform_later)
+            # These calls exist in case we held off on them previously due to having no ecosystems
+            update_rosters(course: course, perform_later: perform_later)
+            update_course_active_dates(course: course, perform_later: perform_later)
+          end
         else
           current_ecosystem = course.course_ecosystems.first.ecosystem
 
           # Course already exists in Biglearn, so just send the latest update
           preparation_uuid = prepare_course_ecosystem(
             course: course, ecosystem: current_ecosystem, perform_later: perform_later
-          )
+          ).fetch(:preparation_uuid)
 
           update_course_ecosystems(
             course: course, preparation_uuid: preparation_uuid, perform_later: perform_later
@@ -107,12 +108,14 @@ module OpenStax::Biglearn::Api
       request, perform_later = extract_perform_later request
 
       with_unique_gapless_course_sequence_numbers(requests: request) do |request|
-        SecureRandom.uuid.tap do |preparation_uuid|
-          single_api_request method: :prepare_course_ecosystem,
-                             request: request.merge(preparation_uuid: preparation_uuid),
-                             keys: [:course, :sequence_number, :ecosystem],
-                             perform_later: perform_later
-        end
+        preparation_uuid = SecureRandom.uuid
+
+        single_api_request method: :prepare_course_ecosystem,
+                           request: request.merge(preparation_uuid: preparation_uuid),
+                           keys: [:course, :sequence_number, :ecosystem],
+                           perform_later: perform_later
+
+        { preparation_uuid: preparation_uuid }
       end
     end
 
@@ -124,13 +127,10 @@ module OpenStax::Biglearn::Api
       requests, perform_later = extract_perform_later requests
 
       with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
-        bulk_api_request(method: :update_course_ecosystems,
+        bulk_api_request method: :update_course_ecosystems,
                          requests: requests,
                          keys: [:course, :sequence_number, :preparation_uuid],
-                         result_class: Symbol,
-                         perform_later: perform_later) do |request, response|
-          response[:update_status].to_sym
-        end
+                         perform_later: perform_later
       end
     end
 
@@ -275,7 +275,7 @@ module OpenStax::Biglearn::Api
       bulk_api_request(method: :fetch_student_clues,
                        requests: requests,
                        keys: [:book_container, :student]) do |request, response|
-        response[:clue_data]
+        response.fetch :clue_data
       end
     end
 
@@ -286,7 +286,7 @@ module OpenStax::Biglearn::Api
       bulk_api_request(method: :fetch_teacher_clues,
                        requests: requests,
                        keys: [:book_container, :course_container]) do |request, response|
-        response[:clue_data]
+        response.fetch :clue_data
       end
     end
 

@@ -74,7 +74,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [
           :prepare_course_ecosystem,
           -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
-          String,
+          Hash,
           -> { @course },
           1
         ],
@@ -204,14 +204,14 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [
           :prepare_course_ecosystem,
           -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
-          String,
+          Hash,
           -> { @course },
           1
         ],
         [
           :update_course_ecosystems,
           -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
-          Symbol,
+          Hash,
           -> { @course },
           1
         ],
