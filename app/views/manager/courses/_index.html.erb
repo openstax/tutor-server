@@ -64,9 +64,9 @@
               <span class="ecosystem-created-at" style="white-space: nowrap;">
                 <%= "(#{ecosystem.created_at})" if ecosystem %>
               </span>
-              <span class="course-duration" style="white-space: nowrap;">
+              <div class="course-duration" style="white-space: nowrap;">
                 Term: <%= course_info.starts_at.strftime('%b %d, %Y') %> - <%= course_info.ends_at.strftime('%b %d, %Y') %>
-              </span>
+              </div>
             </div>
             <div class="content-middle">
               <%= ecosystem.try(:comments) %>
