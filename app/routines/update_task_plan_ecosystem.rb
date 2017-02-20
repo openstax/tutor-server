@@ -81,17 +81,10 @@ class UpdateTaskPlanEcosystem
     Content::Models::Exercise.where(id: exercise_ids).each do |ex_model|
       wrapped_exs_by_id[ex_model.id] = Content::Exercise.new(strategy: ex_model.wrap)
     end
-
-    ex_to_page_map = map.map_exercises_to_pages(exercises: wrapped_exs_by_id.values)
-
-    updated_exercise_ids = exercise_ids.map do |exercise_id|
-      wrapped_ex = wrapped_exs_by_id[exercise_id.to_i]
-      candidate_exercises = ex_to_page_map[wrapped_ex].homework_core_pool.exercises
-      # TODO: Maybe migrate all exercises to have UUIDs and do this mapping by UUID
-      candidate_exercises.find{ |ex| ex.number == wrapped_ex.number }.try!(:id).try!(:to_s)
-    end.compact
-
-    outputs.task_plan.settings['exercise_ids'] = updated_exercise_ids
+    exercise_numbers = exercise_ids.map { |exercise_id| wrapped_exs_by_id[exercise_id.to_i].number }
+    outputs.task_plan.settings['exercise_ids'] = new_wrapped_ecosystem
+                                                   .exercises_by_numbers(*exercise_numbers)
+                                                   .map{|ex| ex.id.to_s }
   end
 
 end
