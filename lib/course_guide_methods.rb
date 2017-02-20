@@ -33,9 +33,7 @@ module CourseGuideMethods
       OpenStax::Biglearn::Api.fetch_teacher_clues(requests)
     end
 
-    {}.tap do |result|
-      responses.each{ |request, response| result[request[:book_container].tutor_uuid] = response }
-    end
+    responses.map { |request, response| [request[:book_container].tutor_uuid, response] }.to_h
   end
 
   def get_page_guides(mapped_relevant_pages,
