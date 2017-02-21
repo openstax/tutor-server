@@ -114,9 +114,9 @@ class OpenStax::Biglearn::Api::RealClient
 
     exercises = ecosystem.exercises.map do |exercise|
       {
-        uuid: exercise.uuid,
-        exercises_uuid: exercise.group_uuid,
-        exercises_version: exercise.version,
+        exercise_uuid: exercise.uuid,
+        group_uuid: exercise.group_uuid,
+        version: exercise.version,
         los: exercise.los.map(&:value)
       }
     end
