@@ -34,6 +34,10 @@ nav.navbar.production {
   background-color: #f9f9f9;
 }
 
+[data-toggle="popover"] {
+  cursor: pointer;
+}
+
 /* Courses Stats */
 
 .stats-card {

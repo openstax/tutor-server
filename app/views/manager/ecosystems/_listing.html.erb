@@ -36,13 +36,13 @@
       <td><%= ecosystem.imported_at %></td>
       <td><%= link_to 'Archive', book.url, target: '_blank',
                                            class: 'btn btn-xs btn-primary' %></td>
-      <td><%= link_to 'Show UUID', '#', role: 'button',
-                                        tabindex: 0,
-                                        data: { toggle: 'popover',
-                                                placement: 'top',
-                                                content: book.uuid,
-                                                container: 'body' },
-                                        class: 'btn btn-xs btn-secondary' %></td>
+      <td data-toggle="popover"
+          data-container="body"
+          data-placement="top"
+          data-content="<%= book.uuid %>"
+      >
+        <%= book.uuid[0...6] %>
+      </td>
       <td><%= link_to 'Download Manifest',
                       manifest_path.call(ecosystem.id),
                       role: 'button',
