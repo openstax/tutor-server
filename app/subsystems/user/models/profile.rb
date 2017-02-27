@@ -28,7 +28,7 @@ module User
       validates :account, presence: true, uniqueness: true
       validates :exchange_read_identifier, presence: true
       validates :exchange_write_identifier, presence: true
-      validates :ui_settings, max_json_length: 1000
+      validates :ui_settings, max_json_length: 1500
       validate  :validate_ui_settings_change_history , on: :update
 
       delegate :username, :first_name, :last_name, :full_name, :title,
