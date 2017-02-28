@@ -150,13 +150,13 @@ class OpenStax::Biglearn::Api::RealClient
     content_map = Content::Map.find_or_create_by!(
       from_ecosystems: [from_ecosystem], to_ecosystem: to_ecosystem
     )
-    cnx_pagemodule_mappings = content_map.map_pages_to_pages(pages: from_ecosystem.pages)
+    book_container_mappings = content_map.map_pages_to_pages(pages: from_ecosystem.pages)
                                          .map do |from_page, to_page|
-      { from_cnx_pagemodule_identity: from_page.cnx_id, to_cnx_pagemodule_identity: to_page.cnx_id }
+      { from_book_container_uuid: from_page.uuid, to_book_container_uuid: to_page.uuid }
     end
     exercise_mappings = content_map.map_exercises_to_pages(exercises: from_ecosystem.exercises)
                                    .map do |exercise, page|
-      { from_exercise_uuid: exercise.uuid, to_cnx_pagemodule_identity: page.cnx_id }
+      { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.uuid }
     end
 
     biglearn_request = {
@@ -167,7 +167,7 @@ class OpenStax::Biglearn::Api::RealClient
       ecosystem_map: {
         from_ecosystem_uuid: from_ecosystem.tutor_uuid,
         to_ecosystem_uuid: to_ecosystem.tutor_uuid,
-        cnx_pagemodule_mappings: cnx_pagemodule_mappings,
+        book_container_mappings: book_container_mappings,
         exercise_mappings: exercise_mappings
       }
     }
