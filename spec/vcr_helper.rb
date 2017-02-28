@@ -19,6 +19,6 @@ end
 
 VCR_OPTS = {
   # This should default to :none before pushing
-  record: ENV["VCR_OPTS_RECORD"].try!(:to_sym) || :none,
+  record: ENV['VCR_OPTS_RECORD'].try!(:to_sym) || :none,
   allow_unused_http_interactions: false
 }
