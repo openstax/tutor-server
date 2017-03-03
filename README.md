@@ -15,10 +15,9 @@ You will need a specific version of `ruby` installed to run tutor-server.
 We recommend using `rbenv` to manage your ruby versions
 and `ruby-build` to compile new versions of ruby.
 
-* Linux: Follow the installation instructions for
+Follow the installation instructions for
 [rbenv](https://github.com/rbenv/rbenv#installation) and
 [ruby-build](https://github.com/rbenv/ruby-build#installation)
-* OS X: `brew install rbenv ruby-build`
 
 After installing all the prerequisites, `git clone` the tutor-server repository and `cd` into it:
 
@@ -31,7 +30,25 @@ Then install the proper version of ruby using rbenv:
 
 ```
 rbenv install 2.2.3
+```
+
+Make sure that `which ruby` and `which gem` point to your `.rbenv` folder,
+NOT `/usr/bin` or `/usr/local/bin`.
+If either of them are pointing to the wrong folder and you did modify your path according to
+`rbenv`'s installation instructions, you might need to restart your shell.
+
+Then install `bundler`:
+
+```
 gem install bundler
+```
+
+Once again, make sure that `which bundle` points to your `.rbenv` folder.
+Restart your shell if that's not the case.
+
+Then install the required gems:
+
+```
 bundle install
 ```
 
