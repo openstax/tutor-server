@@ -15,8 +15,7 @@ module Api
         consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
         result = ResetPracticeWidget.call(
-          role: role, exercise_source: :biglearn,
-          page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
+          role: role, page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
 
         render_api_errors(result.errors) || respond_with(

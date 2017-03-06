@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
 
   let(:application)        { FactoryGirl.create :doorkeeper_application }
-  let(:user_1)             { FactoryGirl.create(:user) }
+  let(:user_1)             { FactoryGirl.create :user }
   let(:user_1_token)       do
     FactoryGirl.create :doorkeeper_access_token, application: application,
                                                  resource_owner_id: user_1.id
@@ -246,11 +246,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       page.practice_widget_pool.update_attribute :content_exercise_ids,
                                                  [tasked_exercise.content_exercise_id]
 
-      AddUserAsPeriodStudent[period: period, user: user_1]
+      ecosystem = Content::Ecosystem.new strategy: page.ecosystem.wrap
 
-      task = ResetPracticeWidget[
-        role: Entity::Role.last, exercise_source: :local, page_ids: [page.id]
-      ]
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+
+      role = AddUserAsPeriodStudent[period: period, user: user_1]
+
+      task = ResetPracticeWidget[role: role, page_ids: [page.id]]
 
       step = task.task_steps.first
 

@@ -212,7 +212,7 @@ class OpenStax::Biglearn::Api::FakeClient
 
   # Returns a number of recommended personalized exercises for the student's worst topics
   # NotYetImplemented in FakeClient (always returns empty result)
-  def fetch_practice_worst_areas_pes(requests)
+  def fetch_practice_worst_areas_exercises(requests)
     requests.map do |request|
       {
         request_uuid: request[:request_uuid],

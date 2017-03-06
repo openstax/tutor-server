@@ -183,7 +183,7 @@ RSpec.describe GetStudentGuide, type: :routine do
 
         VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
           capture_stdout do
-            CreateStudentHistory[course: @course.reload, roles: [@role, @second_role]]
+            CreateStudentHistory[course: @course.reload, roles: [@role.reload, @second_role.reload]]
           end
         end
       end
