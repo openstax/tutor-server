@@ -3,6 +3,14 @@ module Api::V1
 
     include Roar::JSON
 
+    property :mode,
+             type: String,
+             writeable: true,
+             readable: false,
+             schema_info: {
+               description: "The practice mode, either \"specific\" or \"most_needed\""
+             }
+
     collection :page_ids,
                writeable: true,
                readable: false,

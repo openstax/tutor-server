@@ -255,9 +255,9 @@ module OpenStax::Biglearn::Api
     # May return less than the given number if there aren't enough exercises
     # Requests are hashes containing the following keys: :student and :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
-    def fetch_practice_worst_areas_pes(requests)
+    def fetch_practice_worst_areas_exercises(requests)
       bulk_api_request(
-        method: :fetch_practice_worst_areas_pes,
+        method: :fetch_practice_worst_areas_exercises,
         requests: requests,
         keys: [:student, :max_num_exercises],
         result_class: Content::Exercise

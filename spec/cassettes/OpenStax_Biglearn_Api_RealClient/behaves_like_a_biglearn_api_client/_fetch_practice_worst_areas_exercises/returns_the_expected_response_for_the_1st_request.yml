@@ -5,7 +5,7 @@ http_interactions:
     uri: http://localhost:3000/fetch_practice_worst_areas_exercises
     body:
       encoding: UTF-8
-      string: '{"worst_areas_requests":[{"request_uuid":"<FETCH_PRACTICE_WORST_AREAS_PES
+      string: '{"worst_areas_requests":[{"request_uuid":"<FETCH_PRACTICE_WORST_AREAS_EXERCISES
         EXAMPLE 1 REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","max_num_exercises":5}]}'
     headers:
       User-Agent:
@@ -43,8 +43,8 @@ http_interactions:
       - thin
     body:
       encoding: UTF-8
-      string: '{"worst_areas_responses":[{"request_uuid":"<FETCH_PRACTICE_WORST_AREAS_PES
+      string: '{"worst_areas_responses":[{"request_uuid":"<FETCH_PRACTICE_WORST_AREAS_EXERCISES
         EXAMPLE 1 REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","exercise_uuids":[],"student_status":"student_unready"}]}'
-    http_version: 
+    http_version:
   recorded_at: Sat, 18 Feb 2017 01:07:27 GMT
 recorded_with: VCR 2.9.3

@@ -142,7 +142,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           0
         ],
         [
-          :fetch_practice_worst_areas_pes,
+          :fetch_practice_worst_areas_exercises,
           -> { [ { student: @student.reload, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },

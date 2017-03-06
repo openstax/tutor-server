@@ -2,8 +2,14 @@ require 'rails_helper'
 
 RSpec.describe ResetPracticeWidget, type: :routine do
 
-  let(:role)          { FactoryGirl.create(:course_membership_student).role }
+  let(:student)       { FactoryGirl.create :course_membership_student }
+  let(:course)        { student.course }
+  let(:role)          { student.role }
+
   let(:page)          { FactoryGirl.create :content_page }
+
+  let(:ecosystem)     { Content::Ecosystem.new strategy: page.ecosystem.wrap }
+
   (1..5).each do |n|
     let!("exercise_#{n}".to_sym)   do
       FactoryGirl.create(:content_exercise, page: page).tap do |exercise|
@@ -12,10 +18,16 @@ RSpec.describe ResetPracticeWidget, type: :routine do
       end
     end
   end
+
   let(:result)        do
-    described_class.call role: role, exercise_source: :local, page_ids: [page.id]
+    described_class.call role: role, page_ids: [page.id]
   end
+
   let(:practice_task) { result.outputs.task }
+
+  before              do
+    AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+  end
 
   it 'returns results from CreatePracticeWidgetTask' do
     expect(practice_task).to be_persisted
@@ -26,7 +38,7 @@ RSpec.describe ResetPracticeWidget, type: :routine do
 
   it 'clears incomplete steps from previous practice widgets' do
     Preview::AnswerExercise[task_step: practice_task.task_steps.first, is_correct: false]
-    practice_task_2 = described_class[role: role, exercise_source: :local, page_ids: [page.id]]
+    practice_task_2 = described_class[role: role, page_ids: [page.id]]
     expect(practice_task_2).to be_persisted
     expect(practice_task.task_steps.reload.size).to eq 1
   end
@@ -38,7 +50,7 @@ RSpec.describe ResetPracticeWidget, type: :routine do
     course.ends_at = current_time.yesterday
     course.save!
 
-    result = described_class.call(role: role, exercise_source: :fake, page_ids: [])
+    result = described_class.call(role: role, page_ids: [])
     expect(result.errors.first.code).to eq :course_ended
   end
 
