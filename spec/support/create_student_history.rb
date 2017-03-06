@@ -10,6 +10,9 @@ class CreateStudentHistory
   private
 
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+    raise ArgumentError, "Role index #{i} not in given course", caller \
+      if roles.any? { |role| role.student.course != course }
+
     ecosystem = setup_course_book(course, book_id)
 
     create_assignments(ecosystem, course, course.periods.reload)
@@ -65,10 +68,7 @@ class CreateStudentHistory
   end
 
   def create_practice_widget(role, ids = {})
-    ResetPracticeWidget[role: role,
-                        chapter_ids: ids[:chapters],
-                        page_ids: ids[:pages],
-                        exercise_source: :local].task_steps
+    ResetPracticeWidget[role: role, chapter_ids: ids[:chapters], page_ids: ids[:pages]].task_steps
   end
 
   def answer_correctly(steps, num)

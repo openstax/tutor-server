@@ -405,7 +405,7 @@ class OpenStax::Biglearn::Api::RealClient
   end
 
   # Returns a number of recommended personalized exercises for the student's worst topics
-  def fetch_practice_worst_areas_pes(requests)
+  def fetch_practice_worst_areas_exercises(requests)
     biglearn_requests = requests.map do |request|
       {
         request_uuid: request[:request_uuid],

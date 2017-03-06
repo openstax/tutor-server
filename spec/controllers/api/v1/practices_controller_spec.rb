@@ -83,10 +83,6 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([])
 
-      expect_any_instance_of(CreatePracticeWidgetTask).to(
-        receive(:get_local_exercises).and_return([])
-      )
-
       api_post :create,
                user_1_token,
                parameters: { id: course.id, role_id: role.id },
@@ -108,8 +104,8 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
       role = Entity::Role.last
 
-      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
-      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
+      ResetPracticeWidget[role: role, page_ids: [page.id]]
+      ResetPracticeWidget[role: role, page_ids: [page.id]]
 
       api_get :show, user_1_token, parameters: { id: course.id, role_id: role.id }
 
@@ -123,7 +119,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1)
       student_role = AddUserAsPeriodStudent[period: period, user: user_2]
-      ResetPracticeWidget[role: student_role, exercise_source: :local, page_ids: [page.id]]
+      ResetPracticeWidget[role: student_role, page_ids: [page.id]]
 
       api_get :show, user_1_token, parameters: { id: course.id, role_id: student_role.id }
 
