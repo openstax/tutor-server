@@ -183,6 +183,9 @@ gem 'request_store'
 # Use PostgreSQL cursors with ActiveRecord
 gem 'postgresql_cursor'
 
+# Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
+gem 'awesome_print'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
@@ -192,9 +195,6 @@ group :development, :test do
 
   # Show failing parallel specs instantly
   gem 'rspec-instafail'
-
-  # Allows 'ap' alternative to 'pp'
-  gem 'awesome_print'
 
   # Thin development server
   gem 'thin'
