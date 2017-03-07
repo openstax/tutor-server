@@ -14,7 +14,9 @@ Settings::Db.store.defaults[:term_years_to_import] = ''
 secrets = Rails.application.secrets
 
 biglearn_secrets = secrets['openstax']['biglearn']
-Settings::Db.store.defaults[:biglearn_client] = biglearn_secrets.fetch('stub', true) ? :fake : :real
+biglearn_stub = biglearn_secrets.fetch('stub', true)
+Settings::Db.store.defaults[:biglearn_client] = biglearn_stub ? :fake : :real
+Settings::Db.store.defaults[:biglearn_algorithm_name] = biglearn_stub ? :local_query : :sparfa
 
 redis_secrets = secrets['redis']
 Settings::Redis.store = Redis::Store.new(

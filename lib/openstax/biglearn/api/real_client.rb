@@ -382,6 +382,7 @@ class OpenStax::Biglearn::Api::RealClient
       {
         request_uuid: request[:request_uuid],
         assignment_uuid: request[:task].uuid,
+        algorithm_name: algorithm_name,
         max_num_exercises: request[:max_num_exercises]
       }
     end
@@ -396,6 +397,7 @@ class OpenStax::Biglearn::Api::RealClient
       {
         request_uuid: request[:request_uuid],
         assignment_uuid: request[:task].uuid,
+        algorithm_name: algorithm_name,
         max_num_exercises: request[:max_num_exercises]
       }
     end
@@ -410,6 +412,7 @@ class OpenStax::Biglearn::Api::RealClient
       {
         request_uuid: request[:request_uuid],
         student_uuid: request[:student].uuid,
+        algorithm_name: algorithm_name,
         max_num_exercises: request[:max_num_exercises]
       }
     end
@@ -424,7 +427,8 @@ class OpenStax::Biglearn::Api::RealClient
       {
         request_uuid: request[:request_uuid],
         student_uuid: request[:student].uuid,
-        book_container_uuid: request[:book_container].tutor_uuid
+        book_container_uuid: request[:book_container].tutor_uuid,
+        algorithm_name: algorithm_name
       }
     end
 
@@ -438,7 +442,8 @@ class OpenStax::Biglearn::Api::RealClient
       {
         request_uuid: request[:request_uuid],
         course_container_uuid: request[:course_container].uuid,
-        book_container_uuid: request[:book_container].tutor_uuid
+        book_container_uuid: request[:book_container].tutor_uuid,
+        algorithm_name: algorithm_name
       }
     end
 
@@ -447,6 +452,10 @@ class OpenStax::Biglearn::Api::RealClient
   end
 
   protected
+
+  def algorithm_name
+    Settings::Biglearn.algorithm_name
+  end
 
   def absolutize_url(url)
     Addressable::URI.join @server_url, url.to_s
