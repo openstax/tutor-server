@@ -12,6 +12,13 @@ module Settings
         Settings::Db.store.biglearn_client
       end
 
+      def algorithm_name
+        return Settings::Db.store.defaults[:biglearn_algorithm_name] \
+          unless ActiveRecord::Base.connection.table_exists? 'settings'
+
+        Settings::Db.store.biglearn_algorithm_name
+      end
+
     end
 
   end
