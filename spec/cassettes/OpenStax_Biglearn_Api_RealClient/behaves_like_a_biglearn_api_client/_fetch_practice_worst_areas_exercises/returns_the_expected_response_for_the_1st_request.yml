@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"worst_areas_requests":[{"request_uuid":"<FETCH_PRACTICE_WORST_AREAS_EXERCISES
-        EXAMPLE 1 REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","max_num_exercises":5}]}'
+        EXAMPLE 1 REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","algorithm_name":"local_query","max_num_exercises":5}]}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -30,13 +30,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Etag:
-      - W/"429c3c962ef8709cc2121d7433bac61a"
+      - W/"cd0a25faf6e54f036989d710734be9be"
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 48ec0843-3a7e-4a9e-b166-045ba434448b
+      - 9518e017-2c53-487f-80ef-10c3a58838f3
       X-Runtime:
-      - '0.047829'
+      - '0.093194'
       Connection:
       - close
       Server:
@@ -44,7 +44,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"worst_areas_responses":[{"request_uuid":"<FETCH_PRACTICE_WORST_AREAS_EXERCISES
-        EXAMPLE 1 REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","exercise_uuids":[],"student_status":"student_unready"}]}'
-    http_version:
-  recorded_at: Sat, 18 Feb 2017 01:07:27 GMT
+        EXAMPLE 1 REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","exercise_uuids":[],"student_status":"student_unknown"}]}'
+    http_version: 
+  recorded_at: Tue, 07 Mar 2017 20:02:01 GMT
 recorded_with: VCR 2.9.3
