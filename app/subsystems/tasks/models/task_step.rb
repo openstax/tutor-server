@@ -6,8 +6,13 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   belongs_to :tasked, -> { with_deleted }, polymorphic: true, dependent: :destroy,
                                            inverse_of: :task_step, touch: true
 
-  enum group_type: [:default_group, :core_group, :spaced_practice_group,
-                    :personalized_group, :recovery_group]
+  enum group_type: [
+    :default_group,
+    :core_group,
+    :spaced_practice_group,
+    :personalized_group,
+    :recovery_group
+  ]
 
   json_serialize :related_content, Hash, array: true
   json_serialize :related_exercise_ids, Integer, array: true
