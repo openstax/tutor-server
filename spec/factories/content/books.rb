@@ -32,8 +32,12 @@ FactoryGirl.define do
       ]
     }
 
-    after(:build) do |book, evaluator|
-      book.ecosystem ||= build(:content_ecosystem, comments: Faker::Lorem.words(2).join(' '))
+    after(:build) do |book|
+      book.ecosystem ||= build(:content_ecosystem, books: [ book ])
+    end
+
+    after(:create) do |book|
+      book.ecosystem.update_title
     end
 
     after(:create) do |book, evaluator|

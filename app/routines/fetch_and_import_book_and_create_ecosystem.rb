@@ -19,6 +19,8 @@ class FetchAndImportBookAndCreateEcosystem
                         ecosystem: outputs[:ecosystem],
                         reading_processing_instructions: reading_processing_instructions,
                         exercise_uids: exercise_uids)
+
+      outputs[:ecosystem].to_model.update_title
     end
   end
 

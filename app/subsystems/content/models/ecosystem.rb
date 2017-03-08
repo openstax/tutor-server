@@ -29,11 +29,9 @@ module Content
 
       default_scope -> { order(created_at: :desc) }
 
-      def title
-        return 'Empty Ecosystem' if books.empty?
+      before_validation :set_title, on: :create, unless: :title
 
-        "#{books.map(&:title).join('; ')} (#{books.map(&:cnx_id).join('; ')})"
-      end
+      validates :title, presence: true
 
       def deletable?
         courses.empty?
@@ -44,6 +42,15 @@ module Content
           title: title,
           books: books.map(&:manifest_hash)
         }
+      end
+
+      def set_title
+        self.title = books.empty? ?
+          'Empty Ecosystem' : "#{books.map(&:title).join('; ')} (#{books.map(&:cnx_id).join('; ')})"
+      end
+
+      def update_title
+        update_attribute :title, set_title
       end
 
     end

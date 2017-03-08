@@ -10,7 +10,7 @@ RSpec.shared_examples "ecosystem specs" do
     )
   end
 
-  it 'can return its title' do
+  it 'has the correct title' do
     books = ecosystem.books
     expected_title = "#{books.map(&:title).join('; ')} (#{books.map(&:cnx_id).join('; ')})"
     expect(ecosystem.title).to eq expected_title
@@ -31,6 +31,8 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
 
   it { is_expected.to have_many(:to_maps).dependent(:destroy) }
   it { is_expected.to have_many(:from_maps).dependent(:destroy) }
+
+  it { is_expected.to validate_presence_of(:title) }
 
   context 'with no books' do
     let(:expected_title) { 'Empty Ecosystem' }
