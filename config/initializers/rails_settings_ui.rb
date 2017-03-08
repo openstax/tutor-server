@@ -10,7 +10,14 @@ RailsSettingsUi.parent_controller = 'Admin::BaseController' # default: '::Applic
 
 RailsSettingsUi.settings_class = "Settings::Db::Store"
 
-RailsSettingsUi.settings_displayed_as_select_tag = [:biglearn_client]
+RailsSettingsUi.settings_displayed_as_select_tag = [
+  :biglearn_client,
+  :biglearn_student_clues_algorithm_name,
+  :biglearn_teacher_clues_algorithm_name,
+  :biglearn_assignment_spes_algorithm_name,
+  :biglearn_assignment_pes_algorithm_name,
+  :biglearn_practice_worst_areas_algorithm_name
+]
 
 Rails.application.config.to_prepare do
   # If you use a *custom layout*, make route helpers available to RailsSettingsUi:

@@ -379,10 +379,13 @@ class OpenStax::Biglearn::Api::RealClient
   # Returns a number of recommended personalized exercises for the given tasks
   def fetch_assignment_pes(requests)
     biglearn_requests = requests.map do |request|
+      task = request[:task]
+      course = task.taskings.first.role.student.course
+
       {
         request_uuid: request[:request_uuid],
-        assignment_uuid: request[:task].uuid,
-        algorithm_name: algorithm_name,
+        assignment_uuid: task.uuid,
+        algorithm_name: course.biglearn_assignment_pes_algorithm_name,
         max_num_exercises: request[:max_num_exercises]
       }
     end
@@ -394,10 +397,13 @@ class OpenStax::Biglearn::Api::RealClient
   # Returns a number of recommended spaced practice exercises for the given tasks
   def fetch_assignment_spes(requests)
     biglearn_requests = requests.map do |request|
+      task = request[:task]
+      course = task.taskings.first.role.student.course
+
       {
         request_uuid: request[:request_uuid],
-        assignment_uuid: request[:task].uuid,
-        algorithm_name: algorithm_name,
+        assignment_uuid: task.uuid,
+        algorithm_name: course.biglearn_assignment_spes_algorithm_name,
         max_num_exercises: request[:max_num_exercises]
       }
     end
@@ -409,10 +415,13 @@ class OpenStax::Biglearn::Api::RealClient
   # Returns a number of recommended personalized exercises for the student's worst topics
   def fetch_practice_worst_areas_exercises(requests)
     biglearn_requests = requests.map do |request|
+      student = request[:student]
+      course = student.course
+
       {
         request_uuid: request[:request_uuid],
-        student_uuid: request[:student].uuid,
-        algorithm_name: algorithm_name,
+        student_uuid: student.uuid,
+        algorithm_name: course.biglearn_practice_worst_areas_algorithm_name,
         max_num_exercises: request[:max_num_exercises]
       }
     end
@@ -424,11 +433,14 @@ class OpenStax::Biglearn::Api::RealClient
   # Returns the CLUes for the given book containers and students (for students)
   def fetch_student_clues(requests)
     biglearn_requests = requests.map do |request|
+      student = request[:student]
+      course = student.course
+
       {
         request_uuid: request[:request_uuid],
-        student_uuid: request[:student].uuid,
+        student_uuid: student.uuid,
         book_container_uuid: request[:book_container].tutor_uuid,
-        algorithm_name: algorithm_name
+        algorithm_name: course.biglearn_student_clues_algorithm_name
       }
     end
 
@@ -439,11 +451,14 @@ class OpenStax::Biglearn::Api::RealClient
   # Returns the CLUes for the given book containers and periods (for teachers)
   def fetch_teacher_clues(requests)
     biglearn_requests = requests.map do |request|
+      course_container = request[:course_container]
+      course = course_container.course
+
       {
         request_uuid: request[:request_uuid],
-        course_container_uuid: request[:course_container].uuid,
+        course_container_uuid: course_container.uuid,
         book_container_uuid: request[:book_container].tutor_uuid,
-        algorithm_name: algorithm_name
+        algorithm_name: course.biglearn_teacher_clues_algorithm_name
       }
     end
 
