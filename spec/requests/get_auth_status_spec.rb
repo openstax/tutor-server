@@ -21,6 +21,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
       token = Doorkeeper::AccessToken.find_by(resource_owner_id: user.id).token
       expect(response.body_as_hash).to match(
         access_token: token,
+        errata_form_url: 'https://oscms.openstax.org/errata/form',
         tutor_api_url: a_string_starting_with('http'),
         accounts_profile_url: a_string_starting_with('http'),
         accounts_api_url: a_string_starting_with('http'),
