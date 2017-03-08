@@ -29,7 +29,7 @@ module Api::V1
                )
              }
 
-    property :exercises_errata_url,
+    property :errata_form_url,
              readable: true,
              writeable: false,
              getter: ->(*) { Rails.application.secrets['openstax']['osweb']['errata_form_url'] }
