@@ -33,22 +33,30 @@ class CreateCourse
     # make a copy to avoid linking the 2 courses' time_zones to the same record
     time_zone = time_zone.dup if time_zone.present? && time_zone.course.try!(:persisted?)
 
-    run(:create_course,
-        name: name,
-        term: term,
-        year: year,
-        is_college: is_college,
-        is_concept_coach: is_concept_coach,
-        is_preview: is_preview,
-        starts_at: starts_at,
-        ends_at: ends_at,
-        offering: catalog_offering.try!(:to_model),
-        appearance_code: appearance_code,
-        school: school,
-        time_zone: time_zone,
-        cloned_from: cloned_from,
-        default_open_time: default_open_time,
-        default_due_time: default_due_time)
+    run(
+      :create_course,
+      name: name,
+      term: term,
+      year: year,
+      is_college: is_college,
+      is_concept_coach: is_concept_coach,
+      is_preview: is_preview,
+      starts_at: starts_at,
+      ends_at: ends_at,
+      offering: catalog_offering.try!(:to_model),
+      appearance_code: appearance_code,
+      school: school,
+      time_zone: time_zone,
+      cloned_from: cloned_from,
+      default_open_time: default_open_time,
+      default_due_time: default_due_time,
+      biglearn_student_clues_algorithm_name: Settings::Biglearn.student_clues_algorithm_name,
+      biglearn_teacher_clues_algorithm_name: Settings::Biglearn.teacher_clues_algorithm_name,
+      biglearn_assignment_spes_algorithm_name: Settings::Biglearn.assignment_spes_algorithm_name,
+      biglearn_assignment_pes_algorithm_name: Settings::Biglearn.assignment_pes_algorithm_name,
+      biglearn_practice_worst_areas_algorithm_name: \
+        Settings::Biglearn.practice_worst_areas_algorithm_name
+    )
 
     num_sections.times{ run(:create_period, course: outputs.course) }
 
