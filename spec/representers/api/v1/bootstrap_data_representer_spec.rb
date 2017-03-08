@@ -18,6 +18,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "courses" => [], # not testing this since it's too expensive to generate meaningful course data
       "accounts_api_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'api',
       "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
+      "exercises_errata_url" => 'https://oscms.openstax.org/errata/form',
       "tutor_api_url" => 'https://example.com/api',
       "ui_settings" => {},
       "flash" => { "alert" => 'Nothing!' }
