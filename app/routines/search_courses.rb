@@ -23,7 +23,7 @@ class SearchCourses
       [school.outer,
        offering.outer,
        teachers.outer.role.outer.profile.outer.account.outer,
-       ecosystems.outer]
+       ecosystems.outer.books.outer]
     end.uniq
 
     run(:search, relation: relation, sortable_fields: SORTABLE_FIELDS, params: params) do |with|
@@ -36,17 +36,23 @@ class SearchCourses
           next @items = @items.none if sanitized_queries.empty?
 
           @items = @items.where do
-            (name.like_any sanitized_queries) |
-            (school.name.like_any sanitized_queries) |
-            (offering.title.like_any sanitized_queries) |
-            (offering.description.like_any sanitized_queries) |
-            (offering.salesforce_book_name.like_any sanitized_queries) |
-            (offering.appearance_code.like_any sanitized_queries) |
-            (teachers.role.profile.account.username.like_any sanitized_queries) |
-            (teachers.role.profile.account.first_name.like_any sanitized_queries) |
-            (teachers.role.profile.account.last_name.like_any sanitized_queries) |
-            (teachers.role.profile.account.full_name.like_any sanitized_queries) |
-            (ecosystems.title.like_any sanitized_queries)
+            name.like_any(sanitized_queries) |
+            school.name.like_any(sanitized_queries) |
+            offering.title.like_any(sanitized_queries) |
+            offering.description.like_any(sanitized_queries) |
+            offering.salesforce_book_name.like_any(sanitized_queries) |
+            offering.appearance_code.like_any(sanitized_queries) |
+            teachers.role.profile.account.username.like_any(sanitized_queries) |
+            teachers.role.profile.account.first_name.like_any(sanitized_queries) |
+            teachers.role.profile.account.last_name.like_any(sanitized_queries) |
+            teachers.role.profile.account.full_name.like_any(sanitized_queries) |
+            ecosystems.books.title
+              .op('||', ' (')
+              .op('||', ecosystems.books.uuid)
+              .op('||', '@')
+              .op('||', ecosystems.books.version)
+              .op('||', ')')
+              .like_any(sanitized_queries)
           end
         end
       end
@@ -75,10 +81,10 @@ class SearchCourses
           next @items = @items.none if sanitized_queries.empty?
 
           @items = @items.joins(:offering).where do
-            (offering.title.like_any sanitized_queries) |
-            (offering.description.like_any sanitized_queries) |
-            (offering.salesforce_book_name.like_any sanitized_queries) |
-            (offering.appearance_code.like_any sanitized_queries)
+            offering.title.like_any(sanitized_queries) |
+            offering.description.like_any(sanitized_queries) |
+            offering.salesforce_book_name.like_any(sanitized_queries) |
+            offering.appearance_code.like_any(sanitized_queries)
           end
         end
       end
@@ -89,10 +95,10 @@ class SearchCourses
           next @items = @items.none if sanitized_names.empty?
 
           @items = @items.joins(teachers: {role: {profile: :account}}).where do
-            (teachers.role.profile.account.username.like_any sanitized_names) |
-            (teachers.role.profile.account.first_name.like_any sanitized_names) |
-            (teachers.role.profile.account.last_name.like_any sanitized_names) |
-            (teachers.role.profile.account.full_name.like_any sanitized_names)
+            teachers.role.profile.account.username.like_any(sanitized_names) |
+            teachers.role.profile.account.first_name.like_any(sanitized_names) |
+            teachers.role.profile.account.last_name.like_any(sanitized_names) |
+            teachers.role.profile.account.full_name.like_any(sanitized_names)
           end
         end
       end
@@ -102,7 +108,15 @@ class SearchCourses
           sanitized_titles = to_string_array(title, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_titles.empty?
 
-          @items = @items.joins(:ecosystems).where{ecosystems.title.like_any sanitized_titles}
+          @items = @items.joins(ecosystems: :books).where do
+            ecosystems.books.title
+              .op('||', ' (')
+              .op('||', ecosystems.books.uuid)
+              .op('||', '@')
+              .op('||', ecosystems.books.version)
+              .op('||', ')')
+              .like_any(sanitized_titles)
+          end
         end
       end
 

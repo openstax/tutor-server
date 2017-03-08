@@ -35,7 +35,8 @@
       <div class="stats-card">
         <div class="card-header">
           <% if bulk_actions %>
-              <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
+              <% course_selected = params[:course_id].blank? ?
+                                     true : params[:course_id].include?(course_info.id) %>
               <%= check_box_tag 'course_id[]',
                                 course_info.id,
                                 checked = course_selected,
@@ -47,7 +48,8 @@
             <%= "#{course_info.id}" %>
           </span>
           <span class="course-info-name"><%= " #{course_info.name}" %></span>
-          <%= " / #{course_info.teachers.map(&:name).to_sentence}" unless course_info.teachers.blank? %>
+          <%= " / #{course_info.teachers.map(&:name).to_sentence}" \
+                unless course_info.teachers.blank? %>
           <span class="course-info-school">
             <%= " / #{course_info.school_name}" if course_info.school %>
           </span>
@@ -56,24 +58,29 @@
           <div class="card-content-left">
             <div class="content-top">
               <% ecosystem = course_info.ecosystems.first %>
-              <% book = ecosystem.nil? ? '' : ecosystem.books.first %>
 
-              <% unless book.blank? %>
-                <%= "(ID #{book.id})" %> <%= book.title %> <%= "(#{book.uuid}@#{book.version})" %>
+              <% unless ecosystem.nil? %>
+                <%= "(ID #{ecosystem.id})" %> <%= ecosystem.title %>
+
+                <span class="ecosystem-created-at" style="white-space: nowrap;">
+                  <%= "(#{ecosystem.created_at})" %>
+                </span>
               <% end %>
-              <span class="ecosystem-created-at" style="white-space: nowrap;">
-                <%= "(#{ecosystem.created_at})" if ecosystem %>
-              </span>
-              <div class="course-duration" style="white-space: nowrap;">
-                Term: <%= course_info.starts_at.strftime('%b %d, %Y') %> - <%= course_info.ends_at.strftime('%b %d, %Y') %>
-              </div>
             </div>
             <div class="content-middle">
               <%= ecosystem.try(:comments) %>
             </div>
             <div class="content-bottom">
-              <%= "CC / " if course_info.is_concept_coach %> <%= "College / " if course_info.is_college %>
-              <%= "#{course_info.periods_with_deleted.map{|p| p.latest_enrollments_with_deleted.length}.reduce(0, :+)} students" %> <%= " / #{course_info.periods_with_deleted.length} periods" %>
+              <div class="course-duration" style="white-space: nowrap;">
+                Term: <%= course_info.starts_at.strftime('%b %d, %Y') %>
+                    - <%= course_info.ends_at.strftime('%b %d, %Y') %>
+              </div>
+              <%= "CC /" if course_info.is_concept_coach %>
+              <%= "College /" if course_info.is_college %>
+              <%= "#{course_info.periods_with_deleted.map do |period|
+                       period.latest_enrollments_with_deleted.length
+                     end.reduce(0, :+)} students /" %>
+              <%= "#{course_info.periods_with_deleted.length} periods" %>
             </div>
           </div>
           <div class="card-content-right">
@@ -93,7 +100,9 @@
       <div id="courses-bulk-actions">
         <div class="form-group input-group">
           <%= select_tag :ecosystem_id,
-                         options_from_collection_for_select(@ecosystems, :id, :unique_title, params[:ecosystem_id]),
+                         options_from_collection_for_select(
+                           @ecosystems, :id, :unique_title, params[:ecosystem_id]
+                         ),
                          include_blank: '-- Select an ecosystem --',
                          class: 'form-control' %>
           <span class="input-group-btn">

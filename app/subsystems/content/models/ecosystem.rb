@@ -27,9 +27,13 @@ module Content
                            dependent: :destroy,
                            inverse_of: :to_ecosystem
 
-      validates :title, presence: true
-
       default_scope -> { order(created_at: :desc) }
+
+      def title
+        return 'Empty Ecosystem' if books.empty?
+
+        "#{books.map(&:title).join('; ')} (#{books.map(&:cnx_id).join('; ')})"
+      end
 
       def deletable?
         courses.empty?

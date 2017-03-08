@@ -24,11 +24,9 @@ module Catalog
       end
       outputs.num_updated_courses = courses_to_update.length
 
-      wrapped_ecosystem = Marshal.dump(Content::Ecosystem.new(strategy: new_ecosystem.wrap))
-
       courses_to_update.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
-          course: course, ecosystem: wrapped_ecosystem
+          course: course, ecosystem: new_ecosystem
         )
         job = Jobba.find(job_id)
         job.save(course_ecosystem: new_ecosystem.title, course_id: course.id)

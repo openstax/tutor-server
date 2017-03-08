@@ -26,5 +26,13 @@ FactoryGirl.define do
     trait(:process_school_change) do
       after(:create) { |course| SchoolDistrict::ProcessSchoolChange[course: course] }
     end
+
+    #after(:build) do |course|
+    #  course.course_ecosystems << build(
+    #    :course_content_course_ecosystem,
+    #    course: course,
+    #    ecosystem: course.offering.ecosystem
+    #  ) unless course.offering.nil?
+    #end
   end
 end

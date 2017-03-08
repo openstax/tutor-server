@@ -29,7 +29,6 @@ class ImportEcosystemManifest
     book = manifest.books.first
 
     run(:fetch_and_import,
-        ecosystem_title: manifest.title,
         archive_url: book.archive_url,
         book_cnx_id: book.cnx_id,
         reading_processing_instructions: book.reading_processing_instructions,

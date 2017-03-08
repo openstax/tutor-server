@@ -5,10 +5,8 @@ RSpec.describe SearchCourses, type: :routine do
   let(:tutor_school) { FactoryGirl.create(:school_district_school, name: 'TTS') }
   let(:cc_school)    { FactoryGirl.create(:school_district_school, name: 'CCS') }
 
-  let(:ecosystem_1)  do
-    model = FactoryGirl.create :content_ecosystem, title: 'College Physics'
-    Content::Ecosystem.new strategy: model.wrap
-  end
+  let(:book_1)       { FactoryGirl.create :content_book, title: 'College Physics' }
+  let(:ecosystem_1)  { Content::Ecosystem.new strategy: book_1.ecosystem.wrap }
   let(:offering_1)   do
     FactoryGirl.create(:catalog_offering,
                        salesforce_book_name: 'College Physics (Algebra)',
@@ -17,10 +15,8 @@ RSpec.describe SearchCourses, type: :routine do
                        ecosystem: ecosystem_1.to_model)
   end
 
-  let(:ecosystem_2)  do
-    model = FactoryGirl.create :content_ecosystem, title: 'Biology'
-    Content::Ecosystem.new strategy: model.wrap
-  end
+  let(:book_2)       { FactoryGirl.create :content_book, title: 'Biology'     }
+  let(:ecosystem_2)  { Content::Ecosystem.new strategy: book_2.ecosystem.wrap }
   let(:offering_2)   do
     FactoryGirl.create(:catalog_offering,
                        salesforce_book_name: 'Biology',

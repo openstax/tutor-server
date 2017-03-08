@@ -8,17 +8,15 @@ module Content
         verify_and_return strategy_class.all, klass: self, error: StrategyError
       end
 
-      def create(title:, comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
-        title = verify_and_return title, klass: String
+      def create(comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
-        verify_and_return strategy_class.create(title: title, comments: comments),
+        verify_and_return strategy_class.create(comments: comments),
                           klass: self, error: StrategyError
       end
 
-      def create!(title:, comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
-        title = verify_and_return title, klass: String
+      def create!(comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
-        verify_and_return strategy_class.create!(title: title, comments: comments),
+        verify_and_return strategy_class.create!(comments: comments),
                           klass: self, error: StrategyError
       end
 

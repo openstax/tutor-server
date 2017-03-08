@@ -7,11 +7,11 @@ class CourseContent::AddEcosystemToCourse
   def exec(course:, ecosystem:,
            ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
            map_strategy_class: ::Content::Strategies::Generated::Map)
-    course = Marshal.load(course) if course.is_a?(String)
-    ecosystem = Marshal.load(ecosystem) if ecosystem.is_a?(String)
+    ecosystem = Content::Ecosystem.new(strategy: ecosystem.wrap) \
+      if ecosystem.is_a?(Content::Models::Ecosystem)
     fatal_error(code: :ecosystem_already_set,
                 message: 'The given ecosystem is already active for the given course') \
-      if course.reload.ecosystems.first.try(:id) == ecosystem.id
+      if course.reload.ecosystems.first.try!(:id) == ecosystem.id
 
     course_ecosystem = CourseContent::Models::CourseEcosystem.create(
       course: course, content_ecosystem_id: ecosystem.id

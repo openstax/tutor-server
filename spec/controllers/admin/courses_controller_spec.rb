@@ -270,28 +270,30 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   context 'POST #set_ecosystem' do
-    let(:course) { FactoryGirl.create(:course_profile_course, name: 'Physics I') }
-    let(:eco_1)     {
+    let(:course)            { FactoryGirl.create(:course_profile_course, name: 'Physics I') }
+    let(:eco_1)             do
       model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
-    }
-    let(:eco_2)     {
+    end
+    let(:eco_2)             do
       model = FactoryGirl.create(:content_book, title: 'Biology', version: '2').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
-    }
-    let!(:course_ecosystem) {
+    end
+    let!(:course_ecosystem) do
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       course.reload.course_ecosystems.first
-    }
+    end
 
     context 'when the ecosystem is already being used' do
       it 'does not recreate the association' do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_1.id
         ce = course.reload.course_ecosystems.first
         expect(ce).to eq course_ecosystem
-        expect(flash[:notice]).to eq "Course ecosystem \"#{eco_1.title}\" is already selected for \"Physics I\""
+        expect(flash[:notice]).to(
+          eq "Course ecosystem \"#{eco_1.title}\" is already selected for \"Physics I\""
+        )
       end
     end
 
