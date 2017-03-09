@@ -23,13 +23,13 @@ module Content
           end
 
           alias_method :entity_create, :create
-          def create(title:, comments:)
-            ::Content::Ecosystem.new(strategy: entity_create(title: title, comments: comments))
+          def create(comments:)
+            ::Content::Ecosystem.new(strategy: entity_create(comments: comments))
           end
 
           alias_method :entity_create!, :create!
-          def create!(title:, comments:)
-            ::Content::Ecosystem.new(strategy: entity_create!(title: title, comments: comments))
+          def create!(comments:)
+            ::Content::Ecosystem.new(strategy: entity_create!(comments: comments))
           end
 
           alias_method :entity_find, :find

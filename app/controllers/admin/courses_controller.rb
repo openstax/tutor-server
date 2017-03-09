@@ -129,17 +129,14 @@ class Admin::CoursesController < Admin::BaseController
       flash[:error] = 'Please select the courses'
     else
       course_ids = params[:course_id]
-      ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
+      ecosystem = Content::Models::Ecosystem.find(params[:ecosystem_id])
       courses = CourseProfile::Models::Course
         .where { id.in course_ids }
         .preload(:ecosystems)
-        .select { |course|
-          course.ecosystems.first.try(:id) != ecosystem.id
-        }
+        .select { |course| course.ecosystems.first.try(:id) != ecosystem.id }
       courses.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
-          course: course.reload,
-          ecosystem: Marshal.dump(ecosystem)
+          course: course, ecosystem: ecosystem
         )
         job = Jobba.find(job_id)
         job.save(course_ecosystem: ecosystem.title, course_id: course.id)
@@ -168,16 +165,16 @@ class Admin::CoursesController < Admin::BaseController
       flash[:error] = 'Please select a course ecosystem'
     else
       course = CourseProfile::Models::Course.find(params[:id])
-      ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
+      current_ecosystem = GetCourseEcosystem[course: course]
 
-      if GetCourseEcosystem[course: course] == ecosystem
-        flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.name}\""
+      if current_ecosystem.try!(:id).to_s == params[:ecosystem_id]
+        flash[:notice] = "Course ecosystem \"#{current_ecosystem.title
+                         }\" is already selected for \"#{course.name}\""
       else
-        CourseContent::AddEcosystemToCourse.perform_later(
-          course: course.reload,
-          ecosystem: Marshal.dump(ecosystem)
-        )
-        flash[:notice] = "Course ecosystem update to \"#{ecosystem.title
+        new_ecosystem = Content::Models::Ecosystem.find(params[:ecosystem_id])
+
+        CourseContent::AddEcosystemToCourse.perform_later course: course, ecosystem: new_ecosystem
+        flash[:notice] = "Course ecosystem update to \"#{new_ecosystem.title
                          }\" queued for \"#{course.name}\""
       end
     end

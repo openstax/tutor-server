@@ -22,7 +22,7 @@ class CourseMembership::CreateEnrollmentChange
 
     ecosystem = run(:get_ecosystem, course: course).outputs.ecosystem
     # Assumes 1 book in the ecosystem
-    course_book_uuid = ecosystem.nil? ? nil : ecosystem.books.first.uuid
+    course_book_uuid = ecosystem.nil? ? nil : ecosystem.books.first.try!(:uuid)
 
     fatal_error(code: :enrollment_code_does_not_match_book,
                 message: 'The given enrollment code does not match the current book') \

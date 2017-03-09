@@ -4,7 +4,7 @@ FactoryGirl.define do
       contents {{}}
     end
 
-    title { contents[:title] || Faker::Lorem.words(3) }
+    title { contents[:title] || Faker::Lorem.words(3).join(' ') }
     content { contents.to_json }
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
@@ -32,21 +32,21 @@ FactoryGirl.define do
       ]
     }
 
-    after(:build) do |book, evaluator|
-      book.ecosystem ||= FactoryGirl.build(
-        :content_ecosystem,
-        comments: Faker::Lorem.words(2),
-        title: "#{evaluator.title} (#{evaluator.uuid}@#{evaluator.version})"
-      )
+    after(:build) do |book|
+      book.ecosystem ||= build(:content_ecosystem, books: [ book ])
+    end
+
+    after(:create) do |book|
+      book.ecosystem.update_title
     end
 
     after(:create) do |book, evaluator|
       (evaluator.contents[:chapters] || {}).each do |chapter|
-        FactoryGirl.create(:content_chapter,
-                           title: chapter[:title],
-                           book_location: chapter[:book_location],
-                           book: book,
-                           contents: chapter)
+        create(:content_chapter,
+               title: chapter[:title],
+               book_location: chapter[:book_location],
+               book: book,
+               contents: chapter)
       end
     end
 
