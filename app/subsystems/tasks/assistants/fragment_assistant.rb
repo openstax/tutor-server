@@ -12,7 +12,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         step.group_type = :core_group
         step.add_labels(fragment.labels)
         step.add_related_content(related_content)
-        task.add_step(step)
+        task.task_steps << step
       end
     end
 

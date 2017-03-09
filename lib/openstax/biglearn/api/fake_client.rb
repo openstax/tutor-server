@@ -176,21 +176,25 @@ class OpenStax::Biglearn::Api::FakeClient
     requests.map do |request|
       task_key = request_task_keys_map[request]
       all_exercise_uuids_json = exercise_uuids_map[task_key]
+      request_uuid = request[:request_uuid]
+      task = request[:task]
 
       if all_exercise_uuids_json.nil?
         {
-          request_uuid: request[:request_uuid],
-          assignment_uuid: request[:task].uuid,
+          request_uuid: request_uuid,
+          assignment_uuid: task.uuid,
           exercise_uuids: [],
           assignment_status: 'assignment_unknown'
         }
       else
         all_exercise_uuids = JSON.parse all_exercise_uuids_json
+        candidate_exercise_uuids = \
+          all_exercise_uuids - task.exercise_steps.map { |ts| ts.tasked.exercise.uuid }
 
         {
-          request_uuid: request[:request_uuid],
-          assignment_uuid: request[:task].uuid,
-          exercise_uuids: all_exercise_uuids.sample(request[:max_num_exercises]),
+          request_uuid: request_uuid,
+          assignment_uuid: task.uuid,
+          exercise_uuids: candidate_exercise_uuids.sample(request[:max_num_exercises]),
           assignment_status: 'assignment_ready'
         }
       end
@@ -198,16 +202,10 @@ class OpenStax::Biglearn::Api::FakeClient
   end
 
   # Returns a number of recommended spaced practice exercises for the given tasks
-  # NotYetImplemented in FakeClient (always returns empty result)
+  # In the FakeClient, we pretend there are no Spaced Practice exercises,
+  # which causes us to return Personalized exercises instead
   def fetch_assignment_spes(requests)
-    requests.map do |request|
-      {
-        request_uuid: request[:request_uuid],
-        assignment_uuid: request[:task].uuid,
-        exercise_uuids: [],
-        assignment_status: 'assignment_ready'
-      }
-    end
+    fetch_assignment_pes(requests)
   end
 
   # Returns a number of recommended personalized exercises for the student's worst topics

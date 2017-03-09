@@ -4,11 +4,11 @@ class AssignGroupTypesToDefaultGroupSteps < ActiveRecord::Migration
     :page_practice, :chapter_practice, :mixed_practice
   )
 
-  DEFAULT_STEP_GROUP = Tasks::Models::TaskStep.group_types[:default_group]
+  UNKNOWN_STEP_GROUP = Tasks::Models::TaskStep.group_types[:unknown_group]
   PERSONALIZED_STEP_GROUP = Tasks::Models::TaskStep.group_types[:personalized_group]
 
   def up
-    task_steps = Tasks::Models::TaskStep.default_group
+    task_steps = Tasks::Models::TaskStep.unknown_group
                                         .joins(:task)
                                         .where(task: {task_type: PERSONALIZED_TASK_TYPES})
                                         .preload(task: :task_steps)
@@ -16,7 +16,7 @@ class AssignGroupTypesToDefaultGroupSteps < ActiveRecord::Migration
     task_steps.find_each do |task_step|
       begin
         previous_step = task_step.previous_by_number
-      end while previous_step.present? && previous_step.default_group?
+      end while previous_step.present? && previous_step.unknown_group?
 
       next if previous_step.nil?
 
@@ -25,16 +25,16 @@ class AssignGroupTypesToDefaultGroupSteps < ActiveRecord::Migration
                                   labels: previous_step.labels)
     end
 
-    Tasks::Models::TaskStep.default_group
+    Tasks::Models::TaskStep.unknown_group
                            .joins(:task)
                            .where(task: {task_type: PRACTICE_TASK_TYPES})
                            .update_all(group_type: PERSONALIZED_STEP_GROUP)
   end
 
   def down
-    Tasks::Models::TaskStep.default_group
+    Tasks::Models::TaskStep.unknown_group
                            .joins(:task)
                            .where(task: {task_type: PRACTICE_TASK_TYPES})
-                           .update_all(group_type: DEFAULT_STEP_GROUP)
+                           .update_all(group_type: UNKNOWN_STEP_GROUP)
   end
 end

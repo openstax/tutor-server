@@ -20,9 +20,9 @@ RSpec.describe PopulateTrialCourseContent, type: :routine, speed: :medium do
   it 'creates the expected trial course content' do
 
     expect { result = described_class.call(course: @course) }
-      .to change{ @course.students.reload.size }.by(6)
-      .and change{ Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
-      .and change{ Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(32)
+      .to change  { @course.students.reload.size }.by(6)
+      .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
+      .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(32)
 
     @periods.each do |period|
       student_roles = period.student_roles.sort_by(&:created_at)
@@ -32,9 +32,7 @@ RSpec.describe PopulateTrialCourseContent, type: :routine, speed: :medium do
       # All roles except the last have completed everything
       student_roles[0..-2].each do |role|
         role.taskings.each do |tasking|
-          tasking.task.task_steps.each do |task_step|
-            expect(task_step).to be_completed
-          end
+          tasking.task.task_steps.each { |task_step| expect(task_step).to be_completed }
         end
       end
     end

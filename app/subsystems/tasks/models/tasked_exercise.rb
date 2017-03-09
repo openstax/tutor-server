@@ -41,8 +41,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     true
   end
 
-  def handle_task_step_completion!
-    free_response_required
+  def before_completion
     answer_id_required
   end
 

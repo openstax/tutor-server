@@ -1,5 +1,9 @@
 class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistant
 
+  # Used to determine the number of spaced practice slots ONLY
+  # Number of slots = sum of the number of pages assigned in each k-ago assignment
+  K_AGOS_MATCHING_BIGLEARN = [2, 4]
+
   def self.schema
     '{
       "type": "object",
@@ -24,20 +28,19 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     super
 
     @pages = ecosystem.pages_by_ids(task_plan.settings['page_ids'])
+
+    @non_dynamic_pages, @dynamic_pages = @pages.partition do |page|
+      page.reading_dynamic_pool.empty?
+    end
   end
 
   def build_tasks
-    # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
-    # This happens, for example, on intro pages
-    reading_dynamic_pools = ecosystem.reading_dynamic_pools(pages: @pages)
-    skip_dynamic = reading_dynamic_pools.all?(&:empty?)
-
     roles = individualized_tasking_plans.map(&:target)
     histories = GetHistory[roles: roles, type: :reading]
 
     individualized_tasking_plans.map do |tasking_plan|
-      build_reading_task(pages: @pages, history: histories[tasking_plan.target],
-                         individualized_tasking_plan: tasking_plan, skip_dynamic: skip_dynamic)
+      build_reading_task(history: histories[tasking_plan.target],
+                         individualized_tasking_plan: tasking_plan)
     end
   end
 
@@ -47,68 +50,58 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     3
   end
 
-  ## Entries in the list have the form:
-  ##   [from-this-many-events-ago, choose-this-many-exercises]
-  def k_ago_map
-    [ [2, 1], [4, 1] ]
+  def num_spaced_practice_exercises_per_page
+    2
   end
 
-  ## Entries in the list have the form:
-  ##   [nil, choose-this-many-exercises]
-  def random_ago_map
-    [ [nil, 1] ]
-  end
-
-  def build_reading_task(pages:, history:, individualized_tasking_plan:, skip_dynamic:)
-    task = build_task(type: :reading, default_title: 'Reading',
-                      individualized_tasking_plan: individualized_tasking_plan)
+  def build_reading_task(history:, individualized_tasking_plan:)
+    task = build_task(
+      type: :reading,
+      default_title: 'Reading',
+      individualized_tasking_plan: individualized_tasking_plan
+    )
 
     reset_used_exercises
 
-    add_core_steps!(task: task, pages: pages, history: history)
+    add_core_steps!(task: task, history: history)
 
-    unless skip_dynamic
-      add_spaced_practice_exercise_steps!(
-        task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
-        history: history, k_ago_map: k_ago_map, for_each_core_page: true
-      )
-
-      add_spaced_practice_exercise_steps!(
-        task: task, core_page_ids: @pages.map(&:id), pool_type: :reading_dynamic,
-        history: history, k_ago_map: random_ago_map, for_each_core_page: false
-      )
-    end
+    # If only intro pages are assigned, we choose not to include the assignment in the history
+    # In that case, this assignment itself should also not include spaced practice
+    # This happens, for example, if only intro pages are assigned
+    add_placeholder_steps!(
+      task: task,
+      group_type: :spaced_practice_group,
+      count: num_spaced_practice_exercises_per_page * @dynamic_pages.size + 1
+    ) unless @dynamic_pages.empty?
 
     task
   end
 
-  def add_core_steps!(task:, pages:, history:)
+  def add_core_steps!(task:, history:)
     course = task_plan.owner
 
-    pages.each do |page|
+    @pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.chapter.title : page.title
       related_content = page.related_content(title: page_title)
 
       # Reading content
-      task_fragments(task: task, fragments: page.fragments,
-                     page_title: page_title, page: page, related_content: related_content)
+      task_fragments(
+        task: task,
+        fragments: page.fragments,
+        page_title: page_title,
+        page: page,
+        related_content: related_content
+      )
 
-      # "Personalized" exercises after each page
-      candidate_exercises = get_unused_pool_exercises page: page, pool_type: :reading_dynamic
-
-      filtered_exercises = FilterExcludedExercises[
-        exercises: candidate_exercises, course: course,
-        additional_excluded_numbers: @used_exercise_numbers
-      ]
-
-      chosen_exercises = ChooseExercises[
-        exercises: filtered_exercises, count: num_personalized_exercises_per_page, history: history
-      ]
-
-      chosen_exercises.each do |exercise|
-        add_exercise_step!(task: task, exercise: exercise, group_type: :personalized_group)
-      end
+      # Personalized exercises after each page
+      # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
+      # This happens, for example, on intro pages
+      add_placeholder_steps!(
+        task: task,
+        group_type: :personalized_group,
+        count: num_personalized_exercises_per_page
+      ) unless @non_dynamic_pages.include?(page)
     end
 
     task

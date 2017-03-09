@@ -11,7 +11,7 @@ RSpec.describe Api::V1::Tasks::TaskedExternalUrlRepresenter, type: :representer 
       type: 'external_url',
       title: task_step.tasked.title,
       external_url: task_step.tasked.url,
-      group: 'default',
+      group: 'unknown',
       is_completed: false,
       has_recovery: false,
       labels: [],

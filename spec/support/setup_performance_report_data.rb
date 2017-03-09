@@ -8,12 +8,11 @@ class SetupPerformanceReportData
     students = [students].flatten
 
     # There should be at least 4 students
-    (students.length + 1..4).each do |extra_student|
-      students << FactoryGirl.create(:user)
-    end
+    (4 - students.length).times { students << FactoryGirl.create(:user) }
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-    AddUserAsCourseTeacher[course: course, user: teacher]
+    AddUserAsCourseTeacher[course: course, user: teacher] \
+      unless CourseMembership::IsCourseTeacher[course: course, roles: teacher.to_model.roles]
     period_1 = course.periods.any? ? course.periods.first :
                                      FactoryGirl.create(:course_membership_period, course: course)
     period_2 = FactoryGirl.create(:course_membership_period, course: course)
@@ -40,13 +39,13 @@ class SetupPerformanceReportData
   end
 
   def setup_cc_tasks(roles, pages)
-    exercises = [pages.first.exercises.first(6), pages.last.exercises.last(3)]
+    exercises_arrays = [pages.first.exercises.first(6), pages.last.exercises.last(3)]
 
     roles.map do |role|
-      exercises.map do |exercises|
+      exercises_arrays.map do |exercises|
         page = exercises.first.page
 
-        group_types = (exercises.size - 1).times.map{ :core_group } + [:spaced_practice_group]
+        group_types = (exercises.size - 2).times.map{ :core_group } + [:spaced_practice_group] * 2
 
         related_content_array = exercises.map{ page.related_content }
 
@@ -233,21 +232,17 @@ class SetupPerformanceReportData
       Demo::AnswerExercise[task_step: ts, is_correct: false]
     end
 
-    # User 1 answered 2 correct core and 1 incorrect personalized exercise in 2nd homework
-    # On tests with 1-ago spaced practice (by stubbing the k-ago map),
-    # they also answer the spaced practice exercise correctly
+    # User 1 answered 2 correct core, 1 correct spaced practice
+    # and 1 incorrect spaced practice exercise in 2nd homework
     student_1_tasks[2].core_task_steps.each do |ts|
       Demo::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[2].reload
-    raise 'Personalized steps were unexpectedly removed from homework ' +
-          '(probably because Biglearn returned no PEs)' \
-      if student_1_tasks[2].personalized_task_steps.empty?
     Demo::AnswerExercise[
       task_step: student_1_tasks[2].spaced_practice_task_steps.first, is_correct: true
-    ] if student_1_tasks[2].spaced_practice_task_steps.any?
+    ]
     Demo::AnswerExercise[
-      task_step: student_1_tasks[2].personalized_task_steps.last, is_correct: false
+      task_step: student_1_tasks[2].spaced_practice_task_steps.last, is_correct: false
     ]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in homework
@@ -264,8 +259,7 @@ class SetupPerformanceReportData
     MarkTaskStepCompleted[task_step: student_2_tasks[1].task_steps.first]
 
     # User 2 answered 1 correct in 2nd homework
-    Demo::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first,
-                          is_correct: true]
+    Demo::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first, is_correct: true]
 
     # User 3 answered everything in homework correctly
     student_3_tasks = student_tasks[2]

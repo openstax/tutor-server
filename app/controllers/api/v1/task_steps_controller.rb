@@ -1,6 +1,7 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
 
-  before_filter :get_task_step
+  before_filter :get_task_step_and_tasked
+  before_filter :populate_placeholders_if_needed, only: :show
 
   resource_description do
     api_versions "v1"
@@ -66,16 +67,22 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   protected
 
-  def get_task_step
+  def get_task_step_and_tasked
     Tasks::Models::TaskStep.transaction do
       @task_step = Tasks::Models::TaskStep.with_deleted.lock.find_by(id: params[:id])
 
-      if @task_step.present?
-        @tasked = @task_step.tasked
-      else
-        render_api_errors(:no_exercises, :not_found)
-      end
+      return render_api_errors(:no_exercises, :not_found) if @task_step.nil?
+
+      @tasked = @task_step.tasked
     end
+  end
+
+  def populate_placeholders_if_needed
+    return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
+
+    Tasks::PopulatePlaceholders[task: @task_step.task]
+
+    @tasked.reload
   end
 
 end

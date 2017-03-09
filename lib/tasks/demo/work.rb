@@ -45,9 +45,8 @@ class Demo::Work < Demo::Base
                                        .order(created_at: :desc).first!
 
     tasks_profile = build_tasks_profile(
-      students: assignment.periods.flat_map{ |period| period.students.map(&:to_a) },
-      assignment_type: assignment.type.to_sym,
-      step_types: assignment.step_types,
+      students: assignment.periods.flat_map { |period| period.students.map(&:to_a) },
+      assignment_type: assignment.type.to_sym
     )
     log("Working assignment: #{assignment.title}")
     task_plan.tasks

@@ -55,8 +55,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     expect(tasked_exercise.reload).to be_valid
 
-    tasked_exercise.task_step.complete
-    tasked_exercise.task_step.save!
+    tasked_exercise.complete!
 
     expect(tasked_exercise.reload).not_to be_valid
 

@@ -314,10 +314,14 @@ class OpenStax::Biglearn::Api::RealClient
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
       end
-      goal_num_tutor_assigned_spes = task.task_steps.select(&:spaced_practice_group?).length
-      spes_are_assigned = true
-      goal_num_tutor_assigned_pes = task.task_steps.select(&:personalized_group?).length
-      pes_are_assigned = task.placeholder_exercise_steps_count == 0
+      sp_steps = task.task_steps.select(&:spaced_practice_group?)
+      spe_steps = sp_steps.select{ |step| step.exercise? || step.placeholder? }
+      goal_num_tutor_assigned_spes = spe_steps.size
+      spes_are_assigned = spe_steps.none?(&:placeholder?)
+      p_steps = task.task_steps.select(&:personalized_group?)
+      pe_steps = p_steps.select{ |step| step.exercise? || step.placeholder? }
+      goal_num_tutor_assigned_pes = pe_steps.size
+      pes_are_assigned = pe_steps.none?(&:placeholder?)
       assigned_exercises = task.task_steps.select(&:exercise?).map do |exercise_step|
         {
           trial_uuid: exercise_step.tasked.uuid,

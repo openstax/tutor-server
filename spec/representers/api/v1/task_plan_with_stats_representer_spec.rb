@@ -3,16 +3,13 @@ require 'vcr_helper'
 
 RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed: :medium do
 
-  let(:number_of_students){ 2 }
+  let(:number_of_students) { 2 }
 
-  let(:task_plan) {
-    allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-      receive(:k_ago_map) { [ [0, 2] ] }
-    )
+  let(:task_plan)          do
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
-  }
+  end
 
-  let(:representation) { described_class.new(task_plan).as_json }
+  let(:representation)     { described_class.new(task_plan).as_json }
 
   it "represents a task plan's stats" do
     expect(representation).to include(
@@ -37,17 +34,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
               "is_trouble" => false
             )
           ),
-          "spaced_pages" => a_collection_containing_exactly(
-            a_hash_including(
-              "id"     => task_plan.settings['page_ids'].first.to_s,
-              "title"  => "Newton's First Law of Motion: Inertia",
-              "student_count"   => 0,
-              "correct_count"   => 0,
-              "incorrect_count" => 0,
-              "chapter_section" => [1, 1],
-              "is_trouble" => false
-            )
-          ),
+          "spaced_pages" => [],
           "is_trouble" => false
         }
       ]
@@ -56,8 +43,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
 
   context "shareable_url" do
     it "can be read" do
-      FactoryGirl.create :short_code_short_code, code: 'short',
-                         uri: task_plan.to_global_id.to_s
+      FactoryGirl.create :short_code_short_code, code: 'short', uri: task_plan.to_global_id.to_s
       allow(task_plan).to receive(:title).and_return('Read ch 4')
       expect(representation).to include("shareable_url" => '/@/short/read-ch-4')
     end
