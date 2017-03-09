@@ -1,16 +1,39 @@
 require 'rails_helper'
 
 RSpec.describe ActsAsTasked, type: :lib do
-  [:tasks_tasked_reading, :tasks_tasked_exercise].each do |tasked_class|
-    subject(:tasked) { FactoryGirl.create tasked_class }
+  context 'tasked_reading' do
+    subject(:tasked) { FactoryGirl.create :tasks_tasked_reading }
 
     it { is_expected.to have_one(:task_step) }
 
-    it "causes #{tasked_class} to delegate methods to its task_step" do
+    it "causes the tasked_reading to delegate methods to its task_step" do
       expect(tasked.first_completed_at).to be_nil
-      expect(tasked).to_not be_completed
+      expect(tasked).not_to be_completed
 
-      tasked.complete
+      tasked.complete!
+
+      expect(tasked.first_completed_at).to eq tasked.task_step.first_completed_at
+      expect(tasked).to be_completed
+    end
+  end
+
+  context 'tasked_exercise' do
+    subject(:tasked) { FactoryGirl.create :tasks_tasked_exercise }
+
+    it { is_expected.to have_one(:task_step) }
+
+    it "causes the tasked_exercise to delegate methods to its task_step" do
+      expect(tasked.first_completed_at).to be_nil
+      expect(tasked).not_to be_completed
+
+      tasked.complete! # Fails due to no answer
+
+      expect(tasked.first_completed_at).to be_nil
+      expect(tasked).not_to be_completed
+
+      tasked.free_response = 'Something'
+      tasked.answer_id = tasked.correct_answer_id
+      tasked.complete!
 
       expect(tasked.first_completed_at).to eq tasked.task_step.first_completed_at
       expect(tasked).to be_completed

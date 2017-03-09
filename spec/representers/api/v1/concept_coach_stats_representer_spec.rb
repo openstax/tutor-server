@@ -91,15 +91,7 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
               "is_trouble" => false
             }
           ),
-          "spaced_pages" => a_collection_containing_exactly(
-            "id"     => @page_1.id.to_s,
-            "title"  => "Sample module 1",
-            "student_count"   => 0,
-            "correct_count"   => 0,
-            "incorrect_count" => 0,
-            "chapter_section" => [1, 1],
-            "is_trouble" => false
-          ),
+          "spaced_pages" => [],
           "is_trouble" => false
         }
       ]

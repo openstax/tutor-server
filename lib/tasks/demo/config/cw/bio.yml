@@ -23,7 +23,6 @@ periods:
 
 assignments:
   - type: reading
-    step_types: [r, r, r, e, r, e, r, r, r, e, r, r, e, r, r, e, r, r, e, r, r, r, r, p]
     book_locations: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
     late:
@@ -50,7 +49,6 @@ assignments:
         students: {an: 100,cg: 82,cd: 71,dp: 90,fa: 78,jr: 87,js: i,lh: i,ms: 90,rb: 85,wh: ns}
 
   - type: reading
-    step_types: [ r, r, r, e, r, r, r, e, r, r, e, r, r, e, r, r, e, p ]
     book_locations: [[6, 0], [6, 1], [6, 2]]
     title: Read Chapter 6. Metabolism
     late:
@@ -64,14 +62,14 @@ assignments:
         due_at: <%= due_two_days_ago %>
         students:
           ak: 94
-          at: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1 ]
+          at: 77
           bh: 40
-          gj: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0 ]
+          gj: 77
           kl: 60
           ir: i
           mb: ns
           ra: 72
-          sg: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
+          sg: 100
       - id: p4
         opens_at: <%= open_one_day_ago %>
         due_at: <%= due_today %>
@@ -80,16 +78,15 @@ assignments:
           cg: 100
           cd: i
           dp: ns
-          fa: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0 ]
+          fa: 72
           jr: 79
-          js: [ 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0 ]
+          js: 72
           lh: i
           ms: i
-          rb: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1 ]
-          wh: [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0 ]
+          rb: 88
+          wh: 72
 
   - type: homework
-    step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     book_locations: [[1, 0], [1, 1], [1, 2]]
     title: HW Chapter 1 The Study of Life
     num_exercises: 10
@@ -106,12 +103,12 @@ assignments:
           ag: 90
           ap: 87
           bs: 98
-          eh: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 ]
+          eh: 81
           hc: 88
           hg: ns
           iu: ns
           iw: 100
-          nz: [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]
+          nz: 45
           rl: 80
           sk: 65
       - id: p4
@@ -119,11 +116,11 @@ assignments:
         due_at: <%= due_today %>
         students:
           an: 100
-          cg: [ 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1 ]
-          cd: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1 ]
+          cg: 63
+          cd: 72
           dp: 80
           fa: 90
-          jr: [ 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0 ]
+          jr: 27
           js: i
           lh: ns
           ms: i

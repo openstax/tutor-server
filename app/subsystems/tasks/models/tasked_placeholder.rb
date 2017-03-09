@@ -1,7 +1,7 @@
 class Tasks::Models::TaskedPlaceholder < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
-  enum placeholder_type: [:default_type, :exercise_type]
+  enum placeholder_type: [:unknown_type, :exercise_type]
 
   validates :placeholder_type, presence: true
 
@@ -15,9 +15,5 @@ class Tasks::Models::TaskedPlaceholder < Tutor::SubSystems::BaseModel
 
   def completed?
     false
-  end
-
-  def placeholder_name
-    placeholder_type.gsub(/_type\z/, '').gsub('_', ' ')
   end
 end

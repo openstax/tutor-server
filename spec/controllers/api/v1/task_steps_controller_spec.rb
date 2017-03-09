@@ -229,9 +229,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
       errors = response.body_as_hash[:errors]
       expect(errors.size).to eq 2
-      errors.each do |error|
-        expect(error[:code]).to eq 'is required'
-      end
+      errors.each { |error| expect(error[:code]).to include 'is required' }
 
       expect(tasked.task_step(true).completed?).to be_falsy
     end

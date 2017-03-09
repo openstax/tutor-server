@@ -55,29 +55,10 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
   protected
 
-  def k_ago_map(num_spaced_practice_exercises)
-    ## Entries in the list have the form:
-    ##   [from-this-many-events-ago, choose-this-many-exercises]
-    case num_spaced_practice_exercises
-    when 0
-      []
-    when 1
-      [ [2,1] ]
-    when 2
-      [ [2,1], [4,1] ]
-    when 3
-      [ [2,2], [4,1] ]
-    when 4
-      [ [2,2], [4,2] ]
-    else
-      raise "could not determine k-ago map for num_spaced_practice_exercises=#{
-              num_spaced_practice_exercises
-            }"
-    end
-  end
-
-  def num_personalized_exercises
-    1
+  def num_spaced_practice_exercises
+    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic'].to_i
+    num_spaced_practice_exercises = [0, exercises_count_dynamic].max
+    num_spaced_practice_exercises
   end
 
   def build_homework_task(exercises:, history:, individualized_tasking_plan:)
@@ -88,15 +69,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     add_core_steps!(task: task, exercises: exercises)
 
-    add_spaced_practice_exercise_steps!(
-      task: task, core_page_ids: @core_page_ids, history: history,
-      k_ago_map: k_ago_map(num_spaced_practice_exercises), pool_type: :homework_dynamic
-    )
-
-    add_personalized_exercise_steps!(
-      task: task, count: num_personalized_exercises,
-      personalized_placeholder_strategy_class: Tasks::PlaceholderStrategies::HomeworkPersonalized
-    )
+    add_placeholder_steps! task: task,
+                           group_type: :spaced_practice_group,
+                           count: num_spaced_practice_exercises
   end
 
   def add_core_steps!(task:, exercises:)
@@ -105,12 +80,6 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     end
 
     task
-  end
-
-  def num_spaced_practice_exercises
-    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic']
-    num_spaced_practice_exercises = [0, exercises_count_dynamic-1].max
-    num_spaced_practice_exercises
   end
 
 end

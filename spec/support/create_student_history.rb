@@ -24,12 +24,12 @@ class CreateStudentHistory
       practice_steps = create_practice_widget(
         course: course, role: role, page_ids: ecosystem.chapters[3 - (i % 2)].pages[1].id
       )
-      answer_correctly(practice_steps, 2 + i) # 2 or 3/5
+      answer_correctly(practice_steps, 2 + i) # 2 or 3 out of 5
 
       practice_steps = create_practice_widget(
-        course: course, role: role, page_ids: ecosystem.chapters[3].pages[2].id
+        course: course, role: role, pages: ecosystem.chapters[3].pages[2].id
       )
-      answer_correctly(practice_steps, 5) # 5/5
+      answer_correctly(practice_steps, 5) # 5 out of 5
 
       practice_steps = create_practice_widget(
         course: course, role: role, chapter_ids: ecosystem.chapters[3].id
@@ -66,7 +66,10 @@ class CreateStudentHistory
     tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
     tasks.each do |task|
       task = task.reload
-      answer_correctly(task.task_steps(true), 2)
+      answerable_steps = task.task_steps.select do |task_step|
+        task_step.exercise? || task_step.placeholder?
+      end
+      answer_correctly(answerable_steps, 2)
     end
   end
 
@@ -77,15 +80,20 @@ class CreateStudentHistory
   end
 
   def answer_correctly(steps, num)
-    steps.first(num).each do |step|
-      begin
-        step.reload
-      rescue ActiveRecord::RecordNotFound
-        raise "Tried to answer a #{step.group_name} step, but it was removed " +
-              '(probably because Biglearn returned no PEs)'
-      end
+    correct_steps = steps.first(num)
+    steps_count = correct_steps.size
+    raise "Not enough steps to answer correctly." +
+          " Requested: #{num}. Got: #{steps_count}" if steps_count < num
 
-      Preview::AnswerExercise[task_step: step, is_correct: true]
+    correct_steps.each do |task_step|
+      begin
+        task_step.reload
+      rescue ActiveRecord::RecordNotFound
+        raise "Tried to answer a #{task_step.group_name} step, but it was removed " +
+              '(probably because Biglearn returned no PEs)'
+      end if task_step.placeholder?
+
+      Preview::AnswerExercise[task_step: task_step, is_correct: true]
     end
   end
 

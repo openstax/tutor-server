@@ -10,58 +10,24 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
   end
 
+  let(:personalized_step_gold_data) do
+    [ { group_type: 'personalized_group', klass: Tasks::Models::TaskedPlaceholder } ] * 3
+  end
+
+  let(:spaced_practice_step_gold_data) do
+    [ { group_type: 'spaced_practice_group', klass: Tasks::Models::TaskedPlaceholder } ] * 3
+  end
+
+  let(:task_step_gold_data) do
+    core_step_gold_data + personalized_step_gold_data + spaced_practice_step_gold_data
+  end
+
   context "for Introduction and Force" do
     before(:all) do
       cnx_page_hashes = [
         { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
         { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
       ]
-
-      @intro_step_gold_data = {
-        klass: Tasks::Models::TaskedReading,
-        title: "Forces and Newton's Laws of Motion",
-        related_content: [{'title' => "Forces and Newton's Laws of Motion",
-                           'book_location' => [8, 1]}]
-      }
-
-      @core_step_gold_data = [
-        @intro_step_gold_data,
-        {
-          klass: Tasks::Models::TaskedReading,
-          title: "Force",
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
-        }
-      ]
-
-      @personalized_step_gold_data = [
-        {
-          klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
-        },
-        {
-          klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
-        },
-        {
-          klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
-        }
-      ]
-
-      @spaced_practice_step_gold_data = [
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}] },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_content: [{'title' => "Force", 'book_location' => [8, 2]}] }
-      ]
-
-      @task_step_gold_data = @core_step_gold_data + @personalized_step_gold_data +
-                             @spaced_practice_step_gold_data
 
       cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
 
@@ -83,6 +49,27 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
 
       Content::Routines::PopulateExercisePools[book: chapter.book]
+    end
+
+    let(:intro_step_gold_data) do
+      {
+        group_type: 'core_group',
+        klass: Tasks::Models::TaskedReading,
+        title: "Forces and Newton's Laws of Motion",
+        related_content: [{'title' => "Forces and Newton's Laws of Motion",
+                           'book_location' => [8, 1]}]
+      }
+    end
+
+    let(:core_step_gold_data) do
+      [
+        intro_step_gold_data,
+        {
+          klass: Tasks::Models::TaskedReading,
+          title: "Force",
+          related_content: [{'title' => "Force", 'book_location' => [8, 2]}]
+        }
+      ]
     end
 
     let(:task_plan) do
@@ -107,9 +94,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let(:taskee_users) do
       num_taskees.times.map do
-        user = FactoryGirl.create(:user)
-        AddUserAsPeriodStudent.call(user: user, period: period)
-        user
+        FactoryGirl.create(:user).tap do |user|
+          AddUserAsPeriodStudent.call(user: user, period: period)
+        end
       end
     end
 
@@ -128,10 +115,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
-      )
-
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
@@ -142,18 +125,19 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         task_steps = task.task_steps
 
-        expect(task_steps.count).to eq(@task_step_gold_data.count)
+        expect(task_steps.count).to eq(task_step_gold_data.count)
         task_steps.each_with_index do |task_step, ii|
-          expect(task_step.tasked.class).to eq(@task_step_gold_data[ii][:klass])
+          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
-          expect(task_step.tasked.title).to eq(@task_step_gold_data[ii][:title])
-          expect(task_step.related_content).to eq(@task_step_gold_data[ii][:related_content])
+          expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
+          expect(task_step.related_content).to eq(task_step_gold_data[ii][:related_content])
           expect(task_step.related_exercise_ids).to eq []
         end
 
         core_task_steps = task.core_task_steps
-        expect(core_task_steps.count).to eq(@core_step_gold_data.count)
+        expect(core_task_steps.count).to eq(core_step_gold_data.count)
 
         core_task_steps.each_with_index do |task_step, i|
           page = (i == 0) ? @content_pages.first : @content_pages.last
@@ -177,9 +161,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         end
 
-        expect(task.personalized_task_steps.count).to eq(@personalized_step_gold_data.count)
+        expect(task.personalized_task_steps.count).to eq(personalized_step_gold_data.count)
 
-        expect(task.spaced_practice_task_steps.count).to eq(@spaced_practice_step_gold_data.count)
+        expect(task.spaced_practice_task_steps.count).to eq(spaced_practice_step_gold_data.count)
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
@@ -187,10 +171,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
-      )
-
       task_plan.update_attribute(:settings, { 'page_ids' => [@content_pages.first.id.to_s] })
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
@@ -208,10 +188,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.personalized_task_steps.count).to eq 0
 
         task_step = task_steps.first
-        expect(task_step.tasked.class).to eq(@intro_step_gold_data[:klass])
+        expect(task_step.group_type).to eq(intro_step_gold_data[:group_type] || 'core_group')
+        expect(task_step.tasked.class).to eq(intro_step_gold_data[:klass])
 
-        expect(task_step.tasked.title).to eq(@intro_step_gold_data[:title])
-        expect(task_step.related_content).to eq(@intro_step_gold_data[:related_content])
+        expect(task_step.tasked.title).to eq(intro_step_gold_data[:title])
+        expect(task_step.related_content).to eq(intro_step_gold_data[:related_content])
         expect(task_step.related_exercise_ids).to eq []
 
         expect(task_step.core_group?).to eq true
@@ -220,88 +201,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
       expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
     end
-
-    it 'does not assign excluded dynamic exercises' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
-      )
-
-      @content_pages.each do |content_page|
-        reading_dynamic_exercises = content_page.reload.reading_dynamic_pool.exercises
-        reading_dynamic_exercises.each do |exercise|
-          CourseContent::Models::ExcludedExercise.create!(course: course,
-                                                          exercise_number: exercise.number)
-        end
-      end
-
-      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
-      expect(tasks.length).to eq num_taskees
-
-      tasks.each do |task|
-        task_steps = task.task_steps
-
-        expect(task_steps.count).to eq(@core_step_gold_data.count)
-        task_steps.each_with_index do |task_step, ii|
-          expect(task_step.tasked.class).to(
-            eq((@core_step_gold_data)[ii][:klass])
-          )
-
-          expect(task_step.tasked.title).to eq(@core_step_gold_data[ii][:title])
-          expect(task_step.related_content).to eq(@core_step_gold_data[ii][:related_content])
-          expect(task_step.related_exercise_ids).to eq []
-        end
-
-        expect(task.spaced_practice_task_steps.count).to eq 0
-
-        expect(task.personalized_task_steps.count).to eq 0
-      end
-
-      expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
-    end
-
-    it 'does not assign the same spaced practice exercise twice in the same assignment' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises_per_page) { 0 }
-      )
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2], [0, 2]] }
-      )
-
-      unexcluded_exercise = nil
-      @content_pages.each do |content_page|
-        reading_dynamic_exercises = content_page.reload.reading_dynamic_pool.exercises
-        reading_dynamic_exercises.each do |exercise|
-          next unexcluded_exercise = exercise if unexcluded_exercise.nil?
-          CourseContent::Models::ExcludedExercise.create!(course: course,
-                                                          exercise_number: exercise.number)
-        end
-      end
-
-      tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
-      expect(tasks.length).to eq num_taskees
-
-      tasks.each do |task|
-        expect(task.core_task_steps.count).to eq @core_step_gold_data.count
-
-        expect(task.spaced_practice_task_steps.count).to eq 1
-        expect(task.spaced_practice_task_steps.first.tasked.exercise).to eq unexcluded_exercise
-
-        expect(task.personalized_task_steps.count).to eq 0
-      end
-
-      expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
-    end
   end
 
   context "for Newton's First Law of Motion: Inertia" do
-    let(:cnx_page_hash) { {
-      'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-      'title' => "Newton's First Law of Motion: Inertia"
-    } }
+    let(:cnx_page_hash) do
+      {
+        'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+        'title' => "Newton's First Law of Motion: Inertia"
+      }
+    end
 
-    let(:core_step_gold_data) {
+    let(:core_step_gold_data) do
       [
         { klass: Tasks::Models::TaskedReading,
           title: "Newton's First Law of Motion: Inertia" },
@@ -312,53 +222,43 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           title: "Virtual Physics: Forces and Motion: Basics" },
         { klass: Tasks::Models::TaskedExercise, title: nil }
       ]
-    }
-
-    let(:spaced_practice_step_gold_data) {
-      [
-        { klass: Tasks::Models::TaskedExercise, title: nil },
-        { klass: Tasks::Models::TaskedExercise, title: nil }
-      ]
-    }
-
-    let(:task_step_gold_data) {
-      core_step_gold_data + spaced_practice_step_gold_data
-    }
+    end
 
     let(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-    let(:chapter) { FactoryGirl.create :content_chapter,
-                                        title: "Forces and Newton's Laws of Motion" }
+    let(:chapter) do
+      FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
+    end
 
     let(:ecosystem) do
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
       ::Content::Ecosystem.new(strategy: ecosystem_strategy)
     end
 
-    let(:page) {
+    let(:page) do
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [1, 1]
       ).outputs.page.reload
-    }
+    end
 
     let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
 
-    let(:task_plan) {
+    let(:task_plan) do
       FactoryGirl.build(:tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: ecosystem.id,
         settings: { 'page_ids' => [page.id.to_s] },
         num_tasking_plans: 0
       )
-    }
+    end
 
-    let(:course) {
+    let(:course) do
       task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       end
-    }
+    end
 
     let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
@@ -375,7 +275,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
     }
 
-    let!(:tasking_plans) {
+    let!(:tasking_plans) do
       tps = taskee_users.map do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan, task_plan: task_plan, target: taskee
@@ -384,16 +284,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       task_plan.save!
       tps
-    }
+    end
 
     it 'is split into different task steps with immediate feedback' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises_per_page) { 0 }
-      )
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
-      )
-
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
@@ -403,7 +296,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
+          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+          next if task_step.placeholder?
+
           expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
           expect(task_step.related_exercise_ids).to eq []
         end
@@ -413,32 +309,35 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
   end
 
   context "for Newton's Second Law of Motion" do
-    let(:cnx_page_hash) { {
-      'id' => '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0',
-      'title' => "Newton's Second Law of Motion"
-    } }
+    let(:cnx_page_hash) do
+      {
+        'id' => '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0',
+        'title' => "Newton's Second Law of Motion"
+      }
+    end
 
     let(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-    let(:chapter) { FactoryGirl.create :content_chapter,
-                                        title: "Forces and Newton's Laws of Motion" }
+    let(:chapter) do
+      FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
+    end
 
     let(:ecosystem) do
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
       ::Content::Ecosystem.new(strategy: ecosystem_strategy)
     end
 
-    let(:page) {
+    let(:page) do
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [1, 1]
       ).outputs.page.reload
-    }
+    end
 
     let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
 
-    let(:task_plan) {
+    let(:task_plan) do
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: @assistant,
@@ -446,19 +345,19 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         settings: { 'page_ids' => [page.id.to_s] },
         num_tasking_plans: 0
       )
-    }
+    end
 
-    let(:course) {
+    let(:course) do
       task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       end
-    }
+    end
 
     let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
     let(:num_taskees) { 3 }
 
-    let(:taskee_users) {
+    let(:taskee_users) do
       num_taskees.times.map do
         FactoryGirl.create(:user_profile).tap do |profile|
           strategy = User::Strategies::Direct::User.new(profile)
@@ -467,9 +366,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           user
         end
       end
-    }
+    end
 
-    let!(:tasking_plans) {
+    let!(:tasking_plans) do
       tps = taskee_users.map do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan, task_plan: task_plan, target: taskee
@@ -478,9 +377,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       task_plan.save!
       tps
-    }
+    end
 
-    let(:core_step_gold_data) {
+    let(:core_step_gold_data) do
       [
         { klass: Tasks::Models::TaskedReading,
           title: "Newton's Second Law of Motion",
@@ -500,27 +399,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
             exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
           end.map(&:id) }
       ]
-    }
-
-    let(:spaced_practice_step_gold_data) {
-      [
-        { klass: Tasks::Models::TaskedExercise, title: nil, related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedExercise, title: nil, related_exercise_ids: [] }
-      ]
-    }
-
-    let(:task_step_gold_data) {
-      core_step_gold_data + spaced_practice_step_gold_data
-    }
+    end
 
     it 'is split into different task steps with immediate feedback and a "try another" exercise' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises_per_page) { 0 }
-      )
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:k_ago_map) { [[0, 2]] }
-      )
-
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
@@ -530,7 +411,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
+          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+          next if task_step.placeholder?
+
           expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
           expect(Set.new task_step.related_exercise_ids).to(
             eq Set.new(task_step_gold_data[ii][:related_exercise_ids])
@@ -652,7 +536,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
         receive(:num_personalized_exercises_per_page) { 0 }
       )
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [] }
 
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [
@@ -691,7 +574,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       expect(task_steps.count).to eq task_step_gold_data.count
       task_steps.each_with_index do |task_step, ii|
+        expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
         expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+        next if task_step.placeholder?
+
         expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
       end
     end
