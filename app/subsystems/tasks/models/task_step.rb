@@ -7,7 +7,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
                                            inverse_of: :task_step, touch: true
 
   enum group_type: [
-    :default_group,
+    :unknown_group,
     :core_group,
     :spaced_practice_group,
     :personalized_group,
@@ -63,10 +63,18 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     tasked.make_incorrect!
   end
 
-  def complete(completion_time: Time.current)
+  def complete!(completion_time: Time.current)
+    valid?
+    tasked.valid?
+    tasked.before_completion
+    tasked.errors.full_messages.each { |message| errors.add :tasked, message }
+    return if errors.any?
+
     self.first_completed_at ||= completion_time
     self.last_completed_at = completion_time
-    self
+    self.save!
+
+    task.handle_task_step_completion!(completion_time: completion_time)
   end
 
   def completed?

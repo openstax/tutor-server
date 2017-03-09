@@ -44,17 +44,13 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
     before do
       allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
-        receive(:k_ago_map) { [ [2, 4] ] }
+        receive(:num_spaced_practice_exercises) { 3 }
       )
-      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
-        receive(:num_personalized_exercises) { 3 }
-      )
-      generate_test_exercise_content
+      generate_homework_test_exercise_content
     end
 
     it 'creates a preview and distributes the steps' do
-      step_types = ["core_group", "core_group", "core_group", "core_group", "core_group",
-                    "core_group", "personalized_group", "personalized_group", "personalized_group"]
+      expected_step_types = ['core_group'] * 6 + ['spaced_practice_group'] * 3
 
       results = DistributeTasks.call(task_plan: homework_plan, preview: true)
       expect(results.errors).to be_empty
@@ -62,7 +58,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       expect(homework_plan.reload.tasks.length).to eq 1
 
       homework_plan.tasks.each do | task |
-        expect(task.task_steps.map(&:group_type)).to eq(step_types)
+        expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
       end
 
       results = DistributeTasks.call(task_plan: homework_plan)
@@ -71,11 +67,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       expect(homework_plan.reload.tasks.length).to eq 3
 
       homework_plan.tasks.each do | task |
-        expect(task.task_steps.map(&:group_type)).to eq(step_types)
+        expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
       end
     end
 
-    # Note - this isn't 100% guaranteed to fail.  There's still a chance that the forked children will process
+    # Note - this isn't 100% guaranteed to fail.
+    # There's still a chance that the forked children will process
     # distribution in a way that doesn't trigger IsolationConflict exceptions.
     # If this spec starts to fail in indeterminate ways and can't be fixed it can be removed
     it 'cannot be distributed concurrently' do

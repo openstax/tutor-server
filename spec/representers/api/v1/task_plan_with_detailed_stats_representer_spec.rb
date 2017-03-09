@@ -5,17 +5,14 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
 
   let(:number_of_students) { 2 }
 
-  let(:task_plan) {
-    allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-      receive(:k_ago_map) { [ [0, 2] ] }
-    )
+  let(:task_plan)          do
     allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
       receive(:num_personalized_exercises_per_page) { 0 }
     )
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
-  }
+  end
 
-  let(:representation) { described_class.new(task_plan).as_json }
+  let(:representation)     { described_class.new(task_plan).as_json }
 
   it "represents a task plan's stats" do
     # Answer an exercise correctly and mark it as completed
@@ -101,16 +98,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
               }
             )
           ),
-          spaced_pages: a_collection_containing_exactly(
-            id: task_plan.settings['page_ids'].first.to_s,
-            title: "Newton's First Law of Motion: Inertia",
-            student_count: 0,
-            correct_count: 0,
-            incorrect_count: 0,
-            chapter_section: [1, 1],
-            is_trouble: false,
-            exercises: a_kind_of(Array)
-          ),
+          spaced_pages: [],
           is_trouble: false
         }
       ]

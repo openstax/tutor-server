@@ -5,10 +5,10 @@ class TaskExercise
   protected
 
   def exec(exercise:, title: nil, task: nil, task_step: nil)
-    # This routine will make one step per exercise part.  If provided, the
-    # incoming `task_step` will be used as the first step.
+    # This routine will make one step per exercise part.
+    # If provided, the incoming `task_step` will be used as the first step.
 
-    task ||= task_step.try(:task)
+    task ||= task_step.try!(:task)
     fatal_error(code: :cannot_get_task) if task.nil?
 
     current_step = task_step
@@ -49,7 +49,8 @@ class TaskExercise
 
       yield current_step if block_given?
 
-      task.add_step(current_step)
+      # This only saves the steps if the task is already persisted
+      task.task_steps << current_step
 
       current_step
     end

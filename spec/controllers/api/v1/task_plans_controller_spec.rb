@@ -508,9 +508,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         expect(@task_plan.last_published_at).not_to be_within(1).of(published_at)
         expect(@task_plan.publish_job_uuid).not_to eq publish_job_uuid
 
-        @task_plan.tasks.each do |task|
-          expect(task.opens_at).to be_within(1).of(new_opens_at)
-        end
+        @task_plan.tasks.each { |task| expect(task.opens_at).to be_within(1).of(new_opens_at) }
 
         # Revert task_plan to its state when the job was queued
         @task_plan.first_published_at = published_at

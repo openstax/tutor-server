@@ -26,6 +26,7 @@ class PopulatePreviewCourseContent
   uses_routine DistributeTasks, as: :distribute_tasks
   uses_routine MarkTaskStepCompleted, as: :mark_task_step_completed
   uses_routine Preview::AnswerExercise, as: :answer_exercise
+  uses_routine Tasks::PopulatePlaceholderSteps, as: :populate_placeholders
 
   def exec(course:)
 
@@ -181,7 +182,11 @@ class PopulatePreviewCourseContent
       task_steps = task.task_steps.to_a
 
       task_steps.each_with_index do |task_step, index|
-        task_step.reload if task_step.placeholder?
+        if task_step.placeholder?
+          run(:populate_placeholders, task: task)
+
+          task_step.reload
+        end
 
         if task_step.exercise?
           is_correct = SecureRandom.random_number < correct_probability

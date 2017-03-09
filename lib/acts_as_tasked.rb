@@ -13,7 +13,7 @@ module ActsAsTasked
 
         after_update :touch_task_step
 
-        delegate :first_completed_at, :last_completed_at, :completed?, :complete,
+        delegate :first_completed_at, :last_completed_at, :completed?, :complete!,
                  :can_be_recovered?, to: :task_step, allow_nil: true
 
         def touch_task_step
@@ -42,6 +42,9 @@ module ActsAsTasked
 
         def aplos
           []
+        end
+
+        def before_completion
         end
       end
     end

@@ -179,110 +179,14 @@ class Tasks::Assistants::GenericAssistant
     ChooseExercises[exercises: filtered_exercises, count: count, history: history]
   end
 
-  def add_spaced_practice_exercise_steps!(task:, core_page_ids:, pool_type:,
-                                          history:, k_ago_map:, for_each_core_page: false)
-    raise 'You must call reset_used_exercises before add_spaced_practice_exercise_steps!' \
-      if @used_exercise_numbers.nil?
-
-    history = history_for_task task: task, core_page_ids: core_page_ids, history: history
-
-    course = task_plan.owner
-
-    spaced_practice_status = []
-
-    k_ago_map.each do |k_ago, number|
-      if k_ago.nil?
-        num_previous_tasks = history.total_count
-
-        # Skip if no previous tasks
-        next if num_previous_tasks == 0
-
-        # Random-ago does not include 0-ago
-        k_ago = SecureRandom.random_number(num_previous_tasks - 1) + 1
-
-        k_ago_name = "random:#{k_ago}"
-      else
-        k_ago_name = k_ago.to_s
-      end
-
-      # Not enough history
-      if k_ago >= history.total_count
-        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago_name}-ago slot"
-        next
-      end
-
-      spaced_ecosystem_id = history.ecosystem_ids[k_ago]
-      spaced_page_ids = history.core_page_ids[k_ago].uniq
-
-      cached_page_ids = @pool_exercise_cache.keys
-      uncached_spaced_page_ids = spaced_page_ids - cached_page_ids
-
-      unless uncached_spaced_page_ids.empty?
-        # Get the ecosystems map
-        ecosystems_map = get_spaced_ecosystems_map(spaced_ecosystem_id: spaced_ecosystem_id)
-
-        # Get the spaced pages
-        uncached_spaced_pages = get_pages(page_ids: uncached_spaced_page_ids)
-
-        # Map the pages to exercises in the new ecosystem
-        uncached_pool_exercises_by_pages = ecosystems_map.map_pages_to_exercises(
-          pages: uncached_spaced_pages, pool_type: pool_type
-        )
-
-        uncached_pool_exercises_by_pages.each do |uncached_spaced_page, exercises|
-          @pool_exercise_cache[uncached_spaced_page.id][pool_type] = exercises
-        end
-      end
-
-      dynamic_spaced_page_ids = spaced_page_ids.reject do |spaced_page_id|
-        @pool_exercise_cache[spaced_page_id][pool_type].empty?
-      end
-
-      chosen_exercises = if for_each_core_page
-        dynamic_spaced_page_ids.map do |spaced_page_id|
-          candidate_exercises = @pool_exercise_cache[spaced_page_id][pool_type]
-
-          filter_and_choose_exercises(exercises: candidate_exercises, course: course,
-                                      count: number, history: history)
-        end
-      else
-        candidate_exercises = dynamic_spaced_page_ids.flat_map do |spaced_page_id|
-          @pool_exercise_cache[spaced_page_id][pool_type]
-        end
-
-        [filter_and_choose_exercises(exercises: candidate_exercises, course: course,
-                                     count: number, history: history)]
-      end
-
-      # Set related_content and add the exercises to the task
-      chosen_exercises.flatten.map do |chosen_exercise|
-        add_exercise_step!(task: task, exercise: chosen_exercise,
-                           group_type: :spaced_practice_group)
-      end
-
-      spaced_practice_status << "Could not completely fill the #{k_ago_name}-ago slot" \
-        if chosen_exercises.any?{ |exercises| exercises.size < number }
-    end
-
-    spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
-
-    AddSpyInfo[to: task, from: { spaced_practice: spaced_practice_status }]
-
-    task
-  end
-
-  def add_personalized_exercise_steps!(task:, count:, personalized_placeholder_strategy_class:)
-    return task if count == 0
-
-    task.personalized_placeholder_strategy = personalized_placeholder_strategy_class.new
-
+  def add_placeholder_steps!(task:, group_type:, count:)
     count.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
-      task_step.group_type = :personalized_group
-      task.add_step(task_step)
+      task_step.group_type = group_type
+      task.task_steps << task_step
     end
 
     task
