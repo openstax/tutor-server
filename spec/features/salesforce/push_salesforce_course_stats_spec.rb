@@ -23,6 +23,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     FactoryGirl.create :course_profile_course,
                        term: :spring,
                        year: 2017,
+                       starts_at: Chronic.parse("January 1, 2017"),
                        offering: chemistry_offering,
                        is_concept_coach: false
   }
@@ -69,18 +70,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     end
 
     context "when there is an existing IA" do
-      let!(:ia) {
-        Salesforce::Remote::IndividualAdoption.new(
-          contact_id: sf_contact_a.id,
-          class_start_date: "2017-01-01",
-          book_id: @sfh.book_id("Chemistry"),
-          school_id: @sfh.school_id("JP University")
-        ).tap do |ia|
-          if !ia.save
-            raise "didn't save IA"
-          end
-        end
-      }
+      let!(:ia) { create_chemistry_ia }
 
       it 'makes an OSA and pushes stats' do
         call_expecting_no_errors
@@ -88,6 +78,11 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
+      end
+
+      it 'errors when cannot make an OSA' do
+        allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { false }
+        call_expecting_errors(/Could not make new OsAncillary/)
       end
     end
 
@@ -98,29 +93,8 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
     end
 
-    let!(:ia) {
-      Salesforce::Remote::IndividualAdoption.new(
-        contact_id: sf_contact_a.id,
-        class_start_date: "2017-01-01",
-        book_id: @sfh.book_id("Chemistry"),
-        school_id: @sfh.school_id("JP University")
-      ).tap do |ia|
-        if !ia.save
-          raise "didn't save IA"
-        end
-      end
-    }
-
-    let!(:osa) {
-      Salesforce::Remote::OsAncillary.new(
-        individual_adoption_id: ia.id,
-        product: "Tutor"
-      ).tap do |osa|
-        if !osa.save
-          raise "didn't save OSA"
-        end
-      end
-    }
+    let!(:ia) { create_chemistry_ia }
+    let!(:osa) { create_osa(ia, course, sf_contact_a) }
 
     it 'pushes stats if not yet attached' do
       call_expecting_no_errors
@@ -142,8 +116,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     end
 
     it 'handles final OSA save errors' do
-      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { false }
-      call_expecting_errors
+      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save).and_wrap_original do |m, *args|
+        m.call(*args)
+        m.receiver.errors.add(:base, "Test Error")
+        false
+      end
+
+      call_expecting_errors(/Test Error/)
     end
   end
 
@@ -162,46 +141,35 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     it 'errors when no teacher SF contact' do
       AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      call_expecting_errors
+      call_expecting_errors(/No teacher SF contact/)
     end
 
     it 'errors when multiple IAs match' do
-      2.times {
-        Salesforce::Remote::IndividualAdoption.new(
-          contact_id: sf_contact_a.id,
-          class_start_date: "2017-01-01",
-          book_id: @sfh.book_id("Chemistry"),
-          school_id: @sfh.school_id("JP University")
-        ).tap do |ia|
-          if !ia.save
-            raise "didn't save IA"
-          end
-        end
-      }
+      2.times { create_chemistry_ia }
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
-      call_expecting_errors
+      call_expecting_errors(/Too many IndividualAdoptions/)
     end
 
     it 'errors when it cannot save a new IA' do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
       allow_any_instance_of(Salesforce::Remote::Contact).to receive(:school_id).and_return(nil)
-      capture_stdout{ call_expecting_errors }
+      capture_stdout{ call_expecting_errors(/Could not make new IndividualAdoption for inputs/) }
     end
 
     it 'errors when multiple OSAs match' do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
 
       ia = create_chemistry_ia
-      2.times { create_osa(ia, course) }
+      2.times { create_osa(ia, course, sf_contact_a) }
 
-      call_expecting_errors
+      call_expecting_errors(/Too many OsAncillaries/)
     end
 
     it 'errors when no offering' do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
       course.offering = nil
       course.save!
-      call_expecting_errors
+      call_expecting_errors(/No offering/)
     end
 
     context "when there is an error (no teacher)" do
@@ -242,7 +210,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   def create_chemistry_ia
     Salesforce::Remote::IndividualAdoption.new(
       contact_id: sf_contact_a.id,
-      class_start_date: "2017-01-01",
+      spring_start_date: "2017-01-01",
       book_id: @sfh.book_id("Chemistry"),
       school_id: @sfh.school_id("JP University")
     ).tap do |ia|
@@ -252,10 +220,11 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     end
   end
 
-  def create_osa(ia, course)
+  def create_osa(ia, course, contact)
     Salesforce::Remote::OsAncillary.new(
       individual_adoption_id: ia.id,
-      product: course.is_concept_coach ? "Concept Coach" : "Tutor"
+      product: course.is_concept_coach ? "Concept Coach" : "Tutor",
+      contact_id: contact.id
     ).tap do |osa|
       if !osa.save
         raise "didn't save OSA"
@@ -272,9 +241,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     call
   end
 
-  def call_expecting_errors(num_errors=1)
-    raise "nyi" if num_errors != 1
-    expect_any_instance_of(PushSalesforceCourseStats).to receive(:error!).and_call_original
+  def call_expecting_errors(error_messages = [anything()])
+    error_messages = [error_messages].flatten
+    raise "nyi" if error_messages.size != 1
+    expect_any_instance_of(PushSalesforceCourseStats)
+      .to receive(:error!)
+      .with(hash_including(message: error_messages.first))
+      .and_call_original
     call
   end
 

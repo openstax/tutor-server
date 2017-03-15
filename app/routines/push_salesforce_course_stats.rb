@@ -66,7 +66,7 @@ class PushSalesforceCourseStats
         individual_adoption_criteria = {
           contact_id: sf_contact_id,
           book_name: book_name,
-          term_year: salesforce_term_year_for_course(course)
+          school_year: salesforce_school_year_for_course(course)
         }
 
         candidate_individual_adoptions = Salesforce::Remote::IndividualAdoption
@@ -84,12 +84,24 @@ class PushSalesforceCourseStats
             start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
             sf_contact = Salesforce::Remote::Contact.where(id: sf_contact_id).first
 
-            Salesforce::Remote::IndividualAdoption.new(
+            individual_adoption_options = {
               contact_id: sf_contact_id,
-              class_start_date: start_date,
               book_id: book_names_to_sf_ids[book_name],
               school_id: sf_contact.school_id
-            ).tap do |ia|
+            }
+
+            start_date_key =
+              if course.legacy? || course.demo?
+                error!(message: "Unallowed course term", course: course)
+              else
+                "#{course.term}_start_date".to_sym
+              end
+
+            individual_adoption_options.merge(
+              {start_date_key => course.starts_at.iso8601.gsub(/T.*/,'')}
+            )
+
+            Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
               if !ia.save
                 error!(message: "Could not make new IndividualAdoption for inputs " \
                                 "#{individual_adoption_criteria}; errors: " \
@@ -115,7 +127,7 @@ class PushSalesforceCourseStats
 
         os_ancillary = candidate_os_ancillaries.first ||
           begin
-            Salesforce::Remote::OsAncillary.new(os_ancillary_criteria).tap do |osa|
+            Salesforce::Remote::OsAncillary.new(os_ancillary_criteria.merge(contact_id: sf_contact_id)).tap do |osa|
               if !osa.save
                 error!(message: "Could not make new OsAncillary for inputs #{os_ancillary_criteria}; " \
                                 "errors: #{osa.errors.full_messages.join(', ')}",
@@ -140,9 +152,19 @@ class PushSalesforceCourseStats
     end
   end
 
-  def salesforce_term_year_for_course(course)
-    start_year = course.spring? ? course.year - 1 : course.year
-    Salesforce::Remote::TermYear.new(start_year: start_year, term: course.term.to_sym).to_s
+  def salesforce_school_year_for_course(course)
+    base_year = case course.term
+    when 'fall'
+      course.starts_at.year
+    when 'spring'
+      course.starts_at.year - 1
+    when 'summer'
+      course.starts_at.year - 1
+    else
+      raise "Unhandled course term #{course.term}"
+    end
+
+    "#{base_year} - #{(base_year + 1).to_s[2..3]}"
   end
 
   def push_stats(course, os_ancillary)
