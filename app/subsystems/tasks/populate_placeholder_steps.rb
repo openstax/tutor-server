@@ -26,9 +26,14 @@ class Tasks::PopulatePlaceholderSteps
     # have been completed AND there is an open assignment with an earlier due date
     unless task.core_task_steps_completed?
       same_role_taskings = role.taskings
+      task_type = Tasks::Models::Task.task_types[task.task_type]
       due_at = task.due_at
       current_time = Time.current
-      return if same_role_taskings.preload(task: :time_zone).map(&:task).any? do |task|
+      return if same_role_taskings.joins(:task)
+                                  .where(task: { task_type: task_type })
+                                  .preload(task: :time_zone)
+                                  .map(&:task)
+                                  .any? do |task|
         task.due_at < due_at &&
         task.past_open?(current_time: current_time) &&
         !task.past_due?(current_time: current_time)
