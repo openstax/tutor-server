@@ -11,8 +11,13 @@ class TaskExercise
     task ||= task_step.try!(:task)
     fatal_error(code: :cannot_get_task) if task.nil?
 
-    current_step = task_step
-    current_step ||= Tasks::Models::TaskStep.new
+    if task_step.present?
+      current_step = task_step
+      new_step = !task.task_steps.include?(task_step)
+    else
+      current_step = Tasks::Models::TaskStep.new
+      new_step = true
+    end
 
     group_type = current_step.group_type
     related_content = current_step.related_content
@@ -22,14 +27,12 @@ class TaskExercise
 
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
-      if ii > 0
-        next_step_number = current_step.number.nil? ? nil : current_step.number + 1
-
-        current_step = Tasks::Models::TaskStep.new(
-          number: next_step_number, group_type: group_type,
-          related_content: related_content, labels: labels
-        )
-      end
+      current_step = Tasks::Models::TaskStep.new(
+        number: current_step.number.nil? ? nil : current_step.number + 1,
+        group_type: group_type,
+        related_content: related_content,
+        labels: labels
+      ) if ii > 0
 
       # Mark the step as incomplete just in case it had been marked as complete before
       current_step.first_completed_at = nil
@@ -49,8 +52,15 @@ class TaskExercise
 
       yield current_step if block_given?
 
-      # This only saves the steps if the task is already persisted
-      task.task_steps << current_step
+      # Add the step to the task's list of steps if it's new
+      # Both of these only save the steps if the task or the step are already persisted
+      if new_step
+        task.task_steps << current_step
+      elsif current_step.persisted?
+        current_step.save!
+      end
+
+      new_step = true
 
       current_step
     end
