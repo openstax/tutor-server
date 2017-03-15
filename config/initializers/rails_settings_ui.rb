@@ -44,19 +44,4 @@ Rails.application.config.to_prepare do
       end
     end
   end
-
-  # Change the length limit on settings so that UUID's render as a text input (not textarea)
-  RailsSettingsUi::SettingsHelper.module_exec do
-    def text_field(setting_name, setting_value, options = {})
-      field = if setting_value.to_s.size > 36
-        text_area_tag("settings[#{setting_name}]", setting_value.to_s, options.merge(rows: 10))
-      else
-        text_field_tag("settings[#{setting_name}]", setting_value.to_s, options)
-      end
-
-      help_block_content = I18n.t("settings.attributes.#{setting_name}.help_block", default: '')
-      field + (help_block_content.presence &&
-               content_tag(:span, help_block_content, class: 'help-block'))
-    end
-  end
 end

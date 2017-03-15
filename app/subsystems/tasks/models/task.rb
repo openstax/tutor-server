@@ -51,17 +51,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     STEPLESS_TASK_TYPES.include?(task_type.to_sym)
   end
 
-  def personalized_placeholder_strategy
-    serialized_strategy = read_attribute(:personalized_placeholder_strategy)
-    strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
-    strategy
-  end
-
-  def personalized_placeholder_strategy=(strategy)
-    serialized_strategy = strategy.nil? ? nil : YAML.dump(strategy)
-    write_attribute(:personalized_placeholder_strategy, serialized_strategy)
-  end
-
   def is_shared?
     taskings.size > 1
   end
