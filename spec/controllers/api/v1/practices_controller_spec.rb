@@ -104,8 +104,8 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
       role = Entity::Role.last
 
-      ResetPracticeWidget[role: role, page_ids: [page.id]]
-      ResetPracticeWidget[role: role, page_ids: [page.id]]
+      CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
+      CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
 
       api_get :show, user_1_token, parameters: { id: course.id, role_id: role.id }
 
@@ -119,7 +119,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1)
       student_role = AddUserAsPeriodStudent[period: period, user: user_2]
-      ResetPracticeWidget[role: student_role, page_ids: [page.id]]
+      CreatePracticeSpecificTopicsTask[course: course, role: student_role, page_ids: [page.id]]
 
       api_get :show, user_1_token, parameters: { id: course.id, role_id: student_role.id }
 

@@ -1,6 +1,7 @@
-module CourseGuideMethods
+# Note: Not a real ActiveSupport::Concern but no reason it couldn't be
+module CourseGuideRoutine
 
-  private
+  protected
 
   def self.included(base)
     base.lev_routine express_output: :course_guide
@@ -174,8 +175,6 @@ module CourseGuideMethods
                                    completed_exercises_count_by_mapped_relevant_page_ids)
     }
   end
-
-  protected
 
   def exec(role:)
     outputs.course_guide = get_course_guide(role)
