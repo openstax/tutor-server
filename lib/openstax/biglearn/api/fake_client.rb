@@ -211,13 +211,16 @@ class OpenStax::Biglearn::Api::FakeClient
   end
 
   # Returns a number of recommended personalized exercises for the student's worst topics
-  # NotYetImplemented in FakeClient (always returns empty result)
+  # Always returns 5 random exercises from the correct ecosystem in the FakeClient
   def fetch_practice_worst_areas_exercises(requests)
     requests.map do |request|
+      ecosystem = request[:student].course.ecosystems.first
+      exercises = ecosystem.nil? ? [] : ecosystem.exercises.sample(5)
+
       {
         request_uuid: request[:request_uuid],
         student_uuid: request[:student].uuid,
-        exercise_uuids: [],
+        exercise_uuids: exercises.map(&:uuid),
         student_status: 'student_ready'
       }
     end

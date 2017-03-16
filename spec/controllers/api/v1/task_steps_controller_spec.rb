@@ -252,7 +252,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
       role = AddUserAsPeriodStudent[period: period, user: user_1]
 
-      task = ResetPracticeWidget[role: role, page_ids: [page.id]]
+      task = CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
 
       step = task.task_steps.first
 
