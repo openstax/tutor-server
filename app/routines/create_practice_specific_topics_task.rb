@@ -28,12 +28,14 @@ class CreatePracticeSpecificTopicsTask
     @pages = @ecosystem.pages_by_ids(page_ids) + chapters.map(&:pages).flatten.uniq
   end
 
-  def get_exercises(task:, count:)
+  def get_biglearn_exercises
     OpenStax::Biglearn::Api.create_update_assignments(
-      course: @course, task: task, core_page_ids: @pages.map(&:id), perform_later: false
+      course: @course, task: @task, core_page_ids: @pages.map(&:id), perform_later: false
     )
 
-    OpenStax::Biglearn::Api.fetch_assignment_pes task: task, max_num_exercises: count
+    OpenStax::Biglearn::Api.fetch_assignment_pes(
+      task: @task, retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+    )
   end
 
 end
