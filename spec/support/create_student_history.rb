@@ -27,7 +27,7 @@ class CreateStudentHistory
       answer_correctly(practice_steps, 2 + i) # 2 or 3 out of 5
 
       practice_steps = create_practice_widget(
-        course: course, role: role, pages: ecosystem.chapters[3].pages[2].id
+        course: course, role: role, page_ids: ecosystem.chapters[3].pages[2].id
       )
       answer_correctly(practice_steps, 5) # 5 out of 5
 

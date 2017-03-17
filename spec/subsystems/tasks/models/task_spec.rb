@@ -139,18 +139,6 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task.core_task_steps_completed?).to eq false
   end
 
-  it 'can store and retrieve a personalized placeholder strategy object' do
-    obj = OpenStruct.new(value: :correct)
-    task = Tasks::Models::Task.new
-    expect(task.personalized_placeholder_strategy).to be_nil
-    task.personalized_placeholder_strategy = obj
-    expect(task.personalized_placeholder_strategy).to eq(obj)
-    expect(task.personalized_placeholder_strategy.value).to eq(:correct)
-    expect(task.personalized_placeholder_strategy).to_not equal(obj)
-    task.personalized_placeholder_strategy = nil
-    expect(task.personalized_placeholder_strategy).to be_nil
-  end
-
   it 'knows when feedback should be available' do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
     task.feedback_at = nil
