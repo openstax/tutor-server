@@ -116,7 +116,7 @@ Rails.application.routes.draw do
 
         scope :practice, controller: :practices do
           get :'(/role/:role_id)', action: :show
-          post :'(/role/:role_id)', action: :create
+          post :'(/role/:role_id)', action: :create_specific
           post :'worst(/role/:role_id)', action: :create_worst
         end
       end
