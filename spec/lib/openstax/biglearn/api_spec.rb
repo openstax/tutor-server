@@ -267,7 +267,11 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
           expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
 
-          results = OpenStax::Biglearn::Api.send(method, requests, perform_later: false)
+          results = if requests.is_a?(Hash)
+            OpenStax::Biglearn::Api.send(method, requests.merge(perform_later: false))
+          else
+            OpenStax::Biglearn::Api.send(method, requests, perform_later: false)
+          end
 
           results = results.values if requests.is_a?(Array)
 

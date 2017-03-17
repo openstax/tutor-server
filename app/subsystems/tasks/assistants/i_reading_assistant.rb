@@ -1,9 +1,5 @@
 class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistant
 
-  # Used to determine the number of spaced practice slots ONLY
-  # Number of slots = sum of the number of pages assigned in each k-ago assignment
-  K_AGOS_MATCHING_BIGLEARN = [2, 4]
-
   def self.schema
     '{
       "type": "object",

@@ -16,7 +16,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     end
   end
 
-  before  { @task.task_steps.reset }
+  before  { @task.touch }
 
   subject { described_class.call(task: @task) }
 
