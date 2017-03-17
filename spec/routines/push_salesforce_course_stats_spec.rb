@@ -66,33 +66,6 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     end
   end
 
-  context "#salesforce_term_year_for_course" do
-    subject {
-      course = FactoryGirl.create :course_profile_course, term: @term, year: @year
-      instance.salesforce_term_year_for_course(course)
-    }
-
-    it 'works for fall terms' do
-      @term = :fall; @year = 2018
-      expect(subject).to eq "2018 - 19 Fall"
-    end
-
-    it 'works for spring terms' do
-      @term = :spring; @year = 2018
-      expect(subject).to eq "2017 - 18 Spring"
-    end
-
-    it 'errors for legacy terms' do
-      @term = :legacy; @year = 2015
-      expect{subject}.to raise_error(RuntimeError)
-    end
-
-    it 'errors for summer terms b/c SF does not yet support' do
-      @term = :summer; @year = 2015
-      expect{subject}.to raise_error(RuntimeError)
-    end
-  end
-
   context "#notify_errors" do
     it 'does nothing if no errors' do
       expect(Rails.logger).not_to receive(:warn)

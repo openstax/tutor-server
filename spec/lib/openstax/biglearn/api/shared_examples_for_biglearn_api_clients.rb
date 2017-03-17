@@ -106,7 +106,7 @@ RSpec.shared_examples 'a biglearn api client' do
     [ :fetch_practice_worst_areas_exercises,
       [ -> { { student: @student, max_num_exercises: @max_num_exercises } } ],
       [ -> { { student_uuid: @student.uuid,
-               exercise_uuids: [],
+               exercise_uuids: kind_of(Array),
                student_status: kind_of(String) } } ] ],
     [ :fetch_student_clues,
       [ -> { { book_container: @page_1, student: @student } } ],
