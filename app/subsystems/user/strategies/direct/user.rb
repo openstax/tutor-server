@@ -85,6 +85,10 @@ module User
           !repository.content_analyst.nil?
         end
 
+        def viewed_tour_ids
+          repository.tours.pluck(:identifier)
+        end
+
         def to_model
           repository
         end
