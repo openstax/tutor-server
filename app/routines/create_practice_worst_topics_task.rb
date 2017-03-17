@@ -14,9 +14,10 @@ class CreatePracticeWorstTopicsTask
     @role = role
   end
 
-  def get_exercises(task:, count:)
+  def get_biglearn_exercises
     OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
-      student: @role.student, max_num_exercises: count
+      student: @role.student,
+      retry_proc: ->(response) { response[:student_status] != 'student_ready' }
     )
   end
 

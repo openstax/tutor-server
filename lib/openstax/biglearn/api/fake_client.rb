@@ -190,11 +190,12 @@ class OpenStax::Biglearn::Api::FakeClient
         all_exercise_uuids = JSON.parse all_exercise_uuids_json
         candidate_exercise_uuids = \
           all_exercise_uuids - task.exercise_steps.map { |ts| ts.tasked.exercise.uuid }
+        num_exercise_uuids = request[:max_num_exercises] || (task.practice? ? 5 : 3)
 
         {
           request_uuid: request_uuid,
           assignment_uuid: task.uuid,
-          exercise_uuids: candidate_exercise_uuids.sample(request[:max_num_exercises]),
+          exercise_uuids: candidate_exercise_uuids.sample(num_exercise_uuids),
           assignment_status: 'assignment_ready'
         }
       end

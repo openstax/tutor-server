@@ -1,8 +1,6 @@
 module CreatePracticeTaskRoutine
   extend ActiveSupport::Concern
 
-  EXERCISES_COUNT = 5
-
   included do
     lev_routine express_output: :task
 
@@ -40,7 +38,7 @@ module CreatePracticeTaskRoutine
     time_zone = course.time_zone
 
     # Create the new practice widget task
-    task = run(
+    @task = run(
       :build_task,
       task_type: @task_type,
       time_zone: time_zone,
@@ -48,32 +46,31 @@ module CreatePracticeTaskRoutine
       ecosystem: @ecosystem.to_model
     ).outputs.task
 
-    run(:add_spy_info, to: task, from: @ecosystem)
+    run(:add_spy_info, to: @task, from: @ecosystem)
 
-    run(:create_tasking, role: role, task: task)
+    run(:create_tasking, role: role, task: @task)
 
-    task.save!
+    @task.save!
 
     # NOTE: Biglearn calls here lock the course from further Biglearn interaction until
     # the end of the transaction, so hopefully the rest of routine finishes pretty fast...
-    exercises = get_exercises(task: task, count: EXERCISES_COUNT)
+    exercises = get_biglearn_exercises
 
     fatal_error(
       code: :no_exercises,
-      message: "No exercises were found to build the Practice Widget." +
-               " [Course: #{course.id} - Role: #{role.id} - Args: #{args.inspect}" +
-               " - Requested: #{EXERCISES_COUNT} - Got: 0]"
+      message: "No exercises were returned from Biglearn to build the Practice Widget." +
+               " [Course: #{course.id} - Role: #{role.id} - Args: #{args.inspect}]"
     ) if exercises.size == 0
 
     # Add the exercises as task steps
     exercises.each do |exercise|
-      TaskExercise.call(exercise: exercise, task: task) do |step|
+      TaskExercise.call(exercise: exercise, task: @task) do |step|
         step.group_type = :personalized_group
         step.add_related_content(exercise.page.related_content)
       end
     end
 
-    OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
+    OpenStax::Biglearn::Api.create_update_assignments(course: course, task: @task)
   end
 
 end
