@@ -810,7 +810,6 @@ ActiveRecord::Schema.define(version: 20170509203010) do
     t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
     t.integer  "tasks_taskings_count",                         default: 0,                   null: false
-    t.text     "personalized_placeholder_strategy"
     t.integer  "steps_count",                                  default: 0,                   null: false
     t.integer  "completed_steps_count",                        default: 0,                   null: false
     t.integer  "core_steps_count",                             default: 0,                   null: false
