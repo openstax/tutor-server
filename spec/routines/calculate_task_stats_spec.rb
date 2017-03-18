@@ -58,6 +58,8 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       Content::Routines::PopulateExercisePools[book: page.chapter.book]
 
       course = FactoryGirl.create :course_profile_course, :with_assistants
+      AddEcosystemToCourse[course: course, ecosystem: page.ecosystem]
+
       period = FactoryGirl.create :course_membership_period, course: course
       student = FactoryGirl.create(:user)
       AddUserAsPeriodStudent.call(user: student, period: period)

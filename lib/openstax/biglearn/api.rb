@@ -419,7 +419,7 @@ module OpenStax::Biglearn::Api
 
     def single_api_request(method:, request:, keys:, optional_keys: [], result_class: Hash,
                            retry_proc: nil, perform_later: false,
-                           inline_max_retries: 25, inline_sleep_interval: 1.second)
+                           inline_max_retries: 10, inline_sleep_interval: 1.second)
       verified_request = verify_and_slice_request method: method,
                                                   request: request,
                                                   keys: keys,
@@ -448,7 +448,7 @@ module OpenStax::Biglearn::Api
 
     def bulk_api_request(method:, requests:, keys:, optional_keys: [], result_class: Hash,
                          uuid_key: :request_uuid, retry_proc: nil, perform_later: false,
-                         inline_max_retries: 25, inline_sleep_interval: 1.second)
+                         inline_max_retries: 10, inline_sleep_interval: 1.second)
       requests_map = {}
       [requests].flatten.map do |request|
         requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
@@ -483,13 +483,13 @@ module OpenStax::Biglearn::Api
 
           break if requests_with_uuids_map.empty?
 
-          sleep(sleep_interval)
+          sleep(inline_sleep_interval)
         end
 
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
-          " - API: #{method} - Request: #{request}" +
-          " - Attempts: #{ii + 1} - Sleep Interval: #{sleep_interval} second(s)"
+          " - API: #{method} - Request(s): #{requests_with_uuids_map.values.inspect}" +
+          " - Attempts: #{ii + 1} - Sleep Interval: #{inline_sleep_interval} second(s)"
         end unless requests_with_uuids_map.empty?
 
         # If given a Hash instead of an Array, return the response directly
