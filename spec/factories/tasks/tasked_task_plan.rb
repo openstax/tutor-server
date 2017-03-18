@@ -11,9 +11,7 @@ FactoryGirl.define do
       )
     end
 
-    transient do
-      number_of_students 10
-    end
+    transient { number_of_students 10 }
 
     owner     { FactoryGirl.build :course_profile_course, offering: nil }
 
