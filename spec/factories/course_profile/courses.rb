@@ -1,8 +1,6 @@
 FactoryGirl.define do
   factory :course_profile_course, class: '::CourseProfile::Models::Course' do
-    transient do
-      consistent_times { false }
-    end
+    transient             { consistent_times { false } }
 
     name                  { Faker::Lorem.words.join(' ') }
 

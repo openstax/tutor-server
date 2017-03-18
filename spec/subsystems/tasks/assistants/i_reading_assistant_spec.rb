@@ -533,10 +533,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'combines exercises with context with the previous step when possible' do
-      allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-        receive(:num_personalized_exercises_per_page) { 0 }
-      )
-
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [
           OpenStax::Cnx::V1::Fragment::Reading.new(

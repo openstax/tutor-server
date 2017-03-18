@@ -6,9 +6,6 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
   let(:number_of_students) { 2 }
 
   let(:task_plan)          do
-    allow_any_instance_of(Tasks::Assistants::IReadingAssistant).to(
-      receive(:num_personalized_exercises_per_page) { 0 }
-    )
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   end
 
