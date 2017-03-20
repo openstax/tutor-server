@@ -18,4 +18,9 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     ).to_s
   end
 
+  it 'includes viewed tour ids' do
+    User::RecordTourView[user: user, tour_identifier: 'chaos-fang']
+    expect(representation['viewed_tour_ids']).to eq ['chaos-fang']
+  end
+
 end
