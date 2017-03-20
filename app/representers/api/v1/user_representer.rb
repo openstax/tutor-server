@@ -22,6 +22,8 @@ module Api::V1
                required: true
              }
 
+    property :viewed_tour_ids
+
     property :profile_url,
              getter: ->(*) {
                Addressable::URI.join(

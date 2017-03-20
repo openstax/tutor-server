@@ -142,6 +142,10 @@ module User
       verify_and_return @strategy.ui_settings, klass: Hash, allow_nil: true, error: StrategyError
     end
 
+    def viewed_tour_ids
+      verify_and_return @strategy.viewed_tour_ids, klass: Array, allow_nil: true, error: StrategyError
+    end
+
     # Necessary, at least temporarily, so we can assign users to external polymorphics,
     # like task_plan owner, tasking_plan target and FinePrint signatures
     def to_model

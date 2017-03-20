@@ -44,6 +44,10 @@ module User
           false
         end
 
+        def viewed_tour_ids
+          []
+        end
+
         def to_model
           repository
         end

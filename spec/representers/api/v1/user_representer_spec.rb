@@ -12,9 +12,15 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['is_customer_service']).to eq user.is_customer_service?
     expect(representation['is_content_analyst']).to eq user.is_content_analyst?
     expect(representation['faculty_status']).to eq user.faculty_status
+    expect(representation['viewed_tour_ids']).to eq []
     expect(representation['profile_url']).to eq Addressable::URI.join(
       OpenStax::Accounts.configuration.openstax_accounts_url, '/profile'
     ).to_s
+  end
+
+  it 'includes viewed tour ids' do
+    User::RecordTourView[user: user, tour_identifier: 'chaos-fang']
+    expect(representation['viewed_tour_ids']).to eq ['chaos-fang']
   end
 
 end

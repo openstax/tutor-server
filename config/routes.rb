@@ -66,9 +66,8 @@ Rails.application.routes.draw do
     resources :users, only: [:index]
     resource :user, only: [:show] do
       get :tasks
-      put :tours
       put :ui_settings
-
+      patch 'tours/:tour_id', action: :record_tour_view
       resources :courses, only: [:index] do
         patch :student, to: 'students#update_self'
       end
