@@ -99,17 +99,13 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
   def add_core_steps!(task:, num_pes_by_core_page_id:)
     @pages.each do |page|
-      # Chapter intro pages get their titles from the chapter instead
-      page_title = page.is_intro? ? page.chapter.title : page.title
-      related_content = page.related_content(title: page_title)
-
       # Reading content
       task_fragments(
         task: task,
         fragments: page.fragments,
-        page_title: page_title,
+        page_title: page.tutor_title,
         page: page,
-        related_content: related_content
+        related_content: page.related_content
       )
 
       # Personalized exercises after each page
@@ -119,7 +115,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       add_placeholder_steps!(
         task: task,
         group_type: :personalized_group,
-        count: num_pes
+        count: num_pes,
+        page: page
       )
     end
 

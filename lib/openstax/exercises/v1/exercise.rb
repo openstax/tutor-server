@@ -203,7 +203,7 @@ class OpenStax::Exercises::V1::Exercise
       cr['user_id'] = cr['user_id'].try(:to_s)
     end
 
-    (@content_hash['questions'] || []).each do |qq|
+    (questions || []).each do |qq|
       qq['id'] = qq['id'].try(:to_s)
       (qq['answers'] || []).each do |aa|
         aa['id'] = aa['id'].try(:to_s)

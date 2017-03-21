@@ -11,25 +11,30 @@ class TaskExercise
     task ||= task_step.try!(:task)
     fatal_error(code: :cannot_get_task) if task.nil?
 
+    exercise_model = exercise.to_model
+    page = exercise_model.page
+
     if task_step.present?
       current_step = task_step
       new_step = !task.task_steps.include?(task_step)
     else
-      current_step = Tasks::Models::TaskStep.new
+      current_step = Tasks::Models::TaskStep.new page: page, related_content: page.related_content
       new_step = true
     end
 
     group_type = current_step.group_type
+    page = current_step.page
     related_content = current_step.related_content
     labels = current_step.labels
-
     questions = exercise.content_as_independent_questions
 
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
       current_step = Tasks::Models::TaskStep.new(
+        task: task,
         number: current_step.number.nil? ? nil : current_step.number + 1,
         group_type: group_type,
+        page: page,
         related_content: related_content,
         labels: labels
       ) if ii > 0
@@ -39,7 +44,7 @@ class TaskExercise
       current_step.last_completed_at = nil
 
       current_step.tasked = Tasks::Models::TaskedExercise.new(
-        exercise: exercise.to_model,
+        exercise: exercise_model,
         url: exercise.url,
         title: title || exercise.title,
         context: exercise.context,
