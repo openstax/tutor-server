@@ -6,7 +6,7 @@ class Tasks::PopulatePlaceholderSteps
 
   protected
 
-  def exec(task:)
+  def exec(task:, force: false)
     outputs.task = task.lock!
 
     # Skip if no placeholders
@@ -28,7 +28,7 @@ class Tasks::PopulatePlaceholderSteps
 
     # To prevent "skim-filling", skip populating spaced practice if not all core problems
     # have been completed AND there is an open assignment with an earlier due date
-    unless task.core_task_steps_completed?
+    if !task.core_task_steps_completed? && !force
       same_role_taskings = role.taskings
       task_type = Tasks::Models::Task.task_types[task.task_type]
       due_at = task.due_at

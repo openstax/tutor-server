@@ -96,8 +96,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self
   end
 
-  def set_last_worked_at(time:)
-    self.last_worked_at = time
+  def set_last_worked_at(last_worked_at:)
+    self.last_worked_at = last_worked_at
     self
   end
 
@@ -151,8 +151,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     core_steps_count == completed_core_steps_count
   end
 
-  def handle_task_step_completion!(completion_time: Time.current)
-    set_last_worked_at(time: completion_time).save!
+  def handle_task_step_completion!(completed_at: Time.current)
+    set_last_worked_at(last_worked_at: completed_at).save!
   end
 
   def update_step_counts
