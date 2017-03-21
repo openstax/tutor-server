@@ -22,7 +22,19 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
   sortable_has_many :task_steps, -> { with_deleted.order(:number) },
-                                 on: :number, dependent: :destroy, inverse_of: :task
+                                 on: :number, dependent: :destroy, inverse_of: :task do
+    # Because we update task_step counts in the middle of the following methods,
+    # we cause the task_steps to reload and these methods behave oddly (giving us duplicate records)
+    # So we reset after we call them to fix this issue
+    def <<(*records)
+      result = super
+      @association.owner.new_record? ? result : reset
+    end
+
+    alias_method :append, :<<
+    alias_method :concat, :<<
+    alias_method :push, :<<
+  end
   has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,
                                                    source_type: 'Tasks::Models::TaskedExercise'
 

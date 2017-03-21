@@ -296,7 +296,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         task.exercise_steps.each do |exercise_step|
           tasked = exercise_step.tasked
           exercise = tasked.exercise
-          question_ids = exercise.content_hash['questions'].map { |question| question['id'].to_s }
+          question_ids = exercise.questions_hash.map { |question| question['id'].to_s }
           question_ids.each do |question_id|
             student_names_map[question_id] << student_names
             free_responses_map[question_id][student_names] << tasked.free_response

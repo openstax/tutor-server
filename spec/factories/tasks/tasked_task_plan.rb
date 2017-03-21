@@ -1,3 +1,6 @@
+# To allow use in the development environment
+require_relative '../../support/fake_exercise_uuids'
+
 FactoryGirl.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
 

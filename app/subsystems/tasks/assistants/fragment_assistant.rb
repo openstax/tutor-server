@@ -8,8 +8,9 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     title = page_title
 
     step_builder = ->(fragment) do
-      Tasks::Models::TaskStep.new(task: task).tap do |step|
-        step.group_type = :core_group
+      Tasks::Models::TaskStep.new(
+        task: task, group_type: :core_group, page: page.to_model
+      ).tap do |step|
         step.add_labels(fragment.labels)
         step.add_related_content(related_content)
         task.task_steps << step

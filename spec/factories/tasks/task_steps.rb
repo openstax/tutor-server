@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :tasks_task_step, class: '::Tasks::Models::TaskStep' do
     association :task, factory: :tasks_task
+    association :page, factory: :content_page
     tasked_type :tasks_tasked_reading
 
     transient do

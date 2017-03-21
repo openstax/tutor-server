@@ -51,7 +51,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   end
 
   def content_hash
-    ::JSON.parse(content)
+    @content_hash ||= JSON.parse(content)
   end
 
   def content_as_independent_questions
@@ -69,8 +69,16 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     tags.to_a.any?(&:requires_context?)
   end
 
+  def questions_hash
+    content_hash['questions']
+  end
+
+  def number_of_parts
+    questions_hash.size
+  end
+
   def is_multipart?
-    content_hash['questions'].size > 1
+    number_of_parts > 1
   end
 
   def feature_ids

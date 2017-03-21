@@ -58,7 +58,7 @@ class DistributeTasks
     # Abort if the task type is supposed to have steps and any task has 0 steps
     fatal_error(
       code: :empty_tasks, message: 'Tasks could not be published because some tasks were empty'
-    ) if tasks.any?{ |task| !task.stepless? && task.task_steps.empty? }
+    ) if tasks.any? { |task| !task.stepless? && task.task_steps.empty? }
 
     save_tasks(task_plan, tasks)
 
