@@ -410,56 +410,29 @@ class Demo::Base
     tasks
   end
 
-  def work_task(tasks_profile:, task:)
-    responses = tasks_profile.explicit_responses(task: task)
-
-    task.task_steps(preload_tasked: true).each_with_index do |task_step, index|
-      work_step(task_step, responses[index])
-    end
-  end
-
-  # Works a step with the given response; for exercise steps, response can be
+  # Works steps with the given responses; for exercise steps, response can be
   # true/false or 1/0 or '1'/'0' to represent right or wrong.
   # For any step, a nil or 'n' means incomplete, non-nil means complete.
-  def work_step(step, response)
-    return if response.nil? || response == 'n'
+  def work_task(tasks_profile:, task:)
+    responses = tasks_profile.explicit_responses(task: task)
+    is_completed = ->(task, task_step, index) do
+      response = responses[index]
+      response.present? && response != 'n'
+    end
+    is_correct = ->(task, task_step, index) do
+      response = responses[index]
 
-    # Skip if the step was removed from the task by an earlier call to PopulatePlaceholderSteps
-    begin
-      step.reload
-    rescue ActiveRecord::RecordNotFound
-      return
-    end if step.tasked.nil?
-
-    tasked = step.tasked
-
-    if tasked.placeholder?
-      task = step.task
-      Tasks::PopulatePlaceholderSteps[task: task]
-      task.reload
-
-      # Abort if the step was removed
-      begin
-        step.reload
-      rescue ActiveRecord::RecordNotFound
-        return
+      case response
+      when Integer
+        response.zero? ? false : true
+      when String
+        response == '0' ? false : true
+      else
+        !!response
       end
-
-      task = step.task
-      tasked = step.tasked
-
-      raise "TaskedPlaceholder (Task: #{print_task(task: task)}, Step: #{step.id})" +
-            ' did not get populated and cannot be completed' if tasked.placeholder?
     end
 
-    response = (response.zero? ? false : true) if response.is_a?(Integer)
-    response = (response == '0' ? false : true) if response.is_a?(String)
-
-    if tasked.exercise?
-      Preview::AnswerExercise.call(task_step: step, is_correct: response)
-    else
-      run(MarkTaskStepCompleted, task_step: step)
-    end
+    Preview::WorkTask[task: task, is_completed: is_completed, is_correct: is_correct]
   end
 
   def lookup_pages(book:, book_locations:)

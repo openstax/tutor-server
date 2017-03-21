@@ -24,9 +24,7 @@ class PopulatePreviewCourseContent
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine Tasks::GetAssistant, as: :get_assistant
   uses_routine DistributeTasks, as: :distribute_tasks
-  uses_routine MarkTaskStepCompleted, as: :mark_task_step_completed
-  uses_routine Preview::AnswerExercise, as: :answer_exercise
-  uses_routine Tasks::PopulatePlaceholderSteps, as: :populate_placeholders
+  uses_routine Preview::WorkTask, as: :work_task
 
   def exec(course:)
 
@@ -177,31 +175,13 @@ class PopulatePreviewCourseContent
 
       next if task.opens_at > current_time
 
-      work_date = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
-
-      task_steps = task.task_steps.to_a
-
-      task_steps.each_with_index do |task_step, index|
-        if task_step.placeholder?
-          run(:populate_placeholders, task: task)
-
-          task_step.reload
-        end
-
-        if task_step.exercise?
-          is_correct = SecureRandom.random_number < correct_probability
-
-          run :answer_exercise,
-              task_step: task_step,
-              is_correct: is_correct,
-              free_response: FREE_RESPONSE,
-              completion_time: work_date
-        else
-          run :mark_task_step_completed, task_step: task_step, completion_time: work_date
-        end
-
-        break if incomplete && index >= task_steps.size/2
-      end
+      is_correct = ->(task, task_step, index)   { SecureRandom.random_number < correct_probability }
+      is_completed = ->(task, task_step, index) { !incomplete || index < task.task_steps.size/2    }
+      completed_at = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
+      run(:work_task, task: task,
+                      is_correct: is_correct,
+                      is_completed: is_completed,
+                      completed_at: completed_at)
     end
   end
 

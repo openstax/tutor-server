@@ -31,15 +31,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
       task.reload.update_step_counts!
     end
 
-    student_tasks.first(2).each do |task|
-      task.task_steps.each do |task_step|
-        if task_step.exercise?
-          Preview::AnswerExercise[task_step: task_step, is_correct: false]
-        else
-          MarkTaskStepCompleted[task_step: task_step]
-        end
-      end
-    end
+    student_tasks.first(2).each { |task| Preview::WorkTask[task: task, is_correct: false] }
 
     # Not enough tasks completed: no trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
@@ -47,13 +39,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
 
-    student_tasks[2].task_steps.each do |task_step|
-      if task_step.exercise?
-        Preview::AnswerExercise[task_step: task_step, is_correct: false]
-      else
-        MarkTaskStepCompleted[task_step: task_step]
-      end
-    end
+    Preview::WorkTask[task: student_tasks[2], is_correct: false]
 
     # >25% completed: trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
@@ -61,15 +47,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
 
-    student_tasks[3..5].each do |task|
-      task.task_steps.each do |task_step|
-        if task_step.exercise?
-          Preview::AnswerExercise[task_step: task_step, is_correct: true]
-        else
-          MarkTaskStepCompleted[task_step: task_step]
-        end
-      end
-    end
+    student_tasks[3..5].each { |task| Preview::WorkTask[task: task, is_correct: true] }
 
     # 50% correct: no trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
@@ -77,13 +55,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
 
-    student_tasks[6].task_steps.each do |task_step|
-      if task_step.exercise?
-        Preview::AnswerExercise[task_step: task_step, is_correct: false]
-      else
-        MarkTaskStepCompleted[task_step: task_step]
-      end
-    end
+    Preview::WorkTask[task: student_tasks[6], is_correct: false]
 
     # Less than 50% correct: trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
@@ -91,13 +63,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
 
-    student_tasks[7].task_steps.each do |task_step|
-      if task_step.exercise?
-        Preview::AnswerExercise[task_step: task_step, is_correct: true]
-      else
-        MarkTaskStepCompleted[task_step: task_step]
-      end
-    end
+    Preview::WorkTask[task: student_tasks[7], is_correct: true]
 
     # 50% correct: no trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
@@ -105,13 +71,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
 
-    student_tasks[8].task_steps.each do |task_step|
-      if task_step.exercise?
-        Preview::AnswerExercise[task_step: task_step, is_correct: false]
-      else
-        MarkTaskStepCompleted[task_step: task_step]
-      end
-    end
+    Preview::WorkTask[task: student_tasks[8], is_correct: false]
 
     # Less than 50% correct: trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
@@ -119,13 +79,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
 
-    student_tasks[9].task_steps.each do |task_step|
-      if task_step.exercise?
-        Preview::AnswerExercise[task_step: task_step, is_correct: true]
-      else
-        MarkTaskStepCompleted[task_step: task_step]
-      end
-    end
+    Preview::WorkTask[task: student_tasks[9], is_correct: true]
 
     # 50% correct: no trouble
     out = described_class.call(owner: course, include_trouble_flags: true).outputs

@@ -6,12 +6,12 @@ class MarkTaskStepCompleted
 
   protected
 
-  def exec(task_step:, completion_time: Time.current)
+  def exec(task_step:, completed_at: Time.current)
     # Pessimistic locking to prevent race conditions with the update logic
     task_step.lock!
 
     # The task_step save in the complete! method is required for the lock to work
-    task_step.complete!(completion_time: completion_time)
+    task_step.complete!(completed_at: completed_at)
     transfer_errors_from(task_step, {type: :verbatim}, true)
 
     task = task_step.task

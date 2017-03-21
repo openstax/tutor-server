@@ -16,7 +16,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
 
     expect(task).not_to be_late
 
-    task.set_last_worked_at(time: Time.current)
+    task.set_last_worked_at(last_worked_at: Time.current)
     task.save
 
     expect(task).to be_late
@@ -34,7 +34,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task).not_to be_past_due
     expect(task).not_to be_late
 
-    task.set_last_worked_at(time: Time.current)
+    task.set_last_worked_at(last_worked_at: Time.current)
     task.save
 
     expect(task).not_to be_past_due
@@ -42,11 +42,11 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   describe '#handle_task_step_completion!' do
-    it 'marks #last_worked_at to the completion_time' do
+    it 'sets #last_worked_at to completed_at' do
       time = Time.current
       task = FactoryGirl.create(:tasks_task)
 
-      task.handle_task_step_completion!(completion_time: time)
+      task.handle_task_step_completion!(completed_at: time)
 
       expect(task.last_worked_at).to eq(time)
     end
@@ -449,35 +449,41 @@ RSpec.describe Tasks::Models::Task, type: :model do
         expect(task.completed_exercise_steps_count).to eq 0
         expect(task.correct_exercise_steps_count).to eq 0
 
-        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true, completed: true]
+        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true, is_completed: true]
         task.reload
 
         expect(task.completed_steps_count).to eq 1
         expect(task.completed_exercise_steps_count).to eq 1
         expect(task.correct_exercise_steps_count).to eq 1
 
-        Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: false, completed: true]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[1], is_correct: false, is_completed: true
+        ]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 1
 
-        Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true, completed: false]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[2], is_correct: true, is_completed: false
+        ]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 2
 
-        Preview::AnswerExercise[task_step: task.task_steps.fourth, is_correct: false, completed: false]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[3], is_correct: false, is_completed: false
+        ]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 2
 
-        MarkTaskStepCompleted[task_step: task.task_steps.third]
+        MarkTaskStepCompleted[task_step: task.task_steps[2]]
         task.reload
 
         expect(task.completed_steps_count).to eq 3
@@ -490,7 +496,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
 
         # The placeholder step is removed due to no available personalized exercises
         expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([]).once
-        MarkTaskStepCompleted[task_step: task.task_steps.fourth]
+        MarkTaskStepCompleted[task_step: task.task_steps[3]]
 
         task.reload
 
