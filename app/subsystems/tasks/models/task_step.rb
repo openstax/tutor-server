@@ -5,6 +5,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   sortable_belongs_to :task, -> { with_deleted }, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, -> { with_deleted }, polymorphic: true, dependent: :destroy,
                                            inverse_of: :task_step, touch: true
+  belongs_to :page, subsystem: :content, inverse_of: :task_steps
 
   enum group_type: [
     :unknown_group,

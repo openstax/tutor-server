@@ -29,6 +29,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   has_many :same_uuid_pages, class_name: 'Page', primary_key: 'uuid', foreign_key: 'uuid'
 
+  has_many :task_steps, subsystem: :tasks, dependent: :destroy, inverse_of: :page
+
   validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
@@ -37,6 +39,15 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   before_validation :cache_fragments_and_snap_labs
 
   delegate :is_intro?, to: :parser
+
+  def tutor_title
+    # Chapter intro pages get their titles from the chapter instead
+    is_intro? ? chapter.title : title
+  end
+
+  def related_content
+    { title: tutor_title, book_location: book_location }
+  end
 
   def cnx_id
     "#{uuid}@#{version}"
