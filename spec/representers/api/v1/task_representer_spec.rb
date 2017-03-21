@@ -9,7 +9,7 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     time = Time.current
     formatted_time = DateTimeUtilities.to_api_s(time)
 
-    task.set_last_worked_at(time: time)
+    task.set_last_worked_at(last_worked_at: time)
     task.save
 
     represented = described_class.new(task).to_hash

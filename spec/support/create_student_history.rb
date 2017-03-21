@@ -21,17 +21,17 @@ class CreateStudentHistory
       puts "=== Set Role##{role.id} history ==="
 
       # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(
+      practice_task = create_practice_widget(
         course: course, role: role, page_ids: ecosystem.chapters[3 - (i % 2)].pages[1].id
       )
-      answer_correctly(practice_steps, 2 + i) # 2 or 3 out of 5
+      answer_correctly(practice_task, 2 + i) # 2 or 3 out of 5
 
-      practice_steps = create_practice_widget(
+      practice_task = create_practice_widget(
         course: course, role: role, page_ids: ecosystem.chapters[3].pages[2].id
       )
-      answer_correctly(practice_steps, 5) # 5 out of 5
+      answer_correctly(practice_task, 5) # 5 out of 5
 
-      practice_steps = create_practice_widget(
+      create_practice_widget(
         course: course, role: role, chapter_ids: ecosystem.chapters[3].id
       ) # Not started
     end
@@ -64,37 +64,18 @@ class CreateStudentHistory
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
     tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
-    tasks.each do |task|
-      task = task.reload
-      answerable_steps = task.task_steps.select do |task_step|
-        task_step.exercise? || task_step.placeholder?
-      end
-      answer_correctly(answerable_steps, 2)
-    end
+    tasks.each { |task| answer_correctly(task, 2) }
   end
 
   def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)
     CreatePracticeSpecificTopicsTask[
       course: course, role: role, chapter_ids: chapter_ids, page_ids: page_ids
-    ].task_steps
+    ]
   end
 
-  def answer_correctly(steps, num)
-    correct_steps = steps.first(num)
-    steps_count = correct_steps.size
-    raise "Not enough steps to answer correctly." +
-          " Requested: #{num}. Got: #{steps_count}" if steps_count < num
-
-    correct_steps.each do |task_step|
-      begin
-        task_step.reload
-      rescue ActiveRecord::RecordNotFound
-        raise "Tried to answer a #{task_step.group_name} step, but it was removed " +
-              '(probably because Biglearn returned no PEs)'
-      end if task_step.placeholder?
-
-      Demo::AnswerExercise[task_step: task_step, is_correct: true]
-    end
+  def answer_correctly(task, num)
+    is_completed = ->(task, task_step, index) { index < num }
+    Demo::WorkTask[task: task, is_completed: is_completed, is_correct: true]
   end
 
   def ireading_assistant

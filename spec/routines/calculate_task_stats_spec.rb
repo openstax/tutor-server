@@ -94,7 +94,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.partially_complete_count).to eq(1)
       expect(stats.first.trouble).to eq false
 
-      answer_task_steps(task_steps: first_task.task_steps, is_correct: false)
+      work_task(task: first_task, is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
       expect(stats.first.mean_grade_percent).to eq (0)
@@ -116,7 +116,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
   context "after task steps are marked as correct or incorrect" do
 
     it "records them" do
-      answer_task_steps(task_steps: student_tasks[0].task_steps, is_correct: true)
+      work_task(task: student_tasks[0], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
       expect(stats.first.mean_grade_percent).to eq (100)
@@ -133,7 +133,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      answer_task_steps(task_steps: student_tasks[1].task_steps, is_correct: false)
+      work_task(task: student_tasks[1], is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (50)
       expect(stats.first.complete_count).to eq(2)
@@ -150,7 +150,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      answer_task_steps(task_steps: student_tasks[2].task_steps, is_correct: true)
+      work_task(task: student_tasks[2], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (67)
       expect(stats.first.complete_count).to eq(3)
@@ -170,7 +170,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      answer_task_steps(task_steps: student_tasks[3].task_steps, is_correct: true)
+      work_task(task: student_tasks[3], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (75)
       expect(stats.first.complete_count).to eq(4)
@@ -204,7 +204,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.spaced_pages).to be_empty
 
       # Less than 25% done: no trouble
-      answer_task_steps(task_steps: student_tasks[0].task_steps.first(5), is_correct: false)
+      work_task(task: student_tasks[0], is_correct: false, num_steps: 5)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
 
@@ -214,7 +214,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.spaced_pages).to be_empty
 
       # Over 25% done: trouble
-      answer_task_steps(task_steps: student_tasks[1].task_steps, is_correct: false)
+      work_task(task: student_tasks[1], is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq true
 
@@ -223,7 +223,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      answer_task_steps(task_steps: student_tasks[2].task_steps, is_correct: false)
+      work_task(task: student_tasks[2], is_correct: false)
 
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq true
@@ -234,9 +234,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.spaced_pages).to be_empty
 
       # 40% correct: still trouble
-      student_tasks[3..4].each do |task|
-        answer_task_steps(task_steps: task.task_steps, is_correct: true)
-      end
+      student_tasks[3..4].each { |task| work_task(task: task, is_correct: true) }
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq true
 
@@ -246,7 +244,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.spaced_pages).to be_empty
 
       # 50% correct: no more trouble
-      answer_task_steps(task_steps: student_tasks[5].task_steps, is_correct: true)
+      work_task(task: student_tasks[5], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
 
@@ -256,7 +254,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.spaced_pages).to be_empty
 
       # 3 out of 7 correct: trouble again
-      answer_task_steps(task_steps: student_tasks[6].task_steps, is_correct: false)
+      work_task(task: student_tasks[6], is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq true
 
@@ -266,7 +264,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.spaced_pages).to be_empty
 
       # 50% correct: no more trouble
-      answer_task_steps(task_steps: student_tasks[7].task_steps, is_correct: true)
+      work_task(task: student_tasks[7], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
 
@@ -287,7 +285,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         hash[key] = Hash.new { |hash, key| hash[key] = [] }
       end
       tasks.each_with_index do |task, ii|
-        answer_task_steps task_steps: task.task_steps, is_correct: (ii.even? ? true : false)
+        work_task task: task, is_correct: (ii.even? ? true : false)
 
         roles = task.taskings.map(&:role)
         users = Role::GetUsersForRoles[roles]
@@ -472,7 +470,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     context "if the students were dropped after working the assignment" do
       it "does not show dropped students" do
         first_task = student_tasks.first
-        answer_task_steps(task_steps: first_task.task_steps, is_correct: true)
+        work_task(task: first_task, is_correct: true)
 
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
@@ -515,15 +513,9 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
   protected
 
-  def answer_task_steps(task_steps:, is_correct:)
-    task_steps.each do |task_step|
-      next if task_step.completed?
-
-      task_step.reload if task_step.placeholder?
-
-      task_step.exercise? ? Demo::AnswerExercise[task_step: task_step, is_correct: is_correct] :
-                            MarkTaskStepCompleted[task_step: task_step]
-    end
+  def work_task(task:, is_correct:, num_steps: nil)
+    is_completed = num_steps.nil? ? true : ->(task, task_step, index) { index < num_steps }
+    Demo::WorkTask[task: task, is_completed: is_completed, is_correct: is_correct]
   end
 
   def get_assistant(course:, task_plan_type:)

@@ -64,18 +64,18 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     tasked.make_incorrect!
   end
 
-  def complete!(completion_time: Time.current)
+  def complete!(completed_at: Time.current)
     valid?
     tasked.valid?
     tasked.before_completion
     tasked.errors.full_messages.each { |message| errors.add :tasked, message }
     return if errors.any?
 
-    self.first_completed_at ||= completion_time
-    self.last_completed_at = completion_time
+    self.first_completed_at ||= completed_at
+    self.last_completed_at = completed_at
     self.save!
 
-    task.handle_task_step_completion!(completion_time: completion_time)
+    task.handle_task_step_completion!(completed_at: completed_at)
   end
 
   def completed?
