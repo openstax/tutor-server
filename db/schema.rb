@@ -836,6 +836,8 @@ ActiveRecord::Schema.define(version: 20170509203010) do
     t.text     "spy",                                          default: "{}",                null: false
     t.uuid     "uuid",                                         default: "gen_random_uuid()"
     t.integer  "content_ecosystem_id",                                                       null: false
+    t.boolean  "spes_are_assigned",                            default: false,               null: false
+    t.boolean  "pes_are_assigned",                             default: false,               null: false
   end
 
   add_index "tasks_tasks", ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id", using: :btree

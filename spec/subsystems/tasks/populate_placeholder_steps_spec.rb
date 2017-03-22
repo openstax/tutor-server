@@ -16,7 +16,10 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     end
   end
 
-  before  { @task.touch }
+  before  do
+    @task.reload
+    @task.touch
+  end
 
   subject { described_class.call(task: @task) }
 
@@ -27,6 +30,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     it 'removes all the placeholder steps from the task' do
       expect { subject }.to  change { @task.personalized_task_steps.size    }.to(0)
                         .and change { @task.spaced_practice_task_steps.size }.to(0)
+                        .and change { @task.pes_are_assigned  }.from(false).to(true)
+                        .and change { @task.spes_are_assigned }.from(false).to(true)
     end
   end
 
@@ -55,6 +60,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       it 'populates all the placeholder steps in the task' do
         expect { subject }.to  not_change { @task.reload.personalized_task_steps.size    }
                           .and not_change { @task.spaced_practice_task_steps.size }
+                          .and change     { @task.pes_are_assigned  }.from(false).to(true)
+                          .and change     { @task.spes_are_assigned }.from(false).to(true)
 
         (@task.personalized_task_steps + @task.spaced_practice_task_steps).each do |task_step|
           expect(task_step).not_to be_placeholder
@@ -74,6 +81,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       it 'populates all the placeholder steps in the task' do
         expect { subject }.to  not_change { @task.personalized_task_steps.size    }
                           .and not_change { @task.spaced_practice_task_steps.size }
+                          .and change     { @task.pes_are_assigned  }.from(false).to(true)
+                          .and change     { @task.spes_are_assigned }.from(false).to(true)
 
         (@task.personalized_task_steps + @task.spaced_practice_task_steps).each do |task_step|
           expect(task_step).not_to be_placeholder
@@ -96,6 +105,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
         it 'populates only the personalized group placeholder steps in the task' do
           expect { subject }.to  not_change { @task.personalized_task_steps.size    }
                             .and not_change { @task.spaced_practice_task_steps.size }
+                            .and change     { @task.pes_are_assigned  }.from(false).to(true)
+                            .and not_change { @task.spes_are_assigned }
 
           @task.personalized_task_steps.each do |task_step|
             expect(task_step).not_to be_placeholder
@@ -124,6 +135,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
         it 'populates all the placeholder steps in the task' do
           expect { subject }.to  not_change { @task.personalized_task_steps.size    }
                             .and not_change { @task.spaced_practice_task_steps.size }
+                            .and change     { @task.pes_are_assigned  }.from(false).to(true)
+                            .and change     { @task.spes_are_assigned }.from(false).to(true)
 
           (@task.personalized_task_steps + @task.spaced_practice_task_steps).each do |task_step|
             expect(task_step).not_to be_placeholder
