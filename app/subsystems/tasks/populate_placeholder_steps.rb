@@ -9,52 +9,55 @@ class Tasks::PopulatePlaceholderSteps
   def exec(task:, force: false)
     outputs.task = task.lock!
 
-    # Skip if no placeholders
-    placeholder_task_steps = task.task_steps(preload_tasked: true).select(&:placeholder?)
-    return if placeholder_task_steps.empty?
-
     # If the task is a reading, we give Biglearn control of the number of slots
     # Placeholders are merely used to determine the size of the bar the student sees
     biglearn_controls_slots = task.reading?
 
-    # Populate PEs
-    populate_placeholder_steps task: task,
-                               group_type: :personalized_group,
-                               biglearn_api_method: :fetch_assignment_pes,
-                               biglearn_controls_slots: biglearn_controls_slots
+    unless task.pes_are_assigned
+      # Populate PEs
+      populate_placeholder_steps task: task,
+                                 group_type: :personalized_group,
+                                 biglearn_api_method: :fetch_assignment_pes,
+                                 biglearn_controls_slots: biglearn_controls_slots
+
+      task.pes_are_assigned = true
+    end
 
     taskings = task.taskings
     role = taskings.first.try!(:role)
 
-    # To prevent "skim-filling", skip populating spaced practice if not all core problems
-    # have been completed AND there is an open assignment with an earlier due date
-    if !task.core_task_steps_completed? && !force
-      same_role_taskings = role.taskings
+    unless task.spes_are_assigned
+      # To prevent "skim-filling", skip populating spaced practice if not all core problems
+      # have been completed AND there is an open assignment with an earlier due date
+      same_role_taskings = role.try!(:taskings) || Tasks::Models::Tasking.none
       task_type = Tasks::Models::Task.task_types[task.task_type]
       due_at = task.due_at
       current_time = Time.current
-      return if same_role_taskings.joins(:task)
-                                  .where(task: { task_type: task_type })
-                                  .preload(task: :time_zone)
-                                  .map(&:task)
-                                  .any? do |task|
-        task.due_at < due_at &&
-        task.past_open?(current_time: current_time) &&
-        !task.past_due?(current_time: current_time)
+      if force || task.core_task_steps_completed? ||
+                  same_role_taskings.joins(:task)
+                                    .where(task: { task_type: task_type })
+                                    .preload(task: :time_zone)
+                                    .map(&:task)
+                                    .none? do |task|
+                    task.due_at < due_at &&
+                    task.past_open?(current_time: current_time) &&
+                    !task.past_due?(current_time: current_time)
+                  end
+        # Populate SPEs
+        populate_placeholder_steps task: task,
+                                   group_type: :spaced_practice_group,
+                                   biglearn_api_method: :fetch_assignment_spes,
+                                   biglearn_controls_slots: biglearn_controls_slots
+
+        task.spes_are_assigned = true
       end
     end
 
-    # Populate SPEs
-    populate_placeholder_steps task: task,
-                               group_type: :spaced_practice_group,
-                               biglearn_api_method: :fetch_assignment_spes,
-                               biglearn_controls_slots: biglearn_controls_slots
+    # Save pes_are_assigned/spes_are_assigned and ensure the lock works
+    task.save validate: false
 
-    # Ensure the correct steps are returned
+    # Ensure the task will reload and return the correct steps next time
     task.task_steps.reset
-
-    # Ensure the lock works
-    task.touch
 
     # Can't send the info to Biglearn if there's no course
     course = role.try!(:student).try!(:course)
@@ -130,6 +133,8 @@ class Tasks::PopulatePlaceholderSteps
           end
         end
       end
+
+      task.task_steps.reset if task.persisted? && num_added_steps > 0
     else
       # Tutor controls how many PEs/SPEs (homework tasks)
       placeholder_steps = task.task_steps.select do |task_step|

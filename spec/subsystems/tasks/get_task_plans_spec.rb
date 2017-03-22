@@ -28,7 +28,9 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     # Remove placeholder steps since they can sometimes be deleted, messing up our counting
     student_tasks.each do |task|
       task.task_steps.select(&:placeholder?).each(&:really_destroy!)
-      task.reload.update_step_counts!
+      task.pes_are_assigned = true
+      task.spes_are_assigned = true
+      task.update_step_counts!
     end
 
     student_tasks.first(2).each { |task| Preview::WorkTask[task: task, is_correct: false] }

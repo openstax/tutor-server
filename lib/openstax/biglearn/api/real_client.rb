@@ -314,14 +314,6 @@ class OpenStax::Biglearn::Api::RealClient
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
       end
-      sp_steps = task.task_steps.select(&:spaced_practice_group?)
-      spe_steps = sp_steps.select{ |step| step.exercise? || step.placeholder? }
-      goal_num_tutor_assigned_spes = spe_steps.size
-      spes_are_assigned = spe_steps.none?(&:placeholder?)
-      p_steps = task.task_steps.select(&:personalized_group?)
-      pe_steps = p_steps.select{ |step| step.exercise? || step.placeholder? }
-      goal_num_tutor_assigned_pes = pe_steps.size
-      pes_are_assigned = pe_steps.none?(&:placeholder?)
       assigned_exercises = task.task_steps.select(&:exercise?).map do |exercise_step|
         {
           trial_uuid: exercise_step.tasked.uuid,
@@ -329,6 +321,20 @@ class OpenStax::Biglearn::Api::RealClient
           is_spe: exercise_step.spaced_practice_group?,
           is_pe: exercise_step.personalized_group?
         }
+      end
+
+      if task.reading?
+        # Biglearn decides
+        goal_num_tutor_assigned_spes = nil
+        goal_num_tutor_assigned_pes = nil
+      else
+        # Tutor decides
+        sp_steps = task.task_steps.select(&:spaced_practice_group?)
+        spe_steps = sp_steps.select{ |step| step.exercise? || step.placeholder? }
+        goal_num_tutor_assigned_spes = spe_steps.size
+        p_steps = task.task_steps.select(&:personalized_group?)
+        pe_steps = p_steps.select{ |step| step.exercise? || step.placeholder? }
+        goal_num_tutor_assigned_pes = pe_steps.size
       end
 
       {
@@ -341,12 +347,15 @@ class OpenStax::Biglearn::Api::RealClient
         student_uuid: task.taskings.first.role.student.uuid,
         assignment_type: task.task_type,
         assigned_book_container_uuids: assigned_book_container_uuids,
-        goal_num_tutor_assigned_spes: goal_num_tutor_assigned_spes,
-        spes_are_assigned: spes_are_assigned,
-        goal_num_tutor_assigned_pes: goal_num_tutor_assigned_pes,
-        pes_are_assigned: pes_are_assigned,
+        spes_are_assigned: task.spes_are_assigned,
+        pes_are_assigned: task.pes_are_assigned,
         assigned_exercises: assigned_exercises
-      }
+      }.tap do |request|
+        request[:goal_num_tutor_assigned_spes] = goal_num_tutor_assigned_spes \
+          unless goal_num_tutor_assigned_spes.nil?
+        request[:goal_num_tutor_assigned_pes] = goal_num_tutor_assigned_pes \
+          unless goal_num_tutor_assigned_pes.nil?
+      end
     end
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
