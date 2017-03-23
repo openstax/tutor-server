@@ -11,11 +11,11 @@ class Admin::CoursesCreate
     attribute :appearance_code, type: String
     attribute :school_district_school_id, type: Integer
     attribute :catalog_offering_id, type: Integer
-    attribute :is_trial, type: ActiveAttr::Typecasting::Boolean
+    attribute :is_demo, type: ActiveAttr::Typecasting::Boolean
     attribute :is_concept_coach, type: ActiveAttr::Typecasting::Boolean
     attribute :is_college, type: ActiveAttr::Typecasting::Boolean
     validates :name, :term, :year, :num_sections, presence: true
-    validates :is_trial, :is_concept_coach, :is_college, inclusion: [true, false]
+    validates :is_demo, :is_concept_coach, :is_college, inclusion: [true, false]
   end
 
   uses_routine CreateCourse
@@ -38,7 +38,7 @@ class Admin::CoursesCreate
                         num_sections: course_params.num_sections,
                         starts_at: course_params.starts_at,
                         ends_at: course_params.ends_at,
-                        is_trial: course_params.is_trial,
+                        is_demo: course_params.is_demo,
                         is_concept_coach: course_params.is_concept_coach,
                         is_college: course_params.is_college,
                         catalog_offering: offering,

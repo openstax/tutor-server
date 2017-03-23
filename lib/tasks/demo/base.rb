@@ -498,7 +498,7 @@ class Demo::Base
 
   def create_course(name:, term:, year:, starts_at: nil, ends_at: nil,
                     catalog_offering:, appearance_code: nil,
-                    is_trial: false, is_concept_coach: nil, is_college:,
+                    is_demo: false, is_concept_coach: nil, is_college:,
                     school: nil, time_zone: nil)
     course = run(:create_course,
                  name: name,
@@ -506,7 +506,7 @@ class Demo::Base
                  year: year,
                  starts_at: starts_at,
                  ends_at: ends_at,
-                 is_trial: is_trial,
+                 is_demo: is_demo,
                  is_concept_coach: is_concept_coach,
                  is_college: is_college,
                  catalog_offering: catalog_offering,

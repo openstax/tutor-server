@@ -140,7 +140,7 @@ module Api::V1
                description: "The book's webview url, if available."
              }
 
-    property :is_trial,
+    property :is_demo,
              readable: true,
              writeable: false,
              schema_info: {

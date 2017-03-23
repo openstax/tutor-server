@@ -1,23 +1,23 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe PopulateTrialCourseContent, type: :routine, speed: :medium do
+RSpec.describe PopulateDemoCourseContent, type: :routine, speed: :medium do
 
   before(:all) do
-    ecosystem = VCR.use_cassette('PopulateTrialCourseContent/with_book', VCR_OPTS) do
+    ecosystem = VCR.use_cassette('PopulateDemoCourseContent/with_book', VCR_OPTS) do
       FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
     end
 
     offering = FactoryGirl.create :catalog_offering, ecosystem: ecosystem.to_model
 
-    @course = FactoryGirl.create :course_profile_course, offering: offering, is_trial: true
+    @course = FactoryGirl.create :course_profile_course, offering: offering, is_demo: true
 
     @periods = 2.times.map { FactoryGirl.create :course_membership_period, course: @course }
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
   end
 
-  it 'creates the expected trial course content' do
+  it 'creates the expected demo course content' do
 
     expect { result = described_class.call(course: @course) }
       .to change{ @course.students.reload.size }.by(6)

@@ -8,8 +8,8 @@ class SendTaskedExerciseAnswerToExchange
     # Currently assuming no group tasks
     role = tasked_exercise.task_step.task.taskings.first.try!(:role)
 
-    # Don't send teacher_student or trial course info to Exchange
-    return if role.nil? || role.teacher_student? || role.student.try!(:course).try!(:is_trial)
+    # Don't send teacher_student or demo course info to Exchange
+    return if role.nil? || role.teacher_student? || role.student.try!(:course).try!(:is_demo)
 
     identifier = role.exchange_write_identifier
 

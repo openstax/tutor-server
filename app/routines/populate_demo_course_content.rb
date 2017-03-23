@@ -1,12 +1,12 @@
-class PopulateTrialCourseContent
+class PopulateDemoCourseContent
 
   STUDENT_INFO = [
-    { username: 'trialstudent1', first_name: 'Student', last_name: 'One'   },
-    { username: 'trialstudent2', first_name: 'Student', last_name: 'Two'   },
-    { username: 'trialstudent3', first_name: 'Student', last_name: 'Three' },
-    { username: 'trialstudent4', first_name: 'Student', last_name: 'Four'  },
-    { username: 'trialstudent5', first_name: 'Student', last_name: 'Five'  },
-    { username: 'trialstudent6', first_name: 'Student', last_name: 'Six'   }
+    { username: 'demostudent1', first_name: 'Student', last_name: 'One'   },
+    { username: 'demostudent2', first_name: 'Student', last_name: 'Two'   },
+    { username: 'demostudent3', first_name: 'Student', last_name: 'Three' },
+    { username: 'demostudent4', first_name: 'Student', last_name: 'Four'  },
+    { username: 'demostudent5', first_name: 'Student', last_name: 'Five'  },
+    { username: 'demostudent6', first_name: 'Student', last_name: 'Six'   }
   ]
 
   NUM_CHAPTERS = 4
@@ -33,8 +33,8 @@ class PopulateTrialCourseContent
 
     if periods.size > 0
 
-      # Find trial student accounts
-      trial_student_accounts = STUDENT_INFO.map do |student_info|
+      # Find demo student accounts
+      demo_student_accounts = STUDENT_INFO.map do |student_info|
         OpenStax::Accounts::Account.find_or_create_by(
           username: student_info[:username]
         ) do |acc|
@@ -42,20 +42,20 @@ class PopulateTrialCourseContent
           acc.first_name = student_info[:first_name]
           acc.last_name = student_info[:last_name]
         end.tap do |acc|
-          raise "Someone took the trial username #{acc.username}!" if acc.valid_openstax_uid?
+          raise "Someone took the demo username #{acc.username}!" if acc.valid_openstax_uid?
         end
       end
 
-      # Find trial student users
-      trial_student_users = trial_student_accounts.map do |account|
+      # Find demo student users
+      demo_student_users = demo_student_accounts.map do |account|
         User::User.find_by_account_id(account.id) ||
         run(:create_user, account_id: account.id).outputs.user
       end
 
-      num_students_per_period = trial_student_users.size/periods.size
+      num_students_per_period = demo_student_users.size/periods.size
 
-      # Add trial students to periods
-      trial_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
+      # Add demo students to periods
+      demo_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
         users.each{ |user| run(:add_student, user: user, period: periods[index]) }
       end
 
@@ -73,13 +73,13 @@ class PopulateTrialCourseContent
     candidate_chapters = book.chapters.select do |chapter|
       chapter.pages.any?{ |page| page.homework_core_pool.content_exercise_ids.any? }
     end
-    trial_chapters = candidate_chapters[0..NUM_CHAPTERS-1]
-    return if trial_chapters.blank?
+    demo_chapters = candidate_chapters[0..NUM_CHAPTERS-1]
+    return if demo_chapters.blank?
 
     time_zone = course.time_zone
 
     # Assign tasks
-    trial_chapters.each_with_index do |chapter, index|
+    demo_chapters.each_with_index do |chapter, index|
       reading_opens_at = Time.current.monday + (index + 1 - NUM_CHAPTERS).week
       reading_due_at = reading_opens_at + 1.day
       homework_opens_at = reading_due_at
