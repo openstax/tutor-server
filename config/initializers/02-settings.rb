@@ -21,7 +21,7 @@ Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = \
 Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = \
   biglearn_stub ? 'local_query' : 'sparfa'
 Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = \
-  biglearn_stub ? 'local_query_student' : 'tesr_student'
+  biglearn_stub ? 'local_query_student_driven' : 'tesr_student_driven'
 Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = \
   biglearn_stub ? 'local_query' : 'tesr'
 Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = \
