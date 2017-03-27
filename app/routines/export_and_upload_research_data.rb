@@ -132,7 +132,7 @@
     @role_info ||=
       CourseMembership::Models::Student
         .joins(:course, :role)
-        .where(course: { is_demo: false })
+        .where(course: { is_preview: false })
         .select([ :entity_role_id,
                   :course_profile_course_id,
                   Entity::Role.arel_table[:research_identifier] ])

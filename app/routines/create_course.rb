@@ -12,9 +12,9 @@ class CreateCourse
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
 
-  uses_routine PopulateDemoCourseContent, as: :populate_demo_course_content
+  uses_routine PopulatePreviewCourseContent, as: :populate_preview_course_content
 
-  def exec(name:, term:, year:, is_demo:, is_college:, is_concept_coach: nil, num_sections: 0,
+  def exec(name:, term:, year:, is_preview:, is_college:, is_concept_coach: nil, num_sections: 0,
            catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
            school: nil, time_zone: nil, cloned_from: nil,
            default_open_time: nil, default_due_time: nil)
@@ -39,7 +39,7 @@ class CreateCourse
         year: year,
         is_college: is_college,
         is_concept_coach: is_concept_coach,
-        is_demo: is_demo,
+        is_preview: is_preview,
         starts_at: starts_at,
         ends_at: ends_at,
         offering: catalog_offering.try!(:to_model),
@@ -62,7 +62,7 @@ class CreateCourse
 
     run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
 
-    run(:populate_demo_course_content, course: outputs.course) if outputs.course.is_demo
+    run(:populate_preview_course_content, course: outputs.course) if outputs.course.is_preview
   end
 
 end

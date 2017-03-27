@@ -42,7 +42,7 @@ class CollectCourseInfo
         catalog_offering_id: offering.try!(:id),
         is_concept_coach: course.is_concept_coach,
         is_college: course.is_college,
-        is_demo: course.is_demo,
+        is_preview: course.is_preview,
         school_name: course.school_name,
         salesforce_book_name: offering.try(:salesforce_book_name),
         appearance_code: course.appearance_code.blank? ? \

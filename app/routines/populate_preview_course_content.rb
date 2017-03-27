@@ -1,12 +1,12 @@
-class PopulateDemoCourseContent
+class PopulatePreviewCourseContent
 
   STUDENT_INFO = [
-    { username: 'demostudent1', first_name: 'Student', last_name: 'One'   },
-    { username: 'demostudent2', first_name: 'Student', last_name: 'Two'   },
-    { username: 'demostudent3', first_name: 'Student', last_name: 'Three' },
-    { username: 'demostudent4', first_name: 'Student', last_name: 'Four'  },
-    { username: 'demostudent5', first_name: 'Student', last_name: 'Five'  },
-    { username: 'demostudent6', first_name: 'Student', last_name: 'Six'   }
+    { username: 'previewstudent1', first_name: 'Student', last_name: 'One'   },
+    { username: 'previewstudent2', first_name: 'Student', last_name: 'Two'   },
+    { username: 'previewstudent3', first_name: 'Student', last_name: 'Three' },
+    { username: 'previewstudent4', first_name: 'Student', last_name: 'Four'  },
+    { username: 'previewstudent5', first_name: 'Student', last_name: 'Five'  },
+    { username: 'previewstudent6', first_name: 'Student', last_name: 'Six'   }
   ]
 
   NUM_CHAPTERS = 4
@@ -25,7 +25,7 @@ class PopulateDemoCourseContent
   uses_routine Tasks::GetAssistant, as: :get_assistant
   uses_routine DistributeTasks, as: :distribute_tasks
   uses_routine MarkTaskStepCompleted, as: :mark_task_step_completed
-  uses_routine Demo::AnswerExercise, as: :answer_exercise
+  uses_routine Preview::AnswerExercise, as: :answer_exercise
 
   def exec(course:)
 
@@ -33,8 +33,8 @@ class PopulateDemoCourseContent
 
     if periods.size > 0
 
-      # Find demo student accounts
-      demo_student_accounts = STUDENT_INFO.map do |student_info|
+      # Find preview student accounts
+      preview_student_accounts = STUDENT_INFO.map do |student_info|
         OpenStax::Accounts::Account.find_or_create_by(
           username: student_info[:username]
         ) do |acc|
@@ -42,20 +42,20 @@ class PopulateDemoCourseContent
           acc.first_name = student_info[:first_name]
           acc.last_name = student_info[:last_name]
         end.tap do |acc|
-          raise "Someone took the demo username #{acc.username}!" if acc.valid_openstax_uid?
+          raise "Someone took the preview username #{acc.username}!" if acc.valid_openstax_uid?
         end
       end
 
-      # Find demo student users
-      demo_student_users = demo_student_accounts.map do |account|
+      # Find preview student users
+      preview_student_users = preview_student_accounts.map do |account|
         User::User.find_by_account_id(account.id) ||
         run(:create_user, account_id: account.id).outputs.user
       end
 
-      num_students_per_period = demo_student_users.size/periods.size
+      num_students_per_period = preview_student_users.size/periods.size
 
-      # Add demo students to periods
-      demo_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
+      # Add preview students to periods
+      preview_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
         users.each{ |user| run(:add_student, user: user, period: periods[index]) }
       end
 
@@ -73,13 +73,13 @@ class PopulateDemoCourseContent
     candidate_chapters = book.chapters.select do |chapter|
       chapter.pages.any?{ |page| page.homework_core_pool.content_exercise_ids.any? }
     end
-    demo_chapters = candidate_chapters[0..NUM_CHAPTERS-1]
-    return if demo_chapters.blank?
+    preview_chapters = candidate_chapters[0..NUM_CHAPTERS-1]
+    return if preview_chapters.blank?
 
     time_zone = course.time_zone
 
     # Assign tasks
-    demo_chapters.each_with_index do |chapter, index|
+    preview_chapters.each_with_index do |chapter, index|
       reading_opens_at = Time.current.monday + (index + 1 - NUM_CHAPTERS).week
       reading_due_at = reading_opens_at + 1.day
       homework_opens_at = reading_due_at

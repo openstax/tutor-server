@@ -30,7 +30,7 @@ class CloneCourse
       default_open_time: default_open_time || course.default_open_time,
       default_due_time: default_due_time || course.default_due_time,
       cloned_from: course,
-      is_demo: false
+      is_preview: false
     }
 
     run(:create_course, attrs)
