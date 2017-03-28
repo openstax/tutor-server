@@ -6,7 +6,7 @@ FactoryGirl.define do
 
     name                  { Faker::Lorem.words.join(' ') }
 
-    is_trial              false
+    is_preview            false
 
     is_concept_coach      false
     is_college            true
