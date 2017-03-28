@@ -102,7 +102,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       first_task.task_steps.each do |ts|
         next if ts.completed?
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -128,7 +128,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     it "records them" do
       first_task = student_tasks.first
       first_task.task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -154,7 +154,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       second_task = student_tasks.second
       second_task.task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -181,7 +181,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       third_task = student_tasks.third
       third_task.task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -208,7 +208,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       fourth_task = student_tasks.fourth
       fourth_task.task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
@@ -248,7 +248,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       student_tasks.first(2).each do |task|
         task.task_steps.each do |ts|
-          ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
+          ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                          MarkTaskStepCompleted[task_step: ts]
         end
       end
@@ -264,7 +264,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page.trouble).to eq false
 
       student_tasks.third.task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -280,7 +280,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       student_tasks[3..4].each do |task|
         task.task_steps.each do |ts|
-          ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+          ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                          MarkTaskStepCompleted[task_step: ts]
         end
       end
@@ -296,7 +296,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page.trouble).to eq true
 
       student_tasks[5].task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -311,7 +311,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page.trouble).to eq false
 
       student_tasks[6].task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -326,7 +326,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(spaced_page.trouble).to eq true
 
       student_tasks[7].task_steps.each do |ts|
-        ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+        ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                        MarkTaskStepCompleted[task_step: ts]
       end
 
@@ -353,7 +353,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         task_data[:selected_answers] <<
           task.task_steps.each_with_object([]) do |ts, selected_answers|
             if ts.exercise?
-              Demo::AnswerExercise[task_step: ts, is_correct: (tt.even? ? true : false)]
+              Preview::AnswerExercise[task_step: ts, is_correct: (tt.even? ? true : false)]
               selected_answers << ts.tasked.answer_id
             else
               MarkTaskStepCompleted[task_step: ts]
@@ -546,7 +546,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       it "does not show dropped students" do
         first_task = student_tasks.first
         first_task.task_steps.each do |ts|
-          ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: true] : \
+          ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: true] : \
                          MarkTaskStepCompleted[task_step: ts]
         end
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats

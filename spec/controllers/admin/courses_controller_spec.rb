@@ -77,7 +77,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
         name: 'Hello World',
         term: CourseProfile::Models::Course.terms.keys.sample,
         year: Time.current.year,
-        is_trial: false,
+        is_preview: false,
         is_concept_coach: false,
         is_college: true,
         num_sections: num_sections,

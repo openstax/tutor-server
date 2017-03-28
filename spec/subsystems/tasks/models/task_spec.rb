@@ -171,8 +171,8 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                            :tasks_tasked_exercise,
                                            :tasks_tasked_exercise])
 
-    Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
-    Demo::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
+    Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+    Preview::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
 
     task.reload
 
@@ -428,7 +428,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
                                                due_at: Time.current - 1.day,
                                                step_types: ['tasks_tasked_exercise'])
-        Demo::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
 
         task.update_step_counts!
 
@@ -461,28 +461,28 @@ RSpec.describe Tasks::Models::Task, type: :model do
         expect(task.completed_exercise_steps_count).to eq 0
         expect(task.correct_exercise_steps_count).to eq 0
 
-        Demo::AnswerExercise[task_step: task.task_steps.first, is_correct: true, completed: true]
+        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true, completed: true]
         task.reload
 
         expect(task.completed_steps_count).to eq 1
         expect(task.completed_exercise_steps_count).to eq 1
         expect(task.correct_exercise_steps_count).to eq 1
 
-        Demo::AnswerExercise[task_step: task.task_steps.second, is_correct: false, completed: true]
+        Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: false, completed: true]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 1
 
-        Demo::AnswerExercise[task_step: task.task_steps.third, is_correct: true, completed: false]
+        Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true, completed: false]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 2
 
-        Demo::AnswerExercise[task_step: task.task_steps.fourth, is_correct: false, completed: false]
+        Preview::AnswerExercise[task_step: task.task_steps.fourth, is_correct: false, completed: false]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
@@ -553,7 +553,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                                           :tasks_tasked_exercise])
 
       Timecop.freeze(Time.current - 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
 
@@ -562,7 +562,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
 
@@ -581,7 +581,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.accepted_late_at).not_to be_nil
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
 
@@ -614,7 +614,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                                           :tasks_tasked_exercise])
 
       Timecop.freeze(Time.current - 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
 
@@ -623,7 +623,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
 
@@ -642,7 +642,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.accepted_late_at).not_to be_nil
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
 

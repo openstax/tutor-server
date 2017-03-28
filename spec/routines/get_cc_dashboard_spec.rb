@@ -103,25 +103,25 @@ RSpec.describe GetCcDashboard, type: :routine do
         user: @student_user, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ]
       @task_1.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: true]
+        Preview::AnswerExercise[task_step: ts, is_correct: true]
       end
       @task_2 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @page_2.uuid
       ]
       @task_2.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: false]
+        Preview::AnswerExercise[task_step: ts, is_correct: false]
       end
       @task_3 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @page_3.uuid
       ]
       @task_3.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        Preview::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_4 = GetConceptCoach[
         user: @student_user_2, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ]
       @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Demo::AnswerExercise[task_step: ts, is_correct: ii == 0]
+        Preview::AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
       @task_5 = GetConceptCoach[
         user: @student_user_2, book_uuid: @book.uuid, page_uuid: @page_2.uuid

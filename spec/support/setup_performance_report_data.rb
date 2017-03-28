@@ -177,40 +177,40 @@ class SetupPerformanceReportData
     # User 1 answered everything in first CC correctly
     student_1_tasks = student_tasks[0]
     student_1_tasks[0].core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[0].reload.non_core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
 
     # User 1 answered 3 correct, 1 incorrect in 2nd CC
     student_1_tasks[1].core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[1].reload
-    Demo::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.first, is_correct: true]
-    Demo::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.last, is_correct: false]
+    Preview::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.first, is_correct: true]
+    Preview::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.last, is_correct: false]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in first CC
     student_2_tasks = student_tasks[1]
     core_task_steps = student_2_tasks[0].core_task_steps
     core_task_steps.first(2).each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     core_task_steps.last(2).each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: false]
+      Preview::AnswerExercise[task_step: ts, is_correct: false]
     end
 
     # User 2 answered 1 correct in 2nd CC
-    Demo::AnswerExercise[task_step: student_2_tasks[1].core_task_steps.first, is_correct: true]
+    Preview::AnswerExercise[task_step: student_2_tasks[1].core_task_steps.first, is_correct: true]
 
     # User 3 answered everything in first CC correctly
     student_3_tasks = student_tasks[2]
     student_3_tasks[0].core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_3_tasks[0].reload.non_core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
   end
 
@@ -218,29 +218,29 @@ class SetupPerformanceReportData
     # User 1 answered everything in homework task plan correctly
     student_1_tasks = student_tasks[0]
     student_1_tasks[0].core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[0].reload.non_core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
 
     # User 1 completed the reading task plan
     student_1_tasks[1].core_task_steps.each do |ts|
-      ts.exercise? ? Demo::AnswerExercise[task_step: ts, is_correct: false] : \
+      ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
                      MarkTaskStepCompleted[task_step: ts]
     end
     student_1_tasks[1].reload.non_core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: false]
+      Preview::AnswerExercise[task_step: ts, is_correct: false]
     end
 
     # User 1 answered 3 correct, 1 incorrect in 2nd homework
     student_1_tasks[2].core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_1_tasks[2].reload
-    Demo::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
+    Preview::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
                           is_correct: true]
-    Demo::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last,
+    Preview::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last,
                           is_correct: false]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in
@@ -248,26 +248,26 @@ class SetupPerformanceReportData
     student_2_tasks = student_tasks[1]
     core_task_steps = student_2_tasks[0].core_task_steps
     core_task_steps.first(2).each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     core_task_steps.last(2).each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: false]
+      Preview::AnswerExercise[task_step: ts, is_correct: false]
     end
 
     # User 2 started the reading task plan
     MarkTaskStepCompleted[task_step: student_2_tasks[1].task_steps.first]
 
     # User 2 answered 1 correct in 2nd homework
-    Demo::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first,
+    Preview::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first,
                           is_correct: true]
 
     # User 3 answered everything in homework task plan correctly
     student_3_tasks = student_tasks[2]
     student_3_tasks[0].core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_3_tasks[0].reload.non_core_task_steps.each do |ts|
-      Demo::AnswerExercise[task_step: ts, is_correct: true]
+      Preview::AnswerExercise[task_step: ts, is_correct: true]
     end
   end
 

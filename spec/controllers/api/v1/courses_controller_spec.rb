@@ -169,14 +169,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'verified faculty' do
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
-      it 'creates a new trial course for the faculty if all required attributes are specified' do
+      it 'creates a new preview course for the faculty if all required attributes are specified' do
         expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
           change{ CourseProfile::Models::Course.count }.by(1)
         )
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
-        # Trial courses temporarily disabled
-        expect(response.body_as_hash[:is_trial]).to eq false
+        # Preview courses temporarily disabled
+        expect(response.body_as_hash[:is_preview]).to eq false
       end
 
       it 'makes the requesting faculty a teacher in the new course' do
@@ -501,16 +501,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "works without a role specified" do
-        Demo::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
-        Demo::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
+        Preview::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
 
-        Demo::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
-        Demo::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
-        Demo::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
+        Preview::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
+        Preview::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
 
-        Demo::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
-        Demo::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
-        Demo::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
+        Preview::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
+        Preview::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
+        Preview::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
 
         api_get :dashboard, student_token, parameters: {id: course.id}
 
@@ -759,25 +759,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         user: student_user, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ]
       @task_1.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: true]
+        Preview::AnswerExercise[task_step: ts, is_correct: true]
       end
       @task_2 = GetConceptCoach[
         user: student_user, book_uuid: @book.uuid, page_uuid: @page_2.uuid
       ]
       @task_2.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: false]
+        Preview::AnswerExercise[task_step: ts, is_correct: false]
       end
       @task_3 = GetConceptCoach[
         user: student_user, book_uuid: @book.uuid, page_uuid: @page_3.uuid
       ]
       @task_3.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        Preview::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_4 = GetConceptCoach[
         user: student_user_2, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ]
       @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Demo::AnswerExercise[task_step: ts, is_correct: ii == 0]
+        Preview::AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
       @task_5 = GetConceptCoach[
         user: student_user_2, book_uuid: @book.uuid, page_uuid: @page_2.uuid
@@ -1142,7 +1142,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:valid_body)   { { copy_question_library: false } }
 
     before do
-      course.update_attribute :is_trial, true
+      course.update_attribute :is_preview, true
 
       zeroth_period.to_model.destroy!
     end
@@ -1182,7 +1182,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         Api::V1::CourseRepresenter.new(course).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
           year: expected_year,
-          is_trial: false,
+          is_preview: false,
           starts_at: expected_term_year.starts_at,
           ends_at: expected_term_year.ends_at,
           is_active: be_in([true, false]),

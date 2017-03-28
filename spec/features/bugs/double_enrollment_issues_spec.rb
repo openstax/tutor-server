@@ -56,12 +56,12 @@ RSpec.describe "Students in archived old period sign up in new term",
       cc_task_sem_1_page_0 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[0].uuid
       ]
-      Demo::AnswerExercise[task_step: cc_task_sem_1_page_0.task_steps[0], is_correct: true]
+      Preview::AnswerExercise[task_step: cc_task_sem_1_page_0.task_steps[0], is_correct: true]
 
       cc_task_sem_1_page_1 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[1].uuid
       ]
-      Demo::AnswerExercise[task_step: cc_task_sem_1_page_1.task_steps[0], is_correct: true]
+      Preview::AnswerExercise[task_step: cc_task_sem_1_page_1.task_steps[0], is_correct: true]
 
       # teacher, preparing to teach this course again in the current approach,
       # archives the period she has and makes a new one
@@ -95,12 +95,12 @@ RSpec.describe "Students in archived old period sign up in new term",
         cc_task_sem_2_page_2 = GetConceptCoach[
           user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[2].uuid
         ]
-        Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
 
         cc_task_sem_2_page_3 = GetConceptCoach[
           user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[3].uuid
         ]
-        Demo::AnswerExercise[task_step: cc_task_sem_2_page_3.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: cc_task_sem_2_page_3.task_steps[0], is_correct: true]
 
         # "My Progress" screen pulls data from the CC dashboard endpoint
         api_get("/api/courses/#{@course.id}/cc/dashboard", @student_token)
@@ -120,7 +120,7 @@ RSpec.describe "Students in archived old period sign up in new term",
         cc_task_sem_2_page_2 = GetConceptCoach[
           user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[2].uuid
         ]
-        Demo::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: cc_task_sem_2_page_2.task_steps[0], is_correct: true]
 
         api_get("/api/courses/#{@course.id}/performance", @teacher_token)
 
