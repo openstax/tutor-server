@@ -42,10 +42,10 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
 
   it "represents concept coach stats" do
     task_step = @tasks.first.task_steps.select{ |ts| ts.tasked.exercise? }.first
-    Demo::AnswerExercise[task_step: task_step, is_correct: true]
+    Preview::AnswerExercise[task_step: task_step, is_correct: true]
 
     task_step = @tasks.second.task_steps.select{ |ts| ts.tasked.exercise? }.first
-    Demo::AnswerExercise[task_step: task_step, is_correct: false]
+    Preview::AnswerExercise[task_step: task_step, is_correct: false]
 
     task_relation = Tasks::Models::Task.where(id: @tasks.map(&:id))
     stats = Hashie::Mash.new(title: 'Test', stats: CalculateTaskStats[tasks: task_relation])

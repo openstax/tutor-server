@@ -13,7 +13,7 @@ RSpec.describe ResetPracticeWidget, type: :routine do
   end
 
   it 'clears incomplete steps from previous practice widgets' do
-    Demo::AnswerExercise[task_step: practice_task.task_steps.first, is_correct: false]
+    Preview::AnswerExercise[task_step: practice_task.task_steps.first, is_correct: false]
     practice_task_2 = described_class[role: role, exercise_source: :fake, page_ids: []]
     expect(practice_task_2).to be_persisted
     expect(practice_task.task_steps.reload.size).to eq 1

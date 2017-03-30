@@ -4,7 +4,7 @@ module Manager::StatsActions
   end
 
   def courses
-    @courses = CourseProfile::Models::Course.where(is_trial: false).preload(
+    @courses = CourseProfile::Models::Course.where(is_preview: false).preload(
       teachers: { role: { role_user: :profile } },
       periods_with_deleted: :latest_enrollments_with_deleted
     ).order(:name).to_a
@@ -45,7 +45,7 @@ module Manager::StatsActions
   def concept_coach
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(role: {student: :course})
-      .where(role: {student: {course: {is_trial: false}}})
+      .where(role: {student: {course: {is_preview: false}}})
       .preload([{page: {chapter: {book: {chapters: :pages}}}}, {role: :profile}])
       .to_a
 

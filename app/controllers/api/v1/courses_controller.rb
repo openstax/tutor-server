@@ -52,7 +52,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
     course_attributes = attributes.except(:catalog_offering_id)
-                                  .merge(catalog_offering: catalog_offering, is_trial: false)
+                                  .merge(catalog_offering: catalog_offering, is_preview: false)
 
     course = CreateCourse[course_attributes]
 

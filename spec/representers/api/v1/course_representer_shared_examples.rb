@@ -19,7 +19,7 @@ module Api::V1
       FactoryGirl.create :course_profile_course, name: 'Test course',
                                                  appearance_code: 'appearance override',
                                                  offering: catalog_offering,
-                                                 is_trial: true,
+                                                 is_preview: true,
                                                  is_concept_coach: true,
                                                  is_college: false,
                                                  cloned_from: original_course
@@ -70,8 +70,8 @@ module Api::V1
       expect(represented['webview_url']).to eq 'web_url'
     end
 
-    it 'shows whether or not the course is a trial course' do
-      expect(represented['is_trial']).to eq true
+    it 'shows whether or not the course is a preview course' do
+      expect(represented['is_preview']).to eq true
     end
 
     it 'shows whether or not the course is a concept coach course' do

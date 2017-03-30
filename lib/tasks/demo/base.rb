@@ -345,7 +345,7 @@ class Demo::Base
   #   #                            role: role, exercise_source: :biglearn]
 
   #   # task.task_steps.first(num_correct).each do |task_step|
-  #   #   Demo::AnswerExercise[task_step: task_step, is_correct: true]
+  #   #   Preview::AnswerExercise[task_step: task_step, is_correct: true]
   #   # end
   # end
 
@@ -479,7 +479,7 @@ class Demo::Base
     response = (response == '0' ? false : true) if response.is_a?(String)
 
     if step.tasked.exercise?
-      Demo::AnswerExercise.call(task_step: step, is_correct: response)
+      Preview::AnswerExercise.call(task_step: step, is_correct: response)
     else
       run(MarkTaskStepCompleted, task_step: step)
     end
@@ -498,7 +498,7 @@ class Demo::Base
 
   def create_course(name:, term:, year:, starts_at: nil, ends_at: nil,
                     catalog_offering:, appearance_code: nil,
-                    is_trial: false, is_concept_coach: nil, is_college:,
+                    is_preview: false, is_concept_coach: nil, is_college:,
                     school: nil, time_zone: nil)
     course = run(:create_course,
                  name: name,
@@ -506,7 +506,7 @@ class Demo::Base
                  year: year,
                  starts_at: starts_at,
                  ends_at: ends_at,
-                 is_trial: is_trial,
+                 is_preview: is_preview,
                  is_concept_coach: is_concept_coach,
                  is_college: is_college,
                  catalog_offering: catalog_offering,

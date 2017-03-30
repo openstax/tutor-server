@@ -34,7 +34,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     student_tasks.first(2).each do |task|
       task.task_steps.each do |task_step|
         if task_step.exercise?
-          Demo::AnswerExercise[task_step: task_step, is_correct: false]
+          Preview::AnswerExercise[task_step: task_step, is_correct: false]
         else
           MarkTaskStepCompleted[task_step: task_step]
         end
@@ -49,7 +49,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     student_tasks[2].task_steps.each do |task_step|
       if task_step.exercise?
-        Demo::AnswerExercise[task_step: task_step, is_correct: false]
+        Preview::AnswerExercise[task_step: task_step, is_correct: false]
       else
         MarkTaskStepCompleted[task_step: task_step]
       end
@@ -64,7 +64,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     student_tasks[3..5].each do |task|
       task.task_steps.each do |task_step|
         if task_step.exercise?
-          Demo::AnswerExercise[task_step: task_step, is_correct: true]
+          Preview::AnswerExercise[task_step: task_step, is_correct: true]
         else
           MarkTaskStepCompleted[task_step: task_step]
         end
@@ -79,7 +79,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     student_tasks[6].task_steps.each do |task_step|
       if task_step.exercise?
-        Demo::AnswerExercise[task_step: task_step, is_correct: false]
+        Preview::AnswerExercise[task_step: task_step, is_correct: false]
       else
         MarkTaskStepCompleted[task_step: task_step]
       end
@@ -93,7 +93,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     student_tasks[7].task_steps.each do |task_step|
       if task_step.exercise?
-        Demo::AnswerExercise[task_step: task_step, is_correct: true]
+        Preview::AnswerExercise[task_step: task_step, is_correct: true]
       else
         MarkTaskStepCompleted[task_step: task_step]
       end
@@ -107,7 +107,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     student_tasks[8].task_steps.each do |task_step|
       if task_step.exercise?
-        Demo::AnswerExercise[task_step: task_step, is_correct: false]
+        Preview::AnswerExercise[task_step: task_step, is_correct: false]
       else
         MarkTaskStepCompleted[task_step: task_step]
       end
@@ -121,7 +121,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     student_tasks[9].task_steps.each do |task_step|
       if task_step.exercise?
-        Demo::AnswerExercise[task_step: task_step, is_correct: true]
+        Preview::AnswerExercise[task_step: task_step, is_correct: true]
       else
         MarkTaskStepCompleted[task_step: task_step]
       end

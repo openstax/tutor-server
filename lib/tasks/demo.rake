@@ -18,10 +18,10 @@ task :demo, [:config, :version, :random_seed] => :environment do |tt, args|
 end
 
 namespace :demo do
+  require_relative 'demo'
 
   desc 'Initializes book content for the deployment demo'
   task :content, [:config, :version, :random_seed] => :environment do |tt, args|
-    require_relative 'demo/content'
 
     result = Demo::Content.call(args.to_h.merge(print_logs: true))
 
@@ -35,7 +35,6 @@ namespace :demo do
 
   desc 'Creates assignments for students'
   task :tasks, [:config, :random_seed] => :environment do |tt, args|
-    require_relative 'demo/tasks'
 
     result = Demo::Tasks.call(args.to_h.merge(print_logs: true))
 
@@ -49,7 +48,6 @@ namespace :demo do
 
   desc 'Works student assignments'
   task :work, [:config, :random_seed] => :environment do |tt, args|
-    require_relative 'demo/work'
 
     result = Demo::Work.call(args.to_h.merge(print_logs: true))
 

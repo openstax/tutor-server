@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170308183035) do
+ActiveRecord::Schema.define(version: 20170323195331) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -310,7 +310,7 @@ ActiveRecord::Schema.define(version: 20170308183035) do
     t.integer  "term",                                        null: false
     t.integer  "year",                                        null: false
     t.integer  "cloned_from_id"
-    t.boolean  "is_trial",                                    null: false
+    t.boolean  "is_preview",                                  null: false
     t.boolean  "is_excluded_from_salesforce", default: false, null: false
   end
 
