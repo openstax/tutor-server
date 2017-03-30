@@ -143,6 +143,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         name: 'A Course',
         term: term,
         year: year,
+        is_preview: false,
         is_college: true,
         num_sections: num_sections,
         offering_id: catalog_offering.id.to_s
@@ -169,24 +170,48 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'verified faculty' do
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
-      it 'creates a new preview course for the faculty if all required attributes are specified' do
-        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
-          change{ CourseProfile::Models::Course.count }.by(1)
-        )
-        expect(response).to have_http_status :success
-        expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
-        # Preview courses temporarily disabled
-        expect(response.body_as_hash[:is_preview]).to eq false
+      context 'is_preview: true' do
+        before { valid_body_hash[:is_preview] = true }
+
+        it 'creates a new preview course for the faculty if all required attributes are given' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseProfile::Models::Course.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
+          expect(response.body_as_hash[:is_preview]).to eq true
+        end
+
+        it 'makes the requesting faculty a teacher in the new preview course' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseMembership::Models::Teacher.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          course = CourseProfile::Models::Course.order(:created_at).last
+          expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
+        end
       end
 
-      it 'makes the requesting faculty a teacher in the new course' do
-        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
-          change{ CourseMembership::Models::Teacher.count }.by(1)
-        )
-        expect(response).to have_http_status :success
-        course = CourseProfile::Models::Course.order(:created_at).last
-        expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
+      context 'is_preview: false' do
+        it 'creates a new course for the faculty if all required attributes are given' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseProfile::Models::Course.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
+          expect(response.body_as_hash[:is_preview]).to eq false
+        end
+
+        it 'makes the requesting faculty a teacher in the new course' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseMembership::Models::Teacher.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          course = CourseProfile::Models::Course.order(:created_at).last
+          expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
+        end
       end
+
 
       it 'returns errors if required attributes are not specified' do
         expect{ api_post :create, user_1_token }.not_to(
@@ -194,7 +219,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
         expect(response).to have_http_status :unprocessable_entity
         expect(response.body_as_hash[:status]).to eq 422
-        [:name, :term, :year, :is_college, :catalog_offering_id].each do |required_attr|
+        Api::V1::CoursesController::CREATE_REQUIRED_ATTRIBUTES.each do |required_attr|
           expect(response.body_as_hash[:errors]).to include(
             {code: "missing_attribute", message: "The #{required_attr} attribute must be provided"}
           )

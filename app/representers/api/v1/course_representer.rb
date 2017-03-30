@@ -142,7 +142,7 @@ module Api::V1
 
     property :is_preview,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: {
                type: 'boolean',
                required: true
