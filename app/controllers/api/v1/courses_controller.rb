@@ -1,5 +1,9 @@
 class Api::V1::CoursesController < Api::V1::ApiController
 
+  CREATE_REQUIRED_ATTRIBUTES = [
+    :name, :term, :year, :num_sections, :is_preview, :is_college, :catalog_offering_id
+  ]
+
   before_filter :get_course, only: [:show, :update, :dashboard, :cc_dashboard, :roster, :clone]
 
   resource_description do
@@ -39,9 +43,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
-    required_attributes = [:name, :term, :year, :num_sections, :is_college, :catalog_offering_id]
-
-    errors = required_attributes.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
+    errors = CREATE_REQUIRED_ATTRIBUTES.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
       {code: :missing_attribute, message: "The #{sym} attribute must be provided"}
     end
 
@@ -52,7 +54,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
     course_attributes = attributes.except(:catalog_offering_id)
-                                  .merge(catalog_offering: catalog_offering, is_preview: false)
+                                  .merge(catalog_offering: catalog_offering)
 
     course = CreateCourse[course_attributes]
 
