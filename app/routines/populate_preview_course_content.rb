@@ -9,13 +9,13 @@ class PopulatePreviewCourseContent
     { username: 'previewstudent6', first_name: 'Student', last_name: 'Six'   }
   ]
 
-  NUM_CHAPTERS = 4
+  NUM_ASSIGNED_CHAPTERS = 4
 
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
-
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
-
   STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.5
+
+  FREE_RESPONSE = 'This is where you can see each student’s answer in his or her own words.'
 
   lev_routine
 
@@ -73,14 +73,14 @@ class PopulatePreviewCourseContent
     candidate_chapters = book.chapters.select do |chapter|
       chapter.pages.any?{ |page| page.homework_core_pool.content_exercise_ids.any? }
     end
-    preview_chapters = candidate_chapters[0..NUM_CHAPTERS-1]
+    preview_chapters = candidate_chapters[0..NUM_ASSIGNED_CHAPTERS-1]
     return if preview_chapters.blank?
 
     time_zone = course.time_zone
 
     # Assign tasks
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = Time.current.monday + (index + 1 - NUM_CHAPTERS).week
+      reading_opens_at = Time.current.monday + (index + 1 - NUM_ASSIGNED_CHAPTERS).week
       reading_due_at = reading_opens_at + 1.day
       homework_opens_at = reading_due_at
       homework_due_at = homework_opens_at + 3.days
@@ -185,10 +185,13 @@ class PopulatePreviewCourseContent
         if task_step.exercise?
           is_correct = SecureRandom.random_number < correct_probability
 
-          run(:answer_exercise,
-              task_step: task_step, is_correct: is_correct, completion_time: work_date)
+          run :answer_exercise,
+              task_step: task_step,
+              is_correct: is_correct,
+              free_response: FREE_RESPONSE,
+              completion_time: work_date
         else
-          run(:mark_task_step_completed, task_step: task_step, completion_time: work_date)
+          run :mark_task_step_completed, task_step: task_step, completion_time: work_date
         end
 
         break if incomplete && index >= task_steps.size/2
