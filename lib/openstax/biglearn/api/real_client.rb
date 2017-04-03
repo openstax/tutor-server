@@ -353,13 +353,15 @@ class OpenStax::Biglearn::Api::RealClient
   def record_responses(requests)
     biglearn_requests = requests.map do |request|
       tasked_exercise = request[:tasked_exercise]
+      task = tasked_exercise.task_step.task
 
       {
         response_uuid: request[:response_uuid],
         course_uuid: request[:course].uuid,
         sequence_number: request[:sequence_number],
+        ecosystem_uuid: task.ecosystem.tutor_uuid,
         trial_uuid: tasked_exercise.uuid,
-        student_uuid: tasked_exercise.task_step.task.taskings.first.role.student.uuid,
+        student_uuid: task.taskings.first.role.student.uuid,
         exercise_uuid: tasked_exercise.exercise.uuid,
         is_correct: tasked_exercise.is_correct?,
         responded_at: tasked_exercise.updated_at
