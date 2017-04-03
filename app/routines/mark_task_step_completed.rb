@@ -14,11 +14,11 @@ class MarkTaskStepCompleted
 
     tasked = task_step.tasked
     tasked.try(:handle_task_step_completion!)
-    transfer_errors_from(task_step.tasked, {type: :verbatim}, true)
+    transfer_errors_from(tasked, {type: :verbatim}, true)
 
     task = task_step.task
     task.handle_task_step_completion!(completion_time: completion_time)
-    transfer_errors_from(task_step.task, {type: :verbatim}, true)
+    transfer_errors_from(task, {type: :verbatim}, true)
 
     course = task.taskings.first.try!(:role).try!(:student).try!(:course)
     OpenStax::Biglearn::Api.record_responses(course: course, tasked_exercise: tasked) \

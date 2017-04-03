@@ -65,7 +65,7 @@ module CreatePracticeTaskRoutine
                " - Requested: #{EXERCISES_COUNT} - Got: 0]"
     ) if exercises.size == 0
 
-    # Create the new practice widget task, and put the exercises into steps
+    # Add the exercises as task steps
     exercises.each do |exercise|
       TaskExercise.call(exercise: exercise, task: task) do |step|
         step.group_type = :personalized_group
