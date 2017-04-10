@@ -190,8 +190,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(Api::V1::Tasks::TaskedReadingRepresenter.new(
-        tasked.reload
+      expect(response.body).to eq(Api::V1::TaskRepresenter.new(
+        tasked.reload.task_step.task
       ).to_json)
 
       expect(tasked.task_step(true).completed?).to be_truthy
@@ -215,7 +215,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(
-        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked.reload).to_json
+        Api::V1::TaskRepresenter.new(tasked.reload.task_step.task).to_json
       )
 
       expect(tasked.task_step(true).completed?).to be_truthy

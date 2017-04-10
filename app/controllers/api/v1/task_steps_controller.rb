@@ -35,15 +35,20 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :PUT, '/steps/:step_id/completed',
             'Marks the specified TaskStep as completed (if applicable)'
+  description <<-EOS
+    Marks a task step as complete, which may create or modify other steps.
+    The entire task is returned so the FE can update as needed.
+
+    #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
+  EOS
   def completed
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
     result = MarkTaskStepCompleted.call(task_step: @task_step)
-
     render_api_errors(result.errors) || respond_with(
-      @task_step.reload,
+      @task_step.task,
       responder: ResponderWithPutPatchDeleteContent,
-      represent_with: Api::V1::TaskStepRepresenter
+      represent_with: Api::V1::TaskRepresenter
     )
   end
 
