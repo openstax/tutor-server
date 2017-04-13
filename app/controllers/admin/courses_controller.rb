@@ -208,6 +208,7 @@ class Admin::CoursesController < Admin::BaseController
         :ends_at,
         :is_concept_coach,
         :is_college,
+        :is_test,
         :catalog_offering_id,
         :appearance_code,
         :school_district_school_id,
