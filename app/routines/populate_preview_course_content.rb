@@ -30,35 +30,36 @@ class PopulatePreviewCourseContent
   def exec(course:)
 
     periods = course.periods.to_a
+    while course.periods.length < 2
+      run(:create_period, course: course)
 
-    if periods.size > 0
+      periods = course.periods.to_a
+    end
 
-      # Find preview student accounts
-      preview_student_accounts = STUDENT_INFO.map do |student_info|
-        OpenStax::Accounts::Account.find_or_create_by(
-          username: student_info[:username]
-        ) do |acc|
-          acc.title = student_info[:title]
-          acc.first_name = student_info[:first_name]
-          acc.last_name = student_info[:last_name]
-        end.tap do |acc|
-          raise "Someone took the preview username #{acc.username}!" if acc.valid_openstax_uid?
-        end
+    # Find preview student accounts
+    preview_student_accounts = STUDENT_INFO.map do |student_info|
+      OpenStax::Accounts::Account.find_or_create_by(
+        username: student_info[:username]
+      ) do |acc|
+        acc.title = student_info[:title]
+        acc.first_name = student_info[:first_name]
+        acc.last_name = student_info[:last_name]
+      end.tap do |acc|
+        raise "Someone took the preview username #{acc.username}!" if acc.valid_openstax_uid?
       end
+    end
 
-      # Find preview student users
-      preview_student_users = preview_student_accounts.map do |account|
-        User::User.find_by_account_id(account.id) ||
-        run(:create_user, account_id: account.id).outputs.user
-      end
+    # Find preview student users
+    preview_student_users = preview_student_accounts.map do |account|
+      User::User.find_by_account_id(account.id) ||
+      run(:create_user, account_id: account.id).outputs.user
+    end
 
-      num_students_per_period = preview_student_users.size/periods.size
+    num_students_per_period = preview_student_users.size/periods.size
 
-      # Add preview students to periods
-      preview_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
-        users.each{ |user| run(:add_student, user: user, period: periods[index]) }
-      end
-
+    # Add preview students to periods
+    preview_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
+      users.each{ |user| run(:add_student, user: user, period: periods[index]) }
     end
 
     return if course.is_concept_coach
