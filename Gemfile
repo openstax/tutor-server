@@ -69,10 +69,10 @@ gem 'maruku'
 gem 'roar', '1.0.3'
 
 # Background job status store
-gem 'jobba', '~> 1.4.0'
+gem 'jobba', '~> 1.5.0'
 
 # Lev framework
-gem 'lev', '~> 7.0.3'
+gem 'lev', '~> 7.1.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

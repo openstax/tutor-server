@@ -26,8 +26,9 @@ class Admin::CoursesController < Admin::BaseController
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = CollectImportJobsData[state: :incomplete]
-    @failed_jobs = CollectImportJobsData[state: :failed]
+    result = CollectJobsData.call job_name: 'CourseContent::AddEcosystemToCourse'
+    @incomplete_jobs = result.outputs.incomplete_jobs
+    @failed_jobs = result.outputs.failed_jobs
     @job_path_proc = ->(job_id) { admin_job_path(job_id) }
   end
 

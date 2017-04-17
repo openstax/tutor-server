@@ -349,7 +349,7 @@ GEM
     ice_nine (0.11.1)
     inflecto (0.0.2)
     ipaddress (0.8.0)
-    jobba (1.4.0)
+    jobba (1.5.0)
       redis (~> 3.2)
       redis-namespace
     jquery-rails (4.0.3)
@@ -364,7 +364,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (7.0.3)
+    lev (7.1.0)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -556,7 +556,7 @@ GEM
     redis-activesupport (4.0.0)
       activesupport (~> 4)
       redis-store (~> 1.1.0)
-    redis-namespace (1.5.2)
+    redis-namespace (1.5.3)
       redis (~> 3.0, >= 3.0.4)
     redis-rack (1.5.0)
       rack (~> 1.5)
@@ -769,12 +769,12 @@ DEPENDENCIES
   guard-rspec
   hashie
   httparty
-  jobba (~> 1.4.0)
+  jobba (~> 1.5.0)
   jquery-rails
   json-schema
   keyword_search
   launchy
-  lev (~> 7.0.3)
+  lev (~> 7.1.0)
   lograge
   maruku
   mini_magick

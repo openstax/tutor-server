@@ -1,7 +1,7 @@
 <% @page_header = "Courses" %>
 
-<%= render partial: 'manager/courses/tabs', locals: { incomplete_jobs: @incomplete_jobs,
-                                                      failed_jobs: @failed_jobs } %>
+<%= render partial: 'manager/courses/tabs',
+           locals: { incomplete_jobs: @incomplete_jobs, failed_jobs: @failed_jobs } %>
 <br>
 <%= render partial: 'manager/courses/search', locals: { query: @query } %>
 
