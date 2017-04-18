@@ -20,6 +20,7 @@ Results per page:
                        per_page: params[:per_page],
                        incomplete_jobs: @incomplete_jobs,
                        failed_jobs: @failed_jobs,
+                       job_path_proc: ->(job) { admin_job_path(job.id) },
                        extra_fields_procs: [lambda do |course_info| %>
     <td>
       <%= link_to 'List Students', admin_course_students_path(course_info.id),

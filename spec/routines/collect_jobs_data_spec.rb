@@ -6,10 +6,6 @@ RSpec.describe CollectJobsData, type: :routine do
     expect(Jobba.all.count).to eq 0
   end
 
-  let(:ecosystem_title)     do
-    "Physics (334f8b61-30eb-4475-8e05-5260a4866b4b@7.42) - 2016-08-10 18:10:50 UTC"
-  end
-
   let(:job_name)            { 'Cool background job' }
 
   let(:result)              { described_class.call(job_name: job_name) }
@@ -113,9 +109,16 @@ RSpec.describe CollectJobsData, type: :routine do
     end
 
     context "with data hashes" do
+      let(:ecosystem)           { FactoryGirl.create :content_ecosystem }
+
       before(:each) do
         jobs.each do |job|
-          job.save(course_id: course.name, course_ecosystem: ecosystem_title)
+          job.save(
+            course_id: course.id,
+            course_name: course.name,
+            ecosystem_id: ecosystem.id,
+            ecosystem_title: ecosystem.title
+          )
         end
       end
 

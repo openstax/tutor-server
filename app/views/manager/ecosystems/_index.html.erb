@@ -36,14 +36,14 @@
 
   <% unless incomplete_jobs.empty? %>
     <div role="tabpanel" class="tab-pane" id="incomplete">
-      <%= render partial: 'manager/ecosystems/incomplete',
+      <%= render partial: 'manager/ecosystems/jobs',
                  locals: { jobs: incomplete_jobs, job_path_proc: job_path_proc } %>
     </div>
   <% end %>
   <% unless failed_jobs.empty? %>
     <div role="tabpanel" class="tab-pane" id="failed">
-      <%= render partial: 'manager/ecosystems/incomplete',
-                 locals: { jobs: failed_jobs, job_path_proc: job_path_proc } %>
+      <%= render partial: 'manager/ecosystems/jobs',
+                 locals: { jobs: failed_jobs, status: 'Failed', job_path_proc: job_path_proc } %>
     </div>
   <% end %>
 </div>

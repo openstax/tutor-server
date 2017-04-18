@@ -1,0 +1,24 @@
+<% status ||= nil %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Job ID</th>
+      <th>Status</th>
+      <th>Link to Course</th>
+      <th>Ecosystem Title</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% jobs.each do |job| %>
+    <tr>
+      <td><%= link_to(job.id, job_path_proc.call(job)) %></td>
+      <td><%= status || job.state.name.capitalize %></td>
+      <td><%= link_to(job.data["course_name"],
+                      edit_admin_course_path(job.data["course_id"])) %></td>
+      <td><%= job.data["ecosystem_title"] %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><strong>Note:</strong> This table does not automatically refresh.</p>

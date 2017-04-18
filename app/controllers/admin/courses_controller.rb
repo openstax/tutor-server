@@ -29,7 +29,6 @@ class Admin::CoursesController < Admin::BaseController
     result = CollectJobsData.call job_name: 'CourseContent::AddEcosystemToCourse'
     @incomplete_jobs = result.outputs.incomplete_jobs
     @failed_jobs = result.outputs.failed_jobs
-    @job_path_proc = ->(job_id) { admin_job_path(job_id) }
   end
 
   def new
@@ -140,7 +139,12 @@ class Admin::CoursesController < Admin::BaseController
           course: course, ecosystem: ecosystem
         )
         job = Jobba.find(job_id)
-        job.save(course_ecosystem: ecosystem.title, course_id: course.id)
+        job.save(
+          course_id: course.id,
+          course_name: course.name,
+          ecosystem_id: ecosystem.id,
+          ecosystem_title: ecosystem.title
+        )
       end
       flash[:notice] = 'Course ecosystem update background jobs queued.'
     end
