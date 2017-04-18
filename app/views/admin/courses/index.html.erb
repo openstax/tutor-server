@@ -21,7 +21,7 @@ Results per page:
                        incomplete_jobs: @incomplete_jobs,
                        failed_jobs: @failed_jobs,
                        job_path_proc: ->(job) { admin_job_path(job.id) },
-                       extra_fields_procs: [lambda do |course_info| %>
+                       extra_fields_procs: [ lambda do |course_info| %>
     <td>
       <%= link_to 'List Students', admin_course_students_path(course_info.id),
                                    class: 'btn btn-sm btn-primary course-stats-button' %>

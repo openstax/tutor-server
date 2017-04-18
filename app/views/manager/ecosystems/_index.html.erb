@@ -6,14 +6,14 @@
       List of Books
     </a>
   </li>
-  <% unless incomplete_jobs.empty? %>
+  <% unless incomplete_jobs.blank? %>
     <li role="presentation">
       <a href="#incomplete" aria-controls="main" role="tab" data-toggle="tab">
         Incomplete Imports
       </a>
     </li>
   <% end %>
-  <% unless failed_jobs.empty? %>
+  <% unless failed_jobs.blank? %>
     <li role="presentation">
       <a href="#failed" aria-controls="main" role="tab" data-toggle="tab">
         Failed Imports
@@ -34,13 +34,13 @@
     <% end %>
   </div>
 
-  <% unless incomplete_jobs.empty? %>
+  <% unless incomplete_jobs.blank? %>
     <div role="tabpanel" class="tab-pane" id="incomplete">
       <%= render partial: 'manager/ecosystems/jobs',
                  locals: { jobs: incomplete_jobs, job_path_proc: job_path_proc } %>
     </div>
   <% end %>
-  <% unless failed_jobs.empty? %>
+  <% unless failed_jobs.blank? %>
     <div role="tabpanel" class="tab-pane" id="failed">
       <%= render partial: 'manager/ecosystems/jobs',
                  locals: { jobs: failed_jobs, status: 'Failed', job_path_proc: job_path_proc } %>
