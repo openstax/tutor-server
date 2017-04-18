@@ -6,12 +6,9 @@ module Manager::EcosystemsActions
 
   def index
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
-      job.data.try :[], 'ecosystem_import_url'
-    end
-    @failed_jobs = Jobba.where(state: :failed).to_a.select do |job|
-      job.data.try :[], 'ecosystem_import_url'
-    end
+    result = CollectJobsData.call job_name: 'ImportEcosystemManifest'
+    @incomplete_jobs = result.outputs.incomplete_jobs
+    @failed_jobs = result.outputs.failed_jobs
   end
 
   def new

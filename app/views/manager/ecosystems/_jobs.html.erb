@@ -1,3 +1,5 @@
+<% status ||= nil %>
+
 <table class="table table-striped">
   <thead>
     <tr>
@@ -8,10 +10,13 @@
   </thead>
   <tbody>
   <% jobs.each do |job| %>
+    <% ecosystem_import_url = (job.data || {})['ecosystem_import_url'] %>
+
     <tr>
       <td><%= link_to(job.id, job_path_proc.call(job)) %></td>
-      <td><%= job.state.name %></td>
-      <td><%= link_to(job.data['ecosystem_import_url'], job.data['ecosystem_import_url'], target: '_blank') %></td>
+      <td><%= status || job.state.name.capitalize %></td>
+      <td><%= link_to(ecosystem_import_url, ecosystem_import_url, target: '_blank') \
+                if ecosystem_import_url.present? %></td>
     </tr>
   <% end %>
 </table>

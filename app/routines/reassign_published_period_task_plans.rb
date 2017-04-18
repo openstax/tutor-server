@@ -7,7 +7,6 @@ class ReassignPublishedPeriodTaskPlans
   protected
 
   def exec(period:, protect_unopened_tasks: true)
-    status.set_job_name(self.class.name)
     status.set_job_args(period: period.to_global_id.to_s)
 
     published_task_plans = Tasks::Models::TaskPlan

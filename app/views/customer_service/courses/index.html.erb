@@ -1,7 +1,7 @@
 <% @page_header = "Courses" %>
 
-<%= render partial: 'manager/courses/tabs', locals: { incomplete_jobs: @incomplete_jobs,
-                                                      failed_jobs: @failed_jobs } %>
+<%= render partial: 'manager/courses/tabs',
+           locals: { incomplete_jobs: @incomplete_jobs, failed_jobs: @failed_jobs } %>
 <br>
 <%= render partial: 'manager/courses/search', locals: { query: @query } %>
 
@@ -15,10 +15,11 @@ Results per page:
                      per_page: params.fetch(:per_page, 25),
                      incomplete_jobs: @incomplete_jobs,
                      failed_jobs: @failed_jobs,
-                     extra_fields_procs: lambda do |course_info| %>
+                     job_path_proc: ->(job) { customer_service_job_path(job.id) },
+                     extra_fields_procs: [ lambda do |course_info| %>
   <td>
     <%= link_to 'List Students', customer_service_course_students_path(course_info.id),
                                  class: 'btn btn-sm btn-primary course-stats-button' %>
     <%= link_to 'Show', customer_service_course_path(course_info.id), class: "btn btn-sm btn-primary  course-stats-button" %>
   </td>
-<% end } %>
+<% end ] } %>

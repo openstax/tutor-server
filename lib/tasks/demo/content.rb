@@ -116,6 +116,10 @@ class Demo::Content < Demo::Base
 
     set_print_logs(print_logs)
 
+    # Serial step
+    # TODO: Extract this into its own task? Maybe demo:users
+    ActiveRecord::Base.transaction { setup_staff_user_accounts }
+
     OpenStax::Exercises::V1.use_real_client
     configuration = OpenStax::Exercises::V1.configuration
 
@@ -126,9 +130,6 @@ class Demo::Content < Demo::Base
 
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
-
-    # Serial step
-    ActiveRecord::Base.transaction { setup_staff_user_accounts }
 
     # Parallel step
     in_parallel(Demo::ContentConfiguration[config], transaction: true) do |contents, idx_start|
