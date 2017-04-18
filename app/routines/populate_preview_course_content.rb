@@ -9,7 +9,7 @@ class PopulatePreviewCourseContent
     { username: 'previewstudent6', first_name: 'Student', last_name: 'Six'   }
   ]
 
-  NUM_ASSIGNED_CHAPTERS = 4
+  MAX_NUM_ASSIGNED_CHAPTERS = 4
 
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
@@ -28,12 +28,9 @@ class PopulatePreviewCourseContent
 
   def exec(course:)
 
-    periods = course.periods.to_a
-    while course.periods.length < 2
-      run(:create_period, course: course)
+    run(:create_period, course: course) if course.periods.empty?
 
-      periods = course.periods.to_a
-    end
+    periods = course.periods.to_a
 
     # Find preview student accounts
     preview_student_accounts = STUDENT_INFO.map do |student_info|
@@ -73,14 +70,17 @@ class PopulatePreviewCourseContent
     candidate_chapters = book.chapters.select do |chapter|
       chapter.pages.any?{ |page| page.homework_core_pool.content_exercise_ids.any? }
     end
-    preview_chapters = candidate_chapters[0..NUM_ASSIGNED_CHAPTERS-1]
+    num_chapters =
+      [MAX_NUM_ASSIGNED_CHAPTERS, ((course.ends_at - course.starts_at)/1.week).floor].min
+    preview_chapters = candidate_chapters[0..num_chapters-1]
     return if preview_chapters.blank?
 
-    time_zone = course.time_zone
-
     # Assign tasks
+    first_reading_opens_at =
+      [Time.current.monday - (preview_chapters.size/2).weeks, course.starts_at].max
+    time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = Time.current.monday + (index + 1 - NUM_ASSIGNED_CHAPTERS).week
+      reading_opens_at = first_reading_opens_at + index.weeks
       reading_due_at = reading_opens_at + 1.day
       homework_opens_at = reading_due_at
       homework_due_at = homework_opens_at + 3.days
