@@ -1,12 +1,12 @@
 class PopulatePreviewCourseContent
 
   STUDENT_INFO = [
-    { username: 'previewstudent1', first_name: 'Student', last_name: 'One'   },
-    { username: 'previewstudent2', first_name: 'Student', last_name: 'Two'   },
-    { username: 'previewstudent3', first_name: 'Student', last_name: 'Three' },
-    { username: 'previewstudent4', first_name: 'Student', last_name: 'Four'  },
-    { username: 'previewstudent5', first_name: 'Student', last_name: 'Five'  },
-    { username: 'previewstudent6', first_name: 'Student', last_name: 'Six'   }
+    { username: 'previewstudent1', first_name: 'Esme',    last_name: 'Garcia'  },
+    { username: 'previewstudent2', first_name: 'Eloise',  last_name: 'Potter'  },
+    { username: 'previewstudent3', first_name: 'Hugo',    last_name: 'Jackson' },
+    { username: 'previewstudent4', first_name: 'Lucy',    last_name: 'Nguyen'  },
+    { username: 'previewstudent5', first_name: 'Ezra',    last_name: 'Samson'  },
+    { username: 'previewstudent6', first_name: 'Desmond', last_name: 'Jones'   }
   ]
 
   MAX_NUM_ASSIGNED_CHAPTERS = 4
