@@ -38,7 +38,7 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   unique_token :teach_token
 
-  enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter ]
+  enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter, :preview ]
 
   validates :time_zone, presence: true, uniqueness: true
   validates :name, :term, :year, :starts_at, :ends_at,

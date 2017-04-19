@@ -130,7 +130,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   context '#create' do
-    let(:term)             { CourseProfile::Models::Course.terms.keys.sample }
+    let(:term)             { TermYear::VISIBLE_TERMS.sample.to_s }
     let(:year)             { Time.current.year }
     let(:book)             { FactoryGirl.create :content_book }
     let(:catalog_offering) { FactoryGirl.create :catalog_offering, ecosystem: book.ecosystem }
@@ -184,11 +184,30 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         before { valid_body_hash[:is_preview] = true }
 
         it 'claims a preview course for the faculty if all required attributes are given' do
-          api_post :create, user_1_token, raw_post_data: valid_body
-          expect(response.body_as_hash[:id]).to eq preview_course.id.to_s
+          valid_body_hash.delete(:term)
+          valid_body_hash.delete(:year)
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.not_to(
+            change{ CourseProfile::Models::Course.count }
+          )
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
+          expect(response.body_as_hash[:id]).to eq preview_course.id.to_s
+          expect(response.body_as_hash[:term]).to eq 'preview'
+          expect(response.body_as_hash[:year]).to eq Time.current.year
+        end
+
+        it 'ignores the term and year attributes if given' do
+          valid_body_hash.merge! year: 2016
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseProfile::Models::Course.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          expect(response.body_as_hash).to(
+            match a_hash_including(valid_body_hash.except(:term, :year))
+          )
           expect(response.body_as_hash[:is_preview]).to eq true
+          expect(response.body_as_hash[:term]).to eq 'preview'
+          expect(response.body_as_hash[:year]).to eq Time.current.year
         end
 
         it 'makes the requesting faculty a teacher in the new preview course' do
@@ -219,8 +238,33 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           course = CourseProfile::Models::Course.order(:created_at).last
           expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
         end
-      end
 
+        it 'requires the term and year attributes' do
+          body_hash = valid_body_hash.except(:term, :year)
+          expect{ api_post :create, user_1_token, raw_post_data: body_hash.to_json }.not_to(
+            change{ CourseMembership::Models::Teacher.count }
+          )
+          expect(response).to have_http_status :unprocessable_entity
+          expect(response.body_as_hash[:errors]).to include(
+            {
+              code: 'term_year_blank',
+              message: 'You must specify the course term and year (except for preview courses)',
+              data: nil
+            }
+          )
+        end
+
+        it 'does not allow the use of hidden course terms' do
+          body_hash = valid_body_hash.merge term: :demo
+          expect{ api_post :create, user_1_token, raw_post_data: body_hash.to_json }.not_to(
+            change{ CourseProfile::Models::Course.count }
+          )
+          expect(response).to have_http_status :unprocessable_entity
+          expect(response.body_as_hash[:errors]).to include(
+            { code: 'invalid_term', message: 'The given course term is invalid' }
+          )
+        end
+      end
 
       it 'returns errors if required attributes are not specified' do
         expect{ api_post :create, user_1_token }.not_to(
