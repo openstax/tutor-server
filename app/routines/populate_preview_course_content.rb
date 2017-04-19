@@ -9,7 +9,7 @@ class PopulatePreviewCourseContent
     { username: 'previewstudent6', first_name: 'Desmond', last_name: 'Jones'   }
   ]
 
-  MAX_NUM_ASSIGNED_CHAPTERS = 4
+  MAX_NUM_ASSIGNED_CHAPTERS = 10
 
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
@@ -77,13 +77,13 @@ class PopulatePreviewCourseContent
 
     # Assign tasks
     first_reading_opens_at =
-      [Time.current.monday - (preview_chapters.size/2).weeks, course.starts_at].max
+      [Time.current.monday - 2.weeks, course.starts_at].max
     time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
       reading_opens_at = first_reading_opens_at + index.weeks
-      reading_due_at = reading_opens_at + 1.day
+      reading_due_at = [reading_opens_at + 1.day, course.ends_at].min
       homework_opens_at = reading_due_at
-      homework_due_at = homework_opens_at + 3.days
+      homework_due_at = [homework_opens_at + 3.days, course.ends_at].min
 
       pages = chapter.pages
       page_ids = pages.map{ |page| page.id.to_s }
@@ -92,7 +92,7 @@ class PopulatePreviewCourseContent
       end.compact
 
       reading_tp = Tasks::Models::TaskPlan.new(
-        title: "Chapter #{chapter.number} Reading",
+        title: "Chapter #{chapter.number} Reading (Sample)",
         owner: course,
         is_preview: true,
         ecosystem: ecosystem,
@@ -111,15 +111,16 @@ class PopulatePreviewCourseContent
 
       run(:distribute_tasks, task_plan: reading_tp)
 
-      exercises_count_dynamic = [4 - index/2, 2].max
+      exercises_count_dynamic = [2 + index/2, 4].min
 
       homework_tp = Tasks::Models::TaskPlan.new(
-        title: "Chapter #{chapter.number} Practice",
+        title: "Chapter #{chapter.number} Homework (Sample)",
         owner: course,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
-        settings: { 'page_ids' => page_ids, 'exercise_ids' => exercise_ids,
+        settings: { 'page_ids' => page_ids,
+                    'exercise_ids' => exercise_ids,
                     'exercises_count_dynamic' => exercises_count_dynamic }
       )
       homework_tp.assistant = run(:get_assistant, course: course, task_plan: homework_tp)

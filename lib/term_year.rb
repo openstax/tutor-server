@@ -5,7 +5,7 @@ TermYear = Struct.new(:term, :year) do
   const_set 'TERM_START_DATES', {
     legacy:  ->(year) { TermYear::LEGACY_TERM_STARTS_AT },
     demo:    ->(year) { DateTime.new(year - 1, 7)       }, # July 1st of the year before
-    preview: ->(year) { Time.current - 4.weeks          }, # 4 weeks before the course creation date
+    preview: ->(year) { Time.current - 2.weeks          }, # 2 weeks before the course creation date
     winter:  ->(year) { DateTime.new(year       )       }, # January 1st of given year
     spring:  ->(year) { DateTime.new(year       )       }, # January 1st of given year
     summer:  ->(year) { DateTime.new(year    , 5)       }, # May 1st of given year
