@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170308183035) do
+ActiveRecord::Schema.define(version: 20170419193747) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -661,6 +661,8 @@ ActiveRecord::Schema.define(version: 20170308183035) do
   end
 
   add_index "tasks_task_steps", ["deleted_at"], name: "index_tasks_task_steps_on_deleted_at", using: :btree
+  add_index "tasks_task_steps", ["first_completed_at"], name: "index_tasks_task_steps_on_first_completed_at", using: :btree
+  add_index "tasks_task_steps", ["last_completed_at"], name: "index_tasks_task_steps_on_last_completed_at", using: :btree
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
   add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true, using: :btree
 
