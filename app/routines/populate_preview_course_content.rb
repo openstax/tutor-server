@@ -9,6 +9,7 @@ class PopulatePreviewCourseContent
     { username: 'previewstudent6', first_name: 'Desmond', last_name: 'Jones'   }
   ]
 
+  # Should correspond to the total preview course duration, in weeks
   MAX_NUM_ASSIGNED_CHAPTERS = 10
 
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
@@ -76,8 +77,7 @@ class PopulatePreviewCourseContent
     return if preview_chapters.blank?
 
     # Assign tasks
-    first_reading_opens_at =
-      [Time.current.monday - 2.weeks, course.starts_at].max
+    first_reading_opens_at = [Time.current.monday - 2.weeks, course.starts_at].max
     time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
       reading_opens_at = first_reading_opens_at + index.weeks

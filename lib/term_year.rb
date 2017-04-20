@@ -1,25 +1,29 @@
+# Instructor picks term and year
+# Dates using year depend on the year chosen by the instructor
+# Dates using Time.current or DateTime.current depend on the course creation date
+# Times here should be UTC, so use DateTime.parse rather than Time.parse
 TermYear = Struct.new(:term, :year) do
   const_set 'LEGACY_TERM_STARTS_AT', DateTime.parse('July 1st, 2015')
   const_set 'LEGACY_TERM_ENDS_AT'  , DateTime.parse('Jan 1st, 2017' )
 
   const_set 'TERM_START_DATES', {
-    legacy:  ->(year) { TermYear::LEGACY_TERM_STARTS_AT },
-    demo:    ->(year) { DateTime.new(year - 1, 7)       }, # July 1st of the year before
-    preview: ->(year) { Time.current - 2.weeks          }, # 2 weeks before the course creation date
-    winter:  ->(year) { DateTime.new(year       )       }, # January 1st of given year
-    spring:  ->(year) { DateTime.new(year       )       }, # January 1st of given year
-    summer:  ->(year) { DateTime.new(year    , 5)       }, # May 1st of given year
-    fall:    ->(year) { DateTime.new(year    , 7)       }  # July 1st of given year
+    legacy:  ->(year) { TermYear::LEGACY_TERM_STARTS_AT   },
+    demo:    ->(year) { DateTime.new(year - 1, 7)         }, # July 1st of the year before
+    preview: ->(year) { DateTime.current.monday - 2.weeks }, # 2 weeks before the previous monday
+    winter:  ->(year) { DateTime.new(year       )         }, # January 1st of given year
+    spring:  ->(year) { DateTime.new(year       )         }, # January 1st of given year
+    summer:  ->(year) { DateTime.new(year    , 5)         }, # May 1st of given year
+    fall:    ->(year) { DateTime.new(year    , 7)         }  # July 1st of given year
   }
 
   const_set 'TERM_END_DATES', {
-    legacy:  ->(year) { TermYear::LEGACY_TERM_ENDS_AT   },
-    demo:    ->(year) { DateTime.new(year + 1, 7)       }, # July 1st of the year after
-    preview: ->(year) { Time.current + 8.weeks          }, # 8 weeks after the course creation date
-    winter:  ->(year) { DateTime.new(year    , 5)       }, # May 1st of given year
-    spring:  ->(year) { DateTime.new(year    , 7)       }, # July 1st of given year
-    summer:  ->(year) { DateTime.new(year    , 9)       }, # September 1st of given year
-    fall:    ->(year) { DateTime.new(year + 1   )       }  # January 1st of the year after
+    legacy:  ->(year) { TermYear::LEGACY_TERM_ENDS_AT     },
+    demo:    ->(year) { DateTime.new(year + 1, 7)         }, # July 1st of the year after
+    preview: ->(year) { DateTime.current + 8.weeks        }, # 8 weeks after today
+    winter:  ->(year) { DateTime.new(year    , 5)         }, # May 1st of given year
+    spring:  ->(year) { DateTime.new(year    , 7)         }, # July 1st of given year
+    summer:  ->(year) { DateTime.new(year    , 9)         }, # September 1st of given year
+    fall:    ->(year) { DateTime.new(year + 1   )         }  # January 1st of the year after
   }
 
   const_set 'VISIBLE_TERMS', [:spring, :summer, :fall, :winter]
