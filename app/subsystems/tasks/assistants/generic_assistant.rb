@@ -169,10 +169,11 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def filter_and_choose_exercises(exercises:, course:, count:, history:)
+  def filter_and_choose_exercises(exercises:, course:, count:, history:, allow_multipart: true)
     filtered_exercises = FilterExcludedExercises[
       exercises: exercises, course: course,
       additional_excluded_numbers: @used_exercise_numbers
+      allow_multipart: allow_multipart
     ]
 
     ChooseExercises[exercises: filtered_exercises, count: count, history: history]
@@ -237,30 +238,28 @@ class Tasks::Assistants::GenericAssistant
         @pool_exercise_cache[spaced_page_id][pool_type].empty?
       end
 
-      chosen_exercises = if for_each_core_page
+      candidate_exercises = if for_each_core_page
         dynamic_spaced_page_ids.map do |spaced_page_id|
           candidate_exercises = @pool_exercise_cache[spaced_page_id][pool_type]
-
-          filter_and_choose_exercises(exercises: candidate_exercises, course: course,
-                                      count: number, history: history)
         end
       else
-        candidate_exercises = dynamic_spaced_page_ids.flat_map do |spaced_page_id|
+        dynamic_spaced_page_ids.flat_map do |spaced_page_id|
           @pool_exercise_cache[spaced_page_id][pool_type]
         end
-
-        [filter_and_choose_exercises(exercises: candidate_exercises, course: course,
-                                     count: number, history: history)]
       end
 
+      chosen_exercises = filter_and_choose_exercises(exercises: candidate_exercises, course: course,
+                                                     count: number, history: history, allow_multipart: false)
+
       # Set related_content and add the exercises to the task
-      chosen_exercises.flatten.map do |chosen_exercise|
+      chosen_exercises.each do |chosen_exercise|
         add_exercise_step!(task: task, exercise: chosen_exercise,
                            group_type: :spaced_practice_group)
       end
 
       spaced_practice_status << "Could not completely fill the #{k_ago_name}-ago slot" \
-        if chosen_exercises.any?{ |exercises| exercises.size < number }
+        if chosen_exercises.length < number
+
     end
 
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?

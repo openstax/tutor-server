@@ -3,10 +3,16 @@ class ChooseExercises
   lev_routine express_output: :exercises
 
   def exec(exercises:, count:, history:, allow_repeats: true,
-           randomize_exercises: true, randomize_order: true)
+           randomize_exercises: true, randomize_order: true,
+           allow_multipart: true
+          )
     worked_exercise_numbers_set = Set.new history.exercise_numbers.flatten
 
     exercises = exercises.uniq
+    unless allow_multipart
+      exercises.reject!{ |exercise| exercise.to_model.is_multipart? }
+    end
+
     exercises = exercises.shuffle if randomize_exercises
 
     # Partition exercises into new exercises and the repeated exercises
