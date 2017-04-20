@@ -18,10 +18,10 @@ TermYear = Struct.new(:term, :year) do
 
   const_set 'TERM_END_DATES', {
     legacy:  ->(year) { TermYear::LEGACY_TERM_ENDS_AT     },
-    demo:    ->(year) { DateTime.new(year + 1, 7)         }, # July 1st of the year after
+    demo:    ->(year) { DateTime.new(year + 1, 6, 30)     },  # June 30th of the year after
     preview: ->(year) { DateTime.current + 8.weeks        }, # 8 weeks after today
     winter:  ->(year) { DateTime.new(year    , 5)         }, # May 1st of given year
-    spring:  ->(year) { DateTime.new(year    , 7)         }, # July 1st of given year
+    spring:  ->(year) { DateTime.new(year    , 6, 30)     }, # June 30th of given year
     summer:  ->(year) { DateTime.new(year    , 9)         }, # September 1st of given year
     fall:    ->(year) { DateTime.new(year + 1   )         }  # January 1st of the year after
   }
