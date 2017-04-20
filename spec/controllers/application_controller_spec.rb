@@ -25,19 +25,19 @@ RSpec.describe ApplicationController, type: :controller do
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1).of(t)
 
       Settings::Timecop.offset = 1.hour
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t + 1.hour)
+      expect(Time.current).to be_within(1).of(t + 1.hour)
 
       Settings::Timecop.offset = -1.hour
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t - 1.hour)
+      expect(Time.current).to be_within(1).of(t - 1.hour)
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1).of(t)
     end
 
     it 'sets the X-App-Date header to the timecop time' do
@@ -47,25 +47,25 @@ RSpec.describe ApplicationController, type: :controller do
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t)
+      expect(header_time).to be_within(1).of(t)
 
       Settings::Timecop.offset = 1.hour
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t + 1.hour)
+      expect(header_time).to be_within(1).of(t + 1.hour)
 
       Settings::Timecop.offset = -1.hour
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t - 1.hour)
+      expect(header_time).to be_within(1).of(t - 1.hour)
 
       Settings::Timecop.offset = nil
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t)
+      expect(header_time).to be_within(1).of(t)
     end
   end
 
@@ -79,19 +79,19 @@ RSpec.describe ApplicationController, type: :controller do
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1).of(t)
 
       Settings::Timecop.offset = 1.hour
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1).of(t)
 
       Settings::Timecop.offset = -1.hour
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1).of(t)
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.current).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1).of(t)
     end
 
     it 'sets the X-App-Date header to the actual time' do
@@ -101,25 +101,25 @@ RSpec.describe ApplicationController, type: :controller do
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t)
+      expect(header_time).to be_within(1).of(t)
 
       Settings::Timecop.offset = 1.hour
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t)
+      expect(header_time).to be_within(1).of(t)
 
       Settings::Timecop.offset = -1.hour
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t)
+      expect(header_time).to be_within(1).of(t)
 
       Settings::Timecop.offset = nil
       controller.send :load_time
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1.second).of(t)
+      expect(header_time).to be_within(1).of(t)
     end
   end
 end

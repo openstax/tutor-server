@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:3000/create_update_assignments
+    body:
+      encoding: UTF-8
+      string: '{"assignments":[{"request_uuid":"<CREATE_UPDATE_ASSIGNMENTS EXAMPLE
+        1 REQUEST 1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":25,"assignment_uuid":"<TASK
+        UUID>","is_deleted":false,"ecosystem_uuid":"<ECOSYSTEM 1 UUID>","student_uuid":"<STUDENT
+        UUID>","assignment_type":"reading","assigned_book_container_uuids":["95e5a484-fecf-45e1-a463-d1ee47df7429"],"goal_num_tutor_assigned_spes":0,"spes_are_assigned":true,"goal_num_tutor_assigned_pes":3,"pes_are_assigned":true,"assigned_exercises":[{"trial_uuid":"d9705ba7-0181-41b3-a0b8-518eb1f2ecb8","exercise_uuid":"07c698e4-2c83-4b1e-adc7-f95b33d86eeb","is_spe":false,"is_pe":false},{"trial_uuid":"7afac11c-6235-4083-9850-6388616bf7d0","exercise_uuid":"f3bb7dee-6916-44a4-a974-f67e5fc8684c","is_spe":false,"is_pe":false},{"trial_uuid":"3c7990e2-34da-4f92-9528-fbcf027f0583","exercise_uuid":"5187e76c-6463-44cb-b202-b15b6bdfe89c","is_spe":false,"is_pe":true},{"trial_uuid":"9ff92003-ed46-462c-aa36-3906701b2c01","exercise_uuid":"40bdbcff-3d6a-4410-a921-216bced4bc20","is_spe":false,"is_pe":true},{"trial_uuid":"28c3a956-5ec2-4ab8-9309-fc6ae7c8c20f","exercise_uuid":"166bfe41-22f9-4475-b18c-6739a269a874","is_spe":false,"is_pe":true}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"493cc488a2917ecc48a3159754d321ae"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - cb27fc6c-94b2-479b-86aa-dd9e4371ab6e
+      X-Runtime:
+      - '0.059640'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"updated_assignments":[{"request_uuid":"<CREATE_UPDATE_ASSIGNMENTS
+        EXAMPLE 1 REQUEST 1 UUID>","updated_assignment_uuid":"<TASK UUID>"}]}'
+    http_version: 
+  recorded_at: Sat, 18 Feb 2017 01:07:27 GMT
+recorded_with: VCR 2.9.3

@@ -51,9 +51,6 @@ gem 'omniauth-oauth2', '~> 1.3.1'
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 7.3.0'
 
-# OpenStax Exchange integration
-gem 'openstax_exchange', '~> 0.2.1'
-
 # Datetime parsing
 gem 'chronic'
 
@@ -185,6 +182,11 @@ gem 'postgresql_cursor'
 
 # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
 gem 'awesome_print'
+
+# Advisory Locks
+# This version provides locks that unlock automatically at the end of the transaction,
+# which are required for the correct operation of the Biglearn client
+gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
 
 group :development, :test do
   # Get env variables from .env file

@@ -1,5 +1,8 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
+
   acts_as_tasked
+
+  auto_uuid
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
@@ -41,7 +44,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   def handle_task_step_completion!
     free_response_required
     answer_id_required
-    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
   end
 
   def make_correct!
@@ -123,4 +125,5 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     errors.add(:base, 'cannot be updated after feedback becomes available')
     false
   end
+
 end

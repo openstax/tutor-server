@@ -6,9 +6,8 @@ module User
 
         exposes :all, :create, :create!, :find, :anonymous, from_class: ::User::Models::Profile
 
-        exposes :account, :exchange_read_identifier, :exchange_write_identifier,
-                :username, :first_name, :last_name, :full_name, :title, :name,
-                :casual_name, :faculty_status, :ui_settings
+        exposes :account, :username, :title, :first_name, :last_name,
+                :full_name, :name, :casual_name, :faculty_status, :ui_settings
 
         class << self
           alias_method :entity_all, :all

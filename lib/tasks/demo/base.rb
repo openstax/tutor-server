@@ -338,17 +338,6 @@ class Demo::Base
     }
   end
 
-  # def make_and_work_practice_widget(role:, num_correct:, book_part_ids: [],
-  #                                                        page_ids: [])
-  #   # task = ResetPracticeWidget[book_part_ids: book_part_ids,
-  #   #                            page_ids: page_ids,
-  #   #                            role: role, exercise_source: :biglearn]
-
-  #   # task.task_steps.first(num_correct).each do |task_step|
-  #   #   Preview::AnswerExercise[task_step: task_step, is_correct: true]
-  #   # end
-  # end
-
   def get_assistant(course:, task_plan_type:)
     course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
   end

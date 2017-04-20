@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature Admin::StatsController do
+RSpec.feature 'admin stats' do
   background do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)

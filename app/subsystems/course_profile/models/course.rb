@@ -37,7 +37,13 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
   enum term: [ :legacy, :demo, :spring, :summer, :fall ]
 
   validates :time_zone, presence: true, uniqueness: true
-  validates :name, :term, :year, :starts_at, :ends_at, presence: true
+  validates :name, :term, :year, :starts_at, :ends_at,
+            :biglearn_student_clues_algorithm_name,
+            :biglearn_teacher_clues_algorithm_name,
+            :biglearn_assignment_spes_algorithm_name,
+            :biglearn_assignment_pes_algorithm_name,
+            :biglearn_practice_worst_areas_algorithm_name,
+            presence: true
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 

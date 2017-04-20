@@ -15,6 +15,8 @@ FactoryGirl.define do
       number_of_students 10
     end
 
+    owner     { FactoryGirl.build :course_profile_course, offering: nil }
+
     ecosystem do
       require File.expand_path('../../../vcr_helper', __FILE__)
 
@@ -27,8 +29,7 @@ FactoryGirl.define do
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
         OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
-          @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
-                                                book_location: [1, 1]]
+          Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter, book_location: [1, 1]]
         end
       end
 
@@ -43,7 +44,7 @@ FactoryGirl.define do
       ecosystem_model
     end
 
-    settings { { page_ids: [@page.id.to_s] } }
+    settings  { { page_ids: [ecosystem.pages.last.id.to_s] } }
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner

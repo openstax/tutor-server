@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Chapter
 
-        exposes :book, :pages, :exercises, :all_exercises_pool, :title, :book_location
+        exposes :book, :pages, :exercises, :all_exercises_pool, :tutor_uuid, :title, :book_location
 
         alias_method :entity_book, :book
         def book
@@ -29,6 +29,11 @@ module Content
         alias_method :entity_all_exercises_pool, :all_exercises_pool
         def all_exercises_pool
           ::Content::Pool.new(strategy: entity_all_exercises_pool)
+        end
+
+        alias_method :string_tutor_uuid, :tutor_uuid
+        def tutor_uuid
+          ::Content::Uuid.new(string_tutor_uuid)
         end
 
       end

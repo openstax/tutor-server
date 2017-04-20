@@ -18,9 +18,7 @@ class Content::Routines::ImportExercises
     # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise and
     # wrap them in a local mutable form of that class
 
-    wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items'].map do |item|
-      MutableWrapper.new(item)
-    end
+    wrappers = OpenStax::Exercises::V1.exercises(query_hash).map{ |item| MutableWrapper.new(item) }
 
     # Go through wrappers and build a map of wrappers to pages
 
@@ -30,7 +28,7 @@ class Content::Routines::ImportExercises
       # Skip excluded_exercise_numbers (duplicates)
       # Necessary because we split queries to Exercises into smaller queries to avoid timeouts
 
-      next if excluded_exercise_numbers.include? wrapper.number
+      next if excluded_exercise_numbers.include?(wrapper.number)
 
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
 
@@ -72,6 +70,8 @@ class Content::Routines::ImportExercises
     wrapper_to_exercise_page_map.each do |wrapper, exercise_page|
       exercise = Content::Models::Exercise.new(page: exercise_page,
                                                url: wrapper.url,
+                                               uuid: wrapper.uuid,
+                                               group_uuid: wrapper.group_uuid,
                                                number: wrapper.number,
                                                version: wrapper.version,
                                                title: wrapper.title,

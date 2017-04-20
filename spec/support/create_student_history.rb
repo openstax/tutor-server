@@ -10,6 +10,9 @@ class CreateStudentHistory
   private
 
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+    raise ArgumentError, "Role index #{i} not in given course", caller \
+      if roles.any? { |role| role.student.course != course }
+
     ecosystem = setup_course_book(course, book_id)
 
     create_assignments(ecosystem, course, course.periods.reload)
@@ -19,15 +22,18 @@ class CreateStudentHistory
 
       # practice widgets assign 5 task steps to the role
       practice_steps = create_practice_widget(
-        role, pages: ecosystem.chapters[3 - (i % 2)].pages[1].id
+        course: course, role: role, page_ids: ecosystem.chapters[3 - (i % 2)].pages[1].id
       )
       answer_correctly(practice_steps, 2 + i) # 2 or 3/5
 
-      practice_steps = create_practice_widget(role, pages: ecosystem.chapters[3].pages[2].id)
+      practice_steps = create_practice_widget(
+        course: course, role: role, page_ids: ecosystem.chapters[3].pages[2].id
+      )
       answer_correctly(practice_steps, 5) # 5/5
 
-      practice_steps = create_practice_widget(role, chapters: ecosystem.chapters[3].id)
-      # Not started
+      practice_steps = create_practice_widget(
+        course: course, role: role, chapter_ids: ecosystem.chapters[3].id
+      ) # Not started
     end
   end
 
@@ -64,16 +70,22 @@ class CreateStudentHistory
     end
   end
 
-  def create_practice_widget(role, ids = {})
-    ResetPracticeWidget[role: role,
-                        chapter_ids: ids[:chapters],
-                        page_ids: ids[:pages],
-                        exercise_source: :local].task_steps
+  def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)
+    CreatePracticeSpecificTopicsTask[
+      course: course, role: role, chapter_ids: chapter_ids, page_ids: page_ids
+    ].task_steps
   end
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
-      Preview::AnswerExercise[task_step: step.reload, is_correct: true]
+      begin
+        step.reload
+      rescue ActiveRecord::RecordNotFound
+        raise "Tried to answer a #{step.group_name} step, but it was removed " +
+              '(probably because Biglearn returned no PEs)'
+      end
+
+      Preview::AnswerExercise[task_step: step, is_correct: true]
     end
   end
 
@@ -130,6 +142,7 @@ class CreateStudentHistory
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       title: 'Homework',
+      type: 'homework',
       settings: {
         exercise_ids: exercise_ids,
         exercises_count_dynamic: 2

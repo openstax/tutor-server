@@ -13,17 +13,13 @@ begin
 
   namespace :spec do
     desc "Run the fast code examples"
-    RSpec::Core::RakeTask.new(:fast) do |t|
-      t.rspec_opts = %w[--tag ~speed:slow]
-    end
+    RSpec::Core::RakeTask.new(:fast) { |task| task.rspec_opts = %w[--tag ~speed:slow] }
 
     desc "Run the slow code examples"
-    RSpec::Core::RakeTask.new(:slow) do |t|
-      t.rspec_opts = %w[--tag speed:slow]
-    end
+    RSpec::Core::RakeTask.new(:slow) { |task| task.rspec_opts = %w[--tag speed:slow] }
 
     desc "Run the fast code examples first, then the slow code examples"
-    task :speed => ['spec:fast', 'spec:slow']
+    task speed: ['spec:fast', 'spec:slow']
   end
 rescue LoadError
 end
@@ -31,7 +27,3 @@ end
 require File.expand_path('../config/application', __FILE__)
 
 Rails.application.load_tasks
-
-if Rails.env.development?
-  Dir.glob('lib/sprint/*.rake').each { |r| load r }
-end

@@ -24,6 +24,11 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:term) }
   it { is_expected.to validate_presence_of(:year) }
+  it { is_expected.to validate_presence_of(:biglearn_student_clues_algorithm_name) }
+  it { is_expected.to validate_presence_of(:biglearn_teacher_clues_algorithm_name) }
+  it { is_expected.to validate_presence_of(:biglearn_assignment_spes_algorithm_name) }
+  it { is_expected.to validate_presence_of(:biglearn_assignment_pes_algorithm_name) }
+  it { is_expected.to validate_presence_of(:biglearn_practice_worst_areas_algorithm_name) }
 
   it { is_expected.to validate_uniqueness_of(:time_zone) }
 

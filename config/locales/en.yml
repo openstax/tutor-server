@@ -22,12 +22,9 @@
 en:
   settings:
     attributes:
-      excluded_uids:
-        name: 'Excluded exercise UIDs'
-        help_block: 'Number@Version, comma-separated, list ALL versions that will be excluded'
-      excluded_pool_uuid:
-        name: 'Excluded exercise pool UUID'
-        help_block: 'Set automatically when you update the list above'
+      excluded_ids:
+        name: 'Excluded exercise IDs'
+        help_block: 'Number or UUID, comma-separated, @Version optional'
       import_real_salesforce_courses:
         name: 'Import real Salesforce courses?'
         help_block: 'Unchecked: limits to Denver University'
@@ -40,11 +37,41 @@ en:
       biglearn_client:
         name: 'Biglearn Client'
         labels:
-          local_query_with_real: 'local_query_with_real'
-          local_query_with_fake: 'local_query_with_fake'
           real: 'real'
           fake: 'fake'
-        help_block: 'real is full Biglearn; local_query is real or fake BL for writes and local for queries'
+        help_block: 'real is full Biglearn; fake is stubbed Biglearn'
+      biglearn_student_clues_algorithm_name:
+        name: 'Biglearn algorithm for calculating Student CLUes'
+        labels:
+          SPARFA: 'sparfa'
+          Local Query: 'local_query'
+        help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
+      biglearn_teacher_clues_algorithm_name:
+        name: 'Biglearn algorithm for calculating Teacher CLUes'
+        labels:
+          SPARFA: 'sparfa'
+          Local Query: 'local_query'
+        help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
+      biglearn_assignment_spes_algorithm_name:
+        name: 'Biglearn algorithm for choosing Spaced Practice exercises'
+        labels:
+          Student-driven TeSR: 'tesr_student'
+          Faculty-driven TeSR: 'tesr_teacher'
+          Student-driven Local Query: 'local_query_student'
+          Faculty-driven Local Query: 'local_query_teacher'
+        help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
+      biglearn_assignment_pes_algorithm_name:
+        name: 'Biglearn algorithm for choosing Personalized exercises'
+        labels:
+          TeSR: 'tesr'
+          Local Query: 'local_query'
+        help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
+      biglearn_practice_worst_areas_algorithm_name:
+        name: 'Biglearn algorithm for choosing exercises for Practice Worst Topics'
+        labels:
+          TeSR: 'tesr'
+          Local Query: 'local_query'
+        help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       default_due_time:
         name: 'Default task due time'
         help_block: 'In the format HH:MM'

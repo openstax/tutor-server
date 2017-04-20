@@ -7,6 +7,10 @@ module Content
       verify_and_return @strategy.id, klass: Integer, error: StrategyError
     end
 
+    def tutor_uuid
+      verify_and_return @strategy.tutor_uuid, klass: ::Content::Uuid, error: StrategyError
+    end
+
     def url
       verify_and_return @strategy.url, klass: String, error: StrategyError
     end
@@ -109,6 +113,10 @@ module Content
 
     def snap_labs_with_page_id
       verify_and_return @strategy.snap_labs_with_page_id, klass: Hash, error: StrategyError
+    end
+
+    def to_model
+      @strategy.to_model
     end
 
   end

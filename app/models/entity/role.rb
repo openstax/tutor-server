@@ -9,8 +9,7 @@ class Entity::Role < Tutor::SubSystems::BaseModel
   has_one :role_user, dependent: :destroy, subsystem: :role
   has_one :profile, through: :role_user, subsystem: :user
 
-  delegate :username, :first_name, :last_name, :full_name, :name,
-           :exchange_read_identifier, :exchange_write_identifier, to: :profile, allow_nil: true
+  delegate :username, :first_name, :last_name, :full_name, :name, to: :profile, allow_nil: true
 
   unique_token :research_identifier, mode: :hex, length: 4
 
