@@ -64,6 +64,18 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
         expect(instance.applicable_courses).to contain_exactly(b)
       end
     end
+
+    it 'excludes test courses' do
+      a = FactoryGirl.create(:course_profile_course, consistent_times: true,
+                                                     term: :fall, year: 2018,
+                                                     is_test: true)
+      b = FactoryGirl.create(:course_profile_course, consistent_times: true,
+                                                     term: :fall, year: 2018)
+
+      Timecop.freeze(Chronic.parse("7/1/2017")) do
+        expect(instance.applicable_courses).to contain_exactly(b)
+      end
+    end
   end
 
   context "#notify_errors" do
@@ -78,7 +90,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
         @instance = instance
         expect(Rails.logger).to receive(:warn)
         expect(DevMailer).not_to receive(:inspect_object)
-        catch(:course_error) { @instance.error!(message: 'yo') }
+        catch(:go_to_next_course) { @instance.error!(message: 'yo') }
         @instance.notify_errors
       end
 
@@ -86,12 +98,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
         real_production!(true)
         @instance = instance
         expect(Rails.logger).to receive(:warn)
-        catch(:course_error) { @instance.error!(message: 'yo') }
+        catch(:go_to_next_course) { @instance.error!(message: 'yo') }
         expect{ @instance.notify_errors }.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
-      it 'throws course_error' do
-        expect{ run_notify_errors('yo') }.to throw_symbol(:course_error)
+      it 'throws go_to_next_course' do
+        expect{ run_notify_errors('yo') }.to throw_symbol(:go_to_next_course)
       end
     end
 

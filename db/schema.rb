@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170323195331) do
+ActiveRecord::Schema.define(version: 20170412213150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -312,6 +312,7 @@ ActiveRecord::Schema.define(version: 20170323195331) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                  null: false
     t.boolean  "is_excluded_from_salesforce", default: false, null: false
+    t.boolean  "is_test",                     default: false, null: false
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree

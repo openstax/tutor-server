@@ -62,6 +62,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         expect(ias.size).to eq 1
         ia = ias.first
 
+        expect(ia.id).not_to be_blank
+        expect(ia.spring_start_date).to eq "2017-01-01"
+
         osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
@@ -126,6 +129,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     end
   end
 
+  context "skips happen" do
+    it "skips courses that have no teachers" do
+      call_expecting_skips("No teachers")
+    end
+  end
+
   context "errors happen" do
     it 'continues processing later courses when an earlier one errors' do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
@@ -136,12 +145,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
       counts = call
 
-      expect(counts).to eq ({ num_courses: 2, num_updates: 1, num_errors: 1})
+      expect(counts).to eq ({ num_courses: 2, num_updates: 1, num_errors: 1, num_skips: 0})
     end
 
     it 'errors when no teacher SF contact' do
       AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      call_expecting_errors(/No teacher SF contact/)
+      call_expecting_errors(/No teachers have a SF contact ID/)
     end
 
     it 'errors when multiple IAs match' do
@@ -172,7 +181,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       call_expecting_errors(/No offering/)
     end
 
-    context "when there is an error (no teacher)" do
+    context "when there is an error (no teacher with SF contact)" do
+      before(:each) { AddUserAsCourseTeacher[course: course, user: user_no_sf] }
+
       it 'does not send error email in non-production' do
         expect{
           call_expecting_errors
@@ -212,7 +223,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       contact_id: sf_contact_a.id,
       spring_start_date: "2017-01-01",
       book_id: @sfh.book_id("Chemistry"),
-      school_id: @sfh.school_id("JP University")
+      school_id: @sfh.school_id("JP University"),
+      adoption_level: "Confirmed Adoption Won",
+      description: "blah"
     ).tap do |ia|
       if !ia.save
         raise "didn't save IA"
@@ -224,7 +237,8 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     Salesforce::Remote::OsAncillary.new(
       individual_adoption_id: ia.id,
       product: course.is_concept_coach ? "Concept Coach" : "Tutor",
-      contact_id: contact.id
+      contact_id: contact.id,
+      term: "Spring"
     ).tap do |osa|
       if !osa.save
         raise "didn't save OSA"
@@ -251,6 +265,16 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     call
   end
 
+  def call_expecting_skips(skip_messages = [anything()])
+    skip_messages = [skip_messages].flatten
+    raise "nyi" if skip_messages.size != 1
+    expect_any_instance_of(PushSalesforceCourseStats)
+      .to receive(:skip!)
+      .with(hash_including(message: skip_messages.first))
+      .and_call_original
+    call
+  end
+
   def expect_osa_stats(osa)
     expect(osa).not_to be_nil
     osa.reload # make sure we have what actually made it to SF
@@ -264,6 +288,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.status).to be_a(String)
     expect(osa.product).to eq "Tutor"
     expect(osa.error).to be nil
+    expect(osa.term).to be_a(String)
   end
 
   def expect_osa_attachment(osa, course)

@@ -14,30 +14,34 @@ class PushSalesforceCourseStats
   def initialize(allow_error_email:)
     @allow_error_email = allow_error_email
     @errors = []
+    @skips = []
     @num_updates = 0
     @num_errors = 0
+    @num_skips = 0
   end
 
   def call
     log { "Starting..." }
 
     applicable_courses.each do |course|
-      catch(:course_error) do
+      catch(:go_to_next_course) do
         call_for_course(course)
       end
     end
 
     notify_errors
+    notify_skips
 
     counts = {
       num_courses: applicable_courses.size,
       num_updates: @num_updates,
-      num_errors: @num_errors
+      num_errors: @num_errors,
+      num_skips: @num_skips
     }
 
     log {
       "Processed #{counts[:num_courses]} course(s); wrote stats for #{counts[:num_updates]} of " +
-      "these; #{counts[:num_errors]} course(s) ran into an error."
+      "these; skipped #{counts[:num_skips]}; #{counts[:num_errors]} course(s) ran into an error."
     }
 
     counts
@@ -45,6 +49,8 @@ class PushSalesforceCourseStats
 
   def call_for_course(course)
     begin
+      skip!(message: "No teachers", course: course) if teachers(course).length == 0
+
       attached_record = courses_to_attached_records[course]
       os_ancillary = attached_record.try(:salesforce_object)
 
@@ -54,7 +60,7 @@ class PushSalesforceCourseStats
         # First figure out which SF Contact the OSA would hang off of
 
         sf_contact_id = best_sf_contact_id_for_course(course)
-        error!(message: "No teacher SF contact", course: course) if sf_contact_id.nil?
+        error!(message: "No teachers have a SF contact ID", course: course) if sf_contact_id.nil?
 
         # Next see if there's an appropriate IndividualAdoption; if not, make one.
 
@@ -90,16 +96,15 @@ class PushSalesforceCourseStats
               school_id: sf_contact.school_id
             }
 
-            start_date_key =
-              if course.legacy? || course.demo?
-                error!(message: "Unallowed course term", course: course)
-              else
-                "#{course.term}_start_date".to_sym
-              end
+            # already excluded legacy and demo terms
+            start_date_key = "#{course.term}_start_date".to_sym
 
-            individual_adoption_options.merge(
-              {start_date_key => course.starts_at.iso8601.gsub(/T.*/,'')}
-            )
+            individual_adoption_options.merge!({
+              start_date_key => course.starts_at.iso8601.gsub(/T.*/,''),
+              adoption_level: "Confirmed Adoption Won",
+              description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
+                           (Salesforce::Models::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+            })
 
             Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
               if !ia.save
@@ -116,7 +121,8 @@ class PushSalesforceCourseStats
 
         os_ancillary_criteria = {
           individual_adoption_id: individual_adoption.id,
-          product: course.is_concept_coach ? "Concept Coach" : "Tutor"
+          product: course.is_concept_coach ? "Concept Coach" : "Tutor",
+          term: course.term.capitalize
         }
 
         candidate_os_ancillaries = Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
@@ -205,19 +211,24 @@ class PushSalesforceCourseStats
     end
   end
 
+  def teachers(course)
+    course.teachers.order(:created_at)
+  end
+
   def best_sf_contact_id_for_course(course)
-    course.teachers
-          .order(:created_at)
-          .map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
-          .compact
-          .first
+    teachers(course).map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
+                    .compact
+                    .first
   end
 
   def applicable_courses
     # Don't update courses that have ended
     @courses ||= CourseProfile::Models::Course
                    .not_ended
+                   .where(is_test: false)
                    .where(is_excluded_from_salesforce: false)
+                   .where(term: CourseProfile::Models::Course.terms.slice(*%w(spring summer fall)).values)
+                   .where(is_preview: false)
                    .to_a
   end
 
@@ -259,7 +270,22 @@ class PushSalesforceCourseStats
 
       @num_errors += 1
     ensure
-      throw :course_error unless non_fatal
+      throw :go_to_next_course unless non_fatal
+    end
+  end
+
+  def skip!(message: nil, course: nil)
+    begin
+      skip = {}
+
+      skip[:message] = message if message.present?
+      skip[:course] = course.id if course.present?
+
+      @skips.push(skip) if skip.present?
+
+      @num_skips += 1
+    ensure
+      throw :go_to_next_course
     end
   end
 
@@ -275,6 +301,10 @@ class PushSalesforceCourseStats
         to: Rails.application.secrets.salesforce['mail_recipients']
       ).deliver_later
     end
+  end
+
+  def notify_skips
+    log { "Skips: " + @skips.inspect } unless @skips.empty?
   end
 
   def is_real_production?
