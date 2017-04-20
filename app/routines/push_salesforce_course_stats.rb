@@ -96,16 +96,15 @@ class PushSalesforceCourseStats
               school_id: sf_contact.school_id
             }
 
-            start_date_key =
-              if course.legacy? || course.demo?
-                error!(message: "Unallowed course term", course: course)
-              else
-                "#{course.term}_start_date".to_sym
-              end
+            # already excluded legacy and demo terms
+            start_date_key = "#{course.term}_start_date".to_sym
 
-            individual_adoption_options.merge(
-              {start_date_key => course.starts_at.iso8601.gsub(/T.*/,'')}
-            )
+            individual_adoption_options.merge!({
+              start_date_key => course.starts_at.iso8601.gsub(/T.*/,''),
+              adoption_level: "Confirmed Adoption Won",
+              description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
+                           (Salesforce::Models::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+            })
 
             Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
               if !ia.save
@@ -122,7 +121,8 @@ class PushSalesforceCourseStats
 
         os_ancillary_criteria = {
           individual_adoption_id: individual_adoption.id,
-          product: course.is_concept_coach ? "Concept Coach" : "Tutor"
+          product: course.is_concept_coach ? "Concept Coach" : "Tutor",
+          term: course.term.capitalize
         }
 
         candidate_os_ancillaries = Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
@@ -227,6 +227,8 @@ class PushSalesforceCourseStats
                    .not_ended
                    .where(is_test: false)
                    .where(is_excluded_from_salesforce: false)
+                   .where(term: CourseProfile::Models::Course.terms.slice(*%w(spring summer fall)).values)
+                   .where(is_preview: false)
                    .to_a
   end
 

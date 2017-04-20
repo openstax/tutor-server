@@ -62,6 +62,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         expect(ias.size).to eq 1
         ia = ias.first
 
+        expect(ia.id).not_to be_blank
+        expect(ia.spring_start_date).to eq "2017-01-01"
+
         osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
@@ -220,7 +223,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       contact_id: sf_contact_a.id,
       spring_start_date: "2017-01-01",
       book_id: @sfh.book_id("Chemistry"),
-      school_id: @sfh.school_id("JP University")
+      school_id: @sfh.school_id("JP University"),
+      adoption_level: "Confirmed Adoption Won",
+      description: "blah"
     ).tap do |ia|
       if !ia.save
         raise "didn't save IA"
@@ -232,7 +237,8 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     Salesforce::Remote::OsAncillary.new(
       individual_adoption_id: ia.id,
       product: course.is_concept_coach ? "Concept Coach" : "Tutor",
-      contact_id: contact.id
+      contact_id: contact.id,
+      term: "Spring"
     ).tap do |osa|
       if !osa.save
         raise "didn't save OSA"
@@ -282,6 +288,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.status).to be_a(String)
     expect(osa.product).to eq "Tutor"
     expect(osa.error).to be nil
+    expect(osa.term).to be_a(String)
   end
 
   def expect_osa_attachment(osa, course)

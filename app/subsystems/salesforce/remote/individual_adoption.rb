@@ -9,6 +9,8 @@ class Salesforce::Remote::IndividualAdoption < ActiveForce::SObject
   field :summer_start_date,            from: "Summer_Start_Date__c"
   field :winter_start_date,            from: "Winter_Start_Date__c"
   field :spring_start_date,            from: "Spring_Start_Date__c"
+  field :adoption_level,               from: "Adoption_Level__c"
+  field :description,                  from: "Description__c"
 
   # Deprecated
   field :term_year,                    from: "TermYear__c"

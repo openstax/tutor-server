@@ -17,6 +17,7 @@ class Salesforce::Remote::OsAncillary < ActiveForce::SObject
   field :num_sections,              from: "Sections__c", as: :int
   field :num_students,              from: "Students_Using__c", as: :int
   field :term_year,                 from: "TermYear__c"
+  field :term,                      from: "Term__c"
   field :opportunity_id,            from: 'Opportunity__c'
   field :individual_adoption_id,    from: "Individual_Adoption__c"
   field :contact_id,                from: "Contact__c"
