@@ -1,4 +1,6 @@
 class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
+  BATCH_SIZE = 1000
+
   def up
     add_column :content_exercises, :uuid, :uuid
     add_column :content_exercises, :group_uuid, :uuid
@@ -6,17 +8,27 @@ class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
     all_exercise_numbers_and_versions = Content::Models::Exercise.uniq.pluck(:number, :version)
     all_exercise_numbers_and_versions.group_by(&:second).each do |version, ex_numbers_and_versions|
       ex_numbers = ex_numbers_and_versions.map(&:first)
-      ex_numbers.each_slice(1000) do |numbers|
+      ex_numbers.each_slice(BATCH_SIZE) do |numbers|
         exercises = OpenStax::Exercises::V1.exercises(number: numbers, version: version)
 
+        next if exercises.empty?
+
+        uuid_cases = []
+        group_uuid_cases = []
         exercises.each do |exercise|
           uuid = exercise.uuid || raise('Exercise UUID not found - Migrate Exercises first')
           group_uuid = exercise.group_uuid ||
                        raise('Exercise group UUID not found - Migrate Exercises first')
 
-          Content::Models::Exercise.where(number: exercise.number, version: version)
-                                   .update_all(uuid: uuid, group_uuid: group_uuid)
+          uuid_cases << "WHEN #{exercise.number} THEN '#{uuid}'::uuid"
+          group_uuid_cases << "WHEN #{exercise.number} THEN '#{group_uuid}'::uuid"
         end
+
+        set_uuid_query = "\"uuid\" = CASE \"number\" #{uuid_cases.join("\n")} END"
+        set_group_uuid_query = "\"group_uuid\" = CASE \"number\" #{group_uuid_cases.join("\n")} END"
+        set_query = "#{set_uuid_query}, #{set_group_uuid_query}"
+
+        Content::Models::Exercise.where(number: numbers, version: version).update_all(set_query)
       end
     end
 
