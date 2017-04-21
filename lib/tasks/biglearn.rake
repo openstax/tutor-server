@@ -67,7 +67,7 @@ namespace :biglearn do
 
           # TODO: Responses
 
-          puts 'Biglearn data transfer successful!'
+          puts 'Biglearn data transfer successful! (or background jobs created)'
         end
       end
     end
