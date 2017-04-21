@@ -81,8 +81,11 @@ module CourseGuideRoutine
   end
 
   def get_role_guides(roles, history, ecosystems_map, type)
+    # Assuming only 1 book per ecosystem
+    book = ecosystems_map.to_ecosystem.books.first
+
     roles = [roles].flatten
-    return [] if roles.size == 0
+    return { title: book.title, page_ids: [], children: [] } if roles.size == 0
 
     relevant_role_histories = history.values_at(*roles)
 
@@ -162,9 +165,6 @@ module CourseGuideRoutine
       completed_exercises_count_by_mapped_relevant_page_ids[mapped_relevant_page_id] += \
         completed_exercises_count
     end
-
-    # Assuming only 1 book per ecosystem
-    book = ecosystems_map.to_ecosystem.books.first
 
     {
       title: book.title,

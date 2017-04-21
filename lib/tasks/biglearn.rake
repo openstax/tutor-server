@@ -55,7 +55,7 @@ namespace :biglearn do
                      Tasks::Models::Task.preload(taskings: { role: { student: :course } })
                                         .find_in_batches) do |tasks|
             requests = tasks.map do |task|
-              course = task.taskings.first.role.try!(:student).try!(:course)
+              course = task.taskings.first.try!(:role).try!(:student).try!(:course)
               # Skip weird cases like deleted students and preview assignments
               next if course.nil?
 
