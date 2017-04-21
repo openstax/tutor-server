@@ -32,7 +32,17 @@ class OpenStax::Biglearn::Api::RealClient
   # Adds the given ecosystem to Biglearn
   def create_ecosystem(request)
     ecosystem = request[:ecosystem]
-    book = ecosystem.books.first
+    # Assumes ecosystems only have 1 book
+    book = ecosystem.books.preload(
+      chapters: [
+        :all_exercises_pool,
+        {
+          pages: [
+            :all_exercises_pool, :reading_dynamic_pool, :homework_dynamic_pool, :concept_coach_pool
+          ]
+        }
+      ]
+    ).first
     all_pools = book.chapters.flat_map do |chapter|
       [chapter.all_exercises_pool] + chapter.pages.flat_map do |page|
         [page.all_exercises_pool, page.reading_dynamic_pool,
@@ -112,7 +122,7 @@ class OpenStax::Biglearn::Api::RealClient
       end
     end
 
-    exercises = ecosystem.exercises.map do |exercise|
+    exercises = ecosystem.exercises.preload(:tags, :page).map do |exercise|
       los = exercise.los
       lo_strings = los.empty? ? [ "lo:#{exercise.page.uuid}" ] : los.map(&:value)
 
@@ -313,16 +323,27 @@ class OpenStax::Biglearn::Api::RealClient
 
     biglearn_requests = requests.map do |request|
       task = request[:task]
+
+      # Skip tasks with no ecosystem
+      ecosystem = task.ecosystem
+      next if ecosystem.nil?
+
+      # Skip tasks not assigned to a student
+      student = task.taskings.first.try!(:role).try!(:student)
+      next if student.nil?
+
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
       end
-      assigned_exercises = task.task_steps.select(&:exercise?).map do |exercise_step|
+      assigned_exercises = task.tasked_exercises
+                               .preload(:task_step, :exercise)
+                               .map do |tasked_exercise|
         {
-          trial_uuid: exercise_step.tasked.uuid,
-          exercise_uuid: exercise_step.tasked.exercise.uuid,
-          is_spe: exercise_step.spaced_practice_group?,
-          is_pe: exercise_step.personalized_group?
+          trial_uuid: tasked_exercise.uuid,
+          exercise_uuid: tasked_exercise.exercise.uuid,
+          is_spe: tasked_exercise.task_step.spaced_practice_group?,
+          is_pe: tasked_exercise.task_step.personalized_group?
         }
       end
 
@@ -332,11 +353,11 @@ class OpenStax::Biglearn::Api::RealClient
         goal_num_tutor_assigned_pes = nil
       else
         # Tutor decides
-        sp_steps = task.task_steps.select(&:spaced_practice_group?)
-        spe_steps = sp_steps.select{ |step| step.exercise? || step.placeholder? }
+        sp_steps = task.task_steps.spaced_practice_group
+        spe_steps = sp_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_spes = spe_steps.size
-        p_steps = task.task_steps.select(&:personalized_group?)
-        pe_steps = p_steps.select{ |step| step.exercise? || step.placeholder? }
+        p_steps = task.task_steps.personalized_group
+        pe_steps = p_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_pes = pe_steps.size
       end
 
@@ -346,8 +367,8 @@ class OpenStax::Biglearn::Api::RealClient
         sequence_number: request[:sequence_number],
         assignment_uuid: task.uuid,
         is_deleted: task.deleted?,
-        ecosystem_uuid: task.ecosystem.try!(:tutor_uuid),
-        student_uuid: task.taskings.first.role.student.uuid,
+        ecosystem_uuid: ecosystem.tutor_uuid,
+        student_uuid: student.uuid,
         assignment_type: task.task_type,
         assigned_book_container_uuids: assigned_book_container_uuids,
         spes_are_assigned: task.spes_are_assigned,
@@ -359,7 +380,7 @@ class OpenStax::Biglearn::Api::RealClient
         request[:goal_num_tutor_assigned_pes] = goal_num_tutor_assigned_pes \
           unless goal_num_tutor_assigned_pes.nil?
       end
-    end
+    end.compact
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
                      requests_key: :assignments, responses_key: :updated_assignments
