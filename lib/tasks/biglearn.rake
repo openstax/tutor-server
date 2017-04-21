@@ -37,12 +37,12 @@ namespace :biglearn do
               OpenStax::Biglearn::Api.update_course_excluded_exercises course: course
 
               (ecosystems.slice(1..-1)).each do |ecosystem|
-                preparation_uuid = OpenStax::Biglearn::Api.prepare_course_ecosystem(
+                preparation_hash = OpenStax::Biglearn::Api.prepare_course_ecosystem(
                   course: course, ecosystem: ecosystem
                 )
 
                 roster_updates << { course: course }
-                ecosystem_updates << { course: course, preparation_uuid: preparation_uuid }
+                ecosystem_updates << preparation_hash.merge(course: course)
               end
             end
 

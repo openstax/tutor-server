@@ -15,10 +15,9 @@ class Content::Routines::ImportExercises
   def exec(ecosystem:, page:, query_hash:, excluded_exercise_numbers: [])
     outputs[:exercises] = []
 
-    # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise and
-    # wrap them in a local mutable form of that class
+    # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise
 
-    wrappers = OpenStax::Exercises::V1.exercises(query_hash).map{ |item| MutableWrapper.new(item) }
+    wrappers = OpenStax::Exercises::V1.exercises(query_hash)
 
     # Go through wrappers and build a map of wrappers to pages
 
@@ -41,10 +40,6 @@ class Content::Routines::ImportExercises
       # Could use `free-response` format, but let's cut to chase and look for no M/C answers.
 
       next if wrapper.content_hash["questions"].any?{ |qq| qq["answers"].empty? }
-
-      # Add `lo:page_uuid` style tags for wrappers missing other LOs
-
-      wrapper.add_lo("lo:#{exercise_page.uuid}") if wrapper.los.none? && wrapper.aplos.none?
 
       # Assign exercise context if required
 
@@ -94,34 +89,6 @@ class Content::Routines::ImportExercises
 
     exercise_pages = wrapper_to_exercise_page_map.values.compact.uniq
     exercise_pages.each{ |page| page.exercises.reset }
-  end
-
-  # Instead of modifying OpenStax::Exercises::V1::Exercise to become immutable,
-  # this delegator gives us the mutable extension to that class that we need
-  # just while importing exercises
-
-  class MutableWrapper < SimpleDelegator
-    # Adds an LO tag, this impacts many tag methods but notably we don't
-    # make an attempt to alter the underlying content hash.
-    def add_lo(lo)
-      extra_los.push(lo)
-      extra_lo_hashes.push({value: lo, name: nil, type: :lo})
-    end
-
-    def extra_los
-      @extra_los ||= []
-    end
-
-    def extra_lo_hashes
-      @extra_lo_hashes ||= []
-    end
-
-    def tags;               __getobj__.tags              + extra_los;       end
-    def los;                __getobj__.los               + extra_los;       end
-    def import_tags;        __getobj__.import_tags       + extra_los;       end
-    def tag_hashes;         __getobj__.tag_hashes        + extra_lo_hashes; end
-    def lo_hashes;          __getobj__.lo_hashes         + extra_lo_hashes; end
-    def import_tag_hashes;  __getobj__.import_tag_hashes + extra_lo_hashes; end
   end
 
 end

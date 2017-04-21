@@ -113,11 +113,14 @@ class OpenStax::Biglearn::Api::RealClient
     end
 
     exercises = ecosystem.exercises.map do |exercise|
+      los = exercise.los
+      lo_strings = los.empty? ? [ "lo:#{exercise.page.uuid}" ] : los.map(&:value)
+
       {
         exercise_uuid: exercise.uuid,
         group_uuid: exercise.group_uuid,
         version: exercise.version,
-        los: exercise.los.map(&:value)
+        los: lo_strings
       }
     end
 
