@@ -6,7 +6,12 @@ class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
     add_column :content_exercises, :group_uuid, :uuid
 
     all_exercise_numbers_and_versions = Content::Models::Exercise.uniq.pluck(:number, :version)
+    Rails.logger.info { "Total: #{all_exercise_numbers_and_versions.size} unique exercise uid(s)" }
     all_exercise_numbers_and_versions.group_by(&:second).each do |version, ex_numbers_and_versions|
+      Rails.logger.info do
+        "Migrating #{ex_numbers_and_versions.size} exercise(s) (version #{version})"
+      end
+
       ex_numbers = ex_numbers_and_versions.map(&:first)
       ex_numbers.each_slice(BATCH_SIZE) do |numbers|
         exercises = OpenStax::Exercises::V1.exercises(number: numbers, version: version)
@@ -16,9 +21,10 @@ class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
         uuid_cases = []
         group_uuid_cases = []
         exercises.each do |exercise|
-          uuid = exercise.uuid || raise('Exercise UUID not found - Migrate Exercises first')
+          uuid = exercise.uuid ||
+                 raise('Exercise UUID not found - Migrate OpenStax Exercises first')
           group_uuid = exercise.group_uuid ||
-                       raise('Exercise group UUID not found - Migrate Exercises first')
+                       raise('Exercise group UUID not found - Migrate OpenStax Exercises first')
 
           uuid_cases << "WHEN #{exercise.number} THEN '#{uuid}'::uuid"
           group_uuid_cases << "WHEN #{exercise.number} THEN '#{group_uuid}'::uuid"

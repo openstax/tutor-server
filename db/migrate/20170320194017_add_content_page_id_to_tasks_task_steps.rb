@@ -2,7 +2,7 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
   def up
     add_column :tasks_task_steps, :content_page_id, :integer
 
-    puts "Migrating #{Tasks::Models::TaskedExercise.unscoped.count} exercise steps"
+    Rails.logger.info { "Migrating #{Tasks::Models::TaskedExercise.unscoped.count} exercise steps" }
     Tasks::Models::TaskStep.unscoped.update_all(
       <<-SQL.strip_heredoc
         content_page_id = content_exercises.content_page_id
@@ -13,7 +13,7 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
       SQL
     )
 
-    puts "Migrating #{Tasks::Models::TaskedReading.unscoped.count} reading steps"
+    Rails.logger.info { "Migrating #{Tasks::Models::TaskedReading.unscoped.count} reading steps" }
     Tasks::Models::TaskStep.unscoped.update_all(
       <<-SQL.strip_heredoc
         content_page_id = content_pages.id
@@ -31,7 +31,7 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
       SQL
     )
 
-    puts "Migrating #{Tasks::Models::TaskStep.unscoped.count} remaining steps"
+    Rails.logger.info { "Migrating #{Tasks::Models::TaskStep.unscoped.count} remaining steps" }
     Tasks::Models::TaskStep.unscoped.update_all(
       <<-SQL.strip_heredoc
         content_page_id = ts2.content_page_id
