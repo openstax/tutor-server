@@ -45,8 +45,13 @@ class OpenStax::Biglearn::Api::RealClient
     ).first
     all_pools = book.chapters.flat_map do |chapter|
       [chapter.all_exercises_pool] + chapter.pages.flat_map do |page|
-        [page.all_exercises_pool, page.reading_dynamic_pool,
-         page.homework_dynamic_pool, page.concept_coach_pool]
+        [
+          page.all_exercises_pool,
+          page.reading_dynamic_pool,
+          page.homework_dynamic_pool,
+          page.practice_widget_pool,
+          page.concept_coach_pool
+        ]
       end
     end
     all_exercise_ids = all_pools.flat_map(&:content_exercise_ids)
