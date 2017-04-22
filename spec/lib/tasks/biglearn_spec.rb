@@ -29,9 +29,17 @@ RSpec.describe 'biglearn:initialize', type: :rake do
 
     # Courses without an ecosystem are not sent to Biglearn until they get one
     10.times { FactoryGirl.create :course_profile_course, offering: nil }
+
+    # Pick 20 random responses to send to Biglearn
+    Tasks::Models::TaskedExercise.preload(task_step: :task).take(20).each do |tasked_exercise|
+      Preview::AnswerExercise.call(
+        task_step: tasked_exercise.task_step,
+        is_correct: [true, false].sample
+      )
+    end
   end
 
-  let(:result) { capture_stdout{ call } }
+  let(:result) { capture_stdout { call } }
 
   it 'sends the correct number of records to Biglearn' do
     expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem).twice
@@ -39,18 +47,21 @@ RSpec.describe 'biglearn:initialize', type: :rake do
     expect(OpenStax::Biglearn::Api).to receive(:update_globally_excluded_exercises).exactly(6).times
     expect(OpenStax::Biglearn::Api).to receive(:update_course_excluded_exercises).exactly(6).times
     expect(OpenStax::Biglearn::Api).to receive(:prepare_course_ecosystem).twice
+                                         .and_return(preparation_uuid: SecureRandom.uuid)
     expect(OpenStax::Biglearn::Api).to receive(:update_course_ecosystems).once
     expect(OpenStax::Biglearn::Api).to receive(:update_rosters).once
     expect(OpenStax::Biglearn::Api).to receive(:create_update_assignments).once
+    expect(OpenStax::Biglearn::Api).to receive(:record_responses).once
 
     result
   end
 
   it 'prints progress information' do
     expect(result).to include "Ecosystem and Course sequence numbers reset.\n"
-    expect(result).to include "Creating 2 ecosystems..\n"
-    expect(result).to include "Creating 6 courses.\n"
-    expect(result).to include "Creating 17 assignments.\n"
-    expect(result).to include "Biglearn data transfer successful!\n"
+    expect(result).to include "Creating 2 ecosystem(s)..\n"
+    expect(result).to include "Creating 6 course(s).\n"
+    expect(result).to include "Creating 17 assignment(s).\n"
+    expect(result).to include "Creating 20 response(s).\n"
+    expect(result).to include "Biglearn data transfer successful! (or background jobs created)\n"
   end
 end

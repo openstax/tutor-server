@@ -14,7 +14,7 @@ namespace :biglearn do
           CourseProfile::Models::Course.where(id: course_ids).update_all(sequence_number: 0)
           puts 'Ecosystem and Course sequence numbers reset.'
 
-          print_each("Creating #{Content::Models::Ecosystem.count} ecosystems",
+          print_each("Creating #{Content::Models::Ecosystem.count} ecosystem(s)",
                      Content::Models::Ecosystem.where(id: ecosystem_ids).find_each) do |ecosystem|
             OpenStax::Biglearn::Api.create_ecosystem ecosystem: ecosystem
           end
@@ -24,7 +24,7 @@ namespace :biglearn do
                                                  .preload(:ecosystems)
                                                  .uniq
 
-          print_each("Creating #{courses.count} courses", courses.find_in_batches) do |courses|
+          print_each("Creating #{courses.count} course(s)", courses.find_in_batches) do |courses|
             roster_updates = []
             ecosystem_updates = []
             courses.each do |course|
@@ -36,14 +36,17 @@ namespace :biglearn do
 
               OpenStax::Biglearn::Api.update_course_excluded_exercises course: course
 
-              (ecosystems.slice(1..-1)).each do |ecosystem|
+              (ecosystems[1..-1]).each do |ecosystem|
                 preparation_hash = OpenStax::Biglearn::Api.prepare_course_ecosystem(
                   course: course, ecosystem: ecosystem
                 )
 
-                roster_updates << { course: course } unless course.periods_with_deleted.empty?
                 ecosystem_updates << preparation_hash.merge(course: course)
               end
+
+              next if course.periods_with_deleted.empty?
+
+              roster_updates << { course: course }
             end
 
             OpenStax::Biglearn::Api.update_rosters roster_updates
@@ -51,7 +54,7 @@ namespace :biglearn do
             OpenStax::Biglearn::Api.update_course_ecosystems ecosystem_updates
           end
 
-          print_each("Creating #{Tasks::Models::Task.count} assignments",
+          print_each("Creating #{Tasks::Models::Task.count} assignment(s)",
                      Tasks::Models::Task.preload(taskings: { role: { student: :course } })
                                         .find_in_batches) do |tasks|
             requests = tasks.map do |task|
@@ -65,7 +68,24 @@ namespace :biglearn do
             OpenStax::Biglearn::Api.create_update_assignments requests
           end
 
-          # TODO: Responses
+          answered_exercises = Tasks::Models::TaskedExercise
+                                 .joins(:task_step)
+                                 .where{task_step.first_completed_at != nil}
+          print_each("Creating #{answered_exercises.count} response(s)",
+                     answered_exercises
+                       .preload(task_step: { task: { taskings: { role: { student: :course } } } })
+                       .find_in_batches) do |tasked_exercises|
+            requests = tasked_exercises.map do |tasked_exercise|
+              course = tasked_exercise.task_step.task.taskings.first
+                                      .try!(:role).try!(:student).try!(:course)
+              # Skip weird cases like deleted students and preview assignments
+              next if course.nil?
+
+              { course: course, tasked_exercise: tasked_exercise }
+            end.compact
+
+            OpenStax::Biglearn::Api.record_responses requests
+          end
 
           puts 'Biglearn data transfer successful! (or background jobs created)'
         end
