@@ -41,7 +41,7 @@ namespace :biglearn do
                   course: course, ecosystem: ecosystem
                 )
 
-                roster_updates << { course: course }
+                roster_updates << { course: course } unless course.periods_with_deleted.empty?
                 ecosystem_updates << preparation_hash.merge(course: course)
               end
             end
