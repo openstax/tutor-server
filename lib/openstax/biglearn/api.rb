@@ -41,7 +41,7 @@ module OpenStax::Biglearn::Api
 
         single_api_request options.merge(
           method: :create_ecosystem,
-          request: request.merge(ecosystem: request[:ecosystem].to_model),
+          request: { ecosystem: request[:ecosystem].to_model },
           keys: :ecosystem
         )
       end
@@ -116,7 +116,7 @@ module OpenStax::Biglearn::Api
         single_api_request options.merge(
           method: :prepare_course_ecosystem,
           request: request.merge(preparation_uuid: preparation_uuid),
-          keys: [:course, :sequence_number, :ecosystem]
+          keys: [:preparation_uuid, :course, :sequence_number, :ecosystem]
         )
 
         { preparation_uuid: preparation_uuid }
