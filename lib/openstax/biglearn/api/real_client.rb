@@ -2,6 +2,9 @@ class OpenStax::Biglearn::Api::RealClient
 
   HEADER_OPTIONS = { headers: { 'Content-Type' => 'application/json' } }.freeze
 
+  MAX_CONTAINERS_PER_COURSE = 100
+  MAX_STUDENTS_PER_COURSE = 1000
+
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
     @client_id    = biglearn_configuration.client_id
@@ -226,6 +229,26 @@ class OpenStax::Biglearn::Api::RealClient
         end
       end
 
+      num_course_containers = course_containers.size
+      if num_course_containers > MAX_CONTAINERS_PER_COURSE
+        Rails.logger.error do
+          "Course #{course.name} has #{num_course_containers} containers," +
+          " which is more than the Biglearn API limit of #{MAX_CONTAINERS_PER_COURSE} containers"
+        end
+
+        next
+      end
+
+      num_students = students.size
+      if num_students > MAX_STUDENTS_PER_COURSE
+        Rails.logger.error do
+          "Course #{course.name} has #{num_students} students," +
+          " which is more than the Biglearn API limit of #{MAX_STUDENTS_PER_COURSE} students"
+        end
+
+        next
+      end
+
       {
         request_uuid: request.fetch(:request_uuid),
         course_uuid: course.uuid,
@@ -233,7 +256,7 @@ class OpenStax::Biglearn::Api::RealClient
         course_containers: course_containers,
         students: students
       }
-    end
+    end.compact
 
     bulk_api_request url: :update_rosters, requests: biglearn_requests,
                      requests_key: :rosters, responses_key: :updated_rosters, max_requests: 100
