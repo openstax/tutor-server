@@ -69,6 +69,8 @@ gem 'openstax_api', '~> 8.1.0'
 gem 'apipie-rails'
 gem 'maruku'
 
+gem 'ims-lti'
+
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4
 # Also, do not use Roar::Hypermedia links
