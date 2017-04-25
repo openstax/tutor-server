@@ -157,6 +157,17 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
   end
 
+  context 'is_demo' do
+    it 'can be read' do
+      allow(task_plan).to receive(:is_demo).and_return(true)
+      expect(representation).to include('is_demo' => true)
+    end
+    it 'cannot be written (attempts are silently ignored)' do
+        described_class.new(task_plan).from_hash({ 'is_demo' => true })
+        expect(task_plan).not_to have_received(:is_demo=)
+    end
+  end
+
   context 'cloned_from_id' do
     it 'can be read' do
       allow(task_plan).to receive(:cloned_from_id).and_return('42')
