@@ -433,6 +433,24 @@ ActiveRecord::Schema.define(version: 20170724162437) do
 
   add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
 
+  create_table "lms_nonces", force: :cascade do |t|
+    t.string   "value",                limit: 128, null: false
+    t.integer  "lms_tool_consumer_id",             null: false
+    t.datetime "created_at"
+  end
+
+  add_index "lms_nonces", ["lms_tool_consumer_id", "value"], name: "nonce_consumer_value", unique: true, using: :btree
+
+  create_table "lms_tool_consumers", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.string   "key",        null: false
+    t.string   "secret",     null: false
+    t.string   "owner_id",   null: false
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
     t.integer  "application_id",    null: false
@@ -968,6 +986,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "lms_nonces", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
