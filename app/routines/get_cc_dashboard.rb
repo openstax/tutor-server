@@ -35,25 +35,31 @@ class GetCcDashboard
   end
 
   def load_cc_teacher_stats(course, role)
+    # Each tasking will create 1 row but this is not a problem as long as tasks only have 1 tasking
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins(task: {taskings: :period})
-      .preload(task: {taskings: [:period, :role]}, page: :chapter)
-      .where(task: {taskings: {period: {course_profile_course_id: course.id}}})
+      .joins(task: { taskings: :period })
+      .where(task: { taskings: { period: { course_profile_course_id: course.id } } })
       .where{task.completed_exercise_steps_count > 0}
-      .distinct
+      .select([
+        :id,
+        :tasks_task_id,
+        :content_page_id,
+        { task: [ :steps_count, :completed_steps_count ] },
+        { task: { taskings: :course_membership_period_id } },
+        { task: { taskings: :entity_role_id } }
+      ])
+      .preload(page: :chapter)
       .to_a
 
-    # Does not support group work
-    period_id_cc_tasks_map = cc_tasks.group_by{ |cc_task| cc_task.task.taskings.first.period.id }
+    period_id_cc_tasks_map = cc_tasks.group_by(&:course_membership_period_id)
 
     ecosystems_map = GetCourseEcosystemsMap[course: course]
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
-    outputs.course.periods = course.periods.preload(latest_enrollments: {student: :role})
-                                           .map do |period|
+    outputs.course.periods = course.periods.preload(latest_enrollments: :student).map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
-      active_student_roles = period.latest_enrollments.map{ |en| en.student.role }.uniq
+      active_role_ids = period.latest_enrollments.map { |en| en.student.entity_role_id }.uniq
       core_map, spaced_map = get_period_performance_maps_from_cc_tasks(
         period, cc_tasks, ecosystems_map
       )
@@ -71,14 +77,12 @@ class GetCcDashboard
             pages: cc_tasks.group_by do |cc_task|
               map_cc_task_to_page(page_to_page_map, cc_task)
             end.map do |page, cc_tasks|
-              tasks = cc_tasks.map(&:task)
-              completed_roles = tasks.select(&:completed?)
-                                     .flat_map{ |task| task.taskings.map(&:role) }
-                                     .uniq
-              in_progress_roles = tasks.select(&:in_progress?)
-                                       .flat_map{ |task| task.taskings.map(&:role) }
-                                       .uniq
-              not_started_roles = active_student_roles - (completed_roles + in_progress_roles)
+              completed_cc_tasks, in_progress_cc_tasks = cc_tasks.partition do |cc_task|
+                cc_task.completed_steps_count == cc_task.steps_count
+              end
+              completed_role_ids = completed_cc_tasks.map(&:entity_role_id).uniq
+              in_progress_role_ids = in_progress_cc_tasks.map(&:entity_role_id).uniq
+              not_started_role_ids = active_role_ids - (completed_role_ids + in_progress_role_ids)
 
               {
                 id: page.id,
@@ -86,9 +90,9 @@ class GetCcDashboard
                 uuid: page.uuid,
                 version: page.version,
                 book_location: page.book_location,
-                completed: completed_roles.size,
-                in_progress: in_progress_roles.size,
-                not_started: not_started_roles.size,
+                completed: completed_role_ids.size,
+                in_progress: in_progress_role_ids.size,
+                not_started: not_started_role_ids.size,
                 original_performance: core_map[page.id],
                 spaced_practice_performance: spaced_map[page.id]
               }
