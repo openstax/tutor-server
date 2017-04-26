@@ -1,9 +1,4 @@
 class GetCcDashboard
-  # CC dashboard cache duration
-  # The dashboard cache is invalidated each time a new exercise is answered
-  # Otherwise, it will have the duration specified below
-  DASHBOARD_CACHE_DURATION = 1.year
-
   include DashboardRoutineMethods
 
   protected
@@ -45,7 +40,8 @@ class GetCcDashboard
       .preload(task: {taskings: [:period, :role]}, page: :chapter)
       .where(task: {taskings: {period: {course_profile_course_id: course.id}}})
       .where{task.completed_exercise_steps_count > 0}
-      .distinct.to_a
+      .distinct
+      .to_a
 
     # Does not support group work
     period_id_cc_tasks_map = cc_tasks.group_by{ |cc_task| cc_task.task.taskings.first.period.id }
@@ -58,8 +54,9 @@ class GetCcDashboard
                                            .map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       active_student_roles = period.latest_enrollments.map{ |en| en.student.role }.uniq
-      orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks,
-                                                                       page_to_page_map)
+      core_map, spaced_map = get_period_performance_maps_from_cc_tasks(
+        period, cc_tasks, ecosystems_map
+      )
 
       {
         id: period.id,
@@ -92,7 +89,7 @@ class GetCcDashboard
                 completed: completed_roles.size,
                 in_progress: in_progress_roles.size,
                 not_started: not_started_roles.size,
-                original_performance: orig_map[page.id],
+                original_performance: core_map[page.id],
                 spaced_practice_performance: spaced_map[page.id]
               }
             end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
@@ -146,119 +143,84 @@ class GetCcDashboard
     end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
   end
 
-  def get_period_performance_maps_from_cc_tasks(period, cc_tasks, page_to_page_map)
-    all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.id }
-    all_page_models = cc_tasks.map{ |cc_task| cc_task.page }.uniq
-    all_pages = all_page_models.map{ |page_model| Content::Page.new(strategy: page_model.wrap) }
+  def get_period_performance_maps_from_cc_tasks(period, cc_tasks, ecosystems_map)
+    all_task_ids = cc_tasks.map(&:tasks_task_id)
 
-    completed_tasked_exercises = Tasks::Models::TaskedExercise
-      .joins(:task_step, :exercise)
-      .where{(task_step.first_completed_at != nil) & (task_step.tasks_task_id.in all_task_ids)}
-      .group(exercise: :content_page_id)
-    last_answer_times = completed_tasked_exercises.maximum('tasks_task_steps.last_completed_at')
-
-    cache_key_to_page_map = all_pages.each_with_object({}) do |page, hash|
-      cache_key = "dashboard/cc/teacher/#{period.id}/#{page.id}-#{last_answer_times[page.id]}"
-      hash[cache_key] = page
-    end
-
-    all_cache_keys = cache_key_to_page_map.keys
-    cache_key_performance_map = all_cache_keys.empty? ? \
-                                  {} : Rails.cache.read_multi(*all_cache_keys)
-
-    performance_map = {}
-    hit_cache_keys = []
-
-    cache_key_performance_map.each do |cache_key, performance|
-      # Ignore values cached before the cache format change
-      next if performance[:original_count].nil? && performance[:spaced_count].nil?
-
-      page = cache_key_to_page_map[cache_key]
-      performance_map[page] = performance
-      hit_cache_keys << cache_key
-    end
-
-    missed_cache_keys = all_cache_keys - hit_cache_keys
-
-    unless missed_cache_keys.empty?
-      missed_page_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
-        page = cache_key_to_page_map[cache_key]
-        hash[page] = cache_key
-      end
-      missed_page_ids = missed_page_to_cache_key_map.keys.map(&:id)
-
-      missed_completed_tasked_exercises = completed_tasked_exercises.where(
-        exercise: { content_page_id: missed_page_ids }
+    all_pages_with_stats = Content::Models::Page
+      .joins(exercises: { tasked_exercises: :task_step })
+      .where(exercises: { tasked_exercises: { task_step: { tasks_task_id: all_task_ids } } })
+      .group([:id, { exercises: { tasked_exercises: { task_step: :group_type } } }])
+      .select(
+        <<-SQL.strip_heredoc
+          content_pages.id,
+          tasks_task_steps.group_type,
+          COUNT(tasks_task_steps.first_completed_at) AS completed_count,
+          COUNT(tasks_task_steps.first_completed_at) FILTER (
+            WHERE tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id
+          ) AS correct_count
+        SQL
       )
-      missed_completed_core_tasked_exercises = missed_completed_tasked_exercises.where(
-        task_step: { group_type: Tasks::Models::TaskStep.group_types[:core_group] }
-      )
-      missed_correct_core_tasked_exercises = missed_completed_core_tasked_exercises.where{
-        answer_id == correct_answer_id
-      }
-      missed_completed_spaced_tasked_exercises = missed_completed_tasked_exercises.where(
-        task_step: { group_type: Tasks::Models::TaskStep.group_types[:spaced_practice_group] }
-      )
-      missed_correct_spaced_tasked_exercises = missed_completed_spaced_tasked_exercises.where{
-        answer_id == correct_answer_id
-      }
+    all_page_wrappers = all_pages_with_stats.map { |page| Content::Page.new(strategy: page.wrap) }
+    page_to_page_map = ecosystems_map.map_pages_to_pages(pages: all_page_wrappers)
 
-      missed_completed_core_counts = missed_completed_core_tasked_exercises
-                                       .count('DISTINCT tasks_tasked_exercises.id')
-      missed_correct_core_counts = missed_correct_core_tasked_exercises
-                                     .count('DISTINCT tasks_tasked_exercises.id')
-      missed_completed_spaced_counts = missed_completed_spaced_tasked_exercises
-                                         .count('DISTINCT tasks_tasked_exercises.id')
-      missed_correct_spaced_counts = missed_correct_spaced_tasked_exercises
-                                       .count('DISTINCT tasks_tasked_exercises.id')
-
-      missed_page_to_cache_key_map.each do |page, cache_key|
-        completed_core_count = missed_completed_core_counts[page.id] || 0
-        completed_spaced_count = missed_completed_spaced_counts[page.id] || 0
-        correct_core_count = missed_correct_core_counts[page.id] || 0
-        correct_spaced_count = missed_correct_spaced_counts[page.id] || 0
-        original_performance = completed_core_count == 0 ? \
-                                 0 : correct_core_count/completed_core_count.to_f
-        spaced_performance = completed_spaced_count == 0 ? \
-                               0 : correct_spaced_count/completed_spaced_count.to_f
-        performance = { original: original_performance, original_count: completed_core_count,
-                        spaced: spaced_performance, spaced_count: completed_spaced_count }
-
-        Rails.cache.write(cache_key, performance, expires_in: DASHBOARD_CACHE_DURATION)
-
-        performance_map[page] = performance
-      end
-    end
-
-    original_performance_map = {}
-    original_performance_counts = {}
+    core_performance_map = {}
+    core_performance_counts = Hash.new(0)
     spaced_performance_map = {}
-    spaced_performance_counts = {}
+    spaced_performance_counts = Hash.new(0)
+    core_group_type = Tasks::Models::TaskStep.group_types[:core_group]
+    spaced_practice_group_type = Tasks::Models::TaskStep.group_types[:spaced_practice_group]
+    all_pages_with_stats.group_by(&:id).each do |page_id, pages_with_stats|
+      indexed_pages_with_stats = pages_with_stats.index_by(&:group_type)
 
-    # Map the performance map to current ecosystem pages
-    performance_map.each do |page, performance|
-      mapped_page_id = page_to_page_map[page].id
+      # Calculate performance for the core page
+      core_page_with_stats = indexed_pages_with_stats[core_group_type]
 
-      previous_original_count = original_performance_counts[mapped_page_id] || 0
-      previous_original_performance = original_performance_map[mapped_page_id] || 0
-      new_original_count = previous_original_count + performance[:original_count]
-      new_original_performance = new_original_count == 0 ? nil : \
-                                   (previous_original_performance*previous_original_count + \
-                                    performance[:original]*performance[:original_count])/ \
-                                   new_original_count
-      original_performance_counts[mapped_page_id] = new_original_count
-      original_performance_map[mapped_page_id] = new_original_performance
+      # Skip if no core page (if core and spaced practice happened with different course ecosystems)
+      if core_page_with_stats.present?
+        core_completed_count = core_page_with_stats.completed_count
+        core_correct_count = core_page_with_stats.correct_count
+        core_performance = core_correct_count/core_completed_count.to_f
 
-      previous_spaced_count = spaced_performance_counts[mapped_page_id] || 0
-      previous_spaced_performance = spaced_performance_map[mapped_page_id] || 0
-      new_spaced_count = previous_spaced_count + performance[:spaced_count]
+        # Map the core page to a current page
+        wrapped_core_page = Content::Page.new(strategy: core_page_with_stats.wrap)
+        mapped_core_page_id = page_to_page_map[wrapped_core_page].id
+
+        # Update the current page's stats
+        previous_core_count = core_performance_counts[mapped_core_page_id]
+        previous_core_performance = core_performance_map[mapped_core_page_id] || 0
+        new_core_count = previous_core_count + core_completed_count
+        new_core_performance = new_core_count == 0 ? nil : \
+                                 (previous_core_performance * previous_core_count + \
+                                  core_performance * core_completed_count)/new_core_count
+        core_performance_counts[mapped_core_page_id] = new_core_count
+        core_performance_map[mapped_core_page_id] = new_core_performance
+      end
+
+      # Calculate performance for the spaced page
+      spaced_page_with_stats = indexed_pages_with_stats[spaced_practice_group_type]
+
+      # Skip if spaced practice hasn't happened yet
+      next if spaced_page_with_stats.nil?
+
+      spaced_completed_count = spaced_page_with_stats.completed_count
+      spaced_correct_count = spaced_page_with_stats.correct_count
+      spaced_performance = spaced_correct_count/spaced_completed_count.to_f
+
+      # Map the spaced page to a current page
+      wrapped_spaced_page = Content::Page.new(strategy: spaced_page_with_stats.wrap)
+      mapped_spaced_page_id = page_to_page_map[wrapped_spaced_page].id
+
+      # Update the current page's stats
+      previous_spaced_count = spaced_performance_counts[mapped_spaced_page_id]
+      previous_spaced_performance = spaced_performance_map[mapped_spaced_page_id] || 0
+      new_spaced_count = previous_spaced_count + spaced_completed_count
       new_spaced_performance = new_spaced_count == 0 ? nil : \
-                                 (previous_spaced_performance*previous_spaced_count + \
-                                  performance[:spaced]*performance[:spaced_count])/new_spaced_count
-      spaced_performance_counts[mapped_page_id] = new_spaced_count
-      spaced_performance_map[mapped_page_id] = new_spaced_performance
+                               (previous_spaced_performance * previous_spaced_count + \
+                                spaced_performance * spaced_completed_count)/new_spaced_count
+      spaced_performance_counts[mapped_spaced_page_id] = new_spaced_count
+      spaced_performance_map[mapped_spaced_page_id] = new_spaced_performance
     end
 
-    [original_performance_map, spaced_performance_map]
+    [core_performance_map, spaced_performance_map]
   end
 end
