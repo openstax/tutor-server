@@ -445,13 +445,15 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
       course = task.taskings.first.role.student.course
+      max_num_exercises = request[:max_num_exercises]
 
       {
         request_uuid: request.fetch(:request_uuid),
         assignment_uuid: task.uuid,
-        algorithm_name: course.biglearn_assignment_pes_algorithm_name,
-        max_num_exercises: request[:max_num_exercises]
-      }
+        algorithm_name: course.biglearn_assignment_pes_algorithm_name
+      }.tap do |biglearn_request|
+        biglearn_request[:max_num_exercises] = max_num_exercises unless max_num_exercises.nil?
+      end
     end
 
     bulk_api_request url: :fetch_assignment_pes, requests: biglearn_requests,
@@ -463,13 +465,15 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
       course = task.taskings.first.role.student.course
+      max_num_exercises = request[:max_num_exercises]
 
       {
         request_uuid: request.fetch(:request_uuid),
         assignment_uuid: task.uuid,
-        algorithm_name: course.biglearn_assignment_spes_algorithm_name,
-        max_num_exercises: request[:max_num_exercises]
-      }
+        algorithm_name: course.biglearn_assignment_spes_algorithm_name
+      }.tap do |biglearn_request|
+        biglearn_request[:max_num_exercises] = max_num_exercises unless max_num_exercises.nil?
+      end
     end
 
     bulk_api_request url: :fetch_assignment_spes, requests: biglearn_requests,
@@ -481,13 +485,15 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_requests = requests.map do |request|
       student = request.fetch(:student)
       course = student.course
+      max_num_exercises = request[:max_num_exercises]
 
       {
         request_uuid: request.fetch(:request_uuid),
         student_uuid: student.uuid,
-        algorithm_name: course.biglearn_practice_worst_areas_algorithm_name,
-        max_num_exercises: request[:max_num_exercises]
-      }
+        algorithm_name: course.biglearn_practice_worst_areas_algorithm_name
+      }.tap do |biglearn_request|
+        biglearn_request[:max_num_exercises] = max_num_exercises unless max_num_exercises.nil?
+      end
     end
 
     bulk_api_request url: :fetch_practice_worst_areas_exercises, requests: biglearn_requests,
