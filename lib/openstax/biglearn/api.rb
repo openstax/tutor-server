@@ -450,15 +450,18 @@ module OpenStax::Biglearn::Api
                          uuid_key: :request_uuid, retry_proc: nil, perform_later: false,
                          inline_max_retries: 10, inline_sleep_interval: 1.second)
       requests_map = {}
-      [requests].flatten.map do |request|
-        requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
-                                                                   request: request,
-                                                                   keys: keys,
-                                                                   optional_keys: optional_keys
+      [requests].flatten.each do |request|
+        uuid = request.fetch(uuid_key, SecureRandom.uuid)
+
+        requests_map[uuid] = verify_and_slice_request(
+          method: method, request: request, keys: keys, optional_keys: optional_keys
+        )
       end
 
       requests_with_uuids_map = requests_map.map do |uuid, request|
-        [uuid, request.merge(uuid_key => uuid)]
+        request_with_uuid = request.has_key?(uuid_key) ? request : request.merge(uuid_key => uuid)
+
+        [uuid, request_with_uuid]
       end.to_h
       requests_array = requests_with_uuids_map.values
 
