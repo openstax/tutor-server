@@ -25,14 +25,15 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter, type: :representer do
             {
               title: 'my cool title',
               book_location: [1, 4],
+              student_count: 5,
               questions_answered_count: 25,
+              practice_count: 3,
               clue: {
                 minimum: 0.7,
                 most_likely: 0.89,
                 maximum: 0.9,
                 is_real: true
               },
-              practice_count: 3,
               page_ids: [4, 5, 6]
             }
           ]
@@ -47,6 +48,7 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter, type: :representer do
         {
           title: 'my cool title',
           chapter_section: [1, 4],
+          student_count: 5,
           questions_answered_count: 25,
           clue: {
             minimum: 0.7,
