@@ -144,12 +144,12 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     expect(course.starts_at).to eq term_year.starts_at
     expect(course.ends_at).to eq term_year.ends_at
 
-    course.term = 'spring'
+    course.term = 'winter'
     course.year = year + 1
     course.starts_at = nil
     course.ends_at = nil
     expect(course).to be_valid
-    term_year = TermYear.new('spring', year + 1)
+    term_year = TermYear.new('winter', year + 1)
     expect(course.starts_at).to eq term_year.starts_at
     expect(course.ends_at).to eq term_year.ends_at
   end
