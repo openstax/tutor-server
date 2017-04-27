@@ -25,7 +25,7 @@ module CourseGuideRoutine
     else
       # Teacher guide
       periods = roles.map(&:student).map(&:period).uniq
-      raise "Cannot call Biglearn with multiple periods" if periods.size != 1
+      raise NotImplementedError if periods.size != 1
 
       requests = book_containers.map do |book_container|
         { book_container: book_container, course_container: periods.first }
@@ -39,17 +39,23 @@ module CourseGuideRoutine
 
   def get_page_guides(mapped_relevant_pages,
                       clues_by_book_container_uuids,
-                      practice_counts_by_mapped_relevant_page_ids,
-                      completed_exercises_count_by_mapped_relevant_page_ids)
+                      entity_role_ids_by_mapped_page_ids,
+                      questions_answered_counts_by_mapped_page_ids,
+                      practice_counts_by_mapped_page_ids)
     mapped_relevant_pages.map do |mapped_relevant_page|
       page_id = mapped_relevant_page.id
+      student_count = entity_role_ids_by_mapped_page_ids[page_id].uniq.size
+      questions_answered_count = questions_answered_counts_by_mapped_page_ids[page_id]
+      practice_count = practice_counts_by_mapped_page_ids[page_id]
+      clue = clues_by_book_container_uuids[mapped_relevant_page.tutor_uuid]
 
       {
         title: mapped_relevant_page.title,
         book_location: mapped_relevant_page.book_location,
-        questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids[page_id],
-        clue: clues_by_book_container_uuids[mapped_relevant_page.tutor_uuid],
-        practice_count: practice_counts_by_mapped_relevant_page_ids[page_id],
+        student_count: student_count,
+        questions_answered_count: questions_answered_count,
+        practice_count: practice_count,
+        clue: clue,
         page_ids: [page_id]
       }
     end
@@ -57,25 +63,34 @@ module CourseGuideRoutine
 
   def get_chapter_guides(mapped_relevant_pages_by_chapter,
                          clues_by_book_container_uuids,
-                         practice_counts_by_mapped_relevant_page_ids,
-                         completed_exercises_count_by_mapped_relevant_page_ids)
+                         entity_role_ids_by_mapped_page_ids,
+                         questions_answered_counts_by_mapped_page_ids,
+                         practice_counts_by_mapped_page_ids)
 
     mapped_relevant_pages_by_chapter.map do |chapter, mapped_relevant_pages|
       mapped_relevant_page_ids = mapped_relevant_pages.map(&:id)
+      student_count = entity_role_ids_by_mapped_page_ids
+                        .values_at(*mapped_relevant_page_ids).flatten.uniq.size
+      questions_answered_count = questions_answered_counts_by_mapped_page_ids
+                                   .values_at(*mapped_relevant_page_ids).reduce(0, :+)
+      practice_count = practice_counts_by_mapped_page_ids
+                         .values_at(*mapped_relevant_page_ids).reduce(0, :+)
+      clue = clues_by_book_container_uuids[chapter.tutor_uuid]
+      children = get_page_guides(mapped_relevant_pages,
+                                 clues_by_book_container_uuids,
+                                 entity_role_ids_by_mapped_page_ids,
+                                 questions_answered_counts_by_mapped_page_ids,
+                                 practice_counts_by_mapped_page_ids)
 
       {
         title: chapter.title,
         book_location: chapter.book_location,
-        questions_answered_count: completed_exercises_count_by_mapped_relevant_page_ids
-                                    .values_at(*mapped_relevant_page_ids).reduce(0, :+),
-        clue: clues_by_book_container_uuids[chapter.tutor_uuid],
-        practice_count: practice_counts_by_mapped_relevant_page_ids
-                          .values_at(*mapped_relevant_page_ids).reduce(0, :+),
+        student_count: student_count,
+        questions_answered_count: questions_answered_count,
+        practice_count: practice_count,
+        clue: clue,
         page_ids: mapped_relevant_page_ids,
-        children: get_page_guides(mapped_relevant_pages,
-                                  clues_by_book_container_uuids,
-                                  practice_counts_by_mapped_relevant_page_ids,
-                                  completed_exercises_count_by_mapped_relevant_page_ids)
+        children: children
       }
     end
   end
@@ -99,13 +114,20 @@ module CourseGuideRoutine
     end.flatten
 
     role_ids = roles.map(&:id)
-    completed_exercises_count_by_page_ids = Tasks::Models::TaskedExercise
-      .joins([:exercise, {task_step: {task: :taskings}}])
-      .where(task_step: {task: {taskings: {entity_role_id: role_ids}}})
+    # Assumes 1 tasking per task
+    page_role_stats = Tasks::Models::TaskedExercise
+      .joins(:exercise, { task_step: { task: :taskings } })
+      .where(task_step: { task: { taskings: { entity_role_id: role_ids } } })
       .where{task_step.first_completed_at != nil}
-      .group(exercise: :content_page_id)
-      .count
-    all_worked_page_ids = completed_exercises_count_by_page_ids.keys
+      .group(exercise: :content_page_id, task_step: { task: { taskings: :entity_role_id } })
+      .select(
+        [
+          { exercise: :content_page_id },
+          { task_step: { task: { taskings: :entity_role_id } } },
+          'COUNT(*) AS questions_answered_count'
+        ]
+      )
+    all_worked_page_ids = page_role_stats.map(&:content_page_id)
 
     all_relevant_page_ids = (all_core_page_ids + all_worked_page_ids).uniq
 
@@ -139,7 +161,17 @@ module CourseGuideRoutine
       roles, mapped_relevant_pages_by_chapter, type
     )
 
-    practice_counts_by_mapped_relevant_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
+    entity_role_ids_by_mapped_page_ids = Hash.new { |hash, key| hash[key] = [] }
+    questions_answered_counts_by_mapped_page_ids = Hash.new(0)
+    page_role_stats.each do |stats|
+      page = all_relevant_pages_by_id[stats.content_page_id]
+      mapped_page_id = page_map[page].id
+
+      entity_role_ids_by_mapped_page_ids[mapped_page_id] << stats.entity_role_id
+      questions_answered_counts_by_mapped_page_ids[mapped_page_id] += stats.questions_answered_count
+    end
+
+    practice_counts_by_mapped_page_ids = Hash.new(0)
     relevant_role_histories.each do |role_history|
       task_types = role_history.task_types
       practice_task_indices = task_types.each_index.select do |index|
@@ -148,22 +180,12 @@ module CourseGuideRoutine
       practice_core_page_ids = role_history.core_page_ids.values_at(*practice_task_indices)
       practice_core_page_ids.each do |core_page_ids|
         core_page_ids.each do |core_page_id|
-          relevant_page = all_relevant_pages_by_id[core_page_id]
-          mapped_relevant_page_id = page_map[relevant_page].id
+          page = all_relevant_pages_by_id[core_page_id]
+          mapped_page_id = page_map[page].id
 
-          practice_counts_by_mapped_relevant_page_ids[mapped_relevant_page_id] += 1
+          practice_counts_by_mapped_page_ids[mapped_page_id] += 1
         end
       end
-    end
-
-
-    completed_exercises_count_by_mapped_relevant_page_ids = Hash.new{ |hash, key| hash[key] = 0 }
-    completed_exercises_count_by_page_ids.each do |page_id, completed_exercises_count|
-      relevant_page = all_relevant_pages_by_id[page_id]
-      mapped_relevant_page_id = page_map[relevant_page].id
-
-      completed_exercises_count_by_mapped_relevant_page_ids[mapped_relevant_page_id] += \
-        completed_exercises_count
     end
 
     {
@@ -171,8 +193,9 @@ module CourseGuideRoutine
       page_ids: mapped_relevant_page_ids_with_exercises,
       children: get_chapter_guides(mapped_relevant_pages_by_chapter,
                                    clues_by_book_container_uuids,
-                                   practice_counts_by_mapped_relevant_page_ids,
-                                   completed_exercises_count_by_mapped_relevant_page_ids)
+                                   entity_role_ids_by_mapped_page_ids,
+                                   questions_answered_counts_by_mapped_page_ids,
+                                   practice_counts_by_mapped_page_ids)
     }
   end
 
@@ -189,9 +212,7 @@ module CourseGuideRoutine
   end
 
   def get_period_guide(period, period_roles, history, ecosystems_map, type)
-    { period_id: period.id }.merge(
-      get_role_guides(period_roles, history, ecosystems_map, type)
-    )
+    { period_id: period.id }.merge(get_role_guides(period_roles, history, ecosystems_map, type))
   end
 
 end
