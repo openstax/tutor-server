@@ -1,4 +1,3 @@
-# coding: utf-8
 class PopulatePreviewCourseContent
 
   STUDENT_INFO = [
@@ -96,7 +95,7 @@ class PopulatePreviewCourseContent
       reading_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.number} Reading",
         owner: course,
-        is_demo: true,
+        is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
         settings: { 'page_ids' => page_ids }
@@ -118,7 +117,7 @@ class PopulatePreviewCourseContent
       homework_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.number} Practice",
         owner: course,
-        is_demo: true,
+        is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
         settings: { 'page_ids' => page_ids, 'exercise_ids' => exercise_ids,

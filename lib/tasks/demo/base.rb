@@ -371,7 +371,7 @@ class Demo::Base
     Tasks::Models::TaskPlan.new(
       title: title,
       owner: course,
-      is_demo: true,
+      is_preview: true,
       content_ecosystem_id: ecosystem.id,
       type: 'reading',
       assistant: get_assistant(course: course, task_plan_type: 'reading'),
@@ -393,7 +393,7 @@ class Demo::Base
     Tasks::Models::TaskPlan.new(
       title: title,
       owner: course,
-      is_demo: true,
+      is_preview: true,
       content_ecosystem_id: ecosystem.id,
       type: 'homework',
       assistant: get_assistant(course: course, task_plan_type: 'homework'),

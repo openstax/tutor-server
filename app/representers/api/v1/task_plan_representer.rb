@@ -52,7 +52,7 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
            getter: ->(*) { is_draft? },
            schema_info: { type: 'boolean' }
 
-  property :is_demo,
+  property :is_preview,
            readable: true,
            writeable: false
 

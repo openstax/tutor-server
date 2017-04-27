@@ -26,8 +26,8 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
         .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
         .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(32)
 
-      # all task plans should be marked as "is_demo"
-      Tasks::Models::TaskPlan.where(owner: @course).each { |tp| expect(tp.is_demo).to eq(true) }
+      # all task plans should be marked as "is_preview"
+      Tasks::Models::TaskPlan.where(owner: @course).each { |tp| expect(tp.is_preview).to eq(true) }
 
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)

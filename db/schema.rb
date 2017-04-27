@@ -11,7 +11,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 20170425195217) do
 
   # These are extensions that must be enabled in order to support this database
@@ -639,7 +638,7 @@ ActiveRecord::Schema.define(version: 20170425195217) do
     t.datetime "deleted_at"
     t.datetime "last_published_at"
     t.integer  "cloned_from_id"
-    t.boolean  "is_demo",                   default: false
+    t.boolean  "is_preview",                default: false
   end
 
   add_index "tasks_task_plans", ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id", using: :btree
