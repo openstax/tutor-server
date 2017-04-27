@@ -78,6 +78,15 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       it 'makes an OSA and pushes stats' do
         call_expecting_no_errors
 
+        # The term start date should have been set on the IA during the call; check
+        # adoption level and description just to make sure, but would probably have
+        # exploded if they didn't get set.
+
+        ia.reload
+        expect(ia.spring_start_date).to eq "2017-01-01"
+        expect(ia.adoption_level).not_to be_blank
+        expect(ia.description).not_to be_blank
+
         osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
@@ -86,6 +95,16 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       it 'errors when cannot make an OSA' do
         allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { false }
         call_expecting_errors(/Could not make new OsAncillary/)
+      end
+
+      it 'corrects bad term start date' do
+        ia.spring_start_date = "2017-03-28"
+        ia.save!
+
+        call_expecting_no_errors
+
+        ia.reload
+        expect(ia.spring_start_date).to eq "2017-01-01"
       end
     end
 
@@ -126,6 +145,18 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       end
 
       call_expecting_errors(/Test Error/)
+    end
+
+    it 'it makes a new one if the old one\'s Term is blank' do
+      osa.term = nil
+      osa.save
+
+      call_expecting_no_errors
+
+      osa.reload
+      expect(osa.term).to be_nil
+
+      expect(Salesforce::Remote::OsAncillary.where(individual_adoption_id: osa.individual_adoption_id).count).to eq 2
     end
   end
 
@@ -221,7 +252,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   def create_chemistry_ia
     Salesforce::Remote::IndividualAdoption.new(
       contact_id: sf_contact_a.id,
-      spring_start_date: "2017-01-01",
+      fall_start_date: "2016-08-01",
       book_id: @sfh.book_id("Chemistry"),
       school_id: @sfh.school_id("JP University"),
       adoption_level: "Confirmed Adoption Won",
