@@ -54,6 +54,13 @@ class PushSalesforceCourseStats
       attached_record = courses_to_attached_records[course]
       os_ancillary = attached_record.try(:salesforce_object)
 
+      if attached_record.present? && os_ancillary.nil?
+        # The SF record used to exist but no longer does, so detach the record.
+        log { "OSAncillary #{attached_record.salesforce_id} used to exist for course #{course.id} "
+              "but is no longer in SF.  Tutor will forget about it." }
+        attached_record.destroy!
+      end
+
       # If no OSA, try to make one
 
       if os_ancillary.nil?
@@ -84,28 +91,31 @@ class PushSalesforceCourseStats
                  course: course)
         end
 
-        individual_adoption =
-          candidate_individual_adoptions.first ||
-          begin
-            start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
-            sf_contact = Salesforce::Remote::Contact.where(id: sf_contact_id).first
+        individual_adoption = candidate_individual_adoptions.first
 
-            individual_adoption_options = {
-              contact_id: sf_contact_id,
-              book_id: book_names_to_sf_ids[book_name],
-              school_id: sf_contact.school_id
-            }
+        # already excluded legacy and demo terms
+        start_date_key = "#{course.term}_start_date".to_sym
+        start_date_value = course.starts_at.iso8601.gsub(/T.*/,'')
 
-            # already excluded legacy and demo terms
-            start_date_key = "#{course.term}_start_date".to_sym
+        if individual_adoption.nil?
+          start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
+          sf_contact = Salesforce::Remote::Contact.where(id: sf_contact_id).first
 
-            individual_adoption_options.merge!({
-              start_date_key => course.starts_at.iso8601.gsub(/T.*/,''),
-              adoption_level: "Confirmed Adoption Won",
-              description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
-                           (Salesforce::Models::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
-            })
+          individual_adoption_options = {
+            contact_id: sf_contact_id,
+            book_id: book_names_to_sf_ids[book_name],
+            school_id: sf_contact.school_id
+          }
 
+
+          individual_adoption_options.merge!({
+            start_date_key => start_date_value,
+            adoption_level: "Confirmed Adoption Won",
+            description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
+                         (Salesforce::Models::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+          })
+
+          individual_adoption =
             Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
               if !ia.save
                 error!(message: "Could not make new IndividualAdoption for inputs " \
@@ -114,7 +124,12 @@ class PushSalesforceCourseStats
                        course: course)
               end
             end
+        else
+          # Set the term start date if it is blank or has the wrong value
+          if individual_adoption.send(start_date_key) != start_date_value
+            individual_adoption.update_attributes!({start_date_key => start_date_value})
           end
+        end
 
         # Now see if there's an appropriate OSA on the IA; if not, make one.
         # Attach the OSA to the course so we can just use it next time.

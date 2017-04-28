@@ -78,6 +78,15 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       it 'makes an OSA and pushes stats' do
         call_expecting_no_errors
 
+        # The term start date should have been set on the IA during the call; check
+        # adoption level and description just to make sure, but would probably have
+        # exploded if they didn't get set.
+
+        ia.reload
+        expect(ia.spring_start_date).to eq "2017-01-01"
+        expect(ia.adoption_level).not_to be_blank
+        expect(ia.description).not_to be_blank
+
         osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
@@ -86,6 +95,16 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       it 'errors when cannot make an OSA' do
         allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { false }
         call_expecting_errors(/Could not make new OsAncillary/)
+      end
+
+      it 'corrects bad term start date' do
+        ia.spring_start_date = "2017-03-28"
+        ia.save!
+
+        call_expecting_no_errors
+
+        ia.reload
+        expect(ia.spring_start_date).to eq "2017-01-01"
       end
     end
 
@@ -112,6 +131,17 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       expect_osa_stats(osa)
     end
 
+    it 'recovers if the attached OSA no longer exists' do
+      Salesforce::AttachRecord[record: osa, to: course]
+      osa.destroy
+      call_expecting_no_errors
+      new_osas = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).to_a
+      expect(new_osas.size).to eq 1
+      new_osa = new_osas.first
+      expect(new_osa.id).not_to eq osa.id
+      expect_osa_stats(new_osa)
+    end
+
     it 'handle exceptions around saving final stats' do
       # convenient to have the test here b/c of the setup that exists in this context
       allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:changed?) { raise "kaboom" }
@@ -126,6 +156,18 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       end
 
       call_expecting_errors(/Test Error/)
+    end
+
+    it 'it makes a new one if the old one\'s Term is blank' do
+      osa.term = nil
+      osa.save
+
+      call_expecting_no_errors
+
+      osa.reload
+      expect(osa.term).to be_nil
+
+      expect(Salesforce::Remote::OsAncillary.where(individual_adoption_id: osa.individual_adoption_id).count).to eq 2
     end
   end
 
@@ -221,7 +263,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   def create_chemistry_ia
     Salesforce::Remote::IndividualAdoption.new(
       contact_id: sf_contact_a.id,
-      spring_start_date: "2017-01-01",
+      fall_start_date: "2016-08-01",
       book_id: @sfh.book_id("Chemistry"),
       school_id: @sfh.school_id("JP University"),
       adoption_level: "Confirmed Adoption Won",
@@ -251,28 +293,31 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   end
 
   def call_expecting_no_errors
-    expect_any_instance_of(PushSalesforceCourseStats).not_to receive(:error!)
-    call
+    instance = PushSalesforceCourseStats.new(allow_error_email: true)
+    expect(instance).not_to receive(:error!)
+    instance.call
   end
 
   def call_expecting_errors(error_messages = [anything()])
     error_messages = [error_messages].flatten
     raise "nyi" if error_messages.size != 1
-    expect_any_instance_of(PushSalesforceCourseStats)
+    instance = PushSalesforceCourseStats.new(allow_error_email: true)
+    expect(instance)
       .to receive(:error!)
       .with(hash_including(message: error_messages.first))
       .and_call_original
-    call
+    instance.call
   end
 
   def call_expecting_skips(skip_messages = [anything()])
     skip_messages = [skip_messages].flatten
     raise "nyi" if skip_messages.size != 1
-    expect_any_instance_of(PushSalesforceCourseStats)
+    instance = PushSalesforceCourseStats.new(allow_error_email: true)
+    expect(instance)
       .to receive(:skip!)
       .with(hash_including(message: skip_messages.first))
       .and_call_original
-    call
+    instance.call
   end
 
   def expect_osa_stats(osa)
