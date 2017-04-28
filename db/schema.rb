@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20170504174702) do
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
   add_index "catalog_offerings", ["number"], name: "index_catalog_offerings_on_number", unique: true, using: :btree
-  add_index "catalog_offerings", ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name", unique: true, using: :btree
+  add_index "catalog_offerings", ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name", using: :btree
   add_index "catalog_offerings", ["title"], name: "index_catalog_offerings_on_title", using: :btree
 
   create_table "content_books", force: :cascade do |t|

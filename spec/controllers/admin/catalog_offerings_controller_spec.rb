@@ -37,6 +37,15 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
         expect(response).to redirect_to action: 'index'
       }.to change(Catalog::Models::Offering, :count).by(1)
     end
+
+    it 'can have duplicated sf book names' do
+      FactoryGirl.create(:catalog_offering, salesforce_book_name: "Blah")
+      attributes["salesforce_book_name"] = "Blah"
+      expect{
+        response = post :create, { offering: attributes }
+        expect(response).to redirect_to action: 'index'
+      }.to change(Catalog::Models::Offering, :count).by(1)
+    end
   end
 
   describe 'Editing an offering' do

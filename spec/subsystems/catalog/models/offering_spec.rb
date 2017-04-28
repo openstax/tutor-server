@@ -12,6 +12,4 @@ RSpec.describe Catalog::Models::Offering, type: :model do
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:description) }
   it { is_expected.to validate_presence_of(:ecosystem) }
-
-  it { is_expected.to validate_uniqueness_of(:salesforce_book_name) }
 end
