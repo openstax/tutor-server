@@ -33,5 +33,9 @@ module Salesforce
       @strategy.attached_to_id
     end
 
+    def destroy!
+      @strategy.destroy!
+    end
+
   end
 end

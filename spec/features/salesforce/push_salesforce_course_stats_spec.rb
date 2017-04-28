@@ -131,6 +131,17 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       expect_osa_stats(osa)
     end
 
+    it 'recovers if the attached OSA no longer exists' do
+      Salesforce::AttachRecord[record: osa, to: course]
+      osa.destroy
+      call_expecting_no_errors
+      new_osas = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).to_a
+      expect(new_osas.size).to eq 1
+      new_osa = new_osas.first
+      expect(new_osa.id).not_to eq osa.id
+      expect_osa_stats(new_osa)
+    end
+
     it 'handle exceptions around saving final stats' do
       # convenient to have the test here b/c of the setup that exists in this context
       allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:changed?) { raise "kaboom" }
@@ -282,28 +293,31 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   end
 
   def call_expecting_no_errors
-    expect_any_instance_of(PushSalesforceCourseStats).not_to receive(:error!)
-    call
+    instance = PushSalesforceCourseStats.new(allow_error_email: true)
+    expect(instance).not_to receive(:error!)
+    instance.call
   end
 
   def call_expecting_errors(error_messages = [anything()])
     error_messages = [error_messages].flatten
     raise "nyi" if error_messages.size != 1
-    expect_any_instance_of(PushSalesforceCourseStats)
+    instance = PushSalesforceCourseStats.new(allow_error_email: true)
+    expect(instance)
       .to receive(:error!)
       .with(hash_including(message: error_messages.first))
       .and_call_original
-    call
+    instance.call
   end
 
   def call_expecting_skips(skip_messages = [anything()])
     skip_messages = [skip_messages].flatten
     raise "nyi" if skip_messages.size != 1
-    expect_any_instance_of(PushSalesforceCourseStats)
+    instance = PushSalesforceCourseStats.new(allow_error_email: true)
+    expect(instance)
       .to receive(:skip!)
       .with(hash_including(message: skip_messages.first))
       .and_call_original
-    call
+    instance.call
   end
 
   def expect_osa_stats(osa)

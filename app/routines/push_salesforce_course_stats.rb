@@ -54,6 +54,13 @@ class PushSalesforceCourseStats
       attached_record = courses_to_attached_records[course]
       os_ancillary = attached_record.try(:salesforce_object)
 
+      if attached_record.present? && os_ancillary.nil?
+        # The SF record used to exist but no longer does, so detach the record.
+        log { "OSAncillary #{attached_record.salesforce_id} used to exist for course #{course.id} "
+              "but is no longer in SF.  Tutor will forget about it." }
+        attached_record.destroy!
+      end
+
       # If no OSA, try to make one
 
       if os_ancillary.nil?
