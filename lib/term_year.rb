@@ -5,19 +5,19 @@ TermYear = Struct.new(:term, :year) do
   TERM_START_DATES = {
     legacy: ->(year) { LEGACY_TERM_STARTS_AT     },
     demo:   ->(year) { DateTime.new(year - 1, 7) }, # July 1st of the year before given year
+    winter: ->(year) { DateTime.new(year       ) }, # January 1st of given year
     spring: ->(year) { DateTime.new(year       ) }, # January 1st of given year
     summer: ->(year) { DateTime.new(year    , 5) }, # May 1st of given year
     fall:   ->(year) { DateTime.new(year    , 7) }, # July 1st of given year
-    winter: ->(year) { DateTime.new(year    , 11)}  # Dec 1st of given year
   }
 
   TERM_END_DATES = {
     legacy: ->(year) { LEGACY_TERM_ENDS_AT       },
     demo:   ->(year) { DateTime.new(year + 1, 7) }, # July 1st of the year after given year
+    winter: ->(year) { DateTime.new(year    , 5) }, # May  1st of given year
     spring: ->(year) { DateTime.new(year    , 7) }, # July 1st of given year
     summer: ->(year) { DateTime.new(year    , 9) }, # September 1st of given year
     fall:   ->(year) { DateTime.new(year + 1   ) }, # January 1st of the year after given year
-    winter: ->(year) { DateTime.new(year + 1, 3) }  # March 1st of the year after given year
   }
 
   VISIBLE_TERMS = [:spring, :summer, :fall, :winter]
