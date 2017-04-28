@@ -1,8 +1,6 @@
 module Admin
   class SalesforceController < BaseController
 
-    include Manager::SalesforceImportCourses
-
     def show
       @user = Salesforce::Models::User.first
     end
