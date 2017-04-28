@@ -428,12 +428,12 @@ module OpenStax::Biglearn::Api
       if perform_later
         OpenStax::Biglearn::Api::Job.perform_later method.to_s, verified_request, retry_proc
       else
+        should_retry = false
         for ii in 0..inline_max_retries do
           response = client.send(method, verified_request)
 
-          return verify_result(
-            result: block_given? ? yield(request, response) : response, result_class: result_class
-          ) if retry_proc.nil? || !retry_proc.call(response)
+          should_retry = !retry_proc.nil? && retry_proc.call(response)
+          break unless should_retry
 
           sleep(inline_sleep_interval)
         end
@@ -442,7 +442,11 @@ module OpenStax::Biglearn::Api
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request: #{request}" +
           " - Attempts: #{ii + 1} - Sleep Interval: #{sleep_interval} second(s)"
-        end
+        end if should_retry
+
+        return verify_result(
+          result: block_given? ? yield(request, response) : response, result_class: result_class
+        ) if retry_proc.nil? || !retry_proc.call(response)
       end
     end
 
