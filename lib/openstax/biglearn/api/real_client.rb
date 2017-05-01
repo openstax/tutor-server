@@ -1,9 +1,10 @@
+# Requests that get this far biglearn-api
+# or else they will introduce gaps in the sequence_number
+# If aborting a request in here is required in the future,
+# we will need to introduce a NO-OP CourseEvent in biglearn-api
 class OpenStax::Biglearn::Api::RealClient
 
   HEADER_OPTIONS = { headers: { 'Content-Type' => 'application/json' } }.freeze
-
-  MAX_CONTAINERS_PER_COURSE = 100
-  MAX_STUDENTS_PER_COURSE = 1000
 
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
@@ -229,26 +230,6 @@ class OpenStax::Biglearn::Api::RealClient
         end
       end
 
-      num_course_containers = course_containers.size
-      if num_course_containers > MAX_CONTAINERS_PER_COURSE
-        Rails.logger.error do
-          "Course #{course.name} has #{num_course_containers} containers," +
-          " which is more than the Biglearn API limit of #{MAX_CONTAINERS_PER_COURSE} containers"
-        end
-
-        next
-      end
-
-      num_students = students.size
-      if num_students > MAX_STUDENTS_PER_COURSE
-        Rails.logger.error do
-          "Course #{course.name} has #{num_students} students," +
-          " which is more than the Biglearn API limit of #{MAX_STUDENTS_PER_COURSE} students"
-        end
-
-        next
-      end
-
       {
         request_uuid: request.fetch(:request_uuid),
         course_uuid: course.uuid,
@@ -348,14 +329,8 @@ class OpenStax::Biglearn::Api::RealClient
 
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-
-      # Skip tasks with no ecosystem
       ecosystem = task.ecosystem
-      next if ecosystem.nil?
-
-      # Skip tasks not assigned to a student
       student = task.taskings.first.try!(:role).try!(:student)
-      next if student.nil?
 
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|

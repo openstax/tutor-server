@@ -9,6 +9,9 @@ require_relative './api/real_client'
 
 module OpenStax::Biglearn::Api
 
+  MAX_CONTAINERS_PER_COURSE = 100
+  MAX_STUDENTS_PER_COURSE = 1000
+
   OPTION_KEYS = [ :perform_later, :retry_proc, :inline_max_retries, :inline_sleep_interval ]
 
   extend Configurable
@@ -145,7 +148,38 @@ module OpenStax::Biglearn::Api
     def update_rosters(*requests)
       requests, options = extract_options requests, true
 
-      with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
+      select_proc = ->(request) do
+        course = request.fetch(:course)
+
+        num_course_containers = 0
+        num_students = 0
+        course.periods_with_deleted.each do |period|
+          num_course_containers += 1
+          num_students += period.latest_enrollments.length
+        end
+
+        if num_course_containers > MAX_CONTAINERS_PER_COURSE
+          Rails.logger.error do
+            "Course #{course.name} has #{num_course_containers} containers," +
+            " which is more than the Biglearn API limit of #{MAX_CONTAINERS_PER_COURSE} containers"
+          end
+
+          false
+        elsif num_students > MAX_STUDENTS_PER_COURSE
+          Rails.logger.error do
+            "Course #{course.name} has #{num_students} students," +
+            " which is more than the Biglearn API limit of #{MAX_STUDENTS_PER_COURSE} students"
+          end
+
+          false
+        else
+          true
+        end
+      end
+
+      with_unique_gapless_course_sequence_numbers(
+        requests: requests, select_proc: select_proc
+      ) do |requests|
         bulk_api_request options.merge(
           method: :update_rosters,
           requests: requests,
@@ -203,7 +237,19 @@ module OpenStax::Biglearn::Api
     def create_update_assignments(*requests)
       requests, options = extract_options requests, true
 
-      with_unique_gapless_course_sequence_numbers(requests: requests) do |requests|
+      select_proc = ->(request) do
+        task = request.fetch(:task)
+
+        # Skip tasks with no ecosystem or not assigned to any student
+        ecosystem = task.ecosystem
+        student = task.taskings.first.try!(:role).try!(:student)
+
+        ecosystem.present? && student.present?
+      end
+
+      with_unique_gapless_course_sequence_numbers(
+        requests: requests, select_proc: select_proc
+      ) do |requests|
         bulk_api_request options.merge(
           method: :create_update_assignments,
           requests: requests,
@@ -504,21 +550,6 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    def background_bulk_api_request(method:, requests:, keys:, optional_keys: [],
-                                    result_class: Hash, uuid_key: :request_uuid, retry_proc: nil)
-      requests_map = {}
-      [requests].flatten.map do |request|
-        requests_map[SecureRandom.uuid] = verify_and_slice_request method: method,
-                                                                   request: request,
-                                                                   keys: keys,
-                                                                   optional_keys: optional_keys
-      end
-
-      requests_array = requests_map.map { |uuid, request| request.merge uuid_key => uuid }
-
-      OpenStax::Biglearn::Api::Job.perform_later method.to_s, requests_array, retry_proc
-    end
-
     def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_num_exercises:)
       number_returned = exercise_uuids.length
       exercises = ecosystem.exercises.where(uuid: exercise_uuids)
@@ -546,16 +577,24 @@ module OpenStax::Biglearn::Api
     # We attempt to make these wrappers as fast as possible
     # because it prevents any Biglearn calls that share the Course/Ecosystem's sequence_number
     # for the remaining duration of the transaction
-    def with_unique_gapless_course_sequence_numbers(requests:, create: false, &block)
+    def with_unique_gapless_course_sequence_numbers(requests:, create: false,
+                                                    select_proc: nil, &block)
       table_name = CourseProfile::Models::Course.table_name
 
       req = [requests].flatten
 
+      req = req.select(&select_proc) unless select_proc.nil?
+
+      # Any requests that get this far MUST be sent to biglearn-api
+      # or else they will introduce gaps in the sequence_number
+      # If aborting a request after this point is required in the future,
+      # we will need to introduce a NO-OP CourseEvent in biglearn-api
+
+      course_ids = req.map{ |request| request[:course].id }.compact
       course_id_counts = {}
-      req.map{ |request| request[:course].id }.compact.each do |course_id|
+      course_ids.each do |course_id|
         course_id_counts[course_id] = (course_id_counts[course_id] || 0) + 1
       end
-      course_ids = course_id_counts.keys
 
       cases = course_id_counts.map do |course_id, count|
         "WHEN #{course_id} THEN #{count}"
@@ -589,7 +628,6 @@ module OpenStax::Biglearn::Api
             course.sequence_number = sequence_number + 1
             next request.merge(sequence_number: sequence_number)
           end
-
 
           sequence_number = sequence_numbers_by_course_id[course.id]
           # Requests for courses that have not been created
@@ -663,7 +701,6 @@ module OpenStax::Biglearn::Api
             ecosystem.sequence_number = sequence_number + 1
             next request.merge(sequence_number: sequence_number)
           end
-
 
           sequence_number = sequence_numbers_by_ecosystem_id[ecosystem.id]
           # Requests for courses that have not been created
