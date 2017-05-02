@@ -1,28 +1,15 @@
 module OpenStax::Biglearn::Locks
-  def with_course_locks(course_ids)
-    CourseProfile::Models::Course.transaction do
+  def with_biglearn_locks(model_class:, model_ids:)
+    model_class.transaction do
       # We use advisory locks to prevent rollbacks
       # The advisory locks actually last until the end of the transaction,
       # because we use transaction-based locks
-      # We use sort here to prevent deadlocks when locking the courses
-      [course_ids].flatten.compact.sort.each do |course_id|
-        lock_name = "biglearn_course_#{course_id}"
-        CourseProfile::Models::Course.with_advisory_lock(lock_name)
-      end
+      table_name = model_class.table_name
 
-      yield
-    end
-  end
-
-  def with_ecosystem_locks(ecosystem_ids)
-    Content::Models::Ecosystem.transaction do
-      # We use advisory locks to prevent rollbacks
-      # The advisory locks actually last until the end of the transaction,
-      # because we use transaction-based locks
-      # We use sort here to prevent deadlocks when locking the ecosystems
-      [ecosystem_ids].flatten.compact.sort.each do |ecosystem_id|
-        lock_name = "biglearn_ecosystem_#{ecosystem_id}"
-        Content::Models::Ecosystem.with_advisory_lock(lock_name)
+      # We use sort here to prevent deadlocks when locking the models
+      [model_ids].flatten.compact.sort.each do |model_id|
+        lock_name = "biglearn_#{table_name}_#{model_id}"
+        model_class.with_advisory_lock(lock_name)
       end
 
       yield

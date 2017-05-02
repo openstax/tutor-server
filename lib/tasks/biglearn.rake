@@ -8,8 +8,9 @@ namespace :biglearn do
       ecosystem_ids = Content::Models::Ecosystem.pluck(:id)
       course_ids = CourseProfile::Models::Course.pluck(:id)
 
-      task.with_ecosystem_locks(ecosystem_ids) do
-        task.with_course_locks(course_ids) do
+      task.with_biglearn_locks(model_class: Content::Models::Ecosystem, model_ids: ecosystem_ids) do
+        task.with_biglearn_locks(model_class: CourseProfile::Models::Course,
+                                 model_ids: course_ids) do
           Content::Models::Ecosystem.where(id: ecosystem_ids).update_all(sequence_number: 0)
           CourseProfile::Models::Course.where(id: course_ids).update_all(sequence_number: 0)
           puts 'Ecosystem and Course sequence numbers reset.'
