@@ -123,6 +123,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task.feedback_at).to be_nil
 
+        # Preview tasks don't receive Biglearn PEs yet
+        next unless task.taskings.first.role.try!(:student).present?
+
         task_steps = task.task_steps
 
         expect(task_steps.count).to eq(task_step_gold_data.count)
@@ -180,6 +183,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task.feedback_at).to be_nil
 
+        # Preview tasks don't receive Biglearn PEs yet
+        next unless task.taskings.first.role.try!(:student).present?
+
         task_steps = task.task_steps
 
         expect(task_steps.count).to eq 1
@@ -199,7 +205,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(tasks.map{|task| task.taskings.first.role}).to match_array expected_roles
+      expect(tasks.map{ |task| task.taskings.first.role }).to match_array expected_roles
     end
   end
 
@@ -291,6 +297,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be_nil
+
+        # Preview tasks don't receive Biglearn PEs yet
+        next unless task.taskings.first.role.try!(:student).present?
 
         task_steps = task.task_steps
 
@@ -407,6 +416,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be_nil
 
+        # Preview tasks don't receive Biglearn PEs yet
+        next unless task.taskings.first.role.try!(:student).present?
+
         task_steps = task.task_steps
 
         expect(task_steps.count).to eq task_step_gold_data.count
@@ -426,13 +438,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
   end
 
   context "for a fake cnx page" do
-    let(:reading_content)     do
+    let(:reading_content) do
       "Read about Newton's Flaming Laser Sword on
        <a href=\"https://en.wikipedia.org/wiki/Mike_Alder#Newton.27s_flaming_laser_sword\">
          Wikipedia
        </a>"
     end
-    let(:video_content)       do
+    let(:video_content) do
       '<div id="fs-video">
          <iframe src="https://www.youtube.com/embed/C00l_Vid/"></iframe>
        </div>'
@@ -443,21 +455,21 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
        </div>'
     end
 
-    let(:page)            do
+    let(:page) do
       FactoryGirl.create :content_page, title: "Newton's Flaming Laser Sword"
     end
     let(:book)            { page.book }
     let(:ecosystem_model) { book.ecosystem }
     let(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.wrap) }
 
-    let(:cnxmod_tag)                  do
+    let(:cnxmod_tag) do
       FactoryGirl.create(:content_tag, value: "context-cnxmod:#{page.uuid}",
                                        tag_type: :cnxmod,
                                        ecosystem: ecosystem_model).tap do |tag|
         page.tags << tag
       end
     end
-    let!(:video_exercise_id_tag)       do
+    let!(:video_exercise_id_tag) do
       FactoryGirl.create :content_tag, value: 'k12phys-ch99-ex01',
                                        tag_type: :id,
                                        ecosystem: ecosystem_model

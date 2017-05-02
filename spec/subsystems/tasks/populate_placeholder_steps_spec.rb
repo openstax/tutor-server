@@ -7,7 +7,9 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     @task_plan = FactoryGirl.create(:tasked_task_plan, number_of_students: 1)
     @course = @task_plan.owner
     @page = Content::Models::Page.where(id: @task_plan.settings['page_ids']).take
-    @task = @task_plan.tasks.take
+    @task = @task_plan.tasks.find do |task|
+      task.taskings.any? { |tasking| tasking.role.student.present? }
+    end
     @role = @task.taskings.take.role
 
     (@task.personalized_task_steps + @task.spaced_practice_task_steps).each do |task_step|
