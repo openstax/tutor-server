@@ -351,8 +351,12 @@ class OpenStax::Biglearn::Api::RealClient
         # Biglearn decides
         goal_num_tutor_assigned_spes = nil
         goal_num_tutor_assigned_pes = nil
+      elsif task.practice?
+        # Fixed
+        goal_num_tutor_assigned_spes = 0
+        goal_num_tutor_assigned_pes = 5
       else
-        # Tutor decides
+        # Assistant code decides
         sp_steps = task.task_steps.spaced_practice_group
         spe_steps = sp_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_spes = spe_steps.size
