@@ -38,7 +38,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
     before(:all) do
       DatabaseCleaner.start
 
-      task_plan = FactoryGirl.create :tasked_task_plan
+      task_plan = FactoryGirl.create :tasked_task_plan, number_of_students: 1
       @ecosystem = task_plan.ecosystem
       @page = @ecosystem.pages.first
       @exercises = @page.exercises
