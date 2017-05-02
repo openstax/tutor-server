@@ -1,8 +1,10 @@
 FactoryGirl.define do
   factory :tasks_tasking, class: '::Tasks::Models::Tasking' do
-    association :role, factory: :entity_role
     association :task, factory: :tasks_task
 
-    period { role.student.try(:period) }
+    after(:build) do |tasking|
+      tasking.role ||= build(:course_membership_student).role
+      tasking.period ||= tasking.role.student.try!(:period)
+    end
   end
 end

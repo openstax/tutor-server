@@ -435,7 +435,7 @@ module OpenStax::Biglearn::Api
 
     def verify_and_slice_request(method:, request:, keys:, optional_keys: [])
       required_keys = [keys].flatten
-      missing_keys = required_keys.reject{ |key| request.has_key? key }
+      missing_keys = required_keys.reject { |key| request.has_key? key }
 
       raise(
         OpenStax::Biglearn::Api::MalformedRequest,
@@ -463,6 +463,10 @@ module OpenStax::Biglearn::Api
       result
     end
 
+    # Any inline (perform_later: false) requests that require a sequence_number must either:
+    # 1. Happen after the sequence_number increment has been committed to the DB
+    #    in a background job that retries OR
+    # 2. Happen right before the sequence_number increment is committed to the DB
     def single_api_request(method:, request:, keys:, optional_keys: [], result_class: Hash,
                            retry_proc: nil, perform_later: false,
                            inline_max_attempts: 30, inline_sleep_interval: 1.second)
@@ -582,6 +586,8 @@ module OpenStax::Biglearn::Api
       req = [requests].flatten
 
       req = req.select(&select_proc) unless select_proc.nil?
+
+      return requests.is_a?(Array) ? [] : {} if req.empty?
 
       # Any requests that get this far MUST be sent to biglearn-api
       # or else they will introduce gaps in the sequence_number
