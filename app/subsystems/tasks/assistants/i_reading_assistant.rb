@@ -44,12 +44,16 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     # Get the number of personalized steps for each page of each task
     course = task_plan.owner
     core_page_ids = task_plan.settings['page_ids'].map(&:to_i)
-    create_requests = tasks.map do |task|
+    # TODO: PEs for preview assignments (teacher_students)
+    student_tasks = tasks.select do |task|
+      task.taskings.any? { |tasking| tasking.role.try!(:student).present? }
+    end
+    create_requests = student_tasks.map do |task|
       { course: course, task: task, core_page_ids: core_page_ids }
     end
     OpenStax::Biglearn::Api.create_update_assignments create_requests, perform_later: false
 
-    ex_requests = tasks.map { |task| { task: task } }
+    ex_requests = student_tasks.map { |task| { task: task } }
     pes_by_request = OpenStax::Biglearn::Api.fetch_assignment_pes(
       ex_requests, retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
     )

@@ -142,7 +142,7 @@ class OpenStax::Biglearn::Api::FakeClient
     task_to_pe_ids_map.each do |task, pe_ids|
       task_key = "tasks/#{task.uuid}/pe_uuids"
 
-      pe_uuids = pe_ids.map{ |pe_id| pe_id_to_pe_uuid_map[pe_id] }
+      pe_uuids = pe_ids.map { |pe_id| pe_id_to_pe_uuid_map[pe_id] }
 
       store.write task_key, pe_uuids.to_json
     end
