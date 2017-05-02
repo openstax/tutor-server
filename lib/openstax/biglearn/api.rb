@@ -465,7 +465,7 @@ module OpenStax::Biglearn::Api
 
     def single_api_request(method:, request:, keys:, optional_keys: [], result_class: Hash,
                            retry_proc: nil, perform_later: false,
-                           inline_max_retries: 10, inline_sleep_interval: 1.second)
+                           inline_max_attempts: 30, inline_sleep_interval: 1.second)
       verified_request = verify_and_slice_request method: method,
                                                   request: request,
                                                   keys: keys,
@@ -475,7 +475,7 @@ module OpenStax::Biglearn::Api
         OpenStax::Biglearn::Api::Job.perform_later method.to_s, verified_request, retry_proc
       else
         should_retry = false
-        for ii in 0..inline_max_retries do
+        for ii in 1..inline_max_attempts do
           response = client.send(method, verified_request)
 
           should_retry = !retry_proc.nil? && retry_proc.call(response)
@@ -487,18 +487,18 @@ module OpenStax::Biglearn::Api
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request: #{request}" +
-          " - Attempts: #{ii + 1} - Sleep Interval: #{sleep_interval} second(s)"
+          " - Attempts: #{ii} - Sleep Interval: #{sleep_interval} second(s)"
         end if should_retry
 
-        return verify_result(
+        verify_result(
           result: block_given? ? yield(request, response) : response, result_class: result_class
-        ) if retry_proc.nil? || !retry_proc.call(response)
+        )
       end
     end
 
     def bulk_api_request(method:, requests:, keys:, optional_keys: [], result_class: Hash,
                          uuid_key: :request_uuid, retry_proc: nil, perform_later: false,
-                         inline_max_retries: 10, inline_sleep_interval: 1.second)
+                         inline_max_attempts: 30, inline_sleep_interval: 1.second)
       requests_map = {}
       [requests].flatten.each do |request|
         uuid = request.fetch(uuid_key, SecureRandom.uuid)
@@ -519,19 +519,17 @@ module OpenStax::Biglearn::Api
         OpenStax::Biglearn::Api::Job.perform_later method.to_s, requests_array, retry_proc
       else
         responses = {}
-        for ii in 0..inline_max_retries do
+        for ii in 1..inline_max_attempts do
           client.send(method, requests_array).each do |response|
             uuid = response[uuid_key]
             original_request = requests_map[uuid]
 
-            if retry_proc.nil? || !retry_proc.call(response)
-              responses[original_request] = verify_result(
-                result: block_given? ? yield(original_request, response) : response,
-                result_class: result_class
-              )
+            responses[original_request] = verify_result(
+              result: block_given? ? yield(original_request, response) : response,
+              result_class: result_class
+            )
 
-              requests_with_uuids_map.delete uuid
-            end
+            requests_with_uuids_map.delete uuid if retry_proc.nil? || !retry_proc.call(response)
           end
 
           break if requests_with_uuids_map.empty?
@@ -542,7 +540,7 @@ module OpenStax::Biglearn::Api
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request(s): #{requests_with_uuids_map.values.inspect}" +
-          " - Attempts: #{ii + 1} - Sleep Interval: #{inline_sleep_interval} second(s)"
+          " - Attempts: #{ii} - Sleep Interval: #{inline_sleep_interval} second(s)"
         end unless requests_with_uuids_map.empty?
 
         # If given a Hash instead of an Array, return the response directly
