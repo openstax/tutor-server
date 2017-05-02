@@ -31,7 +31,11 @@ class CreateCourse
 
     # If the given time_zone already has an associated course,
     # make a copy to avoid linking the 2 courses' time_zones to the same record
-    time_zone = time_zone.dup if time_zone.present? && time_zone.course.try!(:persisted?)
+    if time_zone.is_a?(TimeZone)
+      time_zone.dup if time_zone.present? && time_zone.course.try!(:persisted?)
+    else
+      time_zone = TimeZone.find_by_name(time_zone)
+    end
 
     run(:create_course,
         name: name,
