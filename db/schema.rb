@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20170518182025) do
     t.boolean  "is_available",                         null: false
     t.string   "title",                                null: false
     t.integer  "number",                               null: false
+    t.boolean  "does_cost",            default: false, null: false
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
@@ -292,6 +293,10 @@ ActiveRecord::Schema.define(version: 20170518182025) do
     t.datetime "updated_at",                                             null: false
     t.string   "student_identifier"
     t.uuid     "uuid",                     default: "gen_random_uuid()"
+    t.datetime "first_paid_at"
+    t.boolean  "is_paid",                  default: false,               null: false
+    t.boolean  "is_comped",                default: false,               null: false
+    t.datetime "payment_due_at"
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
@@ -337,6 +342,7 @@ ActiveRecord::Schema.define(version: 20170518182025) do
     t.string   "biglearn_assignment_pes_algorithm_name",                                     null: false
     t.string   "biglearn_practice_worst_areas_algorithm_name",                               null: false
     t.boolean  "is_test",                                      default: false,               null: false
+    t.boolean  "does_cost",                   default: false, null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
   end
@@ -422,6 +428,24 @@ ActiveRecord::Schema.define(version: 20170518182025) do
   end
 
   add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
+
+  create_table "lms_nonces", force: :cascade do |t|
+    t.string   "value",                limit: 128, null: false
+    t.integer  "lms_tool_consumer_id",             null: false
+    t.datetime "created_at"
+  end
+
+  add_index "lms_nonces", ["lms_tool_consumer_id", "value"], name: "nonce_consumer_value", unique: true, using: :btree
+
+  create_table "lms_tool_consumers", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.string   "key",        null: false
+    t.string   "secret",     null: false
+    t.string   "owner_id",   null: false
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -958,6 +982,7 @@ ActiveRecord::Schema.define(version: 20170518182025) do
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "lms_nonces", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify

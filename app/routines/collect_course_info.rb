@@ -55,6 +55,7 @@ class CollectCourseInfo
         is_concept_coach: course.is_concept_coach,
         is_college: course.is_college,
         is_preview: course.is_preview,
+        does_cost: course.does_cost,
         school_name: course.school_name,
         salesforce_book_name: offering.try!(:salesforce_book_name),
         appearance_code: course.appearance_code.blank? ? offering.try!(:appearance_code) :

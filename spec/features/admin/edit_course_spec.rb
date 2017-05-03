@@ -27,9 +27,9 @@ RSpec.feature 'Admin editing a course' do
     fill_in 'Name', with: 'Changed777888'
     click_button 'edit-save'
 
-    expect(current_path).to eq(admin_courses_path)
+    expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
-    expect(page).to have_text('Changed777888')
+    expect(find_field('Name').value).to eq 'Changed777888'
   end
 
 
@@ -43,9 +43,11 @@ RSpec.feature 'Admin editing a course' do
     # capybara fails (only on Travis) with the Ambiguous match, found 2 elements matching button "Save"
     click_button 'Save', match: :first
 
-    expect(current_path).to eq(admin_courses_path)
+    expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
-    expect(page).to have_text('Term: Jan 01, 2016 - Feb 01, 2016')
+    starts_at = DateTime.parse("2016-01-01")
+    expect(@course.reload.starts_at).to eq starts_at
+    # expect(page).to have_text('Term: Jan 01, 2016 - Feb 01, 2016')
   end
 
 
@@ -57,7 +59,7 @@ RSpec.feature 'Admin editing a course' do
     check 'course_is_college'
     click_button 'edit-save'
 
-    expect(current_path).to eq(admin_courses_path)
+    expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
     expect(CourseProfile::Models::Course.first.is_college).to be_truthy
   end
@@ -70,9 +72,22 @@ RSpec.feature 'Admin editing a course' do
     check 'course_is_test'
     click_button 'edit-save'
 
-    expect(current_path).to eq(admin_courses_path)
+    expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
     expect(CourseProfile::Models::Course.first.is_test).to be_truthy
+  end
+
+  scenario 'Changing "Does Cost"' do
+    visit admin_courses_path
+    click_link 'Edit'
+
+    expect(page).to have_content('Edit Course')
+    check 'course_does_cost'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(CourseProfile::Models::Course.first.does_cost).to be_truthy
   end
 
   scenario 'Assigning a school' do
@@ -83,7 +98,7 @@ RSpec.feature 'Admin editing a course' do
     select 'High high hi school', from: 'School'
     click_button 'edit-save'
 
-    expect(current_path).to eq(admin_courses_path)
+    expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_text('High high hi school')
   end
 

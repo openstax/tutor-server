@@ -17,4 +17,5 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment, allow_nil: true
 
+
 end

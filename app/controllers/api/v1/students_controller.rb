@@ -1,6 +1,8 @@
 class Api::V1::StudentsController < Api::V1::ApiController
 
   before_filter :get_student, only: [:update, :destroy, :undrop]
+  before_filter :get_course_student, only: [:update_self]
+  before_filter :error_if_student_and_needs_to_pay, only: [:update_self, :update, :destroy, :undrop]
 
   resource_description do
     api_versions "v1"
@@ -18,7 +20,6 @@ class Api::V1::StudentsController < Api::V1::ApiController
     #{json_schema(Api::V1::StudentSelfUpdateRepresenter, include: :writeable)}
   EOS
   def update_self
-    @student = get_course_student
     consume!(@student, represent_with: Api::V1::StudentSelfUpdateRepresenter)
 
     if @student.save
@@ -109,7 +110,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
                                    course: CourseProfile::Models::Course.find(params[:course_id]),
                                    allowed_role_type: :student)
     raise(SecurityTransgression, result.errors.map(&:message).to_sentence) if result.errors.any?
-    result.outputs.role.student
+    @student = result.outputs.role.student
   end
 
 end

@@ -30,6 +30,12 @@
     <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.title : 'not set' %>
   </div>
   <div>
+    <b>Available for teachers to select:</b> <%= tf_to_yn(offering.is_available) %>
+  </div>
+  <div>
+    <b>Costs students:</b> <%= tf_to_yn(offering.does_cost) %>
+  </div>
+  <div>
     <b>PDF URL:</b> <%= link_to offering.pdf_url, offering.pdf_url %>
   </div>
   <div>

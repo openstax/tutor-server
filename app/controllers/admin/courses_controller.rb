@@ -91,7 +91,7 @@ class Admin::CoursesController < Admin::BaseController
                 params: course_params,
                 success: ->(*) {
                   flash[:notice] = 'The course has been updated.'
-                  redirect_to admin_courses_path
+                  redirect_to edit_admin_course_path(params[:id])
                 },
                 failure: ->(*) {
                   flash.now[:error] = @handler_result.errors.full_messages
@@ -214,6 +214,7 @@ class Admin::CoursesController < Admin::BaseController
         :is_concept_coach,
         :is_college,
         :is_test,
+        :does_cost,
         :catalog_offering_id,
         :appearance_code,
         :school_district_school_id,

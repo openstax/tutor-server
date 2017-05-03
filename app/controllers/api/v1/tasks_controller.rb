@@ -1,6 +1,7 @@
 class Api::V1::TasksController < Api::V1::ApiController
 
   before_action :get_task
+  before_filter :error_if_student_and_needs_to_pay, only: [:show, :destroy]
   before_action :populate_placeholders, only: :show
 
   resource_description do

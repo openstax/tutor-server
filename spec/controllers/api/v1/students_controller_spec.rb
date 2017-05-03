@@ -155,7 +155,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
             expect(response).to have_http_status(:ok)
             new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
-            expect(response.body_as_hash).to eq({
+            expect(response.body_as_hash).to include({
               id: student.id.to_s,
               first_name: student.first_name,
               last_name: student.last_name,

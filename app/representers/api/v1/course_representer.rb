@@ -168,6 +168,15 @@ module Api::V1
              readable: false,
              writeable: true
 
+    property :does_cost,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                required: true,
+                type: 'boolean',
+                description: "True iff this course requires students to pay"
+             }
+
     collection :periods,
                extend: Api::V1::PeriodRepresenter,
                readable: true,

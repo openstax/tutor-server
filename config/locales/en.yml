@@ -78,6 +78,9 @@ en:
       course_appearance_codes:
         name: 'Valid Course Appearance Codes'
         help_block: 'As a Ruby Hash'
+      student_grace_period_days:
+        name: 'Student payment grace period'
+        help_block: 'In days; changes to this value only apply to students who enroll after the change'
       pardot_toa_redirect:
         name: 'TutorOnboardingA Redirect URL'
         help_block: 'Where an arrival to /pardot/toa is redirected'

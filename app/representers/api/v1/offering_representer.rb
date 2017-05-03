@@ -46,6 +46,15 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :does_cost,
+           writeable: false,
+           readable: true,
+           schema_info: {
+              required: true,
+              type: 'boolean',
+              description: "If true, courses generated from this offering will require students to pay"
+           }
+
   collection :active_term_years,
              class: TermYear,
              extend: Api::V1::TermYearRepresenter,
