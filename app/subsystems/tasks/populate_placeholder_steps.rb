@@ -9,6 +9,8 @@ class Tasks::PopulatePlaceholderSteps
   def exec(task:, force: false)
     outputs.task = task.lock!
 
+    return if task.pes_are_assigned && task.spes_are_assigned
+
     # If the task is a reading, we give Biglearn control of the number of slots
     # Placeholders are merely used to determine the size of the bar the student sees
     biglearn_controls_slots = task.reading?
@@ -33,16 +35,20 @@ class Tasks::PopulatePlaceholderSteps
       task_type = Tasks::Models::Task.task_types[task.task_type]
       due_at = task.due_at
       current_time = Time.current
-      if force || task.core_task_steps_completed? ||
-                  same_role_taskings.joins(:task)
-                                    .where(task: { task_type: task_type })
-                                    .preload(task: :time_zone)
-                                    .map(&:task)
-                                    .none? do |task|
-                    task.due_at < due_at &&
-                    task.past_open?(current_time: current_time) &&
-                    !task.past_due?(current_time: current_time)
-                  end
+      if force ||
+         task.core_task_steps_completed? ||
+         due_at.nil? ||
+         same_role_taskings.joins(:task)
+                           .where(task: { task_type: task_type })
+                           .preload(task: :time_zone)
+                           .map(&:task)
+                           .none? do |task|
+           task.due_at.present? &&
+           task.due_at < due_at &&
+           task.past_open?(current_time: current_time) &&
+           !task.past_due?(current_time: current_time)
+         end
+
         # Populate SPEs
         populate_placeholder_steps task: task,
                                    group_type: :spaced_practice_group,
@@ -72,11 +78,13 @@ class Tasks::PopulatePlaceholderSteps
       # Biglearn controls how many PEs/SPEs (reading tasks)
       chosen_exercises = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
       chosen_exercise_models = chosen_exercises.map(&:to_model)
+
       # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
       task_steps_by_page_id = task.task_steps.group_by(&:content_page_id)
       grouped_chosen_exercises = group_type == :personalized_group ?
                                    chosen_exercise_models.group_by(&:content_page_id) :
                                    { nil => chosen_exercise_models }
+
       # Keep track of the number of steps we added to the task
       num_added_steps = 0
 

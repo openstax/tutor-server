@@ -85,7 +85,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   def populate_placeholders_if_needed
     return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
 
-    Tasks::PopulatePlaceholders[task: @task_step.task]
+    Tasks::PopulatePlaceholderSteps[task: @task_step.task]
 
     @tasked.reload
   end

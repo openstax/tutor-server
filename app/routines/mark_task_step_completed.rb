@@ -19,7 +19,7 @@ class MarkTaskStepCompleted
     OpenStax::Biglearn::Api.record_responses(course: course, tasked_exercise: task_step.tasked) \
       if task_step.exercise? && !task.taskings.first.try!(:role).try!(:student).try!(:course).nil?
 
-    run(:populate_placeholders, task: task) if task.core_task_steps_completed?
+    run(:populate_placeholders, task: task)
   end
 
 end
