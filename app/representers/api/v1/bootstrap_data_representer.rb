@@ -55,15 +55,10 @@ module Api::V1
              readable: true,
              writeable: false
 
-    property :courses,
-             extend: Api::V1::CoursesRepresenter,
-             readable: true,
-             writeable: false,
-             getter: ->(*) {
-               CollectCourseInfo[
-                 user: self,
-                 with: [:roles, :periods, :ecosystem, :ecosystem_book, :students]
-               ]
-             }
+    collection :courses,
+               extend: Api::V1::CourseRepresenter,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { CollectCourseInfo[user: self] }
   end
 end

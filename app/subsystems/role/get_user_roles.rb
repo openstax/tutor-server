@@ -1,21 +1,18 @@
 class Role::GetUserRoles
   lev_routine express_output: :roles
 
-  include VerifyAndGetIdArray
-
   protected
 
-  def exec(users_or_user_ids, role_types = :any)
-    user_ids = verify_and_get_id_array(users_or_user_ids, User::User)
+  def exec(users, role_types = :any)
+    user_ids = [users].flatten.map(&:id)
 
-    role_users = Role::Models::RoleUser.preload(:role).where(user_profile_id: user_ids)
-    roles = role_users.map(&:role)
+    roles = Entity::Role.joins(:role_user).where(role_user: { user_profile_id: user_ids })
 
     role_types = [role_types].flatten.map(&:to_s)
 
-    roles = roles.select{ |role| role_types.include?(role.role_type) } \
-      unless role_types.any?{ |role_type| role_type == 'any' }
+    roles = roles.where(role_type: Entity::Role.role_types.values_at(*role_types)) \
+      unless role_types.any? { |role_type| role_type == 'any' }
 
-    outputs[:roles] = roles
+    outputs.roles = roles
   end
 end

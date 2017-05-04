@@ -6,7 +6,7 @@ class CourseMembership::GetPeriodStudentRoles
   def exec(periods:, include_inactive_students: false)
     periods = [periods].flatten.uniq
 
-    outputs[:roles] = periods.flat_map do |period|
+    outputs.roles = periods.flat_map do |period|
       period.student_roles(include_inactive_students: include_inactive_students)
     end.uniq
   end

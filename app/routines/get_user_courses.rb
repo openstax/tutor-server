@@ -12,8 +12,8 @@ class GetUserCourses
 
   protected
 
-  def exec(user:, types: :any)
+  def exec(user:, types: :any, preload: nil)
     run(:get_user_roles, user)
-    run(:get_role_courses, roles: outputs.roles, types: types)
+    run(:get_role_courses, roles: outputs.roles, types: types, preload: preload)
   end
 end

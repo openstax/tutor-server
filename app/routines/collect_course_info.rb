@@ -1,32 +1,44 @@
 class CollectCourseInfo
   lev_routine express_output: :courses
 
-  uses_routine UserIsCourseTeacher, as: :is_teacher
-  uses_routine GetTeacherNames, as: :get_teacher_names
-  uses_routine GetUserCourses, as: :get_courses
-  uses_routine GetUserCourseRoles, as: :get_course_roles
-  uses_routine CourseMembership::GetCoursePeriods, as: :get_course_periods
-  uses_routine GetCourseEcosystem, as: :get_course_ecosystem
+  uses_routine GetUserCourses, as: :get_user_courses
+  uses_routine GetUserCourseRoles, as: :get_user_course_roles
 
   protected
 
-  def exec(courses: nil, user: nil, with: [])
-    courses = collect_courses(courses: courses, user: user)
-    outputs[:courses] = collect_course_info(courses, user, [with].flatten)
+  def exec(courses: nil, user: nil)
+    outputs.courses = get_course_infos(courses: courses, user: user)
   end
 
-  def collect_courses(courses: nil, user: nil)
-    courses = [courses].flatten unless courses.nil?
-    courses ||= run(:get_courses, user: user).outputs.courses unless user.nil?
-    courses || CourseProfile::Models::Course.all
+  def get_courses(courses:, user:)
+    return [courses].flatten unless courses.nil?
+
+    preloads = [ :time_zone, :offering, :periods, { ecosystems: :books } ]
+    return run(:get_user_courses, user: user, preload: preloads).outputs.courses unless user.nil?
+
+    CourseProfile::Models::Course.preload(*preloads)
   end
 
-  def collect_course_info(courses, user, with)
-    courses = CourseProfile::Models::Course.where(id: courses.map(&:id)).preload(:offering)
+  def get_roles(courses:, user:)
+    run(
+      :get_user_course_roles, courses: courses, user: user
+    ).outputs.roles.group_by(&:course_profile_course_id)
+  end
+
+  def get_course_infos(courses:, user:)
+    courses = get_courses(courses: courses, user: user)
+    roles_by_course_id = get_roles_by_course_id(courses: courses, user: user)
+
     courses.map do |course|
       offering = course.offering
+      roles = roles_by_course_id.fetch(course.id, [])
+      students = get_students(course: course, roles: roles)
+      periods = get_periods(course: course, roles: roles, students: students)
 
-      info = Hashie::Mash.new(
+      #       This routine the entire Course object + some extra attributes
+      # TODO: Figure out a better way to handle this.
+      #       Maybe create a CourseInfo class that contains the course model + the extra attributes?
+      Hashie::Mash.new(
         id: course.id,
         name: course.name,
         term: course.term,
@@ -44,85 +56,30 @@ class CollectCourseInfo
         is_college: course.is_college,
         is_preview: course.is_preview,
         school_name: course.school_name,
-        salesforce_book_name: offering.try(:salesforce_book_name),
-        appearance_code: course.appearance_code.blank? ? \
-                           offering.try(:appearance_code) : course.appearance_code,
-        cloned_from_id: course.cloned_from_id
+        salesforce_book_name: offering.try!(:salesforce_book_name),
+        appearance_code: course.appearance_code.blank? ? offering.try!(:appearance_code) :
+                                                         course.appearance_code,
+        cloned_from_id: course.cloned_from_id,
+        ecosystems: course.ecosystems,
+        periods: periods,
+        students: students,
+        roles: roles
       )
-
-      collect_extended_course_info(info, course, user, with)
     end
   end
 
-  def collect_extended_course_info(info, course, user, with)
-    with.each do |option|
-      case option
-      when :teacher_names
-        set_teacher_names(info, course)
-      when :roles
-        set_roles(info, course, user)
-      when :periods
-        set_periods(info, course, user)
-      when :ecosystem
-        set_ecosystem(info, course)
-      when :ecosystem_book
-        set_ecosystem_book(info, course)
-      when :students
-        set_students(info, course, user)
-      end
-    end
-
-    info
+  def get_roles_by_course_id(courses:, user:)
+    run(:get_user_course_roles, courses: courses, user: user,
+                                preload: { student: { latest_enrollment: :period } })
+      .outputs.roles.group_by(&:course_profile_course_id)
   end
 
-  def set_teacher_names(info, course)
-    info.teacher_names = run(:get_teacher_names, course.id).outputs.teacher_names
+  def get_students(course:, roles:)
+    roles.map(&:student).compact
   end
 
-  def set_roles(info, course, user)
-    roles = get_course_roles(course: course, user: user)
-
-    info.roles = roles.map do |role|
-      {
-        id: role.id,
-        type: role.role_type,
-        latest_enrollment_at: role.latest_enrollment_at,
-        created_at: role.created_at
-      }
-    end
+  def get_periods(course:, roles:, students:)
+    roles.any?(&:teacher?) ? course.periods :
+                             students.map { |student| student.latest_enrollment.period }
   end
-
-  def set_periods(info, course, user)
-    roles = get_course_roles(course: course, user: user)
-
-    info.periods = run(:get_course_periods, course: course, roles: roles,
-                                            include_archived: true).outputs.periods
-  end
-
-  def set_ecosystem(info, course)
-    info.ecosystem = get_course_ecosystem(course: course)
-  end
-
-  def set_ecosystem_book(info, course)
-    ecosystem = get_course_ecosystem(course: course)
-
-    info.ecosystem_book = ecosystem.try(:books).try(:first)
-  end
-
-  def set_students(info, course, user)
-    roles = get_course_roles(course: course, user: user)
-
-    info.students = roles.map(&:student).compact
-  end
-
-  def get_course_roles(course:, user:)
-    @roles ||= {}
-    @roles[course] ||= run(:get_course_roles, course: course, user: user).outputs.roles
-  end
-
-  def get_course_ecosystem(course:)
-    @ecosystem ||= {}
-    @ecosystem[course] ||= run(:get_course_ecosystem, course: course).outputs.ecosystem
-  end
-
 end

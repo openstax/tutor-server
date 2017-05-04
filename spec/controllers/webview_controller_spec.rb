@@ -52,7 +52,7 @@ RSpec.describe WebviewController, type: :controller do
         doc = Nokogiri::HTML(response.body)
         data = ::JSON.parse(doc.css('body script#tutor-boostrap-data').inner_text)
         expect(data).to include({
-          'courses'=> CollectCourseInfo[user: registered_user, with: [:roles, :periods]].as_json,
+          'courses'=> CollectCourseInfo[user: registered_user].as_json,
           'user' => Api::V1::UserRepresenter.new(registered_user).as_json,
           'flash' => {alert: "Alarm!"}.as_json
         })

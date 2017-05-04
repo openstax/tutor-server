@@ -4,12 +4,12 @@ class Role::GetUsersForRoles
   protected
 
   def exec(roles)
-    role_ids = [roles].flatten.compact.map(&:id)
-    role_users = Role::Models::RoleUser.includes(:profile).where{entity_role_id.in role_ids}
-    outputs[:users] = role_users.map do |role_user|
-      profile = role_user.profile
-      strategy = ::User::Strategies::Direct::User.new(profile)
-      ::User::User.new(strategy: strategy)
-    end.uniq
+    role_ids = [roles].flatten.map(&:id)
+
+    users = User::Models::Profile.joins(:role_users)
+                                 .where(role_users: { entity_role_id: role_ids })
+                                 .distinct
+
+    outputs.users = users.map { |user| ::User::User.new(strategy: user.wrap) }
   end
 end
