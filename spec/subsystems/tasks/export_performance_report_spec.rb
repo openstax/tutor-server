@@ -14,7 +14,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
 
     @teacher = FactoryGirl.create(:user)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
-    @role = GetUserCourseRoles[course: @course, user: @teacher].first
+    @role = GetUserCourseRoles[courses: @course, user: @teacher].first
   end
 
   after(:each) do

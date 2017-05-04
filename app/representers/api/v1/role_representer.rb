@@ -10,7 +10,8 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :type,
+    property :role_type,
+             as: :type,
              type: String,
              readable: true,
              writeable: false,

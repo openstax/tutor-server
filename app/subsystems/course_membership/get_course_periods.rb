@@ -22,7 +22,7 @@ module CourseMembership
       is_teacher = run(:is_teacher, course: course, roles: roles).outputs.is_course_teacher
       return all_periods if is_teacher
 
-      role_periods = roles.map{ |role| role.student.try(:period) }
+      role_periods = roles.map { |role| role.student.try!(:period) }
       all_periods & role_periods
     end
   end

@@ -64,9 +64,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         api_get :index, user_1_token
 
-        course_infos = CollectCourseInfo[
-          user: user_1, with: [:roles, :periods, :ecosystem, :students]
-        ]
+        course_infos = CollectCourseInfo[user: user_1]
 
         expect(response.body_as_hash).to match_array(
           Api::V1::CoursesRepresenter.new(course_infos).as_json.map(&:deep_symbolize_keys)
@@ -347,10 +345,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'renames the course' do
         api_patch :update, user_1_token, parameters: { id: course.id },
                                          raw_post_data: { name: 'Renamed' }.to_json
-        expect(course.reload.name).to eq 'Renamed'
-        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:name]).to eq 'Renamed'
         expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
+        expect(course.reload.name).to eq 'Renamed'
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
       end
 
       it 'updates the time_zone' do
@@ -376,10 +374,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         api_patch :update, user_1_token, parameters: { id: course.id },
                                          raw_post_data: { name: course_name,
                                                           time_zone: 'Edinburgh' }.to_json
-        expect(course.reload.name).to eq course_name
-        expect(course.time_zone.name).to eq 'Edinburgh'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:time_zone]).to eq 'Edinburgh'
+        expect(course.reload.name).to eq course_name
+        expect(course.time_zone.name).to eq 'Edinburgh'
 
         edinburgh_tz = course.time_zone.to_tz
 
@@ -400,12 +398,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         course_name = course.name
         api_patch :update, user_1_token, parameters: { id: course.id },
                                          raw_post_data: { default_open_time: '01:02' }.to_json
-        expect(course.reload.name).to eq course_name
-        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
-        expect(course.reload.default_open_time).to eq '01:02'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_open_time]).to eq '01:02'
+        expect(course.reload.name).to eq course_name
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(course.default_open_time).to eq '01:02'
       end
 
       it 'freaks if the default open time is in a bad format' do

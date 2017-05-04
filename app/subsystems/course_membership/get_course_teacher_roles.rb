@@ -3,6 +3,6 @@ class CourseMembership::GetCourseTeacherRoles
 
   protected
   def exec(course:)
-    outputs[:roles] = course.teachers.map(&:role)
+    outputs.roles = course.teachers.map(&:role)
   end
 end

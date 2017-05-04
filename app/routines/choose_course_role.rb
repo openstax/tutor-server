@@ -17,31 +17,37 @@
 class ChooseCourseRole
   lev_routine express_output: :role
 
-  uses_routine GetUserCourseRoles,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_roles
+  uses_routine GetUserCourseRoles, as: :get_user_course_roles
+  uses_routine UserIsCourseTeacher, as: :user_is_course_teacher
+  uses_routine CourseMembership::GetCourseRoles, as: :get_course_roles
 
   protected
 
-  def exec(user:, course:, allowed_role_type: :any, role_id: nil)
+  def exec(user:, course:, role_id: nil, allowed_role_type: :any)
     # Don't include the user's own inactive student roles
-    run(:get_roles, course: course, user: user, types: allowed_role_type,
-                    include_inactive_students: false)
+    roles = run(:get_user_course_roles, courses: course, user: user, types: allowed_role_type,
+                                        include_inactive_students: false).outputs.roles
     integer_role_id = Integer(role_id) rescue nil
 
     if integer_role_id
-      extra_roles = get_course_student_roles(course: course, user: user)
-      outputs.roles = (outputs.roles + extra_roles).select{ |r| r.id == integer_role_id }.uniq
+      if run(:user_is_course_teacher, user: user, course: course).outputs.user_is_course_teacher
+        # Teacher is allowed to impersonate students
+        roles += run(:get_course_roles, course: course, types: :student,
+                                        include_inactive_students: true).outputs.roles
+      end
+
+      roles = roles.select { |r| r.id == integer_role_id }.uniq
+
       fatal_error(
         code:    :invalid_role,
         message: "The user does not have the specified role in the course"
-      ) if outputs.roles.none?
+      ) if roles.empty?
     end
 
     case allowed_role_type
     when :any
-      unless find_unique_role(course: course, type: :teacher)
-        unless find_unique_role(course: course, type: :student)
+      unless find_unique_role(roles: roles, type: :teacher)
+        unless find_unique_role(roles: roles, type: :student)
           fatal_error(
             code:    :invalid_user,
             message: "The user does not have the any role in the course"
@@ -49,14 +55,14 @@ class ChooseCourseRole
         end
       end
     when :teacher
-      unless find_unique_role(course: course, type: :teacher)
+      unless find_unique_role(roles: roles, type: :teacher)
         fatal_error(
           code:    :invalid_user,
           message: "The user does not have any teacher roles in the course"
         )
       end
     when :student
-      unless find_unique_role(course: course, type: :student)
+      unless find_unique_role(roles: roles, type: :student)
         fatal_error(
           code:    :invalid_user,
           message: "The user does not have any student roles in the course"
@@ -65,45 +71,34 @@ class ChooseCourseRole
     else
       fatal_error(
         code: :invalid_argument,
-        message: ":allowed_role_type must be one of {:any, :teacher, :student} (not #{allowed_role_type})"
+        message: ":allowed_role_type must be one of {:any, :teacher, :student}" +
+                 " (was #{allowed_role_type.inspect} instead)"
       )
     end
   end
 
-  private
+  protected
 
-  def find_unique_role(course:, type:)
-    matching_roles = outputs.roles.select do |role|
+  def find_unique_role(roles:, type:)
+    matching_roles = roles.select do |role|
       case type
       when :teacher
-        CourseMembership::IsCourseTeacher[course: course, roles: role]
+        role.teacher?
       when :student
-        CourseMembership::IsCourseStudent[course: course, roles: role, include_dropped: true]
+        role.student?
       end
     end
 
     if matching_roles.count > 1
       fatal_error(
         code:    :multiple_roles,
-        message: "The user has multiple #{type} roles in the course (specifiy role to narrow selection)"
+        message: "The user has multiple #{type} roles in the course" +
+                 " (specify role to narrow selection)"
       )
     end
 
-    outputs[:role] = matching_roles.first
+    outputs.role = matching_roles.first
 
-    outputs[:role].present?
-  end
-
-  def get_course_student_roles(course:, user:)
-    # Return student roles if user is a teacher
-    user_roles = Role::GetUserRoles.call(user).outputs[:roles]
-    is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: user_roles]
-    if is_teacher
-      # Teachers can impersonate any student, even inactive ones
-      CourseMembership::GetCourseRoles.call(course: course, types: :student,
-                                            include_inactive_students: true).outputs[:roles]
-    else
-      []
-    end
+    outputs.role.present?
   end
 end

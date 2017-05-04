@@ -25,7 +25,7 @@ class SetupPerformanceReportData
       AddUserAsPeriodStudent[period: period_2, user: student, student_identifier: "S#{index + 3}"]
     end
 
-    roles = students.map{ |student| GetUserCourseRoles[course: course, user: student].first }
+    roles = students.map { |student| GetUserCourseRoles[courses: course, user: student].first }
 
     # Exclude introduction pages b/c they don't have LOs
     pages = ecosystem.books.first.chapters.flat_map do |ch|
