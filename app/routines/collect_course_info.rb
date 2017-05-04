@@ -70,7 +70,8 @@ class CollectCourseInfo
 
   def get_roles_by_course_id(courses:, user:)
     run(:get_user_course_roles, courses: courses, user: user,
-                                preload: { student: { latest_enrollment: :period } })
+                                preload: { student: { latest_enrollment: :period },
+                                           profile: :account })
       .outputs.roles.group_by(&:course_profile_course_id)
   end
 
