@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170412213150) do
+ActiveRecord::Schema.define(version: 20170425195217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pgcrypto"
   enable_extension "hstore"
 
   create_table "catalog_offerings", force: :cascade do |t|
@@ -620,23 +621,24 @@ ActiveRecord::Schema.define(version: 20170412213150) do
   add_index "tasks_performance_report_exports", ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course", using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
-    t.integer  "tasks_assistant_id",                       null: false
-    t.integer  "owner_id",                                 null: false
-    t.string   "owner_type",                               null: false
-    t.string   "type",                                     null: false
-    t.string   "title",                                    null: false
+    t.integer  "tasks_assistant_id",                        null: false
+    t.integer  "owner_id",                                  null: false
+    t.string   "owner_type",                                null: false
+    t.string   "type",                                      null: false
+    t.string   "title",                                     null: false
     t.text     "description"
-    t.text     "settings",                                 null: false
+    t.text     "settings",                                  null: false
     t.datetime "publish_last_requested_at"
     t.datetime "first_published_at"
     t.string   "publish_job_uuid"
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
-    t.integer  "content_ecosystem_id",                     null: false
-    t.boolean  "is_feedback_immediate",     default: true, null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.integer  "content_ecosystem_id",                      null: false
+    t.boolean  "is_feedback_immediate",     default: true,  null: false
     t.datetime "deleted_at"
     t.datetime "last_published_at"
     t.integer  "cloned_from_id"
+    t.boolean  "is_preview",                default: false
   end
 
   add_index "tasks_task_plans", ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id", using: :btree
