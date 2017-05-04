@@ -15,7 +15,8 @@ RSpec.describe CreateCourse, type: :routine do
       time_zone: 'Indiana (East)',
       is_preview: is_preview,
       is_college: is_college,
-      catalog_offering: catalog_offering
+      catalog_offering: catalog_offering,
+      estimated_student_count: 42
     )
     expect(result.errors).to be_empty
 
@@ -23,6 +24,7 @@ RSpec.describe CreateCourse, type: :routine do
     expect(course.time_zone.name).to eq 'Indiana (East)'
     expect(course).to be_a CourseProfile::Models::Course
     expect(course.course_assistants.count).to eq 4
+    expect(course.estimated_student_count).to eq 42
   end
 
   it 'adds a unique registration code for the teacher' do
