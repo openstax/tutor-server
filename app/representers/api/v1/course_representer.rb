@@ -169,6 +169,11 @@ module Api::V1
              readable: true,
              writeable: false
 
+    property :estimated_student_count,
+             type: Integer,
+             readable: false,
+             writeable: true
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
