@@ -153,7 +153,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     Creates a copy of the course with the given ID
     All JSON attributes in the schema are optional
     They will default to the given course's attributes if ommitted
-    #{json_schema(Api::V1::CourseRepresenter, include: :writeable)}
+    #{json_schema(Api::V1::CourseCloneRepresenter, include: :writeable)}
   EOS
   def clone
     OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, @course)
