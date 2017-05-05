@@ -331,6 +331,7 @@ class OpenStax::Biglearn::Api::RealClient
       task = request.fetch(:task)
       ecosystem = task.ecosystem
       student = task.taskings.first.try!(:role).try!(:student)
+      task_type = task.practice? ? 'practice' : task.task_type
 
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
@@ -373,7 +374,7 @@ class OpenStax::Biglearn::Api::RealClient
         is_deleted: task.deleted?,
         ecosystem_uuid: ecosystem.tutor_uuid,
         student_uuid: student.uuid,
-        assignment_type: task.task_type,
+        assignment_type: task_type,
         assigned_book_container_uuids: assigned_book_container_uuids,
         spes_are_assigned: task.spes_are_assigned,
         pes_are_assigned: task.pes_are_assigned,
