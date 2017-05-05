@@ -244,7 +244,6 @@ Rails.application.routes.draw do
 
     resource :salesforce, only: [:show], controller: :salesforce do
       delete :destroy_user
-      post :import_courses
       put :update_salesforce
     end
 
@@ -293,7 +292,6 @@ Rails.application.routes.draw do
     resources :targeted_contracts, only: [:index]
 
     resource :salesforce, only: [:show], controller: :salesforce do
-      post :import_courses
     end
 
     resources :jobs, only: [:index, :show]

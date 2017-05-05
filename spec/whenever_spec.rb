@@ -9,10 +9,9 @@ describe 'whenever schedule' do
     before(:each) { expect(OpenStax::RescueFrom).not_to receive(:perform_rescue) }
 
     it 'makes sure `runner` statements exist' do
-      assert_equal 3, schedule.jobs[:runner].count
+      assert_equal 2, schedule.jobs[:runner].count
 
       expect_any_instance_of(PushSalesforceCourseStats).to receive(:call)
-      expect_any_instance_of(ImportSalesforceCourses).to receive(:call)
       expect_any_instance_of(GetSalesforceBookNames).to receive(:call)
 
       # Executes the actual ruby statement to make sure all constants and methods exist:

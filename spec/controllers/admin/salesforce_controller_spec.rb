@@ -37,25 +37,6 @@ RSpec.describe Admin::SalesforceController, type: :controller do
     end
   end
 
-  describe 'import_courses' do
-    it 'receives the call and formats the flash' do
-      expect(ImportSalesforceCourses)
-        .to receive(:call)
-        .with(include_real_salesforce_data: false)
-
-      allow(ImportSalesforceCourses)
-        .to receive(:call)
-        .with(include_real_salesforce_data: false)
-        .and_return(
-          OpenStruct.new(num_failures: 1, num_successes: 2)
-        )
-
-      post :import_courses, use_real_data: false
-
-      expect(flash[:notice].gsub(/[^0-9]/, '')).to eq "321"
-    end
-  end
-
   def omniauth_env_hash
     {
       "omniauth.auth" => Hashie::Mash.new({
