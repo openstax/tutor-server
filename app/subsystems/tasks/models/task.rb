@@ -156,20 +156,53 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts
-    steps = persisted? ? task_steps.reload.preload(:tasked).to_a : task_steps.to_a
+    steps = persisted? ? task_steps.reload.to_a : task_steps.to_a
 
-    update_steps_count(task_steps: steps)
-    update_completed_steps_count(task_steps: steps)
-    update_completed_on_time_steps_count(task_steps: steps)
-    update_core_steps_count(task_steps: steps)
-    update_completed_core_steps_count(task_steps: steps)
-    update_exercise_steps_count(task_steps: steps)
-    update_completed_exercise_steps_count(task_steps: steps)
-    update_completed_on_time_exercise_steps_count(task_steps: steps)
-    update_correct_exercise_steps_count(task_steps: steps)
-    update_correct_on_time_exercise_steps_count(task_steps: steps)
-    update_placeholder_steps_count(task_steps: steps)
-    update_placeholder_exercise_steps_count(task_steps: steps)
+    completed_steps = steps.select(&:completed?)
+    core_steps = steps.select(&:core_group?)
+    completed_core_steps = completed_steps & core_steps
+    exercise_steps = steps.select(&:exercise?)
+    completed_exercise_steps = completed_steps & exercise_steps
+
+    correct_exercise_steps = if persisted?
+      tasked_exercise_ids = exercise_steps.map(&:tasked_id)
+      correct_tasked_exercise_ids = Tasks::Models::TaskedExercise
+                                      .correct
+                                      .where(id: tasked_exercise_ids)
+                                      .pluck(:id)
+      exercise_steps.select { |step| correct_tasked_exercise_ids.include? step.tasked_id }
+    else
+      exercise_steps.select { |step| step.tasked.is_correct? }
+    end
+
+    placeholder_steps = steps.select(&:placeholder?)
+
+    self.steps_count = steps.count
+    self.completed_steps_count = completed_steps.count
+    self.completed_on_time_steps_count = completed_steps.count { |step| step_on_time?(step) }
+    self.core_steps_count = core_steps.count
+    self.completed_core_steps_count = completed_core_steps.count
+    self.exercise_steps_count = exercise_steps.count
+    self.completed_exercise_steps_count = completed_exercise_steps.count
+    self.completed_on_time_exercise_steps_count = completed_exercise_steps.count do |step|
+      step_on_time?(step)
+    end
+    self.correct_exercise_steps_count = correct_exercise_steps.count
+    self.correct_on_time_exercise_steps_count = correct_exercise_steps.count do |step|
+      step_on_time?(step)
+    end
+    self.placeholder_steps_count = placeholder_steps.count
+
+    self.placeholder_exercise_steps_count = if persisted?
+      tasked_placeholder_ids = placeholder_steps.map(&:tasked_id)
+      exercise_placeholder_ids = Tasks::Models::TaskedPlaceholder
+                                   .exercise_type
+                                   .where(id: tasked_placeholder_ids)
+                                   .pluck(:id)
+      placeholder_steps.count { |step| exercise_placeholder_ids.include? step.tasked_id }
+    else
+      placeholder_steps.count { |step| step.tasked.exercise_type? }
+    end
 
     self
   end
@@ -262,71 +295,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     false
   end
 
-  def update_steps_count(task_steps:)
-    self.steps_count = task_steps.count
-  end
-
-  def update_completed_steps_count(task_steps:)
-    self.completed_steps_count = task_steps.count(&:completed?)
-  end
-
-  def update_completed_on_time_steps_count(task_steps:)
-    self.completed_on_time_steps_count = task_steps.count do |step|
-      step.completed? && step_on_time?(step)
-    end
-  end
-
-  def update_core_steps_count(task_steps:)
-    self.core_steps_count = task_steps.count(&:core_group?)
-  end
-
-  def update_completed_core_steps_count(task_steps:)
-    self.completed_core_steps_count = task_steps.count do |step|
-      step.core_group? && step.completed?
-    end
-  end
-
-  def update_exercise_steps_count(task_steps:)
-    self.exercise_steps_count = task_steps.count(&:exercise?)
-  end
-
-  def update_completed_exercise_steps_count(task_steps:)
-    self.completed_exercise_steps_count = task_steps.count do |step|
-      step.exercise? && step.completed?
-    end
-  end
-
-  def update_completed_on_time_exercise_steps_count(task_steps:)
-    self.completed_on_time_exercise_steps_count = task_steps.count do |step|
-      step.exercise? && step.completed? && step_on_time?(step)
-    end
-  end
-
-  def update_correct_exercise_steps_count(task_steps:)
-    self.correct_exercise_steps_count = task_steps.count do |step|
-      step.exercise? && step.tasked.is_correct?
-    end
-  end
-
-  def update_correct_on_time_exercise_steps_count(task_steps:)
-    self.correct_on_time_exercise_steps_count = task_steps.count do |step|
-      step.exercise? && step.completed? &&
-      step.tasked.is_correct? && step_on_time?(step)
-    end
-  end
-
-  def update_placeholder_steps_count(task_steps:)
-    self.placeholder_steps_count = task_steps.count(&:placeholder?)
-  end
-
-  def update_placeholder_exercise_steps_count(task_steps:)
-    self.placeholder_exercise_steps_count = task_steps.count do |step|
-      step.placeholder? && step.tasked.exercise_type?
-    end
-  end
-
   def step_on_time?(step)
-    due_at.nil? || step.last_completed_at < due_at
+    due_at.nil? || (step.last_completed_at.present? && step.last_completed_at < due_at)
   end
 
 end

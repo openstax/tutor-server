@@ -16,6 +16,13 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback
 
+  scope :correct, -> do
+    where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
+  end
+  scope :incorrect, -> do
+    where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
+  end
+
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
            :content_hash_for_students, :tags, :los, :aplos, to: :parser
