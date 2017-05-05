@@ -14,7 +14,7 @@ class CloneCourse
 
   def exec(course:, teacher_user:, copy_question_library:,
            name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
-           time_zone: nil, default_open_time: nil, default_due_time: nil)
+           time_zone: nil, default_open_time: nil, default_due_time: nil, estimated_student_count: nil)
 
     attrs = {
       name: name || course.name,
@@ -30,6 +30,7 @@ class CloneCourse
       default_open_time: default_open_time || course.default_open_time,
       default_due_time: default_due_time || course.default_due_time,
       cloned_from: course,
+      estimated_student_count: estimated_student_count,
       is_preview: false
     }
 
