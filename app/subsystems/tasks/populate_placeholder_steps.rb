@@ -94,6 +94,7 @@ class Tasks::PopulatePlaceholderSteps
         placeholder_steps = page_task_steps.select do |task_step|
           task_step.placeholder? && task_step.group_type == group_type.to_s
         end
+        ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
         last_step = page_task_steps.last
         max_page_step_number = last_step.try!(:number) || 0
@@ -141,14 +142,14 @@ class Tasks::PopulatePlaceholderSteps
           end
         end
       end
-
-      task.task_steps.reset if task.persisted? && num_added_steps > 0
     else
       # Tutor controls how many PEs/SPEs (homework tasks)
       placeholder_steps = task.task_steps.select do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
       return if placeholder_steps.empty?
+
+      ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
       # max_num_exercises ensures we don't get more exercises than the number of placeholders
       chosen_exercises = OpenStax::Biglearn::Api.public_send(
@@ -169,6 +170,8 @@ class Tasks::PopulatePlaceholderSteps
         run(:task_exercise, task_step: task_step, exercise: exercise)
       end
     end
+
+    task.task_steps.reset if task.persisted?
   end
 
 end
