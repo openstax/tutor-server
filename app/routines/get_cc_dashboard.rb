@@ -53,7 +53,25 @@ class GetCcDashboard
 
     period_id_cc_tasks_map = cc_tasks.group_by(&:course_membership_period_id)
 
+    # seems like this should also work?
+    # cc_tasks = Tasks::Models::ConceptCoachTask
+    #   .joins('join cc_page_stats cc_page_stats on tasks_concept_coach_tasks.id = ANY(cc_page_stats.task_ids)')
+    #   .joins(task: { taskings: :period })
+    #   .select([
+    #             :id,
+    #             :tasks_task_id,
+    #             :content_page_id,
+    #             { cc_page_stats: [ :course_period_id ] },
+    #             { task: [ :steps_count, :completed_steps_count ] },
+    #             { task: { taskings: :entity_role_id } },
+    #           ])
+    #   .preload(page: :chapter)
+    #   .to_a
+
+    # period_id_cc_tasks_map = cc_tasks.group_by(&:course_period_id)
+
     ecosystems_map = GetCourseEcosystemsMap[course: course]
+
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
@@ -148,22 +166,11 @@ class GetCcDashboard
   end
 
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks, ecosystems_map)
-    all_task_ids = cc_tasks.map(&:tasks_task_id)
 
-    all_pages_with_stats = Content::Models::Page
-      .joins(exercises: { tasked_exercises: :task_step })
-      .where(exercises: { tasked_exercises: { task_step: { tasks_task_id: all_task_ids } } })
-      .group([:id, { exercises: { tasked_exercises: { task_step: :group_type } } }])
-      .select(
-        <<-SQL.strip_heredoc
-          content_pages.id,
-          tasks_task_steps.group_type,
-          COUNT(tasks_task_steps.first_completed_at) AS completed_count,
-          COUNT(tasks_task_steps.first_completed_at) FILTER (
-            WHERE tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id
-          ) AS correct_count
-        SQL
-      )
+    all_pages_with_stats = Content::Models::Page.joins(
+      'join cc_page_stats on cc_page_stats.content_page_id = content_pages.id'
+    ).where(['cc_page_stats.course_period_id = ?', period.id]).select('*')
+
     all_page_wrappers = all_pages_with_stats.map { |page| Content::Page.new(strategy: page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: all_page_wrappers)
 
