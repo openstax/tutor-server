@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
+RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc,
+                                                                  biglearn_fetch_api_method,
+                                                                  changes_sequence_number_on_error|
 
   let(:student)       { FactoryGirl.create :course_membership_student }
   let(:course)        { student.course }
@@ -50,6 +52,18 @@ RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
     expect(practice_task.task_steps.size).to eq 5
     practice_task.task_steps.each{ |task_step| expect(task_step.exercise?).to eq true }
     expect(practice_task.feedback_available?).to be_truthy
+  end
+
+  it 'errors when there are not enough local exercises for the widget' do
+    expect(OpenStax::Biglearn::Api).to receive(biglearn_fetch_api_method).and_return([])
+    expect { result }
+      .to  not_change { Tasks::Models::Task.count }
+      .and not_change { Tasks::Models::Tasking.count }
+      .and not_change { Tasks::Models::TaskStep.count }
+      .and not_change { Tasks::Models::TaskedExercise.count }
+      .and(changes_sequence_number_on_error ? change { course.sequence_number }.by(1) :
+                                              not_change { course.sequence_number })
+    expect(result.errors.first.code).to eq :no_exercises
   end
 
 end

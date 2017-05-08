@@ -589,11 +589,6 @@ module OpenStax::Biglearn::Api
 
       return requests.is_a?(Array) ? [] : {} if req.empty?
 
-      # Any requests that get this far MUST be sent to biglearn-api
-      # or else they will introduce gaps in the sequence_number
-      # If aborting a request after this point is required in the future,
-      # we will need to introduce NO-OP Events in biglearn-api
-
       model_ids = req.map { |request| request[request_model_key].id }.compact
       model_id_counts = {}
       model_ids.each { |model_id| model_id_counts[model_id] = (model_id_counts[model_id] || 0) + 1 }
@@ -602,23 +597,28 @@ module OpenStax::Biglearn::Api
         "WHEN #{model_id} THEN #{count}"
       end
       increments = "CASE \"id\" #{cases.join(' ')} END"
+      sequence_number_sql = <<-SQL.strip_heredoc
+        UPDATE #{table_name}
+        SET "sequence_number" = "sequence_number" + #{increments}
+        WHERE "#{table_name}"."id" IN (#{model_ids.join(', ')})
+        #{'  AND "sequence_number" > 0' unless create}
+        RETURNING "id", "sequence_number"
+      SQL
 
       with_biglearn_locks(model_class: model_class, model_ids: model_ids) do
         # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
         # Requests for records that have not been created
         # on the Biglearn side (sequence_number == 0) are suppressed
         sequence_numbers_by_model_id = {}
-        model_class.connection.execute(
-          "UPDATE #{table_name}" +
-          " SET \"sequence_number\" = \"sequence_number\" + #{increments}" +
-          " WHERE \"#{table_name}\".\"id\" IN (#{model_ids.join(', ')})" +
-          " #{'AND "sequence_number" > 0' unless create}" +
-          " RETURNING \"id\", \"sequence_number\""
-        ).each do |hash|
+        model_class.connection.execute(sequence_number_sql).each do |hash|
           id = hash['id'].to_i
           sequence_numbers_by_model_id[id] = hash['sequence_number'].to_i - model_id_counts[id]
         end if model_ids.any?
 
+        # From this point on, if the current transaction commits, those requests MUST be sent to
+        # biglearn-api or else they will cause gaps in the sequence_number
+        # If aborting a request after this point without rolling back the transaction is required
+        # in the future, we will need to introduce NO-OP Events in biglearn-api
         requests_with_sequence_numbers = req.map do |request|
           model = request[request_model_key].to_model
 
@@ -651,11 +651,16 @@ module OpenStax::Biglearn::Api
 
         # If an array was given, call the block with an array
         # If another type of argument was given, extract the block argument from the array
-        modified_requests = requests.is_a?(Array) ? requests_with_sequence_numbers :
-                                                    requests_with_sequence_numbers.first
+        modified_requests = requests.is_a?(Hash) ? requests_with_sequence_numbers.first :
+                                                   requests_with_sequence_numbers
 
         # nil can happen if the request got suppressed
-        block.call(modified_requests) unless modified_requests.nil?
+        return {} if modified_requests.nil?
+        return [] if modified_requests.empty?
+
+        block.call(modified_requests)
+        # Any transactions that get this far with perform_later: false MUST be committed
+        # or else they will cause sequence_number repeats
       end
     end
 
