@@ -11,6 +11,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
   let(:student_user)      { FactoryGirl.create(:user) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
+  let!(:student_original_payment_due_at) { student.payment_due_at }
   let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: student_user.id }
@@ -292,6 +293,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
               student.reload
               expect(student.persisted?).to eq true
               expect(student.deleted?).to eq false
+              expect(student.payment_due_at).to eq student_original_payment_due_at
             end
 
             it 'fails if the student\'s identifier is taken by someone else' do

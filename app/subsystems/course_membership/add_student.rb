@@ -19,7 +19,7 @@ class CourseMembership::AddStudent
     course = period.course
 
     # Give the student til midnight after 14 days from now
-    payment_due_at = course.time_zone.to_tz.tomorrow.midnight - 1.second +
+    payment_due_at = course.time_zone.to_tz.now.midnight + 1.day - 1.second +
                      Settings::Payments.student_grace_period_days.days
 
     student = CourseMembership::Models::Student.create(role: role,

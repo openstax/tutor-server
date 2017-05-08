@@ -9,6 +9,8 @@ RSpec.describe MoveStudent, type: :routine do
       period_2 = FactoryGirl.create :course_membership_period, course: course
       student = CourseMembership::AddStudent[period: period_1, role: role]
 
+      original_payment_due_at = student.payment_due_at
+
       result = nil
       expect {
         result = MoveStudent.call(period: period_2, student: student)
@@ -25,6 +27,7 @@ RSpec.describe MoveStudent, type: :routine do
 
       expect(student.reload.course).to eq course
       expect(student.period.id).to eq period_1.id
+      expect(student.payment_due_at).to eq original_payment_due_at
     end
   end
 
