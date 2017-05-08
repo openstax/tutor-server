@@ -29,6 +29,8 @@ class CreatePracticeSpecificTopicsTask
   end
 
   def get_biglearn_exercises
+    # Due to perform_later: false, the transaction MUST commit
+    # See comments on app/routines/concerns/create_practice_task_routine.rb
     OpenStax::Biglearn::Api.create_update_assignments(
       course: @course, task: @task, core_page_ids: @pages.map(&:id), perform_later: false
     )

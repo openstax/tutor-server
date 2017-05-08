@@ -56,11 +56,20 @@ module CreatePracticeTaskRoutine
     # the end of the transaction, so hopefully the rest of routine finishes pretty fast...
     exercises = get_biglearn_exercises
 
-    fatal_error(
-      code: :no_exercises,
-      message: "No exercises were returned from Biglearn to build the Practice Widget." +
-               " [Course: #{course.id} - Role: #{role.id} - Args: #{args.inspect}]"
-    ) if exercises.size == 0
+    # Normally we would throw a fatal_error here and rollback but then creating a
+    # practice_specific_topics task the transaction MUST commit
+    # since we already talked to Biglearn (with perform_later: false)
+    if exercises.size == 0
+      nonfatal_error(
+        code: :no_exercises,
+        message: "No exercises were returned from Biglearn to build the Practice Widget." +
+                 " [Course: #{course.id} - Role: #{role.id} - Args: #{args.inspect}]"
+      )
+
+      @task.really_destroy!
+
+      return
+    end
 
     # Add the exercises as task steps
     exercises.each do |exercise|
