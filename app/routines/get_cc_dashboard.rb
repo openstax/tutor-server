@@ -35,25 +35,23 @@ class GetCcDashboard
   end
 
   def load_cc_teacher_stats(course, role)
-    # Each tasking will create 1 row but this is not a problem as long as tasks only have 1 tasking
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins(task: { taskings: :period })
-      .where(task: { taskings: { period: { course_profile_course_id: course.id } } })
-      .where{task.completed_exercise_steps_count > 0}
+      .with_deleted # speed up query, the join on cc_page_stats removes deleted
+      .joins('join cc_page_stats cc_page_stats on ' \
+              'cc_page_stats.task_ids @> array[tasks_concept_coach_tasks.tasks_task_id]')
+      .where(['cc_page_stats.course_id = ?', course.id])
       .select([
-        :id,
-        :tasks_task_id,
-        :content_page_id,
-        { task: [ :steps_count, :completed_steps_count ] },
-        { task: { taskings: :course_membership_period_id } },
-        { task: { taskings: :entity_role_id } }
-      ])
+                :id,
+                :tasks_task_id,
+                :content_page_id,
+                { cc_page_stats: [ :course_period_id, :completed_steps_count, :steps_count, :role_ids ] }
+              ])
       .preload(page: :chapter)
       .to_a
-
-    period_id_cc_tasks_map = cc_tasks.group_by(&:course_membership_period_id)
+    period_id_cc_tasks_map = cc_tasks.group_by(&:course_period_id)
 
     ecosystems_map = GetCourseEcosystemsMap[course: course]
+
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
@@ -80,8 +78,8 @@ class GetCcDashboard
               completed_cc_tasks, in_progress_cc_tasks = cc_tasks.partition do |cc_task|
                 cc_task.completed_steps_count == cc_task.steps_count
               end
-              completed_role_ids = completed_cc_tasks.map(&:entity_role_id).uniq
-              in_progress_role_ids = in_progress_cc_tasks.map(&:entity_role_id).uniq
+              completed_role_ids = completed_cc_tasks.flat_map(&:role_ids).uniq
+              in_progress_role_ids = in_progress_cc_tasks.flat_map(&:role_ids).uniq
               not_started_role_ids = active_role_ids - (completed_role_ids + in_progress_role_ids)
 
               {
@@ -148,22 +146,11 @@ class GetCcDashboard
   end
 
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks, ecosystems_map)
-    all_task_ids = cc_tasks.map(&:tasks_task_id)
 
-    all_pages_with_stats = Content::Models::Page
-      .joins(exercises: { tasked_exercises: :task_step })
-      .where(exercises: { tasked_exercises: { task_step: { tasks_task_id: all_task_ids } } })
-      .group([:id, { exercises: { tasked_exercises: { task_step: :group_type } } }])
-      .select(
-        <<-SQL.strip_heredoc
-          content_pages.id,
-          tasks_task_steps.group_type,
-          COUNT(tasks_task_steps.first_completed_at) AS completed_count,
-          COUNT(tasks_task_steps.first_completed_at) FILTER (
-            WHERE tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id
-          ) AS correct_count
-        SQL
-      )
+    all_pages_with_stats = Content::Models::Page.joins(
+      'join cc_page_stats on cc_page_stats.content_page_id = content_pages.id'
+    ).where(['cc_page_stats.course_period_id = ?', period.id]).select('*')
+
     all_page_wrappers = all_pages_with_stats.map { |page| Content::Page.new(strategy: page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: all_page_wrappers)
 
@@ -181,7 +168,7 @@ class GetCcDashboard
 
       # Skip if no core page (if core and spaced practice happened with different course ecosystems)
       if core_page_with_stats.present?
-        core_completed_count = core_page_with_stats.completed_count
+        core_completed_count = core_page_with_stats.completed_steps_count
         core_correct_count = core_page_with_stats.correct_count
         core_performance = core_correct_count/core_completed_count.to_f
 
@@ -206,7 +193,7 @@ class GetCcDashboard
       # Skip if spaced practice hasn't happened yet
       next if spaced_page_with_stats.nil?
 
-      spaced_completed_count = spaced_page_with_stats.completed_count
+      spaced_completed_count = spaced_page_with_stats.completed_steps_count
       spaced_correct_count = spaced_page_with_stats.correct_count
       spaced_performance = spaced_correct_count/spaced_completed_count.to_f
 
