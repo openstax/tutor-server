@@ -146,20 +146,19 @@ class GetCcDashboard
     end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
   end
 
+
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks, page_to_page_map)
-    all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.id }
-    all_page_models = cc_tasks.map{ |cc_task| cc_task.page }.uniq
-    all_pages = all_page_models.map{ |page_model| Content::Page.new(strategy: page_model.wrap) }
+    result = Tasks::Models::TaskedExercise.connection
+      .select_all("select content_page_id, task_steps_last_completed_at, task_ids
+                  from cc_section_last_completion_time where course_period_id = #{period.id.to_i}")
+    page_to_tasks = {}
 
-    completed_tasked_exercises = Tasks::Models::TaskedExercise
-      .joins(:task_step, :exercise)
-      .where{(task_step.first_completed_at != nil) & (task_step.tasks_task_id.in all_task_ids)}
-      .group(exercise: :content_page_id)
-    last_answer_times = completed_tasked_exercises.maximum('tasks_task_steps.last_completed_at')
-
-    cache_key_to_page_map = all_pages.each_with_object({}) do |page, hash|
-      cache_key = "dashboard/cc/teacher/#{period.id}/#{page.id}-#{last_answer_times[page.id]}"
-      hash[cache_key] = page
+    pgArray = result.column_types['task_ids']
+    cache_key_to_page_map = result.each_with_object({}) do |row, hash|
+      cache_key = "dashboard/cc/teacher/#{period.id}/#{row['content_page_id']}-#{row['task_steps_last_completed_at']}"
+      # FIXME, maybe there's a better way?
+      hash[cache_key] = page_to_page_map.find{|pg| pg.first.id == row['content_page_id'].to_i }.first
+      page_to_tasks[cache_key] = pgArray.type_cast_from_database(row['task_ids'])
     end
 
     all_cache_keys = cache_key_to_page_map.keys
@@ -181,15 +180,23 @@ class GetCcDashboard
     missed_cache_keys = all_cache_keys - hit_cache_keys
 
     unless missed_cache_keys.empty?
+
       missed_page_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
         page = cache_key_to_page_map[cache_key]
         hash[page] = cache_key
       end
       missed_page_ids = missed_page_to_cache_key_map.keys.map(&:id)
 
-      missed_completed_tasked_exercises = completed_tasked_exercises.where(
-        exercise: { content_page_id: missed_page_ids }
-      )
+      missed_task_ids = missed_cache_keys.flat_map{|key| page_to_tasks[key] }
+
+      missed_completed_tasked_exercises = Tasks::Models::TaskedExercise
+                                     .joins(:task_step, :exercise)
+                                     .where(task_step: { tasks_task_id: missed_task_ids },
+                                            exercise: { content_page_id: missed_page_ids })
+                                     .group(exercise: :content_page_id)
+
+      #  = completed_tasked_exercises.where(
+      # )
       missed_completed_core_tasked_exercises = missed_completed_tasked_exercises.where(
         task_step: { group_type: Tasks::Models::TaskStep.group_types[:core_group] }
       )
