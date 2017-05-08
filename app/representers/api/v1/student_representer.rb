@@ -63,7 +63,8 @@ module Api::V1
              writeable: false,
              readable: true,
              getter: ->(*) {
-               course = self.course
+               # Shenanigans b/c sometimes this representer gets an AR, sometimes a hash
+               course = self.course || CourseProfile::Models::Course.find(course_profile_course_id)
 
                Settings::Payments.payments_enabled &&
                course.does_cost &&
