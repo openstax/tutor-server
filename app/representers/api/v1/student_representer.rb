@@ -59,6 +59,23 @@ module Api::V1
                 description: "Student is dropped iff false"
              }
 
+    property :prompt_student_to_pay,
+             writeable: false,
+             readable: true,
+             getter: ->(*) {
+               course = self.course
+
+               Settings::Payments.payments_enabled &&
+               course.does_cost &&
+               !course.is_preview &&
+               !(is_paid || is_comped)
+             },
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: "True iff payments enabled globally, course costs and not preview, and not paid or comped"
+             }
+
     property :is_paid,
              writeable: false,
              readable: true,

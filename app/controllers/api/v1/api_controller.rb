@@ -31,6 +31,7 @@ class Api::V1::ApiController < OpenStax::Api::V1::ApiController
   protected
 
   def payment_overdue?(course, student)
+    return false if !Settings::Payments.payments_enabled
     return false if student.nil?                        # only students need to pay
     return false if course.is_preview                   # preview courses should never cost
     return false if !course.does_cost
