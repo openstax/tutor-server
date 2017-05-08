@@ -1163,7 +1163,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 name: student.name,
                 period_id: period.id.to_s,
                 role_id: student_role.id.to_s,
-                is_active: true
+                is_active: true,
+                prompt_student_to_pay: false
               },
               {
                 id: student_2.id.to_s,
@@ -1172,7 +1173,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 name: student_2.name,
                 period_id: period.id.to_s,
                 role_id: student_role_2.id.to_s,
-                is_active: true
+                is_active: true,
+                prompt_student_to_pay: false
               },
               {
                 id: student_3.id.to_s,
@@ -1181,7 +1183,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 name: student_3.name,
                 period_id: period_2.id.to_s,
                 role_id: student_role_3.id.to_s,
-                is_active: true
+                is_active: true,
+                prompt_student_to_pay: false
               }
             )
           })

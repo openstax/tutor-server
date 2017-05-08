@@ -17,6 +17,8 @@ RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay', type:
     end
   end
 
+  before(:each) { allow(Settings::Payments).to receive(:payments_enabled) { true } }
+
   let(:application)       { FactoryGirl.create :doorkeeper_application }
   let(:course)            { FactoryGirl.create :course_profile_course }
   let(:period)            { FactoryGirl.create :course_membership_period, course: course }
