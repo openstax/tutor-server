@@ -114,6 +114,13 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             expect(response.body_as_hash[:student_identifier]).to eq new_id
             expect(student.reload.student_identifier).to eq new_id
           end
+
+          it "422's if needs to pay" do
+            make_payment_required_and_expect_422(course: course, student: student) {
+              api_patch :update_self, student_token, parameters: valid_params,
+                                                     raw_post_data: valid_body
+            }
+          end
         end
       end
 
@@ -166,6 +173,12 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
               is_active: true
             })
             expect(student.reload.period).to eq period_2.to_model
+          end
+
+          it "422's if needs to pay" do
+            make_payment_required_and_expect_422(course: course, student: student) {
+              api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
+            }
           end
 
           context 'and updating the student\'s identifier' do

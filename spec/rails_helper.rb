@@ -182,3 +182,18 @@ def disable_sfdc_client
     .to receive(:sfdc_client)
     .and_return(double('null object').as_null_object)
 end
+
+def make_payment_required_and_expect_422(student: nil, course: nil, user: nil)
+  allow(Settings::Payments).to receive(:payments_enabled) { true }
+  course.update_attribute(:does_cost, true) if course.present?
+
+  if student.nil?
+    raise "user cannot be nil if student is nil" if user.nil?
+    student = UserIsCourseStudent.call(user: user, course: course).outputs.student
+  end
+
+  Timecop.freeze(student.payment_due_at + 1.day) do
+    yield
+  end
+  expect(response).to have_http_status(:unprocessable_entity)
+end

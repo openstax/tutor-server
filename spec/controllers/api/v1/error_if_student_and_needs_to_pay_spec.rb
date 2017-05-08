@@ -17,7 +17,7 @@ RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay', type:
     end
   end
 
-  before(:each) { allow(Settings::Payments).to receive(:payments_enabled) { true } }
+
 
   let(:application)       { FactoryGirl.create :doorkeeper_application }
   let(:course)            { FactoryGirl.create :course_profile_course }
@@ -37,6 +37,8 @@ RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay', type:
                                                    resource_owner_id: non_student_user.id }
 
   context 'error_if_student_and_needs_to_pay' do
+    before(:each) { allow(Settings::Payments).to receive(:payments_enabled) { true } }
+
     context 'when the user is a student in the course' do
       it 'returns true when course is free' do
         student.update_attribute(:payment_due_at, 40.years.ago)
@@ -84,9 +86,18 @@ RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay', type:
   end
 
   it 'still works when just student specified' do
+    allow(Settings::Payments).to receive(:payments_enabled) { true }
     course.update_attributes(does_cost: true)
     student.update_attributes(payment_due_at: 3.days.ago, is_paid: true)
     api_get :index, student_token, parameters: { student_id: student.id }
+  end
+
+  it 'return true when global payments_enabled is false' do
+    allow(Settings::Payments).to receive(:payments_enabled) { false }
+    course.update_attributes(does_cost: true)
+    student.update_attributes(payment_due_at: 3.days.ago, is_paid: false)
+    api_get :index, student_token, parameters: { student_id: student.id }
+    expect(response).to have_http_status(:success)
   end
 
 end

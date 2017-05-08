@@ -570,6 +570,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
     end
 
+    context 'not paid' do
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: course, student: student_role.student) {
+          api_get :dashboard, student_token, parameters: {id: course.id}
+        }
+      end
+    end
+
     context 'student' do
       it 'returns an error if the course is a CC course' do
         course.update_attribute(:is_concept_coach, true)

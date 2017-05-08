@@ -2,7 +2,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
 
   before_filter :get_student, only: [:update, :destroy, :undrop]
   before_filter :get_course_student, only: [:update_self]
-  before_filter :error_if_student_and_needs_to_pay, only: [:update_self, :update, :destroy, :undrop]
+  before_filter :error_if_student_and_needs_to_pay, only: [:update_self, :update]
 
   resource_description do
     api_versions "v1"
