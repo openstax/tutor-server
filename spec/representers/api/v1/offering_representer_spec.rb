@@ -109,4 +109,17 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
       )
     end
   end
+
+  context 'does_cost' do
+    it 'can be read' do
+      expect(representation['does_cost']).to eq offering.does_cost
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:does_cost=)
+      expect{ described_class.new(offering).from_hash('does_cost' => 'true') }.not_to(
+        change{ offering.does_cost }
+      )
+    end
+  end
 end

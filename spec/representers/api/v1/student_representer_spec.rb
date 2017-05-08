@@ -8,6 +8,8 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
   let(:representation) { Api::V1::StudentRepresenter.new(student).as_json }
 
   it 'represents a student' do
+    student.update_attributes(first_paid_at: 2.days.ago)
+
     expect(representation).to include(
       'id' => student.id.to_s,
       'period_id' => period.id.to_s,
@@ -18,8 +20,15 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'is_active' => !student.deleted?,
       'is_paid' => false,
       'is_comped' => false,
-      'payment_due_at' => be_kind_of(String)
+      'payment_due_at' => be_kind_of(String),
+      'first_paid_at' => be_kind_of(String)
     )
+
+    [:first_paid_at, :payment_due_at].each do |date_method|
+      actual_value = Chronic.parse(representation[date_method.to_s])
+      expected_value = student.send(date_method)
+      expect(actual_value).to be_within(1.seconds).of(expected_value)
+    end
   end
 
   context '#prompt_student_to_pay' do
