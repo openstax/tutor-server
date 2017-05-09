@@ -348,11 +348,7 @@ class OpenStax::Biglearn::Api::RealClient
         }
       end
 
-      if task.reading?
-        # Biglearn decides
-        goal_num_tutor_assigned_spes = nil
-        goal_num_tutor_assigned_pes = nil
-      elsif task.practice?
+      if task.practice?
         # Fixed
         goal_num_tutor_assigned_spes = 0
         goal_num_tutor_assigned_pes = 5
@@ -553,7 +549,7 @@ class OpenStax::Biglearn::Api::RealClient
 
       responses_array = response_hash[responses_key] || []
 
-      responses_array.map{ |response| block_given? ? yield(response) : response }
+      responses_array.map { |response| block_given? ? yield(response) : response }
     end
   end
 
