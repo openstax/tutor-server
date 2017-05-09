@@ -5,7 +5,9 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
   let(:course)            { FactoryGirl.create :course_profile_course }
   let(:period)            { FactoryGirl.create :course_membership_period, course: course }
 
+  let(:task_plan_1)       { FactoryGirl.create :tasks_task_plan, owner: course }
   let(:task_1)             { FactoryGirl.create :tasks_task, title: 'A Task Title',
+                                                task_plan: task_plan_1,
                                                 step_types: [:tasks_tasked_reading,
                                                              :tasks_tasked_exercise] }
 

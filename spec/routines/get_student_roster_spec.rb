@@ -31,8 +31,8 @@ RSpec.describe GetCourseRoster, type: :routine do
   it 'returns all the students in the course' do
     students = GetCourseRoster.call(course: course).outputs.roster[:students]
     students.sort! { |a, b| a.id <=> b.id }
-    expect(students).to eq([
-      {
+    expect(students).to match a_collection_containing_exactly(
+      a_hash_including(
         'id' => students[0].id,
         'first_name' => student_1.first_name,
         'last_name' => student_1.last_name,
@@ -42,8 +42,8 @@ RSpec.describe GetCourseRoster, type: :routine do
         'username' => student_1.username,
         'student_identifier' => student_1_role.student.student_identifier,
         'deleted?' => false
-      },
-      {
+      ),
+      a_hash_including(
         'id' => students[1].id,
         'first_name' => student_2.first_name,
         'last_name' => student_2.last_name,
@@ -53,8 +53,8 @@ RSpec.describe GetCourseRoster, type: :routine do
         'username' => student_2.username,
         'student_identifier' => student_2_role.student.student_identifier,
         'deleted?' => false
-      },
-      {
+      ),
+      a_hash_including(
         'id' => students[2].id,
         'first_name' => student_3.first_name,
         'last_name' => student_3.last_name,
@@ -64,8 +64,8 @@ RSpec.describe GetCourseRoster, type: :routine do
         'username' => student_3.username,
         'student_identifier' => student_3_role.student.student_identifier,
         'deleted?' => false
-      }
-    ])
+      )
+    )
   end
 
   it 'does not blow up when a period has been deleted' do
@@ -77,8 +77,8 @@ RSpec.describe GetCourseRoster, type: :routine do
     students = GetCourseRoster.call(course: course).outputs.roster[:students]
     students.sort! { |a, b| a.id <=> b.id }
 
-    expect(students).to eq([
-      {
+    expect(students).to match a_collection_containing_exactly(
+      a_hash_including(
         'id' => students[0].id,
         'first_name' => student_1.first_name,
         'last_name' => student_1.last_name,
@@ -88,8 +88,8 @@ RSpec.describe GetCourseRoster, type: :routine do
         'username' => student_1.username,
         'student_identifier' => student_1_role.student.student_identifier,
         'deleted?' => false
-      },
-      {
+      ),
+      a_hash_including(
         'id' => students[1].id,
         'first_name' => student_2.first_name,
         'last_name' => student_2.last_name,
@@ -99,8 +99,8 @@ RSpec.describe GetCourseRoster, type: :routine do
         'username' => student_2.username,
         'student_identifier' => student_2_role.student.student_identifier,
         'deleted?' => false
-      },
-      {
+      ),
+      a_hash_including(
         'id' => students[2].id,
         'first_name' => student_3.first_name,
         'last_name' => student_3.last_name,
@@ -110,7 +110,7 @@ RSpec.describe GetCourseRoster, type: :routine do
         'username' => student_3.username,
         'student_identifier' => student_3_role.student.student_identifier,
         'deleted?' => true
-      }
-    ])
+      )
+    )
   end
 end

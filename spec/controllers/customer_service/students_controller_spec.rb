@@ -38,8 +38,8 @@ RSpec.describe CustomerService::StudentsController do
     it 'returns all the students in a course' do
       get :index, course_id: course.id
       expect(assigns[:course].name).to eq 'Physics'
-      expect(assigns[:students]).to eq([
-        {
+      expect(assigns[:students]).to match a_collection_containing_exactly(
+        a_hash_including(
           'id' => student_1.id,
           'username' => user_1.username,
           'first_name' => user_1.first_name,
@@ -49,8 +49,8 @@ RSpec.describe CustomerService::StudentsController do
           'course_membership_period_id' => student_1.period.id,
           'student_identifier' => student_1.student_identifier,
           'deleted?' => false
-        },
-        {
+        ),
+        a_hash_including(
           'id' => student_3.id,
           'username' => user_3.username,
           'first_name' => user_3.first_name,
@@ -60,8 +60,8 @@ RSpec.describe CustomerService::StudentsController do
           'course_membership_period_id' => student_3.period.id,
           'student_identifier' => student_3.student_identifier,
           'deleted?' => false
-        },
-        {
+        ),
+        a_hash_including(
           'id' => student_2.id,
           'username' => user_2.username,
           'first_name' => user_2.first_name,
@@ -71,8 +71,8 @@ RSpec.describe CustomerService::StudentsController do
           'course_membership_period_id' => student_2.period.id,
           'student_identifier' => student_2.student_identifier,
           'deleted?' => false
-        }
-      ])
+        )
+      )
     end
 
     it 'works even if a student has a nil username' do
@@ -80,8 +80,8 @@ RSpec.describe CustomerService::StudentsController do
 
       get :index, course_id: course.id
       expect(assigns[:course].name).to eq 'Physics'
-      expect(assigns[:students]).to eq([
-        {
+      expect(assigns[:students]).to match a_collection_containing_exactly(
+        a_hash_including(
           'id' => student_1.id,
           'username' => user_1.username,
           'first_name' => user_1.first_name,
@@ -91,8 +91,8 @@ RSpec.describe CustomerService::StudentsController do
           'course_membership_period_id' => student_1.period.id,
           'student_identifier' => student_1.student_identifier,
           'deleted?' => false
-        },
-        {
+        ),
+        a_hash_including(
           'id' => student_3.id,
           'username' => user_3.username,
           'first_name' => user_3.first_name,
@@ -102,8 +102,8 @@ RSpec.describe CustomerService::StudentsController do
           'course_membership_period_id' => student_3.period.id,
           'student_identifier' => student_3.student_identifier,
           'deleted?' => false
-        },
-        {
+        ),
+        a_hash_including(
           'id' => student_2.id,
           'username' => nil,
           'first_name' => user_2.first_name,
@@ -113,8 +113,8 @@ RSpec.describe CustomerService::StudentsController do
           'course_membership_period_id' => student_2.period.id,
           'student_identifier' => student_2.student_identifier,
           'deleted?' => false
-        }
-      ])
+        )
+      )
     end
   end
 end
