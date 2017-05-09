@@ -18,28 +18,11 @@ module Api
           course: course, role: role, page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
 
-        task = result.outputs.task
-
-        task = ::Tasks::PopulatePlaceholderSteps.call(task: task).outputs.task
-
-        if task.task_steps.empty?
-          render_api_errors(
-            [
-              {
-                code: :no_exercises,
-                message: "No exercises were returned from Biglearn to build the Practice Widget." +
-                         " [Course: #{course.id} - Role: #{role.id}" +
-                         " - Task Type: #{task.task_type} - Ecosystem: #{task.ecosystem.title}]"
-              }
-            ]
-          )
-        else
-          respond_with(
-            task,
-            represent_with: Api::V1::TaskRepresenter,
-            location: nil
-          )
-        end
+        render_api_errors(result.errors) || respond_with(
+          result.outputs.task,
+          represent_with: Api::V1::TaskRepresenter,
+          location: nil
+        )
       end
 
       api :POST, '/courses/:course_id/practice/worst(/role/:role_id)',
@@ -51,8 +34,7 @@ module Api
 
         result = CreatePracticeWorstTopicsTask.call course: course, role: role
 
-        errors = result.outputs.errors || result.errors
-        render_api_errors(errors) || respond_with(
+        render_api_errors(result.errors) || respond_with(
           result.outputs.task,
           represent_with: Api::V1::TaskRepresenter,
           location: nil
@@ -65,7 +47,9 @@ module Api
         course, role = get_practice_course_and_role
         task = ::Tasks::GetPracticeTask[role: role]
 
-        task.nil? ? head(:not_found) : respond_with(task, represent_with: Api::V1::TaskRepresenter)
+        return head(:not_found) if task.nil?
+
+        respond_with task, represent_with: Api::V1::TaskRepresenter
       end
 
       protected

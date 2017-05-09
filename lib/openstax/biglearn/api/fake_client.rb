@@ -202,7 +202,6 @@ class OpenStax::Biglearn::Api::FakeClient
           candidate_exercise_uuids = \
             all_exercise_uuids - task.exercise_steps.map { |ts| ts.tasked.exercise.uuid }
 
-
           {
             request_uuid: request_uuid,
             assignment_uuid: task.uuid,
@@ -266,10 +265,10 @@ class OpenStax::Biglearn::Api::FakeClient
   end
 
   def random_clue(options = {})
-    options[:most_likely]    ||= rand
-    options[:minimum]        ||= rand * options[:most_likely]
-    options[:maximum]        ||= 1 - rand * (1 - options[:most_likely])
-    options[:is_real]        ||= [true, false].sample
+    options[:most_likely] ||= rand
+    options[:minimum]     ||= rand * options[:most_likely]
+    options[:maximum]     ||= 1 - rand * (1 - options[:most_likely])
+    options[:is_real]     ||= [true, false].sample
 
     options.slice(:minimum, :most_likely, :maximum, :is_real, :ecosystem_uuid)
   end

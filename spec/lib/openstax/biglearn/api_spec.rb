@@ -64,7 +64,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [
           :create_ecosystem,
           -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @ecosystem },
           1
         ],
@@ -72,7 +72,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :create_course,
           -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
                  ecosystem: @ecosystem } },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -86,49 +86,49 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [
           :update_course_ecosystems,
           -> { [ { course: @course, preparation_uuid: SecureRandom.uuid } ] },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :update_rosters,
           -> { [ { course: @course } ] },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :update_globally_excluded_exercises,
           -> { { course: @course } },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :update_course_excluded_exercises,
           -> { { course: @course } },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :update_course_active_dates,
           -> { { course: @course } },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :create_update_assignments,
           -> { [ { course: @course, task: @task } ] },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :record_responses,
           -> { [ { course: @course, tasked_exercise: @tasked_exercise } ] },
-          OpenStax::Biglearn::Api::Job,
+          OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -186,105 +186,6 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           expect(sequence_number_record.reload.sequence_number).to(
             eq(sequence_number + increment)
           ) if sequence_number_record.present?
-        end
-      end
-    end
-
-    context 'with perform_later: false' do
-      [
-        [
-          :create_ecosystem,
-          -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
-          Hash,
-          -> { @ecosystem },
-          1
-        ],
-        [
-          :create_course,
-          -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
-                 ecosystem: @ecosystem } },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :prepare_course_ecosystem,
-          -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :update_course_ecosystems,
-          -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :update_rosters,
-          -> { [ { course: @course.reload } ] },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :update_globally_excluded_exercises,
-          -> { { course: @course.reload } },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :update_course_excluded_exercises,
-          -> { { course: @course.reload } },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :update_course_active_dates,
-          -> { { course: @course.reload } },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :create_update_assignments,
-          -> { [ { course: @course.reload, task: @task.reload } ] },
-          Hash,
-          -> { @course },
-          1
-        ],
-        [
-          :record_responses,
-          -> { [ { course: @course.reload, tasked_exercise: @tasked_exercise.reload } ] },
-          Hash,
-          -> { @course },
-          1
-        ]
-      ].each do |method, requests_proc, result_class, sequence_number_record_proc, increment|
-        it "delegates #{method} to the client implementation and returns the response" do
-          requests = instance_exec &requests_proc
-          sequence_number_record = instance_exec &sequence_number_record_proc
-
-          sequence_number = sequence_number_record.sequence_number \
-            if sequence_number_record.present?
-
-          expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
-
-          results = if requests.is_a?(Hash)
-            OpenStax::Biglearn::Api.send(method, requests.merge(perform_later: false))
-          else
-            OpenStax::Biglearn::Api.send(method, requests, perform_later: false)
-          end
-
-          results = results.values if requests.is_a?(Array)
-
-          [results].flatten.each { |result| expect(result).to be_a result_class }
-
-          expect(sequence_number_record.sequence_number).to(eq(sequence_number + increment)) \
-            if sequence_number_record.present?
         end
       end
     end
@@ -368,7 +269,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         OpenStax::Biglearn::Api.fetch_assignment_pes(
           task: @task, max_num_exercises: max_num_exercises
         )
-      end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
+      end.to raise_error { OpenStax::Biglearn::Api::ExercisesError }
     end
   end
 end

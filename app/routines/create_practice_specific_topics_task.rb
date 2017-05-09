@@ -28,11 +28,34 @@ class CreatePracticeSpecificTopicsTask
     @pages = @ecosystem.pages_by_ids(page_ids) + chapters.map(&:pages).flatten.uniq
   end
 
+  def add_task_steps
+    # Need at least 1 placeholder per page so we know where to place the exercise steps
+    @pages.each do |page|
+      task_step = Tasks::Models::TaskStep.new(
+        tasked: Tasks::Models::TaskedPlaceholder.exercise_type.new,
+        content_page_id: page.id,
+        group_type: :personalized_group
+      )
+
+      @task.task_steps << task_step
+    end
+
+    after_transaction do
+      outputs.task = Tasks::PopulatePlaceholderSteps.call(task: @task).outputs.task
+
+      nonfatal_error(
+        code: :no_exercises,
+        message: "No exercises were returned from Biglearn to build the Practice Widget." +
+                 " [Course: #{@course.id} - Role: #{@role.id}" +
+                 " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
+      ) if outputs.task.task_steps.empty?
+    end
+  end
+
   def send_task_to_biglearn
     OpenStax::Biglearn::Api.create_update_assignments(
       course: @course,
       task: @task,
-      core_page_ids: @pages.map(&:id),
       goal_num_tutor_assigned_pes: NUM_BIGLEARN_EXERCISES
     )
   end

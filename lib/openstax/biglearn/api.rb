@@ -10,7 +10,7 @@ module OpenStax::Biglearn::Api
   MAX_CONTAINERS_PER_COURSE = 100
   MAX_STUDENTS_PER_COURSE = 1000
 
-  OPTION_KEYS = [ :perform_later, :inline_retry_proc, :inline_max_retries, :inline_sleep_interval ]
+  OPTION_KEYS = [ :inline_retry_proc, :inline_max_retries, :inline_sleep_interval ]
 
   extend Configurable
   extend Configurable::ClientMethods
@@ -34,13 +34,14 @@ module OpenStax::Biglearn::Api
     # Adds the given ecosystem to Biglearn
     # Requests is a hash containing the following key: :ecosystem
     def create_ecosystem(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       single_api_request options.merge(
         method: :create_ecosystem,
         request: { ecosystem: request[:ecosystem].to_model },
         keys: :ecosystem,
         create: true,
+        perform_later: true,
         sequence_number_model_key: :ecosystem,
         sequence_number_model_class: Content::Models::Ecosystem
       )
@@ -50,7 +51,7 @@ module OpenStax::Biglearn::Api
     # including ecosystem and roster (if roster update was skipped before)
     # Request is a hash containing the following key: :course
     def prepare_and_update_course_ecosystem(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       course = request[:course]
 
@@ -85,13 +86,14 @@ module OpenStax::Biglearn::Api
     # Adds the given course to Biglearn
     # Requests is a hash containing the following keys: :course and :ecosystem
     def create_course(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       single_api_request options.merge(
         method: :create_course,
         request: request,
         keys: [:course, :ecosystem],
         create: true,
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -101,7 +103,7 @@ module OpenStax::Biglearn::Api
     # Requests is a hash containing the following keys: :course and :ecosystem
     # Returns a preparation_uuid to be used in the call to update_course_ecosystems
     def prepare_course_ecosystem(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       preparation_uuid = SecureRandom.uuid
 
@@ -109,6 +111,7 @@ module OpenStax::Biglearn::Api
         method: :prepare_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
         keys: [:preparation_uuid, :course, :ecosystem],
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -121,12 +124,13 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following keys: :course and :preparation_uuid
     # Returns a hash mapping request objects to their update status (Symbol)
     def update_course_ecosystems(*requests)
-      requests, options = extract_options requests, true
+      requests, options = extract_options requests
 
       bulk_api_request options.merge(
         method: :update_course_ecosystems,
         requests: requests,
         keys: [:course, :preparation_uuid],
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -136,7 +140,7 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following key: :course
     # Requests will not be sent if the course has not been created in Biglearn due to no ecosystem
     def update_rosters(*requests)
-      requests, options = extract_options requests, true
+      requests, options = extract_options requests
 
       select_proc = ->(request) do
         course = request.fetch(:course)
@@ -172,6 +176,7 @@ module OpenStax::Biglearn::Api
         requests: requests,
         keys: [:course],
         select_proc: select_proc,
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -180,12 +185,13 @@ module OpenStax::Biglearn::Api
     # Updates global exercise exclusions
     # Request is a hash containing the following key: :course
     def update_globally_excluded_exercises(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       single_api_request options.merge(
         method: :update_globally_excluded_exercises,
         request: request,
         keys: [:course],
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -194,12 +200,13 @@ module OpenStax::Biglearn::Api
     # Updates exercise exclusions for the given course
     # Request is a hash containing the following key: :course
     def update_course_excluded_exercises(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       single_api_request options.merge(
         method: :update_course_excluded_exercises,
         request: request,
         keys: [:course],
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -208,12 +215,13 @@ module OpenStax::Biglearn::Api
     # Updates the given course's start/end dates
     # Request is a hash containing the following key: :course
     def update_course_active_dates(*request)
-      request, options = extract_options request, true
+      request, options = extract_options request
 
       single_api_request options.merge(
         method: :update_course_active_dates,
         request: request,
         keys: [:course],
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -224,7 +232,7 @@ module OpenStax::Biglearn::Api
     # They may also contain the following optional key: :core_page_ids
     # The task records' sequence numbers are increased by 1
     def create_update_assignments(*requests)
-      requests, options = extract_options requests, true
+      requests, options = extract_options requests
 
       select_proc = ->(request) do
         task = request.fetch(:task)
@@ -241,6 +249,7 @@ module OpenStax::Biglearn::Api
         requests: requests,
         keys: [:course, :task],
         optional_keys: :core_page_ids,
+        perform_later: true,
         select_proc: select_proc,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
@@ -250,13 +259,14 @@ module OpenStax::Biglearn::Api
     # Records a student's response for a given exercise
     # Requests are hashes containing the following keys: :course and :tasked_exercise
     def record_responses(*requests)
-      requests, options = extract_options requests, true
+      requests, options = extract_options requests
 
       bulk_api_request options.merge(
         method: :record_responses,
         requests: requests,
         keys: [:course, :tasked_exercise],
         uuid_key: :response_uuid,
+        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -268,7 +278,7 @@ module OpenStax::Biglearn::Api
     # They may also contain the following optional key: :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_pes(*requests)
-      requests, options = extract_options requests, false
+      requests, options = extract_options requests
 
       bulk_api_request(
         options.merge(
@@ -276,7 +286,8 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: :task,
           optional_keys: :max_num_exercises,
-          result_class: Content::Exercise
+          result_class: Content::Exercise,
+          perform_later: false
         )
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
@@ -291,7 +302,7 @@ module OpenStax::Biglearn::Api
     # They may also contain the following optional key: :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_spes(*requests)
-      requests, options = extract_options requests, false
+      requests, options = extract_options requests
 
       bulk_api_request(
         options.merge(
@@ -299,7 +310,8 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: :task,
           optional_keys: :max_num_exercises,
-          result_class: Content::Exercise
+          result_class: Content::Exercise,
+          perform_later: false
         )
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
@@ -314,7 +326,7 @@ module OpenStax::Biglearn::Api
     # They may also contain the following optional key: :max_num_exercises
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_practice_worst_areas_exercises(*requests)
-      requests, options = extract_options requests, false
+      requests, options = extract_options requests
 
       bulk_api_request(
         options.merge(
@@ -322,7 +334,8 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: :student,
           optional_keys: :max_num_exercises,
-          result_class: Content::Exercise
+          result_class: Content::Exercise,
+          perform_later: false
         )
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:student].course.ecosystems.first,
@@ -335,13 +348,14 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following keys: :book_container and :student
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_student_clues(*requests)
-      requests, options = extract_options requests, false
+      requests, options = extract_options requests
 
       bulk_api_request(
         options.merge(
           method: :fetch_student_clues,
           requests: requests,
-          keys: [:book_container, :student]
+          keys: [:book_container, :student],
+          perform_later: false
         )
       ) do |request, response|
         response.fetch :clue_data
@@ -352,13 +366,14 @@ module OpenStax::Biglearn::Api
     # Requests are hashes containing the following keys: :book_container and :course_container
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_teacher_clues(*requests)
-      requests, options = extract_options requests, false
+      requests, options = extract_options requests
 
       bulk_api_request(
         options.merge(
           method: :fetch_teacher_clues,
           requests: requests,
-          keys: [:book_container, :course_container]
+          keys: [:book_container, :course_container],
+          perform_later: false
         )
       ) do |request, response|
         response.fetch :clue_data
@@ -566,7 +581,7 @@ module OpenStax::Biglearn::Api
                                         sequence_number_model_class: sequence_number_model_class
 
           responses.each do |response|
-            uuid = response[uuid_key] rescue debugger
+            uuid = response[uuid_key]
             original_request = requests_map[uuid]
 
             responses_map[original_request] = verify_result(
@@ -618,9 +633,7 @@ module OpenStax::Biglearn::Api
       exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
     end
 
-    def extract_options(args_array, default_perform_later)
-      default_hash = { perform_later: default_perform_later }
-
+    def extract_options(args_array)
       num_args = args_array.size
       requests = args_array.first
 
@@ -644,7 +657,7 @@ module OpenStax::Biglearn::Api
         raise ArgumentError, "wrong number of arguments (#{num_args} for 1..2)", caller
       end
 
-      [requests, default_hash.merge(options.slice(*OPTION_KEYS))]
+      [requests, options.slice(*OPTION_KEYS)]
     end
 
   end

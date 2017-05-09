@@ -91,7 +91,7 @@ class Tasks::PopulatePlaceholderSteps
       # Keep track of the number of steps we added to the task
       num_added_steps = 0
 
-      # Populate each page at a time to ensure we get the correct number of steps for each
+      # Populate each page one at a time to ensure we get the correct number of steps for each
       task_steps_by_page_id.each do |page_id, page_task_steps|
         exercises = grouped_chosen_exercises[page_id] || []
         placeholder_steps = page_task_steps.select do |task_step|

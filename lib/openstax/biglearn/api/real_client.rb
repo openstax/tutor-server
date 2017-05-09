@@ -546,7 +546,7 @@ class OpenStax::Biglearn::Api::RealClient
 
       responses_array = response_hash[responses_key] || []
 
-      responses_array.map{ |response| block_given? ? yield(response) : response }
+      responses_array.map { |response| block_given? ? yield(response) : response }
     end
   end
 
