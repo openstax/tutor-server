@@ -132,14 +132,13 @@ class OpenStax::Biglearn::Api::RealClient
     end
 
     exercises = ecosystem.exercises.preload(:tags, :page).map do |exercise|
-      los = exercise.los
-      lo_strings = los.empty? ? [ "lo:#{exercise.page.uuid}" ] : los.map(&:value)
+      los = ([ "cnxmod:#{exercise.page.uuid}" ] + exercise.los.map(&:value)).uniq
 
       {
         exercise_uuid: exercise.uuid,
         group_uuid: exercise.group_uuid,
         version: exercise.version,
-        los: lo_strings
+        los: los
       }
     end
 
