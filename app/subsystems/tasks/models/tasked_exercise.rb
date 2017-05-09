@@ -6,6 +6,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   before_validation :set_correct_answer_id, on: :create
 
   validates :url, presence: true
+  validates :question_id, presence: true
   validates :content, presence: true
   validates :correct_answer_id, presence: true
   validates :free_response, length: { maximum: 10000 }
@@ -16,6 +17,14 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
            :content_hash_for_students, :tags, :los, :aplos, to: :parser
+
+  def content
+    return if exercise.nil?
+
+    exercise.content_as_independent_questions
+            .find { |question| question[:id].to_s == question_id }
+            .try!(:[], :content)
+  end
 
   # We depend on the parser because we do not save the parsed content
   def parser

@@ -88,14 +88,16 @@ class OpenStax::Exercises::V1::FakeClient
         }
       ],
       questions: num_parts.times.map do |index|
+        question_number = number + index
+
         {
-          id: "#{number}",
+          id: "#{question_number}",
           formats: ["multiple-choice", "free-response"],
           stem_html: "Select 10 N. (#{index})",
           answers: [
-            { id: "#{2*number + 1}", content_html: "10 N",
+            { id: "#{2*question_number + 1}", content_html: "10 N",
               correctness: 1.0, feedback_html: "Right!" },
-            { id: "#{2*number}", content_html: "1 N",
+            { id: "#{2*question_number}", content_html: "1 N",
               correctness: 0.0, feedback_html: "Wrong!" }
           ],
           solutions: [ { content_html: "The first one." } ]

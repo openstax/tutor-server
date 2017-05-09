@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskedExercise, type: :model do
-  let(:content_exercise) { FactoryGirl.create :content_exercise }
-  subject(:tasked_exercise)  { FactoryGirl.create(:tasks_tasked_exercise,
-                                                  exercise: content_exercise) }
+  let(:content_exercise)    { FactoryGirl.create :content_exercise }
+  subject(:tasked_exercise) do
+    FactoryGirl.create :tasks_tasked_exercise, exercise: content_exercise
+  end
 
-  it { is_expected.to validate_presence_of(:content) }
+  it { is_expected.to validate_presence_of(:url) }
+  it { is_expected.to validate_presence_of(:question_id) }
   it { is_expected.to validate_presence_of(:correct_answer_id) }
   it { is_expected.to validate_length_of(:free_response).is_at_most(10000) }
 
@@ -15,7 +17,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     )
   end
 
-  it 'does not accept a multiple choice answer before a free response unless the free-response format is not present' do
+  it 'does not accept a multiple choice answer before a free response' +
+     ' unless the free-response format is not present' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
     expect(tasked_exercise.errors).to include :free_response
@@ -89,7 +92,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it 'does not call SendTaskedExerciseAnswerToExchange when attributes are missing' do
     expect(SendTaskedExerciseAnswerToExchange).not_to receive(:perform_later)
     tasked_exercise.handle_task_step_completion!
-    expect(Set.new tasked_exercise.errors).to eq Set.new [[:free_response, 'is required'],
-                                                          [:answer_id, 'is required']]
+    expect(Set.new tasked_exercise.errors).to(
+      eq Set.new [[:free_response, 'is required'], [:answer_id, 'is required']]
+    )
   end
 end

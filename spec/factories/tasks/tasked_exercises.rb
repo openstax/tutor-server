@@ -15,7 +15,6 @@ FactoryGirl.define do
     end
 
     association :exercise, factory: :content_exercise
-    content { exercise.content }
     url { exercise.url }
     title { exercise.title }
     question_id { exercise.content_as_independent_questions.first[:id] }

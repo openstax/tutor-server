@@ -49,7 +49,9 @@ module Api::V1
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) },
-             schema_info: { description: "When the task was last worked (nil means not yet worked)" }
+             schema_info: {
+               description: "When the task was last worked (nil means not yet worked)"
+             }
 
     property :is_shared?,
              as: :is_shared,
@@ -65,6 +67,14 @@ module Api::V1
                writeable: false,
                readable: true,
                extend: TaskStepRepresenter,
+               getter: ->(*) do
+                 next task_steps unless persisted?
+
+                 ActiveRecord::Associations::Preloader.new.preload(task_steps, :tasked)
+                 tasked_exercises = task_steps.select(&:exercise?).map(&:tasked)
+                 ActiveRecord::Associations::Preloader.new.preload(tasked_exercises, :exercise)
+                 task_steps
+               end,
                schema_info: {
                  required: true,
                  description: "The steps which this Task is composed of"
