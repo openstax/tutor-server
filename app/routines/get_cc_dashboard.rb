@@ -36,22 +36,22 @@ class GetCcDashboard
 
   def load_cc_teacher_stats(course, role)
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .with_deleted # speed up query, the join on cc_page_stats removes deleted
-      .joins('join cc_page_stats cc_page_stats on ' \
-              'cc_page_stats.task_ids @> array[tasks_concept_coach_tasks.tasks_task_id]')
-      .where(['cc_page_stats.course_id = ?', course.id])
+      .joins(task: { taskings: :period })
+      .where(task: { taskings: { period: { course_profile_course_id: course.id } } })
+      .where{task.completed_exercise_steps_count > 0}
       .select([
-                :id,
-                :tasks_task_id,
-                :content_page_id,
-                { cc_page_stats: [ :course_period_id, :completed_steps_count, :steps_count, :role_ids ] }
-              ])
+        :id,
+        :tasks_task_id,
+        :content_page_id,
+        { task: [ :steps_count, :completed_steps_count ] },
+        { task: { taskings: :course_membership_period_id } },
+        { task: { taskings: :entity_role_id } }
+      ])
       .preload(page: :chapter)
       .to_a
-    period_id_cc_tasks_map = cc_tasks.group_by(&:course_period_id)
+    period_id_cc_tasks_map = cc_tasks.group_by(&:course_membership_period_id)
 
     ecosystems_map = GetCourseEcosystemsMap[course: course]
-
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
@@ -78,8 +78,8 @@ class GetCcDashboard
               completed_cc_tasks, in_progress_cc_tasks = cc_tasks.partition do |cc_task|
                 cc_task.completed_steps_count == cc_task.steps_count
               end
-              completed_role_ids = completed_cc_tasks.flat_map(&:role_ids).uniq
-              in_progress_role_ids = in_progress_cc_tasks.flat_map(&:role_ids).uniq
+              completed_role_ids = completed_cc_tasks.map(&:entity_role_id).uniq
+              in_progress_role_ids = in_progress_cc_tasks.map(&:entity_role_id).uniq
               not_started_role_ids = active_role_ids - (completed_role_ids + in_progress_role_ids)
 
               {
