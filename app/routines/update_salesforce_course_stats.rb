@@ -135,7 +135,7 @@ class UpdateSalesforceCourseStats
         # in the future some of this code will go away or become unused when we prohibit
         # teachers from reusing Courses across semesters.
 
-        target_term_year = Salesforce::Remote::TermYear.guess_from_created_at(period.created_at)
+        target_term_year = OpenStax::Salesforce::Remote::TermYear.guess_from_created_at(period.created_at)
         eligible_sf_objects = course_sf_objects.select do |sf|
           sf.term_year_object == target_term_year
         end

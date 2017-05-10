@@ -40,51 +40,58 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Course Organization<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><%= link_to 'Catalog Offerings', admin_catalog_offerings_path %></li>
-                <li><%= link_to 'Courses', admin_courses_path %></li>
-                <li><%= link_to 'Schools', admin_schools_path %></li>
-                <li><%= link_to 'Districts', admin_districts_path %></li>
+                <li><%= link_to 'Catalog Offerings', main_app.admin_catalog_offerings_path %></li>
+                <li><%= link_to 'Courses', main_app.admin_courses_path %></li>
+                <li><%= link_to 'Schools', main_app.admin_schools_path %></li>
+                <li><%= link_to 'Districts', main_app.admin_districts_path %></li>
               </ul>
             </li>
 
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Content<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><%= link_to 'Tags', admin_tags_path %></li>
-                <li><%= link_to 'Ecosystems', admin_ecosystems_path %></li>
+                <li><%= link_to 'Tags', main_app.admin_tags_path %></li>
+                <li><%= link_to 'Ecosystems', main_app.admin_ecosystems_path %></li>
               </ul>
             </li>
 
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Legal<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><%= link_to 'Terms', fine_print_path %></li>
-                <li><%= link_to 'Targeted Contracts', admin_targeted_contracts_path %></li>
+                <li><%= link_to 'Terms', main_app.fine_print_path %></li>
+                <li><%= link_to 'Targeted Contracts', main_app.admin_targeted_contracts_path %></li>
               </ul>
             </li>
 
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stats<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><%= link_to 'Courses', admin_stats_courses_path %></li>
-                <li><%= link_to 'Excluded Exercises', admin_stats_excluded_exercises_path %></li>
-                <li><%= link_to 'Concept Coach', admin_stats_concept_coach_path %></li>
+                <li><%= link_to 'Courses', main_app.admin_stats_courses_path %></li>
+                <li><%= link_to 'Excluded Exercises', main_app.admin_stats_excluded_exercises_path %></li>
+                <li><%= link_to 'Concept Coach', main_app.admin_stats_concept_coach_path %></li>
               </ul>
             </li>
 
-            <li><%= link_to 'Users', admin_users_path %></li>
-            <li><%= link_to 'Jobs', admin_jobs_path %></li>
+            <li><%= link_to 'Users', main_app.admin_users_path %></li>
+            <li><%= link_to 'Jobs', main_app.admin_jobs_path %></li>
 
-            <li><%= link_to 'Research Data', admin_research_data_path %></li>
+            <li><%= link_to 'Research Data', main_app.admin_research_data_path %></li>
 
-            <li><%= link_to 'Salesforce', admin_salesforce_path %></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Salesforce<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><%= link_to 'Setup', main_app.openstax_salesforce_path %></li>
+                <li><%= link_to 'Actions', main_app.actions_admin_salesforce_path %></li>
+              </ul>
+            </li>
+
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">System Setting<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><%= link_to 'Settings', admin_rails_settings_ui_path %></li>
-                <li><%= link_to 'Notifications', admin_notifications_path %></li>
+                <li><%= link_to 'Settings', main_app.admin_rails_settings_ui_path %></li>
+                <li><%= link_to 'Notifications', main_app.admin_notifications_path %></li>
                 <% if Timecop.enabled? %>
-                  <li><%= link_to 'Time Travel', admin_timecop_path %></li>
+                  <li><%= link_to 'Time Travel', main_app.admin_timecop_path %></li>
                 <% end %>
               </ul>
             </li>
@@ -107,7 +114,7 @@
     <div class="container">
       <div class="page-header">
         <% @page_header = "Global Settings" if current_page?(admin_rails_settings_ui.settings_url) %>
-        <h1><%= @page_header %></h1>
+        <h1><%= @page_header || yield(:page_header) %></h1>
       </div>
 
       <%= render 'layouts/flash_messages' %>

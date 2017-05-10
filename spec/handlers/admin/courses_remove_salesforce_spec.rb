@@ -31,9 +31,9 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
   it 'removes and resets stats' do
     disable_sfdc_client
 
-    fake_sf_object_1 = fake_sf_object(klass: Salesforce::Remote::ClassSize, id: 'earlier')
+    fake_sf_object_1 = fake_sf_object(klass: OpenStax::Salesforce::Remote::ClassSize, id: 'earlier')
     fake_sf_object_1.num_students = 42
-    fake_sf_object_2 = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'later')
+    fake_sf_object_2 = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'later')
     fake_sf_object_2.num_students = 38
 
     [course, period_1].each do |tutor_object|
@@ -67,11 +67,11 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
 
     FactoryGirl.create(:salesforce_attached_record,
                        tutor_object: course,
-                       salesforce_class_name: "Salesforce::Remote::ClassSize",
+                       salesforce_class_name: "OpenStax::Salesforce::Remote::ClassSize",
                        salesforce_id: "something",
                        salesforce_object: nil)
 
-    allow(Salesforce::Remote::ClassSize).to receive(:find).with("something") { nil }
+    allow(OpenStax::Salesforce::Remote::ClassSize).to receive(:find).with("something") { nil }
 
     expect{
       call(course_id: course.id, salesforce_id: 'something')
@@ -80,7 +80,7 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
 
   it "can find the methods it needs in potential SF object classes" do
     # Have this check since we're mostly otherwise stubbing these classes
-    [Salesforce::Remote::OsAncillary, Salesforce::Remote::ClassSize].each do |sf_class|
+    [OpenStax::Salesforce::Remote::OsAncillary, OpenStax::Salesforce::Remote::ClassSize].each do |sf_class|
       expect(sf_class.new).to respond_to(:reset_stats, :save)
     end
   end

@@ -12,15 +12,24 @@ RSpec.describe 'Admnistration' do
   end
 
   context 'pages are reachable via the menu' do
-    before(:each) do
+    scenario 'System Setting/Settings' do
       admin = FactoryGirl.create(:user, :administrator)
       stub_current_user(admin)
       visit admin_root_path
-    end
 
-    scenario 'System Setting/Settings' do
       click_link 'System Setting'
       click_link 'Settings'
+    end
+
+    scenario 'Salesforce' do
+      admin = FactoryGirl.create(:user, :administrator)
+      stub_current_user(admin)
+      stub_current_user(admin, OpenStax::Salesforce::SettingsController)
+      visit admin_root_path
+
+      click_link 'Salesforce'
+      click_link 'Setup'
+      expect(page).to have_content "Salesforce Setup"
     end
   end
 end

@@ -44,13 +44,13 @@ RSpec.feature 'Admin changing course Salesforce settings' do
     end
 
     scenario 'a valid, unused SF ID works' do
-      existing_sf_object = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'orig')
+      existing_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'orig')
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @course,
                                                       salesforce_object: existing_sf_object)
       go_to_salesforce_tab
       expect(page).to have_content('orig')
 
-      new_sf_object = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'new')
+      new_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'new')
       fill_in 'add_salesforce_salesforce_id', with: 'new'
       click_button 'Add'
       expect(page).to have_content('orig')
@@ -58,7 +58,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
     end
 
     scenario 'a valid, used SF ID gives an error' do
-      existing_sf_object = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'orig')
+      existing_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'orig')
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @course,
                                                       salesforce_object: existing_sf_object)
       go_to_salesforce_tab
@@ -72,7 +72,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
 
   context "when removing a course SF record" do
     before(:each) do
-      sf_object = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'orig')
+      sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'orig')
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @course,
                                                       salesforce_object: sf_object)
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @period_1,
@@ -102,8 +102,8 @@ RSpec.feature 'Admin changing course Salesforce settings' do
   context "when there are two SF objects on a course with different periods on each" do
     before(:each) do
       period_2 = FactoryGirl.create :course_membership_period, course: @course
-      sf_object_a = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'sfoa')
-      sf_object_b = fake_sf_object(klass: Salesforce::Remote::OsAncillary, id: 'sfob')
+      sf_object_a = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'sfoa')
+      sf_object_b = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'sfob')
 
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @course,
                                                       salesforce_object: sf_object_a)

@@ -15,7 +15,7 @@ module Salesforce
         new: true
       }
 
-      target_opportunities = Salesforce::Remote::Opportunity.where(target_opportunity_criteria).to_a
+      target_opportunities = OpenStax::Salesforce::Remote::Opportunity.where(target_opportunity_criteria).to_a
 
       if target_opportunities.size > 1
         raise OsAncillaryRenewalError, "Too many opportunities matching #{target_opportunity_criteria}"
@@ -30,13 +30,13 @@ module Salesforce
         product: based_on.product
       }
 
-      existing_os_ancillary = Salesforce::Remote::OsAncillary.where(os_ancillary_attributes).first
+      existing_os_ancillary = OpenStax::Salesforce::Remote::OsAncillary.where(os_ancillary_attributes).first
       return existing_os_ancillary if existing_os_ancillary.present?
 
-      new_os_ancillary = Salesforce::Remote::OsAncillary.new(
+      new_os_ancillary = OpenStax::Salesforce::Remote::OsAncillary.new(
         os_ancillary_attributes.merge(
           course_id: based_on.course_id,
-          status: Remote::OsAncillary::STATUS_APPROVED,
+          status: OpenStax::Salesforce::Remote::OsAncillary::STATUS_APPROVED,
           error: nil,
           teacher_join_url: based_on.teacher_join_url
         )

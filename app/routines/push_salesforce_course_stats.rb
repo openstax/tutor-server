@@ -82,7 +82,7 @@ class PushSalesforceCourseStats
           school_year: salesforce_school_year_for_course(course)
         }
 
-        candidate_individual_adoptions = Salesforce::Remote::IndividualAdoption
+        candidate_individual_adoptions = OpenStax::Salesforce::Remote::IndividualAdoption
                                            .where(individual_adoption_criteria)
                                            .to_a
 
@@ -99,7 +99,7 @@ class PushSalesforceCourseStats
 
         if individual_adoption.nil?
           start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
-          sf_contact = Salesforce::Remote::Contact.where(id: sf_contact_id).first
+          sf_contact = OpenStax::Salesforce::Remote::Contact.where(id: sf_contact_id).first
 
           individual_adoption_options = {
             contact_id: sf_contact_id,
@@ -112,11 +112,11 @@ class PushSalesforceCourseStats
             start_date_key => start_date_value,
             adoption_level: "Confirmed Adoption Won",
             description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
-                         (Salesforce::Models::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+                         (OpenStax::Salesforce::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
           })
 
           individual_adoption =
-            Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
+            OpenStax::Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
               if !ia.save
                 error!(message: "Could not make new IndividualAdoption for inputs " \
                                 "#{individual_adoption_criteria}; errors: " \
@@ -140,7 +140,7 @@ class PushSalesforceCourseStats
           term: course.term.capitalize
         }
 
-        candidate_os_ancillaries = Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
+        candidate_os_ancillaries = OpenStax::Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
 
         if candidate_os_ancillaries.size > 1
           error!(message: "Too many OsAncillaries matching #{os_ancillary_criteria}", course: course)
@@ -148,7 +148,8 @@ class PushSalesforceCourseStats
 
         os_ancillary = candidate_os_ancillaries.first ||
           begin
-            Salesforce::Remote::OsAncillary.new(os_ancillary_criteria.merge(contact_id: sf_contact_id)).tap do |osa|
+            attrs = os_ancillary_criteria.merge(contact_id: sf_contact_id)
+            OpenStax::Salesforce::Remote::OsAncillary.new(attrs).tap do |osa|
               if !osa.save
                 error!(message: "Could not make new OsAncillary for inputs #{os_ancillary_criteria}; " \
                                 "errors: #{osa.errors.full_messages.join(', ')}",
@@ -204,7 +205,7 @@ class PushSalesforceCourseStats
       os_ancillary.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
       os_ancillary.num_sections = periods.length
 
-      os_ancillary.status = Salesforce::Remote::OsAncillary::STATUS_APPROVED
+      os_ancillary.status = OpenStax::Salesforce::Remote::OsAncillary::STATUS_APPROVED
       os_ancillary.product = course.is_concept_coach ? "Concept Coach" : "Tutor"
     rescue Exception => ee
       # Add the error to the OSA and `error!` but non fatally so the error can get saved
@@ -258,7 +259,7 @@ class PushSalesforceCourseStats
 
   def book_names_to_sf_ids
     @book_names_to_sf_ids ||= begin
-      all_books = Salesforce::Remote::Book.all
+      all_books = OpenStax::Salesforce::Remote::Book.all
       all_books.each_with_object({}) do |book, hash|
         hash[book.name] = book.id
       end

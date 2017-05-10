@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Book__c"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Book__c"
     body:
       encoding: US-ASCII
       string: ''
@@ -21,21 +21,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 28 Apr 2017 19:42:57 GMT
+      - Tue, 09 May 2017 22:35:06 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=grXCj-ewT0OQdOxzY_AXUw;Path=/;Domain=.salesforce.com;Expires=Tue,
-        27-Jun-2017 19:42:57 GMT
+      - BrowserId=S2qwmu81RJKeE-U6Th539g;Path=/;Domain=.salesforce.com;Expires=Sat,
+        08-Jul-2017 22:35:06 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=91/48000
+      - api-usage=148/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -44,12 +45,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z0S000000FgiHUAS"},"Id":"a0Z0S000000FgiHUAS","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v29.0/sobjects/Book__c/a0Z0S000000FgiCUAS"},"Id":"a0Z0S000000FgiCUAS","Name":"Chemistry"}]}'
+      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0Z0S000000FgiHUAS"},"Id":"a0Z0S000000FgiHUAS","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0Z0S000000FgiCUAS"},"Id":"a0Z0S000000FgiCUAS","Name":"Chemistry"}]}'
     http_version: 
-  recorded_at: Fri, 28 Apr 2017 19:42:57 GMT
+  recorded_at: Tue, 09 May 2017 22:35:06 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v29.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
     body:
       encoding: US-ASCII
       string: ''
@@ -68,21 +69,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 28 Apr 2017 19:42:57 GMT
+      - Tue, 09 May 2017 22:35:06 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=m0fOhqTfSd2GIezchTxbJg;Path=/;Domain=.salesforce.com;Expires=Tue,
-        27-Jun-2017 19:42:57 GMT
+      - BrowserId=GIiamzmxSAeZtrJSMrR0NQ;Path=/;Domain=.salesforce.com;Expires=Sat,
+        08-Jul-2017 22:35:06 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=92/48000
+      - api-usage=148/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -91,8 +93,8 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0010S0000057qMUQAY"},"Id":"0010S0000057qMUQAY","Name":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010S0000057qMUQAY"},"Id":"0010S0000057qMUQAY","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Fri, 28 Apr 2017 19:42:57 GMT
+  recorded_at: Tue, 09 May 2017 22:35:07 GMT
 recorded_with: VCR 2.9.3

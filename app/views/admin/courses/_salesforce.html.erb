@@ -1,5 +1,5 @@
 
-<% salesforce_url = Salesforce::Models::User.first.try(:instance_url) %>
+<% salesforce_url = OpenStax::Salesforce::User.first.try(:instance_url) %>
 
 <%
   sf_linker = ->(id) {

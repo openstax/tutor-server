@@ -1,6 +1,9 @@
 # Try to list more often used routes first, although catch-all routes have to be at the end
 Rails.application.routes.draw do
 
+  mount OpenStax::Salesforce::Engine, at: '/admin/salesforce'
+  OpenStax::Salesforce.set_top_level_routes(self)
+
   # Home page, course picker, course dashboard and student enrollment
   scope controller: :webview do
     root action: :home
@@ -242,8 +245,8 @@ Rails.application.routes.draw do
 
     resources :research_data, only: [:index, :create]
 
-    resource :salesforce, only: [:show], controller: :salesforce do
-      delete :destroy_user
+    resource :salesforce, only: [], controller: :salesforce do
+      get :actions
       put :update_salesforce
     end
 
@@ -272,7 +275,7 @@ Rails.application.routes.draw do
     end
   end
 
-  match '/auth/salesforce/callback', to: 'admin/salesforce#callback', via: [:get, :post]
+  # match '/auth/salesforce/callback', to: 'admin/salesforce#callback', via: [:get, :post]
 
   # All CS routes
   namespace :customer_service do
@@ -291,8 +294,7 @@ Rails.application.routes.draw do
 
     resources :targeted_contracts, only: [:index]
 
-    resource :salesforce, only: [:show], controller: :salesforce do
-    end
+    resource :salesforce, only: [:show], controller: :salesforce
 
     resources :jobs, only: [:index, :show]
 

@@ -116,7 +116,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
   context "#book_names_to_sf_ids" do
     it 'works' do
-      allow(Salesforce::Remote::Book).to receive(:all) { [
+      allow(OpenStax::Salesforce::Remote::Book).to receive(:all) { [
         OpenStruct.new(id: 1, name: 'foo'),
         OpenStruct.new(id: 2, name: 'bob')
       ]}
