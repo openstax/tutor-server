@@ -1,6 +1,5 @@
 require_relative './api/configuration'
 require_relative './api/job'
-require_relative './api/job_failed'
 require_relative './api/malformed_request'
 require_relative './api/result_type_error'
 require_relative './api/exercises_error'
@@ -12,7 +11,7 @@ module OpenStax::Biglearn::Api
   MAX_CONTAINERS_PER_COURSE = 100
   MAX_STUDENTS_PER_COURSE = 1000
 
-  OPTION_KEYS = [ :perform_later, :retry_proc, :inline_max_retries, :inline_sleep_interval ]
+  OPTION_KEYS = [ :perform_later, :inline_retry_proc, :inline_max_retries, :inline_sleep_interval ]
 
   extend Configurable
   extend Configurable::ClientMethods
@@ -468,21 +467,24 @@ module OpenStax::Biglearn::Api
     #    in a background job that retries OR
     # 2. Happen right before the sequence_number increment is committed to the DB
     def single_api_request(method:, request:, keys:, optional_keys: [], result_class: Hash,
-                           retry_proc: nil, perform_later: false,
+                           uuid_key: :request_uuid, perform_later: false, inline_retry_proc: nil,
                            inline_max_attempts: 30, inline_sleep_interval: 1.second)
       verified_request = verify_and_slice_request method: method,
                                                   request: request,
                                                   keys: keys,
                                                   optional_keys: optional_keys
 
+      request_with_uuid = verified_request.has_key?(uuid_key) ?
+                            verified_request : verified_request.merge(uuid_key => SecureRandom.uuid)
+
       if perform_later
-        OpenStax::Biglearn::Api::Job.perform_later method.to_s, verified_request, retry_proc
+        OpenStax::Biglearn::Api::Job.perform_later method.to_s, request_with_uuid
       else
         should_retry = false
         for ii in 1..inline_max_attempts do
-          response = client.send(method, verified_request)
+          response = client.send(method, request_with_uuid)
 
-          should_retry = !retry_proc.nil? && retry_proc.call(response)
+          should_retry = !inline_retry_proc.nil? && inline_retry_proc.call(response)
           break unless should_retry
 
           sleep(inline_sleep_interval)
@@ -501,7 +503,7 @@ module OpenStax::Biglearn::Api
     end
 
     def bulk_api_request(method:, requests:, keys:, optional_keys: [], result_class: Hash,
-                         uuid_key: :request_uuid, retry_proc: nil, perform_later: false,
+                         uuid_key: :request_uuid, perform_later: false, inline_retry_proc: nil,
                          inline_max_attempts: 30, inline_sleep_interval: 1.second)
       requests_map = {}
       [requests].flatten.each do |request|
@@ -520,7 +522,7 @@ module OpenStax::Biglearn::Api
       requests_array = requests_with_uuids_map.values
 
       if perform_later
-        OpenStax::Biglearn::Api::Job.perform_later method.to_s, requests_array, retry_proc
+        OpenStax::Biglearn::Api::Job.perform_later method.to_s, requests_array
       else
         responses = {}
         for ii in 1..inline_max_attempts do
@@ -533,7 +535,8 @@ module OpenStax::Biglearn::Api
               result_class: result_class
             )
 
-            requests_with_uuids_map.delete uuid if retry_proc.nil? || !retry_proc.call(response)
+            requests_with_uuids_map.delete uuid if inline_retry_proc.nil? ||
+                                                   !inline_retry_proc.call(response)
           end
 
           break if requests_with_uuids_map.empty?

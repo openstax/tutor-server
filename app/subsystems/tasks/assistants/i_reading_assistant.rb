@@ -61,10 +61,12 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
       ex_requests = student_tasks.map { |task| { task: task } }
       pes_by_request = OpenStax::Biglearn::Api.fetch_assignment_pes(
-        ex_requests, retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+        ex_requests,
+        inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
       )
       spes_by_request = OpenStax::Biglearn::Api.fetch_assignment_spes(
-        ex_requests, retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+        ex_requests,
+        inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
       )
     end
 

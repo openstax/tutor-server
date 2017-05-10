@@ -119,16 +119,15 @@ RSpec.shared_examples 'a biglearn api client' do
       examples.each_with_index do |(method, requests, expected_responses, uuid_key), index|
         uuid_key ||= :request_uuid
 
-        if requests.is_a?(Array)
-          request_uuids = requests.map{ SecureRandom.uuid }
+        requests_array = [requests].flatten
+        request_uuids = requests_array.map { SecureRandom.uuid }
 
-          before(:all, when_tagged_with_vcr) do
-            VCR.configure do |config|
-              requests.each_with_index do |request, request_index|
-                config.define_cassette_placeholder(
-                  "<#{method.to_s.upcase} EXAMPLE #{index + 1} REQUEST #{request_index + 1} UUID>"
-                ) { request_uuids[index] }
-              end
+        before(:all, when_tagged_with_vcr) do
+          VCR.configure do |config|
+            requests_array.each_with_index do |request, request_index|
+              config.define_cassette_placeholder(
+                "<#{method.to_s.upcase} EXAMPLE #{index + 1} REQUEST #{request_index + 1} UUID>"
+              ) { request_uuids[index] }
             end
           end
         end
@@ -150,6 +149,8 @@ RSpec.shared_examples 'a biglearn api client' do
               response = instance_exec(&response) if response.is_a?(Proc)
               response.merge(uuid_key => request_uuids[index])
             end
+          else
+            requests = requests.merge(uuid_key => request_uuids.first)
           end
 
           actual_responses = client.send(method, requests)

@@ -263,7 +263,7 @@ class OpenStax::Biglearn::Api::RealClient
     exclusions = group_exclusions + version_exclusions
 
     biglearn_request = {
-      request_uuid: SecureRandom.uuid,
+      request_uuid: request.fetch(:request_uuid),
       course_uuid: course.uuid,
       sequence_number: request.fetch(:sequence_number),
       exclusions: exclusions
@@ -281,7 +281,7 @@ class OpenStax::Biglearn::Api::RealClient
     group_exclusions = group_uuids.map { |group_uuid| { exercise_group_uuid: group_uuid } }
 
     biglearn_request = {
-      request_uuid: SecureRandom.uuid,
+      request_uuid: request.fetch(:request_uuid),
       course_uuid: course.uuid,
       sequence_number: request.fetch(:sequence_number),
       exclusions: group_exclusions
@@ -295,7 +295,7 @@ class OpenStax::Biglearn::Api::RealClient
     course = request.fetch(:course)
 
     biglearn_request = {
-      request_uuid: SecureRandom.uuid,
+      request_uuid: request.fetch(:request_uuid),
       course_uuid: course.uuid,
       sequence_number: request.fetch(:sequence_number),
       starts_at: course.starts_at,

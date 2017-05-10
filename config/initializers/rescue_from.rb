@@ -45,9 +45,4 @@ OpenStax::RescueFrom.register_exception(
   notify: secrets['salesforce']['allow_use_of_real_data']
 )
 
-OpenStax::RescueFrom.register_exception(
-  'OpenStax::Biglearn::Api::JobFailed',
-  notify: false
-)
-
 ExceptionNotifier.ignored_exceptions.delete("ActionController::UrlGenerationError")

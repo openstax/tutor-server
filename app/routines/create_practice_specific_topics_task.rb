@@ -36,7 +36,8 @@ class CreatePracticeSpecificTopicsTask
     )
 
     OpenStax::Biglearn::Api.fetch_assignment_pes(
-      task: @task, retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+      task: @task,
+      inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
     )
   end
 
