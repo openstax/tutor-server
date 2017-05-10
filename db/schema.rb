@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170504174702) do
+ActiveRecord::Schema.define(version: 20170509203010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -502,6 +502,16 @@ ActiveRecord::Schema.define(version: 20170504174702) do
 
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true, using: :btree
 
+  create_table "openstax_salesforce_users", force: :cascade do |t|
+    t.string   "name"
+    t.string   "uid",           null: false
+    t.string   "oauth_token",   null: false
+    t.string   "refresh_token", null: false
+    t.string   "instance_url",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "role_role_users", force: :cascade do |t|
     t.integer  "user_profile_id", null: false
     t.integer  "entity_role_id",  null: false
@@ -523,16 +533,6 @@ ActiveRecord::Schema.define(version: 20170504174702) do
   add_index "salesforce_attached_records", ["deleted_at"], name: "index_salesforce_attached_records_on_deleted_at", using: :btree
   add_index "salesforce_attached_records", ["salesforce_id", "salesforce_class_name", "tutor_gid"], name: "salesforce_attached_record_tutor_gid", unique: true, using: :btree
   add_index "salesforce_attached_records", ["tutor_gid"], name: "index_salesforce_attached_records_on_tutor_gid", using: :btree
-
-  create_table "salesforce_users", force: :cascade do |t|
-    t.string   "name"
-    t.string   "uid",           null: false
-    t.string   "oauth_token",   null: false
-    t.string   "refresh_token", null: false
-    t.string   "instance_url",  null: false
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-  end
 
   create_table "school_district_districts", force: :cascade do |t|
     t.string   "name",       null: false

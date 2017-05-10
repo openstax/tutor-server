@@ -9,7 +9,7 @@ RSpec.describe GetSalesforceBookNames, type: :routine do
   end
 
   it 'queries the salesforce book model to get book names' do
-    expect(Salesforce::Remote::Book).to(
+    expect(OpenStax::Salesforce::Remote::Book).to(
       receive(:all).once.and_return(book_names.map{ |name| OpenStruct.new(name: name) })
     )
 
@@ -17,7 +17,7 @@ RSpec.describe GetSalesforceBookNames, type: :routine do
   end
 
   it 'returns cached results in subsequent calls' do
-    expect(Salesforce::Remote::Book).to(
+    expect(OpenStax::Salesforce::Remote::Book).to(
       receive(:all).once.and_return(book_names.map{ |name| OpenStruct.new(name: name) })
     )
 
@@ -27,7 +27,7 @@ RSpec.describe GetSalesforceBookNames, type: :routine do
   end
 
   it 'does not use the cached value if a forced cache miss is requested' do
-    expect(Salesforce::Remote::Book).to(
+    expect(OpenStax::Salesforce::Remote::Book).to(
       receive(:all).twice.and_return(book_names.map{ |name| OpenStruct.new(name: name) })
     )
 

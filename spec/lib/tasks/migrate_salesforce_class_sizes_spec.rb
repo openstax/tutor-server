@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe "migrate_salesforce_class_sizes", type: :rake do
   include_context "rake"
 
-  let(:class_size) { Salesforce::Remote::ClassSize.new(os_ancillary_id: "osa_id", id: "id") }
+  let(:class_size) { OpenStax::Salesforce::Remote::ClassSize.new(os_ancillary_id: "osa_id", id: "id") }
 
   it "ignores OSAs" do
-    stub_attached_records(Salesforce::Remote::OsAncillary.new)
+    stub_attached_records(OpenStax::Salesforce::Remote::OsAncillary.new)
     expect(capture_stdout{call}).to be_blank
   end
 
@@ -26,7 +26,7 @@ RSpec.describe "migrate_salesforce_class_sizes", type: :rake do
       capture_stdout{call}
     ).to eq "In AR 0, ClassSize id has changed to OsAncillary osa_id (dry run)\n"
 
-    expect(stubs.first.salesforce_class_name).to eq "Salesforce::Remote::OsAncillary"
+    expect(stubs.first.salesforce_class_name).to eq "OpenStax::Salesforce::Remote::OsAncillary"
     expect(stubs.first.salesforce_id).to eq "osa_id"
     expect(stubs.first.salesforce_object).to eq class_size # not changed for dry run
   end

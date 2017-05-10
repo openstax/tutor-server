@@ -5,16 +5,16 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   before(:all) do
     VCR.use_cassette('PushSalesforceCourseStats/sf_setup', VCR_OPTS) do
-      @sfh = SalesforceHelper.new
+      @proxy = SalesforceProxy.new
       load_salesforce_user
-      @sfh.ensure_books_exist(%w(Chemistry Physics))
-      @sfh.ensure_schools_exist(["JP University"])
+      @proxy.ensure_books_exist(%w(Chemistry Physics))
+      @proxy.ensure_schools_exist(["JP University"])
     end
   end
 
   before(:each) { load_salesforce_user }
 
-  let(:sf_contact_a) { @sfh.new_contact }
+  let(:sf_contact_a) { @proxy.new_contact }
   let(:chemistry_offering) { FactoryGirl.create(:catalog_offering, salesforce_book_name: "Chemistry") }
   let(:user_sf_a) { FactoryGirl.create(:user, salesforce_contact_id: sf_contact_a.id)}
   let(:user_no_sf) { FactoryGirl.create(:user)}
@@ -55,7 +55,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       it 'makes both and pushes stats' do
         call_expecting_no_errors
 
-        ias = Salesforce::Remote::IndividualAdoption.where(
+        ias = OpenStax::Salesforce::Remote::IndividualAdoption.where(
           contact_id: user_sf_a.account.salesforce_contact_id
         ).to_a
 
@@ -65,7 +65,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         expect(ia.id).not_to be_blank
         expect(ia.spring_start_date).to eq "2017-01-01"
 
-        osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
+        osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
         expect_osa_attachment(osa,course)
@@ -87,13 +87,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         expect(ia.adoption_level).not_to be_blank
         expect(ia.description).not_to be_blank
 
-        osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
+        osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect_osa_stats(osa)
       end
 
       it 'errors when cannot make an OSA' do
-        allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { false }
+        allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:save) { false }
         call_expecting_errors(/Could not make new OsAncillary/)
       end
 
@@ -135,7 +135,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       Salesforce::AttachRecord[record: osa, to: course]
       osa.destroy
       call_expecting_no_errors
-      new_osas = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).to_a
+      new_osas = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).to_a
       expect(new_osas.size).to eq 1
       new_osa = new_osas.first
       expect(new_osa.id).not_to eq osa.id
@@ -144,12 +144,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     it 'handle exceptions around saving final stats' do
       # convenient to have the test here b/c of the setup that exists in this context
-      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:changed?) { raise "kaboom" }
+      allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:changed?) { raise "kaboom" }
       call_expecting_errors
     end
 
     it 'handles final OSA save errors' do
-      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save).and_wrap_original do |m, *args|
+      allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:save).and_wrap_original do |m, *args|
         m.call(*args)
         m.receiver.errors.add(:base, "Test Error")
         false
@@ -167,7 +167,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       osa.reload
       expect(osa.term).to be_nil
 
-      expect(Salesforce::Remote::OsAncillary.where(individual_adoption_id: osa.individual_adoption_id).count).to eq 2
+      expect(OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: osa.individual_adoption_id).count).to eq 2
     end
   end
 
@@ -203,7 +203,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     it 'errors when it cannot save a new IA' do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
-      allow_any_instance_of(Salesforce::Remote::Contact).to receive(:school_id).and_return(nil)
+      allow_any_instance_of(OpenStax::Salesforce::Remote::Contact).to receive(:school_id).and_return(nil)
       capture_stdout{ call_expecting_errors(/Could not make new IndividualAdoption for inputs/) }
     end
 
@@ -246,10 +246,10 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         AddUserAsCourseTeacher[course: course, user: user_sf_a]
         call_expecting_errors
 
-        ia = Salesforce::Remote::IndividualAdoption.where(
+        ia = OpenStax::Salesforce::Remote::IndividualAdoption.where(
           contact_id: user_sf_a.account.salesforce_contact_id
         ).to_a.first
-        osa = Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
+        osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
         expect(osa.error).to match /Unable to update stats: kaboom/
       end
@@ -261,11 +261,11 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   #### HELPERS ####
 
   def create_chemistry_ia
-    Salesforce::Remote::IndividualAdoption.new(
+    OpenStax::Salesforce::Remote::IndividualAdoption.new(
       contact_id: sf_contact_a.id,
       fall_start_date: "2016-08-01",
-      book_id: @sfh.book_id("Chemistry"),
-      school_id: @sfh.school_id("JP University"),
+      book_id: @proxy.book_id("Chemistry"),
+      school_id: @proxy.school_id("JP University"),
       adoption_level: "Confirmed Adoption Won",
       description: "blah"
     ).tap do |ia|
@@ -276,7 +276,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   end
 
   def create_osa(ia, course, contact)
-    Salesforce::Remote::OsAncillary.new(
+    OpenStax::Salesforce::Remote::OsAncillary.new(
       individual_adoption_id: ia.id,
       product: course.is_concept_coach ? "Concept Coach" : "Tutor",
       contact_id: contact.id,
@@ -339,7 +339,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   def expect_osa_attachment(osa, course)
     expect(Salesforce::Models::AttachedRecord.count).to eq 1
     ar = Salesforce::Models::AttachedRecord.first
-    expect(ar.salesforce_class_name).to eq 'Salesforce::Remote::OsAncillary'
+    expect(ar.salesforce_class_name).to eq 'OpenStax::Salesforce::Remote::OsAncillary'
     expect(ar.salesforce_id).to eq osa.id
     expect(ar.tutor_gid).to eq course.to_global_id.to_s
   end

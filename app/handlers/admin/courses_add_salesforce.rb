@@ -40,7 +40,7 @@ class Admin::CoursesAddSalesforce
   def get_class_size_for_id(id)
     # `find` and `where(id: ...).first` don't handle non-existent IDs well
     begin
-      Salesforce::Remote::ClassSize.find(id)
+      OpenStax::Salesforce::Remote::ClassSize.find(id)
     rescue Faraday::ClientError => e
       nil
     end
@@ -48,7 +48,7 @@ class Admin::CoursesAddSalesforce
 
   def get_os_ancillary_for_id(id)
     begin
-      Salesforce::Remote::OsAncillary.find(id)
+      OpenStax::Salesforce::Remote::OsAncillary.find(id)
     rescue Faraday::ClientError => e
       nil
     end

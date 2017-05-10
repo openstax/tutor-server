@@ -13,8 +13,8 @@ desc "Migrates from old ClassSize Salesforce records to OsAncillaries"
 task :migrate_salesforce_class_sizes, [:run_mode] => :environment do |t, args|
   args ||= {}
 
-  cs_class = Salesforce::Remote::ClassSize
-  osa_class = Salesforce::Remote::OsAncillary
+  cs_class = OpenStax::Salesforce::Remote::ClassSize
+  osa_class = OpenStax::Salesforce::Remote::OsAncillary
 
   Salesforce::Models::AttachedRecord.transaction do
     attached_records = Salesforce::Models::AttachedRecord.preload(:salesforce_objects)
