@@ -40,7 +40,6 @@ class CcPageStats < ActiveRecord::Migration
 
       # refresh concurrently requires a unique index
       execute "create unique index cc_page_stats_page_indx on cc_page_stats(course_period_id, content_page_id, group_type)"
-      execute "create index cc_page_stats_tasks_indx on cc_page_stats using gin (task_ids)"
       execute "create index cc_page_stats_course_indx on cc_page_stats(course_id)"
     end
 
