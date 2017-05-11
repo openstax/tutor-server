@@ -75,7 +75,7 @@ class Demo::Work < Demo::Base
     cc_task_type = Tasks::Models::Task.task_types[:concept_coach]
     student.role.taskings.joins(:task).where(task: { task_type: cc_task_type })
                          .preload(task: { task_steps: :tasked }).each do |tasking|
-      task.task_steps.each{ |task_step| work_step(task_step, Random.rand < 0.5) }
+      tasking.task.task_steps.each{ |task_step| work_step(task_step, Random.rand < 0.5) }
     end
   end
 end
