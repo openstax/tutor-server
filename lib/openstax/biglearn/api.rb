@@ -416,13 +416,24 @@ module OpenStax::Biglearn::Api
     end
 
     def new_client(name: default_client_name)
-      client_class = case name.to_sym
+      name_sym = name.to_sym
+
+      client_class = case name_sym
       when :real
         RealClient
       when :fake
         FakeClient
       else
-        raise "Invalid Biglearn client name (#{name})"
+        valid_client_name = name_sym.to_s.include?('real') ? :real : :fake
+
+        Rails.logger.error do
+          "Invalid Biglearn client name: #{name_sym}. Setting it to #{valid_client_name}."
+        end
+
+        Settings::Biglearn.client = valid_client_name
+        RequestStore.store[:biglearn_api_default_client_name] = valid_client_name
+
+        new_client(name: valid_client_name)
       end
 
       begin
