@@ -16,6 +16,10 @@ module User
         nil
       end
 
+      def salesforce_contact_id
+        nil
+      end
+
     end
   end
 end

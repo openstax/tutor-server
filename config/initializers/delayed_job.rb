@@ -55,7 +55,8 @@ Delayed::Worker.class_exec do
 
   def handle_failed_job_with_instant_failures(job, exception)
     fail_proc = INSTANT_FAILURE_PROCS[exception.class.name]
-    job.fail! if fail_proc.present? && fail_proc.call(exception)
+    job.fail! if fail_proc.present? && fail_proc.call(exception) ||
+                 exception.try(:instantly_fail_if_in_background_job?)
 
     handle_failed_job_without_instant_failures(job, exception)
   end
