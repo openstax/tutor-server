@@ -1,5 +1,8 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
+
   acts_as_tasked
+
+  auto_uuid
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
@@ -12,6 +15,13 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback
+
+  scope :correct, -> do
+    where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
+  end
+  scope :incorrect, -> do
+    where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
+  end
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
@@ -38,10 +48,8 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     true
   end
 
-  def handle_task_step_completion!
-    free_response_required
+  def before_completion
     answer_id_required
-    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
   end
 
   def make_correct!
@@ -51,6 +59,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def make_incorrect!
+    self.free_response = '.'
     self.answer_id = nil
     self.save!
   end
@@ -123,4 +132,5 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     errors.add(:base, 'cannot be updated after feedback becomes available')
     false
   end
+
 end

@@ -120,17 +120,22 @@ class CalculateTaskStats
                                            {task_step: {task: {taskings: :role}}}]).to_a
   end
 
-  def group_tasked_exercises_by_pages(tasked_exercises)
-    tasked_exercises.group_by{ |te| te.exercise.page }
-  end
-
   def generate_page_stats_for_task_steps(task_steps, details)
-    page_hash = group_tasked_exercises_by_pages(
-      get_tasked_exercises_from_task_steps(task_steps)
-    )
+    tasked_exercises = get_tasked_exercises_from_task_steps(task_steps)
+    grouped_tasked_exercises = tasked_exercises.group_by{ |te| te.exercise.page }
+    current_page_arrays, spaced_page_arrays = \
+      grouped_tasked_exercises.partition do |page, tasked_exercises|
+      tasked_exercises.any? { |te| !te.task_step.spaced_practice_group? }
+    end
 
-    page_hash.map{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises, details) }
-             .sort_by{ |page_stats| page_stats[:chapter_section] }
+    current_page_stats = current_page_arrays.map do |page, tasked_exercises|
+      generate_page_stats(page, tasked_exercises, details)
+    end.sort_by { |page_stats| page_stats[:chapter_section] }
+    spaced_page_stats = spaced_page_arrays.map do |page, tasked_exercises|
+      generate_page_stats(page, tasked_exercises, details)
+    end.sort_by { |page_stats| page_stats[:chapter_section] }
+
+    [ current_page_stats, spaced_page_stats ]
   end
 
   def generate_period_stat_data(tasks, details)
@@ -140,13 +145,10 @@ class CalculateTaskStats
                                 .preload([:task_steps, { taskings: :period }])
 
     grouped_tasks = active_student_tasks.group_by{ |task| task.taskings.first.try!(:period) }
-
     grouped_tasks.map do |period, period_tasks|
-      current_task_steps = period_tasks.map{ |t| t.core_task_steps + t.personalized_task_steps }
-      current_page_stats = generate_page_stats_for_task_steps(current_task_steps, details)
+      task_steps = period_tasks.map(&:task_steps)
 
-      spaced_task_steps = period_tasks.map(&:spaced_practice_task_steps)
-      spaced_page_stats = generate_page_stats_for_task_steps(spaced_task_steps, details)
+      current_page_stats, spaced_page_stats = generate_page_stats_for_task_steps task_steps, details
 
       Hashie::Mash.new(
         period_id: period.id,

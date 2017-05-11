@@ -16,6 +16,8 @@ class CourseMembership::AddEnrollment
     outputs[:student] = student
     transfer_errors_from(outputs[:student], {type: :verbatim}, true)
 
+    OpenStax::Biglearn::Api.update_rosters(course: period.course)
+
     ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \
       if assign_published_period_tasks
   end

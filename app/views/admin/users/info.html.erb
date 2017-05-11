@@ -29,7 +29,9 @@
 
 <% courses = GetUserCourses[user: user] %>
 
-<% courses.sort_by{|cc| [-cc.year, -CourseProfile::Models::Course.terms[cc.term], cc.name]}.each do |course| %>
+<% courses.sort_by do |cc|
+     [-cc.year, -CourseProfile::Models::Course.terms[cc.term], cc.name]
+   end.each do |course| %>
   <ol>
     <li>
       <%= link_to course.name, edit_admin_course_path(course) %> //
@@ -37,7 +39,7 @@
       <%= course.is_concept_coach ? "Concept Coach" : "Tutor" %> //
       <%= course.is_college ? "College" : "High School" %> //
 
-      <% roles = GetUserCourseRoles[course: course, user: user] %>
+      <% roles = GetUserCourseRoles[courses: course, user: user] %>
 
       <% roles.each do |role| %>
           [ <%= role.role_type %> |

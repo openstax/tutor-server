@@ -103,5 +103,4 @@ class OpenStax::Exercises::V1::FakeClient
       end
     }
   end
-
 end

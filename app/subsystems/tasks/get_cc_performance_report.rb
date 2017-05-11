@@ -1,6 +1,6 @@
 module Tasks
   class GetCcPerformanceReport
-    include PerformanceReportMethods
+    include PerformanceReportRoutine
 
     # Overall average score and heading stats do not include dropped student data
 
@@ -21,7 +21,7 @@ module Tasks
                              .flat_map(&:keys)       # ignore the values of page and is_dropped keys
                              .keep_if{|key| key.is_a? Content::Page} # ignore is_dropped
                              .uniq
-                             .sort{ |a, b| b.book_location <=> a.book_location }
+                             .sort_by(&:book_location)
 
         period_students = period.latest_enrollments
                                 .preload(student: {role: {profile: :account}})
@@ -109,8 +109,7 @@ module Tasks
           type: 'concept_coach',
           average_score: average_scores(non_dropped_page_tasks),
           average_actual_and_placeholder_exercise_count: average(
-            non_dropped_page_tasks,
-            ->(tt) {tt.actual_and_placeholder_exercise_count}
+            non_dropped_page_tasks, ->(tt) {tt.actual_and_placeholder_exercise_count}
           ),
           completion_rate: completion_fraction(non_dropped_page_tasks)
         }

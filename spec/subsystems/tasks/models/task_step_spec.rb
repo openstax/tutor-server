@@ -13,7 +13,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
   describe '#complete' do
     let(:time) { Time.current }
 
-    before { Timecop.freeze(time) { task_step.complete } }
+    before { Timecop.freeze(time) { task_step.complete! } }
 
     it 'completes a first and last completion datetime to track lateness' do
       expect(task_step.first_completed_at).to eq(time)
@@ -33,21 +33,21 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
   end
 
   context "group types" do
-    it "is created with 'default' group type" do
-      expect(task_step.default_group?).to be_truthy
+    it "is created with 'unknown_group' group type" do
+      expect(task_step.unknown_group?).to be_truthy
     end
 
-    it "supports the 'core' group type" do
+    it "supports the 'core_group' group type" do
       task_step.core_group!
       expect(task_step.core_group?).to be_truthy
     end
 
-    it "supports the 'spaced practice' group type" do
+    it "supports the 'spaced_practice_group' group type" do
       task_step.spaced_practice_group!
       expect(task_step.spaced_practice_group?).to be_truthy
     end
 
-    it "supports the 'personalized' group type" do
+    it "supports the 'personalized_group' group type" do
       task_step.personalized_group!
       expect(task_step.personalized_group?).to be_truthy
     end
@@ -55,7 +55,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
 
   it "converts its group type to a name" do
     name_by_type = {
-      "default_group"         => "default",
+      "unknown_group"         => "unknown",
       "core_group"            => "core",
       "spaced_practice_group" => "spaced practice",
       "personalized_group"    => "personalized",

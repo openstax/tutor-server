@@ -8,28 +8,60 @@ class CourseMembership::GetRoleCourses
 
   protected
 
-  def exec(roles:, types: :any, include_inactive_students: false)
-    types = [types].flatten.compact
-    types = [:student, :teacher] if types.include?(:any)
+  def exec(roles:, types: :any, include_inactive_students: false, preload: nil)
+    types = [types].flatten
+    if types.include?(:any)
+      includes_student = true
+      includes_teacher = true
+    else
+      includes_student = types.include?(:student)
+      includes_teacher = types.include?(:teacher)
+    end
 
-    role_ids = [roles].flatten.compact.map(&:id)
+    return outputs.courses = CourseProfile::Models::Course.none \
+      unless includes_student || includes_teacher
 
-    courses = []
+    role_ids = [roles].flatten.map(&:id)
+    subqueries = []
+    if includes_student
+      student_subquery = CourseProfile::Models::Course
+        .joins(:periods)
+        .joins do
+          <<-SQL.strip_heredoc
+            INNER JOIN #{CourseMembership::Models::Enrollment.with_reverse_sequence_number_sql}
+              ON course_membership_enrollments.course_membership_period_id =
+                course_membership_periods.id
+            INNER JOIN course_membership_students
+              ON course_membership_students.id =
+                course_membership_enrollments.course_membership_student_id
+          SQL
+        end.where(course_membership_students: { entity_role_id: role_ids },
+                  course_membership_enrollments: { reverse_sequence_number: 1 })
 
-    if types.include?(:student)
-      courses_as_student = CourseProfile::Models::Course.joins{students}
-                                                        .where{students.entity_role_id.in role_ids}
-      courses_as_student = courses_as_student.where(students: { deleted_at: nil }) \
+      student_subquery = student_subquery
+        .where(periods: { deleted_at: nil, course_membership_students: { deleted_at: nil } }) \
         unless include_inactive_students
-      courses += courses_as_student
+
+      subqueries << student_subquery
     end
 
-    if types.include?(:teacher)
-      courses += CourseProfile::Models::Course.joins{teachers}
-                                              .where{teachers.entity_role_id.in role_ids}
+    if includes_teacher
+      subqueries << CourseProfile::Models::Course
+        .joins(:teachers)
+        .where(teachers: { entity_role_id: role_ids })
     end
 
-    outputs.courses = courses.uniq
+    subquery = subqueries.size == 1 ? subqueries.first.arel : subqueries.reduce(:union)
+
+    # http://radar.oreilly.com/2014/05/more-than-enough-arel.html
+    course_table = CourseProfile::Models::Course.arel_table
+    courses = CourseProfile::Models::Course.from(
+      course_table.create_table_alias(subquery, :course_profile_courses)
+    )
+
+    courses = courses.preload(*[preload].flatten) unless preload.nil?
+
+    outputs.courses = courses
   end
 
 end

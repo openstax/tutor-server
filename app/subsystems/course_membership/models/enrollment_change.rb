@@ -1,11 +1,12 @@
 class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
+
   wrapped_by CourseMembership::Strategies::Direct::EnrollmentChange
 
   acts_as_paranoid
 
   belongs_to :profile, -> { with_deleted }, subsystem: :user
-  belongs_to :enrollment, -> { with_deleted } # from
-  belongs_to :period, -> { with_deleted }     # to
+  belongs_to :enrollment, -> { with_deleted }, inverse_of: :enrollment_change # from
+  belongs_to :period, -> { with_deleted }                                     # to
   belongs_to :conflicting_enrollment, -> { with_deleted },
                                       class_name: 'CourseMembership::Models::Enrollment'
 
@@ -81,4 +82,5 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
     errors.add(:conflicting_enrollment, 'is invalid')
     false
   end
+
 end

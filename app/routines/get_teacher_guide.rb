@@ -1,6 +1,6 @@
 class GetTeacherGuide
 
-  include CourseGuideMethods
+  include CourseGuideRoutine
 
   uses_routine CourseMembership::GetPeriodStudentRoles, as: :get_period_student_roles
 

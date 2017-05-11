@@ -9,6 +9,8 @@ module CourseMembership
       student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
       outputs[:student] = student
+
+      OpenStax::Biglearn::Api.update_rosters(course: student.course)
     end
   end
 end

@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
 
   before(:all) do
-    generate_test_exercise_content
+    generate_homework_test_exercise_content
     @old_ecosystem = @ecosystem
     @old_pages = @pages
-    generate_test_exercise_content
+    generate_homework_test_exercise_content
   end
 
   context 'reading task plan' do

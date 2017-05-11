@@ -5,29 +5,33 @@ end
 
 Settings::Db.store = Settings::Db::Store
 
-Settings::Db.store.defaults[:excluded_uids] = ''
-Settings::Db.store.defaults[:excluded_pool_uuid] = ''
+Settings::Db.store.defaults[:excluded_ids] = ''
 Settings::Db.store.defaults[:import_real_salesforce_courses] = false
 Settings::Db.store.defaults[:default_open_time] = '00:01'
 Settings::Db.store.defaults[:default_due_time] = '07:00'
 Settings::Db.store.defaults[:term_years_to_import] = ''
 
-Settings::Db.store.defaults[:biglearn_client] =
-  case Rails.env
-  when "test"
-    :fake
-  when "development"
-    :local_query_with_fake
-  when "production"
-    :local_query_with_real
-  end
+secrets = Rails.application.secrets
 
-redis_secrets = Rails.application.secrets['redis']
+biglearn_secrets = secrets['openstax']['biglearn']
+biglearn_stub = biglearn_secrets['stub'].nil? ? true : biglearn_secrets['stub']
+Settings::Db.store.defaults[:biglearn_client] = biglearn_stub ? :fake : :real
+Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = \
+  biglearn_stub ? 'local_query' : 'sparfa'
+Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = \
+  biglearn_stub ? 'local_query' : 'sparfa'
+Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = \
+  biglearn_stub ? 'local_query_student_driven' : 'tesr_student_driven'
+Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = \
+  biglearn_stub ? 'local_query' : 'tesr'
+Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = \
+  biglearn_stub ? 'local_query' : 'tesr'
+
+redis_secrets = secrets['redis']
 Settings::Redis.store = Redis::Store.new(
   url: redis_secrets['url'],
   namespace: redis_secrets['namespaces']['settings']
 )
-
 
 Settings::Db.store.defaults[:course_appearance_codes] = {
     hs_physics:           'Physics',

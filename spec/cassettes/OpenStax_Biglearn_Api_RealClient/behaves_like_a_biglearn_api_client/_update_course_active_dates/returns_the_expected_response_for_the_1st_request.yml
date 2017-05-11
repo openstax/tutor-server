@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:3000/update_course_active_dates
+    body:
+      encoding: UTF-8
+      string: '{"request_uuid":"3670a853-1719-46b7-9073-ed22caac8a64","course_uuid":"<COURSE
+        UUID>","sequence_number":25,"starts_at":"2016-11-18T01:07:16.743Z","ends_at":"2017-05-18T01:07:16.744Z"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"daf720648e4f484582aea7090560725f"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 72bbd0c4-d26b-4f66-b4cc-642692a911be
+      X-Runtime:
+      - '0.044939'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"updated_course_uuid":"<COURSE UUID>"}'
+    http_version: 
+  recorded_at: Sat, 18 Feb 2017 01:07:27 GMT
+recorded_with: VCR 2.9.3

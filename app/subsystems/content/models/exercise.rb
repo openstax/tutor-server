@@ -2,9 +2,9 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   attr_accessor :pool_types, :is_excluded
 
-  acts_as_resource
-
   wrapped_by ::Content::Strategies::Direct::Exercise
+
+  acts_as_resource
 
   belongs_to :page, inverse_of: :exercises
   has_one :chapter, through: :page
@@ -16,14 +16,18 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
+  validates :uuid, presence: true
+  validates :group_uuid, presence: true
   validates :number, presence: true
   validates :version, presence: true
 
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) {
-    joins{ scope.as(:later_version).on{ (later_version.number == ~number) & \
-                                        (later_version.version > ~version) }.outer }
-      .where{later_version.id == nil}
+    joins do
+      scope.as(:later_version).on do
+        (later_version.number == ~number) & (later_version.version > ~version)
+      end.outer
+    end.where{later_version.id == nil}
   }
 
   def uid
@@ -47,7 +51,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   end
 
   def content_hash
-    ::JSON.parse(content)
+    @content_hash ||= JSON.parse(content)
   end
 
   def content_as_independent_questions
@@ -65,8 +69,16 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     tags.to_a.any?(&:requires_context?)
   end
 
+  def questions_hash
+    content_hash['questions']
+  end
+
+  def number_of_parts
+    questions_hash.size
+  end
+
   def is_multipart?
-    content_hash['questions'].size > 1
+    number_of_parts > 1
   end
 
   def feature_ids

@@ -1,7 +1,7 @@
 biglearn_secrets = Rails.application.secrets['openstax']['biglearn']
 redis_secrets = Rails.application.secrets['redis']
 
-OpenStax::Biglearn::V1.configure do |config|
+OpenStax::Biglearn::Api.configure do |config|
   config.server_url = biglearn_secrets['url']
   config.client_id  = biglearn_secrets['client_id']
   config.secret     = biglearn_secrets['secret']

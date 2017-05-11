@@ -4,10 +4,13 @@ module Content
 
       wrapped_by ::Content::Strategies::Direct::Ecosystem
 
+      auto_uuid :tutor_uuid
+
       has_many :course_ecosystems, dependent: :destroy, subsystem: :course_content
       has_many :courses, through: :course_ecosystems, subsystem: :course_profile
 
       has_many :task_plans, subsystem: :tasks, dependent: :destroy
+      has_many :tasks, subsystem: :tasks, dependent: :destroy
 
       has_many :books, dependent: :destroy, inverse_of: :ecosystem
       has_many :chapters, through: :books

@@ -24,7 +24,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
     allow(placeholder).to receive(:can_be_recovered?).and_return(false)
 
     ## TaskedPlaceholder-specific properties
-    allow(placeholder).to receive(:placeholder_name).and_return('Some step type')
+    allow(placeholder).to receive(:placeholder_type).and_return('some_exercise_type')
     allow(placeholder).to receive(:last_completed_at).and_return(Time.current)
     allow(placeholder).to receive(:first_completed_at).and_return(Time.current - 1.week)
 
@@ -40,7 +40,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
   end
 
   it "has the correct 'placeholder_for'" do
-    expect(representation).to include("placeholder_for" => 'Some step type')
+    expect(representation).to include("placeholder_for" => 'some_exercise_type')
   end
 
   it "correctly references the TaskStep and Task ids" do

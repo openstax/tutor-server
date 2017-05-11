@@ -7,9 +7,13 @@ module Content
 
         exposes :chapter, :reading_dynamic_pool, :reading_context_pool, :homework_core_pool,
                 :homework_dynamic_pool, :practice_widget_pool, :concept_coach_pool,
-                :all_exercises_pool, :exercises, :tags, :los, :aplos, :url, :uuid, :version,
-                :cnx_id, :title, :content, :book_location, :is_intro?, :fragments, :snap_labs,
-                :snap_labs_with_page_id, :short_id
+                :all_exercises_pool, :exercises, :tags, :los, :aplos, :tutor_uuid, :url, :uuid,
+                :version, :cnx_id, :title, :tutor_title, :content, :book_location, :is_intro?,
+                :fragments, :snap_labs, :snap_labs_with_page_id, :short_id, :related_content
+
+        def to_model
+          repository
+        end
 
         alias_method :entity_chapter, :chapter
         def chapter
@@ -73,15 +77,14 @@ module Content
           entity_aplos.map{ |ea| ::Content::Tag.new(strategy: ea) }
         end
 
+        alias_method :string_tutor_uuid, :tutor_uuid
+        def tutor_uuid
+          ::Content::Uuid.new(string_tutor_uuid)
+        end
+
         alias_method :string_uuid, :uuid
         def uuid
           ::Content::Uuid.new(string_uuid)
-        end
-
-        def related_content(title: nil, book_location: nil)
-          title ||= is_intro? ? chapter.title : self.title
-          book_location ||= self.book_location
-          { title: title, book_location: book_location }
         end
 
       end

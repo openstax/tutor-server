@@ -6,7 +6,9 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   wrapped_by CourseMembership::Strategies::Direct::Period
 
-  belongs_to :course, subsystem: :course_profile
+  auto_uuid
+
+  belongs_to :course, subsystem: :course_profile, inverse_of: :periods_with_deleted
 
   # Roles don't have soft-delete so we don't destroy them when the period is archived
   belongs_to :teacher_student_role, subsystem: :entity, class_name: 'Entity::Role'
@@ -14,14 +16,14 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :teachers, through: :course
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
-  has_many :enrollments, dependent: :destroy
+  has_many :enrollments, dependent: :destroy, inverse_of: :period
   has_many :latest_enrollments, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
   has_many :latest_enrollments_with_deleted, -> { latest.with_deleted },
                                                 class_name: '::CourseMembership::Models::Enrollment'
 
-  has_many :enrollment_changes, dependent: :destroy
+  has_many :enrollment_changes, dependent: :destroy, inverse_of: :period
 
-  has_many :taskings, subsystem: :tasks
+  has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
 
   unique_token :enrollment_code, mode: :random_number, length: 6

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Administration' do
+RSpec.feature 'Administration' do
   before do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)

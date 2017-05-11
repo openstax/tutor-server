@@ -20,8 +20,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(new_tasking_plan.task_plan).to eq task_plan
       expect(new_tasking_plan.target).to eq tasking_plan.target
-      expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-      expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+      expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+      expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
     end
   end
 
@@ -41,8 +41,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(new_tasking_plan.task_plan).to eq task_plan
       expect(new_tasking_plan.target).to eq default_role
-      expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-      expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+      expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+      expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
     end
   end
 
@@ -72,8 +72,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in acceptable_roles
-        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+        expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
       end
     end
 
@@ -84,8 +84,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       ts_result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in acceptable_roles
-        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+        expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
       end
     end
 
@@ -100,8 +100,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
       expect(new_tasking_plan.task_plan).to eq task_plan
       expect(new_tasking_plan.target).to eq student_role_3
-      expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-      expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+      expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+      expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
     end
   end
 
@@ -129,8 +129,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in acceptable_roles
-        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+        expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
       end
     end
 
@@ -141,8 +141,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       ts_result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
         expect(new_tasking_plan.target).to be_in acceptable_roles
-        expect(new_tasking_plan.opens_at).to be_within(1).of tasking_plan.opens_at
-        expect(new_tasking_plan.due_at).to be_within(1).of tasking_plan.due_at
+        expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
+        expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
       end
     end
 

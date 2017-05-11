@@ -1,8 +1,6 @@
 FactoryGirl.define do
   factory :course_profile_course, class: '::CourseProfile::Models::Course' do
-    transient do
-      consistent_times { false }
-    end
+    transient             { consistent_times { false } }
 
     name                  { Faker::Lorem.words.join(' ') }
 
@@ -16,6 +14,12 @@ FactoryGirl.define do
 
     starts_at             { consistent_times ? term_year.starts_at : Time.current - 3.months }
     ends_at               { consistent_times ? term_year.ends_at : Time.current + 3.months }
+
+    biglearn_student_clues_algorithm_name        { Faker::Hacker.abbreviation }
+    biglearn_teacher_clues_algorithm_name        { Faker::Hacker.abbreviation }
+    biglearn_assignment_spes_algorithm_name      { Faker::Hacker.abbreviation }
+    biglearn_assignment_pes_algorithm_name       { Faker::Hacker.abbreviation }
+    biglearn_practice_worst_areas_algorithm_name { Faker::Hacker.abbreviation }
 
     association :offering, factory: :catalog_offering
 

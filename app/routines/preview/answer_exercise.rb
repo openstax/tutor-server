@@ -8,14 +8,14 @@ module Preview
     protected
 
     def exec(task_step:, is_correct:, free_response: nil,
-             completed: true, completion_time: Time.current)
+             is_completed: true, completed_at: Time.current)
       tasked = task_step.tasked
 
       if !tasked.is_a?(::Tasks::Models::TaskedExercise)
-        # puts "tasked:    #{tasked.inspect}"
-        # puts "task step: #{task_step.inspect}"
         # puts "task:      #{task_step.task.inspect}"
-        raise "Task step isn't an exercise"
+        # puts "task step: #{task_step.inspect}"
+        # puts "tasked:    #{tasked.inspect}"
+        raise "Cannot answer a #{tasked.class.name} - Group: #{task_step.group_type}"
       end
 
       if is_correct
@@ -30,7 +30,7 @@ module Preview
 
       tasked.update_attributes(free_response: free_response, answer_id: answer_id)
 
-      run(:mark_completed, task_step: task_step, completion_time: completion_time) if completed
+      run(:mark_completed, task_step: task_step, completed_at: completed_at) if is_completed
     end
 
   end

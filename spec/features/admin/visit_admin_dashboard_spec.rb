@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Admnistration' do
+RSpec.feature 'Admnistration' do
   scenario 'visit the admin dashboard' do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)

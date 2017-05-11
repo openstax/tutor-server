@@ -8,11 +8,13 @@ module Manager::StatsActions
       teachers: { role: { role_user: :profile } },
       periods_with_deleted: :latest_enrollments_with_deleted
     ).order(:name).to_a
+
     @total_students = @courses.map do |course|
       course.periods_with_deleted.map do |period|
         period.latest_enrollments_with_deleted.length
       end.reduce(0, :+)
     end.reduce(0, :+)
+
     @course_url_proc = course_url_proc
 
     render 'manager/stats/courses'

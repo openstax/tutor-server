@@ -8,12 +8,11 @@ class SetupPerformanceReportData
     students = [students].flatten
 
     # There should be at least 4 students
-    (students.length + 1..4).each do |extra_student|
-      students << FactoryGirl.create(:user)
-    end
+    (4 - students.length).times { students << FactoryGirl.create(:user) }
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-    AddUserAsCourseTeacher[course: course, user: teacher]
+    AddUserAsCourseTeacher[course: course, user: teacher] \
+      unless CourseMembership::IsCourseTeacher[course: course, roles: teacher.to_model.roles]
     period_1 = course.periods.any? ? course.periods.first :
                                      FactoryGirl.create(:course_membership_period, course: course)
     period_2 = FactoryGirl.create(:course_membership_period, course: course)
@@ -26,7 +25,7 @@ class SetupPerformanceReportData
       AddUserAsPeriodStudent[period: period_2, user: student, student_identifier: "S#{index + 3}"]
     end
 
-    roles = students.map{ |student| GetUserCourseRoles[course: course, user: student].first }
+    roles = students.map { |student| GetUserCourseRoles[courses: course, user: student].first }
 
     # Exclude introduction pages b/c they don't have LOs
     pages = ecosystem.books.first.chapters.flat_map do |ch|
@@ -40,13 +39,13 @@ class SetupPerformanceReportData
   end
 
   def setup_cc_tasks(roles, pages)
-    exercises = [pages.first.exercises.first(6), pages.last.exercises.last(3)]
+    exercises_arrays = [pages.first.exercises.first(6), pages.last.exercises.last(3)]
 
     roles.map do |role|
-      exercises.map do |exercises|
+      exercises_arrays.map do |exercises|
         page = exercises.first.page
 
-        group_types = (exercises.size - 1).times.map{ :core_group } + [:spaced_practice_group]
+        group_types = (exercises.size - 2).times.map{ :core_group } + [:spaced_practice_group] * 2
 
         related_content_array = exercises.map{ page.related_content }
 
@@ -176,99 +175,62 @@ class SetupPerformanceReportData
   def answer_cc_tasks(student_tasks)
     # User 1 answered everything in first CC correctly
     student_1_tasks = student_tasks[0]
-    student_1_tasks[0].core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    student_1_tasks[0].reload.non_core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
+    Preview::WorkTask[task: student_1_tasks[0], is_correct: true]
 
     # User 1 answered 3 correct, 1 incorrect in 2nd CC
-    student_1_tasks[1].core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    student_1_tasks[1].reload
-    Preview::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.first, is_correct: true]
-    Preview::AnswerExercise[task_step: student_1_tasks[1].non_core_task_steps.last, is_correct: false]
+    is_completed = ->(task, task_step, index) { index < 3 || index == task.task_steps.size - 1 }
+    is_correct = ->(task, task_step, index)   { index < 3 }
+    Preview::WorkTask[task: student_1_tasks[1], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in first CC
     student_2_tasks = student_tasks[1]
-    core_task_steps = student_2_tasks[0].core_task_steps
-    core_task_steps.first(2).each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    core_task_steps.last(2).each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: false]
-    end
+    is_completed = ->(task, task_step, index) { index < 2 || index >= task.task_steps.size - 2 }
+    is_correct = ->(task, task_step, index)   { index < 2 }
+    Preview::WorkTask[task: student_2_tasks[0], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 answered 1 correct in 2nd CC
-    Preview::AnswerExercise[task_step: student_2_tasks[1].core_task_steps.first, is_correct: true]
+    Preview::AnswerExercise[task_step: student_2_tasks[1].task_steps.first, is_correct: true]
 
     # User 3 answered everything in first CC correctly
     student_3_tasks = student_tasks[2]
-    student_3_tasks[0].core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    student_3_tasks[0].reload.non_core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
+    Preview::WorkTask[task: student_3_tasks[0], is_correct: true]
   end
 
   def answer_tp_tasks(student_tasks)
-    # User 1 answered everything in homework task plan correctly
+    # User 1 answered everything in homework correctly
     student_1_tasks = student_tasks[0]
-    student_1_tasks[0].core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    student_1_tasks[0].reload.non_core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
+    Preview::WorkTask[task: student_1_tasks[0], is_correct: true]
 
-    # User 1 completed the reading task plan
-    student_1_tasks[1].core_task_steps.each do |ts|
-      ts.exercise? ? Preview::AnswerExercise[task_step: ts, is_correct: false] : \
-                     MarkTaskStepCompleted[task_step: ts]
-    end
-    student_1_tasks[1].reload.non_core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: false]
-    end
+    # User 1 completed the reading
+    Preview::WorkTask[task: student_1_tasks[1], is_correct: false]
 
-    # User 1 answered 3 correct, 1 incorrect in 2nd homework
-    student_1_tasks[2].core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
+    # User 1 answered 2 correct core, 1 correct spaced practice
+    # and 1 incorrect spaced practice exercise in 2nd homework
+    is_completed = ->(task, task_step, index) do
+      task_step.core_group? ||
+      task_step == task.spaced_practice_task_steps.first ||
+      task_step == task.spaced_practice_task_steps.last
     end
-    student_1_tasks[2].reload
-    Preview::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
-                          is_correct: true]
-    Preview::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last,
-                          is_correct: false]
+    is_correct = ->(task, task_step, index) do
+      task_step.core_group? || task_step == task.spaced_practice_task_steps.first
+    end
+    Preview::WorkTask[task: student_1_tasks[2], is_completed: is_completed, is_correct: is_correct]
 
-    # User 2 answered 2 questions correctly and 2 incorrectly in
-    # homework task plan
+    # User 2 answered 2 questions correctly and 2 incorrectly in homework
     student_2_tasks = student_tasks[1]
-    core_task_steps = student_2_tasks[0].core_task_steps
-    core_task_steps.first(2).each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    core_task_steps.last(2).each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: false]
-    end
+    is_completed = ->(task, task_step, index) { index < 2 || index >= task.task_steps.size - 2 }
+    is_correct = ->(task, task_step, index) { index < 2 }
+    Preview::WorkTask[task: student_2_tasks[0], is_completed: is_completed, is_correct: is_correct]
 
-    # User 2 started the reading task plan
+    # User 2 started the reading
     MarkTaskStepCompleted[task_step: student_2_tasks[1].task_steps.first]
 
     # User 2 answered 1 correct in 2nd homework
-    Preview::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first,
-                          is_correct: true]
+    Preview::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first, is_correct: true]
 
-    # User 3 answered everything in homework task plan correctly
+    # User 3 answered everything in homework correctly
     student_3_tasks = student_tasks[2]
-    student_3_tasks[0].core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
-    student_3_tasks[0].reload.non_core_task_steps.each do |ts|
-      Preview::AnswerExercise[task_step: ts, is_correct: true]
-    end
+    Preview::WorkTask[task: student_3_tasks[0], is_correct: true]
   end
 
 end

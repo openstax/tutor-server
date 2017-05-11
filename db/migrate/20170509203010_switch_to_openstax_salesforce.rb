@@ -1,3 +1,7 @@
+class OldSfUser < ActiveRecord::Base
+  self.table_name = :salesforce_users
+end
+
 class SwitchToOpenStaxSalesforce < ActiveRecord::Migration
   def up
     # Move SF attached records to openstax_salesforce namespace
@@ -6,7 +10,7 @@ class SwitchToOpenStaxSalesforce < ActiveRecord::Migration
     )
 
     # Move SF user from native model to openstax_salesforce model
-    old_sf_user = Salesforce::Models::User.first
+    old_sf_user = OldSfUser.first
 
     if old_sf_user.present?
       OpenStax::Salesforce::User.create!(

@@ -14,7 +14,19 @@ module Api::V1
                readable: true,
                writeable: false
 
+    property :student_count,
+             type: Integer,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
     property :questions_answered_count,
+             type: Integer,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
+    property :practice_count,
              type: Integer,
              readable: true,
              writeable: false,
@@ -22,12 +34,6 @@ module Api::V1
 
     property :clue,
              extend: ClueRepresenter,
-             readable: true,
-             writeable: false,
-             schema_info: { required: true }
-
-    property :practice_count,
-             type: Integer,
              readable: true,
              writeable: false,
              schema_info: { required: true }

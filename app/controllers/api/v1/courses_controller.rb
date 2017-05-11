@@ -25,8 +25,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
       :index, current_api_user, CourseProfile::Models::Course
     )
 
-    course_infos = CollectCourseInfo[user: current_human_user,
-                                     with: [:roles, :periods, :ecosystem, :students]]
+    course_infos = CollectCourseInfo[user: current_human_user]
 
     respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
   end
@@ -86,7 +85,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     result = UpdateCourse.call(params[:id], **consumed(Api::V1::CourseRepresenter))
 
     render_api_errors(result.errors) || respond_with(
-      collect_course_info(course: @course),
+      collect_course_info(course: @course.reload),
       represent_with: Api::V1::CourseRepresenter,
       location: nil,
       responder: ResponderWithPutPatchDeleteContent
@@ -177,9 +176,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   def collect_course_info(course:)
-    CollectCourseInfo[courses: course,
-                      user: current_human_user,
-                      with: [:roles, :periods, :ecosystem, :students]].first
+    CollectCourseInfo[courses: course, user: current_human_user].first
   end
 
   def get_course_role(course:, types: :any)
