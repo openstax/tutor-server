@@ -19,5 +19,5 @@ every 1.day, at: '8:30 AM' do  # ~ 2:30am central
 end
 
 every 30.minutes do
-  rake 'refresh_cc_stats_view'
+  runner "Tasks::CcPageStatsView.refresh"
 end

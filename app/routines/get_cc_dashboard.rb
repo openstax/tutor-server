@@ -147,10 +147,10 @@ class GetCcDashboard
 
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks, ecosystems_map)
 
-    all_pages_with_stats = Content::Models::Page.joins(
-      'join cc_page_stats on cc_page_stats.content_page_id = content_pages.id'
-    ).where(['cc_page_stats.course_period_id = ?', period.id]).select('*')
-
+    all_pages_with_stats = Content::Models::Page
+                             .joins(:cc_stats)
+                             .where(['cc_page_stats.course_period_id = ?', period.id])
+                             .select('*')
     all_page_wrappers = all_pages_with_stats.map { |page| Content::Page.new(strategy: page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: all_page_wrappers)
 
