@@ -950,8 +950,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "works without a role specified" do
+        Tasks::CcPageStatsView.refresh
         api_get :cc_dashboard, teacher_token, parameters: {id: course.id}
-
+pp HashWithIndifferentAccess[response.body_as_hash]
+        1.upto(3).each{|i|
+          puts "TASK: #{i}"
+          puts "Page: #{Tasks::Models::ConceptCoachTask.find_by(tasks_task_id: i).content_page_id}"
+          task = Tasks::Models::Task.where(id: i).first
+          p task.task_steps.pluck(:id, :group_type)
+        }
         expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
           "role" => {
             "id" => teacher_role.id.to_s,

@@ -222,6 +222,7 @@ RSpec.describe GetCcDashboard, type: :routine do
     end
 
     it "works for a teacher" do
+      Tasks::CcPageStatsView.refresh
       outputs = described_class.call(course: @course, role: @teacher_role).outputs
 
       expect(HashWithIndifferentAccess[outputs]).to include(
@@ -332,6 +333,7 @@ RSpec.describe GetCcDashboard, type: :routine do
       @student_role.student.destroy
       @student_role_2.student.destroy
       @course.reload
+      Tasks::CcPageStatsView.refresh
 
       outputs = described_class.call(course: @course, role: @teacher_role).outputs
 

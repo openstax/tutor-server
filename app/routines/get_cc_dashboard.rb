@@ -146,11 +146,13 @@ class GetCcDashboard
   end
 
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks, ecosystems_map)
-
+    all_task_ids = cc_tasks.map(&:tasks_task_id)
     all_pages_with_stats = Content::Models::Page
                              .joins(:cc_stats)
                              .where(['cc_page_stats.course_period_id = ?', period.id])
                              .select('*')
+
+    found_ids = all_pages_with_stats.flat_map(&:task_ids).uniq
     all_page_wrappers = all_pages_with_stats.map { |page| Content::Page.new(strategy: page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: all_page_wrappers)
 
@@ -168,7 +170,7 @@ class GetCcDashboard
 
       # Skip if no core page (if core and spaced practice happened with different course ecosystems)
       if core_page_with_stats.present?
-        core_completed_count = core_page_with_stats.completed_steps_count
+        core_completed_count = core_page_with_stats.completed_count
         core_correct_count = core_page_with_stats.correct_count
         core_performance = core_correct_count/core_completed_count.to_f
 
@@ -193,7 +195,7 @@ class GetCcDashboard
       # Skip if spaced practice hasn't happened yet
       next if spaced_page_with_stats.nil?
 
-      spaced_completed_count = spaced_page_with_stats.completed_steps_count
+      spaced_completed_count = spaced_page_with_stats.completed_count
       spaced_correct_count = spaced_page_with_stats.correct_count
       spaced_performance = spaced_correct_count/spaced_completed_count.to_f
 

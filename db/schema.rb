@@ -988,12 +988,12 @@ ActiveRecord::Schema.define(version: 20170509203010) do
       tasks_task_steps.group_type,
       count(tasks_task_steps.*) AS steps_count,
       max(tasks_task_steps.last_completed_at) AS task_steps_last_completed_at,
-      count(tasks_task_steps.first_completed_at) AS completed_steps_count,
+      count(tasks_task_steps.first_completed_at) AS completed_count,
       count(tasks_task_steps.first_completed_at) FILTER (WHERE ((tasks_tasked_exercises.answer_id)::text = (tasks_tasked_exercises.correct_answer_id)::text)) AS correct_count,
-      array_agg(tasks_taskings.entity_role_id) AS role_ids,
-      array_agg(tasks_tasks.id) AS task_ids
+      array_agg(DISTINCT tasks_taskings.entity_role_id) AS role_ids,
+      array_agg(DISTINCT tasks_tasks.id) AS task_ids
      FROM (((((tasks_concept_coach_tasks
-       JOIN tasks_tasks ON (((tasks_tasks.id = tasks_concept_coach_tasks.tasks_task_id) AND (tasks_tasks.deleted_at IS NULL))))
+       JOIN tasks_tasks ON (((tasks_tasks.id = tasks_concept_coach_tasks.tasks_task_id) AND (tasks_tasks.deleted_at IS NULL) AND (tasks_tasks.completed_exercise_steps_count > 0))))
        JOIN tasks_task_steps ON (((tasks_task_steps.tasks_task_id = tasks_tasks.id) AND ((tasks_task_steps.tasked_type)::text = 'Tasks::Models::TaskedExercise'::text))))
        JOIN tasks_tasked_exercises ON ((tasks_task_steps.tasked_id = tasks_tasked_exercises.id)))
        JOIN tasks_taskings ON (((tasks_taskings.tasks_task_id = tasks_tasks.id) AND (tasks_taskings.deleted_at IS NULL))))
