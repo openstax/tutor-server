@@ -5,8 +5,8 @@ module Content
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :comments,
-                :created_at, :deletable?, :manifest_hash
+        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :tutor_uuid,
+                :title, :comments, :created_at, :deletable?, :manifest_hash
         exposes :all, :create, :create!, :find, :deletable?,
                 from_class: ::Content::Models::Ecosystem
 
@@ -243,6 +243,11 @@ module Content
           entity_tags.where(value: values).map do |entity_tag|
             ::Content::Tag.new(strategy: entity_tag)
           end.sort_by{ |tag| value_indices[tag.value.to_s] }
+        end
+
+        alias_method :string_tutor_uuid, :tutor_uuid
+        def tutor_uuid
+          ::Content::Uuid.new(string_tutor_uuid)
         end
 
         alias_method :imported_at, :created_at

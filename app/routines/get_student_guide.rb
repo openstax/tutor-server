@@ -1,6 +1,6 @@
 class GetStudentGuide
 
-  include CourseGuideMethods
+  include CourseGuideRoutine
 
   protected
 

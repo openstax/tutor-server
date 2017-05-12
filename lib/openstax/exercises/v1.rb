@@ -19,10 +19,9 @@ module OpenStax::Exercises::V1
     # options can have :tag, :id, :number, :version keys
     def exercises(options={})
       exercises_hash = client.exercises(options)
-      exercises_hash['items'] = exercises_hash['items'].map do |ex|
+      exercises_hash['items'].map do |ex|
         OpenStax::Exercises::V1::Exercise.new(content: ex.to_json, server_url: client.server_url)
       end
-      exercises_hash
     end
 
     def use_fake_client

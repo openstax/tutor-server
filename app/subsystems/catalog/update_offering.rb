@@ -29,7 +29,12 @@ module Catalog
           course: course, ecosystem: new_ecosystem
         )
         job = Jobba.find(job_id)
-        job.save(course_ecosystem: new_ecosystem.title, course_id: course.id)
+        job.save(
+          course_id: course.id,
+          course_name: course.name,
+          ecosystem_id: new_ecosystem.id,
+          ecosystem_title: new_ecosystem.title
+        )
       end
     end
 

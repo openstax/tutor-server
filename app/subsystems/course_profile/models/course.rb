@@ -14,11 +14,15 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
   belongs_to :offering, subsystem: :catalog
 
   has_many :periods, subsystem: :course_membership, dependent: :destroy
-  has_many :periods_with_deleted, -> { with_deleted }, subsystem: :course_membership,
-           dependent: :destroy, class_name: 'CourseMembership::Models::Period'
+  has_many :periods_with_deleted,
+           -> { with_deleted },
+           subsystem: :course_membership,
+           dependent: :destroy,
+           class_name: 'CourseMembership::Models::Period',
+           inverse_of: :course
 
-  has_many :teachers, subsystem: :course_membership, dependent: :destroy
-  has_many :students, subsystem: :course_membership, dependent: :destroy
+  has_many :teachers, subsystem: :course_membership, dependent: :destroy, inverse_of: :course
+  has_many :students, subsystem: :course_membership, dependent: :destroy, inverse_of: :course
 
   has_many :excluded_exercises, subsystem: :course_content, dependent: :destroy
 
@@ -34,10 +38,16 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   unique_token :teach_token
 
-  enum term: [ :legacy, :demo, :spring, :summer, :fall ]
+  enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter ]
 
   validates :time_zone, presence: true, uniqueness: true
-  validates :name, :term, :year, :starts_at, :ends_at, presence: true
+  validates :name, :term, :year, :starts_at, :ends_at,
+            :biglearn_student_clues_algorithm_name,
+            :biglearn_teacher_clues_algorithm_name,
+            :biglearn_assignment_spes_algorithm_name,
+            :biglearn_assignment_pes_algorithm_name,
+            :biglearn_practice_worst_areas_algorithm_name,
+            presence: true
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 

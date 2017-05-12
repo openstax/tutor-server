@@ -1,12 +1,8 @@
 require 'rails_helper'
 require 'vcr_helper'
-require 'tasks/demo/content'
-require 'tasks/demo/tasks'
-require 'tasks/demo/work'
-require 'tasks/demo/show'
+require 'tasks/demo'
 
-RSpec.describe Demo, type: :routine, version: :v1, speed: :slow,
-                     truncation: true, vcr: VCR_OPTS do
+RSpec.describe Demo, type: :routine, speed: :slow, truncation: true, vcr: VCR_OPTS do
 
   context 'with the stable book version' do
     it "doesn't catch on fire" do

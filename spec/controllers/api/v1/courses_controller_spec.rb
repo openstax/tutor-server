@@ -64,9 +64,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         api_get :index, user_1_token
 
-        course_infos = CollectCourseInfo[
-          user: user_1, with: [:roles, :periods, :ecosystem, :students]
-        ]
+        course_infos = CollectCourseInfo[user: user_1]
 
         expect(response.body_as_hash).to match_array(
           Api::V1::CoursesRepresenter.new(course_infos).as_json.map(&:deep_symbolize_keys)
@@ -143,6 +141,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         name: 'A Course',
         term: term,
         year: year,
+        is_preview: false,
         is_college: true,
         num_sections: num_sections,
         offering_id: catalog_offering.id.to_s
@@ -169,24 +168,48 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'verified faculty' do
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
 
-      it 'creates a new trial course for the faculty if all required attributes are specified' do
-        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
-          change{ CourseProfile::Models::Course.count }.by(1)
-        )
-        expect(response).to have_http_status :success
-        expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
-        # Trial courses temporarily disabled
-        expect(response.body_as_hash[:is_trial]).to eq false
+      context 'is_preview: true' do
+        before { valid_body_hash[:is_preview] = true }
+
+        it 'creates a new preview course for the faculty if all required attributes are given' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseProfile::Models::Course.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
+          expect(response.body_as_hash[:is_preview]).to eq true
+        end
+
+        it 'makes the requesting faculty a teacher in the new preview course' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseMembership::Models::Teacher.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          course = CourseProfile::Models::Course.order(:created_at).last
+          expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
+        end
       end
 
-      it 'makes the requesting faculty a teacher in the new course' do
-        expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
-          change{ CourseMembership::Models::Teacher.count }.by(1)
-        )
-        expect(response).to have_http_status :success
-        course = CourseProfile::Models::Course.order(:created_at).last
-        expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
+      context 'is_preview: false' do
+        it 'creates a new course for the faculty if all required attributes are given' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseProfile::Models::Course.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
+          expect(response.body_as_hash[:is_preview]).to eq false
+        end
+
+        it 'makes the requesting faculty a teacher in the new course' do
+          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
+            change{ CourseMembership::Models::Teacher.count }.by(1)
+          )
+          expect(response).to have_http_status :success
+          course = CourseProfile::Models::Course.order(:created_at).last
+          expect(UserIsCourseTeacher[user: user_1, course: course]).to eq true
+        end
       end
+
 
       it 'returns errors if required attributes are not specified' do
         expect{ api_post :create, user_1_token }.not_to(
@@ -194,7 +217,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
         expect(response).to have_http_status :unprocessable_entity
         expect(response.body_as_hash[:status]).to eq 422
-        [:name, :term, :year, :is_college, :catalog_offering_id].each do |required_attr|
+        Api::V1::CoursesController::CREATE_REQUIRED_ATTRIBUTES.each do |required_attr|
           expect(response.body_as_hash[:errors]).to include(
             {code: "missing_attribute", message: "The #{required_attr} attribute must be provided"}
           )
@@ -322,10 +345,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'renames the course' do
         api_patch :update, user_1_token, parameters: { id: course.id },
                                          raw_post_data: { name: 'Renamed' }.to_json
-        expect(course.reload.name).to eq 'Renamed'
-        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:name]).to eq 'Renamed'
         expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
+        expect(course.reload.name).to eq 'Renamed'
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
       end
 
       it 'updates the time_zone' do
@@ -351,10 +374,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         api_patch :update, user_1_token, parameters: { id: course.id },
                                          raw_post_data: { name: course_name,
                                                           time_zone: 'Edinburgh' }.to_json
-        expect(course.reload.name).to eq course_name
-        expect(course.time_zone.name).to eq 'Edinburgh'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:time_zone]).to eq 'Edinburgh'
+        expect(course.reload.name).to eq course_name
+        expect(course.time_zone.name).to eq 'Edinburgh'
 
         edinburgh_tz = course.time_zone.to_tz
 
@@ -375,12 +398,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         course_name = course.name
         api_patch :update, user_1_token, parameters: { id: course.id },
                                          raw_post_data: { default_open_time: '01:02' }.to_json
-        expect(course.reload.name).to eq course_name
-        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
-        expect(course.reload.default_open_time).to eq '01:02'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_open_time]).to eq '01:02'
+        expect(course.reload.name).to eq course_name
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(course.default_open_time).to eq '01:02'
       end
 
       it 'freaks if the default open time is in a bad format' do
@@ -501,16 +524,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "works without a role specified" do
-        Demo::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
-        Demo::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
+        Preview::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
 
-        Demo::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
-        Demo::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
-        Demo::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
+        Preview::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
+        Preview::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
 
-        Demo::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
-        Demo::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
-        Demo::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
+        Preview::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
+        Preview::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
+        Preview::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
 
         api_get :dashboard, student_token, parameters: {id: course.id}
 
@@ -759,25 +782,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         user: student_user, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ]
       @task_1.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: true]
+        Preview::AnswerExercise[task_step: ts, is_correct: true]
       end
       @task_2 = GetConceptCoach[
         user: student_user, book_uuid: @book.uuid, page_uuid: @page_2.uuid
       ]
       @task_2.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: false]
+        Preview::AnswerExercise[task_step: ts, is_correct: false]
       end
       @task_3 = GetConceptCoach[
         user: student_user, book_uuid: @book.uuid, page_uuid: @page_3.uuid
       ]
       @task_3.task_steps.each do |ts|
-        Demo::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        Preview::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_4 = GetConceptCoach[
         user: student_user_2, book_uuid: @book.uuid, page_uuid: @page_1.uuid
       ]
       @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Demo::AnswerExercise[task_step: ts, is_correct: ii == 0]
+        Preview::AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
       @task_5 = GetConceptCoach[
         user: student_user_2, book_uuid: @book.uuid, page_uuid: @page_2.uuid
@@ -1142,7 +1165,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:valid_body)   { { copy_question_library: false } }
 
     before do
-      course.update_attribute :is_trial, true
+      course.update_attribute :is_preview, true
 
       zeroth_period.to_model.destroy!
     end
@@ -1182,7 +1205,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         Api::V1::CourseRepresenter.new(course).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
           year: expected_year,
-          is_trial: false,
+          is_preview: false,
           starts_at: expected_term_year.starts_at,
           ends_at: expected_term_year.ends_at,
           is_active: be_in([true, false]),

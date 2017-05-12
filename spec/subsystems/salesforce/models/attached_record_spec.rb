@@ -6,7 +6,7 @@ RSpec.describe Salesforce::Models::AttachedRecord, type: :model do
     it "has good defaults" do
       ar = FactoryGirl.create :salesforce_attached_record
       expect(ar.tutor_gid).to match /CourseProfile::Models::Course/
-      expect(ar.salesforce_class).to eq Salesforce::Remote::OsAncillary
+      expect(ar.salesforce_class).to eq OpenStax::Salesforce::Remote::OsAncillary
       expect(ar.salesforce_id).to eq "foo"
     end
 
@@ -17,9 +17,9 @@ RSpec.describe Salesforce::Models::AttachedRecord, type: :model do
     end
 
     it "can take sf object" do
-      cs = Salesforce::Remote::ClassSize.new(id: "blah")
+      cs = OpenStax::Salesforce::Remote::ClassSize.new(id: "blah")
       ar = FactoryGirl.create :salesforce_attached_record, salesforce_object: cs
-      expect(ar.salesforce_class).to eq Salesforce::Remote::ClassSize
+      expect(ar.salesforce_class).to eq OpenStax::Salesforce::Remote::ClassSize
       expect(ar.salesforce_id).to eq "blah"
     end
   end

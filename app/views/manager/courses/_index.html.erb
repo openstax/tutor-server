@@ -113,55 +113,16 @@
     <% end %>
   </div>
 
-  <% unless incomplete_jobs.blank? %>
+  <% unless incomplete_jobs.empty? %>
     <div role="tabpanel" class="tab-pane" id="incomplete">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Job ID</th>
-            <th>Status</th>
-            <th>Course</th>
-            <th>Ecosystem Title</th>
-          </tr>
-        </thead>
-        <tbody>
-        <% incomplete_jobs.each do |job| %>
-          <tr>
-            <td><%= link_to(job["id"], @job_path_proc.call(job["id"])) %></td>
-            <td><%= job["state_name"] %></td>
-            <td><%= job["course_name"] %></td>
-            <td><%= job["course_ecosystem"] %></td>
-          </tr>
-        <% end %>
-      </table>
-
-      <p><strong>Note:</strong> This table does not automatically refresh.</p>
+      <%= render partial: 'manager/courses/jobs',
+                 locals: { jobs: incomplete_jobs, job_path_proc: job_path_proc } %>
     </div>
   <% end %>
-
   <% unless failed_jobs.empty? %>
     <div role="tabpanel" class="tab-pane" id="failed">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Job ID</th>
-            <th>Status</th>
-            <th>Course</th>
-            <th>Ecosystem Title</th>
-          </tr>
-        </thead>
-        <tbody>
-        <% failed_jobs.each do |job| %>
-          <tr>
-            <td><%= link_to(job["id"], @job_path_proc.call(job["id"])) %></td>
-            <td><%= job["state_name"] %></td>
-            <td><%= job["course_name"] %></td>
-            <td><%= job["course_ecosystem"] %></td>
-          </tr>
-        <% end %>
-      </table>
-
-      <p><strong>Note:</strong> This table does not automatically refresh.</p>
+      <%= render partial: 'manager/courses/jobs',
+                 locals: { jobs: failed_jobs, status: 'Failed', job_path_proc: job_path_proc } %>
     </div>
   <% end %>
 </div>

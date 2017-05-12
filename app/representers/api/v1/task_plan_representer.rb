@@ -52,6 +52,10 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
            getter: ->(*) { is_draft? },
            schema_info: { type: 'boolean' }
 
+  property :is_preview,
+           readable: true,
+           writeable: false
+
   property :is_publishing,
            readable: true,
            writeable: false,

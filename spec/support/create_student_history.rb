@@ -10,6 +10,9 @@ class CreateStudentHistory
   private
 
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+    raise ArgumentError, "Role index #{i} not in given course", caller \
+      if roles.any? { |role| role.student.course != course }
+
     ecosystem = setup_course_book(course, book_id)
 
     create_assignments(ecosystem, course, course.periods.reload)
@@ -18,16 +21,19 @@ class CreateStudentHistory
       puts "=== Set Role##{role.id} history ==="
 
       # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(
-        role, pages: ecosystem.chapters[3 - (i % 2)].pages[1].id
+      practice_task = create_practice_widget(
+        course: course, role: role, page_ids: ecosystem.chapters[3 - (i % 2)].pages[1].id
       )
-      answer_correctly(practice_steps, 2 + i) # 2 or 3/5
+      answer_correctly(practice_task, 2 + i) # 2 or 3 out of 5
 
-      practice_steps = create_practice_widget(role, pages: ecosystem.chapters[3].pages[2].id)
-      answer_correctly(practice_steps, 5) # 5/5
+      practice_task = create_practice_widget(
+        course: course, role: role, page_ids: ecosystem.chapters[3].pages[2].id
+      )
+      answer_correctly(practice_task, 5) # 5 out of 5
 
-      practice_steps = create_practice_widget(role, chapters: ecosystem.chapters[3].id)
-      # Not started
+      create_practice_widget(
+        course: course, role: role, chapter_ids: ecosystem.chapters[3].id
+      ) # Not started
     end
   end
 
@@ -58,23 +64,18 @@ class CreateStudentHistory
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
     tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
-    tasks.each do |task|
-      task = task.reload
-      answer_correctly(task.task_steps(true), 2)
-    end
+    tasks.each { |task| answer_correctly(task, 2) }
   end
 
-  def create_practice_widget(role, ids = {})
-    ResetPracticeWidget[role: role,
-                        chapter_ids: ids[:chapters],
-                        page_ids: ids[:pages],
-                        exercise_source: :local].task_steps
+  def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)
+    CreatePracticeSpecificTopicsTask[
+      course: course, role: role, chapter_ids: chapter_ids, page_ids: page_ids
+    ]
   end
 
-  def answer_correctly(steps, num)
-    steps.first(num).each do |step|
-      Demo::AnswerExercise[task_step: step.reload, is_correct: true]
-    end
+  def answer_correctly(task, num)
+    is_completed = ->(task, task_step, index) { index < num }
+    Preview::WorkTask[task: task, is_completed: is_completed, is_correct: true]
   end
 
   def ireading_assistant
@@ -130,6 +131,7 @@ class CreateStudentHistory
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       title: 'Homework',
+      type: 'homework',
       settings: {
         exercise_ids: exercise_ids,
         exercises_count_dynamic: 2

@@ -27,7 +27,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { data.try :[], 'url' },
+             getter: ->(*) { data.try :[], 'url' }, # data is not guaranteed to be a hash
              schema_info: { required: false }
 
     collection :errors,

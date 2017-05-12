@@ -9,9 +9,9 @@ class GetSalesforceBookNames
     end
 
     begin
-      outputs[:book_names] = Salesforce::Remote::Book.all.map(&:name)
+      outputs[:book_names] = OpenStax::Salesforce::Remote::Book.all.map(&:name)
       ActiveForce.cache_store.set('book_names', outputs[:book_names])
-    rescue SalesforceUserMissing
+    rescue OpenStax::Salesforce::UserMissing
       fatal_error(code: :salesforce_user_missing)
     end
   end

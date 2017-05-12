@@ -10,6 +10,7 @@ VCR.configure do |c|
   %w(
     tutor_specs_oauth_token
     tutor_specs_refresh_token
+    tutor_specs_instance_url
   ).each do |salesforce_secret_name|
     Rails.application.secrets['salesforce'][salesforce_secret_name].tap do |value|
       c.filter_sensitive_data("<#{salesforce_secret_name}>") { value } if value.present?
@@ -18,6 +19,7 @@ VCR.configure do |c|
 end
 
 VCR_OPTS = {
-  record: ENV["VCR_OPTS_RECORD"].try(:to_sym) || :none, # This should default to :none before pushing
+  # This should default to :none
+  record: ENV['VCR_OPTS_RECORD'].try!(:to_sym) || :none,
   allow_unused_http_interactions: false
 }

@@ -5,9 +5,15 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   sortable_belongs_to :task, -> { with_deleted }, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, -> { with_deleted }, polymorphic: true, dependent: :destroy,
                                            inverse_of: :task_step, touch: true
+  belongs_to :page, subsystem: :content, inverse_of: :task_steps
 
-  enum group_type: [:default_group, :core_group, :spaced_practice_group,
-                    :personalized_group, :recovery_group]
+  enum group_type: [
+    :unknown_group,
+    :core_group,
+    :spaced_practice_group,
+    :personalized_group,
+    :recovery_group
+  ]
 
   json_serialize :related_content, Hash, array: true
   json_serialize :related_exercise_ids, Integer, array: true
@@ -25,6 +31,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
+  # Lock the task instead, but don't explode if task is nil
   def lock!(*args)
     task.try! :lock!, *args
 
@@ -57,10 +64,18 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     tasked.make_incorrect!
   end
 
-  def complete(completion_time: Time.current)
-    self.first_completed_at ||= completion_time
-    self.last_completed_at = completion_time
-    self
+  def complete!(completed_at: Time.current)
+    valid?
+    tasked.valid?
+    tasked.before_completion
+    tasked.errors.full_messages.each { |message| errors.add :tasked, message }
+    return if errors.any?
+
+    self.first_completed_at ||= completed_at
+    self.last_completed_at = completed_at
+    self.save!
+
+    task.handle_task_step_completion!(completed_at: completed_at)
   end
 
   def completed?

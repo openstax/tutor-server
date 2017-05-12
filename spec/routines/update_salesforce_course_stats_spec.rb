@@ -31,7 +31,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       # the type of SF object doesn't really matter to the described_class (tho does matter
       # in 'renew' call)
 
-      @existing_sf_object = Salesforce::Remote::OsAncillary.new(
+      @existing_sf_object = OpenStax::Salesforce::Remote::OsAncillary.new(
         product: "Concept Coach", account_type: "High School", id: "123", term_year: '2015 - 16 Spring'
       )
 
@@ -54,13 +54,13 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       period_2.to_model.update_attribute(:created_at, Time.zone.local(2016,4,20))
       period_3.to_model.update_attribute(:created_at, Time.zone.local(2016,4,10))
 
-      @new_sf_object = Salesforce::Remote::OsAncillary.new(
+      @new_sf_object = OpenStax::Salesforce::Remote::OsAncillary.new(
         product: "Concept Coach", account_type: "High School", id: "42", term_year: '2016 - 17 Fall'
       )
 
       allow(Salesforce::RenewOsAncillary).to receive(:call).once { @new_sf_object }
-      allow_any_instance_of(Salesforce::Remote::OsAncillary).to receive(:save) { nil }
-      allow_any_instance_of(Salesforce::Remote::ClassSize).to receive(:save) { nil }
+      allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:save) { nil }
+      allow_any_instance_of(OpenStax::Salesforce::Remote::ClassSize).to receive(:save) { nil }
 
       period_1.to_model.destroy
 
@@ -161,11 +161,11 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
     it "notifies if too many eligible SF objects" do
       allow(@organizer).to receive(:get_sf_objects) { [
-        Salesforce::Remote::OsAncillary.new(term_year: "2015 - 16 Fall"),
-        Salesforce::Remote::OsAncillary.new(term_year: "2015 - 16 Fall"),
+        OpenStax::Salesforce::Remote::OsAncillary.new(term_year: "2015 - 16 Fall"),
+        OpenStax::Salesforce::Remote::OsAncillary.new(term_year: "2015 - 16 Fall"),
       ] }
-      allow(Salesforce::Remote::TermYear).to receive(:guess_from_created_at) {
-        Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
+      allow(OpenStax::Salesforce::Remote::TermYear).to receive(:guess_from_created_at) {
+        OpenStax::Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
       }
 
       expect_any_instance_of(described_class).to receive(:notify)
@@ -174,11 +174,11 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     end
 
     it "reuses an existing eligible SF object" do
-      term_year = Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
-      existing_sf_object = Salesforce::Remote::OsAncillary.new(term_year: term_year.to_s, id: 'foo')
+      term_year = OpenStax::Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
+      existing_sf_object = OpenStax::Salesforce::Remote::OsAncillary.new(term_year: term_year.to_s, id: 'foo')
 
       allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
-      allow(Salesforce::Remote::TermYear).to receive(:guess_from_created_at) { term_year.dup }
+      allow(OpenStax::Salesforce::Remote::TermYear).to receive(:guess_from_created_at) { term_year.dup }
 
       expect(Salesforce::RenewOsAncillary).not_to receive(:call)
       expect(Salesforce::AttachRecord).to receive(:[]).with(record: existing_sf_object, to: period_3.to_model)
@@ -189,7 +189,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     end
 
     it "gracefully handles a bad term year in an SF object" do
-      existing_sf_object = Salesforce::Remote::OsAncillary.new(term_year: "fix formula 2016", id: 'foo')
+      existing_sf_object = OpenStax::Salesforce::Remote::OsAncillary.new(term_year: "fix formula 2016", id: 'foo')
       allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
 
       expect_any_instance_of(described_class)
@@ -200,12 +200,12 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     end
 
     it "makes a new SF object if no eligible ones available" do
-      term_year = Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
+      term_year = OpenStax::Salesforce::Remote::TermYear.from_string("2015 - 16 Fall")
       existing_sf_object = OpenStruct.new(term_year: term_year.to_s, id: 'foo')
 
       allow(@organizer).to receive(:get_sf_objects) { [existing_sf_object] }
-      allow(Salesforce::Remote::TermYear).to receive(:guess_from_created_at) { term_year.next }
-      allow(Salesforce::RenewOsAncillary).to receive(:call) { Salesforce::Remote::OsAncillary.new(id: 'bar') }
+      allow(OpenStax::Salesforce::Remote::TermYear).to receive(:guess_from_created_at) { term_year.next }
+      allow(Salesforce::RenewOsAncillary).to receive(:call) { OpenStax::Salesforce::Remote::OsAncillary.new(id: 'bar') }
 
       expect(Salesforce::RenewOsAncillary).to receive(:call)
       expect(Salesforce::AttachRecord).to receive(:[]).twice
@@ -270,7 +270,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
   it "can find the methods it needs in potential SF object classes" do
     # Have this check since we're mostly otherwise stubbing these classes
-    [Salesforce::Remote::OsAncillary, Salesforce::Remote::ClassSize].each do |sf_class|
+    [OpenStax::Salesforce::Remote::OsAncillary, OpenStax::Salesforce::Remote::ClassSize].each do |sf_class|
       expect(sf_class.new).to respond_to(:num_teachers=, :num_sections=, :num_students=,
                                          :error=, :changed?, :save)
     end

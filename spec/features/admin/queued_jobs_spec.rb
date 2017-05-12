@@ -48,10 +48,9 @@ RSpec.feature 'Administration of queued jobs', :js do
 
     # set the job as completed and refresh the page
     status.succeeded!
-    status.set_job_name('Export performance report')
     visit admin_job_path(status.id)
 
-    expect(page).to have_css('.job_name', text: 'Export performance report')
+    expect(page).to have_css('.job_name', text: 'Tasks::ExportPerformanceReport')
     expect(page).to have_css('.job_args', text: '{}')
     expect(page).to have_css('.job_progress', text: '100%')
     expect(page).to have_css('.job_errors', text: '')

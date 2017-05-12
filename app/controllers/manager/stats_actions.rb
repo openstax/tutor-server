@@ -4,15 +4,17 @@ module Manager::StatsActions
   end
 
   def courses
-    @courses = CourseProfile::Models::Course.where(is_trial: false).preload(
+    @courses = CourseProfile::Models::Course.where(is_preview: false).preload(
       teachers: { role: { role_user: :profile } },
       periods_with_deleted: :latest_enrollments_with_deleted
     ).order(:name).to_a
+
     @total_students = @courses.map do |course|
       course.periods_with_deleted.map do |period|
         period.latest_enrollments_with_deleted.length
       end.reduce(0, :+)
     end.reduce(0, :+)
+
     @course_url_proc = course_url_proc
 
     render 'manager/stats/courses'
@@ -45,7 +47,7 @@ module Manager::StatsActions
   def concept_coach
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(role: {student: :course})
-      .where(role: {student: {course: {is_trial: false}}})
+      .where(role: {student: {course: {is_preview: false}}})
       .preload([{page: {chapter: {book: {chapters: :pages}}}}, {role: :profile}])
       .to_a
 

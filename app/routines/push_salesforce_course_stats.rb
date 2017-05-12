@@ -14,30 +14,34 @@ class PushSalesforceCourseStats
   def initialize(allow_error_email:)
     @allow_error_email = allow_error_email
     @errors = []
+    @skips = []
     @num_updates = 0
     @num_errors = 0
+    @num_skips = 0
   end
 
   def call
     log { "Starting..." }
 
     applicable_courses.each do |course|
-      catch(:course_error) do
+      catch(:go_to_next_course) do
         call_for_course(course)
       end
     end
 
     notify_errors
+    notify_skips
 
     counts = {
       num_courses: applicable_courses.size,
       num_updates: @num_updates,
-      num_errors: @num_errors
+      num_errors: @num_errors,
+      num_skips: @num_skips
     }
 
     log {
       "Processed #{counts[:num_courses]} course(s); wrote stats for #{counts[:num_updates]} of " +
-      "these; #{counts[:num_errors]} course(s) ran into an error."
+      "these; skipped #{counts[:num_skips]}; #{counts[:num_errors]} course(s) ran into an error."
     }
 
     counts
@@ -45,8 +49,17 @@ class PushSalesforceCourseStats
 
   def call_for_course(course)
     begin
+      skip!(message: "No teachers", course: course) if teachers(course).length == 0
+
       attached_record = courses_to_attached_records[course]
       os_ancillary = attached_record.try(:salesforce_object)
+
+      if attached_record.present? && os_ancillary.nil?
+        # The SF record used to exist but no longer does, so detach the record.
+        log { "OSAncillary #{attached_record.salesforce_id} used to exist for course #{course.id} "
+              "but is no longer in SF.  Tutor will forget about it." }
+        attached_record.destroy!
+      end
 
       # If no OSA, try to make one
 
@@ -54,7 +67,7 @@ class PushSalesforceCourseStats
         # First figure out which SF Contact the OSA would hang off of
 
         sf_contact_id = best_sf_contact_id_for_course(course)
-        error!(message: "No teacher SF contact", course: course) if sf_contact_id.nil?
+        error!(message: "No teachers have a SF contact ID", course: course) if sf_contact_id.nil?
 
         # Next see if there's an appropriate IndividualAdoption; if not, make one.
 
@@ -69,7 +82,7 @@ class PushSalesforceCourseStats
           school_year: salesforce_school_year_for_course(course)
         }
 
-        candidate_individual_adoptions = Salesforce::Remote::IndividualAdoption
+        candidate_individual_adoptions = OpenStax::Salesforce::Remote::IndividualAdoption
                                            .where(individual_adoption_criteria)
                                            .to_a
 
@@ -78,30 +91,32 @@ class PushSalesforceCourseStats
                  course: course)
         end
 
-        individual_adoption =
-          candidate_individual_adoptions.first ||
-          begin
-            start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
-            sf_contact = Salesforce::Remote::Contact.where(id: sf_contact_id).first
+        individual_adoption = candidate_individual_adoptions.first
 
-            individual_adoption_options = {
-              contact_id: sf_contact_id,
-              book_id: book_names_to_sf_ids[book_name],
-              school_id: sf_contact.school_id
-            }
+        # already excluded legacy and demo terms
+        start_date_key = "#{course.term}_start_date".to_sym
+        start_date_value = course.starts_at.iso8601.gsub(/T.*/,'')
 
-            start_date_key =
-              if course.legacy? || course.demo?
-                error!(message: "Unallowed course term", course: course)
-              else
-                "#{course.term}_start_date".to_sym
-              end
+        if individual_adoption.nil?
+          start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
+          sf_contact = OpenStax::Salesforce::Remote::Contact.where(id: sf_contact_id).first
 
-            individual_adoption_options.merge(
-              {start_date_key => course.starts_at.iso8601.gsub(/T.*/,'')}
-            )
+          individual_adoption_options = {
+            contact_id: sf_contact_id,
+            book_id: book_names_to_sf_ids[book_name],
+            school_id: sf_contact.school_id
+          }
 
-            Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
+
+          individual_adoption_options.merge!({
+            start_date_key => start_date_value,
+            adoption_level: "Confirmed Adoption Won",
+            description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
+                         (OpenStax::Salesforce::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+          })
+
+          individual_adoption =
+            OpenStax::Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
               if !ia.save
                 error!(message: "Could not make new IndividualAdoption for inputs " \
                                 "#{individual_adoption_criteria}; errors: " \
@@ -109,17 +124,23 @@ class PushSalesforceCourseStats
                        course: course)
               end
             end
+        else
+          # Set the term start date if it is blank or has the wrong value
+          if individual_adoption.send(start_date_key) != start_date_value
+            individual_adoption.update_attributes!({start_date_key => start_date_value})
           end
+        end
 
         # Now see if there's an appropriate OSA on the IA; if not, make one.
         # Attach the OSA to the course so we can just use it next time.
 
         os_ancillary_criteria = {
           individual_adoption_id: individual_adoption.id,
-          product: course.is_concept_coach ? "Concept Coach" : "Tutor"
+          product: course.is_concept_coach ? "Concept Coach" : "Tutor",
+          term: course.term.capitalize
         }
 
-        candidate_os_ancillaries = Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
+        candidate_os_ancillaries = OpenStax::Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
 
         if candidate_os_ancillaries.size > 1
           error!(message: "Too many OsAncillaries matching #{os_ancillary_criteria}", course: course)
@@ -127,7 +148,8 @@ class PushSalesforceCourseStats
 
         os_ancillary = candidate_os_ancillaries.first ||
           begin
-            Salesforce::Remote::OsAncillary.new(os_ancillary_criteria.merge(contact_id: sf_contact_id)).tap do |osa|
+            attrs = os_ancillary_criteria.merge(contact_id: sf_contact_id)
+            OpenStax::Salesforce::Remote::OsAncillary.new(attrs).tap do |osa|
               if !osa.save
                 error!(message: "Could not make new OsAncillary for inputs #{os_ancillary_criteria}; " \
                                 "errors: #{osa.errors.full_messages.join(', ')}",
@@ -183,7 +205,7 @@ class PushSalesforceCourseStats
       os_ancillary.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
       os_ancillary.num_sections = periods.length
 
-      os_ancillary.status = Salesforce::Remote::OsAncillary::STATUS_APPROVED
+      os_ancillary.status = OpenStax::Salesforce::Remote::OsAncillary::STATUS_APPROVED
       os_ancillary.product = course.is_concept_coach ? "Concept Coach" : "Tutor"
     rescue Exception => ee
       # Add the error to the OSA and `error!` but non fatally so the error can get saved
@@ -205,19 +227,24 @@ class PushSalesforceCourseStats
     end
   end
 
+  def teachers(course)
+    course.teachers.order(:created_at)
+  end
+
   def best_sf_contact_id_for_course(course)
-    course.teachers
-          .order(:created_at)
-          .map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
-          .compact
-          .first
+    teachers(course).map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
+                    .compact
+                    .first
   end
 
   def applicable_courses
     # Don't update courses that have ended
     @courses ||= CourseProfile::Models::Course
                    .not_ended
+                   .where(is_test: false)
                    .where(is_excluded_from_salesforce: false)
+                   .where(term: CourseProfile::Models::Course.terms.slice(*%w(spring summer fall)).values)
+                   .where(is_preview: false)
                    .to_a
   end
 
@@ -232,7 +259,7 @@ class PushSalesforceCourseStats
 
   def book_names_to_sf_ids
     @book_names_to_sf_ids ||= begin
-      all_books = Salesforce::Remote::Book.all
+      all_books = OpenStax::Salesforce::Remote::Book.all
       all_books.each_with_object({}) do |book, hash|
         hash[book.name] = book.id
       end
@@ -259,7 +286,22 @@ class PushSalesforceCourseStats
 
       @num_errors += 1
     ensure
-      throw :course_error unless non_fatal
+      throw :go_to_next_course unless non_fatal
+    end
+  end
+
+  def skip!(message: nil, course: nil)
+    begin
+      skip = {}
+
+      skip[:message] = message if message.present?
+      skip[:course] = course.id if course.present?
+
+      @skips.push(skip) if skip.present?
+
+      @num_skips += 1
+    ensure
+      throw :go_to_next_course
     end
   end
 
@@ -275,6 +317,10 @@ class PushSalesforceCourseStats
         to: Rails.application.secrets.salesforce['mail_recipients']
       ).deliver_later
     end
+  end
+
+  def notify_skips
+    log { "Skips: " + @skips.inspect } unless @skips.empty?
   end
 
   def is_real_production?

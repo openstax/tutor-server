@@ -16,7 +16,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
 
     expect(task).not_to be_late
 
-    task.set_last_worked_at(time: Time.current)
+    task.set_last_worked_at(last_worked_at: Time.current)
     task.save
 
     expect(task).to be_late
@@ -34,7 +34,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task).not_to be_past_due
     expect(task).not_to be_late
 
-    task.set_last_worked_at(time: Time.current)
+    task.set_last_worked_at(last_worked_at: Time.current)
     task.save
 
     expect(task).not_to be_past_due
@@ -42,11 +42,11 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   describe '#handle_task_step_completion!' do
-    it 'marks #last_worked_at to the completion_time' do
+    it 'sets #last_worked_at to completed_at' do
       time = Time.current
       task = FactoryGirl.create(:tasks_task)
 
-      task.handle_task_step_completion!(completion_time: time)
+      task.handle_task_step_completion!(completed_at: time)
 
       expect(task.last_worked_at).to eq(time)
     end
@@ -106,11 +106,11 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it 'returns personalized task steps' do
-    core_step1         = instance_double('TaskStep', :personalized_group? => false)
-    core_step2         = instance_double('TaskStep', :personalized_group? => false)
-    core_step3         = instance_double('TaskStep', :personalized_group? => false)
-    personalized_step1 = instance_double('TaskStep', :personalized_group? => true)
-    personalized_step2 = instance_double('TaskStep', :personalized_group? => true)
+    core_step1         = instance_double('TaskStep', personalized_group?: false)
+    core_step2         = instance_double('TaskStep', personalized_group?: false)
+    core_step3         = instance_double('TaskStep', personalized_group?: false)
+    personalized_step1 = instance_double('TaskStep', personalized_group?: true)
+    personalized_step2 = instance_double('TaskStep', personalized_group?: true)
     task_steps = [core_step1, core_step2, core_step3, personalized_step1, personalized_step2]
     task = Tasks::Models::Task.new
     allow(task).to receive(:task_steps).and_return(task_steps)
@@ -139,18 +139,6 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task.core_task_steps_completed?).to eq false
   end
 
-  it 'can store and retrieve a personalized placeholder strategy object' do
-    obj = OpenStruct.new(value: :correct)
-    task = Tasks::Models::Task.new
-    expect(task.personalized_placeholder_strategy).to be_nil
-    task.personalized_placeholder_strategy = obj
-    expect(task.personalized_placeholder_strategy).to eq(obj)
-    expect(task.personalized_placeholder_strategy.value).to eq(:correct)
-    expect(task.personalized_placeholder_strategy).to_not equal(obj)
-    task.personalized_placeholder_strategy = nil
-    expect(task.personalized_placeholder_strategy).to be_nil
-  end
-
   it 'knows when feedback should be available' do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
     task.feedback_at = nil
@@ -171,8 +159,8 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                            :tasks_tasked_exercise,
                                            :tasks_tasked_exercise])
 
-    Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
-    Demo::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
+    Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+    Preview::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
 
     task.reload
 
@@ -182,49 +170,79 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   context "update step counts" do
-    let(:task) {
-      tt = Tasks::Models::Task.new
-      allow(tt).to receive(:save!)
-      tt
-    }
+    let(:task) { Tasks::Models::Task.new.tap { |task| allow(task).to receive(:save!) } }
 
-    let(:step) {
+    let(:step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(false)
       end
-    }
+    end
+    let(:step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    end
 
-    let(:completed_step) {
+    let(:completed_step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(true)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(false)
       end
-    }
+    end
+    let(:completed_step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    end
 
-    let(:core_step) {
+    let(:core_step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(true)
         allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(false)
       end
-    }
-
-    let(:completed_core_step) {
+    end
+    let(:core_step_2) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(true)
-        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(false)
       end
-    }
+    end
 
-    let(:exercise_step) {
+    let(:completed_core_step_1) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(true)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    end
+    let(:completed_core_step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(true)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    end
+
+    let(:exercise_step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
@@ -236,12 +254,11 @@ RSpec.describe Tasks::Models::Task, type: :model do
           end
         )
       end
-    }
-
-    let(:completed_exercise_step) {
+    end
+    let(:exercise_step_2) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
-        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(true)
         allow(step).to receive(:placeholder?).and_return(false)
         allow(step).to receive(:tasked).and_return(
@@ -250,9 +267,38 @@ RSpec.describe Tasks::Models::Task, type: :model do
           end
         )
       end
-    }
+    end
 
-    let(:correct_exercise_step) {
+    let(:completed_exercise_step_1) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(true)
+        allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+            allow(exercise).to receive(:is_correct?).and_return(false)
+          end
+        )
+      end
+    end
+    let(:completed_exercise_step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(true)
+        allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+            allow(exercise).to receive(:is_correct?).and_return(false)
+          end
+        )
+      end
+    end
+
+    let(:correct_exercise_step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(true)
@@ -265,9 +311,23 @@ RSpec.describe Tasks::Models::Task, type: :model do
           end
         )
       end
-    }
+    end
+    let(:correct_exercise_step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(true)
+        allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+            allow(exercise).to receive(:is_correct?).and_return(true)
+          end
+        )
+      end
+    end
 
-    let(:placeholder_step) {
+    let(:placeholder_step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
@@ -280,9 +340,23 @@ RSpec.describe Tasks::Models::Task, type: :model do
           end
         )
       end
-    }
+    end
+    let(:placeholder_step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(nil)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
+            allow(exercise).to receive(:exercise_type?).and_return(false)
+          end
+        )
+      end
+    end
 
-    let(:placeholder_exercise_step) {
+    let(:placeholder_exercise_step_1) do
       instance_double(Tasks::Models::TaskStep).tap do |step|
         allow(step).to receive(:core_group?).and_return(false)
         allow(step).to receive(:completed?).and_return(false)
@@ -295,7 +369,21 @@ RSpec.describe Tasks::Models::Task, type: :model do
           end
         )
       end
-    }
+    end
+    let(:placeholder_exercise_step_2) do
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(nil)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
+            allow(exercise).to receive(:exercise_type?).and_return(true)
+          end
+        )
+      end
+    end
 
     context "steps count" do
       context "total" do
@@ -306,7 +394,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple steps" do
-          allow(task).to receive(:task_steps).and_return([step, step])
+          allow(task).to receive(:task_steps).and_return([step_1, step_2])
           task.update_step_counts!
           expect(task.steps_count).to eq(2)
         end
@@ -320,7 +408,9 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple completed steps" do
-          allow(task).to receive(:task_steps).and_return([completed_step, step, completed_step])
+          allow(task).to(
+            receive(:task_steps).and_return([completed_step_1, step_1, completed_step_2])
+          )
           task.update_step_counts!
           expect(task.completed_steps_count).to eq(2)
         end
@@ -334,7 +424,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple core steps" do
-          allow(task).to receive(:task_steps).and_return([core_step, step, core_step])
+          allow(task).to receive(:task_steps).and_return([core_step_1, step_1, core_step_2])
           task.update_step_counts!
           expect(task.core_steps_count).to eq(2)
         end
@@ -348,7 +438,9 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple completed core steps" do
-          allow(task).to receive(:task_steps).and_return([completed_core_step, step, core_step, completed_core_step])
+          allow(task).to receive(:task_steps).and_return(
+            [completed_core_step_1, step_1, core_step_1, completed_core_step_2]
+          )
           task.update_step_counts!
           expect(task.completed_core_steps_count).to eq(2)
         end
@@ -362,7 +454,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple exercise steps" do
-          allow(task).to receive(:task_steps).and_return([exercise_step, step, exercise_step])
+          allow(task).to receive(:task_steps).and_return([exercise_step_1, step_1, exercise_step_2])
           task.update_step_counts!
           expect(task.exercise_steps_count).to eq(2)
         end
@@ -376,7 +468,9 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple completed exercise steps" do
-          allow(task).to receive(:task_steps).and_return([completed_exercise_step, exercise_step, step, completed_exercise_step])
+          allow(task).to receive(:task_steps).and_return(
+            [completed_exercise_step_1, exercise_step_1, step_1, completed_exercise_step_2]
+          )
           task.update_step_counts!
           expect(task.completed_exercise_steps_count).to eq(2)
         end
@@ -390,7 +484,9 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple correct exercise steps" do
-          allow(task).to receive(:task_steps).and_return([correct_exercise_step, completed_exercise_step, correct_exercise_step])
+          allow(task).to receive(:task_steps).and_return(
+            [correct_exercise_step_1, completed_exercise_step_1, correct_exercise_step_2]
+          )
           task.update_step_counts!
           expect(task.correct_exercise_steps_count).to eq(2)
         end
@@ -404,7 +500,9 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple placeholder steps" do
-          allow(task).to receive(:task_steps).and_return([placeholder_step, step, placeholder_step])
+          allow(task).to(
+            receive(:task_steps).and_return([placeholder_step_1, step_1, placeholder_step_2])
+          )
           task.update_step_counts!
           expect(task.placeholder_steps_count).to eq(2)
         end
@@ -418,7 +516,9 @@ RSpec.describe Tasks::Models::Task, type: :model do
         end
 
         it "works with multiple placeholder exercise steps" do
-          allow(task).to receive(:task_steps).and_return([placeholder_exercise_step, placeholder_step, placeholder_exercise_step])
+          allow(task).to receive(:task_steps).and_return(
+            [placeholder_exercise_step_1, placeholder_step_1, placeholder_exercise_step_2]
+          )
           task.update_step_counts!
           expect(task.placeholder_exercise_steps_count).to eq(2)
         end
@@ -428,7 +528,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
                                                due_at: Time.current - 1.day,
                                                step_types: ['tasks_tasked_exercise'])
-        Demo::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
 
         task.update_step_counts!
 
@@ -444,69 +544,71 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates counts after any change to the task" do
-        tasked_to = [FactoryGirl.create(:entity_role)]
+        tasked_to = [ FactoryGirl.create(:entity_role) ]
         task = FactoryGirl.create :tasks_task, tasked_to: tasked_to, step_types: [
           :tasks_tasked_exercise, :tasks_tasked_exercise,
           :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
-        ], personalized_placeholder_strategy: Tasks::PlaceholderStrategies::HomeworkPersonalized.new
+        ]
         exercise_ids = [task.tasked_exercises.first.content_exercise_id]
         task.task_plan.update_attribute :settings, { 'exercise_ids' => exercise_ids}
-        task.task_steps.first(4).each{ |ts| ts.update_attribute :group_type, :core_group }
-
-        expect(task.steps_count).to eq 5
-        expect(task.exercise_steps_count).to eq 4
-        expect(task.placeholder_steps_count).to eq 1
+        task.task_steps.first(4).each { |ts| ts.update_attribute :group_type, :core_group }
 
         expect(task.completed_steps_count).to eq 0
         expect(task.completed_exercise_steps_count).to eq 0
         expect(task.correct_exercise_steps_count).to eq 0
 
-        Demo::AnswerExercise[task_step: task.task_steps.first, is_correct: true, completed: true]
+        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true, is_completed: true]
         task.reload
+
+        expect(task.steps_count).to eq 5
+        expect(task.exercise_steps_count).to eq 4
+        expect(task.placeholder_steps_count).to eq 1
 
         expect(task.completed_steps_count).to eq 1
         expect(task.completed_exercise_steps_count).to eq 1
         expect(task.correct_exercise_steps_count).to eq 1
 
-        Demo::AnswerExercise[task_step: task.task_steps.second, is_correct: false, completed: true]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[1], is_correct: false, is_completed: true
+        ]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 1
 
-        Demo::AnswerExercise[task_step: task.task_steps.third, is_correct: true, completed: false]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[2], is_correct: true, is_completed: false
+        ]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 2
 
-        Demo::AnswerExercise[task_step: task.task_steps.fourth, is_correct: false, completed: false]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[3], is_correct: false, is_completed: false
+        ]
         task.reload
 
         expect(task.completed_steps_count).to eq 2
         expect(task.completed_exercise_steps_count).to eq 2
         expect(task.correct_exercise_steps_count).to eq 2
 
-        MarkTaskStepCompleted[task_step: task.task_steps.third]
+        MarkTaskStepCompleted[task_step: task.task_steps[2]]
         task.reload
 
         expect(task.completed_steps_count).to eq 3
         expect(task.completed_exercise_steps_count).to eq 3
         expect(task.correct_exercise_steps_count).to eq 2
 
-        expect(task.steps_count).to eq 5
-        expect(task.exercise_steps_count).to eq 4
-        expect(task.placeholder_steps_count).to eq 1
-
         # The placeholder step is removed due to no available personalized exercises
-        expect(GetEcosystemExercisesFromBiglearn).to receive(:[]).and_return([])
-        MarkTaskStepCompleted[task_step: task.task_steps.fourth]
+        expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([]).once
+
+        MarkTaskStepCompleted[task_step: task.task_steps[3]]
 
         task.reload
 
-        expect(task.task_steps.size).to eq 4
         expect(task.steps_count).to eq 4
         expect(task.exercise_steps_count).to eq 4
         expect(task.placeholder_steps_count).to eq 0
@@ -553,7 +655,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                                           :tasks_tasked_exercise])
 
       Timecop.freeze(Time.current - 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
 
@@ -562,7 +664,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
 
@@ -581,7 +683,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.accepted_late_at).not_to be_nil
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
 
@@ -614,7 +716,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                                           :tasks_tasked_exercise])
 
       Timecop.freeze(Time.current - 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
       end
 
@@ -623,7 +725,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
       end
 
@@ -642,7 +744,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.accepted_late_at).not_to be_nil
 
       Timecop.freeze(Time.current + 1.day) do
-        Demo::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
+        Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
       end
 

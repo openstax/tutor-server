@@ -9,18 +9,22 @@ class CourseMembership::IsCourseStudent
     relation = relation.with_deleted if include_dropped
     students = relation.where(entity_role_id: roles)
 
-    valid_student = students.detect do | student |
-      ! ( student.deleted? || student.period.deleted? )
+    valid_student = students.find do | student |
+      !student.deleted? && !student.period.deleted?
     end
 
     if include_dropped
-      outputs[:is_dropped] = valid_student.nil? && students.any? { | student | student.deleted? }
+      outputs.is_dropped = valid_student.nil? && students.any?(&:deleted?)
     end
 
     if include_archived
-      outputs[:is_archived] = valid_student.nil? && students.any? { | student | student.period.deleted? }
+      outputs.is_archived = valid_student.nil? && students.any? do | student |
+        student.period.deleted?
+      end
     end
 
-    outputs[:is_course_student] = !!(valid_student.present? || outputs[:is_dropped] || outputs[:is_archived])
+    is_course_student = valid_student.present? || outputs.is_dropped || outputs.is_archived
+
+    outputs.is_course_student = !!is_course_student
   end
 end

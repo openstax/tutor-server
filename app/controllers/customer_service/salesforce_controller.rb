@@ -1,8 +1,6 @@
 module CustomerService
   class SalesforceController < BaseController
 
-    include Manager::SalesforceImportCourses
-
     def show
     end
 

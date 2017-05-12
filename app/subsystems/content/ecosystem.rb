@@ -49,6 +49,10 @@ module Content
       verify_and_return @strategy.id, klass: Integer, error: StrategyError
     end
 
+    def tutor_uuid
+      verify_and_return @strategy.tutor_uuid, klass: ::Content::Uuid, error: StrategyError
+    end
+
     def manifest
       verify_and_return @strategy.manifest, klass: ::Content::Manifest, error: StrategyError
     end

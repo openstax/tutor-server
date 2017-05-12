@@ -12,12 +12,12 @@ class CreateCourse
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
 
-  uses_routine PopulateTrialCourseContent, as: :populate_trial_course_content
+  uses_routine PopulatePreviewCourseContent, as: :populate_preview_course_content
 
-  def exec(name:, term:, year:, is_trial:, is_college:, is_concept_coach: nil, num_sections: 0,
+  def exec(name:, term:, year:, is_preview:, is_college:, is_concept_coach: nil, num_sections: 0,
            catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
-           school: nil, time_zone: nil, cloned_from: nil,
-           default_open_time: nil, default_due_time: nil)
+           school: nil, time_zone: nil, cloned_from: nil, default_open_time: nil,
+           default_due_time: nil, estimated_student_count: nil)
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
@@ -31,24 +31,45 @@ class CreateCourse
 
     # If the given time_zone already has an associated course,
     # make a copy to avoid linking the 2 courses' time_zones to the same record
-    time_zone = time_zone.dup if time_zone.present? && time_zone.course.try!(:persisted?)
+    # p time_zone
+    # time_zone = time_zone.dup if time_zone.present? && time_zone.course.try!(:persisted?)
 
-    run(:create_course,
-        name: name,
-        term: term,
-        year: year,
-        is_college: is_college,
-        is_concept_coach: is_concept_coach,
-        is_trial: is_trial,
-        starts_at: starts_at,
-        ends_at: ends_at,
-        offering: catalog_offering.try!(:to_model),
-        appearance_code: appearance_code,
-        school: school,
-        time_zone: time_zone,
-        cloned_from: cloned_from,
-        default_open_time: default_open_time,
-        default_due_time: default_due_time)
+    # Convert time_zone to a model
+    # if it already is and has an associated course,
+    #   make a copy to avoid linking the 2 courses' time_zones to the same record
+    if time_zone.present?
+      if time_zone.is_a?(TimeZone)
+        time_zone = time_zone.dup if time_zone.course.try!(:persisted?)
+      else
+        time_zone = TimeZone.new(name: time_zone)
+      end
+    end
+
+    run(
+      :create_course,
+      name: name,
+      term: term,
+      year: year,
+      is_college: is_college,
+      is_concept_coach: is_concept_coach,
+      is_preview: is_preview,
+      starts_at: starts_at,
+      ends_at: ends_at,
+      offering: catalog_offering.try!(:to_model),
+      appearance_code: appearance_code,
+      school: school,
+      time_zone: time_zone,
+      cloned_from: cloned_from,
+      default_open_time: default_open_time,
+      default_due_time: default_due_time,
+      estimated_student_count: estimated_student_count,
+      biglearn_student_clues_algorithm_name: Settings::Biglearn.student_clues_algorithm_name,
+      biglearn_teacher_clues_algorithm_name: Settings::Biglearn.teacher_clues_algorithm_name,
+      biglearn_assignment_spes_algorithm_name: Settings::Biglearn.assignment_spes_algorithm_name,
+      biglearn_assignment_pes_algorithm_name: Settings::Biglearn.assignment_pes_algorithm_name,
+      biglearn_practice_worst_areas_algorithm_name: \
+        Settings::Biglearn.practice_worst_areas_algorithm_name
+    )
 
     num_sections.times{ run(:create_period, course: outputs.course) }
 
@@ -62,7 +83,7 @@ class CreateCourse
 
     run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
 
-    run(:populate_trial_course_content, course: outputs.course) if outputs.course.is_trial
+    run(:populate_preview_course_content, course: outputs.course) if outputs.course.is_preview
   end
 
 end

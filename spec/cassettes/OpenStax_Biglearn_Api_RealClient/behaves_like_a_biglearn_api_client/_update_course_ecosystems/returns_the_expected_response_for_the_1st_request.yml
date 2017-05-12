@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:3000/update_course_ecosystems
+    body:
+      encoding: UTF-8
+      string: '{"update_requests":[{"request_uuid":"<UPDATE_COURSE_ECOSYSTEMS EXAMPLE
+        1 REQUEST 1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":25,"preparation_uuid":"72611ecc-624a-4af6-96ed-2c7e5a06f080"}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"a25bebd5f9b78ae8de7ec62a26dbc4d5"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - a39dcf7c-f13f-4402-a5d9-e484b64c7320
+      X-Runtime:
+      - '0.048429'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"update_responses":[{"request_uuid":"<UPDATE_COURSE_ECOSYSTEMS EXAMPLE
+        1 REQUEST 1 UUID>","update_status":"preparation_unknown"}]}'
+    http_version: 
+  recorded_at: Sat, 18 Feb 2017 01:07:26 GMT
+recorded_with: VCR 2.9.3

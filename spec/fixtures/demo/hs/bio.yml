@@ -18,7 +18,6 @@ periods:
 
 assignments:
   - type: reading
-    step_types: [ r, r, r, r, r, e, e, e, r, r, r, r, r, r, e, r, r, e, r, e, r, e, e, e ]
     book_locations: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
     periods:
@@ -33,7 +32,6 @@ assignments:
         students: {gs: ns}
 
   - type: homework
-    step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     book_locations: [[1, 0], [1, 1], [1, 2]]
     title: HW The Study of Life
     num_exercises: 10
@@ -43,7 +41,8 @@ assignments:
         due_at: <%= due_three_days_ago %>
         students:
           ak: 90
-          gj: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 ]
+          # 10 core, 3 SP
+          gj: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0 ]
       - id: p2
         opens_at: <%= open_two_days_ago %>
         due_at: <%= due_two_days_ago %>

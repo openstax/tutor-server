@@ -7,6 +7,15 @@ GIT
       active_attr (~> 0.8)
       restforce (~> 2.1.0)
 
+GIT
+  remote: https://github.com/procore/with_advisory_lock.git
+  revision: aba1583ce8127370ed7098b03ab5e1952020c295
+  ref: aba1583c
+  specs:
+    with_advisory_lock (3.0.2)
+      activerecord (>= 3.2)
+      thread_safe
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -201,8 +210,8 @@ GEM
       redis (~> 3.0)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
-    faraday_middleware (0.10.0)
-      faraday (>= 0.7.4, < 0.10)
+    faraday_middleware (0.11.0.1)
+      faraday (>= 0.7.4, < 1.0)
     fastercsv (1.5.5)
     ffi (1.9.8)
     fine_print (3.1.0)
@@ -333,7 +342,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.4.4)
+    hashie (3.5.5)
     highline (1.6.21)
     hike (1.2.3)
     html2haml (2.0.0)
@@ -349,14 +358,14 @@ GEM
     ice_nine (0.11.1)
     inflecto (0.0.2)
     ipaddress (0.8.0)
-    jobba (1.4.0)
+    jobba (1.5.0)
       redis (~> 3.2)
       redis-namespace
     jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
-    json (1.8.3)
+    json (1.8.6)
     json-schema (2.5.1)
       addressable (~> 2.3.7)
     jwt (1.5.1)
@@ -364,7 +373,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (7.0.3)
+    lev (7.1.0)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -417,27 +426,15 @@ GEM
       rack (>= 1.2, < 3)
     oj (2.16.1)
     oj_mimic_json (1.0.1)
-    omniauth (1.3.1)
-      hashie (>= 1.2, < 4)
-      rack (>= 1.0, < 3)
+    omniauth (1.6.1)
+      hashie (>= 3.4.6, < 3.6.0)
+      rack (>= 1.6.2, < 3)
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
     omniauth-salesforce (1.0.5)
-      action_interceptor (>= 1.0)
-      keyword_search (>= 1.0.0)
-      lev (>= 2.2.1)
-      oauth2 (>= 0.5.0)
-      omniauth (>= 1.1)
       omniauth (~> 1.0)
-      omniauth-oauth2 (>= 1.1)
       omniauth-oauth2 (~> 1.0)
-      openstax_api (>= 3.1.0)
-      openstax_utilities (>= 4.1.0)
-      rails (>= 4.1)
-      representable (>= 2.0)
-      roar (>= 1.0)
-      squeel (>= 0.5.0)
     openstax_accounts (7.3.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
@@ -461,12 +458,14 @@ GEM
       responders
       roar (>= 1.0)
       roar-rails (>= 1.0)
-    openstax_exchange (0.2.1)
-      hashie
-      oauth2 (>= 0.5.0)
     openstax_rescue_from (1.6.0)
       exception_notification (>= 4.1, < 5.0)
       rails (>= 3.1, < 5.0)
+    openstax_salesforce (0.12.0)
+      active_force
+      omniauth-salesforce (~> 1.0.5)
+      rails (~> 4.2.0)
+      restforce (~> 2.1.3)
     openstax_utilities (4.2.3)
       keyword_search
       lev
@@ -500,7 +499,7 @@ GEM
       pry (>= 0.9.11)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
-    rack (1.6.4)
+    rack (1.6.6)
     rack-attack (4.3.1)
       rack
     rack-test (0.6.3)
@@ -556,7 +555,7 @@ GEM
     redis-activesupport (4.0.0)
       activesupport (~> 4)
       redis-store (~> 1.1.0)
-    redis-namespace (1.5.2)
+    redis-namespace (1.5.3)
       redis (~> 3.0, >= 3.0.4)
     redis-rack (1.5.0)
       rack (~> 1.5)
@@ -577,7 +576,7 @@ GEM
     request_store (1.3.1)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
-    restforce (2.1.1)
+    restforce (2.1.3)
       faraday (~> 0.9.0)
       faraday_middleware (>= 0.8.8)
       hashie (>= 1.2.0, < 4.0)
@@ -769,12 +768,12 @@ DEPENDENCIES
   guard-rspec
   hashie
   httparty
-  jobba (~> 1.4.0)
+  jobba (~> 1.5.0)
   jquery-rails
   json-schema
   keyword_search
   launchy
-  lev (~> 7.0.3)
+  lev (~> 7.1.0)
   lograge
   maruku
   mini_magick
@@ -783,11 +782,10 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  omniauth-salesforce
   openstax_accounts (~> 7.3.0)
   openstax_api (~> 8.1.0)
-  openstax_exchange (~> 0.2.1)
   openstax_rescue_from (~> 1.6.0)
+  openstax_salesforce (~> 0.12.0)
   openstax_utilities (~> 4.2.0)
   p3p
   parallel_tests
@@ -811,7 +809,6 @@ DEPENDENCIES
   remotipart
   render_anywhere
   request_store
-  restforce
   roar (= 1.0.3)
   roo
   rspec-collection_matchers
@@ -838,6 +835,7 @@ DEPENDENCIES
   whenever
   whenever-test
   will_paginate (~> 3.0.6)
+  with_advisory_lock!
 
 BUNDLED WITH
-   1.14.5
+   1.14.6

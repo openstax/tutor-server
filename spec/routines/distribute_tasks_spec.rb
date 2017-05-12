@@ -44,17 +44,13 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
     before do
       allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
-        receive(:k_ago_map) { [ [2, 4] ] }
+        receive(:num_spaced_practice_exercises) { 3 }
       )
-      allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
-        receive(:num_personalized_exercises) { 3 }
-      )
-      generate_test_exercise_content
+      generate_homework_test_exercise_content
     end
 
     it 'creates a preview and distributes the steps' do
-      step_types = ["core_group", "core_group", "core_group", "core_group", "core_group",
-                    "core_group", "personalized_group", "personalized_group", "personalized_group"]
+      expected_step_types = ['core_group'] * 6 + ['spaced_practice_group'] * 3
 
       results = DistributeTasks.call(task_plan: homework_plan, preview: true)
       expect(results.errors).to be_empty
@@ -62,7 +58,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       expect(homework_plan.reload.tasks.length).to eq 1
 
       homework_plan.tasks.each do | task |
-        expect(task.task_steps.map(&:group_type)).to eq(step_types)
+        expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
       end
 
       results = DistributeTasks.call(task_plan: homework_plan)
@@ -71,11 +67,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       expect(homework_plan.reload.tasks.length).to eq 3
 
       homework_plan.tasks.each do | task |
-        expect(task.task_steps.map(&:group_type)).to eq(step_types)
+        expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
       end
     end
 
-    # Note - this isn't 100% guaranteed to fail.  There's still a chance that the forked children will process
+    # Note - this isn't 100% guaranteed to fail.
+    # There's still a chance that the forked children will process
     # distribution in a way that doesn't trigger IsolationConflict exceptions.
     # If this spec starts to fail in indeterminate ways and can't be fixed it can be removed
     it 'cannot be distributed concurrently' do
@@ -109,7 +106,6 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
 
       context 'creating a preview task' do
-
         it 'can create a preview' do
           expect(task_plan.tasks).to be_empty
           result = DistributeTasks.call(task_plan: task_plan, preview: true)
@@ -126,7 +122,6 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
           expect(result.errors).to be_empty
           expect(new_plan).to be_new_record
         end
-
       end
 
       it 'creates tasks for the task_plan' do
@@ -139,8 +134,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       it 'sets the published_at fields' do
         result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
-        expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
+        task_plan.reload
+        expect(task_plan.first_published_at).to be_within(1).of(Time.current)
+        expect(task_plan.last_published_at).to be_within(1).of(Time.current)
       end
 
       it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -174,8 +170,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       it 'sets the published_at fields' do
         result = DistributeTasks.call(task_plan: task_plan)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.first_published_at).to be_within(1.second).of(Time.current)
-        expect(task_plan.reload.last_published_at).to be_within(1.second).of(Time.current)
+        task_plan.reload
+        expect(task_plan.first_published_at).to be_within(1).of(Time.current)
+        expect(task_plan.last_published_at).to be_within(1).of(Time.current)
       end
 
       it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -224,8 +221,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         publish_time = Time.current
         result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
         expect(result.errors).to be_empty
-        expect(task_plan.reload.first_published_at).to eq old_published_at
-        expect(task_plan.last_published_at).to be_within(1).of(publish_time)
+        task_plan.reload
+        expect(task_plan.first_published_at).to eq old_published_at
+        expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
       end
     end
 
@@ -252,7 +250,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
         result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.first_published_at).to eq old_published_at
-        expect(task_plan.last_published_at).to be_within(1).of(publish_time)
+        expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
       end
     end
   end

@@ -26,9 +26,9 @@ class Admin::CoursesController < Admin::BaseController
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = CollectImportJobsData[state: :incomplete]
-    @failed_jobs = CollectImportJobsData[state: :failed]
-    @job_path_proc = ->(job_id) { admin_job_path(job_id) }
+    result = CollectJobsData.call job_name: 'CourseContent::AddEcosystemToCourse'
+    @incomplete_jobs = result.outputs.incomplete_jobs
+    @failed_jobs = result.outputs.failed_jobs
   end
 
   def new
@@ -139,7 +139,12 @@ class Admin::CoursesController < Admin::BaseController
           course: course, ecosystem: ecosystem
         )
         job = Jobba.find(job_id)
-        job.save(course_ecosystem: ecosystem.title, course_id: course.id)
+        job.save(
+          course_id: course.id,
+          course_name: course.name,
+          ecosystem_id: ecosystem.id,
+          ecosystem_title: ecosystem.title
+        )
       end
       flash[:notice] = 'Course ecosystem update background jobs queued.'
     end
@@ -208,6 +213,7 @@ class Admin::CoursesController < Admin::BaseController
         :ends_at,
         :is_concept_coach,
         :is_college,
+        :is_test,
         :catalog_offering_id,
         :appearance_code,
         :school_district_school_id,

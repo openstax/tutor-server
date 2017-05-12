@@ -1,6 +1,7 @@
 class Api::V1::TasksController < Api::V1::ApiController
 
   before_action :get_task
+  before_action :populate_placeholders, only: :show
 
   resource_description do
     api_versions "v1"
@@ -74,6 +75,10 @@ class Api::V1::TasksController < Api::V1::ApiController
 
   def get_task
     @task = Tasks::Models::Task.with_deleted.find(params[:id])
+  end
+
+  def populate_placeholders
+    Tasks::PopulatePlaceholderSteps[task: @task]
   end
 
 end

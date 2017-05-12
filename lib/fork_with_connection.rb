@@ -18,8 +18,8 @@ module Tutor
         Jobba.redis.client.reconnect
 
         # reconnect fake client if Biglearn stubbing is enabled
-        OpenStax::Biglearn::V1.client.store.reconnect \
-          if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
+        OpenStax::Biglearn::Api.client.store.reconnect \
+          if OpenStax::Biglearn::Api.client.is_a? OpenStax::Biglearn::Api::FakeClient
 
         # This is needed to re-initialize the random number generator after forking (if you want diff random numbers generated in the forks)
         srand

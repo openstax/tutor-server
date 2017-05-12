@@ -4,7 +4,9 @@ module Salesforce
       class AttachedRecord < Entity
 
         wraps ::Salesforce::Models::AttachedRecord
-        exposes :salesforce_object, :salesforce_id, :attached_to, :attached_to_class_name, :attached_to_id
+        exposes :salesforce_object, :salesforce_id,
+                :attached_to, :attached_to_class_name, :attached_to_id,
+                :destroy!
 
         def self.all
           models = ::Salesforce::Models::AttachedRecord.all

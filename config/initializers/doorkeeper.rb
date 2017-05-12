@@ -11,7 +11,7 @@ Doorkeeper.configure do
 
   # If you want to restrict access to the web interface for adding oauth authorized applications, you need to declare the block below.
   admin_authenticator do
-    raise SecurityTransgression if Rails.env.production? && !current_user.administrator
+    raise SecurityTransgression if Rails.env.production? && !current_user.is_admin?
     current_user
   end
 

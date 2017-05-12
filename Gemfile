@@ -51,9 +51,6 @@ gem 'omniauth-oauth2', '~> 1.3.1'
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 7.3.0'
 
-# OpenStax Exchange integration
-gem 'openstax_exchange', '~> 0.2.1'
-
 # Datetime parsing
 gem 'chronic'
 
@@ -69,10 +66,10 @@ gem 'maruku'
 gem 'roar', '1.0.3'
 
 # Background job status store
-gem 'jobba', '~> 1.4.0'
+gem 'jobba', '~> 1.5.0'
 
 # Lev framework
-gem 'lev', '~> 7.0.3'
+gem 'lev', '~> 7.1.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -149,8 +146,7 @@ gem 'babbler', '~> 1.0.1'
 gem 'paranoia', '~> 2.1.3'
 
 # Salesforce
-gem 'restforce'
-gem 'omniauth-salesforce'
+gem 'openstax_salesforce', '~> 0.12.0'
 # Fork that supports Ruby >= 2.1 and stubbable stdout
 gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '7caac17'
 
@@ -185,6 +181,11 @@ gem 'postgresql_cursor'
 
 # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
 gem 'awesome_print'
+
+# Advisory Locks
+# This version provides locks that unlock automatically at the end of the transaction,
+# which are required for the correct operation of the Biglearn client
+gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
 
 group :development, :test do
   # Get env variables from .env file

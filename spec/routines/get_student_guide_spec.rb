@@ -19,19 +19,22 @@ RSpec.describe GetStudentGuide, type: :routine do
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
   end
 
+  let(:clue_matcher) do
+    a_hash_including(
+      minimum: kind_of(Numeric),
+      most_likely: kind_of(Numeric),
+      maximum: kind_of(Numeric),
+      is_real: be_in([true, false])
+    )
+  end
+
   context 'without work' do
 
-    # Automatic cleanup is only done for top-level describe/context blocks
-    # We need the cleanup here so this context will not interfere with the other context block
     before(:all) do
-      DatabaseCleaner.start
-
       book = FactoryGirl.create :content_book, title: 'Physics (Demo)'
       ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
     end
-
-    after(:all) { DatabaseCleaner.clean }
 
     it 'does not blow up' do
       guide = described_class[role: @role]
@@ -50,11 +53,7 @@ RSpec.describe GetStudentGuide, type: :routine do
 
   context 'with work' do
 
-    # Automatic cleanup is only done for top-level describe/context blocks
-    # We need the cleanup here so this context will not interfere with the other context block
     before(:all) do
-      DatabaseCleaner.start
-
       VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
         capture_stdout do
           CreateStudentHistory[course: @course.reload, roles: [@role, @second_role]]
@@ -94,16 +93,9 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_1).to match(
           "title" => "Acceleration",
           "book_location" => [3],
+          "student_count" => 1,
           "questions_answered_count" => 2,
-          "clue" => {
-            "value" => kind_of(Float),
-            "value_interpretation" => kind_of(String),
-            "confidence_interval" => kind_of(Array),
-            "confidence_interval_interpretation" => kind_of(String),
-            "sample_size" => kind_of(Integer),
-            "sample_size_interpretation" => kind_of(String),
-            "unique_learner_count" => kind_of(Integer)
-          },
+          "clue" => clue_matcher,
           "practice_count" => 0,
           "page_ids" => [kind_of(Integer)]*2,
           "children" => [kind_of(Hash)]*2
@@ -113,16 +105,9 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_2).to match(
           "title" => "Force and Newton's Laws of Motion",
           "book_location" => [4],
+          "student_count" => 1,
           "questions_answered_count" => 7,
-          "clue" => {
-            "value" => kind_of(Float),
-            "value_interpretation" => kind_of(String),
-            "confidence_interval" => kind_of(Array),
-            "confidence_interval_interpretation" => kind_of(String),
-            "sample_size" => kind_of(Integer),
-            "sample_size_interpretation" => kind_of(String),
-            "unique_learner_count" => kind_of(Integer)
-          },
+          "clue" => clue_matcher,
           "practice_count" => 0,
           "page_ids" => [kind_of(Integer)]*4,
           "children" => [kind_of(Hash)]*4
@@ -137,32 +122,18 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             "title" => "Acceleration",
             "book_location" => [3, 1],
+            "student_count" => 1,
             "questions_answered_count" => 2,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Representing Acceleration with Equations and Graphs",
             "book_location" => [3, 2],
+            "student_count" => 0,
             "questions_answered_count" => 0,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           }
@@ -173,64 +144,36 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             "title" => "Force",
             "book_location" => [4, 1],
+            "student_count" => 1,
             "questions_answered_count" => 2,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Newton's First Law of Motion: Inertia",
             "book_location" => [4, 2],
+            "student_count" => 1,
             "questions_answered_count" => 5,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Newton's Second Law of Motion",
             "book_location" => [4, 3],
+            "student_count" => 0,
             "questions_answered_count" => 0,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Newton's Third Law of Motion",
             "book_location" => [4, 4],
+            "student_count" => 0,
             "questions_answered_count" => 0,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           }
@@ -248,7 +191,7 @@ RSpec.describe GetStudentGuide, type: :routine do
 
         VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
           capture_stdout do
-            CreateStudentHistory[course: @course.reload, roles: [@role, @second_role]]
+            CreateStudentHistory[course: @course.reload, roles: [@role.reload, @second_role.reload]]
           end
         end
       end
@@ -283,16 +226,9 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_1).to match(
           "title" => "Acceleration",
           "book_location" => [3],
+          "student_count" => 1,
           "questions_answered_count" => 4,
-          "clue" => {
-            "value" => kind_of(Float),
-            "value_interpretation" => kind_of(String),
-            "confidence_interval" => kind_of(Array),
-            "confidence_interval_interpretation" => kind_of(String),
-            "sample_size" => kind_of(Integer),
-            "sample_size_interpretation" => kind_of(String),
-            "unique_learner_count" => kind_of(Integer)
-          },
+          "clue" => clue_matcher,
           "practice_count" => 0,
           "page_ids" => [kind_of(Integer)]*2,
           "children" => [kind_of(Hash)]*2
@@ -302,16 +238,9 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_2).to match(
           "title" => "Force and Newton's Laws of Motion",
           "book_location" => [4],
+          "student_count" => 1,
           "questions_answered_count" => 14,
-          "clue" => {
-            "value" => kind_of(Float),
-            "value_interpretation" => kind_of(String),
-            "confidence_interval" => kind_of(Array),
-            "confidence_interval_interpretation" => kind_of(String),
-            "sample_size" => kind_of(Integer),
-            "sample_size_interpretation" => kind_of(String),
-            "unique_learner_count" => kind_of(Integer)
-          },
+          "clue" => clue_matcher,
           "practice_count" => 0,
           "page_ids" => [kind_of(Integer)]*4,
           "children" => [kind_of(Hash)]*4
@@ -326,32 +255,18 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             "title" => "Acceleration",
             "book_location" => [3, 1],
+            "student_count" => 1,
             "questions_answered_count" => 4,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Representing Acceleration with Equations and Graphs",
             "book_location" => [3, 2],
+            "student_count" => 0,
             "questions_answered_count" => 0,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           }
@@ -362,64 +277,36 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             "title" => "Force",
             "book_location" => [4, 1],
+            "student_count" => 1,
             "questions_answered_count" => 4,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Newton's First Law of Motion: Inertia",
             "book_location" => [4, 2],
+            "student_count" => 1,
             "questions_answered_count" => 10,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Newton's Second Law of Motion",
             "book_location" => [4, 3],
+            "student_count" => 0,
             "questions_answered_count" => 0,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           },
           {
             "title" => "Newton's Third Law of Motion",
             "book_location" => [4, 4],
+            "student_count" => 0,
             "questions_answered_count" => 0,
-            "clue" => {
-              "value" => kind_of(Float),
-              "value_interpretation" => kind_of(String),
-              "confidence_interval" => kind_of(Array),
-              "confidence_interval_interpretation" => kind_of(String),
-              "sample_size" => kind_of(Integer),
-              "sample_size_interpretation" => kind_of(String),
-              "unique_learner_count" => kind_of(Integer)
-            },
+            "clue" => clue_matcher,
             "practice_count" => 0,
             "page_ids" => [kind_of(Integer)]
           }

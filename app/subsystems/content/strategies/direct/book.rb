@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Book
 
-        exposes :ecosystem, :chapters, :pages, :exercises, :url, :archive_url,
+        exposes :ecosystem, :chapters, :pages, :exercises, :tutor_uuid, :url, :archive_url,
                 :webview_url, :uuid, :short_id, :version, :cnx_id, :title
 
         alias_method :entity_ecosystem, :ecosystem
@@ -32,6 +32,11 @@ module Content
           entity_exercises.map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end
+        end
+
+        alias_method :string_tutor_uuid, :tutor_uuid
+        def tutor_uuid
+          ::Content::Uuid.new(string_tutor_uuid)
         end
 
         alias_method :string_uuid, :uuid

@@ -22,7 +22,16 @@ module JsonSerialize
         return unless has_attribute?(attribute)
 
         value = send attribute
-        return if options[:array] ? value.to_a.all?{ |val| val.is_a? type } : value.is_a?(type)
+        if options[:array]
+          if value.is_a?(type) && !value.is_a?(Array)
+            value = [value]
+            send options[:setter_method], value
+          end
+
+          return if value.to_a.all?{ |val| val.is_a? type }
+        else
+          return if value.is_a?(type)
+        end
 
         raise "Cannot convert object of type #{value.class.name} into #{type.name}" +
               " without specifying the :conversion_method" if options[:conversion_method].nil?

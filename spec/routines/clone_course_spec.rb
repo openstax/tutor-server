@@ -7,7 +7,12 @@ RSpec.describe CloneCourse, type: :routine do
 
   it 'creates a copy of a course' do
 
-    result = described_class.call(course: course, teacher_user: user, copy_question_library: false)
+    result = described_class.call(
+      course: course,
+      teacher_user: user,
+      copy_question_library: false,
+      estimated_student_count: 100
+    )
 
     expect(result.errors).to be_empty
 
@@ -15,6 +20,7 @@ RSpec.describe CloneCourse, type: :routine do
 
     expect(clone).to be_a CourseProfile::Models::Course
     expect(clone.cloned_from).to eq course
+    expect(clone.estimated_student_count).to eq 100
     expect(clone.course_assistants.count).to eq 4
     expect(UserIsCourseTeacher[user: user, course: clone]).to eq true
 

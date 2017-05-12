@@ -31,7 +31,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
     step.tasked = tasked_external_url(
       task_step: step, role: role, url: task_plan.settings['external_url']
     )
-    task.add_step(step)
+    task.task_steps << step
     task
   end
 

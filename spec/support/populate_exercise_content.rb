@@ -2,7 +2,7 @@ require 'vcr_helper'
 
 module PopulateExerciseContent
 
-  def generate_test_exercise_content
+  def generate_homework_test_exercise_content
 
     cnx_page_hashes = [
       { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
@@ -12,41 +12,26 @@ module PopulateExerciseContent
     @intro_step_gold_data = {
       klass: Tasks::Models::TaskedReading,
       title: "Forces and Newton's Laws of Motion",
-      related_content: [{title: "Forces and Newton's Laws of Motion",
-                         book_location: [8, 1]}]
+      related_content: [{title: "Forces and Newton's Laws of Motion", book_location: [8, 1]}]
     }
 
     @core_step_gold_data = [
       @intro_step_gold_data,
       { klass: Tasks::Models::TaskedReading,
         title: "Force",
-        related_content: [{title: "Force",
-                           book_location: [8, 2]}] }
+        related_content: [{title: "Force", book_location: [8, 2]}] }
     ]
+
+    @personalized_step_gold_data = []
 
     @spaced_practice_step_gold_data = [
-      { klass: Tasks::Models::TaskedExercise,
-        title: nil,
-        related_content: [{title: "Force",
-                           book_location: [8, 2]}] },
-      { klass: Tasks::Models::TaskedExercise,
-        title: nil,
-        related_content: [{title: "Force",
-                           book_location: [8, 2]}] },
-    ]
-
-    @personalized_step_gold_data = [
-      { klass: Tasks::Models::TaskedPlaceholder,
-        title: nil,
-        related_content: [] }
-    ]
+      { group_type: 'spaced_practice_group', klass: Tasks::Models::TaskedPlaceholder }
+    ] * 3
 
     @task_step_gold_data = \
-    @core_step_gold_data + @spaced_practice_step_gold_data + @personalized_step_gold_data
+      @core_step_gold_data + @personalized_step_gold_data + @spaced_practice_step_gold_data
 
-    cnx_pages = cnx_page_hashes.map do |hash|
-      OpenStax::Cnx::V1::Page.new(hash: hash)
-    end
+    cnx_pages = cnx_page_hashes.map { |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
 
     @chapter = FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
 

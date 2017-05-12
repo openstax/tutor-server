@@ -7,6 +7,10 @@ module Content
       verify_and_return @strategy.id, klass: Integer, error: StrategyError
     end
 
+    def tutor_uuid
+      verify_and_return @strategy.tutor_uuid, klass: ::Content::Uuid, error: StrategyError
+    end
+
     def url
       verify_and_return @strategy.url, klass: String, error: StrategyError
     end
@@ -82,6 +86,10 @@ module Content
       !!@strategy.is_intro?
     end
 
+    def tutor_title
+      verify_and_return @strategy.tutor_title, klass: String, error: StrategyError
+    end
+
     def fragments
       @strategy.fragments
     end
@@ -98,9 +106,8 @@ module Content
       verify_and_return @strategy.aplos, klass: ::Content::Tag, error: StrategyError
     end
 
-    def related_content(title: nil, book_location: nil)
-      related_content = @strategy.related_content(title: title, book_location: book_location)
-      verify_and_return related_content, klass: Hash, error: StrategyError
+    def related_content
+      verify_and_return @strategy.related_content, klass: Hash, error: StrategyError
     end
 
     def snap_labs
@@ -109,6 +116,10 @@ module Content
 
     def snap_labs_with_page_id
       verify_and_return @strategy.snap_labs_with_page_id, klass: Hash, error: StrategyError
+    end
+
+    def to_model
+      @strategy.to_model
     end
 
   end
