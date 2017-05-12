@@ -62,7 +62,6 @@ RSpec.describe GetCcDashboard, type: :routine do
   context 'without any work' do
     it "still returns period info for teachers" do
       outputs = described_class.call(course: @course, role: @teacher_role).outputs
-
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
@@ -224,7 +223,6 @@ RSpec.describe GetCcDashboard, type: :routine do
     it "works for a teacher" do
       Tasks::CcPageStatsView.refresh
       outputs = described_class.call(course: @course, role: @teacher_role).outputs
-
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
@@ -257,7 +255,7 @@ RSpec.describe GetCcDashboard, type: :routine do
                       in_progress: 0,
                       not_started: 0,
                       original_performance: 1.0,
-                      spaced_practice_performance: nil
+                      spaced_practice_performance: 0.0
                     }
                   ]
                 },
@@ -288,7 +286,7 @@ RSpec.describe GetCcDashboard, type: :routine do
                       in_progress: 0,
                       not_started: 0,
                       original_performance: 1.0,
-                      spaced_practice_performance: 0.0
+                      spaced_practice_performance: nil
                     }
                   ]
                 }
@@ -369,7 +367,7 @@ RSpec.describe GetCcDashboard, type: :routine do
                       in_progress: 0,
                       not_started: 0,
                       original_performance: 1.0,
-                      spaced_practice_performance: nil
+                      spaced_practice_performance: 0.0
                     }
                   ]
                 },
@@ -400,7 +398,7 @@ RSpec.describe GetCcDashboard, type: :routine do
                       in_progress: 0,
                       not_started: 0,
                       original_performance: 1.0,
-                      spaced_practice_performance: 0.0
+                      spaced_practice_performance: nil
                     }
                   ]
                 }
