@@ -9,7 +9,8 @@ module OpenStax::Biglearn::Locks
       # We use sort here to prevent deadlocks when locking the models
       [model_ids].flatten.compact.sort.each do |model_id|
         lock_name = "biglearn_#{table_name}_#{model_id}"
-        model_class.with_advisory_lock(lock_name)
+        result = model_class.with_advisory_lock(lock_name)
+        raise "Unable to acquire lock #{lock_name}" if result == false # nil is OK
       end
 
       yield
