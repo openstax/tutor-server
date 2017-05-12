@@ -222,8 +222,8 @@ RSpec.describe GetCcDashboard, type: :routine do
     end
 
     it "works for a teacher" do
+      Tasks::CcPageStatsView.refresh
       outputs = described_class.call(course: @course, role: @teacher_role).outputs
-
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
@@ -332,6 +332,7 @@ RSpec.describe GetCcDashboard, type: :routine do
       @student_role.student.destroy
       @student_role_2.student.destroy
       @course.reload
+      Tasks::CcPageStatsView.refresh
 
       outputs = described_class.call(course: @course, role: @teacher_role).outputs
 
@@ -437,37 +438,6 @@ RSpec.describe GetCcDashboard, type: :routine do
         },
         tasks: []
       )
-    end
-
-    it 'caches recent teacher dashboard results' do
-      @counts = 0
-      allow_any_instance_of(Tasks::Models::TaskedExercise::ActiveRecord_Relation).to(
-        receive(:count).with('DISTINCT tasks_tasked_exercises.id') { @counts += 1 }
-      )
-
-      # Miss (8 times = 4 counts per period * 2 periods)
-      described_class[course: @course, role: @teacher_role]
-      expect(@counts).to eq 8
-
-      # Hit
-      described_class[course: @course, role: @teacher_role]
-      expect(@counts).to eq 8
-
-      teacher_user_2 = FactoryGirl.create(:user)
-      teacher_role_2 = AddUserAsCourseTeacher.call(user: teacher_user_2, course: @course)
-                                             .outputs.role
-
-      # Hit
-      described_class[course: @course, role: teacher_role_2]
-      expect(@counts).to eq 8
-
-      # Answering an exercise invalidates the period cache
-      @period.to_model.taskings.first.task.tasked_exercises.first.task_step
-             .update_attribute(:last_completed_at, Time.current)
-
-      # Miss (4 times = 4 counts per period * 1 period)
-      described_class[course: @course, role: @teacher_role]
-      expect(@counts).to eq 12
     end
   end
 end

@@ -179,6 +179,9 @@ gem 'request_store'
 # Use PostgreSQL cursors with ActiveRecord
 gem 'postgresql_cursor'
 
+# manage PostgresQL view migrations
+gem 'scenic', '~> 1.4'
+
 # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
 gem 'awesome_print'
 

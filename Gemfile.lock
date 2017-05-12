@@ -633,6 +633,9 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
+    scenic (1.4.0)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     sexp_processor (4.5.0)
     shellany (0.0.1)
     shoulda-matchers (2.8.0)
@@ -815,6 +818,7 @@ DEPENDENCIES
   rspec-instafail
   rspec-rails (~> 3.0)
   sass-rails (~> 5.0.0)
+  scenic (~> 1.4)
   shoulda-matchers
   sortability
   spring

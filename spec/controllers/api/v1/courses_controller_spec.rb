@@ -950,8 +950,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "works without a role specified" do
+        Tasks::CcPageStatsView.refresh
         api_get :cc_dashboard, teacher_token, parameters: {id: course.id}
-
         expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
           "role" => {
             "id" => teacher_role.id.to_s,
