@@ -15,7 +15,6 @@ module OpenStax::Biglearn::Api
 
   extend Configurable
   extend Configurable::ClientMethods
-  extend OpenStax::Biglearn::Locks
   extend MonitorMixin
 
   class << self
@@ -57,36 +56,31 @@ module OpenStax::Biglearn::Api
 
       course = request[:course]
 
-      with_biglearn_locks(model_class: CourseProfile::Models::Course, model_ids: course.id) do
-        # Reload after locking
-        course.reload if course.persisted?
+      # Don't send course to Biglearn if it has no ecosystems
+      return if course.course_ecosystems.empty?
 
-        # Don't send course to Biglearn if it has no ecosystems
-        return if course.course_ecosystems.empty?
+      if course.sequence_number.nil? || course.sequence_number == 0
+        # The initial ecosystem is always course_ecosystems.last
+        ecosystem = course.course_ecosystems.last.ecosystem
 
-        if course.sequence_number.nil? || course.sequence_number == 0
-          # The initial ecosystem is always course_ecosystems.last
-          ecosystem = course.course_ecosystems.last.ecosystem
+        # New course, so create it in Biglearn
+        create_course(options.merge course: course, ecosystem: ecosystem).tap do
+          # Apply global exercise exclusions to the new course
+          update_globally_excluded_exercises(options.merge course: course)
 
-          # New course, so create it in Biglearn
-          create_course(options.merge course: course, ecosystem: ecosystem).tap do
-            # Apply global exercise exclusions to the new course
-            update_globally_excluded_exercises(options.merge course: course)
-
-            # These calls exist in case we held off on them previously due to having no ecosystems
-            update_rosters(options.merge course: course)
-            update_course_active_dates(options.merge course: course)
-          end
-        else
-          current_ecosystem = course.course_ecosystems.first.ecosystem
-
-          # Course already exists in Biglearn, so just send the latest update
-          preparation_uuid = prepare_course_ecosystem(
-            options.merge course: course, ecosystem: current_ecosystem
-          ).fetch(:preparation_uuid)
-
-          update_course_ecosystems(options.merge course: course, preparation_uuid: preparation_uuid)
+          # These calls exist in case we held off on them previously due to having no ecosystems
+          update_rosters(options.merge course: course)
+          update_course_active_dates(options.merge course: course)
         end
+      else
+        current_ecosystem = course.course_ecosystems.first.ecosystem
+
+        # Course already exists in Biglearn, so just send the latest update
+        preparation_uuid = prepare_course_ecosystem(
+          options.merge course: course, ecosystem: current_ecosystem
+        ).fetch(:preparation_uuid)
+
+        update_course_ecosystems(options.merge course: course, preparation_uuid: preparation_uuid)
       end
     end
 
@@ -489,7 +483,7 @@ module OpenStax::Biglearn::Api
                             verified_request : verified_request.merge(uuid_key => SecureRandom.uuid)
 
       if perform_later
-        OpenStax::Biglearn::Api::Job.perform_later method.to_s, request_with_uuid
+        OpenStax::Biglearn::Api::Job.perform_later method: method.to_s, requests: request_with_uuid
       else
         should_retry = false
         for ii in 1..inline_max_attempts do
@@ -533,7 +527,7 @@ module OpenStax::Biglearn::Api
       requests_array = requests_with_uuids_map.values
 
       if perform_later
-        OpenStax::Biglearn::Api::Job.perform_later method.to_s, requests_array
+        OpenStax::Biglearn::Api::Job.perform_later method: method.to_s, requests: requests_array
       else
         responses = {}
         for ii in 1..inline_max_attempts do
@@ -619,63 +613,61 @@ module OpenStax::Biglearn::Api
         RETURNING "id", "sequence_number"
       SQL
 
-      with_biglearn_locks(model_class: model_class, model_ids: model_ids) do
-        # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
+      # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
+      # Requests for records that have not been created
+      # on the Biglearn side (sequence_number == 0) are suppressed
+      sequence_numbers_by_model_id = {}
+      model_class.connection.execute(sequence_number_sql).each do |hash|
+        id = hash['id'].to_i
+        sequence_numbers_by_model_id[id] = hash['sequence_number'].to_i - model_id_counts[id]
+      end if model_ids.any?
+
+      # From this point on, if the current transaction commits, those requests MUST be sent to
+      # biglearn-api or else they will cause gaps in the sequence_number
+      # If aborting a request after this point without rolling back the transaction is required
+      # in the future, we will need to introduce NO-OP Events in biglearn-api
+      requests_with_sequence_numbers = req.map do |request|
+        model = request[request_model_key].to_model
+
+        if model.new_record?
+          # Special case for unsaved records
+          sequence_number = model.sequence_number || 0
+          next if sequence_number == 0 && !create
+
+          model.sequence_number = sequence_number + 1
+          next request.merge(sequence_number: sequence_number)
+        end
+
+        sequence_number = sequence_numbers_by_model_id[model.id]
         # Requests for records that have not been created
         # on the Biglearn side (sequence_number == 0) are suppressed
-        sequence_numbers_by_model_id = {}
-        model_class.connection.execute(sequence_number_sql).each do |hash|
-          id = hash['id'].to_i
-          sequence_numbers_by_model_id[id] = hash['sequence_number'].to_i - model_id_counts[id]
-        end if model_ids.any?
+        next if sequence_number.nil?
 
-        # From this point on, if the current transaction commits, those requests MUST be sent to
-        # biglearn-api or else they will cause gaps in the sequence_number
-        # If aborting a request after this point without rolling back the transaction is required
-        # in the future, we will need to introduce NO-OP Events in biglearn-api
-        requests_with_sequence_numbers = req.map do |request|
-          model = request[request_model_key].to_model
+        next_sequence_number = sequence_number + 1
+        sequence_numbers_by_model_id[model.id] = next_sequence_number
 
-          if model.new_record?
-            # Special case for unsaved records
-            sequence_number = model.sequence_number || 0
-            next if sequence_number == 0 && !create
+        # Make sure the provided model has the new sequence_number
+        # and mark the attribute as persisted
+        model.sequence_number = next_sequence_number
+        model.previous_changes[:sequence_number] = model.changes[:sequence_number]
+        model.send :clear_attribute_changes, :sequence_number
 
-            model.sequence_number = sequence_number + 1
-            next request.merge(sequence_number: sequence_number)
-          end
+        # Call the given block with the previous sequence_number
+        request.merge(sequence_number: sequence_number)
+      end.compact
 
-          sequence_number = sequence_numbers_by_model_id[model.id]
-          # Requests for records that have not been created
-          # on the Biglearn side (sequence_number == 0) are suppressed
-          next if sequence_number.nil?
+      # If an array was given, call the block with an array
+      # If another type of argument was given, extract the block argument from the array
+      modified_requests = requests.is_a?(Hash) ? requests_with_sequence_numbers.first :
+                                                 requests_with_sequence_numbers
 
-          next_sequence_number = sequence_number + 1
-          sequence_numbers_by_model_id[model.id] = next_sequence_number
+      # nil can happen if the request got suppressed
+      return {} if modified_requests.nil?
+      return [] if modified_requests.empty?
 
-          # Make sure the provided model has the new sequence_number
-          # and mark the attribute as persisted
-          model.sequence_number = next_sequence_number
-          model.previous_changes[:sequence_number] = model.changes[:sequence_number]
-          model.send :clear_attribute_changes, :sequence_number
-
-          # Call the given block with the previous sequence_number
-          request.merge(sequence_number: sequence_number)
-        end.compact
-
-        # If an array was given, call the block with an array
-        # If another type of argument was given, extract the block argument from the array
-        modified_requests = requests.is_a?(Hash) ? requests_with_sequence_numbers.first :
-                                                   requests_with_sequence_numbers
-
-        # nil can happen if the request got suppressed
-        return {} if modified_requests.nil?
-        return [] if modified_requests.empty?
-
-        block.call(modified_requests)
-        # Any transactions that get this far with perform_later: false MUST be committed
-        # or else they will cause sequence_number repeats
-      end
+      block.call(modified_requests)
+      # Any transactions that get this far with perform_later: false MUST be committed
+      # or else they will cause sequence_number repeats
     end
 
     def with_unique_gapless_course_sequence_numbers(requests:, create: false,

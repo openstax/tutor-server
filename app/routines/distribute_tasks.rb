@@ -107,7 +107,7 @@ class DistributeTasks
       task.taskings.reset
     end
 
-    requests = tasks.map{ |task| { course: task_plan.owner, task: task } }
+    requests = tasks.map { |task| { course: task_plan.owner, task: task } }
 
     task_plan.tasks.reset
 

@@ -5,5 +5,4 @@ module OpenStax
   end
 end
 
-require_relative 'locks'
 require_relative 'api'
