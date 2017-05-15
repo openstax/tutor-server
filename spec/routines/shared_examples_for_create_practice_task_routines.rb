@@ -55,15 +55,16 @@ RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc,
   end
 
   it 'errors when there are not enough local exercises for the widget' do
+    Rails.logger.level = 0
     expect(OpenStax::Biglearn::Api).to receive(biglearn_fetch_api_method).and_return([])
     expect { result }
       .to  not_change { Tasks::Models::Task.count }
       .and not_change { Tasks::Models::Tasking.count }
       .and not_change { Tasks::Models::TaskStep.count }
       .and not_change { Tasks::Models::TaskedExercise.count }
-      .and(changes_sequence_number_on_error ? change { course.sequence_number }.by(1) :
-                                              not_change { course.sequence_number })
-    expect(result.errors.first.code).to eq :no_exercises
+      .and(changes_sequence_number_on_error ? change { course.reload.sequence_number }.by(1) :
+                                              not_change { course.reload.sequence_number })
+    expect(result.outputs.errors.first.code).to eq :no_exercises
   end
 
 end

@@ -2,6 +2,17 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.feature 'Switching biglearn option' do
+  before(:all) do
+    @student = FactoryGirl.create :course_membership_student
+    @book_container = FactoryGirl.create :content_page
+  end
+
+  let(:request_uuid) { SecureRandom.uuid }
+  let(:request)      do
+    { request_uuid: request_uuid, student: @student, book_container: @book_container }
+  end
+  let(:responses)    { [ { request_uuid: request_uuid, clue_data: {} } ] }
+
   background do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
@@ -18,7 +29,7 @@ RSpec.feature 'Switching biglearn option' do
     ).and_call_original
     expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).not_to receive(:fetch_student_clues)
 
-    OpenStax::Biglearn::Api.fetch_student_clues([])
+    OpenStax::Biglearn::Api.fetch_student_clues(request)
   end
 
   scenario 'can change to real client' do
@@ -38,12 +49,12 @@ RSpec.feature 'Switching biglearn option' do
 
       expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to(
         receive(:fetch_student_clues)
-      ).and_return([])
+      ).and_return(responses)
       expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).not_to(
         receive(:fetch_student_clues)
       )
 
-      OpenStax::Biglearn::Api.fetch_student_clues([])
+      OpenStax::Biglearn::Api.fetch_student_clues(request)
     ensure
       # Prevent other specs from being affected by this one
       Settings::Db.store.biglearn_client = 'fake'

@@ -52,6 +52,11 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     after(:all) { DatabaseCleaner.clean }
 
+    before(:each) do
+      @course.reload
+      @ecosystem.reload
+    end
+
     let(:max_num_exercises) { 5 }
 
     context 'with default perform_later' do
@@ -73,91 +78,91 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         ],
         [
           :prepare_course_ecosystem,
-          -> { { course: @course.reload, ecosystem: @ecosystem.reload } },
+          -> { { course: @course, ecosystem: @ecosystem } },
           Hash,
           -> { @course },
           1
         ],
         [
           :update_course_ecosystems,
-          -> { [ { course: @course.reload, preparation_uuid: SecureRandom.uuid } ] },
+          -> { [ { course: @course, preparation_uuid: SecureRandom.uuid } ] },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :update_rosters,
-          -> { [ { course: @course.reload } ] },
+          -> { [ { course: @course } ] },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :update_globally_excluded_exercises,
-          -> { { course: @course.reload } },
+          -> { { course: @course } },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :update_course_excluded_exercises,
-          -> { { course: @course.reload } },
+          -> { { course: @course } },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :update_course_active_dates,
-          -> { { course: @course.reload } },
+          -> { { course: @course } },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :create_update_assignments,
-          -> { [ { course: @course.reload, task: @task.reload } ] },
+          -> { [ { course: @course, task: @task } ] },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :record_responses,
-          -> { [ { course: @course.reload, tasked_exercise: @tasked_exercise.reload } ] },
+          -> { [ { course: @course, tasked_exercise: @tasked_exercise } ] },
           OpenStax::Biglearn::Api::Job,
           -> { @course },
           1
         ],
         [
           :fetch_assignment_pes,
-          -> { [ { task: @task.reload, max_num_exercises: max_num_exercises } ] },
+          -> { [ { task: @task, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },
           0
         ],
         [
           :fetch_assignment_spes,
-          -> { [ { task: @task.reload, max_num_exercises: max_num_exercises } ] },
+          -> { [ { task: @task, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },
           0
         ],
         [
           :fetch_practice_worst_areas_exercises,
-          -> { [ { student: @student.reload, max_num_exercises: max_num_exercises } ] },
+          -> { [ { student: @student, max_num_exercises: max_num_exercises } ] },
           Content::Exercise,
           -> { @course },
           0
         ],
         [
           :fetch_student_clues,
-          -> { [ { book_container: @page.reload, student: @student.reload } ] },
+          -> { [ { book_container: @page, student: @student } ] },
           Hash,
           -> { @course },
           0
         ],
         [
           :fetch_teacher_clues,
-          -> { [ { book_container: @page.reload, course_container: @period.reload } ] },
+          -> { [ { book_container: @page, course_container: @period } ] },
           Hash,
           -> { @course },
           0
@@ -178,8 +183,9 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
           [results].flatten.each { |result| expect(result).to be_a result_class }
 
-          expect(sequence_number_record.sequence_number).to(eq(sequence_number + increment)) \
-            if sequence_number_record.present?
+          expect(sequence_number_record.reload.sequence_number).to(
+            eq(sequence_number + increment)
+          ) if sequence_number_record.present?
         end
       end
     end

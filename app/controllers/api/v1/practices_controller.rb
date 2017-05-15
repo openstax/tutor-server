@@ -18,8 +18,9 @@ module Api
           course: course, role: role, page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
 
-        render_api_errors(result.errors) || respond_with(
-          result.outputs[:task],
+        errors = result.outputs.errors || result.errors
+        render_api_errors(errors) || respond_with(
+          result.outputs.task,
           represent_with: Api::V1::TaskRepresenter,
           location: nil
         )
@@ -34,8 +35,9 @@ module Api
 
         result = CreatePracticeWorstTopicsTask.call course: course, role: role
 
-        render_api_errors(result.errors) || respond_with(
-          result.outputs[:task],
+        errors = result.outputs.errors || result.errors
+        render_api_errors(errors) || respond_with(
+          result.outputs.task,
           represent_with: Api::V1::TaskRepresenter,
           location: nil
         )

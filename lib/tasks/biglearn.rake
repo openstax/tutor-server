@@ -2,7 +2,10 @@ namespace :biglearn do
   desc 'Transfers tutor-server data to a new empty Biglearn instance'
   # Shutdown the app servers and any workers before running this
   task initialize: :environment do |task|
-    ActiveRecord::Base.transaction(isolation: :repeatable_read) do
+    args = ActiveRecord::Base.connection.open_transactions == 0 ? { isolation: :repeatable_read } :
+                                                                  {}
+
+    ActiveRecord::Base.transaction(args) do
       ecosystem_ids = Content::Models::Ecosystem.pluck(:id)
       course_ids = CourseProfile::Models::Course.pluck(:id)
 
