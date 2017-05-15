@@ -76,7 +76,11 @@ class Tasks::PopulatePlaceholderSteps
   def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs (reading tasks)
-      chosen_exercises = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
+      chosen_exercises = OpenStax::Biglearn::Api.public_send(
+        biglearn_api_method,
+        task: task,
+        inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+      )
       chosen_exercise_models = chosen_exercises.map(&:to_model)
 
       # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
@@ -152,8 +156,11 @@ class Tasks::PopulatePlaceholderSteps
       ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
       # max_num_exercises ensures we don't get more exercises than the number of placeholders
-      chosen_exercises = OpenStax::Biglearn::Api.public_send(
-        biglearn_api_method, task: task, max_num_exercises: placeholder_steps.size
+      OpenStax::Biglearn::Api.public_send(
+        biglearn_api_method,
+        task: task,
+        max_num_exercises: placeholder_steps.size,
+        inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
       )
 
       # This code is much simpler because it doesn't have to account for steps being added
