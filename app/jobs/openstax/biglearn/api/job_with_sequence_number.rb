@@ -1,4 +1,6 @@
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
+  BIGLEARN_API_TIMEOUT = 10.minutes
+
   queue_as :default
 
   def perform(method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:)
@@ -25,7 +27,9 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       RETURNING "id", "sequence_number"
     SQL
 
-    sequence_number_model_class.transaction do
+    can_perform_later = Delayed::Worker.delay_jobs
+
+    job_or_result = sequence_number_model_class.transaction do
       # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
       # Requests for records that have not been created
       # on the Biglearn side (sequence_number == 0) are suppressed
@@ -46,6 +50,8 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
           # Special case for unsaved records
           sequence_number = model.sequence_number || 0
           next if sequence_number == 0 && !create
+
+          can_peform_later = false
 
           model.sequence_number = sequence_number + 1
           next request.merge(sequence_number: sequence_number)
@@ -78,7 +84,28 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       return {} if modified_requests.nil?
       return [] if modified_requests.empty?
 
-      super(method: method, requests: modified_requests)
+      # Create a background job if possible to guarantee the sequence_number will reach Biglearn
+      can_perform_later ? OpenStax::Biglearn::Api::Job.perform_later(
+        method: method.to_s, requests: modified_requests
+      ) : super(method: method, requests: modified_requests)
     end
+
+    # Attempt to run the job inline to speed up Biglearn responses
+    return job_or_result unless can_perform_later
+
+    delayed_job_id = job_or_result.provider_job_id
+
+    return job_or_result if delayed_job_id.nil?
+
+    worker = Delayed::Worker.new
+    ready_scope = Delayed::Job.ready_to_run(worker.name, Delayed::Worker.max_run_time)
+                              .where(id: delayed_job_id)
+    # Pretend the lock is much closer to expiring so we get a shorter timeout
+    now = Delayed::Job.db_time_now - Delayed::Worker.max_run_time + BIGLEARN_API_TIMEOUT
+    delayed_job = Delayed::Job.reserve_with_scope(ready_scope, worker, now)
+
+    return job_or_result if delayed_job.nil?
+
+    worker.run(delayed_job)
   end
 end
