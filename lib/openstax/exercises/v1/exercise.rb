@@ -3,7 +3,7 @@ class OpenStax::Exercises::V1::Exercise
   VIDEO_CSS = 'iframe[src*="youtube"], iframe[src*="khanacademy"]'
   INTERACTIVE_CSS = 'iframe:not([src*="youtube"]):not([src*="khanacademy"])'
 
-  # Context must be externally set before the preview initialized
+  # Context must be externally set before the preview is initialized
   attr_accessor :context
   attr_reader :content
 
@@ -25,7 +25,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def group_uuid
-    @uuid ||= content_hash['group_uuid']
+    @group_uuid ||= content_hash['group_uuid']
   end
 
   def number
