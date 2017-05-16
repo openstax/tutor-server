@@ -30,8 +30,8 @@ class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
           group_uuid_cases << "WHEN #{exercise.number} THEN '#{group_uuid}'::uuid"
         end
 
-        set_uuid_query = "\"uuid\" = CASE \"number\" #{uuid_cases.join("\n")} END"
-        set_group_uuid_query = "\"group_uuid\" = CASE \"number\" #{group_uuid_cases.join("\n")} END"
+        set_uuid_query = "\"uuid\" = CASE \"number\" #{uuid_cases.join(' ')} END"
+        set_group_uuid_query = "\"group_uuid\" = CASE \"number\" #{group_uuid_cases.join(' ')} END"
         set_query = "#{set_uuid_query}, #{set_group_uuid_query}"
 
         Content::Models::Exercise.where(number: numbers, version: version).update_all(set_query)
@@ -46,11 +46,11 @@ class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
       missing_exercise_numbers.join(', ')}"
     end if missing_exercise_numbers.any?
     missing_exercise_numbers.each do |missing_exercise_number|
-      uuid = SecureRandom.uuid
       group_uuid = SecureRandom.uuid
 
-      Content::Models::Exercise.where(number: missing_exercise_number)
-                               .update_all(uuid: uuid, group_uuid: group_uuid)
+      Content::Models::Exercise
+        .where(number: missing_exercise_number)
+        .update_all("uuid = gen_random_uuid(), group_uuid = '#{group_uuid}'::uuid")
     end
 
     change_column_null :content_exercises, :uuid, false
