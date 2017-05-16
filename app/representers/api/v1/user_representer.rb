@@ -24,6 +24,23 @@ module Api::V1
 
     property :viewed_tour_ids
 
+    property :self_reported_role,
+             type: String,
+             getter: ->(*) { account.role },
+             schema_info: {
+               description: "The user's uncorroborated role, one of [#{
+                        OpenStax::Accounts::Account.roles.keys.map(&:to_s).join(', ')
+                      }]",
+               required: true
+             }
+
+    property :account_uuid,
+             getter: ->(*) { account.uuid },
+             type: String,
+             schema_info: {
+               description: "The UUID as set by Accounts"
+             }
+
     property :profile_url,
              getter: ->(*) {
                Addressable::URI.join(
