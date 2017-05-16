@@ -6,19 +6,32 @@ class CreatePracticeWorstTopicsTask
 
   protected
 
-  def setup(course:, role:)
+  def setup(**args)
     @task_type = :practice_worst_topics
 
-    @ecosystem = run(:get_course_ecosystem, course: course).outputs.ecosystem
-
-    @role = role
+    @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
   end
 
-  def get_biglearn_exercises
-    OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
+  def add_task_steps
+    exercises = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
       student: @role.student,
       inline_retry_proc: ->(response) { response[:student_status] != 'student_ready' }
     )
+
+    fatal_error(
+      code: :no_exercises,
+      message: "No exercises were returned from Biglearn to build the Practice Widget." +
+               " [Course: #{@course.id} - Role: #{@role.id}" +
+               " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
+    ) if exercises.empty?
+
+    # Add the exercises as task steps
+    exercises.each do |exercise|
+      TaskExercise.call(exercise: exercise, task: @task) do |step|
+        step.group_type = :personalized_group
+        step.add_related_content(exercise.page.related_content)
+      end
+    end
   end
 
 end

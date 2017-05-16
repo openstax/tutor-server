@@ -347,19 +347,16 @@ class OpenStax::Biglearn::Api::RealClient
         }
       end
 
-      if task.reading?
-        # Biglearn decides
-        goal_num_tutor_assigned_spes = nil
-        goal_num_tutor_assigned_pes = nil
-      elsif task.practice?
-        # Fixed
-        goal_num_tutor_assigned_spes = 0
-        goal_num_tutor_assigned_pes = 5
-      else
-        # Assistant code decides
+      # Calculate desired number of SPEs and PEs
+      goal_num_tutor_assigned_spes = request[:goal_num_tutor_assigned_spes]
+      if goal_num_tutor_assigned_spes.nil?
         sp_steps = task.task_steps.spaced_practice_group
         spe_steps = sp_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_spes = spe_steps.size
+      end
+
+      goal_num_tutor_assigned_pes = request[:goal_num_tutor_assigned_pes]
+      if goal_num_tutor_assigned_pes.nil?
         p_steps = task.task_steps.personalized_group
         pe_steps = p_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_pes = pe_steps.size
@@ -375,15 +372,12 @@ class OpenStax::Biglearn::Api::RealClient
         student_uuid: student.uuid,
         assignment_type: task_type,
         assigned_book_container_uuids: assigned_book_container_uuids,
+        goal_num_tutor_assigned_spes: goal_num_tutor_assigned_spes,
         spes_are_assigned: task.spes_are_assigned,
+        goal_num_tutor_assigned_pes: goal_num_tutor_assigned_pes,
         pes_are_assigned: task.pes_are_assigned,
         assigned_exercises: assigned_exercises
-      }.tap do |request|
-        request[:goal_num_tutor_assigned_spes] = goal_num_tutor_assigned_spes \
-          unless goal_num_tutor_assigned_spes.nil?
-        request[:goal_num_tutor_assigned_pes] = goal_num_tutor_assigned_pes \
-          unless goal_num_tutor_assigned_pes.nil?
-      end
+      }
     end.compact
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,

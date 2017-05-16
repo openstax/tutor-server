@@ -1,12 +1,14 @@
 class CreatePracticeSpecificTopicsTask
 
+  NUM_BIGLEARN_EXERCISES = 5
+
   include CreatePracticeTaskRoutine
 
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
 
   protected
 
-  def setup(course:, role:, page_ids: nil, chapter_ids: nil)
+  def setup(page_ids: nil, chapter_ids: nil)
     @task_type = if page_ids.present?
       chapter_ids.present? ? :mixed_practice : :page_practice
     else
@@ -16,28 +18,22 @@ class CreatePracticeSpecificTopicsTask
       )
     end
 
-    course_ecosystems = course.ecosystems.map { |eco| Content::Ecosystem.new strategy: eco.wrap }
+    course_ecosystems = @course.ecosystems.map { |eco| Content::Ecosystem.new strategy: eco.wrap }
     @ecosystem = run(:get_ecosystem, page_ids: page_ids, chapter_ids: chapter_ids).outputs.ecosystem
     fatal_error(code: :invalid_page_ids_or_chapter_ids) \
       unless course_ecosystems.include?(@ecosystem)
-
-    @course = course
 
     # Gather relevant chapters and pages
     chapters = @ecosystem.chapters_by_ids(chapter_ids)
     @pages = @ecosystem.pages_by_ids(page_ids) + chapters.map(&:pages).flatten.uniq
   end
 
-  def get_biglearn_exercises
-    # Due to perform_later: false, the transaction MUST commit
-    # See comments on app/routines/concerns/create_practice_task_routine.rb
+  def send_task_to_biglearn
     OpenStax::Biglearn::Api.create_update_assignments(
-      course: @course, task: @task, core_page_ids: @pages.map(&:id), perform_later: false
-    )
-
-    OpenStax::Biglearn::Api.fetch_assignment_pes(
+      course: @course,
       task: @task,
-      inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+      core_page_ids: @pages.map(&:id),
+      goal_num_tutor_assigned_pes: NUM_BIGLEARN_EXERCISES
     )
   end
 

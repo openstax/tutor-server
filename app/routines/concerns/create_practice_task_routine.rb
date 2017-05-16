@@ -18,6 +18,13 @@ module CreatePracticeTaskRoutine
 
   protected
 
+  def add_task_steps
+  end
+
+  def send_task_to_biglearn
+    OpenStax::Biglearn::Api.create_update_assignments(course: @course, task: @task)
+  end
+
   def exec(course:, role:, **args)
     fatal_error(code: :course_not_started) unless course.started?
     fatal_error(code: :course_ended) if course.ended?
@@ -29,9 +36,12 @@ module CreatePracticeTaskRoutine
     existing_practice_task.task_steps.incomplete.each(&:really_destroy!) \
       unless existing_practice_task.nil?
 
+    @course = course
+    @role = role
+
     # This method must setup @task_type and @ecosystem,
     # as well as any other variables needed for the get_exercises method
-    setup(course: course, role: role, **args)
+    setup(**args)
     raise 'Invalid @task_type' unless Tasks::Models::Task.task_types.keys.include?(@task_type.to_s)
     raise '@ecosystem cannot be blank' if @ecosystem.blank?
 
@@ -52,36 +62,9 @@ module CreatePracticeTaskRoutine
 
     @task.save!
 
-    # NOTE: Biglearn calls here lock the course from further Biglearn interaction until
-    # the end of the transaction, so hopefully the rest of routine finishes pretty fast...
-    exercises = get_biglearn_exercises
+    add_task_steps
 
-    # Normally we would throw a fatal_error here and rollback but when creating a
-    # practice_specific_topics task the transaction MUST commit
-    # since we already talked to Biglearn (with perform_later: false)
-    if exercises.size == 0
-      outputs.errors = [
-        {
-          code: :no_exercises,
-          message: "No exercises were returned from Biglearn to build the Practice Widget." +
-                   " [Course: #{course.id} - Role: #{role.id} - Args: #{args.inspect}]"
-        }
-      ]
-
-      @task.really_destroy!
-
-      return
-    end
-
-    # Add the exercises as task steps
-    exercises.each do |exercise|
-      TaskExercise.call(exercise: exercise, task: @task) do |step|
-        step.group_type = :personalized_group
-        step.add_related_content(exercise.page.related_content)
-      end
-    end
-
-    OpenStax::Biglearn::Api.create_update_assignments(course: course, task: @task)
+    send_task_to_biglearn
   end
 
 end

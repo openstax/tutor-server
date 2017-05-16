@@ -11,9 +11,8 @@ class Tasks::PopulatePlaceholderSteps
 
     return if task.pes_are_assigned && task.spes_are_assigned
 
-    # If the task is a reading, we give Biglearn control of the number of slots
-    # Placeholders are merely used to determine the size of the bar the student sees
-    biglearn_controls_slots = task.reading?
+    # If the task is a practice widget, we give Biglearn control of the number of slots
+    biglearn_controls_slots = task.practice?
 
     unless task.pes_are_assigned
       # Populate PEs
@@ -156,7 +155,7 @@ class Tasks::PopulatePlaceholderSteps
       ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
       # max_num_exercises ensures we don't get more exercises than the number of placeholders
-      OpenStax::Biglearn::Api.public_send(
+      chosen_exercises = OpenStax::Biglearn::Api.public_send(
         biglearn_api_method,
         task: task,
         max_num_exercises: placeholder_steps.size,
