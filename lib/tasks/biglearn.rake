@@ -18,10 +18,14 @@ namespace :biglearn do
         OpenStax::Biglearn::Api.create_ecosystem ecosystem: ecosystem
       end
 
-      courses = CourseProfile::Models::Course.where(id: course_ids)
-                                             .joins(:ecosystems)
-                                             .preload(:ecosystems)
-                                             .uniq
+      courses = CourseProfile::Models::Course
+        .where(id: course_ids)
+        .joins(:course_ecosystems)
+        .preload(
+          :time_zone,
+          { course_ecosystems: :ecosystem },
+          { periods_with_deleted: { latest_enrollments_with_deleted: :student } }
+        ).uniq
 
       print_each("Creating #{courses.count} course(s)", courses.find_in_batches) do |courses|
         roster_updates = []

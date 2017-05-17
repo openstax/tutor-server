@@ -170,10 +170,13 @@ class OpenStax::Biglearn::Api::RealClient
   # Prepares Biglearn for a course ecosystem update
   def prepare_course_ecosystem(request)
     course = request.fetch(:course)
-    course_ecosystem = course.course_ecosystems.first
-    to_ecosystem_model = request[:ecosystem] || course_ecosystem.ecosystem
+    to_ecosystem_model = request.fetch(:ecosystem)
     to_ecosystem = Content::Ecosystem.new strategy: to_ecosystem_model.wrap
-    from_ecosystem_model = course.ecosystems.find{ |ecosystem| ecosystem.id != to_ecosystem.id }
+    to_course_ecosystems, other_course_ecosystems = course.course_ecosystems
+                                                          .partition do |course_ecosystem|
+      course_ecosystem.content_ecosystem_id == to_ecosystem.id
+    end
+    from_ecosystem_model = other_course_ecosystems.first.ecosystem
     from_ecosystem = Content::Ecosystem.new strategy: from_ecosystem_model.wrap
     content_map = Content::Map.find_or_create_by!(
       from_ecosystems: [from_ecosystem], to_ecosystem: to_ecosystem
@@ -186,7 +189,9 @@ class OpenStax::Biglearn::Api::RealClient
                                    .map do |exercise, page|
       { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.uuid }
     end
-    prepared_at = request[:prepared_at] || course_ecosystem.try!(:created_at) || Time.current
+    prepared_at = request[:prepared_at] ||
+                  to_course_ecosystems.first.try!(:created_at) ||
+                  Time.current
 
     biglearn_request = {
       preparation_uuid: request.fetch(:preparation_uuid),
@@ -241,7 +246,7 @@ class OpenStax::Biglearn::Api::RealClient
           hash[:archived_at] = period.deleted_at.utc.iso8601(6) if period.deleted?
         end
 
-        period.latest_enrollments.map do |enrollment|
+        period.latest_enrollments_with_deleted.map do |enrollment|
           student = enrollment.student
 
           {
