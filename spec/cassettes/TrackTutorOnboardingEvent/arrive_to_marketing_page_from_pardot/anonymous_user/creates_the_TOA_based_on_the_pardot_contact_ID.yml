@@ -1,0 +1,875 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%27some_sf_id%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 12 May 2017 21:06:32 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=JK-Ka14rQgy04EdwbiU1Lg;Path=/;Domain=.salesforce.com;Expires=Tue,
+        11-Jul-2017 21:06:32 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=6/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"TutorOnboardingA__c","url":"/services/data/v37.0/sobjects/TutorOnboardingA__c/a0K0S000001HjpzUAC"},"Id":"a0K0S000001HjpzUAC","accounts_uuid__c":null,"Contact__c":null,"pardot_reported_contact_id__c":"some_sf_id","pardot_reported_piaid__c":"piaid","pardot_reported_picid__c":"picid","first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":"2017-05-12T21:01:20.000+0000","days_since_arrived_marketing_page_from_p__c":0.0,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"days_since_like_preview_yes__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null}]}'
+    http_version: 
+  recorded_at: Fri, 12 May 2017 21:06:32 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005AEaCQAW%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 12 May 2017 21:10:26 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=BNuiWR2hTT-a_i63SlxG1Q;Path=/;Domain=.salesforce.com;Expires=Tue,
+        11-Jul-2017 21:10:26 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=7/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Fri, 12 May 2017 21:10:26 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005AEaWQAW%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 12 May 2017 21:10:50 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=QlCnoy7ZSJqLAl94L1PBxg;Path=/;Domain=.salesforce.com;Expires=Tue,
+        11-Jul-2017 21:10:50 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=7/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Fri, 12 May 2017 21:10:50 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005AEb1QAG%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 12 May 2017 21:11:50 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=P9zO_w6NRpiFg5YuUianEA;Path=/;Domain=.salesforce.com;Expires=Tue,
+        11-Jul-2017 21:11:50 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=14/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Fri, 12 May 2017 21:11:50 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005PD1FQAW%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 19:26:07 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=DO5rgVKuTLCgm50qg2Qtzg;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 19:26:07 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=55/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 19:26:07 GMT
+- request:
+    method: post
+    uri: https://login.salesforce.com/services/oauth2/token
+    body:
+      encoding: US-ASCII
+      string: grant_type=refresh_token&refresh_token=<tutor_specs_refresh_token>&client_id=3MVG9PbQtiUzNgN5HOnTahCd6GdfAf1_bqyfAEbOrN7.DHHLfqbC1Sln4ybNsOKMB5bySrOX3dLazMQSlGvs1&client_secret=8445545272226199623
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Date:
+      - Wed, 17 May 2017 19:54:11 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin
+      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      Set-Cookie:
+      - BrowserId=bC_PSSl0TdqDVa3UxRHvNg;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 19:54:11 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache, no-store
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: '{"error":"invalid_grant","error_description":"expired access/refresh
+        token"}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 19:54:11 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Date:
+      - Wed, 17 May 2017 19:54:30 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=fczWI9IWSV-MTr9blzeVBg;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 19:54:30 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Www-Authenticate:
+      - Token
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: '[{"message":"Session expired or invalid","errorCode":"INVALID_SESSION_ID"}]'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 19:54:30 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005PEbAQAW%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 19:57:57 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=CvqKfd7_TBymfbmNxp0IFQ;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 19:57:57 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=68/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 19:57:57 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005PHSQQA4%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 20:46:23 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=RxYUkYH1TAKm86swcLauDA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 20:46:23 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=156/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 20:46:23 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(Id%20=%20%27a0K0S000001HlhwUAC%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 20:46:24 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=mIaPblxHSSyLvB-Somyxjg;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 20:46:24 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=158/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"TutorOnboardingA__c","url":"/services/data/v37.0/sobjects/TutorOnboardingA__c/a0K0S000001HlhwUAC"},"Id":"a0K0S000001HlhwUAC","accounts_uuid__c":null,"Contact__c":null,"pardot_reported_contact_id__c":"0030S000005PHSQQA4","pardot_reported_piaid__c":"piaid","pardot_reported_picid__c":"picid","first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":"2017-05-17T20:46:23.000+0000","days_since_arrived_marketing_page_from_p__c":0.0,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"days_since_like_preview_yes__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null}]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 20:46:24 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005PJAiQAO%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 21:09:05 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=SUzGkzGzQUevSMgUq_Ifuw;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 21:09:05 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=233/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 21:09:05 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(Id%20=%20%27a0K0S000001Hlj9UAC%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 21:09:05 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=VOa71RrgT8iaTphz1ZBIsw;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 21:09:05 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=235/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"TutorOnboardingA__c","url":"/services/data/v37.0/sobjects/TutorOnboardingA__c/a0K0S000001Hlj9UAC"},"Id":"a0K0S000001Hlj9UAC","accounts_uuid__c":null,"Contact__c":null,"pardot_reported_contact_id__c":"0030S000005PJAiQAO","pardot_reported_piaid__c":"piaid","pardot_reported_picid__c":"picid","first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":"2017-05-17T21:09:05.000+0000","days_since_arrived_marketing_page_from_p__c":0.0,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"days_since_like_preview_yes__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null}]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 21:09:05 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005PNGEQA4%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 22:57:37 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=eF9S6bBcScqA4VbfMrOWTA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 22:57:37 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=339/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 22:57:37 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(Id%20=%20%27a0K0S000001HlkWUAS%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 22:57:37 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=eNcWdKqRQ0q4gYHq8ga4BQ;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 22:57:37 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=339/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"TutorOnboardingA__c","url":"/services/data/v37.0/sobjects/TutorOnboardingA__c/a0K0S000001HlkWUAS"},"Id":"a0K0S000001HlkWUAS","accounts_uuid__c":null,"Contact__c":null,"pardot_reported_contact_id__c":"0030S000005PNGEQA4","pardot_reported_piaid__c":"piaid","pardot_reported_picid__c":"picid","first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":"2017-05-17T22:57:37.000+0000","days_since_arrived_marketing_page_from_p__c":0.0,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"days_since_like_preview_yes__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null}]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 22:57:37 GMT
+- request:
+    method: post
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Contact"
+    body:
+      encoding: UTF-8
+      string: '{"FirstName":"Chasity","LastName":"Halvorson","AccountId":"0010S0000057qMUQAY"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 17 May 2017 23:38:19 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=_jjXVJTWSDmX-i2bvGtYBA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 23:38:19 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=503/48000
+      Location:
+      - "/services/data/v37.0/sobjects/Contact/0030S000005POduQAG"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"0030S000005POduQAG","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 23:38:19 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(pardot_reported_contact_id__c%20=%20%270030S000005POduQAG%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 23:38:20 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=gSmaTYByRHqsZtf34MxGmg;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 23:38:20 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=501/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 23:38:20 GMT
+- request:
+    method: post
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/TutorOnboardingA__c"
+    body:
+      encoding: UTF-8
+      string: '{"pardot_reported_contact_id__c":"0030S000005POduQAG","pardot_reported_piaid__c":"piaid","pardot_reported_picid__c":"picid","arrived_marketing_page_from_pardot_at__c":"2017-05-17T23:38:20.237+00:00"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 17 May 2017 23:38:20 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=2UHLn140QhKE4jH4uXemRA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 23:38:20 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=502/48000
+      Location:
+      - "/services/data/v37.0/sobjects/TutorOnboardingA__c/a0K0S000001Hln2UAC"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"a0K0S000001Hln2UAC","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 23:38:20 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20accounts_uuid__c,%20Contact__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20days_since_arrived_marketing_page_from_p__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20days_since_like_preview_yes__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c%20FROM%20TutorOnboardingA__c%20WHERE%20(Id%20=%20%27a0K0S000001Hln2UAC%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth 00D0S0000000XrX!ARMAQAdbbSHGgK9AgUP.u5PKjxpZ0bmyeH_LkmARJe8a8OSWhI8k3mLAlBJjgGGLbFA3lA3ccmGfZy71uGeopROsqer1zj3K
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 17 May 2017 23:38:20 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=Kqi3q5rVQBud3xCZA-s7jA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        16-Jul-2017 23:38:20 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=501/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"TutorOnboardingA__c","url":"/services/data/v37.0/sobjects/TutorOnboardingA__c/a0K0S000001Hln2UAC"},"Id":"a0K0S000001Hln2UAC","accounts_uuid__c":null,"Contact__c":null,"pardot_reported_contact_id__c":"0030S000005POduQAG","pardot_reported_piaid__c":"piaid","pardot_reported_picid__c":"picid","first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":"2017-05-17T23:38:20.000+0000","days_since_arrived_marketing_page_from_p__c":0.0,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"days_since_like_preview_yes__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null}]}'
+    http_version: 
+  recorded_at: Wed, 17 May 2017 23:38:20 GMT
+recorded_with: VCR 2.9.3

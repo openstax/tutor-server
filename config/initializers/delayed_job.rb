@@ -53,6 +53,16 @@ Delayed::Worker.class_exec do
     end
   }
 
+  def self.with_delay_jobs(value, &block)
+    begin
+      original_value = delay_jobs
+      self.delay_jobs = value
+      block.call
+    ensure
+      self.delay_jobs = original_value
+    end
+  end
+
   def handle_failed_job_with_instant_failures(job, exception)
     fail_proc = INSTANT_FAILURE_PROCS[exception.class.name]
     job.fail! if fail_proc.present? && fail_proc.call(exception) ||

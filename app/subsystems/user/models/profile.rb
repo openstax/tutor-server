@@ -30,7 +30,7 @@ module User
       validates :ui_settings, max_json_length: 1500
       validate  :validate_ui_settings_change_history , on: :update
 
-      delegate :username, :first_name, :last_name, :full_name, :title,
+      delegate :username, :first_name, :last_name, :full_name, :title, :uuid,
                :name, :casual_name, :salesforce_contact_id, :faculty_status,
                :first_name=, :last_name=, :full_name=, :title=, to: :account
 

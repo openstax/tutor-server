@@ -20,6 +20,11 @@ module User
         nil
       end
 
+      def id
+        # convention that anonymous user has an ID of -1, helps with globalID lookup
+        -1
+      end
+
     end
   end
 end

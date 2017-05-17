@@ -255,6 +255,8 @@ A teacher is setup with the `teacher01` username.
 The full list of teachers and students can be
 [found here](https://github.com/openstax/tutor-server/blob/master/lib/tasks/demo/people.yml).
 
+Fastest way to get started `rake db:reset demo:content[mini]`.
+
 ## Profiling
 
 See
