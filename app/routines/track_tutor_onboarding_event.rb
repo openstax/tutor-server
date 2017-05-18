@@ -29,8 +29,10 @@ protected
 
         toa.pardot_reported_piaid ||= data[:pardot_reported_piaid]
         toa.pardot_reported_picid ||= data[:pardot_reported_picid]
-        toa.arrived_marketing_page_from_pardot_at ||= DateTime.current # TODO spec doesn't overwrite this on 2nd arrival
-
+        toa.arrived_marketing_page_from_pardot_at ||= DateTime.current
+      when :arrived_tutor_marketing_page_not_from_pardot
+        toa = find_or_initialize_toa(user: user)
+        toa.arrived_marketing_page_not_from_pardot_at ||= DateTime.current
       when :arrived_my_courses
         # Nothing to do, just want to make sure a record gets created
         toa = find_or_initialize_toa(user: user)
@@ -84,22 +86,27 @@ protected
         TOA.find_or_initialize_by(pardot_reported_contact_id: pardot_reported_contact_id)
       end
     else
-      # Find in priority order by local SF contact ID, pardot Contact ID, UUID,
-      # then set missing fields as needed.
+      # Find in priority order by local SF contact ID, UUID, pardot Contact ID; if
+      # not found, init by UUID.  Put Pardot ID later in priority because there is
+      # a chance that the ID could be shared by people forwarding emails around, whereas
+      # the local SF contact ID and UUID are more specific to one user. Then set missing
+      # fields as needed.
 
       toa = TOA.find_by(first_teacher_contact_id: user.salesforce_contact_id) \
         if user.salesforce_contact_id.present?
 
+      toa ||= TOA.find_by(accounts_uuid: user.uuid) if user.uuid.present?
+
       toa ||= TOA.find_by(pardot_reported_contact_id: pardot_reported_contact_id) \
         if pardot_reported_contact_id.present?
 
-      toa ||= TOA.find_or_initialize_by(accounts_uuid: user_uuid(user))
+      toa ||= TOA.new(accounts_uuid: user_uuid!(user))
 
       # TODO think through / spec different cases (e.g. teacher forwards pardot email to colleage at different times)
 
       toa.first_teacher_contact_id ||= user.salesforce_contact_id
       toa.pardot_reported_contact_id ||= pardot_reported_contact_id
-      toa.accounts_uuid ||= user_uuid(user)
+      toa.accounts_uuid ||= user_uuid!(user)
 
       toa
     end
@@ -109,7 +116,7 @@ protected
     Rails.logger.send(level) { "[OnboardingTracking] #{block.call}" }
   end
 
-  def user_uuid(user)
+  def user_uuid!(user)
     if user.uuid.blank?
       raise IllegalState, "User #{user.id} does not have a UUID; sync with Accounts!"
     end

@@ -1,24 +1,51 @@
 require 'rails_helper'
 
 RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
-#  include ActiveJob::TestHelper
 
-  before(:all) { @proxy = SalesforceProxy.new }
-  before(:each) { load_salesforce_user }
+  before(:all) do
+    VCR.use_cassette('TrackTutorOnboardingEvent/sf_setup', VCR_OPTS) do
+      @proxy = SalesforceProxy.new
+      load_salesforce_user
+      @proxy.ensure_schools_exist(["JP University"])
+      @sf_contact_a = @proxy.new_contact
+    end
 
-  before(:each) { load_salesforce_user }
+    # To use placeholders for the user UUIDs, we have to set them up in a before(:all)
+    # call, because `define_cassette_placeholder` doesn't work well from a before(:each)
 
-  let(:anonymous_user)    do
+    @user_no_sf = FactoryGirl.create(:user)
+    @user_sf_a = FactoryGirl.create(:user, salesforce_contact_id: @sf_contact_a.id)
+
+    VCR.configure do |config|
+      config.define_cassette_placeholder("<USER_NO_SF_UUID>") { @user_no_sf.uuid }
+      config.define_cassette_placeholder("<USER_SF_A_UUID>")  { @user_sf_a.uuid  }
+    end
+  end
+
+  # We are reusing one SF contact and the two users so that we can correctly
+  # put placeholders in for the user's UUIDs.  But each spec expects that
+  # no TOAs have been created for the SF contact yet, so track which TOAs
+  # we create and destroy them after each spec.
+
+  before(:each) do
+    @delete_me = []
+
+    allow_any_instance_of(OpenStax::Salesforce::Remote::TutorOnboardingA).to receive(:create!).and_wrap_original do |m, *args|
+      m.call(*args).tap{|object| @delete_me.push(object)}
+    end
+  end
+
+  after(:each) do
+    @delete_me.each{|obj| obj.destroy}
+  end
+
+  let(:anonymous_user) do
     profile = User::Models::AnonymousProfile.instance
     strategy = User::Strategies::Direct::AnonymousUser.new(profile)
     User::User.new(strategy: strategy)
   end
 
-  let(:user_no_sf)    { FactoryGirl.create(:user) }
-  let(:sf_contact_a)  { @proxy.new_contact }
-  let(:user_sf_a)     { FactoryGirl.create(:user, salesforce_contact_id: sf_contact_a.id) }
-  let(:user_sf_b)     { FactoryGirl.create(:user, salesforce_contact_id: 'b') }
-  let(:data)          { {} }
+  let(:data) { {} }
 
   def call
     described_class[user: user, event: event, data: data].reload
@@ -60,7 +87,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   context 'arrive to marketing page from pardot' do
     let(:event) { :arrived_tutor_marketing_page_from_pardot }
     let(:data) {{
-      pardot_reported_contact_id: sf_contact_a.id,
+      pardot_reported_contact_id: @sf_contact_a.id,
       pardot_reported_piaid: "piaid",
       pardot_reported_picid: "picid"
     }}
@@ -93,35 +120,41 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
       it 'creates the TOA based on the pardot contact ID' do
         toa = call
         expect(toa.id).to be_present
-        expect(toa.pardot_reported_contact_id).to eq sf_contact_a.id
+        expect(toa.pardot_reported_contact_id).to eq @sf_contact_a.id
       end
     end
 
     context 'signed in' do
-
-
       context 'has salesforce contact ID' do
-        let(:user) { user_sf_a }
+        let(:user) { @user_sf_a }
 
         it 'picks up the TOA by that SF ID' do
-          existing_toa = @proxy.new_tutor_onboarding_a(first_teacher_contact_id: sf_contact_a.id)
+          existing_toa = @proxy.new_tutor_onboarding_a(first_teacher_contact_id: @sf_contact_a.id)
           toa = call
           expect(toa.id).to eq existing_toa.id
-          expect(toa.pardot_reported_contact_id).to eq sf_contact_a.id
-          expect(toa.accounts_uuid).to eq user_sf_a.uuid
+          expect(toa.pardot_reported_contact_id).to eq @sf_contact_a.id
+          expect(toa.accounts_uuid).to eq @user_sf_a.uuid
+        end
+
+        it 'sets the timestamp' do
+          expect_call_to_set_timestamp(:arrived_marketing_page_from_pardot_at)
+        end
+
+        it 'does not overwrite the timestamp on 2nd arrival' do
+          expect_2nd_call_to_not_change_timestamp(:arrived_marketing_page_from_pardot_at)
         end
       end
 
       context 'no salesforce contact ID' do
-        let(:user) { user_no_sf }
+        let(:user) { @user_no_sf }
 
         it 'picks up the TOA by the pardot SF ID' do
-          existing_toa = @proxy.new_tutor_onboarding_a(pardot_reported_contact_id: sf_contact_a.id)
+          existing_toa = @proxy.new_tutor_onboarding_a(pardot_reported_contact_id: @sf_contact_a.id)
           toa = call
           expect(toa.id).to eq existing_toa.id
-          expect(toa.pardot_reported_contact_id).to eq sf_contact_a.id
+          expect(toa.pardot_reported_contact_id).to eq @sf_contact_a.id
           expect(toa.first_teacher_contact_id).to be_blank
-          expect(toa.accounts_uuid).to eq user_no_sf.uuid
+          expect(toa.accounts_uuid).to eq @user_no_sf.uuid
         end
       end
     end
@@ -130,6 +163,8 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
       xit 'does not reuse teacher 1\'s TOA' do
 
       end
+
+      # TODO do all cases of signed in and not signed in?
     end
 
     context '2nd arrival from same user' do
@@ -140,9 +175,16 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   end
 
   context 'arrived marketing page not from pardot' do
-    context 'signed in but no SF contact ID' do
-      it 'raises an exception if no UUID on user' do
+    let(:event) { :arrived_tutor_marketing_page_not_from_pardot }
+    let(:user) { @user_sf_a }
 
+    context 'signed in but no SF contact ID' do
+      it 'sets the timestamp' do
+        expect_call_to_set_timestamp(:arrived_marketing_page_not_from_pardot_at)
+      end
+
+      it 'does not overwrite the timestamp on 2nd arrival' do
+        expect_2nd_call_to_not_change_timestamp(:arrived_marketing_page_not_from_pardot_at)
       end
     end
 
@@ -150,7 +192,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   context 'created preview' do
     let(:event) { :created_preview_course }
-    let(:user) { user_sf_a }
+    let(:user) { @user_sf_a }
 
     it 'sets preview_created_at' do
       expect_call_to_set_timestamp(:preview_created_at)
@@ -163,7 +205,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   context 'created real course' do
     let(:event) { :created_real_course }
-    let(:user) { user_sf_a }
+    let(:user) { @user_sf_a }
 
     it 'sets real_course_created_at' do
       expect_call_to_set_timestamp(:real_course_created_at)
@@ -176,13 +218,20 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   context 'ask later about like preview' do
     let(:event) { :like_preview_ask_later }
-    let(:user) { user_sf_a }
+    let(:user) { @user_sf_a }
 
+    it 'updates the count' do
+      toa = call
+      expect(toa.like_preview_ask_later_count).to eq 1
+
+      toa = call
+      expect(toa.like_preview_ask_later_count).to eq 2
+    end
   end
 
   context 'say yes to like preview' do
     let(:event) { :like_preview_yes }
-    let(:user) { user_sf_a }
+    let(:user) { @user_sf_a }
 
     it 'sets like_preview_yes' do
       expect_call_to_set_timestamp(:like_preview_yes_at)
@@ -195,7 +244,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   context 'adoption decision' do
     let(:event) { :made_adoption_decision }
-    let(:user) { user_sf_a }
+    let(:user) { @user_sf_a }
     let(:data) {{
       decision: "For course credit"
     }}
@@ -228,7 +277,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   context "when event unknown" do
     let(:event) { :booyah }
-    let(:user) { user_sf_a }
+    let(:user) { @user_sf_a }
 
     it 'raise an exception' do
       expect{call}.to raise_error(StandardError)
@@ -276,7 +325,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
           3 == errors_call_count ? ["blah"] : m.call(*args)
         }
 
-        described_class.perform_later(user: user_sf_a, event: "like_preview_yes")
+        described_class.perform_later(user: @user_sf_a, event: "like_preview_yes")
 
         expect_any_instance_of(Delayed::Job).not_to receive(:fail!)
         s,f = Delayed::Worker.new.work_off(1)
