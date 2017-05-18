@@ -12,14 +12,18 @@
 # Keep failed jobs for later inspection
 Delayed::Worker.destroy_failed_jobs = false
 
-# Should be longer than the longest background job (that actually uses this gem)
+# Poll the database every second to reduce delay (number of workers = number of queries per second)
+Delayed::Worker.sleep_delay = 1
+
+# Should be longer than the longest background job
 Delayed::Worker.max_run_time = Rails.application.secrets['background_worker_timeout']
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline
 Delayed::Worker.delay_jobs = Rails.env.production? || (
-                               Rails.env.development? && \
-                               EnvUtilities.load_boolean(name: 'USE_REAL_BACKGROUND_JOBS',
-                                                         default: false)
+                               Rails.env.development? &&
+                               EnvUtilities.load_boolean(
+                                 name: 'USE_REAL_BACKGROUND_JOBS', default: false
+                               )
                              )
 
 # https://github.com/smartinez87/exception_notification/issues/195#issuecomment-31257207
@@ -77,28 +81,50 @@ Delayed::Worker.class_exec do
 end
 
 # http://stackoverflow.com/questions/29855768/rails-4-2-get-delayed-job-id-from-active-job
-module ActiveJob
-  class Base
-    attr_accessor :provider_job_id
+ActiveJob::Base.class_exec do
+  attr_accessor :provider_job_id
+
+  def self.execute(job_data, provider_job_id = nil)
+    job = deserialize(job_data)
+    job.provider_job_id = provider_job_id
+    job.perform_now
+  end
+end
+
+ActiveJob::QueueAdapters::DelayedJobAdapter.class_exec do
+  def enqueue(job) #:nodoc:
+    delayed_job = Delayed::Job.enqueue(
+      ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper.new(job.serialize),
+      queue: job.queue_name
+    )
+    job.provider_job_id = delayed_job.id
+    delayed_job
   end
 
-  module QueueAdapters
-    class DelayedJobAdapter
-      class << self
-        def enqueue(job) #:nodoc:
-          delayed_job = Delayed::Job.enqueue(JobWrapper.new(job.serialize), queue: job.queue_name)
-          job.provider_job_id = delayed_job.id
-          delayed_job
-        end
+  def enqueue_at(job, timestamp) #:nodoc:
+    delayed_job = Delayed::Job.enqueue(
+      ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper.new(job.serialize),
+      queue: job.queue_name,
+      run_at: Time.at(timestamp)
+    )
+    job.provider_job_id = delayed_job.id
+    delayed_job
+  end
+end
 
-        def enqueue_at(job, timestamp) #:nodoc:
-          delayed_job = Delayed::Job.enqueue(
-            JobWrapper.new(job.serialize), queue: job.queue_name, run_at: Time.at(timestamp)
-          )
-          job.provider_job_id = delayed_job.id
-          delayed_job
-        end
-      end
-    end
+ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper.class_exec do
+  attr_reader :job_data
+  attr_reader :provider_job_id
+
+  def initialize(job_data)
+    @job_data = job_data
+  end
+
+  def before(delayed_job)
+    @provider_job_id = delayed_job.id
+  end
+
+  def perform
+    ActiveJob::Base.execute(job_data, provider_job_id)
   end
 end

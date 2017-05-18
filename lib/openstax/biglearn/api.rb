@@ -166,6 +166,10 @@ module OpenStax::Biglearn::Api
           end
 
           false
+        elsif num_course_containers == 0
+          # We simply cannot send roster updates for courses with 0 course_containers,
+          # since biglearn-api requires at least 1 course_container in the request
+          false
         else
           true
         end

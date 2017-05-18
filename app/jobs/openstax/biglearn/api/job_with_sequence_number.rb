@@ -3,7 +3,8 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
 
   queue_as :default
 
-  def perform(method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:)
+  def perform(method:, requests:, create:,
+              sequence_number_model_key:, sequence_number_model_class:)
     req = [requests].flatten
     sequence_number_model_key = sequence_number_model_key.to_sym
 
@@ -85,18 +86,27 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       return [] if modified_requests.empty?
 
       # Create a background job if possible to guarantee the sequence_number will reach Biglearn
-      can_perform_later ? OpenStax::Biglearn::Api::Job.perform_later(
-        method: method.to_s, requests: modified_requests
-      ) : super(method: method, requests: modified_requests)
+      if can_perform_later
+        # Destroy the current job so it's removed from the queue when this transaction commits
+        # Just in case we encounter an error after the transaction ends,
+        # since we don't want this job to run again
+        Delayed::Job.where(id: provider_job_id).delete_all
+
+        OpenStax::Biglearn::Api::Job.perform_later(
+          method: method.to_s, requests: modified_requests
+        )
+      else
+        super(method: method, requests: modified_requests)
+      end
     end
 
-    # Attempt to run the job inline to speed up Biglearn responses
     return job_or_result unless can_perform_later
 
     delayed_job_id = job_or_result.provider_job_id
 
     return job_or_result if delayed_job_id.nil?
 
+    # Attempt to lock and run the Biglearn request job inline to speed up Biglearn responses
     worker = Delayed::Worker.new
     ready_scope = Delayed::Job.ready_to_run(worker.name, Delayed::Worker.max_run_time)
                               .where(id: delayed_job_id)
