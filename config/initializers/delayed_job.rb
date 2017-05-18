@@ -63,6 +63,19 @@ Delayed::Worker.class_exec do
   alias_method_chain :handle_failed_job, :instant_failures
 end
 
+# Fix NewRelic's broken DJ monkeypatch
+# Without this fix, a second call to Delayed::Worker.new
+# will cause the worker to enter an infinite loop
+Delayed::Worker.class_exec do
+  def initialize_with_new_relic_fix(*args)
+    Delayed::Job.method_defined?(:invoke_job_without_new_relic) ?
+      initialize_without_new_relic(*args) : initialize_without_new_relic_fix(*args)
+  end
+
+  alias initialize_without_new_relic_fix initialize
+  alias initialize initialize_with_new_relic_fix
+end
+
 # http://stackoverflow.com/questions/29855768/rails-4-2-get-delayed-job-id-from-active-job
 module ActiveJob
   class Base
