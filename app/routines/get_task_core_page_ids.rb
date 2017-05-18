@@ -23,11 +23,11 @@ class GetTaskCorePageIds
         step.core_group? || step.personalized_group?
       end
 
-      task_id_to_core_page_ids_map[task.id] = task_steps.map(&:content_page_id).uniq
+      task_id_to_core_page_ids_map[task.id] = task_steps.map(&:content_page_id).compact.uniq
     end
     unloaded_tasks.each do |task|
       task_steps = unloaded_task_steps[task.id] || []
-      task_id_to_core_page_ids_map[task.id] = task_steps.map(&:second).uniq
+      task_id_to_core_page_ids_map[task.id] = task_steps.map(&:second).compact.uniq
     end
 
     outputs.task_id_to_core_page_ids_map = task_id_to_core_page_ids_map
