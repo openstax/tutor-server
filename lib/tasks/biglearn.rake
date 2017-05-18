@@ -22,10 +22,9 @@ namespace :biglearn do
         .where(id: course_ids)
         .joins(:course_ecosystems)
         .preload(
-          :time_zone,
-          { course_ecosystems: :ecosystem },
-          { periods_with_deleted: { latest_enrollments_with_deleted: :student } }
-        ).uniq
+          course_ecosystems: :ecosystem,
+          periods_with_deleted: { latest_enrollments_with_deleted: :student }
+        ).distinct
 
       print_each("Creating #{courses.count} course(s)", courses.find_in_batches) do |courses|
         roster_updates = []
