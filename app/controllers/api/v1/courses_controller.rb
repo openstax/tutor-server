@@ -55,7 +55,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course_attributes = attributes.except(:catalog_offering_id)
                                   .merge(catalog_offering: catalog_offering)
 
-    course = CreateCourse[course_attributes]
+    course = course_attributes[:is_preview] ?
+               CreateCourse[course_attributes] : CourseProfile::ClaimPreviewCourse[course_attributes]
 
     AddUserAsCourseTeacher[course: course, user: current_human_user]
 
