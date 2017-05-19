@@ -21,3 +21,7 @@ end
 every 30.minutes do
   runner "Tasks::CcPageStatsView.refresh"
 end
+
+every 10.minutes do
+  runner "CourseProfile::BuildPreviewCourses.start_in_background"
+end
