@@ -6,13 +6,14 @@ class CreateCourse
 
   uses_routine CourseMembership::CreatePeriod, as: :create_period
 
+
   uses_routine SchoolDistrict::ProcessSchoolChange, as: :process_school_change
 
   uses_routine Tasks::CreateCourseAssistants, as: :create_course_assistants
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
-
-  uses_routine PopulatePreviewCourseContent, as: :populate_preview_course_content
+  uses_routine CourseProfile::ClaimPreviewCourse, as: :claim_preview_course,
+                                                  translations: { outputs: { type: :verbatim } }
 
   def exec(name:, term:, year:, is_preview:, is_college:, is_concept_coach: nil, num_sections: 0,
            catalog_offering: nil, appearance_code: nil, starts_at: nil, ends_at: nil,
@@ -83,7 +84,6 @@ class CreateCourse
 
     run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
 
-    run(:populate_preview_course_content, course: outputs.course) if outputs.course.is_preview
   end
 
 end
