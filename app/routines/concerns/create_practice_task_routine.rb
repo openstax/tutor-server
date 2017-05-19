@@ -1,4 +1,7 @@
 module CreatePracticeTaskRoutine
+
+  NUM_BIGLEARN_EXERCISES = 5
+
   extend ActiveSupport::Concern
 
   included do
@@ -22,7 +25,11 @@ module CreatePracticeTaskRoutine
   end
 
   def send_task_to_biglearn
-    OpenStax::Biglearn::Api.create_update_assignments(course: @course, task: @task)
+    OpenStax::Biglearn::Api.create_update_assignments(
+      course: @course,
+      task: @task,
+      goal_num_tutor_assigned_pes: NUM_BIGLEARN_EXERCISES
+    )
   end
 
   def exec(course:, role:, **args)

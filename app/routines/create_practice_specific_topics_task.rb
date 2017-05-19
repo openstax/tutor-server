@@ -1,7 +1,5 @@
 class CreatePracticeSpecificTopicsTask
 
-  NUM_BIGLEARN_EXERCISES = 5
-
   include CreatePracticeTaskRoutine
 
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
@@ -50,14 +48,6 @@ class CreatePracticeSpecificTopicsTask
                  " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
       ) if outputs.task.task_steps.empty?
     end
-  end
-
-  def send_task_to_biglearn
-    OpenStax::Biglearn::Api.create_update_assignments(
-      course: @course,
-      task: @task,
-      goal_num_tutor_assigned_pes: NUM_BIGLEARN_EXERCISES
-    )
   end
 
 end
