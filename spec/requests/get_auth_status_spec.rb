@@ -39,6 +39,8 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           is_content_analyst: false,
           faculty_status: 'no_faculty_info',
           viewed_tour_ids: [],
+          self_reported_role: user.account.role,
+          account_uuid: user.account.uuid,
           profile_url: a_string_starting_with('http')
         },
         courses: []
