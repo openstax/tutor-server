@@ -15,8 +15,6 @@ RSpec.describe CourseProfile::ClaimPreviewCourse do
       catalog_offering: offering,
       estimated_student_count: 42
     ).outputs.course
-    # course.save!
-    # course
   }
 
   it 'finds the course and updates it’s attributes' do
@@ -26,5 +24,8 @@ RSpec.describe CourseProfile::ClaimPreviewCourse do
     expect(claimed_course.id).to eq course.id
     expect(claimed_course.name).to eq 'My New Preview Course'
     expect(claimed_course.preview_claimed_at).to be_within(1.minute).of(Time.now)
+
+
+
   end
 end
