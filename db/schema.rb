@@ -338,10 +338,10 @@ ActiveRecord::Schema.define(version: 20170518182025) do
     t.string   "biglearn_practice_worst_areas_algorithm_name",                               null: false
     t.boolean  "is_test",                                      default: false,               null: false
     t.integer  "estimated_student_count"
-    t.boolean  "is_preview_claimed",                           default: false
+    t.datetime "preview_claimed_at"
   end
 
-  add_index "course_profile_courses", ["catalog_offering_id", "is_preview", "is_preview_claimed"], name: "preview_pending_indx", using: :btree
+  add_index "course_profile_courses", ["catalog_offering_id", "is_preview", "preview_claimed_at"], name: "preview_pending_indx", using: :btree
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
   add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
   add_index "course_profile_courses", ["name"], name: "index_course_profile_courses_on_name", using: :btree

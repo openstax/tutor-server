@@ -1,8 +1,8 @@
 class PreviewClaimed < ActiveRecord::Migration
   def change
-    add_column :course_profile_courses, :is_preview_claimed, :boolean
+    add_column :course_profile_courses, :preview_claimed_at, :timestamp
     add_index :course_profile_courses,
-              [:catalog_offering_id, :is_preview, :is_preview_claimed],
+              [:catalog_offering_id, :is_preview, :preview_claimed_at],
               name: :preview_pending_indx
   end
 end
