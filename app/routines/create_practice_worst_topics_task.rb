@@ -31,7 +31,7 @@ class CreatePracticeWorstTopicsTask
         step.group_type = :personalized_group
         step.add_related_content(exercise.page.related_content)
       end
-    end
+    end.tap { @task.update_attribute :pes_are_assigned, true }
   end
 
 end
