@@ -234,7 +234,6 @@ module OpenStax::Biglearn::Api
     # Creates or updates tasks in Biglearn
     # Requests are hashes containing the following keys: :course and :task
     # They may also contain the following optional key: :core_page_ids
-    # The task records' sequence numbers are increased by 1
     def create_update_assignments(*requests)
       requests, options = extract_options requests
 
@@ -252,7 +251,7 @@ module OpenStax::Biglearn::Api
         method: :create_update_assignments,
         requests: requests,
         keys: [:course, :task],
-        optional_keys: :core_page_ids,
+        optional_keys: [:goal_num_tutor_assigned_pes, :goal_num_tutor_assigned_spes],
         perform_later: true,
         select_proc: select_proc,
         sequence_number_model_key: :course,

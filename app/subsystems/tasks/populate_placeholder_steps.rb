@@ -11,15 +11,16 @@ class Tasks::PopulatePlaceholderSteps
 
     return if task.pes_are_assigned && task.spes_are_assigned
 
-    # If the task is a practice widget, we give Biglearn control of the number of slots
-    biglearn_controls_slots = task.practice?
+    # If the task is a practice widget, we give Biglearn control of the number of PE slots
+    biglearn_controls_pe_slots = task.practice?
+    biglearn_controls_spe_slots = false
 
     unless task.pes_are_assigned
       # Populate PEs
       populate_placeholder_steps task: task,
                                  group_type: :personalized_group,
                                  biglearn_api_method: :fetch_assignment_pes,
-                                 biglearn_controls_slots: biglearn_controls_slots
+                                 biglearn_controls_slots: biglearn_controls_pe_slots
 
       task.pes_are_assigned = true
     end
@@ -52,7 +53,7 @@ class Tasks::PopulatePlaceholderSteps
         populate_placeholder_steps task: task,
                                    group_type: :spaced_practice_group,
                                    biglearn_api_method: :fetch_assignment_spes,
-                                   biglearn_controls_slots: biglearn_controls_slots
+                                   biglearn_controls_slots: biglearn_controls_spe_slots
 
         task.spes_are_assigned = true
       end
@@ -72,7 +73,8 @@ class Tasks::PopulatePlaceholderSteps
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
-  def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
+  def populate_placeholder_steps(task:, group_type:,
+                                 biglearn_api_method:, biglearn_controls_slots:)
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs (reading tasks)
       chosen_exercises = OpenStax::Biglearn::Api.public_send(

@@ -16,7 +16,7 @@ class CreatePracticeWorstTopicsTask
     exercises = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
       student: @role.student,
       inline_retry_proc: ->(response) { response[:student_status] != 'student_ready' }
-    )
+    ).first(CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES)
 
     fatal_error(
       code: :no_exercises,
