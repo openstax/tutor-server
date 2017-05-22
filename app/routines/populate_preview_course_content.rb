@@ -1,15 +1,16 @@
 class PopulatePreviewCourseContent
 
   STUDENT_INFO = [
-    { username: 'previewstudent1', first_name: 'Student', last_name: 'One'   },
-    { username: 'previewstudent2', first_name: 'Student', last_name: 'Two'   },
-    { username: 'previewstudent3', first_name: 'Student', last_name: 'Three' },
-    { username: 'previewstudent4', first_name: 'Student', last_name: 'Four'  },
-    { username: 'previewstudent5', first_name: 'Student', last_name: 'Five'  },
-    { username: 'previewstudent6', first_name: 'Student', last_name: 'Six'   }
+    { username: 'previewstudent1', first_name: 'Esme',    last_name: 'Garcia'  },
+    { username: 'previewstudent2', first_name: 'Eloise',  last_name: 'Potter'  },
+    { username: 'previewstudent3', first_name: 'Hugo',    last_name: 'Jackson' },
+    { username: 'previewstudent4', first_name: 'Lucy',    last_name: 'Nguyen'  },
+    { username: 'previewstudent5', first_name: 'Ezra',    last_name: 'Samson'  },
+    { username: 'previewstudent6', first_name: 'Desmond', last_name: 'Jones'   }
   ]
 
-  NUM_ASSIGNED_CHAPTERS = 4
+  # Should correspond to the total preview course duration, in weeks
+  MAX_NUM_ASSIGNED_CHAPTERS = 10
 
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
@@ -28,12 +29,9 @@ class PopulatePreviewCourseContent
 
   def exec(course:)
 
-    periods = course.periods.to_a
-    while course.periods.length < 2
-      run(:create_period, course: course)
+    run(:create_period, course: course) if course.periods.empty?
 
-      periods = course.periods.to_a
-    end
+    periods = course.periods.to_a
 
     # Find preview student accounts
     preview_student_accounts = STUDENT_INFO.map do |student_info|
@@ -73,17 +71,19 @@ class PopulatePreviewCourseContent
     candidate_chapters = book.chapters.select do |chapter|
       chapter.pages.any?{ |page| page.homework_core_pool.content_exercise_ids.any? }
     end
-    preview_chapters = candidate_chapters[0..NUM_ASSIGNED_CHAPTERS-1]
+    num_chapters =
+      [MAX_NUM_ASSIGNED_CHAPTERS, ((course.ends_at - course.starts_at)/1.week).floor].min
+    preview_chapters = candidate_chapters[0..num_chapters-1]
     return if preview_chapters.blank?
 
-    time_zone = course.time_zone
-
     # Assign tasks
+    first_reading_opens_at = [Time.current.monday - 2.weeks, course.starts_at].max
+    time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = Time.current.monday + (index + 1 - NUM_ASSIGNED_CHAPTERS).week
-      reading_due_at = reading_opens_at + 1.day
+      reading_opens_at = first_reading_opens_at + index.weeks
+      reading_due_at = [reading_opens_at + 1.day, course.ends_at].min
       homework_opens_at = reading_due_at
-      homework_due_at = homework_opens_at + 3.days
+      homework_due_at = [homework_opens_at + 3.days, course.ends_at].min
 
       pages = chapter.pages
       page_ids = pages.map{ |page| page.id.to_s }
@@ -92,7 +92,7 @@ class PopulatePreviewCourseContent
       end.compact
 
       reading_tp = Tasks::Models::TaskPlan.new(
-        title: "Chapter #{chapter.number} Reading",
+        title: "Chapter #{chapter.number} Reading (Sample)",
         owner: course,
         is_preview: true,
         ecosystem: ecosystem,
@@ -111,15 +111,16 @@ class PopulatePreviewCourseContent
 
       run(:distribute_tasks, task_plan: reading_tp)
 
-      exercises_count_dynamic = [4 - index/2, 2].max
+      exercises_count_dynamic = [2 + index/2, 4].min
 
       homework_tp = Tasks::Models::TaskPlan.new(
-        title: "Chapter #{chapter.number} Practice",
+        title: "Chapter #{chapter.number} Homework (Sample)",
         owner: course,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
-        settings: { 'page_ids' => page_ids, 'exercise_ids' => exercise_ids,
+        settings: { 'page_ids' => page_ids,
+                    'exercise_ids' => exercise_ids,
                     'exercises_count_dynamic' => exercises_count_dynamic }
       )
       homework_tp.assistant = run(:get_assistant, course: course, task_plan: homework_tp)

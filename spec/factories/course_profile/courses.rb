@@ -9,7 +9,8 @@ FactoryGirl.define do
     is_concept_coach      false
     is_college            true
 
-    term                  { CourseProfile::Models::Course.terms.keys.sample }
+    # Preview term dates are based on DateTime.current, so they lead to flaky tests
+    term                  { (CourseProfile::Models::Course.terms.keys - [ 'preview' ]).sample }
     year                  { Time.current.year }
 
     starts_at             { consistent_times ? term_year.starts_at : Time.current - 3.months }

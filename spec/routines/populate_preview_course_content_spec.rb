@@ -12,19 +12,17 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
 
     @course = FactoryGirl.create :course_profile_course, offering: offering, is_preview: true
 
-    FactoryGirl.create :course_membership_period, course: @course
-
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
   end
 
-  context 'when the course has less than 2 periods' do
-    it 'creates new periods until the course has at least 2' +
-       ' and populates the expected preview course content' do
+  context 'when the course has no periods' do
+    it 'creates a new period and populates the expected preview course content' do
+      # 4 tasks for each of the 6 students + 1 preview role
       expect { result = described_class.call(course: @course) }
-        .to change { @course.students.reload.size }.by(6)
-        .and change { @course.periods.reload.size }.to(2)
+        .to  change { @course.students.reload.size }.by(6)
+        .and change { @course.periods.reload.size }.from(0).to(1)
         .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
-        .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(32)
+        .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(28)
 
       # all task plans should be marked as "is_preview"
       Tasks::Models::TaskPlan.where(owner: @course).each { |tp| expect(tp.is_preview).to eq(true) }
@@ -32,10 +30,10 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)
 
-        expect(student_roles.size).to eq 3
+        expect(student_roles.size).to eq 6
 
-        # All roles except the last have completed everything
-        student_roles[0..-2].each do |role|
+        # All roles except the third and sixth have completed everything
+        (student_roles[0..1] + student_roles[3..4]).each do |role|
           role.taskings.each do |tasking|
             tasking.task.task_steps.each do |task_step|
               expect(task_step).to be_completed
@@ -46,7 +44,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     end
   end
 
-  context 'when the course has 2 or more periods' do
+  context 'when the course a period' do
     before(:all) do
       DatabaseCleaner.start
 
@@ -56,19 +54,20 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     after(:all)  { DatabaseCleaner.clean }
 
     it 'does not create any new periods and populates the expected preview course content' do
+      # 4 tasks for each of the 6 students + 1 preview role
       expect { result = described_class.call(course: @course) }
         .to change { @course.students.reload.size }.by(6)
         .and not_change { @course.periods.reload.size }
         .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
-        .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(32)
+        .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(28)
 
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)
 
-        expect(student_roles.size).to eq 3
+        expect(student_roles.size).to eq 6
 
-        # All roles except the last have completed everything
-        student_roles[0..-2].each do |role|
+        # All roles except the third and sixth have completed everything
+        (student_roles[0..1] + student_roles[3..4]).each do |role|
           role.taskings.each do |tasking|
             tasking.task.task_steps.each do |task_step|
               expect(task_step).to be_completed

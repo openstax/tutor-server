@@ -64,7 +64,7 @@ RSpec.describe GetTpDashboard, type: :routine do
     it "works for a student" do
       outputs = described_class.call(course: course, role: student_role).outputs
 
-      expect(HashWithIndifferentAccess[outputs]).to include(
+      expect(outputs).to match a_hash_including(
         course: {
           id: course.id,
           name: 'Physics 101',
@@ -88,15 +88,17 @@ RSpec.describe GetTpDashboard, type: :routine do
     it "works for a teacher" do
       outputs = described_class.call(course: course, role: teacher_role).outputs
 
-      expect(HashWithIndifferentAccess[outputs]).to include(
+      expect(outputs).to match a_hash_including(
         course: {
           id: course.id,
           name: 'Physics 101',
           teachers: [
-            { id: teacher_role.teacher.id.to_s,
+            {
+              id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart' }
+              last_name: 'Newhart'
+            }
           ]
         },
         role: {
@@ -135,7 +137,7 @@ RSpec.describe GetTpDashboard, type: :routine do
       outputs = described_class.call(course: course, role: student_role,
                                      start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz).outputs
 
-      expect(HashWithIndifferentAccess[outputs]).to include(
+      expect(outputs).to match a_hash_including(
         course: {
           id: course.id,
           name: 'Physics 101',
@@ -160,15 +162,17 @@ RSpec.describe GetTpDashboard, type: :routine do
       outputs = described_class.call(course: course, role: teacher_role,
                                      start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz).outputs
 
-      expect(HashWithIndifferentAccess[outputs]).to include(
+      expect(outputs).to match a_hash_including(
         course: {
           id: course.id,
           name: 'Physics 101',
           teachers: [
-            { id: teacher_role.teacher.id.to_s,
+            {
+              id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart' }
+              last_name: 'Newhart'
+            }
           ]
         },
         role: {

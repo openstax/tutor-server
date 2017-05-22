@@ -10,6 +10,9 @@ class CourseMembership::CreateEnrollmentChange
     fatal_error(code: :invalid_enrollment_code,
                 message: 'The given enrollment code is invalid') if period.nil?
 
+    fatal_error(code: :preview_course,
+                message: 'You cannot enroll in a preview course') if period.course.is_preview
+
     fatal_error(code: :course_ended,
                 message: 'The course associated with the given enrollment code has ended') \
       if period.course.ended?

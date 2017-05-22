@@ -40,7 +40,7 @@ RSpec.describe TermYear, type: :lib do
         end
 
         it "returns June 30th, #{year + 1} 11:59:59 PM as the end date" do
-          end_date = DateTime.parse("June 30th, #{year + 1} 11:59:59 PM")
+          end_date = DateTime.parse("June 29th, #{year + 1} 11:59:59 PM")
           expect(term_year.ends_at).to eq end_date
         end
       end
@@ -80,7 +80,7 @@ RSpec.describe TermYear, type: :lib do
         end
 
         it "returns June 30th, #{year} 11:59:59 PM as the end date" do
-          end_date = DateTime.parse("June 30th, #{year} 11:59:59 PM")
+          end_date = DateTime.parse("June 29th, #{year} 11:59:59 PM")
           expect(term_year.ends_at).to eq end_date
         end
       end

@@ -27,6 +27,29 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
     AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
   end
 
+  it "returns invalid_enrollment_code error if the given enrollment code is invalid" do
+    result = nil
+    expect{ result = described_class.call(user: user, enrollment_code: '1nv4l1d!') }
+      .not_to change{ CourseMembership::Models::EnrollmentChange.count }
+    expect(result.errors.first.code).to eq :invalid_enrollment_code
+  end
+
+  it "returns preview_course error if the associated period's course is a preview course" do
+    course_1.update_attribute :is_preview, true
+    result = nil
+    expect{ result = described_class.call(args) }
+      .not_to change{ CourseMembership::Models::EnrollmentChange.count }
+    expect(result.errors.first.code).to eq :preview_course
+  end
+
+  it "returns course_ended error if the associated period's course has ended" do
+    course_1.update_attribute :ends_at, Time.current
+    result = nil
+    expect{ result = described_class.call(args) }
+      .not_to change{ CourseMembership::Models::EnrollmentChange.count }
+    expect(result.errors.first.code).to eq :course_ended
+  end
+
   context 'with no existing enrollments' do
     it 'creates an EnrollmentChange with a nil from_period' do
       result = nil

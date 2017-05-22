@@ -9,6 +9,7 @@ class CourseMembership::ValidateEnrollmentParameters
     outputs.period = CourseMembership::Models::Period.find_by(enrollment_code: enrollment_code)
 
     fatal_error(code: :invalid_enrollment_code) if outputs.period.nil?
+    fatal_error(code: :preview_course) if outputs.period.course.is_preview
     fatal_error(code: :course_ended) if outputs.period.course.ended?
     fatal_error(code: :enrollment_code_does_not_match_book) \
       if outputs.period.course.ecosystems.none? do |ecosystem|
