@@ -21,13 +21,13 @@ RSpec.describe CourseProfile::ClaimPreviewCourse do
 
     it 'finds the course and updates it’s attributes' do
       course.update_attributes!(created_at: 3.days.ago)
-
       claimed_course = CourseProfile::ClaimPreviewCourse[
         catalog_offering: offering, name: 'My New Preview Course'
       ]
       expect(claimed_course.id).to eq course.id
       expect(claimed_course.name).to eq 'My New Preview Course'
       expect(claimed_course.preview_claimed_at).to be_within(1.minute).of(Time.now)
+      claimed_course
     end
   end
 

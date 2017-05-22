@@ -23,23 +23,18 @@ class CourseProfile::ClaimPreviewCourse
       ends_at: current_term.ends_at
     )
 
-    offset = (Time.now - course.created_at).seconds.to_i
+    interval = "interval '#{(Time.now - course.created_at).seconds.to_i} seconds'"
     update = lambda { |fields|
-      return fields.map{|f| "#{f} = #{f} + interval '#{offset} seconds'"}.join(', ')
+      return fields.map{|f| "#{f} = #{f} + #{interval}"}.join(', ')
     }
-
-    CourseProfile::Models::Course
-      .where({id: course.id})
-      .update_all(update[%w{created_at updated_at}])
-
-    course.taskings.update_all(update[%w{created_at updated_at}])
 
     tasks = Tasks::Models::Task
               .joins(taskings: :period )
               .where(taskings: { period: { course_profile_course_id: course.id } })
     tasks.update_all(
-      update[%w{opens_at_ntz due_at_ntz feedback_at_ntz last_worked_at created_at updated_at deleted_at}]
+      update[%w{opens_at_ntz due_at_ntz feedback_at_ntz last_worked_at}]
     )
-    outputs.course = course.reload
+    course.taskings.reset
+    outputs.course = course
   end
 end
