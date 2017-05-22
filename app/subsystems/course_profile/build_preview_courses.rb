@@ -8,7 +8,7 @@ class CourseProfile::BuildPreviewCourses
 
   def exec(desired_count: Settings::Db.store.prebuilt_preview_course_count)
     while (
-      offerings = self.class.offerings_that_need_previews(desired_count: desired_count)
+      offerings = offerings_that_need_previews(desired_count)
     ).any?
       term = TermYear.visible_term_years.first
 
@@ -36,13 +36,13 @@ class CourseProfile::BuildPreviewCourses
   def self.run_scheduled_build
     CourseProfile::Models::Course.transaction do
       CourseProfile::Models::Course.with_advisory_lock('preview-builder', 0) do
-        self.call if offerings_that_need_previews.any?
+        self.call
       end
     end
   end
 
 
-  def self.offerings_that_need_previews(desired_count: Settings::Db.store.prebuilt_preview_course_count)
+  def offerings_that_need_previews(desired_count)
     courses = CourseProfile::Models::Course
                 .where("is_preview = 't' and preview_claimed_at is null")
                 .group(:catalog_offering_id)

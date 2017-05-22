@@ -6,7 +6,7 @@ RSpec.describe CourseProfile::BuildPreviewCourses do
   }
 
   it 'queries for needed offerings' do
-    needed = described_class.offerings_that_need_previews
+    needed = described_class.new.send(:offerings_that_need_previews, 10)
     expect(needed.map(&:id)).to eq offerings.map(&:id)
     expect(needed.map(&:course_preview_count)).to eq [0, 0]
   end
