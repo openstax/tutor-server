@@ -7,7 +7,6 @@ class CourseProfile::BuildPreviewCourses
   protected
 
   def exec(desired_count: Settings::Db.store.prebuilt_preview_course_count)
-
     while (
       offerings = self.class.offerings_that_need_previews(desired_count: desired_count)
     ).any?
@@ -34,18 +33,20 @@ class CourseProfile::BuildPreviewCourses
   end
 
 
-  def self.start_in_background
-    if offerings_that_need_previews.any? && Jobba.where(job_name: self.name).none?
-      self.perform_later
+  def self.run_scheduled_build
+    CourseProfile::Models::Course.transaction do
+      CourseProfile::Models::Course.with_advisory_lock('preview-builder', 0) do
+        self.call if offerings_that_need_previews.any?
+      end
     end
   end
+
 
   def self.offerings_that_need_previews(desired_count: Settings::Db.store.prebuilt_preview_course_count)
     courses = CourseProfile::Models::Course
                 .where("is_preview = 't' and preview_claimed_at is null")
                 .group(:catalog_offering_id)
                 .select([:catalog_offering_id, 'count(*) as course_preview_count'])
-
 
     Catalog::Models::Offering
       .joins { courses.as('course_preview_counts')
