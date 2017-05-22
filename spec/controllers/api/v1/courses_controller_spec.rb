@@ -167,14 +167,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'verified faculty' do
       before { user_1.account.update_attribute :faculty_status, :confirmed_faculty }
-
+      let!(:preview_course)  {
+          CreateCourse.call(
+            name: 'Unclaimed',
+            term: term,
+            year: year,
+            time_zone: 'Indiana (East)',
+            is_preview: true,
+            is_college: true,
+            num_sections: 2,
+            catalog_offering: catalog_offering,
+            estimated_student_count: 42
+          ).outputs.course
+      }
       context 'is_preview: true' do
         before { valid_body_hash[:is_preview] = true }
 
-        it 'creates a new preview course for the faculty if all required attributes are given' do
-          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
-            change{ CourseProfile::Models::Course.count }.by(1)
-          )
+        it 'claims a preview course for the faculty if all required attributes are given' do
+          api_post :create, user_1_token, raw_post_data: valid_body
+          expect(response.body_as_hash[:id]).to eq preview_course.id.to_s
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
           expect(response.body_as_hash[:is_preview]).to eq true
