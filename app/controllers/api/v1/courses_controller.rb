@@ -45,7 +45,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     errors = CREATE_REQUIRED_ATTRIBUTES.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
       { code: :missing_attribute, message: "The #{sym} attribute must be provided" }
     end
-    render_api_errors(errors) and return if errors.any?
+    return render_api_errors(errors) unless errors.empty?
 
     render_api_errors(code: :invalid_term, message: 'The given course term is invalid') and return \
       if attributes[:term].present? && !TermYear::VISIBLE_TERMS.include?(attributes[:term].to_sym)
@@ -53,9 +53,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     catalog_offering = Catalog::Models::Offering.find(attributes[:catalog_offering_id])
     OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
-    course = CreateOrClaimCourse[
+    result = CreateOrClaimCourse.call(
       attributes.except(:catalog_offering_id).merge(catalog_offering: catalog_offering)
-    ]
+    )
+
+    errors = result.errors
+    return render_api_errors(errors) unless errors.empty?
+
+    course = result.outputs.course
 
     AddUserAsCourseTeacher[course: course, user: current_human_user]
 
@@ -184,9 +189,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
                                    course: course,
                                    allowed_role_type: types,
                                    role_id: params[:role_id])
-    if result.errors.any?
-      raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
-    end
+
+    errors = result.errors
+    raise(SecurityTransgression, errors.map(&:message).to_sentence) unless errors.empty?
     result.outputs.role
   end
 end

@@ -186,8 +186,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         it 'claims a preview course for the faculty if all required attributes are given' do
           valid_body_hash.delete(:term)
           valid_body_hash.delete(:year)
-          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.not_to(
-            change{ CourseProfile::Models::Course.count }
+          expect { api_post :create, user_1_token, raw_post_data: valid_body }.not_to(
+            change { CourseProfile::Models::Course.count }
           )
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
@@ -198,14 +198,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         it 'ignores the term and year attributes if given' do
           valid_body_hash.merge! year: 2016
-          expect{ api_post :create, user_1_token, raw_post_data: valid_body }.to(
-            change{ CourseProfile::Models::Course.count }.by(1)
+          expect { api_post :create, user_1_token, raw_post_data: valid_body }.not_to(
+            change { CourseProfile::Models::Course.count }
           )
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to(
             match a_hash_including(valid_body_hash.except(:term, :year))
           )
-          expect(response.body_as_hash[:is_preview]).to eq true
+          expect(response.body_as_hash[:id]).to eq preview_course.id.to_s
           expect(response.body_as_hash[:term]).to eq 'preview'
           expect(response.body_as_hash[:year]).to eq Time.current.year
         end
@@ -592,62 +592,63 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         api_get :dashboard, student_token, parameters: {id: course.id}
 
-        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
-
-          "tasks" => a_collection_including(
+        expect(response.body_as_hash).to match(
+          tasks: a_collection_including(
             a_hash_including(
-              "id" => reading_task.id.to_s,
-              "title" => reading_task.title,
-              "opens_at" => be_kind_of(String),
-              "due_at" => be_kind_of(String),
-              "type" => 'reading',
-              "complete" => false,
-              "exercise_count" => 2,
-              "complete_exercise_count" => 0
+              id: reading_task.id.to_s,
+              title: reading_task.title,
+              opens_at: be_kind_of(String),
+              due_at: be_kind_of(String),
+              type: 'reading',
+              complete: false,
+              exercise_count: 2,
+              complete_exercise_count: 0
             ),
             a_hash_including(
-              "id" => hw1_task.id.to_s,
-              "title" => hw1_task.title,
-              "opens_at" => be_kind_of(String),
-              "due_at" => be_kind_of(String),
-              "type" => 'homework',
-              "complete" => false,
-              "exercise_count" => 3,
-              "complete_exercise_count" => 2
+              id: hw1_task.id.to_s,
+              title: hw1_task.title,
+              opens_at: be_kind_of(String),
+              due_at: be_kind_of(String),
+              type: 'homework',
+              complete: false,
+              exercise_count: 3,
+              complete_exercise_count: 2
             ),
             a_hash_including(
-              "id" => hw2_task.id.to_s,
-              "title" => hw2_task.title,
-              "opens_at" => be_kind_of(String),
-              "due_at" => be_kind_of(String),
-              "type" => 'homework',
-              "complete" => true,
-              "exercise_count" => 3,
-              "complete_exercise_count" => 3,
-              "correct_exercise_count" => 2
+              id: hw2_task.id.to_s,
+              title: hw2_task.title,
+              opens_at: be_kind_of(String),
+              due_at: be_kind_of(String),
+              type: 'homework',
+              complete: true,
+              exercise_count: 3,
+              complete_exercise_count: 3,
+              correct_exercise_count: 2
             ),
             a_hash_including(
-              "id" => hw3_task.id.to_s,
-              "title" => hw3_task.title,
-              "opens_at" => be_kind_of(String),
-              "due_at" => be_kind_of(String),
-              "type" => 'homework',
-              "complete" => true,
-              "exercise_count" => 3,
-              "complete_exercise_count" => 3,
+              id: hw3_task.id.to_s,
+              title: hw3_task.title,
+              opens_at: be_kind_of(String),
+              due_at: be_kind_of(String),
+              type: 'homework',
+              complete: true,
+              exercise_count: 3,
+              complete_exercise_count: 3,
             ),
           ),
-          "role" => {
-            "id" => student_role.id.to_s,
-            "type" => 'student'
+          role: {
+            id: student_role.id.to_s,
+            type: 'student'
           },
-          "course" => {
-            "name" => 'Physics 101',
-            "teachers" => [
-              { 'id' => teacher_role.teacher.id.to_s,
-                'role_id' => teacher_role.id.to_s,
-                'first_name' => 'Bob',
-                'last_name' => 'Newhart' }
+          course: {
+            name: 'Physics 101',
+            teachers: [
+              {
+                id: teacher_role.teacher.id.to_s,
+                role_id: teacher_role.id.to_s,
+                first_name: 'Bob',
+                last_name: 'Newhart'
+              }
             ]
           }
         )
@@ -689,35 +690,39 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it "works without a role specified" do
         api_get :dashboard, teacher_token, parameters: {id: course.id}
 
-        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
-          "role" => {
-            "id" => teacher_role.id.to_s,
-            "type" => 'teacher'
+        expect(response.body_as_hash).to match(
+          role: {
+            id: teacher_role.id.to_s,
+            type: 'teacher'
           },
-          "course" => {
-            "name" => 'Physics 101',
-            "teachers" => [
-              { 'id' => teacher_role.teacher.id.to_s,
-                'role_id' => teacher_role.id.to_s,
-                'first_name' => 'Bob',
-                'last_name' => 'Newhart' }
+          course: {
+            name: 'Physics 101',
+            teachers: [
+              {
+                id: teacher_role.teacher.id.to_s,
+                role_id: teacher_role.id.to_s,
+                first_name: 'Bob',
+                last_name: 'Newhart'
+              }
             ]
           },
-          "tasks" => [],
-          "plans" => a_collection_including(
+          tasks: [],
+          plans: a_collection_including(
             a_hash_including(
-              "id" => plan.id.to_s,
-              "type" => 'reading',
-              "first_published_at" => be_kind_of(String),
-              "last_published_at" => be_kind_of(String),
-              "publish_job_url" => be_kind_of(String),
-              "tasking_plans" => [
+              id: plan.id.to_s,
+              type: 'reading',
+              first_published_at: be_kind_of(String),
+              last_published_at: be_kind_of(String),
+              publish_job_url: be_kind_of(String),
+              tasking_plans: [
                 a_hash_including(
-                { "target_id" => course.id.to_s,
-                  "target_type" => 'course',
-                  "opens_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
-                  "due_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
-                })
+                  {
+                    target_id: course.id.to_s,
+                    target_type: 'course',
+                    opens_at: DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
+                    due_at: DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
+                  }
+                )
               ]
             )
           )
@@ -727,22 +732,23 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it "works with a student role specified" do
         api_get :dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
 
-        response_body = HashWithIndifferentAccess[response.body_as_hash]
-        expect(response_body['role']).to eq({
-          'id' => student_role.id.to_s,
-          'type' => 'student'
+        expect(response.body_as_hash[:role]).to match({
+          id: student_role.id.to_s,
+          type: 'student'
         })
-        expect(response_body['course']).to eq({
-          'name' => 'Physics 101',
-          'teachers' => [
-            { 'id' => teacher_role.teacher.id.to_s,
-              'role_id' => teacher_role.id.to_s,
-              'first_name' => 'Bob',
-              'last_name' => 'Newhart' }
+        expect(response.body_as_hash[:course]).to match({
+          name: 'Physics 101',
+          teachers: [
+            {
+              id: teacher_role.teacher.id.to_s,
+              role_id: teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart'
+            }
           ]
         })
-        expect(response_body['tasks']).not_to be_empty
-        expect(response_body['plans']).to be_nil
+        expect(response.body_as_hash[:tasks]).not_to be_empty
+        expect(response.body_as_hash[:plans]).to be_nil
       end
 
       it "allows the start_at and end_at dates to be specified" do
