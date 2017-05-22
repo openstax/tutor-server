@@ -19,7 +19,7 @@ module Api
         )
 
         render_api_errors(result.errors) || respond_with(
-          result.outputs[:task],
+          result.outputs.task,
           represent_with: Api::V1::TaskRepresenter,
           location: nil
         )
@@ -35,7 +35,7 @@ module Api
         result = CreatePracticeWorstTopicsTask.call course: course, role: role
 
         render_api_errors(result.errors) || respond_with(
-          result.outputs[:task],
+          result.outputs.task,
           represent_with: Api::V1::TaskRepresenter,
           location: nil
         )
@@ -47,7 +47,9 @@ module Api
         course, role = get_practice_course_and_role
         task = ::Tasks::GetPracticeTask[role: role]
 
-        task.nil? ? head(:not_found) : respond_with(task, represent_with: Api::V1::TaskRepresenter)
+        return head(:not_found) if task.nil?
+
+        respond_with task, represent_with: Api::V1::TaskRepresenter
       end
 
       protected

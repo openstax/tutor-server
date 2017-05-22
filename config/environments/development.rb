@@ -10,8 +10,8 @@ Rails.application.configure do
   config.eager_load = false
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local       = EnvUtilities.load_boolean(name: 'USE_DEV_ERROR_RESPONSES',
-                                                                       default: true)
+  config.consider_all_requests_local = EnvUtilities.load_boolean(name: 'USE_DEV_ERROR_RESPONSES',
+                                                                 default: true)
   config.action_controller.perform_caching = false
 
   config.serve_static_files  = true

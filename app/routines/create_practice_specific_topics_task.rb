@@ -6,7 +6,7 @@ class CreatePracticeSpecificTopicsTask
 
   protected
 
-  def setup(course:, role:, page_ids: nil, chapter_ids: nil)
+  def setup(page_ids: nil, chapter_ids: nil)
     @task_type = if page_ids.present?
       chapter_ids.present? ? :mixed_practice : :page_practice
     else
@@ -16,29 +16,38 @@ class CreatePracticeSpecificTopicsTask
       )
     end
 
-    course_ecosystems = course.ecosystems.map { |eco| Content::Ecosystem.new strategy: eco.wrap }
+    course_ecosystems = @course.ecosystems.map { |eco| Content::Ecosystem.new strategy: eco.wrap }
     @ecosystem = run(:get_ecosystem, page_ids: page_ids, chapter_ids: chapter_ids).outputs.ecosystem
     fatal_error(code: :invalid_page_ids_or_chapter_ids) \
       unless course_ecosystems.include?(@ecosystem)
-
-    @course = course
 
     # Gather relevant chapters and pages
     chapters = @ecosystem.chapters_by_ids(chapter_ids)
     @pages = @ecosystem.pages_by_ids(page_ids) + chapters.map(&:pages).flatten.uniq
   end
 
-  def get_biglearn_exercises
-    # Due to perform_later: false, the transaction MUST commit
-    # See comments on app/routines/concerns/create_practice_task_routine.rb
-    OpenStax::Biglearn::Api.create_update_assignments(
-      course: @course, task: @task, core_page_ids: @pages.map(&:id), perform_later: false
-    )
+  def add_task_steps
+    # Need at least 1 placeholder per page so we know where to place the exercise steps
+    @pages.each do |page|
+      task_step = Tasks::Models::TaskStep.new(
+        tasked: Tasks::Models::TaskedPlaceholder.exercise_type.new,
+        content_page_id: page.id,
+        group_type: :personalized_group
+      )
 
-    OpenStax::Biglearn::Api.fetch_assignment_pes(
-      task: @task,
-      inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
-    )
+      @task.task_steps << task_step
+    end
+
+    after_transaction do
+      outputs.task = Tasks::PopulatePlaceholderSteps.call(task: @task).outputs.task
+
+      nonfatal_error(
+        code: :no_exercises,
+        message: "No exercises were returned from Biglearn to build the Practice Widget." +
+                 " [Course: #{@course.id} - Role: #{@role.id}" +
+                 " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
+      ) if outputs.task.task_steps.empty?
+    end
   end
 
 end

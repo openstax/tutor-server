@@ -11,16 +11,16 @@ class Tasks::PopulatePlaceholderSteps
 
     return if task.pes_are_assigned && task.spes_are_assigned
 
-    # If the task is a reading, we give Biglearn control of the number of slots
-    # Placeholders are merely used to determine the size of the bar the student sees
-    biglearn_controls_slots = task.reading?
+    # If the task is a practice widget, we give Biglearn control of the number of PE slots
+    biglearn_controls_pe_slots = task.practice?
+    biglearn_controls_spe_slots = false
 
     unless task.pes_are_assigned
       # Populate PEs
       populate_placeholder_steps task: task,
                                  group_type: :personalized_group,
                                  biglearn_api_method: :fetch_assignment_pes,
-                                 biglearn_controls_slots: biglearn_controls_slots
+                                 biglearn_controls_slots: biglearn_controls_pe_slots
 
       task.pes_are_assigned = true
     end
@@ -53,7 +53,7 @@ class Tasks::PopulatePlaceholderSteps
         populate_placeholder_steps task: task,
                                    group_type: :spaced_practice_group,
                                    biglearn_api_method: :fetch_assignment_spes,
-                                   biglearn_controls_slots: biglearn_controls_slots
+                                   biglearn_controls_slots: biglearn_controls_spe_slots
 
         task.spes_are_assigned = true
       end
@@ -73,10 +73,15 @@ class Tasks::PopulatePlaceholderSteps
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
-  def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
+  def populate_placeholder_steps(task:, group_type:,
+                                 biglearn_api_method:, biglearn_controls_slots:)
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs (reading tasks)
-      chosen_exercises = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
+      chosen_exercises = OpenStax::Biglearn::Api.public_send(
+        biglearn_api_method,
+        task: task,
+        inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
+      )
       chosen_exercise_models = chosen_exercises.map(&:to_model)
 
       # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
@@ -88,7 +93,7 @@ class Tasks::PopulatePlaceholderSteps
       # Keep track of the number of steps we added to the task
       num_added_steps = 0
 
-      # Populate each page at a time to ensure we get the correct number of steps for each
+      # Populate each page one at a time to ensure we get the correct number of steps for each
       task_steps_by_page_id.each do |page_id, page_task_steps|
         exercises = grouped_chosen_exercises[page_id] || []
         placeholder_steps = page_task_steps.select do |task_step|
@@ -153,7 +158,10 @@ class Tasks::PopulatePlaceholderSteps
 
       # max_num_exercises ensures we don't get more exercises than the number of placeholders
       chosen_exercises = OpenStax::Biglearn::Api.public_send(
-        biglearn_api_method, task: task, max_num_exercises: placeholder_steps.size
+        biglearn_api_method,
+        task: task,
+        max_num_exercises: placeholder_steps.size,
+        inline_retry_proc: ->(response) { response[:assignment_status] != 'assignment_ready' }
       )
 
       # This code is much simpler because it doesn't have to account for steps being added

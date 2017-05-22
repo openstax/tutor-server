@@ -174,30 +174,41 @@ class OpenStax::Biglearn::Api::FakeClient
     exercise_uuids_map = store.read_multi(*request_task_keys_map.values)
 
     requests.map do |request|
-      task_key = request_task_keys_map[request]
-      all_exercise_uuids_json = exercise_uuids_map[task_key]
       request_uuid = request[:request_uuid]
       task = request[:task]
 
-      if all_exercise_uuids_json.nil?
+      num_exercise_uuids = request[:max_num_exercises] || (task.practice? ? 5 : 3)
+
+      if num_exercise_uuids == 0
         {
           request_uuid: request_uuid,
           assignment_uuid: task.uuid,
           exercise_uuids: [],
-          assignment_status: 'assignment_unknown'
-        }
-      else
-        all_exercise_uuids = JSON.parse all_exercise_uuids_json
-        candidate_exercise_uuids = \
-          all_exercise_uuids - task.exercise_steps.map { |ts| ts.tasked.exercise.uuid }
-        num_exercise_uuids = request[:max_num_exercises] || (task.practice? ? 5 : 3)
-
-        {
-          request_uuid: request_uuid,
-          assignment_uuid: task.uuid,
-          exercise_uuids: candidate_exercise_uuids.sample(num_exercise_uuids),
           assignment_status: 'assignment_ready'
         }
+      else
+        task_key = request_task_keys_map[request]
+        all_exercise_uuids_json = exercise_uuids_map[task_key]
+
+        if all_exercise_uuids_json.nil?
+          {
+            request_uuid: request_uuid,
+            assignment_uuid: task.uuid,
+            exercise_uuids: [],
+            assignment_status: 'assignment_unknown'
+          }
+        else
+          all_exercise_uuids = JSON.parse all_exercise_uuids_json
+          candidate_exercise_uuids = \
+            all_exercise_uuids - task.exercise_steps.map { |ts| ts.tasked.exercise.uuid }
+
+          {
+            request_uuid: request_uuid,
+            assignment_uuid: task.uuid,
+            exercise_uuids: candidate_exercise_uuids.sample(num_exercise_uuids),
+            assignment_status: 'assignment_ready'
+          }
+        end
       end
     end
   end
@@ -254,10 +265,10 @@ class OpenStax::Biglearn::Api::FakeClient
   end
 
   def random_clue(options = {})
-    options[:most_likely]    ||= rand
-    options[:minimum]        ||= rand * options[:most_likely]
-    options[:maximum]        ||= 1 - rand * (1 - options[:most_likely])
-    options[:is_real]        ||= [true, false].sample
+    options[:most_likely] ||= rand
+    options[:minimum]     ||= rand * options[:most_likely]
+    options[:maximum]     ||= 1 - rand * (1 - options[:most_likely])
+    options[:is_real]     ||= [true, false].sample
 
     options.slice(:minimum, :most_likely, :maximum, :is_real, :ecosystem_uuid)
   end
