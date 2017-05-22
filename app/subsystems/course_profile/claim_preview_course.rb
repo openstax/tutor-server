@@ -8,6 +8,7 @@ class CourseProfile::ClaimPreviewCourse
                .where(is_preview: true,
                       preview_claimed_at: nil,
                       catalog_offering_id: catalog_offering.id)
+               .lock
                .first
     if course.nil?
       fatal_error(code: :no_preview_courses_available)
