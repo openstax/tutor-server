@@ -7,7 +7,8 @@ module User
         exposes :all, :create, :create!, :find, :anonymous, from_class: ::User::Models::Profile
 
         exposes :account, :username, :title, :first_name, :last_name,
-                :full_name, :name, :casual_name, :faculty_status, :ui_settings
+                :full_name, :name, :casual_name, :faculty_status, :ui_settings,
+                :salesforce_contact_id, :uuid
 
         class << self
           alias_method :entity_all, :all

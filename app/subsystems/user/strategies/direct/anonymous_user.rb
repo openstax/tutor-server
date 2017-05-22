@@ -6,7 +6,8 @@ module User
 
         exposes :instance, :anonymous, from_class: ::User::Models::AnonymousProfile
         exposes :account, :username, :title, :first_name, :last_name,
-                :full_name, :name, :casual_name
+                :full_name, :name, :casual_name,
+                :salesforce_contact_id, :uuid
 
         class << self
           alias_method :entity_instance, :instance

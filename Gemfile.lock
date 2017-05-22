@@ -163,7 +163,6 @@ GEM
       compass (~> 1.0.0)
       sass-rails (<= 5.0.1)
       sprockets (< 2.13)
-    concurrent-ruby (1.0.5)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
     daemons (1.2.2)
@@ -434,7 +433,7 @@ GEM
     omniauth-salesforce (1.0.5)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
-    openstax_accounts (7.4.0)
+    openstax_accounts (7.5.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -461,7 +460,7 @@ GEM
     openstax_rescue_from (1.6.0)
       exception_notification (>= 4.1, < 5.0)
       rails (>= 3.1, < 5.0)
-    openstax_salesforce (0.12.0)
+    openstax_salesforce (0.14.0)
       active_force
       omniauth-salesforce (~> 1.0.5)
       rails (~> 4.2.0)
@@ -785,10 +784,10 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts (~> 7.4.0)
+  openstax_accounts (~> 7.5.0)
   openstax_api (~> 8.1.0)
   openstax_rescue_from (~> 1.6.0)
-  openstax_salesforce (~> 0.12.0)
+  openstax_salesforce (~> 0.14.0)
   openstax_utilities (~> 4.2.0)
   p3p
   parallel_tests

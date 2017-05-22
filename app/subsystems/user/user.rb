@@ -1,6 +1,7 @@
 module User
   class User
     include Wrapper
+    include GlobalID::Identification
 
     class << self
       def all(strategy_class: ::User::Strategies::Direct::User)
@@ -22,7 +23,17 @@ module User
       end
 
       def find(*args, strategy_class: ::User::Strategies::Direct::User)
-        verify_and_return strategy_class.find(*args), klass: self, error: StrategyError
+        flat_args = args.first.is_a?(Array) ? args.first : args
+        string_args = flat_args.map(&:to_s)
+
+        # convention that anonymous user has an ID of -1, helps with globalID lookup
+        if string_args == ["-1"]
+          anonymous
+        elsif string_args.include?("-1")
+          raise "Cannot find anonymous users (id of -1) intermixed with other searches"
+        else
+          verify_and_return(strategy_class.find(*args), klass: self, error: StrategyError)
+        end
       end
 
       def find_by_account_id(account_id, strategy_class: ::User::Strategies::Direct::User)
@@ -116,6 +127,14 @@ module User
 
     def viewed_tour_ids
       verify_and_return @strategy.viewed_tour_ids, klass: Array, allow_nil: true, error: StrategyError
+    end
+
+    def salesforce_contact_id
+      verify_and_return @strategy.salesforce_contact_id, klass: String, allow_nil: true, error: StrategyError
+    end
+
+    def uuid
+      verify_and_return @strategy.uuid, klass: String, allow_nil: true, error: StrategyError
     end
 
     # Necessary, at least temporarily, so we can assign users to external polymorphics,

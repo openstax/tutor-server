@@ -65,4 +65,5 @@ namespace :demo do
 
     Demo::Show.call(args.to_h.merge(print_logs: true))
   end
+
 end
