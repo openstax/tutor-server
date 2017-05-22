@@ -1,7 +1,6 @@
 # Generates a unique gapless sequence number for each request given,
 # then queues up another job to make the Biglearn request itself
-# After the transaction is committed, attempts to lock and work the job
-#
+# Then attempts to lock the job and, after the transaction is committed, work it inline
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
   BIGLEARN_API_TIMEOUT = 10.minutes
 
@@ -91,14 +90,14 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
 
       # Create a background job if possible to guarantee the sequence_number will reach Biglearn
       if can_perform_later
+        job = OpenStax::Biglearn::Api::Job.perform_later(
+          method: method.to_s, requests: modified_requests
+        )
+
         # Destroy the current job so it's removed from the queue when this transaction commits
         # Just in case we encounter an error after the transaction ends,
         # since we don't want this job to run again
         Delayed::Job.where(id: provider_job_id).delete_all
-
-        job = OpenStax::Biglearn::Api::Job.perform_later(
-          method: method.to_s, requests: modified_requests
-        )
 
         delayed_job_id = job.provider_job_id
 
