@@ -45,18 +45,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     errors = CREATE_REQUIRED_ATTRIBUTES.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
       {code: :missing_attribute, message: "The #{sym} attribute must be provided"}
     end
-
     render_api_errors(errors) and return if errors.any?
 
     catalog_offering = Catalog::Models::Offering.find(attributes[:catalog_offering_id])
-
     OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
-    course_attributes = attributes.except(:catalog_offering_id)
-                                  .merge(catalog_offering: catalog_offering)
-
-    course = course_attributes[:is_preview] ?
-               CreateCourse[course_attributes] : CourseProfile::ClaimPreviewCourse[course_attributes]
+    course = CreateOrClaimCourse[
+      attributes.except(:catalog_offering_id).merge(catalog_offering: catalog_offering)
+    ]
 
     AddUserAsCourseTeacher[course: course, user: current_human_user]
 

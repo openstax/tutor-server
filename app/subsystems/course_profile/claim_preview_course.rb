@@ -36,11 +36,9 @@ class CourseProfile::ClaimPreviewCourse
     tasks = Tasks::Models::Task
               .joins(taskings: :period )
               .where(taskings: { period: { course_profile_course_id: course.id } })
-
     tasks.update_all(
       update[%w{opens_at_ntz due_at_ntz feedback_at_ntz last_worked_at created_at updated_at deleted_at}]
     )
-
     outputs.course = course.reload
   end
 end
