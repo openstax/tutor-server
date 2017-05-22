@@ -71,8 +71,7 @@ protected
       log(:error) { "Cannot get TOA for #{event} event because '#{ee.message}'" }
       raise
     rescue MissingArgument => ee
-      log(:error) { "Missing the `#{ee.message}` argument for event #{event}" }
-      raise
+      raise(MissingArgument, "Missing the `#{ee.message}` argument for event #{event}")
     end
 
   end
@@ -100,13 +99,13 @@ protected
       toa ||= TOA.find_by(pardot_reported_contact_id: pardot_reported_contact_id) \
         if pardot_reported_contact_id.present?
 
-      toa ||= TOA.new(accounts_uuid: user_uuid!(user))
+      toa ||= TOA.new(accounts_uuid: require_and_return_uuid!(user))
 
       # TODO think through / spec different cases (e.g. teacher forwards pardot email to colleage at different times)
 
       toa.first_teacher_contact_id ||= user.salesforce_contact_id
       toa.pardot_reported_contact_id ||= pardot_reported_contact_id
-      toa.accounts_uuid ||= user_uuid!(user)
+      toa.accounts_uuid ||= require_and_return_uuid!(user)
 
       toa
     end
@@ -116,7 +115,7 @@ protected
     Rails.logger.send(level) { "[OnboardingTracking] #{block.call}" }
   end
 
-  def user_uuid!(user)
+  def require_and_return_uuid!(user)
     if user.uuid.blank?
       raise IllegalState, "User #{user.id} does not have a UUID; sync with Accounts!"
     end

@@ -71,7 +71,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     first_time = toa.send(timestamp_field)
     Timecop.freeze(5.minutes.from_now) do
       toa = call
-      expect(toa.send(timestamp_field)).to be_within(1.seconds).of(DateTime.now)
+      expect(toa.send(timestamp_field)).to be_within(1.seconds).of(first_time + 5.minutes)
     end
   end
 
@@ -98,19 +98,19 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
       it 'requires pardot_reported_contact_id' do
         data[:pardot_reported_contact_id] = ""
         expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument,
-                                    "pardot_reported_contact_id")
+                                    /pardot_reported_contact_id.*arrived_tutor_marketing_page_from_pardot/)
       end
 
       it 'requires pardot_reported_piaid' do
         data.delete(:pardot_reported_piaid)
         expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument,
-                                    "pardot_reported_piaid")
+                                    /pardot_reported_piaid.*arrived_tutor_marketing_page_from_pardot/)
       end
 
       it 'requires pardot_reported_picid' do
         data.delete(:pardot_reported_picid)
         expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument,
-                                    "pardot_reported_picid")
+                                    /pardot_reported_picid.*arrived_tutor_marketing_page_from_pardot/)
       end
     end
 

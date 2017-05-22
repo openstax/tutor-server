@@ -53,6 +53,7 @@ Delayed::Worker.class_exec do
     end
   }
 
+  # Not ThreadSafe(TM)
   def self.with_delay_jobs(value, &block)
     begin
       original_value = delay_jobs

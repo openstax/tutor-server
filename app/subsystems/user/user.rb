@@ -23,10 +23,17 @@ module User
       end
 
       def find(*args, strategy_class: ::User::Strategies::Direct::User)
+        flat_args = args.first.is_a?(Array) ? args.first : args
+        string_args = flat_args.map(&:to_s)
+
         # convention that anonymous user has an ID of -1, helps with globalID lookup
-        [-1] == args.map(&:to_i) ?
-          anonymous :
+        if string_args == ["-1"]
+          anonymous
+        elsif string_args.include?("-1")
+          raise "Cannot find anonymous users (id of -1) intermixed with other searches"
+        else
           verify_and_return(strategy_class.find(*args), klass: self, error: StrategyError)
+        end
       end
 
       def find_by_account_id(account_id, strategy_class: ::User::Strategies::Direct::User)
