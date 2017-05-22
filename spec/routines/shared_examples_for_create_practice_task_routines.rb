@@ -34,14 +34,14 @@ RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
     expect(errors.first.code).to eq :course_ended
   end
 
-  it 'clears incomplete steps from previous practice widgets' do
+  it 'does not clear incomplete steps from previous practice widgets' do
     expect(errors).to be_empty
     Preview::AnswerExercise[task_step: practice_task.task_steps.first, is_correct: false]
     result_2 = instance_exec &result_proc
     expect(result_2.errors).to be_empty
     practice_task_2 = result_2.outputs.task
     expect(practice_task_2).to be_persisted
-    expect(practice_task.task_steps.reload.size).to eq 1
+    expect(practice_task.task_steps.reload.size).to eq 5
   end
 
   it 'creates tasks with 5 exercise steps and feedback immediately available' do

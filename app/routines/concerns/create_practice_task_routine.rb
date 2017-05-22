@@ -7,7 +7,6 @@ module CreatePracticeTaskRoutine
   included do
     lev_routine express_output: :task
 
-    uses_routine Tasks::GetPracticeTask, as: :get_practice_task
     uses_routine Tasks::BuildTask, translations: { outputs: { type: :verbatim } },
                                    as: :build_task
 
@@ -39,12 +38,6 @@ module CreatePracticeTaskRoutine
     fatal_error(code: :course_not_started) unless course.started?
     fatal_error(code: :course_ended) if course.ended?
     fatal_error(code: :course_has_no_ecosystems) if course.ecosystems.empty?
-
-    # Get the existing practice widget and hard-delete
-    # incomplete exercises from it so they can be used in later practice
-    existing_practice_task = run(:get_practice_task, role: role).outputs.task
-    existing_practice_task.task_steps.incomplete.each(&:really_destroy!) \
-      unless existing_practice_task.nil?
 
     @course = course
     @role = role

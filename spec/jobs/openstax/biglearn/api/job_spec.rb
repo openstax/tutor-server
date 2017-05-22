@@ -8,7 +8,7 @@ RSpec.describe OpenStax::Biglearn::Api::Job, type: :job do
   let(:method)                      { :create_course }
   let(:requests)                    { [ { course: course } ] }
 
-  let(:args)                        { method: method, requests: requests }
+  let(:args)                        { { method: method, requests: requests } }
 
   it 'delegates #perform to a new instance of itself' do
     allow(described_class).to receive(:new).and_return(job)
