@@ -8,20 +8,23 @@ module CreatePracticeTaskRoutine
     lev_routine express_output: :task
 
     uses_routine Tasks::GetPracticeTask, as: :get_practice_task
-    uses_routine Tasks::BuildTask,
-      translations: { outputs: { type: :verbatim } },
-      as: :build_task
+    uses_routine Tasks::BuildTask, translations: { outputs: { type: :verbatim } },
+                                   as: :build_task
 
     uses_routine AddSpyInfo, as: :add_spy_info
 
-    uses_routine Tasks::CreateTasking,
-      translations: { outputs: { type: :verbatim } },
-      as: :create_tasking
+    uses_routine Tasks::CreateTasking, translations: { outputs: { type: :verbatim } },
+                                       as: :create_tasking
   end
 
   protected
 
+  def setup(**args)
+    raise NotImplementedError
+  end
+
   def add_task_steps
+    raise NotImplementedError
   end
 
   def send_task_to_biglearn

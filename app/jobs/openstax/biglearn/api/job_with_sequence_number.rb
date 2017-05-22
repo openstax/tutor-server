@@ -1,3 +1,7 @@
+# Generates a unique gapless sequence number for each request given,
+# then queues up another job to make the Biglearn request itself
+# After the transaction is committed, attempts to lock and work the job
+#
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
   BIGLEARN_API_TIMEOUT = 10.minutes
 
@@ -29,8 +33,8 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
     SQL
 
     can_perform_later = Delayed::Worker.delay_jobs
-
-    job_or_result = sequence_number_model_class.transaction do
+    worker = Delayed::Worker.new if can_perform_later
+    delayed_job = sequence_number_model_class.transaction do
       # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
       # Requests for records that have not been created
       # on the Biglearn side (sequence_number == 0) are suppressed
@@ -76,8 +80,8 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
         request.merge(sequence_number: sequence_number)
       end.compact
 
-      # If an array was given, call the block with an array
-      # If another type of argument was given, extract the block argument from the array
+      # If a hash was given, call the Biglearn client with a hash
+      # If an array was given, call the Biglearn client with the array of requests
       modified_requests = requests.is_a?(Hash) ? requests_with_sequence_numbers.first :
                                                  requests_with_sequence_numbers
 
@@ -92,30 +96,29 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
         # since we don't want this job to run again
         Delayed::Job.where(id: provider_job_id).delete_all
 
-        OpenStax::Biglearn::Api::Job.perform_later(
+        job = OpenStax::Biglearn::Api::Job.perform_later(
           method: method.to_s, requests: modified_requests
         )
+
+        delayed_job_id = job.provider_job_id
+
+        return job if delayed_job_id.nil?
+
+        # Lock the Biglearn request job so we can run it inline to speed up Biglearn responses
+        ready_scope = Delayed::Job.ready_to_run(worker.name, Delayed::Worker.max_run_time)
+                                  .where(id: delayed_job_id)
+        # Pretend the lock is much closer to expiring so we get a shorter timeout
+        now = Delayed::Job.db_time_now - Delayed::Worker.max_run_time + BIGLEARN_API_TIMEOUT
+
+        # We just created the job and are still inside the same transaction,
+        # so the lock should never fail (PostgreSQL doesn't even support Read Uncommitted)
+        Delayed::Job.reserve_with_scope(ready_scope, worker, now)
       else
-        super(method: method, requests: modified_requests)
+        return super(method: method, requests: modified_requests)
       end
     end
 
-    return job_or_result unless can_perform_later
-
-    delayed_job_id = job_or_result.provider_job_id
-
-    return job_or_result if delayed_job_id.nil?
-
-    # Attempt to lock and run the Biglearn request job inline to speed up Biglearn responses
-    worker = Delayed::Worker.new
-    ready_scope = Delayed::Job.ready_to_run(worker.name, Delayed::Worker.max_run_time)
-                              .where(id: delayed_job_id)
-    # Pretend the lock is much closer to expiring so we get a shorter timeout
-    now = Delayed::Job.db_time_now - Delayed::Worker.max_run_time + BIGLEARN_API_TIMEOUT
-    delayed_job = Delayed::Job.reserve_with_scope(ready_scope, worker, now)
-
-    return job_or_result if delayed_job.nil?
-
+    # Run the Biglearn request job inline (must be outside the main transaction)
     worker.run(delayed_job)
   end
 end
