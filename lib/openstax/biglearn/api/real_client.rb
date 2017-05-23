@@ -159,6 +159,7 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_request = {
       course_uuid: course.uuid,
       ecosystem_uuid: request.fetch(:ecosystem).tutor_uuid,
+      is_real_course: !course.is_preview,
       starts_at: course.starts_at.utc.iso8601(6),
       ends_at: course.ends_at.utc.iso8601(6),
       created_at: course.created_at.utc.iso8601(6)
@@ -425,18 +426,20 @@ class OpenStax::Biglearn::Api::RealClient
   # Records the given student responses
   def record_responses(requests)
     biglearn_requests = requests.map do |request|
+      course = request.fetch(:course)
       tasked_exercise = request.fetch(:tasked_exercise)
       task = tasked_exercise.task_step.task
 
       {
         response_uuid: request.fetch(:response_uuid),
-        course_uuid: request.fetch(:course).uuid,
+        course_uuid: course.uuid,
         sequence_number: request.fetch(:sequence_number),
         ecosystem_uuid: task.ecosystem.tutor_uuid,
         trial_uuid: tasked_exercise.uuid,
         student_uuid: task.taskings.first.role.student.uuid,
         exercise_uuid: tasked_exercise.exercise.uuid,
         is_correct: tasked_exercise.is_correct?,
+        is_real_response: !course.is_preview,
         responded_at: tasked_exercise.updated_at.utc.iso8601(6)
       }
     end

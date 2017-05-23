@@ -5,7 +5,7 @@ http_interactions:
     uri: http://localhost:3000/create_course
     body:
       encoding: UTF-8
-      string: '{"course_uuid":"<COURSE UUID>","ecosystem_uuid":"<ECOSYSTEM 1 UUID>","starts_at":"2017-02-17T22:02:24.981232Z","ends_at":"2017-08-17T22:02:24.981447Z","created_at":"2017-05-17T22:02:26.673733Z"}'
+      string: '{"course_uuid":"<COURSE UUID>","ecosystem_uuid":"<ECOSYSTEM 1 UUID>","is_real_course":true,"starts_at":"2017-02-23T16:06:29.025545Z","ends_at":"2017-08-23T16:06:29.025781Z","created_at":"2017-05-23T16:06:30.663976Z"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 17 May 2017 22:02:35 GMT
+      - Tue, 23 May 2017 16:06:38 GMT
       Connection:
       - close
       X-Frame-Options:
@@ -33,16 +33,16 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Etag:
-      - W/"38e729920e9006a5db7dfec529c47576"
+      - W/"837b8f56d5f4f3904b234a54dc352211"
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - baac5b2b-de16-4027-94ba-f20a6ee99d84
+      - 920793b0-0882-4438-b9c3-4787ca35d3c9
       X-Runtime:
-      - '0.042325'
+      - '0.524084'
     body:
       encoding: UTF-8
       string: '{"created_course_uuid":"<COURSE UUID>"}'
     http_version: 
-  recorded_at: Wed, 17 May 2017 22:02:35 GMT
+  recorded_at: Tue, 23 May 2017 16:06:38 GMT
 recorded_with: VCR 2.9.3
