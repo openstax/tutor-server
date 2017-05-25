@@ -49,6 +49,15 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
   end
 
+
+  describe '#track' do
+    it 'rejects unknown codes' do
+      api_post :event, nil, parameters: { code: 'foo' }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+  end
+
   def log(options)
     api_post :entry, nil, raw_post_data: options.to_json
   end
