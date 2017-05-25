@@ -62,6 +62,12 @@ class DistributeTasks
 
     save_tasks(task_plan, tasks)
 
+    outputs.tasks = tasks
+
+    # Abort without updating timestamps if no tasks were created
+    # Should help prevent ActiveRecord::TransactionIsolationConflicts
+    return if tasks.empty?
+
     if preview
       task_plan.touch if task_plan.persisted?
     else
@@ -72,12 +78,12 @@ class DistributeTasks
       # We are only changing timestamps here, so no reason to validate the record
       task_plan.save(validate: false) if task_plan.persisted?
     end
-
-    outputs[:tasks] = tasks
   end
 
   # Efficiently save all task records
   def save_tasks(task_plan, tasks)
+    return if tasks.empty?
+
     # Taskeds are not saved by recursive: true because they are a belongs_to association
     # So we handle them separately
     all_taskeds = tasks.map do |task|
