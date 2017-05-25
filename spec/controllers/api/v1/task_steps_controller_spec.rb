@@ -257,7 +257,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  context "practice task update step" do    
+  context "practice task update step" do
     let(:step) do
       page = tasked_exercise.exercise.page
 
@@ -270,13 +270,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
       AddEcosystemToCourse[course: course, ecosystem: ecosystem]
 
-      role = AddUserAsPeriodStudent[period: period, user: user_1]
-
-      task = CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
+      task = CreatePracticeSpecificTopicsTask[course: course, role: user_1_role, page_ids: [page.id]]
 
       task.task_steps.first
     end
-  
+
     it "allows updating of a step" do
 
       api_put :update, user_1_token, parameters: { id: step.id },
