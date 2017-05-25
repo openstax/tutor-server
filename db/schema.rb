@@ -704,7 +704,6 @@ ActiveRecord::Schema.define(version: 20170518182025) do
   create_table "tasks_tasked_exercises", force: :cascade do |t|
     t.integer  "content_exercise_id",                               null: false
     t.string   "url",                                               null: false
-    t.text     "content",                                           null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
