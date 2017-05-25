@@ -77,4 +77,7 @@ en:
         help_block: 'In the format HH:MM'
       course_appearance_codes:
         name: 'Valid Course Appearance Codes'
-        help_blocK: 'As a Ruby Hash'
+        help_block: 'As a Ruby Hash'
+      pardot_toa_redirect:
+        name: 'TutorOnboardingA Redirect URL'
+        help_block: 'Where an arrival to /pardot/toa is redirected'

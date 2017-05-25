@@ -42,6 +42,10 @@ Rails.application.routes.draw do
     get :signup
   end
 
+  resource :pardot, controller: :pardot, only: [] do
+    get :toa
+  end
+
   # User information and remote log in/out
   namespace :auth do
     match :status, action: :cors_preflight_check, via: [:options]

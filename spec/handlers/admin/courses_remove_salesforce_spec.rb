@@ -85,12 +85,6 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
     end
   end
 
-  def disable_sfdc_client
-    allow(ActiveForce)
-      .to receive(:sfdc_client)
-      .and_return(double('null object').as_null_object)
-  end
-
   def fake_sf_object(klass:, id:, save_outcome: true)
     klass.new(id: id).tap do |fake|
       allow(fake).to receive(:save) { save_outcome }   # stub save

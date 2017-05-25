@@ -176,3 +176,9 @@ def redirect_uri
   expect(response.code).to eq "302"
   uri = URI.parse(response.headers["Location"])
 end
+
+def disable_sfdc_client
+  allow(ActiveForce)
+    .to receive(:sfdc_client)
+    .and_return(double('null object').as_null_object)
+end

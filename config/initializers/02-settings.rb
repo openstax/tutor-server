@@ -47,3 +47,5 @@ Settings::Db.store.defaults[:course_appearance_codes] = {
     intro_sociology:      'Intro to Sociology',
     anatomy_physiology:   'Anatomy and Physiology'
 }
+
+Settings::Db.store.defaults[:pardot_toa_redirect] = ""
