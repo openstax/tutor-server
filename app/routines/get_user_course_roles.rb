@@ -29,21 +29,12 @@ class GetUserCourseRoles
       student_subquery = Entity::Role
         .select('entity_roles.*, course_membership_students.course_profile_course_id')
         .joins(:student)
-        .joins(
-          <<-SQL.strip_heredoc
-            INNER JOIN #{CourseMembership::Models::Enrollment.with_reverse_sequence_number_sql}
-              ON course_membership_enrollments.course_membership_student_id =
-                course_membership_students.id
-            INNER JOIN course_membership_periods
-              ON course_membership_periods.id =
-                course_membership_enrollments.course_membership_period_id
-          SQL
-        )
+        .joins(CourseMembership::Models::Enrollment.latest_join_sql(:student, :period))
         .where(course_membership_periods: { course_profile_course_id: course_ids })
 
-      student_subquery = student_subquery
-        .where(student: { deleted_at: nil },
-               course_membership_periods: { deleted_at: nil }) unless include_inactive_students
+      student_subquery = student_subquery.where(
+        student: { deleted_at: nil }, course_membership_periods: { deleted_at: nil }
+      ) unless include_inactive_students
 
       subqueries << student_subquery
     end

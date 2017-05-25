@@ -13,16 +13,18 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
 
   default_scope -> { order(:created_at) }
 
-  def self.with_reverse_sequence_number_sql
+  def self.latest_join_sql(from_association, to_association)
+    from_underscored = "course_membership_#{from_association.to_s.chomp('s')}"
+    to_underscored = "course_membership_#{to_association.to_s.chomp('s')}"
+
     <<-SQL
-      (
-        SELECT course_membership_enrollments.*,
-          row_number() OVER (
-            PARTITION BY course_membership_enrollments.course_membership_student_id
-            ORDER BY course_membership_enrollments.created_at DESC
-          ) AS reverse_sequence_number
-        FROM course_membership_enrollments
-      ) AS course_membership_enrollments
+      CROSS JOIN LATERAL (#{
+        CourseMembership::Models::Enrollment.where(
+          "\"#{from_underscored}_id\" = \"#{from_underscored}s\".\"id\""
+        ).reorder(created_at: :desc).limit(1).to_sql
+      }) "course_membership_enrollments"
+      INNER JOIN "#{to_underscored}s"
+        ON "#{to_underscored}s"."id" = "course_membership_enrollments"."#{to_underscored}_id"
     SQL
   end
 
