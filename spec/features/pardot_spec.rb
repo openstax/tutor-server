@@ -38,9 +38,17 @@ RSpec.describe "Pardot" do
 
     context "redirect URL is set" do
       let(:redirect_url) { "http://www.rice.edu/" }
-      before(:each) {
-        Settings::Pardot.toa_redirect = redirect_url
-        Settings::Db.store.object('pardot_toa_redirect').try!(:expire_cache)
+      around(:each) { |example|
+        begin
+          original_value = Settings::Pardot.toa_redirect
+          Settings::Pardot.toa_redirect = redirect_url
+          Settings::Db.store.object('pardot_toa_redirect').try!(:expire_cache)
+
+          example.run
+        ensure
+          Settings::Pardot.toa_redirect = original_value
+          Settings::Db.store.object('pardot_toa_redirect').try!(:expire_cache)
+        end
       }
 
       context "anonymous user" do
