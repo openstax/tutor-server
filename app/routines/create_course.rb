@@ -19,7 +19,7 @@ class CreateCourse
            num_sections: 0, catalog_offering: nil, appearance_code: nil,
            starts_at: nil, ends_at: nil, school: nil, time_zone: nil, cloned_from: nil,
            default_open_time: nil, default_due_time: nil, estimated_student_count: nil,
-           does_cost: false)
+           does_cost: nil)
 
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
@@ -35,7 +35,7 @@ class CreateCourse
     end
 
     is_concept_coach = catalog_offering.try!(:is_concept_coach) if is_concept_coach.nil?
-    does_cost = catalog_offering.try!(:does_cost) if does_cost.nil?
+    does_cost = (catalog_offering.try!(:does_cost) || false) if does_cost.nil?
 
     fatal_error(
       code: :is_concept_coach_blank,
