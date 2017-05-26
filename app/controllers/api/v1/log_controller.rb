@@ -52,9 +52,11 @@ class Api::V1::LogController < Api::V1::ApiController
 
   api :POST, '/log/event/<event code>', 'Log that a user event has occured'
   def event
-    OSU::AccessPolicy.require_action_allowed!(
-      params[:code], current_api_user, TrackTutorOnboardingEvent
-    )
-    head :created
+    if OSU::AccessPolicy.action_allowed?(params[:code], current_human_user, TrackTutorOnboardingEvent)
+      TrackTutorOnboardingEvent.perform_later(event: params[:code], user: current_human_user)
+      head :created
+    else
+      head :forbidden
+    end
   end
 end

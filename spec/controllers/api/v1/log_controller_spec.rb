@@ -51,11 +51,34 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
 
   describe '#track' do
-    it 'rejects unknown codes' do
-      api_post :event, nil, parameters: { code: 'foo' }
+    let(:user) { FactoryGirl.create(:user) }
+    let(:user_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                            resource_owner_id: user.id }
+
+    it 'rejects student access' do
+      user.account.update_attributes(role: :student)
+      api_post :event, user_token, parameters: { code: 'arrived_my_courses' }
       expect(response).to have_http_status(:forbidden)
+      expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
     end
 
+    describe 'as an instructor' do
+      before(:each) { user.account.role = :instructor }
+
+      it 'rejects invalid codes' do
+        api_post :event, user_token, parameters: { code: 'bad&wrong' }
+        expect(response).to have_http_status(:forbidden)
+        expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
+      end
+
+      it 'tracks valid codes' do
+        user.account.update_attributes!(role: :instructor)
+        expect(TrackTutorOnboardingEvent).to receive(:perform_later)
+                                               .with(event: 'arrived_my_courses', user: anything)
+        api_post :event, user_token, parameters: { code: 'arrived_my_courses' }
+        expect(response).to have_http_status(:success)
+      end
+    end
   end
 
   def log(options)
