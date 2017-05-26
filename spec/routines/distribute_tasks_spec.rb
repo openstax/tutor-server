@@ -71,29 +71,22 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
     end
 
-    # Note - this isn't 100% guaranteed to fail.
-    # There's still a chance that the forked children will process
-    # distribution in a way that doesn't trigger IsolationConflict exceptions.
-    # If this spec starts to fail in indeterminate ways and can't be fixed it can be removed
-    it 'cannot be distributed concurrently' do
-      plan = homework_plan
-      pids = []
-      0.upto(5) do
-        pids << Tutor.fork_with_connection do
-          begin
-            DistributeTasks.call(task_plan: plan)
-            0 # all we care about for this spec is isolation conflicts, anything else is considered passing
-          rescue ActiveRecord::TransactionIsolationConflict
-            99 # arbitrary exit status to indicate failure
+    it 'produces correct results when distributed concurrently' do
+      # 2 students and 1 preview task
+      expected_num_tasks = 3
+
+      expect do
+        pids = 5.times.map do
+          Tutor.fork_with_connection do
+            # Should no longer trigger ActiveRecord::TransactionIsolationConflicts
+            # because after the first retry it detects that the plan
+            # has already been distributed and does nothing
+            DistributeTasks.call(task_plan: homework_plan)
           end
         end
-      end
-      failed = []
-      pids.each do |pid|
-        Process.wait(pid)
-        failed << pid if $?.exitstatus == 99
-      end
-      expect(failed).not_to be_empty
+
+        pids.each { |pid| Process.wait(pid) }
+      end.to change { homework_plan.tasks.count }.by(expected_num_tasks)
     end
   end
 
