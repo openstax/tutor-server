@@ -8,7 +8,7 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   belongs_to :role, subsystem: :entity, inverse_of: :student
 
   has_many :enrollments, -> { with_deleted }, dependent: :destroy, inverse_of: :student
-  has_one :latest_enrollment, -> { with_deleted.latest },
+  has_one :latest_enrollment, -> { latest.with_deleted },
                               class_name: '::CourseMembership::Models::Enrollment'
 
   validates :course, presence: true

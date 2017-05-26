@@ -26,17 +26,8 @@ class CourseMembership::GetRoleCourses
     if includes_student
       student_subquery = CourseProfile::Models::Course
         .joins(:periods)
-        .joins do
-          <<-SQL.strip_heredoc
-            INNER JOIN #{CourseMembership::Models::Enrollment.with_reverse_sequence_number_sql}
-              ON course_membership_enrollments.course_membership_period_id =
-                course_membership_periods.id
-            INNER JOIN course_membership_students
-              ON course_membership_students.id =
-                course_membership_enrollments.course_membership_student_id
-          SQL
-        end.where(course_membership_students: { entity_role_id: role_ids },
-                  course_membership_enrollments: { reverse_sequence_number: 1 })
+        .joins(CourseMembership::Models::Enrollment.latest_join_sql(:periods, :student))
+        .where(course_membership_students: { entity_role_id: role_ids })
 
       student_subquery = student_subquery
         .where(periods: { deleted_at: nil, course_membership_students: { deleted_at: nil } }) \
