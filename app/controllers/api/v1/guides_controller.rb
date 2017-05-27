@@ -1,6 +1,9 @@
 module Api
   module V1
     class GuidesController < ApiController
+      before_filter :get_course
+      before_filter :error_if_student_and_needs_to_pay, only: [:student]
+
       resource_description do
         api_versions "v1"
         short_description 'Represents course guides in the system'
@@ -15,8 +18,7 @@ module Api
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        course = CourseProfile::Models::Course.find(params[:course_id])
-        guide = GetStudentGuide[role: role(course, :student)]
+        guide = GetStudentGuide[role: role(@course, :student)]
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 
@@ -26,12 +28,15 @@ module Api
         #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
-        course = CourseProfile::Models::Course.find(params[:course_id])
-        guide = GetTeacherGuide[role: role(course, :teacher)]
+        guide = GetTeacherGuide[role: role(@course, :teacher)]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end
 
       protected
+
+      def get_course
+        @course = CourseProfile::Models::Course.find(params[:course_id])
+      end
 
       def role(course, types = :any)
         result = ChooseCourseRole.call(user: current_human_user,

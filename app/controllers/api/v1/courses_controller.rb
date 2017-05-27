@@ -5,6 +5,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   ]
 
   before_filter :get_course, only: [:show, :update, :dashboard, :cc_dashboard, :roster, :clone]
+  before_filter :error_if_student_and_needs_to_pay, only: [:dashboard]
 
   resource_description do
     api_versions "v1"

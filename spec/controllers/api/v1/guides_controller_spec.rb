@@ -45,6 +45,12 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         api_get :student, user_1_token, parameters: { course_id: course.id,
                                                       role_id: student_3_role.id }
       end
+
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: course, student: student_role.student) {
+          api_get :student, user_2_token, parameters: { course_id: course.id }
+        }
+      end
     end
 
     describe '#teacher' do

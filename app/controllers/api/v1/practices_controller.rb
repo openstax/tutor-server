@@ -1,21 +1,24 @@
 module Api
   module V1
     class PracticesController < ApiController
+      before_filter :get_course_and_practice_role
+      before_filter :error_if_student_and_needs_to_pay, only: [:create_specific,
+                                                               :create_worst,
+                                                               :show]
+
       api :POST, '/courses/:course_id/practice(/role/:role_id)',
                  'Starts a new practice widget for a specific set of page_ids or chapter_ids'
       description <<-EOS
         #{json_schema(Api::V1::PracticeRepresenter, include: :writeable)}
       EOS
       def create_specific
-        course, role = get_practice_course_and_role
-
-        OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, course)
+        OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
         practice = OpenStruct.new
         consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
         result = CreatePracticeSpecificTopicsTask.call(
-          course: course, role: role, page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
+          course: @course, role: @role, page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         )
 
         render_api_errors(result.errors) || respond_with(
@@ -28,11 +31,9 @@ module Api
       api :POST, '/courses/:course_id/practice/worst(/role/:role_id)',
                  'Starts a new practice widget for Practice Worst Topics'
       def create_worst
-        course, role = get_practice_course_and_role
+        OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
-        OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, course)
-
-        result = CreatePracticeWorstTopicsTask.call course: course, role: role
+        result = CreatePracticeWorstTopicsTask.call course: @course, role: @role
 
         render_api_errors(result.errors) || respond_with(
           result.outputs.task,
@@ -44,8 +45,7 @@ module Api
       api :GET, '/courses/:course_id/practice(/role/:role_id)',
                 'Gets the most recent practice widget'
       def show
-        course, role = get_practice_course_and_role
-        task = ::Tasks::GetPracticeTask[role: role]
+        task = ::Tasks::GetPracticeTask[role: @role]
 
         return head(:not_found) if task.nil?
 
@@ -54,16 +54,16 @@ module Api
 
       protected
 
-      def get_practice_course_and_role
-        course = CourseProfile::Models::Course.find(params[:id])
+      def get_course_and_practice_role
+        @course = CourseProfile::Models::Course.find(params[:id])
         result = ChooseCourseRole.call(user: current_human_user,
-                                       course: course,
+                                       course: @course,
                                        allowed_role_type: :student,
                                        role_id: params[:role_id])
         if result.errors.any?
           raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
         else
-          [course, result.outputs.role]
+          @role = result.outputs.role
         end
       end
     end

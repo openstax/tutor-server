@@ -43,7 +43,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           salesforce_book_name: course_1.offering.salesforce_book_name,
           appearance_code: course_1.offering.appearance_code,
           cloned_from_id: course_1.cloned_from_id,
-          is_preview: course_1.is_preview
+          is_preview: course_1.is_preview,
+          does_cost: false
         )
       )
     end
@@ -86,7 +87,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           appearance_code: course_1.offering.appearance_code,
           ecosystems: course_1.ecosystems,
           cloned_from_id: course_1.cloned_from_id,
-          is_preview: course_1.is_preview
+          is_preview: course_1.is_preview,
+          does_cost: false
         ),
         a_hash_including(
           id: course_2.id,
@@ -109,7 +111,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           appearance_code: course_2.offering.appearance_code,
           ecosystems: course_2.ecosystems,
           cloned_from_id: course_2.cloned_from_id,
-          is_preview: course_2.is_preview
+          is_preview: course_2.is_preview,
+          does_cost: false
         )
       )
     end
@@ -143,7 +146,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.offering.salesforce_book_name,
             appearance_code: course_1.offering.appearance_code,
             cloned_from_id: course_1.cloned_from_id,
-            is_preview: course_1.is_preview
+            is_preview: course_1.is_preview,
+            does_cost: false
           )
         )
       end
@@ -171,7 +175,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             appearance_code: course_1.offering.appearance_code,
             periods: a_collection_containing_exactly(period_1, period_2),
             cloned_from_id: course_1.cloned_from_id,
-            is_preview: course_1.is_preview
+            is_preview: course_1.is_preview,
+            does_cost: false
           )
         )
       end
@@ -204,7 +209,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             salesforce_book_name: course_1.offering.salesforce_book_name,
             appearance_code: course_1.offering.appearance_code,
             cloned_from_id: course_1.cloned_from_id,
-            is_preview: course_1.is_preview
+            is_preview: course_1.is_preview,
+            does_cost: false
           )
         )
       end
@@ -232,7 +238,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             appearance_code: course_1.offering.appearance_code,
             periods: [ period_1 ],
             cloned_from_id: course_1.cloned_from_id,
-            is_preview: course_1.is_preview
+            is_preview: course_1.is_preview,
+            does_cost: false
           )
         )
       end

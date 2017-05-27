@@ -2,13 +2,22 @@ require "rails_helper"
 
 RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
+  let(:course)            { FactoryGirl.create :course_profile_course }
+  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
+
+  let(:task_plan_1)       { FactoryGirl.create :tasks_task_plan, owner: course }
+  let(:task_1)             { FactoryGirl.create :tasks_task, title: 'A Task Title',
+                                                task_plan: task_plan_1,
+                                                step_types: [:tasks_tasked_reading,
+                                                             :tasks_tasked_exercise] }
+
   let(:application)        { FactoryGirl.create :doorkeeper_application }
   let(:user_1)             { FactoryGirl.create(:user) }
   let(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: user_1.id }
 
-  let(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
+  let!(:user_1_role)        { AddUserAsPeriodStudent[user: user_1, period: period] }
 
   let(:user_2)             { FactoryGirl.create(:user) }
   let(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
@@ -18,13 +27,10 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
   let(:userless_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application }
 
-  let(:task_1)             { FactoryGirl.create :tasks_task, title: 'A Task Title',
-                                                step_types: [:tasks_tasked_reading,
-                                                             :tasks_tasked_exercise] }
   let!(:tasking_1)         { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task_1 }
 
   let(:teacher_user)       { FactoryGirl.create(:user) }
-  let!(:teacher_role)      { AddUserAsCourseTeacher[course: task_1.task_plan.owner,
+  let!(:teacher_role)      { AddUserAsCourseTeacher[course: course,
                                                     user: teacher_user] }
   let(:teacher_user_token) { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
@@ -39,6 +45,12 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
       expect(response.body_as_hash).to have_key(:steps)
       expect(response.body_as_hash[:steps][0]).to include(type: 'reading')
       expect(response.body_as_hash[:steps][1]).to include(type: 'exercise')
+    end
+
+    it "422's if needs to pay" do
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_get :show, user_1_token, parameters: {id: task_1.id}
+      }
     end
 
     it 'raises SecurityTransgression when user is anonymous or not a teacher' do
@@ -123,6 +135,12 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
           api_delete :destroy, token, parameters: {id: task_1.id}
 
           expect(task_1.reload).to be_hidden
+        end
+
+        it "422's if needs to pay" do
+          make_payment_required_and_expect_422(course: course, user: user_1) {
+            api_delete :destroy, token, parameters: {id: task_1.id}
+          }
         end
       end
 

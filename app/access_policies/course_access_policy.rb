@@ -25,4 +25,5 @@ class CourseAccessPolicy
       false
     end
   end
+
 end

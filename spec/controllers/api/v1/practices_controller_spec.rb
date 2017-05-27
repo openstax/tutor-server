@@ -92,6 +92,15 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(response).to have_http_status(422)
     end
+    
+    it "422's if needs to pay" do
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_post :create_specific,
+                 user_1_token,
+                 parameters: { id: course.id, role_id: role.id },
+                 raw_post_data: { page_ids: [page.id.to_s] }.to_json
+      }
+    end
   end
 
   context 'POST #create_worst' do
@@ -139,6 +148,15 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(response).to have_http_status(422)
     end
+    
+    
+    it "422's if needs to pay" do
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_post :create_worst,
+                 user_1_token,
+                 parameters: { id: course.id, role_id: role.id }
+      }
+    end
   end
 
   context 'GET #show' do
@@ -163,6 +181,14 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       expect(response.body_as_hash).to(
         include(id: be_kind_of(String), title: 'Practice', steps: have(5).items)
       )
+    end
+
+    it "422's if needs to pay" do
+      AddUserAsPeriodStudent.call(period: period, user: user_1)
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_get :show, user_1_token, parameters: { id: course.id,
+                                                   role_id: Entity::Role.last.id }
+      }
     end
 
     it 'can be called by a teacher using a student role' do

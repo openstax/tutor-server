@@ -16,7 +16,15 @@ class CourseMembership::AddStudent
       }."
     ) unless student.nil?
 
-    student = CourseMembership::Models::Student.create(role: role, course: period.course,
+    course = period.course
+
+    # Give the student til midnight after 14 days from now
+    payment_due_at = course.time_zone.to_tz.now.midnight + 1.day - 1.second +
+                     Settings::Payments.student_grace_period_days.days
+
+    student = CourseMembership::Models::Student.create(role: role,
+                                                       course: course,
+                                                       payment_due_at: payment_due_at,
                                                        student_identifier: student_identifier)
     transfer_errors_from(student, {type: :verbatim}, true)
 

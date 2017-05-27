@@ -10,6 +10,8 @@ Settings::Db.store.defaults[:import_real_salesforce_courses] = false
 Settings::Db.store.defaults[:default_open_time] = '00:01'
 Settings::Db.store.defaults[:default_due_time] = '07:00'
 Settings::Db.store.defaults[:term_years_to_import] = ''
+Settings::Db.store.defaults[:student_grace_period_days] = 14
+Settings::Db.store.defaults[:payments_enabled] = false
 
 secrets = Rails.application.secrets
 

@@ -570,6 +570,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
     end
 
+    context 'not paid' do
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: course, student: student_role.student) {
+          api_get :dashboard, student_token, parameters: {id: course.id}
+        }
+      end
+    end
+
     context 'student' do
       it 'returns an error if the course is a CC course' do
         course.update_attribute(:is_concept_coach, true)
@@ -1113,7 +1121,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#roster' do
     let(:application)        { FactoryGirl.create :doorkeeper_application }
 
-    let(:course)             { FactoryGirl.create :course_profile_course }
+    let(:course)             { FactoryGirl.create :course_profile_course, does_cost: true }
     let!(:period_2)          { FactoryGirl.create :course_membership_period, course: course }
 
     let(:student_user)       { FactoryGirl.create(:user) }
@@ -1142,11 +1150,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
         it 'returns the course roster' do
+          allow(Settings::Payments).to receive(:payments_enabled) { true }
+
+          student_2.update_attributes(is_paid: true)
+          student_3.update_attributes(is_comped: true)
+
           api_get :roster, teacher_token, parameters: valid_params
           expect(response).to have_http_status(:ok)
           roster = response.body_as_hash
-          expect(roster).to include({
-            teach_url: a_string_matching(/.*teach\/[a-f0-9]{32}\/DO_NOT.*/),
+
+
+          expect(roster).to include(
+            teach_url: a_string_matching(/.*teach\/[a-f0-9]{32}\/DO_NOT.*/)
+          )
+
+          expect(roster).to include(
             teachers: a_collection_containing_exactly(
               {
                 id: teacher_role.teacher.id.to_s,
@@ -1154,37 +1172,52 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 first_name: teacher_user.first_name,
                 last_name: teacher_user.last_name,
               }
-            ),
+            )
+          )
+
+          expect(roster).to include(
             students: a_collection_containing_exactly(
-              {
+              a_hash_including({
                 id: student.id.to_s,
                 first_name: student.first_name,
                 last_name: student.last_name,
                 name: student.name,
                 period_id: period.id.to_s,
                 role_id: student_role.id.to_s,
-                is_active: true
-              },
-              {
+                is_active: true,
+                prompt_student_to_pay: true,
+                is_paid: false,
+                is_comped: false,
+                payment_due_at: be_kind_of(String)
+              }),
+              a_hash_including({
                 id: student_2.id.to_s,
                 first_name: student_2.first_name,
                 last_name: student_2.last_name,
                 name: student_2.name,
                 period_id: period.id.to_s,
                 role_id: student_role_2.id.to_s,
-                is_active: true
-              },
-              {
+                is_active: true,
+                prompt_student_to_pay: false,
+                is_paid: true,
+                is_comped: false,
+                payment_due_at: be_kind_of(String)
+              }),
+              a_hash_including({
                 id: student_3.id.to_s,
                 first_name: student_3.first_name,
                 last_name: student_3.last_name,
                 name: student_3.name,
                 period_id: period_2.id.to_s,
                 role_id: student_role_3.id.to_s,
-                is_active: true
-              }
+                is_active: true,
+                prompt_student_to_pay: false,
+                is_paid: false,
+                is_comped: true,
+                payment_due_at: be_kind_of(String)
+              })
             )
-          })
+          )
         end
       end
 

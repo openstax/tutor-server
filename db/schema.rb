@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20170526133610) do
     t.boolean  "is_available",                         null: false
     t.string   "title",                                null: false
     t.integer  "number",                               null: false
+    t.boolean  "does_cost",            default: false, null: false
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
@@ -293,6 +294,10 @@ ActiveRecord::Schema.define(version: 20170526133610) do
     t.datetime "updated_at",                                             null: false
     t.string   "student_identifier"
     t.uuid     "uuid",                     default: "gen_random_uuid()"
+    t.datetime "first_paid_at"
+    t.boolean  "is_paid",                  default: false,               null: false
+    t.boolean  "is_comped",                default: false,               null: false
+    t.datetime "payment_due_at"
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
@@ -338,6 +343,7 @@ ActiveRecord::Schema.define(version: 20170526133610) do
     t.string   "biglearn_assignment_pes_algorithm_name",                                     null: false
     t.string   "biglearn_practice_worst_areas_algorithm_name",                               null: false
     t.boolean  "is_test",                                      default: false,               null: false
+    t.boolean  "does_cost",                                    default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
   end

@@ -111,5 +111,9 @@ module Api::V1
 
       expect(represented["num_sections"]).to eq 4
     end
+
+    it 'shows does_cost' do
+      expect(represented['does_cost']).to eq false
+    end
   end
 end

@@ -11,6 +11,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
   let(:student_user)      { FactoryGirl.create(:user) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
+  let!(:student_original_payment_due_at) { student.payment_due_at }
   let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: student_user.id }
@@ -113,6 +114,13 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             expect(response.body_as_hash[:student_identifier]).to eq new_id
             expect(student.reload.student_identifier).to eq new_id
           end
+
+          it "422's if needs to pay" do
+            make_payment_required_and_expect_422(course: course, student: student) {
+              api_patch :update_self, student_token, parameters: valid_params,
+                                                     raw_post_data: valid_body
+            }
+          end
         end
       end
 
@@ -155,7 +163,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
             expect(response).to have_http_status(:ok)
             new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
-            expect(response.body_as_hash).to eq({
+            expect(response.body_as_hash).to include({
               id: student.id.to_s,
               first_name: student.first_name,
               last_name: student.last_name,
@@ -165,6 +173,12 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
               is_active: true
             })
             expect(student.reload.period).to eq period_2.to_model
+          end
+
+          it "422's if needs to pay" do
+            make_payment_required_and_expect_422(course: course, student: student) {
+              api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
+            }
           end
 
           context 'and updating the student\'s identifier' do
@@ -292,6 +306,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
               student.reload
               expect(student.persisted?).to eq true
               expect(student.deleted?).to eq false
+              expect(student.payment_due_at).to eq student_original_payment_due_at
             end
 
             it 'fails if the student\'s identifier is taken by someone else' do

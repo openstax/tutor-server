@@ -18,7 +18,9 @@ class CreateCourse
   def exec(name:, is_preview:, is_college:, is_concept_coach: nil, term: nil, year: nil,
            num_sections: 0, catalog_offering: nil, appearance_code: nil,
            starts_at: nil, ends_at: nil, school: nil, time_zone: nil, cloned_from: nil,
-           default_open_time: nil, default_due_time: nil, estimated_student_count: nil)
+           default_open_time: nil, default_due_time: nil, estimated_student_count: nil,
+           does_cost: nil)
+
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
@@ -33,15 +35,13 @@ class CreateCourse
     end
 
     is_concept_coach = catalog_offering.try!(:is_concept_coach) if is_concept_coach.nil?
+    does_cost = (catalog_offering.try!(:does_cost) || false) if does_cost.nil?
 
     fatal_error(
       code: :is_concept_coach_blank,
       message: 'You must provide at least one of the following 2 options: ' +
                ':is_concept_coach or :catalog_offering'
     ) if is_concept_coach.nil?
-
-    # If the given time_zone already has an associated course,
-    # make a copy to avoid linking the 2 courses' time_zones to the same record
 
     # Convert time_zone to a model
     # if it already is and has an associated course,
@@ -60,6 +60,7 @@ class CreateCourse
       is_college: is_college,
       is_concept_coach: is_concept_coach,
       is_preview: is_preview,
+      does_cost: does_cost,
       term: term,
       year: year,
       starts_at: starts_at,

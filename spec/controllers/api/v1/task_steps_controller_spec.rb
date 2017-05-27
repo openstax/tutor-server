@@ -2,13 +2,16 @@ require "rails_helper"
 
 RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
 
+  let(:course)              { FactoryGirl.create :course_profile_course }
+  let(:period)              { FactoryGirl.create :course_membership_period, course: course }
+
   let(:application)        { FactoryGirl.create :doorkeeper_application }
   let(:user_1)             { FactoryGirl.create :user }
   let(:user_1_token)       do
     FactoryGirl.create :doorkeeper_access_token, application: application,
                                                  resource_owner_id: user_1.id
   end
-  let(:user_1_role)        { Role::GetDefaultUserRole[user_1] }
+  let(:user_1_role)        { AddUserAsPeriodStudent[user: user_1, period: period] }
 
   let(:user_2)             { FactoryGirl.create(:user) }
   let(:user_2_token)       do
@@ -33,8 +36,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     te
   end
 
-  let(:course)              { FactoryGirl.create :course_profile_course }
-  let(:period)              { FactoryGirl.create :course_membership_period, course: course }
+
 
   let(:lo)                  { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let(:pp)                  { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
@@ -70,6 +72,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       })
     end
 
+    it "422's if needs to pay" do
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
+      }
+    end
+
     it 'raises SecurityTransgression when user is anonymous or not a teacher' do
       expect {
         api_get :show, nil, parameters: { task_id: task_step.task.id, id: task_step.id }
@@ -97,6 +105,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       )
 
       expect(tasked.reload.free_response).to eq "Ipsum lorem"
+    end
+
+    it "422's if needs to pay" do
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_put :update, user_1_token, parameters: id_parameters,
+                raw_post_data: { free_response: "Ipsum lorem" }
+      }
     end
 
     it "updates the selected answer of an exercise" do
@@ -197,6 +212,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       expect(tasked.task_step(true).completed?).to be_truthy
     end
 
+    it "422's if needs to pay" do
+      tasked = create_tasked(:tasked_reading, user_1_role)
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_put :completed, user_1_token, parameters: { id: tasked.task_step.id }
+      }
+    end
+
     it "should not allow marking completion of reading steps by random user" do
       tasked = create_tasked(:tasked_reading, user_1_role)
       expect{
@@ -236,7 +258,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
   end
 
   context "practice task update step" do
-    it "allows updating of a step" do
+    let(:step) do
       page = tasked_exercise.exercise.page
 
       Content::Routines::PopulateExercisePools[book: page.book]
@@ -248,16 +270,23 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
       AddEcosystemToCourse[course: course, ecosystem: ecosystem]
 
-      role = AddUserAsPeriodStudent[period: period, user: user_1]
+      task = CreatePracticeSpecificTopicsTask[course: course, role: user_1_role, page_ids: [page.id]]
 
-      task = CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
+      task.task_steps.first
+    end
 
-      step = task.task_steps.first
+    it "allows updating of a step" do
 
       api_put :update, user_1_token, parameters: { id: step.id },
               raw_post_data: { free_response: "Ipsum lorem" }
-
       expect(response).to have_http_status(:success)
+    end
+
+    it "422's if needs to pay" do
+      make_payment_required_and_expect_422(course: course, user: user_1) {
+        api_put :update, user_1_token, parameters: { id: step.id },
+                raw_post_data: { free_response: "Ipsum lorem" }
+      }
     end
   end
 

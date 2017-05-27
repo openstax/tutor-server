@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Settings::Pardot, type: :lib do
   it 'can store the TOA redirect' do
+    Settings::Db.store.object('pardot_toa_redirect').try!(:expire_cache)
     expect(described_class.toa_redirect).to be_blank
 
     described_class.toa_redirect = "http://www.google.com"

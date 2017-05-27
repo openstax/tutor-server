@@ -65,6 +65,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :purchases, only: [:show]
+
   mount OpenStax::Accounts::Engine => :accounts
   mount FinePrint::Engine => :fine_print
 

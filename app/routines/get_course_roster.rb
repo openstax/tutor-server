@@ -17,11 +17,15 @@ class GetCourseRoster
           first_name: student.first_name,
           last_name: student.last_name,
           name: student.name,
+          course_profile_course_id: student.course_profile_course_id,
           course_membership_period_id: student.course_membership_period_id,
           entity_role_id: student.entity_role_id,
           username: student.username,
           student_identifier: student.student_identifier,
-          deleted?: student.deleted?
+          deleted?: student.deleted?,
+          is_paid: student.is_paid,
+          is_comped: student.is_comped,
+          payment_due_at: student.payment_due_at
         })
       end
     }

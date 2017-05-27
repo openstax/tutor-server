@@ -59,5 +59,58 @@ module Api::V1
                 description: "Student is dropped iff false"
              }
 
+    property :prompt_student_to_pay,
+             writeable: false,
+             readable: true,
+             getter: ->(*) {
+               # Shenanigans b/c sometimes this representer gets an AR, sometimes a hash
+               course = self.course || CourseProfile::Models::Course.find(course_profile_course_id)
+
+               Settings::Payments.payments_enabled &&
+               course.does_cost &&
+               !course.is_preview &&
+               !(is_paid || is_comped)
+             },
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: "True iff payments enabled globally, course costs and not preview, and not paid or comped"
+             }
+
+    property :is_paid,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                required: true,
+                type: 'boolean',
+                description: "True iff student has paid"
+             }
+
+    property :is_comped,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                required: true,
+                type: 'boolean',
+                description: "True iff student has been comped"
+             }
+
+    property :first_paid_at,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(first_paid_at) },
+             schema_info: {
+                description: "First time the student paid, doesn't change after set"
+             }
+
+    property :payment_due_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(payment_due_at) },
+             schema_info: {
+               description: "Payment is due before this date (if the course costs)"
+             }
+
   end
 end

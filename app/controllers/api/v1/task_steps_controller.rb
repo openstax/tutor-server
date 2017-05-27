@@ -1,6 +1,7 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
 
   before_filter :get_task_step_and_tasked
+  before_filter :error_if_student_and_needs_to_pay
   before_filter :populate_placeholders_if_needed, only: :show
 
   resource_description do

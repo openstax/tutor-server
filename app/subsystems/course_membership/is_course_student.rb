@@ -24,7 +24,8 @@ class CourseMembership::IsCourseStudent
     end
 
     is_course_student = valid_student.present? || outputs.is_dropped || outputs.is_archived
-
     outputs.is_course_student = !!is_course_student
+    
+    outputs[:student] = valid_student
   end
 end
