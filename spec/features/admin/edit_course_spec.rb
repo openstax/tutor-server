@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
+require 'feature_js_helper'
 
 RSpec.feature 'Admin editing a course' do
   background do
@@ -23,7 +24,7 @@ RSpec.feature 'Admin editing a course' do
     visit admin_courses_path
     click_link 'Edit'
 
-    expect(page).to have_content('Edit Course')
+    expect(page).to have_content('Edit course')
     fill_in 'Name', with: 'Changed777888'
     click_button 'edit-save'
 
@@ -37,7 +38,7 @@ RSpec.feature 'Admin editing a course' do
     visit admin_courses_path
     click_link 'Edit'
 
-    expect(page).to have_content('Edit Course')
+    expect(page).to have_content('Edit course')
     fill_in 'Starts at', with: '2016-01-01'
     fill_in 'Ends at', with: '2016-02-01'
     # capybara fails (only on Travis) with the Ambiguous match, found 2 elements matching button "Save"
@@ -55,7 +56,7 @@ RSpec.feature 'Admin editing a course' do
     visit admin_courses_path
     click_link 'Edit'
 
-    expect(page).to have_content('Edit Course')
+    expect(page).to have_content('Edit course')
     check 'course_is_college'
     click_button 'edit-save'
 
@@ -68,7 +69,7 @@ RSpec.feature 'Admin editing a course' do
     visit admin_courses_path
     click_link 'Edit'
 
-    expect(page).to have_content('Edit Course')
+    expect(page).to have_content('Edit course')
     check 'course_is_test'
     click_button 'edit-save'
 
@@ -81,7 +82,7 @@ RSpec.feature 'Admin editing a course' do
     visit admin_courses_path
     click_link 'Edit'
 
-    expect(page).to have_content('Edit Course')
+    expect(page).to have_content('Edit course')
     check 'course_does_cost'
     click_button 'edit-save'
 
@@ -102,10 +103,11 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_text('High high hi school')
   end
 
-  scenario 'Adding a period' do
+  scenario 'Adding a period', js: true do
     visit admin_courses_path
     click_link 'Edit'
 
+    click_link 'Periods'
     click_link 'Add period'
     expect(page).to have_content('New Period for Physics I')
     expect(page).to have_content('Enrollment code')
@@ -118,12 +120,13 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_content("2nd #{period.enrollment_code} Edit")
   end
 
-  scenario 'Editing a period' do
+  scenario 'Editing a period', js: true do
     visit admin_courses_path
     click_link 'Edit'
 
-    click_link 'Edit'
-    expect(page).to have_content('Edit Period')
+    click_link 'Periods'
+    click_link 'Add period'
+    expect(page).to have_content('Enrollment code')
 
     fill_in 'Name', with: 'first'
     fill_in 'Enrollment code', with: 'happy restrictions'
@@ -160,5 +163,37 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_content('Course ecosystem update background jobs queued')
     expect(@course.ecosystems.first.books.first.version).to eq('5.1')
     expect(course_2.ecosystems.first.books.first.version).to eq('5.1')
+  end
+
+  scenario 'Check payment fields on student roster', js: true do
+    user_1 = FactoryGirl.create(:user, last_name: "AAAA")
+    user_2 = FactoryGirl.create(:user, last_name: "BBBB")
+
+    student_1 = AddUserAsPeriodStudent[user: user_1, period: @course.periods.first].student
+    student_2 = AddUserAsPeriodStudent[user: user_2, period: @course.periods.first].student
+
+    student_1.is_paid = true
+    student_1.save!
+
+    student_2.is_comped = true
+    student_2.save!
+
+    visit admin_courses_path
+    click_link 'Edit'
+    click_link 'Roster'
+
+    expect(page).to have_content(/.*Yes.*No.*No.*Yes/)
+
+    click_link('No')
+    wait_for_ajax
+
+    expect(page).to have_content(/.*Yes.*Yes.*No.*Yes/)
+
+    first('#students tbody tr').click_link("11:59:59")
+    wait_for_ajax
+    click_link('3')
+    wait_for_ajax
+
+    expect(first('#students tbody tr').text).to match(/3, \d\d\d\d 11:59/)
   end
 end

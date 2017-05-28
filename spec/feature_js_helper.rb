@@ -1,7 +1,3 @@
-require 'capybara'
-
-Capybara.javascript_driver = :webkit
-
 # Monkey patching ActiveRecord::Base to use the same transaction for all threads
 # http://rubydoc.info/github/jnicklas/capybara/master#Transactions_and_database_setup
 class ActiveRecord::Base

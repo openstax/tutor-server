@@ -5,6 +5,7 @@ module Manager::CourseDetails
     @course = CourseProfile::Models::Course.find(params[:id])
     @periods = @course.periods
     @teachers = @course.teachers.includes(role: { profile: :account })
+    @students = @course.students.includes(role: { profile: :account }).sort_by{|ss| ss.last_name}
     @ecosystems = Content::ListEcosystems[]
 
     @course_ecosystem = nil

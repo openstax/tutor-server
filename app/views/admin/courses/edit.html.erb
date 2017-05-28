@@ -24,7 +24,12 @@
   </li>
   <li role="presentation">
     <a href="#roster" aria-controls="roster" role="tab" data-toggle="tab">
-      Student Roster
+      Roster
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#upload-students" aria-controls="upload-students" role="tab" data-toggle="tab">
+      Upload Students
     </a>
   </li>
   <li role="presentation">
@@ -59,10 +64,22 @@
     <%= render 'periods' %>
   </div>
 
+  <div role="tabpanel" class="tab-pane" id="periods">
+    <h3>Periods</h3>
+
+    <%= render 'periods' %>
+  </div>
+
   <div role="tabpanel" class="tab-pane" id="roster">
+    <h3>Roster</h3>
+
+    <%= render 'students' %>
+  </div>
+
+  <div role="tabpanel" class="tab-pane" id="upload-students">
     <h3>Upload Student Roster</h3>
 
-    <%= render 'students', url: students_admin_course_path(@course.id) %>
+    <%= render 'upload_students', url: students_admin_course_path(@course.id) %>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="salesforce">

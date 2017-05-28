@@ -242,6 +242,8 @@ Rails.application.routes.draw do
       resources :teachers, only: [:destroy], shallow: true
     end
 
+    resources :students, only: :update
+
     resources :schools, except: [:show]
 
     resources :districts, except: [:show]

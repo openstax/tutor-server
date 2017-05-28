@@ -73,4 +73,11 @@ RSpec.describe DateTimeUtilities, type: :lib do
       expect(time_with_zone.to_s).to eq "2007-02-10 20:30:45 -0800"
     end
   end
+
+  context '#parse_in_zone' do
+    it 'parses a date correctly' do
+      date_time = described_class.parse_in_zone(string: "5/25/17", zone: "Eastern Time (US & Canada)")
+      expect(date_time.to_s).to eq "2017-05-25T12:00:00-04:00"
+    end
+  end
 end
