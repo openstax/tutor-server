@@ -55,17 +55,15 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
 
     result = CreateOrClaimCourse.call(
-      attributes.except(:catalog_offering_id).merge(catalog_offering: catalog_offering)
+      attributes.except(:catalog_offering_id).merge(
+        teacher: current_human_user,
+        catalog_offering: catalog_offering
+      )
     )
 
-    errors = result.errors
-    return render_api_errors(errors) unless errors.empty?
+    return render_api_errors(result.errors) unless result.errors.empty?
 
-    course = result.outputs.course
-
-    AddUserAsCourseTeacher[course: course, user: current_human_user]
-
-    respond_with collect_course_info(course: course),
+    respond_with collect_course_info(course: result.outputs.course),
                  represent_with: Api::V1::CourseRepresenter,
                  location: nil
   end
