@@ -15,6 +15,10 @@ class AddUserAsCourseTeacher
     else
       run(Role::CreateUserRole, user, :teacher)
       run(CourseMembership::AddTeacher, course: course, role: outputs.role)
+      TrackTutorOnboardingEvent.perform_later(
+        event: (course.is_preview? ? 'created_preview_course' : 'created_real_course'),
+        user: user
+      ) if errors.none?
     end
   end
 end
