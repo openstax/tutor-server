@@ -11,6 +11,11 @@ class CourseProfile::ClaimPreviewCourse
                .lock
                .first
     if course.nil?
+      DevMailer.inspect_object(
+        object: catalog_offering,
+        subject: "Failed to find preview course to claim for offering id #{catalog_offering.id}",
+        to: Rails.application.secrets.salesforce['mail_recipients']
+      ).deliver_later
       fatal_error(code: :no_preview_courses_available)
       return
     end

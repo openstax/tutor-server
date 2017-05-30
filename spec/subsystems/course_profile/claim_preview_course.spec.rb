@@ -33,11 +33,12 @@ RSpec.describe CourseProfile::ClaimPreviewCourse do
 
 
   context 'when no previews are pre-built' do
-    it 'errors with api code' do
+    it 'errors with api code and sends email' do
       result = CourseProfile::ClaimPreviewCourse.call(
         catalog_offering: offering, name: 'My New Preview Course'
       )
       expect(result.errors.first.code).to eq :no_preview_courses_available
+      expect(ActionMailer::Base.deliveries.last.subject).to match('Failed to find preview course')
     end
   end
 
