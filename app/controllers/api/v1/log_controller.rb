@@ -47,16 +47,13 @@ class Api::V1::LogController < Api::V1::ApiController
       Rails.logger.log(level, "(ext) #{message}")
       head :created
     end
-  end
-
-
-  api :POST, '/log/event/<event code>', 'Log that a user event has occured'
-  def event
-    if OSU::AccessPolicy.action_allowed?(params[:code], current_human_user, TrackTutorOnboardingEvent)
-      TrackTutorOnboardingEvent.perform_later(event: params[:code], user: current_human_user)
-      head :created
-    else
-      head :forbidden
     end
+
+
+  api :POST, '/log/onboarding/<event code>', 'Log that a user onboarding event has occured'
+  def onboarding_event
+    OSU::AccessPolicy.require_action_allowed!(params[:code], current_human_user, TrackTutorOnboardingEvent)
+    TrackTutorOnboardingEvent.perform_later(event: params[:code], user: current_human_user)
+    head :created
   end
 end
