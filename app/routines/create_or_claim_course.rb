@@ -19,7 +19,7 @@ class CreateOrClaimCourse
             catalog_offering: attributes[:catalog_offering]
       })
     else
-      run(:create_course, attributes)
+      run(:create_course, attributes.except(:teacher))
     end
     if errors.none?
       run(:add_user_as_teacher, course: outputs.course, user: attributes[:teacher])
