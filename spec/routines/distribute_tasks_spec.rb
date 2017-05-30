@@ -71,7 +71,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
     end
 
-    it 'produces correct results when distributed concurrently' do
+    xit 'produces correct results when distributed concurrently' do
       # 2 students and 1 preview task
       expected_num_tasks = 3
 

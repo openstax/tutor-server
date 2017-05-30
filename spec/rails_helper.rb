@@ -21,6 +21,19 @@ include OpenStax::Salesforce::SpecHelpers
 
 require 'shoulda/matchers'
 
+require 'capybara'
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
+window_size = [1920, 6000]
+
+Capybara.asset_host = 'http://localhost:3001'
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, {
+    :window_size => window_size
+  })
+end
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end

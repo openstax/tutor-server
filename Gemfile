@@ -190,6 +190,9 @@ gem 'awesome_print'
 # which are required for the correct operation of the Biglearn client
 gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
 
+# In place form editing on admin menu
+gem 'best_in_place'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
@@ -276,7 +279,7 @@ group :test do
   gem 'fakeredis'
 
   gem 'shoulda-matchers', require: false
-  gem 'capybara-webkit'
+  gem 'poltergeist'
   gem 'launchy'
   gem 'database_cleaner'
   gem 'db-query-matchers'

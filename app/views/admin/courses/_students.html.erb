@@ -1,17 +1,55 @@
-<% method ||= :post %>
+<% @page_header = "Students for course #{@course.name}" %>
 
-<%= form_for(:course, url: url, method: method, html: { multipart: true }) do |f| %>
-  <div class='form-group'>
-    <%= f.label :period %>
-    <%= select_tag 'course[period]', options_from_collection_for_select(@periods, :id, :name),
-                                     class: 'form-control' %>
-  </div>
+<table class="table table-striped" id="students">
+  <thead>
+    <tr style="background-color: white">
+      <th>Name</th>
+      <th>Paid?</th>
+      <th>Comped?</th>
+      <th>Payment Due</th>
+      <th>Student Identifier</th>
+      <th width="80px">User</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @students.each do |student| %>
+    <% @time_zone ||= student.course.time_zone.to_tz %>
+    <% user_id = student.role.profile.id %>
 
-  <div class='form-group'>
-    <%= label_tag :student_roster %>
-    <%= file_field_tag :student_roster %>
-    <p class='help-block'>Upload a CSV file only, with columns "first_name", "last_name", "username", "password".</p>
-  </div>
+    <tr>
+      <td><%= student.name %></td>
+      <td><%= student.is_paid ? 'Yes' : 'No' %></td>
+      <td>
+        <a href="#"><%= best_in_place student, :is_comped, as: :checkbox, url: admin_student_path(student) %></a>
+      </td>
+      <td>
+        <a href="#">
+          <%= best_in_place student,
+              :payment_due_at,
+              as: :date,
+              url: admin_student_path(student),
+              display_with: ->(val) {
+               val.in_time_zone(@time_zone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
+              }
+          %>
+        </a>
+      </td>
+      <td><%= student.student_identifier %></td>
+      <td>
+        <%= link_to '', edit_admin_user_path(user_id), class: "btn btn-xs glyphicon glyphicon-pencil" %>
+        <%= link_to '', info_admin_users_path(id: user_id), class: "btn btn-xs glyphicon glyphicon-info-sign" %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
 
-  <%= f.submit 'Upload', class: 'btn btn-primary' %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('table#students').stickyTableHeaders();
+      jQuery(".best_in_place").best_in_place();
+    });
+  </script>
 <% end %>

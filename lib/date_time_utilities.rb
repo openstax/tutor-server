@@ -26,4 +26,27 @@ module DateTimeUtilities
   def self.remove_tz(date_time)
     date_time.try(:change, offset: 0).try(:in_time_zone, 'UTC')
   end
+
+ def self.parse_in_zone(string:, zone:)
+    datetime = nil
+
+    begin
+      if zone.present?
+        original_time_zone = Time.zone
+        original_chronic_time_class = Chronic.time_class
+
+        Time.zone = zone
+        Chronic.time_class = Time.zone
+      end
+
+      datetime = Chronic.parse(string)
+    ensure
+      if zone.present?
+        Time.zone = original_time_zone
+        Chronic.time_class = original_chronic_time_class
+      end
+    end
+
+    DateTime.parse(datetime.to_s)
+  end
 end

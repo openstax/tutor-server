@@ -1,0 +1,17 @@
+<% method ||= :post %>
+
+<%= form_for(:course, url: url, method: method, html: { multipart: true }) do |f| %>
+  <div class='form-group'>
+    <%= f.label :period %>
+    <%= select_tag 'course[period]', options_from_collection_for_select(@periods, :id, :name),
+                                     class: 'form-control' %>
+  </div>
+
+  <div class='form-group'>
+    <%= label_tag :student_roster %>
+    <%= file_field_tag :student_roster %>
+    <p class='help-block'>Upload a CSV file only, with columns "first_name", "last_name", "username", "password".</p>
+  </div>
+
+  <%= f.submit 'Upload', class: 'btn btn-primary' %>
+<% end %>
