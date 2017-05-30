@@ -21,7 +21,13 @@ class CreateOrClaimCourse
     else
       run(:create_course, attributes)
     end
-    run(:add_user_as_teacher, course: outputs.course, user: attributes[:teacher]) if errors.none?
+    if errors.none?
+      run(:add_user_as_teacher, course: outputs.course, user: attributes[:teacher])
+      TrackTutorOnboardingEvent.perform_later(
+        event: (outputs.course.is_preview? ? 'created_preview_course' : 'created_real_course'),
+        user: attributes[:teacher]
+      )
+    end
   end
 
 
