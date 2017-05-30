@@ -10,7 +10,12 @@ module OpenStax::Biglearn::Api
   MAX_CONTAINERS_PER_COURSE = 100
   MAX_STUDENTS_PER_COURSE = 1000
 
-  OPTION_KEYS = [ :inline_retry_proc, :inline_max_retries, :inline_sleep_interval ]
+  OPTION_KEYS = [
+    :response_status_key,
+    :accepted_response_status,
+    :inline_max_retries,
+    :inline_sleep_interval
+  ]
 
   extend Configurable
   extend Configurable::ClientMethods
@@ -132,7 +137,9 @@ module OpenStax::Biglearn::Api
         keys: [:course, :preparation_uuid],
         perform_later: true,
         sequence_number_model_key: :course,
-        sequence_number_model_class: CourseProfile::Models::Course
+        sequence_number_model_class: CourseProfile::Models::Course,
+        response_status_key: :update_status,
+        accepted_response_status: [ 'updated_and_ready', 'updated_but_unready' ]
       )
     end
 
@@ -290,7 +297,9 @@ module OpenStax::Biglearn::Api
           keys: :task,
           optional_keys: :max_num_exercises,
           result_class: Content::Exercise,
-          perform_later: false
+          perform_later: false,
+          response_status_key: :assignment_status,
+          accepted_response_status: 'assignment_ready'
         )
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
@@ -314,7 +323,9 @@ module OpenStax::Biglearn::Api
           keys: :task,
           optional_keys: :max_num_exercises,
           result_class: Content::Exercise,
-          perform_later: false
+          perform_later: false,
+          response_status_key: :assignment_status,
+          accepted_response_status: 'assignment_ready'
         )
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
@@ -338,7 +349,9 @@ module OpenStax::Biglearn::Api
           keys: :student,
           optional_keys: :max_num_exercises,
           result_class: Content::Exercise,
-          perform_later: false
+          perform_later: false,
+          response_status_key: :student_status,
+          accepted_response_status: 'student_ready'
         )
       ) do |request, response|
         get_ecosystem_exercises_by_uuids ecosystem: request[:student].course.ecosystems.first,
@@ -487,7 +500,8 @@ module OpenStax::Biglearn::Api
     def single_api_request(method:, request:, keys:, optional_keys: [],
                            result_class: Hash, uuid_key: :request_uuid,
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
-                           create: false, perform_later: false, inline_retry_proc: nil,
+                           create: false, perform_later: false,
+                           response_status_key: nil, accepted_response_status: [],
                            inline_max_attempts: 30, inline_sleep_interval: 1.second)
       include_sequence_number = sequence_number_model_key.present? &&
                                 sequence_number_model_class.present?
@@ -501,16 +515,19 @@ module OpenStax::Biglearn::Api
                                                   optional_keys: optional_keys
 
       request_with_uuid = verified_request.has_key?(uuid_key) ?
-                            verified_request : verified_request.merge(uuid_key => SecureRandom.uuid)
+                            verified_request :
+                            verified_request.merge(uuid_key => SecureRandom.uuid)
 
       if perform_later
         job_class.perform_later method: method.to_s,
                                 requests: request_with_uuid,
                                 create: create,
                                 sequence_number_model_key: sequence_number_model_key.to_s,
-                                sequence_number_model_class: sequence_number_model_class.name
+                                sequence_number_model_class: sequence_number_model_class.name,
+                                response_status_key: response_status_key.try!(:to_s),
+                                accepted_response_status: accepted_response_status
       else
-        should_retry = false
+        should_retry = true
         for ii in 1..inline_max_attempts do
           response = job_class.perform method: method,
                                        requests: request_with_uuid,
@@ -518,7 +535,11 @@ module OpenStax::Biglearn::Api
                                        sequence_number_model_key: sequence_number_model_key,
                                        sequence_number_model_class: sequence_number_model_class
 
-          should_retry = !inline_retry_proc.nil? && inline_retry_proc.call(response)
+          should_retry = if response_status_key.nil?
+            false
+          else
+            ![accepted_response_status].flatten.include?(response[response_status_key])
+          end
           break unless should_retry
 
           sleep(inline_sleep_interval)
@@ -539,7 +560,8 @@ module OpenStax::Biglearn::Api
     def bulk_api_request(method:, requests:, keys:, optional_keys: [],
                          result_class: Hash, uuid_key: :request_uuid, select_proc: nil,
                          sequence_number_model_key: nil, sequence_number_model_class: nil,
-                         create: false, perform_later: false, inline_retry_proc: nil,
+                         create: false, perform_later: false,
+                         response_status_key: nil, accepted_response_status: [],
                          inline_max_attempts: 30, inline_sleep_interval: 1.second)
       include_sequence_numbers = sequence_number_model_key.present? &&
                                  sequence_number_model_class.present?
@@ -573,7 +595,9 @@ module OpenStax::Biglearn::Api
                                 requests: requests_array,
                                 create: create,
                                 sequence_number_model_key: sequence_number_model_key.to_s,
-                                sequence_number_model_class: sequence_number_model_class.name
+                                sequence_number_model_class: sequence_number_model_class.name,
+                                response_status_key: response_status_key.try!(:to_s),
+                                accepted_response_status: accepted_response_status
       else
         responses_map = {}
         for ii in 1..inline_max_attempts do
@@ -582,6 +606,9 @@ module OpenStax::Biglearn::Api
                                         create: create,
                                         sequence_number_model_key: sequence_number_model_key,
                                         sequence_number_model_class: sequence_number_model_class
+
+          accepted_response_status = [accepted_response_status].flatten \
+            unless response_status_key.nil?
 
           responses.each do |response|
             uuid = response[uuid_key]
@@ -592,8 +619,9 @@ module OpenStax::Biglearn::Api
               result_class: result_class
             )
 
-            requests_with_uuids_map.delete uuid if inline_retry_proc.nil? ||
-                                                   !inline_retry_proc.call(response)
+            requests_with_uuids_map.delete(uuid) \
+              if response_status_key.nil? ||
+                 accepted_response_status.include?(response[response_status_key])
           end
 
           break if requests_with_uuids_map.empty?

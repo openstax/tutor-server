@@ -6,8 +6,10 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
 
   queue_as :default
 
-  def perform(method:, requests:, create:,
-              sequence_number_model_key:, sequence_number_model_class:)
+  def perform(
+    method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:,
+    response_status_key: nil, accepted_response_status: []
+  )
     req = [requests].flatten
     sequence_number_model_key = sequence_number_model_key.to_sym
 
@@ -91,7 +93,10 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       # Create a background job if possible to guarantee the sequence_number will reach Biglearn
       if can_perform_later
         job = OpenStax::Biglearn::Api::Job.perform_later(
-          method: method.to_s, requests: modified_requests
+          method: method.to_s,
+          requests: modified_requests,
+          response_status_key: response_status_key.try!(:to_s),
+          accepted_response_status: accepted_response_status
         )
 
         # Destroy the current job so it's removed from the queue when this transaction commits
@@ -113,7 +118,10 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
         # so the lock should never fail (PostgreSQL doesn't even support Read Uncommitted)
         Delayed::Job.reserve_with_scope(ready_scope, worker, now)
       else
-        return super(method: method, requests: modified_requests)
+        return super(method: method,
+                     requests: modified_requests,
+                     response_status_key: response_status_key,
+                     accepted_response_status: accepted_response_status)
       end
     end
 

@@ -198,7 +198,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: exercises.map(&:uuid)
+            exercise_uuids: exercises.map(&:uuid),
+            assignment_status: 'assignment_ready'
           }
         end
       end
@@ -218,7 +219,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid }
+            exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid },
+            assignment_status: 'assignment_ready'
           }
         end
       end
@@ -239,7 +241,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: exercises.map(&:uuid)
+            exercise_uuids: exercises.map(&:uuid),
+            assignment_status: 'assignment_ready'
           }
         end
       end
@@ -259,7 +262,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid }
+            exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid },
+            assignment_status: 'assignment_ready'
           }
         end
       end
