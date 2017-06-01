@@ -3,12 +3,6 @@ module Api::V1
 
     include Roar::JSON
 
-    property :previous_ui_settings,
-             type: Hash,
-             readable: true,
-             writeable: true,
-             schema_info: { required: true }
-
     property :ui_settings,
              type: Hash,
              readable: true,
