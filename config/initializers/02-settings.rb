@@ -18,16 +18,11 @@ secrets = Rails.application.secrets
 biglearn_secrets = secrets['openstax']['biglearn']
 biglearn_stub = biglearn_secrets['stub'].nil? ? true : biglearn_secrets['stub']
 Settings::Db.store.defaults[:biglearn_client] = biglearn_stub ? :fake : :real
-Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = \
-  biglearn_stub ? 'local_query' : 'sparfa'
-Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = \
-  biglearn_stub ? 'local_query' : 'sparfa'
-Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = \
-  biglearn_stub ? 'local_query_student_driven' : 'tesr_student_driven'
-Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = \
-  biglearn_stub ? 'local_query' : 'tesr'
-Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = \
-  biglearn_stub ? 'local_query' : 'tesr'
+Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = 'local_query'
+Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = 'local_query'
+Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = 'student_driven_local_query'
+Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = 'local_query'
+Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = 'local_query'
 
 redis_secrets = secrets['redis']
 Settings::Redis.store = Redis::Store.new(
