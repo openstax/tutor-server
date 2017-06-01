@@ -23,7 +23,12 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
 
   let(:request_with_sequence_numbers)  { request.merge sequence_number: 0 }
   let(:job_args)                       do
-    { method: method.to_s, requests: request_with_sequence_numbers }
+    {
+      method: method.to_s,
+      requests: request_with_sequence_numbers,
+      response_status_key: nil,
+      accepted_response_status: []
+    }
   end
 
   it 'delegates #perform to a new instance of itself' do
