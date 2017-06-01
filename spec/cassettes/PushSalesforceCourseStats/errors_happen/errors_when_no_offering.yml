@@ -5,7 +5,7 @@ http_interactions:
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Contact"
     body:
       encoding: UTF-8
-      string: '{"FirstName":"Kennedi","LastName":"Weber","AccountId":"0010S0000057qMUQAY"}'
+      string: '{"FirstName":"Lura","LastName":"Eichmann","AccountId":"0010v000002Wo0qAAC"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -23,24 +23,23 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Tue, 09 May 2017 22:37:22 GMT
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
+      - Thu, 01 Jun 2017 22:38:08 GMT
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      - referrer origin-when-cross-origin
+      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
       Set-Cookie:
-      - BrowserId=azyOXAsTR_SFZQzUgCpbBQ;Path=/;Domain=.salesforce.com;Expires=Sat,
-        08-Jul-2017 22:37:22 GMT
+      - BrowserId=txrUGnP8RbiRYEqgPeuW_A;Path=/;Domain=.salesforce.com;Expires=Mon,
+        31-Jul-2017 22:38:08 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=235/48000
+      - api-usage=202/48000
       Location:
-      - "/services/data/v37.0/sobjects/Contact/0030S0000059KiUQAU"
+      - "/services/data/v37.0/sobjects/Contact/0030v000001vEChAAM"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -49,7 +48,7 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0030S0000059KiUQAU","success":true,"errors":[]}'
+      string: '{"id":"0030v000001vEChAAM","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Tue, 09 May 2017 22:37:23 GMT
+  recorded_at: Thu, 01 Jun 2017 22:38:09 GMT
 recorded_with: VCR 2.9.3

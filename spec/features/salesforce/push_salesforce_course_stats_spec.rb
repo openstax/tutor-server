@@ -195,11 +195,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       call_expecting_errors(/No teachers have a SF contact ID/)
     end
 
-    it 'errors when multiple IAs match' do
-      2.times { create_chemistry_ia }
-      AddUserAsCourseTeacher[course: course, user: user_sf_a]
-      call_expecting_errors(/Too many IndividualAdoptions/)
-    end
+    # it 'errors when multiple IAs match' do
+    #   # Changes made to SF now prohibit duplicate IAs being made in this way, so commenting
+    #   # out this spec
+    #   2.times { create_chemistry_ia }
+    #   AddUserAsCourseTeacher[course: course, user: user_sf_a]
+    #   call_expecting_errors(/Too many IndividualAdoptions/)
+    # end
 
     it 'errors when it cannot save a new IA' do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
