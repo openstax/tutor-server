@@ -136,6 +136,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:catalog_offering) { FactoryGirl.create :catalog_offering, ecosystem: book.ecosystem }
     let(:num_sections)     { 2 }
 
+    before(:each) {
+      allow(TrackTutorOnboardingEvent).to receive(:perform_later)
+    }
+
     let(:valid_body_hash) do
       {
         name: 'A Course',

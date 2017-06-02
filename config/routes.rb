@@ -86,6 +86,7 @@ Rails.application.routes.draw do
 
     namespace :log do
       post :entry
+      post 'event/onboarding/:code', action: :onboarding_event
     end
 
     resources :tasks, only: [:show, :destroy] do

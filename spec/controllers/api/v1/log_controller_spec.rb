@@ -49,6 +49,40 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
   end
 
+
+  describe '#track' do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:user_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                            resource_owner_id: user.id }
+
+    it 'rejects student access' do
+      user.account.update_attributes(role: :student)
+      expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
+      expect {
+        api_post :onboarding_event, user_token, parameters: { code: 'arrived_my_courses' }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    describe 'as an instructor' do
+      before(:each) { user.account.role = :instructor }
+
+      it 'rejects invalid codes' do
+        expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
+        expect {
+          api_post :onboarding_event, user_token, parameters: { code: 'bad&wrong' }
+        }.to raise_error(SecurityTransgression)
+      end
+
+      it 'tracks valid codes' do
+        user.account.update_attributes!(role: :instructor)
+        expect(TrackTutorOnboardingEvent).to receive(:perform_later)
+                                               .with(event: 'arrived_my_courses', user: anything)
+        api_post :onboarding_event, user_token, parameters: { code: 'arrived_my_courses' }
+        expect(response).to have_http_status(:success)
+      end
+    end
+  end
+
   def log(options)
     api_post :entry, nil, raw_post_data: options.to_json
   end
