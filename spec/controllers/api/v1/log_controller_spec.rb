@@ -75,9 +75,14 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
       it 'tracks valid codes' do
         user.account.update_attributes!(role: :instructor)
-        expect(TrackTutorOnboardingEvent).to receive(:perform_later)
-                                               .with(event: 'arrived_my_courses', user: anything)
-        api_post :onboarding_event, user_token, parameters: { code: 'arrived_my_courses' }
+        expect(TrackTutorOnboardingEvent).to receive(:perform_later).with(
+                                               data: { decision: "I won't be using it" },
+                                               event: 'made_adoption_decision',
+                                               user: anything,
+                                             )
+        api_post :onboarding_event, user_token, parameters: {
+                   code: 'made_adoption_decision', data: { decision: "I won't be using it" },
+                 }
         expect(response).to have_http_status(:success)
       end
     end
