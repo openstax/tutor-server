@@ -22,6 +22,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
       expect(response.body_as_hash).to match(
         access_token: token,
         errata_form_url: 'https://oscms.openstax.org/errata/form',
+        terms_signatures_needed: false,
         tutor_api_url: a_string_starting_with('http'),
         accounts_profile_url: a_string_starting_with('http'),
         accounts_api_url: a_string_starting_with('http'),

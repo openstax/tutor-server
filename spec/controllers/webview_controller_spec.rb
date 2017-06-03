@@ -37,7 +37,7 @@ RSpec.describe WebviewController, type: :controller do
     it 'requires agreement to contracts' do
       controller.sign_in new_user
       get :index
-      expect(response).to have_http_status(:found)
+      expect(response).to have_http_status(:ok)
     end
 
     context "as a signed in user" do

@@ -39,6 +39,7 @@ class AuthController < ApplicationController
     if current_user.is_anonymous?
       redirect_to_login_url
     else
+      require_contracts
       @status = user_status_update
       @parent_window = params[:parent]
     end
