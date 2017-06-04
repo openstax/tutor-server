@@ -180,7 +180,8 @@ Rails.application.routes.draw do
 
     resources :jobs, only: [:index, :show]
 
-    resources :terms, only: [:index, :update]
+    get 'terms', to: 'terms#index'
+    put 'terms/:ids', to: 'terms#sign'
 
     match :'*all', to: 'api#options', via: [:options]
   end

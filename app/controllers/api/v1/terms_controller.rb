@@ -40,21 +40,31 @@ class Api::V1::TermsController < Api::V1::ApiController
   api :PUT, '/terms/:ids', 'Signs the identified terms for the current user'
   description <<-EOS
     :ids should be a comma-separated list of contract IDs that the user signed
-  EOS
-  def update
-    if current_human_user.nil? || current_human_user.is_anonymous?
-      head :forbidden
-    else
-      ids.split(',').map(&:strip).each do |id|
-        signature = FinePrint.sign_contract(current_user.to_model, id)
-        if signature && signature.errors.any?
-          render_api_errors(signature.errors)
-          return
-        end
-      end
 
-      head :success
+    403 if forbidden
+    400 with message if no IDs provided
+    422 with message if can't find terms or other signature error
+    200 if all good (repeat signatures are ok)
+  EOS
+  def sign
+    return head :forbidden if current_human_user.nil? || current_human_user.is_anonymous?
+    return render_api_errors(:terms_ids_missing, :bad_request) if params[:ids].blank?
+
+    params[:ids].split(',').map(&:strip).each do |id|
+      signature =
+        begin
+          FinePrint.sign_contract(current_human_user.to_model, id)
+        rescue ActiveRecord::RecordNotFound
+          return render_api_errors("Terms with ID #{id} not found")
+        end
+
+      # Go to next if already signed
+      next if signature.errors.get_type(:contract_id) == [:taken]
+
+      return render_api_errors(signature.errors) if signature.errors.any?
     end
+
+    head :ok
   end
 
 end
