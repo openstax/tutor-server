@@ -48,14 +48,6 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
   end
 
   context "#ui-settings" do
-    it 'returns api_error when previous is invalid' do
-      api_put :ui_settings, user_1_token, raw_post_data: {
-                ui_settings: {is_open: false, answer: 42}
-              }.to_json
-      expect(response.code).to eq('422')
-      expect(response.body).to include('out-of-band update detected')
-    end
-
     it "saves to profile" do
       api_put :ui_settings, user_1_token, raw_post_data: {
                 previous_ui_settings: {},
