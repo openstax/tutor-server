@@ -77,11 +77,6 @@ module Api::V1
              schema_info: { type: 'boolean',
                             description: "If the feedback should be shown for the task" }
 
-    property :spy,
-             type: Object,
-             readable: true,
-             writeable: false
-
     property :deleted?,
              as: :is_deleted,
              readable: true,
@@ -90,6 +85,11 @@ module Api::V1
                type: 'boolean',
                description: "Whether or not this task has been withdrawn by the teacher"
              }
+
+    property :spy,
+             type: Object,
+             readable: true,
+             writeable: false
 
   end
 end

@@ -25,7 +25,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda {|*| task_step.tasks_task_id },
+             getter: ->(*) { task_step.tasks_task_id },
              schema_info: {
                  required: true,
                  description: "The id of the Task"
@@ -35,8 +35,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| self.class.name.demodulize.remove("Tasked")
-                                                 .underscore.downcase },
+             getter: ->(*) { self.class.name.demodulize.remove("Tasked").underscore.downcase },
              schema_info: {
                required: true,
                description: "The type of this TaskStep (exercise, reading, video, placeholder, etc.)"
@@ -56,7 +55,7 @@ module Api::V1::Tasks
     property :is_completed,
              writeable: false,
              readable: true,
-             getter: lambda {|*| task_step.completed?},
+             getter: ->(*) { task_step.completed? },
              schema_info: {
                required: true,
                type: 'boolean',
@@ -89,9 +88,7 @@ module Api::V1::Tasks
     collection :related_content,
                writeable: false,
                readable: true,
-               getter: ->(*) {
-                 task_step.related_content.map{ |rc| Hashie::Mash.new(rc) }
-               },
+               getter: ->(*) { task_step.related_content.map{ |rc| Hashie::Mash.new(rc) } },
                extend: ::Api::V1::RelatedContentRepresenter,
                schema_info: {
                  required: true,
@@ -106,6 +103,12 @@ module Api::V1::Tasks
                  required: true,
                  description: "Misc properties related to this step"
                }
+
+    property :spy,
+             type: Object,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { task_step.spy }
 
   end
 end

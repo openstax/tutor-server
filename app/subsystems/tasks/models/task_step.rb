@@ -18,6 +18,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   json_serialize :related_content, Hash, array: true
   json_serialize :related_exercise_ids, Integer, array: true
   json_serialize :labels, String, array: true
+  json_serialize :spy, Hash
 
   validates :task, presence: true
   validates :tasked, presence: true

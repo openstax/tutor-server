@@ -15,7 +15,8 @@ RSpec.describe Api::V1::Tasks::TaskedExternalUrlRepresenter, type: :representer 
       is_completed: false,
       has_recovery: false,
       labels: [],
-      related_content: []
+      related_content: [],
+      spy: {}
     }.stringify_keys)
   end
 end
