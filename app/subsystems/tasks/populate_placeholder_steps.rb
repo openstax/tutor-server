@@ -3,6 +3,7 @@ class Tasks::PopulatePlaceholderSteps
   lev_routine express_output: :task
 
   uses_routine TaskExercise, as: :task_exercise
+  uses_routine TranslateBiglearnSpyInfo, as: :translate_biglearn_spy_info
 
   protected
 
@@ -79,7 +80,7 @@ class Tasks::PopulatePlaceholderSteps
       # Biglearn controls how many PEs/SPEs (reading tasks)
       result = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
       chosen_exercises = result[:exercises]
-      spy_info = result[:spy_info]
+      spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       chosen_exercise_models = chosen_exercises.map(&:to_model)
 
       # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
@@ -139,6 +140,8 @@ class Tasks::PopulatePlaceholderSteps
 
               num_added_steps += exercise.number_of_parts - 1
             end
+
+            task_step.spy = spy_info.fetch(exercise.uuid, {})
 
             # Assign the exercise (handles multipart questions, etc)
             run(:task_exercise, task_step: task_step, exercise: exercise)
