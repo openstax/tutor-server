@@ -33,6 +33,15 @@ gem 'jquery-rails'
 # Automatically ajaxify links
 gem 'turbolinks'
 
+# PostgreSQL database
+gem 'pg'
+
+# Run unicorn when using the `rails server` or `rails s` command
+gem 'unicorn-rails'
+
+# Prevent server memory from growing until OOM
+gem 'unicorn-worker-killer'
+
 # Rails 5 HTML sanitizer
 gem 'rails-html-sanitizer', '~> 1.0'
 
@@ -107,9 +116,6 @@ gem 'httparty'
 
 # Ordered models
 gem 'sortability'
-
-# PostgreSQL database
-gem 'pg'
 
 # Lorem Ipsum
 gem 'faker'
@@ -203,9 +209,6 @@ group :development, :test do
   # Show failing parallel specs instantly
   gem 'rspec-instafail'
 
-  # Thin development server
-  gem 'thin'
-
   # Call 'debugger' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 
@@ -288,12 +291,6 @@ group :test do
 end
 
 group :production do
-  # Unicorn production server
-  gem 'unicorn'
-
-  # Unicorn worker killer
-  gem 'unicorn-worker-killer'
-
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 
