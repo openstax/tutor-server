@@ -84,3 +84,12 @@ en:
       pardot_toa_redirect:
         name: 'TutorOnboardingA Redirect URL'
         help_block: 'Where an arrival to /pardot/toa is redirected'
+      ga_tracking_codes:
+        name: 'Google Analytics tracking codes'
+        help_block: 'Can list multiple, comma-separated'
+      payments_enabled:
+        name: 'Payments Enabled?'
+        help_block: 'If unchecked, payments will not overdue, students will not be prompted to pay; useful if Payments site is down or has an issue'
+      prebuilt_preview_course_count:
+        name: '# Prebuilt Preview Courses'
+        help_block: 'The number of prebuilt preview courses to keep at the ready'
