@@ -15,7 +15,8 @@ RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, type: :representer do
       has_recovery: false,
       content_url: task_step.tasked.url,
       content_html: task_step.tasked.content,
-      related_content: a_kind_of(Array)
+      related_content: a_kind_of(Array),
+      spy: {}
     }.stringify_keys)
   end
 end

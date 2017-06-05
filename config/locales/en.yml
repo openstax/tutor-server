@@ -55,10 +55,10 @@ en:
       biglearn_assignment_spes_algorithm_name:
         name: 'Biglearn algorithm for choosing Spaced Practice exercises'
         labels:
-          Student-driven TeSR: 'tesr_student_driven'
-          Faculty-driven TeSR: 'tesr_instructor_driven'
-          Student-driven Local Query: 'local_query_student_driven'
-          Faculty-driven Local Query: 'local_query_instructor_driven'
+          Student-driven TeSR: 'student_driven_tesr'
+          Faculty-driven TeSR: 'instructor_driven_tesr'
+          Student-driven Local Query: 'student_driven_local_query'
+          Faculty-driven Local Query: 'instructor_driven_local_query'
         help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       biglearn_assignment_pes_algorithm_name:
         name: 'Biglearn algorithm for choosing Personalized exercises'

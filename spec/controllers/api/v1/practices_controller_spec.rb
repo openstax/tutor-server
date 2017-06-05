@@ -83,7 +83,12 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it 'returns error when no exercises can be scrounged' do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
 
-      expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([])
+      expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
+        {
+          exercises: [],
+          spy_info: {}
+        }
+      )
 
       api_post :create_specific,
                user_1_token,
@@ -92,7 +97,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(response).to have_http_status(422)
     end
-    
+
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: course, user: user_1) {
         api_post :create_specific,
@@ -140,16 +145,19 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     it 'returns error when no exercises can be scrounged' do
       AddUserAsPeriodStudent.call(period: period, user: user_1)
 
-      expect(OpenStax::Biglearn::Api).to(
-        receive(:fetch_practice_worst_areas_exercises).and_return([])
+      expect(OpenStax::Biglearn::Api).to receive(:fetch_practice_worst_areas_exercises).and_return(
+        {
+          exercises: [],
+          spy_info: {}
+        }
       )
 
       api_post :create_worst, user_1_token, parameters: { id: course.id, role_id: role.id }
 
       expect(response).to have_http_status(422)
     end
-    
-    
+
+
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: course, user: user_1) {
         api_post :create_worst,

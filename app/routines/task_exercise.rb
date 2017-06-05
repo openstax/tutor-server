@@ -26,6 +26,7 @@ class TaskExercise
     page = current_step.page
     related_content = current_step.related_content
     labels = current_step.labels
+    spy = current_step.spy
     questions = exercise.content_as_independent_questions
 
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
@@ -36,7 +37,8 @@ class TaskExercise
         group_type: group_type,
         page: page,
         related_content: related_content,
-        labels: labels
+        labels: labels,
+        spy: spy
       ) if ii > 0
 
       # Mark the step as incomplete just in case it had been marked as complete before

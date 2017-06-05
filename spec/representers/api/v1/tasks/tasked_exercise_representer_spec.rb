@@ -1,50 +1,49 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
-  let(:task_step) {
-    step = instance_double(Tasks::Models::TaskStep)
-    allow(step).to receive(:id).and_return(15)
-    allow(step).to receive(:tasks_task_id).and_return(42)
-    allow(step).to receive(:group_name).and_return('Some group')
-    allow(step).to receive(:completed?).and_return(false)
-    allow(step).to receive(:feedback_available?).and_return(false)
-    allow(step).to receive(:can_be_recovered?).and_return(true)
-    allow(step).to receive(:related_content).and_return([])
-    allow(step).to receive(:labels).and_return([])
-    step
-  }
+  let(:task_step) do
+    instance_double(Tasks::Models::TaskStep).tap do |step|
+      allow(step).to receive(:id).and_return(15)
+      allow(step).to receive(:tasks_task_id).and_return(42)
+      allow(step).to receive(:group_name).and_return('Some group')
+      allow(step).to receive(:completed?).and_return(false)
+      allow(step).to receive(:feedback_available?).and_return(false)
+      allow(step).to receive(:can_be_recovered?).and_return(true)
+      allow(step).to receive(:related_content).and_return([])
+      allow(step).to receive(:labels).and_return([])
+      allow(step).to receive(:spy).and_return({})
+    end
+  end
 
-  let(:tasked_exercise) {
-    exercise = instance_double(Tasks::Models::TaskedExercise)
+  let(:tasked_exercise) do
+    instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+      ## Avoid rspec double class when figuring out :type
+      allow(exercise).to receive(:class).and_return(Tasks::Models::TaskedExercise)
 
-    ## Avoid rspec double class when figuring out :type
-    allow(exercise).to receive(:class).and_return(Tasks::Models::TaskedExercise)
+      allow(exercise).to receive(:task_step).and_return(task_step)
+      allow(exercise).to receive(:can_be_recovered?).and_return(false)
 
-    allow(exercise).to receive(:task_step).and_return(task_step)
-    allow(exercise).to receive(:can_be_recovered?).and_return(false)
+      ## TaskedExercise-specific properties
+      allow(exercise).to receive(:url).and_return('Some url')
+      allow(exercise).to receive(:title).and_return('Some title')
+      allow(exercise).to receive(:context).and_return('Some context')
+      allow(exercise).to receive(:content_hash_for_students).and_return('Some content')
+      allow(exercise).to receive(:solution).and_return('Some solution')
+      allow(exercise).to receive(:feedback).and_return('Some feedback')
+      allow(exercise).to receive(:correct_answer_id).and_return('456')
+      allow(exercise).to receive(:is_correct?).and_return(false)
+      allow(exercise).to receive(:free_response).and_return(nil)
+      allow(exercise).to receive(:answer_id).and_return(nil)
+      allow(exercise).to receive(:last_completed_at).and_return(Time.current)
+      allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
+      allow(exercise).to receive(:question_id).and_return("questionID")
+      allow(exercise).to receive(:is_in_multipart).and_return(false)
+    end
+  end
 
-    ## TaskedExercise-specific properties
-    allow(exercise).to receive(:url).and_return('Some url')
-    allow(exercise).to receive(:title).and_return('Some title')
-    allow(exercise).to receive(:context).and_return('Some context')
-    allow(exercise).to receive(:content_hash_for_students).and_return('Some content')
-    allow(exercise).to receive(:solution).and_return('Some solution')
-    allow(exercise).to receive(:feedback).and_return('Some feedback')
-    allow(exercise).to receive(:correct_answer_id).and_return('456')
-    allow(exercise).to receive(:is_correct?).and_return(false)
-    allow(exercise).to receive(:free_response).and_return(nil)
-    allow(exercise).to receive(:answer_id).and_return(nil)
-    allow(exercise).to receive(:last_completed_at).and_return(Time.current)
-    allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
-    allow(exercise).to receive(:question_id).and_return("questionID")
-    allow(exercise).to receive(:is_in_multipart).and_return(false)
-
-    exercise
-  }
-
-  let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
+  let(:representation) do ## NOTE: This is lazily-evaluated on purpose!
     Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked_exercise).as_json
-  }
+  end
 
   shared_examples "a good exercise representation should" do
     it "'type' == 'exercise'" do
@@ -98,6 +97,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     it "has 'is_in_multipart" do
       expect(representation).to include("is_in_multipart" => false)
+    end
+
+    it "has 'spy'" do
+      expect(representation).to include("spy" => {})
     end
 
   end

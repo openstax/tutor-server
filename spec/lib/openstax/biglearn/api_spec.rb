@@ -135,21 +135,21 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [
           :fetch_assignment_pes,
           -> { [ { task: @task, max_num_exercises: max_num_exercises } ] },
-          Content::Exercise,
+          Hash,
           -> { @course },
           0
         ],
         [
           :fetch_assignment_spes,
           -> { [ { task: @task, max_num_exercises: max_num_exercises } ] },
-          Content::Exercise,
+          Hash,
           -> { @course },
           0
         ],
         [
           :fetch_practice_worst_areas_exercises,
           -> { [ { student: @student, max_num_exercises: max_num_exercises } ] },
-          Content::Exercise,
+          Hash,
           -> { @course },
           0
         ],
@@ -198,7 +198,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: exercises.map(&:uuid)
+            exercise_uuids: exercises.map(&:uuid),
+            assignment_status: 'assignment_ready'
           }
         end
       end
@@ -210,7 +211,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           task: @task, max_num_exercises: max_num_exercises
         )
       end.not_to raise_error
-      expect(result).to match_array(exercises)
+      expect(result.fetch(:exercises)).to match_array(exercises)
     end
 
     it 'errors when client returns more exercises than expected' do
@@ -218,7 +219,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid }
+            exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid },
+            assignment_status: 'assignment_ready'
           }
         end
       end
@@ -239,7 +241,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: exercises.map(&:uuid)
+            exercise_uuids: exercises.map(&:uuid),
+            assignment_status: 'assignment_ready'
           }
         end
       end
@@ -251,7 +254,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           task: @task, max_num_exercises: max_num_exercises
         )
       end.not_to raise_error
-      expect(result).to match_array(exercises)
+      expect(result.fetch(:exercises)).to match_array(exercises)
     end
 
     it 'errors when client returns exercises not present locally' do
@@ -259,7 +262,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         requests.map do |request|
           {
             request_uuid: request[:request_uuid],
-            exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid }
+            exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid },
+            assignment_status: 'assignment_ready'
           }
         end
       end
