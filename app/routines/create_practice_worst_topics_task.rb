@@ -13,8 +13,9 @@ class CreatePracticeWorstTopicsTask
   end
 
   def add_task_steps
-    exercises = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(student: @role.student)
-                                       .first(CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES)
+    result = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(student: @role.student)
+    exercises = result[:exercises].first(CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES)
+    spy_info = result[:spy_info]
 
     fatal_error(
       code: :no_exercises,

@@ -135,21 +135,21 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         [
           :fetch_assignment_pes,
           -> { [ { task: @task, max_num_exercises: max_num_exercises } ] },
-          Content::Exercise,
+          Hash,
           -> { @course },
           0
         ],
         [
           :fetch_assignment_spes,
           -> { [ { task: @task, max_num_exercises: max_num_exercises } ] },
-          Content::Exercise,
+          Hash,
           -> { @course },
           0
         ],
         [
           :fetch_practice_worst_areas_exercises,
           -> { [ { student: @student, max_num_exercises: max_num_exercises } ] },
-          Content::Exercise,
+          Hash,
           -> { @course },
           0
         ],
@@ -211,7 +211,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           task: @task, max_num_exercises: max_num_exercises
         )
       end.not_to raise_error
-      expect(result).to match_array(exercises)
+      expect(result.fetch(:exercises)).to match_array(exercises)
     end
 
     it 'errors when client returns more exercises than expected' do
@@ -254,7 +254,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           task: @task, max_num_exercises: max_num_exercises
         )
       end.not_to raise_error
-      expect(result).to match_array(exercises)
+      expect(result.fetch(:exercises)).to match_array(exercises)
     end
 
     it 'errors when client returns exercises not present locally' do

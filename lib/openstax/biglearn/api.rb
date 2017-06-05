@@ -296,15 +296,19 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: :task,
           optional_keys: :max_num_exercises,
-          result_class: Content::Exercise,
           perform_later: false,
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready'
         )
       ) do |request, response|
-        get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
-                                         exercise_uuids: response[:exercise_uuids],
-                                         max_num_exercises: request[:max_num_exercises]
+        {
+          exercises: get_ecosystem_exercises_by_uuids(
+            ecosystem: request[:task].ecosystem,
+            exercise_uuids: response[:exercise_uuids],
+            max_num_exercises: request[:max_num_exercises]
+          ),
+          spy_info: response.fetch(:spy_info, {})
+        }
       end
     end
 
@@ -322,15 +326,19 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: :task,
           optional_keys: :max_num_exercises,
-          result_class: Content::Exercise,
           perform_later: false,
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready'
         )
       ) do |request, response|
-        get_ecosystem_exercises_by_uuids ecosystem: request[:task].ecosystem,
-                                         exercise_uuids: response[:exercise_uuids],
-                                         max_num_exercises: request[:max_num_exercises]
+        {
+          exercises: get_ecosystem_exercises_by_uuids(
+            ecosystem: request[:task].ecosystem,
+            exercise_uuids: response[:exercise_uuids],
+            max_num_exercises: request[:max_num_exercises]
+          ),
+          spy_info: response.fetch(:spy_info, {})
+        }
       end
     end
 
@@ -348,15 +356,19 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: :student,
           optional_keys: :max_num_exercises,
-          result_class: Content::Exercise,
           perform_later: false,
           response_status_key: :student_status,
           accepted_response_status: 'student_ready'
         )
       ) do |request, response|
-        get_ecosystem_exercises_by_uuids ecosystem: request[:student].course.ecosystems.first,
-                                         exercise_uuids: response[:exercise_uuids],
-                                         max_num_exercises: request[:max_num_exercises]
+        {
+          exercises: get_ecosystem_exercises_by_uuids(
+            ecosystem: request[:student].course.ecosystems.first,
+            exercise_uuids: response[:exercise_uuids],
+            max_num_exercises: request[:max_num_exercises]
+          ),
+          spy_info: response.fetch(:spy_info, {})
+        }
       end
     end
 
