@@ -11,6 +11,9 @@ class CourseProfile::ClaimPreviewCourse
                .lock
                .first
     if course.nil?
+      WarningMailer.log_and_deliver(
+        "Failed to claim preview course for offering id #{catalog_offering.id}"
+      )
       fatal_error(code: :no_preview_courses_available)
       return
     end
