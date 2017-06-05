@@ -70,11 +70,11 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it 'returns core task steps' do
-    core_step1            = instance_double('TaskStep', :core_group? => true)
-    core_step2            = instance_double('TaskStep', :core_group? => true)
-    core_step3            = instance_double('TaskStep', :core_group? => true)
-    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false)
-    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false)
+    core_step1            = instance_double('TaskStep', core_group?: true)
+    core_step2            = instance_double('TaskStep', core_group?: true)
+    core_step3            = instance_double('TaskStep', core_group?: true)
+    spaced_practice_step1 = instance_double('TaskStep', core_group?: false)
+    spaced_practice_step2 = instance_double('TaskStep', core_group?: false)
     task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
     task = Tasks::Models::Task.new
     allow(task).to receive(:task_steps).and_return(task_steps)
@@ -88,11 +88,11 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it 'returns spaced_practice task steps' do
-    core_step1            = instance_double('TaskStep', :spaced_practice_group? => false)
-    core_step2            = instance_double('TaskStep', :spaced_practice_group? => false)
-    core_step3            = instance_double('TaskStep', :spaced_practice_group? => false)
-    spaced_practice_step1 = instance_double('TaskStep', :spaced_practice_group? => true)
-    spaced_practice_step2 = instance_double('TaskStep', :spaced_practice_group? => true)
+    core_step1            = instance_double('TaskStep', spaced_practice_group?: false)
+    core_step2            = instance_double('TaskStep', spaced_practice_group?: false)
+    core_step3            = instance_double('TaskStep', spaced_practice_group?: false)
+    spaced_practice_step1 = instance_double('TaskStep', spaced_practice_group?: true)
+    spaced_practice_step2 = instance_double('TaskStep', spaced_practice_group?: true)
     task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
     task = Tasks::Models::Task.new
     allow(task).to receive(:task_steps).and_return(task_steps)
@@ -603,7 +603,12 @@ RSpec.describe Tasks::Models::Task, type: :model do
         expect(task.correct_exercise_steps_count).to eq 2
 
         # The placeholder step is removed due to no available personalized exercises
-        expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return([]).once
+        expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
+          {
+            exercises: [],
+            spy_info: {}
+          }
+        ).once
 
         MarkTaskStepCompleted[task_step: task.task_steps[3]]
 
