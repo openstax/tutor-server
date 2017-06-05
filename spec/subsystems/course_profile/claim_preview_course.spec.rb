@@ -38,7 +38,8 @@ RSpec.describe CourseProfile::ClaimPreviewCourse do
         catalog_offering: offering, name: 'My New Preview Course'
       )
       expect(result.errors.first.code).to eq :no_preview_courses_available
-      expect(ActionMailer::Base.deliveries.last.subject).to match('Failed to find preview course')
+      expect(ActionMailer::Base.deliveries.last.subject).to match('claim_preview_course.rb')
+      expect(ActionMailer::Base.deliveries.last.body).to match("offering id #{offering.id}")
     end
   end
 
