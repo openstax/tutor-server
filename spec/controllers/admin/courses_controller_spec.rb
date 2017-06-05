@@ -104,7 +104,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  context 'POST #students' do
+  context 'POST #roster' do
     let(:physics)        { FactoryGirl.create :course_profile_course }
     let(:physics_period) { FactoryGirl.create :course_membership_period, course: physics }
 
@@ -112,28 +112,28 @@ RSpec.describe Admin::CoursesController, type: :controller do
     let(:biology_period) { FactoryGirl.create :course_membership_period, course: biology }
 
     let(:file_1) do
-      fixture_file_upload('roster/test_courses_post_students_1.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_roster_1.csv', 'text/csv')
     end
 
     let(:file_2) do
-      fixture_file_upload('roster/test_courses_post_students_2.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_roster_2.csv', 'text/csv')
     end
 
-    let(:file_blankness) do
-      fixture_file_upload('roster/test_courses_post_students_blankness.csv', 'text/csv')
+    let(:file_blank_lines) do
+      fixture_file_upload('roster/test_courses_post_roster_blank_lines.csv', 'text/csv')
     end
 
     let(:incomplete_file) do
-      fixture_file_upload('roster/test_courses_post_students_incomplete.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_roster_incomplete.csv', 'text/csv')
     end
 
     it 'adds students to a course period' do
-      expect {
-        post :students, id: physics.id,
-                        course: { period: physics_period.id },
-                        student_roster: file_1
-      }.to change { OpenStax::Accounts::Account.count }.by(3)
-      expect(flash[:notice]).to eq('Student roster has been uploaded.')
+      expect do
+        post :roster, id: physics.id,
+                      period: physics_period.id,
+                      roster: file_1
+      end.to change { OpenStax::Accounts::Account.count }.by(3)
+      expect(flash[:notice]).to eq('Student roster import has been queued.')
 
       student_roster = GetCourseRoster.call(course: physics).outputs.roster[:students]
       csv = CSV.parse(file_1.open)
@@ -143,17 +143,17 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     it 'reuses existing users for existing usernames' do
-      expect {
-        post :students, id: physics.id,
-                        course: { period: physics_period.id },
-                        student_roster: file_1
-      }.to change { OpenStax::Accounts::Account.count }.by(3)
+      expect do
+        post :roster, id: physics.id,
+                      period: physics_period.id,
+                      roster: file_1
+      end.to change { OpenStax::Accounts::Account.count }.by(3)
 
-      expect {
-        post :students, id: biology.id,
-                        course: { period: biology_period.id },
-                        student_roster: file_2
-      }.to change { OpenStax::Accounts::Account.count }.by(1) # 2 in file but 1 reused
+      expect do
+        post :roster, id: biology.id,
+                      period: biology_period.id,
+                      roster: file_2
+      end.to change { OpenStax::Accounts::Account.count }.by(1) # 2 in file but 1 reused
 
       # Carol B should be in both courses
       carol_b = User::User.find_by_username('carolb')
@@ -162,67 +162,79 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     it 'does not add any students if username or password is missing' do
-      expect {
-        post :students, id: physics.id,
-                        course: { period: physics_period.id },
-                        student_roster: incomplete_file
-      }.to change { OpenStax::Accounts::Account.count }.by(0)
+      expect do
+        post :roster, id: physics.id,
+                      period: physics_period.id,
+                      roster: incomplete_file
+      end.to change { OpenStax::Accounts::Account.count }.by(0)
       expect(flash[:error]).to eq([
-        'Error uploading student roster',
-        'On line 2, password is missing.',
-        'On line 3, username is missing.',
-        'On line 4, username is missing.',
-        'On line 4, password is missing.'
+        'Invalid Roster: On line 2, password is missing.',
+        'Invalid Roster: On line 3, username is missing.',
+        'Invalid Roster: On line 4, username is missing.',
+        'Invalid Roster: On line 4, password is missing.'
       ])
     end
 
     it 'gives a nice error and no exception if has funky characters' do
-      expect {
-        post :students, id: physics.id,
-                        course: { period: physics_period.id },
-                        student_roster: file_blankness
-      }.not_to raise_error
+      expect do
+        post :roster, id: physics.id,
+                      period: physics_period.id,
+                      roster: file_blank_lines
+      end.not_to raise_error
 
       expect(flash[:error]).to include 'Unquoted fields do not allow \r or \n (line 2).'
     end
 
+    it 'gives a nice error if the period is blank' do
+      expect { post :roster, id: physics.id, roster: file_1 }.not_to raise_error
+
+      expect(flash[:error]).to include 'You must select a period to upload to.'
+    end
+
+    it 'gives a nice error if an invalid period is selected' do
+      expect do
+        post :roster, id: physics.id, period: biology_period.id, roster: file_1
+      end.not_to raise_error
+
+      expect(flash[:error]).to include 'The selected period could not be found.'
+    end
+
     it 'gives a nice error if the file is blank' do
-      expect {
-        post :students, id: physics.id, course: { period: physics_period.id }
-      }.not_to raise_error
+      expect { post :roster, id: physics.id, period: physics_period.id }.not_to raise_error
 
       expect(flash[:error]).to include 'You must attach a file to upload.'
     end
   end
 
   context 'GET #edit' do
-    let!(:eco_1)            {
+    let!(:eco_1)            do
       model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
-    }
-    let(:catalog_offering)  {
+    end
+    let(:catalog_offering)  do
       FactoryGirl.create :catalog_offering, ecosystem: eco_1.to_model
-    }
-    let(:course)            { FactoryGirl.create :course_profile_course, name: 'Physics I',
-                                                                 offering: catalog_offering }
+    end
+    let(:course)            do
+      FactoryGirl.create :course_profile_course, name: 'Physics I', offering: catalog_offering
+    end
     let(:book_1)            { eco_1.books.first }
     let(:uuid_1)            { book_1.uuid }
     let(:version_1)         { book_1.version }
-    let!(:eco_2)            {
+    let!(:eco_2)            do
       model = FactoryGirl.create(:content_book, title: 'Biology').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
-    }
+    end
     let(:book_2)            { eco_2.books.first }
     let(:uuid_2)            { book_2.uuid }
     let(:version_2)         { book_2.version }
-    let!(:course_ecosystem) {
+    let!(:course_ecosystem) do
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       CourseContent::Models::CourseEcosystem.where { course_profile_course_id == my { course.id } }
                                             .where { content_ecosystem_id == my { eco_1.id } }
                                             .first
-    }
+    end
 
     it 'assigns extra course info' do
       get :edit, id: course.id

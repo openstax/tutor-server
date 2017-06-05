@@ -146,21 +146,18 @@ class Admin::CoursesController < Admin::BaseController
           ecosystem_title: ecosystem.title
         )
       end
-      flash[:notice] = 'Course ecosystem update background jobs queued.'
+      flash[:notice] = 'Course ecosystem updates have been queued.'
     end
 
     redirect_to admin_courses_path
   end
 
-  def students
-    handle_with(Admin::CoursesStudents, success: -> {
-      flash[:notice] = 'Student roster has been uploaded.'
-    },
-    failure: -> {
-      flash[:error] = ['Error uploading student roster'] +
-                        @handler_result.errors.map(&:message).flatten
-
-    })
+  def roster
+    handle_with(
+      Admin::CoursesRoster,
+      success: -> { flash[:notice] = 'Student roster import has been queued.' },
+      failure: -> { flash[:error] = @handler_result.errors.map(&:message).flatten }
+    )
 
     redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
   end

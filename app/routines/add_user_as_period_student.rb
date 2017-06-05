@@ -1,4 +1,5 @@
 class AddUserAsPeriodStudent
+
   lev_routine express_output: :role
 
   uses_routine UserIsCourseTeacher
@@ -24,8 +25,10 @@ class AddUserAsPeriodStudent
     end
 
     run(Role::CreateUserRole, user, :student)
-    run(CourseMembership::AddStudent, period: period, role: outputs.role,
+    run(CourseMembership::AddStudent, period: period,
+                                      role: outputs.role,
                                       student_identifier: student_identifier,
                                       assign_published_period_tasks: assign_published_period_tasks)
   end
+
 end
