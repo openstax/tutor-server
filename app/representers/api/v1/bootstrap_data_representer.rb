@@ -55,11 +55,6 @@ module Api::V1
              readable: true,
              writeable: false
 
-    property :terms_signatures_needed,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { GetUserTermsInfos[self].any?{|info| !info.is_signed} }
-
     collection :courses,
                extend: Api::V1::CourseRepresenter,
                readable: true,
