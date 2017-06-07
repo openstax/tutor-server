@@ -41,6 +41,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           viewed_tour_ids: [],
           self_reported_role: user.account.role,
           account_uuid: user.account.uuid,
+          terms_signatures_needed: false,
           profile_url: a_string_starting_with('http')
         },
         courses: []

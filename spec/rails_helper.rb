@@ -210,3 +210,12 @@ def make_payment_required_and_expect_422(student: nil, course: nil, user: nil)
   end
   expect(response).to have_http_status(:unprocessable_entity)
 end
+
+def create_contract!(name)
+  FinePrint::Contract.create! do |contract|
+    contract.name    = name
+    contract.version = 1
+    contract.title   = name + ' title'
+    contract.content = name + ' content'
+  end
+end

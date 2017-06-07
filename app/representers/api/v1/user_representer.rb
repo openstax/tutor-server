@@ -41,6 +41,11 @@ module Api::V1
                description: "The UUID as set by Accounts"
              }
 
+    property :terms_signatures_needed,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { GetUserTermsInfos[self].any?{|info| !info.is_signed} }
+
     property :profile_url,
              getter: ->(*) {
                Addressable::URI.join(

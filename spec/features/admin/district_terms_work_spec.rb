@@ -130,20 +130,17 @@ RSpec.feature 'DistrictTermsWork' do
 
     stub_current_user(user_1)
 
+    stub_current_user(user_1, Api::V1::TermsController)
+
     # User 1 should not have signed district a terms yet
 
     expect(FinePrint.signed_contract?(user_1.to_model, 'district_a_terms')).to be_falsy
 
-    # Want to check that WebviewController receives fine_print_require with certain terms, but can't do it
-    # since also want to do it below for a second request -- so using cheesier expectation on FinePrint
-    # directly here and below.
-    #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use')
-    expect(FinePrint).to receive(:unsigned_contracts_for)
-                           .with(user_1.to_model, name: ['general_terms_of_use'])
+    # Simulate the FE getting the terms listing for a user, should add an implicit signature
+    # for user1 / district_a_terms
 
-    # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
     expect{
-      visit dashboard_path
+      visit api_terms_path
     }.to change { FinePrint::Signature.count }.by(1)
 
     expect(FinePrint.signed_contract?(user_1.to_model, 'district_a_terms')).to be_truthy
@@ -152,14 +149,9 @@ RSpec.feature 'DistrictTermsWork' do
     # user 2 is not in district A, so should just see normal terms
     stub_current_user(user_2)
 
-    #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use', 'privacy_policy')
-    expect(FinePrint).to receive(:unsigned_contracts_for)
-                           .with(user_2.to_model,
-                                 name: ['general_terms_of_use', 'privacy_policy'])
-
-    # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
+    # Simulate the FE getting the terms listing for a user, should NOT add an implicit signature
     expect{
-      visit dashboard_path
+      visit api_terms_path
     }.not_to change { FinePrint::Signature.count }
   end
 

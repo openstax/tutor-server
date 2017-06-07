@@ -6,8 +6,6 @@ class WebviewController < ApplicationController
 
   skip_before_filter :authenticate_user!, only: :home
 
-  before_filter :require_contracts, only: :index
-
   def home
     if params[:cc] == "1"
       redirect_to 'http://cc.openstax.org'
