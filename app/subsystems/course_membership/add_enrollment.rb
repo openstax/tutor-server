@@ -5,7 +5,7 @@ class CourseMembership::AddEnrollment
 
   protected
 
-  def exec(period:, student:, assign_published_period_tasks: true)
+  def exec(period:, student:, reassign_published_period_task_plans: true, send_to_biglearn: true)
     outputs[:enrollment] = CourseMembership::Models::Enrollment.create(
       student: student, period: period.to_model
     )
@@ -16,9 +16,9 @@ class CourseMembership::AddEnrollment
     outputs[:student] = student
     transfer_errors_from(outputs[:student], {type: :verbatim}, true)
 
-    OpenStax::Biglearn::Api.update_rosters(course: period.course)
-
     ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \
-      if assign_published_period_tasks
+      if reassign_published_period_task_plans
+
+    OpenStax::Biglearn::Api.update_rosters(course: period.course) if send_to_biglearn
   end
 end

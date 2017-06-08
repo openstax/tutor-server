@@ -22,7 +22,8 @@ RSpec.describe ImportRoster, type: :routine do
   before            do
     reassign = ReassignPublishedPeriodTaskPlans.new
     expect(ReassignPublishedPeriodTaskPlans).to receive(:new).and_return(reassign)
-    expect(reassign).to receive(:exec).with(period: period)
+    expect(reassign).to receive(:exec).with(period: period).once
+    expect(OpenStax::Biglearn::Api).to receive(:update_rosters).with(course: period.course).once
   end
 
   it 'imports the given user hashes into the given period' do
