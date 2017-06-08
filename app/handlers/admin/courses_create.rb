@@ -16,7 +16,7 @@ class Admin::CoursesCreate
     attribute :is_concept_coach, type: ActiveAttr::Typecasting::Boolean
     attribute :is_college, type: ActiveAttr::Typecasting::Boolean
     validates :name, :term, :year, :num_sections, presence: true
-    validates :is_preview, :is_concept_coach, :is_college, inclusion: [true, false]
+    validates :is_test, :is_preview, :is_concept_coach, :is_college, inclusion: [true, false]
   end
 
   uses_routine CreateCourse
