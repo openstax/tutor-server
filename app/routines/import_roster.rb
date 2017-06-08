@@ -17,11 +17,14 @@ class ImportRoster
         :add_user_as_period_student,
         period: period,
         user: user,
-        assign_published_period_tasks: false
+        reassign_published_period_task_plans: false,
+        send_to_biglearn: false
       )
     end
 
     run(:reassign_published_period_task_plans, period: period)
+
+    OpenStax::Biglearn::Api.update_rosters(course: period.course)
   end
 
 end
