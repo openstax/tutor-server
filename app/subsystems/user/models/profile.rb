@@ -25,7 +25,7 @@ module User
       json_serialize :ui_settings, Hash
 
       validates :account, presence: true, uniqueness: true
-      validates :ui_settings, max_json_length: 1500
+      validates :ui_settings, max_json_length: 10_000
 
       delegate :username, :first_name, :last_name, :full_name, :title, :uuid,
                :name, :casual_name, :salesforce_contact_id, :faculty_status,

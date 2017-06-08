@@ -28,7 +28,7 @@ RSpec.describe User::Models::Profile, type: :model do
 
   it 'enforces length of ui_settings' do
     profile = FactoryGirl.build(:user_profile)
-    profile.ui_settings = {test: ('a' * 1500)}
+    profile.ui_settings = {test: ('a' * 10_001)}
     expect(profile).to_not be_valid
     expect(profile.errors[:ui_settings].to_s).to include 'too long'
   end
