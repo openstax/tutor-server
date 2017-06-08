@@ -369,6 +369,8 @@ class OpenStax::Biglearn::Api::RealClient
       student = task.taskings.first.try!(:role).try!(:student)
       task_type = task.practice? ? 'practice' : task.task_type
 
+      due_at = task.due_at
+
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
@@ -416,7 +418,12 @@ class OpenStax::Biglearn::Api::RealClient
         assigned_exercises: assigned_exercises,
         created_at: task.created_at.utc.iso8601(6),
         updated_at: task.updated_at.utc.iso8601(6)
-      }
+      }.tap do |request|
+        request[:exclusion_info] = {
+          opens_at: task.opens_at.utc.iso8601(6),
+          due_at: due_at.utc.iso8601(6)
+        } unless due_at.nil?
+      end
     end.compact
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
