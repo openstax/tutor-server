@@ -15,8 +15,8 @@ class CreateCourse
   uses_routine CourseProfile::ClaimPreviewCourse, as: :claim_preview_course,
                                                   translations: { outputs: { type: :verbatim } }
 
-  def exec(name:, is_preview:, is_college:, is_concept_coach: nil, term: nil, year: nil,
-           num_sections: 0, catalog_offering: nil, appearance_code: nil,
+  def exec(name:, is_preview:, is_college:, is_test: false, is_concept_coach: nil,
+           term: nil, year: nil, num_sections: 0, catalog_offering: nil, appearance_code: nil,
            starts_at: nil, ends_at: nil, school: nil, time_zone: nil, cloned_from: nil,
            default_open_time: nil, default_due_time: nil, estimated_student_count: nil,
            does_cost: nil)
@@ -59,6 +59,7 @@ class CreateCourse
       name: name,
       is_college: is_college,
       is_concept_coach: is_concept_coach,
+      is_test: is_test,
       is_preview: is_preview,
       does_cost: does_cost,
       term: term,

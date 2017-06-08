@@ -11,6 +11,7 @@ class Admin::CoursesCreate
     attribute :appearance_code, type: String
     attribute :school_district_school_id, type: Integer
     attribute :catalog_offering_id, type: Integer
+    attribute :is_test, type: ActiveAttr::Typecasting::Boolean
     attribute :is_preview, type: ActiveAttr::Typecasting::Boolean
     attribute :is_concept_coach, type: ActiveAttr::Typecasting::Boolean
     attribute :is_college, type: ActiveAttr::Typecasting::Boolean
@@ -38,6 +39,7 @@ class Admin::CoursesCreate
                         num_sections: course_params.num_sections,
                         starts_at: course_params.starts_at,
                         ends_at: course_params.ends_at,
+                        is_test: course_params.is_test,
                         is_preview: course_params.is_preview,
                         is_concept_coach: course_params.is_concept_coach,
                         is_college: course_params.is_college,
