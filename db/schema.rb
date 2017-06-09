@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605144519) do
+ActiveRecord::Schema.define(version: 20170609150609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -297,7 +297,7 @@ ActiveRecord::Schema.define(version: 20170605144519) do
     t.datetime "first_paid_at"
     t.boolean  "is_paid",                  default: false,               null: false
     t.boolean  "is_comped",                default: false,               null: false
-    t.datetime "payment_due_at"
+    t.datetime "payment_due_at",                                         null: false
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
