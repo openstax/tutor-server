@@ -159,7 +159,7 @@ class OpenStax::Biglearn::Api::RealClient
     biglearn_request = {
       course_uuid: course.uuid,
       ecosystem_uuid: request.fetch(:ecosystem).tutor_uuid,
-      is_real_course: !course.is_preview,
+      is_real_course: !course.is_preview && !course.is_test,
       starts_at: course.starts_at.utc.iso8601(6),
       ends_at: course.ends_at.utc.iso8601(6),
       created_at: course.created_at.utc.iso8601(6)
