@@ -73,7 +73,7 @@
           next if r_info.nil?
 
           tasked = step.tasked
-          type = step.tasked_type.match(/Tasked(.+)\z/).try(:[],1)
+          type = step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1)
           course_id = r_info[:course_id]
           url = tasked.respond_to?(:url) ? tasked.url : nil
 
@@ -110,8 +110,7 @@
               ]
             when 'Reading'
               [
-                url + ".json",
-                nil, nil, nil, nil
+                url + ".json", nil, nil, nil, nil
               ]
             else
               5.times.map{nil}
@@ -129,20 +128,19 @@
   end
 
   def role_info
-    @role_info ||=
+    @role_info ||= {}.tap do |role_info|
       CourseMembership::Models::Student
         .joins(:course, :role)
-        .where(course: { is_preview: false })
-        .select([ :entity_role_id,
-                  :course_profile_course_id,
-                  Entity::Role.arel_table[:research_identifier] ])
+        .where(course: { is_preview: false, is_test: false })
         .with_deleted
-        .each_with_object({}) do |student, hsh|
-          hsh[student.entity_role_id] = {
-            research_identifier: student.research_identifier,
-            course_id: student.course_profile_course_id
+        .pluck(:entity_role_id, :course_profile_course_id, :research_identifier)
+        .each do |entity_role_id, course_profile_course_id, research_identifier|
+          role_info[entity_role_id] = {
+            research_identifier: research_identifier,
+            course_id: course_profile_course_id
           }
         end
+    end
   end
 
   def is_cc?(course_id)
