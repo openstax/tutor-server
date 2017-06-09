@@ -5,7 +5,7 @@ RSpec.describe GetUserTermsInfos, type: :routine do
   let(:user) { FactoryGirl.create(:user) }
 
   it 'does not explode if standard terms are absent' do
-    expect{described_class[user]}.not_to raise_error(ActiveRecord::RecordNotFound)
+    expect{described_class[user]}.not_to raise_error
   end
 
   context "normal flow" do
