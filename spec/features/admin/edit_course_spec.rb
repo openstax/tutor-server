@@ -17,6 +17,7 @@ RSpec.feature 'Admin editing a course' do
     click_on 'Save'
 
     @course = CourseProfile::Models::Course.order(:id).last
+    @course.update_attribute :does_cost, true
     FactoryGirl.create :course_membership_period, course: @course
   end
 
@@ -83,12 +84,19 @@ RSpec.feature 'Admin editing a course' do
     click_link 'Edit'
 
     expect(page).to have_content('Edit course')
+    uncheck 'course_does_cost'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(CourseProfile::Models::Course.first.does_cost).to eq false
+
     check 'course_does_cost'
     click_button 'edit-save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
-    expect(CourseProfile::Models::Course.first.does_cost).to be_truthy
+    expect(CourseProfile::Models::Course.first.does_cost).to eq true
   end
 
   scenario 'Assigning a school' do
