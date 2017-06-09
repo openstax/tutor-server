@@ -4,9 +4,11 @@
   <thead>
     <tr style="background-color: white">
       <th>Name</th>
-      <th>Paid?</th>
-      <th>Comped?</th>
-      <th>Payment Due</th>
+      <% if @course.does_cost %>
+        <th>Paid?</th>
+        <th>Comped?</th>
+        <th>Payment Due</th>
+      <% end %>
       <th>Student Identifier</th>
       <th width="80px">User</th>
     </tr>
@@ -18,22 +20,28 @@
 
     <tr>
       <td><%= student.name %></td>
-      <td><%= student.is_paid ? 'Yes' : 'No' %></td>
-      <td>
-        <a href="#"><%= best_in_place student, :is_comped, as: :checkbox, url: admin_student_path(student) %></a>
-      </td>
-      <td>
-        <a href="#">
-          <%= best_in_place student,
-              :payment_due_at,
-              as: :date,
-              url: admin_student_path(student),
-              display_with: ->(val) {
-               val.in_time_zone(@time_zone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
-              }
-          %>
-        </a>
-      </td>
+      <% if @course.does_cost %>
+        <td><%= student.is_paid ? 'Yes' : 'No' %></td>
+        <td>
+          <a href="#">
+            <%= best_in_place student,
+                :is_comped,
+                as: :checkbox,
+                url: admin_student_path(student) %>
+          </a>
+        </td>
+        <td>
+          <a href="#">
+            <%= best_in_place student,
+                :payment_due_at,
+                as: :date,
+                url: admin_student_path(student),
+                display_with: ->(val) do
+                  val.in_time_zone(@time_zone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
+                end %>
+          </a>
+        </td>
+      <% end %>
       <td><%= student.student_identifier %></td>
       <td>
         <%= link_to '', edit_admin_user_path(user_id), class: "btn btn-xs glyphicon glyphicon-pencil" %>
