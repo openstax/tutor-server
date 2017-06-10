@@ -16,6 +16,8 @@ FactoryGirl.define do
     starts_at             { consistent_times ? term_year.starts_at : Time.current - 3.months }
     ends_at               { consistent_times ? term_year.ends_at : Time.current + 3.months }
 
+    uuid                  { SecureRandom.uuid }
+
     biglearn_student_clues_algorithm_name        { Faker::Hacker.abbreviation }
     biglearn_teacher_clues_algorithm_name        { Faker::Hacker.abbreviation }
     biglearn_assignment_spes_algorithm_name      { Faker::Hacker.abbreviation }

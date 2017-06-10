@@ -10,6 +10,11 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       @proxy.ensure_books_exist(%w(Chemistry Physics))
       @proxy.ensure_schools_exist(["JP University"])
     end
+
+    @uuids = 300.times.map{ SecureRandom.uuid }
+    VCR.configure do |config|
+      @uuids.each_with_index{|uuid,ii| config.define_cassette_placeholder("<UUID_#{ii}>") { uuid }}
+    end
   end
 
   before(:each) { load_salesforce_user }
@@ -25,12 +30,19 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                        year: 2017,
                        starts_at: Chronic.parse("January 1, 2017"),
                        offering: chemistry_offering,
-                       is_concept_coach: false
+                       is_concept_coach: false,
+                       estimated_student_count: 42,
+                       uuid: @uuids.shift
   }
 
   before(:each) {
     period1 = CreatePeriod[course: course]
     p1students = 4.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period1] }
+
+    p1students[0].student.update_attribute(:is_paid, true)
+    p1students[1].student.update_attribute(:is_comped, true)
+    p1students[2].student.update_attribute(:is_comped, true)
+    p1students[3].student.update_attribute(:first_paid_at, Time.now) # refunded
 
     period2 = CreatePeriod[course: course]
     p2students = 2.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period1] }
@@ -63,7 +75,11 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         ia = ias.first
 
         expect(ia.id).not_to be_blank
-        expect(ia.spring_start_date).to eq "2017-01-01"
+        expect(ia.source).to eq "Tutor Signup"
+        expect(ia.book_name).to eq "Chemistry"
+        expect(ia.school.name).to eq "JP University"
+        expect(ia.contact_id).not_to be_blank
+        expect(ia.adoption_level).to eq "Confirmed Adoption Won"
 
         osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
 
@@ -83,7 +99,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         # exploded if they didn't get set.
 
         ia.reload
-        expect(ia.spring_start_date).to eq "2017-01-01"
         expect(ia.adoption_level).not_to be_blank
         expect(ia.description).not_to be_blank
 
@@ -95,16 +110,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       it 'errors when cannot make an OSA' do
         allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:save) { false }
         call_expecting_errors(/Could not make new OsAncillary/)
-      end
-
-      it 'corrects bad term start date' do
-        ia.spring_start_date = "2017-03-28"
-        ia.save!
-
-        call_expecting_no_errors
-
-        ia.reload
-        expect(ia.spring_start_date).to eq "2017-01-01"
       end
     end
 
@@ -120,6 +125,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     it 'pushes stats if not yet attached' do
       call_expecting_no_errors
+      osa.reload
       expect_osa_stats(osa)
       expect_osa_attachment(osa,course)
     end
@@ -158,16 +164,20 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       call_expecting_errors(/Test Error/)
     end
 
-    it 'it makes a new one if the old one\'s Term is blank' do
-      osa.term = nil
-      osa.save
+    it 'is ok with another course being in the same term same teacher' do
+      other_course =
+        FactoryGirl.create :course_profile_course,
+                           term: :spring,
+                           year: 2017,
+                           starts_at: Chronic.parse("January 1, 2017"),
+                           offering: chemistry_offering,
+                           is_concept_coach: false,
+                           uuid: @uuids.shift
+      AddUserAsCourseTeacher[course: other_course, user: user_sf_a]
 
       call_expecting_no_errors
 
-      osa.reload
-      expect(osa.term).to be_nil
-
-      expect(OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: osa.individual_adoption_id).count).to eq 2
+      expect(OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).count).to eq 2
     end
   end
 
@@ -207,15 +217,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
       allow_any_instance_of(OpenStax::Salesforce::Remote::Contact).to receive(:school_id).and_return(nil)
       capture_stdout{ call_expecting_errors(/Could not make new IndividualAdoption for inputs/) }
-    end
-
-    it 'errors when multiple OSAs match' do
-      AddUserAsCourseTeacher[course: course, user: user_sf_a]
-
-      ia = create_chemistry_ia
-      2.times { create_osa(ia, course, sf_contact_a) }
-
-      call_expecting_errors(/Too many OsAncillaries/)
     end
 
     it 'errors when no offering' do
@@ -282,6 +283,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       individual_adoption_id: ia.id,
       product: course.is_concept_coach ? "Concept Coach" : "Tutor",
       contact_id: contact.id,
+      course_uuid: course.uuid,
       term: "Spring"
     ).tap do |osa|
       if !osa.save
@@ -328,7 +330,11 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     expect(osa.num_sections).to eq 2
     expect(osa.num_students).to eq 6
+    expect(osa.num_students_paid).to eq 1
+    expect(osa.num_students_comped).to eq 2
+    expect(osa.num_students_refunded).to eq 1
     expect(osa.num_teachers).to eq 1
+    expect(osa.estimated_enrollment).to eq 42
     expect(osa.course_id).to be_a(String)
     expect(osa.created_at).to be_a(Date)
     expect(osa.teacher_join_url).to be_a(String)
@@ -336,6 +342,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.product).to eq "Tutor"
     expect(osa.error).to be nil
     expect(osa.term).to be_a(String)
+    expect(osa.course_start_date).to eq Date.parse("2017-01-01")
   end
 
   def expect_osa_attachment(osa, course)

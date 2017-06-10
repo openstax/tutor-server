@@ -7,6 +7,10 @@ class PushSalesforceCourseStats
   # the current course via `throw`/`catch` calls (to avoid always remembering to
   # `return` after `error!` and to avoid using exceptions which we catch all of)
 
+  # shortcuts
+  OSA = OpenStax::Salesforce::Remote::OsAncillary
+  IA = OpenStax::Salesforce::Remote::IndividualAdoption
+
   def self.call(allow_error_email:)
     new(allow_error_email: allow_error_email).call
   end
@@ -54,123 +58,105 @@ class PushSalesforceCourseStats
       attached_record = courses_to_attached_records[course]
       os_ancillary = attached_record.try(:salesforce_object)
 
-      if attached_record.present? && os_ancillary.nil?
-        # The SF record used to exist but no longer does, so detach the record.
-        log { "OSAncillary #{attached_record.salesforce_id} used to exist for course #{course.id} "
-              "but is no longer in SF.  Tutor will forget about it." }
-        attached_record.destroy!
-      end
-
-      # If no OSA, try to make one
-
       if os_ancillary.nil?
-        # First figure out which SF Contact the OSA would hang off of
-
-        sf_contact_id = best_sf_contact_id_for_course(course)
-        error!(message: "No teachers have a SF contact ID", course: course) if sf_contact_id.nil?
-
-        # Next see if there's an appropriate IndividualAdoption; if not, make one.
-
-        offering = course.offering
-        error!(message: "No offering for course", course: course) if offering.nil?
-
-        book_name = offering.salesforce_book_name
-
-        individual_adoption_criteria = {
-          contact_id: sf_contact_id,
-          book_name: book_name,
-          school_year: salesforce_school_year_for_course(course)
-        }
-
-        candidate_individual_adoptions = OpenStax::Salesforce::Remote::IndividualAdoption
-                                           .where(individual_adoption_criteria)
-                                           .to_a
-
-        if candidate_individual_adoptions.size > 1
-          error!(message: "Too many IndividualAdoptions matching #{individual_adoption_criteria}",
-                 course: course)
+        if attached_record.present?
+          # The SF record used to exist but no longer does, so detach the record.
+          log { "OSAncillary #{attached_record.salesforce_id} used to exist for course #{course.id} "
+                "but is no longer in SF.  Tutor will forget about it." }
+          attached_record.destroy!
         end
 
-        individual_adoption = candidate_individual_adoptions.first
-
-        # already excluded legacy and demo terms
-        start_date_key = "#{course.term}_start_date".to_sym
-        start_date_value = course.starts_at.iso8601.gsub(/T.*/,'')
-
-        if individual_adoption.nil?
-          start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
-          sf_contact = OpenStax::Salesforce::Remote::Contact.where(id: sf_contact_id).first
-
-          individual_adoption_options = {
-            contact_id: sf_contact_id,
-            book_id: book_names_to_sf_ids[book_name],
-            school_id: sf_contact.school_id
-          }
-
-
-          individual_adoption_options.merge!({
-            start_date_key => start_date_value,
-            adoption_level: "Confirmed Adoption Won",
-            description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
-                         (OpenStax::Salesforce::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
-          })
-
-          individual_adoption =
-            OpenStax::Salesforce::Remote::IndividualAdoption.new(individual_adoption_options).tap do |ia|
-              if !ia.save
-                error!(message: "Could not make new IndividualAdoption for inputs " \
-                                "#{individual_adoption_criteria}; errors: " \
-                                "#{ia.errors.full_messages.join(', ')}",
-                       course: course)
-              end
-            end
-        else
-          # Set the term start date if it is blank or has the wrong value
-          if individual_adoption.send(start_date_key) != start_date_value
-            individual_adoption.update_attributes!({start_date_key => start_date_value})
-          end
-        end
-
-        # Now see if there's an appropriate OSA on the IA; if not, make one.
-        # Attach the OSA to the course so we can just use it next time.
-
-        os_ancillary_criteria = {
-          individual_adoption_id: individual_adoption.id,
-          product: course.is_concept_coach ? "Concept Coach" : "Tutor",
-          term: course.term.capitalize
-        }
-
-        candidate_os_ancillaries = OpenStax::Salesforce::Remote::OsAncillary.where(os_ancillary_criteria).to_a
-
-        if candidate_os_ancillaries.size > 1
-          error!(message: "Too many OsAncillaries matching #{os_ancillary_criteria}", course: course)
-        end
-
-        os_ancillary = candidate_os_ancillaries.first ||
-          begin
-            attrs = os_ancillary_criteria.merge(contact_id: sf_contact_id)
-            OpenStax::Salesforce::Remote::OsAncillary.new(attrs).tap do |osa|
-              if !osa.save
-                error!(message: "Could not make new OsAncillary for inputs #{os_ancillary_criteria}; " \
-                                "errors: #{osa.errors.full_messages.join(', ')}",
-                       course: course)
-              end
-
-              # Values in the OSA that are derived from other places in SF, e.g. `TermYear`,
-              # cannot be set when creating the record.  Instead of manually setting them
-              # here, just reload the object from SF so that we know any derived fields are
-              # populated.
-              osa.reload
-            end
-          end
+        os_ancillary = find_or_create_os_ancillary(course)
 
         Salesforce::AttachRecord[record: os_ancillary, to: course]
       end
 
       push_stats(course, os_ancillary)
-
     rescue Exception => ee
       error!(exception: ee, course: course)
+    end
+  end
+
+  def find_or_create_os_ancillary(course)
+    osa = find_os_ancillary_by_course_uuid(course)
+    return osa if osa.present?
+
+    ia = find_or_create_individual_adoption(course)
+    create_os_ancillary(course, ia)
+  end
+
+  def find_os_ancillary_by_course_uuid(course)
+    # First, see if an OSA exists for this course.  There can be at most 1 because
+    # salesforce requires the UUID field to be unique
+    OSA.where(course_uuid: course.uuid).to_a.first
+  end
+
+  def find_or_create_individual_adoption(course)
+    offering = course.offering
+    error!(message: "No offering for course", course: course) if offering.nil?
+
+    book_name = offering.salesforce_book_name
+    sf_contact_id = best_sf_contact_id_for_course(course)
+
+    individual_adoption_criteria = {
+      contact_id: sf_contact_id,
+      book_name: book_name,
+      school_year: salesforce_school_year_for_course(course)
+    }
+
+    candidate_individual_adoptions = OpenStax::Salesforce::Remote::IndividualAdoption
+                                       .where(individual_adoption_criteria)
+                                       .to_a
+
+    if candidate_individual_adoptions.size > 1
+      error!(message: "Too many IndividualAdoptions matching #{individual_adoption_criteria}",
+             course: course)
+    end
+
+    candidate_individual_adoptions.first || begin
+      sf_contact = OpenStax::Salesforce::Remote::Contact.where(id: sf_contact_id).first
+
+      individual_adoption_options = {
+        contact_id: sf_contact_id,
+        book_id: book_names_to_sf_ids[book_name],
+        school_id: sf_contact.school_id,
+        adoption_level: "Confirmed Adoption Won",
+        source: "Tutor Signup",
+        description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
+                     (OpenStax::Salesforce::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+      }
+
+      IA.new(individual_adoption_options).tap do |ia|
+        if !ia.save
+          error!(message: "Could not make new IndividualAdoption for inputs " \
+                          "#{individual_adoption_options}; errors: " \
+                          "#{ia.errors.full_messages.join(', ')}",
+                 course: course)
+        end
+      end
+    end
+  end
+
+  def create_os_ancillary(course, individual_adoption)
+    arguments = {
+      individual_adoption_id: individual_adoption.id,
+      product: course.is_concept_coach ? "Concept Coach" : "Tutor",
+      term: course.term.capitalize,
+      contact_id: best_sf_contact_id_for_course(course)
+    }
+
+    OSA.new(arguments).tap do |osa|
+      if !osa.save
+        error!(message: "Could not make new OsAncillary for inputs #{arguments}; " \
+                        "errors: #{osa.errors.full_messages.join(', ')}",
+               course: course)
+      end
+
+      # Values in the OSA that are derived from other places in SF, e.g. `TermYear`,
+      # cannot be set when creating the record.  Instead of manually setting them
+      # here, just reload the object from SF so that we know any derived fields are
+      # populated.
+      osa.reload
     end
   end
 
@@ -198,15 +184,31 @@ class PushSalesforceCourseStats
       periods = course.periods
 
       os_ancillary.course_id = course.id
+      os_ancillary.course_uuid = course.uuid
       os_ancillary.created_at = course.created_at.iso8601
       os_ancillary.teacher_join_url = UrlGenerator.teach_course_url(course.teach_token)
 
+      os_ancillary.reset_stats
+
+      students = periods.flat_map(&:students_with_deleted)
+
+      students.each do |student|
+        os_ancillary.num_students += 1
+        os_ancillary.num_students_paid += 1 if student.is_paid
+        os_ancillary.num_students_comped += 1 if student.is_comped
+        os_ancillary.num_students_refunded += 1 if student.first_paid_at.present? && !student.is_paid
+      end
+
       os_ancillary.num_teachers = course.teachers.length
-      os_ancillary.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
       os_ancillary.num_sections = periods.length
+
+      os_ancillary.estimated_enrollment = course.estimated_student_count
 
       os_ancillary.status = OpenStax::Salesforce::Remote::OsAncillary::STATUS_APPROVED
       os_ancillary.product = course.is_concept_coach ? "Concept Coach" : "Tutor"
+
+      os_ancillary.course_start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
+      os_ancillary.term = course.term.capitalize
     rescue Exception => ee
       # Add the error to the OSA and `error!` but non fatally so the error can get saved
       # to the OSA
@@ -232,9 +234,15 @@ class PushSalesforceCourseStats
   end
 
   def best_sf_contact_id_for_course(course)
-    teachers(course).map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
-                    .compact
-                    .first
+    @cache ||= {}
+    (
+      @cache[course.uuid] ||=
+        teachers(course).map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
+                        .compact
+                        .first
+    ).tap do |contact_id|
+      error!(message: "No teachers have a SF contact ID", course: course) if contact_id.nil?
+    end
   end
 
   def applicable_courses
