@@ -10,13 +10,13 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     subject { instance.best_sf_contact_id_for_course(course) }
 
-    it 'returns nil if there are no teachers' do
-      expect(subject).to be_nil
+    it 'errors if there are no teachers' do
+      expect{ subject }.to throw_symbol(:go_to_next_course)
     end
 
     it 'returns nil if there are no teachers with a SF contact ID' do
       AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      expect(subject).to be_nil
+      expect{ subject }.to throw_symbol(:go_to_next_course)
     end
 
     it 'returns the SF ID when there is one teacher with a SF ID' do
