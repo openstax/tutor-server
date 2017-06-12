@@ -369,7 +369,7 @@ class OpenStax::Biglearn::Api::RealClient
       student = task.taskings.first.try!(:role).try!(:student)
       task_type = task.practice? ? 'practice' : task.task_type
 
-      due_at = task.due_at
+      feedback_at = task.feedback_at
 
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
@@ -421,8 +421,9 @@ class OpenStax::Biglearn::Api::RealClient
       }.tap do |request|
         request[:exclusion_info] = {
           opens_at: task.opens_at.utc.iso8601(6),
-          due_at: due_at.utc.iso8601(6)
-        } unless due_at.nil?
+          due_at: task.due_at.utc.iso8601(6),
+          feedback_at: feedback_at.utc.iso8601(6)
+        } unless feedback_at.nil?
       end
     end.compact
 
