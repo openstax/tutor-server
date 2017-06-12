@@ -13,7 +13,7 @@ module Tasks
 
     protected
 
-    def exec(role:, page:, exercises:, group_types:, related_content_array: [])
+    def exec(role:, page:, exercises:, group_types:)
       course = role.student.course
 
       fatal_error(code: :course_not_started) unless course.started?
@@ -33,7 +33,6 @@ module Tasks
       exercises.each_with_index do |exercise, ii|
         TaskExercise.call(exercise: exercise, task: outputs.task) do |step|
           step.group_type = group_types[ii]
-          step.add_related_content(related_content_array[ii])
         end
       end
 

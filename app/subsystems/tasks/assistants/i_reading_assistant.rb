@@ -64,8 +64,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
         task: task,
         fragments: page.fragments,
         page_title: page.tutor_title,
-        page: page,
-        related_content: page.related_content
+        page: page
       )
 
       # Personalized exercises after each page

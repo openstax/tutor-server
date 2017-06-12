@@ -52,13 +52,10 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def add_exercise_step!(task:, exercise:, group_type:, title: nil, labels: nil)
-    related_content = exercise.page.related_content
-
     @used_exercise_numbers << exercise.number
 
     TaskExercise.call(task: task, exercise: exercise) do |step|
       step.group_type = group_type
-      step.add_related_content(related_content) if related_content.present?
       step.add_labels(labels) if labels.present?
     end.outputs.task_step
   end

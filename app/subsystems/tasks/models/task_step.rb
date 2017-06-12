@@ -15,7 +15,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     :recovery_group
   ]
 
-  json_serialize :related_content, Hash, array: true
   json_serialize :related_exercise_ids, Integer, array: true
   json_serialize :labels, String, array: true
   json_serialize :spy, Hash
@@ -91,13 +90,12 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     group_type.sub(/_group\z/, '').gsub('_', ' ')
   end
 
-  def add_related_content(related_content_hash)
-    return if related_content_hash.nil?
-    self.related_content << related_content_hash
-  end
-
   def add_labels(labels)
     self.labels = [self.labels, labels].flatten.compact.uniq
+  end
+
+  def related_content
+    page.nil? ? [] : [ page.related_content ]
   end
 
 end

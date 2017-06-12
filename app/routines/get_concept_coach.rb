@@ -119,11 +119,8 @@ class GetConceptCoach
     exercises = core_exercises + spaced_exercises
     group_types = core_exercises.map{ :core_group } + spaced_exercises.map{ :spaced_practice_group }
 
-    related_content_array = exercises.map{ |ex| ex.page.related_content }
-
     # Create the new concept coach task, and put the exercises into steps
-    run(:create_cc_task, role: role, page: page, exercises: exercises,
-                         group_types: group_types, related_content_array: related_content_array)
+    run(:create_cc_task, role: role, page: page, exercises: exercises, group_types: group_types)
 
     run(:add_spy_info, to: outputs.task,
                        from: [ecosystem, { history: history.core_page_ids,

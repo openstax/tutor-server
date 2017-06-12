@@ -102,7 +102,6 @@ class Tasks::PopulatePlaceholderSteps
 
         last_step = page_task_steps.last
         max_page_step_number = last_step.try!(:number) || 0
-        related_content = last_step.try!(:related_content)
         labels = last_step.try!(:labels)
 
         # Iterate through all the exercises and steps
@@ -125,7 +124,6 @@ class Tasks::PopulatePlaceholderSteps
                 number: next_step_number,
                 group_type: group_type,
                 content_page_id: exercise.content_page_id,
-                related_content: related_content,
                 labels: labels
               )
 

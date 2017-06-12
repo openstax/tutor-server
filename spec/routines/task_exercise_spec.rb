@@ -55,7 +55,7 @@ RSpec.describe TaskExercise, type: :routine do
     exercise_step = task.task_steps.third
 
     placeholder_step.update_attributes(
-      group_type: :personalized_group, related_content: [{test: true}], labels: ['test']
+      group_type: :personalized_group, labels: ['test']
     )
 
     TaskExercise[exercise: multipart_exercise, task_step: placeholder_step, task: task]

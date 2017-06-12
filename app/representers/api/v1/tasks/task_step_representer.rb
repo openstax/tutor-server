@@ -46,7 +46,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda {|*| task_step.group_name },
+             getter: ->(*) { task_step.group_name },
              schema_info: {
                 required: true,
                 description: "Which group this TaskStep belongs to (default,core,spaced practice,personalized)"
@@ -88,7 +88,7 @@ module Api::V1::Tasks
     collection :related_content,
                writeable: false,
                readable: true,
-               getter: ->(*) { task_step.related_content.map{ |rc| Hashie::Mash.new(rc) } },
+               getter: ->(*) { task_step.related_content.map { |rc| OpenStruct.new(rc) } },
                extend: ::Api::V1::RelatedContentRepresenter,
                schema_info: {
                  required: true,

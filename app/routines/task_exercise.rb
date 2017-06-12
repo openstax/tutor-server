@@ -18,13 +18,12 @@ class TaskExercise
       current_step = task_step
       new_step = !task.task_steps.include?(task_step)
     else
-      current_step = Tasks::Models::TaskStep.new page: page, related_content: page.related_content
+      current_step = Tasks::Models::TaskStep.new page: page
       new_step = true
     end
 
     group_type = current_step.group_type
     page = current_step.page
-    related_content = current_step.related_content
     labels = current_step.labels
     spy = current_step.spy
     questions = exercise.content_as_independent_questions
@@ -36,7 +35,6 @@ class TaskExercise
         number: current_step.number.nil? ? nil : current_step.number + 1,
         group_type: group_type,
         page: page,
-        related_content: related_content,
         labels: labels,
         spy: spy
       ) if ii > 0

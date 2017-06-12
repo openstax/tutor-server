@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskStep, type: :model do
+
   subject(:task_step) { FactoryGirl.create :tasks_task_step }
 
   it { is_expected.to belong_to(:task) }
@@ -68,31 +69,6 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
     end
   end
 
-  context "related content" do
-    it "can get related content" do
-      expect(task_step.related_content).to eq([])
-    end
-
-    it "can set related content" do
-      target_related_content = [{'title' => 'blah', 'chapter_section' => 'blah'}]
-      task_step.related_content = target_related_content
-      task_step.save!
-      task_step.reload
-      expect(task_step.related_content).to eq(target_related_content)
-    end
-
-    it "can add new related content" do
-      expect(task_step.related_content).to eq([])
-
-      content = {'title' => 'blah', 'chapter_section' => 'blah'}
-      expect{
-        task_step.add_related_content content
-        task_step.save!
-        task_step.reload
-      }.to change{task_step.related_content}.by [content]
-    end
-  end
-
   context "labels" do
     it "can get labels" do
       expect(task_step.labels).to eq([])
@@ -117,4 +93,13 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
       }.to change{task_step.labels}.by labels
     end
   end
+
+  context "related content" do
+    it "can get related content" do
+      expect(task_step.related_content).to eq([ task_step.page.related_content ])
+      task_step.page = nil
+      expect(task_step.related_content).to eq([])
+    end
+  end
+
 end
