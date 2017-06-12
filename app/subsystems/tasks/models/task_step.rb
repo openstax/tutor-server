@@ -90,10 +90,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     group_type.sub(/_group\z/, '').gsub('_', ' ')
   end
 
-  def add_labels(labels)
-    self.labels = [self.labels, labels].flatten.compact.uniq
-  end
-
   def related_content
     page.nil? ? [] : [ page.related_content ]
   end

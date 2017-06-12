@@ -81,17 +81,6 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
       task_step.reload
       expect(task_step.labels).to eq(target_labels)
     end
-
-    it "can add new labels" do
-      expect(task_step.labels).to eq([])
-
-      labels = ['a', 'b']
-      expect{
-        task_step.add_labels labels
-        task_step.save!
-        task_step.reload
-      }.to change{task_step.labels}.by labels
-    end
   end
 
   context "related content" do

@@ -54,9 +54,9 @@ class Tasks::Assistants::GenericAssistant
   def add_exercise_step!(task:, exercise:, group_type:, title: nil, labels: nil)
     @used_exercise_numbers << exercise.number
 
-    TaskExercise.call(task: task, exercise: exercise) do |step|
+    TaskExercise.call(task: task, exercise: exercise, title: title) do |step|
       step.group_type = group_type
-      step.add_labels(labels) if labels.present?
+      step.labels = labels if labels.present?
     end.outputs.task_step
   end
 

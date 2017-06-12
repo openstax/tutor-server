@@ -4,7 +4,7 @@ class TaskExercise
 
   protected
 
-  def exec(exercise:, title: nil, task: nil, task_step: nil)
+  def exec(exercise:, task: nil, task_step: nil, title: nil)
     # This routine will make one step per exercise part.
     # If provided, the incoming `task_step` will be used as the first step.
 
@@ -14,20 +14,14 @@ class TaskExercise
     exercise_model = exercise.to_model
     page = exercise_model.page
 
-    if task_step.present?
-      current_step = task_step
-      new_step = !task.task_steps.include?(task_step)
-    else
-      current_step = Tasks::Models::TaskStep.new page: page
-      new_step = true
-    end
+    current_step = task_step || Tasks::Models::TaskStep.new(page: page)
 
     group_type = current_step.group_type
-    page = current_step.page
     labels = current_step.labels
     spy = current_step.spy
-    questions = exercise.content_as_independent_questions
 
+    questions = exercise.content_as_independent_questions
+    is_new_step = !task.task_steps.include?(task_step)
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
       current_step = Tasks::Models::TaskStep.new(
@@ -59,13 +53,13 @@ class TaskExercise
 
       # Add the step to the task's list of steps if it's new
       # Both of these only save the steps if the task or the step are already persisted
-      if new_step
+      if is_new_step
         task.task_steps << current_step
       elsif current_step.persisted?
         current_step.save!
       end
 
-      new_step = true
+      is_new_step = true
 
       current_step
     end
