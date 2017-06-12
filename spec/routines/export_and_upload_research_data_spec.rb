@@ -11,26 +11,28 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
   let!(:period) { FactoryGirl.create :course_membership_period, course: course }
 
   let(:teacher) { FactoryGirl.create(:user) }
-  let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
-                                           resource_owner_id: teacher.id }
+  let(:teacher_token) do
+    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: teacher.id
+  end
 
-  let(:student_1) { FactoryGirl.create(:user, first_name: 'Student',
-                                              last_name: 'One',
-                                              full_name: 'Student One') }
-  let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
-                                             resource_owner_id: student_1.id }
+  let(:student_1) do
+    FactoryGirl.create :user, first_name: 'Student', last_name: 'One', full_name: 'Student One'
+  end
+  let(:student_1_token) do
+    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: student_1.id
+  end
 
-  let(:student_2) { FactoryGirl.create(:user, first_name: 'Student',
-                                              last_name: 'Two',
-                                              full_name: 'Student Two') }
+  let(:student_2) do
+    FactoryGirl.create :user, first_name: 'Student', last_name: 'Two', full_name: 'Student Two'
+  end
 
-  let(:student_3) { FactoryGirl.create(:user, first_name: 'Student',
-                                              last_name: 'Three',
-                                              full_name: 'Student Three') }
+  let(:student_3) do
+    FactoryGirl.create :user, first_name: 'Student', last_name: 'Three', full_name: 'Student Three'
+  end
 
-  let(:student_4) { FactoryGirl.create(:user, first_name: 'Student',
-                                              last_name: 'Four',
-                                              full_name: 'Student Four') }
+  let(:student_4) do
+    FactoryGirl.create :user, first_name: 'Student', last_name: 'Four', full_name: 'Student Four'
+  end
 
   let(:all_task_types) { Tasks::Models::Task.task_types.values }
 
@@ -56,28 +58,45 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       # We replace the uploading of the research data with the test case itself
       with_export_rows(all_task_types) do |rows|
         headers = rows.first
-        values = rows.second
-        data = Hash[headers.zip(values)]
-        step = Tasks::Models::TaskStep.first
-        student = CourseMembership::Models::Student.first
 
-        expect(data['Student']).to eq(student.role.research_identifier)
-        expect(data['Course ID']).to eq(course.id.to_s)
-        expect(data['CC?']).to eq("FALSE")
-        expect(data['Period ID']).to eq(period.id.to_s)
-        expect(data['Step ID']).to eq(step.id.to_s)
-        expect(data['Step Type']).to eq('Reading')
-        expect(data['Group']).to eq(step.group_name)
-        expect(data['First Completed At']).to eq(step.first_completed_at.utc.iso8601)
-        expect(data['Last Completed At']).to eq(step.last_completed_at.utc.iso8601)
-        expect(data['Opens At']).to eq(step.task.opens_at.utc.iso8601)
-        expect(data['Due At']).to eq(step.task.due_at.utc.iso8601)
-        expect(data['URL']).to eq(step.tasked.url)
-        expect(data['Correct Answer ID']).to eq(nil)
-        expect(data['Answer ID']).to eq(nil)
-        expect(data['Correct?']).to eq(nil)
-        expect(data['Free Response']).to eq(nil)
-        expect(data['Tags']).to eq(nil)
+        step_id_index = headers.index('Step ID')
+        step_ids = rows.map { |row| row[step_id_index] }
+        steps_by_id = Tasks::Models::TaskStep
+          .where(id: step_ids)
+          .preload(:tasked, task: [ :time_zone, taskings: :role ])
+          .index_by(&:id)
+
+        period_ids = course.periods.map { |period| period.id.to_s }
+
+        rows[1..-1].each do |row|
+          data = headers.zip(row).to_h
+          step = steps_by_id.fetch(data['Step ID'].to_i)
+          task = step.task
+          tasked = step.tasked
+          url = tasked.respond_to?(:url) ? tasked.url : nil
+          correct_answer_id = step.exercise? ? tasked.correct_answer_id : nil
+          answer_id = step.exercise? ? tasked.answer_id : nil
+          correct = step.exercise? ? tasked.is_correct?.to_s : nil
+          free_response = step.exercise? ? tasked.free_response : nil
+          tags = step.exercise? ? tasked.tags.join(',') : nil
+
+          expect(data['Student']).to eq(task.taskings.first.role.research_identifier)
+          expect(data['Course ID']).to eq(course.id.to_s)
+          expect(data['CC?']).to eq("FALSE")
+          expect(data['Period ID']).to be_in(period_ids)
+          expect(data['Step Type']).to eq(step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1))
+          expect(data['Group']).to eq(step.group_name)
+          expect(data['First Completed At']).to eq(format_time(step.first_completed_at))
+          expect(data['Last Completed At']).to eq(format_time(step.last_completed_at))
+          expect(data['Opens At']).to eq(format_time(task.opens_at))
+          expect(data['Due At']).to eq(format_time(task.due_at))
+          expect(data['URL']).to eq(url)
+          expect(data['Correct Answer ID']).to eq(correct_answer_id)
+          expect(data['Answer ID']).to eq(answer_id)
+          expect(data['Correct?']).to eq(correct)
+          expect(data['Free Response']).to eq(free_response)
+          expect(data['Tags']).to eq(tags)
+        end
       end
     end
 
@@ -87,8 +106,10 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
       expect(HTTParty).to receive(:put).with(
         webdav_url_regex,
-        basic_auth: { username: a_kind_of(String).or(be_nil),
-                      password: a_kind_of(String).or(be_nil) },
+        basic_auth: {
+          username: a_kind_of(String).or(be_nil),
+          password: a_kind_of(String).or(be_nil)
+        },
         body_stream: a_kind_of(File),
         headers: { 'Transfer-Encoding' => 'chunked' }
       ).and_return OpenStruct.new(success?: true)
@@ -178,4 +199,9 @@ def with_export_rows(task_types = [], from = nil, to = nil, &block)
   end
 
   capture_stdout{ described_class.call(task_types: task_types, from: from, to: to) }
+end
+
+def format_time(time)
+  return time if time.blank?
+  time.utc.iso8601
 end
