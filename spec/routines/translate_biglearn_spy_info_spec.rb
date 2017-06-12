@@ -17,18 +17,18 @@ RSpec.describe TranslateBiglearnSpyInfo, type: :routine do
 
   let(:spy_info) do
     {
-      given_exercise_uuid_1 => { book_container_uuid: given_book_container_uuid_1 },
-      given_exercise_uuid_2 => {
+      given_exercise_uuid_1.to_sym => { book_container_uuid: given_book_container_uuid_1 },
+      given_exercise_uuid_2.to_sym => {
         k_ago: 1,
         assignment_uuid: @spaced_task.uuid,
         book_container_uuid: given_book_container_uuid_2
       },
-      given_exercise_uuid_3 => {
+      given_exercise_uuid_3.to_sym => {
         k_ago: 0,
         assignment_uuid: @current_task.uuid,
         book_container_uuid: given_book_container_uuid_3
       }
-    }.deep_stringify_keys
+    }
   end
 
   let(:expected_translated_spy_info) do
