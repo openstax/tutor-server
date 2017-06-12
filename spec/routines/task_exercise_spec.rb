@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TaskExercise, type: :routine do
+
   let(:exercise)  do
     content_exercise = FactoryGirl.create(:content_exercise)
     strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
@@ -19,7 +20,7 @@ RSpec.describe TaskExercise, type: :routine do
     TaskExercise[exercise: exercise, task_step: task_step]
     expect(task_step.tasked).to be_a(Tasks::Models::TaskedExercise)
     expect(task_step.tasked).to be_persisted
-    expect(task_step.tasked.is_in_multipart).to be_falsy
+    expect(task_step.tasked.is_in_multipart).to eq false
     expect(task_step.tasked.question_id).to be_kind_of(String)
     expect(task_step.tasked.task_step).to eq task_step
     parser = task_step.tasked.parser
@@ -46,21 +47,18 @@ RSpec.describe TaskExercise, type: :routine do
   end
 
   it 'can insert multiple exercise steps in order for a single placeholder step' do
-    task = FactoryGirl.create :tasks_task,
-                              step_types: [:tasks_tasked_reading,
-                                           :tasks_tasked_placeholder,
-                                           :tasks_tasked_exercise]
+    task = FactoryGirl.create :tasks_task, step_types: [
+      :tasks_tasked_reading, :tasks_tasked_placeholder, :tasks_tasked_exercise
+    ]
     reading_step = task.task_steps.first
     placeholder_step = task.task_steps.second
     exercise_step = task.task_steps.third
 
-    placeholder_step.update_attributes(
-      group_type: :personalized_group, labels: ['test']
-    )
+    placeholder_step.update_attributes group_type: :personalized_group, labels: ['test']
 
     TaskExercise[exercise: multipart_exercise, task_step: placeholder_step, task: task]
 
-    question_ids = multipart_exercise.content_as_independent_questions.map{ |qq| qq[:id] }
+    question_ids = multipart_exercise.content_as_independent_questions.map { |qq| qq[:id] }
 
     expect(task.task_steps.length).to eq 4
     expect(task.task_steps[0]).to eq reading_step
@@ -68,9 +66,9 @@ RSpec.describe TaskExercise, type: :routine do
     expect(task.task_steps[1]).to eq placeholder_step
     task.task_steps[1..2].each do |task_step|
       expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
-      expect(task_step.tasked.is_in_multipart).to be_truthy
+      expect(task_step.tasked.is_in_multipart).to eq true
       expect(task_step.group_type).to eq 'personalized_group'
-      expect(task_step.related_content).to eq [{'test' => true}]
+      expect(task_step.page).to eq multipart_exercise.page.to_model
       expect(task_step.labels).to eq ['test']
     end
     expect(task.task_steps[1].tasked.question_id).to eq question_ids[0]
@@ -79,7 +77,8 @@ RSpec.describe TaskExercise, type: :routine do
     expect(task.task_steps[2].tasked.content).to match("(1)")
 
     expect(task.task_steps[3]).to eq exercise_step
-    expect(task.task_steps[3].tasked.is_in_multipart).to be_falsy
+    expect(task.task_steps[3].tasked.is_in_multipart).to eq false
+    expect(task.task_steps[3].page).not_to eq multipart_exercise.page.to_model
   end
 
 end
