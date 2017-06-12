@@ -3,18 +3,16 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
   protected
 
-  def task_fragments(task:, fragments:, page_title:, page:, related_content: nil)
-    related_content ||= page.related_content
+  def task_fragments(task:, fragments:, page_title:, page:)
     title = page_title
 
     step_builder = ->(fragment) do
       Tasks::Models::TaskStep.new(
-        task: task, group_type: :core_group, page: page.to_model
-      ).tap do |step|
-        step.add_labels(fragment.labels)
-        step.add_related_content(related_content)
-        task.task_steps << step
-      end
+        task: task,
+        group_type: :core_group,
+        page: page.to_model,
+        labels: fragment.labels
+      ).tap { |step| task.task_steps << step }
     end
 
     fragments.each do |fragment|

@@ -4,31 +4,30 @@ class TaskExercise
 
   protected
 
-  def exec(exercise:, title: nil, task: nil, task_step: nil)
+  def exec(exercise:, task: nil, task_step: nil, title: nil)
     # This routine will make one step per exercise part.
     # If provided, the incoming `task_step` will be used as the first step.
 
     task ||= task_step.try!(:task)
     fatal_error(code: :cannot_get_task) if task.nil?
 
-    exercise_model = exercise.to_model
-    page = exercise_model.page
-
-    if task_step.present?
-      current_step = task_step
-      new_step = !task.task_steps.include?(task_step)
+    if task_step.nil?
+      current_step = Tasks::Models::TaskStep.new
+      is_new_step = true
     else
-      current_step = Tasks::Models::TaskStep.new page: page, related_content: page.related_content
-      new_step = true
+      current_step = task_step
+      is_new_step = !task.task_steps.include?(task_step)
     end
 
+    exercise_model = exercise.to_model
+    page = exercise_model.page
+    current_step.page = page
+
     group_type = current_step.group_type
-    page = current_step.page
-    related_content = current_step.related_content
     labels = current_step.labels
     spy = current_step.spy
-    questions = exercise.content_as_independent_questions
 
+    questions = exercise.content_as_independent_questions
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
       current_step = Tasks::Models::TaskStep.new(
@@ -36,7 +35,6 @@ class TaskExercise
         number: current_step.number.nil? ? nil : current_step.number + 1,
         group_type: group_type,
         page: page,
-        related_content: related_content,
         labels: labels,
         spy: spy
       ) if ii > 0
@@ -61,13 +59,11 @@ class TaskExercise
 
       # Add the step to the task's list of steps if it's new
       # Both of these only save the steps if the task or the step are already persisted
-      if new_step
+      if ii > 0 || is_new_step
         task.task_steps << current_step
       elsif current_step.persisted?
         current_step.save!
       end
-
-      new_step = true
 
       current_step
     end

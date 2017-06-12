@@ -31,8 +31,8 @@ class CreatePracticeSpecificTopicsTask
     @pages.each do |page|
       task_step = Tasks::Models::TaskStep.new(
         tasked: Tasks::Models::TaskedPlaceholder.exercise_type.new,
-        content_page_id: page.id,
-        group_type: :personalized_group
+        group_type: :personalized_group,
+        page: page.to_model
       )
 
       @task.task_steps << task_step

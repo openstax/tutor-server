@@ -30,7 +30,6 @@ class CreatePracticeWorstTopicsTask
     exercises.each do |exercise|
       run(:task_exercise, exercise: exercise, task: @task) do |step|
         step.group_type = :personalized_group
-        step.add_related_content(exercise.page.related_content)
         step.spy = spy_info.fetch(exercise.uuid, {})
       end
     end.tap { @task.update_attribute :pes_are_assigned, true }

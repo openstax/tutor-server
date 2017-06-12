@@ -47,11 +47,8 @@ class SetupPerformanceReportData
 
         group_types = (exercises.size - 2).times.map{ :core_group } + [:spaced_practice_group] * 2
 
-        related_content_array = exercises.map{ page.related_content }
-
         Tasks::CreateConceptCoachTask[
-          role: role, page: page, exercises: exercises,
-          group_types: group_types, related_content_array: related_content_array
+          role: role, page: page, exercises: exercises, group_types: group_types
         ]
       end
     end
