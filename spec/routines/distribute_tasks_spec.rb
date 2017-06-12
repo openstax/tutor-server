@@ -125,11 +125,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
 
       it 'sets the published_at fields' do
-        result = DistributeTasks.call(task_plan: task_plan)
+        publish_time = Time.current
+        result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
         expect(result.errors).to be_empty
         task_plan.reload
-        expect(task_plan.first_published_at).to be_within(1).of(Time.current)
-        expect(task_plan.last_published_at).to be_within(1).of(Time.current)
+        expect(task_plan.first_published_at).to be_within(1).of(publish_time)
+        expect(task_plan.last_published_at).to be_within(1).of(publish_time)
       end
 
       it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -161,11 +162,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
       end
 
       it 'sets the published_at fields' do
-        result = DistributeTasks.call(task_plan: task_plan)
+        publish_time = Time.current
+        result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
         expect(result.errors).to be_empty
         task_plan.reload
-        expect(task_plan.first_published_at).to be_within(1).of(Time.current)
-        expect(task_plan.last_published_at).to be_within(1).of(Time.current)
+        expect(task_plan.first_published_at).to be_within(1).of(publish_time)
+        expect(task_plan.last_published_at).to be_within(1).of(publish_time)
       end
 
       it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
