@@ -3,34 +3,31 @@ require 'rails_helper'
 
 RSpec.describe CourseProfile::ClaimPreviewCourse do
   let(:offering) { FactoryGirl.create :catalog_offering }
-  let(:term) { TermYear.visible_term_years.first }
-  let(:user) { FactoryGirl.create :user }
+  let(:term)     { :preview }
+  let(:year)     { Time.current.year }
 
   context 'with preview available' do
-    let!(:course) {
-      CreateCourse.call(
+    let!(:course) do
+      CreateCourse[
         name: 'Unclaimed',
-        term: term.term,
-        year: term.year,
+        term: term,
+        year: year,
         time_zone: 'Indiana (East)',
         is_preview: true,
         is_college: true,
         catalog_offering: offering,
         estimated_student_count: 42
-      ).outputs.course
-    }
+      ]
+    end
 
-    it 'finds the course and updates it’s attributes' do
+    it 'finds the course and updates its attributes' do
       course.update_attributes!(created_at: 3.days.ago)
       claimed_course = CourseProfile::ClaimPreviewCourse[
-        teacher: user, catalog_offering: offering, name: 'My New Preview Course'
+        catalog_offering: offering, name: 'My New Preview Course'
       ]
       expect(claimed_course.id).to eq course.id
       expect(claimed_course.name).to eq 'My New Preview Course'
-      expect(claimed_course.preview_claimed_at).to be_within(1.minute).of(Time.now)
-      expect(
-        CourseMembership::IsCourseTeacher[course: claimed_course, roles: user.to_model.roles.first]
-      ).to be(true)
+      expect(claimed_course.preview_claimed_at).to be_within(1.minute).of(Time.current)
     end
   end
 
@@ -38,7 +35,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse do
   context 'when no previews are pre-built' do
     it 'errors with api code and sends email' do
       result = CourseProfile::ClaimPreviewCourse.call(
-        teacher: user, catalog_offering: offering, name: 'My New Preview Course'
+        catalog_offering: offering, name: 'My New Preview Course'
       )
       expect(result.errors.first.code).to eq :no_preview_courses_available
       expect(ActionMailer::Base.deliveries.last.subject).to match('claim_preview_course.rb')

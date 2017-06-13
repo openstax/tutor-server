@@ -23,5 +23,5 @@ every 30.minutes do
 end
 
 every 10.minutes do
-  runner "CourseProfile::BuildPreviewCourses.run_scheduled_build"
+  runner "CourseProfile::BuildPreviewCourses.call"
 end
