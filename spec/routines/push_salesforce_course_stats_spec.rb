@@ -10,13 +10,13 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     subject { instance.best_sf_contact_id_for_course(course) }
 
-    it 'returns nil if there are no teachers' do
-      expect(subject).to be_nil
+    it 'errors if there are no teachers' do
+      expect{ subject }.to throw_symbol(:go_to_next_course)
     end
 
     it 'returns nil if there are no teachers with a SF contact ID' do
       AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      expect(subject).to be_nil
+      expect{ subject }.to throw_symbol(:go_to_next_course)
     end
 
     it 'returns the SF ID when there is one teacher with a SF ID' do
@@ -36,6 +36,64 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
         AddUserAsCourseTeacher[course: course, user: user_sf_b]
         expect(subject).to eq "a"
       end
+    end
+  end
+
+  context "#base_year_for_course" do
+    let(:course) { FactoryGirl.create :course_profile_course, term: @term, year: @year }
+    subject { instance.base_year_for_course(course) }
+
+    it "gives 2016 for Fall 2016" do
+      @term = :fall
+      @year = 2016
+      is_expected.to eq 2016
+    end
+
+    it "gives 2016 for Winter 2017" do
+      @term = :winter
+      @year = 2017
+      is_expected.to eq 2016
+    end
+
+    it "gives 2016 for Spring 2017" do
+      @term = :spring
+      @year = 2017
+      is_expected.to eq 2016
+    end
+
+    it "gives 2016 for Summer 2017" do
+      @term = :summer
+      @year = 2017
+      is_expected.to eq 2016
+    end
+  end
+
+  context '#salesforce_school_year_for_course' do
+    let(:course) { FactoryGirl.create :course_profile_course, term: @term, year: @year }
+    subject { instance.salesforce_school_year_for_course(course) }
+
+    it "gives 2016 for Fall 2016" do
+      @term = :fall
+      @year = 2016
+      is_expected.to eq "2016 - 17"
+    end
+
+    it "gives 2016 for Winter 2017" do
+      @term = :winter
+      @year = 2017
+      is_expected.to eq "2016 - 17"
+    end
+
+    it "gives 2016 for Spring 2017" do
+      @term = :spring
+      @year = 2017
+      is_expected.to eq "2016 - 17"
+    end
+
+    it "gives 2016 for Summer 2017" do
+      @term = :summer
+      @year = 2017
+      is_expected.to eq "2016 - 17"
     end
   end
 

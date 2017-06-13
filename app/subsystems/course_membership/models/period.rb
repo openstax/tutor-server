@@ -23,6 +23,11 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :enrollment_changes, dependent: :destroy, inverse_of: :period
 
+  has_many :students, through: :enrollments
+  has_many :students_with_deleted, through: :latest_enrollments_with_deleted,
+                                   class_name: '::CourseMembership::Models::Student',
+                                   source: :student
+
   has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
 

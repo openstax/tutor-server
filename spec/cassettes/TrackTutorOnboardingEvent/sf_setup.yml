@@ -21,21 +21,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 21 May 2017 07:16:08 GMT
+      - Sun, 11 Jun 2017 03:47:26 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=3KPW7GUlSHC5XAVYZSziNw;Path=/;Domain=.salesforce.com;Expires=Thu,
-        20-Jul-2017 07:16:08 GMT
+      - BrowserId=1AFM3r7gSDSjr0KQxX8r5w;Path=/;Domain=.salesforce.com;Expires=Thu,
+        10-Aug-2017 03:47:26 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=1207/48000
+      - api-usage=1154/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -44,16 +45,16 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v000002Wo0qAAC"},"Id":"0010v000002Wo0qAAC","Name":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v000003uCSCAA2"},"Id":"0010v000003uCSCAA2","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Sun, 21 May 2017 07:16:08 GMT
+  recorded_at: Sun, 11 Jun 2017 03:47:26 GMT
 - request:
     method: post
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Contact"
     body:
       encoding: UTF-8
-      string: '{"FirstName":"Nina","LastName":"Harber","AccountId":"0010v000002Wo0qAAC"}'
+      string: '{"FirstName":"Lavonne","LastName":"Bode","AccountId":"0010v000003uCSCAA2"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -71,23 +72,24 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Sun, 21 May 2017 07:16:09 GMT
+      - Sun, 11 Jun 2017 03:47:28 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=lAzUTJ2cRE-VFYTQTlM4mw;Path=/;Domain=.salesforce.com;Expires=Thu,
-        20-Jul-2017 07:16:09 GMT
+      - BrowserId=ks5BvCU0R2OSz2uzYxax2w;Path=/;Domain=.salesforce.com;Expires=Thu,
+        10-Aug-2017 03:47:28 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=1207/48000
+      - api-usage=1168/48000
       Location:
-      - "/services/data/v37.0/sobjects/Contact/0030v000001Y6RqAAK"
+      - "/services/data/v37.0/sobjects/Contact/0030v000002CiKnAAK"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -96,7 +98,7 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0030v000001Y6RqAAK","success":true,"errors":[]}'
+      string: '{"id":"0030v000002CiKnAAK","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Sun, 21 May 2017 07:16:10 GMT
+  recorded_at: Sun, 11 Jun 2017 03:47:28 GMT
 recorded_with: VCR 2.9.3

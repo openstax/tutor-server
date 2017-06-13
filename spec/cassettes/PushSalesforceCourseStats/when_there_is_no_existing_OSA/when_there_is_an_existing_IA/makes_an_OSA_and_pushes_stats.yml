@@ -5,7 +5,7 @@ http_interactions:
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Contact"
     body:
       encoding: UTF-8
-      string: '{"FirstName":"Aron","LastName":"Morar","AccountId":"0010v000002Wo0qAAC"}'
+      string: '{"FirstName":"Silas","LastName":"Buckridge","AccountId":"0010v000003uCSCAA2"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -23,23 +23,24 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:22 GMT
+      - Tue, 13 Jun 2017 20:35:31 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=Rh0cT2YeS_2WqhM6L3YMAQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:22 GMT
+      - BrowserId=QaRrQ93VREqy-VlGPDixJQ;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:31 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=144/48000
+      - api-usage=322/48000
       Location:
-      - "/services/data/v37.0/sobjects/Contact/0030v000001vEBFAA2"
+      - "/services/data/v37.0/sobjects/Contact/0030v000002EOuUAAW"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -48,15 +49,15 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0030v000001vEBFAA2","success":true,"errors":[]}'
+      string: '{"id":"0030v000002EOuUAAW","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:22 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:32 GMT
 - request:
     method: post
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Individual_Adoption__c"
     body:
       encoding: UTF-8
-      string: '{"Contact__c":"0030v000001vEBFAA2","Book__c":"a0Z0v00000052FMEAY","Account__c":"0010v000002Wo0qAAC","Fall_Start_Date__c":"2016-08-01","Adoption_Level__c":"Confirmed
+      string: '{"Contact__c":"0030v000002EOuUAAW","Book__c":"a0Z0v000000DzuWEAS","Account__c":"0010v000003uCSCAA2","Fall_Start_Date__c":"2016-08-01","Adoption_Level__c":"Confirmed
         Adoption Won","Description__c":"blah"}'
     headers:
       User-Agent:
@@ -75,23 +76,24 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:23 GMT
+      - Tue, 13 Jun 2017 20:35:32 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=UIrL0qVoTxygy7Z3FvIqqQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:23 GMT
+      - BrowserId=RmI-sXBJQgy2A817ciXAPQ;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:32 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=142/48000
+      - api-usage=322/48000
       Location:
-      - "/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v00000093vgEAA"
+      - "/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v0000004bPTEAY"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -100,12 +102,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"a1W0v00000093vgEAA","success":true,"errors":[]}'
+      string: '{"id":"a1W0v0000004bPTEAY","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:24 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:35 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Book_Text__c,%20Contact__c,%20Book__c,%20Account__c,%20School_Year__c,%20Fall_Start_Date__c,%20Summer_Start_Date__c,%20Winter_Start_Date__c,%20Spring_Start_Date__c,%20Adoption_Level__c,%20Description__c,%20TermYear__c,%20Class_Start_Date__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270030v000001vEBFAA2%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(School_Year__c%20=%20%272016%20-%2017%27)"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Course_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20External_UUID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20Students_Paid__c,%20Students_Comped__c,%20Students_Refunded__c,%20TermYear__c,%20Term__c,%20Manual_Base_Year__c,%20Estimated_Enrollment__c,%20Paid_Course__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(External_UUID__c%20=%20%27<UUID_1>%27)"
     body:
       encoding: US-ASCII
       string: ''
@@ -124,119 +126,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:24 GMT
+      - Tue, 13 Jun 2017 20:35:36 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=pe5F-Ut9SXGcaC-E_Z9OrA;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:24 GMT
+      - BrowserId=B3RCXViJQeampE_i31eRpA;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:36 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=144/48000
-      Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Individual_Adoption__c","url":"/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v00000093vgEAA"},"Id":"a1W0v00000093vgEAA","Book_Text__c":"Chemistry","Contact__c":"0030v000001vEBFAA2","Book__c":"a0Z0v00000052FMEAY","Account__c":"0010v000002Wo0qAAC","School_Year__c":"2016
-        - 17","Fall_Start_Date__c":"2016-08-01","Summer_Start_Date__c":null,"Winter_Start_Date__c":null,"Spring_Start_Date__c":null,"Adoption_Level__c":"Confirmed
-        Adoption Won","Description__c":"blah","TermYear__c":"2016 - 17 Spring","Class_Start_Date__c":null}]}'
-    http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:24 GMT
-- request:
-    method: patch
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v00000093vgEAA"
-    body:
-      encoding: UTF-8
-      string: '{"Spring_Start_Date__c":"2017-01-01"}'
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Content-Type:
-      - application/json
-      Authorization:
-      - OAuth <tutor_specs_oauth_token>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 204
-      message: No Content
-    headers:
-      Date:
-      - Thu, 01 Jun 2017 22:36:25 GMT
-      X-Content-Type-Options:
-      - nosniff
-      X-Xss-Protection:
-      - 1; mode=block
-      Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
-      Set-Cookie:
-      - BrowserId=Zrw8TykYQPmtFZ95E8jg0g;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:25 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=144/48000
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:25 GMT
-- request:
-    method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Term__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W0v00000093vgEAA%27)%20AND%20(Product__c%20=%20%27Tutor%27)%20AND%20(Term__c%20=%20%27Spring%27)"
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Authorization:
-      - OAuth <tutor_specs_oauth_token>
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Thu, 01 Jun 2017 22:36:25 GMT
-      Content-Security-Policy-Report-Only:
-      - 'default-src https:; script-src https: ''unsafe-inline'' ''unsafe-eval'';
-        style-src https: ''unsafe-inline''; img-src https: data:; frame-ancestors
-        ''self'' *.salesforce.com *.force.com; font-src https: data:; connect-src
-        ''self'' https:; report-uri /_/ContentDomainCSPNoAuth?type=login; base-uri
-        http://cs66.salesforce.com/services/data/v37.0/query'
-      X-Content-Type-Options:
-      - nosniff
-      X-Xss-Protection:
-      - 1; mode=block
-      Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
-      Set-Cookie:
-      - BrowserId=DkK1rRqhSTyGhoCcKErcCg;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:25 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Sforce-Limit-Info:
-      - api-usage=143/48000
+      - api-usage=325/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -247,13 +152,64 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:25 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:36 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Book_Text__c,%20Contact__c,%20Book__c,%20Account__c,%20School_Year__c,%20Fall_Start_Date__c,%20Summer_Start_Date__c,%20Winter_Start_Date__c,%20Spring_Start_Date__c,%20Adoption_Level__c,%20Description__c,%20Source__c,%20TermYear__c,%20Class_Start_Date__c%20FROM%20Individual_Adoption__c%20WHERE%20(Contact__c%20=%20%270030v000002EOuUAAW%27)%20AND%20(Book_Text__c%20=%20%27Chemistry%27)%20AND%20(School_Year__c%20=%20%272016%20-%2017%27)"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 13 Jun 2017 20:35:36 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      Set-Cookie:
+      - BrowserId=Ivfr3oRyRRiHFeYrQWUIZA;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:36 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=323/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Individual_Adoption__c","url":"/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v0000004bPTEAY"},"Id":"a1W0v0000004bPTEAY","Book_Text__c":"Chemistry","Contact__c":"0030v000002EOuUAAW","Book__c":"a0Z0v000000DzuWEAS","Account__c":"0010v000003uCSCAA2","School_Year__c":"2016
+        - 17","Fall_Start_Date__c":"2016-08-01","Summer_Start_Date__c":null,"Winter_Start_Date__c":null,"Spring_Start_Date__c":null,"Adoption_Level__c":"Confirmed
+        Adoption Won","Description__c":"blah","Source__c":null,"TermYear__c":"2016
+        - 17 Spring","Class_Start_Date__c":null}]}'
+    http_version: 
+  recorded_at: Tue, 13 Jun 2017 20:35:36 GMT
 - request:
     method: post
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/OS_Ancillary__c"
     body:
       encoding: UTF-8
-      string: '{"Product__c":"Tutor","Term__c":"Spring","Individual_Adoption__c":"a1W0v00000093vgEAA","Contact__c":"0030v000001vEBFAA2"}'
+      string: '{"Product__c":"Tutor","Term__c":"Spring","Manual_Base_Year__c":2016,"Individual_Adoption__c":"a1W0v0000004bPTEAY","Contact__c":"0030v000002EOuUAAW"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -271,23 +227,24 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:26 GMT
+      - Tue, 13 Jun 2017 20:35:36 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=EQRgeb0kSfmQejwqGm4UnQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:26 GMT
+      - BrowserId=xkIIBKSySL6yBZdF9N-Nzw;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:36 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=145/48000
+      - api-usage=323/48000
       Location:
-      - "/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000008RbaEAE"
+      - "/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000000FKzEAM"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -296,12 +253,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"a1S0v0000008RbaEAE","success":true,"errors":[]}'
+      string: '{"id":"a1S0v0000000FKzEAM","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:26 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:37 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Term__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S0v0000008RbaEAE%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Course_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20External_UUID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20Students_Paid__c,%20Students_Comped__c,%20Students_Refunded__c,%20TermYear__c,%20Term__c,%20Manual_Base_Year__c,%20Estimated_Enrollment__c,%20Paid_Course__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S0v0000000FKzEAM%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -320,21 +277,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:26 GMT
+      - Tue, 13 Jun 2017 20:35:38 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=PY9BShDPT4OocdOtNppPCA;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:26 GMT
+      - BrowserId=P2o-R5bFSJGTkY3wp5s-mQ;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=145/48000
+      - api-usage=325/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -343,17 +301,17 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000008RbaEAE"},"Id":"a1S0v0000008RbaEAE","Status__c":null,"Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":null,"Course_Name__c":null,"Course_Code__c":null,"External_ID__c":null,"E_Created_Date__c":null,"Error__c":null,"General_Access_URL__c":null,"Teacher_Join_URL__c":null,"School_Name__c":"JP
-        University","Active_Teachers__c":null,"Sections__c":null,"Students_Using__c":null,"TermYear__c":"2016
-        - 17 Spring","Term__c":"Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W0v00000093vgEAA","Contact__c":"0030v000001vEBFAA2"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000000FKzEAM"},"Id":"a1S0v0000000FKzEAM","Status__c":null,"Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Course_Start_Date__c":null,"Course_Name__c":null,"Course_Code__c":null,"External_ID__c":null,"External_UUID__c":null,"E_Created_Date__c":null,"Error__c":null,"General_Access_URL__c":null,"Teacher_Join_URL__c":null,"School_Name__c":"JP
+        University","Active_Teachers__c":null,"Sections__c":null,"Students_Using__c":null,"Students_Paid__c":null,"Students_Comped__c":null,"Students_Refunded__c":null,"TermYear__c":"2016
+        - 17 Spring","Term__c":"Spring","Manual_Base_Year__c":2016.0,"Estimated_Enrollment__c":null,"Paid_Course__c":false,"Opportunity__c":null,"Individual_Adoption__c":"a1W0v0000004bPTEAY","Contact__c":"0030v000002EOuUAAW"}]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:27 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:38 GMT
 - request:
     method: patch
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000008RbaEAE"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000000FKzEAM"
     body:
       encoding: UTF-8
-      string: '{"Status__c":"Approved","External_ID__c":2,"E_Created_Date__c":"2017-06-01T22:36:19Z","Teacher_Join_URL__c":"http://localhost:3001/teach/bbefd885c16573a8dafd652e9e178252/DO_NOT_GIVE_TO_STUDENTS","Active_Teachers__c":1,"Sections__c":2,"Students_Using__c":6}'
+      string: '{"Status__c":"Approved","Course_Start_Date__c":"2017-01-01","External_ID__c":2,"External_UUID__c":"<UUID_1>","E_Created_Date__c":"2017-06-13T20:35:28Z","Teacher_Join_URL__c":"http://localhost:3001/teach/970662bc7c8163cf8936447b1af81a92/DO_NOT_GIVE_TO_STUDENTS","Active_Teachers__c":1,"Sections__c":2,"Students_Using__c":6,"Students_Paid__c":1,"Students_Comped__c":2,"Students_Refunded__c":1,"Estimated_Enrollment__c":42,"Paid_Course__c":true}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -371,29 +329,30 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:27 GMT
+      - Tue, 13 Jun 2017 20:35:38 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=FDuGmTjSSvSgBS25d5skZw;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:27 GMT
+      - BrowserId=i7ZsTRpFReOheWBlc_3G6g;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=145/48000
+      - api-usage=323/48000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:27 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:39 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Book_Text__c,%20Contact__c,%20Book__c,%20Account__c,%20School_Year__c,%20Fall_Start_Date__c,%20Summer_Start_Date__c,%20Winter_Start_Date__c,%20Spring_Start_Date__c,%20Adoption_Level__c,%20Description__c,%20TermYear__c,%20Class_Start_Date__c%20FROM%20Individual_Adoption__c%20WHERE%20(Id%20=%20%27a1W0v00000093vgEAA%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Book_Text__c,%20Contact__c,%20Book__c,%20Account__c,%20School_Year__c,%20Fall_Start_Date__c,%20Summer_Start_Date__c,%20Winter_Start_Date__c,%20Spring_Start_Date__c,%20Adoption_Level__c,%20Description__c,%20Source__c,%20TermYear__c,%20Class_Start_Date__c%20FROM%20Individual_Adoption__c%20WHERE%20(Id%20=%20%27a1W0v0000004bPTEAY%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -412,21 +371,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:27 GMT
+      - Tue, 13 Jun 2017 20:35:39 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=XzMOc7i0RMyQWSi4dn3C9g;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:27 GMT
+      - BrowserId=R_MtpxCfQCeTPk5ShAXh8A;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:39 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=143/48000
+      - api-usage=323/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -435,14 +395,15 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Individual_Adoption__c","url":"/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v00000093vgEAA"},"Id":"a1W0v00000093vgEAA","Book_Text__c":"Chemistry","Contact__c":"0030v000001vEBFAA2","Book__c":"a0Z0v00000052FMEAY","Account__c":"0010v000002Wo0qAAC","School_Year__c":"2016
-        - 17","Fall_Start_Date__c":"2016-08-01","Summer_Start_Date__c":null,"Winter_Start_Date__c":null,"Spring_Start_Date__c":"2017-01-01","Adoption_Level__c":"Confirmed
-        Adoption Won","Description__c":"blah","TermYear__c":"2016 - 17 Spring","Class_Start_Date__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Individual_Adoption__c","url":"/services/data/v37.0/sobjects/Individual_Adoption__c/a1W0v0000004bPTEAY"},"Id":"a1W0v0000004bPTEAY","Book_Text__c":"Chemistry","Contact__c":"0030v000002EOuUAAW","Book__c":"a0Z0v000000DzuWEAS","Account__c":"0010v000003uCSCAA2","School_Year__c":"2016
+        - 17","Fall_Start_Date__c":"2016-08-01","Summer_Start_Date__c":null,"Winter_Start_Date__c":null,"Spring_Start_Date__c":null,"Adoption_Level__c":"Confirmed
+        Adoption Won","Description__c":"blah","Source__c":null,"TermYear__c":"2016
+        - 17 Spring","Class_Start_Date__c":null}]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:28 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:39 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Term__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W0v00000093vgEAA%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Course_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20External_UUID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20Students_Paid__c,%20Students_Comped__c,%20Students_Refunded__c,%20TermYear__c,%20Term__c,%20Manual_Base_Year__c,%20Estimated_Enrollment__c,%20Paid_Course__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Individual_Adoption__c%20=%20%27a1W0v0000004bPTEAY%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -461,21 +422,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:28 GMT
+      - Tue, 13 Jun 2017 20:35:39 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=9hVSwVj4Tt6QvPQ1Wr09Qg;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:28 GMT
+      - BrowserId=H_jamtKYQ4SxdcGOSkTT1g;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:39 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=144/48000
+      - api-usage=323/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -484,14 +446,14 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000008RbaEAE"},"Id":"a1S0v0000008RbaEAE","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":null,"Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"2","E_Created_Date__c":"2017-06-01T22:36:19.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/2/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/bbefd885c16573a8dafd652e9e178252/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
-        University","Active_Teachers__c":1.0,"Sections__c":2.0,"Students_Using__c":6.0,"TermYear__c":"2016
-        - 17 Spring","Term__c":"Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W0v00000093vgEAA","Contact__c":"0030v000001vEBFAA2"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000000FKzEAM"},"Id":"a1S0v0000000FKzEAM","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Course_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"2","External_UUID__c":"<UUID_1>","E_Created_Date__c":"2017-06-13T20:35:28.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/2/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/970662bc7c8163cf8936447b1af81a92/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
+        University","Active_Teachers__c":1.0,"Sections__c":2.0,"Students_Using__c":6.0,"Students_Paid__c":1.0,"Students_Comped__c":2.0,"Students_Refunded__c":1.0,"TermYear__c":"2016
+        - 17 Spring","Term__c":"Spring","Manual_Base_Year__c":2016.0,"Estimated_Enrollment__c":42.0,"Paid_Course__c":true,"Opportunity__c":null,"Individual_Adoption__c":"a1W0v0000004bPTEAY","Contact__c":"0030v000002EOuUAAW"}]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:28 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:39 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Class_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20TermYear__c,%20Term__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S0v0000008RbaEAE%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Status__c,%20Product__c,%20Account_Type__c,%20Book_Name__c,%20Course_Start_Date__c,%20Course_Name__c,%20Course_Code__c,%20External_ID__c,%20External_UUID__c,%20E_Created_Date__c,%20Error__c,%20General_Access_URL__c,%20Teacher_Join_URL__c,%20School_Name__c,%20Active_Teachers__c,%20Sections__c,%20Students_Using__c,%20Students_Paid__c,%20Students_Comped__c,%20Students_Refunded__c,%20TermYear__c,%20Term__c,%20Manual_Base_Year__c,%20Estimated_Enrollment__c,%20Paid_Course__c,%20Opportunity__c,%20Individual_Adoption__c,%20Contact__c%20FROM%20OS_Ancillary__c%20WHERE%20(Id%20=%20%27a1S0v0000000FKzEAM%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -510,21 +472,22 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 01 Jun 2017 22:36:28 GMT
+      - Tue, 13 Jun 2017 20:35:40 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
       - nosniff
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin
-      - reflected-xss block;report-uri /_/ContentDomainCSPNoAuth?type=xss
+      - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=KW2eelf_SAisKjtDxfAZyA;Path=/;Domain=.salesforce.com;Expires=Mon,
-        31-Jul-2017 22:36:28 GMT
+      - BrowserId=bmu0O8z7Qj6u-ahy8l1zcQ;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 20:35:40 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=145/48000
+      - api-usage=326/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -533,9 +496,9 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000008RbaEAE"},"Id":"a1S0v0000008RbaEAE","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Class_Start_Date__c":null,"Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"2","E_Created_Date__c":"2017-06-01T22:36:19.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/2/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/bbefd885c16573a8dafd652e9e178252/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
-        University","Active_Teachers__c":1.0,"Sections__c":2.0,"Students_Using__c":6.0,"TermYear__c":"2016
-        - 17 Spring","Term__c":"Spring","Opportunity__c":null,"Individual_Adoption__c":"a1W0v00000093vgEAA","Contact__c":"0030v000001vEBFAA2"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"OS_Ancillary__c","url":"/services/data/v37.0/sobjects/OS_Ancillary__c/a1S0v0000000FKzEAM"},"Id":"a1S0v0000000FKzEAM","Status__c":"Approved","Product__c":"Tutor","Account_Type__c":null,"Book_Name__c":"Chemistry","Course_Start_Date__c":"2017-01-01","Course_Name__c":null,"Course_Code__c":null,"External_ID__c":"2","External_UUID__c":"<UUID_1>","E_Created_Date__c":"2017-06-13T20:35:28.000+0000","Error__c":null,"General_Access_URL__c":"https://tutor.openstax.org/courses/2/dashboard","Teacher_Join_URL__c":"http://localhost:3001/teach/970662bc7c8163cf8936447b1af81a92/DO_NOT_GIVE_TO_STUDENTS","School_Name__c":"JP
+        University","Active_Teachers__c":1.0,"Sections__c":2.0,"Students_Using__c":6.0,"Students_Paid__c":1.0,"Students_Comped__c":2.0,"Students_Refunded__c":1.0,"TermYear__c":"2016
+        - 17 Spring","Term__c":"Spring","Manual_Base_Year__c":2016.0,"Estimated_Enrollment__c":42.0,"Paid_Course__c":true,"Opportunity__c":null,"Individual_Adoption__c":"a1W0v0000004bPTEAY","Contact__c":"0030v000002EOuUAAW"}]}'
     http_version: 
-  recorded_at: Thu, 01 Jun 2017 22:36:29 GMT
+  recorded_at: Tue, 13 Jun 2017 20:35:40 GMT
 recorded_with: VCR 2.9.3

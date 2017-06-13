@@ -52,9 +52,12 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   end
 
   def expect_call_to_set_timestamp(timestamp_field)
-    toa = call
-    expect(toa).to be_persisted
-    expect(toa.send(timestamp_field)).to be_within(20.seconds).of(DateTime.now)
+    time = Chronic.parse("July 23, 2017 5:04pm")
+    Timecop.freeze(time) do
+      toa = call
+      expect(toa).to be_persisted
+      expect(toa.send(timestamp_field)).to be_within(1.second).of(DateTime.parse(time.to_s))
+    end
   end
 
   def expect_2nd_call_to_not_change_timestamp(timestamp_field)
