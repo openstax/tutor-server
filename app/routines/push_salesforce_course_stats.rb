@@ -212,6 +212,8 @@ class PushSalesforceCourseStats
       os_ancillary.course_start_date = course.term_year.starts_at.to_date.iso8601
       os_ancillary.term = course.term.capitalize
       os_ancillary.base_year = base_year_for_course(course)
+
+      os_ancillary.does_cost = course.does_cost
     rescue Exception => ee
       # Add the error to the OSA and `error!` but non fatally so the error can get saved
       # to the OSA
