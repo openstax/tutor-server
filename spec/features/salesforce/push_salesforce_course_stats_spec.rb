@@ -343,6 +343,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.error).to be nil
     expect(osa.term).to be_a(String)
     expect(osa.course_start_date).to eq Date.parse("2017-01-01")
+    expect(osa.base_year).to eq 2016
   end
 
   def expect_osa_attachment(osa, course)

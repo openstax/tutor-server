@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 11 Jun 2017 01:26:31 GMT
+      - Tue, 13 Jun 2017 18:56:55 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -31,12 +31,12 @@ http_interactions:
       Content-Security-Policy:
       - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=AlD54AjlSYWyUh4a5euosw;Path=/;Domain=.salesforce.com;Expires=Thu,
-        10-Aug-2017 01:26:31 GMT
+      - BrowserId=FQNTEdnRRfKewTx3Q1NLGw;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 18:56:55 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=872/48000
+      - api-usage=107/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -47,7 +47,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0Z0v000000DzubEAC"},"Id":"a0Z0v000000DzubEAC","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0Z0v000000DzuWEAS"},"Id":"a0Z0v000000DzuWEAS","Name":"Chemistry"}]}'
     http_version: 
-  recorded_at: Sun, 11 Jun 2017 01:26:31 GMT
+  recorded_at: Tue, 13 Jun 2017 18:56:55 GMT
 - request:
     method: get
     uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
@@ -69,7 +69,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 11 Jun 2017 01:26:32 GMT
+      - Tue, 13 Jun 2017 18:56:55 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -79,12 +79,12 @@ http_interactions:
       Content-Security-Policy:
       - referrer origin-when-cross-origin; upgrade-insecure-requests
       Set-Cookie:
-      - BrowserId=cVBqG9iBQQu1JjJ7UZV9hw;Path=/;Domain=.salesforce.com;Expires=Thu,
-        10-Aug-2017 01:26:32 GMT
+      - BrowserId=UL1EAt34SCqRqGN_kXfHVQ;Path=/;Domain=.salesforce.com;Expires=Sat,
+        12-Aug-2017 18:56:55 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=873/48000
+      - api-usage=108/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -96,5 +96,5 @@ http_interactions:
       string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v000003uCSCAA2"},"Id":"0010v000003uCSCAA2","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Sun, 11 Jun 2017 01:26:32 GMT
+  recorded_at: Tue, 13 Jun 2017 18:56:55 GMT
 recorded_with: VCR 2.9.3

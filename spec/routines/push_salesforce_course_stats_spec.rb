@@ -39,6 +39,64 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     end
   end
 
+  context "#base_year_for_course" do
+    let(:course) { FactoryGirl.create :course_profile_course, term: @term, year: @year }
+    subject { instance.base_year_for_course(course) }
+
+    it "gives 2016 for Fall 2016" do
+      @term = :fall
+      @year = 2016
+      is_expected.to eq 2016
+    end
+
+    it "gives 2016 for Winter 2017" do
+      @term = :winter
+      @year = 2017
+      is_expected.to eq 2016
+    end
+
+    it "gives 2016 for Spring 2017" do
+      @term = :spring
+      @year = 2017
+      is_expected.to eq 2016
+    end
+
+    it "gives 2016 for Summer 2017" do
+      @term = :summer
+      @year = 2017
+      is_expected.to eq 2016
+    end
+  end
+
+  context '#salesforce_school_year_for_course' do
+    let(:course) { FactoryGirl.create :course_profile_course, term: @term, year: @year }
+    subject { instance.salesforce_school_year_for_course(course) }
+
+    it "gives 2016 for Fall 2016" do
+      @term = :fall
+      @year = 2016
+      is_expected.to eq "2016 - 17"
+    end
+
+    it "gives 2016 for Winter 2017" do
+      @term = :winter
+      @year = 2017
+      is_expected.to eq "2016 - 17"
+    end
+
+    it "gives 2016 for Spring 2017" do
+      @term = :spring
+      @year = 2017
+      is_expected.to eq "2016 - 17"
+    end
+
+    it "gives 2016 for Summer 2017" do
+      @term = :summer
+      @year = 2017
+      is_expected.to eq "2016 - 17"
+    end
+  end
+
   context "#applicable_courses" do
     it 'limits by ends_at' do
       a = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("6/30/2017"), term: "spring")

@@ -113,26 +113,26 @@ class PushSalesforceCourseStats
              course: course)
     end
 
-    candidate_individual_adoptions.first || begin
-      sf_contact = OpenStax::Salesforce::Remote::Contact.where(id: sf_contact_id).first
+    return candidate_individual_adoptions.first if candidate_individual_adoptions.one?
 
-      individual_adoption_options = {
-        contact_id: sf_contact_id,
-        book_id: book_names_to_sf_ids[book_name],
-        school_id: sf_contact.school_id,
-        adoption_level: "Confirmed Adoption Won",
-        source: "Tutor Signup",
-        description: Time.now.in_time_zone('Central Time (US & Canada)').iso8601.gsub(/T.*/,'') + ", " +
-                     (OpenStax::Salesforce::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
-      }
+    sf_contact = OpenStax::Salesforce::Remote::Contact.where(id: sf_contact_id).first
 
-      IA.new(individual_adoption_options).tap do |ia|
-        if !ia.save
-          error!(message: "Could not make new IndividualAdoption for inputs " \
-                          "#{individual_adoption_options}; errors: " \
-                          "#{ia.errors.full_messages.join(', ')}",
-                 course: course)
-        end
+    individual_adoption_options = {
+      contact_id: sf_contact_id,
+      book_id: book_names_to_sf_ids[book_name],
+      school_id: sf_contact.school_id,
+      adoption_level: "Confirmed Adoption Won",
+      source: "Tutor Signup",
+      description: Time.now.in_time_zone('Central Time (US & Canada)').to_date.iso8601 + ", " +
+                   (OpenStax::Salesforce::User.first.try(:name) || 'Unknown') + ", Created by Tutor"
+    }
+
+    IA.new(individual_adoption_options).tap do |ia|
+      if !ia.save
+        error!(message: "Could not make new IndividualAdoption for inputs " \
+                        "#{individual_adoption_options}; errors: " \
+                        "#{ia.errors.full_messages.join(', ')}",
+               course: course)
       end
     end
   end
@@ -142,7 +142,8 @@ class PushSalesforceCourseStats
       individual_adoption_id: individual_adoption.id,
       product: course.is_concept_coach ? "Concept Coach" : "Tutor",
       term: course.term.capitalize,
-      contact_id: best_sf_contact_id_for_course(course)
+      contact_id: best_sf_contact_id_for_course(course),
+      base_year: base_year_for_course(course)
     }
 
     OSA.new(arguments).tap do |osa|
@@ -161,18 +162,19 @@ class PushSalesforceCourseStats
   end
 
   def salesforce_school_year_for_course(course)
-    base_year = case course.term
+    base_year = base_year_for_course(course)
+    "#{base_year} - #{(base_year + 1).to_s[2..3]}"
+  end
+
+  def base_year_for_course(course)
+    case course.term
     when 'fall'
-      course.starts_at.year
-    when 'spring'
-      course.starts_at.year - 1
-    when 'summer'
-      course.starts_at.year - 1
+      course.year
+    when 'spring', 'summer', 'winter'
+      course.year - 1
     else
       raise "Unhandled course term #{course.term}"
     end
-
-    "#{base_year} - #{(base_year + 1).to_s[2..3]}"
   end
 
   def push_stats(course, os_ancillary)
@@ -207,8 +209,9 @@ class PushSalesforceCourseStats
       os_ancillary.status = OpenStax::Salesforce::Remote::OsAncillary::STATUS_APPROVED
       os_ancillary.product = course.is_concept_coach ? "Concept Coach" : "Tutor"
 
-      os_ancillary.course_start_date = course.term_year.starts_at.iso8601.gsub(/T.*/,'')
+      os_ancillary.course_start_date = course.term_year.starts_at.to_date.iso8601
       os_ancillary.term = course.term.capitalize
+      os_ancillary.base_year = base_year_for_course(course)
     rescue Exception => ee
       # Add the error to the OSA and `error!` but non fatally so the error can get saved
       # to the OSA
@@ -237,7 +240,8 @@ class PushSalesforceCourseStats
     @cache ||= {}
     (
       @cache[course.uuid] ||=
-        teachers(course).map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
+        teachers(course).order{created_at.asc}
+                        .map{|tt| tt.role.role_user.profile.account.salesforce_contact_id}
                         .compact
                         .first
     ).tap do |contact_id|
