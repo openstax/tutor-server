@@ -13,7 +13,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine, speed: :slow do
 
     @role = AddUserAsPeriodStudent[user: user, period: period]
 
-    reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: course)
+    reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: course, number_of_students: 0)
     @page_ids_1 = reading_plan_1.settings['page_ids'].map(&:to_i)
     pages_1 = Content::Models::Page.where(id: @page_ids_1).to_a
     homework_exercises_1 = pages_1.flat_map(&:exercises).sort_by(&:uid).first(5)
@@ -22,11 +22,12 @@ RSpec.describe GetTaskCorePageIds, type: :routine, speed: :slow do
                          type: 'homework',
                          assistant: homework_assistant,
                          ecosystem: pages_1.first.ecosystem,
+                         number_of_students: 0,
                          settings: { 'exercise_ids' => homework_exercises_1.map{ |ex| ex.id.to_s },
                                      'exercises_count_dynamic' => 2 }
     )
 
-    reading_plan_2 = FactoryGirl.create(:tasked_task_plan, owner: course)
+    reading_plan_2 = FactoryGirl.create(:tasked_task_plan, owner: course, number_of_students: 0)
     @page_ids_2 = reading_plan_2.settings['page_ids'].map(&:to_i)
     pages_2 = Content::Models::Page.where(id: @page_ids_2).to_a
     homework_exercises_2 = pages_2.flat_map(&:exercises).sort_by(&:uid).first(4)
@@ -35,11 +36,12 @@ RSpec.describe GetTaskCorePageIds, type: :routine, speed: :slow do
                          type: 'homework',
                          assistant: homework_assistant,
                          ecosystem: pages_2.first.ecosystem,
+                         number_of_students: 0,
                          settings: { 'exercise_ids' => homework_exercises_2.map{ |ex| ex.id.to_s },
                                      'exercises_count_dynamic' => 3 }
     )
 
-    reading_plan_3 = FactoryGirl.create(:tasked_task_plan, owner: course)
+    reading_plan_3 = FactoryGirl.create(:tasked_task_plan, owner: course, number_of_students: 0)
     @page_ids_3 = reading_plan_3.settings['page_ids'].map(&:to_i)
     pages_3 = Content::Models::Page.where(id: @page_ids_3).to_a
     homework_exercises_3 = pages_3.flat_map(&:exercises).sort_by(&:uid).first(3)
@@ -48,6 +50,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine, speed: :slow do
                          type: 'homework',
                          assistant: homework_assistant,
                          ecosystem: pages_3.first.ecosystem,
+                         number_of_students: 0,
                          settings: { 'exercise_ids' => homework_exercises_3.map{ |ex| ex.id.to_s },
                                      'exercises_count_dynamic' => 4 }
     )
