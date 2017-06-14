@@ -13,13 +13,14 @@
 # uncomment this line if your project needs to run something other than `rake`:
 # script: bundle exec rspec spec
 sudo: false
+dist: trusty
 language: ruby
 rvm:
   - "2.2.3"
 cache: bundler
 bundler_args: --without production --retry=6
 addons:
- postgresql: "9.4"
+ postgresql: "9.5"
 script:
   - bundle exec parallel_rspec ./spec
 branches:
