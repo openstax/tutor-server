@@ -50,6 +50,10 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:cnxfeature?)
   end
 
+  def requires_context?
+    tags.to_a.any?(&:requires_context?)
+  end
+
   def content_hash
     @content_hash ||= JSON.parse(content)
   end
@@ -63,10 +67,6 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
         {id: question['id'], content: content}
       end
     end
-  end
-
-  def requires_context?
-    tags.to_a.any?(&:requires_context?)
   end
 
   def questions_hash

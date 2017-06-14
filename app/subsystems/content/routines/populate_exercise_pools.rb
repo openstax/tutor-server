@@ -12,7 +12,7 @@ class Content::Routines::PopulateExercisePools
   def exec(book:, save: true)
     ecosystem = book.ecosystem
     # Use preload here instead of eager_load here to avoid a memory usage spike
-    chapters = book.chapters.preload(pages: { exercises: { exercise_tags: :tag } })
+    chapters = book.chapters.preload(pages: { exercises: :tags })
 
     hs_logic = HS_UUIDS.include?(book.uuid)
     college_logic = !hs_logic
@@ -39,7 +39,7 @@ class Content::Routines::PopulateExercisePools
                                                             pool_type: :all_exercises)
 
         page.exercises.each do |exercise|
-          tags = exercise.exercise_tags.map{ |et| et.tag.value }
+          tags = exercise.tags.map(&:value)
 
           # All Exercises
           page.all_exercises_pool.content_exercise_ids << exercise.id

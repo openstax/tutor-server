@@ -6,8 +6,8 @@ class Content::Visitors::Exercise < Content::Visitors::Book
 
   def visit_page(page)
     page_exercises = Content::Models::Exercise
-      .joins{exercise_tags.tag.page_tags}
-      .where{exercise_tags.tag.page_tags.content_page_id == my{page.id}}
+      .joins{tags.page_tags}
+      .where{tags.page_tags.content_page_id == my{page.id}}
 
     page_exercises.each do |page_exercise|
       wrapper = OpenStax::Exercises::V1::Exercise.new(content: page_exercise.content)
