@@ -1,66 +1,55 @@
 class CourseProfile::BuildPreviewCourses
-  lev_routine
 
-  uses_routine ::CreateCourse, as: :create_course
-  uses_routine PopulatePreviewCourseContent, as: :populate_preview_course_content
+  lev_routine transaction: :no_transaction
+
+  # We really want no transaction here, so we don't call uses_routine
+  # uses_routine ::CreateCourse, as: :create_course
+  # uses_routine PopulatePreviewCourseContent, as: :populate_preview_course_content
 
   protected
 
   def exec(desired_count: Settings::Db.store.prebuilt_preview_course_count)
-    while (
-      offerings = offerings_that_need_previews(desired_count)
-    ).any?
-      term = TermYear.visible_term_years.first
+    loop do
+      # Start a transaction for every course created so we don't lose work in case of a crash
+      CourseProfile::Models::Course.transaction do
+        # We need to call this in every transaction so we lock the offering
+        offering = offering_that_needs_previews(desired_count)
+        return if offering.nil? # No more work to do
 
-      offerings.each do |offering|
-        (desired_count - offering.course_preview_count).times do
+        course = ::CreateCourse[
+          name: "#{offering.description} Preview",
+          is_preview: true,
+          is_college: true,
+          num_sections: 2,
+          time_zone: "Central Time (US & Canada)",
+          catalog_offering: offering
+        ]
 
-          course = run(:create_course, {
-                name: "#{offering.description} Preview",
-                term: term.term,
-                year: term.year,
-                is_preview: true,
-                is_college: true,
-                num_sections: 2,
-                time_zone: "Central Time (US & Canada)",
-                catalog_offering: offering
-              }).outputs.course
-
-          run(:populate_preview_course_content, course: course)
-        end
+        PopulatePreviewCourseContent[course: course]
       end
     end
   end
 
-
-  def self.run_scheduled_build
-    CourseProfile::Models::Course.transaction do
-      CourseProfile::Models::Course.with_advisory_lock('preview-builder', 0) do
-        self.call
-      end
-    end
-  end
-
-
-  def offerings_that_need_previews(desired_count)
+  def offering_that_needs_previews(desired_count)
     courses = CourseProfile::Models::Course
-                .where("is_preview = 't' and preview_claimed_at is null")
+                .where(is_preview: true, preview_claimed_at: nil)
                 .group(:catalog_offering_id)
                 .select([:catalog_offering_id, 'count(*) as course_preview_count'])
 
+    # We only lock one offering here, so other calls to this routine
+    # could potentially work on different offerings simultaneously
     Catalog::Models::Offering
-      .joins { courses.as('course_preview_counts')
-                 .on { id == course_preview_counts.catalog_offering_id }
-                 .outer }
-      .where(
-        ["is_tutor = 't' and is_available = 't' and " \
-         'coalesce(course_preview_count, 0) < ?', desired_count]
-      )
-      .select(
-        'catalog_offerings.*, coalesce(course_preview_count, 0) as course_preview_count'
-      )
-      .to_a
+      .joins do
+        courses.as('course_preview_counts')
+               .on { id == course_preview_counts.catalog_offering_id }
+               .outer
+      end
+      .where(is_tutor: true, is_available: true)
+      .where(['coalesce(course_preview_count, 0) < ?', desired_count])
+      .select('coalesce(course_preview_count, 0) as course_preview_count, catalog_offerings.*')
+      .reorder(1, :number) # Work on offerings with lower course_preview_count first
+      .lock('FOR UPDATE OF catalog_offerings SKIP LOCKED') # Skip offerings being worked on
+      .first # Only lock 1 offering at a time
   end
-
 
 end
