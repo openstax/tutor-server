@@ -93,8 +93,9 @@ RSpec.describe GetHistory, type: :routine, speed: :slow do
     correct_tasks.map{ |task| Set.new task.tasked_exercises.map{ |te| te.exercise.number } }
   end
 
-  context "when there are more than #{GetHistory::TASK_BATCH_SIZE} tasks" do
+  context "when there are more than GetHistory::TASK_BATCH_SIZE tasks" do
     before do
+      stub_const("GetHistory::TASK_BATCH_SIZE", 3) # instead of 10k for a faster spec
       ecosystem = FactoryGirl.create :content_ecosystem
 
       tasks = GetHistory::TASK_BATCH_SIZE.times.map do |index|
