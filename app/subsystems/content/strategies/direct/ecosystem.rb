@@ -178,13 +178,13 @@ module Content
           end.sort_by{ |ex| number_indices[ex.number] }
         end
 
-        def exercises_with_tags(*tags, pages: nil, match_count: tags.size)
+        def exercises_with_tags(*tags_array, pages: nil, match_count: tags_array.size)
           exercises = entity_exercises.reorder(nil)
-                                      .preload(exercise_tags: :tag)
-                                      .joins(exercise_tags: :tag)
-                                      .where(exercise_tags: {tag: {value: tags.flatten}})
+                                      .preload(:tags)
+                                      .joins(:tags)
+                                      .where(tags: {value: tags_array.flatten})
                                       .group(:id).having do
-            count(distinct(exercise_tags.tag.id)).gteq match_count
+            count(distinct(tags.id)).gteq match_count
           end
           exercises = exercises.where(content_page_id: [pages].flatten.map(&:id)) unless pages.nil?
 
