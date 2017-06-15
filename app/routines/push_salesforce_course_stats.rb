@@ -187,18 +187,28 @@ class PushSalesforceCourseStats
 
       os_ancillary.course_id = course.id
       os_ancillary.course_uuid = course.uuid
+      os_ancillary.course_name = course.name
       os_ancillary.created_at = course.created_at.iso8601
       os_ancillary.teacher_join_url = UrlGenerator.teach_course_url(course.teach_token)
 
       os_ancillary.reset_stats
 
-      students = periods.flat_map(&:students_with_deleted)
+      students = periods.flat_map do |period|
+        period.students_with_deleted.preload({role: {taskings: :task}})
+      end
 
       students.each do |student|
         os_ancillary.num_students += 1
         os_ancillary.num_students_paid += 1 if student.is_paid
         os_ancillary.num_students_comped += 1 if student.is_comped
         os_ancillary.num_students_refunded += 1 if student.first_paid_at.present? && !student.is_paid
+        os_ancillary.num_students_dropped += 1 if student.deleted?
+
+        num_steps_completed = student.role.taskings.map{ |tasking|
+          tasking.task.completed_steps_count
+        }.sum
+
+        os_ancillary.num_students_with_work += 1 if num_steps_completed >= 10
       end
 
       os_ancillary.num_teachers = course.teachers.length
