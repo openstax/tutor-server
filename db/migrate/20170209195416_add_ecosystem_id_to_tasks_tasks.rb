@@ -20,10 +20,19 @@ class AddEcosystemIdToTasksTasks < ActiveRecord::Migration
 
     # Practice tasks
     Tasks::Models::Task.unscoped.where(content_ecosystem_id: nil).find_in_batches do |tasks|
-      task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: tasks]
+      task_id_to_core_page_ids_map = Hash.new { |hash, key| hash[key] = [] }
+      Tasks::Models::TaskedExercise
+        .unscoped
+        .joins(:task_step, :exercise)
+        .where(task_step: {tasks_task_id: tasks.map(&:id)})
+        .pluck('tasks_task_steps.tasks_task_id', 'content_exercises.content_page_id')
+        .each do |task_id, content_page_id|
+        task_id_to_core_page_ids_map[task_id] << content_page_id
+      end
 
       tasks.each do |task|
         core_page_ids = task_id_to_core_page_ids_map[task.id]
+        next if core_page_ids.empty?
         ecosystem = Content::Ecosystem.find_by_page_ids(*core_page_ids)
         next if ecosystem.nil?
 

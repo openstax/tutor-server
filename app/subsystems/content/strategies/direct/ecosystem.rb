@@ -38,6 +38,7 @@ module Content
           end
 
           def find_by_book_ids(*ids)
+            ids = ids.flatten
             books = ::Content::Models::Book.eager_load(:ecosystem).where(id: ids).to_a
             return if books.size < ids.size
 
@@ -49,6 +50,7 @@ module Content
           end
 
           def find_by_chapter_ids(*ids)
+            ids = ids.flatten
             chapters = ::Content::Models::Chapter.eager_load(:ecosystem).where(id: ids).to_a
             return if chapters.size < ids.size
 
@@ -60,6 +62,7 @@ module Content
           end
 
           def find_by_page_ids(*ids)
+            ids = ids.flatten
             pages = ::Content::Models::Page.eager_load(:ecosystem).where(id: ids).to_a
             return if pages.size < ids.size
 
@@ -71,6 +74,7 @@ module Content
           end
 
           def find_by_exercise_ids(*ids)
+            ids = ids.flatten
             exercises = ::Content::Models::Exercise.eager_load(:ecosystem).where(id: ids).to_a
             return if exercises.size < ids.size
 
