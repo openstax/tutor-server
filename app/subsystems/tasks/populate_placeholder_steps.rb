@@ -74,14 +74,14 @@ class Tasks::PopulatePlaceholderSteps
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
-  def populate_placeholder_steps(task:, group_type:,
-                                 biglearn_api_method:, biglearn_controls_slots:)
+  def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs (reading tasks)
       result = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
       chosen_exercises = result[:exercises]
-      spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       chosen_exercise_models = chosen_exercises.map(&:to_model)
+      spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
+      exercise_spy_info = spy_info.fetch('exercises', {})
 
       # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
       task_steps_by_page_id = task.task_steps.group_by(&:content_page_id)
@@ -139,7 +139,7 @@ class Tasks::PopulatePlaceholderSteps
               num_added_steps += exercise.number_of_parts - 1
             end
 
-            task_step.spy = spy_info.fetch(exercise.uuid, {})
+            task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
 
             # Assign the exercise (handles multipart questions, etc)
             run(:task_exercise, task_step: task_step, exercise: exercise)
@@ -162,7 +162,8 @@ class Tasks::PopulatePlaceholderSteps
         max_num_exercises: placeholder_steps.size
       )
       chosen_exercises = result[:exercises]
-      spy_info = result[:spy_info]
+      spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
+      exercise_spy_info = spy_info.fetch('exercises', {})
 
       # This code is much simpler because it doesn't have to account for steps being added
       placeholder_steps.each_with_index do |task_step, index|
@@ -174,10 +175,14 @@ class Tasks::PopulatePlaceholderSteps
         # Otherwise, hard-delete just the TaskedPlaceholder
         task_step.tasked.really_destroy!
 
+        task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
+
         # Assign the exercise (handles multipart questions, etc)
         run(:task_exercise, task_step: task_step, exercise: exercise)
       end
     end
+
+    task.update_attribute(:spy, task.spy.merge(spy_info.except('exercises')))
 
     task.task_steps.reset if task.persisted?
   end
