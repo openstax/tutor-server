@@ -100,6 +100,12 @@ Rails.application.routes.draw do
       member do
         put :check
       end
+
+      if !IAm.real_production?
+        collection do
+          post 'fake', action: 'create_fake'
+        end
+      end
     end
 
     resources :tasks, only: [:show, :destroy] do

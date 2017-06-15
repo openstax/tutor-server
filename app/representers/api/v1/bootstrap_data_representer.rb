@@ -39,14 +39,23 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
+    property :payments_base_url,
+             readable: true,
+             writeable: false,
+             getter: ->(*) {
+               OpenStax::Payments::Api.configuration.server_url
+             }
+             
     property :payments_embed_js_url,
              readable: true,
              writeable: false,
              getter: ->(*) { Rails.application.secrets['openstax']['payments']['embed_js_url'] }
+             
     property :payments_product_uuid,
              readable: true,
              writeable: false,
              getter: ->(*) { Rails.application.secrets['openstax']['payments']['product_uuid'] }
+
     property :flash,
              readable: true,
              writeable: false,
