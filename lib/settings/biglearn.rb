@@ -12,6 +12,10 @@ module Settings
         Settings::Db.store.biglearn_client
       end
 
+      def client=(new_biglearn_client)
+        Settings::Db.store.biglearn_client = new_biglearn_client
+      end
+
       def student_clues_algorithm_name
         return Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] \
           unless ActiveRecord::Base.connection.table_exists? 'settings'
