@@ -27,12 +27,16 @@ class CreatePracticeWorstTopicsTask
     ) if exercises.empty?
 
     # Add the exercises as task steps
+    exercise_spy_info = spy_info.fetch('exercises', {})
     exercises.each do |exercise|
       run(:task_exercise, exercise: exercise, task: @task) do |step|
         step.group_type = :personalized_group
-        step.spy = spy_info.fetch(exercise.uuid, {})
+        step.spy = exercise_spy_info.fetch(exercise.uuid, {})
       end
-    end.tap { @task.update_attribute :pes_are_assigned, true }
+    end.tap do
+      @task.update_attributes pes_are_assigned: true,
+                              spy: @task.spy.merge(spy_info.except('exercises'))
+    end
   end
 
 end
