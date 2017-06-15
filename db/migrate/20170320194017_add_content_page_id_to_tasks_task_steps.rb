@@ -6,10 +6,11 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
     Tasks::Models::TaskStep.unscoped.update_all(
       <<-SQL.strip_heredoc
         content_page_id = content_exercises.content_page_id
-          FROM tasks_tasked_exercises, content_exercises
+          FROM tasks_tasked_exercises
+            INNER JOIN content_exercises
+              ON content_exercises.id = tasks_tasked_exercises.content_exercise_id
           WHERE tasked_id = tasks_tasked_exercises.id
             AND tasked_type = 'Tasks::Models::TaskedExercise'
-            AND content_exercises.id = tasks_tasked_exercises.content_exercise_id
       SQL
     )
 
@@ -17,36 +18,41 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
     Tasks::Models::TaskStep.unscoped.update_all(
       <<-SQL.strip_heredoc
         content_page_id = content_pages.id
-          FROM tasks_tasks, content_ecosystems, content_books, content_chapters, content_pages,
-            tasks_tasked_readings
-          WHERE tasked_id = tasks_tasked_readings.id
-            AND tasked_type = 'Tasks::Models::TaskedReading'
-            AND tasks_task_id = tasks_tasks.id
-            AND tasks_tasks.content_ecosystem_id = content_ecosystems.id
-            AND content_books.content_ecosystem_id = content_ecosystems.id
-            AND content_chapters.content_book_id = content_books.id
-            AND content_chapters.number = (tasks_tasked_readings.book_location::json->>0)::int
-            AND content_pages.content_chapter_id = content_chapters.id
-            AND content_pages.number = (tasks_tasked_readings.book_location::json->>1)::int
+        FROM tasks_task_steps ts
+          INNER JOIN tasks_tasked_readings
+            ON tasks_tasked_readings.id = ts.tasked_id
+          INNER JOIN tasks_tasks
+            ON tasks_tasks.id = ts.tasks_task_id
+          INNER JOIN content_ecosystems
+            ON content_ecosystems.id = tasks_tasks.content_ecosystem_id
+          INNER JOIN content_books
+            ON content_books.content_ecosystem_id = content_ecosystems.id
+          INNER JOIN content_chapters
+            ON content_chapters.content_book_id = content_books.id
+          INNER JOIN content_pages
+            ON content_pages.content_chapter_id = content_chapters.id
+            AND content_pages.book_location = tasks_tasked_readings.book_location
+        WHERE ts.id = tasks_task_steps.id
+          AND tasks_task_steps.tasked_type = 'Tasks::Models::TaskedReading'
       SQL
     )
 
     Rails.logger.info { "Migrating #{Tasks::Models::TaskStep.unscoped.count} remaining steps" }
     Tasks::Models::TaskStep.unscoped.update_all(
       <<-SQL.strip_heredoc
-        content_page_id = ts2.content_page_id
-        FROM tasks_task_steps ts1, LATERAL (
-          SELECT content_page_id
-          FROM tasks_tasks, tasks_task_steps ts2
-          WHERE tasks_tasks.id = ts1.tasks_task_id
-          AND ts2.tasks_task_id = tasks_tasks.id
-          AND ts2.content_page_id IS NOT NULL
-          AND ts2.number < ts1.number
-          ORDER BY ts2.number DESC
-          LIMIT 1
-        ) AS ts2
+        content_page_id = previous_step.content_page_id
+        FROM tasks_task_steps current_step
+          CROSS JOIN LATERAL (
+            SELECT content_page_id
+            FROM tasks_task_steps previous_step
+            WHERE previous_step.tasks_task_id = current_step.tasks_task_id
+            AND previous_step.content_page_id IS NOT NULL
+            AND previous_step.number < current_step.number
+            ORDER BY previous_step.number DESC
+            LIMIT 1
+          ) AS previous_step
         WHERE tasks_task_steps.content_page_id IS NULL
-          AND tasks_task_steps.id = ts1.id
+          AND current_step.id = tasks_task_steps.id
       SQL
     )
   end
