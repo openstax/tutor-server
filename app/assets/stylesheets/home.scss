@@ -225,7 +225,7 @@ header {
     a {
       display: block;
       transition: color 0.4s, background-color 0.4s;
-      &:hover {
+      &:hover, &:focus {
         text-decoration: none;
       }
     }
