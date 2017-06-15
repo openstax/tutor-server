@@ -26,6 +26,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   let!(:course) {
     FactoryGirl.create :course_profile_course,
+                       name: "A Fun Course",
                        term: :spring,
                        year: 2017,
                        starts_at: Chronic.parse("January 1, 2017"),
@@ -44,6 +45,18 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     p1students[1].student.update_attribute(:is_comped, true)
     p1students[2].student.update_attribute(:is_comped, true)
     p1students[3].student.update_attribute(:first_paid_at, Time.now) # refunded
+
+    # Add two fake tasks to test reporting of students with work (one above, one below threshold)
+    [
+      [p1students[0], 10],
+      [p1students[1], 3], # this student should have enough across 2 tasks
+      [p1students[1], 7],
+      [p1students[2], 9]
+    ].each do |options|
+      task = Tasks::BuildTask[title: "A", task_type: :homework, content_ecosystem_id: 1, completed_steps_count: options[1]]
+      task.save
+      Tasks::CreateTasking[role: options[0], task: task]
+    end
 
     period2 = CreatePeriod[course: course]
     p2students = 2.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period1] }
@@ -334,9 +347,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.num_students_paid).to eq 1
     expect(osa.num_students_comped).to eq 2
     expect(osa.num_students_refunded).to eq 1
+    expect(osa.num_students_dropped).to eq 1
+    expect(osa.num_students_with_work).to eq 2
     expect(osa.num_teachers).to eq 1
     expect(osa.estimated_enrollment).to eq 42
     expect(osa.course_id).to be_a(String)
+    expect(osa.course_uuid).to eq course.uuid
+    expect(osa.course_name).to eq course.name
     expect(osa.created_at).to be_a(Date)
     expect(osa.teacher_join_url).to be_a(String)
     expect(osa.status).to be_a(String)
