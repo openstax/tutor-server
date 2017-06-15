@@ -296,13 +296,13 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
     let!(:course_ecosystem) do
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
-      course.reload.course_ecosystems.first
+      course.course_ecosystems.first
     end
 
     context 'when the ecosystem is already being used' do
       it 'does not recreate the association' do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_1.id
-        ce = course.reload.course_ecosystems.first
+        ce = course.course_ecosystems.first
         expect(ce).to eq course_ecosystem
         expect(flash[:notice]).to(
           eq "Course ecosystem \"#{eco_1.title}\" is already selected for \"Physics I\""

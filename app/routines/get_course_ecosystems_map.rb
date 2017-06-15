@@ -6,9 +6,7 @@ class GetCourseEcosystemsMap
   def exec(course:, ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
                     map_strategy_class: ::Content::Strategies::Generated::Map)
     # The first ecosystem is the latest
-    to_content_ecosystem = course.ecosystems.preload(
-      pages: [ :all_exercises_pool, { chapter: :all_exercises_pool } ]
-    ).first
+    to_content_ecosystem = course.ecosystems.first
 
     raise 'The given course has no ecosystems' if to_content_ecosystem.nil?
 

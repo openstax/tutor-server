@@ -1,3 +1,4 @@
+# NOTE: Will save the given course if it is a new record
 class CourseContent::AddEcosystemToCourse
 
   lev_routine express_output: :ecosystem_map
@@ -9,12 +10,12 @@ class CourseContent::AddEcosystemToCourse
            map_strategy_class: ::Content::Strategies::Generated::Map)
     fatal_error(code: :ecosystem_already_set,
                 message: 'The given ecosystem is already active for the given course') \
-      if course.lock!.ecosystems.first.try!(:id) == ecosystem.id
+      if course.lock!.course_ecosystems.first.try!(:content_ecosystem_id) == ecosystem.id
 
     ecosystem = Content::Ecosystem.new(strategy: ecosystem.wrap) \
       if ecosystem.is_a?(Content::Models::Ecosystem)
 
-    course_ecosystem = CourseContent::Models::CourseEcosystem.create(
+    course_ecosystem = CourseContent::Models::CourseEcosystem.new(
       course: course, content_ecosystem_id: ecosystem.id
     )
     course.course_ecosystems << course_ecosystem
@@ -30,6 +31,9 @@ class CourseContent::AddEcosystemToCourse
                                                                 to_ecosystem: ecosystem,
                                                                 strategy_class: map_strategy_class)
 
+    # Saving is necessary so the course can be sent to Biglearn
+    # because we cannot serialize unsaved AR objects
+    course.save if course.new_record?
     OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)
   end
 
