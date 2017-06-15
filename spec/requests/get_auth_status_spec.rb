@@ -23,6 +23,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
         access_token: token,
         errata_form_url: 'https://oscms.openstax.org/errata/form',
         tutor_api_url: a_string_starting_with('http'),
+        payments_base_url: 'https://payments-dev.openstax.org',
         accounts_profile_url: a_string_starting_with('http'),
         accounts_api_url: a_string_starting_with('http'),
         ui_settings: {},
