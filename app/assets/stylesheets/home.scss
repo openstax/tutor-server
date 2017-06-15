@@ -41,9 +41,8 @@ body,html {
 }
 
 body {
-  font-family: "Lato", sans-serif;
+  font-family: $tutor-default-font-list;
   font-weight: 300;
-  font-family: Lato;
   color: #424242;
 }
 
@@ -54,7 +53,6 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6 {
-  font-family: Lato;
   font-weight: 900;
 }
 
@@ -125,7 +123,7 @@ a {
 header {
 
   .navbar-default {
-    background: rgba(255,255,255,.9);
+    background: white;
     border: none;
     border-bottom: 1px solid #e5e5e5;
     padding: 10px;
@@ -200,41 +198,66 @@ header {
 ---------------------------------------------------------------*/
 
 .tutor-home {
-
-  .intro-header {
+  $dark-blue: #002469;
+  .body-container {
     width: 100%;
-    height: 800px;
-    background: image-url("ost_hero.jpg") no-repeat top / cover;
+    min-height: 700px;
+    margin-top: 60px;
+    background: image-url("tutor-background.svg") no-repeat top / cover;
     background-position: 0 -40px;
-    padding: 100px 0 $standard-spacing;
-  }
+    padding: 80px $standard-spacing $standard-spacing $standard-spacing;
+    text-align: center;
 
-  .container {
-    width: 100%;
-
-    .taglines {
-      margin: 200px 0 0 50%;
-
-      div {
-        display: inline-block;
-        padding: 20px 40px;
-        margin: 0 0 40px 0;
-        background: #79b142;
-
-        p {
-          margin: 0;
-          padding: 0;
-          color: #ffffff;
-          font-size: 36px;
-          font-weight: 600;
-        }
-
+    h1 {
+      margin: 0;
+      padding: 0;
+      font-weight: 900;
+      font-size: 60px;
+      font-family: $tutor-default-bold-font-list;
+      color: $dark-blue;
+    }
+    .lead {
+      font-size: 18px;
+      line-height: 30px;
+      color: $dark-blue;
+      margin: 50px auto 0 auto;
+      width: 600px;
+    }
+    a {
+      display: block;
+      transition: color 0.4s, background-color 0.4s;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+    .learn-more {
+      font-weight: bold;
+      font-size: 18px;
+      margin: 20px auto 0 auto;
+      color: $dark-blue;
+      &:hover {
+        color: lighten($dark-blue, 15%);
+      }
+    }
+    .login {
+      background-color: $dark-blue;
+      color: white;
+      width: 200px;
+      margin: 100px auto 0 auto;
+      font-size: 21px;
+      padding: 15px 0;
+      &:hover {
+        color: darken(white, 10%);
+        background-color: lighten($dark-blue, 5%);
       }
 
     }
-
   }
 
+  footer {
+    padding: 0;
+    border-top: 0;
+  }
 }
 
 /*-------------------------------------------------------------

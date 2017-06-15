@@ -35,8 +35,6 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
         <ul class="nav navbar-nav links">
-          <li><%= link_to 'Log in', openstax_accounts_login_path, class: 'btn' %></li>
-          <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
         </ul>
         <a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank"></a>
       </div>
@@ -48,31 +46,27 @@
 <!-- HEADER
 ============================================= -->
 
-<div id="intro-header" class="intro-header">
-  <div class="container">
 
-    <div class="row">
+<div class="body-container">
+  <h1>
+    Discover a new frontier in education.
+  </h1>
 
-      <div class="col-sm-12">
-        <div class="taglines">
-          <div>
-            <p>Personalized Learning</p>
-            <p>from a tutor that adapts to you</p>
-          </div>
-        </div>
-      </div>
+  <p class="lead">
+    OpenStax Tutor Beta gives college students the easy-to-use online courseware and
+    learning tools they need to complete their course the first time around.
+    And it’s all based on science. Available for College Physics, Biology,
+    and Introduction to Sociology 2e.
+  </p>
 
-    </div>
+  <a class="learn-more" href="https://openstax.org/openstax-tutor/">LEARN MORE</a>
 
-  </div>
+  <%= link_to 'Log in', openstax_accounts_login_path, class: 'login' %>
+
 </div>
 
 <footer>
-  <div class="container">
-    <div class="row">
-      <p><%= render 'layouts/copyright_terms' %></p>
-    </div>
-  </div>
+  <p><%= render 'layouts/copyright_terms' %></p>
 </footer>
 <!-- FOOTER
 ============================================= -->
