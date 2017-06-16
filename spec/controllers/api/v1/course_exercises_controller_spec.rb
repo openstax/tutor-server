@@ -69,7 +69,8 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
         it 'returns exercises in the given ecosystem if an ecosystem_id is specified' do
           new_ecosystem_model = FactoryGirl.create :content_ecosystem
-          course.course_ecosystems << CourseContent::Models::CourseEcosystem.create!(
+          # We don't use AddEcosystemToCourse here because the ecosystem mapping would be invalid
+          course.course_ecosystems << CourseContent::Models::CourseEcosystem.new(
             course: course, ecosystem: new_ecosystem_model
           )
 

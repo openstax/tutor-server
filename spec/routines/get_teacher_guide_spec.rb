@@ -31,6 +31,10 @@ RSpec.describe GetTeacherGuide, type: :routine do
   context 'without work' do
 
     before(:all) do
+      @role.reload
+      @second_role.reload
+      @teacher_role.reload
+
       book = FactoryGirl.create :content_book, title: 'Physics (Demo)'
       ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
@@ -60,6 +64,10 @@ RSpec.describe GetTeacherGuide, type: :routine do
   context 'with work' do
 
     before(:all) do
+      @role.reload
+      @second_role.reload
+      @teacher_role.reload
+
       VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
         capture_stdout do
           CreateStudentHistory[course: @course, roles: [@role, @second_role]]
