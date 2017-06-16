@@ -9,8 +9,9 @@ class ApplicationController < ActionController::Base
   add_flash_types *WEBVIEW_FLASH_TYPES
   prepend_before_filter :keep_webview_flash
 
-  before_filter :block_sign_up, unless: -> { params[:block_sign_up] == false }
-  before_filter :straight_to_student_sign_up, if: -> { params[:straight_to_student_sign_up] == true }
+  before_filter :block_sign_up, unless: -> { params[:block_sign_up].to_s == "false" }
+  before_filter :straight_to_student_sign_up, if: -> { params[:straight_to_student_sign_up].to_s == "true" }
+  before_filter :straight_to_sign_up, if: -> { params[:straight_to_sign_up].to_s == "true" }
   before_filter :authenticate_user!
 
   protected
@@ -23,6 +24,11 @@ class ApplicationController < ActionController::Base
   def straight_to_student_sign_up
     # Must be called before `authenticate_user!`
     login_params[:go] = 'student_signup'
+  end
+
+  def straight_to_sign_up
+    # Must be called before `authenticate_user!`
+    login_params[:go] = 'signup'
   end
 
   def require_contracts

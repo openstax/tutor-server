@@ -42,6 +42,9 @@ Rails.application.routes.draw do
     get :signup
   end
 
+  get :non_student_signup,
+      to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
+
   resource :pardot, controller: :pardot, only: [] do
     get :toa
   end
