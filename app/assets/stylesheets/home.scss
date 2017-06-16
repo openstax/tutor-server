@@ -203,8 +203,7 @@ header {
     width: 100%;
     min-height: 700px;
     margin-top: 60px;
-    background: image-url("tutor-background.svg") no-repeat top / cover;
-    background-position: 0 -40px;
+    background: image-url("tutor-background.svg") no-repeat bottom center / cover;
     padding: 80px $standard-spacing $standard-spacing $standard-spacing;
     text-align: center;
 
@@ -221,12 +220,12 @@ header {
       line-height: 30px;
       color: $dark-blue;
       margin: 50px auto 0 auto;
-      width: 600px;
+      max-width: 600px;
     }
     a {
       display: block;
       transition: color 0.4s, background-color 0.4s;
-      &:hover {
+      &:hover, &:focus {
         text-decoration: none;
       }
     }
@@ -243,7 +242,7 @@ header {
       background-color: $dark-blue;
       color: white;
       width: 200px;
-      margin: 100px auto 0 auto;
+      margin: 75px auto 0 auto;
       font-size: 21px;
       padding: 15px 0;
       &:hover {
@@ -257,6 +256,7 @@ header {
   footer {
     padding: 0;
     border-top: 0;
+    margin-top: 15px;
   }
 }
 
