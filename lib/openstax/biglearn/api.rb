@@ -656,14 +656,19 @@ module OpenStax::Biglearn::Api
     end
 
     def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_num_exercises:)
-      number_returned = exercise_uuids.length
-      exercises = ecosystem.exercises.where(uuid: exercise_uuids)
-
-      raise(
-        OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned exercises not present locally"
-      ) if exercises.count < number_returned
+      exercises_by_uuid = ecosystem.exercises.where(uuid: exercise_uuids).index_by(&:uuid)
+      ordered_exercises = exercise_uuids.map do |uuid|
+        exercises_by_uuid[uuid].tap do |exercise|
+          raise(
+            OpenStax::Biglearn::Api::ExercisesError,
+            "Biglearn returned exercises not present locally"
+          ) if exercise.nil?
+        end
+      end
 
       unless max_num_exercises.nil?
+        number_returned = exercise_uuids.length
+
         raise(
           OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned more exercises than requested"
         ) if number_returned > max_num_exercises
@@ -673,10 +678,10 @@ module OpenStax::Biglearn::Api
           number_returned} instead of #{max_num_exercises})"
         end if number_returned < max_num_exercises
 
-        exercises = exercises.first(max_num_exercises)
+        ordered_exercises = ordered_exercises.first(max_num_exercises)
       end
 
-      exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
+      ordered_exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
     end
 
     def extract_options(args_array)
