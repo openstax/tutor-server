@@ -76,25 +76,24 @@ class Tasks::PopulatePlaceholderSteps
 
   def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
     if biglearn_controls_slots
-      # Biglearn controls how many PEs/SPEs (reading tasks)
+      # Biglearn controls how many PEs/SPEs
       result = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
-      chosen_exercises = result[:exercises]
-      chosen_exercise_models = chosen_exercises.map(&:to_model)
+      chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
 
       # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
       task_steps_by_page_id = task.task_steps.group_by(&:content_page_id)
-      grouped_chosen_exercises = group_type == :personalized_group ?
-                                   chosen_exercise_models.group_by(&:content_page_id) :
-                                   { nil => chosen_exercise_models }
+      exercises_by_page_id = group_type == :personalized_group ?
+                               chosen_exercises.group_by(&:content_page_id) :
+                               { nil => chosen_exercises }
 
       # Keep track of the number of steps we added to the task
       num_added_steps = 0
 
       # Populate each page one at a time to ensure we get the correct number of steps for each
       task_steps_by_page_id.each do |page_id, page_task_steps|
-        exercises = grouped_chosen_exercises[page_id] || []
+        exercises = exercises_by_page_id[page_id] || []
         placeholder_steps = page_task_steps.select do |task_step|
           task_step.placeholder? && task_step.group_type == group_type.to_s
         end
@@ -147,7 +146,7 @@ class Tasks::PopulatePlaceholderSteps
         end
       end
     else
-      # Tutor controls how many PEs/SPEs (homework tasks)
+      # Tutor controls how many PEs/SPEs
       placeholder_steps = task.task_steps.select do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
@@ -161,24 +160,34 @@ class Tasks::PopulatePlaceholderSteps
         task: task,
         max_num_exercises: placeholder_steps.size
       )
-      chosen_exercises = result[:exercises]
+      chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
 
       # This code is much simpler because it doesn't have to account for steps being added
-      placeholder_steps.each_with_index do |task_step, index|
-        exercise = chosen_exercises[index]
+      # Group placeholder steps and exercises by content_page_id
+      # Spaced Practice uses nil content_page_ids
+      placeholder_steps_by_page_id = placeholder_steps.group_by(&:content_page_id)
+      exercises_by_page_id = group_type == :personalized_group ?
+                               chosen_exercises.group_by(&:content_page_id) :
+                               { nil => chosen_exercises }
+      placeholder_steps_by_page_id.each do |page_id, page_placeholder_steps|
+        exercises = exercises_by_page_id[page_id] || []
 
-        # If no exercise available, hard-delete the Placeholder TaskStep and the TaskedPlaceholder
-        next task_step.really_destroy! if exercise.nil?
+        page_placeholder_steps.each_with_index do |task_step, index|
+          exercise = exercises[index]
 
-        # Otherwise, hard-delete just the TaskedPlaceholder
-        task_step.tasked.really_destroy!
+          # If no exercise available, hard-delete the Placeholder TaskStep and TaskedPlaceholder
+          next task_step.really_destroy! if exercise.nil?
 
-        task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
+          # Otherwise, hard-delete just the TaskedPlaceholder
+          task_step.tasked.really_destroy!
 
-        # Assign the exercise (handles multipart questions, etc)
-        run(:task_exercise, task_step: task_step, exercise: exercise)
+          task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
+
+          # Assign the exercise (handles multipart questions, etc)
+          run(:task_exercise, task_step: task_step, exercise: exercise)
+        end
       end
     end
 
