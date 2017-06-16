@@ -136,19 +136,18 @@ header {
 
     .navbar-brand {
       display: block;
-      margin: 5px 0 !important;
-      height: 30px;
+      margin: 0px 0 !important;
+      height: 42px;
 
       &, &.tutor {
-        width: 217px;
-        background: image-url("ost-horiz-tm-logo.svg") no-repeat;
+        width: 250px;
+        background: image-url("openstax-tutor-beta-logo.svg") no-repeat;
         background-size: 100%;
       }
 
       &.openstax {
-        width: 148px;
-        background: image-url("ost-horiz-tm-logo.svg") no-repeat;
-        background-size: 103%;
+        width: 250px;
+        background: image-url("openstax-tutor-beta-logo.svg") no-repeat;
       }
     }
 
