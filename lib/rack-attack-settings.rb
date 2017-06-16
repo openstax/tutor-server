@@ -10,6 +10,11 @@ class Rack::Attack
     req.ip if req.path.starts_with?(ROUTES.api_log_entry_path) && req.post?
   end
 
+  throttle(ROUTES.check_api_purchase_path(':id'), limit: 10, period: 1.hour) do |req|
+    # Throttled based on the ID field for requests to this endpoint
+    req.path.match(ROUTES.check_api_purchase_path('(.*)')).try(:[],1)
+  end
+
 end
 
 # Monkey-patch the rack-attack Request object (this is where the author says to do this)

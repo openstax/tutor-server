@@ -89,6 +89,12 @@ Rails.application.routes.draw do
       post 'event/onboarding/:code', action: :onboarding_event
     end
 
+    resources :purchases, only: [] do
+      member do
+        put :check
+      end
+    end
+
     resources :tasks, only: [:show, :destroy] do
       member do
         put :accept_late_work

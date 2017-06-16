@@ -31,4 +31,29 @@ RSpec.describe "Throttles", type: :request, version: :v1 do
     end
   end
 
+  describe '/api/purchases/:id/check' do
+    let(:limit) { 10 }
+
+    it 'allows requests under the limit, throttles at limit, and logs only once, all based on ID' do
+      # Allowed
+      limit.times do
+        api_put '/api/purchases/first_ID/check', nil
+        expect(response).to_not have_http_status(429)
+      end
+
+      # First to pass the limit
+      expect_any_instance_of(Rack::Attack::Request).to receive(:log_throttled!).once
+      api_put '/api/purchases/first_ID/check', nil
+      expect(response).to have_http_status(429)
+
+      # Second to pass the limit
+      api_put '/api/purchases/first_ID/check', nil
+      expect(response).to have_http_status(429)
+
+      # Different IP OK
+      api_put '/api/purchases/second_ID/check', nil
+      expect(response).to_not have_http_status(429)
+    end
+  end
+
 end
