@@ -19,10 +19,10 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
   context '#default_client_name' do
     it 'returns whatever is in the settings and caches it until the end of the request' do
       begin
-        allow(Settings::Biglearn).to receive(:client) { 'blah' }
+        allow(Settings::Biglearn).to receive(:client_name) { 'blah' }
         expect(described_class.default_client_name).to eq :blah
 
-        allow(Settings::Biglearn).to receive(:client) { 'fake' }
+        allow(Settings::Biglearn).to receive(:client_name) { 'fake' }
         expect(described_class.default_client_name).to eq :blah
 
         RequestStore.clear!
