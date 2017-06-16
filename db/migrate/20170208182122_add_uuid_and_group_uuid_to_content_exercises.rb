@@ -2,6 +2,8 @@ class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
   BATCH_SIZE = 1000
 
   def up
+    enable_extension 'pgcrypto'
+
     add_column :content_exercises, :uuid, :uuid
     add_column :content_exercises, :group_uuid, :uuid
 

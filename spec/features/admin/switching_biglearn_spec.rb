@@ -22,7 +22,7 @@ RSpec.feature 'Switching biglearn option' do
 
   scenario 'in test env, calls go to fake client by default' do
     expect(page).to have_content(/Biglearn client/i)
-    expect(find_field('settings_biglearn_client').value).to eq 'fake'
+    expect(find_field('settings_biglearn_client_name').value).to eq 'fake'
 
     expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).to(
       receive(:fetch_student_clues)
@@ -33,7 +33,7 @@ RSpec.feature 'Switching biglearn option' do
   end
 
   scenario 'can change to real client' do
-    select_field = find_field('settings_biglearn_client')
+    select_field = find_field('settings_biglearn_client_name')
     expect(select_field.value).to eq 'fake'
 
     real_option = select_field.find('[value=real]')
@@ -45,7 +45,7 @@ RSpec.feature 'Switching biglearn option' do
       click_button 'Save'
 
       # Expire the cached setting so we can see the change
-      expire_biglearn_client_setting_caches
+      expire_biglearn_client_name_settings_cache
 
       expect_any_instance_of(OpenStax::Biglearn::Api::RealClient).to(
         receive(:fetch_student_clues)
@@ -57,14 +57,14 @@ RSpec.feature 'Switching biglearn option' do
       OpenStax::Biglearn::Api.fetch_student_clues(request)
     ensure
       # Prevent other specs from being affected by this one
-      Settings::Db.store.biglearn_client = 'fake'
+      Settings::Db.store.biglearn_client_name = 'fake'
 
-      expire_biglearn_client_setting_caches
+      expire_biglearn_client_name_settings_cache
     end
   end
 
-  def expire_biglearn_client_setting_caches
-    Settings::Db.store.object('biglearn_client').try!(:expire_cache)
+  def expire_biglearn_client_name_settings_cache
+    Settings::Db.store.object('biglearn_client_name').try!(:expire_cache)
 
     RequestStore.clear!
   end

@@ -34,11 +34,11 @@ en:
       default_open_time:
         name: 'Default task open time'
         help_block: 'In the format HH:MM'
-      biglearn_client:
+      biglearn_client_name:
         name: 'Biglearn Client'
         labels:
-          real: 'real'
-          fake: 'fake'
+          Real: 'real'
+          Fake: 'fake'
         help_block: 'real is full Biglearn; fake is stubbed Biglearn'
       biglearn_student_clues_algorithm_name:
         name: 'Biglearn algorithm for calculating Student CLUes'

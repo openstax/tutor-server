@@ -419,7 +419,8 @@ module OpenStax::Biglearn::Api
       # the setting if they want during development.
 
       # We only read this setting once per request to prevent it from changing mid-request
-      RequestStore.store[:biglearn_api_default_client_name] ||= Settings::Biglearn.client.to_sym
+      RequestStore.store[:biglearn_api_default_client_name] ||=
+        Settings::Biglearn.client_name.to_sym
     end
 
     alias :threadsafe_client :client
@@ -447,10 +448,10 @@ module OpenStax::Biglearn::Api
       OpenStax::Biglearn::Api::Configuration.new
     end
 
-    def new_client(name: default_client_name)
+    def client_class(name: default_client_name)
       name_sym = name.to_sym
 
-      client_class = case name_sym
+      case name_sym
       when :real
         RealClient
       when :fake
@@ -462,14 +463,16 @@ module OpenStax::Biglearn::Api
           "Invalid Biglearn client name: #{name_sym}. Setting it to #{valid_client_name}."
         end
 
-        Settings::Biglearn.client = valid_client_name
+        Settings::Biglearn.client_name = valid_client_name
         RequestStore.store[:biglearn_api_default_client_name] = valid_client_name
 
-        new_client(name: valid_client_name)
+        client_class(name: valid_client_name)
       end
+    end
 
+    def new_client(name: default_client_name)
       begin
-        client_class.new(configuration)
+        client_class(name: name).new(configuration)
       rescue StandardError => e
         raise "Biglearn client initialization error: #{e.message}"
       end

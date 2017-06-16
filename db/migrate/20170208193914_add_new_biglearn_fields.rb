@@ -1,7 +1,5 @@
 class AddNewBiglearnFields < ActiveRecord::Migration
   def change
-    enable_extension 'pgcrypto'
-
     add_column :content_ecosystems, :tutor_uuid, :uuid, null: false, default: 'gen_random_uuid()'
     add_column :content_books, :tutor_uuid, :uuid, null: false, default: 'gen_random_uuid()'
     add_column :content_chapters, :tutor_uuid, :uuid, null: false, default: 'gen_random_uuid()'
