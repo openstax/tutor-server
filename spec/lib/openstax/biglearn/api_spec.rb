@@ -190,28 +190,31 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       end
     end
 
-    it 'converts returned exercise uuids to exercise objects' do
+    it 'converts returned exercise uuids to exercise objects, preserving their order' do
       exercises = @exercises.first(max_num_exercises).map do |exercise|
         Content::Exercise.new strategy: exercise.wrap
       end
-      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-        requests.map do |request|
-          {
-            request_uuid: request[:request_uuid],
-            exercise_uuids: exercises.map(&:uuid),
-            assignment_status: 'assignment_ready'
-          }
-        end
-      end
       expect(Rails.logger).not_to receive(:warn)
 
-      result = nil
-      expect do
-        result = OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_num_exercises: max_num_exercises
-        )
-      end.not_to raise_error
-      expect(result.fetch(:exercises)).to match_array(exercises)
+      [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
+        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+          requests.map do |request|
+            {
+              request_uuid: request[:request_uuid],
+              exercise_uuids: exercises.map(&:uuid),
+              assignment_status: 'assignment_ready'
+            }
+          end
+        end.once
+
+        result = nil
+        expect do
+          result = OpenStax::Biglearn::Api.public_send(
+            api_method, task: @task, max_num_exercises: max_num_exercises
+          )
+        end.not_to raise_error
+        expect(result.fetch(:exercises)).to eq exercises
+      end
     end
 
     it 'errors when client returns more exercises than expected' do
