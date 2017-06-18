@@ -23,6 +23,12 @@ Rails.application.configure do
     :protocol => 'http', :host => Rails.application.secrets.mail_site_url
   }
 
+  # Tell Action Mailer not to deliver emails to the real world.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.  If SMTP used instead
+  # but without good credentials, results in 30 second pauses.
+  config.action_mailer.delivery_method = :test
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
