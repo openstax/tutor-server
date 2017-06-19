@@ -62,7 +62,8 @@ class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTask
           (
             SELECT previous_step.content_page_id
             FROM steps_with_content_page_id previous_step
-            WHERE previous_step.tasks_task_id = current_step.tasks_task_id
+            WHERE current_step.group_type != 2 -- content_page_id = null for SPE placeholders
+            AND previous_step.tasks_task_id = current_step.tasks_task_id
             AND previous_step.content_page_id IS NOT NULL
             AND previous_step.number < current_step.number
             ORDER BY previous_step.number DESC
@@ -127,6 +128,6 @@ class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTask
   end
 
   def down
-    remove_column :tasks_task_steps, :content_page_id
+    raise ActiveRecord::IrreversibleMigration
   end
 end
