@@ -1,4 +1,4 @@
-class AddContentPageIdAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskSteps < ActiveRecord::Migration
+class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskSteps < ActiveRecord::Migration
   def up
     # https://dba.stackexchange.com/a/52531
     query = <<-SQL.strip_heredoc
@@ -56,6 +56,7 @@ class AddContentPageIdAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskS
         deleted_at,
         related_exercise_ids,
         labels,
+        '{}'::text AS spy,
         COALESCE(
           current_step.content_page_id,
           (
@@ -85,7 +86,9 @@ class AddContentPageIdAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskS
         ALTER COLUMN related_exercise_ids SET DEFAULT '[]'::text,
         ALTER COLUMN related_exercise_ids SET NOT NULL,
         ALTER COLUMN labels SET DEFAULT '[]'::text,
-        ALTER COLUMN labels SET NOT NULL;
+        ALTER COLUMN labels SET NOT NULL,
+        ALTER COLUMN spy SET DEFAULT '{}'::text,
+        ALTER COLUMN spy SET NOT NULL;
 
       ALTER SEQUENCE tasks_task_steps_id_seq OWNED BY task_steps_temp.id;
 
