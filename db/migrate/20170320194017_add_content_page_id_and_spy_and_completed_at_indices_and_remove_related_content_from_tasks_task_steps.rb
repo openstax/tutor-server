@@ -16,7 +16,7 @@ class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTask
 
       LOCK TABLE tasks_task_steps IN SHARE MODE;
 
-      WITH steps_with_content_page_id AS (
+      CREATE TEMP TABLE steps_with_content_page_id ON COMMIT DROP AS (
         SELECT tasks_task_steps.*,
           CASE tasked_type
           WHEN 'Tasks::Models::TaskedExercise'
@@ -51,7 +51,13 @@ class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTask
           END AS content_page_id
           FROM tasks_task_steps
           ORDER BY id
-      )
+      );
+
+      CREATE UNIQUE INDEX idx_temp_by_id ON steps_with_content_page_id (id);
+
+      CREATE INDEX idx_temp_multi
+        ON steps_with_content_page_id (tasks_task_id, content_page_id, number);
+
       SELECT id,
         tasks_task_id,
         tasked_id,
@@ -80,7 +86,8 @@ class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTask
           )
         ) AS content_page_id
       INTO task_steps_temp
-      FROM steps_with_content_page_id current_step;
+      FROM steps_with_content_page_id current_step
+      ORDER BY id;
 
       ALTER TABLE task_steps_temp
         ALTER COLUMN id SET DEFAULT nextval('tasks_task_steps_id_seq'::regclass),
