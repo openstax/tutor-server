@@ -129,8 +129,8 @@ module User
       verify_and_return @strategy.ui_settings, klass: Hash, allow_nil: true, error: StrategyError
     end
 
-    def viewed_tour_ids
-      verify_and_return @strategy.viewed_tour_ids, klass: Array, allow_nil: true, error: StrategyError
+    def viewed_tour_stats
+      verify_and_return @strategy.viewed_tour_stats, klass: Array, allow_nil: true, error: StrategyError
     end
 
     def salesforce_contact_id

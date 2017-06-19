@@ -22,7 +22,7 @@ module Api::V1
                required: true
              }
 
-    property :viewed_tour_ids
+    property :viewed_tour_stats
 
     property :self_reported_role,
              type: String,
