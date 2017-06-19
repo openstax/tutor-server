@@ -55,7 +55,6 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
         updated_at,
         deleted_at,
         related_exercise_ids,
-        related_content,
         labels,
         COALESCE(
           current_step.content_page_id,
@@ -85,8 +84,6 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
         ALTER COLUMN updated_at SET NOT NULL,
         ALTER COLUMN related_exercise_ids SET DEFAULT '[]'::text,
         ALTER COLUMN related_exercise_ids SET NOT NULL,
-        ALTER COLUMN related_content SET DEFAULT '[]'::text,
-        ALTER COLUMN related_content SET NOT NULL,
         ALTER COLUMN labels SET DEFAULT '[]'::text,
         ALTER COLUMN labels SET NOT NULL,
         ALTER COLUMN content_page_id SET NOT NULL;
@@ -104,6 +101,14 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
       CREATE INDEX index_tasks_task_steps_on_deleted_at
         ON tasks_task_steps
         USING btree (deleted_at);
+
+      CREATE INDEX index_tasks_task_steps_on_first_completed_at
+        ON tasks_task_steps
+        USING btree (first_completed_at);
+
+      CREATE INDEX index_tasks_task_steps_on_last_completed_at
+        ON tasks_task_steps
+        USING btree (last_completed_at);
 
       CREATE UNIQUE INDEX index_tasks_task_steps_on_tasked_id_and_tasked_type
         ON tasks_task_steps
