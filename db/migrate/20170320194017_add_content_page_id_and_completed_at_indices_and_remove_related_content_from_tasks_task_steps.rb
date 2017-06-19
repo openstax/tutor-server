@@ -1,4 +1,4 @@
-class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
+class AddContentPageIdAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskSteps < ActiveRecord::Migration
   def up
     # https://dba.stackexchange.com/a/52531
     query = <<-SQL.strip_heredoc
