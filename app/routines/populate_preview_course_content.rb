@@ -41,6 +41,7 @@ class PopulatePreviewCourseContent
         acc.title = student_info[:title]
         acc.first_name = student_info[:first_name]
         acc.last_name = student_info[:last_name]
+        acc.role = 'student'
       end.tap do |acc|
         raise "Someone took the preview username #{acc.username}!" if acc.valid_openstax_uid?
       end

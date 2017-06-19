@@ -41,6 +41,11 @@
   <% end %>
 
   <div class='form-group'>
+    <%= f.label :role, class: 'col-sm-2 control-label' %>
+    <%= f.select :role, OpenStax::Accounts::Account.roles.keys.map{|rr| [rr, rr]} %>
+  </div>
+
+  <div class='form-group'>
     <%= f.label :administrator, class: 'col-sm-2 control-label' %>
     <%= check_box_tag 'user[administrator]', "1", @user.try(:is_admin?) %>
   </div>

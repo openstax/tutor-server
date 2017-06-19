@@ -42,6 +42,11 @@ RSpec.describe ImportRoster, type: :routine do
     end
   end
 
+  it 'sets the new users to have the student role' do
+    result
+    expect(OpenStax::Accounts::Account.find_by(username: user_hashes[0][:username]).role).to eq 'student'
+  end
+
   it 'does not overwrite existing users\' info' do
     existing_users = user_hashes.map do |user_hash|
       FactoryGirl.create :user, username: user_hash[:username]
