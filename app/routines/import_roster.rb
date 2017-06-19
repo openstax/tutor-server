@@ -11,6 +11,7 @@ class ImportRoster
 
   def exec(user_hashes:, period:)
     user_hashes.each do |user_hash|
+      user_hash[:role] = 'student'
       user = run(:find_or_create_user, user_hash).outputs.user
 
       run(

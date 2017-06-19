@@ -8,7 +8,7 @@ module User
 
         exposes :account, :username, :title, :first_name, :last_name,
                 :full_name, :name, :casual_name, :faculty_status, :ui_settings,
-                :salesforce_contact_id, :uuid
+                :salesforce_contact_id, :uuid, :role
 
         class << self
           alias_method :entity_all, :all

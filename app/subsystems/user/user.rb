@@ -85,6 +85,10 @@ module User
       verify_and_return @strategy.title, klass: String, allow_nil: true, error: StrategyError
     end
 
+    def role
+      verify_and_return @strategy.role, klass: String, allow_nil: true, error: StrategyError
+    end
+
     def is_human?
       !!@strategy.is_human?
     end

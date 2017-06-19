@@ -1,6 +1,6 @@
 class Admin::UsersCreate
   ALLOWED_ATTRIBUTES = ['username', 'password', 'first_name', 'last_name',
-                        'full_name', 'title', 'email']
+                        'full_name', 'title', 'email', 'role']
 
   lev_handler
 
@@ -17,6 +17,7 @@ class Admin::UsersCreate
     attribute :full_name, type: String
     attribute :title, type: String
     attribute :email, type: String
+    attribute :role, type: String
     attribute :administrator, type: boolean
     attribute :customer_service, type: boolean
     attribute :content_analyst, type: boolean
