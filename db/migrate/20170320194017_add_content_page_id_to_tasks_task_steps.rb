@@ -1,60 +1,122 @@
 class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
   def up
-    add_column :tasks_task_steps, :content_page_id, :integer
+    # https://dba.stackexchange.com/a/52531
+    query = <<-SQL.strip_heredoc
+      SET LOCAL work_mem = '128 MB'; -- just for this transaction
+      SET LOCAL maintenance_work_mem = '512 MB';
 
-    Rails.logger.info { "Migrating #{Tasks::Models::TaskedExercise.unscoped.count} exercise steps" }
-    Tasks::Models::TaskStep.unscoped.update_all(
-      <<-SQL.strip_heredoc
-        content_page_id = content_exercises.content_page_id
-          FROM tasks_tasked_exercises
-            INNER JOIN content_exercises
-              ON content_exercises.id = tasks_tasked_exercises.content_exercise_id
-          WHERE tasked_id = tasks_tasked_exercises.id
-            AND tasked_type = 'Tasks::Models::TaskedExercise'
-      SQL
-    )
+      LOCK TABLE tasks_task_steps IN SHARE MODE;
 
-    Rails.logger.info { "Migrating #{Tasks::Models::TaskedReading.unscoped.count} reading steps" }
-    Tasks::Models::TaskStep.unscoped.update_all(
-      <<-SQL.strip_heredoc
-        content_page_id = content_pages.id
-        FROM tasks_task_steps ts
-          INNER JOIN tasks_tasked_readings
-            ON tasks_tasked_readings.id = ts.tasked_id
-          INNER JOIN tasks_tasks
-            ON tasks_tasks.id = ts.tasks_task_id
-          INNER JOIN content_ecosystems
-            ON content_ecosystems.id = tasks_tasks.content_ecosystem_id
-          INNER JOIN content_books
-            ON content_books.content_ecosystem_id = content_ecosystems.id
-          INNER JOIN content_chapters
-            ON content_chapters.content_book_id = content_books.id
-          INNER JOIN content_pages
-            ON content_pages.content_chapter_id = content_chapters.id
-            AND content_pages.book_location = tasks_tasked_readings.book_location
-        WHERE ts.id = tasks_task_steps.id
-          AND tasks_task_steps.tasked_type = 'Tasks::Models::TaskedReading'
-      SQL
-    )
-
-    Rails.logger.info { "Migrating #{Tasks::Models::TaskStep.unscoped.count} remaining steps" }
-    Tasks::Models::TaskStep.unscoped.update_all(
-      <<-SQL.strip_heredoc
-        content_page_id = previous_step.content_page_id
-        FROM tasks_task_steps current_step
-          CROSS JOIN LATERAL (
-            SELECT content_page_id
-            FROM tasks_task_steps previous_step
+      WITH steps_with_content_page_id AS (
+        SELECT tasks_task_steps.*,
+          CASE tasked_type
+          WHEN 'Tasks::Models::TaskedExercise'
+          THEN
+            (
+              SELECT content_exercises.content_page_id
+              FROM tasks_tasked_exercises
+                INNER JOIN content_exercises
+                  ON content_exercises.id = tasks_tasked_exercises.content_exercise_id
+              WHERE tasks_tasked_exercises.id = tasked_id
+            )
+          WHEN 'Tasks::Models::TaskedReading'
+          THEN
+            (
+              SELECT content_pages.id
+              FROM tasks_task_steps ts
+                INNER JOIN tasks_tasked_readings
+                  ON tasks_tasked_readings.id = ts.tasked_id
+                INNER JOIN tasks_tasks
+                  ON tasks_tasks.id = ts.tasks_task_id
+                INNER JOIN content_ecosystems
+                  ON content_ecosystems.id = tasks_tasks.content_ecosystem_id
+                INNER JOIN content_books
+                  ON content_books.content_ecosystem_id = content_ecosystems.id
+                INNER JOIN content_chapters
+                  ON content_chapters.content_book_id = content_books.id
+                INNER JOIN content_pages
+                  ON content_pages.content_chapter_id = content_chapters.id
+                  AND content_pages.book_location = tasks_tasked_readings.book_location
+              WHERE ts.id = tasks_task_steps.id
+            )
+          END AS content_page_id
+          FROM tasks_task_steps
+          ORDER BY id
+      )
+      SELECT id,
+        tasks_task_id,
+        tasked_id,
+        tasked_type,
+        number,
+        first_completed_at,
+        last_completed_at,
+        group_type,
+        created_at,
+        updated_at,
+        deleted_at,
+        related_exercise_ids,
+        related_content,
+        labels,
+        COALESCE(
+          current_step.content_page_id,
+          (
+            SELECT previous_step.content_page_id
+            FROM steps_with_content_page_id previous_step
             WHERE previous_step.tasks_task_id = current_step.tasks_task_id
             AND previous_step.content_page_id IS NOT NULL
             AND previous_step.number < current_step.number
             ORDER BY previous_step.number DESC
             LIMIT 1
-          ) AS previous_step
-        WHERE tasks_task_steps.content_page_id IS NULL
-          AND current_step.id = tasks_task_steps.id
-      SQL
-    )
+          )
+        ) AS content_page_id
+      INTO task_steps_temp
+      FROM steps_with_content_page_id current_step;
+
+      ALTER TABLE task_steps_temp
+        ALTER COLUMN id SET DEFAULT nextval('tasks_task_steps_id_seq'::regclass),
+        ALTER COLUMN id SET NOT NULL,
+        ALTER COLUMN tasks_task_id SET NOT NULL,
+        ALTER COLUMN tasked_id SET NOT NULL,
+        ALTER COLUMN tasked_type SET NOT NULL,
+        ALTER COLUMN number SET NOT NULL,
+        ALTER COLUMN group_type SET DEFAULT 0,
+        ALTER COLUMN group_type SET NOT NULL,
+        ALTER COLUMN created_at SET NOT NULL,
+        ALTER COLUMN updated_at SET NOT NULL,
+        ALTER COLUMN related_exercise_ids SET DEFAULT '[]'::text,
+        ALTER COLUMN related_exercise_ids SET NOT NULL,
+        ALTER COLUMN related_content SET DEFAULT '[]'::text,
+        ALTER COLUMN related_content SET NOT NULL,
+        ALTER COLUMN labels SET DEFAULT '[]'::text,
+        ALTER COLUMN labels SET NOT NULL,
+        ALTER COLUMN content_page_id SET NOT NULL;
+
+      ALTER SEQUENCE tasks_task_steps_id_seq OWNED BY task_steps_temp.id;
+
+      DROP TABLE tasks_task_steps;
+      ALTER TABLE task_steps_temp RENAME TO tasks_task_steps;
+
+      ALTER TABLE tasks_task_steps
+        ADD CONSTRAINT tasks_task_steps_pkey PRIMARY KEY (id),
+        ADD CONSTRAINT fk_rails_a7b925659a FOREIGN KEY (tasks_task_id) REFERENCES tasks_tasks(id)
+          ON UPDATE CASCADE ON DELETE CASCADE;
+
+      CREATE INDEX index_tasks_task_steps_on_deleted_at
+        ON tasks_task_steps
+        USING btree (deleted_at);
+
+      CREATE UNIQUE INDEX index_tasks_task_steps_on_tasked_id_and_tasked_type
+        ON tasks_task_steps
+        USING btree (tasked_id, tasked_type);
+
+      CREATE UNIQUE INDEX index_tasks_task_steps_on_tasks_task_id_and_number
+        ON tasks_task_steps
+        USING btree (tasks_task_id, number);
+
+      ANALYZE tasks_task_steps;
+    SQL
+
+    ActiveRecord::Base.connection.execute query
   end
 
   def down

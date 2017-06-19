@@ -698,7 +698,7 @@ ActiveRecord::Schema.define(version: 20170612150156) do
     t.datetime "deleted_at"
     t.text     "related_exercise_ids", default: "[]", null: false
     t.text     "labels",               default: "[]", null: false
-    t.integer  "content_page_id"
+    t.integer  "content_page_id",                     null: false
     t.text     "spy",                  default: "{}", null: false
   end
 
