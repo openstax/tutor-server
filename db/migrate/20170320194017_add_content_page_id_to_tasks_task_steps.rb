@@ -85,8 +85,7 @@ class AddContentPageIdToTasksTaskSteps < ActiveRecord::Migration
         ALTER COLUMN related_exercise_ids SET DEFAULT '[]'::text,
         ALTER COLUMN related_exercise_ids SET NOT NULL,
         ALTER COLUMN labels SET DEFAULT '[]'::text,
-        ALTER COLUMN labels SET NOT NULL,
-        ALTER COLUMN content_page_id SET NOT NULL;
+        ALTER COLUMN labels SET NOT NULL;
 
       ALTER SEQUENCE tasks_task_steps_id_seq OWNED BY task_steps_temp.id;
 
