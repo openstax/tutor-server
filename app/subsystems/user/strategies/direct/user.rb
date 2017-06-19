@@ -85,8 +85,8 @@ module User
           !repository.content_analyst.nil?
         end
 
-        def viewed_tour_ids
-          repository.tours.pluck(:identifier)
+        def viewed_tour_stats
+          repository.tour_views.map {|t| { id: t.tour.identifier, view_count: t.view_count } }
         end
 
         def to_model

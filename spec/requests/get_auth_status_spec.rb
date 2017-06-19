@@ -38,7 +38,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           is_customer_service: false,
           is_content_analyst: false,
           faculty_status: 'no_faculty_info',
-          viewed_tour_ids: [],
+          viewed_tour_stats: [],
           self_reported_role: user.account.role,
           account_uuid: user.account.uuid,
           terms_signatures_needed: false,
