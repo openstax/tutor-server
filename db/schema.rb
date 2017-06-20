@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170612150156) do
+ActiveRecord::Schema.define(version: 20170609150609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -698,8 +698,8 @@ ActiveRecord::Schema.define(version: 20170612150156) do
     t.datetime "deleted_at"
     t.text     "related_exercise_ids", default: "[]", null: false
     t.text     "labels",               default: "[]", null: false
-    t.integer  "content_page_id"
     t.text     "spy",                  default: "{}", null: false
+    t.integer  "content_page_id"
   end
 
   add_index "tasks_task_steps", ["deleted_at"], name: "index_tasks_task_steps_on_deleted_at", using: :btree
