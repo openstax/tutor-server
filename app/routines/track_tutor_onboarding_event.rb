@@ -72,6 +72,12 @@ protected
       raise
     rescue MissingArgument => ee
       raise(MissingArgument, "Missing the `#{ee.message}` argument for event #{event}")
+    rescue OpenStax::Salesforce::UserMissing => ee
+      if Rails.env.development?
+        Rails.logger.error { "Cannot track TOA event because Salesforce user not set" }
+      else
+        raise
+      end
     end
 
   end
