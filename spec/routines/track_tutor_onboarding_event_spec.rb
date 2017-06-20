@@ -78,6 +78,17 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     end
   end
 
+  context "when there is no SF user" do
+    let(:event) { :like_preview_yes }
+    let(:user) { @user_sf_a }
+
+    it "freaks out in production" do
+      clear_salesforce_user
+      ActiveForce.clear_sfdc_client!
+      expect{call}.to raise_error(OpenStax::Salesforce::UserMissing)
+    end
+  end
+
   context 'when user anonymous and no pardot contact ID supplied' do
     let(:event) { :arrived_my_courses }
     let(:user) { anonymous_user }
