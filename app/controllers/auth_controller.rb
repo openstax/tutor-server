@@ -78,9 +78,7 @@ class AuthController < ApplicationController
   end
 
   def terms_agreed?
-    FinePrint.unsigned_contracts_for(
-      current_user.to_model, name: current_users_contracts.non_proxy_signed
-    ).none?
+    GetUserTermsInfos[current_user].reject(&:is_signed).empty?
   end
 
   def set_cors_headers
