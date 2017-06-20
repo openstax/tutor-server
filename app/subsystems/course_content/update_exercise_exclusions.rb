@@ -1,6 +1,6 @@
 class CourseContent::UpdateExerciseExclusions
 
-  lev_routine express_output: :exercise_representations
+  lev_routine express_output: :exercise_representations, transaction: :read_committed
 
   uses_routine GetExercises, as: :get_exercises
 
