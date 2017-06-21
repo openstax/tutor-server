@@ -13,13 +13,15 @@
 
   <div class='container teacher-student'>
     <div class="student">
-      <h3>Are you a student?</h3>
-      <p>
-        You need an enrollment link from your instructor to join a course. Clicking the enrollment link will give you access to your instructor’s course.
-      </p>
+      <div>
+        <h3>Are you a student?</h3>
+        <p>
+          You need an enrollment link from your instructor to join a course. Clicking the enrollment link will give you access to your instructor’s course.
+        </p>
+      </div>
     </div>
     <div class="teacher">
-      <div style="float:right">
+      <div>
         <h3>Are you an instructor?</h3>
         <p>
           <%= link_to 'Get started', main_app.non_student_signup_path %> with OpenStax Tutor beta
