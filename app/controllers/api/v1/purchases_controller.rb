@@ -1,4 +1,9 @@
+require_relative './fake_purchase_actions'
+
 class Api::V1::PurchasesController < Api::V1::ApiController
+
+  before_filter :verify_purchase_exists, only: [:check, :refund]
+
   resource_description do
     api_versions "v1"
     short_description 'Interface for purchases'
@@ -6,7 +11,7 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     EOS
   end
 
-  api :PUT, ':id/check', 'Instructs Tutor to check on a purchase\'s payment status'
+  api :PUT, '/:id/check', 'Instructs Tutor to check on a purchase\'s payment status'
   description <<-EOS
     Instructs Tutor to check on a purchase\'s payment status.  The ID is the UUID
     of the purchase.  This endpoint is throttled.
@@ -20,33 +25,44 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     Caller should retry later if response is not 2xx or 404.
   EOS
   def check
-    if PurchasedItem.exists?(uuid: params[:id])
-      UpdatePaymentStatus.perform_later(uuid: params[:id])
-      head :accepted
-    else
-      head :not_found
-    end
+    UpdatePaymentStatus.perform_later(uuid: params[:id])
+    head :accepted
   end
 
-  if !IAm.real_production?
-    api :POST, 'fake', 'Adds fake purchased items to Tutor'
-    description <<-EOS
-      Adds fake purchased items to Tutor for testing.  In the posted data, include
-      JSON with an array of UUIDs for the items.  These correspond to the product
-      instance UUIDs on Payments.  Should always return 200.
+  api :PUT, '/:id/refund', 'Instructs Tutor to initiate a refund of this purchase'
+  description <<-EOS
+    Instructs Tutor to initate a refund of this purchase.  The ID is the UUID of the
+    purchase.
 
-          curl -i -X PUT http://localhost:3001/api/purchases/2f25f315-137f-4ec2-9efe-d23cdb70501e/check
-          => 404 Not Found
-          curl -i -H "Content-Type: application/json" -X POST -d '["2f25f315-137f-4ec2-9efe-d23cdb70501e","f030e182-0985-4a6e-a54f-7d1dc0230eb0"]' http://localhost:3001/api/purchases/fake
-          => 200 OK
-          curl -i -X PUT http://localhost:3001/api/purchases/2f25f315-137f-4ec2-9efe-d23cdb70501e/check
-          => 202 Accepted
-    EOS
-    def create_fake
-      uuids = JSON.parse(request.body.read)
-      uuids.each{|uuid| OpenStax::Payments::FakePurchasedItem.create(uuid)}
-      head :ok
+    Responses:
+    * 202 Accepted if all good
+    * 404 if the UUID does not exist for a purchase
+    * 422 with code 'not_paid' if the purchase hasn't been paid yet
+    * 422 with code 'refund_period_elapsed' if the refund was requested too late
+    * 5xx if things go boom
+  EOS
+  def refund
+    OSU::AccessPolicy.require_action_allowed!(:refund, current_api_user, purchased_item)
+
+    if purchased_item.is_a?(CourseMembership::Models::Student)
+      return render_api_errors(:not_paid) if !purchased_item.is_paid
+      return render_api_errors(:refund_period_elapsed) if !purchased_item.is_refund_allowed
     end
+
+    InitiateRefund.perform_later(uuid: params[:id])
+    head :accepted
+  end
+
+  include Api::V1::FakePurchaseActions if !IAm.real_production?
+
+  protected
+
+  def purchased_item
+    @purchased_item ||= PurchasedItem.find(uuid: params[:id])
+  end
+
+  def verify_purchase_exists
+    head(:not_found) if purchased_item.nil?
   end
 
 end

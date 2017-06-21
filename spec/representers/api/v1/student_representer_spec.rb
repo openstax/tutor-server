@@ -21,7 +21,9 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'is_paid' => false,
       'is_comped' => false,
       'payment_due_at' => be_kind_of(String),
-      'first_paid_at' => be_kind_of(String)
+      'first_paid_at' => be_kind_of(String),
+      'is_refund_pending' => false,
+      'is_refund_allowed' => false
     )
 
     [:first_paid_at, :payment_due_at].each do |date_method|
@@ -67,4 +69,5 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       expect(representation).to include('prompt_student_to_pay' => false)
     end
   end
+
 end

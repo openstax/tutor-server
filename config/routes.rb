@@ -99,6 +99,7 @@ Rails.application.routes.draw do
     resources :purchases, only: [] do
       member do
         put :check
+        put :refund
       end
 
       if !IAm.real_production?

@@ -112,5 +112,20 @@ module Api::V1
                description: "Payment is due before this date (if the course costs)"
              }
 
+    property :is_refund_pending,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                type: 'boolean',
+                description: "True iff the student has a refund in progress"
+             }
+
+    property :is_refund_allowed,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                type: 'boolean',
+                description: "True iff the student can currently request a refund"
+             }
   end
 end
