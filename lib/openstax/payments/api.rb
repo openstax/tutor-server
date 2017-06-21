@@ -18,6 +18,10 @@ module OpenStax::Payments::Api
       client.check_payment(product_instance_uuid: product_instance_uuid)
     end
 
+    def initiate_refund(product_instance_uuid:)
+      client.initiate_refund(product_instance_uuid: product_instance_uuid)
+    end
+
     def use_fake_client
       self.client = new_fake_client
     end

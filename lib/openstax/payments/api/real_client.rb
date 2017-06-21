@@ -24,6 +24,10 @@ class OpenStax::Payments::Api::RealClient
     api_request(method: :get, url: "/pay/check/#{uuid}")
   end
 
+  def initiate_refund(product_instance_uuid:)
+    api_request(method: :put, url: "/pay/refund/#{uuid}")
+  end
+
   protected
 
   def absolutize_url(url)
