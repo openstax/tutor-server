@@ -43,10 +43,14 @@
  .teacher-student {
    margin-bottom: 60px;
    margin-top: 40px;
-
+   max-width: 800px;
    display: flex;
-   .teacher { flex: 1; margin-left:  2rem; }
-   .student { flex: 1; margin-right: 2rem; }
+   .teacher, .student {
+     flex: 1;
+     display: flex;
+     justify-content: center;
+     margin: 0 1rem;
+   }
  }
 
 }
