@@ -17,6 +17,7 @@ class CourseProfile::BuildPreviewCourses
     log(:debug) { "Started at #{start_time}" }
 
     created_course_counts_by_offering_title = Hash.new { |hash, key| hash[key] = 0 }
+    lowest_preview_counts_by_offering_title = Hash.new { |hash, key| hash[key] = desired_count }
     loop do
       # Start a transaction for every course created so we don't lose work in case of a crash
       CourseProfile::Models::Course.transaction do
@@ -29,7 +30,9 @@ class CourseProfile::BuildPreviewCourses
           log(:info) do
             created_preview_courses_description = created_course_counts_by_offering_title
               .map do |offering_title, course_count|
-              "#{course_count} preview course(s) for #{offering_title}"
+              lowest = lowest_preview_counts_by_offering_title[offering_title]
+
+              "#{course_count} preview course(s) for #{offering_title} (lowest count #{lowest})"
             end.join(', ')
 
             "Created #{created_preview_courses_description} in #{end_time - start_time} second(s)"
@@ -51,7 +54,11 @@ class CourseProfile::BuildPreviewCourses
 
         PopulatePreviewCourseContent[course: course]
 
-        created_course_counts_by_offering_title[offering.title] += 1
+        offering_title = offering.title
+        created_course_counts_by_offering_title[offering_title] += 1
+        lowest_preview_counts_by_offering_title[offering_title] = [
+          lowest_preview_counts_by_offering_title[offering_title], offering.course_preview_count
+        ].min
       end
     end
   end
