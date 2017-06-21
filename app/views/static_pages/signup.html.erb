@@ -1,7 +1,7 @@
 <div id="alt-signup">
 
   <div class='title'>
-    <h2>How To Sign Up for OpenStax Tutor Beta</h2>
+    <h2>How to get started with OpenStax Tutor Beta</h2>
     <div class="stripe">
       <div class="orange"> </div>
       <div class="blue"> </div>
@@ -15,15 +15,17 @@
     <div class="student">
       <h3>Are you a student?</h3>
       <p>
-        You need an enrollment link from your instructor to join a course.  Click that link to access the course.
+        You need an enrollment link from your instructor to join a course. Clicking the enrollment link will give you access to your instructor’s course.
       </p>
     </div>
     <div class="teacher">
-      <h3>Are you an instructor or administrator?</h3>
-      <p>
-        <%= link_to 'Sign up', main_app.non_student_signup_path %> to join the OpenStax Tutor beta.  After we verify
-        that you are faculty, you'll be able to test out preview courses or create your own course.
-      </p>
+      <div style="float:right">
+        <h3>Are you an instructor?</h3>
+        <p>
+          <%= link_to 'Get started', main_app.non_student_signup_path %> with OpenStax Tutor beta
+          or <%= link_to 'learn more', 'https://openstax.org/openstax-tutor/' %>.
+        </p>
+      </div>
     </div>
   </div>
 
