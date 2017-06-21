@@ -1,43 +1,62 @@
 class CourseContent::UpdateExerciseExclusions
 
-  lev_routine express_output: :exercise_representations
+  lev_routine express_output: :exercise_representations, transaction: :read_committed
+
+  uses_routine GetExercises, as: :get_exercises
 
   protected
 
   def exec(course:, updates_array:)
-    # TODO: Optimize this code so it doesn't cause serialization failures in production
     updates_array = updates_array.map(&:stringify_keys)
-    page_ids = Content::Models::Exercise.find(updates_array.map{ |update| update['id'] })
-                                        .map(&:content_page_id)
+    exercise_ids = updates_array.map { |update| update['id'] }
+    page_ids = Content::Models::Exercise.where(id: exercise_ids).pluck(:content_page_id)
 
     # The course is touched at the end, so we lock the course to make this update atomic
     course.lock!
 
-    out = GetExercises.call(course: course, page_ids: page_ids).outputs
-    exercises = out.exercises.index_by{ |ex| ex.id.to_s }
-    page_exercises = out.exercise_search['items'].index_by(&:id)
+    course_id = course.id
 
+    out = run(:get_exercises, course: course, page_ids: page_ids).outputs
+    exercises_by_id = out.exercises.index_by { |ex| ex.id.to_s }
+    exercise_representations_by_id = out.exercise_search['items'].index_by(&:id)
+
+    excluded_exercises = []
+    unexcluded_exercise_numbers = []
     outputs[:exercise_representations] = updates_array.map do |exercise_params|
-      id = exercise_params['id']
-      is_excluded = exercise_params['is_excluded']
+      fatal_error(:id_blank, 'Missing id for exercise exclusion') \
+        unless exercise_params.has_key?('id')
+      fatal_error(:is_excluded_blank, "Missing is_exclusion for exercise with 'id'=#{id}") \
+        unless exercise_params.has_key?('is_excluded')
 
-      exercise = exercises[id]
-      exercise_representation = page_exercises[id]
+      id = exercise_params.fetch('id').to_s
+      exercise = exercises_by_id[id]
+      exercise_representation = exercise_representations_by_id[id]
+      fatal_error(:exercise_not_found, "Couldn't find Content::Models::Exercise with 'id'=#{id}") \
+        if exercise.nil? || exercise_representation.nil?
 
-      if is_excluded # true
-        CourseContent::Models::ExcludedExercise.find_or_create_by(
-          course_profile_course_id: course.id, exercise_number: exercise.number
+      is_excluded = !!exercise_params.fetch('is_excluded')
+      exercise_representation['is_excluded'] = !!is_excluded
+
+      if is_excluded
+        excluded_exercises << CourseContent::Models::ExcludedExercise.new(
+          course_profile_course_id: course_id, exercise_number: exercise.number
         )
-        exercise_representation['is_excluded'] = true
-      elsif !is_excluded.nil? # false
-        excluded_exercise = CourseContent::Models::ExcludedExercise.where(
-          course_profile_course_id: course.id, exercise_number: exercise.number
-        ).delete_all
-        exercise_representation['is_excluded'] = false
+      else
+        unexcluded_exercise_numbers << exercise.number
       end
 
       exercise_representation
     end
+
+    CourseContent::Models::ExcludedExercise.import(
+      excluded_exercises,
+      validate: false,
+      on_duplicate_key_ignore: { conflict_target: [ :course_profile_course_id, :exercise_number ] }
+    )
+
+    CourseContent::Models::ExcludedExercise.where(
+      course_profile_course_id: course_id, exercise_number: unexcluded_exercise_numbers
+    ).delete_all
 
     # This touch ensures that transactions trying to lock the same course will retry
     course.touch
