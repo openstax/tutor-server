@@ -17,13 +17,11 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
   end
 
   # Workaround for PostgreSQL bug where the task records
-  # stop existing in SELECT FOR UPDATE queries (but not in regular SELECTs)
-  # after the transaction rollback that happens in between spec examples
-  before(:each) { @task_plan.tasks.each(&:touch) }
+  # stop existing in SELECT ... FOR UPDATE queries (but not in regular SELECTs)
+  # after the transaction rollback that happens in-between spec examples
+  before(:each)       { @task_plan.tasks.each(&:touch) }
 
-  let(:student_tasks) do
-    @task_plan.tasks.joins(taskings: {role: :student}).to_a
-  end
+  let(:student_tasks) { @task_plan.tasks.joins(taskings: { role: :student }).to_a }
 
   context "with an unworked plan" do
 

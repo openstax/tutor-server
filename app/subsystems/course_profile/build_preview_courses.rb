@@ -3,18 +3,45 @@ class CourseProfile::BuildPreviewCourses
   lev_routine transaction: :no_transaction
 
   # We really want no transaction here, so we don't call uses_routine
-  # uses_routine ::CreateCourse, as: :create_course
-  # uses_routine PopulatePreviewCourseContent, as: :populate_preview_course_content
+  # uses_routine ::CreateCourse
+  # uses_routine PopulatePreviewCourseContent
 
   protected
 
+  def log(level, &block)
+    Rails.logger.tagged(self.class.name) { |logger| logger.public_send(level, &block) }
+  end
+
   def exec(desired_count: Settings::Db.store.prebuilt_preview_course_count)
+    start_time = Time.current
+    log(:debug) { "Started at #{start_time}" }
+
+    created_course_counts_by_offering_title = Hash.new { |hash, key| hash[key] = 0 }
+    lowest_preview_counts_by_offering_title = Hash.new { |hash, key| hash[key] = desired_count }
     loop do
       # Start a transaction for every course created so we don't lose work in case of a crash
       CourseProfile::Models::Course.transaction do
         # We need to call this in every transaction so we lock the offering
         offering = offering_that_needs_previews(desired_count)
-        return if offering.nil? # No more work to do
+        if offering.nil?
+          # No more work to do
+          end_time = Time.current
+
+          log(:info) do
+            created_preview_courses_description = created_course_counts_by_offering_title
+              .map do |offering_title, course_count|
+              lowest = lowest_preview_counts_by_offering_title[offering_title]
+
+              "#{course_count} preview course(s) for #{offering_title} (lowest count #{lowest})"
+            end.join(', ')
+
+            "Created #{created_preview_courses_description} in #{end_time - start_time} second(s)"
+          end unless created_course_counts_by_offering_title.empty?
+
+          log(:debug) { "Finished at #{end_time}" }
+
+          return
+        end
 
         course = ::CreateCourse[
           name: "#{offering.description} Preview",
@@ -26,6 +53,12 @@ class CourseProfile::BuildPreviewCourses
         ]
 
         PopulatePreviewCourseContent[course: course]
+
+        offering_title = offering.title
+        created_course_counts_by_offering_title[offering_title] += 1
+        lowest_preview_counts_by_offering_title[offering_title] = [
+          lowest_preview_counts_by_offering_title[offering_title], offering.course_preview_count
+        ].min
       end
     end
   end
@@ -48,7 +81,7 @@ class CourseProfile::BuildPreviewCourses
       .where(['coalesce(course_preview_count, 0) < ?', desired_count])
       .select('coalesce(course_preview_count, 0) as course_preview_count, catalog_offerings.*')
       .reorder(1, :number) # Work on offerings with lower course_preview_count first
-      .lock('FOR UPDATE OF catalog_offerings SKIP LOCKED') # Skip offerings being worked on
+      .lock('FOR NO KEY UPDATE OF catalog_offerings SKIP LOCKED') # Skip offerings being worked on
       .first # Only lock 1 offering at a time
   end
 
