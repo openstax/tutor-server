@@ -8,6 +8,11 @@
  #alt-signup {
    $title-height: 260px;
    position: relative;
+
+   a {
+     color: #0dc0dc;
+   }
+
    .title {
      background: #0dc0de;
      height: $title-height;
