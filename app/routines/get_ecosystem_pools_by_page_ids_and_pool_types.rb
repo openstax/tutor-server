@@ -1,6 +1,6 @@
 class GetEcosystemPoolsByPageIdsAndPoolTypes
 
-  lev_routine express_output: :pools_map
+  lev_routine transaction: :no_transaction, express_output: :pools_map
 
   protected
 
