@@ -3,10 +3,12 @@ class AddEcosystemIdToTasksTasks < ActiveRecord::Migration
     add_column :tasks_tasks, :content_ecosystem_id, :integer
 
     # Tasks that come from TaskPlans
-    Tasks::Models::Task.unscoped
-                       .joins(:task_plan)
-                       .preload(task_plan: :ecosystem)
-                       .find_each do |task|
+    Tasks::Models::Task.unscoped.joins(
+      <<-SQL.strip_heredoc
+        INNER JOIN "tasks_task_plans"
+          ON "tasks_task_plans"."id" = "tasks_tasks"."tasks_task_plan_id"
+      SQL
+    ).preload(task_plan: :ecosystem).find_each do |task|
       task.update_attribute :ecosystem, task.task_plan.ecosystem
     end
 
