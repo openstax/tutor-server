@@ -179,17 +179,21 @@ class OpenStax::Biglearn::Api::RealClient
     end
     from_ecosystem_model = other_course_ecosystems.first.ecosystem
     from_ecosystem = Content::Ecosystem.new strategy: from_ecosystem_model.wrap
-    content_map = Content::Map.find_or_create_by!(
+    content_map = Content::Map.find_or_create_by(
       from_ecosystems: [from_ecosystem], to_ecosystem: to_ecosystem
     )
     book_container_mappings = content_map.map_pages_to_pages(pages: from_ecosystem.pages)
                                          .map do |from_page, to_page|
+      next if to_page.nil?
+
       { from_book_container_uuid: from_page.uuid, to_book_container_uuid: to_page.uuid }
-    end
+    end.compact
     exercise_mappings = content_map.map_exercises_to_pages(exercises: from_ecosystem.exercises)
                                    .map do |exercise, page|
+      next if page.nil?
+
       { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.uuid }
-    end
+    end.compact
     prepared_at = request[:prepared_at] ||
                   to_course_ecosystems.first.try!(:created_at) ||
                   Time.current
@@ -369,7 +373,14 @@ class OpenStax::Biglearn::Api::RealClient
       student = task.taskings.first.try!(:role).try!(:student)
       task_type = task.practice? ? 'practice' : task.task_type
 
+      opens_at = task.opens_at
+      due_at = task.due_at
       feedback_at = task.feedback_at
+
+      exclusion_info = {}
+      exclusion_info[:opens_at] = opens_at.utc.iso8601(6) if opens_at.present?
+      exclusion_info[:due_at] = due_at.utc.iso8601(6) if due_at.present?
+      exclusion_info[:feedback_at] = feedback_at.utc.iso8601(6) if feedback_at.present?
 
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
@@ -410,6 +421,7 @@ class OpenStax::Biglearn::Api::RealClient
         ecosystem_uuid: ecosystem.tutor_uuid,
         student_uuid: student.uuid,
         assignment_type: task_type,
+        exclusion_info: exclusion_info,
         assigned_book_container_uuids: assigned_book_container_uuids,
         goal_num_tutor_assigned_spes: goal_num_tutor_assigned_spes,
         spes_are_assigned: task.spes_are_assigned,
@@ -418,14 +430,8 @@ class OpenStax::Biglearn::Api::RealClient
         assigned_exercises: assigned_exercises,
         created_at: task.created_at.utc.iso8601(6),
         updated_at: task.updated_at.utc.iso8601(6)
-      }.tap do |request|
-        request[:exclusion_info] = {
-          opens_at: task.opens_at.utc.iso8601(6),
-          due_at: task.due_at.utc.iso8601(6),
-          feedback_at: feedback_at.utc.iso8601(6)
-        } unless feedback_at.nil?
-      end
-    end.compact
+      }
+    end
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
                      requests_key: :assignments, responses_key: :updated_assignments
