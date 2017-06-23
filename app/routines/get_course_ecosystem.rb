@@ -1,5 +1,5 @@
 class GetCourseEcosystem
-  lev_routine express_output: :ecosystem
+  lev_routine transaction: :no_transaction, express_output: :ecosystem
 
   protected
 

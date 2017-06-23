@@ -1,9 +1,10 @@
 class GetExercises
 
-  lev_routine express_output: :exercise_search, transaction: :no_transaction
+  lev_routine transaction: :no_transaction, express_output: :exercise_search
 
   uses_routine GetCourseEcosystem, as: :get_ecosystem
   uses_routine FilterExcludedExercises, as: :filter
+  uses_routine GetEcosystemPoolsByPageIdsAndPoolTypes, as: :get_ecosystem_pools
 
   # Returns Content::Exercises filtered "by":
   #   :ecosystem or :course
@@ -18,9 +19,9 @@ class GetExercises
 
     ecosystem ||= run(:get_ecosystem, course: course).outputs.ecosystem
 
-    pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes[ecosystem: ecosystem,
-                                                       page_ids: page_ids,
-                                                       pool_types: pool_types]
+    pools_map = run(:get_ecosystem_pools, ecosystem: ecosystem,
+                                          page_ids: page_ids,
+                                          pool_types: pool_types).outputs.pools_map
 
     excl_exercise_numbers_set = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
       unless course.nil?

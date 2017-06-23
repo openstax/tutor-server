@@ -1,6 +1,6 @@
 class FilterExcludedExercises
 
-  lev_routine express_output: :exercises
+  lev_routine transaction: :no_transaction, express_output: :exercises
 
   def exec(exercises:, course: nil, additional_excluded_numbers: [])
     admin_exclusions = Settings::Exercises.excluded_ids.split(',').map(&:strip)
