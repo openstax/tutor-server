@@ -73,6 +73,9 @@ Rails.application.routes.draw do
   mount OpenStax::Accounts::Engine => :accounts
   mount FinePrint::Engine => :fine_print
 
+  # API docs
+  apipie
+
   # All API routes
   api :v1, default: true do
     resources :users, only: [:index]
@@ -200,9 +203,6 @@ Rails.application.routes.draw do
     get :'teach/:teach_token(/:ignore)', as: :teach_course
     get :'courses/join/:teach_token', as: :deprecated_teach_course
   end
-
-  # API docs
-  apipie
 
   # All admin routes
   namespace :admin do
