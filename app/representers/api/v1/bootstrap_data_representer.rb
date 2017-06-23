@@ -39,11 +39,11 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
-    property :payments_base_url,
+    property :payments_embed_js_url,
              readable: true,
              writeable: false,
              getter: ->(*) {
-               OpenStax::Payments::Api.configuration.server_url
+               OpenStax::Payments::Api.embed_js_url
              }
              
     property :payments_embed_js_url,

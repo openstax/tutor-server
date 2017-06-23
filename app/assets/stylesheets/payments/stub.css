@@ -1,0 +1,12 @@
+/*
+*= require ../vendor/picnic.css
+*= require_self
+*/
+
+
+.actions {
+  display: flex;
+  height: 100%;
+  justify-content: space-around;
+  align-items: center;
+}

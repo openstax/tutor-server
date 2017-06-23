@@ -27,4 +27,8 @@ class StaticPagesController < ApplicationController
   def use_openstax_logo
     @use_openstax_logo = true
   end
+
+  def stubbed_payments
+    render layout: false
+  end
 end
