@@ -10,8 +10,11 @@ class OpenStax::Biglearn::Api::Job < ApplicationJob
       responses = [response].flatten
 
       responses.each do |response|
-        raise OpenStax::Biglearn::Api::JobFailed \
-          if !accepted_response_status.include?(response[response_status_key])
+        raise(
+          OpenStax::Biglearn::Api::JobFailed,
+          "[#{method}] Expected #{response_status_key} to be in #{
+          accepted_response_status.inspect} but was #{response[response_status_key]} instead"
+        ) unless accepted_response_status.include?(response[response_status_key])
       end
     end
   end
