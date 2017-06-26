@@ -56,7 +56,8 @@ namespace :biglearn do
       end
 
       print_each("Creating #{Tasks::Models::Task.count} assignment(s)",
-                 Tasks::Models::Task.preload(:ecosystem, taskings: { role: { student: :course } })
+                 Tasks::Models::Task.select([:id, :content_ecosystem_id])
+                                    .preload(:ecosystem, taskings: { role: { student: :course } })
                                     .find_in_batches) do |tasks|
         requests = tasks.map do |task|
           course = task.taskings.first.try!(:role).try!(:student).try!(:course)
@@ -67,6 +68,9 @@ namespace :biglearn do
         end.compact
 
         OpenStax::Biglearn::Api.create_update_assignments requests
+
+        # Reduce memory growth
+        tasks.each { |task| task.taskings.reset }
       end
 
       te = Tasks::Models::TaskedExercise.arel_table
@@ -105,5 +109,5 @@ end
 def print_each(msg, iter, &block)
   print msg
 
-  iter.map { |ii| block.call(ii).tap{ print '.' } }.tap{ print "\n" }
+  iter.map { |ii| block.call(ii).tap { print '.' } }.tap { print "\n" }
 end
