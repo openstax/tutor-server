@@ -20,10 +20,9 @@ namespace :biglearn do
 
       courses = CourseProfile::Models::Course
         .where(id: course_ids)
-        .joins(:course_ecosystems)
+        .joins(:ecosystems)
         .preload(
-          course_ecosystems: :ecosystem,
-          periods_with_deleted: { latest_enrollments_with_deleted: :student }
+          :ecosystems, periods_with_deleted: { latest_enrollments_with_deleted: :student }
         ).distinct
 
       print_each("Creating #{courses.count} course(s)", courses.find_in_batches) do |courses|
@@ -57,7 +56,7 @@ namespace :biglearn do
       end
 
       print_each("Creating #{Tasks::Models::Task.count} assignment(s)",
-                 Tasks::Models::Task.preload(taskings: { role: { student: :course } })
+                 Tasks::Models::Task.preload(:ecosystem, taskings: { role: { student: :course } })
                                     .find_in_batches) do |tasks|
         requests = tasks.map do |task|
           course = task.taskings.first.try!(:role).try!(:student).try!(:course)
@@ -70,16 +69,25 @@ namespace :biglearn do
         OpenStax::Biglearn::Api.create_update_assignments requests
       end
 
+      te = Tasks::Models::TaskedExercise.arel_table
+      ts = Tasks::Models::TaskStep.arel_table
+      co = CourseProfile::Models::Course.arel_table
+      tk = Tasks::Models::Tasking.arel_table
       answered_exercises = Tasks::Models::TaskedExercise
+                             .select([ te[:id], ts[:tasks_task_id] ])
                              .joins(:task_step)
                              .where{task_step.first_completed_at != nil}
       print_each("Creating #{answered_exercises.count} response(s)",
-                 answered_exercises
-                   .preload(task_step: { task: { taskings: { role: { student: :course } } } })
-                   .find_in_batches) do |tasked_exercises|
+                 answered_exercises.find_in_batches) do |tasked_exercises|
+        task_ids = answered_exercises.map(&:tasks_task_id)
+        courses_by_task_id = CourseProfile::Models::Course
+          .select([ co[:id], tk[:tasks_task_id] ])
+          .joins(students: { role: :taskings })
+          .where(students: { role: { taskings: { tasks_task_id: task_ids } } })
+          .index_by(&:tasks_task_id)
+
         requests = tasked_exercises.map do |tasked_exercise|
-          course = tasked_exercise.task_step.task.taskings.first
-                                  .try!(:role).try!(:student).try!(:course)
+          course = courses_by_task_id[tasked_exercise.tasks_task_id]
           # Skip weird cases like deleted students and preview assignments
           next if course.nil?
 
