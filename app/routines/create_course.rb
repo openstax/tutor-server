@@ -82,17 +82,17 @@ class CreateCourse
         Settings::Biglearn.practice_worst_areas_algorithm_name
     )
 
+    unless catalog_offering.blank?
+      ecosystem = Content::Ecosystem.new(strategy: catalog_offering.ecosystem.to_model.wrap)
+
+      run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
+    end
+
     num_sections.times{ run(:create_period, course: outputs.course) }
 
     run(:create_course_assistants, course: outputs.course)
 
     run(:process_school_change, course: outputs.course)
-
-    return if catalog_offering.blank?
-
-    ecosystem = Content::Ecosystem.new(strategy: catalog_offering.ecosystem.to_model.wrap)
-
-    run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
   end
 
 end

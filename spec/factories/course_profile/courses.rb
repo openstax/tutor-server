@@ -18,6 +18,7 @@ FactoryGirl.define do
 
     uuid                  { SecureRandom.uuid }
 
+    sequence_number                              { rand(1000) + 1 }
     biglearn_student_clues_algorithm_name        { Faker::Hacker.abbreviation }
     biglearn_teacher_clues_algorithm_name        { Faker::Hacker.abbreviation }
     biglearn_assignment_spes_algorithm_name      { Faker::Hacker.abbreviation }
