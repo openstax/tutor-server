@@ -6,14 +6,16 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"assignments":[{"request_uuid":"<CREATE_UPDATE_ASSIGNMENTS EXAMPLE
-        1 REQUEST 1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":13,"assignment_uuid":"<TASK
+        1 REQUEST 1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":385,"assignment_uuid":"<TASK
         UUID>","is_deleted":false,"ecosystem_uuid":"<ECOSYSTEM 1 UUID>","student_uuid":"<STUDENT
-        UUID>","assignment_type":"reading","assigned_book_container_uuids":["35ad05d3-b212-4f7b-b214-3c4c6db30afd"],"goal_num_tutor_assigned_spes":3,"spes_are_assigned":false,"goal_num_tutor_assigned_pes":3,"pes_are_assigned":false,"assigned_exercises":[{"trial_uuid":"68012ad0-0c11-4ede-b9c1-99b674b11af6","exercise_uuid":"b38874af-b026-4041-bdcc-9497440965d3","is_spe":false,"is_pe":false},{"trial_uuid":"cda21c1d-f853-43d4-af30-58c16fe49d37","exercise_uuid":"5f1dc341-a611-4a52-bcea-39379e7fc78c","is_spe":false,"is_pe":false}],"created_at":"2017-06-09T20:49:45.048516Z","updated_at":"2017-06-09T20:49:45.048533Z"}]}'
+        UUID>","assignment_type":"reading","exclusion_info":{"opens_at":"2017-06-27T23:26:47.514672Z","due_at":"2017-07-04T23:26:47.514672Z"},"assigned_book_container_uuids":["a45f73ab-c847-40f7-b7ca-b76a7e6f01a9"],"goal_num_tutor_assigned_spes":3,"spes_are_assigned":false,"goal_num_tutor_assigned_pes":3,"pes_are_assigned":false,"assigned_exercises":[{"trial_uuid":"a848b203-15c4-4623-85e0-c39b23314bce","exercise_uuid":"b4f2c32e-450b-4c36-b18e-d4c0f5cf2d29","is_spe":false,"is_pe":false},{"trial_uuid":"3c81e038-30ca-4f33-98cb-44980dd7d7d8","exercise_uuid":"0f63914a-a79b-4c58-bc2d-f9cf26319ccd","is_spe":false,"is_pe":false}],"created_at":"2017-06-27T23:26:49.142898Z","updated_at":"2017-06-27T23:26:49.142925Z"}]}'
     headers:
       User-Agent:
       - Faraday v0.9.2
       Content-Type:
       - application/json
+      Biglearn-Api-Token:
+      - 56c3d42cdd96f892ec5448efbe7bfd52a6ff2c874319e7b7297e1ae0dffc1db999cff1c5eb5d5d1ba4e4a16069f72a8bd961791df75d9dd97ff029325eb9fb98
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -24,7 +26,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 09 Jun 2017 20:49:51 GMT
+      - Tue, 27 Jun 2017 23:26:56 GMT
       Connection:
       - close
       X-Frame-Options:
@@ -36,17 +38,17 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Etag:
-      - W/"fb80b91ed46192ae70eea2064be66b87"
+      - W/"bc68ea6ed0ecae50886d9561014bfa1e"
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - eb8a7cea-68eb-46dd-9d52-a382c2d61b85
+      - 3d8bcf80-ec13-42a5-b924-60a453590916
       X-Runtime:
-      - '0.716468'
+      - '0.055629'
     body:
       encoding: UTF-8
       string: '{"updated_assignments":[{"request_uuid":"<CREATE_UPDATE_ASSIGNMENTS
         EXAMPLE 1 REQUEST 1 UUID>","updated_assignment_uuid":"<TASK UUID>"}]}'
     http_version: 
-  recorded_at: Fri, 09 Jun 2017 20:49:51 GMT
+  recorded_at: Tue, 27 Jun 2017 23:26:56 GMT
 recorded_with: VCR 2.9.3

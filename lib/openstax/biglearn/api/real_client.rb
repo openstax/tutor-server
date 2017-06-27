@@ -4,10 +4,11 @@
 # we will need to introduce a NO-OP CourseEvent in biglearn-api
 class OpenStax::Biglearn::Api::RealClient
 
-  HEADER_OPTIONS = { headers: { 'Content-Type' => 'application/json' } }.freeze
+  HEADER_OPTIONS = { 'Content-Type' => 'application/json' }.freeze
 
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
+    @token        = biglearn_configuration.token
     @client_id    = biglearn_configuration.client_id
     @secret       = biglearn_configuration.secret
 
@@ -577,7 +578,11 @@ class OpenStax::Biglearn::Api::RealClient
   def api_request(method:, url:, body:)
     absolute_uri = absolutize_url(url)
 
-    request_options = HEADER_OPTIONS.merge({ body: body.to_json })
+    header_options = { headers: @token.nil? ? HEADER_OPTIONS : HEADER_OPTIONS.merge(
+        'Biglearn-Api-Token' => @token
+      )
+    }
+    request_options = body.nil? ? header_options : header_options.merge(body: body.to_json)
 
     response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
 
