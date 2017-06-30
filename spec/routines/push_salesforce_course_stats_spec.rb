@@ -99,11 +99,13 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
   context "#applicable_courses" do
     it 'limits by ends_at' do
-      a = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("6/30/2017"), term: "spring")
-      b = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("7/2/2017"), term: "spring")
+      a = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("6/30/2017"),
+                                                     term: "spring")
+      b = FactoryGirl.create(:course_profile_course, ends_at: Chronic.parse("7/2/2017"),
+                                                     term: "spring")
 
-      Timecop.freeze(Chronic.parse("6/31/2017")) do
-        expect(instance.applicable_courses).to contain_exactly(a,b)
+      Timecop.freeze(Chronic.parse("7/1/2017")) do
+        expect(instance.applicable_courses).to contain_exactly(b)
       end
 
       Timecop.freeze(Chronic.parse("7/2/2017")) do
