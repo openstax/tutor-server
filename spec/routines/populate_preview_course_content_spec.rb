@@ -37,6 +37,12 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
           role.taskings.each do |tasking|
             tasking.task.task_steps.each do |task_step|
               expect(task_step).to be_completed
+
+              next unless task_step.exercise?
+
+              expect(task_step.tasked.free_response).to(
+                eq (PopulatePreviewCourseContent::FREE_RESPONSE)
+              )
             end
           end
         end
@@ -44,7 +50,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     end
   end
 
-  context 'when the course a period' do
+  context 'when the course has a period' do
     before(:all) do
       DatabaseCleaner.start
 
@@ -71,6 +77,12 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
           role.taskings.each do |tasking|
             tasking.task.task_steps.each do |task_step|
               expect(task_step).to be_completed
+
+              next unless task_step.exercise?
+
+              expect(task_step.tasked.free_response).to(
+                eq (PopulatePreviewCourseContent::FREE_RESPONSE)
+              )
             end
           end
         end
