@@ -289,12 +289,12 @@ class OpenStax::Biglearn::Api::RealClient
     end
     group_numbers, uids = excluded_numbers_and_versions.partition { |ex| ex.second.nil? }
 
-    group_uuids = Content::Models::Exercise.where(number: group_numbers).pluck(:group_uuid)
+    group_uuids = Content::Models::Exercise.where(number: group_numbers).distinct.pluck(:group_uuid)
     group_exclusions = group_uuids.map { |group_uuid| { exercise_group_uuid: group_uuid } }
 
     uuids = uids.empty? ? [] : Content::Models::Exercise.where do
       uids.map { |nn, vv| number.eq(nn).and version.eq(vv) }.join(:or)
-    end.pluck(:uuid)
+    end.distinct.pluck(:uuid)
     version_exclusions = uuids.map { |uuid| { exercise_uuid: uuid } }
 
     exclusions = group_exclusions + version_exclusions
@@ -317,7 +317,7 @@ class OpenStax::Biglearn::Api::RealClient
     course = request.fetch(:course)
 
     group_numbers = course.excluded_exercises.map(&:exercise_number)
-    group_uuids = Content::Models::Exercise.where(number: group_numbers).pluck(:group_uuid)
+    group_uuids = Content::Models::Exercise.where(number: group_numbers).distinct.pluck(:group_uuid)
     group_exclusions = group_uuids.map { |group_uuid| { exercise_group_uuid: group_uuid } }
 
     biglearn_request = {
