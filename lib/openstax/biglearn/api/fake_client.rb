@@ -184,7 +184,8 @@ class OpenStax::Biglearn::Api::FakeClient
           request_uuid: request_uuid,
           assignment_uuid: task.uuid,
           exercise_uuids: [],
-          assignment_status: 'assignment_ready'
+          assignment_status: 'assignment_ready',
+          spy_info: {}
         }
       else
         task_key = request_task_keys_map[request]
@@ -195,7 +196,8 @@ class OpenStax::Biglearn::Api::FakeClient
             request_uuid: request_uuid,
             assignment_uuid: task.uuid,
             exercise_uuids: [],
-            assignment_status: 'assignment_unknown'
+            assignment_status: 'assignment_unknown',
+            spy_info: {}
           }
         else
           all_exercise_uuids = JSON.parse all_exercise_uuids_json
@@ -206,7 +208,8 @@ class OpenStax::Biglearn::Api::FakeClient
             request_uuid: request_uuid,
             assignment_uuid: task.uuid,
             exercise_uuids: candidate_exercise_uuids.sample(num_exercise_uuids),
-            assignment_status: 'assignment_ready'
+            assignment_status: 'assignment_ready',
+            spy_info: {}
           }
         end
       end
@@ -231,7 +234,8 @@ class OpenStax::Biglearn::Api::FakeClient
         request_uuid: request[:request_uuid],
         student_uuid: request[:student].uuid,
         exercise_uuids: exercises.map(&:uuid),
-        student_status: 'student_ready'
+        student_status: 'student_ready',
+        spy_info: {}
       }
     end
   end

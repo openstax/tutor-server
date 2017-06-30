@@ -6,12 +6,14 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"teacher_clue_requests":[{"request_uuid":"<FETCH_TEACHER_CLUES EXAMPLE
-        1 REQUEST 1 UUID>","course_container_uuid":"e5d9dec7-2827-4d1a-acb6-563b98a3af57","book_container_uuid":"c70959cc-3d23-4122-94cd-9789b5952797","algorithm_name":"SMTP"}]}'
+        1 REQUEST 1 UUID>","course_container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","book_container_uuid":"6a36be15-e3d0-4587-aae4-3c09a662a187","algorithm_name":"PNG"}]}'
     headers:
       User-Agent:
       - Faraday v0.9.2
       Content-Type:
       - application/json
+      Biglearn-Api-Token:
+      - 56c3d42cdd96f892ec5448efbe7bfd52a6ff2c874319e7b7297e1ae0dffc1db999cff1c5eb5d5d1ba4e4a16069f72a8bd961791df75d9dd97ff029325eb9fb98
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -22,7 +24,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 17 May 2017 22:02:36 GMT
+      - Tue, 27 Jun 2017 23:26:56 GMT
       Connection:
       - close
       X-Frame-Options:
@@ -34,18 +36,18 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Etag:
-      - W/"7c268d235d823e16e1e7f3810e54c9d7"
+      - W/"c1712339589a69284ee9901e0424c503"
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 69983e85-02c4-4917-abb2-32235d552fef
+      - a63805fc-2db9-4acd-8bb6-7b75ab46f18d
       X-Runtime:
-      - '0.042353'
+      - '0.034704'
     body:
       encoding: UTF-8
       string: '{"teacher_clue_responses":[{"request_uuid":"<FETCH_TEACHER_CLUES EXAMPLE
         1 REQUEST 1 UUID>","clue_data":{"minimum":0,"most_likely":0.5,"maximum":1,"is_real":false,"ecosystem_uuid":"<ECOSYSTEM
         1 UUID>"},"clue_status":"clue_unready"}]}'
     http_version: 
-  recorded_at: Wed, 17 May 2017 22:02:36 GMT
+  recorded_at: Tue, 27 Jun 2017 23:26:56 GMT
 recorded_with: VCR 2.9.3

@@ -11,6 +11,8 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
     response_status_key: nil, accepted_response_status: []
   )
     req = [requests].flatten
+    return [] if req.empty?
+
     sequence_number_model_key = sequence_number_model_key.to_sym
 
     model_ids = req.map { |request| request[sequence_number_model_key].id }.compact
@@ -21,15 +23,12 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       if sequence_number_model_class.respond_to?(:constantize)
     table_name = sequence_number_model_class.table_name
 
-    cases = model_id_counts.map do |model_id, count|
-      "WHEN #{model_id} THEN #{count}"
-    end
+    cases = model_id_counts.map { |model_id, count| "WHEN #{model_id} THEN #{count}" }
     increments = "CASE \"id\" #{cases.join(' ')} END"
     sequence_number_sql = <<-SQL.strip_heredoc
       UPDATE #{table_name}
       SET "sequence_number" = "sequence_number" + #{increments}
       WHERE "#{table_name}"."id" IN (#{model_ids.join(', ')})
-      #{'  AND "sequence_number" > 0' unless create}
       RETURNING "id", "sequence_number"
     SQL
 
@@ -52,10 +51,25 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       requests_with_sequence_numbers = req.map do |request|
         model = request[sequence_number_model_key].to_model
 
+        # This code is currently unused, but could be used if there was a call to Biglearn that
+        # required a sequence_number and had perform_later: false, although that might be a bad idea
         if model.new_record?
           # Special case for unsaved records
           sequence_number = model.sequence_number || 0
-          next if sequence_number == 0 && !create
+
+          # Detect a race condition with the create call and potentially retry later
+          raise(
+            OpenStax::Biglearn::Api::JobFailed,
+            "[#{method}] Attempted to get sequence_number 0 (reserved for \"create\" calls) from #{
+            sequence_number_model_class} ID #{model.id}"
+          ) if sequence_number == 0 && !create
+
+          # The condition below should never happen unless we have a bug
+          raise(
+            ArgumentError,
+            "[#{method}] The given #{sequence_number_model_class
+            } with ID #{model.id} has already been created"
+          ) if sequence_number > 0 && create
 
           can_peform_later = false
 
@@ -64,9 +78,20 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
         end
 
         sequence_number = sequence_numbers_by_model_id[model.id]
-        # Requests for records that have not been created
-        # on the Biglearn side (sequence_number == 0) are suppressed
-        next if sequence_number.nil?
+
+        # Detect a race condition with the create call and potentially retry later
+        raise(
+          OpenStax::Biglearn::Api::JobFailed,
+          "[#{method}] Attempted to get sequence_number 0 (reserved for \"create\" calls) from #{
+          sequence_number_model_class} ID #{model.id}"
+        ) if sequence_number == 0 && !create
+
+        # The condition below should never happen unless we have a bug
+        raise(
+          ArgumentError,
+          "[#{method}] The given #{sequence_number_model_class
+          } with ID #{model.id} has already been created"
+        ) if sequence_number > 0 && create
 
         next_sequence_number = sequence_number + 1
         sequence_numbers_by_model_id[model.id] = next_sequence_number
@@ -79,16 +104,12 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
 
         # Call the given block with the previous sequence_number
         request.merge(sequence_number: sequence_number)
-      end.compact
+      end
 
       # If a hash was given, call the Biglearn client with a hash
       # If an array was given, call the Biglearn client with the array of requests
       modified_requests = requests.is_a?(Hash) ? requests_with_sequence_numbers.first :
                                                  requests_with_sequence_numbers
-
-      # nil can happen if the request was suppressed
-      return {} if modified_requests.nil?
-      return [] if modified_requests.empty?
 
       # Create a background job if possible to guarantee the sequence_number will reach Biglearn
       if can_perform_later
