@@ -15,6 +15,10 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
   end
 
+  let(:expected_opens_at) do
+    [@course.time_zone.to_tz.now.monday - 2.weeks, @course.starts_at].max
+  end
+
   context 'when the course has no periods' do
     it 'creates a new period and populates the expected preview course content' do
       # 4 tasks for each of the 6 students + 1 preview role
@@ -35,7 +39,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
         # All roles except the third and sixth have completed everything
         (student_roles[0..1] + student_roles[3..4]).each do |role|
           role.taskings.each do |tasking|
-            tasking.task.task_steps.each do |task_step|
+            task = tasking.task
+
+            expect(task.opens_at).to be_within(1.hour).of expected_opens_at
+
+            task.task_steps.each do |task_step|
               expect(task_step).to be_completed
 
               next unless task_step.exercise?
@@ -75,7 +83,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
         # All roles except the third and sixth have completed everything
         (student_roles[0..1] + student_roles[3..4]).each do |role|
           role.taskings.each do |tasking|
-            tasking.task.task_steps.each do |task_step|
+            task = tasking.task
+
+            expect(task.opens_at).to be_within(1.hour).of expected_opens_at
+
+            task.task_steps.each do |task_step|
               expect(task_step).to be_completed
 
               next unless task_step.exercise?

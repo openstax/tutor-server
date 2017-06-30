@@ -78,13 +78,11 @@ class PopulatePreviewCourseContent
     return if preview_chapters.blank?
 
     # Assign tasks
-    first_reading_opens_at = [Time.current.monday - 2.weeks, course.starts_at].max
+    opens_at = [Time.current.monday - 2.weeks, course.starts_at.utc].max
     time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = first_reading_opens_at + index.weeks
-      reading_due_at = [reading_opens_at + 1.day, course.ends_at].min
-      homework_opens_at = reading_due_at
-      homework_due_at = [homework_opens_at + 3.days, course.ends_at].min
+      reading_due_at = [opens_at + index.weeks + 1.day, course.ends_at].min
+      homework_due_at = [reading_due_at + 3.days, course.ends_at].min
 
       pages = chapter.pages
       page_ids = pages.map{ |page| page.id.to_s }
@@ -105,7 +103,7 @@ class PopulatePreviewCourseContent
       reading_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
           task_plan: reading_tp, target: period,
-          time_zone: time_zone, opens_at: reading_opens_at, due_at: reading_due_at
+          time_zone: time_zone, opens_at: opens_at, due_at: reading_due_at
         )
       end
       reading_tp.save!
@@ -129,7 +127,7 @@ class PopulatePreviewCourseContent
       homework_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
           task_plan: homework_tp, target: period,
-          time_zone: time_zone, opens_at: homework_opens_at, due_at: homework_due_at
+          time_zone: time_zone, opens_at: opens_at, due_at: homework_due_at
         )
       end
       homework_tp.save!
