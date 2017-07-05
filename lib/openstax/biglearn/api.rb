@@ -300,7 +300,7 @@ module OpenStax::Biglearn::Api
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready'
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
         {
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:task].ecosystem,
@@ -330,7 +330,7 @@ module OpenStax::Biglearn::Api
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready'
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
         {
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:task].ecosystem,
@@ -360,7 +360,7 @@ module OpenStax::Biglearn::Api
           response_status_key: :student_status,
           accepted_response_status: 'student_ready'
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
         {
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:student].course.ecosystems.first,
@@ -385,7 +385,7 @@ module OpenStax::Biglearn::Api
           keys: [:book_container, :student],
           perform_later: false
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
         response.fetch :clue_data
       end
     end
@@ -403,7 +403,7 @@ module OpenStax::Biglearn::Api
           keys: [:book_container, :course_container],
           perform_later: false
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
         response.fetch :clue_data
       end
     end
@@ -542,7 +542,7 @@ module OpenStax::Biglearn::Api
                                 response_status_key: response_status_key.try!(:to_s),
                                 accepted_response_status: accepted_response_status
       else
-        should_retry = true
+        accepted = false
         for ii in 1..inline_max_attempts do
           response = job_class.perform method: method,
                                        requests: request_with_uuid,
@@ -550,24 +550,22 @@ module OpenStax::Biglearn::Api
                                        sequence_number_model_key: sequence_number_model_key,
                                        sequence_number_model_class: sequence_number_model_class
 
-          should_retry = if response_status_key.nil?
-            false
-          else
-            ![accepted_response_status].flatten.include?(response[response_status_key])
-          end
-          break unless should_retry
+          accepted = response_status_key.nil? ||
+                     [accepted_response_status].flatten.include?(response[response_status_key])
+          break if accepted
 
           sleep(inline_sleep_interval)
         end
 
-        Rails.logger.warn do
+        WarningMailer.log_and_deliver(
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request: #{request}" +
-          " - Attempts: #{ii} - Sleep Interval: #{sleep_interval} second(s)"
-        end if should_retry
+          " - Attempts: #{ii} - Sleep Interval: #{inline_sleep_interval} second(s)"
+        ) unless accepted
 
         verify_result(
-          result: block_given? ? yield(request, response) : response, result_class: result_class
+          result: block_given? ? yield(request, response, accepted) : response,
+          result_class: result_class
         )
       end
     end
@@ -598,12 +596,10 @@ module OpenStax::Biglearn::Api
         )
       end
 
-      requests_with_uuids_map = requests_map.map do |uuid, request|
-        request_with_uuid = request.has_key?(uuid_key) ? request : request.merge(uuid_key => uuid)
-
-        [uuid, request_with_uuid]
-      end.to_h
-      requests_array = requests_with_uuids_map.values
+      requests_array = requests_map.map do |uuid, request|
+        request.has_key?(uuid_key) ? request : request.merge(uuid_key => uuid)
+      end
+      request_uuids = requests_map.keys.sort
 
       if perform_later
         job_class.perform_later method: method.to_s,
@@ -614,7 +610,8 @@ module OpenStax::Biglearn::Api
                                 response_status_key: response_status_key.try!(:to_s),
                                 accepted_response_status: accepted_response_status
       else
-        responses_map = {}
+        responses = []
+        accepted = false
         for ii in 1..inline_max_attempts do
           responses = job_class.perform method: method,
                                         requests: requests_array,
@@ -625,30 +622,35 @@ module OpenStax::Biglearn::Api
           accepted_response_status = [accepted_response_status].flatten \
             unless response_status_key.nil?
 
-          responses.each do |response|
-            uuid = response[uuid_key]
-            original_request = requests_map[uuid]
+          accepted_responses_uuids = responses.map do |response|
+            next if response_status_key.present? &&
+                    !accepted_response_status.include?(response[response_status_key])
 
-            responses_map[original_request] = verify_result(
-              result: block_given? ? yield(original_request, response) : response,
-              result_class: result_class
-            )
-
-            requests_with_uuids_map.delete(uuid) \
-              if response_status_key.nil? ||
-                 accepted_response_status.include?(response[response_status_key])
+            response[uuid_key]
           end
 
-          break if requests_with_uuids_map.empty?
+          accepted = request_uuids == accepted_responses_uuids.sort!
+          break if accepted
 
           sleep(inline_sleep_interval)
         end
 
-        Rails.logger.warn do
+        WarningMailer.log_and_deliver(
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
-          " - API: #{method} - Request(s): #{requests_with_uuids_map.values.inspect}" +
+          " - API: #{method} - Request(s): #{requests_array.inspect}" +
           " - Attempts: #{ii} - Sleep Interval: #{inline_sleep_interval} second(s)"
-        end unless requests_with_uuids_map.empty?
+        ) unless accepted
+
+        responses_map = {}
+        responses.each do |response|
+          uuid = response[uuid_key]
+          original_request = requests_map[uuid]
+
+          responses_map[original_request] = verify_result(
+            result: block_given? ? yield(original_request, response, accepted) : response,
+            result_class: result_class
+          )
+        end
 
         # If given a Hash instead of an Array, return the response directly
         requests.is_a?(Hash) ? responses_map.values.first : responses_map
