@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseProfile::UpdateCourse do
+RSpec.describe CourseProfile::UpdateCourse, type: :routine do
   let(:course) { FactoryGirl.create :course_profile_course }
 
   it 'updates the course name' do

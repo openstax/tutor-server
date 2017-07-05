@@ -28,6 +28,49 @@ class PopulatePreviewCourseContent
   uses_routine Preview::WorkTask, as: :work_task
 
   def exec(course:)
+    # preview_claimed_at should already have been set by CourseProfile::BuildPreviewCourses
+    # so the course doesn't get claimed by anyone until it is ready
+    # course.update_attribute :preview_claimed_at, Time.current
+
+    # Work tasks after the current transaction finishes
+    # so Biglearn can receive the data from this course
+    after_transaction do
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.delay_touching do
+          course.periods.each do |period|
+            student_roles = period.student_roles.sort_by(&:created_at)
+
+            next if student_roles.empty?
+
+            great_student_role = student_roles.first
+
+            work_tasks(
+              role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY
+            )
+
+            next if student_roles.size < 2
+
+            struggling_student_role = student_roles.last
+
+            work_tasks(role: struggling_student_role,
+                       correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
+                       late: true,
+                       incomplete: true)
+
+            next if student_roles.size < 3
+
+            average_student_roles = student_roles[1..-2]
+
+            average_student_roles.each do |role|
+              work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
+            end
+          end
+
+          # The course is now ready to be claimed
+          course.update_attribute :preview_claimed_at, nil
+        end
+      end
+    end
 
     run(:create_period, course: course) if course.periods.empty?
 
@@ -134,37 +177,6 @@ class PopulatePreviewCourseContent
 
       run(:distribute_tasks, task_plan: homework_tp)
     end
-
-    # Work tasks
-    ActiveRecord::Base.delay_touching do
-      course.periods.each do |period|
-        student_roles = period.student_roles.sort_by(&:created_at)
-
-        return if student_roles.size < 1
-
-        great_student_role = student_roles.first
-
-        work_tasks(role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY)
-
-        next if student_roles.size < 2
-
-        struggling_student_role = student_roles.last
-
-        work_tasks(role: struggling_student_role,
-                   correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
-                   late: true,
-                   incomplete: true)
-
-        next if student_roles.size < 3
-
-        average_student_roles = student_roles[1..-2]
-
-        average_student_roles.each do |role|
-          work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
-        end
-      end
-    end
-
   end
 
   protected

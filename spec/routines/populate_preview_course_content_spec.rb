@@ -16,7 +16,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
   end
 
   let(:expected_opens_at) do
-    [@course.time_zone.to_tz.now.monday - 2.weeks, @course.starts_at].max
+    [ @course.time_zone.to_tz.now.monday - 2.weeks, @course.starts_at ].max
   end
 
   context 'when the course has no periods' do
