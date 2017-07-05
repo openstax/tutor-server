@@ -18,16 +18,35 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     end
   end
 
-  before  do
-    @task.reload
-    @task.touch
-  end
+  before  { @task.reload.touch }
 
   subject { described_class.call(task: @task) }
 
   context 'with no dynamic exercises available' do
-    before { OpenStax::Biglearn::Api.client.reset! }
-    after  { OpenStax::Biglearn::Api.create_update_assignments task: @task, course: @course }
+    before do
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            assignment_uuid: request[:task].uuid,
+            exercise_uuids: [],
+            assignment_status: 'assignment_ready',
+            spy_info: {}
+          }
+        end
+      end
+      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_spes) do |requests|
+        requests.map do |request|
+          {
+            request_uuid: request[:request_uuid],
+            assignment_uuid: request[:task].uuid,
+            exercise_uuids: [],
+            assignment_status: 'assignment_ready',
+            spy_info: {}
+          }
+        end
+      end
+    end
 
     it 'removes all the placeholder steps from the task' do
       expect { subject }.to  change { @task.personalized_task_steps.size    }.to(0)
