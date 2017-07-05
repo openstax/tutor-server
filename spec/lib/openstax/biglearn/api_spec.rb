@@ -217,66 +217,106 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       end
     end
 
-    it 'errors when client returns more exercises than expected' do
-      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-        requests.map do |request|
-          {
-            request_uuid: request[:request_uuid],
-            exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid },
-            assignment_status: 'assignment_ready'
-          }
+    it 'falls back to random personalized exercises if no valid Biglearn response' do
+      [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
+        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+          requests.map do |request|
+            {
+              request_uuid: request[:request_uuid],
+              exercise_uuids: [],
+              assignment_status: 'assignment_unready'
+            }
+          end
+        end.exactly(3).times
+        expect(Rails.logger).to receive(:warn).twice
+
+        core_page_ids = @task.task_steps.pluck(:content_page_id)
+
+        result = nil
+        expect do
+          result = OpenStax::Biglearn::Api.public_send(
+            api_method,
+            task: @task,
+            max_num_exercises: max_num_exercises,
+            inline_sleep_interval: 0.01.second,
+            inline_max_attempts: 3
+          )
+        end.not_to raise_error
+        exercises = result.fetch(:exercises)
+        expect(exercises.size).to eq max_num_exercises
+        exercises.each do |exercise|
+          expect(core_page_ids).to include(exercise.content_page_id)
         end
       end
-      expect(Rails.logger).not_to receive(:warn)
+    end
 
-      expect do
-        OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_num_exercises: max_num_exercises
-        )
-      end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
+    it 'errors when client returns more exercises than expected' do
+      [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
+        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+          requests.map do |request|
+            {
+              request_uuid: request[:request_uuid],
+              exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid },
+              assignment_status: 'assignment_ready'
+            }
+          end
+        end
+        expect(Rails.logger).not_to receive(:warn)
+
+        expect do
+          OpenStax::Biglearn::Api.public_send(
+            api_method, task: @task, max_num_exercises: max_num_exercises
+          )
+        end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
+      end
     end
 
     it 'logs a warning when client returns less exercises than expected' do
       exercises = @exercises.first(max_num_exercises - 1).map do |exercise|
         Content::Exercise.new strategy: exercise.wrap
       end
-      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-        requests.map do |request|
-          {
-            request_uuid: request[:request_uuid],
-            exercise_uuids: exercises.map(&:uuid),
-            assignment_status: 'assignment_ready'
-          }
-        end
-      end
-      expect(Rails.logger).to receive(:warn)
 
-      result = nil
-      expect do
-        result = OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_num_exercises: max_num_exercises
-        )
-      end.not_to raise_error
-      expect(result.fetch(:exercises)).to match_array(exercises)
+      [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
+        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+          requests.map do |request|
+            {
+              request_uuid: request[:request_uuid],
+              exercise_uuids: exercises.map(&:uuid),
+              assignment_status: 'assignment_ready'
+            }
+          end
+        end
+        expect(Rails.logger).to receive(:warn)
+
+        result = nil
+        expect do
+          result = OpenStax::Biglearn::Api.public_send(
+            api_method, task: @task, max_num_exercises: max_num_exercises
+          )
+        end.not_to raise_error
+        expect(result.fetch(:exercises)).to match_array(exercises)
+      end
     end
 
     it 'errors when client returns exercises not present locally' do
-      expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
-        requests.map do |request|
-          {
-            request_uuid: request[:request_uuid],
-            exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid },
-            assignment_status: 'assignment_ready'
-          }
+      [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
+        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+          requests.map do |request|
+            {
+              request_uuid: request[:request_uuid],
+              exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid },
+              assignment_status: 'assignment_ready'
+            }
+          end
         end
-      end
-      expect(Rails.logger).not_to receive(:warn)
+        expect(Rails.logger).not_to receive(:warn)
 
-      expect do
-        OpenStax::Biglearn::Api.fetch_assignment_pes(
-          task: @task, max_num_exercises: max_num_exercises
-        )
-      end.to raise_error { OpenStax::Biglearn::Api::ExercisesError }
+        expect do
+          OpenStax::Biglearn::Api.public_send(
+            api_method, task: @task, max_num_exercises: max_num_exercises
+          )
+        end.to raise_error { OpenStax::Biglearn::Api::ExercisesError }
+      end
     end
   end
 end
