@@ -1,7 +1,6 @@
-# coding: utf-8
 require 'rails_helper'
 
-RSpec.describe CourseProfile::ClaimPreviewCourse do
+RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
   let(:offering) { FactoryGirl.create :catalog_offering }
   let(:term)     { :preview }
   let(:year)     { Time.current.year }

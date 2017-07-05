@@ -20,7 +20,7 @@ class CourseProfile::BuildPreviewCourses
     lowest_preview_counts_by_offering_title = Hash.new { |hash, key| hash[key] = desired_count }
     loop do
       # Start a transaction for every course created so we don't lose work in case of a crash
-      CourseProfile::Models::Course.transaction do
+      course = CourseProfile::Models::Course.transaction do
         # We need to call this in every transaction so we lock the offering
         offering = offering_that_needs_previews(desired_count)
         if offering.nil?
@@ -43,23 +43,27 @@ class CourseProfile::BuildPreviewCourses
           return
         end
 
-        course = ::CreateCourse[
+        ::CreateCourse[
           name: "#{offering.description} Preview",
           is_preview: true,
           is_college: true,
           num_sections: 2,
           time_zone: "Central Time (US & Canada)",
           catalog_offering: offering
-        ]
+        ].tap do |course|
+          # We set preview_claimed_at so the course doesn't get claimed by anyone until ready
+          course.update_attribute :preview_claimed_at, Time.current
 
-        PopulatePreviewCourseContent[course: course]
-
-        offering_title = offering.title
-        created_course_counts_by_offering_title[offering_title] += 1
-        lowest_preview_counts_by_offering_title[offering_title] = [
-          lowest_preview_counts_by_offering_title[offering_title], offering.course_preview_count
-        ].min
+          offering_title = offering.title
+          created_course_counts_by_offering_title[offering_title] += 1
+          lowest_preview_counts_by_offering_title[offering_title] = [
+            lowest_preview_counts_by_offering_title[offering_title], offering.course_preview_count
+          ].min
+        end
       end
+
+      # This routine needs to run outside the transaction above so Biglearn receives data
+      PopulatePreviewCourseContent[course: course]
     end
   end
 

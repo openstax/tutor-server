@@ -28,6 +28,49 @@ class PopulatePreviewCourseContent
   uses_routine Preview::WorkTask, as: :work_task
 
   def exec(course:)
+    # preview_claimed_at should already have been set by CourseProfile::BuildPreviewCourses
+    # so the course doesn't get claimed by anyone until it is ready
+    # course.update_attribute :preview_claimed_at, Time.current
+
+    # Work tasks after the current transaction finishes
+    # so Biglearn can receive the data from this course
+    after_transaction do
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.delay_touching do
+          course.periods.each do |period|
+            student_roles = period.student_roles.sort_by(&:created_at)
+
+            next if student_roles.empty?
+
+            great_student_role = student_roles.first
+
+            work_tasks(
+              role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY
+            )
+
+            next if student_roles.size < 2
+
+            struggling_student_role = student_roles.last
+
+            work_tasks(role: struggling_student_role,
+                       correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
+                       late: true,
+                       incomplete: true)
+
+            next if student_roles.size < 3
+
+            average_student_roles = student_roles[1..-2]
+
+            average_student_roles.each do |role|
+              work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
+            end
+          end
+
+          # The course is now ready to be claimed
+          course.update_attribute :preview_claimed_at, nil
+        end
+      end
+    end
 
     run(:create_period, course: course) if course.periods.empty?
 
@@ -78,13 +121,11 @@ class PopulatePreviewCourseContent
     return if preview_chapters.blank?
 
     # Assign tasks
-    first_reading_opens_at = [Time.current.monday - 2.weeks, course.starts_at].max
+    opens_at = [Time.current.monday - 2.weeks, course.starts_at.utc].max
     time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = first_reading_opens_at + index.weeks
-      reading_due_at = [reading_opens_at + 1.day, course.ends_at].min
-      homework_opens_at = reading_due_at
-      homework_due_at = [homework_opens_at + 3.days, course.ends_at].min
+      reading_due_at = [opens_at + index.weeks + 1.day, course.ends_at].min
+      homework_due_at = [reading_due_at + 3.days, course.ends_at].min
 
       pages = chapter.pages
       page_ids = pages.map{ |page| page.id.to_s }
@@ -105,7 +146,7 @@ class PopulatePreviewCourseContent
       reading_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
           task_plan: reading_tp, target: period,
-          time_zone: time_zone, opens_at: reading_opens_at, due_at: reading_due_at
+          time_zone: time_zone, opens_at: opens_at, due_at: reading_due_at
         )
       end
       reading_tp.save!
@@ -129,44 +170,13 @@ class PopulatePreviewCourseContent
       homework_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
           task_plan: homework_tp, target: period,
-          time_zone: time_zone, opens_at: homework_opens_at, due_at: homework_due_at
+          time_zone: time_zone, opens_at: opens_at, due_at: homework_due_at
         )
       end
       homework_tp.save!
 
       run(:distribute_tasks, task_plan: homework_tp)
     end
-
-    # Work tasks
-    ActiveRecord::Base.delay_touching do
-      course.periods.each do |period|
-        student_roles = period.student_roles.sort_by(&:created_at)
-
-        return if student_roles.size < 1
-
-        great_student_role = student_roles.first
-
-        work_tasks(role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY)
-
-        next if student_roles.size < 2
-
-        struggling_student_role = student_roles.last
-
-        work_tasks(role: struggling_student_role,
-                   correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
-                   late: true,
-                   incomplete: true)
-
-        next if student_roles.size < 3
-
-        average_student_roles = student_roles[1..-2]
-
-        average_student_roles.each do |role|
-          work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
-        end
-      end
-    end
-
   end
 
   protected
@@ -183,6 +193,7 @@ class PopulatePreviewCourseContent
       is_completed = ->(task, task_step, index) { !incomplete || index < task.task_steps.size/2    }
       completed_at = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
       run(:work_task, task: task,
+                      free_response: FREE_RESPONSE,
                       is_correct: is_correct,
                       is_completed: is_completed,
                       completed_at: completed_at)
