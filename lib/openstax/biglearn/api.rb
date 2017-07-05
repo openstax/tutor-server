@@ -552,7 +552,7 @@ module OpenStax::Biglearn::Api
                                 accepted_response_status: accepted_response_status
       else
         accepted = false
-        for ii in 1..inline_max_attempts do
+        inline_max_attempts.times do
           response = job_class.perform method: method,
                                        requests: request_with_uuid,
                                        create: create,
@@ -569,7 +569,7 @@ module OpenStax::Biglearn::Api
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request: #{request}" +
-          " - Attempts: #{ii} - Sleep Interval: #{inline_sleep_interval} second(s)"
+          " - Attempts: #{inline_max_attempts} - Sleep Interval: #{inline_sleep_interval} second(s)"
         end unless accepted
 
         verify_result(
@@ -622,7 +622,7 @@ module OpenStax::Biglearn::Api
         responses = []
         accepted_responses_uuids = []
         all_accepted = false
-        for ii in 1..inline_max_attempts do
+        inline_max_attempts.times do
           responses = job_class.perform method: method,
                                         requests: requests_array,
                                         create: create,
@@ -632,12 +632,12 @@ module OpenStax::Biglearn::Api
           accepted_response_status = [accepted_response_status].flatten \
             unless response_status_key.nil?
 
-          accepted_responses_uuids = responses.map do |response|
-            next if response_status_key.present? &&
-                    !accepted_response_status.include?(response[response_status_key])
-
-            response[uuid_key]
-          end.compact
+          accepted_responses_uuids = []
+          responses.each do |response|
+            accepted_responses_uuids << response[uuid_key] \
+              if response_status_key.nil? ||
+                 accepted_response_status.include?(response[response_status_key])
+          end
 
           all_accepted = request_uuids == accepted_responses_uuids.sort!
           break if all_accepted
@@ -648,7 +648,7 @@ module OpenStax::Biglearn::Api
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request(s): #{requests_array.inspect}" +
-          " - Attempts: #{ii} - Sleep Interval: #{inline_sleep_interval} second(s)"
+          " - Attempts: #{inline_max_attempts} - Sleep Interval: #{inline_sleep_interval} second(s)"
         end unless all_accepted
 
         responses_map = {}
