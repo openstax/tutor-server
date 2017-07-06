@@ -13,7 +13,7 @@ module OpenStax::Biglearn::Api
   OPTION_KEYS = [
     :response_status_key,
     :accepted_response_status,
-    :inline_max_retries,
+    :inline_max_attempts,
     :inline_sleep_interval
   ]
 
@@ -300,12 +300,15 @@ module OpenStax::Biglearn::Api
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready'
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
+        # If no valid response was received from Biglearn, fallback to random personalized exercises
         {
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:task].ecosystem,
             exercise_uuids: response[:exercise_uuids],
-            max_num_exercises: request[:max_num_exercises]
+            max_num_exercises: request[:max_num_exercises],
+            accepted: accepted,
+            task: request[:task]
           ),
           spy_info: response.fetch(:spy_info, {})
         }
@@ -330,12 +333,15 @@ module OpenStax::Biglearn::Api
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready'
         )
-      ) do |request, response|
+      ) do |request, response, accepted|
+        # If no valid response was received from Biglearn, fallback to random personalized exercises
         {
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:task].ecosystem,
             exercise_uuids: response[:exercise_uuids],
-            max_num_exercises: request[:max_num_exercises]
+            max_num_exercises: request[:max_num_exercises],
+            accepted: accepted,
+            task: request[:task]
           ),
           spy_info: response.fetch(:spy_info, {})
         }
@@ -360,7 +366,8 @@ module OpenStax::Biglearn::Api
           response_status_key: :student_status,
           accepted_response_status: 'student_ready'
         )
-      ) do |request, response|
+      ) do |request, response, _|
+        # Return the last response received from Biglearn regardless of what it was
         {
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:student].course.ecosystems.first,
@@ -385,7 +392,8 @@ module OpenStax::Biglearn::Api
           keys: [:book_container, :student],
           perform_later: false
         )
-      ) do |request, response|
+      ) do |_, response, _|
+        # Return the last response received from Biglearn regardless of what it was
         response.fetch :clue_data
       end
     end
@@ -403,7 +411,8 @@ module OpenStax::Biglearn::Api
           keys: [:book_container, :course_container],
           perform_later: false
         )
-      ) do |request, response|
+      ) do |_, response, _|
+        # Return the last response received from Biglearn regardless of what it was
         response.fetch :clue_data
       end
     end
@@ -542,20 +551,17 @@ module OpenStax::Biglearn::Api
                                 response_status_key: response_status_key.try!(:to_s),
                                 accepted_response_status: accepted_response_status
       else
-        should_retry = true
-        for ii in 1..inline_max_attempts do
+        accepted = false
+        inline_max_attempts.times do
           response = job_class.perform method: method,
                                        requests: request_with_uuid,
                                        create: create,
                                        sequence_number_model_key: sequence_number_model_key,
                                        sequence_number_model_class: sequence_number_model_class
 
-          should_retry = if response_status_key.nil?
-            false
-          else
-            ![accepted_response_status].flatten.include?(response[response_status_key])
-          end
-          break unless should_retry
+          accepted = response_status_key.nil? ||
+                     [accepted_response_status].flatten.include?(response[response_status_key])
+          break if accepted
 
           sleep(inline_sleep_interval)
         end
@@ -563,11 +569,12 @@ module OpenStax::Biglearn::Api
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request: #{request}" +
-          " - Attempts: #{ii} - Sleep Interval: #{sleep_interval} second(s)"
-        end if should_retry
+          " - Attempts: #{inline_max_attempts} - Sleep Interval: #{inline_sleep_interval} second(s)"
+        end unless accepted
 
         verify_result(
-          result: block_given? ? yield(request, response) : response, result_class: result_class
+          result: block_given? ? yield(request, response, accepted) : response,
+          result_class: result_class
         )
       end
     end
@@ -598,12 +605,10 @@ module OpenStax::Biglearn::Api
         )
       end
 
-      requests_with_uuids_map = requests_map.map do |uuid, request|
-        request_with_uuid = request.has_key?(uuid_key) ? request : request.merge(uuid_key => uuid)
-
-        [uuid, request_with_uuid]
-      end.to_h
-      requests_array = requests_with_uuids_map.values
+      requests_array = requests_map.map do |uuid, request|
+        request.has_key?(uuid_key) ? request : request.merge(uuid_key => uuid)
+      end
+      request_uuids = requests_map.keys.sort
 
       if perform_later
         job_class.perform_later method: method.to_s,
@@ -614,8 +619,10 @@ module OpenStax::Biglearn::Api
                                 response_status_key: response_status_key.try!(:to_s),
                                 accepted_response_status: accepted_response_status
       else
-        responses_map = {}
-        for ii in 1..inline_max_attempts do
+        responses = []
+        accepted_responses_uuids = []
+        all_accepted = false
+        inline_max_attempts.times do
           responses = job_class.perform method: method,
                                         requests: requests_array,
                                         create: create,
@@ -625,63 +632,107 @@ module OpenStax::Biglearn::Api
           accepted_response_status = [accepted_response_status].flatten \
             unless response_status_key.nil?
 
+          accepted_responses_uuids = []
           responses.each do |response|
-            uuid = response[uuid_key]
-            original_request = requests_map[uuid]
-
-            responses_map[original_request] = verify_result(
-              result: block_given? ? yield(original_request, response) : response,
-              result_class: result_class
-            )
-
-            requests_with_uuids_map.delete(uuid) \
+            accepted_responses_uuids << response[uuid_key] \
               if response_status_key.nil? ||
                  accepted_response_status.include?(response[response_status_key])
           end
 
-          break if requests_with_uuids_map.empty?
+          all_accepted = request_uuids == accepted_responses_uuids.sort!
+          break if all_accepted
 
           sleep(inline_sleep_interval)
         end
 
         Rails.logger.warn do
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
-          " - API: #{method} - Request(s): #{requests_with_uuids_map.values.inspect}" +
-          " - Attempts: #{ii} - Sleep Interval: #{inline_sleep_interval} second(s)"
-        end unless requests_with_uuids_map.empty?
+          " - API: #{method} - Request(s): #{requests_array.inspect}" +
+          " - Attempts: #{inline_max_attempts} - Sleep Interval: #{inline_sleep_interval} second(s)"
+        end unless all_accepted
+
+        responses_map = {}
+        responses.each do |response|
+          uuid = response[uuid_key]
+          original_request = requests_map[uuid]
+          accepted = accepted_responses_uuids.include? uuid
+
+          responses_map[original_request] = verify_result(
+            result: block_given? ? yield(original_request, response, accepted) : response,
+            result_class: result_class
+          )
+        end
 
         # If given a Hash instead of an Array, return the response directly
         requests.is_a?(Hash) ? responses_map.values.first : responses_map
       end
     end
 
-    def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_num_exercises:)
-      exercises_by_uuid = ecosystem.exercises.where(uuid: exercise_uuids).index_by(&:uuid)
-      ordered_exercises = exercise_uuids.map do |uuid|
-        exercises_by_uuid[uuid].tap do |exercise|
+    def get_ecosystem_exercises_by_uuids(
+      ecosystem:, exercise_uuids:, max_num_exercises:, accepted: true, task: nil
+    )
+      if accepted
+        exercises_by_uuid = ecosystem.exercises.where(uuid: exercise_uuids).index_by(&:uuid)
+        ordered_exercises = exercise_uuids.map do |uuid|
+          exercises_by_uuid[uuid].tap do |exercise|
+            raise(
+              OpenStax::Biglearn::Api::ExercisesError,
+              "Biglearn returned exercises not present locally"
+            ) if exercise.nil?
+          end
+        end
+
+        unless max_num_exercises.nil?
+          number_returned = exercise_uuids.length
+
           raise(
             OpenStax::Biglearn::Api::ExercisesError,
-            "Biglearn returned exercises not present locally"
-          ) if exercise.nil?
+            "Biglearn returned more exercises than requested"
+          ) if number_returned > max_num_exercises
+
+          Rails.logger.warn do
+            "Biglearn returned less exercises than requested (#{
+            number_returned} instead of #{max_num_exercises})"
+          end if number_returned < max_num_exercises
+
+          ordered_exercises = ordered_exercises.first(max_num_exercises)
+        end
+
+        ordered_exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
+      else
+        # Fallback in case Biglearn fails to respond in a timely manner
+        # We just assign personalized exercises for the current assignment
+        # regardless of what the original slot was
+        return [] if task.nil?
+
+        course = task.taskings.first.try!(:role).try!(:student).try!(:course)
+        return [] if course.nil?
+
+        core_page_ids = task.task_steps.map(&:content_page_id).compact.uniq
+        pages = ecosystem.pages.where(id: core_page_ids)
+        if task.reading?
+          pool_method = :reading_dynamic_pool
+        elsif task.homework?
+          pool_method = :homework_dynamic_pool
+        else
+          return []
+        end
+        pools = pages.map { |page| page.public_send(pool_method) }
+
+        task_exercise_ids = Set.new task.tasked_exercises.pluck(:content_exercise_id)
+        pool_exercises = pools.flat_map(&:exercises).uniq
+        filtered_exercises = FilterExcludedExercises[exercises: pool_exercises, course: course]
+        candidate_exercises = filtered_exercises.reject do |exercise|
+          task_exercise_ids.include?(exercise.id)
+        end
+
+        candidate_exercises.sample(max_num_exercises).tap do |chosen_exercises|
+          WarningMailer.log_and_deliver(
+            "Assigned #{chosen_exercises.size} fallback personalized exercises for task with ID #{
+            task.id} because Biglearn did not respond in a timely manner"
+          ) unless chosen_exercises.empty?
         end
       end
-
-      unless max_num_exercises.nil?
-        number_returned = exercise_uuids.length
-
-        raise(
-          OpenStax::Biglearn::Api::ExercisesError, "Biglearn returned more exercises than requested"
-        ) if number_returned > max_num_exercises
-
-        Rails.logger.warn do
-          "Biglearn returned less exercises than requested (#{
-          number_returned} instead of #{max_num_exercises})"
-        end if number_returned < max_num_exercises
-
-        ordered_exercises = ordered_exercises.first(max_num_exercises)
-      end
-
-      ordered_exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
     end
 
     def extract_options(args_array)

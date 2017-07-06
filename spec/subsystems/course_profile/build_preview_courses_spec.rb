@@ -11,10 +11,11 @@ RSpec.describe CourseProfile::BuildPreviewCourses, type: :routine, truncation: t
 
   it 'launches from schedule' do
     begin
+      @previous_prebuilt_preview_course_count = Settings::Db.store.prebuilt_preview_course_count
       Settings::Db.store.prebuilt_preview_course_count = 2
       expect { described_class.call }.not_to raise_error
     ensure
-      Settings::Db.store.prebuilt_preview_course_count = 10
+      Settings::Db.store.prebuilt_preview_course_count = @previous_prebuilt_preview_course_count
     end
   end
 
