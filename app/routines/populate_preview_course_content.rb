@@ -100,7 +100,10 @@ class PopulatePreviewCourseContent
 
     # Add preview students to periods
     preview_student_users.each_slice(num_students_per_period).each_with_index do |users, index|
-      users.each{ |user| run(:add_student, user: user, period: periods[index]) }
+      users.each do |user|
+        run(:add_student, user: user, period: periods[index],
+                          reassign_published_period_task_plans: false)
+      end
     end
 
     return if course.is_concept_coach
