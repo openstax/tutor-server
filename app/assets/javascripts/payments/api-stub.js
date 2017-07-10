@@ -1,7 +1,21 @@
 class OSPaymentsEmbed {
 
-  constructor(params) {
-    this.params = params;
+  constructor(options) {
+    this.options = options;
+    Object.assign(this.options.messageHandlers, {
+      size:  this.applySize.bind(this),
+      ready: this.onReady.bind(this),
+    });
+  }
+
+  onReady() {
+    this.pendingReady(this);
+    delete this.pendingReady;
+    this.iframe.style.display = 'block';
+  }
+
+  applySize(size) {
+    this.iframe.height = size.height + 40;
   }
 
   logFailure(msg) {
@@ -10,7 +24,7 @@ class OSPaymentsEmbed {
 
   createIframe(parentEl) {
     return new Promise((resolve) => {
-      this.resolvePendingPromise = resolve;
+      this.pendingReady = resolve;
       const i = document.createElement('iframe');
       i.src = '/stubbed_payments';
       i.width = '100%';
@@ -23,18 +37,22 @@ class OSPaymentsEmbed {
   }
 
   dispatchMessage(msgEvent) {
-    const msg = JSON.parse(msgEvent.data);
-    if (msg.available && this.resolvePendingPromise) {
-      this.resolvePendingPromise(this);
-      delete this.resolvePendingPromise;
-      this.iframe.style.display = 'block';
+    if (this.iframe.contentWindow !== msgEvent.source) { return; }
+    let msg;
+    try {
+      msg = JSON.parse(msgEvent.data);
+    } catch (e) {
+      msg = {};
     }
-    if (this.onMessageHandler) { this.onMessageHandler(msg); };
+    if (this.options.messageHandlers[msg.type]) {
+      this.options.messageHandlers[msg.type](msg.data);
+    } else {
+      this.logFailure(`received message: ${msgEvent.data} without a handler`);
+    }
   }
 
-  onMessage(cb) {
-    this.onMessageHandler = cb;
-  }
+  // called by parent when the user is closing payments
+  close() { }
 
 }
 

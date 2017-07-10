@@ -10,4 +10,5 @@ OpenStax::Payments::Api.configure do |config|
     url: redis_secrets['url'],
     namespace: redis_secrets['namespaces']['fake_payments']
   )
+  config.embed_js_url = payments_secrets['embed_js_url']
 end
