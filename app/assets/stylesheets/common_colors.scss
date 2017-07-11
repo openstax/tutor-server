@@ -1,7 +1,7 @@
-// Copyright 2011-2013 Rice University. Licensed under the Affero General Public 
+// Copyright 2011-2013 Rice University. Licensed under the Affero General Public
 // License version 3 or later.  See the COPYRIGHT file for details.
 
-$os_green:  rgb(118, 177, 67); //#77AF42; //#76b143; 
+$os_green:  rgb(118, 177, 67); //#77AF42; //#76b143;
 $os_orange: #F47641; //#f37643;
 $os_gray:   #5F6163; //#5e6062;
 $os_yellow: #F4D019; //#f5d10e;
@@ -17,3 +17,14 @@ $ost_account_gray:  #9d9d9d;
 $application_background_color: white;
 
 $application_footer_background_color: #7d7d7d;
+
+$tutor-white: white;
+$tutor-neutral-lightest: rgb(249, 249, 249); // nearly white
+$tutor-neutral-bright: rgb(245, 245, 245); // bright gray
+$tutor-neutral-lighter: rgb(241, 241, 241); // light gray
+$tutor-neutral-light:  rgb(229, 229, 229); // light gray
+$tutor-neutral-lite: rgb(153, 153, 153); // a gray that's not quite as light as the "light"
+$tutor-neutral: rgb(129, 129, 129); // gray
+$tutor-neutral-dark: rgb(95, 97, 99); // dark gray
+$tutor-neutral-darker: rgb(66, 66, 66); // very dark gray
+$tutor-black: black;

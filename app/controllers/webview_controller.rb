@@ -4,7 +4,7 @@ class WebviewController < ApplicationController
 
   layout :resolve_layout
 
-  skip_before_filter :authenticate_user!, only: :home
+  skip_before_filter :authenticate_user!, only: [:home, :enroll]
 
   def home
     if params[:cc] == "1"
@@ -17,10 +17,13 @@ class WebviewController < ApplicationController
   def index
   end
 
+  def enroll
+  end
+
   protected
 
   def resolve_layout
-    if 'home' == action_name
+    if ['home', 'enroll'].include? action_name
       false
     else
       # since webview layout used, get the webview flash info prepped

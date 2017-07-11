@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+  <title>OpenStax Tutor Enrollment</title>
+  <meta name="robots" content="noindex">
+  <meta http-equiv="content-type" content="text/html; charset=UTF8" />
+  <%= render 'layouts/meta' %>
+  <%= stylesheet_link_tag 'enroll', media: 'all' %>
+  <%= csrf_meta_tags %>
+  <%= render 'webview/google_analytics' %>
+</head>
+<body id="enroll">
+
+  <div class="splash">
+
+    <h1>Welcome to OpenStax Tutor Beta!</h1>
+    <h3>Start learning and studying more effectively for just $10.</h3>
+
+    <div class="columns">
+
+      <div class="signup">
+        1. Sign up for or log in to your OpenStax account
+      </div>
+
+      <div class="enter-id">
+        2. Enter your school ID number to join your course
+      </div>
+
+      <div class="payment">
+        3. Enter your payment info
+      </div>
+
+    </div>
+
+    <%= link_to 'Get started', start_enrollment_url(enroll_token: params[:enroll_token]), class: 'btn' %>
+
+    </div>
+
+</body>
+</html>

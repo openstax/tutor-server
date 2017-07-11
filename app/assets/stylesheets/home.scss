@@ -17,17 +17,7 @@
 @import "bootstrap";
 @import "common_colors";
 @import "fonts";
-
-@mixin tutor-button(){
-  @extend .btn-lg;
-  @extend .btn-primary;
-  border-radius: 4px;
-  background-color: $os_orange;
-  color: white;
-  &:hover{
-    background-color: darken( $os-orange, 5% );
-  }
-}
+@import "mixins";
 
 $standard-spacing: 40px;
 

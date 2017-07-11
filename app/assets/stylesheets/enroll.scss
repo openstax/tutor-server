@@ -1,94 +1,74 @@
-// the enrollment page displays the flash itself
-.courses-enroll .application-flash { display: none; }
+// Core variables and mixins
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
 
-#enroll {
-  margin-top: 20px;
+// Reset and dependencies
+@import "bootstrap/normalize";
+@import "bootstrap/buttons";
+@import "common_colors";
+@import "fonts";
+@import "mixins";
 
-  &.well {
-    margin-bottom: 0px;
+body#enroll {
+  font-family: $tutor-default-font-list;
+  font-weight: 300;
+  color: #424242;
+  padding: 40px;
+
+  &::before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    content: "";
+    z-index: -1;
+    background-image: image-url('openstax-logo-white.png'), image-url('ost-hero.jpg');
+    background-repeat: no-repeat, no-repeat;
+    background-size: 174px 40px, cover;
+    background-position: center 20px, center;
   }
 
-  h2 {
+
+  .splash {
+    margin: 80px auto;
+    max-width: 1000px;
+    padding: 40px;
+    background-color: $tutor-neutral-lighter;
     text-align: center;
-    margin-top: 0px;
-    font-size: 24px;
-    line-height: 36px;
-  }
-
-  hr {
-    width: 60%;
-    border-top: 2px solid #dddddd;
-  }
-
-  form {
-    margin: 0 auto;
-    width: 305px;
-    input[type='text'] {
-      width: 170px;
-      margin-top: 10px;
-      margin-right: 20px;
+    h1 {
+      color: #222e66;
     }
-    label {
-      font-size: 16px;
-      margin-bottom: 2px;
+    h3 {
+      font-weight: 300;
+    }
+
+    .columns {
+      margin: 80px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      > div {
+        background-size: 100px auto;
+        background-repeat: no-repeat;
+        background-position: top center;
+        padding-top: 116px;
+
+        width: 280px;
+        text-align: center;
+
+        &.signup { background-image: image-url("student-onboarding/key.svg"); }
+        &.enter-id { background-image: image-url("student-onboarding/student-id.svg"); }
+        &.payment {
+          background-image: image-url("student-onboarding/cost.svg");
+          background-position-y: 10px;
+        }
+      }
+
     }
     .btn {
-      font-size: 18px;
-      padding: 4px 16px;
-      background-color: $os_green;
-      width: 110px;
-      margin-top: 10px;
-    }
-
-    .btn-link {
-      background:none!important;
-      border:none;
-      padding:0!important;
-      font: inherit;
-      cursor: pointer;
-      margin-top: 14px;
-      font-size: 16px;
-
-      &:disabled {
-        color: #666666;
-        cursor: default;
-      }
-    }
-  }
-  .enrollment-flash {
-    max-width: 800px;
-    margin: 20px auto;
-  }
-  span.help {
-    display: block;
-    font-size: 12px;
-    line-height: 14px;
-    font-style: italic;
-    color: #aaaaaa;
-    margin-top: 15px;
-  }
-}
-
-.enrollment-failure {
-  .explain {
-    font-size: 25px;
-    max-width: 600px;
-    margin: 30px auto;
-  }
-  .continue {
-    text-align: center;
-    font-size: 16px;
-  }
-  &.archived {
-    .continue .btn {
-      background-color: $btn-primary-bg;
-      color: $btn-primary-color;
-    }
-  }
-  &.dropped {
-    .continue .btn {
-      background-color: $btn-success-bg;
-      color: $btn-success-color;
+      @include tutor-button();
     }
   }
 }
