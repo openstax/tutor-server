@@ -18,12 +18,13 @@ Rails.application.routes.draw do
       get :'course/:course_id/task/:task_id', as: :student_task
       get :'course/:course_id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
 
-      scope :enroll do
-        get :':enroll_token(/:ignore)', as: :token_enroll,
-                                        block_sign_up: false,
-                                        straight_to_student_sign_up: true
-        post :confirm, as: :confirm_token_enroll
-      end
+    end
+
+    scope :enroll do
+      # this is handled by the FE
+      get :'start/:enroll_token', action: :index, as: :start_enrollment, block_sign_up: false, straight_to_student_sign_up: true
+      # we render this to display a splash screen before login/signup
+      get :':enroll_token(/:ignore)', as: :token_enroll, action: :enroll
     end
   end
 
