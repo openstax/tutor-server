@@ -92,19 +92,9 @@ RSpec.configure do |config|
   end
 
   config.prepend_before(:all) do
+    metadata = self.class.metadata
+    DatabaseCleaner.strategy = metadata[:js] || metadata[:truncation] ? :truncation : :transaction
     DatabaseCleaner.start
-  end
-
-  config.prepend_before(:all, js: true) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.prepend_before(:all, truncation: true) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.prepend_before(:all) do
-    DatabaseCleaner.strategy = :transaction
   end
 
   config.prepend_before(:each) do

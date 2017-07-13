@@ -2,7 +2,7 @@
 # then queues up another job to make the Biglearn request itself
 # Then attempts to lock the job and, after the transaction is committed, work it inline
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
-  INLINE_JOB_TIMEOUT = 10.minutes
+  INLINE_JOB_TIMEOUT = 30.seconds
 
   queue_as :default
 
