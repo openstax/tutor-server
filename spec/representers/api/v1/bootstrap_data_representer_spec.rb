@@ -20,6 +20,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
       "errata_form_url" => 'https://oscms.openstax.org/errata/form',
       "tutor_api_url" => 'https://example.com/api',
+      "payments_embed_js_url" => 'http://localhost:3001/assets/payments/api-stub.js',
       "ui_settings" => {},
       "flash" => { "alert" => 'Nothing!' }
     )
