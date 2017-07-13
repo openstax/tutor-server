@@ -2,9 +2,19 @@
 # then queues up another job to make the Biglearn request itself
 # Then attempts to lock the job and, after the transaction is committed, work it inline
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
-  BIGLEARN_API_TIMEOUT = 10.minutes
+  INLINE_JOB_TIMEOUT = 30.seconds
 
   queue_as :default
+
+  def self.perform_later(*_)
+    super.tap do |job|
+      # Attempt to get the sequence_number as soon as the current transaction (if any) ends
+      # This should guarantee that the intended order of events is preserved unless the server dies
+      # in-between committing the transaction and running the after_commit callbacks
+      # (in that case we'll still get the events eventually but they may be in the wrong order)
+      ActiveJob::AfterCommitRunner.new(job, INLINE_JOB_TIMEOUT).run_after_commit
+    end
+  end
 
   def perform(
     method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:,
@@ -32,9 +42,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       RETURNING "id", "sequence_number"
     SQL
 
-    can_perform_later = Delayed::Worker.delay_jobs
-    worker = Delayed::Worker.new if can_perform_later
-    delayed_job = sequence_number_model_class.transaction do
+    sequence_number_model_class.transaction do
       # Update and read all sequence_numbers in one statement to minimize time waiting for I/O
       # Requests for records that have not been created
       # on the Biglearn side (sequence_number == 0) are suppressed
@@ -51,31 +59,11 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       requests_with_sequence_numbers = req.map do |request|
         model = request[sequence_number_model_key].to_model
 
-        # This code is currently unused, but could be used if there was a call to Biglearn that
-        # required a sequence_number and had perform_later: false, although that might be a bad idea
-        if model.new_record?
-          # Special case for unsaved records
-          sequence_number = model.sequence_number || 0
-
-          # Detect a race condition with the create call and potentially retry later
-          raise(
-            OpenStax::Biglearn::Api::JobFailed,
-            "[#{method}] Attempted to get sequence_number 0 (reserved for \"create\" calls) from #{
-            sequence_number_model_class} ID #{model.id}"
-          ) if sequence_number == 0 && !create
-
-          # The condition below should never happen unless we have a bug
-          raise(
-            ArgumentError,
-            "[#{method}] The given #{sequence_number_model_class
-            } with ID #{model.id} has already been created"
-          ) if sequence_number > 0 && create
-
-          can_peform_later = false
-
-          model.sequence_number = sequence_number + 1
-          next request.merge(sequence_number: sequence_number)
-        end
+        # Unsaved sequence_number_models are not supported (ActiveJob cannot serialize them)
+        raise(
+          ArgumentError,
+          "The given #{sequence_number_model_class.name} is unsaved."
+        ) if model.new_record?
 
         sequence_number = sequence_numbers_by_model_id[model.id]
 
@@ -111,42 +99,17 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       modified_requests = requests.is_a?(Hash) ? requests_with_sequence_numbers.first :
                                                  requests_with_sequence_numbers
 
-      # Create a background job if possible to guarantee the sequence_number will reach Biglearn
-      if can_perform_later
-        job = OpenStax::Biglearn::Api::Job.perform_later(
-          method: method.to_s,
-          requests: modified_requests,
-          response_status_key: response_status_key.try!(:to_s),
-          accepted_response_status: accepted_response_status
-        )
+      # nil can happen if the request was suppressed
+      return {} if modified_requests.nil?
+      return [] if modified_requests.empty?
 
-        # Destroy the current job so it's removed from the queue when this transaction commits
-        # Just in case we encounter an error after the transaction ends,
-        # since we don't want this job to run again
-        Delayed::Job.where(id: provider_job_id).delete_all
-
-        delayed_job_id = job.provider_job_id
-
-        return job if delayed_job_id.nil?
-
-        # Lock the Biglearn request job so we can run it inline to speed up Biglearn responses
-        ready_scope = Delayed::Job.ready_to_run(worker.name, Delayed::Worker.max_run_time)
-                                  .where(id: delayed_job_id)
-        # Pretend the lock is much closer to expiring so we get a shorter timeout
-        now = Delayed::Job.db_time_now - Delayed::Worker.max_run_time + BIGLEARN_API_TIMEOUT
-
-        # We just created the job and are still inside the same transaction,
-        # so the lock should never fail (PostgreSQL doesn't even support Read Uncommitted)
-        Delayed::Job.reserve_with_scope(ready_scope, worker, now)
-      else
-        return super(method: method,
-                     requests: modified_requests,
-                     response_status_key: response_status_key,
-                     accepted_response_status: accepted_response_status)
-      end
+      # Create a background job to guarantee the sequence_number request will reach Biglearn
+      OpenStax::Biglearn::Api::Job.perform_later(
+        method: method.to_s,
+        requests: modified_requests,
+        response_status_key: response_status_key.try!(:to_s),
+        accepted_response_status: accepted_response_status
+      )
     end
-
-    # Run the Biglearn request job inline (must be outside the main transaction)
-    worker.run(delayed_job)
   end
 end

@@ -8,7 +8,16 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
   let(:sequence_number_model_key)     { :course }
   let(:sequence_number_model_class)   { CourseProfile::Models::Course }
 
-  let(:args)                          do
+  let(:perform_later_args)             do
+    {
+      method: method.to_s,
+      requests: requests,
+      create: create,
+      sequence_number_model_key: sequence_number_model_key.to_s,
+      sequence_number_model_class: sequence_number_model_class.to_s
+    }
+  end
+  let(:perform_args)                   do
     {
       method: method,
       requests: requests,
@@ -37,39 +46,48 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
 
       it 'delegates #perform to a new instance of itself' do
         allow(described_class).to receive(:new).and_return(job_with_sequence_number)
-        expect(job_with_sequence_number).to receive(:perform).with(args)
+        expect(job_with_sequence_number).to receive(:perform).with(perform_args)
 
-        described_class.perform(args)
+        described_class.perform(perform_args)
       end
 
       it 'increments the course\'s sequence_number' do
-        expect { job_with_sequence_number.perform(args) }.to change { course.sequence_number }.by(1)
+        expect do
+          job_with_sequence_number.perform(perform_args)
+        end.to change { course.sequence_number }.by(1)
       end
 
       context 'when delay_jobs is true' do
         before { allow(Delayed::Worker).to receive(:delay_jobs).and_return(true) }
 
-        it 'creates a new OpenStax::Biglearn::Api::Job with the same args plus sequence_numbers' do
-          expect(OpenStax::Biglearn::Api::Job).to(
-            receive(:perform_later).with(job_args).and_call_original
-          )
+        context '#perform_later' do
+          it 'uses ActiveJob::AfterCommitRunner to lock and work its own job inline' do
+            runner = ActiveJob::AfterCommitRunner.new(job_with_sequence_number)
 
-          job_with_sequence_number.perform(args)
+            expect(ActiveJob::AfterCommitRunner).to receive(:new) do |job|
+              expect(job).to be_a described_class
+            end.and_return(runner)
+            expect(runner).to receive(:run_after_commit)
+
+            described_class.perform_later(perform_later_args)
+          end
         end
 
-        it 'attempts to lock and work the newly created job inline' do
-          delayed_job = Delayed::Job.new(handler: '')
-          allow(Delayed::Job).to receive(:reserve_with_scope).and_return(delayed_job)
-          expect(delayed_job).to receive(:invoke_job)
+        context '#perform' do
+          it 'creates a new OpenStax::Biglearn::Api::Job with same args plus sequence_numbers' do
+            expect(OpenStax::Biglearn::Api::Job).to(
+              receive(:perform_later).with(job_args).and_call_original
+            )
 
-          job_with_sequence_number.perform(args)
+            job_with_sequence_number.perform(perform_args)
+          end
         end
       end
     end
 
     context 'when the course\'s sequence_number is not 0' do
       it 'fails with an ArgumentError so the job does not retry' do
-        expect{ job_with_sequence_number.perform(args) }.to raise_error(ArgumentError)
+        expect{ job_with_sequence_number.perform(perform_args) }.to raise_error(ArgumentError)
       end
     end
   end
@@ -88,7 +106,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
       before { course.update_attribute :sequence_number, 0 }
 
       it 'fails with an OpenStax::Biglearn::Api::JobFailed so the job can retry later' do
-        expect{ job_with_sequence_number.perform(args) }.to(
+        expect{ job_with_sequence_number.perform(perform_args) }.to(
           raise_error(OpenStax::Biglearn::Api::JobFailed)
         )
       end
@@ -97,32 +115,41 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
     context 'when the course\'s sequence_number is not 0' do
       it 'delegates #perform to a new instance of itself' do
         allow(described_class).to receive(:new).and_return(job_with_sequence_number)
-        expect(job_with_sequence_number).to receive(:perform).with(args)
+        expect(job_with_sequence_number).to receive(:perform).with(perform_args)
 
-        described_class.perform(args)
+        described_class.perform(perform_args)
       end
 
       it 'increments the course\'s sequence_number' do
-        expect { job_with_sequence_number.perform(args) }.to change { course.sequence_number }.by(1)
+        expect do
+          job_with_sequence_number.perform(perform_args)
+        end.to change { course.sequence_number }.by(1)
       end
 
       context 'when delay_jobs is true' do
         before { allow(Delayed::Worker).to receive(:delay_jobs).and_return(true) }
 
-        it 'creates a new OpenStax::Biglearn::Api::Job with the same args plus sequence_numbers' do
-          expect(OpenStax::Biglearn::Api::Job).to(
-            receive(:perform_later).with(job_args).and_call_original
-          )
+        context '#perform_later' do
+          it 'uses ActiveJob::AfterCommitRunner to lock and work its own job inline' do
+            runner = ActiveJob::AfterCommitRunner.new(job_with_sequence_number)
 
-          job_with_sequence_number.perform(args)
+            expect(ActiveJob::AfterCommitRunner).to receive(:new) do |job|
+              expect(job).to be_a described_class
+            end.and_return(runner)
+            expect(runner).to receive(:run_after_commit)
+
+            described_class.perform_later(perform_later_args)
+          end
         end
 
-        it 'attempts to lock and work the newly created job inline' do
-          delayed_job = Delayed::Job.new(handler: '')
-          allow(Delayed::Job).to receive(:reserve_with_scope).and_return(delayed_job)
-          expect(delayed_job).to receive(:invoke_job)
+        context '#perform' do
+          it 'creates a new OpenStax::Biglearn::Api::Job with same args plus sequence_numbers' do
+            expect(OpenStax::Biglearn::Api::Job).to(
+              receive(:perform_later).with(job_args).and_call_original
+            )
 
-          job_with_sequence_number.perform(args)
+            job_with_sequence_number.perform(perform_args)
+          end
         end
       end
     end

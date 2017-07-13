@@ -2,6 +2,7 @@
 require File.expand_path('../application', __FILE__)
 
 require 'date_time_utilities'
+require 'active_job/after_commit_runner'
 require 'acts_as_resource'
 require 'acts_as_tasked'
 require 'belongs_to_time_zone'
