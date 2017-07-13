@@ -42,10 +42,11 @@ module Api::V1
     property :payments_embed_js_url,
              readable: true,
              writeable: false,
-             getter: ->(*) {
-                Rails.application.secrets['openstax']['payments']['embed_js_url']
-             }
-
+             getter: ->(*) { Rails.application.secrets['openstax']['payments']['embed_js_url'] }
+    property :payments_product_uuid,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { Rails.application.secrets['openstax']['payments']['product_uuid'] }
     property :flash,
              readable: true,
              writeable: false,
