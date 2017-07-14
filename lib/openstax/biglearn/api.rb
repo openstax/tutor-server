@@ -708,7 +708,7 @@ module OpenStax::Biglearn::Api
         course = task.taskings.first.try!(:role).try!(:student).try!(:course)
         return [] if course.nil?
 
-        core_page_ids = task.task_steps.map(&:content_page_id).compact.uniq
+        core_page_ids = GetTaskCorePageIds[tasks: task][task.id]
         pages = ecosystem.pages.where(id: core_page_ids)
         if task.reading?
           pool_method = :reading_dynamic_pool
