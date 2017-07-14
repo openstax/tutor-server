@@ -75,6 +75,10 @@ class Tasks::PopulatePlaceholderSteps
   end
 
   def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
+    # Get the task core_page_ids (only necessary for spaced_practice_group)
+    core_page_ids = Set.new(task.task_steps.select(&:core_group?).map(&:content_page_id)) \
+      if group_type == :spaced_practice_group
+
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs
       result = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
@@ -138,6 +142,12 @@ class Tasks::PopulatePlaceholderSteps
               num_added_steps += exercise.number_of_parts - 1
             end
 
+            # Detect PEs being used as SPEs and set the step type to :personalized_group
+            # So they are displayed as personalized exercises
+            task_step.group_type = :personalized_group \
+              if group_type == :spaced_practice_group &&
+                 core_page_ids.include?(exercise.content_page_id)
+
             task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
 
             # Assign the exercise (handles multipart questions, etc)
@@ -182,6 +192,12 @@ class Tasks::PopulatePlaceholderSteps
 
           # Otherwise, hard-delete just the TaskedPlaceholder
           task_step.tasked.really_destroy!
+
+          # Detect PEs being used as SPEs and set the step type to :personalized_group
+          # So they are displayed as personalized exercises
+          task_step.group_type = :personalized_group \
+            if group_type == :spaced_practice_group &&
+               core_page_ids.include?(exercise.content_page_id)
 
           task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
 
