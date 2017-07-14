@@ -45,7 +45,7 @@ class SetupPerformanceReportData
       exercises_arrays.map do |exercises|
         page = exercises.first.page
 
-        group_types = (exercises.size - 2).times.map{ :core_group } + [:spaced_practice_group] * 2
+        group_types = (exercises.size - 2).times.map { :core_group } + [:spaced_practice_group] * 2
 
         Tasks::CreateConceptCoachTask[
           role: role, page: page, exercises: exercises, group_types: group_types
@@ -202,21 +202,15 @@ class SetupPerformanceReportData
     Preview::WorkTask[task: student_1_tasks[1], is_correct: false]
 
     # User 1 answered 2 correct core, 1 correct spaced practice
-    # and 1 incorrect spaced practice exercise in 2nd homework
-    is_completed = ->(task, task_step, index) do
-      task_step.core_group? ||
-      task_step == task.spaced_practice_task_steps.first ||
-      task_step == task.spaced_practice_task_steps.last
-    end
-    is_correct = ->(task, task_step, index) do
-      task_step.core_group? || task_step == task.spaced_practice_task_steps.first
-    end
+    # and 1 incorrect personalized exercise (in an SPE slot) in 2nd homework
+    is_completed = ->(task, task_step, index) { true }
+    is_correct   = ->(task, task_step, index) { index < task.task_steps.size }
     Preview::WorkTask[task: student_1_tasks[2], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in homework
     student_2_tasks = student_tasks[1]
     is_completed = ->(task, task_step, index) { index < 2 || index >= task.task_steps.size - 2 }
-    is_correct = ->(task, task_step, index) { index < 2 }
+    is_correct   = ->(task, task_step, index) { index < 2 }
     Preview::WorkTask[task: student_2_tasks[0], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 started the reading
