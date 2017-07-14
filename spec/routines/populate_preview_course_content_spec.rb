@@ -19,6 +19,8 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     [ @course.time_zone.to_tz.now.monday - 2.weeks, @course.starts_at ].max
   end
 
+  before { expect(WorkPreviewCourseTasks).to receive(:perform_later).with(course: @course).once }
+
   context 'when the course has no periods' do
     it 'creates a new period and populates the expected preview course content' do
       # 4 tasks for each of the 6 students + 1 preview role
@@ -44,13 +46,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
             expect(task.opens_at).to be_within(1.hour).of expected_opens_at
 
             task.task_steps.each do |task_step|
-              expect(task_step).to be_completed
+              expect(task_step).not_to be_completed
 
               next unless task_step.exercise?
 
-              expect(task_step.tasked.free_response).to(
-                eq (PopulatePreviewCourseContent::FREE_RESPONSE)
-              )
+              expect(task_step.tasked.free_response).to be_nil
             end
           end
         end
@@ -88,13 +88,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
             expect(task.opens_at).to be_within(1.hour).of expected_opens_at
 
             task.task_steps.each do |task_step|
-              expect(task_step).to be_completed
+              expect(task_step).not_to be_completed
 
               next unless task_step.exercise?
 
-              expect(task_step.tasked.free_response).to(
-                eq (PopulatePreviewCourseContent::FREE_RESPONSE)
-              )
+              expect(task_step.tasked.free_response).to be_nil
             end
           end
         end

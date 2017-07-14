@@ -7,6 +7,7 @@ class CourseProfile::ClaimPreviewCourse
   def exec(catalog_offering:, name:, current_time: Time.current)
     course = CourseProfile::Models::Course
                .where(is_preview: true,
+                      is_preview_ready: true,
                       preview_claimed_at: nil,
                       catalog_offering_id: catalog_offering.id)
                .lock

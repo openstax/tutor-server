@@ -348,11 +348,12 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.boolean  "does_cost",                                    default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
+    t.boolean  "is_preview_ready",                             default: false,               null: false
   end
 
-  add_index "course_profile_courses", ["catalog_offering_id", "is_preview", "preview_claimed_at"], name: "preview_pending_indx", using: :btree
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
   add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
+  add_index "course_profile_courses", ["is_preview", "is_preview_ready", "preview_claimed_at", "catalog_offering_id"], name: "preview_pending_index", using: :btree
   add_index "course_profile_courses", ["name"], name: "index_course_profile_courses_on_name", using: :btree
   add_index "course_profile_courses", ["school_district_school_id"], name: "index_course_profile_courses_on_school_district_school_id", using: :btree
   add_index "course_profile_courses", ["teach_token"], name: "index_course_profile_courses_on_teach_token", unique: true, using: :btree

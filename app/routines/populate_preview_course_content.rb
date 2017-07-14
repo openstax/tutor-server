@@ -12,11 +12,8 @@ class PopulatePreviewCourseContent
   # Should correspond to the total preview course duration, in weeks
   MAX_NUM_ASSIGNED_CHAPTERS = 10
 
-  GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
-  AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
-  STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.5
-
-  FREE_RESPONSE = 'This is where you can see each student’s answer in his or her own words.'
+  # Wait this long before querying Biglearn for PEs/SPEs
+  BIGLEARN_WAIT = 30.seconds
 
   lev_routine
 
@@ -25,58 +22,10 @@ class PopulatePreviewCourseContent
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine Tasks::GetAssistant, as: :get_assistant
   uses_routine DistributeTasks, as: :distribute_tasks
-  uses_routine Preview::WorkTask, as: :work_task
 
   def exec(course:)
-    # preview_claimed_at should already have been set by CourseProfile::BuildPreviewCourses
-    # so the course doesn't get claimed by anyone until it is ready
-    # course.update_attribute :preview_claimed_at, Time.current
-
-    # Work tasks after the current transaction finishes
-    # so Biglearn can receive the data from this course
-    after_transaction do
-      # Wait until all the data has been sent to Biglearn
-      sleep(1) if Delayed::Job.where(attempts: 0).exists?
-
-      # Give Biglearn some time to process the data
-      sleep(60)
-
-      ActiveRecord::Base.transaction do
-        ActiveRecord::Base.delay_touching do
-          course.periods.each do |period|
-            student_roles = period.student_roles.sort_by(&:created_at)
-
-            next if student_roles.empty?
-
-            great_student_role = student_roles.first
-
-            work_tasks(
-              role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY
-            )
-
-            next if student_roles.size < 2
-
-            struggling_student_role = student_roles.last
-
-            work_tasks(role: struggling_student_role,
-                       correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
-                       late: true,
-                       incomplete: true)
-
-            next if student_roles.size < 3
-
-            average_student_roles = student_roles[1..-2]
-
-            average_student_roles.each do |role|
-              work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
-            end
-          end
-
-          # The course is now ready to be claimed
-          course.update_attribute :preview_claimed_at, nil
-        end
-      end
-    end
+    # is_preview_ready: false prevents the course from being claimed
+    course.update_attribute(:is_preview_ready, false) if course.is_preview_ready
 
     run(:create_period, course: course) if course.periods.empty?
 
@@ -186,27 +135,10 @@ class PopulatePreviewCourseContent
 
       run(:distribute_tasks, task_plan: homework_tp)
     end
-  end
 
-  protected
-
-  def work_tasks(role:, correct_probability:, late: false, incomplete: false)
-    current_time = Time.current
-
-    role.taskings.preload(task: [:time_zone, { task_steps: :tasked }]).each do |tasking|
-      task = tasking.task
-
-      next if task.opens_at > current_time
-
-      is_correct = ->(task, task_step, index)   { SecureRandom.random_number < correct_probability }
-      is_completed = ->(task, task_step, index) { !incomplete || index < task.task_steps.size/2    }
-      completed_at = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
-      run(:work_task, task: task,
-                      free_response: FREE_RESPONSE,
-                      is_correct: is_correct,
-                      is_completed: is_completed,
-                      completed_at: completed_at)
-    end
+    # Work tasks after the current transaction finishes
+    # so Biglearn can receive the data from this course
+    WorkPreviewCourseTasks.perform_later(course: course)
   end
 
 end

@@ -16,7 +16,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         is_college: true,
         catalog_offering: offering,
         estimated_student_count: 42
-      ]
+      ].tap { |course| course.update_attribute :is_preview_ready, true }
     end
 
     it 'finds the course and updates its attributes' do
