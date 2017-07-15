@@ -40,6 +40,7 @@ class CollectCourseInfo
       #       Maybe create a CourseInfo class that contains the course model + the extra attributes?
       Hashie::Mash.new(
         id: course.id,
+        uuid: course.uuid,
         name: course.name,
         term: course.term,
         year: course.year,
