@@ -1319,9 +1319,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'clones the course for the user' do
         api_post :clone, user_1_token, parameters: valid_params, raw_post_data: valid_body
-
         expect(response).to have_http_status(:success)
-        expect(response.body_as_hash).to match expected_response
+        body = response.body_as_hash
+        expect(body[:uuid]).not_to eq(expected_response[:body])
+        expected_response[:uuid] = body[:uuid]
+        expect(body).to match expected_response
       end
     end
   end
