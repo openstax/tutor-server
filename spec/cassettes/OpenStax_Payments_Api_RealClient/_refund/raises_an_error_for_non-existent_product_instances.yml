@@ -1,0 +1,1269 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 15 Jul 2017 22:27:48 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store
+      Pragma:
+      - no-cache
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '118'
+    body:
+      encoding: UTF-8
+      string: '{"access_token": "DeN1MplgMfztWdSWhXBOYHd62xYm27", "expires_in": 36000,
+        "token_type": "Bearer", "scope": "read write"}'
+    http_version: 
+  recorded_at: Sat, 15 Jul 2017 22:27:48 GMT
+- request:
+    method: post
+    uri: "<openstax_payments_url>/pay/refund/<UUID_2>/"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer DeN1MplgMfztWdSWhXBOYHd62xYm27
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 500
+      message: Internal Server Error
+    headers:
+      Date:
+      - Sat, 15 Jul 2017 22:27:49 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - text/html
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '102196'
+      Vary:
+      - Cookie
+    body:
+      encoding: UTF-8
+      string: "\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\"
+        content=\"text/html; charset=utf-8\">\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n
+        \ <title>DoesNotExist at /pay/refund/<UUID_2>/</title>\n  <style type=\"text/css\">\n
+        \   html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body
+        * * { padding:0; }\n    body { font:small sans-serif; }\n    body>div { border-bottom:1px
+        solid #ddd; }\n    h1 { font-weight:normal; }\n    h2 { margin-bottom:.8em;
+        }\n    h2 span { font-size:80%; color:#666; font-weight:normal; }\n    h3
+        { margin:1em 0 .5em 0; }\n    h4 { margin:0 0 .5em 0; font-weight: normal;
+        }\n    code, pre { font-size: 100%; white-space: pre-wrap; }\n    table {
+        border:1px solid #ccc; border-collapse: collapse; width:100%; background:white;
+        }\n    tbody td, tbody th { vertical-align:top; padding:2px 3px; }\n    thead
+        th {\n      padding:1px 6px 1px 3px; background:#fefefe; text-align:left;\n
+        \     font-weight:normal; font-size:11px; border:1px solid #ddd;\n    }\n
+        \   tbody th { width:12em; text-align:right; color:#666; padding-right:.5em;
+        }\n    table.vars { margin:5px 0 2px 40px; }\n    table.vars td, table.req
+        td { font-family:monospace; }\n    table td.code { width:100%; }\n    table
+        td.code pre { overflow:hidden; }\n    table.source th { color:#666; }\n    table.source
+        td { font-family:monospace; white-space:pre; border-bottom:1px solid #eee;
+        }\n    ul.traceback { list-style-type:none; color: #222; }\n    ul.traceback
+        li.frame { padding-bottom:1em; color:#666; }\n    ul.traceback li.user { background-color:#e0e0e0;
+        color:#000 }\n    div.context { padding:10px 0; overflow:hidden; }\n    div.context
+        ol { padding-left:30px; margin:0 10px; list-style-position: inside; }\n    div.context
+        ol li { font-family:monospace; white-space:pre; color:#777; cursor:pointer;
+        padding-left: 2px; }\n    div.context ol li pre { display:inline; }\n    div.context
+        ol.context-line li { color:#505050; background-color:#dfdfdf; padding: 3px
+        2px; }\n    div.context ol.context-line li span { position:absolute; right:32px;
+        }\n    .user div.context ol.context-line li { background-color:#bbb; color:#000;
+        }\n    .user div.context ol li { color:#666; }\n    div.commands { margin-left:
+        40px; }\n    div.commands a { color:#555; text-decoration:none; }\n    .user
+        div.commands a { color: black; }\n    #summary { background: #ffc; }\n    #summary
+        h2 { font-weight: normal; color: #666; }\n    #explanation { background:#eee;
+        }\n    #template, #template-not-exist { background:#f6f6f6; }\n    #template-not-exist
+        ul { margin: 0 0 10px 20px; }\n    #template-not-exist .postmortem-section
+        { margin-bottom: 3px; }\n    #unicode-hint { background:#eee; }\n    #traceback
+        { background:#eee; }\n    #requestinfo { background:#f6f6f6; padding-left:120px;
+        }\n    #summary table { border:none; background:transparent; }\n    #requestinfo
+        h2, #requestinfo h3 { position:relative; margin-left:-100px; }\n    #requestinfo
+        h3 { margin-bottom:-1em; }\n    .error { background: #ffc; }\n    .specific
+        { color:#cc3300; font-weight:bold; }\n    h2 span.commands { font-size:.7em;}\n
+        \   span.commands a:link {color:#5E5694;}\n    pre.exception_value { font-family:
+        sans-serif; color: #666; font-size: 1.5em; margin: 10px 0 10px 0; }\n    .append-bottom
+        { margin-bottom: 10px; }\n  </style>\n  \n  <script type=\"text/javascript\">\n
+        \ //<!--\n    function getElementsByClassName(oElm, strTagName, strClassName){\n
+        \       // Written by Jonathan Snook, http://www.snook.ca/jon; Add-ons by
+        Robert Nyman, http://www.robertnyman.com\n        var arrElements = (strTagName
+        == \"*\" && document.all)? document.all :\n        oElm.getElementsByTagName(strTagName);\n
+        \       var arrReturnElements = new Array();\n        strClassName = strClassName.replace(/\\-/g,
+        \"\\\\-\");\n        var oRegExp = new RegExp(\"(^|\\\\s)\" + strClassName
+        + \"(\\\\s|$)\");\n        var oElement;\n        for(var i=0; i<arrElements.length;
+        i++){\n            oElement = arrElements[i];\n            if(oRegExp.test(oElement.className)){\n
+        \               arrReturnElements.push(oElement);\n            }\n        }\n
+        \       return (arrReturnElements)\n    }\n    function hideAll(elems) {\n
+        \     for (var e = 0; e < elems.length; e++) {\n        elems[e].style.display
+        = 'none';\n      }\n    }\n    window.onload = function() {\n      hideAll(getElementsByClassName(document,
+        'table', 'vars'));\n      hideAll(getElementsByClassName(document, 'ol', 'pre-context'));\n
+        \     hideAll(getElementsByClassName(document, 'ol', 'post-context'));\n      hideAll(getElementsByClassName(document,
+        'div', 'pastebin'));\n    }\n    function toggle() {\n      for (var i = 0;
+        i < arguments.length; i++) {\n        var e = document.getElementById(arguments[i]);\n
+        \       if (e) {\n          e.style.display = e.style.display == 'none' ?
+        'block': 'none';\n        }\n      }\n      return false;\n    }\n    function
+        varToggle(link, id) {\n      toggle('v' + id);\n      var s = link.getElementsByTagName('span')[0];\n
+        \     var uarr = String.fromCharCode(0x25b6);\n      var darr = String.fromCharCode(0x25bc);\n
+        \     s.textContent = s.textContent == uarr ? darr : uarr;\n      return false;\n
+        \   }\n    function switchPastebinFriendly(link) {\n      s1 = \"Switch to
+        copy-and-paste view\";\n      s2 = \"Switch back to interactive view\";\n
+        \     link.textContent = link.textContent.trim() == s1 ? s2: s1;\n      toggle('browserTraceback',
+        'pastebinTraceback');\n      return false;\n    }\n    //-->\n  </script>\n
+        \ \n</head>\n<body>\n<div id=\"summary\">\n  <h1>DoesNotExist at /pay/refund/<UUID_2>/</h1>\n
+        \ <pre class=\"exception_value\">Transaction matching query does not exist.</pre>\n
+        \ <table class=\"meta\">\n\n    <tr>\n      <th>Request Method:</th>\n      <td>POST</td>\n
+        \   </tr>\n    <tr>\n      <th>Request URL:</th>\n      <td><openstax_payments_url>/pay/refund/<UUID_2>/</td>\n
+        \   </tr>\n\n    <tr>\n      <th>Django Version:</th>\n      <td>1.11</td>\n
+        \   </tr>\n\n    <tr>\n      <th>Exception Type:</th>\n      <td>DoesNotExist</td>\n
+        \   </tr>\n\n\n    <tr>\n      <th>Exception Value:</th>\n      <td><pre>Transaction
+        matching query does not exist.</pre></td>\n    </tr>\n\n\n    <tr>\n      <th>Exception
+        Location:</th>\n      <td>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/db/models/query.py
+        in get, line 379</td>\n    </tr>\n\n    <tr>\n      <th>Python Executable:</th>\n
+        \     <td>/Users/jps/.environments/ospayments/bin/python</td>\n    </tr>\n
+        \   <tr>\n      <th>Python Version:</th>\n      <td>3.6.1</td>\n    </tr>\n
+        \   <tr>\n      <th>Python Path:</th>\n      <td><pre>[&#39;/Users/jps/dev/openstax/ospayments&#39;,\n
+        &#39;/Users/jps/.environments/ospayments/lib/python36.zip&#39;,\n &#39;/Users/jps/.environments/ospayments/lib/python3.6&#39;,\n
+        &#39;/Users/jps/.environments/ospayments/lib/python3.6/lib-dynload&#39;,\n
+        &#39;/usr/local/Cellar/python3/3.6.1/Frameworks/Python.framework/Versions/3.6/lib/python3.6&#39;,\n
+        &#39;/Users/jps/.environments/ospayments/lib/python3.6/site-packages&#39;]</pre></td>\n
+        \   </tr>\n    <tr>\n      <th>Server time:</th>\n      <td>Sat, 15 Jul 2017
+        17:27:49 -0500</td>\n    </tr>\n  </table>\n</div>\n\n\n\n\n<div id=\"traceback\">\n
+        \ <h2>Traceback <span class=\"commands\"><a href=\"#\" onclick=\"return switchPastebinFriendly(this);\">\n
+        \   Switch to copy-and-paste view</a></span>\n  </h2>\n  \n  <div id=\"browserTraceback\">\n
+        \   <ul class=\"traceback\">\n      \n        \n        <li class=\"frame
+        django\">\n          <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/core/handlers/exception.py</code>
+        in <code>inner</code>\n\n          \n            <div class=\"context\" id=\"c4491163592\">\n
+        \             \n                <ol start=\"34\" class=\"pre-context\" id=\"pre4491163592\">\n
+        \               \n                  <li onclick=\"toggle('pre4491163592',
+        'post4491163592')\"><pre>    This decorator is automatically applied to all
+        middleware to ensure that</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>    no middleware
+        leaks an exception and that the next middleware in the stack</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491163592',
+        'post4491163592')\"><pre>    can rely on getting a response instead of an
+        exception.</pre></li>\n                \n                  <li onclick=\"toggle('pre4491163592',
+        'post4491163592')\"><pre>    &quot;&quot;&quot;</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>
+        \   @wraps(get_response, assigned=available_attrs(get_response))</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491163592',
+        'post4491163592')\"><pre>    def inner(request):</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>
+        \       try:</pre></li>\n                \n                </ol>\n              \n
+        \             <ol start=\"41\" class=\"context-line\">\n                <li
+        onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>\n            response
+        = get_response(request)</pre> <span>...</span></li></ol>\n              \n
+        \               <ol start='42' class=\"post-context\" id=\"post4491163592\">\n
+        \                 \n                  <li onclick=\"toggle('pre4491163592',
+        'post4491163592')\"><pre>        except Exception as exc:</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>
+        \           response = response_for_exception(request, exc)</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>
+        \       return response</pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre>    return inner</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491163592',
+        'post4491163592')\"><pre></pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491163592', 'post4491163592')\"><pre></pre></li>\n                  \n
+        \             </ol>\n              \n            </div>\n          \n\n          \n
+        \           <div class=\"commands\">\n                \n                    <a
+        href=\"#\" onclick=\"return varToggle(this, '4491163592')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491163592\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>exc</td>\n
+        \                   <td class=\"code\"><pre>DoesNotExist(&#39;Transaction
+        matching query does not exist.&#39;,)</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>get_response</td>\n
+        \                   <td class=\"code\"><pre>&lt;bound method BaseHandler._get_response
+        of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x10a2c8828&gt;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>request</td>\n
+        \                   <td class=\"code\"><pre>&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n              </tbody>\n            </table>\n
+        \         \n        </li>\n      \n        \n        <li class=\"frame django\">\n
+        \         <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/core/handlers/base.py</code>
+        in <code>_get_response</code>\n\n          \n            <div class=\"context\"
+        id=\"c4491162184\">\n              \n                <ol start=\"180\" class=\"pre-context\"
+        id=\"pre4491162184\">\n                \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>                break</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre></pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>        if response is None:</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre>
+        \           wrapped_callback = self.make_view_atomic(callback)</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>            try:</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre>                response
+        = wrapped_callback(request, *callback_args, **callback_kwargs)</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>            except Exception as e:</pre></li>\n                \n
+        \               </ol>\n              \n              <ol start=\"187\" class=\"context-line\">\n
+        \               <li onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre>\n
+        \               response = self.process_exception_by_middleware(e, request)</pre>
+        <span>...</span></li></ol>\n              \n                <ol start='188'
+        class=\"post-context\" id=\"post4491162184\">\n                  \n                  <li
+        onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre></pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre>
+        \       # Complain if the view returned None (a common error).</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>        if response is None:</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491162184', 'post4491162184')\"><pre>
+        \           if isinstance(callback, types.FunctionType):    # FBV</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>                view_name = callback.__name__</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491162184',
+        'post4491162184')\"><pre>            else:                                           #
+        CBV</pre></li>\n                  \n              </ol>\n              \n
+        \           </div>\n          \n\n          \n            <div class=\"commands\">\n
+        \               \n                    <a href=\"#\" onclick=\"return varToggle(this,
+        '4491162184')\"><span>&#x25b6;</span> Local vars</a>\n                \n            </div>\n
+        \           <table class=\"vars\" id=\"v4491162184\">\n              <thead>\n
+        \               <tr>\n                  <th>Variable</th>\n                  <th>Value</th>\n
+        \               </tr>\n              </thead>\n              <tbody>\n                \n
+        \                 <tr>\n                    <td>callback</td>\n                    <td
+        class=\"code\"><pre>&lt;function refund at 0x109e0ce18&gt;</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>callback_args</td>\n
+        \                   <td class=\"code\"><pre>()</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>callback_kwargs</td>\n
+        \                   <td class=\"code\"><pre>{&#39;product_instance_uuid&#39;:
+        &#39;<UUID_2>&#39;}</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>middleware_method</td>\n                    <td
+        class=\"code\"><pre>&lt;bound method DebugToolbarMiddleware.process_view of
+        &lt;debug_toolbar.middleware.DebugToolbarMiddleware object at 0x108828b38&gt;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>request</td>\n
+        \                   <td class=\"code\"><pre>&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>resolver</td>\n
+        \                   <td class=\"code\"><pre>&lt;RegexURLResolver &#39;urls&#39;
+        (None:None) ^/&gt;</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>resolver_match</td>\n                    <td
+        class=\"code\"><pre>ResolverMatch(func=pay.views.refund, args=(), kwargs={&#39;product_instance_uuid&#39;:
+        &#39;<UUID_2>&#39;}, url_name=refund, app_names=[], namespaces=[])</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>response</td>\n
+        \                   <td class=\"code\"><pre>None</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>self</td>\n
+        \                   <td class=\"code\"><pre>&lt;django.core.handlers.wsgi.WSGIHandler
+        object at 0x10a2c8828&gt;</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>wrapped_callback</td>\n                    <td
+        class=\"code\"><pre>&lt;function refund at 0x109e0ce18&gt;</pre></td>\n                  </tr>\n
+        \               \n              </tbody>\n            </table>\n          \n
+        \       </li>\n      \n        \n        <li class=\"frame django\">\n          <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/core/handlers/base.py</code>
+        in <code>_get_response</code>\n\n          \n            <div class=\"context\"
+        id=\"c4491162760\">\n              \n                <ol start=\"178\" class=\"pre-context\"
+        id=\"pre4491162760\">\n                \n                  <li onclick=\"toggle('pre4491162760',
+        'post4491162760')\"><pre>            response = middleware_method(request,
+        callback, callback_args, callback_kwargs)</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>            if
+        response:</pre></li>\n                \n                  <li onclick=\"toggle('pre4491162760',
+        'post4491162760')\"><pre>                break</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre></pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162760',
+        'post4491162760')\"><pre>        if response is None:</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>
+        \           wrapped_callback = self.make_view_atomic(callback)</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162760',
+        'post4491162760')\"><pre>            try:</pre></li>\n                \n                </ol>\n
+        \             \n              <ol start=\"185\" class=\"context-line\">\n
+        \               <li onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>\n
+        \               response = wrapped_callback(request, *callback_args, **callback_kwargs)</pre>
+        <span>...</span></li></ol>\n              \n                <ol start='186'
+        class=\"post-context\" id=\"post4491162760\">\n                  \n                  <li
+        onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>            except
+        Exception as e:</pre></li>\n                  \n                  <li onclick=\"toggle('pre4491162760',
+        'post4491162760')\"><pre>                response = self.process_exception_by_middleware(e,
+        request)</pre></li>\n                  \n                  <li onclick=\"toggle('pre4491162760',
+        'post4491162760')\"><pre></pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>        # Complain
+        if the view returned None (a common error).</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>
+        \       if response is None:</pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491162760', 'post4491162760')\"><pre>            if
+        isinstance(callback, types.FunctionType):    # FBV</pre></li>\n                  \n
+        \             </ol>\n              \n            </div>\n          \n\n          \n
+        \           <div class=\"commands\">\n                \n                    <a
+        href=\"#\" onclick=\"return varToggle(this, '4491162760')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491162760\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>callback</td>\n
+        \                   <td class=\"code\"><pre>&lt;function refund at 0x109e0ce18&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>callback_args</td>\n
+        \                   <td class=\"code\"><pre>()</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>callback_kwargs</td>\n
+        \                   <td class=\"code\"><pre>{&#39;product_instance_uuid&#39;:
+        &#39;<UUID_2>&#39;}</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>middleware_method</td>\n                    <td
+        class=\"code\"><pre>&lt;bound method DebugToolbarMiddleware.process_view of
+        &lt;debug_toolbar.middleware.DebugToolbarMiddleware object at 0x108828b38&gt;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>request</td>\n
+        \                   <td class=\"code\"><pre>&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>resolver</td>\n
+        \                   <td class=\"code\"><pre>&lt;RegexURLResolver &#39;urls&#39;
+        (None:None) ^/&gt;</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>resolver_match</td>\n                    <td
+        class=\"code\"><pre>ResolverMatch(func=pay.views.refund, args=(), kwargs={&#39;product_instance_uuid&#39;:
+        &#39;<UUID_2>&#39;}, url_name=refund, app_names=[], namespaces=[])</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>response</td>\n
+        \                   <td class=\"code\"><pre>None</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>self</td>\n
+        \                   <td class=\"code\"><pre>&lt;django.core.handlers.wsgi.WSGIHandler
+        object at 0x10a2c8828&gt;</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>wrapped_callback</td>\n                    <td
+        class=\"code\"><pre>&lt;function refund at 0x109e0ce18&gt;</pre></td>\n                  </tr>\n
+        \               \n              </tbody>\n            </table>\n          \n
+        \       </li>\n      \n        \n        <li class=\"frame django\">\n          <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/views/decorators/csrf.py</code>
+        in <code>wrapped_view</code>\n\n          \n            <div class=\"context\"
+        id=\"c4491163208\">\n              \n                <ol start=\"51\" class=\"pre-context\"
+        id=\"pre4491163208\">\n                \n                  <li onclick=\"toggle('pre4491163208',
+        'post4491163208')\"><pre>    &quot;&quot;&quot;</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491163208', 'post4491163208')\"><pre>
+        \   Marks a view function as being exempt from the CSRF view protection.</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491163208',
+        'post4491163208')\"><pre>    &quot;&quot;&quot;</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491163208', 'post4491163208')\"><pre>
+        \   # We could just do view_func.csrf_exempt = True, but decorators</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491163208',
+        'post4491163208')\"><pre>    # are nicer if they don&#39;t have side-effects,
+        so we return a new</pre></li>\n                \n                  <li onclick=\"toggle('pre4491163208',
+        'post4491163208')\"><pre>    # function.</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491163208', 'post4491163208')\"><pre>    def wrapped_view(*args,
+        **kwargs):</pre></li>\n                \n                </ol>\n              \n
+        \             <ol start=\"58\" class=\"context-line\">\n                <li
+        onclick=\"toggle('pre4491163208', 'post4491163208')\"><pre>\n        return
+        view_func(*args, **kwargs)</pre> <span>...</span></li></ol>\n              \n
+        \               <ol start='59' class=\"post-context\" id=\"post4491163208\">\n
+        \                 \n                  <li onclick=\"toggle('pre4491163208',
+        'post4491163208')\"><pre>    wrapped_view.csrf_exempt = True</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491163208',
+        'post4491163208')\"><pre>    return wraps(view_func, assigned=available_attrs(view_func))(wrapped_view)</pre></li>\n
+        \                 \n              </ol>\n              \n            </div>\n
+        \         \n\n          \n            <div class=\"commands\">\n                \n
+        \                   <a href=\"#\" onclick=\"return varToggle(this, '4491163208')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491163208\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>args</td>\n
+        \                   <td class=\"code\"><pre>(&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;,)</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>kwargs</td>\n
+        \                   <td class=\"code\"><pre>{&#39;product_instance_uuid&#39;:
+        &#39;<UUID_2>&#39;}</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>view_func</td>\n                    <td
+        class=\"code\"><pre>&lt;function refund at 0x109e0d048&gt;</pre></td>\n                  </tr>\n
+        \               \n              </tbody>\n            </table>\n          \n
+        \       </li>\n      \n        \n        <li class=\"frame django\">\n          <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/views/decorators/http.py</code>
+        in <code>inner</code>\n\n          \n            <div class=\"context\" id=\"c4491164936\">\n
+        \             \n                <ol start=\"33\" class=\"pre-context\" id=\"pre4491164936\">\n
+        \               \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>        def inner(request, *args, **kwargs):</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>            if request.method not in request_method_list:</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>                logger.warning(</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491164936', 'post4491164936')\"><pre>
+        \                   &#39;Method Not Allowed (%s): %s&#39;, request.method,
+        request.path,</pre></li>\n                \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>                    extra={&#39;status_code&#39;:
+        405, &#39;request&#39;: request}</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491164936', 'post4491164936')\"><pre>                )</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>                return HttpResponseNotAllowed(request_method_list)</pre></li>\n
+        \               \n                </ol>\n              \n              <ol
+        start=\"40\" class=\"context-line\">\n                <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>\n            return func(request, *args, **kwargs)</pre>
+        <span>...</span></li></ol>\n              \n                <ol start='41'
+        class=\"post-context\" id=\"post4491164936\">\n                  \n                  <li
+        onclick=\"toggle('pre4491164936', 'post4491164936')\"><pre>        return
+        inner</pre></li>\n                  \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>    return decorator</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491164936', 'post4491164936')\"><pre></pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre></pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491164936', 'post4491164936')\"><pre>require_GET = require_http_methods([&quot;GET&quot;])</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491164936',
+        'post4491164936')\"><pre>require_GET.__doc__ = &quot;Decorator to require
+        that a view only accepts the GET method.&quot;</pre></li>\n                  \n
+        \             </ol>\n              \n            </div>\n          \n\n          \n
+        \           <div class=\"commands\">\n                \n                    <a
+        href=\"#\" onclick=\"return varToggle(this, '4491164936')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491164936\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>args</td>\n
+        \                   <td class=\"code\"><pre>()</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>func</td>\n
+        \                   <td class=\"code\"><pre>&lt;function refund at 0x109e0d158&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>kwargs</td>\n
+        \                   <td class=\"code\"><pre>{&#39;product_instance_uuid&#39;:
+        &#39;<UUID_2>&#39;}</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>request</td>\n                    <td
+        class=\"code\"><pre>&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>request_method_list</td>\n
+        \                   <td class=\"code\"><pre>[&#39;POST&#39;]</pre></td>\n
+        \                 </tr>\n                \n              </tbody>\n            </table>\n
+        \         \n        </li>\n      \n        \n        <li class=\"frame user\">\n
+        \         <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/oauth2_provider/decorators.py</code>
+        in <code>_validate</code>\n\n          \n            <div class=\"context\"
+        id=\"c4491165512\">\n              \n                <ol start=\"27\" class=\"pre-context\"
+        id=\"pre4491165512\">\n                \n                  <li onclick=\"toggle('pre4491165512',
+        'post4491165512')\"><pre>        @wraps(view_func)</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>
+        \       def _validate(request, *args, **kwargs):</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>
+        \           validator = validator_cls()</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>            core
+        = OAuthLibCore(server_cls(validator))</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>            valid,
+        oauthlib_req = core.verify_request(request, scopes=_scopes)</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>
+        \           if valid:</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>                request.resource_owner
+        = oauthlib_req.user</pre></li>\n                \n                </ol>\n
+        \             \n              <ol start=\"34\" class=\"context-line\">\n                <li
+        onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>\n                return
+        view_func(request, *args, **kwargs)</pre> <span>...</span></li></ol>\n              \n
+        \               <ol start='35' class=\"post-context\" id=\"post4491165512\">\n
+        \                 \n                  <li onclick=\"toggle('pre4491165512',
+        'post4491165512')\"><pre>            return HttpResponseForbidden()</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491165512',
+        'post4491165512')\"><pre>        return _validate</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre>
+        \   return decorator</pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre></pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491165512', 'post4491165512')\"><pre></pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491165512',
+        'post4491165512')\"><pre>def rw_protected_resource(scopes=None, validator_cls=OAuth2Validator,
+        server_cls=Server):</pre></li>\n                  \n              </ol>\n
+        \             \n            </div>\n          \n\n          \n            <div
+        class=\"commands\">\n                \n                    <a href=\"#\" onclick=\"return
+        varToggle(this, '4491165512')\"><span>&#x25b6;</span> Local vars</a>\n                \n
+        \           </div>\n            <table class=\"vars\" id=\"v4491165512\">\n
+        \             <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>_scopes</td>\n
+        \                   <td class=\"code\"><pre>[]</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>args</td>\n
+        \                   <td class=\"code\"><pre>()</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>core</td>\n
+        \                   <td class=\"code\"><pre>&lt;oauth2_provider.oauth2_backends.OAuthLibCore
+        object at 0x10bbd12b0&gt;</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>kwargs</td>\n                    <td
+        class=\"code\"><pre>{&#39;product_instance_uuid&#39;: &#39;<UUID_2>&#39;}</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>oauthlib_req</td>\n
+        \                   <td class=\"code\"><pre>&lt;oauthlib.Request url=&quot;/pay/refund/<UUID_2>/&quot;,
+        http_method=&quot;POST&quot;, headers=&quot;{&#39;VIRTUALENVWRAPPER_SCRIPT&#39;:
+        &#39;/usr/local/bin/virtualenvwrapper.sh&#39;, &#39;VIRTUALENVWRAPPER_PROJECT_FILENAME&#39;:
+        &#39;.project&#39;, &#39;TERM_PROGRAM&#39;: &#39;Apple_Terminal&#39;, &#39;NVM_CD_FLAGS&#39;:
+        &#39;&#39;, &#39;TERM&#39;: &#39;xterm-256color&#39;, &#39;SHELL&#39;: &#39;/bin/bash&#39;,
+        &#39;CLICOLOR&#39;: &#39;1&#39;, &#39;TMPDIR&#39;: &#39;/var/folders/nc/yjz82d452sx2wztlvg4__jfc0000gn/T/&#39;,
+        &#39;Apple_PubSub_Socket_Render&#39;: &#39;/private/tmp/com.apple.launchd.Tyaykkx8cb/Render&#39;,
+        &#39;TERM_PROGRAM_VERSION&#39;: &#39;343.7&#39;, &#39;OLDPWD&#39;: &#39;/Users/jps/dev/openstax/ospayments&#39;,
+        &#39;TERM_SESSION_ID&#39;: &#39;CD673973-56A8-4D23-8BEF-F458FC99C1FF&#39;,
+        &#39;NVM_DIR&#39;: &#39;/Users/jps/.nvm&#39;, &#39;USER&#39;: &#39;jps&#39;,
+        &#39;SSH_AUTH_SOCK&#39;: &#39;/private/tmp/com.apple.launchd.q900Vtgr9U/Listeners&#39;,
+        &#39;__CF_USER_TEXT_ENCODING&#39;: &#39;0x1F5:0x0:0x0&#39;, &#39;VIRTUAL_ENV&#39;:
+        &#39;/Users/jps/.environments/ospayments&#39;, &#39;WORKON_HOME&#39;: &#39;/Users/jps/.environments&#39;,
+        &#39;LSCOLORS&#39;: &#39;ExGxCxDxBxegedabagaced&#39;, &#39;PATH&#39;: &#39;/Users/jps/.environments/ospayments/bin:/Users/jps/.rbenv/shims:/Users/jps/bin:/usr/local/bin:/Users/jps/google-cloud-sdk/bin:/Users/jps/.nvm/versions/node/v6.3.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/texbin:/Applications/Wireshark.app/Contents/MacOS&#39;,
+        &#39;VIRTUALENVWRAPPER_HOOK_DIR&#39;: &#39;/Users/jps/.environments&#39;,
+        &#39;PWD&#39;: &#39;/Users/jps/dev/openstax/ospayments&#39;, &#39;JAVA_HOME&#39;:
+        &#39;/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home/&#39;,
+        &#39;LANG&#39;: &#39;en_US.UTF-8&#39;, &#39;XPC_FLAGS&#39;: &#39;0x0&#39;,
+        &#39;PS1&#39;: &#39;(ospayments) $(/Users/jps/bin/prompt.pl)&#39;, &#39;RBENV_SHELL&#39;:
+        &#39;bash&#39;, &#39;XPC_SERVICE_NAME&#39;: &#39;0&#39;, &#39;HOME&#39;: &#39;/Users/jps&#39;,
+        &#39;SHLVL&#39;: &#39;1&#39;, &#39;LOGNAME&#39;: &#39;jps&#39;, &#39;NVM_BIN&#39;:
+        &#39;/Users/jps/.nvm/versions/node/v6.3.1/bin&#39;, &#39;VIRTUALENVWRAPPER_WORKON_CD&#39;:
+        &#39;1&#39;, &#39;DISPLAY&#39;: &#39;/private/tmp/com.apple.launchd.dNljRO1W65/org.macosforge.xquartz:0&#39;,
+        &#39;SECURITYSESSIONID&#39;: &#39;186a5&#39;, &#39;_&#39;: &#39;/Users/jps/.environments/ospayments/bin/python&#39;,
+        &#39;DJANGO_SETTINGS_MODULE&#39;: &#39;settings&#39;, &#39;TZ&#39;: &#39;America/Chicago&#39;,
+        &#39;RUN_MAIN&#39;: &#39;true&#39;, &#39;SERVER_NAME&#39;: &#39;1.0.0.127.in-addr.arpa&#39;,
+        &#39;GATEWAY_INTERFACE&#39;: &#39;CGI/1.1&#39;, &#39;SERVER_PORT&#39;: &#39;8000&#39;,
+        &#39;REMOTE_HOST&#39;: &#39;&#39;, &#39;CONTENT_LENGTH&#39;: &#39;2&#39;,
+        &#39;SCRIPT_NAME&#39;: &#39;&#39;, &#39;SERVER_PROTOCOL&#39;: &#39;HTTP/1.1&#39;,
+        &#39;SERVER_SOFTWARE&#39;: &#39;WSGIServer/0.2&#39;, &#39;REQUEST_METHOD&#39;:
+        &#39;POST&#39;, &#39;PATH_INFO&#39;: &#39;/pay/refund/<UUID_2>/&#39;, &#39;QUERY_STRING&#39;:
+        &#39;&#39;, &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;, &#39;CONTENT_TYPE&#39;:
+        &#39;application/json&#39;, &#39;HTTP_USER_AGENT&#39;: &#39;Faraday v0.9.2&#39;,
+        &#39;HTTP_AUTHORIZATION&#39;: &#39;Bearer DeN1MplgMfztWdSWhXBOYHd62xYm27&#39;,
+        &#39;HTTP_ACCEPT_ENCODING&#39;: &#39;gzip;q=1.0,deflate;q=0.6,identity;q=0.3&#39;,
+        &#39;HTTP_ACCEPT&#39;: &#39;*/*&#39;, &#39;HTTP_HOST&#39;: &#39;<openstax_payments_url_without_protocol>&#39;,
+        &#39;wsgi.version&#39;: (1, 0), &#39;wsgi.run_once&#39;: False, &#39;wsgi.url_scheme&#39;:
+        &#39;http&#39;, &#39;wsgi.multithread&#39;: True, &#39;wsgi.multiprocess&#39;:
+        False, &#39;wsgi.file_wrapper&#39;: &lt;class &#39;wsgiref.util.FileWrapper&#39;&gt;,
+        &#39;Authorization&#39;: &#39;&lt;SANITIZED&gt;&#39;}&quot;, body=&quot;&quot;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>request</td>\n
+        \                   <td class=\"code\"><pre>&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>server_cls</td>\n
+        \                   <td class=\"code\"><pre>&lt;class &#39;oauthlib.oauth2.rfc6749.endpoints.pre_configured.Server&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>valid</td>\n
+        \                   <td class=\"code\"><pre>True</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>validator</td>\n
+        \                   <td class=\"code\"><pre>&lt;oauth2_provider.oauth2_validators.OAuth2Validator
+        object at 0x10bb79470&gt;</pre></td>\n                  </tr>\n                \n
+        \                 <tr>\n                    <td>validator_cls</td>\n                    <td
+        class=\"code\"><pre>&lt;class &#39;oauth2_provider.oauth2_validators.OAuth2Validator&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>view_func</td>\n
+        \                   <td class=\"code\"><pre>&lt;function refund at 0x109e0d0d0&gt;</pre></td>\n
+        \                 </tr>\n                \n              </tbody>\n            </table>\n
+        \         \n        </li>\n      \n        \n        <li class=\"frame user\">\n
+        \         <code>/Users/jps/dev/openstax/ospayments/pay/views.py</code> in
+        <code>refund</code>\n\n          \n            <div class=\"context\" id=\"c4491163784\">\n
+        \             \n                <ol start=\"219\" class=\"pre-context\" id=\"pre4491163784\">\n
+        \               \n                  <li onclick=\"toggle('pre4491163784',
+        'post4491163784')\"><pre></pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre></pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre>@csrf_exempt</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491163784',
+        'post4491163784')\"><pre>@require_http_methods([&#39;POST&#39;])</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491163784',
+        'post4491163784')\"><pre>@protected_resource()</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre>def
+        refund(request, product_instance_uuid):</pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre>    order = Order.objects.filter(product_instance_uuid=uuid.UUID(product_instance_uuid))</pre></li>\n
+        \               \n                </ol>\n              \n              <ol
+        start=\"226\" class=\"context-line\">\n                <li onclick=\"toggle('pre4491163784',
+        'post4491163784')\"><pre>\n    transaction = Transaction.objects.get(order=order)</pre>
+        <span>...</span></li></ol>\n              \n                <ol start='227'
+        class=\"post-context\" id=\"post4491163784\">\n                  \n                  <li
+        onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre></pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre>
+        \   was_successful = handle_refund(transaction)</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre></pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491163784',
+        'post4491163784')\"><pre>    if was_successful:</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491163784', 'post4491163784')\"><pre>
+        \       data = {</pre></li>\n                  \n                  <li onclick=\"toggle('pre4491163784',
+        'post4491163784')\"><pre>            &#39;success&#39;: True,</pre></li>\n
+        \                 \n              </ol>\n              \n            </div>\n
+        \         \n\n          \n            <div class=\"commands\">\n                \n
+        \                   <a href=\"#\" onclick=\"return varToggle(this, '4491163784')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491163784\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>order</td>\n
+        \                   <td class=\"code\"><pre>&lt;QuerySet []&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>product_instance_uuid</td>\n
+        \                   <td class=\"code\"><pre>&#39;<UUID_2>&#39;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>request</td>\n
+        \                   <td class=\"code\"><pre>&lt;WSGIRequest: POST &#39;/pay/refund/<UUID_2>/&#39;&gt;</pre></td>\n
+        \                 </tr>\n                \n              </tbody>\n            </table>\n
+        \         \n        </li>\n      \n        \n        <li class=\"frame django\">\n
+        \         <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/db/models/manager.py</code>
+        in <code>manager_method</code>\n\n          \n            <div class=\"context\"
+        id=\"c4491164616\">\n              \n                <ol start=\"78\" class=\"pre-context\"
+        id=\"pre4491164616\">\n                \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>    def check(self, **kwargs):</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491164616', 'post4491164616')\"><pre>
+        \       return []</pre></li>\n                \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre></pre></li>\n                \n                  <li
+        onclick=\"toggle('pre4491164616', 'post4491164616')\"><pre>    @classmethod</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>    def _get_queryset_methods(cls, queryset_class):</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>        def create_method(name, method):</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>            def manager_method(self, *args, **kwargs):</pre></li>\n
+        \               \n                </ol>\n              \n              <ol
+        start=\"85\" class=\"context-line\">\n                <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>\n                return getattr(self.get_queryset(),
+        name)(*args, **kwargs)</pre> <span>...</span></li></ol>\n              \n
+        \               <ol start='86' class=\"post-context\" id=\"post4491164616\">\n
+        \                 \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>            manager_method.__name__ = method.__name__</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>            manager_method.__doc__ = method.__doc__</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>            return manager_method</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491164616', 'post4491164616')\"><pre></pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491164616',
+        'post4491164616')\"><pre>        new_methods = {}</pre></li>\n                  \n
+        \                 <li onclick=\"toggle('pre4491164616', 'post4491164616')\"><pre>
+        \       # Refs http://bugs.python.org/issue1785.</pre></li>\n                  \n
+        \             </ol>\n              \n            </div>\n          \n\n          \n
+        \           <div class=\"commands\">\n                \n                    <a
+        href=\"#\" onclick=\"return varToggle(this, '4491164616')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491164616\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>args</td>\n
+        \                   <td class=\"code\"><pre>()</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>kwargs</td>\n
+        \                   <td class=\"code\"><pre>{&#39;order&#39;: &lt;QuerySet
+        []&gt;}</pre></td>\n                  </tr>\n                \n                  <tr>\n
+        \                   <td>name</td>\n                    <td class=\"code\"><pre>&#39;get&#39;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>self</td>\n
+        \                   <td class=\"code\"><pre>&lt;django.db.models.manager.Manager
+        object at 0x1096e3710&gt;</pre></td>\n                  </tr>\n                \n
+        \             </tbody>\n            </table>\n          \n        </li>\n
+        \     \n        \n        <li class=\"frame django\">\n          <code>/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/db/models/query.py</code>
+        in <code>get</code>\n\n          \n            <div class=\"context\" id=\"c4491162376\">\n
+        \             \n                <ol start=\"372\" class=\"pre-context\" id=\"pre4491162376\">\n
+        \               \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>            clone = clone.order_by()</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>        num = len(clone)</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162376', 'post4491162376')\"><pre>
+        \       if num == 1:</pre></li>\n                \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>            return clone._result_cache[0]</pre></li>\n
+        \               \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>        if not num:</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162376', 'post4491162376')\"><pre>
+        \           raise self.model.DoesNotExist(</pre></li>\n                \n
+        \                 <li onclick=\"toggle('pre4491162376', 'post4491162376')\"><pre>
+        \               &quot;%s matching query does not exist.&quot; %</pre></li>\n
+        \               \n                </ol>\n              \n              <ol
+        start=\"379\" class=\"context-line\">\n                <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>\n                self.model._meta.object_name</pre>
+        <span>...</span></li></ol>\n              \n                <ol start='380'
+        class=\"post-context\" id=\"post4491162376\">\n                  \n                  <li
+        onclick=\"toggle('pre4491162376', 'post4491162376')\"><pre>            )</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>        raise self.model.MultipleObjectsReturned(</pre></li>\n
+        \                 \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>            &quot;get() returned more than one %s
+        -- it returned %s!&quot; %</pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491162376', 'post4491162376')\"><pre>            (self.model._meta.object_name,
+        num)</pre></li>\n                  \n                  <li onclick=\"toggle('pre4491162376',
+        'post4491162376')\"><pre>        )</pre></li>\n                  \n                  <li
+        onclick=\"toggle('pre4491162376', 'post4491162376')\"><pre></pre></li>\n                  \n
+        \             </ol>\n              \n            </div>\n          \n\n          \n
+        \           <div class=\"commands\">\n                \n                    <a
+        href=\"#\" onclick=\"return varToggle(this, '4491162376')\"><span>&#x25b6;</span>
+        Local vars</a>\n                \n            </div>\n            <table class=\"vars\"
+        id=\"v4491162376\">\n              <thead>\n                <tr>\n                  <th>Variable</th>\n
+        \                 <th>Value</th>\n                </tr>\n              </thead>\n
+        \             <tbody>\n                \n                  <tr>\n                    <td>args</td>\n
+        \                   <td class=\"code\"><pre>()</pre></td>\n                  </tr>\n
+        \               \n                  <tr>\n                    <td>clone</td>\n
+        \                   <td class=\"code\"><pre>&lt;QuerySet []&gt;</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>kwargs</td>\n
+        \                   <td class=\"code\"><pre>{&#39;order&#39;: &lt;QuerySet
+        []&gt;}</pre></td>\n                  </tr>\n                \n                  <tr>\n
+        \                   <td>num</td>\n                    <td class=\"code\"><pre>0</pre></td>\n
+        \                 </tr>\n                \n                  <tr>\n                    <td>self</td>\n
+        \                   <td class=\"code\"><pre>&lt;QuerySet [&lt;Transaction:
+        cqh658xb&gt;, &lt;Transaction: 8hth7tev&gt;, &lt;Transaction: f9hwwms0&gt;,
+        &lt;Transaction: q404wx8f&gt;, &lt;Transaction: q404wx8f&gt;, &lt;Transaction:
+        5xj529ht&gt;, &lt;Transaction: 5xj529ht&gt;, &lt;Transaction: hxx85htb&gt;,
+        &lt;Transaction: hxx85htb&gt;, &lt;Transaction: 1cte5rkr&gt;, &lt;Transaction:
+        e621pdvt&gt;, &lt;Transaction: 1ejbp6td&gt;, &lt;Transaction: 1ejbp6td&gt;,
+        &lt;Transaction: a9se02c8&gt;, &lt;Transaction: a9se02c8&gt;, &lt;Transaction:
+        b145ee1d&gt;, &lt;Transaction: ftvswhb7&gt;, &lt;Transaction: ftvswhb7&gt;,
+        &lt;Transaction: 5drjxzgm&gt;, &lt;Transaction: 5drjxzgm&gt;, &#39;...(remaining
+        elements truncated)...&#39;]&gt;</pre></td>\n                  </tr>\n                \n
+        \             </tbody>\n            </table>\n          \n        </li>\n
+        \     \n    </ul>\n  </div>\n  \n  <form action=\"http://dpaste.com/\" name=\"pasteform\"
+        id=\"pasteform\" method=\"post\">\n\n  <div id=\"pastebinTraceback\" class=\"pastebin\">\n
+        \   <input type=\"hidden\" name=\"language\" value=\"PythonConsole\">\n    <input
+        type=\"hidden\" name=\"title\"\n      value=\"DoesNotExist at /pay/refund/<UUID_2>/\">\n
+        \   <input type=\"hidden\" name=\"source\" value=\"Django Dpaste Agent\">\n
+        \   <input type=\"hidden\" name=\"poster\" value=\"Django\">\n    <textarea
+        name=\"content\" id=\"traceback_area\" cols=\"140\" rows=\"25\">\nEnvironment:\n\n\nRequest
+        Method: POST\nRequest URL: <openstax_payments_url>/pay/refund/<UUID_2>/\n\nDjango
+        Version: 1.11\nPython Version: 3.6.1\nInstalled Applications:\n[&#39;django.contrib.auth&#39;,\n
+        &#39;django.contrib.contenttypes&#39;,\n &#39;django.contrib.sessions&#39;,\n
+        &#39;django.contrib.messages&#39;,\n &#39;django.contrib.staticfiles&#39;,\n
+        &#39;django.contrib.admin&#39;,\n &#39;django_filters&#39;,\n &#39;oauth2_provider&#39;,\n
+        &#39;corsheaders&#39;,\n &#39;social_django&#39;,\n &#39;rangefilter&#39;,\n
+        &#39;accounts&#39;,\n &#39;rest_framework&#39;,\n &#39;products&#39;,\n &#39;reporting&#39;,\n
+        &#39;invoice&#39;,\n &#39;pay&#39;,\n &#39;chargebacks&#39;,\n &#39;mail&#39;,\n
+        &#39;tax&#39;,\n &#39;salesforce&#39;,\n &#39;test_lib&#39;,\n &#39;webpack_loader&#39;,\n
+        &#39;debug_toolbar&#39;]\nInstalled Middleware:\n[&#39;django.middleware.security.SecurityMiddleware&#39;,\n
+        &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,\n &#39;django.middleware.common.CommonMiddleware&#39;,\n
+        &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,\n &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,\n
+        &#39;django.contrib.messages.middleware.MessageMiddleware&#39;,\n &#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;,\n
+        &#39;corsheaders.middleware.CorsMiddleware&#39;,\n &#39;debug_toolbar.middleware.DebugToolbarMiddleware&#39;]\n\n\n\nTraceback:\n\nFile
+        \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/core/handlers/exception.py\"
+        in inner\n  41.             response = get_response(request)\n\nFile \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/core/handlers/base.py\"
+        in _get_response\n  187.                 response = self.process_exception_by_middleware(e,
+        request)\n\nFile \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/core/handlers/base.py\"
+        in _get_response\n  185.                 response = wrapped_callback(request,
+        *callback_args, **callback_kwargs)\n\nFile \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/views/decorators/csrf.py\"
+        in wrapped_view\n  58.         return view_func(*args, **kwargs)\n\nFile \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/views/decorators/http.py\"
+        in inner\n  40.             return func(request, *args, **kwargs)\n\nFile
+        \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/oauth2_provider/decorators.py\"
+        in _validate\n  34.                 return view_func(request, *args, **kwargs)\n\nFile
+        \"/Users/jps/dev/openstax/ospayments/pay/views.py\" in refund\n  226.     transaction
+        = Transaction.objects.get(order=order)\n\nFile \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/db/models/manager.py\"
+        in manager_method\n  85.                 return getattr(self.get_queryset(),
+        name)(*args, **kwargs)\n\nFile \"/Users/jps/.environments/ospayments/lib/python3.6/site-packages/django/db/models/query.py\"
+        in get\n  379.                 self.model._meta.object_name\n\nException Type:
+        DoesNotExist at /pay/refund/<UUID_2>/\nException Value: Transaction matching
+        query does not exist.\n</textarea>\n  <br><br>\n  <input type=\"submit\" value=\"Share
+        this traceback on a public website\">\n  </div>\n</form>\n</div>\n\n\n\n<div
+        id=\"requestinfo\">\n  <h2>Request information</h2>\n\n\n  \n    <h3 id=\"user-info\">USER</h3>\n
+        \   <p>AnonymousUser</p>\n  \n\n  <h3 id=\"get-info\">GET</h3>\n  \n    <p>No
+        GET data</p>\n  \n\n  <h3 id=\"post-info\">POST</h3>\n  \n    <table class=\"req\">\n
+        \     <thead>\n        <tr>\n          <th>Variable</th>\n          <th>Value</th>\n
+        \       </tr>\n      </thead>\n      <tbody>\n        \n      </tbody>\n    </table>\n
+        \ \n  <h3 id=\"files-info\">FILES</h3>\n  \n    <p>No FILES data</p>\n  \n\n\n
+        \ <h3 id=\"cookie-info\">COOKIES</h3>\n  \n    <p>No cookie data</p>\n  \n\n
+        \ <h3 id=\"meta-info\">META</h3>\n  <table class=\"req\">\n    <thead>\n      <tr>\n
+        \       <th>Variable</th>\n        <th>Value</th>\n      </tr>\n    </thead>\n
+        \   <tbody>\n      \n        <tr>\n          <td>Apple_PubSub_Socket_Render</td>\n
+        \         <td class=\"code\"><pre>&#39;/private/tmp/com.apple.launchd.Tyaykkx8cb/Render&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CLICOLOR</td>\n          <td
+        class=\"code\"><pre>&#39;1&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>CONTENT_LENGTH</td>\n          <td class=\"code\"><pre>&#39;2&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CONTENT_TYPE</td>\n          <td
+        class=\"code\"><pre>&#39;application/json&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>DISPLAY</td>\n          <td class=\"code\"><pre>&#39;/private/tmp/com.apple.launchd.dNljRO1W65/org.macosforge.xquartz:0&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DJANGO_SETTINGS_MODULE</td>\n
+        \         <td class=\"code\"><pre>&#39;settings&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>GATEWAY_INTERFACE</td>\n          <td
+        class=\"code\"><pre>&#39;CGI/1.1&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>HOME</td>\n          <td class=\"code\"><pre>&#39;/Users/jps&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>HTTP_ACCEPT</td>\n          <td
+        class=\"code\"><pre>&#39;*/*&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>HTTP_ACCEPT_ENCODING</td>\n          <td class=\"code\"><pre>&#39;gzip;q=1.0,deflate;q=0.6,identity;q=0.3&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>HTTP_AUTHORIZATION</td>\n
+        \         <td class=\"code\"><pre>&#39;Bearer DeN1MplgMfztWdSWhXBOYHd62xYm27&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>HTTP_HOST</td>\n          <td
+        class=\"code\"><pre>&#39;<openstax_payments_url_without_protocol>&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>HTTP_USER_AGENT</td>\n
+        \         <td class=\"code\"><pre>&#39;Faraday v0.9.2&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>JAVA_HOME</td>\n          <td class=\"code\"><pre>&#39;/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home/&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LANG</td>\n          <td
+        class=\"code\"><pre>&#39;en_US.UTF-8&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>LOGNAME</td>\n          <td class=\"code\"><pre>&#39;jps&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LSCOLORS</td>\n          <td
+        class=\"code\"><pre>&#39;ExGxCxDxBxegedabagaced&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>NVM_BIN</td>\n          <td class=\"code\"><pre>&#39;/Users/jps/.nvm/versions/node/v6.3.1/bin&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>NVM_CD_FLAGS</td>\n          <td
+        class=\"code\"><pre>&#39;&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>NVM_DIR</td>\n          <td class=\"code\"><pre>&#39;/Users/jps/.nvm&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>OLDPWD</td>\n          <td
+        class=\"code\"><pre>&#39;/Users/jps/dev/openstax/ospayments&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>PATH</td>\n          <td
+        class=\"code\"><pre>&#39;/Users/jps/.environments/ospayments/bin:/Users/jps/.rbenv/shims:/Users/jps/bin:/usr/local/bin:/Users/jps/google-cloud-sdk/bin:/Users/jps/.nvm/versions/node/v6.3.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/texbin:/Applications/Wireshark.app/Contents/MacOS&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>PATH_INFO</td>\n          <td
+        class=\"code\"><pre>&#39;/pay/refund/<UUID_2>/&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>PS1</td>\n          <td class=\"code\"><pre>&#39;(ospayments)
+        $(/Users/jps/bin/prompt.pl)&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>PWD</td>\n          <td class=\"code\"><pre>&#39;/Users/jps/dev/openstax/ospayments&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>QUERY_STRING</td>\n          <td
+        class=\"code\"><pre>&#39;&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>RBENV_SHELL</td>\n          <td class=\"code\"><pre>&#39;bash&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>REMOTE_ADDR</td>\n          <td
+        class=\"code\"><pre>&#39;127.0.0.1&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>REMOTE_HOST</td>\n          <td class=\"code\"><pre>&#39;&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>REQUEST_METHOD</td>\n          <td
+        class=\"code\"><pre>&#39;POST&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>RUN_MAIN</td>\n          <td class=\"code\"><pre>&#39;true&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SCRIPT_NAME</td>\n          <td
+        class=\"code\"><pre>&#39;&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>SECURITYSESSIONID</td>\n          <td class=\"code\"><pre>&#39;186a5&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SERVER_NAME</td>\n          <td
+        class=\"code\"><pre>&#39;1.0.0.127.in-addr.arpa&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>SERVER_PORT</td>\n          <td class=\"code\"><pre>&#39;8000&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SERVER_PROTOCOL</td>\n
+        \         <td class=\"code\"><pre>&#39;HTTP/1.1&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>SERVER_SOFTWARE</td>\n          <td class=\"code\"><pre>&#39;WSGIServer/0.2&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SHELL</td>\n          <td
+        class=\"code\"><pre>&#39;/bin/bash&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SHLVL</td>\n          <td class=\"code\"><pre>&#39;1&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SSH_AUTH_SOCK</td>\n          <td
+        class=\"code\"><pre>&#39;/private/tmp/com.apple.launchd.q900Vtgr9U/Listeners&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TERM</td>\n          <td
+        class=\"code\"><pre>&#39;xterm-256color&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>TERM_PROGRAM</td>\n          <td class=\"code\"><pre>&#39;Apple_Terminal&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TERM_PROGRAM_VERSION</td>\n
+        \         <td class=\"code\"><pre>&#39;343.7&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>TERM_SESSION_ID</td>\n          <td class=\"code\"><pre>&#39;CD673973-56A8-4D23-8BEF-F458FC99C1FF&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TMPDIR</td>\n          <td
+        class=\"code\"><pre>&#39;/var/folders/nc/yjz82d452sx2wztlvg4__jfc0000gn/T/&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TZ</td>\n          <td
+        class=\"code\"><pre>&#39;America/Chicago&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>USER</td>\n          <td class=\"code\"><pre>&#39;jps&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>VIRTUALENVWRAPPER_HOOK_DIR</td>\n
+        \         <td class=\"code\"><pre>&#39;/Users/jps/.environments&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>VIRTUALENVWRAPPER_PROJECT_FILENAME</td>\n
+        \         <td class=\"code\"><pre>&#39;.project&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>VIRTUALENVWRAPPER_SCRIPT</td>\n          <td
+        class=\"code\"><pre>&#39;/usr/local/bin/virtualenvwrapper.sh&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>VIRTUALENVWRAPPER_WORKON_CD</td>\n
+        \         <td class=\"code\"><pre>&#39;1&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>VIRTUAL_ENV</td>\n          <td class=\"code\"><pre>&#39;/Users/jps/.environments/ospayments&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>WORKON_HOME</td>\n          <td
+        class=\"code\"><pre>&#39;/Users/jps/.environments&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>XPC_FLAGS</td>\n          <td class=\"code\"><pre>&#39;0x0&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>XPC_SERVICE_NAME</td>\n
+        \         <td class=\"code\"><pre>&#39;0&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>_</td>\n          <td class=\"code\"><pre>&#39;/Users/jps/.environments/ospayments/bin/python&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>__CF_USER_TEXT_ENCODING</td>\n
+        \         <td class=\"code\"><pre>&#39;0x1F5:0x0:0x0&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>wsgi.errors</td>\n          <td class=\"code\"><pre>&lt;_io.TextIOWrapper
+        name=&#39;&lt;stderr&gt;&#39; mode=&#39;w&#39; encoding=&#39;UTF-8&#39;&gt;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>wsgi.file_wrapper</td>\n
+        \         <td class=\"code\"><pre>&#39;&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>wsgi.input</td>\n          <td class=\"code\"><pre>&lt;_io.BufferedReader
+        name=6&gt;</pre></td>\n        </tr>\n      \n        <tr>\n          <td>wsgi.multiprocess</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>wsgi.multithread</td>\n          <td class=\"code\"><pre>True</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>wsgi.run_once</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>wsgi.url_scheme</td>\n          <td class=\"code\"><pre>&#39;http&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>wsgi.version</td>\n          <td
+        class=\"code\"><pre>(1, 0)</pre></td>\n        </tr>\n      \n    </tbody>\n
+        \ </table>\n\n\n  <h3 id=\"settings-info\">Settings</h3>\n  <h4>Using settings
+        module <code>settings</code></h4>\n  <table class=\"req\">\n    <thead>\n
+        \     <tr>\n        <th>Setting</th>\n        <th>Value</th>\n      </tr>\n
+        \   </thead>\n    <tbody>\n      \n        <tr>\n          <td>ABSOLUTE_URL_OVERRIDES</td>\n
+        \         <td class=\"code\"><pre>{}</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>ACCESS_TOKEN_URL</td>\n          <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>ADMINS</td>\n          <td
+        class=\"code\"><pre>[]</pre></td>\n        </tr>\n      \n        <tr>\n          <td>ALLOWED_HOSTS</td>\n
+        \         <td class=\"code\"><pre>[]</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>APPEND_SLASH</td>\n          <td class=\"code\"><pre>True</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>AUTHENTICATION_BACKENDS</td>\n
+        \         <td class=\"code\"><pre>(&#39;accounts.backend.OpenStax&#39;, &#39;django.contrib.auth.backends.ModelBackend&#39;)</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>AUTHORIZATION_URL</td>\n
+        \         <td class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/oauth/authorize&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>AUTH_PASSWORD_VALIDATORS</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>AUTH_USER_MODEL</td>\n
+        \         <td class=\"code\"><pre>&#39;auth.User&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>BASE_DIR</td>\n          <td class=\"code\"><pre>&#39;/Users/jps/dev/openstax/ospayments&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>BRAINTREE_MERCHANT_ID</td>\n
+        \         <td class=\"code\"><pre>&#39;sds6bwfmcxc8pfsy&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>BRAINTREE_PRIVATE_KEY</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>BRAINTREE_PUBLIC_KEY</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CACHES</td>\n          <td
+        class=\"code\"><pre>{&#39;default&#39;: {&#39;BACKEND&#39;: &#39;django.core.cache.backends.locmem.LocMemCache&#39;}}</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CACHE_MIDDLEWARE_ALIAS</td>\n
+        \         <td class=\"code\"><pre>&#39;default&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>CACHE_MIDDLEWARE_KEY_PREFIX</td>\n          <td
+        class=\"code\"><pre>&#39;********************&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>CACHE_MIDDLEWARE_SECONDS</td>\n          <td
+        class=\"code\"><pre>600</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>CORS_ORIGIN_ALLOW_ALL</td>\n          <td class=\"code\"><pre>True</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CSRF_COOKIE_AGE</td>\n
+        \         <td class=\"code\"><pre>31449600</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>CSRF_COOKIE_DOMAIN</td>\n          <td class=\"code\"><pre>None</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CSRF_COOKIE_HTTPONLY</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>CSRF_COOKIE_NAME</td>\n          <td class=\"code\"><pre>&#39;csrftoken&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CSRF_COOKIE_PATH</td>\n
+        \         <td class=\"code\"><pre>&#39;/&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>CSRF_COOKIE_SECURE</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>CSRF_FAILURE_VIEW</td>\n          <td class=\"code\"><pre>&#39;django.views.csrf.csrf_failure&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CSRF_HEADER_NAME</td>\n
+        \         <td class=\"code\"><pre>&#39;HTTP_X_CSRFTOKEN&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>CSRF_TRUSTED_ORIGINS</td>\n
+        \         <td class=\"code\"><pre>[]</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>CSRF_USE_SESSIONS</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DATABASES</td>\n          <td
+        class=\"code\"><pre>{&#39;default&#39;: {&#39;ATOMIC_REQUESTS&#39;: False,\n
+        \            &#39;AUTOCOMMIT&#39;: True,\n             &#39;CONN_MAX_AGE&#39;:
+        0,\n             &#39;ENGINE&#39;: &#39;django.db.backends.postgresql&#39;,\n
+        \            &#39;HOST&#39;: &#39;&#39;,\n             &#39;NAME&#39;: &#39;ospayments&#39;,\n
+        \            &#39;OPTIONS&#39;: {},\n             &#39;PASSWORD&#39;: &#39;********************&#39;,\n
+        \            &#39;PORT&#39;: &#39;&#39;,\n             &#39;TEST&#39;: {&#39;CHARSET&#39;:
+        None,\n                      &#39;COLLATION&#39;: None,\n                      &#39;MIRROR&#39;:
+        None,\n                      &#39;NAME&#39;: None},\n             &#39;TIME_ZONE&#39;:
+        None,\n             &#39;USER&#39;: &#39;&#39;}}</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>DATABASE_ROUTERS</td>\n          <td class=\"code\"><pre>[]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DATA_UPLOAD_MAX_MEMORY_SIZE</td>\n
+        \         <td class=\"code\"><pre>2621440</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>DATA_UPLOAD_MAX_NUMBER_FIELDS</td>\n          <td
+        class=\"code\"><pre>1000</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>DATETIME_FORMAT</td>\n          <td class=\"code\"><pre>&#39;N
+        j, Y, P&#39;</pre></td>\n        </tr>\n      \n        <tr>\n          <td>DATETIME_INPUT_FORMATS</td>\n
+        \         <td class=\"code\"><pre>[&#39;%Y-%m-%d %H:%M:%S&#39;,\n &#39;%Y-%m-%d
+        %H:%M:%S.%f&#39;,\n &#39;%Y-%m-%d %H:%M&#39;,\n &#39;%Y-%m-%d&#39;,\n &#39;%m/%d/%Y
+        %H:%M:%S&#39;,\n &#39;%m/%d/%Y %H:%M:%S.%f&#39;,\n &#39;%m/%d/%Y %H:%M&#39;,\n
+        &#39;%m/%d/%Y&#39;,\n &#39;%m/%d/%y %H:%M:%S&#39;,\n &#39;%m/%d/%y %H:%M:%S.%f&#39;,\n
+        &#39;%m/%d/%y %H:%M&#39;,\n &#39;%m/%d/%y&#39;]</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>DATE_FORMAT</td>\n          <td class=\"code\"><pre>&#39;N
+        j, Y&#39;</pre></td>\n        </tr>\n      \n        <tr>\n          <td>DATE_INPUT_FORMATS</td>\n
+        \         <td class=\"code\"><pre>[&#39;%Y-%m-%d&#39;,\n &#39;%m/%d/%Y&#39;,\n
+        &#39;%m/%d/%y&#39;,\n &#39;%b %d %Y&#39;,\n &#39;%b %d, %Y&#39;,\n &#39;%d
+        %b %Y&#39;,\n &#39;%d %b, %Y&#39;,\n &#39;%B %d %Y&#39;,\n &#39;%B %d, %Y&#39;,\n
+        &#39;%d %B %Y&#39;,\n &#39;%d %B, %Y&#39;]</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>DEBUG</td>\n          <td class=\"code\"><pre>True</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DEBUG_PROPAGATE_EXCEPTIONS</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>DEBUG_TOOLBAR_CONFIG</td>\n          <td class=\"code\"><pre>{&#39;INTERCEPT_REDIRECTS&#39;:
+        False}</pre></td>\n        </tr>\n      \n        <tr>\n          <td>DEBUG_TOOLBAR_PATCH_SETTINGS</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>DECIMAL_SEPARATOR</td>\n          <td class=\"code\"><pre>&#39;.&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DEFAULT_CHARSET</td>\n
+        \         <td class=\"code\"><pre>&#39;utf-8&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>DEFAULT_CONTENT_TYPE</td>\n          <td
+        class=\"code\"><pre>&#39;text/html&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>DEFAULT_EXCEPTION_REPORTER_FILTER</td>\n          <td
+        class=\"code\"><pre>&#39;django.views.debug.SafeExceptionReporterFilter&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DEFAULT_FILE_STORAGE</td>\n
+        \         <td class=\"code\"><pre>&#39;django.core.files.storage.FileSystemStorage&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DEFAULT_FROM_EMAIL</td>\n
+        \         <td class=\"code\"><pre>&#39;webmaster@localhost&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DEFAULT_INDEX_TABLESPACE</td>\n
+        \         <td class=\"code\"><pre>&#39;&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>DEFAULT_TABLESPACE</td>\n          <td class=\"code\"><pre>&#39;&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>DISALLOWED_USER_AGENTS</td>\n
+        \         <td class=\"code\"><pre>[]</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>EMAIL_BACKEND</td>\n          <td class=\"code\"><pre>&#39;django.core.mail.backends.console.EmailBackend&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>EMAIL_HOST</td>\n          <td
+        class=\"code\"><pre>&#39;localhost&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>EMAIL_HOST_PASSWORD</td>\n          <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>EMAIL_HOST_USER</td>\n
+        \         <td class=\"code\"><pre>&#39;&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>EMAIL_PORT</td>\n          <td class=\"code\"><pre>25</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>EMAIL_SSL_CERTFILE</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>EMAIL_SSL_KEYFILE</td>\n          <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>EMAIL_SUBJECT_PREFIX</td>\n
+        \         <td class=\"code\"><pre>&#39;[Django] &#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>EMAIL_TIMEOUT</td>\n          <td class=\"code\"><pre>None</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>EMAIL_USE_LOCALTIME</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>EMAIL_USE_SSL</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>EMAIL_USE_TLS</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>FILE_CHARSET</td>\n          <td class=\"code\"><pre>&#39;utf-8&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>FILE_UPLOAD_DIRECTORY_PERMISSIONS</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>FILE_UPLOAD_HANDLERS</td>\n          <td class=\"code\"><pre>[&#39;django.core.files.uploadhandler.MemoryFileUploadHandler&#39;,\n
+        &#39;django.core.files.uploadhandler.TemporaryFileUploadHandler&#39;]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>FILE_UPLOAD_MAX_MEMORY_SIZE</td>\n
+        \         <td class=\"code\"><pre>2621440</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>FILE_UPLOAD_PERMISSIONS</td>\n          <td class=\"code\"><pre>420</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>FILE_UPLOAD_TEMP_DIR</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>FIRST_DAY_OF_WEEK</td>\n          <td class=\"code\"><pre>0</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>FIXTURE_DIRS</td>\n          <td
+        class=\"code\"><pre>[]</pre></td>\n        </tr>\n      \n        <tr>\n          <td>FORCE_SCRIPT_NAME</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>FORMAT_MODULE_PATH</td>\n          <td class=\"code\"><pre>None</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>FORM_RENDERER</td>\n          <td
+        class=\"code\"><pre>&#39;django.forms.renderers.DjangoTemplates&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>GRAPPELLI_ADMIN_TITLE</td>\n
+        \         <td class=\"code\"><pre>&#39;OpenStax Payments&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>GRAPPELLI_SWITCH_USER</td>\n
+        \         <td class=\"code\"><pre>True</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>IGNORABLE_404_URLS</td>\n          <td class=\"code\"><pre>[]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>INSTALLED_APPS</td>\n          <td
+        class=\"code\"><pre>[&#39;django.contrib.auth&#39;,\n &#39;django.contrib.contenttypes&#39;,\n
+        &#39;django.contrib.sessions&#39;,\n &#39;django.contrib.messages&#39;,\n
+        &#39;django.contrib.staticfiles&#39;,\n &#39;django.contrib.admin&#39;,\n
+        &#39;django_filters&#39;,\n &#39;oauth2_provider&#39;,\n &#39;corsheaders&#39;,\n
+        &#39;social_django&#39;,\n &#39;rangefilter&#39;,\n &#39;accounts&#39;,\n
+        &#39;rest_framework&#39;,\n &#39;products&#39;,\n &#39;reporting&#39;,\n &#39;invoice&#39;,\n
+        &#39;pay&#39;,\n &#39;chargebacks&#39;,\n &#39;mail&#39;,\n &#39;tax&#39;,\n
+        &#39;salesforce&#39;,\n &#39;test_lib&#39;,\n &#39;webpack_loader&#39;,\n
+        &#39;debug_toolbar&#39;]</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>INTERNAL_IPS</td>\n          <td class=\"code\"><pre>[&#39;127.0.0.1&#39;,
+        &#39;0.0.0.0&#39;]</pre></td>\n        </tr>\n      \n        <tr>\n          <td>LANGUAGES</td>\n
+        \         <td class=\"code\"><pre>[(&#39;en&#39;, &#39;English&#39;)]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LANGUAGES_BIDI</td>\n          <td
+        class=\"code\"><pre>[&#39;he&#39;, &#39;ar&#39;, &#39;fa&#39;, &#39;ur&#39;]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LANGUAGE_CODE</td>\n          <td
+        class=\"code\"><pre>&#39;en-US&#39;</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>LANGUAGE_COOKIE_AGE</td>\n          <td class=\"code\"><pre>None</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LANGUAGE_COOKIE_DOMAIN</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>LANGUAGE_COOKIE_NAME</td>\n          <td class=\"code\"><pre>&#39;django_language&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LANGUAGE_COOKIE_PATH</td>\n
+        \         <td class=\"code\"><pre>&#39;/&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>LOCALE_PATHS</td>\n          <td class=\"code\"><pre>[]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LOGGING</td>\n          <td
+        class=\"code\"><pre>{&#39;disable_existing_loggers&#39;: False,\n &#39;filters&#39;:
+        {&#39;require_debug_false&#39;: {&#39;()&#39;: &#39;django.utils.log.RequireDebugFalse&#39;}},\n
+        &#39;handlers&#39;: {&#39;mail_admins&#39;: {&#39;class&#39;: &#39;django.utils.log.AdminEmailHandler&#39;,\n
+        \                             &#39;filters&#39;: [&#39;require_debug_false&#39;],\n
+        \                             &#39;level&#39;: &#39;ERROR&#39;}},\n &#39;loggers&#39;:
+        {&#39;django.request&#39;: {&#39;handlers&#39;: [&#39;mail_admins&#39;],\n
+        \                               &#39;level&#39;: &#39;ERROR&#39;,\n                                &#39;propagate&#39;:
+        True}},\n &#39;version&#39;: 1}</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>LOGGING_CONFIG</td>\n          <td class=\"code\"><pre>&#39;logging.config.dictConfig&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LOGIN_REDIRECT_URL</td>\n
+        \         <td class=\"code\"><pre>&#39;/accounts/profile/&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>LOGIN_URL</td>\n          <td
+        class=\"code\"><pre>&#39;/accounts/login/openstax&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>LOGOUT_REDIRECT_URL</td>\n          <td
+        class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>MANAGERS</td>\n          <td class=\"code\"><pre>[]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>MEDIA_ROOT</td>\n          <td
+        class=\"code\"><pre>&#39;/Users/jps/dev/openstax/ospayments/media&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>MEDIA_URL</td>\n          <td
+        class=\"code\"><pre>&#39;/media/&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>MESSAGE_STORAGE</td>\n          <td class=\"code\"><pre>&#39;django.contrib.messages.storage.fallback.FallbackStorage&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>MIDDLEWARE</td>\n          <td
+        class=\"code\"><pre>[&#39;django.middleware.security.SecurityMiddleware&#39;,\n
+        &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,\n &#39;django.middleware.common.CommonMiddleware&#39;,\n
+        &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,\n &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,\n
+        &#39;django.contrib.messages.middleware.MessageMiddleware&#39;,\n &#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;,\n
+        &#39;corsheaders.middleware.CorsMiddleware&#39;,\n &#39;debug_toolbar.middleware.DebugToolbarMiddleware&#39;]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>MIDDLEWARE_CLASSES</td>\n
+        \         <td class=\"code\"><pre>[&#39;django.middleware.common.CommonMiddleware&#39;,\n
+        &#39;django.middleware.csrf.CsrfViewMiddleware&#39;]</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>MIGRATION_MODULES</td>\n          <td
+        class=\"code\"><pre>{}</pre></td>\n        </tr>\n      \n        <tr>\n          <td>MONTH_DAY_FORMAT</td>\n
+        \         <td class=\"code\"><pre>&#39;F j&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>NUMBER_GROUPING</td>\n          <td class=\"code\"><pre>0</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>OPENSTAX_ACCOUNTS_LOGOUT_URL</td>\n
+        \         <td class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/signout&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>PASSWORD_HASHERS</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>PASSWORD_RESET_TIMEOUT_DAYS</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>PREPEND_WWW</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>ROOT_URLCONF</td>\n          <td class=\"code\"><pre>&#39;urls&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SALESFORCE</td>\n          <td
+        class=\"code\"><pre>{&#39;password&#39;: &#39;********************&#39;,\n
+        &#39;sandbox&#39;: True,\n &#39;security_token&#39;: &#39;********************&#39;,\n
+        &#39;username&#39;: &#39;ecw1@rice.edu.tutorqa&#39;}</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>SECRET_KEY</td>\n          <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SECURE_BROWSER_XSS_FILTER</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SECURE_CONTENT_TYPE_NOSNIFF</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>SECURE_HSTS_INCLUDE_SUBDOMAINS</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SECURE_HSTS_PRELOAD</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SECURE_HSTS_SECONDS</td>\n          <td class=\"code\"><pre>0</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SECURE_PROXY_SSL_HEADER</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SECURE_REDIRECT_EXEMPT</td>\n          <td class=\"code\"><pre>[]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SECURE_SSL_HOST</td>\n
+        \         <td class=\"code\"><pre>None</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SECURE_SSL_REDIRECT</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SERVER_EMAIL</td>\n          <td
+        class=\"code\"><pre>&#39;root@localhost&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SESSION_CACHE_ALIAS</td>\n          <td class=\"code\"><pre>&#39;default&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SESSION_COOKIE_AGE</td>\n
+        \         <td class=\"code\"><pre>1209600</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SESSION_COOKIE_DOMAIN</td>\n          <td class=\"code\"><pre>None</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SESSION_COOKIE_HTTPONLY</td>\n
+        \         <td class=\"code\"><pre>True</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SESSION_COOKIE_NAME</td>\n          <td class=\"code\"><pre>&#39;sessionid&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SESSION_COOKIE_PATH</td>\n
+        \         <td class=\"code\"><pre>&#39;/&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>SESSION_COOKIE_SECURE</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>SESSION_ENGINE</td>\n          <td class=\"code\"><pre>&#39;django.contrib.sessions.backends.db&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SESSION_EXPIRE_AT_BROWSER_CLOSE</td>\n
+        \         <td class=\"code\"><pre>True</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SESSION_FILE_PATH</td>\n          <td class=\"code\"><pre>None</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SESSION_SAVE_EVERY_REQUEST</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SESSION_SERIALIZER</td>\n          <td class=\"code\"><pre>&#39;django.contrib.sessions.serializers.JSONSerializer&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SETTINGS_MODULE</td>\n
+        \         <td class=\"code\"><pre>&#39;settings&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>SHORT_DATETIME_FORMAT</td>\n          <td
+        class=\"code\"><pre>&#39;m/d/Y P&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SHORT_DATE_FORMAT</td>\n          <td class=\"code\"><pre>&#39;m/d/Y&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SIGNING_BACKEND</td>\n
+        \         <td class=\"code\"><pre>&#39;django.core.signing.TimestampSigner&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SILENCED_SYSTEM_CHECKS</td>\n
+        \         <td class=\"code\"><pre>[]</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>SOCIAL_AUTH_LOGIN_REDIRECT_URL</td>\n          <td class=\"code\"><pre>&#39;http://0.0.0.0:8000&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SOCIAL_AUTH_OPENSTAX_KEY</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SOCIAL_AUTH_OPENSTAX_SECRET</td>\n
+        \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SOCIAL_AUTH_PIPELINE</td>\n
+        \         <td class=\"code\"><pre>(&#39;social_core.pipeline.social_auth.social_details&#39;,\n
+        &#39;social_core.pipeline.social_auth.social_uid&#39;,\n &#39;social_core.pipeline.social_auth.auth_allowed&#39;,\n
+        &#39;social_core.pipeline.social_auth.social_user&#39;,\n &#39;social_core.pipeline.user.create_user&#39;,\n
+        &#39;accounts.pipelines.update_email&#39;,\n &#39;social_core.pipeline.social_auth.associate_user&#39;,\n
+        &#39;social_core.pipeline.social_auth.load_extra_data&#39;,\n &#39;social_core.pipeline.user.user_details&#39;)</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>SOCIAL_AUTH_REDIRECT_IS_HTTPS</td>\n
+        \         <td class=\"code\"><pre>True</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>SOCIAL_AUTH_SANITIZE_REDIRECTS</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>STATICFILES_DIRS</td>\n          <td class=\"code\"><pre>(&#39;/Users/jps/dev/openstax/ospayments/assets&#39;,)</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>STATICFILES_FINDERS</td>\n
+        \         <td class=\"code\"><pre>[&#39;django.contrib.staticfiles.finders.FileSystemFinder&#39;,\n
+        &#39;django.contrib.staticfiles.finders.AppDirectoriesFinder&#39;]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>STATICFILES_STORAGE</td>\n
+        \         <td class=\"code\"><pre>&#39;django.contrib.staticfiles.storage.StaticFilesStorage&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>STATIC_ROOT</td>\n          <td
+        class=\"code\"><pre>&#39;/Users/jps/dev/openstax/ospayments/static&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>STATIC_URL</td>\n          <td
+        class=\"code\"><pre>&#39;/static/&#39;</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>TAXJAR_TOKEN</td>\n          <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TEMPLATES</td>\n          <td
+        class=\"code\"><pre>[{&#39;APP_DIRS&#39;: True,\n  &#39;BACKEND&#39;: &#39;django.template.backends.django.DjangoTemplates&#39;,\n
+        \ &#39;DIRS&#39;: [&#39;templates&#39;],\n  &#39;OPTIONS&#39;: {&#39;context_processors&#39;:
+        [&#39;django.template.context_processors.debug&#39;,\n                                     &#39;django.template.context_processors.request&#39;,\n
+        \                                    &#39;django.contrib.auth.context_processors.auth&#39;,\n
+        \                                    &#39;django.contrib.messages.context_processors.messages&#39;]}}]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TESTING</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>TEST_NON_SERIALIZED_APPS</td>\n          <td class=\"code\"><pre>[]</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TEST_RUNNER</td>\n          <td
+        class=\"code\"><pre>&#39;django.test.runner.DiscoverRunner&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>THOUSAND_SEPARATOR</td>\n
+        \         <td class=\"code\"><pre>&#39;,&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>TIME_FORMAT</td>\n          <td class=\"code\"><pre>&#39;P&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>TIME_INPUT_FORMATS</td>\n
+        \         <td class=\"code\"><pre>[&#39;%H:%M:%S&#39;, &#39;%H:%M:%S.%f&#39;,
+        &#39;%H:%M&#39;]</pre></td>\n        </tr>\n      \n        <tr>\n          <td>TIME_ZONE</td>\n
+        \         <td class=\"code\"><pre>&#39;America/Chicago&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>USERS_QUERY</td>\n          <td class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/api/users?&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>USER_QUERY</td>\n          <td
+        class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/api/user?&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>USE_ETAGS</td>\n          <td
+        class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>USE_I18N</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>USE_L10N</td>\n          <td
+        class=\"code\"><pre>True</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>USE_THOUSAND_SEPARATOR</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>USE_TZ</td>\n          <td
+        class=\"code\"><pre>True</pre></td>\n        </tr>\n      \n        <tr>\n
+        \         <td>USE_X_FORWARDED_HOST</td>\n          <td class=\"code\"><pre>False</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>USE_X_FORWARDED_PORT</td>\n
+        \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
+        \       <tr>\n          <td>WEBPACK_LOADER</td>\n          <td class=\"code\"><pre>{&#39;DEFAULT&#39;:
+        {&#39;BUNDLE_DIR_NAME&#39;: &#39;bundles/&#39;,\n             &#39;STATS_FILE&#39;:
+        &#39;/Users/jps/dev/openstax/ospayments/static/bundles/manifest.json&#39;}}</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>WSGI_APPLICATION</td>\n
+        \         <td class=\"code\"><pre>&#39;wsgi.application&#39;</pre></td>\n
+        \       </tr>\n      \n        <tr>\n          <td>X_FRAME_OPTIONS</td>\n
+        \         <td class=\"code\"><pre>&#39;SAMEORIGIN&#39;</pre></td>\n        </tr>\n
+        \     \n        <tr>\n          <td>YEAR_MONTH_FORMAT</td>\n          <td
+        class=\"code\"><pre>&#39;F Y&#39;</pre></td>\n        </tr>\n      \n    </tbody>\n
+        \ </table>\n\n</div>\n\n  <div id=\"explanation\">\n    <p>\n      You're
+        seeing this error because you have <code>DEBUG = True</code> in your\n      Django
+        settings file. Change that to <code>False</code>, and Django will\n      display
+        a standard page generated by the handler for this status code.\n    </p>\n
+        \ </div>\n\n\n<link rel=\"stylesheet\" href=\"/static/debug_toolbar/css/print.css\"
+        type=\"text/css\" media=\"print\" />\n<link rel=\"stylesheet\" href=\"/static/debug_toolbar/css/toolbar.css\"
+        type=\"text/css\" />\n\n<!-- Prevent our copy of jQuery from registering as
+        an AMD module on sites that use RequireJS. -->\n<script src=\"/static/debug_toolbar/js/jquery_pre.js\"></script>\n<script
+        src=\"//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js\"></script>\n<script
+        src=\"/static/debug_toolbar/js/jquery_post.js\"></script>\n\n<script src=\"/static/debug_toolbar/js/toolbar.js\"></script>\n<div
+        id=\"djDebug\" class=\"djdt-hidden\" dir=\"ltr\"\n     data-store-id=\"efbb38cd57ab4935923647b1ba78b0b8\"
+        data-render-panel-url=\"/__debug__/render_panel/\"\n     >\n\t<div class=\"djdt-hidden\"
+        id=\"djDebugToolbar\">\n\t\t<ul id=\"djDebugPanelList\">\n\t\t\t\n\t\t\t<li><a
+        id=\"djHideToolBarButton\" href=\"#\" title=\"Hide toolbar\">Hide &#187;</a></li>\n\t\t\t\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtVersionsPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Versions\" class=\"VersionsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tVersions\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>Django 1.11</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtTimerPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Time\" class=\"TimerPanel\">\n\t\t\t\t\t\n\t\t\t\t\tTime\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>CPU: 161.85ms (171.87ms)</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSettingsPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Settings from &lt;code&gt;settings&lt;/code&gt;\" class=\"SettingsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSettings\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtHeadersPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Headers\" class=\"HeadersPanel\">\n\t\t\t\t\t\n\t\t\t\t\tHeaders\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtRequestPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Request\" class=\"RequestPanel\">\n\t\t\t\t\t\n\t\t\t\t\tRequest\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>refund</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSQLPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"SQL queries from 1 connection\" class=\"SQLPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSQL\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>6 queries in 4.68ms</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtStaticFilesPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Static files (150 found, 0 used)\" class=\"StaticFilesPanel\">\n\t\t\t\t\t\n\t\t\t\t\tStatic
+        files\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br /><small>0 files used</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtTemplatesPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Templates (1 rendered)\" class=\"TemplatesPanel\">\n\t\t\t\t\t\n\t\t\t\t\tTemplates\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtCachePanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Cache calls from 1 backend\" class=\"CachePanel\">\n\t\t\t\t\t\n\t\t\t\t\tCache\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>0 calls in 0.00ms</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSignalsPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Signals\" class=\"SignalsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSignals\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>6 receivers of 12 signals</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtLoggingPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Log messages\" class=\"LoggingPanel\">\n\t\t\t\t\t\n\t\t\t\t\tLogging\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>1 message</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtRedirectsPanel\"
+        title=\"Enable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<div
+        class=\"djdt-contentless djdt-disabled\">\n\t\t\t\t\t\n\t\t\t\t\tIntercept
+        redirects\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t</ul>\n\t</div>\n\t<div
+        class=\"djdt-hidden\" id=\"djDebugToolbarHandle\">\n\t\t<span title=\"Show
+        toolbar\" id=\"djShowToolBarButton\">&#171;</span>\n\t</div>\n\t\n\t\t\n\t\t\t<div
+        id=\"VersionsPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Versions</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"TimerPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Time</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"SettingsPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Settings from <code>settings</code></h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"HeadersPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Headers</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"RequestPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Request</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"SQLPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>SQL queries from 1 connection</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"StaticFilesPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Static files (150 found,
+        0 used)</h3>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img
+        src=\"/static/debug_toolbar/img/ajax-loader.gif\" alt=\"loading\" class=\"djdt-loader\"
+        />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"TemplatesPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Templates (1 rendered)</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"CachePanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Cache calls from 1 backend</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"SignalsPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Signals</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"LoggingPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Log messages</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\n\t<div
+        id=\"djDebugWindow\" class=\"djdt-panelContent\"></div>\n</div>\n</body>\n</html>\n"
+    http_version: 
+  recorded_at: Sat, 15 Jul 2017 22:27:49 GMT
+recorded_with: VCR 2.9.3

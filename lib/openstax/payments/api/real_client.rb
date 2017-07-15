@@ -7,7 +7,8 @@ class OpenStax::Payments::Api::RealClient
     @client_id    = configuration.client_id
     @secret       = configuration.secret
 
-    @oauth_client = OAuth2::Client.new @client_id, @secret, site: @server_url
+    @oauth_client = OAuth2::Client.new @client_id, @secret,
+                                       site: @server_url, token_url: '/o/token/'
 
     @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
@@ -21,11 +22,17 @@ class OpenStax::Payments::Api::RealClient
   #
 
   def check_payment(product_instance_uuid:)
-    api_request(method: :get, url: "/pay/check/#{uuid}")
+    api_request(method: :get, url: "/pay/check/#{product_instance_uuid}/")
   end
 
-  def initiate_refund(product_instance_uuid:)
-    api_request(method: :put, url: "/pay/refund/#{uuid}")
+  def refund(product_instance_uuid:)
+    api_request(method: :post, url: "/pay/refund/#{product_instance_uuid}/")
+  end
+
+  if !Rails.env.production?
+    def make_fake_purchase(product_instance_uuid:)
+      api_request(method: :post, url: "/pay/mock_purchase/#{product_instance_uuid}/")
+    end
   end
 
   protected
@@ -34,12 +41,16 @@ class OpenStax::Payments::Api::RealClient
     Addressable::URI.join @server_url, url.to_s
   end
 
-  def api_request(method:, url:, body:)
+  def api_request(method:, url:, body: {})
     absolute_uri = absolutize_url(url)
 
     request_options = HEADER_OPTIONS.merge({ body: body.to_json })
 
-    response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+    begin
+      response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+    rescue OAuth2::Error => err
+      raise OpenStax::Payments::RemoteError
+    end
 
     JSON.parse(response.body).deep_symbolize_keys
   end
