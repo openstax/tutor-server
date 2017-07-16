@@ -7,7 +7,7 @@ RSpec.describe OpenStax::Payments::Api::RealClient, type: :external, vcr: VCR_OP
 
   before(:all) do
     @config = OpenStax::Payments::Api.configuration
-    @uuids = vcr_friendly_uuids(count: 300)
+    @uuids = vcr_friendly_uuids(count: 10, namespace: "payments_real_client")
   end
 
   # TODO filter keys from cassettes

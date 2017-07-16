@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 15 Jul 2017 22:27:46 GMT
+      - Sun, 16 Jul 2017 20:13:57 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -36,13 +36,13 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "yFgwvqa9TRtX2IKWf6sGYTXGsH7ObI", "expires_in": 36000,
+      string: '{"access_token": "GxbJRI5uUNMpHQ71oQPvLqYLvCi4Ao", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
     http_version: 
-  recorded_at: Sat, 15 Jul 2017 22:27:46 GMT
+  recorded_at: Sun, 16 Jul 2017 20:13:57 GMT
 - request:
     method: get
-    uri: "<openstax_payments_url>/pay/check/<UUID_0>/"
+    uri: "<openstax_payments_url>/pay/check/<UUID_payments_real_client_0>/"
     body:
       encoding: UTF-8
       string: "{}"
@@ -52,7 +52,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer yFgwvqa9TRtX2IKWf6sGYTXGsH7ObI
+      - Bearer GxbJRI5uUNMpHQ71oQPvLqYLvCi4Ao
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -63,7 +63,7 @@ http_interactions:
       message: Not Found
     headers:
       Date:
-      - Sat, 15 Jul 2017 22:27:46 GMT
+      - Sun, 16 Jul 2017 20:13:57 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -77,7 +77,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: "\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\"
-        content=\"text/html; charset=utf-8\">\n  <title>Page not found at /pay/check/<UUID_0>/</title>\n
+        content=\"text/html; charset=utf-8\">\n  <title>Page not found at /pay/check/<UUID_payments_real_client_0>/</title>\n
         \ <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style type=\"text/css\">\n
         \   html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body
         * * { padding:0; }\n    body { font:small sans-serif; background:#eee; }\n
@@ -91,7 +91,7 @@ http_interactions:
         0px none; }\n  </style>\n</head>\n<body>\n  <div id=\"summary\">\n    <h1>Page
         not found <span>(404)</span></h1>\n    <table class=\"meta\">\n      <tr>\n
         \       <th>Request Method:</th>\n        <td>GET</td>\n      </tr>\n      <tr>\n
-        \       <th>Request URL:</th>\n        <td><openstax_payments_url>/pay/check/<UUID_0>/</td>\n
+        \       <th>Request URL:</th>\n        <td><openstax_payments_url>/pay/check/<UUID_payments_real_client_0>/</td>\n
         \     </tr>\n      \n      <tr>\n        <th>Raised by:</th>\n        <td>pay.views.transaction_status</td>\n
         \     </tr>\n      \n    </table>\n  </div>\n  <div id=\"info\">\n    \n      <p></p>\n
         \   \n  </div>\n\n  <div id=\"explanation\">\n    <p>\n      You're seeing
@@ -103,7 +103,7 @@ http_interactions:
         an AMD module on sites that use RequireJS. -->\n<script src=\"/static/debug_toolbar/js/jquery_pre.js\"></script>\n<script
         src=\"//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js\"></script>\n<script
         src=\"/static/debug_toolbar/js/jquery_post.js\"></script>\n\n<script src=\"/static/debug_toolbar/js/toolbar.js\"></script>\n<div
-        id=\"djDebug\" class=\"djdt-hidden\" dir=\"ltr\"\n     data-store-id=\"903877c30d964b73884f537b41eaca83\"
+        id=\"djDebug\" class=\"djdt-hidden\" dir=\"ltr\"\n     data-store-id=\"50d97ccc4bdd461390ba375cbe386431\"
         data-render-panel-url=\"/__debug__/render_panel/\"\n     >\n\t<div class=\"djdt-hidden\"
         id=\"djDebugToolbar\">\n\t\t<ul id=\"djDebugPanelList\">\n\t\t\t\n\t\t\t<li><a
         id=\"djHideToolBarButton\" href=\"#\" title=\"Hide toolbar\">Hide &#187;</a></li>\n\t\t\t\n\t\t\t\n\t\t\t\t<li
@@ -114,7 +114,7 @@ http_interactions:
         class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtTimerPanel\"
         checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
         href=\"#\" title=\"Time\" class=\"TimerPanel\">\n\t\t\t\t\t\n\t\t\t\t\tTime\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
-        /><small>CPU: 42.08ms (48.16ms)</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        /><small>CPU: 45.49ms (55.21ms)</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
         class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSettingsPanel\"
         checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
         href=\"#\" title=\"Settings from &lt;code&gt;settings&lt;/code&gt;\" class=\"SettingsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSettings\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
@@ -128,7 +128,7 @@ http_interactions:
         class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSQLPanel\"
         checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
         href=\"#\" title=\"SQL queries from 1 connection\" class=\"SQLPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSQL\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
-        /><small>2 queries in 3.62ms</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        /><small>2 queries in 3.59ms</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
         class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtStaticFilesPanel\"
         checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
         href=\"#\" title=\"Static files (150 found, 0 used)\" class=\"StaticFilesPanel\">\n\t\t\t\t\t\n\t\t\t\t\tStatic
@@ -201,5 +201,5 @@ http_interactions:
         alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\n\t<div
         id=\"djDebugWindow\" class=\"djdt-panelContent\"></div>\n</div>\n</body>\n</html>\n"
     http_version: 
-  recorded_at: Sat, 15 Jul 2017 22:27:46 GMT
+  recorded_at: Sun, 16 Jul 2017 20:13:57 GMT
 recorded_with: VCR 2.9.3

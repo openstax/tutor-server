@@ -11,7 +11,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       @proxy.ensure_schools_exist(["JP University"])
     end
 
-    @uuids = 300.times.map{ SecureRandom.uuid }
+    @uuids = 40.times.map{ SecureRandom.uuid }
     VCR.configure do |config|
       @uuids.each_with_index{|uuid,ii| config.define_cassette_placeholder("<UUID_#{ii}>") { uuid }}
     end

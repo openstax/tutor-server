@@ -36,6 +36,10 @@ VCR.configure do |c|
   c.allow_http_connections_when_no_cassette = false
   c.ignore_localhost = true
 
+  # Turn on debug logging, works in Travis too tho in full runs results
+  # in Travis build logs that are too large and cause a Travis error
+  # c.debug_logger = $stderr
+
   # TODO convert the following to `filter_secret`
 
   %w(
@@ -62,10 +66,10 @@ VCR.configure do |c|
   filter_secret(['openstax', 'payments', 'url'])
 end
 
-def vcr_friendly_uuids(count:)
+def vcr_friendly_uuids(count:, namespace: '')
   uuids = count.times.map{ SecureRandom.uuid }
   VCR.configure do |config|
-    uuids.each_with_index{|uuid,ii| config.define_cassette_placeholder("<UUID_#{ii}>") { uuid }}
+    uuids.each_with_index{|uuid,ii| config.define_cassette_placeholder("<UUID_#{namespace}_#{ii}>") { uuid }}
   end
   uuids
 end
