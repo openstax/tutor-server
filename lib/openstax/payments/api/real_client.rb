@@ -6,11 +6,6 @@ class OpenStax::Payments::Api::RealClient
     @server_url   = configuration.server_url
     @client_id    = configuration.client_id
     @secret       = configuration.secret
-
-    @oauth_client = OAuth2::Client.new @client_id, @secret,
-                                       site: @server_url, token_url: '/o/token/'
-
-    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
 
   def name
@@ -37,6 +32,21 @@ class OpenStax::Payments::Api::RealClient
 
   protected
 
+  def oauth_worker
+    # Lazily instantiate the oauth client and token primarily to ensure that
+    # initialization does not occur before test code initialized (so that all
+    # interactions are recorded inside VCR cassettes)
+
+    @oauth_worker ||= begin
+      @oauth_client = OAuth2::Client.new @client_id, @secret,
+                                         site: @server_url, token_url: '/o/token/'
+
+      @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
+
+      @oauth_token || @oauth_client
+    end
+  end
+
   def absolutize_url(url)
     Addressable::URI.join @server_url, url.to_s
   end
@@ -47,7 +57,7 @@ class OpenStax::Payments::Api::RealClient
     request_options = HEADER_OPTIONS.merge({ body: body.to_json })
 
     begin
-      response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+      response = oauth_worker.request method, absolute_uri, request_options
     rescue OAuth2::Error => err
       raise OpenStax::Payments::RemoteError
     end

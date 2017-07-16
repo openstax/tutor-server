@@ -3,6 +3,8 @@ require 'vcr_helper'
 
 RSpec.describe OpenStax::Payments::Api::RealClient, type: :external, vcr: VCR_OPTS do
 
+  set_vcr_config_around(:all, ignore_localhost: false)
+
   before(:all) do
     @config = OpenStax::Payments::Api.configuration
     @uuids = vcr_friendly_uuids(count: 300)
