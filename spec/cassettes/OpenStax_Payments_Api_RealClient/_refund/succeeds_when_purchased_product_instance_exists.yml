@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 20:14:01 GMT
+      - Sun, 16 Jul 2017 21:03:01 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -36,10 +36,10 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "fpTWIix8UqaeBOBDNpVPuYTpwPMqar", "expires_in": 36000,
+      string: '{"access_token": "EwSWVM1Ov32Cui202JKNcfnH6z8qZk", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 20:14:01 GMT
+  recorded_at: Sun, 16 Jul 2017 21:03:01 GMT
 - request:
     method: post
     uri: "<openstax_payments_url>/pay/mock_purchase/<UUID_payments_real_client_3>/"
@@ -52,7 +52,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer fpTWIix8UqaeBOBDNpVPuYTpwPMqar
+      - Bearer EwSWVM1Ov32Cui202JKNcfnH6z8qZk
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -63,7 +63,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 20:14:03 GMT
+      - Sun, 16 Jul 2017 21:03:03 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -74,9 +74,9 @@ http_interactions:
       - '49'
     body:
       encoding: UTF-8
-      string: '{"success": true, "transaction_uuid": "dfrzha9q"}'
+      string: '{"success": true, "transaction_uuid": "7h3t0vqp"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 20:14:03 GMT
+  recorded_at: Sun, 16 Jul 2017 21:03:03 GMT
 - request:
     method: post
     uri: "<openstax_payments_url>/pay/refund/<UUID_payments_real_client_3>/"
@@ -89,7 +89,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer fpTWIix8UqaeBOBDNpVPuYTpwPMqar
+      - Bearer EwSWVM1Ov32Cui202JKNcfnH6z8qZk
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -100,7 +100,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 20:14:04 GMT
+      - Sun, 16 Jul 2017 21:03:05 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -111,7 +111,7 @@ http_interactions:
       - '49'
     body:
       encoding: UTF-8
-      string: '{"success": true, "transaction_uuid": "dfrzha9q"}'
+      string: '{"success": true, "transaction_uuid": "7h3t0vqp"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 20:14:04 GMT
+  recorded_at: Sun, 16 Jul 2017 21:03:05 GMT
 recorded_with: VCR 2.9.3

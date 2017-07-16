@@ -1,0 +1,411 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://localhost:8001/reporting/purchaser/1bc161b3-fdd2-4f84-b87b-d8642aa87987.json
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 403
+      message: Forbidden
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:36:19 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - text/html; charset=utf-8
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:36:19 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/f1fa8aef-4691-4f9c-b983-390a54c8d790.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer YTj82ZWwkSkfu789hGGvdRfYE0gMDK
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:42:23 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:42:23 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/71b2829f-4ebf-44f4-acfb-7907c7e84578.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer 3SMGRZjMtRNnPGcqhL1iGU4VRQ1ZKR
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:43:03 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:43:03 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/8fab277e-77ec-4ad4-964b-f33713c56a4f.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer GfEH0Vp03DaBdMsWqg9N1LtxCZ2ntv
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:44:10 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:44:10 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/c4960200-90f1-4925-bf69-29e084cc5230.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer N3ZhunAH59EhoFUyBjVnRJxl6Zyrfy
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:45:50 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:45:50 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/790cb779-d2c9-476a-89b2-52bb5eb274b7.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer YqKCkGYTAuqDNIM4f2ws252cgxkdDF
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:46:30 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:46:30 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/caa58460-6d58-4e4b-be93-d9febc6dcb6d.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer aGXaV3vsZcxKyCfQU5MLplkKQiJLvn
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:47:59 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:47:59 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/ae970fc2-db9d-4b18-bf88-f66e4811fdf0.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer nFAMKgSx4EHO0WXcz1FapLVQ9rTm1B
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 20:49:01 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 20:49:01 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/d35b8ed6-6b7b-492d-9beb-f0296e1ac7a7.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer nFAMKgSx4EHO0WXcz1FapLVQ9rTm1B
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 21:02:01 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 21:02:01 GMT
+- request:
+    method: post
+    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 21:03:00 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store
+      Pragma:
+      - no-cache
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '118'
+    body:
+      encoding: UTF-8
+      string: '{"access_token": "ubn6n1YA5TMlA3ATBbcSciPhYRE6CK", "expires_in": 36000,
+        "token_type": "Bearer", "scope": "read write"}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 21:03:00 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/5c97c9fb-6699-4bc6-8db0-3cfc1a77e521.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer ubn6n1YA5TMlA3ATBbcSciPhYRE6CK
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jul 2017 21:03:00 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '14'
+    body:
+      encoding: UTF-8
+      string: '{"orders": []}'
+    http_version: 
+  recorded_at: Sun, 16 Jul 2017 21:03:00 GMT
+recorded_with: VCR 2.9.3
