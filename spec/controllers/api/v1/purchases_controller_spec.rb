@@ -18,19 +18,6 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
                                                application: application,
                                                resource_owner_id: other_user.id }
 
-  describe "#index" do
-    it 'returns JSON from payments' do
-      expect(OpenStax::Payments::Api.client).to(
-        receive(:orders_for_account)
-          .with(student_user)
-          .and_return(orders: [1, 2, 3])
-      )
-      api_get :index, student_token
-      expect(response).to have_http_status(:ok)
-      expect(response.body_as_hash).to eq(orders: [1, 2, 3])
-    end
-  end
-
   describe "#check" do
     it 'gives accepted status when the student exists' do
       student = FactoryGirl.create(:course_membership_student)
@@ -85,9 +72,16 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
   end
 
   describe "#index" do
-    # meaningful tests of this need VCR, so let's keep those tests in the
-    # /spec/requests/api/v1/purchases_spec.rb and leave non-VCR logic tests in
-    # this spec.
+    it 'returns JSON from payments' do
+      expect(OpenStax::Payments::Api.client).to(
+        receive(:orders_for_account)
+          .with(student_user)
+          .and_return(orders: [1, 2, 3])
+      )
+      api_get :index, student_token
+      expect(response).to have_http_status(:ok)
+      expect(response.body_as_hash).to eq(orders: [1, 2, 3])
+    end
   end
 
   describe "#create_fake" do

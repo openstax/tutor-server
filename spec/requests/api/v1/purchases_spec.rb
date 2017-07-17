@@ -27,20 +27,25 @@ RSpec.describe "Purchase endpoints", type: :request, api: true, version: :v1, vc
     OpenStax::Payments::Api.client = @original_client
   end
 
-  # Make sure each test run gets a student with a UUID not used in previous tests
-  before(:each) { student.update_column(:uuid, @uuids.shift) }
+  # Make sure each test run gets fresh, VCR-friendly UUIDs
+  before(:each) {
+    student.update_column(:uuid, @uuids.shift)
+    student_user.account.update_column(:uuid, @uuids.shift)
+  }
 
   it "works through a sequence of purchases and refunds" do
     # Need to time travel to when cassette recorded so we can see if times are recorded
     # as we expect. https://relishapp.com/vcr/vcr/docs/cassettes/freezing-time
     Timecop.travel(VCR.current_cassette.try(:originally_recorded_at) || Time.now) do
 
-      # Make sure start unpaid
+      # Make sure start unpaid and no purchases on payments
       expect(student).not_to be_is_paid
       expect(student.first_paid_at).to be_nil
+      api_get("/api/purchases", student_token)
+      expect(response.body_as_hash[:orders].length).to eq 0
 
       # First time purchasing
-      make_purchase(product_instance_uuid: student.uuid)
+      make_purchase(product_instance_uuid: student.uuid, purchaser_account_uuid: student_user.uuid)
       student.reload
       expect(student).to be_is_paid
       expect(student.first_paid_at).to be_within(1.minute).of(Time.now)
@@ -48,6 +53,9 @@ RSpec.describe "Purchase endpoints", type: :request, api: true, version: :v1, vc
 
       # TODO test student can list orders, requires `make_purchase` to be
       # able to take the purchaser_account_uuid
+
+      api_get("/api/purchases", student_token)
+      expect(response.body_as_hash[:orders].length).to eq 1
 
       # Trigger a refund; Payments will call `check` after the refund completes,
       # so we simulate that call.
@@ -65,14 +73,15 @@ RSpec.describe "Purchase endpoints", type: :request, api: true, version: :v1, vc
     end
   end
 
-  def make_purchase(product_instance_uuid:)
+  def make_purchase(product_instance_uuid: nil, purchaser_account_uuid: nil)
     # Making a fake purchase on payments should trigger a callback
     # to Tutor to have Tutor come and check the payment status.  We
     # make that call manually here since it is hard/impossible to
     # configure our payments server to call back into this spec
 
     fake_purchase_response = OpenStax::Payments::Api.client.make_fake_purchase(
-      product_instance_uuid: product_instance_uuid
+      product_instance_uuid: product_instance_uuid,
+      purchaser_account_uuid: purchaser_account_uuid
     )
     # Make sure fake purchase actually went through
     expect(fake_purchase_response[:success]).to eq true

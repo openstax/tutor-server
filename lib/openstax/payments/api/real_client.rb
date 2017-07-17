@@ -29,8 +29,11 @@ class OpenStax::Payments::Api::RealClient
   end
 
   if !Rails.env.production?
-    def make_fake_purchase(product_instance_uuid:)
-      api_request(method: :post, url: "/pay/mock_purchase/#{product_instance_uuid}/")
+    def make_fake_purchase(product_instance_uuid: nil, purchaser_account_uuid: nil)
+      api_request(method: :post, url: "/pay/mock_purchase/", body: {
+        product_instance_uuid: product_instance_uuid,
+        purchaser_account_uuid: purchaser_account_uuid
+      }.select{|k,v| !v.nil?})
     end
   end
 

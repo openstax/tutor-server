@@ -11,19 +11,7 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/purchases', 'Instructs Tutor to fetch the list of purchase\'s for a user'
-  description <<-EOS
-    Instructs Tutor to retreive the list of purchases for a user
-  EOS
-  def index
-    response = OpenStax::Payments::Api.client.orders_for_account(
-      current_human_user
-    )
-    render json: response
-  end
-
-
-  api :PUT, '/:id/check', 'Instructs Tutor to check on a purchase\'s payment status'
+  api :PUT, '/purchases/:id/check', 'Instructs Tutor to check on a purchase\'s payment status'
   description <<-EOS
     Instructs Tutor to check on a purchase\'s payment status.  The ID is the UUID
     of the purchase.  This endpoint is throttled.
@@ -41,7 +29,7 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     head :accepted
   end
 
-  api :PUT, '/:id/refund', 'Instructs Tutor to initiate a refund of this purchase'
+  api :PUT, '/purchases/:id/refund', 'Instructs Tutor to initiate a refund of this purchase'
   description <<-EOS
     Instructs Tutor to initate a refund of this purchase.  The ID is the UUID of the
     purchase.
@@ -65,9 +53,12 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     head :accepted
   end
 
-  api :GET, '/', 'Get current user\'s purchases'
+  api :GET, '/purchases', 'Instructs Tutor to fetch the list of purchase\'s for a user'
+  description <<-EOS
+    Instructs Tutor to retreive the list of purchases for a user
+  EOS
   def index
-    response = OpenStax::Payments::Api.orders_for_account(current_api_user.human_user.profile.account)
+    response = OpenStax::Payments::Api.orders_for_account(current_human_user.account)
     render json: response, status: :ok
   end
 
