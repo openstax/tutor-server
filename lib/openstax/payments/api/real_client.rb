@@ -17,8 +17,7 @@ class OpenStax::Payments::Api::RealClient
   #
 
   def orders_for_account(account)
-    response = api_request(method: :get, url: "/reporting/purchaser/#{account.uuid}.json")
-    response ? response[:orders] || [] : []
+    api_request(method: :get, url: "/reporting/purchaser/#{account.uuid}.json")
   end
 
   def check_payment(product_instance_uuid:)

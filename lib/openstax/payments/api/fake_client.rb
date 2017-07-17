@@ -15,10 +15,12 @@ class OpenStax::Payments::Api::FakeClient
   end
 
   def orders_for_account(account)
-    [
-      {:order_id=>78, :total=>"13.41", :sales_tax=>"1.08", :is_refunded=>false, :purchased_at=>"2017-07-13T22:58:30.929412+00:00", :updated_at=>"2017-07-13T22:58:30.929412+00:00", :product=>{:uuid=>"e6d22dbc-0a01-5131-84ba-2214bbe4d74d", :name=>"OpenStax Tutor", :price=>"12.33"}},
-      {:order_id=>79, :total=>"13.41", :sales_tax=>"1.08", :is_refunded=>false, :purchased_at=>"2017-07-13T23:09:11.996562+00:00", :updated_at=>"2017-07-13T23:09:11.996562+00:00", :product=>{:uuid=>"e6d22dbc-0a01-5131-84ba-2214bbe4d74d", :name=>"OpenStax Tutor", :price=>"12.33"}}
-    ]
+    {
+      orders: [
+        {:order_id=>78, :total=>"13.41", :sales_tax=>"1.08", :is_refunded=>false, :purchased_at=>"2017-07-13T22:58:30.929412+00:00", :updated_at=>"2017-07-13T22:58:30.929412+00:00", :product=>{:uuid=>"e6d22dbc-0a01-5131-84ba-2214bbe4d74d", :name=>"OpenStax Tutor", :price=>"12.33"}},
+        {:order_id=>79, :total=>"13.41", :sales_tax=>"1.08", :is_refunded=>false, :purchased_at=>"2017-07-13T23:09:11.996562+00:00", :updated_at=>"2017-07-13T23:09:11.996562+00:00", :product=>{:uuid=>"e6d22dbc-0a01-5131-84ba-2214bbe4d74d", :name=>"OpenStax Tutor", :price=>"12.33"}}
+      ]
+    }
   end
 
   def check_payment(product_instance_uuid:)
