@@ -49,8 +49,14 @@ class Api::V1::PurchasesController < Api::V1::ApiController
       return render_api_errors(:refund_period_elapsed) if !purchased_item.is_refund_allowed
     end
 
-    InitiateRefund.perform_later(uuid: params[:id])
+    RefundPayment.perform_later(uuid: params[:id])
     head :accepted
+  end
+
+  api :GET, '/', 'Get current user\'s purchases'
+  def index
+    response = OpenStax::Payments::Api.orders_for_account(current_api_user.human_user.profile.account)
+    render json: response, status: :ok
   end
 
   include Api::V1::FakePurchaseActions if !IAm.real_production?

@@ -1,4 +1,4 @@
-class InitiateRefund
+class RefundPayment
   lev_routine
 
   def exec(uuid:)
@@ -7,7 +7,7 @@ class InitiateRefund
     purchased_item = PurchasedItem.find(uuid: uuid)
     return if purchased_item.nil?
 
-    response = OpenStax::Payments::Api.initiate_refund(product_instance_uuid: uuid)
+    response = OpenStax::Payments::Api.refund(product_instance_uuid: uuid)
 
     # TODO fail if response not 2xx and write spec showing job retried
     # log either way

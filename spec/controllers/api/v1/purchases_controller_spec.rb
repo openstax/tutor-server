@@ -65,10 +65,16 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
 
     it "gives 202 accepted if all good" do
       student.update_attributes!(is_paid: true)
-      expect(InitiateRefund).to receive(:perform_later).with(uuid: student.uuid)
+      expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid)
       api_put :refund, student_token, parameters: { id: student.uuid }
       expect(response).to have_http_status(:accepted)
     end
+  end
+
+  describe "#index" do
+    # meaningful tests of this need VCR, so let's keep those tests in the
+    # /spec/requests/api/v1/purchases_spec.rb and leave non-VCR logic tests in
+    # this spec.
   end
 
   describe "#create_fake" do

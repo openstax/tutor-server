@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe InitiateRefund, type: :routine do
+RSpec.describe RefundPayment, type: :routine do
 
   xit "should work" do
   end

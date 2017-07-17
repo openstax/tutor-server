@@ -97,7 +97,7 @@ Rails.application.routes.draw do
       post 'event/onboarding/:code', action: :onboarding_event
     end
 
-    resources :purchases, only: [] do
+    resources :purchases, only: [:index] do
       member do
         put :check
         put :refund

@@ -22,6 +22,10 @@ module OpenStax::Payments::Api
       client.refund(product_instance_uuid: product_instance_uuid)
     end
 
+    def orders_for_account(account)
+      client.orders_for_account(account)
+    end
+
     def use_fake_client
       self.client = new_fake_client
     end

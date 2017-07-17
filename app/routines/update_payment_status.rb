@@ -14,7 +14,7 @@ class UpdatePaymentStatus
       raise err
     end
 
-    log(:info) { "Got payment status for #{uuid}: #{response}" }
+    log(:info) { "Got payment status for #{uuid}: #{outputs.response.to_h}" }
 
     # TODO fail if response not 2xx and write spec showing job retried
 
@@ -31,7 +31,7 @@ class UpdatePaymentStatus
       student.is_refund_pending = false
     end
 
-    student.first_paid_at ||= response[:changed_at]
+    student.first_paid_at ||= Chronic.parse(response[:purchased_at])
     student.save! if student.changed?
   end
 
