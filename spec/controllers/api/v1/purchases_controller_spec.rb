@@ -18,6 +18,19 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
                                                application: application,
                                                resource_owner_id: other_user.id }
 
+  describe "#index" do
+    it 'returns JSON from payments' do
+      expect(OpenStax::Payments::Api.client).to(
+        receive(:orders_for_account)
+          .with(student_user)
+          .and_return(orders: [1, 2, 3])
+      )
+      api_get :index, student_token
+      expect(response).to have_http_status(:ok)
+      expect(response.body_as_hash).to eq(orders: [1, 2, 3])
+    end
+  end
+
   describe "#check" do
     it 'gives accepted status when the student exists' do
       student = FactoryGirl.create(:course_membership_student)

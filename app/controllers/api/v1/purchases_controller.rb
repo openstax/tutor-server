@@ -11,6 +11,18 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     EOS
   end
 
+  api :GET, '/purchases', 'Instructs Tutor to fetch the list of purchase\'s for a user'
+  description <<-EOS
+    Instructs Tutor to retreive the list of purchases for a user
+  EOS
+  def index
+    response = OpenStax::Payments::Api.client.orders_for_account(
+      current_human_user
+    )
+    render json: response
+  end
+
+
   api :PUT, '/:id/check', 'Instructs Tutor to check on a purchase\'s payment status'
   description <<-EOS
     Instructs Tutor to check on a purchase\'s payment status.  The ID is the UUID
