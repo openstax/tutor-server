@@ -27,18 +27,26 @@ class OpenStax::Payments::Api::FakeClient
     # TODO check @store to see if product exists
     {
       paid: false,
-      changed_at: Time.now
+      purchased_at: Time.now
     }
   end
 
   def refund(product_instance_uuid:)
-    :ok
+    # TODO check @store to see if product exists, update it, call check_payment
+    {
+      success: true,
+      transaction_uuid: fake_braintree_transaction_id
+    }
   end
 
   if !IAm.real_production?
     def fake_pay(product_instance_uuid:)
 
     end
+  end
+
+  def fake_braintree_transaction_id
+    "fake_bt_transaction_#{SecureRandom.uuid[0..5]}"
   end
 
 end
