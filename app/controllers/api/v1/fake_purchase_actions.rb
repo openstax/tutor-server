@@ -17,7 +17,7 @@ module Api::V1::FakePurchaseActions
       EOS
       def create_fake
         uuids = JSON.parse(request.body.read)
-        uuids.each{|uuid| OpenStax::Payments::FakePurchasedItem.create(uuid)}
+        uuids.each{|uuid| OpenStax::Payments::FakePurchasedItem.create(uuid: uuid)}
         head :ok
       end
     end

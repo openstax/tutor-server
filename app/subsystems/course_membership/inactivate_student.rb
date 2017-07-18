@@ -12,7 +12,7 @@ module CourseMembership
 
       OpenStax::Biglearn::Api.update_rosters(course: student.course)
 
-      RefundPayment.perform_later(uuid: student.uuid)# if student.is_refund_allowed
+      RefundPayment.perform_later(uuid: student.uuid) if student.is_refund_allowed
     end
   end
 end

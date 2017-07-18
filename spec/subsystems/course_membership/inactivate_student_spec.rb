@@ -6,6 +6,7 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
 
   context "active student" do
     it "inactivates but does not delete the given student" do
+      allow(student).to receive(:is_refund_allowed) { true }
       expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid)
 
       result = nil
@@ -17,7 +18,12 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
       expect(student.reload.course).to eq course
       expect(student).to be_persisted
       expect(student).to be_deleted
+    end
 
+    it "does not refund student after refund period elapses" do
+      allow(student).to receive(:is_refund_allowed) { false }
+      expect(RefundPayment).not_to receive(:perform_later).with(uuid: student.uuid)
+      described_class.call(student: student)
     end
   end
 
@@ -31,4 +37,5 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
       expect(student).to be_deleted
     end
   end
+
 end
