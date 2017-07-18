@@ -75,7 +75,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
     it 'returns JSON from payments' do
       expect(OpenStax::Payments::Api.client).to(
         receive(:orders_for_account)
-          .with(student_user)
+          .with(student_user.account)
           .and_return(orders: [1, 2, 3])
       )
       api_get :index, student_token

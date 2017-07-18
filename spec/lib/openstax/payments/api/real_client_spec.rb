@@ -29,20 +29,6 @@ RSpec.describe OpenStax::Payments::Api::RealClient, type: :external, vcr: VCR_OP
     end
   end
 
-  context '#orders_for_account' do
-    it 'returns empty array for invalid uuids' do
-      fake_account = Hashie::Mash.new(uuid: SecureRandom.uuid)
-      orders = real_client.orders_for_account(fake_account)
-      expect(orders).to be_empty
-    end
-    it 'fetches orders for a user' do
-      account = Hashie::Mash.new(uuid: 'c577b301-7696-46ba-bf27-503c6957750c')
-      response = real_client.orders_for_account(account)
-      expect(response[:orders]).not_to be_empty
-      expect(response[:orders].first).to eq(:order_id=>78, :total=>"13.41", :sales_tax=>"1.08", :is_refunded=>false, :purchased_at=>"2017-07-13T22:58:30.929412+00:00", :updated_at=>"2017-07-13T22:58:30.929412+00:00", :product=>{:uuid=>"e6d22dbc-0a01-5131-84ba-2214bbe4d74d", :name=>"OpenStax Tutor", :price=>"12.33"})
-    end
-  end
-
   context '#refund' do
     it 'raises an error for non-existent product instances' do
       expect{
@@ -60,7 +46,7 @@ RSpec.describe OpenStax::Payments::Api::RealClient, type: :external, vcr: VCR_OP
     it 'gets unpaid status after a refund' do
       uuid = @uuids.shift
       make_purchase(product_instance_uuid: uuid)
-      real_client.refund(product_instance_uuid: uuid)
+      rr = real_client.refund(product_instance_uuid: uuid)
       response = real_client.check_payment(product_instance_uuid: uuid)
       expect(response[:paid]).to eq false
     end
@@ -69,26 +55,25 @@ RSpec.describe OpenStax::Payments::Api::RealClient, type: :external, vcr: VCR_OP
   context '#orders_for_account' do
     it 'returns empty array for invalid uuids' do
       fake_account = Hashie::Mash.new(uuid: @uuids.shift)
-      orders = real_client.orders_for_account(fake_account)
-      expect(orders).to be_empty
+      response = real_client.orders_for_account(fake_account)
+      expect(response[:orders]).to be_empty
     end
 
     it 'fetches orders for a user' do
-      # TODO modify `make_purchase` (and mock_purchase on ospayments) to accept
-      # a purchaser_account_uuid so that we can make fake purchases for a fake
-      # purchaser and then query them here.  The test below relies on specific
-      # test data existing in the payments server being tested.
-
-      account = Hashie::Mash.new(uuid: 'c577b301-7696-46ba-bf27-503c6957750c')
-      orders = real_client.orders_for_account(account)
-      expect(orders).not_to be_empty
-      expect(orders.first).to eq(:order_id=>78, :total=>"13.41", :sales_tax=>"1.08", :is_refunded=>false, :purchased_at=>"2017-07-13T22:58:30.929412+00:00", :updated_at=>"2017-07-13T22:58:30.929412+00:00", :product=>{:uuid=>"e6d22dbc-0a01-5131-84ba-2214bbe4d74d", :name=>"OpenStax Tutor", :price=>"12.33"})
+      uuid = @uuids.shift
+      make_purchase(purchaser_account_uuid: uuid)
+      account = Hashie::Mash.new(uuid: uuid)
+      response = real_client.orders_for_account(account)
+      expect(response[:orders]).not_to be_empty
     end
   end
 
-  def make_purchase(product_instance_uuid:)
-    response = real_client.make_fake_purchase(product_instance_uuid: product_instance_uuid)
-    expect(response[:success]).to eq true
+  def make_purchase(product_instance_uuid: nil, purchaser_account_uuid: nil)
+    response = real_client.make_fake_purchase(
+      product_instance_uuid: product_instance_uuid,
+      purchaser_account_uuid: purchaser_account_uuid
+    )
+    expect(response[:success]).to eq(true), "make_purchase failed: #{response}"
   end
 
 end

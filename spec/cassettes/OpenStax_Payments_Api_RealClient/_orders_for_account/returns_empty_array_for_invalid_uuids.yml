@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 17 Jul 2017 04:19:22 GMT
+      - Tue, 18 Jul 2017 02:17:58 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -36,10 +36,10 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "VhECViicANVGw5asWEKQ0qBz6AxZP9", "expires_in": 36000,
+      string: '{"access_token": "GKxwrff1w30apoUY9n9GtSrdwyWm5I", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version:
-  recorded_at: Mon, 17 Jul 2017 04:19:22 GMT
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 - request:
     method: get
     uri: "<openstax_payments_url>/reporting/purchaser/<UUID_payments_real_client_5>.json"
@@ -52,7 +52,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer VhECViicANVGw5asWEKQ0qBz6AxZP9
+      - Bearer GKxwrff1w30apoUY9n9GtSrdwyWm5I
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -63,7 +63,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 17 Jul 2017 04:19:22 GMT
+      - Tue, 18 Jul 2017 02:17:58 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -75,6 +75,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"orders": []}'
-    http_version:
-  recorded_at: Mon, 17 Jul 2017 04:19:22 GMT
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 recorded_with: VCR 2.9.3

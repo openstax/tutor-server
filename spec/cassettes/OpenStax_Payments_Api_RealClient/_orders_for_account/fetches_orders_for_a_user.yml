@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 21:03:00 GMT
+      - Tue, 18 Jul 2017 02:17:58 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -36,23 +36,23 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "NCLx5Nwd5KUlSmqHSbeoZqTyVVF7Fb", "expires_in": 36000,
+      string: '{"access_token": "fH2hhcHZ1k6bzUJGamb2cTSLLVkCv2", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version:
-  recorded_at: Sun, 16 Jul 2017 21:03:00 GMT
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 - request:
-    method: get
-    uri: "<openstax_payments_url>/reporting/purchaser/c577b301-7696-46ba-bf27-503c6957750c.json"
+    method: post
+    uri: "<openstax_payments_url>/pay/mock_purchase/"
     body:
       encoding: UTF-8
-      string: "{}"
+      string: '{"purchaser_account_uuid":"<UUID_payments_real_client_6>"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
       Content-Type:
       - application/json
       Authorization:
-      - Bearer NCLx5Nwd5KUlSmqHSbeoZqTyVVF7Fb
+      - Bearer fH2hhcHZ1k6bzUJGamb2cTSLLVkCv2
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -63,7 +63,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 21:03:01 GMT
+      - Tue, 18 Jul 2017 02:17:59 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -71,22 +71,51 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       Content-Length:
-      - '1156'
+      - '94'
     body:
       encoding: UTF-8
-      string: '{"orders": [{"order_id": 78, "total": "13.41", "sales_tax": "1.08",
-        "is_refunded": false, "purchased_at": "2017-07-13T22:58:30.929412+00:00",
-        "updated_at": "2017-07-13T22:58:30.929412+00:00", "product": {"uuid": "e6d22dbc-0a01-5131-84ba-2214bbe4d74d",
-        "name": "OpenStax Tutor", "price": "12.33"}}, {"order_id": 79, "total": "13.41",
-        "sales_tax": "1.08", "is_refunded": false, "purchased_at": "2017-07-13T23:09:11.996562+00:00",
-        "updated_at": "2017-07-13T23:09:11.996562+00:00", "product": {"uuid": "e6d22dbc-0a01-5131-84ba-2214bbe4d74d",
-        "name": "OpenStax Tutor", "price": "12.33"}}, {"order_id": 80, "total": "13.41",
-        "sales_tax": "1.08", "is_refunded": false, "purchased_at": "2017-07-13T23:49:35.224793+00:00",
-        "updated_at": "2017-07-13T23:49:35.224793+00:00", "product": {"uuid": "e6d22dbc-0a01-5131-84ba-2214bbe4d74d",
-        "name": "OpenStax Tutor", "price": "12.33"}}, {"order_id": 81, "total": "13.41",
-        "sales_tax": "1.08", "is_refunded": false, "purchased_at": "2017-07-14T21:15:32.836337+00:00",
-        "updated_at": "2017-07-14T21:15:32.836337+00:00", "product": {"uuid": "e6d22dbc-0a01-5131-84ba-2214bbe4d74d",
-        "name": "OpenStax Tutor", "price": "12.33"}}]}'
-    http_version:
-  recorded_at: Sun, 16 Jul 2017 21:03:01 GMT
+      string: '{"success": true, "created": "2017-07-18T02:17:58.404937+00:00", "identifier":
+        "q2xhcgiyr2j5"}'
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:17:59 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/reporting/purchaser/<UUID_payments_real_client_6>.json"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer fH2hhcHZ1k6bzUJGamb2cTSLLVkCv2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 18 Jul 2017 02:18:00 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '337'
+    body:
+      encoding: UTF-8
+      string: '{"orders": [{"order_id": 94, "identifier": "q2xhcgiyr2j5", "total":
+        "1650.66", "sales_tax": "126.01", "is_refunded": false, "purchased_at": "2017-07-18T02:17:59.486851+00:00",
+        "updated_at": "2017-07-18T02:17:59.486851+00:00", "product": {"uuid": "39ad6922-46ec-4b4f-af29-3bbdb2570996",
+        "name": "unit test product", "price": "1524.65"}}]}'
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:18:00 GMT
 recorded_with: VCR 2.9.3

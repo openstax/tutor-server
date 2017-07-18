@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 21:03:06 GMT
+      - Tue, 18 Jul 2017 02:17:54 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -36,23 +36,23 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "D11HmMpbz26agEl3JRz4n91ZILH9yz", "expires_in": 36000,
+      string: '{"access_token": "aHOfNxSX79SD4DNBNz2JlxM0l7W0PN", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 21:03:06 GMT
+  recorded_at: Tue, 18 Jul 2017 02:17:54 GMT
 - request:
     method: post
-    uri: "<openstax_payments_url>/pay/mock_purchase/<UUID_payments_real_client_4>/"
+    uri: "<openstax_payments_url>/pay/mock_purchase/"
     body:
       encoding: UTF-8
-      string: "{}"
+      string: '{"product_instance_uuid":"<UUID_payments_real_client_4>"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
       Content-Type:
       - application/json
       Authorization:
-      - Bearer D11HmMpbz26agEl3JRz4n91ZILH9yz
+      - Bearer aHOfNxSX79SD4DNBNz2JlxM0l7W0PN
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -63,7 +63,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 21:03:08 GMT
+      - Tue, 18 Jul 2017 02:17:56 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -71,12 +71,13 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       Content-Length:
-      - '49'
+      - '94'
     body:
       encoding: UTF-8
-      string: '{"success": true, "transaction_uuid": "8115aecx"}'
+      string: '{"success": true, "created": "2017-07-18T02:17:54.925836+00:00", "identifier":
+        "jhx3e8i8xat7"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 21:03:08 GMT
+  recorded_at: Tue, 18 Jul 2017 02:17:56 GMT
 - request:
     method: post
     uri: "<openstax_payments_url>/pay/refund/<UUID_payments_real_client_4>/"
@@ -89,7 +90,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer D11HmMpbz26agEl3JRz4n91ZILH9yz
+      - Bearer aHOfNxSX79SD4DNBNz2JlxM0l7W0PN
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -100,7 +101,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 21:03:10 GMT
+      - Tue, 18 Jul 2017 02:17:57 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -111,9 +112,9 @@ http_interactions:
       - '49'
     body:
       encoding: UTF-8
-      string: '{"success": true, "transaction_uuid": "8115aecx"}'
+      string: '{"success": true, "transaction_uuid": "8z4kj6yt"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 21:03:10 GMT
+  recorded_at: Tue, 18 Jul 2017 02:17:57 GMT
 - request:
     method: get
     uri: "<openstax_payments_url>/pay/check/<UUID_payments_real_client_4>/"
@@ -126,7 +127,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer D11HmMpbz26agEl3JRz4n91ZILH9yz
+      - Bearer aHOfNxSX79SD4DNBNz2JlxM0l7W0PN
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -137,7 +138,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 16 Jul 2017 21:03:10 GMT
+      - Tue, 18 Jul 2017 02:17:58 GMT
       Server:
       - WSGIServer/0.2 CPython/3.6.1
       Content-Type:
@@ -148,7 +149,7 @@ http_interactions:
       - '59'
     body:
       encoding: UTF-8
-      string: '{"paid": false, "purchased_at": "2017-07-16T21:03:07.498Z"}'
+      string: '{"paid": false, "purchased_at": "2017-07-18T02:17:55.876Z"}'
     http_version: 
-  recorded_at: Sun, 16 Jul 2017 21:03:10 GMT
+  recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 recorded_with: VCR 2.9.3

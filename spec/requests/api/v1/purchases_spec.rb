@@ -20,6 +20,7 @@ RSpec.describe "Purchase endpoints", type: :request, api: true, version: :v1, vc
   before(:all) do
     @original_client = OpenStax::Payments::Api.client
     OpenStax::Payments::Api.use_real_client
+    OpenStax::Payments::Api.save_static_client!
     @uuids = vcr_friendly_uuids(count: 10, namespace: "purchase_endpoints")
   end
 
