@@ -1319,9 +1319,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'clones the course for the user' do
         api_post :clone, user_1_token, parameters: valid_params, raw_post_data: valid_body
-
         expect(response).to have_http_status(:success)
-        expect(response.body_as_hash).to match expected_response
+        new_course = response.body_as_hash
+        # the new course will have a different uuid
+        expect(new_course[:uuid]).not_to eq(expected_response[:uuid])
+        # but will otherwise be the same
+        expect(new_course).to match expected_response.merge(uuid: new_course[:uuid])
       end
     end
   end

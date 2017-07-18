@@ -10,6 +10,12 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :uuid,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
     property :name,
              type: String,
              readable: true,

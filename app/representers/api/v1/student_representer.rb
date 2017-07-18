@@ -12,6 +12,12 @@ module Api::V1
                required: true
              }
 
+    property :uuid,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
     property :course_membership_period_id,
              as: :period_id,
              type: String,
