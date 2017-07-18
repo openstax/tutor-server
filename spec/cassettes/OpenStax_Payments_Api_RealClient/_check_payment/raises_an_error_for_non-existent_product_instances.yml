@@ -1,0 +1,205 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 18 Jul 2017 02:17:48 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store
+      Pragma:
+      - no-cache
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '118'
+    body:
+      encoding: UTF-8
+      string: '{"access_token": "w5IeBqlmVhOE8Cnk3g915uBZYGyzKd", "expires_in": 36000,
+        "token_type": "Bearer", "scope": "read write"}'
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:17:48 GMT
+- request:
+    method: get
+    uri: "<openstax_payments_url>/pay/check/<UUID_payments_real_client_0>/"
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer w5IeBqlmVhOE8Cnk3g915uBZYGyzKd
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Tue, 18 Jul 2017 02:17:48 GMT
+      Server:
+      - WSGIServer/0.2 CPython/3.6.1
+      Content-Type:
+      - text/html
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '11273'
+      Vary:
+      - Cookie
+    body:
+      encoding: UTF-8
+      string: "\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\"
+        content=\"text/html; charset=utf-8\">\n  <title>Page not found at /pay/check/<UUID_payments_real_client_0>/</title>\n
+        \ <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style type=\"text/css\">\n
+        \   html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body
+        * * { padding:0; }\n    body { font:small sans-serif; background:#eee; }\n
+        \   body>div { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal;
+        margin-bottom:.4em; }\n    h1 span { font-size:60%; color:#666; font-weight:normal;
+        }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td,
+        th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right;
+        color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info
+        ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary
+        { background: #ffc; }\n    #explanation { background:#eee; border-bottom:
+        0px none; }\n  </style>\n</head>\n<body>\n  <div id=\"summary\">\n    <h1>Page
+        not found <span>(404)</span></h1>\n    <table class=\"meta\">\n      <tr>\n
+        \       <th>Request Method:</th>\n        <td>GET</td>\n      </tr>\n      <tr>\n
+        \       <th>Request URL:</th>\n        <td><openstax_payments_url>/pay/check/<UUID_payments_real_client_0>/</td>\n
+        \     </tr>\n      \n      <tr>\n        <th>Raised by:</th>\n        <td>pay.views.transaction_status</td>\n
+        \     </tr>\n      \n    </table>\n  </div>\n  <div id=\"info\">\n    \n      <p></p>\n
+        \   \n  </div>\n\n  <div id=\"explanation\">\n    <p>\n      You're seeing
+        this error because you have <code>DEBUG = True</code> in\n      your Django
+        settings file. Change that to <code>False</code>, and Django\n      will display
+        a standard 404 page.\n    </p>\n  </div>\n\n<link rel=\"stylesheet\" href=\"/static/debug_toolbar/css/print.css\"
+        type=\"text/css\" media=\"print\" />\n<link rel=\"stylesheet\" href=\"/static/debug_toolbar/css/toolbar.css\"
+        type=\"text/css\" />\n\n<!-- Prevent our copy of jQuery from registering as
+        an AMD module on sites that use RequireJS. -->\n<script src=\"/static/debug_toolbar/js/jquery_pre.js\"></script>\n<script
+        src=\"//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js\"></script>\n<script
+        src=\"/static/debug_toolbar/js/jquery_post.js\"></script>\n\n<script src=\"/static/debug_toolbar/js/toolbar.js\"></script>\n<div
+        id=\"djDebug\" class=\"djdt-hidden\" dir=\"ltr\"\n     data-store-id=\"15c41cdf748e4a768d42a64e880226a9\"
+        data-render-panel-url=\"/__debug__/render_panel/\"\n     >\n\t<div class=\"djdt-hidden\"
+        id=\"djDebugToolbar\">\n\t\t<ul id=\"djDebugPanelList\">\n\t\t\t\n\t\t\t<li><a
+        id=\"djHideToolBarButton\" href=\"#\" title=\"Hide toolbar\">Hide &#187;</a></li>\n\t\t\t\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtVersionsPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Versions\" class=\"VersionsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tVersions\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>Django 1.11</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtTimerPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Time\" class=\"TimerPanel\">\n\t\t\t\t\t\n\t\t\t\t\tTime\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>CPU: 48.08ms (59.33ms)</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSettingsPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Settings from &lt;code&gt;settings&lt;/code&gt;\" class=\"SettingsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSettings\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtHeadersPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Headers\" class=\"HeadersPanel\">\n\t\t\t\t\t\n\t\t\t\t\tHeaders\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtRequestPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Request\" class=\"RequestPanel\">\n\t\t\t\t\t\n\t\t\t\t\tRequest\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>transaction_status</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSQLPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"SQL queries from 1 connection\" class=\"SQLPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSQL\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>2 queries in 4.32ms</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtStaticFilesPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Static files (157 found, 0 used)\" class=\"StaticFilesPanel\">\n\t\t\t\t\t\n\t\t\t\t\tStatic
+        files\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br /><small>0 files used</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtTemplatesPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Templates (1 rendered)\" class=\"TemplatesPanel\">\n\t\t\t\t\t\n\t\t\t\t\tTemplates\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtCachePanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Cache calls from 1 backend\" class=\"CachePanel\">\n\t\t\t\t\t\n\t\t\t\t\tCache\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>0 calls in 0.00ms</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtSignalsPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Signals\" class=\"SignalsPanel\">\n\t\t\t\t\t\n\t\t\t\t\tSignals\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>6 receivers of 12 signals</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtLoggingPanel\"
+        checked=\"checked\" title=\"Disable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<a
+        href=\"#\" title=\"Log messages\" class=\"LoggingPanel\">\n\t\t\t\t\t\n\t\t\t\t\tLogging\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t<br
+        /><small>0 messages</small>\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t\t\t<li
+        class=\"djDebugPanelButton\">\n\t\t\t\t\t<input type=\"checkbox\" data-cookie=\"djdtRedirectsPanel\"
+        title=\"Enable for next and successive requests\" />\n\t\t\t\t\t\n\t\t\t\t\t\t<div
+        class=\"djdt-contentless djdt-disabled\">\n\t\t\t\t\t\n\t\t\t\t\tIntercept
+        redirects\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t</li>\n\t\t\t\n\t\t</ul>\n\t</div>\n\t<div
+        class=\"djdt-hidden\" id=\"djDebugToolbarHandle\">\n\t\t<span title=\"Show
+        toolbar\" id=\"djShowToolBarButton\">&#171;</span>\n\t</div>\n\t\n\t\t\n\t\t\t<div
+        id=\"VersionsPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Versions</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"TimerPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Time</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"SettingsPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Settings from <code>settings</code></h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"HeadersPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Headers</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"RequestPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Request</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"SQLPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>SQL queries from 1 connection</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"StaticFilesPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Static files (157 found,
+        0 used)</h3>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img
+        src=\"/static/debug_toolbar/img/ajax-loader.gif\" alt=\"loading\" class=\"djdt-loader\"
+        />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"TemplatesPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Templates (1 rendered)</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"CachePanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Cache calls from 1 backend</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"SignalsPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Signals</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\t\t<div
+        id=\"LoggingPanel\" class=\"djdt-panelContent\">\n\t\t\t\t<div class=\"djDebugPanelTitle\">\n\t\t\t\t\t<a
+        href=\"\" class=\"djDebugClose\"></a>\n\t\t\t\t\t<h3>Log messages</h3>\n\t\t\t\t</div>\n\t\t\t\t<div
+        class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
+        alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\n\t<div
+        id=\"djDebugWindow\" class=\"djdt-panelContent\"></div>\n</div>\n</body>\n</html>\n"
+    http_version: 
+  recorded_at: Tue, 18 Jul 2017 02:17:48 GMT
+recorded_with: VCR 2.9.3

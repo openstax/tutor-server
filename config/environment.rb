@@ -1,6 +1,7 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
+require 'i_am'
 require 'date_time_utilities'
 require 'active_job/after_commit_runner'
 require 'acts_as_resource'
@@ -30,7 +31,7 @@ require 'json_serialize'
 require 'configurable'
 require 'term_year'
 
-%w(biglearn cnx exercises).each do |oxlib|
+%w(biglearn cnx exercises payments).each do |oxlib|
   Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
 end
 

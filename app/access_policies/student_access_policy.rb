@@ -5,6 +5,8 @@ class StudentAccessPolicy
     case action
     when :create, :update, :destroy
       UserIsCourseTeacher[user: requestor, course: student.course]
+    when :refund
+      student.role.role_user.user_profile_id == requestor.id
     else
       false
     end

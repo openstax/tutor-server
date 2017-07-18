@@ -19,4 +19,32 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
   [:username, :first_name, :last_name, :full_name].each do |method|
     it { is_expected.to delegate_method(method).to(:role) }
   end
+
+  context '#is_refund_allowed' do
+    it 'does not allow refunds if have not paid' do
+      expect(student.is_refund_allowed).to eq false
+    end
+
+    it 'does not allow refunds if once paid but no longer' do
+      student.update_attributes!(is_paid: true)
+      student.update_attributes!(is_paid: false)
+      expect(student.is_refund_allowed).to eq false
+    end
+
+    context 'have paid' do
+      before(:each) { student.update_attributes!(is_paid: true) }
+
+      it 'allows refunds after paying before 14 days elapse' do
+        Timecop.freeze(Time.now + 13.8.days) do
+          expect(student.is_refund_allowed).to eq true
+        end
+      end
+
+      it 'does not allows refunds after paying after 14 days elapse' do
+        Timecop.freeze(Time.now + 14.01.days) do
+          expect(student.is_refund_allowed).to eq false
+        end
+      end
+    end
+  end
 end

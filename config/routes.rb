@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     get :status
     get :'auth/failure', action: :omniauth_failure
     get :signup
+    get :stubbed_payments
   end
 
   get :non_student_signup,
@@ -96,9 +97,16 @@ Rails.application.routes.draw do
       post 'event/onboarding/:code', action: :onboarding_event
     end
 
-    resources :purchases, only: [] do
+    resources :purchases, only: [:index] do
       member do
         put :check
+        put :refund
+      end
+
+      if !IAm.real_production?
+        collection do
+          post 'fake', action: 'create_fake'
+        end
       end
     end
 

@@ -56,7 +56,7 @@ module Api::V1
              getter: ->(*) { !deleted? },
              schema_info: {
                 required: true,
-                description: "Student is dropped iff false"
+                description: "Student is dropped if false"
              }
 
     property :prompt_student_to_pay,
@@ -74,7 +74,7 @@ module Api::V1
              schema_info: {
                required: true,
                type: 'boolean',
-               description: "True iff payments enabled globally, course costs and not preview, and not paid or comped"
+               description: "True if payments enabled globally, course costs and not preview, and not paid or comped"
              }
 
     property :is_paid,
@@ -83,7 +83,7 @@ module Api::V1
              schema_info: {
                 required: true,
                 type: 'boolean',
-                description: "True iff student has paid"
+                description: "True if student has paid"
              }
 
     property :is_comped,
@@ -92,7 +92,7 @@ module Api::V1
              schema_info: {
                 required: true,
                 type: 'boolean',
-                description: "True iff student has been comped"
+                description: "True if student has been comped"
              }
 
     property :first_paid_at,
@@ -112,5 +112,20 @@ module Api::V1
                description: "Payment is due before this date (if the course costs)"
              }
 
+    property :is_refund_pending,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                type: 'boolean',
+                description: "True if the student has a refund in progress"
+             }
+
+    property :is_refund_allowed,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                type: 'boolean',
+                description: "True if the student can currently request a refund"
+             }
   end
 end
