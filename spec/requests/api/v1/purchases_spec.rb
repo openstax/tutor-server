@@ -26,6 +26,7 @@ RSpec.describe "Purchase endpoints", type: :request, api: true, version: :v1, vc
 
   after(:all) do
     OpenStax::Payments::Api.client = @original_client
+    OpenStax::Payments::Api.save_static_client!
   end
 
   # Make sure each test run gets fresh, VCR-friendly UUIDs

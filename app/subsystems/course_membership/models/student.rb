@@ -1,5 +1,7 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
+  REFUND_PERIOD = 14.days # TODO make this configurable
+
   acts_as_paranoid
 
   auto_uuid
@@ -20,7 +22,7 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   delegate :period, :course_membership_period_id, to: :latest_enrollment, allow_nil: true
 
   def is_refund_allowed
-    is_paid ? first_paid_at + 14.days > Time.now : false # TODO make this configurable
+    is_paid ? first_paid_at + REFUND_PERIOD > Time.now : false
   end
 
   protected
