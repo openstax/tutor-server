@@ -19,6 +19,11 @@ class Admin::StudentsController < Admin::BaseController
         format.json { respond_with_bip(student) }
       end
     end
+  end
 
+  def refund
+    student = CourseMembership::Models::Student.find(params[:id])
+    RefundPayment[uuid: student.uuid]
+    redirect_to edit_admin_course_path(student.course, anchor: "roster")
   end
 end

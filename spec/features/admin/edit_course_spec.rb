@@ -204,4 +204,34 @@ RSpec.feature 'Admin editing a course' do
 
     expect(first('#students tbody tr').text).to match(/3, \d\d\d\d 11:59/)
   end
+
+  scenario 'refunding student payment', js: true do
+    user = FactoryGirl.create(:user, last_name: "AAAA")
+    student = AddUserAsPeriodStudent[user: user, period: @course.periods.first].student
+
+    OpenStax::Payments::Api.client.fake_pay(product_instance_uuid: student.uuid)
+    # Payments will cause us to update payment status, so simulate that here
+    UpdatePaymentStatus[uuid: student.uuid]
+
+    visit admin_courses_path
+    click_link 'Edit'
+    click_link 'Roster'
+
+    expect(page).to have_content(/.*Yes \(Refund\).*/)
+
+    click_link('Refund')
+
+    expect(page).to have_content(/.*Yes \(Refund pending\).*/)
+
+    # Payments will cause us to update payment status, so simulate that here
+    UpdatePaymentStatus[uuid: student.uuid]
+
+    student.reload
+    expect(student.is_paid).to eq false
+    expect(student.is_refund_pending).to eq false
+
+    page.evaluate_script("window.location.reload()")
+
+    expect(page).not_to have_content(/.*Refund.*/)
+  end
 end

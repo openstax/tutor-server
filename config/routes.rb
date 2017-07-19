@@ -264,7 +264,11 @@ Rails.application.routes.draw do
       resources :teachers, only: [:destroy], shallow: true
     end
 
-    resources :students, only: :update
+    resources :students, only: :update do
+      member do
+        put :refund
+      end
+    end
 
     resources :schools, except: [:show]
 
