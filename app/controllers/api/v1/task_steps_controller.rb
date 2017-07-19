@@ -1,8 +1,8 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
 
-  before_filter :get_task_step_and_tasked
-  before_filter :error_if_student_and_needs_to_pay
-  before_filter :populate_placeholders_if_needed, only: :show
+  around_action :with_task_step_and_tasked
+  before_action :error_if_student_and_needs_to_pay
+  before_action :populate_placeholders_if_needed, only: :show
 
   resource_description do
     api_versions "v1"
@@ -73,13 +73,15 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   protected
 
-  def get_task_step_and_tasked
+  def with_task_step_and_tasked
     Tasks::Models::TaskStep.transaction do
       @task_step = Tasks::Models::TaskStep.with_deleted.lock.find_by(id: params[:id])
 
       return render_api_errors(:no_exercises, :not_found) if @task_step.nil?
 
       @tasked = @task_step.tasked
+
+      yield
     end
   end
 
