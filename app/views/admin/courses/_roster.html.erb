@@ -21,7 +21,23 @@
     <tr>
       <td><%= student.name %></td>
       <% if @course.does_cost %>
-        <td><%= student.is_paid ? 'Yes' : 'No' %></td>
+        <td>
+          <% if student.is_paid %>
+            <% if student.is_refund_pending %>
+              Yes (Refund pending)
+            <% else %>
+              Yes
+              (<%= link_to "Refund",
+                          refund_admin_student_path(student),
+                          method: :put,
+                          data: {
+                            confirm: "Are you sure you want to refund for #{student.name}?"
+                          } %>)
+            <% end %>
+          <% else %>
+            No
+          <% end %>
+        </td>
         <td>
           <a href="#">
             <%= best_in_place student,
