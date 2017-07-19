@@ -299,7 +299,7 @@ ActiveRecord::Schema.define(version: 20170719182041) do
     t.boolean  "is_comped",                default: false,               null: false
     t.datetime "payment_due_at",                                         null: false
     t.boolean  "is_refund_pending",        default: false,               null: false
-    t.jsonb    "refund_survey_response",   default: []
+    t.jsonb    "refund_survey_response",   default: {}
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree

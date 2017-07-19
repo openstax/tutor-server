@@ -1,7 +1,7 @@
 class RefundPayment
   lev_routine
 
-  def exec(uuid:, survey:)
+  def exec(uuid:, survey: {})
     status.set_job_args(purchased_item_uuid: uuid)
 
     purchased_item = PurchasedItem.find(uuid: uuid)
