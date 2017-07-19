@@ -65,6 +65,13 @@ module Api::V1
                writeable: false,
                readable: true,
                extend: TaskStepRepresenter,
+               getter: ->(*) do
+                 task_steps.tap do |task_steps|
+                   ActiveRecord::Associations::Preloader.new.preload(
+                     task_steps, [:tasked, page: :chapter]
+                   )
+                 end
+               end,
                schema_info: {
                  required: true,
                  description: "The steps which this Task is composed of"
