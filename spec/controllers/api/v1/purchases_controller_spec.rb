@@ -65,8 +65,9 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
 
     it "gives 202 accepted if all good" do
       student.update_attributes!(is_paid: true)
-      expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid)
-      api_put :refund, student_token, parameters: { id: student.uuid }
+      survey = { 'why' => "too-expensive", "comments"=>"gimme my money back"}
+      expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid, survey: survey)
+      api_put :refund, student_token, parameters: { id: student.uuid, survey: survey }
       expect(response).to have_http_status(:accepted)
     end
   end
