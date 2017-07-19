@@ -1,7 +1,7 @@
 class RefundPayment
   lev_routine
 
-  def exec(uuid:)
+  def exec(uuid:, survey:)
     status.set_job_args(purchased_item_uuid: uuid)
 
     purchased_item = PurchasedItem.find(uuid: uuid)
@@ -14,7 +14,7 @@ class RefundPayment
 
     case purchased_item
     when CourseMembership::Models::Student
-      purchased_item.update_attributes(is_refund_pending: true)
+      purchased_item.update_attributes(is_refund_pending: true, refund_survey_response: survey)
     end
   end
 
