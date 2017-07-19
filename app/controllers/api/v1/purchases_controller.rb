@@ -49,7 +49,7 @@ class Api::V1::PurchasesController < Api::V1::ApiController
       return render_api_errors(:refund_period_elapsed) if !purchased_item.is_refund_allowed
     end
 
-    RefundPayment.perform_later(uuid: params[:id])
+    RefundPayment.perform_later(uuid: params[:id], survey: params[:survey])
     head :accepted
   end
 
