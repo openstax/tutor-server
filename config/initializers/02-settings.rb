@@ -17,9 +17,6 @@ Settings::Db.store.defaults[:payments_enabled] = false
 Settings::Db.store.defaults[:ga_tracking_codes] = \
     (secrets.environment_name == "prodtutor") ? 'UA-66552106-1' : ''
 
-biglearn_secrets = secrets['openstax']['biglearn']
-biglearn_stub = biglearn_secrets['stub'].nil? ? true : biglearn_secrets['stub']
-Settings::Db.store.defaults[:biglearn_client_name] = biglearn_stub ? 'fake' : 'real'
 Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = 'local_query'
 Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = 'local_query'
 Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = 'student_driven_local_query'

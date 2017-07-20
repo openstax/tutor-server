@@ -5,17 +5,6 @@ module Settings
     # In that case, the setting has never been set, so the correct value is the default value.
     class << self
 
-      def client_name
-        return Settings::Db.store.defaults[:biglearn_client_name] \
-          unless ActiveRecord::Base.connection.table_exists? 'settings'
-
-        Settings::Db.store.biglearn_client_name
-      end
-
-      def client_name=(new_biglearn_client_name)
-        Settings::Db.store.biglearn_client_name = new_biglearn_client_name
-      end
-
       def student_clues_algorithm_name
         return Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] \
           unless ActiveRecord::Base.connection.table_exists? 'settings'

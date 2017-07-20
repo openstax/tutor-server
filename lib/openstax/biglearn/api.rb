@@ -417,71 +417,17 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    #
-    # Configuration
-    #
-
-    def default_client_name
-      # The default Biglearn client is set via an admin console setting. The
-      # default value for this setting is environment-specific in config/initializers/
-      # 02-settings.rb. Developers will need to use the admin console to change
-      # the setting if they want during development.
-
-      # We only read this setting once per request to prevent it from changing mid-request
-      RequestStore.store[:biglearn_api_default_client_name] ||=
-        Settings::Biglearn.client_name.to_sym
-    end
-
-    alias :threadsafe_client :client
-
-    def client
-      # We normally keep a cached version of the client in use.  If a caller
-      # (normally a spec) has said to use a specific client, we don't want to
-      # change the client. However if this is not the case and the client's
-      # name no longer matches the admin DB setting, change it out.
-
-      synchronize do
-        if threadsafe_client.nil? || threadsafe_client.name != default_client_name
-          self.client = new_client
-
-          save_static_client!
-        end
-      end
-
-      threadsafe_client
-    end
-
     protected
 
     def new_configuration
       OpenStax::Biglearn::Api::Configuration.new
     end
 
-    def client_class(name: default_client_name)
-      name_sym = name.to_sym
+    def new_client
+      client_class = configuration.stub ? FakeClient : RealClient
 
-      case name_sym
-      when :real
-        RealClient
-      when :fake
-        FakeClient
-      else
-        valid_client_name = name_sym.to_s.include?('real') ? :real : :fake
-
-        Rails.logger.error do
-          "Invalid Biglearn client name: #{name_sym}. Setting it to #{valid_client_name}."
-        end
-
-        Settings::Biglearn.client_name = valid_client_name
-        RequestStore.store[:biglearn_api_default_client_name] = valid_client_name
-
-        client_class(name: valid_client_name)
-      end
-    end
-
-    def new_client(name: default_client_name)
       begin
-        client_class(name: name).new(configuration)
+        client_class.new(configuration)
       rescue StandardError => e
         raise "Biglearn client initialization error: #{e.message}"
       end
