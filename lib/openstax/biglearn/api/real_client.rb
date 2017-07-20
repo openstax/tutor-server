@@ -454,7 +454,7 @@ class OpenStax::Biglearn::Api::RealClient
         student_uuid: task.taskings.first.role.student.uuid,
         exercise_uuid: tasked_exercise.exercise.uuid,
         is_correct: tasked_exercise.is_correct?,
-        is_real_response: !course.is_preview,
+        is_real_response: !course.is_preview && !course.is_test,
         responded_at: tasked_exercise.updated_at.utc.iso8601(6)
       }
     end
