@@ -230,7 +230,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         end.exactly(3).times
         expect(Rails.logger).to receive(:warn).twice
 
-        core_page_ids = @task.task_steps.pluck(:content_page_id)
+        core_page_ids = GetTaskCorePageIds[tasks: @task][@task.id]
 
         result = nil
         expect do
