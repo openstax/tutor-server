@@ -308,6 +308,12 @@ Rails.application.routes.draw do
       post :freeze_time
       post :time_travel
     end
+
+    resources :payments, only: [:index] do
+      collection do
+        put :extend_payment_due_at
+      end
+    end
   end
 
   # match '/auth/salesforce/callback', to: 'admin/salesforce#callback', via: [:get, :post]

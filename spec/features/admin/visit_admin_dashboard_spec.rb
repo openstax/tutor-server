@@ -31,5 +31,14 @@ RSpec.feature 'Admnistration' do
       click_link 'Setup'
       expect(page).to have_content "Salesforce Setup"
     end
+
+    scenario 'Payments' do
+      admin = FactoryGirl.create(:user, :administrator)
+      stub_current_user(admin)
+      visit admin_root_path
+
+      click_link 'Payments'
+      expect(page).to have_content "Extend Payment"
+    end
   end
 end
