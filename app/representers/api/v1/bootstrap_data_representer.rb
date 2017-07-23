@@ -39,6 +39,11 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
+    property :is_payments_enabled,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { Settings::Payments.payments_enabled }
+
     property :payments_base_url,
              readable: true,
              writeable: false,
