@@ -1,0 +1,14 @@
+<% @page_header = "Payments" %>
+
+<h3>Extend Payment Due Dates</h3>
+
+<p>Use the button below to extend the payment due date for all students in courses that have not
+yet ended.  The payment due date will be as if they joined the class when the button is pressed
+(<%= Settings::Payments.student_grace_period_days %> days from now at 11:59:59pm in the course
+time zone).</p>
+
+<%= form_tag(extend_payment_due_at_admin_payments_path, method: :put, style: 'margin: 30px 0') do %>
+  <%= submit_tag 'Extend Payment Due Dates',
+                 class: 'btn btn-primary',
+                 data: { confirm: "Are you sure you want to extend a whole bunch of due dates?"} %>
+<% end %>

@@ -18,11 +18,19 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   validates :course, presence: true
   validates :role, presence: true, uniqueness: true
 
+  before_save :init_payment_due_at
+
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment, allow_nil: true
 
   def is_refund_allowed
     is_paid ? first_paid_at + REFUND_PERIOD > Time.now : false
+  end
+
+  def new_payment_due_at
+    # Give the student til midnight after configurable days from now
+    course.time_zone.to_tz.now.midnight + 1.day - 1.second +
+      Settings::Payments.student_grace_period_days.days
   end
 
   protected
@@ -31,6 +39,10 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
     # Better for this value to be set using actual payment time from Payments,
     # but this is better than nothing
     self.first_paid_at ||= Time.now if is_paid
+  end
+
+  def init_payment_due_at
+    self.payment_due_at ||= new_payment_due_at
   end
 
 end
