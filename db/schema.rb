@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170719182041) do
+ActiveRecord::Schema.define(version: 20170724162437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -329,7 +329,7 @@ ActiveRecord::Schema.define(version: 20170719182041) do
     t.string   "default_open_time"
     t.string   "default_due_time"
     t.integer  "time_zone_id",                                                               null: false
-    t.boolean  "is_college",                                   default: false,               null: false
+    t.boolean  "is_college"
     t.datetime "starts_at",                                                                  null: false
     t.datetime "ends_at",                                                                    null: false
     t.integer  "term",                                                                       null: false
@@ -700,8 +700,8 @@ ActiveRecord::Schema.define(version: 20170719182041) do
     t.datetime "deleted_at"
     t.text     "related_exercise_ids", default: "[]", null: false
     t.text     "labels",               default: "[]", null: false
-    t.integer  "content_page_id"
     t.text     "spy",                  default: "{}", null: false
+    t.integer  "content_page_id"
   end
 
   add_index "tasks_task_steps", ["deleted_at"], name: "index_tasks_task_steps_on_deleted_at", using: :btree
@@ -1010,7 +1010,7 @@ ActiveRecord::Schema.define(version: 20170719182041) do
      FROM (((((content_exercises
        JOIN tasks_tasked_exercises ON ((tasks_tasked_exercises.content_exercise_id = content_exercises.id)))
        JOIN tasks_task_steps ON (((tasks_task_steps.tasked_id = tasks_tasked_exercises.id) AND ((tasks_task_steps.tasked_type)::text = 'Tasks::Models::TaskedExercise'::text))))
-       JOIN tasks_tasks ON ((((tasks_tasks.id = tasks_task_steps.tasks_task_id) AND (tasks_tasks.deleted_at IS NULL)) AND (tasks_tasks.completed_exercise_steps_count > 0))))
+       JOIN tasks_tasks ON (((tasks_tasks.id = tasks_task_steps.tasks_task_id) AND (tasks_tasks.deleted_at IS NULL) AND (tasks_tasks.completed_exercise_steps_count > 0))))
        JOIN tasks_taskings ON (((tasks_taskings.tasks_task_id = tasks_tasks.id) AND (tasks_taskings.deleted_at IS NULL))))
        JOIN course_membership_periods ON (((course_membership_periods.id = tasks_taskings.course_membership_period_id) AND (course_membership_periods.deleted_at IS NULL))))
     GROUP BY course_membership_periods.course_profile_course_id, course_membership_periods.id, content_exercises.content_page_id, tasks_task_steps.group_type;

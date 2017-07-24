@@ -1,7 +1,7 @@
 class Api::V1::CoursesController < Api::V1::ApiController
 
   CREATE_REQUIRED_ATTRIBUTES = [
-    :name, :is_preview, :is_college, :num_sections, :catalog_offering_id
+    :name, :is_preview, :num_sections, :catalog_offering_id
   ]
 
   before_filter :get_course, only: [:show, :update, :dashboard, :cc_dashboard, :roster, :clone]

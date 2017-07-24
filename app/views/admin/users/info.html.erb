@@ -37,13 +37,14 @@
       <%= link_to course.name, edit_admin_course_path(course) %> //
       <%= course.term %> <%= course.year %> //
       <%= course.is_concept_coach ? "Concept Coach" : "Tutor" %> //
-      <%= course.is_college ? "College" : "High School" %> //
+      <%= course.is_college.nil? ? "" : (course.is_college ? "College" : "High School") %> //
 
       <% roles = GetUserCourseRoles[courses: course, user: user] %>
 
       <% roles.each do |role| %>
           [ <%= role.role_type %> |
-          <%= role.created_at.in_time_zone('Central Time (US & Canada)').strftime("%m/%d/%Y %H:%M:%S") %> Central |
+          <%= role.created_at.in_time_zone('Central Time (US & Canada)')
+                             .strftime("%m/%d/%Y %H:%M:%S") %> Central |
           <%= role.research_identifier %> ]
       <% end %>
     </li>

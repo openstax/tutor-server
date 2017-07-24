@@ -18,7 +18,7 @@ class CloneCourse
 
     attrs = {
       name: name || course.name,
-      is_college: is_college || course.is_college,
+      is_college: is_college.nil? ? course.is_college : is_college,
       is_concept_coach: course.is_concept_coach,
       term: term || course.term,
       year: year || course.year + 1,
