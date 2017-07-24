@@ -20,10 +20,12 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
       "errata_form_url" => 'https://oscms.openstax.org/errata/form',
       "tutor_api_url" => 'https://example.com/api',
-      "is_payments_enabled" => be_falsy,
-      "payments_base_url" => a_string_starting_with('http'),
-      "payments_embed_js_url" => a_string_starting_with('http'),
-      "payments_product_uuid" => '6d60ab29-3b3d-575a-93ef-57d62e30984c',
+      "payments" => a_hash_including(
+        "is_enabled" => be_falsy,
+        "js_url" => a_string_starting_with('http'),
+        "base_url" => a_string_starting_with('http'),
+        "product_uuid" => Rails.application.secrets['openstax']['payments']['product_uuid']
+      ),
       "ui_settings" => {},
       "flash" => { "alert" => 'Nothing!' }
     )
