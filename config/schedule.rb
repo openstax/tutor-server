@@ -22,6 +22,6 @@ every 3.hours do
   runner "Tasks::CcPageStatsView.refresh"
 end
 
-every 10.minutes do
+every 1.hour do
   runner "CourseProfile::BuildPreviewCourses.call"
 end

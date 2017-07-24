@@ -35,6 +35,12 @@ class PopulatePreviewCourseContent
     # Work tasks after the current transaction finishes
     # so Biglearn can receive the data from this course
     after_transaction do
+      # Wait until all the data has been sent to Biglearn
+      sleep(1) if Delayed::Job.where(attempts: 0).exists?
+
+      # Give Biglearn some time to process the data
+      sleep(60)
+
       ActiveRecord::Base.transaction do
         ActiveRecord::Base.delay_touching do
           course.periods.each do |period|
