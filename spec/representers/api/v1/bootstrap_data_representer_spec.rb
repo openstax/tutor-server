@@ -21,7 +21,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "errata_form_url" => 'https://oscms.openstax.org/errata/form',
       "tutor_api_url" => 'https://example.com/api',
       "payments" => a_hash_including(
-        "is_enabled" => be_falsy,
+        "is_enabled" => Settings::Payments.payments_enabled,
         "js_url" => a_string_starting_with('http'),
         "base_url" => a_string_starting_with('http'),
         "product_uuid" => Rails.application.secrets['openstax']['payments']['product_uuid']
