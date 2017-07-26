@@ -90,7 +90,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :notifications, only: [:index]
+    resources :updates, only: [:index]
 
     namespace :log do
       post :entry

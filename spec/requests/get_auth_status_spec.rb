@@ -24,13 +24,13 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
         errata_form_url: 'https://oscms.openstax.org/errata/form',
         tutor_api_url: a_string_starting_with('http'),
         payments: a_hash_including(
-          is_enabled: be_falsy,
+          is_enabled: Settings::Payments.payments_enabled,
           js_url: a_string_starting_with('http'),
           base_url: a_string_starting_with('http'),
           product_uuid: Rails.application.secrets['openstax']['payments']['product_uuid']
         ),
-        accounts_profile_url: a_string_starting_with('http'),
         accounts_api_url: a_string_starting_with('http'),
+        accounts_profile_url: a_string_starting_with('http'),
         ui_settings: {},
         endpoints: {
           is_stubbed: true,
