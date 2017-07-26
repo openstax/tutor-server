@@ -9,6 +9,7 @@ module Settings
 
       def payments_enabled=(value)
         Settings::Db.store.payments_enabled = value
+        Settings::Db.store.object('payments_enabled').expire_cache
       end
 
       def student_grace_period_days
@@ -17,6 +18,7 @@ module Settings
 
       def student_grace_period_days=(days)
         Settings::Db.store.student_grace_period_days = days
+        Settings::Db.store.object('student_grace_period_days').expire_cache
       end
 
     end
