@@ -293,7 +293,7 @@ class OpenStax::Biglearn::Api::RealClient
     group_exclusions = group_uuids.map { |group_uuid| { exercise_group_uuid: group_uuid } }
 
     uuids = uids.empty? ? [] : Content::Models::Exercise.where do
-      uids.map { |nn, vv| number.eq(nn).and version.eq(vv) }.join(:or)
+      uids.map { |nn, vv| number.eq(nn) & version.eq(vv) }.reduce(:|)
     end.distinct.pluck(:uuid)
     version_exclusions = uuids.map { |uuid| { exercise_uuid: uuid } }
 
