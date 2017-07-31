@@ -19,7 +19,7 @@ RSpec.describe Tasks::GetAssistant, type: :routine do
 
   it 'finds a default assistant even if it has not been explicitly added' do
     resulting_assistant = Tasks::GetAssistant[course: course, task_plan: hw_task_plan]
-    resulting_assistant.destroy! # pretend it wasn't there
+    Tasks::Models::Assistant.where(id: resulting_assistant.id).delete_all # pretend it wasn't there
     resulting_assistant = Tasks::GetAssistant[course: course, task_plan: hw_task_plan]
     expect(resulting_assistant.code_class_name).to eq 'Tasks::Assistants::HomeworkAssistant'
   end

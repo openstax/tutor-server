@@ -11,7 +11,7 @@ class IndividualizeTaskingPlans
       target = tasking_plan.target
 
       # For example, a deleted period
-      next [] if target.nil? || target.respond_to?(:deleted?) && target.deleted?
+      next [] if target.nil? || (target.respond_to?(:deleted?) && target.deleted?)
 
       roles = case target
       when Entity::Role

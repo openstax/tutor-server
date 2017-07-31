@@ -4,6 +4,6 @@ class Content::ListEcosystems
   protected
 
   def exec
-    outputs[:ecosystems] = ::Content::Ecosystem.all
+    outputs[:ecosystems] = ::Content::Ecosystem.without_deleted
   end
 end

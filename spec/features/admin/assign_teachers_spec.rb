@@ -43,12 +43,13 @@ RSpec.feature 'Administration', js: true do
     # Search for the user and add the user to the course
     autocomplete '#course_teacher', with: 'imatea'
     expect(page).to have_css('.flash_notice', text: 'Teachers updated.')
+    expect(page).to have_text('Ima Teacher No')
 
     # Remove the teacher
     click_link 'Remove from course'
     expect(page).to have_css('.flash_notice', text: 'Teacher "Ima Teacher" removed from course.')
 
     # Check that the teacher is now not in the list of teachers
-    expect(page).not_to have_text('imateacher')
+    expect(page).to have_text('Ima Teacher Yes')
   end
 end

@@ -76,7 +76,7 @@ class Demo::Content < Demo::Base
       log("    #{initials} #{student_info.username} (#{student_info.name})")
       run(:add_student, period: period, user: user, student_identifier: student_identifier) \
         unless run(:is_student, user: user, course: course,
-                                include_dropped: true).outputs.user_is_course_student
+                                include_dropped_students: true).outputs.user_is_course_student
 
     end
 

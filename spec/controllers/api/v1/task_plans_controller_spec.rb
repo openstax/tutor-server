@@ -603,7 +603,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     it 'allows a teacher to destroy a task_plan for their course' do
       controller.sign_in @teacher
       expect{ api_delete :destroy, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
-        .to change{ Tasks::Models::TaskPlan.count }.by(-1)
+        .to change{ @task_plan.reload.withdrawn? }.from(false).to(true)
       expect(response).to have_http_status(:success)
       expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
     end
@@ -635,7 +635,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     it 'allows a teacher to restore a destroyed task_plan for their course' do
       controller.sign_in @teacher
       expect{ api_put :restore, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
-        .to change{ Tasks::Models::TaskPlan.count }.by(1)
+        .to change{ @task_plan.reload.withdrawn? }.from(true).to(false)
       expect(response).to have_http_status(:success)
       expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan.reload).to_json
     end

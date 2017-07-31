@@ -1,4 +1,4 @@
-class Legal::Models::TargetedContract < Tutor::SubSystems::BaseModel
+class Legal::Models::TargetedContract < ApplicationRecord
 
   json_serialize :masked_contract_names, String, array: true
 

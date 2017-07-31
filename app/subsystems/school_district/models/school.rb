@@ -1,6 +1,6 @@
 module SchoolDistrict
   module Models
-    class School < Tutor::SubSystems::BaseModel
+    class School < ApplicationRecord
       has_many :courses, subsystem: :course_profile
 
       belongs_to :district

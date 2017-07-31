@@ -1,4 +1,4 @@
-class Content::Models::Tag < Tutor::SubSystems::BaseModel
+class Content::Models::Tag < IndestructibleRecord
 
   wrapped_by ::Content::Strategies::Direct::Tag
 

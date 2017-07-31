@@ -102,7 +102,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
   protected
 
   def get_student
-    @student = CourseMembership::Models::Student.with_deleted.find(params[:id])
+    @student = CourseMembership::Models::Student.find(params[:id])
   end
 
   def get_course_student

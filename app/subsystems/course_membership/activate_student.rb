@@ -4,7 +4,7 @@ module CourseMembership
 
     def exec(student:)
       fatal_error(code: :already_active,
-                  message: 'Student is already active') unless student.deleted?
+                  message: 'Student is already active') unless student.dropped?
       fatal_error(code: :student_identifier_has_already_been_taken,
                   message: 'Student identifier has already been taken') \
         if student.student_identifier.present? &&

@@ -43,7 +43,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     if source_course.nil?
       task_plans = Tasks::Models::TaskPlan.none
     else
-      tps = Tasks::Models::TaskPlan.preload_tasking_plans.where(owner: source_course)
+      tps = Tasks::Models::TaskPlan.where(owner: source_course)
+                                   .without_deleted
+                                   .preload_tasking_plans
 
       task_plans = case params[:clone_status]
       when 'unused_source'
@@ -380,8 +382,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def destroy
-    task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps
-                                       .with_deleted.find_by(id: params[:id])
+    task_plan = Tasks::Models::TaskPlan.preload_tasking_plans
+                                       .preload_tasks_and_steps
+                                       .find(params[:id])
     # Some Task models have touch: true, so delay_touching is useful here
     ActiveRecord::Base.delay_touching { standard_destroy(task_plan, Api::V1::TaskPlanRepresenter) }
   end
@@ -395,8 +398,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def restore
-    task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks_and_steps
-                                       .with_deleted.find_by(id: params[:id])
+    task_plan = Tasks::Models::TaskPlan.preload_tasking_plans
+                                       .preload_tasks_and_steps
+                                       .find(params[:id])
     # Paranoia restore triggers .touch several times and some Task models have touch: true,
     # so delay_touching is useful here
     ActiveRecord::Base.delay_touching { standard_restore(task_plan, Api::V1::TaskPlanRepresenter) }

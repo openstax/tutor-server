@@ -1,4 +1,4 @@
-class Content::Models::Book < Tutor::SubSystems::BaseModel
+class Content::Models::Book < IndestructibleRecord
 
   wrapped_by ::Content::Strategies::Direct::Book
 
@@ -21,6 +21,8 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
 
   scope :preloaded, ->{ preload(chapters: :pages) }
 
+  after_create :set_ecosystem_title
+
   def archive_url
     Addressable::URI.parse(url).site
   end
@@ -40,6 +42,11 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
       reading_processing_instructions: reading_processing_instructions,
       exercise_ids: exercises.sort_by(&:number).map(&:uid)
     }
+  end
+
+  def set_ecosystem_title
+    ecosystem.books.reload unless ecosystem.books.include?(self)
+    ecosystem.update_attribute(:title, ecosystem.set_title)
   end
 
 end

@@ -1,14 +1,12 @@
 module Tasks::Models
-  class ConceptCoachTask < Tutor::SubSystems::BaseModel
-
-    acts_as_paranoid
+  class ConceptCoachTask < IndestructibleRecord
 
     CORE_EXERCISES_COUNT = 3
     SPACED_EXERCISES_MAP = [[2, 1], [:random, 1]]
 
     belongs_to :page, subsystem: :content
     belongs_to :role, subsystem: :entity
-    belongs_to :task, ->{ with_deleted }, inverse_of: :concept_coach_task
+    belongs_to :task, inverse_of: :concept_coach_task
 
     validates :page, presence: true
     validates :role, presence: true, uniqueness: { scope: :content_page_id }

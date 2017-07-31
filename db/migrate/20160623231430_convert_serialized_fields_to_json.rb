@@ -31,9 +31,7 @@ class ConvertSerializedFieldsToJson < ActiveRecord::Migration
         add_column table_name, field_name, :text, null: false, default: default.to_json
       end
 
-      relation = klass.all
-      relation = relation.with_deleted if relation.respond_to?(:with_deleted)
-      relation.find_each(batch_size: 100) do |model|
+      relation = klass.find_each(batch_size: 100) do |model|
         attributes = {}
 
         fields.each do |field_name, default|

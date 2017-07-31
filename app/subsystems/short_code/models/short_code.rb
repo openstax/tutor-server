@@ -1,4 +1,4 @@
-class ShortCode::Models::ShortCode < Tutor::SubSystems::BaseModel
+class ShortCode::Models::ShortCode < ApplicationRecord
   validates :uri, presence: true
   validates :code, presence: true, uniqueness: true
 

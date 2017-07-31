@@ -121,7 +121,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr
     it 'deletes an ecosystem' do
       expect {
         delete :destroy, id: ecosystem_1.id
-      }.to change { Content::Models::Ecosystem.count }.by(-1)
+      }.to change { ecosystem_1.to_model.reload.deleted? }.from(false).to(true)
       expect(flash[:notice]).to eq('Ecosystem deleted.')
       expect(flash[:error]).to be_nil
     end

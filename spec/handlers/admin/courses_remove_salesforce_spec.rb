@@ -25,7 +25,7 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
     ).to have_routine_error(:could_not_clear_salesforce_stats)
 
     # no removals stick...
-    expect(Salesforce::Models::AttachedRecord.count).to eq 3
+    expect(Salesforce::Models::AttachedRecord.without_deleted.count).to eq 3
   end
 
   it 'removes and resets stats' do
@@ -48,13 +48,13 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
 
     expect{
       call(course_id: course.id, salesforce_id: 'earlier')
-    }.to change{Salesforce::Models::AttachedRecord.count}.by(-2)
+    }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(-2)
 
-    expect(Salesforce::Models::AttachedRecord.all.map(&:tutor_gid))
+    expect(Salesforce::Models::AttachedRecord.without_deleted.map(&:tutor_gid))
       .to contain_exactly(course.to_global_id.to_s, period_2.to_global_id.to_s)
 
     # Course AR should be soft deleted, period AR should be really deleted
-    expect(Salesforce::Models::AttachedRecord.with_deleted.all.map(&:tutor_gid))
+    expect(Salesforce::Models::AttachedRecord.all.map(&:tutor_gid))
       .to contain_exactly(course.to_global_id.to_s, course.to_global_id.to_s,
                           period_2.to_global_id.to_s)
 

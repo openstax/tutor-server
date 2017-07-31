@@ -28,7 +28,7 @@ class CourseMembership::CreateEnrollmentChange
       end
 
     student_roles = roles.select do |role|
-      role.student? && role.student.present? && !role.student.period.deleted?
+      role.student? && role.student.present? && !role.student.period.archived?
     end
 
     ecosystem = run(:get_ecosystem, course: course).outputs.ecosystem
@@ -69,7 +69,7 @@ class CourseMembership::CreateEnrollmentChange
 
       fatal_error(code: :dropped_student,
                   message: 'You cannot re-enroll in a course from which you were dropped') \
-        if student.deleted?
+        if student.dropped?
 
       enrollment = student.latest_enrollment
 

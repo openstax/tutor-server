@@ -105,10 +105,6 @@ module User
       !!@strategy.is_anonymous?
     end
 
-    def is_deleted?
-      !!@strategy.is_deleted?
-    end
-
     def is_admin?
       !!@strategy.is_admin?
     end

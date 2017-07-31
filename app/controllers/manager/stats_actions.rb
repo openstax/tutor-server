@@ -6,12 +6,12 @@ module Manager::StatsActions
   def courses
     @courses = CourseProfile::Models::Course.where(is_preview: false).preload(
       teachers: { role: { role_user: :profile } },
-      periods_with_deleted: :latest_enrollments_with_deleted
+      periods: :latest_enrollments
     ).order(:name).to_a
 
     @total_students = @courses.map do |course|
-      course.periods_with_deleted.map do |period|
-        period.latest_enrollments_with_deleted.length
+      course.periods.map do |period|
+        period.latest_enrollments.length
       end.reduce(0, :+)
     end.reduce(0, :+)
 

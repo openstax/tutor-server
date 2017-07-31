@@ -1,4 +1,4 @@
-class Content::Models::Pool < Tutor::SubSystems::BaseModel
+class Content::Models::Pool < IndestructibleRecord
 
   wrapped_by ::Content::Strategies::Direct::Pool
 

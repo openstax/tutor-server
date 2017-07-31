@@ -6,7 +6,8 @@ class CourseMembership::IsCourseTeacher
   def exec(course:, roles:)
     role_ids = [roles].flatten.map(&:id)
 
-    outputs.is_course_teacher = CourseMembership::Models::Teacher.exists?(course: course,
-                                                                          entity_role_id: role_ids)
+    outputs.is_course_teacher = CourseMembership::Models::Teacher.exists?(
+      course: course, entity_role_id: role_ids, deleted_at: nil
+    )
   end
 end

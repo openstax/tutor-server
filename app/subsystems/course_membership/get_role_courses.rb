@@ -8,7 +8,7 @@ class CourseMembership::GetRoleCourses
 
   protected
 
-  def exec(roles:, types: :any, include_inactive_students: false, preload: nil)
+  def exec(roles:, types: :any, include_dropped_students: false, preload: nil)
     types = [types].flatten
     if types.include?(:any)
       includes_student = true
@@ -30,8 +30,8 @@ class CourseMembership::GetRoleCourses
         .where(course_membership_students: { entity_role_id: role_ids })
 
       student_subquery = student_subquery
-        .where(periods: { deleted_at: nil, course_membership_students: { deleted_at: nil } }) \
-        unless include_inactive_students
+        .where(periods: { archived_at: nil, course_membership_students: { dropped_at: nil } }) \
+        unless include_dropped_students
 
       subqueries << student_subquery
     end

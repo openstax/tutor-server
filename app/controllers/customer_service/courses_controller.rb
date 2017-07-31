@@ -12,7 +12,7 @@ class CustomerService::CoursesController < CustomerService::BaseController
     @course_infos = courses.items.preload(
       [
         { teachers: { role: [:role_user, :profile] },
-          periods_with_deleted: :latest_enrollments_with_deleted,
+          periods: :latest_enrollments,
           ecosystems: :books },
         :periods
       ]

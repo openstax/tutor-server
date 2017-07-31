@@ -1,4 +1,4 @@
-class Catalog::Models::Offering < Tutor::SubSystems::BaseModel
+class Catalog::Models::Offering < IndestructibleRecord
 
   sortable_class on: :number
 

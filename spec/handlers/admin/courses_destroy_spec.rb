@@ -8,7 +8,7 @@ RSpec.describe Admin::CoursesDestroy, type: :handler do
       result = nil
       expect do
         result = described_class.call(params: {id: course.id})
-      end.to change{ CourseProfile::Models::Course.count }.by(-1)
+      end.to change{ course.reload.deleted? }.from(false).to(true)
       expect(result.errors).to be_empty
     end
   end

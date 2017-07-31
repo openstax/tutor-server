@@ -38,7 +38,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
               steps: task.task_steps.as_json,
               spy: { ecosystem_id: ecosystem.id, ecosystem_title: ecosystem.title},
               is_feedback_available: task.feedback_available?,
-              is_deleted: task.deleted?
+              is_deleted: task.task_plan.withdrawn?
             }
           end
         )

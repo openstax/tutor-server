@@ -59,7 +59,7 @@ module Api::V1
     property :is_active,
              writeable: false,
              readable: true,
-             getter: ->(*) { !deleted? },
+             getter: ->(*) { !dropped? },
              schema_info: {
                 required: true,
                 description: "Student is dropped if false"

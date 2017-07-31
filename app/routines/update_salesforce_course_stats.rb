@@ -84,7 +84,7 @@ class UpdateSalesforceCourseStats
 
     courses = CourseProfile::Models::Course
       .where(id: organizer.course_ids)
-      .preload([:teachers, { periods_with_deleted: :latest_enrollments_with_deleted }])
+      .preload([:teachers, { periods: :latest_enrollments }])
 
     # Go through each course object and its period objects, telling the organizer about them (so it
     # can do efficient lookups later).  For all periods without an AR in the organizer, add them
@@ -92,9 +92,8 @@ class UpdateSalesforceCourseStats
 
     courses.each do |course|
       organizer.remember_course(course)
-      periods = course.periods_with_deleted
 
-      periods.each do |period|
+      course.periods.each do |period|
         organizer.remember_period(period)
         organizer.add_orphan_period(period) if organizer.no_salesforce_object_for_period?(period)
       end
@@ -190,7 +189,7 @@ class UpdateSalesforceCourseStats
 
       begin
         salesforce_object.num_teachers = course.teachers.length
-        salesforce_object.num_students = periods.flat_map(&:latest_enrollments_with_deleted).length
+        salesforce_object.num_students = periods.flat_map(&:latest_enrollments).length
         salesforce_object.num_sections = periods.length
       rescue Exception => e
         an_error_occurred = true

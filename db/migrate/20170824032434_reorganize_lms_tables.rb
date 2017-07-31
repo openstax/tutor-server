@@ -2,7 +2,7 @@ class ReorganizeLmsTables < ActiveRecord::Migration
 
   # Make sure this class always exist when this migration is run, in case it
   # goes away one day.
-  class Lms::Models::Nonce < Tutor::SubSystems::BaseModel; end
+  class Lms::Models::Nonce < ApplicationRecord; end
 
   def up
     remove_index :lms_nonces, name: :nonce_consumer_value

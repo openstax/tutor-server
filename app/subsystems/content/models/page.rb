@@ -1,4 +1,4 @@
-class Content::Models::Page < Tutor::SubSystems::BaseModel
+class Content::Models::Page < IndestructibleRecord
 
   wrapped_by ::Content::Strategies::Direct::Page
 

@@ -19,7 +19,7 @@ class SearchCourses
 
   def exec(params = {}, options = {})
     params[:order_by] ||= :name
-    relation = CourseProfile::Models::Course.joins do
+    relation = CourseProfile::Models::Course.without_deleted.joins do
       [school.outer,
        offering.outer,
        teachers.outer.role.outer.profile.outer.account.outer,

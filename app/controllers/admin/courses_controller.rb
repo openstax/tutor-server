@@ -20,7 +20,7 @@ class Admin::CoursesController < Admin::BaseController
     @course_infos = result.outputs.items.preload(
       [
         { teachers: { role: [:role_user, :profile] },
-          periods_with_deleted: :latest_enrollments_with_deleted,
+          periods: :latest_enrollments,
           ecosystems: :books },
         :periods
       ]
@@ -77,7 +77,6 @@ class Admin::CoursesController < Admin::BaseController
 
   def restore_salesforce
     Salesforce::Models::AttachedRecord
-      .with_deleted
       .find(params[:restore_salesforce][:attached_record_id])
       .restore
     redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")

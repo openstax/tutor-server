@@ -195,7 +195,7 @@ RSpec.describe GetStudentGuide, type: :routine do
       before(:all) do
         DatabaseCleaner.start
 
-        @course.course_ecosystems.delete_all
+        @course.course_ecosystems.delete_all :delete_all
 
         @role.reload
         @second_role.reload

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CourseProfile::Models::Course, type: :model do
   subject(:course) { FactoryGirl.create :course_profile_course }
 
-  it { is_expected.to belong_to(:time_zone).dependent(:destroy).autosave(true) }
+  it { is_expected.to belong_to(:time_zone).autosave(true) }
 
   it { is_expected.to belong_to(:school) }
   it { is_expected.to belong_to(:offering) }
@@ -14,10 +14,10 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to have_many(:teachers).dependent(:destroy) }
   it { is_expected.to have_many(:students).dependent(:destroy) }
 
-  it { is_expected.to have_many(:course_ecosystems).dependent(:destroy) }
+  it { is_expected.to have_many(:course_ecosystems) }
   it { is_expected.to have_many(:ecosystems) }
 
-  it { is_expected.to have_many(:course_assistants).dependent(:destroy) }
+  it { is_expected.to have_many(:course_assistants) }
 
   it { is_expected.to have_many(:taskings) }
 

@@ -3,11 +3,11 @@ class CourseMembership::GetPeriodStudentRoles
 
   protected
 
-  def exec(periods:, include_inactive_students: false)
+  def exec(periods:, include_dropped_students: false)
     periods = [periods].flatten.uniq
 
     outputs.roles = periods.flat_map do |period|
-      period.student_roles(include_inactive_students: include_inactive_students)
+      period.student_roles(include_dropped_students: include_dropped_students)
     end.uniq
   end
 end

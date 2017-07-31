@@ -128,7 +128,6 @@ class ExportAndUploadResearchData
       CourseMembership::Models::Student
         .joins(:course, :role)
         .where(course: { is_preview: false, is_test: false })
-        .with_deleted
         .pluck(:entity_role_id, :course_profile_course_id, :research_identifier)
         .each do |entity_role_id, course_profile_course_id, research_identifier|
           role_info[entity_role_id] = {

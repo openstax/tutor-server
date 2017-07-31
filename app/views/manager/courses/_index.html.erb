@@ -87,10 +87,10 @@
               <%= "CC /" if course_info.is_concept_coach %>
               <%= course_info.is_college ? "College /" : "High School /" \
                     unless course_info.is_college.nil? %>
-              <%= "#{course_info.periods_with_deleted.map do |period|
-                       period.latest_enrollments_with_deleted.length
+              <%= "#{course_info.periods.map do |period|
+                       period.latest_enrollments.length
                      end.reduce(0, :+)} students /" %>
-              <%= "#{course_info.periods_with_deleted.length} periods" %> /
+              <%= "#{course_info.periods.length} periods" %> /
               <%= course_info.does_cost ? "Does Cost" : "Does NOT Cost" %> /
               LMS: <%= course_info.is_lms_enabling_allowed ? "enable allowed" : "enable not allowed" %> -
               <% if course_info.is_lms_enabled.nil? %>

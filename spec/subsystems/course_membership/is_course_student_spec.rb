@@ -86,7 +86,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
       end
       it "returns is_archived" do
         result = CourseMembership::IsCourseStudent.call(
-          course: target_course, roles: target_student_role, include_archived: true
+          course: target_course, roles: target_student_role, include_archived_periods: true
         )
         expect(result.outputs.is_archived).to be true
       end
@@ -98,7 +98,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
       end
       it "returns is_dropped" do
         result = CourseMembership::IsCourseStudent.call(
-          course: target_course, roles: target_student_role, include_dropped: true
+          course: target_course, roles: target_student_role, include_dropped_students: true
         )
         expect(result.outputs.is_archived).to be_nil
         expect(result.outputs.is_dropped).to be true

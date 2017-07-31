@@ -6,6 +6,7 @@
     <tr>
       <th>Username</th>
       <th>Name</th>
+      <th>Deleted?</th>
       <% [extra_headers].flatten.each do |extra_header| %>
       <th><%= extra_header %></th>
       <% end %>
@@ -16,6 +17,7 @@
       <tr>
         <td><%= teacher.role.username %></td>
         <td><%= teacher.role.name %></td>
+        <td><%= tf_to_yn teacher.deleted? %></td>
         <%= capture(teacher, &extra_fields_proc) unless extra_fields_proc.nil? %>
       </tr>
     <% end %>

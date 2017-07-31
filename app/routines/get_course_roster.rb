@@ -6,7 +6,7 @@ class GetCourseRoster
   protected
 
   def exec(course:)
-    students = course.students.with_deleted.includes(:enrollments, role: { profile: :account })
+    students = course.students.includes(:enrollments, role: { profile: :account })
 
     outputs.roster = {
       teach_url: UrlGenerator.teach_course_url(course.teach_token),
@@ -22,7 +22,7 @@ class GetCourseRoster
           entity_role_id: student.entity_role_id,
           username: student.username,
           student_identifier: student.student_identifier,
-          deleted?: student.deleted?,
+          dropped?: student.dropped?,
           is_paid: student.is_paid,
           is_comped: student.is_comped,
           payment_due_at: student.payment_due_at

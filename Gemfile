@@ -158,7 +158,7 @@ gem 'openstax_rescue_from', github: 'openstax/rescue_from',
 gem 'babbler', '~> 1.0.1'
 
 # Soft-deletion
-gem 'paranoia', '~> 2.1.3'
+gem 'paranoia'
 
 # Salesforce
 gem 'openstax_salesforce', '~> 0.19.0'

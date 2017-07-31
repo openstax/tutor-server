@@ -23,7 +23,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
 
           context "and the task is deleted" do
             before do
-              allow(tasked.task_step.task).to receive(:deleted?) { true }
+              allow(tasked.task_step.task).to receive(:withdrawn?) { true }
               allow(tasked.task_step.task).to receive(:past_open?) { true }
             end
 

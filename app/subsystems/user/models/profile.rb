@@ -1,8 +1,6 @@
 module User
   module Models
-    class Profile < Tutor::SubSystems::BaseModel
-
-      acts_as_paranoid
+    class Profile < IndestructibleRecord
 
       wrapped_by Strategies::Direct::User
 

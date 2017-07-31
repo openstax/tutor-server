@@ -1,32 +1,26 @@
-class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
+class CourseMembership::Models::Period < ApplicationRecord
+
+  acts_as_paranoid column: :archived_at, without_default_scope: true
 
   include DefaultTimeValidations
-
-  acts_as_paranoid
 
   wrapped_by CourseMembership::Strategies::Direct::Period
 
   auto_uuid
 
-  belongs_to :course, subsystem: :course_profile, inverse_of: :periods_with_deleted
+  belongs_to :course, subsystem: :course_profile, inverse_of: :periods
 
-  # Roles don't have soft-delete so we don't destroy them when the period is archived
   belongs_to :teacher_student_role, subsystem: :entity, class_name: 'Entity::Role'
 
   has_many :teachers, through: :course
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
-  has_many :enrollments, dependent: :destroy, inverse_of: :period
+  has_many :enrollments, inverse_of: :period
   has_many :latest_enrollments, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
-  has_many :latest_enrollments_with_deleted, -> { latest.with_deleted },
-                                                class_name: '::CourseMembership::Models::Enrollment'
 
-  has_many :enrollment_changes, dependent: :destroy, inverse_of: :period
+  has_many :enrollment_changes, inverse_of: :period
 
-  has_many :students, through: :enrollments
-  has_many :students_with_deleted, through: :latest_enrollments_with_deleted,
-                                   class_name: '::CourseMembership::Models::Student',
-                                   source: :student
+  has_many :students, through: :latest_enrollments
 
   has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
@@ -36,7 +30,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   validates :course, presence: true
   validates :teacher_student_role, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: { scope: :course_profile_course_id,
-                                                 conditions: -> { where(deleted_at: nil) } }
+                                                 conditions: -> { where(archived_at: nil) } }
   validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
 
   validate :default_times_have_good_values
@@ -45,10 +39,14 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   default_scope { order(:name) }
 
-  def student_roles(include_inactive_students: false)
-    target_enrollments = include_inactive_students ?
-                           latest_enrollments.with_deleted : latest_enrollments
-    target_enrollments.preload(student: :role).map{ |en| en.student.role }
+  def archived?
+    deleted?
+  end
+
+  def student_roles(include_dropped_students: false)
+    students = latest_enrollments.preload(student: :role).map(&:student)
+    students = students.reject(&:dropped?) unless include_dropped_students
+    students.map(&:role)
   end
 
   def default_open_time

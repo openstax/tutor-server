@@ -46,7 +46,7 @@ RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
       it 'works when the incoming SF ID is blank' do
         expect{
           call(period_id: period_1.id, salesforce_id: '')
-        }.to change{Salesforce::Models::AttachedRecord.count}.by(0)
+        }.not_to change{Salesforce::Models::AttachedRecord.count}
       end
     end
 
@@ -62,15 +62,15 @@ RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
 
         expect{
           call(period_id: period_1.id, salesforce_id: 'foo')
-        }.to change{Salesforce::Models::AttachedRecord.count}.by(0)
+        }.not_to change{Salesforce::Models::AttachedRecord.count}
 
         expect(Salesforce::Models::AttachedRecord.where(salesforce_id: 'foo').count).to eq 2
       end
 
-      it 'delets the existing AR when the incoming SF ID is blank' do
+      it 'deletes the existing AR when the incoming SF ID is blank' do
         expect{
           call(period_id: period_1.id, salesforce_id: '')
-        }.to change{Salesforce::Models::AttachedRecord.count}.by(-1)
+        }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(-1)
       end
     end
   end

@@ -1,4 +1,4 @@
-class CourseContent::Models::ExcludedExercise < Tutor::SubSystems::BaseModel
+class CourseContent::Models::ExcludedExercise < ApplicationRecord
 
   belongs_to :course, subsystem: :course_profile
 

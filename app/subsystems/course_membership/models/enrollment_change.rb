@@ -1,14 +1,11 @@
-class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
+class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
 
   wrapped_by CourseMembership::Strategies::Direct::EnrollmentChange
 
-  acts_as_paranoid
-
-  belongs_to :profile, -> { with_deleted }, subsystem: :user
-  belongs_to :enrollment, -> { with_deleted }, inverse_of: :enrollment_change # from
-  belongs_to :period, -> { with_deleted }                                     # to
-  belongs_to :conflicting_enrollment, -> { with_deleted },
-                                      class_name: 'CourseMembership::Models::Enrollment'
+  belongs_to :profile, subsystem: :user
+  belongs_to :enrollment, inverse_of: :enrollment_change # from
+  belongs_to :period                                     # to
+  belongs_to :conflicting_enrollment, class_name: 'CourseMembership::Models::Enrollment'
 
   enum status: [ :pending, :approved, :rejected, :processed ]
 
@@ -23,8 +20,8 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
 
   def conflicting_period
     conflicting_enrollment.period unless conflicting_enrollment.nil? ||
-                                         conflicting_enrollment.deleted? ||
-                                         conflicting_enrollment.student.deleted?
+                                         conflicting_enrollment.period.archived? ||
+                                         conflicting_enrollment.student.dropped?
   end
 
   alias_method :to_period, :period

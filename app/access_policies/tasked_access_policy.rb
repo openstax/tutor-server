@@ -11,7 +11,8 @@ class TaskedAccessPolicy
     when :update, :mark_completed, :related_exercise
       requestor.is_human? &&
       DoesTaskingExist[task_component: tasked, user: requestor] &&
-      tasked.task_step.task.past_open? && !tasked.task_step.task.deleted?
+      tasked.task_step.task.past_open? &&
+      !tasked.task_step.task.withdrawn?
     else
       false
     end

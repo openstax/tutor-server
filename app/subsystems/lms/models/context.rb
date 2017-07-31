@@ -1,6 +1,6 @@
 module Lms
   module Models
-    class Context < Tutor::SubSystems::BaseModel
+    class Context < ApplicationRecord
       # Links an LMS-provided "context_id" to a course, so when we receive a launch
       # we know which course it is for.
 

@@ -84,7 +84,7 @@ module Api::V1
              schema_info: { type: 'boolean',
                             description: "If the feedback should be shown for the task" }
 
-    property :deleted?,
+    property :withdrawn?,
              as: :is_deleted,
              readable: true,
              writeable: false,

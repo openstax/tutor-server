@@ -41,7 +41,7 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
         'student_identifier' => student_1_role.student.student_identifier,
-        'deleted?' => false
+        'dropped?' => false
       ),
       a_hash_including(
         'id' => students[1].id,
@@ -52,7 +52,7 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
         'student_identifier' => student_2_role.student.student_identifier,
-        'deleted?' => false
+        'dropped?' => false
       ),
       a_hash_including(
         'id' => students[2].id,
@@ -63,15 +63,15 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
         'student_identifier' => student_3_role.student.student_identifier,
-        'deleted?' => false
+        'dropped?' => false
       )
     )
   end
 
   it 'does not blow up when a period has been deleted' do
-    period_2.to_model.enrollments.each{ |en| en.student.destroy }
-    expect{ period_2.to_model.destroy }.to(
-      change{ CourseMembership::Models::Period.count }.by(-1)
+    period_2.to_model.enrollments.each { |en| en.student.destroy }
+    expect { period_2.to_model.destroy }.to(
+      change{ period_2.to_model.archived? }.from(false).to(true)
     )
 
     students = GetCourseRoster.call(course: course).outputs.roster[:students]
@@ -87,7 +87,7 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
         'student_identifier' => student_1_role.student.student_identifier,
-        'deleted?' => false
+        'dropped?' => false
       ),
       a_hash_including(
         'id' => students[1].id,
@@ -98,7 +98,7 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
         'student_identifier' => student_2_role.student.student_identifier,
-        'deleted?' => false
+        'dropped?' => false
       ),
       a_hash_including(
         'id' => students[2].id,
@@ -109,7 +109,7 @@ RSpec.describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
         'student_identifier' => student_3_role.student.student_identifier,
-        'deleted?' => true
+        'dropped?' => true
       )
     )
   end

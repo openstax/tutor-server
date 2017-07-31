@@ -4,8 +4,12 @@ module Manager::CourseDetails
   def get_course_details
     @course = CourseProfile::Models::Course.find(params[:id])
     @periods = @course.periods
-    @teachers = @course.teachers.includes(role: { profile: :account })
-    @students = @course.students.includes(role: { profile: :account }).sort_by{|ss| ss.last_name || ss.name}
+    @teachers = @course.teachers
+                       .preload(role: { profile: :account })
+                       .sort_by { |ss| ss.last_name || ss.name }
+    @students = @course.students
+                       .preload(role: { profile: :account })
+                       .sort_by { |ss| ss.last_name || ss.name }
     @ecosystems = Content::ListEcosystems[]
 
     @course_ecosystem = nil

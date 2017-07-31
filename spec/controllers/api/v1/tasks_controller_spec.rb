@@ -65,8 +65,8 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
   end
 
   context "#accept_late_work" do
-    context 'deleted task' do
-      before{ task_1.destroy! }
+    context 'withdrawn task_plan' do
+      before{ task_1.task_plan.destroy! }
 
       it 'does not change is_late_work_accepted to true' do
         expect {
@@ -77,7 +77,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
       end
     end
 
-    context 'non-deleted task' do
+    context 'non-withdrawn task_plan' do
       it "changes is_late_work_accepted to true" do
         expect(task_1.accepted_late_at).to be_nil
         api_put :accept_late_work, teacher_user_token, parameters: {id: task_1.id}
@@ -96,8 +96,8 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
   context "#reject_late_work" do
     before { task_1.update_attribute :accepted_late_at, Time.current }
 
-    context 'deleted task' do
-      before{ task_1.destroy! }
+    context 'withdrawn task_plan' do
+      before{ task_1.task_plan.destroy! }
 
       it 'does not change is_late_work_accepted to false' do
         expect {
@@ -108,7 +108,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
       end
     end
 
-    context 'non-deleted task' do
+    context 'non-withdrawn task_plan' do
       it "changes is_late_work_accepted to false" do
         expect(task_1.accepted_late_at).not_to be_nil
         api_put :reject_late_work, teacher_user_token, parameters: {id: task_1.id}
@@ -128,8 +128,8 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
     context 'student' do
       let(:token) { user_1_token }
 
-      context 'deleted task' do
-        before { task_1.destroy! }
+      context 'withdrawn task_plan' do
+        before { task_1.task_plan.destroy! }
 
         it 'hides the task' do
           api_delete :destroy, token, parameters: {id: task_1.id}
@@ -144,7 +144,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
         end
       end
 
-      context 'non-deleted task' do
+      context 'non-withdrawn task_plan' do
         it 'does not hide the task' do
           expect {
             api_delete :destroy, token, parameters: {id: task_1.id}
@@ -158,7 +158,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
     context 'non-student' do
       let(:token) { teacher_user_token }
 
-      before{ task_1.destroy! }
+      before{ task_1.task_plan.destroy! }
 
       it 'does not hide the task' do
         expect {
