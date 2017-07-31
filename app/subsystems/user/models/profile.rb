@@ -6,7 +6,10 @@ module User
 
       wrapped_by Strategies::Direct::User
 
-      belongs_to :account, class_name: 'OpenStax::Accounts::Account', subsystem: 'none'
+      belongs_to :account,
+                 class_name: 'OpenStax::Accounts::Account',
+                 subsystem: 'none',
+                 inverse_of: :profile
 
       has_many :groups_as_member, through: :account, subsystem: 'none'
       has_many :groups_as_owner, through: :account, subsystem: 'none'

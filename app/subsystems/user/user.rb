@@ -36,9 +36,9 @@ module User
         end
       end
 
-      def find_by_account_id(account_id, strategy_class: ::User::Strategies::Direct::User)
-        account_id = verify_and_return account_id, klass: Integer
-        verify_and_return strategy_class.find_by_account_id(account_id),
+      def find_by_account(account, strategy_class: ::User::Strategies::Direct::User)
+        account = verify_and_return account, klass: OpenStax::Accounts::Account
+        verify_and_return strategy_class.find_by_account(account),
                           klass: self, allow_nil: true, error: StrategyError
       end
 

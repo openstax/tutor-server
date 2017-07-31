@@ -19,17 +19,17 @@ OpenStax::Accounts.configure do |config|
   config.enable_stubbing = stub
   config.logout_via = :delete
   config.account_user_mapper = MapUsersAccounts
-  config.logout_redirect_url = ->(request) {
+  config.logout_redirect_url = ->(request) do
     LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
-  }
-  config.return_to_url_approver = ->(url) {
+  end
+  config.return_to_url_approver = ->(url) do
     begin
       uri = Addressable::URI.parse(url)
       approved_host_regexes.any?{|regex| regex.match(uri.host)}
     rescue
       false
     end
-  }
+  end
 end
 
 OpenStax::Accounts::ApplicationController.class_exec do
@@ -37,6 +37,11 @@ OpenStax::Accounts::ApplicationController.class_exec do
 end
 
 OpenStax::Accounts::Account.class_exec do
+  has_one :profile, primary_key: :id,
+                    foreign_key: :account_id,
+                    class_name: 'User::Models::Profile',
+                    inverse_of: :account
+
   # TODO: Move this to accounts-rails
   def name
     full_name.present? ? \
