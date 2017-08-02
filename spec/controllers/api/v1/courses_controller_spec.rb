@@ -15,7 +15,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course)         { FactoryGirl.create :course_profile_course, name: 'Physics 101' }
+  let(:course)         do
+    FactoryGirl.create :course_profile_course, name: 'Physics 101', is_college: true
+  end
   let!(:period)        { FactoryGirl.create :course_membership_period, course: course }
 
   let(:book)           { FactoryGirl.create(:content_book, :standard_contents_1) }

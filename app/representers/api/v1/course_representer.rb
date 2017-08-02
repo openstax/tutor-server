@@ -160,7 +160,6 @@ module Api::V1
              readable: true,
              writeable: true,
              schema_info: {
-               required: true,
                type: 'boolean'
              }
 

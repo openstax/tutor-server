@@ -20,7 +20,7 @@
       <td><%= course.name %></td>
       <td><%= course.school_name %></td>
       <td><%= course.is_concept_coach ? 'Yes' : 'No' %></td>
-      <td><%= course.is_college ? 'Yes' : 'No' %></td>
+      <td><%= course.is_college.nil? ? 'Unknown' : (course.is_college ? 'Yes' : 'No') %></td>
       <td><%= course.teachers.map(&:name).join(', ') %></td>
       <td><%= course.periods_with_deleted.length %></td>
       <td><%= course.periods_with_deleted.map do |period|

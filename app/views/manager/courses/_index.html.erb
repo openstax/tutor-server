@@ -76,7 +76,8 @@
                     - <%= course_info.ends_at.strftime('%b %d, %Y') %>
               </div>
               <%= "CC /" if course_info.is_concept_coach %>
-              <%= "College /" if course_info.is_college %>
+              <%= course_info.is_college ? "College /" : "High School /" \
+                    unless course_info.is_college.nil? %>
               <%= "#{course_info.periods_with_deleted.map do |period|
                        period.latest_enrollments_with_deleted.length
                      end.reduce(0, :+)} students /" %>
