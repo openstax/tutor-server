@@ -11,7 +11,6 @@ RailsSettingsUi.parent_controller = 'Admin::BaseController' # default: '::Applic
 RailsSettingsUi.settings_class = "Settings::Db::Store"
 
 RailsSettingsUi.settings_displayed_as_select_tag = [
-  :biglearn_client_name,
   :biglearn_student_clues_algorithm_name,
   :biglearn_teacher_clues_algorithm_name,
   :biglearn_assignment_spes_algorithm_name,
