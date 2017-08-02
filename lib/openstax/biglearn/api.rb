@@ -152,6 +152,9 @@ module OpenStax::Biglearn::Api
       select_proc = ->(request) do
         course = request.fetch(:course)
 
+        # The create_course event is not sent until the course has an ecosystem
+        next false if course.ecosystems.empty?
+
         num_course_containers = 0
         num_students = 0
         course.periods_with_deleted.each do |period|
@@ -227,6 +230,11 @@ module OpenStax::Biglearn::Api
     # Request is a hash containing the following key: :course
     def update_course_active_dates(*request)
       request, options = extract_options request
+
+      select_proc = ->(request) do
+        # The create_course event is not sent until the course has an ecosystem
+        !request.fetch(:course).ecosystems.empty?
+      end
 
       single_api_request options.merge(
         method: :update_course_active_dates,
