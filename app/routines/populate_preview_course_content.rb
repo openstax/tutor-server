@@ -98,7 +98,7 @@ class PopulatePreviewCourseContent
 
     # Find preview student users
     preview_student_users = preview_student_accounts.map do |account|
-      User::User.find_by_account_id(account.id) ||
+      User::User.find_by_account(account) ||
       run(:create_user, account_id: account.id).outputs.user
     end
 

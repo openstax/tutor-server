@@ -18,7 +18,7 @@ module MapUsersAccounts
     def find_or_create_user(account)
       retry_count = 0
       begin
-        user = User::User.find_by_account_id(account.id)
+        user = User::User.find_by_account(account)
         return user if user.present?
 
         result = User::CreateUser.call(account_id: account.id)

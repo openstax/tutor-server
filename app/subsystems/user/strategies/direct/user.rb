@@ -33,8 +33,8 @@ module User
             ::User::User.new(strategy: entity_find(*args))
           end
 
-          def find_by_account_id(account_id)
-            profile = ::User::Models::Profile.with_deleted.find_by(account_id: account_id)
+          def find_by_account(account)
+            profile = account.profile
             return if profile.nil?
 
             strategy = new(profile)
