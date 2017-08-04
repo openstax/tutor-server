@@ -15,7 +15,7 @@ class PopulatePreviewCourseContent
   # Wait this long before querying Biglearn for PEs/SPEs
   BIGLEARN_WAIT = 30.seconds
 
-  lev_routine
+  lev_routine active_job_enqueue_options: { queue: :long_running }
 
   uses_routine User::CreateUser, as: :create_user
   uses_routine CourseMembership::CreatePeriod, as: :create_period

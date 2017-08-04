@@ -15,8 +15,19 @@ Delayed::Worker.destroy_failed_jobs = false
 # Poll the database every second to reduce delay (number of workers = number of queries per second)
 Delayed::Worker.sleep_delay = 1
 
-# Should be longer than the longest background job
-Delayed::Worker.max_run_time = Rails.application.secrets['background_worker_timeout']
+# Default queue name
+Delayed::Worker.default_queue_name = :default
+
+# Must be equal to the longest max_run_time below
+Delayed::Worker.max_run_time = 4.hours
+
+# Default queue priorities and max_run_times
+Delayed::Worker.queue_attributes = {
+  high_priority: { priority: -5, max_run_time: 1.minute   },
+  default:       { priority:  0, max_run_time: 5.minutes  },
+  low_priority:  { priority:  5, max_run_time: 30.minutes },
+  long_running:  { priority: 10, max_run_time: 4.hours    }
+}
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline
 Delayed::Worker.delay_jobs = Rails.env.production? || (
@@ -77,12 +88,15 @@ Delayed::Worker.class_exec do
   end
 
   alias_method_chain :handle_failed_job, :instant_failures
-end
 
-# Fix NewRelic's broken DJ monkeypatch
-# Without this fix, a second call to Delayed::Worker.new
-# will cause the worker to enter an infinite loop
-Delayed::Worker.class_exec do
+  def max_run_time(job)
+    self.class.queue_attributes.fetch(job.queue, {})
+                               .fetch('max_run_time', job.max_run_time || self.class.max_run_time)
+  end
+
+  # Fix NewRelic's broken DJ monkeypatch
+  # Without this fix, a second call to Delayed::Worker.new
+  # will cause the worker to enter an infinite loop
   def initialize_with_new_relic_fix(*args)
     Delayed::Job.method_defined?(:invoke_job_without_new_relic) ?
       initialize_without_new_relic(*args) : initialize_without_new_relic_fix(*args)
@@ -90,6 +104,22 @@ Delayed::Worker.class_exec do
 
   alias initialize_without_new_relic_fix initialize
   alias initialize initialize_with_new_relic_fix
+end
+
+Delayed::Backend::ActiveRecord::Job.class_exec do
+  def self.ready_to_run(worker_name, max_run_time)
+    max_run_time_cases = Delayed::Worker.queue_attributes.map do |queue_name, attributes|
+      "WHEN '#{queue_name}' THEN #{attributes.fetch(:max_run_time, max_run_time)}"
+    end
+    max_run_time_sql = max_run_time_cases.empty? ?
+      max_run_time :
+      "CASE \"delayed_jobs\".\"queue\" #{max_run_time_cases.join(' ')} ELSE #{max_run_time} END"
+
+    where(
+      "(run_at <= ? AND (locked_at IS NULL OR locked_at + INTERVAL '1 second' * #{max_run_time_sql
+      } < ? ) OR locked_by = ?) AND failed_at IS NULL", db_time_now, db_time_now, worker_name
+    )
+  end
 end
 
 # http://stackoverflow.com/questions/29855768/rails-4-2-get-delayed-job-id-from-active-job

@@ -3,6 +3,11 @@
 
 source 'https://rubygems.org'
 
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
+
 # Rails framework
 gem 'rails', '4.2.4'
 
@@ -78,7 +83,7 @@ gem 'roar', '1.0.3'
 gem 'jobba', '~> 1.5.0'
 
 # Lev framework
-gem 'lev', '~> 7.1.0'
+gem 'lev', github: 'lml/lev', ref: '351d0b0a49e296d312a1920c4803bc8b7619fb80'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

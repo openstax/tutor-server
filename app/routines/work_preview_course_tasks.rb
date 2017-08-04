@@ -6,7 +6,7 @@ class WorkPreviewCourseTasks
 
   FREE_RESPONSE = 'This is where you can see each student’s answer in his or her own words.'
 
-  lev_routine
+  lev_routine active_job_enqueue_options: { queue: :long_running, wait: 30.seconds }
 
   uses_routine Preview::WorkTask, as: :work_task
 

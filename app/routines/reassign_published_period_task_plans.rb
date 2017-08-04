@@ -1,6 +1,6 @@
 class ReassignPublishedPeriodTaskPlans
 
-  lev_routine
+  lev_routine active_job_enqueue_options: { queue: :low_priority }
 
   uses_routine DistributeTasks, as: :distribute
 

@@ -2,7 +2,7 @@
 # then queues up another job to make the Biglearn request itself
 # Then attempts to lock the job and, after the transaction is committed, work it inline
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
-  queue_as :default
+  queue_as :high_priority
 
   def self.perform_later(*_)
     super.tap do |job|
