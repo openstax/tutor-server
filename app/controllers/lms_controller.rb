@@ -3,6 +3,7 @@ class LmsController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: [:launch]
 
   def configuration
+    debugger
   end
 
   def launch
