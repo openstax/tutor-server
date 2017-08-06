@@ -205,7 +205,10 @@ Rails.application.routes.draw do
     put 'terms/:ids', to: 'terms#sign'
 
     match :'*all', to: 'api#options', via: [:options]
-  end
+
+    get 'lms/:course_id', to: 'lms#index'
+
+  end # end of API scope
 
   # Teacher enrollment
   scope to: 'courses#teach' do
