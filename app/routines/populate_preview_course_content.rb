@@ -12,9 +12,6 @@ class PopulatePreviewCourseContent
   # Should correspond to the total preview course duration, in weeks
   MAX_NUM_ASSIGNED_CHAPTERS = 10
 
-  # Wait this long before querying Biglearn for PEs/SPEs
-  BIGLEARN_WAIT = 30.seconds
-
   lev_routine active_job_enqueue_options: { queue: :long_running }
 
   uses_routine User::CreateUser, as: :create_user

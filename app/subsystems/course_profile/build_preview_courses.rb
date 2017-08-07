@@ -70,7 +70,7 @@ class CourseProfile::BuildPreviewCourses
     # The first where uses literal strings because Rails fails to provide the proper bind parameters
     # in the Catalog::Models::Offering query below if we use hashes here
     courses = CourseProfile::Models::Course
-                .where("is_preview = 't' AND is_preview_ready = 't'")
+                .where("is_preview = 't'")
                 .where(preview_claimed_at: nil)
                 .group(:catalog_offering_id)
                 .select([:catalog_offering_id, 'count(*) as course_preview_count'])
