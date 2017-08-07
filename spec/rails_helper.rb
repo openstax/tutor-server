@@ -6,7 +6,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::Codecov
 ]) if ENV['CI'] == 'true'
 
-SimpleCov.start 'rails'
+SimpleCov.start('rails') { merge_timeout 3600 }
 
 ENV['RAILS_ENV'] ||= 'test'
 
