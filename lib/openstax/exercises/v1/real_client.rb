@@ -10,14 +10,10 @@ class OpenStax::Exercises::V1::RealClient
     @server_url   = exercises_configuration.server_url
     @client_id    = exercises_configuration.client_id
     @secret       = exercises_configuration.secret
-
-    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
-
-    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
 
   def request(*args)
-    (@oauth_token || @oauth_client).request(*args)
+    oauth_worker.request(*args)
   end
 
   def sanitize(vals)
@@ -39,6 +35,22 @@ class OpenStax::Exercises::V1::RealClient
     uri.query = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query
 
     JSON.parse(request(:get, uri, with_accept_header(options)).body)
+  end
+
+  protected
+
+  def oauth_worker
+    # Lazily instantiate the oauth client and token primarily to ensure that
+    # initialization does not occur before test code initialized (so that all
+    # interactions are recorded inside VCR cassettes)
+
+    @oauth_worker ||= begin
+      oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
+
+      oauth_token  = oauth_client.client_credentials.get_token unless @client_id.nil?
+
+      oauth_token || oauth_client
+    end
   end
 
   private
