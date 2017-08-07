@@ -13,7 +13,7 @@ class LmsController < ApplicationController
     # debugger
     consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
     return redirect_to action: :launch_failed if consumer.nil?
-
+    # debugger
     # Check that the message has the correct OAuth signature
 
     authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
