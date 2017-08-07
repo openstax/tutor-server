@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-  <% jobs.each do |job| %>
+  <% (jobs || []).each do |job| %>
     <% ecosystem_import_url = (job.data || {})['ecosystem_import_url'] %>
 
     <tr>

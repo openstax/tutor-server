@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-  <% jobs.each do |job| %>
+  <% (jobs || []).each do |job| %>
     <% data = job.data || {} %>
     <% course_id = data["course_id"] %>
     <% course_name = data["course_name"] || 'Course' %>

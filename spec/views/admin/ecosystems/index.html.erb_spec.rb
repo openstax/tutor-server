@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'admin/ecosystems/index', type: :view do
-  let(:ecosystems)   { [] }
+  let(:ecosystems) { [] }
 
-  before(:each)      do
+  before(:each)    do
     assign :ecosystems, ecosystems
     assign :job_path_proc, ->(job) { admin_job_path(job.id) }
   end
