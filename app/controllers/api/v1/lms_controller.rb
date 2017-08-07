@@ -23,7 +23,7 @@ class Api::V1::LmsController < Api::V1::ApiController
     condition = { owner_id: @course.id, name: @course.name }
     consumer = Lms::Models::ToolConsumer.where(condition).first || Lms::Models::ToolConsumer.create(condition)
     render json: consumer.as_json.merge(
-             url: lms_configuration_url,
+             url: lms_configuration_url(format: :xml),
              xml: render_to_string(template: 'lms/configuration.xml')
            )
   end
