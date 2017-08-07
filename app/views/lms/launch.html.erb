@@ -1,1 +1,21 @@
-Hi <%= @launch_message.ai(plain:true, ruby19_syntax: true, indent: 2) %>
+<h2>Launch Data</h2>
+
+<p>Required params:</p>
+<pre><%= @launch_message.required_params.ai(plain:true, ruby19_syntax: true, indent: 2) %></pre>
+
+<p>Recommended params:</p>
+<pre><%= @launch_message.recommended_params.ai(plain:true, ruby19_syntax: true, indent: 2) %></pre>
+
+
+<p>Optional params:</p>
+<pre><%= @launch_message.optional_params.ai(plain:true, ruby19_syntax: true, indent: 2) %></pre>
+
+<p>Deprecated params:</p>
+<pre><%= @launch_message.deprecated_params.ai(plain:true, ruby19_syntax: true, indent: 2) %></pre>
+
+
+<hr/>
+
+<font size="-2">
+<%= @launch_message.ai(plain:true, ruby19_syntax: true, indent: 2) %>
+</font>
