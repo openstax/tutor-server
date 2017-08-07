@@ -9,7 +9,7 @@ module CourseMembership
                   message: 'Student identifier has already been taken') \
         if student.student_identifier.present? &&
            CourseMembership::Models::Student.exists?(student_identifier: student.student_identifier)
-      student.restore(recursive: true)
+      student.restore
       student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
 

@@ -36,7 +36,7 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
 
   it 'includes is_archived: false if the period has been restored' do
     period.to_model.destroy!
-    period.to_model.restore!(recursive: true)
+    period.to_model.restore!
     expect(represented['is_archived']).to eq false
   end
 

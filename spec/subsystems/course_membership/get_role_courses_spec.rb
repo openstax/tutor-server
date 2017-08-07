@@ -52,4 +52,10 @@ RSpec.describe CourseMembership::GetRoleCourses do
     expect(courses).to contain_exactly(course_1)
   end
 
+  it 'does not find courses where the role is a deleted teacher' do
+    role_c.teacher.destroy
+    courses = described_class[roles: [role_a, role_c], types: [:teacher]]
+    expect(courses).to contain_exactly(course_1)
+  end
+
 end

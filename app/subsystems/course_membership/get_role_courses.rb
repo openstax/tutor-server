@@ -8,7 +8,8 @@ class CourseMembership::GetRoleCourses
 
   protected
 
-  def exec(roles:, types: :any, include_dropped_students: false, preload: nil)
+  def exec(roles:, types: :any, include_dropped_students: false,
+           include_deleted_teachers: false, preload: nil)
     types = [types].flatten
     if types.include?(:any)
       includes_student = true
@@ -29,17 +30,24 @@ class CourseMembership::GetRoleCourses
         .joins(CourseMembership::Models::Enrollment.latest_join_sql(:periods, :student))
         .where(course_membership_students: { entity_role_id: role_ids })
 
-      student_subquery = student_subquery
-        .where(periods: { archived_at: nil, course_membership_students: { dropped_at: nil } }) \
-        unless include_dropped_students
+      student_subquery = student_subquery.where(
+        course_membership_periods: { archived_at: nil },
+        course_membership_students: { dropped_at: nil }
+      ) unless include_dropped_students
 
       subqueries << student_subquery
     end
 
     if includes_teacher
-      subqueries << CourseProfile::Models::Course
+      teacher_subquery = CourseProfile::Models::Course
         .joins(:teachers)
-        .where(teachers: { entity_role_id: role_ids })
+        .where(course_membership_teachers: { entity_role_id: role_ids })
+
+      teacher_subquery = teacher_subquery.where(
+        course_membership_teachers: { deleted_at: nil }
+      ) unless include_deleted_teachers
+
+      subqueries << teacher_subquery
     end
 
     subquery = subqueries.size == 1 ? subqueries.first.arel : subqueries.reduce(:union)

@@ -55,7 +55,7 @@
             <%= "#{course_info.id}" %>
           </span>
           <span class="course-info-name"><%= " #{course_info.name}" %></span>
-          <%= " / #{course_info.teachers.map(&:name).to_sentence}" \
+          <%= " / #{course_info.teachers.without_deleted.map(&:name).to_sentence}" \
                 unless course_info.teachers.blank? %>
           <span class="course-info-school">
             <%= " / #{course_info.school_name}" if course_info.school %>

@@ -89,4 +89,12 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
   end
+
+  it 'does not return withdrawn task_plans' do
+    task_plan_2.destroy
+    out = described_class.call(owner: course).outputs
+    expect(out[:plans].length).to eq 2
+    expect(out[:plans]).to include(task_plan_1, task_plan_3)
+    expect(out[:trouble_plan_ids]).to be_nil
+  end
 end

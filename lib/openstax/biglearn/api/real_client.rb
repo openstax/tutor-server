@@ -249,7 +249,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
           parent_container_uuid: course.uuid,
           created_at: period.created_at.utc.iso8601(6)
         }.tap do |hash|
-          hash[:archived_at] = period.archived.utc.iso8601(6) if period.archived?
+          hash[:archived_at] = period.archived_at.utc.iso8601(6) if period.archived?
         end
 
         period.latest_enrollments.map do |enrollment|

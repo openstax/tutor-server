@@ -113,7 +113,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     end_at = DateTimeUtilities.from_s(params[:end_at])
     end_at_ntz = DateTimeUtilities.remove_tz(end_at)
 
-    result = GetTpDashboard.call(course: @course, role: get_course_role(course: @course),
+    result = GetTpDashboard.call(course: @course,
+                                 role: get_course_role(course: @course),
                                  start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
 
     render_api_errors(result.errors) || respond_with(

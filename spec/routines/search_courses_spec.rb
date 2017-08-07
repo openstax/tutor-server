@@ -193,4 +193,10 @@ RSpec.describe SearchCourses, type: :routine do
     courses = described_class[query: "is_preview:true", order_by: 'ID asc'].to_a
     expect(courses).to eq [course_4]
   end
+
+  it 'does not return soft-deleted courses' do
+    course_3.destroy
+    courses = described_class[query: nil].to_a
+    expect(courses).to eq [course_2, course_1]
+  end
 end

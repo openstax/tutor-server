@@ -15,12 +15,16 @@ RSpec.describe CourseMembership::IsCourseTeacher do
 
     context "when a single role is given" do
       it "returns false" do
-        result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
+        result = CourseMembership::IsCourseTeacher.call(
+          course: target_course, roles: target_teacher_role
+        )
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_falsey
+        expect(result.outputs.is_course_teacher).to eq false
+        expect(result.outputs.is_deleted).to eq false
       end
     end
-    context "multiple roles are given" do
+
+    context "when multiple roles are given" do
       it "returns false" do
         other_role1 = FactoryGirl.create :entity_role
         other_role2 = FactoryGirl.create :entity_role
@@ -28,13 +32,17 @@ RSpec.describe CourseMembership::IsCourseTeacher do
 
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_falsey
+        expect(result.outputs.is_course_teacher).to eq false
+        expect(result.outputs.is_deleted).to eq false
       end
     end
-    context "when expressed called" do
+
+    context "when express called" do
       it "returns false" do
-        is_course_teacher = CourseMembership::IsCourseTeacher[course: target_course, roles: target_teacher_role]
-        expect(is_course_teacher).to be_falsey
+        is_course_teacher = CourseMembership::IsCourseTeacher[
+          course: target_course, roles: target_teacher_role
+        ]
+        expect(is_course_teacher).to eq false
       end
     end
   end
@@ -49,12 +57,16 @@ RSpec.describe CourseMembership::IsCourseTeacher do
 
     context "when a single role is given" do
       it "returns true" do
-        result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
+        result = CourseMembership::IsCourseTeacher.call(
+          course: target_course, roles: target_teacher_role
+        )
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_truthy
+        expect(result.outputs.is_course_teacher).to eq true
+        expect(result.outputs.is_deleted).to eq false
       end
     end
-    context "multiple roles are given" do
+
+    context "when multiple roles are given" do
       it "returns true" do
         other_role1 = FactoryGirl.create :entity_role
         other_role2 = FactoryGirl.create :entity_role
@@ -62,13 +74,43 @@ RSpec.describe CourseMembership::IsCourseTeacher do
 
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_truthy
+        expect(result.outputs.is_course_teacher).to eq true
+        expect(result.outputs.is_deleted).to eq false
       end
     end
-    context "when expressed called" do
+
+    context "when teacher has been deleted" do
+      before { target_teacher_role.teacher.destroy }
+
+      context "when include_deleted_teachers is given" do
+        it "returns true" do
+          result = CourseMembership::IsCourseTeacher.call(
+            course: target_course, roles: target_teacher_role, include_deleted_teachers: true
+          )
+          expect(result.errors).to be_empty
+          expect(result.outputs.is_course_teacher).to eq true
+          expect(result.outputs.is_deleted).to eq true
+        end
+      end
+
+      context "when include_deleted_teachers is not given" do
+        it "returns false" do
+          result = CourseMembership::IsCourseTeacher.call(
+            course: target_course, roles: target_teacher_role
+          )
+          expect(result.errors).to be_empty
+          expect(result.outputs.is_course_teacher).to eq false
+          expect(result.outputs.is_deleted).to eq false
+        end
+      end
+    end
+
+    context "when express called" do
       it "returns true" do
-        is_course_teacher = CourseMembership::IsCourseTeacher[course: target_course, roles: target_teacher_role]
-        expect(is_course_teacher).to be_truthy
+        is_course_teacher = CourseMembership::IsCourseTeacher[
+          course: target_course, roles: target_teacher_role
+        ]
+        expect(is_course_teacher).to eq true
       end
     end
   end
