@@ -5,22 +5,19 @@
 <% failed_jobs ||= [] %>
 <% total_count ||= course_infos.try(:count) %>
 
-<div>Showing <%= total_count %> total</div>
-
 <% page ||= 1 %>
 <% per_page = per_page == 'all' ? total_count : per_page.to_i %>
 <% per_page = 25 if per_page == 0 %>
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="main">
+    <div>Showing <%= total_count %> total</div>
 
-    <%
-    pagination = will_paginate(
+    <% pagination = will_paginate(
       WillPaginate::Collection.create(page, per_page, total_count) do |pager|
         pager.replace course_infos
       end
-    )
-    %>
+    ) %>
 
     <%= pagination %>
 
