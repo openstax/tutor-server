@@ -6,15 +6,13 @@ class LmsController < ApplicationController
   layout false
 
   def configuration
-    debugger
   end
 
   def launch
     # Check that the request specifies a valid tool consumer
-    # debugger
     consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
     return redirect_to action: :launch_failed if consumer.nil?
-
+    # debugger
     # Check that the message has the correct OAuth signature
 
     authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
@@ -23,7 +21,6 @@ class LmsController < ApplicationController
       consumer.secret
     )
     return redirect_to action: :launch_failed if !authenticator.valid_signature?
-
     @launch_message = authenticator.message
     # Check that we haven't seen this nonce yet
 
