@@ -3,15 +3,13 @@ class LmsController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: [:launch]
 
   def configuration
-    debugger
   end
 
   def launch
     # Check that the request specifies a valid tool consumer
-debugger
     consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
     return redirect_to action: :launch_failed if consumer.nil?
-
+    # debugger
     # Check that the message has the correct OAuth signature
 
     authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
@@ -20,7 +18,6 @@ debugger
       consumer.secret
     )
     return redirect_to action: :launch_failed if !authenticator.valid_signature?
-
     # Check that we haven't seen this nonce yet
 
     begin
