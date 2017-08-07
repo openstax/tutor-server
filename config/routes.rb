@@ -352,7 +352,7 @@ Rails.application.routes.draw do
   namespace :content_analyst do
     root 'console#index'
 
-    resources :ecosystems, except: [:edit] do
+    resources :ecosystems, only: [:index] do
       get :manifest, on: :member
     end
 

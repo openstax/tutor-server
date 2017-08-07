@@ -6,7 +6,8 @@
              incomplete_jobs: @incomplete_jobs,
              failed_jobs: @failed_jobs,
              job_path_proc: ->(job) { admin_job_path(job.id) },
-             import_path: new_admin_ecosystem_path,
+             manifest_path: ->(*args) { manifest_admin_ecosystem_path(*args) },
              ecosystem_path: ->(*args) { admin_ecosystem_path(*args) },
-             manifest_path: ->(*args) { manifest_admin_ecosystem_path(*args) }
+             import_path: new_admin_ecosystem_path,
+             allow_delete: true
            } %>

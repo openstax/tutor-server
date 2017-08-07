@@ -2,10 +2,12 @@ class EcosystemAccessPolicy
   def self.action_allowed?(action, requestor, ecosystem)
     return false unless requestor.is_human?
 
-    # Content Analysts and admins can do all things content
-    return true if requestor.is_content_analyst? || requestor.is_admin?
+    # Admins can do all things content
+    return true if requestor.is_admin?
 
     case action
+    when :index
+      requestor.is_content_analyst?
     when :readings
       # readings should be readable by course teachers and students
       # because FE uses it for the reference view
