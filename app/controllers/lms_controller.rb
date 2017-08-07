@@ -21,6 +21,7 @@ class LmsController < ApplicationController
       consumer.secret
     )
     return redirect_to action: :launch_failed if !authenticator.valid_signature?
+    # debugger
     @launch_message = authenticator.message
     # Check that we haven't seen this nonce yet
 
