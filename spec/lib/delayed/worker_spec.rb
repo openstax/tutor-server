@@ -1,10 +1,30 @@
 require 'rails_helper'
 
 module Delayed
-  describe Worker, type: :lib do
+  RSpec.describe Worker, type: :lib do
     let(:job)            { ::ActiveJob::Base.new }
     let(:delayed_job)    { ::Delayed::Job.create!(payload_object: job) }
-    let(:delayed_worker) { ::Delayed::Worker.new }
+    let(:delayed_worker) { described_class.new }
+
+    context '#max_run_time' do
+      it 'returns the per-queue max_run_time if present' do
+        expect(delayed_worker.max_run_time(delayed_job)).to(
+          eq described_class.queue_attributes[:default][:max_run_time]
+        )
+
+        described_class.queue_attributes.each do |queue_name, attributes|
+          delayed_job.queue = queue_name
+
+          expect(delayed_worker.max_run_time(delayed_job)).to eq attributes[:max_run_time]
+        end
+      end
+
+      it 'returns the default max_run_time if there is no per-queue max_run_time' do
+        delayed_job.queue = :unknown
+
+        expect(delayed_worker.max_run_time(delayed_job)).to eq described_class.max_run_time
+      end
+    end
 
     context 'exceptions with no argument' do
       [
