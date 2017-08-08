@@ -210,6 +210,8 @@ gem 'best_in_place'
 # Box integration
 gem 'boxr'
 
+gem 'oauth'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

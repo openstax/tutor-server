@@ -437,6 +437,7 @@ GEM
     notiffany (0.1.0)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    oauth (0.5.3)
     oauth2 (1.1.0)
       faraday (>= 0.8, < 0.10)
       jwt (~> 1.0, < 1.5.2)
@@ -808,6 +809,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
+  oauth
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
