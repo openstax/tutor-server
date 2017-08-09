@@ -187,13 +187,13 @@ class OpenStax::Biglearn::Api::RealClient
                                          .map do |from_page, to_page|
       next if to_page.nil?
 
-      { from_book_container_uuid: from_page.uuid, to_book_container_uuid: to_page.uuid }
+      { from_book_container_uuid: from_page.tutor_uuid, to_book_container_uuid: to_page.tutor_uuid }
     end.compact
     exercise_mappings = content_map.map_exercises_to_pages(exercises: from_ecosystem.exercises)
                                    .map do |exercise, page|
       next if page.nil?
 
-      { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.uuid }
+      { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.tutor_uuid }
     end.compact
     prepared_at = request[:prepared_at] ||
                   to_course_ecosystems.first.try!(:created_at) ||
