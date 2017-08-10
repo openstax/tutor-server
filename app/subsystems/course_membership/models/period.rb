@@ -64,7 +64,10 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   end
 
   def assignments_count
-    tasking_plans.count
+    tasking_plans
+      .joins(:task_plan)
+      .where { task_plan.first_published_at != nil }
+      .count
   end
 
   protected
