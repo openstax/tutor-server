@@ -1,11 +1,11 @@
 class CleanupDeletedAtColumns < ActiveRecord::Migration
-  def change
+  def up
     remove_index :cc_page_stats,
                  column: %w{course_period_id coach_task_content_page_id group_type},
                  unique: true,
                  name: 'cc_page_stats_uniq'
-    remove_index :cc_page_stats, :course_period_id
-    drop_view :cc_page_stats, materialized: true, revert_to_version: 1
+    remove_index :cc_page_stats, column: :course_period_id
+    drop_view :cc_page_stats, materialized: true
 
     remove_column :user_profiles, :deleted_at, :datetime
 
@@ -47,5 +47,9 @@ class CleanupDeletedAtColumns < ActiveRecord::Migration
     create_view :cc_page_stats, materialized: true, version: 2
     add_index :cc_page_stats, %w{course_period_id coach_task_content_page_id group_type},
               unique: true, name: 'cc_page_stats_uniq'
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration
   end
 end
