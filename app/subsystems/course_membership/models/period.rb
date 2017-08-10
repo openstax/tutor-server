@@ -63,6 +63,10 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
     enrollment_code.gsub(/ /,'-')
   end
 
+  def assignments_count
+    taskings.count
+  end
+
   protected
 
   def build_teacher_student_role
