@@ -11,12 +11,12 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
   api :GET, '/ecosystems', 'Returns all available ecosystems'
   description <<-EOS
-    Returns a listing of all the ecosytems in that have been created
+    Returns a listing of all the ecosytems that exist in Tutor
 
     #{json_schema(Api::V1::EcosystemsRepresenter, include: :readable)}
   EOS
   def index
-    OSU::AccessPolicy.require_action_allowed!(:ecosystems, current_human_user, Content::Ecosystem)
+    OSU::AccessPolicy.require_action_allowed!(:index, current_human_user, Content::Ecosystem)
     ecosystems = Content::ListEcosystems[]
     respond_with ecosystems, represent_with: Api::V1::EcosystemsRepresenter
   end

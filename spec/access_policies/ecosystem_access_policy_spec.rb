@@ -1,20 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe EcosystemAccessPolicy, type: :access_policy do
-  let(:course)            { FactoryGirl.create :course_profile_course }
-  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)          { FactoryGirl.create :course_profile_course }
+  let(:period)          { FactoryGirl.create :course_membership_period, course: course }
 
-  let(:student)           { FactoryGirl.create(:user) }
-  let(:teacher)           { FactoryGirl.create(:user) }
+  let(:student)         { FactoryGirl.create(:user) }
+  let(:teacher)         { FactoryGirl.create(:user) }
 
-  let(:admin)             { FactoryGirl.create(:user, :administrator) }
-  let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
+  let(:content_analyst) { FactoryGirl.create(:user, :content_analyst) }
+  let(:admin)           { FactoryGirl.create(:user, :administrator) }
 
-  let(:ecosystem)         {
+  let(:ecosystem)       do
     content_ecosystem = FactoryGirl.create(:content_ecosystem)
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
     ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-  }
+  end
 
   before(:each) do
     AddUserAsCourseTeacher[course: course, user: teacher]
@@ -82,10 +82,15 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   context 'content analysts' do
     let(:requestor) { content_analyst }
 
-    [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
+    context 'index' do
+      let(:action) { :index }
+      it { should eq true }
+    end
+
+    [:create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should eq true }
+        it { should eq false }
       end
     end
   end

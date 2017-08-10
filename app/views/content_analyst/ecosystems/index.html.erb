@@ -6,7 +6,5 @@
              incomplete_jobs: @incomplete_jobs,
              failed_jobs: @failed_jobs,
              job_path_proc: ->(job) { content_analyst_job_path(job.id) },
-             import_path: new_content_analyst_ecosystem_path,
-             ecosystem_path: ->(*args) { content_analyst_ecosystem_path(*args) },
              manifest_path: ->(*args) { manifest_content_analyst_ecosystem_path(*args) }
            } %>
