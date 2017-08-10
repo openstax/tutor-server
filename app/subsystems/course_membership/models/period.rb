@@ -30,7 +30,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
-
+  has_many :tasking_plans, as: :target, class_name: 'Tasks::Models::TaskingPlan'
   unique_token :enrollment_code, mode: :random_number, length: 6
 
   validates :course, presence: true
@@ -64,7 +64,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   end
 
   def assignments_count
-    taskings.count
+    tasking_plans.count
   end
 
   protected
