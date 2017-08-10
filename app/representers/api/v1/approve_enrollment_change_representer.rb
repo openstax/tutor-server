@@ -5,8 +5,7 @@ module Api::V1
 
     property :student_identifier,
              type: String,
-             readable: false,
-             writeable: true
-
+             readable: true,
+             writeable: false
   end
 end
