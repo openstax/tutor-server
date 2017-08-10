@@ -1022,7 +1022,7 @@ ActiveRecord::Schema.define(version: 20171009182057) do
   add_foreign_key "course_profile_courses", "catalog_offerings", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade
   add_foreign_key "lms_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_contexts", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
@@ -1044,7 +1044,7 @@ ActiveRecord::Schema.define(version: 20171009182057) do
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_tasking_plans", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "tasks_tasking_plans", "time_zones", on_update: :cascade
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade

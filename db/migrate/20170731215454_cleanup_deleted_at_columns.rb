@@ -44,6 +44,12 @@ class CleanupDeletedAtColumns < ActiveRecord::Migration
     add_foreign_key :tasks_taskings, :tasks_tasks,
                     on_update: :cascade, on_delete: :cascade
 
+    remove_foreign_key :course_profile_courses, :time_zones
+    add_foreign_key :course_profile_courses, :time_zones, on_update: :cascade
+
+    remove_foreign_key :tasks_tasking_plans, :time_zones
+    add_foreign_key :tasks_tasking_plans, :time_zones, on_update: :cascade
+
     create_view :cc_page_stats, materialized: true, version: 2
     add_index :cc_page_stats, %w{course_period_id coach_task_content_page_id group_type},
               unique: true, name: 'cc_page_stats_uniq'
