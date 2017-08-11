@@ -13,4 +13,8 @@ class CourseMembership::Strategies::Direct::Period < Entity
     repository
   end
 
+  def assignments_count
+    repository.assignments_count
+  end
+
 end

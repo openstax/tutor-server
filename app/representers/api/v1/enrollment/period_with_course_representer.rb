@@ -58,6 +58,12 @@ module Api::V1::Enrollment
                readable: true,
                writeable: false,
                schema_info: { required: true }
+
+      property :assignments_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
     end
 
   end

@@ -49,6 +49,10 @@ module CourseMembership
                                                      allow_nil: true
     end
 
+    def assignments_count
+      @strategy.assignments_count
+    end
+
     def deleted?
       !!@strategy.deleted?
     end

@@ -30,7 +30,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
-
+  has_many :tasking_plans, as: :target, class_name: 'Tasks::Models::TaskingPlan'
   unique_token :enrollment_code, mode: :random_number, length: 6
 
   validates :course, presence: true
@@ -61,6 +61,13 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   def enrollment_code_for_url
     enrollment_code.gsub(/ /,'-')
+  end
+
+  def assignments_count
+    tasking_plans
+      .joins(:task_plan)
+      .where { task_plan.first_published_at != nil }
+      .count
   end
 
   protected
