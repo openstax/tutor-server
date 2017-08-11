@@ -11,8 +11,8 @@ RSpec.describe GetTpDashboard, type: :routine do
                                                .outputs.role }
 
   let(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
-                                                    last_name: 'Newhart',
-                                                    full_name: 'Bob Newhart') }
+                                                   last_name: 'Newhart',
+                                                   full_name: 'Bob Newhart') }
   let!(:teacher_role)  { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
                                                .outputs.role }
 
