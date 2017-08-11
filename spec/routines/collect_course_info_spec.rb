@@ -125,7 +125,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
       before do
         AddUserAsCourseTeacher[user: user_1, course: course_1]
 
-        period_2.destroy
+        period_2.destroy!
       end
 
       it "returns information about the user's active courses" do
