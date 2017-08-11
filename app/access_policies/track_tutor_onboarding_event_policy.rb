@@ -5,7 +5,7 @@ class TrackTutorOnboardingEventPolicy
     like_preview_ask_later like_preview_yes made_adoption_decision
   }
   def self.action_allowed?(event, requestor, policy)
-    return false if requestor.is_anonymous? || !requestor.account.confirmed_faculty?
+    return false if requestor.is_anonymous? || requestor.account.student?
 
     TEACHER_EVENTS.include?(event)
   end

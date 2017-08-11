@@ -18,6 +18,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
                                                                   message: "Bad level"}]})
     end
 
+
     it 'requires a message' do
       expect(Rails.logger).not_to receive(:log)
       log(level: 'info', message: '')
@@ -50,18 +51,20 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
 
   describe '#track' do
-    let(:user)       { FactoryGirl.create(:user) }
-    let(:user_token) { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user.id }
+    let(:user) { FactoryGirl.create(:user) }
+    let(:user_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                            resource_owner_id: user.id }
 
-    it 'rejects non-confirmed-faculty access' do
+    it 'rejects student access' do
+      user.account.update_attributes(role: :student)
       expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
       expect {
         api_post :onboarding_event, user_token, parameters: { code: 'arrived_my_courses' }
       }.to raise_error(SecurityTransgression)
     end
 
-    describe 'as confirmed faculty' do
-      before(:each) { user.account.update_attribute :faculty_status, :confirmed_faculty }
+    describe 'as an instructor' do
+      before(:each) { user.account.role = :instructor }
 
       it 'rejects invalid codes' do
         expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
@@ -71,6 +74,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
       end
 
       it 'tracks valid codes' do
+        user.account.update_attributes!(role: :instructor)
         expect(TrackTutorOnboardingEvent).to receive(:perform_later).with(
                                                data: { decision: "I won't be using it" },
                                                event: 'made_adoption_decision',
