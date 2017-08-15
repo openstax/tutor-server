@@ -18,15 +18,15 @@ Delayed::Worker.sleep_delay = 1
 # Default queue name if not specified in the job class
 Delayed::Worker.default_queue_name = :default
 
-# Default max_run_time if not specified below
-Delayed::Worker.max_run_time = 5.minutes
+# max_run_time must be longer than the longest-running job
+Delayed::Worker.max_run_time = 4.hours
 
-# Default queue priorities and max_run_times
+# Default queue priorities
 Delayed::Worker.queue_attributes = {
-  high_priority: { priority: -5, max_run_time: 1.minute   },
-  default:       { priority:  0, max_run_time: 5.minutes  },
-  low_priority:  { priority:  5, max_run_time: 30.minutes },
-  long_running:  { priority: 10, max_run_time: 4.hours    }
+  high_priority: { priority: -5 },
+  default:       { priority:  0 },
+  low_priority:  { priority:  5 },
+  long_running:  { priority: 10 }
 }
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline
@@ -89,12 +89,6 @@ Delayed::Worker.class_exec do
 
   alias_method_chain :handle_failed_job, :instant_failures
 
-  # We use per-queue max_run_times
-  def max_run_time(job)
-    self.class.queue_attributes.fetch(job.queue, {})
-                               .fetch('max_run_time', job.max_run_time || self.class.max_run_time)
-  end
-
   # Fix NewRelic's broken DJ monkeypatch
   # Without this fix, a second call to Delayed::Worker.new
   # will cause the worker to enter an infinite loop
@@ -105,26 +99,6 @@ Delayed::Worker.class_exec do
 
   alias initialize_without_new_relic_fix initialize
   alias initialize initialize_with_new_relic_fix
-end
-
-# Delayed Job considers a job is ready to run if run_at is in the past and
-# it is not locked or it is locked by this worker or the lock timed out
-# Since we are using custom timeouts for each queue,
-# we need to take that into account on the SQL that finds jobs that are ready to run
-Delayed::Backend::ActiveRecord::Job.class_exec do
-  def self.ready_to_run(worker_name, max_run_time)
-    max_run_time_cases = Delayed::Worker.queue_attributes.map do |queue_name, attributes|
-      "WHEN '#{queue_name}' THEN #{attributes.fetch(:max_run_time, max_run_time)}"
-    end
-    max_run_time_sql = max_run_time_cases.empty? ?
-      max_run_time :
-      "CASE \"delayed_jobs\".\"queue\" #{max_run_time_cases.join(' ')} ELSE #{max_run_time} END"
-
-    where(
-      "(run_at <= ? AND (locked_at IS NULL OR locked_at + INTERVAL '1 second' * #{max_run_time_sql
-      } < ? ) OR locked_by = ?) AND failed_at IS NULL", db_time_now, db_time_now, worker_name
-    )
-  end
 end
 
 # https://github.com/rails/rails/pull/19910
