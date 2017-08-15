@@ -8,7 +8,7 @@ class Admin::TeachersController < Admin::BaseController
 
     errors = results.flat_map(&:errors)
     if errors.empty?
-      flash[:notice] = 'Teachers updated'
+      flash[:notice] = 'Teachers updated.'
     else
       flash[:error] = errors.first.code.to_s.humanize
     end
