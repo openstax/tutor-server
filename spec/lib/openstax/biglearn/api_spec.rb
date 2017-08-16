@@ -195,11 +195,13 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
             api_method, task: @task, max_num_exercises: max_num_exercises
           )
         end.not_to raise_error
+        expect(result.fetch(:accepted)).to eq true
         expect(result.fetch(:exercises)).to eq exercises
       end
     end
 
-    it 'falls back to random personalized exercises if no valid Biglearn response' do
+    it 'returns accepted: false and falls back to random personalized exercises' +
+       ' if no valid Biglearn response' do
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
         expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
           requests.map do |request|
@@ -224,6 +226,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
             inline_max_attempts: 3
           )
         end.not_to raise_error
+        expect(result.fetch(:accepted)).to eq false
         exercises = result.fetch(:exercises)
         expect(exercises.size).to eq max_num_exercises
         exercises.each do |exercise|
