@@ -3,7 +3,7 @@ class ExportExerciseExclusions
   EE_STATS_FOLDER = owncloud_secrets['excluded_exercises_stats_folder']
   WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{EE_STATS_FOLDER}"
 
-  lev_routine
+  lev_routine active_job_enqueue_options: { queue: :long_running }
 
   protected
 

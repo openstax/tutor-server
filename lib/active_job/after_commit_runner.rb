@@ -4,8 +4,8 @@
 # If this is the same transaction that created the Delayed::Job, the reserve step should never fail
 # If there is no ongoing transaction, the Delayed::Job is run immediately, if reserved successfully
 class ActiveJob::AfterCommitRunner
-  def initialize(active_job, inline_job_timeout = Delayed::Worker.max_run_time)
-    @delayed_job = reserve_and_return_delayed_job(active_job, inline_job_timeout)
+  def initialize(active_job, now = Delayed::Job.db_time_now)
+    @delayed_job = reserve_and_return_delayed_job(active_job, now)
   end
 
   def has_transactional_callbacks?
@@ -36,7 +36,7 @@ class ActiveJob::AfterCommitRunner
     Thread.current[:delayed_worker] ||= Delayed::Worker.new
   end
 
-  def reserve_and_return_delayed_job(active_job, inline_job_timeout)
+  def reserve_and_return_delayed_job(active_job, now)
     delayed_job_id = active_job.provider_job_id
 
     return if delayed_job_id.nil?
@@ -44,8 +44,6 @@ class ActiveJob::AfterCommitRunner
     # Lock the Biglearn request job so we can run it inline to speed up Biglearn responses
     ready_scope = Delayed::Job.ready_to_run(delayed_worker.name, Delayed::Worker.max_run_time)
                               .where(id: delayed_job_id)
-    # Pretend the lock is much closer to expiring so we get a shorter timeout
-    now = Delayed::Job.db_time_now - Delayed::Worker.max_run_time + inline_job_timeout
 
     # We just created the job and are still inside the same transaction,
     # so the lock should never fail (PostgreSQL doesn't even support Read Uncommitted)

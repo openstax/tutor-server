@@ -51,9 +51,6 @@ class CourseProfile::BuildPreviewCourses
           time_zone: "Central Time (US & Canada)",
           catalog_offering: offering
         ].tap do |course|
-          # We set preview_claimed_at so the course doesn't get claimed by anyone until ready
-          course.update_attribute :preview_claimed_at, Time.current
-
           offering_title = offering.title
           created_course_counts_by_offering_title[offering_title] += 1
           lowest_preview_counts_by_offering_title[offering_title] = [
@@ -63,13 +60,18 @@ class CourseProfile::BuildPreviewCourses
       end
 
       # This routine needs to run outside the transaction above so Biglearn receives data
-      PopulatePreviewCourseContent[course: course]
+      PopulatePreviewCourseContent.perform_later(course: course)
     end
   end
 
   def offering_that_needs_previews(desired_count)
+    # is_preview_ready: false prevents the course from being claimed
+    # but it still counts for the total here
+    # The first where uses literal strings because Rails fails to provide the proper bind parameters
+    # in the Catalog::Models::Offering query below if we use hashes here
     courses = CourseProfile::Models::Course
-                .where(is_preview: true, preview_claimed_at: nil)
+                .where("is_preview = 't'")
+                .where(preview_claimed_at: nil)
                 .group(:catalog_offering_id)
                 .select([:catalog_offering_id, 'count(*) as course_preview_count'])
 

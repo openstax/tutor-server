@@ -184,7 +184,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             num_sections: 2,
             catalog_offering: catalog_offering,
             estimated_student_count: 42
-          ).outputs.course
+          ).outputs.course.tap { |course| course.update_attribute :is_preview_ready, true }
       }
       context 'is_preview: true' do
         before { valid_body_hash[:is_preview] = true }

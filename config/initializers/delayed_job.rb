@@ -15,8 +15,19 @@ Delayed::Worker.destroy_failed_jobs = false
 # Poll the database every second to reduce delay (number of workers = number of queries per second)
 Delayed::Worker.sleep_delay = 1
 
-# Should be longer than the longest background job
-Delayed::Worker.max_run_time = Rails.application.secrets['background_worker_timeout']
+# Default queue name if not specified in the job class
+Delayed::Worker.default_queue_name = :default
+
+# max_run_time must be longer than the longest-running job
+Delayed::Worker.max_run_time = 4.hours
+
+# Default queue priorities
+Delayed::Worker.queue_attributes = {
+  high_priority: { priority: -5 },
+  default:       { priority:  0 },
+  low_priority:  { priority:  5 },
+  long_running:  { priority: 10 }
+}
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline
 Delayed::Worker.delay_jobs = Rails.env.production? || (
@@ -26,7 +37,6 @@ Delayed::Worker.delay_jobs = Rails.env.production? || (
                                )
                              )
 
-# https://github.com/smartinez87/exception_notification/issues/195#issuecomment-31257207
 Delayed::Worker.class_exec do
   ALWAYS_FAIL = ->(exception) { true }
 
@@ -57,6 +67,15 @@ Delayed::Worker.class_exec do
     end
   }
 
+  # Based on https://github.com/smartinez87/exception_notification/issues/195#issuecomment-31257207
+  def handle_failed_job_with_instant_failures(job, exception)
+    fail_proc = INSTANT_FAILURE_PROCS[exception.class.name]
+    job.fail! if fail_proc.present? && fail_proc.call(exception) ||
+                 exception.try(:instantly_fail_if_in_background_job?)
+
+    handle_failed_job_without_instant_failures(job, exception)
+  end
+
   # Not ThreadSafe(TM)
   def self.with_delay_jobs(value, &block)
     begin
@@ -68,21 +87,11 @@ Delayed::Worker.class_exec do
     end
   end
 
-  def handle_failed_job_with_instant_failures(job, exception)
-    fail_proc = INSTANT_FAILURE_PROCS[exception.class.name]
-    job.fail! if fail_proc.present? && fail_proc.call(exception) ||
-                 exception.try(:instantly_fail_if_in_background_job?)
-
-    handle_failed_job_without_instant_failures(job, exception)
-  end
-
   alias_method_chain :handle_failed_job, :instant_failures
-end
 
-# Fix NewRelic's broken DJ monkeypatch
-# Without this fix, a second call to Delayed::Worker.new
-# will cause the worker to enter an infinite loop
-Delayed::Worker.class_exec do
+  # Fix NewRelic's broken DJ monkeypatch
+  # Without this fix, a second call to Delayed::Worker.new
+  # will cause the worker to enter an infinite loop
   def initialize_with_new_relic_fix(*args)
     Delayed::Job.method_defined?(:invoke_job_without_new_relic) ?
       initialize_without_new_relic(*args) : initialize_without_new_relic_fix(*args)
@@ -92,17 +101,7 @@ Delayed::Worker.class_exec do
   alias initialize initialize_with_new_relic_fix
 end
 
-# http://stackoverflow.com/questions/29855768/rails-4-2-get-delayed-job-id-from-active-job
-ActiveJob::Base.class_exec do
-  attr_accessor :provider_job_id
-
-  def self.execute(job_data, provider_job_id = nil)
-    job = deserialize(job_data)
-    job.provider_job_id = provider_job_id
-    job.perform_now
-  end
-end
-
+# https://github.com/rails/rails/pull/19910
 ActiveJob::QueueAdapters::DelayedJobAdapter.class_exec do
   class << self
     def enqueue(job) #:nodoc:
@@ -123,6 +122,18 @@ ActiveJob::QueueAdapters::DelayedJobAdapter.class_exec do
       job.provider_job_id = delayed_job.id
       delayed_job
     end
+  end
+end
+
+# The following are custom ActiveJob patches
+# to allow access to the provider_job_id during job execution
+ActiveJob::Base.class_exec do
+  attr_accessor :provider_job_id
+
+  def self.execute(job_data, provider_job_id = nil)
+    job = deserialize(job_data)
+    job.provider_job_id = provider_job_id
+    job.perform_now
   end
 end
 

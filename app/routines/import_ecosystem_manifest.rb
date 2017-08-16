@@ -1,6 +1,6 @@
 class ImportEcosystemManifest
 
-  lev_routine express_output: :ecosystem
+  lev_routine express_output: :ecosystem, active_job_enqueue_options: { queue: :long_running }
 
   uses_routine FetchAndImportBookAndCreateEcosystem, as: :fetch_and_import,
                                                      translations: { outputs: { type: :verbatim } }

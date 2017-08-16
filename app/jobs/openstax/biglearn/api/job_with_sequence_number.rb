@@ -2,9 +2,7 @@
 # then queues up another job to make the Biglearn request itself
 # Then attempts to lock the job and, after the transaction is committed, work it inline
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
-  INLINE_JOB_TIMEOUT = 30.seconds
-
-  queue_as :default
+  queue_as :high_priority
 
   def self.perform_later(*_)
     super.tap do |job|
@@ -12,7 +10,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       # This should guarantee that the intended order of events is preserved unless the server dies
       # in-between committing the transaction and running the after_commit callbacks
       # (in that case we'll still get the events eventually but they may be in the wrong order)
-      ActiveJob::AfterCommitRunner.new(job, INLINE_JOB_TIMEOUT).run_after_commit
+      ActiveJob::AfterCommitRunner.new(job).run_after_commit
     end
   end
 

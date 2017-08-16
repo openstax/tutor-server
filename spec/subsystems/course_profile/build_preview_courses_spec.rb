@@ -20,10 +20,14 @@ RSpec.describe CourseProfile::BuildPreviewCourses, type: :routine, truncation: t
   end
 
   it 'builds specified number of preview courses for each offering' do
+    expect(PopulatePreviewCourseContent).to(
+      receive(:perform_later).exactly(offerings.size * 2).times
+    )
+
     described_class[desired_count: 2]
 
     offerings.each do |offering|
-      expect(offering.courses(true).where(is_preview: true, preview_claimed_at: nil).count).to eq 2
+      expect(offering.courses.where(is_preview: true, preview_claimed_at: nil).count).to eq 2
     end
   end
 end
