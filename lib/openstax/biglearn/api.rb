@@ -311,6 +311,7 @@ module OpenStax::Biglearn::Api
       ) do |request, response, accepted|
         # If no valid response was received from Biglearn, fallback to random personalized exercises
         {
+          accepted: accepted,
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:task].ecosystem,
             exercise_uuids: response[:exercise_uuids],
@@ -344,6 +345,7 @@ module OpenStax::Biglearn::Api
       ) do |request, response, accepted|
         # If no valid response was received from Biglearn, fallback to random personalized exercises
         {
+          accepted: accepted,
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:task].ecosystem,
             exercise_uuids: response[:exercise_uuids],

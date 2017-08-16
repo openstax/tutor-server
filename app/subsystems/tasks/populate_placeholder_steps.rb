@@ -10,6 +10,7 @@ class Tasks::PopulatePlaceholderSteps
 
   def exec(task:, force: false)
     outputs.task = task.lock!
+    outputs.accepted = true
 
     return if task.pes_are_assigned && task.spes_are_assigned
 
@@ -19,10 +20,11 @@ class Tasks::PopulatePlaceholderSteps
 
     unless task.pes_are_assigned
       # Populate PEs
-      populate_placeholder_steps task: task,
-                                 group_type: :personalized_group,
-                                 biglearn_api_method: :fetch_assignment_pes,
-                                 biglearn_controls_slots: biglearn_controls_pe_slots
+      outputs.accepted = false \
+        unless populate_placeholder_steps(task: task,
+                                          group_type: :personalized_group,
+                                          biglearn_api_method: :fetch_assignment_pes,
+                                          biglearn_controls_slots: biglearn_controls_pe_slots)
 
       task.pes_are_assigned = true
     end
@@ -52,10 +54,11 @@ class Tasks::PopulatePlaceholderSteps
          end
 
         # Populate SPEs
-        populate_placeholder_steps task: task,
-                                   group_type: :spaced_practice_group,
-                                   biglearn_api_method: :fetch_assignment_spes,
-                                   biglearn_controls_slots: biglearn_controls_spe_slots
+        outputs.accepted = false \
+          unless populate_placeholder_steps(task: task,
+                                            group_type: :spaced_practice_group,
+                                            biglearn_api_method: :fetch_assignment_spes,
+                                            biglearn_controls_slots: biglearn_controls_spe_slots)
 
         task.spes_are_assigned = true
       end
@@ -161,7 +164,7 @@ class Tasks::PopulatePlaceholderSteps
       placeholder_steps = task.task_steps.select do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
-      return if placeholder_steps.empty?
+      return true if placeholder_steps.empty?
 
       ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
@@ -211,6 +214,8 @@ class Tasks::PopulatePlaceholderSteps
     task.update_attribute(:spy, task.spy.merge(spy_info.except('exercises')))
 
     task.task_steps.reset if task.persisted?
+
+    !!result[:accepted]
   end
 
 end

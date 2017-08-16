@@ -39,14 +39,24 @@ class CreatePracticeSpecificTopicsTask
     end
 
     after_transaction do
-      outputs.task = Tasks::PopulatePlaceholderSteps.call(task: @task).outputs.task
+      # This needs to happen after the transaction where the task is created
+      # so it can be sent to Biglearn in the background
+      outs = Tasks::PopulatePlaceholderSteps.call(task: @task).outputs
+      outputs.task = outs.task
 
-      nonfatal_error(
+      next unless outs.task.task_steps.empty?
+
+      outs.accepted ? nonfatal_error(
         code: :no_exercises,
         message: "No exercises were returned from Biglearn to build the Practice Widget." +
                  " [Course: #{@course.id} - Role: #{@role.id}" +
                  " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
-      ) if outputs.task.task_steps.empty?
+      ) : nonfatal_error(
+        code: :no_response,
+        message: "Biglearn failed to provide exercises in the maximum number of retries." +
+                 " [Course: #{@course.id} - Role: #{@role.id}" +
+                 " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
+      )
     end
   end
 

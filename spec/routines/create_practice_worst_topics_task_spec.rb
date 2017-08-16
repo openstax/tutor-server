@@ -9,6 +9,7 @@ RSpec.describe CreatePracticeWorstTopicsTask, type: :routine do
   it 'errors when there are not enough local exercises for the widget' do
     expect(OpenStax::Biglearn::Api).to receive(:fetch_practice_worst_areas_exercises).and_return(
       {
+        accepted: true,
         exercises: [],
         spy_info: {}
       }
