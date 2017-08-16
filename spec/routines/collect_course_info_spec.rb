@@ -122,7 +122,11 @@ RSpec.describe CollectCourseInfo, type: :routine do
     let(:args) { { user: user_1 } }
 
     context "when the user is a teacher" do
-      before { AddUserAsCourseTeacher[user: user_1, course: course_1] }
+      before do
+        AddUserAsCourseTeacher[user: user_1, course: course_1]
+
+        period_2.destroy!
+      end
 
       it "returns information about the user's active courses" do
         expect(result).to contain_exactly(
@@ -152,32 +156,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
         )
       end
 
-      it "returns all of the course's periods" do
+      it "returns all of the course's periods, even archived ones" do
         expect(result).to contain_exactly(
-          a_hash_including(
-            id: course_1.id,
-            name: course_1.name,
-            term: course_1.term,
-            year: course_1.year,
-            num_sections: course_1.num_sections,
-            starts_at: be_within(1e-6).of(course_1.starts_at),
-            ends_at: be_within(1e-6).of(course_1.ends_at),
-            active?: course_1.active?,
-            is_concept_coach: false,
-            is_college: course_1.is_college,
-            time_zone: course_1.time_zone.name,
-            default_open_time: course_1.default_open_time,
-            default_due_time: course_1.default_due_time,
-            offering: course_1.offering,
-            catalog_offering_id: course_1.offering.id,
-            school_name: course_1.school_name,
-            salesforce_book_name: course_1.offering.salesforce_book_name,
-            appearance_code: course_1.offering.appearance_code,
-            periods: a_collection_containing_exactly(period_1, period_2),
-            cloned_from_id: course_1.cloned_from_id,
-            is_preview: course_1.is_preview,
-            does_cost: false
-          )
+          a_hash_including(periods: a_collection_containing_exactly(period_1, period_2))
         )
       end
     end
@@ -216,32 +197,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
       end
 
       it "returns only the user's current period" do
-        expect(result).to contain_exactly(
-          a_hash_including(
-            id: course_1.id,
-            name: course_1.name,
-            term: course_1.term,
-            year: course_1.year,
-            num_sections: course_1.num_sections,
-            starts_at: be_within(1e-6).of(course_1.starts_at),
-            ends_at: be_within(1e-6).of(course_1.ends_at),
-            active?: course_1.active?,
-            is_concept_coach: false,
-            is_college: course_1.is_college,
-            time_zone: course_1.time_zone.name,
-            default_open_time: course_1.default_open_time,
-            default_due_time: course_1.default_due_time,
-            offering: course_1.offering,
-            catalog_offering_id: course_1.offering.id,
-            school_name: course_1.school_name,
-            salesforce_book_name: course_1.offering.salesforce_book_name,
-            appearance_code: course_1.offering.appearance_code,
-            periods: [ period_1 ],
-            cloned_from_id: course_1.cloned_from_id,
-            is_preview: course_1.is_preview,
-            does_cost: false
-          )
-        )
+        expect(result).to contain_exactly a_hash_including(periods: [ period_1 ])
       end
 
       it "returns student info for the user" do

@@ -82,7 +82,7 @@ class CollectCourseInfo
   end
 
   def get_periods(course:, roles:, students:)
-    roles.any?(&:teacher?) ? course.periods :
+    roles.any?(&:teacher?) ? course.periods.with_deleted :
                              students.map { |student| student.latest_enrollment.period }
   end
 end
