@@ -43,7 +43,8 @@ OpenStax::RescueFrom.register_exception(
     HTML
   ).html_safe,
   status: :forbidden,
-  notify: false
+  notify: false,
+  sorry: false
 )
 
 OpenStax::RescueFrom.register_exception(
