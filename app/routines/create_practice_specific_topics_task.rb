@@ -52,8 +52,8 @@ class CreatePracticeSpecificTopicsTask
                  " [Course: #{@course.id} - Role: #{@role.id}" +
                  " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
       ) : nonfatal_error(
-        code: :no_response,
-        message: "Biglearn failed to provide exercises in the maximum number of retries." +
+        code: :biglearn_not_ready,
+        message: "Biglearn failed to provide practice exercises in the maximum number of retries." +
                  " [Course: #{@course.id} - Role: #{@role.id}" +
                  " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
       )

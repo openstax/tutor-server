@@ -37,7 +37,7 @@ RSpec.describe CreatePracticeSpecificTopicsTask, type: :routine do
       .and not_change { Tasks::Models::TaskStep.count }
       .and not_change { Tasks::Models::TaskedExercise.count }
       .and change { course.reload.sequence_number }.by(2)
-    expect(result.errors.first.code).to eq :no_response
+    expect(result.errors.first.code).to eq :biglearn_not_ready
   end
 
 end
