@@ -34,6 +34,15 @@ OpenStax::RescueFrom.register_exception(
 )
 
 OpenStax::RescueFrom.register_exception(
+  'CoursesTeach::UserIsStudent',
+  message: "It looks like you're trying to add instructor permissions to a student account." +
+           " Sorry, but that is not permitted." +
+           " Contact <a href=\"mailto:support@openstaxtutor.org\">Support</a> if you need help.",
+  status: :forbidden,
+  notify: false
+)
+
+OpenStax::RescueFrom.register_exception(
   'ShortCodeNotFound',
   status: :not_found,
   notify: false

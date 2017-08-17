@@ -4,7 +4,7 @@ class CoursesController < ApplicationController
   skip_before_filter :authenticate_user!, if: :period_is_archived?
 
   def teach
-    handle_with(CoursesTeach, complete: -> {
+    handle_with(CoursesTeach, success: -> {
       course = @handler_result.outputs.course
       redirect_to course_dashboard_path(course.id)
     })

@@ -3,11 +3,15 @@ class CoursesTeach
   class InvalidTeachToken < StandardError
   end
 
+  class UserIsStudent < StandardError
+  end
+
   lev_handler
 
+  uses_routine UserIsCourseStudent,    as: :user_is_course_student
   uses_routine AddUserAsCourseTeacher, as: :add_teacher,
                                        translations: { outputs: { type: :verbatim } },
-                                       ignored_errors: [:user_is_already_teacher_of_course]
+                                       ignored_errors: [ :user_is_already_teacher_of_course ]
 
   protected
 
@@ -16,10 +20,15 @@ class CoursesTeach
   end
 
   def handle
-    outputs.course = CourseProfile::Models::Course.find_by(teach_token: params[:teach_token])
-    raise InvalidTeachToken if outputs.course.nil?
+    course = CourseProfile::Models::Course.find_by(teach_token: params[:teach_token])
+    outputs.course = course
+    raise InvalidTeachToken if course.nil?
+    raise UserIsStudent if run(
+      :user_is_course_student,
+      user: caller, course: course, include_dropped: true, include_archived: true
+    ).outputs.user_is_course_student
 
-    run(:add_teacher, course: outputs.course, user: caller)
+    run(:add_teacher, course: course, user: caller)
   end
 
 end

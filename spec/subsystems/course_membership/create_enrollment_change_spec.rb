@@ -94,20 +94,6 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
       end
 
-      it 'picks the most recent role if the user has multiple student roles in the course' do
-        second_role = Role::CreateUserRole[user, :student]
-        CourseMembership::AddStudent[period: period_1, role: second_role]
-
-        result = nil
-        expect do
-          result = described_class.call(args.merge(enrollment_code: period_2.enrollment_code))
-        end.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
-        expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period.to_model).to eq period_1
-        expect(result.outputs.enrollment_change.status).to eq :pending
-        expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
-      end
-
       it 'returns an error if the user has been dropped from the course' do
         user.to_model.roles.first.student.destroy
 
