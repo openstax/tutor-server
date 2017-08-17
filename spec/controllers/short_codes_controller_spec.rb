@@ -72,12 +72,10 @@ RSpec.describe ShortCodesController, type: :controller do
     }.to raise_error(ShortCodeNotFound)
   end
 
-  it 'raises SecurityTransgression for users who cannot see the task plan' do
+  it 'gives a 403 for users who cannot see the task plan' do
     controller.sign_in(user)
-
-    expect {
-      get :redirect, short_code: task_plan_code.code
-    }.to raise_error(SecurityTransgression)
+    get :redirect, short_code: task_plan_code.code
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'returns 404 for short code with a non task plan GID' do
