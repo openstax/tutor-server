@@ -35,9 +35,13 @@ OpenStax::RescueFrom.register_exception(
 
 OpenStax::RescueFrom.register_exception(
   'CoursesTeach::UserIsStudent',
-  message: "It looks like you're trying to add instructor permissions to a student account." +
-           " Sorry, but that is not permitted." +
-           " Contact <a href=\"mailto:support@openstaxtutor.org\">Support</a> if you need help.",
+  message: (
+    <<-HTML.strip_heredoc
+      <h3>Sorry, but that is not permitted.</h3>
+      It looks like you're trying to add instructor permissions to a student account.<br>
+      Contact <a href=\"mailto:support@openstaxtutor.org\">Support</a> if you need help.
+    HTML
+  ).html_safe,
   status: :forbidden,
   notify: false
 )
