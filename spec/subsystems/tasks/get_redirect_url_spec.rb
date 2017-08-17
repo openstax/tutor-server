@@ -38,10 +38,10 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
     ).to have_routine_error(:authentication_required)
   end
 
-  it 'returns :invalid_user for users not in the course' do
+  it 'returns :user_not_in_course_with_required_role for users not in the course' do
     expect(
       described_class.call(gid: task_plan_gid, user: user)
-    ).to have_routine_error(:invalid_user)
+    ).to have_routine_error(:user_not_in_course_with_required_role)
   end
 
 end

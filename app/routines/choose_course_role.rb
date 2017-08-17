@@ -6,7 +6,7 @@
 #   Get the users set of roles for the given course, restricted to
 #   allowed_role_type unless that is set to :any (the default)
 #
-#   If there are no roles, fail with :invalid_user
+#   If there are no roles, fail with :user_not_in_course_with_required_role
 #
 #   If there is one role, return it
 #
@@ -49,7 +49,7 @@ class ChooseCourseRole
       unless find_unique_role(roles: roles, type: :teacher)
         unless find_unique_role(roles: roles, type: :student)
           fatal_error(
-            code:    :invalid_user,
+            code:    :user_not_in_course_with_required_role,
             message: "The user does not have the any role in the course"
           )
         end
@@ -57,14 +57,14 @@ class ChooseCourseRole
     when :teacher
       unless find_unique_role(roles: roles, type: :teacher)
         fatal_error(
-          code:    :invalid_user,
+          code:    :user_not_in_course_with_required_role,
           message: "The user does not have any teacher roles in the course"
         )
       end
     when :student
       unless find_unique_role(roles: roles, type: :student)
         fatal_error(
-          code:    :invalid_user,
+          code:    :user_not_in_course_with_required_role,
           message: "The user does not have any student roles in the course"
         )
       end

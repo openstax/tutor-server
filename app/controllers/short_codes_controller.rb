@@ -26,8 +26,9 @@ class ShortCodesController < ApplicationController
             raise ShortCodeNotFound
           when :authentication_required
             authenticate_user!
-          when :invalid_user
-            raise SecurityTransgression
+          when :user_not_in_course_with_required_role
+            body = "To enroll in this course, please ask your instructor for the course enrollment link."
+            error_page('You are not enrolled in this course.', body, :forbidden, false)
           else
             raise StandardError, "#{@handler_result.errors.map(&:code).join(', ')}"
           end
@@ -36,10 +37,10 @@ class ShortCodesController < ApplicationController
 
   protected
 
-  def error_page(heading, body)
+  def error_page(heading, body, status=:unprocessable_entity, show_apology=true)
     render 'static_pages/generic_error',
-           locals: { heading: heading, body: body },
-           status: :unprocessable_entity
+           locals: { heading: heading, body: body, show_apology: show_apology },
+           status: status
   end
 
 end

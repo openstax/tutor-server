@@ -129,7 +129,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
       describe "errors" do
         subject { result.errors }
         it { should_not be_empty }
-        it { expect(subject.first.code).to eq(:invalid_user) }
+        it { expect(subject.first.code).to eq(:user_not_in_course_with_required_role) }
       end
 
       describe "output" do
