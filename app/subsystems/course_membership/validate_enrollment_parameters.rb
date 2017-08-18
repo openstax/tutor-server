@@ -1,4 +1,5 @@
 # Checks if an enrollment code is valid for a given book
+# May be hit before the user is logged in
 class CourseMembership::ValidateEnrollmentParameters
 
   lev_routine express_output: :period

@@ -10,18 +10,26 @@ class CourseMembership::CreateEnrollmentChange
     fatal_error(code: :invalid_enrollment_code,
                 message: 'The given enrollment code is invalid') if period.nil?
 
+    course = period.course
     fatal_error(code: :preview_course,
-                message: 'You cannot enroll in a preview course') if period.course.is_preview
+                message: 'You cannot enroll in a preview course') if course.is_preview
 
     fatal_error(code: :course_ended,
                 message: 'The course associated with the given enrollment code has ended') \
-      if period.course.ended?
+      if course.ended?
 
-    student_roles = run(:get_user_roles, user, 'student').outputs.roles.reject do |role|
-      role.student.period.deleted?
+    roles = run(:get_user_roles, user, ['student', 'teacher']).outputs.roles
+
+    fatal_error(
+      code: :is_teacher,
+      message: 'You cannot enroll as both a student and a teacher',
+      data: { course_name: course.name }) if roles.any? do |role|
+        role.teacher? && role.teacher.present? && role.teacher.course == course
+      end
+
+    student_roles = roles.select do |role|
+      role.student? && role.student.present? && !role.student.period.deleted?
     end
-
-    course = period.course
 
     ecosystem = run(:get_ecosystem, course: course).outputs.ecosystem
     # Assumes 1 book in the ecosystem
@@ -31,7 +39,7 @@ class CourseMembership::CreateEnrollmentChange
                 message: 'The given enrollment code does not match the current book') \
       if book_uuid.present? && book_uuid != course_book_uuid
 
-    course_roles, other_roles = student_roles.partition{ |role| role.student.course == course }
+    course_roles, other_roles = student_roles.partition { |role| role.student.course == course }
 
     if course.is_concept_coach
       # Detect conflicting concept coach courses (other CC courses that use the same book)
