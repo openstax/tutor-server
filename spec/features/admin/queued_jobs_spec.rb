@@ -10,13 +10,13 @@ RSpec.feature 'Administration of queued jobs', :js do
   let(:status) { Jobba.find(@job_id) }
 
   before(:all) do
-    Jobba.all.to_a.each { |status| status.delete! }
+    Jobba.all.to_a.each(&:delete!)
     Delayed::Worker.delay_jobs = true
   end
 
   after(:all) do
     Delayed::Worker.delay_jobs = false
-    Jobba.all.to_a.each { |status| status.delete! }
+    Jobba.all.to_a.each(&:delete!)
   end
 
   before(:each) do
@@ -26,7 +26,7 @@ RSpec.feature 'Administration of queued jobs', :js do
 
   after(:each) do
     Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
-      performance_report_export.try(:export).try(:file).try(:delete)
+      performance_report_export.try!(:export).try!(:file).try!(:delete)
     end
   end
 
@@ -71,84 +71,75 @@ RSpec.feature 'Administration of queued jobs', :js do
                              text: 'For all the good children')
   end
 
-  scenario 'succeeded jobs are hidden' do
-    status.succeeded!
-
-    visit admin_root_path
-    click_link 'Jobs'
-
-    expect(page).not_to have_css('.succeeded')
-
-    click_link 'all'
-    expect(page).to have_css('.succeeded')
-
-    click_link 'incomplete'
-    expect(page).not_to have_css('.succeeded')
-  end
-
-  scenario 'statuses are filterable' do
+  scenario 'Filtering by statuses' do
     status.queued!
     visit admin_jobs_path
 
-    click_link 'killed'
-    expect(page).not_to have_css('.queued')
-    click_link 'queued'
+    select 'killed', from: 'state'
+    click_button 'Search'
+    expect(page).to have_no_css('.queued')
+    select 'queued', from: 'state'
+    click_button 'Search'
     expect(page).to have_css('.queued')
-
 
     status.started!
     visit admin_jobs_path
 
-    click_link 'killed'
-    expect(page).not_to have_css('.started')
-    click_link 'started'
+    select 'killed', from: 'state'
+    click_button 'Search'
+    expect(page).to have_no_css('.started')
+    select 'started', from: 'state'
+    click_button 'Search'
     expect(page).to have_css('.started')
-
 
     status.failed!
     visit admin_jobs_path
 
-    click_link 'killed'
-    expect(page).not_to have_css('.failed')
-    click_link 'failed'
+    select 'killed', from: 'state'
+    click_button 'Search'
+    expect(page).to have_no_css('.failed')
+    select 'failed', from: 'state'
+    click_button 'Search'
     expect(page).to have_css('.failed')
-
 
     status.killed!
     visit admin_jobs_path
 
-    click_link 'failed'
-    expect(page).not_to have_css('.killed')
-    click_link 'killed'
+    select 'failed', from: 'state'
+    click_button 'Search'
+    expect(page).to have_no_css('.killed')
+    select 'killed', from: 'state'
+    click_button 'Search'
     expect(page).to have_css('.killed')
-
 
     status.unknown!
     visit admin_jobs_path
 
-    click_link 'killed'
-    expect(page).not_to have_css('.unknown')
-    click_link 'unknown'
+    select 'killed', from: 'state'
+    click_button 'Search'
+    expect(page).to have_no_css('.unknown')
+    select 'unknown', from: 'state'
+    click_button 'Search'
     expect(page).to have_css('.unknown')
-
-
-    status.queued!
-    visit admin_jobs_path
-
-    click_link 'all'
-    click_link 'incomplete'
-    expect(page).to have_css('.queued')
   end
 
-  scenario 'search by id' do
+  scenario 'Paginating jobs' do
+    extra_jobs = 10.times.map { Jobba.create! }
+
     visit admin_jobs_path
+    expect(page).to have_no_css('.pagination')
 
-    expect(page).to have_css('#jobs tbody tr')
+    select 10, from: 'per_page'
+    click_button 'Search'
+    expect(page).to have_css('.pagination')
+    expect(page).to have_css('.next_page:not(.disabled)')
+    expect(page).to have_css('.previous_page.disabled')
 
-    fill_in 'filter_id', with: 'not-here'
-    expect(page).not_to have_css('#jobs tbody tr')
+    click_link 'Next →'
+    expect(page).to have_css('.pagination')
+    expect(page).to have_css('.next_page.disabled')
+    expect(page).to have_css('.previous_page:not(.disabled)')
 
-    fill_in 'filter_id', with: status.id[4..7] # partial matching works
-    expect(page).to have_css('.job_id', text: status.id)
+    extra_jobs.each(&:delete!)
   end
 end
