@@ -23,5 +23,4 @@ module WebviewHelper
     }
     JWT.encode payload, Rails.application.secrets[:hypothesis]['client_secret'], 'HS256'
   end
-
 end
