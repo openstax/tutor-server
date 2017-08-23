@@ -28,6 +28,8 @@ class AuthController < ApplicationController
   # Requested by an OPTIONS request type
   def cors_preflight_check # the other CORS headers are set by the before_filter
     headers['Access-Control-Max-Age'] = '1728000'
+    headers['Access-Control-Allow-Origin'] = Rails.application.secrets[:hypothesis]['client_url']
+    headers['Access-Contorl-Allow_methods'] = ["GET", "POST", "PATCH", "DELETE"]
     render text: '', content_type: 'text/plain'
   end
 
