@@ -29,6 +29,12 @@ class LmsController < ApplicationController
 
     return redirect_to action: :launch_failed if !authenticator.valid_signature?
 
+    lms_user = Lms::Models::User.where(lti_user_id: params['user_id']).first
+    if lms_user.nil?
+      forward_user_to_accounts and return
+    end
+
+
     @launch_message = authenticator.message
     # Check that we haven't seen this nonce yet
 
@@ -85,6 +91,30 @@ class LmsController < ApplicationController
   def launch_failed; end
 
   protected
+
+
+  def forward_user_to_accounts
+    url = openstax_accounts.login_url
+    # params must be normalized so they're deterministic for the signature
+    qp = OAuth::Helper.normalize(lti_account_params)
+    # loosely from SO:
+    # http://stackoverflow.com/questions/4084979/ruby-way-to-generate-a-hmac-sha1-signature-for-oauth
+    secret_key = Rails.application.secrets.openstax['accounts']['secret']
+    signature = Base64.encode64(OpenSSL::HMAC.digest('sha1',secret_key, qp)).gsub(/\W+$/, '')
+
+    redirect_to "#{url}?#{qp}&lti_signature=#{signature}"
+  end
+
+  def lti_account_params
+    {
+      go: 'lti_launch',
+      timestamp: Time.now.to_i,
+      name: params[:lis_person_name_full],
+      email: params[:lis_person_contact_email_primary],
+      role: params[:roles].split(',').include?('Instructor') ?
+        :instructor : :student
+    }
+  end
 
   def submit_random_grade(consumer)
     score = sprintf('%0.2f', rand)
