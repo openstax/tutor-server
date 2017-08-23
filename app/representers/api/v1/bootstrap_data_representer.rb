@@ -29,6 +29,51 @@ module Api::V1
                )
              }
 
+
+    property :hypothesis_api_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*) {
+                 Rails.application.secrets['hypothesis']['api_url']
+
+             }
+
+    property :hypothesis_sidebar_app_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*) {
+                 Rails.application.secrets['hypothesis']['sidebar_app_url']
+             }
+
+    property :hypothesis_client_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*) {
+                 Rails.application.secrets['hypothesis']['client_url']
+             }
+
+    property :hypothesis_authority,
+             readable: true,
+             writeable: false,
+             getter: -> (*) {
+                 Rails.application.secrets['hypothesis']['authority']
+             }
+
+    property :hypothesis_embed_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*) {
+                 Rails.application.secrets['hypothesis']['embed_url']
+             }
+
+    property :hypothesis_client_id,
+             readable: true,
+             writable: false,
+             getter: -> (*) {
+                 Rails.application.secrets['hypothesis']['client_id']
+             }
+
+
     property :errata_form_url,
              readable: true,
              writeable: false,
@@ -38,6 +83,7 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
+
 
     property :payments, writeable: false, readable: true, getter: ->(*) {
       {
