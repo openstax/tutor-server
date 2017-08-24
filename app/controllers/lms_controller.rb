@@ -7,70 +7,32 @@ class LmsController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: [:launch, :ci_launch]
   skip_before_filter :authenticate_user!, only: [:configuration, :launch, :ci_launch]
 
+  before_filter :allow_embedding_in_iframe, only: [:launch, :ci_launch]
+  before_filter :get_app, only: [:launch, :ci_launch]
+  before_filter :get_launch_message, only: [:launch, :ci_launch]
+
   layout false
 
   def configuration
   end
 
   def launch
-    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
-
-    # Check that the request specifies a valid tool consumer
-    consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
-    return redirect_to action: :launch_failed if consumer.nil?
-
-    # Check that the message has the correct OAuth signature
-
-    authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
-      request.url,
-      request.request_parameters,
-      consumer.secret
-    )
-
-    return redirect_to action: :launch_failed if !authenticator.valid_signature?
-
     lms_user = Lms::Models::User.where(lti_user_id: params['user_id']).first
     if lms_user.nil?
       forward_user_to_accounts and return
     end
 
 
-    @launch_message = authenticator.message
-    # Check that we haven't seen this nonce yet
-
-    # begin
-    #   Lms::Models::Nonce.create!({ lms_tool_consumer_id: consumer.id, value: params['oauth_nonce'] })
-    # rescue ActiveRecord::RecordNotUnique => ee
-    #   return redirect_to action: :launch_failed
-    # end
-
-    # All checks passed, move along
-
     respond_to do |format|
       format.html
     end
 
     # sourcedid is only set if user is a student
-    submit_random_grade(consumer) if params['lis_result_sourcedid']
+    submit_random_grade(app) if params['lis_result_sourcedid']
   end
 
   def ci_launch
     # https://www.imsglobal.org/specs/lticiv1p0/specification-3
-
-    # Allow embedding in Canvas iframe
-    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
-
-    consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
-    return redirect_to action: :launch_failed if consumer.nil?
-
-    authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
-      request.url,
-      request.request_parameters,
-      consumer.secret
-    )
-    return redirect_to action: :launch_failed if !authenticator.valid_signature?
-
-    @launch_message = authenticator.message
 
     @cis = IMS::LTI::Models::Messages::ContentItemSelection.new(
       content_items: [
@@ -84,14 +46,40 @@ class LmsController < ApplicationController
     )
   end
 
-  def someplace
-  end
-
-
   def launch_failed; end
 
   protected
 
+  def allow_embedding_in_iframe
+    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
+  end
+
+  def get_app
+    @app = Lms::Models::App.find_by(key: params[:oauth_consumer_key])
+    redirect_to action: :launch_failed if @app.nil?
+  end
+
+  def get_launch_message
+    # Check that the message has the correct OAuth signature
+
+    authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
+      request.url,
+      request.request_parameters,
+      @app.secret
+    )
+
+    return redirect_to action: :launch_failed if !authenticator.valid_signature?
+
+    @launch_message = authenticator.message
+
+    # Check that we haven't seen this nonce yet
+
+    begin
+      Lms::Models::Nonce.create!({ lms_app_id: @app.id, value: params['oauth_nonce'] })
+    rescue ActiveRecord::RecordNotUnique => ee
+      redirect_to action: :launch_failed
+    end
+  end
 
   def forward_user_to_accounts
     url = openstax_accounts.login_url
@@ -114,16 +102,16 @@ class LmsController < ApplicationController
       email: params[:lis_person_contact_email_primary],
       role:  params[:roles].split(',').include?('Instructor') ? :instructor : :student
     }
-  end
-
-  def submit_random_grade(consumer)
+  end  
+  
+  def submit_random_grade(app)
     score = sprintf('%0.2f', rand)
     Rails.logger.debug "SET SCORE TO #{score}"
 
     Thread.abort_on_exception=true
     Thread.new {
       sleep 1
-      auth = OAuth::Consumer.new(consumer.key, consumer.secret)
+      auth = OAuth::Consumer.new(app.key, app.secret)
       token = OAuth::AccessToken.new(auth)
       xml = render_to_string(
         template: 'lms/random_outcome.xml',
