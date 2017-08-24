@@ -100,7 +100,7 @@ class LmsController < ApplicationController
     # loosely from SO:
     # http://stackoverflow.com/questions/4084979/ruby-way-to-generate-a-hmac-sha1-signature-for-oauth
     secret_key = Rails.application.secrets.openstax['accounts']['secret']
-    signature = Base64.encode64(OpenSSL::HMAC.digest('sha1',secret_key, qp)).gsub(/\W+$/, '')
+    signature = OpenSSL::HMAC.hexdigest('sha1',secret_key, qp)
 
     redirect_to "#{url}?#{qp}&lti_signature=#{signature}"
   end
