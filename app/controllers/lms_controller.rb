@@ -102,17 +102,17 @@ class LmsController < ApplicationController
     secret_key = Rails.application.secrets.openstax['accounts']['secret']
     signature = OpenSSL::HMAC.hexdigest('sha1',secret_key, qp)
 
-    redirect_to "#{url}?#{qp}&lti_signature=#{signature}"
+    redirect_to "#{url}?#{qp}&signature=#{signature}"
   end
 
   def lti_account_params
     {
-      go: 'lti_launch',
+      go: 'trusted_launch',
       timestamp: Time.now.to_i,
-      name: params[:lis_person_name_full],
+      uuid:  params[:user_id],
+      name:  params[:lis_person_name_full],
       email: params[:lis_person_contact_email_primary],
-      role: params[:roles].split(',').include?('Instructor') ?
-        :instructor : :student
+      role:  params[:roles].split(',').include?('Instructor') ? :instructor : :student
     }
   end
 
