@@ -28,6 +28,8 @@ branches:
     - master
     - alpha
     - beta
+    - lms
+    - /^int-.*$/
 before_script:
   - export OXT_DB_USER=postgres
   - export OXT_DB_PASS=
