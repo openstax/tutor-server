@@ -1,4 +1,4 @@
-class Lms::Models::ToolConsumer < Tutor::SubSystems::BaseModel
+class Lms::Models::App < Tutor::SubSystems::BaseModel
 
   before_validation :initialize_tokens
 
