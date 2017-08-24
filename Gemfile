@@ -212,7 +212,8 @@ gem 'best_in_place'
 # Box integration
 gem 'boxr'
 
-gem 'oauth'
+# OAuth gem for generating and validating lti requests
+gem 'oauth', '~> 0.5.1'
 
 group :development, :test do
   # Get env variables from .env file
