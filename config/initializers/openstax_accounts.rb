@@ -28,7 +28,7 @@ OpenStax::Accounts.configure do |config|
     end
   end
   config.forwardable_login_param_keys.push(
-    'name', 'email', 'role', 'lti_signature', 'timestamp'
+    'name', 'email', 'role', 'signature', 'timestamp', 'uuid'
   )
 end
 
