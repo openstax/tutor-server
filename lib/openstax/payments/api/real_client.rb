@@ -81,7 +81,7 @@ class OpenStax::Payments::Api::RealClient
         # date can be changed on Payments without us knowing, we always try to get
         # a new token even if not expired.
 
-        if num_tries == 1
+        if num_tries >= 1
           Rails.logger.info("OX Payments: client token expired") if token_expired?
           Rails.logger.info("OX Payments: getting a new token to try to resolve a 403")
           initialize_oauth_variables! # resets token
