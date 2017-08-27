@@ -27,9 +27,6 @@ OpenStax::Accounts.configure do |config|
       false
     end
   end
-  config.forwardable_login_param_keys.push(
-    'name', 'email', 'role', 'signature', 'timestamp', 'uuid'
-  )
 end
 
 OpenStax::Accounts::ApplicationController.class_exec do
@@ -37,11 +34,6 @@ OpenStax::Accounts::ApplicationController.class_exec do
 end
 
 OpenStax::Accounts::Account.class_exec do
-  has_one :profile, primary_key: :id,
-                    foreign_key: :account_id,
-                    class_name: 'User::Models::Profile',
-                    inverse_of: :account
-
   # TODO: Move this to accounts-rails
   def name
     full_name.present? ? \

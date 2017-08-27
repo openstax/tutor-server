@@ -1,6 +1,10 @@
 class Lms::Models::App < Tutor::SubSystems::BaseModel
 
+  belongs_to :owner, polymorphic: true
+
   before_validation :initialize_tokens
+
+  validates :owner, presence: true
 
   protected
 
