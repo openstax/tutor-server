@@ -348,12 +348,11 @@ ActiveRecord::Schema.define(version: 20170824032434) do
     t.boolean  "does_cost",                                    default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
-    t.boolean  "is_preview_ready",                             default: false,               null: false
   end
 
+  add_index "course_profile_courses", ["catalog_offering_id", "is_preview", "preview_claimed_at"], name: "preview_pending_indx", using: :btree
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
   add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
-  add_index "course_profile_courses", ["is_preview", "is_preview_ready", "preview_claimed_at", "catalog_offering_id"], name: "preview_pending_index", using: :btree
   add_index "course_profile_courses", ["name"], name: "index_course_profile_courses_on_name", using: :btree
   add_index "course_profile_courses", ["school_district_school_id"], name: "index_course_profile_courses_on_school_district_school_id", using: :btree
   add_index "course_profile_courses", ["teach_token"], name: "index_course_profile_courses_on_teach_token", unique: true, using: :btree
@@ -434,16 +433,15 @@ ActiveRecord::Schema.define(version: 20170824032434) do
   add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
 
   create_table "lms_apps", force: :cascade do |t|
-    t.string   "name",       null: false
-    t.string   "key",        null: false
-    t.string   "secret",     null: false
-    t.text     "notes"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.integer  "owner_id",   null: false
     t.string   "owner_type", null: false
+    t.string   "key",        null: false
+    t.string   "secret",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
+  add_index "lms_apps", ["key"], name: "index_lms_apps_on_key", using: :btree
   add_index "lms_apps", ["owner_type", "owner_id"], name: "index_lms_apps_on_owner_type_and_owner_id", using: :btree
 
   create_table "lms_nonces", force: :cascade do |t|
@@ -453,6 +451,14 @@ ActiveRecord::Schema.define(version: 20170824032434) do
   end
 
   add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
+
+  create_table "lms_users", force: :cascade do |t|
+    t.string  "lti_user_id",                   null: false
+    t.integer "openstax_accounts_accounts_id"
+  end
+
+  add_index "lms_users", ["lti_user_id"], name: "index_lms_users_on_lti_user_id", using: :btree
+  add_index "lms_users", ["openstax_accounts_accounts_id"], name: "index_lms_users_on_openstax_accounts_accounts_id", using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
