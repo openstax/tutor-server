@@ -203,7 +203,8 @@ gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.gi
 # In place form editing on admin menu
 gem 'best_in_place'
 
-gem 'oauth'
+# OAuth gem for generating and validating lti requests
+gem 'oauth', '~> 0.5.1'
 
 group :development, :test do
   # Get env variables from .env file

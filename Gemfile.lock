@@ -815,7 +815,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
-  oauth
+  oauth (~> 0.5.1)
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
