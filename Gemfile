@@ -69,7 +69,8 @@ gem 'openstax_accounts', git: 'https://github.com/openstax/accounts-rails.git', 
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', git: 'https://github.com/openstax/openstax_api.git', ref: '1ae1a5174ad93c311463c48e924e9bcfdc3f2e6f'  # '~> 8.1.0'
+gem 'openstax_api', git: 'https://github.com/openstax/openstax_api.git', branch: 'sign-params'
+# ref: '1ae1a5174ad93c311463c48e924e9bcfdc3f2e6f'  # '~> 8.1.0'
 
 gem 'apipie-rails'
 gem 'maruku'

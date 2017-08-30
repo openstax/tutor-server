@@ -50,7 +50,7 @@ GIT
 GIT
   remote: https://github.com/openstax/openstax_api.git
   revision: 1ae1a5174ad93c311463c48e924e9bcfdc3f2e6f
-  ref: 1ae1a5174ad93c311463c48e924e9bcfdc3f2e6f
+  branch: sign-params
   specs:
     openstax_api (8.1.1)
       doorkeeper (>= 2.0)
