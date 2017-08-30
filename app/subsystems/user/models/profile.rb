@@ -41,3 +41,12 @@ module User
     end
   end
 end
+
+# Leave this monkey patch of Account here.  If moved to a location that is
+# not reloaded by Rails, things break in the development environment.
+OpenStax::Accounts::Account.class_exec do
+  has_one :profile, primary_key: :id,
+                    foreign_key: :account_id,
+                    class_name: 'User::Models::Profile',
+                    inverse_of: :account
+end

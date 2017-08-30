@@ -1,141 +1,85 @@
-require 'net/http'
-require 'uri'
-require 'oauth'
-
 class LmsController < ApplicationController
 
   skip_before_filter :verify_authenticity_token, only: [:launch, :ci_launch]
   skip_before_filter :authenticate_user!, only: [:configuration, :launch, :ci_launch]
 
+  before_filter :allow_embedding_in_iframe, only: [:launch, :ci_launch]
+
   layout false
 
-  def configuration
-  end
+  def configuration; end
 
   def launch
-    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
+    begin
+      launch = Lms::Launch.from_request(request)
 
-    # Check that the request specifies a valid tool consumer
-    consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
-    return redirect_to action: :launch_failed if consumer.nil?
+      Rails.logger.debug { launch.formatted_data(include_everything: true) }
 
-    # Check that the message has the correct OAuth signature
+      # Bail early if we can't handle the launch role
+      if !(launch.is_student? || launch.is_instructor?)
+        render(:unsupported_role) and return
+      end
 
-    authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
-      request.url,
-      request.request_parameters,
-      consumer.secret
-    )
+      # Persist the launch so we can load it after return from Accounts
+      session[:launch_id] = launch.persist!
 
-    return redirect_to action: :launch_failed if !authenticator.valid_signature?
+      # Always send users to accounts when a launch happens.  We may decide
+      # later to skip accounts when the user is already logged in, but in
+      # that case we will want to make sure that the launching user is in
+      # fact the user who is logged in, for which we'd need to track a link
+      # between LMS user ID and local user ID.  For users who have launched
+      # before, the trip to Accounts and back should be pretty quick / invisible.
 
-    lms_user = Lms::Models::User.where(lti_user_id: params['user_id']).first
-    if lms_user.nil?
-      forward_user_to_accounts and return
+      send_launched_user_to_accounts(launch)
+    rescue Lms::Launch::Error
+      render :launch_failed
     end
+  end
 
+  def complete_launch
+    launch = Lms::Launch.from_id(session.delete(:launch_id))
 
-    @launch_message = authenticator.message
-    # Check that we haven't seen this nonce yet
-
-    # begin
-    #   Lms::Models::Nonce.create!({ lms_tool_consumer_id: consumer.id, value: params['oauth_nonce'] })
-    # rescue ActiveRecord::RecordNotUnique => ee
-    #   return redirect_to action: :launch_failed
-    # end
-
-    # All checks passed, move along
-
-    respond_to do |format|
-      format.html
-    end
-
-    # sourcedid is only set if user is a student
-    submit_random_grade(consumer) if params['lis_result_sourcedid']
+    handle_with(LmsCompleteLaunch,
+                launch: launch,
+                success: lambda do
+                  render :complete_launch,
+                         locals: {
+                           destination_url: course_dashboard_url(outputs.course)
+                         }
+                end,
+                failure: lambda do
+                  render :launch_failed
+                end)
   end
 
   def ci_launch
-    # https://www.imsglobal.org/specs/lticiv1p0/specification-3
-
-    # Allow embedding in Canvas iframe
-    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
-
-    consumer = Lms::Models::ToolConsumer.find_by(key: params[:oauth_consumer_key])
-    return redirect_to action: :launch_failed if consumer.nil?
-
-    authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
-      request.url,
-      request.request_parameters,
-      consumer.secret
-    )
-    return redirect_to action: :launch_failed if !authenticator.valid_signature?
-
-    @launch_message = authenticator.message
-
-    @cis = IMS::LTI::Models::Messages::ContentItemSelection.new(
-      content_items: [
-        IMS::LTI::Models::ContentItems::LtiLinkItem.new(
-          media_type: 'application/vnd.ims.lti.v1.ltilink',
-          text: 'A URL to click',
-          url: lms_launch_url,
-          thumbnail: IMS::LTI::Models::Image.new(id: 'test', height: 123, width: 456)
-        )
-      ]
-    )
+    begin
+      @launch = Lms::Launch.from_request(request)
+    rescue Lms::Launch::Error
+      redirect_to action: :launch_failed
+    end
   end
-
-  def someplace
-  end
-
-
-  def launch_failed; end
 
   protected
 
-
-  def forward_user_to_accounts
-    url = openstax_accounts.login_url
-    # params must be normalized so they're deterministic for the signature
-    qp = OAuth::Helper.normalize(lti_account_params)
-    # loosely from SO:
-    # http://stackoverflow.com/questions/4084979/ruby-way-to-generate-a-hmac-sha1-signature-for-oauth
-    secret_key = Rails.application.secrets.openstax['accounts']['secret']
-    signature = OpenSSL::HMAC.hexdigest('sha1',secret_key, qp)
-
-    redirect_to "#{url}?#{qp}&signature=#{signature}"
+  def allow_embedding_in_iframe
+    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
   end
 
-  def lti_account_params
-    {
+  def send_launched_user_to_accounts(launch)
+    redirect_to openstax_accounts.login_url(
+      sp: OpenStax::Api::Params.sign(
+        params: {
+          uuid:  launch.lms_user_id,
+          name:  launch.full_name,
+          email: launch.email,
+          role:  launch.role
+        },
+        secret: Rails.application.secrets.openstax['accounts']['secret']
+      ),
       go: 'trusted_launch',
-      timestamp: Time.now.to_i,
-      uuid:  params[:user_id],
-      name:  params[:lis_person_name_full],
-      email: params[:lis_person_contact_email_primary],
-      role:  params[:roles].split(',').include?('Instructor') ? :instructor : :student
-    }
+      return_to: lms_complete_launch_url
+    )
   end
 
-  def submit_random_grade(consumer)
-    score = sprintf('%0.2f', rand)
-    Rails.logger.debug "SET SCORE TO #{score}"
-
-    Thread.abort_on_exception=true
-    Thread.new {
-      sleep 1
-      auth = OAuth::Consumer.new(consumer.key, consumer.secret)
-      token = OAuth::AccessToken.new(auth)
-      xml = render_to_string(
-        template: 'lms/random_outcome.xml',
-        locals: {
-          :@score => score,
-          :@source_id => params['lis_result_sourcedid']
-        }
-      )
-      response = token.post(
-        params['lis_outcome_service_url'], xml, {'Content-Type' => 'application/xml'}
-      )
-      Rails.logger.debug response.body
-    }
-  end
 end

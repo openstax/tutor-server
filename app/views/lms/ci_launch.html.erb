@@ -1,8 +1,22 @@
-<form method="post" action="<%= @launch_message.content_item_return_url %>" id="assignment_selection">
- <input type="hidden" name="data" value="<%= @launch_message.data %>"/>
+<%
+  # https://www.imsglobal.org/specs/lticiv1p0/specification-3
+
+  cis = IMS::LTI::Models::Messages::ContentItemSelection.new(
+    content_items: [
+      IMS::LTI::Models::ContentItems::LtiLinkItem.new(
+        media_type: 'application/vnd.ims.lti.v1.ltilink',
+        text: 'OpenStax Tutor',
+        url: lms_launch_url,
+      )
+    ]
+  )
+%>
+
+<form method="post" action="<%= @launch.message.content_item_return_url %>" id="assignment_selection">
+ <input type="hidden" name="data" value="<%= @launch.message.data %>"/>
  <input type="hidden" name="lti_message_type" value="ContentItemSelection"/>
  <input type="hidden" name="lti_version" value="LTI-1p0"/>
- <input type="hidden" name="content_items" value="<%= @cis.parameters['content_items'] %>"/>
+ <input type="hidden" name="content_items" value="<%= cis.parameters['content_items'] %>"/>
 </form>
 
 <script>

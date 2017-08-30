@@ -58,13 +58,13 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.6.0'
+gem 'openstax_accounts', git: 'https://github.com/openstax/accounts-rails.git', ref: '5215f0720383ef826c50711ed83085feb9f213a6'  # '~> 7.6.0'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 8.1.0'
+gem 'openstax_api', git: 'https://github.com/openstax/openstax_api.git', ref: '1ae1a5174ad93c311463c48e924e9bcfdc3f2e6f'  # '~> 8.1.0'
 
 gem 'apipie-rails'
 gem 'maruku'
