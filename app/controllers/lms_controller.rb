@@ -73,6 +73,7 @@ class LmsController < ApplicationController
           uuid:  launch.lms_user_id,
           name:  launch.full_name,
           email: launch.email,
+          school: launch.school,
           role:  launch.role
         },
         secret: Rails.application.secrets.openstax['accounts']['secret']
