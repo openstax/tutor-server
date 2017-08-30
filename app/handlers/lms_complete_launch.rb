@@ -1,14 +1,15 @@
 require 'active_support/core_ext/module/delegation'
 
-class Lms::ProcessLaunch
+class LmsCompleteLaunch
 
-  lev_routine
+  lev_handler
 
-  def exec(launch, user)
+  def authorized?
+    true
+  end
+
+  def handle
     raise "`launch` cannot be nil" if launch.nil?
-    raise "`user` cannot be nil" if user.nil?
-
-    @launch = launch
 
     # Get the tool consumer, and update its metadata as needed
 
@@ -17,10 +18,10 @@ class Lms::ProcessLaunch
 
     # Get or create the context so we can know the course to launch into
 
-    context = Lms::Models::Context.joins{tool_consumer}
+    context = Lms::Models::Context.joins(:tool_consumer)
                                   .eager_load(:course)
-                                  .where{lti_id == context_id}
-                                  .where{tool_consumer.guid == tool_consumer_instance_guid}
+                                  .where(lti_id: context_id)
+                                  .where(tool_consumer: { guid: tool_consumer_instance_guid })
                                   .first
 
     if context.nil?
@@ -66,8 +67,8 @@ class Lms::ProcessLaunch
                                 )
       end
     elsif launch.is_instructor?
-      if !UserIsCourseTeacher[user: requestor, course: course]
-        AddUserAsCourseTeacher[course: course, user: user]
+      if !UserIsCourseTeacher[user: caller, course: course]
+        AddUserAsCourseTeacher[user: caller, course: course]
       end
     end
 
@@ -87,8 +88,12 @@ class Lms::ProcessLaunch
     # want latest LMS admin contact info immediately
   end
 
+  def launch
+    options[:launch]
+  end
+
   def message
-    @launch.message
+    launch.message
   end
 
 end

@@ -16,7 +16,7 @@ class LmsController < ApplicationController
       Rails.logger.debug { launch.formatted_data(include_everything: true) }
 
       # Bail early if we can't handle the launch role
-      if !launch.is_student? || !launch.is_instructor?
+      if !(launch.is_student? || launch.is_instructor?)
         render(:unsupported_role) and return
       end
 
@@ -39,19 +39,22 @@ class LmsController < ApplicationController
   def complete_launch
     launch = Lms::Launch.from_id(session.delete(:launch_id))
 
-    # TODO this should probably be a handler
-    outputs = ProcessLaunch[launch, current_user]
-
-    @launch_destination_url = course_dashboard_url(outputs.course)
-
-    respond_to do |format|
-      format.html { template: 'complete_launch' }
-    end
+    handle_with(LmsCompleteLaunch,
+                launch: launch,
+                success: lambda do
+                  render :complete_launch,
+                         locals: {
+                           destination_url: course_dashboard_url(outputs.course)
+                         }
+                end,
+                failure: lambda do
+                  render :launch_failed
+                end)
   end
 
   def ci_launch
     begin
-      @launch = Lms::Launch.from(request)
+      @launch = Lms::Launch.from_request(request)
     rescue Lms::Launch::Error
       redirect_to action: :launch_failed
     end
@@ -65,7 +68,7 @@ class LmsController < ApplicationController
 
   def send_launched_user_to_accounts(launch)
     redirect_to openstax_accounts.login_url(
-      signed_payload: OpenStax::Api::Params.sign(
+      sp: OpenStax::Api::Params.sign(
         params: {
           uuid:  launch.lms_user_id,
           name:  launch.full_name,
