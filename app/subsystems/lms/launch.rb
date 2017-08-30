@@ -58,6 +58,10 @@ class Lms::Launch
     request_parameters[:lis_person_contact_email_primary]
   end
 
+  def school
+    request_parameters[:tool_consumer_instance_name]
+  end
+
   def role
     # Let's start with recognizing only definite instructor and student roles; there
     # are a zillion roles defined in LIS and JP thinks we should be aware of the roles
