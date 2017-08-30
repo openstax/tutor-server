@@ -377,6 +377,7 @@ Rails.application.routes.draw do
   post 'lms/launch', to: 'lms#launch'
   post 'lms/ci_launch', to: 'lms#ci_launch'
   get 'lms/launch_failed', to: 'lms#launch_failed'
+  get 'lms/complete_launch', to: 'lms#complete_launch'
 
   # Catch-all frontend route
   match :'*other', to: 'webview#index', via: [:get, :post, :put, :patch, :delete]

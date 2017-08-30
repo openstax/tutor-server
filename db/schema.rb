@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824032434) do
+ActiveRecord::Schema.define(version: 20170826122030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -444,6 +444,25 @@ ActiveRecord::Schema.define(version: 20170824032434) do
   add_index "lms_apps", ["key"], name: "index_lms_apps_on_key", using: :btree
   add_index "lms_apps", ["owner_type", "owner_id"], name: "index_lms_apps_on_owner_type_and_owner_id", using: :btree
 
+  create_table "lms_contexts", force: :cascade do |t|
+    t.string  "lti_id",                   null: false
+    t.integer "lms_tool_consumer_id",     null: false
+    t.integer "course_profile_course_id", null: false
+  end
+
+  add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", using: :btree
+  add_index "lms_contexts", ["lms_tool_consumer_id"], name: "index_lms_contexts_on_lms_tool_consumer_id", using: :btree
+  add_index "lms_contexts", ["lti_id"], name: "index_lms_contexts_on_lti_id", using: :btree
+
+  create_table "lms_course_grade_callbacks", force: :cascade do |t|
+    t.string  "result_sourcedid",             null: false
+    t.string  "outcome_url",                  null: false
+    t.integer "course_membership_student_id", null: false
+  end
+
+  add_index "lms_course_grade_callbacks", ["course_membership_student_id"], name: "course_grade_callbacks_on_student", using: :btree
+  add_index "lms_course_grade_callbacks", ["result_sourcedid", "outcome_url"], name: "course_grade_callback_result_outcome", unique: true, using: :btree
+
   create_table "lms_nonces", force: :cascade do |t|
     t.string   "value",      limit: 128, null: false
     t.datetime "created_at"
@@ -451,6 +470,23 @@ ActiveRecord::Schema.define(version: 20170824032434) do
   end
 
   add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
+
+  create_table "lms_tool_consumers", force: :cascade do |t|
+    t.string "guid",                null: false
+    t.string "product_family_code"
+    t.string "version"
+    t.string "name"
+    t.string "description"
+    t.string "url"
+    t.string "contact_email"
+  end
+
+  add_index "lms_tool_consumers", ["guid"], name: "index_lms_tool_consumers_on_guid", using: :btree
+
+  create_table "lms_trusted_launch_data", force: :cascade do |t|
+    t.json   "request_params"
+    t.string "request_url"
+  end
 
   create_table "lms_users", force: :cascade do |t|
     t.string  "lti_user_id",                   null: false
@@ -995,6 +1031,9 @@ ActiveRecord::Schema.define(version: 20170824032434) do
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "lms_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_contexts", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_course_grade_callbacks", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade

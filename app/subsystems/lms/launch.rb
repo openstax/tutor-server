@@ -1,7 +1,10 @@
 class Lms::Launch
 
+  # A PORO that wraps a launch request, handles validating it, hiding certain
+  # details from other code.
+
   attr_reader :app, :message
-  attr_reader :request_parameters
+  attr_reader :request_parameters, :request_url
 
   class Error < StandardError; end
   class AppNotFound < Error; end
@@ -14,16 +17,16 @@ class Lms::Launch
   end
 
   def persist!
-    Lms::Models::ValidLaunchData.create!(
-      request_params: request.request_parameters,
-      request_url: request.url
+    Lms::Models::TrustedLaunchData.create!(
+      request_params: request_parameters,
+      request_url: request_url
     ).id
   end
 
   def self.from_id(id)
-    launch_data = Lms::Models::ValidLaunchData.find(id)
+    launch_data = Lms::Models::TrustedLaunchData.find(id)
     raise CouldNotLoadLaunch if launch_data.nil?
-    launch = new(request_parameters: launch_data.request_parameters,
+    launch = new(request_parameters: ActiveSupport::HashWithIndifferentAccess.new(launch_data.request_params),
                  request_url: launch_data.request_url,
                  trusted: true)
     launch_data.destroy
@@ -90,8 +93,9 @@ class Lms::Launch
 
   protected
 
-  def initialize(request_paramaters:, request_url:, trusted: false)
-    @request_parameters = request.request_parameters
+  def initialize(request_parameters:, request_url:, trusted: false)
+    @request_parameters = request_parameters
+    @request_url = request_url
 
     if trusted
       @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
@@ -104,7 +108,7 @@ class Lms::Launch
       end
 
       authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
-        request.url,
+        request_url,
         request_parameters,
         app.secret
       )
