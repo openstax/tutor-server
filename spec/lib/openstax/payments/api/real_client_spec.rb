@@ -68,6 +68,22 @@ RSpec.describe OpenStax::Payments::Api::RealClient, type: :external, vcr: VCR_OP
     end
   end
 
+  context 'Payments returns a 403' do
+    it 'manually refreshes the token and tries again' do
+      # should reset token once
+      expect_any_instance_of(OpenStax::Payments::Api::RealClient).to receive(:initialize_oauth_variables!).once()
+
+      times_called = 0
+      allow_any_instance_of(OpenStax::Payments::Api::RealClient).to receive(:oauth_worker) {
+        times_called += 1
+        raise(OAuth2::Error, OpenStruct.new(status: 403)) if times_called == 1 # simulate token expiration
+        double(request: double(body: {}.to_json)) # second time should get good value
+      }
+
+      expect(real_client.check_payment(product_instance_uuid: SecureRandom.uuid)).to eq({})
+    end
+  end
+
   def make_purchase(product_instance_uuid: nil, purchaser_account_uuid: nil)
     response = real_client.make_fake_purchase(
       product_instance_uuid: product_instance_uuid,
