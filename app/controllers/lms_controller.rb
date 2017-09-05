@@ -31,7 +31,7 @@ class LmsController < ApplicationController
       # before, the trip to Accounts and back should be pretty quick / invisible.
 
       send_launched_user_to_accounts(launch)
-    rescue Lms::Launch::Error
+    rescue Lms::Launch::Error => ee
       render :launch_failed
     end
   end
@@ -76,7 +76,7 @@ class LmsController < ApplicationController
           school: launch.school,
           role:  launch.role
         },
-        secret: Rails.application.secrets.openstax['accounts']['secret']
+        secret: OpenStax::Accounts.configuration.openstax_application_secret
       ),
       go: 'trusted_launch',
       return_to: lms_complete_launch_url

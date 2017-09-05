@@ -68,7 +68,7 @@ class Lms::Launch
     # we are handling and which we consider to be instructors.
 
     @role ||= begin
-      lms_roles = request_parameters[:roles].split(',')
+      lms_roles = (request_parameters[:roles] || '').split(',')
       if lms_roles.any?{|lms_role| lms_role.match(/Instructor/)}
         :instructor
       elsif lms_roles.any?{|lms_role| lms_role.match(/Student|Learner/)}
@@ -147,6 +147,9 @@ class Lms::Launch
 
         "\nDeprecated params:\n" +
         message.deprecated_params.ai(plain:true, ruby19_syntax: true, indent: 2) +
+
+        "\nUnknown params:\n" +
+        message.unknown_params.ai(plain:true, ruby19_syntax: true, indent: 2) +
 
         "\nOther misc params not always in `message`:\n" +
         {
