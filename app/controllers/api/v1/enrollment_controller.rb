@@ -1,4 +1,5 @@
-class Api::V1::EnrollmentChangesController < Api::V1::ApiController
+class Api::V1::EnrollmentController < Api::V1::ApiController
+
 
   resource_description do
     api_versions "v1"
@@ -8,6 +9,25 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       The changes currently need to be approved by the requesting user to be effective.
     EOS
   end
+
+  api :GET, '/:course_uuid/choices', 'Returns limited information for a given course uuid'
+  description <<-EOS
+    Returns course and period information for a course identified by it's UUID.
+    Can be called by any logged in user, but only returns the course name and enrollment codes
+    #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
+  EOS
+  def choices
+    course = CourseProfile::Models::Course.find_by(uuid: params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:enrollment_info, current_human_user, course)
+
+    respond_with(
+      course,
+      represent_with: Api::V1::CourseEnrollmentsRepresenter,
+      location: nil
+    )
+  end
+
+
 
   api :POST, '/prevalidate', 'Check if an enrollment code is valid for a given book uuid'
   description <<-EOS
