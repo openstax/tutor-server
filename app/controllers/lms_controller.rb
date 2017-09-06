@@ -44,7 +44,11 @@ class LmsController < ApplicationController
                 success: lambda do
                   render :complete_launch,
                          locals: {
-                           destination_url: course_dashboard_url(outputs.course)
+                           destination_url: if @handler_result.outputs.is_unenrolled_student
+                             token_enroll_url(@handler_result.outputs.course.uuid)
+                           else
+                             course_dashboard_url(@handler_result.outputs.course)
+                           end
                          }
                 end,
                 failure: lambda do
