@@ -68,7 +68,7 @@ class Lms::Launch
     # we are handling and which we consider to be instructors.
 
     @role ||= begin
-      lms_roles = request_parameters[:roles].split(',')
+      lms_roles = (request_parameters[:roles] || '').split(',')
       if lms_roles.any?{|lms_role| lms_role.match(/Instructor/)}
         :instructor
       elsif lms_roles.any?{|lms_role| lms_role.match(/Student|Learner/)}
@@ -101,9 +101,15 @@ class Lms::Launch
     @request_parameters = request_parameters
     @request_url = request_url
 
+    # ims-lti gem gives a lot of "unknown parameter" warnings even for params
+    # that Canvas commonly sends; silence those except in dev env
+    warning_verbosity = Rails.env.development? ? $VERBOSE : nil
+
     if trusted
-      @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
-      @message.launch_url = request_url
+      with_warnings(warning_verbosity) do
+        @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
+        @message.launch_url = request_url
+      end
     else
       begin
         Lms::Models::Nonce.create!({ lms_app_id: app.id, value: request_parameters[:oauth_nonce] })
@@ -111,15 +117,17 @@ class Lms::Launch
         raise AlreadyUsed
       end
 
-      authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
-        request_url,
-        request_parameters,
-        app.secret
-      )
+      with_warnings(warning_verbosity) do
+        authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
+          request_url,
+          request_parameters,
+          app.secret
+        )
 
-      raise InvalidSignature if !authenticator.valid_signature?
+        raise InvalidSignature if !authenticator.valid_signature?
 
-      @message = authenticator.message
+        @message = authenticator.message
+      end
     end
   end
 
@@ -147,6 +155,9 @@ class Lms::Launch
 
         "\nDeprecated params:\n" +
         message.deprecated_params.ai(plain:true, ruby19_syntax: true, indent: 2) +
+
+        "\nUnknown params:\n" +
+        message.unknown_params.ai(plain:true, ruby19_syntax: true, indent: 2) +
 
         "\nOther misc params not always in `message`:\n" +
         {
