@@ -20,6 +20,9 @@ class Lms::SendCourseGradesToLms
     #
     # Rewrite this code :-)
     #
+    # NOTE also that CourseGradeCallbacks are now stored in terms of user/course
+    # pairs instead of students.
+    #
     #######################################################################
 
     app = Lms::Models::App.where(app_owner: course).first
