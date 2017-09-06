@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true, version: :v1 do
   let(:user)                 { FactoryGirl.create :user }
 
   let(:user_2)               { FactoryGirl.create :user }
@@ -266,6 +266,15 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
     context 'authorized user' do
       before(:each) { controller.sign_in user }
+
+      it 'lists periods for a course' do
+        pr = period
+        api_get :choices, nil, parameters: { id: course.uuid }
+        expect(response.body_as_hash).to eq({
+          name: course.name,
+          periods: [{ name: pr.name, enrollment_code: pr.enrollment_code }]
+        })
+      end
 
       it 'approves a pending EnrollmentChange request' do
         expect do

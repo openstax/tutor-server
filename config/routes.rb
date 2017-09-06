@@ -192,9 +192,10 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :enrollment_changes, only: [:create] do
+    resources :enrollment, only: [:create] do
       put :approve, on: :member
       post :prevalidate, on: :collection
+      get :choices, on: :member
     end
 
     resources :offerings, only: [:index]
