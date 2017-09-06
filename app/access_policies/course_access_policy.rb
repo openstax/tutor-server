@@ -21,8 +21,6 @@ class CourseAccessPolicy
     when :clone
       UserIsCourseTeacher[user: requestor, course: course] &&
         course.offering.try!(:is_available)
-    when :enrollment_info
-      return course.present?
     else
       false
     end

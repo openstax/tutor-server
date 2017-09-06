@@ -17,9 +17,7 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def choices
-    course = CourseProfile::Models::Course.find_by(uuid: params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:enrollment_info, current_human_user, course)
-
+    course = CourseProfile::Models::Course.find_by!(uuid: params[:id])
     respond_with(
       course,
       represent_with: Api::V1::CourseEnrollmentsRepresenter,
