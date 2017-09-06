@@ -461,7 +461,7 @@ ActiveRecord::Schema.define(version: 20170905204817) do
     t.integer "course_profile_course_id", null: false
   end
 
-  add_index "lms_course_grade_callbacks", ["course_profile_course_id", "user_profile_id"], name: "course_grade_callbacks_on_course_user", using: :btree
+  add_index "lms_course_grade_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_grade_callbacks_on_course_user_result_outcome", using: :btree
   add_index "lms_course_grade_callbacks", ["result_sourcedid", "outcome_url"], name: "course_grade_callback_result_outcome", unique: true, using: :btree
   add_index "lms_course_grade_callbacks", ["user_profile_id"], name: "course_grade_callbacks_on_user", using: :btree
 
