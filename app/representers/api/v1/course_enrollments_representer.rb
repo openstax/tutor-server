@@ -7,7 +7,7 @@ class Api::V1::CourseEnrollmentsRepresenter < Roar::Decorator
 
     property :name,
              type: String,
-             writeable: true,
+             writeable: false,
              readable: true,
              schema_info: {
                description: "The period's name"
@@ -15,20 +15,20 @@ class Api::V1::CourseEnrollmentsRepresenter < Roar::Decorator
 
     property :enrollment_code,
              type: String,
-             writeable: true,
+             writeable: false,
              readable: true,
              schema_info: {
                description: "The period's enrollment code"
              }
   end
 
-    property :name,
-             type: String,
-             writeable: true,
-             readable: true,
-             schema_info: {
-               description: "The Course's name"
-             }
+  property :name,
+           type: String,
+           writeable: false,
+           readable: true,
+           schema_info: {
+             description: "The Course's name"
+           }
 
   collection :periods, extend: PeriodsRepresenter
 end
