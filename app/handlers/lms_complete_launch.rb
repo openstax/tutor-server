@@ -9,7 +9,7 @@ class LmsCompleteLaunch
   end
 
   def handle
-    raise "`launch` cannot be nil" if launch.nil?
+    fatal_error(code: :launch_cannot_be_nil) if launch.nil?
 
     # Get the tool consumer, and update its metadata as needed
 
@@ -46,25 +46,27 @@ class LmsCompleteLaunch
     # Add the user as a teacher or student
 
     if launch.is_student?
-      # Make sure the user is in the course as a student
+      # Note if the user is not yet a student in the course, so they can be sent through the
+      # LMS-optimized enrollment flow.
 
-      # TODO how do we know which period to add them to?  Possible that we could just add
-      # the student to the course and then on the FE recognize that they are without period
-      # and have them self-select their period?
-
-      student = nil # FIXME obviously :-)
+      if !UserIsCourseStudent[course: course, user: caller]
+        outputs.is_unenrolled_student = true
+      end
 
       if launch.is_assignment?
         # For assignment launches, store the grade passback info.  We are currently
         # only doing course-level grade sync, so store the grade attached to the Student.
-        # It is possible that a teacher could add the Tutor assignment more than once,
-        # so keep track of those multiple callback infos by hanging records off of Student.
+        # Since we may not actually have a Student record yet (if enrollment hasn't completed),
+        # we really attach it to the combination of course and user (which is essentially what
+        # a Student later records).  It is possible that a teacher could add the Tutor assignment
+        # more than once, so we could have multiple callback infos for ever course/user combination.
 
-        course_grade_callback = Lms::Models::CourseGradeCallback.find_or_create_by(
-                                  result_sourcedid: launch.result_sourcedid,
-                                  outcome_url: launch.outcome_url,
-                                  student: student
-                                )
+        Lms::Models::CourseGradeCallback.find_or_create_by(
+          result_sourcedid: launch.result_sourcedid,
+          outcome_url: launch.outcome_url,
+          course: course,
+          profile: caller.to_model
+        )
       end
     elsif launch.is_instructor?
       if !UserIsCourseTeacher[user: caller, course: course]

@@ -6,7 +6,8 @@ class Lms::Models::CourseGradeCallback < Tutor::SubSystems::BaseModel
   # at least deal with this situation until the teacher realizes that is not
   # useful.
 
-  belongs_to :student, subsystem: :course_membership
+  belongs_to :course, subsystem: :course_profile
+  belongs_to :profile, subsystem: :user
 
   validates :outcome_url, presence: true
   validates :result_sourcedid, presence: true, uniqueness: { scope: :outcome_url }
