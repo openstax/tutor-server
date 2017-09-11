@@ -29,50 +29,16 @@ module Api::V1
                )
              end
 
-
-    property :hypothesis_api_url,
-             readable: true,
-             writeable: false,
-             getter: -> (*) {
-                 Rails.application.secrets['hypothesis']['api_url']
-
-             }
-
-    property :hypothesis_sidebar_app_url,
-             readable: true,
-             writeable: false,
-             getter: -> (*) {
-                 Rails.application.secrets['hypothesis']['sidebar_app_url']
-             }
-
-    property :hypothesis_client_url,
-             readable: true,
-             writeable: false,
-             getter: -> (*) {
-                 Rails.application.secrets['hypothesis']['client_url']
-             }
-
-    property :hypothesis_authority,
-             readable: true,
-             writeable: false,
-             getter: -> (*) {
-                 Rails.application.secrets['hypothesis']['authority']
-             }
-
-    property :hypothesis_embed_url,
-             readable: true,
-             writeable: false,
-             getter: -> (*) {
-                 Rails.application.secrets['hypothesis']['embed_url']
-             }
-
-    property :hypothesis_client_id,
-             readable: true,
-             writable: false,
-             getter: -> (*) {
-                 Rails.application.secrets['hypothesis']['client_id']
-             }
-
+    property :hypothesis, writeable: false, readable: true, getter: ->(*) {
+        {
+            client_id: Rails.application.secrets['hypothesis']['client_id'],
+            embed_url: Rails.application.secrets['hypothesis']['embed_url'],
+            authority: Rails.application.secrets['hypothesis']['authority'],
+            client_url: Rails.application.secrets['hypothesis']['client_url'],
+            sidebar_app_url: Rails.application.secrets['hypothesis']['sidebar_app_url'],
+            api_url: Rails.application.secrets['hypothesis']['api_url']
+        }
+    }
 
     property :errata_form_url,
              readable: true,
