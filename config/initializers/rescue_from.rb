@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'openstax_rescue_from'
 
 secrets = Rails.application.secrets
@@ -37,9 +38,10 @@ OpenStax::RescueFrom.register_exception(
   'CoursesTeach::UserIsStudent',
   message: (
     <<-HTML.strip_heredoc
-      <h3>Sorry, but that is not permitted.</h3>
-      It looks like you're trying to add instructor permissions to a student account.<br>
-      Contact <a href=\"mailto:support@openstaxtutor.org\">Support</a> if you need help.
+      <h3>Sorry, you can't enroll as a teacher in your course</h3>
+       The URL you’re using is for instructor access to OpenStax Tutor Beta, but you’re signed
+       in to a student account.
+       Contact <a href="mailto:support@openstax.org">Support</a> if you need help.
     HTML
   ).html_safe,
   status: :forbidden,
