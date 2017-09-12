@@ -41,7 +41,7 @@ OpenStax::RescueFrom.register_exception(
       <h3>Sorry, you can't enroll as a teacher in your course</h3>
        The URL you’re using is for instructor access to OpenStax Tutor Beta, but you’re signed
        in to a student account.
-       Contact <a href=\"mailto:support@openstax.org\">Support</a> if you need help.
+       Contact <a href="mailto:support@openstax.org">Support</a> if you need help.
     HTML
   ).html_safe,
   status: :forbidden,
