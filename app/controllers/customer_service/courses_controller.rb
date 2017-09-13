@@ -5,6 +5,7 @@ class CustomerService::CoursesController < CustomerService::BaseController
 
   def index
     @query = params[:query]
+    @order_by = params[:order_by]
     courses = SearchCourses.call(query: params[:query], order_by: params[:order_by]).outputs
     params[:per_page] = courses.total_count if params[:per_page] == "all"
     @total_courses = courses.total_count

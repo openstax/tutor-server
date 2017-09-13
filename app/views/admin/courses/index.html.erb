@@ -3,15 +3,14 @@
 <%= render partial: 'manager/courses/tabs',
            locals: { incomplete_jobs: @incomplete_jobs, failed_jobs: @failed_jobs } %>
 <br>
-<%= render partial: 'manager/courses/search', locals: { query: @query } %>
+<%= render partial: 'manager/courses/search', locals: {
+             query: @query, order_by: @order_by, total_count: @course_infos.try(:count)
+           } %>
 
-Results per page:
-<%= select_tag "Results per page",
-               options_for_select([25, 50, 100, 200, 400, 'all'], params[:per_page]),
-               id: "search-courses-results-pp" %>
+<%= form_tag bulk_update_admin_courses_path, method: :post do %>
+  <%= hidden_field_tag :query, @query %>
+  <%= hidden_field_tag :order_by, @order_by %>
 
-
-<%= form_tag bulk_update_admin_courses_path, method: :post do |f| %>
   <%= render partial: 'manager/courses/index',
              locals: { course_infos: @course_infos,
                        bulk_actions: true,
@@ -23,16 +22,15 @@ Results per page:
                        job_path_proc: ->(job) { admin_job_path(job.id) },
                        extra_fields_procs: [ lambda do |course_info| %>
     <td>
-      <%= link_to 'List Students', admin_course_students_path(course_info.id),
-                                   class: 'btn btn-sm btn-primary course-stats-button' %>
-      <%= link_to 'Edit', edit_admin_course_path(course_info.id), class: "btn btn-sm btn-primary course-stats-button" %>
+      <%= link_to 'List Students', admin_course_students_path(course_info.id), style: 'display:block' %>
+      <%= link_to 'Edit Course', edit_admin_course_path(course_info.id), style: 'display:block' %>
       <% if course_info.teachers.empty? && course_info.periods.empty? %>
         <%= link_to 'Delete', admin_course_path(course_info.id),
                               method: :delete,
                               data: {
                                 confirm: "Are you sure you want to delete #{course_info.name}?"
                               },
-                              class: 'btn btn-xs btn-primary course-stats-button' %>
+                              style: 'display:block' %>
       <% end %>
     </td>
   <% end ] } %>

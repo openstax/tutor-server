@@ -42,15 +42,16 @@ nav.navbar.production {
 
 .stats-card {
   width: 100%;
-  min-height: 130px;
+  min-height: 110px;
   height: auto;
-  border: #777 3px solid;
+  border: #777 1px solid;
   margin-bottom: 35px;
   overflow-y: auto;
   border-radius: 8px;
 
   .card-header {
-    border-bottom: #777 3px solid;
+    background-color: #eee;
+    border-bottom: #777 1px solid;
     padding: 5px;
 
     .bread-crumb {

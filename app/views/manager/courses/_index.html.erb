@@ -5,8 +5,6 @@
 <% failed_jobs ||= [] %>
 <% total_count ||= course_infos.try(:count) %>
 
-<div>Showing <%= total_count %> total</div>
-
 <% page ||= 1 %>
 <% per_page = per_page == 'all' ? total_count : per_page.to_i %>
 <% per_page = 25 if per_page == 0 %>
@@ -26,8 +24,18 @@
 
     <div style="margin-bottom: 10px;">
     <% if bulk_actions %>
-        <%= check_box_tag 'courses_select_all', nil, checked = true, id: 'courses_select_all' %>
+        <%= check_box_tag 'courses_select_all_on_page', nil, checked = true, id: 'courses_select_all_on_page' %>
          Select All
+        <% if pagination.present? %>
+          (This Page)
+          &nbsp;
+          &nbsp;
+          <%= check_box_tag 'courses_select_all_on_all_pages', nil, checked = true, id: 'courses_select_all_on_all_pages' %>
+           Select All (All Pages)
+          &nbsp;
+          &nbsp;
+          Individual selections are not remembered on other pages
+        <% end %>
     <% end %>
     </div>
 
@@ -82,7 +90,15 @@
                        period.latest_enrollments_with_deleted.length
                      end.reduce(0, :+)} students /" %>
               <%= "#{course_info.periods_with_deleted.length} periods" %> /
-              <%= course_info.does_cost ? "Does Cost" : "Does NOT Cost" %>
+              <%= course_info.does_cost ? "Does Cost" : "Does NOT Cost" %> /
+              LMS: <%= course_info.is_lms_enabling_allowed ? "enable allowed" : "enable not allowed" %> -
+              <% if course_info.is_lms_enabled.nil? %>
+                no choice made
+              <% elsif course_info.is_lms_enabled %>
+                enabled
+              <% else %>
+                disabled
+              <% end %>
             </div>
           </div>
           <div class="card-content-right">
@@ -110,6 +126,27 @@
           <span class="input-group-btn">
             <%= submit_tag 'Set Ecosystem', class: 'btn btn-primary' %>
           </span>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+          <div class="form-group col-xs-7">
+            <%= select_tag :flag_name,
+                           options_for_select([["Allow teacher to enable LMS?", "is_lms_enabling_allowed"]]),
+                           include_blank: '-- Select a flag to modify --',
+                           class: 'form-control' %>
+          </div>
+          <div class="form-group col-xs-4">
+            <%= select_tag :flag_value,
+                           options_for_select([["False / No", "false"], ["True / Yes", "true"]]),
+                           class: 'form-control' %>
+          </div>
+          <div class="form-group col-xs-1">
+            <span class="input-group-btn pull-right">
+              <%= submit_tag 'Set Flag', class: 'btn btn-primary pull-right' %>
+            </span>
+          </div>
         </div>
       </div>
     <% end %>

@@ -23,6 +23,8 @@ Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = 'student
 Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = 'local_query'
 Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = 'local_query'
 
+Settings::Db.store.defaults[:default_is_lms_enabling_allowed] = false
+
 redis_secrets = secrets['redis']
 Settings::Redis.store = Redis::Store.new(
   url: redis_secrets['url'],
