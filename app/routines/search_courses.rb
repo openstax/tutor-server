@@ -114,6 +114,42 @@ class SearchCourses
           @items = @items.where(catalog_offering_id: sanitized_queries)
         end
       end
+
+      with.keyword :is_lms_enabled do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: true)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(is_lms_enabled: sanitized_queries)
+        end
+      end
+
+      with.keyword :is_lms_enabling_allowed do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: false)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(is_lms_enabling_allowed: sanitized_queries)
+        end
+      end
     end
+  end
+end
+
+class OpenStax::Utilities::SearchRelation
+  def to_boolean_array(input, allow_nil: false)
+    array = [input].flatten.map do |ii|
+      ii.downcase!
+      if ii == "false"
+        false
+      elsif ii == "true"
+        true
+      elsif ii == "nil" || ii == "null"
+        nil
+      end
+    end
+
+    array.compact! if !allow_nil
+    array
   end
 end
