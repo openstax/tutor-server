@@ -470,7 +470,7 @@ class Demo::Base
   end
 
   def find_period(course:, name:)
-    Entity::Relation.new(CourseMembership::Models::Period.where(course: course, name: name)).first
+    Entitee::Relation.new(CourseMembership::Models::Period.where(course: course, name: name)).first
   end
 
   def log(message)

@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Chapter < Entity
+      class Chapter < Entitee
 
         wraps ::Content::Models::Chapter
 

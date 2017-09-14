@@ -1,7 +1,7 @@
 module Salesforce
   module Strategies
     module Direct
-      class AttachedRecord < Entity
+      class AttachedRecord < Entitee
 
         wraps ::Salesforce::Models::AttachedRecord
         exposes :salesforce_object, :salesforce_id,

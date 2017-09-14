@@ -1,4 +1,4 @@
-class CourseMembership::Strategies::Direct::EnrollmentChange < Entity
+class CourseMembership::Strategies::Direct::EnrollmentChange < Entitee
 
   wraps CourseMembership::Models::EnrollmentChange
 

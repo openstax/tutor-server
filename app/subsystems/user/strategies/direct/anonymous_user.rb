@@ -1,7 +1,7 @@
 module User
   module Strategies
     module Direct
-      class AnonymousUser < Entity
+      class AnonymousUser < Entitee
         wraps ::User::Models::AnonymousProfile
 
         exposes :instance, :anonymous, from_class: ::User::Models::AnonymousProfile

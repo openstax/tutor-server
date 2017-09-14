@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Pool < Entity
+      class Pool < Entitee
 
         wraps ::Content::Models::Pool
 
