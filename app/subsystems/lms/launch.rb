@@ -29,7 +29,6 @@ class Lms::Launch
     launch = new(request_parameters: ActiveSupport::HashWithIndifferentAccess.new(launch_data.request_params),
                  request_url: launch_data.request_url,
                  trusted: true)
-    launch_data.destroy
     launch
   end
 
