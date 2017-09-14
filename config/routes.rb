@@ -375,6 +375,7 @@ Rails.application.routes.draw do
   get 'lms/configuration', to: 'lms#configuration'
   get 'lms/ci_configuration', to: 'lms#ci_configuration'
   post 'lms/launch', to: 'lms#launch'
+  get 'lms/launch_authenticate', to: 'lms#launch_authenticate'
   post 'lms/ci_launch', to: 'lms#ci_launch'
   get 'lms/launch_failed', to: 'lms#launch_failed'
   get 'lms/complete_launch', to: 'lms#complete_launch'
