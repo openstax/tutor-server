@@ -1,4 +1,4 @@
-class CourseMembership::Strategies::Direct::Period < Entity
+class CourseMembership::Strategies::Direct::Period < Entitee
 
   wraps CourseMembership::Models::Period
 
