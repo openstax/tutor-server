@@ -18,6 +18,10 @@ every 1.day, at: '8:30 AM' do  # ~ 2:30am central
   runner "OpenStax::RescueFrom.this{ PushSalesforceCourseStats.call(allow_error_email: true) }"
 end
 
+every 1.day, at: '10:30 AM' do
+  runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.where{created_at.lt 30.weeks.ago}.destroy_all }"
+end
+
 every 1.hour do
   runner "CourseProfile::BuildPreviewCourses.call"
 end

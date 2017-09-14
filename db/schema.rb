@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170905204817) do
+ActiveRecord::Schema.define(version: 20170915024702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -486,8 +486,9 @@ ActiveRecord::Schema.define(version: 20170905204817) do
   add_index "lms_tool_consumers", ["guid"], name: "index_lms_tool_consumers_on_guid", using: :btree
 
   create_table "lms_trusted_launch_data", force: :cascade do |t|
-    t.json   "request_params"
-    t.string "request_url"
+    t.json     "request_params"
+    t.string   "request_url"
+    t.datetime "created_at",     default: '2017-09-14 00:00:00', null: false
   end
 
   create_table "lms_users", force: :cascade do |t|
