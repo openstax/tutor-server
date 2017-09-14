@@ -1,0 +1,26 @@
+<%# This page exists to force Tutor to open in its own tab %>
+
+<div id="say-open-in-tab" style="display:none">
+  <%= link_to "OpenStax Tutor is best viewed in its own window.  Click here to open it in a new tab.",
+              lms_launch_authenticate_path, target: :_blank %>
+</div>
+
+<script>
+// https://stackoverflow.com/a/9899701
+(function() {
+  // https://stackoverflow.com/a/326076
+  var inIframe = function() {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  if (inIframe()) {
+    document.getElementById('say-open-in-tab').style.display = 'block';
+  } else {
+    window.location.href = '<%= lms_launch_authenticate_path %>';
+  }
+})();
+</script>

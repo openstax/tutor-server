@@ -95,6 +95,9 @@ RSpec.describe 'LMS Launch', type: :request do
   end
 
   def expect_and_fake_trip_to_accounts_and_back(user)
+    expect(response.status).to eq 200
+    get response.body.match(/href=\"(.*)\"/)[1] # 'click' open in new tab
+
     expect(redirect_path).to eq "/accounts/login"
     expect(redirect_query_hash[:sp]["signature"]).not_to be_blank
 
