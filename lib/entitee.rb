@@ -1,4 +1,4 @@
-class Entity
+class Entitee
 
   # Class methods
 
@@ -50,8 +50,8 @@ class Entity
       end
     end
 
-    # Lists the classes that are wrapped by this Entity
-    # Required for the Entity to function
+    # Lists the classes that are wrapped by this Entitee
+    # Required for the Entitee to function
     # Not thread-safe: call only during initialization
     def wraps(*klasses)
       _unwrapped_classes[name] += klasses
@@ -63,18 +63,18 @@ class Entity
       )
     end
 
-    # Returns the classes being wrapped by this Entity class
+    # Returns the classes being wrapped by this Entitee class
     # For internal use only
     def _repository_classes
       _unwrapped_classes[name]
     end
 
-    # Wraps the given object using Entity classes
+    # Wraps the given object using Entitee classes
     # For internal use only
     def _wrap(obj)
       case obj
       when ::ActiveRecord::Relation
-        Entity::Relation.new(obj)
+        Entitee::Relation.new(obj)
       else
         wrap_class_proc = _wrap_class_procs[obj.class.name]
         return wrap_class_proc.call(obj).new(obj) unless wrap_class_proc.nil?
@@ -87,11 +87,11 @@ class Entity
       end
     end
 
-    # Unwraps the given object if it is an Entity class
+    # Unwraps the given object if it is an Entitee class
     # For internal use only
     def _unwrap(obj)
       case obj
-      when Entity, Entity::Relation
+      when Entitee, Entitee::Relation
         obj._repository
       else
         # Handle Enumerables
@@ -109,7 +109,7 @@ class Entity
   attr_reader :repository
   protected :repository
 
-  # Either initializes the Entity with an existing repository object,
+  # Either initializes the Entitee with an existing repository object,
   # or forwards the given arguments to the object's new method (if :new is exposed)
   def initialize(args = {})
     if self.class._repository_classes.include?(args.class)
@@ -138,7 +138,7 @@ class Entity
     repository.hash ^ self.class.hash
   end
 
-  # Calls the repository's inspect method, but replaces its class name with the Entity's class name
+  # Calls the repository's inspect method, but replaces its class name with the Entitee's class name
   def inspect
     repository.inspect.gsub(repository.class.name, self.class.name)
   end
@@ -151,7 +151,7 @@ class Entity
 
 end
 
-require 'entity/class_methods'
-require 'entity/relation'
+require 'entitee/class_methods'
+require 'entitee/relation'
 
-::ActiveRecord::Base.extend Entity::ClassMethods
+::ActiveRecord::Base.extend Entitee::ClassMethods

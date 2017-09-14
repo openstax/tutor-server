@@ -1,7 +1,7 @@
 module User
   module Strategies
     module Direct
-      class User < Entity
+      class User < Entitee
         wraps ::User::Models::Profile
 
         exposes :all, :create, :create!, :find, :anonymous, from_class: ::User::Models::Profile

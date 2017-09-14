@@ -1,7 +1,7 @@
-require 'entity'
+require 'entitee'
 
-class Entity
-  class Relation < Entity
+class Entitee
+  class Relation < Entitee
 
     include Enumerable
 
@@ -17,7 +17,7 @@ class Entity
             :length, :to_ary, :join, :table_name, :quoted_table_name, :primary_key,
             :quoted_primary_key, :connection, :columns_hash
 
-    # The constructor for Entity::Relation only accepts an ActiveRecord::Relation object
+    # The constructor for Entitee::Relation only accepts an ActiveRecord::Relation object
     def initialize(repository)
       # Don't dup the repository relation, since that's a huge performance hit
       @repository = repository
@@ -28,7 +28,7 @@ class Entity
       to_a.each(&block)
     end
 
-    # Wrap ActiveRecord::Relation's inspect and pretty_print methods to use the Entity class names
+    # Wrap ActiveRecord::Relation's inspect and pretty_print methods to use the Entitee class names
     def inspect
       entries = to_a.take([repository.limit_value, 11].compact.min).map!(&:inspect)
       entries[10] = '...' if entries.size == 11
