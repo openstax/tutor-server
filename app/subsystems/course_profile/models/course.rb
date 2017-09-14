@@ -51,6 +51,8 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 
+  validate :lms_enabling_allowed
+
   delegate :name, to: :school, prefix: true, allow_nil: true
 
   before_validation :set_starts_at_and_ends_at
@@ -113,6 +115,12 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
     return if valid_year_range.include?(year)
     errors.add :year, 'is outside the valid range'
     false
+  end
+
+  def lms_enabling_allowed
+    errors.add(:is_lms_enabled, "Enabling LMS integration is not allowed for this course") \
+      if is_lms_enabled_changed? && is_lms_enabled && !is_lms_enabling_allowed
+    errors.none?
   end
 
 end
