@@ -182,6 +182,25 @@ module Api::V1
                 description: "True iff this course requires students to pay"
              }
 
+    property :is_lms_enabling_allowed,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                required: true,
+                type: 'boolean',
+                description: "Iff true, the teacher can enable LMS integration"
+             }
+
+    property :is_lms_enabled,
+             writeable: true,
+             readable: true,
+             schema_info: {
+                required: false,
+                type: 'boolean',
+                description: "If true, indicates the teacher has chosen to integrate with " \
+                             "an LMS; can be `nil` which indicates no choice yet"
+             }
+
     collection :periods,
                extend: Api::V1::PeriodRepresenter,
                readable: true,
