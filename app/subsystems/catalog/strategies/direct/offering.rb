@@ -1,7 +1,7 @@
 module Catalog
   module Strategies
     module Direct
-      class Offering < Entity
+      class Offering < Entitee
 
         wraps ::Catalog::Models::Offering
 

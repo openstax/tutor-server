@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Exercise < Entity
+      class Exercise < Entitee
 
         wraps ::Content::Models::Exercise
 
