@@ -10,6 +10,7 @@
   <script type="text/javascript">
     window.hypothesisConfig = function() {
         return {
+            "clientUrl": "<%= Rails.application.secrets[:hypothesis]['client_url'] %>",
             "services": [
             {
                 "authority": "<%= Rails.application.secrets[:hypothesis]['authority'] %>",
@@ -30,11 +31,6 @@
   <!-- ADD HYPOTHESIS embed script here and config -->
   <% if current_user.present? %>
       <script type="text/javascript" src="<%= Rails.application.secrets[:hypothesis]['embed_url']%>" ></script>
-      <!-- This needs to be removed. Only here for debugging purposes.
-      <script>"<%=raw json_escape bootstrap_data %>"</script> -->
-       <!-- This needs to be removed. Only here for debugging purposes.  -->
-
-  
   <% end %>
   <%= yield %>
 

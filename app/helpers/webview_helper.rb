@@ -15,7 +15,7 @@ module WebviewHelper
     user_id = "acct:mike@openstax.org"
 
     payload = {
-      aud: '127.0.0.1',
+      aud: 'h.mikefromit.com',
       iss: Rails.application.secrets[:hypothesis]['client_id'],
       sub: user_id,
       nbf: now,
