@@ -1,7 +1,7 @@
 class LmsController < ApplicationController
 
   skip_before_filter :verify_authenticity_token, only: [:launch, :ci_launch]
-  skip_before_filter :authenticate_user!, only: [:configuration, :launch, :ci_launch]
+  skip_before_filter :authenticate_user!, only: [:configuration, :launch, :launch_authenticate, :ci_launch]
 
   before_filter :allow_embedding_in_iframe, only: [:launch, :ci_launch]
 
@@ -22,6 +22,14 @@ class LmsController < ApplicationController
 
       # Persist the launch so we can load it after return from Accounts
       session[:launch_id] = launch.persist!
+    rescue Lms::Launch::Error => ee
+      render :launch_failed
+    end
+  end
+
+  def launch_authenticate
+    begin
+      launch = Lms::Launch.from_id(session[:launch_id])
 
       # Always send users to accounts when a launch happens.  We may decide
       # later to skip accounts when the user is already logged in, but in
@@ -30,7 +38,19 @@ class LmsController < ApplicationController
       # between LMS user ID and local user ID.  For users who have launched
       # before, the trip to Accounts and back should be pretty quick / invisible.
 
-      send_launched_user_to_accounts(launch)
+      redirect_to openstax_accounts.login_url(
+        sp: OpenStax::Api::Params.sign(
+          params: {
+            uuid:  launch.lms_user_id,
+            name:  launch.full_name,
+            email: launch.email,
+            school: launch.school,
+            role:  launch.role
+          },
+          secret: OpenStax::Accounts.configuration.openstax_application_secret
+        ),
+        return_to: lms_complete_launch_url
+      )
     rescue Lms::Launch::Error => ee
       render :launch_failed
     end
@@ -42,14 +62,11 @@ class LmsController < ApplicationController
     handle_with(LmsCompleteLaunch,
                 launch: launch,
                 success: lambda do
-                  render :complete_launch,
-                         locals: {
-                           destination_url: if @handler_result.outputs.is_unenrolled_student
-                             token_enroll_url(@handler_result.outputs.course.uuid)
-                           else
-                             course_dashboard_url(@handler_result.outputs.course)
-                           end
-                         }
+                  if @handler_result.outputs.is_unenrolled_student
+                    redirect_to token_enroll_url(@handler_result.outputs.course.uuid)
+                  else
+                    redirect_to course_dashboard_url(@handler_result.outputs.course)
+                  end
                 end,
                 failure: lambda do
                   render :launch_failed
@@ -68,23 +85,6 @@ class LmsController < ApplicationController
 
   def allow_embedding_in_iframe
     response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
-  end
-
-  def send_launched_user_to_accounts(launch)
-    redirect_to openstax_accounts.login_url(
-      sp: OpenStax::Api::Params.sign(
-        params: {
-          uuid:  launch.lms_user_id,
-          name:  launch.full_name,
-          email: launch.email,
-          school: launch.school,
-          role:  launch.role
-        },
-        secret: OpenStax::Accounts.configuration.openstax_application_secret
-      ),
-      go: 'trusted_launch',
-      return_to: lms_complete_launch_url
-    )
   end
 
 end

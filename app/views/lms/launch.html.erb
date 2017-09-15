@@ -2,7 +2,7 @@
 
 <div id="say-open-in-tab" style="display:none">
   <%= link_to "OpenStax Tutor is best viewed in its own window.  Click here to open it in a new tab.",
-              destination_url, target: :_blank %>
+              lms_launch_authenticate_path, target: :_blank %>
 </div>
 
 <script>
@@ -20,7 +20,7 @@
   if (inIframe()) {
     document.getElementById('say-open-in-tab').style.display = 'block';
   } else {
-    window.location.href = '<%= destination_url %>';
+    window.location.href = '<%= lms_launch_authenticate_path %>';
   }
 })();
 </script>
