@@ -71,6 +71,7 @@ $(document).ready(function() {
       $('#courses_select_all_on_page').prop('checked', true);
     } else {
       $('#courses_select_all_on_page').prop('checked', false);
+      $('#courses_select_all_on_all_pages').prop('checked', false);
     }
   });
 
