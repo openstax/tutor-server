@@ -34,6 +34,9 @@
       <li><b>ecosystem</b> - matches the ecosystem's title</li>
       <li><b>is_lms_enabled</b> - accepts <b>false</b> (disabled), <b>true</b> (enabled), <b>nil</b> (not yet chosen)</li>
       <li><b>is_lms_enabling_allowed</b> - accepts <b>false</b> or <b>true</b></li>
+      <li><b>term</b> - accepts <%= CourseProfile::Models::Course.terms.keys.map{|kk| "<b>#{kk}</b>"}.join(', ').html_safe %></li>
+      <li><b>year</b> - the year of the course, e.g. <b>2017</b></li>
+      <li><b>costs</b> - accepts <b>false</b> (does not cost) or <b>true</b> (does cost)</li>
     </ul>
 
     <p>Examples:</p>

@@ -249,6 +249,7 @@ class Admin::CoursesController < Admin::BaseController
         :appearance_code,
         :school_district_school_id,
         :is_excluded_from_salesforce,
+        :is_lms_enabling_allowed,
         teacher_ids: []
       )
     }

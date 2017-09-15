@@ -26,17 +26,20 @@ RSpec.describe SearchCourses, type: :routine do
 
   let!(:course_1) do
     FactoryGirl.create(
-      :course_profile_course, name: 'Physics', school: tutor_school, offering: offering_1
+      :course_profile_course, name: 'Physics', school: tutor_school, offering: offering_1, year: 2016, term: :fall,
+                              is_lms_enabling_allowed: true
     )
   end
   let!(:course_2) do
     FactoryGirl.create(
-      :course_profile_course, name: 'Biology', school: tutor_school, offering: offering_2
+      :course_profile_course, name: 'Biology', school: tutor_school, offering: offering_2, year: 2016, term: :spring,
+                              is_lms_enabled: true
     )
   end
   let!(:course_3) do
     FactoryGirl.create(
-      :course_profile_course, name: 'Concept Coach', school: cc_school, offering: offering_1
+      :course_profile_course, name: 'Concept Coach', school: cc_school, offering: offering_1, year: 2017, term: :fall,
+                              does_cost: true
     )
   end
 
@@ -147,5 +150,31 @@ RSpec.describe SearchCourses, type: :routine do
   it 'returns courses whose catalog offering id matches the given query' do
     courses = described_class[query: "offering_id:#{offering_1.id}"].to_a
     expect(courses).to eq [course_3, course_1]
+  end
+
+  it 'returns courses whose is_lms_enabled matches the given query' do
+    courses = described_class[query: "is_lms_enabled:true"].to_a
+    expect(courses).to eq [course_2]
+  end
+
+  it 'returns courses whose is_lms_enabling_allowed matches the given query' do
+    courses = described_class[query: "is_lms_enabling_allowed:true", order_by: "ID asc"].to_a
+    expect(courses).to eq [course_1, course_2]
+  end
+
+
+  it 'returns courses whose term matches the given query' do
+    courses = described_class[query: "term:SprinG"].to_a
+    expect(courses).to eq [course_2]
+  end
+
+  it 'returns courses whose year matches the given query' do
+    courses = described_class[query: "year:2016", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_1, course_2]
+  end
+
+  it 'returns courses that cost' do
+    courses = described_class[query: "costs:true", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_3]
   end
 end
