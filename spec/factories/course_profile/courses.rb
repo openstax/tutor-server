@@ -25,6 +25,8 @@ FactoryGirl.define do
     biglearn_assignment_pes_algorithm_name       { Faker::Hacker.abbreviation }
     biglearn_practice_worst_areas_algorithm_name { Faker::Hacker.abbreviation }
 
+    is_lms_enabling_allowed { is_lms_enabled == true ? true : false }
+
     association :offering, factory: :catalog_offering
 
     trait(:with_assistants) do

@@ -29,7 +29,7 @@
           (This Page)
           &nbsp;
           &nbsp;
-          <%= check_box_tag 'courses_select_all_on_all_pages', nil, checked = true, id: 'courses_select_all_on_all_pages' %>
+          <%= check_box_tag 'courses_select_all_on_all_pages', nil, checked = false, id: 'courses_select_all_on_all_pages' %>
            Select All (All Pages)
           &nbsp;
           &nbsp;
@@ -79,8 +79,10 @@
             </div>
             <div class="content-bottom">
               <div class="course-duration" style="white-space: nowrap;">
-                Term: <%= course_info.starts_at.strftime('%b %d, %Y') %>
-                    - <%= course_info.ends_at.strftime('%b %d, %Y') %>
+                <%= course_info.term.capitalize %>
+                <%= course_info.year %>
+                (<%= course_info.starts_at.strftime('%b %d, %Y') %>
+                - <%= course_info.ends_at.strftime('%b %d, %Y') %>)
               </div>
               <%= "CC /" if course_info.is_concept_coach %>
               <%= course_info.is_college ? "College /" : "High School /" \
@@ -120,7 +122,7 @@
                          options_from_collection_for_select(
                            @ecosystems, :id, :unique_title, params[:ecosystem_id]
                          ),
-                         include_blank: '-- Select an ecosystem --',
+                         include_blank: '-- Select an ecosystem (does not work across pages yet) --',
                          class: 'form-control' %>
           <span class="input-group-btn">
             <%= submit_tag 'Set Ecosystem', class: 'btn btn-primary' %>
@@ -132,7 +134,7 @@
         <div class="row">
           <div class="form-group col-xs-7">
             <%= select_tag :flag_name,
-                           options_for_select([["Allow teacher to enable LMS?", "is_lms_enabling_allowed"]]),
+                           options_for_select([["Allow teacher to enable LMS?", "is_lms_enabling_allowed"], ["Course costs?", "does_cost"]]),
                            include_blank: '-- Select a flag to modify --',
                            class: 'form-control' %>
           </div>

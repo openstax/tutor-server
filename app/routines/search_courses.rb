@@ -132,13 +132,40 @@ class SearchCourses
           @items = @items.where(is_lms_enabling_allowed: sanitized_queries)
         end
       end
+
+      with.keyword :term do |terms|
+        terms.each do |term|
+          sanitized_term_values = to_string_array(term).map{|tt| CourseProfile::Models::Course.terms[tt.downcase]}
+          next @items = @items.none if sanitized_term_values.empty?
+
+          @items = @items.where(term: sanitized_term_values)
+        end
+      end
+
+      with.keyword :year do |years|
+        years.each do |year|
+          sanitized_years = to_number_array(year)
+          next @items = @items.none if sanitized_years.empty?
+
+          @items = @items.where(year: sanitized_years)
+        end
+      end
+
+      with.keyword :costs do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: false)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(does_cost: sanitized_queries)
+        end
+      end
     end
   end
 end
 
 class OpenStax::Utilities::SearchRelation
   def to_boolean_array(input, allow_nil: false)
-    array = [input].flatten.map do |ii|
+    array = to_string_array(input).map do |ii|
       ii.downcase!
       if ii == "false"
         false

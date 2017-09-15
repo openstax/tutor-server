@@ -102,5 +102,10 @@
     <%= f.check_box :does_cost, class: 'form-control' %>
   </div>
 
+  <div class="form-group">
+    <%= f.label :is_lms_enabling_allowed %>
+    <%= f.check_box :is_lms_enabling_allowed, class: 'form-control' %>
+  </div>
+
   <%= f.submit 'Save', class: 'btn btn-primary', id: 'edit-save' %>
 <% end %>
