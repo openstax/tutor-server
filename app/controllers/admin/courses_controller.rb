@@ -167,19 +167,10 @@ class Admin::CoursesController < Admin::BaseController
         course_ids = params[:course_id]
       end
 
-      begin
-        CourseProfile::Models::Course.transaction do
-          CourseProfile::Models::Course
-            .where(id: course_ids)
-            .find_each do |course|
-              course.send("#{params[:flag_name]}=", params[:flag_value].to_s == "true")
-              course.save!
-            end
-        end
-        flash[:notice] = 'Flag values were updated'
-      rescue ActiveRecord::RecordInvalid => invalid
-        flash[:error] = "Could not update flag value for at least one course, rolled back all changes: #{invalid.message}"
-      end
+      CourseProfile::Models::Course.where(id: course_ids).update_all(
+        params[:flag_name] => params[:flag_value].to_s == "true"
+      )
+      flash[:notice] = 'Flag values were updated'
     end
 
     redirect_to admin_courses_path(query: params[:query], order_by: params[:order_by])
