@@ -135,7 +135,16 @@
         <div class="row">
           <div class="form-group col-xs-7">
             <%= select_tag :flag_name,
-                           options_for_select([["Allow teacher to enable LMS?", "is_lms_enabling_allowed"], ["Course costs?", "does_cost"]]),
+                           options_for_select([
+                             #
+                             # *********              ATTENTION                 **********
+                             # only put flags here that are not validated and that do not have
+                             # callbacks use their value.  The flags are set with an `update_all`
+                             # command that skips validations and callbacks.
+                             #
+                             ["Allow teacher to enable LMS?", "is_lms_enabling_allowed"],
+                             ["Course costs?", "does_cost"]
+                            ]),
                            include_blank: '-- Select a flag to modify --',
                            class: 'form-control' %>
           </div>
