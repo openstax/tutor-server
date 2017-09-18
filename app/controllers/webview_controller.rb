@@ -1,4 +1,5 @@
 class WebviewController < ApplicationController
+  include Hypothesis
 
   respond_to :html
 

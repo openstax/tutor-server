@@ -7,31 +7,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML-full&amp;delayStartupUntil=configured" async></script>
   <script type='text/javascript' src='https://c.la2-c2-dfw.salesforceliveagent.com/content/g/js/39.0/deployment.js'></script>
   <script type='text/javascript' src='<%= Rails.application.secrets[:js_url] %>' async></script>
-  <script type="text/javascript">
-    window.hypothesisConfig = function() {
-        return {
-            "clientUrl": "<%= Rails.application.secrets[:hypothesis]['client_url'] %>",
-            "services": [
-            {
-                "authority": "<%= Rails.application.secrets[:hypothesis]['authority'] %>",
-                "grantToken": "<%= generate_hypothesis_token %>",
-                "icon": "https://openclipart.org/download/272629/sihouette-animaux-10.svg",
-                "apiUrl": "<%= Rails.application.secrets[:hypothesis]['api_url'] %>"
-            }
-        ]
-    }
-    }
-    
-  </script>
   <%= csrf_meta_tags %>
   <%= render 'webview/google_analytics' %>
 </head>
 <body>
   <script id="tutor-boostrap-data" type="application/json"><%=raw json_escape bootstrap_data %></script>
-  <!-- ADD HYPOTHESIS embed script here and config -->
-  <% if current_user.present? %>
-      <script type="text/javascript" src="<%= Rails.application.secrets[:hypothesis]['embed_url']%>" ></script>
-  <% end %>
   <%= yield %>
 
 </body>

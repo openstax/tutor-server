@@ -9,18 +9,4 @@ module WebviewHelper
     )
   end
 
-  def generate_hypothesis_token
-
-    now = Time.now.to_i
-    user_id = "acct:mike@openstax.org"
-
-    payload = {
-      aud: 'h.mikefromit.com',
-      iss: Rails.application.secrets[:hypothesis]['client_id'],
-      sub: user_id,
-      nbf: now,
-      exp: now + 600
-    }
-    JWT.encode payload, Rails.application.secrets[:hypothesis]['client_secret'], 'HS256'
-  end
 end

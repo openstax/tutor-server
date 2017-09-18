@@ -36,7 +36,8 @@ module Api::V1
             authority: Rails.application.secrets['hypothesis']['authority'],
             client_url: Rails.application.secrets['hypothesis']['client_url'],
             sidebar_app_url: Rails.application.secrets['hypothesis']['sidebar_app_url'],
-            api_url: Rails.application.secrets['hypothesis']['api_url']
+            api_url: Rails.application.secrets['hypothesis']['api_url'],
+            grant_token: Hypothesis.generate_grant_token()
         }
     }
 
