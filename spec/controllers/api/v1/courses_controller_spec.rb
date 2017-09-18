@@ -412,6 +412,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
       end
 
+      it 'turns on LMS integration when allowed' do
+        course.update_attribute(:is_lms_enabling_allowed, true)
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { is_lms_enabled: true }.to_json
+        expect(response.body_as_hash[:is_lms_enabled]).to eq true
+        expect(course.reload.is_lms_enabled).to eq true
+      end
+
+      it 'cannot turn on LMS integration when not allowed' do
+        course.update_attribute(:is_lms_enabling_allowed, false)
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { is_lms_enabled: true }.to_json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(course.reload.is_lms_enabled).to eq nil
+      end
+
       it 'updates the time_zone' do
         time_zone = course.time_zone.to_tz
         opens_at = time_zone.now - 2.months

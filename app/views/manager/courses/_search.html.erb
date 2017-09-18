@@ -1,13 +1,64 @@
 <%= form_tag '', id: "search-courses-form", method: :get do %>
 
-  <div class="input-group form-group">
-     <%= text_field_tag :query, query, class: 'form-control', id: "search-courses", placeholder: 'Search here' %>
-     <span class="input-group-btn">
-       <%= submit_tag 'Search', class: "btn btn-primary"  %>
-     </span>
+  <div class="input-group" style="width:100%">
+    <%= text_field_tag :query, query, class: 'form-control', id: "search-courses", placeholder: 'Search here' %>
+  </div>
+  <div class="input-group" style="margin-bottom: 20px" >
+    <%= text_field_tag :order_by, order_by, class: 'form-control', placeholder: "Ordered by" %>
+    <span class="input-group-btn">
+      <%= submit_tag 'Search', class: "btn btn-primary"  %>
+    </span>
   </div>
 
-  <div><b>Use advanced search with keywords like</b> name:physics <b>or </b> teacher:charles</div>
+  <div style="margin-bottom: 10px">
+    Results per page:
+    <%= select_tag "Results per page",
+                   options_for_select([25, 50, 100, 200, 400, 'all'], params[:per_page]),
+                   id: "search-courses-results-pp" %>
 
-  <br>
+    &nbsp; &nbsp; (<%= total_count %> total results)
+  </div>
+
+  <div style="font-size:10px; margin-top: -6px; float:right; margin-bottom: 6px;"><%= link_to "Toggle search help", "#", class: 'search-help' %></div>
+
+
+  <div id="search-help" style="display:none; border: 1px solid #ccc; margin: 20px 0; padding: 20px; clear: right">
+    <p>The search string is made up of a space-separated collection of search conditions on different fields.  Each condition is formatted as “field_name:comma-separated-values”. The resulting list of courses will match all of the conditions. Each condition will produce a list of courses that must match any one of the comma-separated-values. The fields names and their characteristics are given below. All conditions use a wildcard search (so whatever search terms you enter are automatically prepended and appended with wildcards).</p>
+
+    <ul>
+      <li><b>name</b> - matches the course name</li>
+      <li><b>school</b> - matches the school name</li>
+      <li><b>offering</b> - matches the offering title, description, SF book name, or appearance code</li>
+      <li><b>offering_id</b> - matches the offering's integer ID in Tutor</li>
+      <li><b>teacher</b> - matches the teacher's username, first, last, or full name</li>
+      <li><b>ecosystem</b> - matches the ecosystem's title</li>
+      <li><b>is_lms_enabled</b> - accepts <b>false</b> (disabled), <b>true</b> (enabled), <b>nil</b> (not yet chosen)</li>
+      <li><b>is_lms_enabling_allowed</b> - accepts <b>false</b> or <b>true</b></li>
+      <li><b>term</b> - accepts <%= CourseProfile::Models::Course.terms.keys.map{|kk| "<b>#{kk}</b>"}.join(', ').html_safe %></li>
+      <li><b>year</b> - the year of the course, e.g. <b>2017</b></li>
+      <li><b>costs</b> - accepts <b>false</b> (does not cost) or <b>true</b> (does cost)</li>
+    </ul>
+
+    <p>Examples:</p>
+
+    <ul>
+      <li><b>school:Rice,Texas</b> - matches courses at Rice University or the University of Texas</li>
+      <li><b>school:Rice teacher:Baran</b> - matches courses at Rice taught by richb.</li>
+    </ul>
+
+    <p>You can also specify the sort field and the sort direction using the "Ordered by" field.  To sort by
+    descending ID, you'd enter <b>id DESC</b>.  The sortable fields are <%=
+      SearchCourses::SORTABLE_FIELDS.keys.map{|kk| "<b>#{kk}</b>"}.join(', ').html_safe
+    %>.</p>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("a.search-help").on("click", function(e) {
+        $('#search-help').toggle();
+      });
+    });
+  </script>
 <% end %>

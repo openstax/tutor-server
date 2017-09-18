@@ -87,3 +87,6 @@ en:
       prebuilt_preview_course_count:
         name: '# Prebuilt Preview Courses'
         help_block: 'The number of prebuilt preview courses to keep at the ready'
+      default_is_lms_enabling_allowed:
+        name: 'Default for new course `is_lms_enabling_allowed`'
+        help_block: 'Changing this only changes the default value stored in new courses; to change existing courses, see the courses admin page'

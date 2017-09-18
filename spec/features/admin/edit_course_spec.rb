@@ -99,6 +99,26 @@ RSpec.feature 'Admin editing a course' do
     expect(CourseProfile::Models::Course.first.does_cost).to eq true
   end
 
+  scenario 'Changing "Is LMS Enabling Allowed"' do
+    visit admin_courses_path
+    click_link 'Edit'
+
+    expect(page).to have_content('Edit course')
+    check 'course_is_lms_enabling_allowed'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(@course.reload.is_lms_enabling_allowed).to eq true
+
+    uncheck 'course_is_lms_enabling_allowed'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(@course.reload.is_lms_enabling_allowed).to eq false
+  end
+
   scenario 'Assigning a school' do
     FactoryGirl.create(:school_district_school, name: 'High high hi school')
     visit admin_courses_path
