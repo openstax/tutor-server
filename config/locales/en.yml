@@ -36,35 +36,18 @@ en:
         help_block: 'In the format HH:MM'
       biglearn_student_clues_algorithm_name:
         name: 'Biglearn algorithm for calculating Student CLUes'
-        labels:
-          SPARFA: 'sparfa'
-          Local Query: 'local_query'
         help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       biglearn_teacher_clues_algorithm_name:
         name: 'Biglearn algorithm for calculating Teacher CLUes'
-        labels:
-          SPARFA: 'sparfa'
-          Local Query: 'local_query'
         help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       biglearn_assignment_spes_algorithm_name:
         name: 'Biglearn algorithm for choosing Spaced Practice exercises'
-        labels:
-          Student-driven TeSR: 'student_driven_tesr'
-          Faculty-driven TeSR: 'instructor_driven_tesr'
-          Student-driven Local Query: 'student_driven_local_query'
-          Faculty-driven Local Query: 'instructor_driven_local_query'
         help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       biglearn_assignment_pes_algorithm_name:
         name: 'Biglearn algorithm for choosing Personalized exercises'
-        labels:
-          TeSR: 'tesr'
-          Local Query: 'local_query'
         help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       biglearn_practice_worst_areas_algorithm_name:
         name: 'Biglearn algorithm for choosing exercises for Practice Worst Topics'
-        labels:
-          TeSR: 'tesr'
-          Local Query: 'local_query'
         help_block: 'This setting can also be changed on a per-course basis. Changing it here will only affect new courses.'
       default_due_time:
         name: 'Default task due time'
