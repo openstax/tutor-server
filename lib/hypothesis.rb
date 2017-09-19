@@ -1,10 +1,10 @@
 module Hypothesis
-  def self.generate_grant_token
+  def self.generate_grant_token(account_uuid)
       now = Time.now.to_i
-      user_id = "acct:#{current_user.account_uuid}@openstax.org"
+      user_id = "acct:" + account_uuid.abs.to_s + "@openstax.org"
 
       payload = {
-        aud: Rails.application.secrets[:hypothesis]['client_url'],
+        aud: Rails.application.secrets[:hypothesis]['host'],
         iss: Rails.application.secrets[:hypothesis]['client_id'],
         sub: user_id,
         nbf: now,
