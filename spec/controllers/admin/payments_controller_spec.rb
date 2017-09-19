@@ -28,7 +28,7 @@ RSpec.describe Admin::PaymentsController do
 
         expect(old_student.payment_due_at).to eq original_old_student_payment_due_at
         expect(current_student.payment_due_at).not_to eq original_current_student_payment_due_at
-        expect(current_student.payment_due_at - Time.now).to be_within(1.day).of(Settings::Payments.student_grace_period_days.days)
+        expect(current_student.payment_due_at - Time.now).to be_within(1.1.day).of(Settings::Payments.student_grace_period_days.days)
       end
     end
   end
