@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170915024702) do
+ActiveRecord::Schema.define(version: 20170918164126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -337,7 +337,7 @@ ActiveRecord::Schema.define(version: 20170915024702) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                 null: false
     t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                                         default: "gen_random_uuid()"
     t.integer  "sequence_number",                              default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                      null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
@@ -455,6 +455,7 @@ ActiveRecord::Schema.define(version: 20170915024702) do
 
   add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", using: :btree
   add_index "lms_contexts", ["lms_tool_consumer_id"], name: "index_lms_contexts_on_lms_tool_consumer_id", using: :btree
+  add_index "lms_contexts", ["lti_id", "lms_tool_consumer_id", "course_profile_course_id"], name: "lms_contexts_lti_id_tool_consumer_id_course_id", unique: true, using: :btree
   add_index "lms_contexts", ["lti_id"], name: "index_lms_contexts_on_lti_id", using: :btree
 
   create_table "lms_course_grade_callbacks", force: :cascade do |t|

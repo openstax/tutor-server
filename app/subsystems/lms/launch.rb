@@ -1,16 +1,29 @@
+require 'active_support/core_ext/module/delegation'
+
 class Lms::Launch
 
-  # A PORO that wraps a launch request, handles validating it, hiding certain
-  # details from other code.
+  # A PORO that hides the details of a launch request's internals and
+  # launch-related models from other LMS code.
 
   attr_reader :app, :message
   attr_reader :request_parameters, :request_url
 
-  class Error < StandardError; end
-  class AppNotFound < Error; end
-  class InvalidSignature < Error; end
-  class AlreadyUsed < Error; end
-  class CouldNotLoadLaunch < Error; end
+  class HandledError          < StandardError; end
+  class InvalidSignature      < HandledError; end
+  class AlreadyUsed           < HandledError; end
+  class CourseKeysAlreadyUsed < HandledError; end
+  class LmsDisabled           < HandledError; end
+
+  class UnhandledError        < StandardError; end
+  class AppNotFound           < UnhandledError; end
+  class CouldNotLoadLaunch    < UnhandledError; end
+
+  delegate :tool_consumer_instance_guid, :context_id, to: :message
+
+  REQUIRED_FIELDS = [
+    :tool_consumer_instance_guid,
+    :context_id
+  ]
 
   def self.from_request(request)
     new(request_parameters: request.request_parameters, request_url: request.url)
@@ -26,10 +39,9 @@ class Lms::Launch
   def self.from_id(id)
     launch_data = Lms::Models::TrustedLaunchData.find(id)
     raise CouldNotLoadLaunch if launch_data.nil?
-    launch = new(request_parameters: ActiveSupport::HashWithIndifferentAccess.new(launch_data.request_params),
-                 request_url: launch_data.request_url,
-                 trusted: true)
-    launch
+    new(request_parameters: ActiveSupport::HashWithIndifferentAccess.new(launch_data.request_params),
+        request_url: launch_data.request_url,
+        trusted: true)
   end
 
   def is_assignment?
@@ -92,6 +104,64 @@ class Lms::Launch
       raise AppNotFound if @app.nil?
     end
     @app
+  end
+
+  def tool_consumer!
+    @tool_consumer ||= Lms::Models::ToolConsumer.find_or_create_by!(guid: tool_consumer_instance_guid)
+  end
+
+  def context
+    if @context.nil?
+      query = Lms::Models::Context.eager_load(:course)
+                                  .where(lti_id: context_id)
+
+      if @tool_consumer.nil?
+        query = query.joins(:tool_consumer)
+                     .where(tool_consumer: { guid: tool_consumer_instance_guid })
+      else
+        query = query.where(tool_consumer: @tool_consumer)
+      end
+
+      @context = query.first
+    end
+    @context
+  end
+
+  def missing_required_fields
+    @missing_required_fields ||= REQUIRED_FIELDS.select do |required_field|
+      send(required_field).blank?
+    end
+  end
+
+  def can_auto_create_context?
+    app.owner.is_a? CourseProfile::Models::Course
+  end
+
+  def auto_create_context!
+    raise "Cannot auto create context" if !can_auto_create_context?
+
+    course = app.owner
+
+    raise LmsDisabled if !course.is_lms_enabled
+
+    # In theory, we could allow multiple LTI context IDs to point to the same Tutor course (e.g. if
+    # one teacher has 3 sections and uses 3 LMS courses to point to one Tutor course).  For this reason
+    # we don't currently prohibit this with a database constraint.  But for the time being, we do
+    # restrict this here in code by requiring, in the auto create call, that a course only be used
+    # in one Context.
+
+    raise CourseKeysAlreadyUsed if Lms::Models::Context.where(course: course).exists?
+
+    @context = Lms::Models::Context.create!(
+      lti_id: context_id,
+      tool_consumer: tool_consumer!,
+      course: course
+    )
+  end
+
+  def update_tool_consumer_metadata!
+    # TODO use the data in the launch to update what we know about the tool consumer
+    # includes admin email addresses, LMS version, etc.
   end
 
   protected
