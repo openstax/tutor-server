@@ -23,6 +23,7 @@ class OpenStax::Cnx::V1::Fragment
 
         # Build iframe based on the link's URL
         iframe = Nokogiri::XML::Node.new('iframe', node.document)
+        iframe['title'] = 'Interactive Simulation'
         iframe['src'] = link_node['href']
         iframe['class'] = iframe_classes.join(' ')
         iframe['width'] = default_width

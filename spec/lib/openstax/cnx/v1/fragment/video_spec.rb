@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 require 'vcr_helper'
 
@@ -22,7 +23,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Video, type: :external, vcr: VCR_OPT
 
       <p id="fs-idp29827984">This video contrasts the way we thought about motion and force in the time before Galileo’s concept of inertia and Newton’s first law of motion with the way we understand force and motion now.</p>
        <div data-type="media" id="fs-idp48266880" data-alt="This link takes you to a lecture that contrasts the way we thought about motion and force before Galileo's concept of inertia and Newton's first law of motion with the way we understand force and motion now." class="os-embed">
-        <iframe width="660" height="371.4" src="https://www.khanacademy.org/embed_video?v=5-ZFOhHQS68" class="os-embed video"></iframe>
+        <iframe width="660" height="371.4" src="https://www.khanacademy.org/embed_video?v=5-ZFOhHQS68" class="os-embed video" title="Video"></iframe>
       </div>
 
 
