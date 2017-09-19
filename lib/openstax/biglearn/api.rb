@@ -684,8 +684,9 @@ module OpenStax::Biglearn::Api
 
         candidate_exercises.sample(max_num_exercises).tap do |chosen_exercises|
           WarningMailer.log_and_deliver(
-            "Assigned #{chosen_exercises.size} fallback personalized exercises for task with ID #{
-            task.id} because Biglearn did not respond in a timely manner"
+            "Assigned #{chosen_exercises.size} fallback personalized exercises for task with ID: #{
+            task.id}, UUID: #{task.uuid}, Type: #{task.task_type
+            } because Biglearn was not ready after the maximum number of attempts"
           ) unless chosen_exercises.empty?
         end
       end
