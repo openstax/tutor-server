@@ -80,7 +80,7 @@ gem 'maruku'
 gem 'roar', '1.0.3'
 
 # Background job status store
-gem 'jobba', github: 'openstax/jobba', ref: 'def4b3e5b578d90e13454538de0e576447ee9b2c'
+gem 'jobba', github: 'openstax/jobba', ref: 'ff50c27d5e3782fa07cf0d682554719c0650af61'
 
 # Lev framework
 gem 'lev', github: 'lml/lev', ref: '351d0b0a49e296d312a1920c4803bc8b7619fb80'

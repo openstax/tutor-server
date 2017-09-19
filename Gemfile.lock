@@ -24,8 +24,8 @@ GIT
 
 GIT
   remote: https://github.com/openstax/jobba.git
-  revision: def4b3e5b578d90e13454538de0e576447ee9b2c
-  ref: def4b3e5b578d90e13454538de0e576447ee9b2c
+  revision: ff50c27d5e3782fa07cf0d682554719c0650af61
+  ref: ff50c27d5e3782fa07cf0d682554719c0650af61
   specs:
     jobba (1.5.0)
       redis (~> 3.2)
@@ -866,4 +866,4 @@ DEPENDENCIES
   with_advisory_lock!
 
 BUNDLED WITH
-   1.14.6
+   1.15.4
