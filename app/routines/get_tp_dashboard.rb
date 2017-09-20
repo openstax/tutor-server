@@ -25,14 +25,14 @@ class GetTpDashboard
 
   def load_plans(course, start_at_ntz, end_at_ntz)
     result = run(:get_plans, owner: course, start_at_ntz: start_at_ntz,
-                             end_at_ntz: end_at_ntz, include_trouble_flags: true).outputs
+                             end_at_ntz: end_at_ntz, include_trouble_flags: false).outputs
 
     outputs.plans = result.plans.map do |task_plan|
       task_plan.attributes.symbolize_keys.except(:is_draft, :is_publishing, :is_published).merge({
         is_draft?: task_plan.is_draft?,
         is_publishing?: task_plan.is_publishing?,
         is_published?: task_plan.is_published?,
-        is_trouble: result.trouble_plan_ids.include?(task_plan.id),
+        is_trouble: false,
         shareable_url: run(:get_short_code_url, task_plan, suffix: task_plan.title).outputs.url,
         tasking_plans: task_plan.tasking_plans
       })
