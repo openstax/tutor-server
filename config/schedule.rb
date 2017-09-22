@@ -25,3 +25,7 @@ end
 every 1.hour do
   runner "CourseProfile::BuildPreviewCourses.call"
 end
+
+every 1.month, at: '9 AM' do  # ~ 3am central
+  runner "OpenStax::RescueFrom.this { Jobba.cleanup }"
+end
