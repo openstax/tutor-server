@@ -23,15 +23,6 @@ GIT
       restforce (~> 2.1.0)
 
 GIT
-  remote: https://github.com/openstax/jobba.git
-  revision: ff50c27d5e3782fa07cf0d682554719c0650af61
-  ref: ff50c27d5e3782fa07cf0d682554719c0650af61
-  specs:
-    jobba (1.5.0)
-      redis (~> 3.2)
-      redis-namespace
-
-GIT
   remote: https://github.com/openstax/rescue_from.git
   revision: e0d60e68afc629361d8b0c142c5eb0283e523aaa
   ref: e0d60e68afc629361d8b0c142c5eb0283e523aaa
@@ -391,6 +382,9 @@ GEM
     ice_nine (0.11.1)
     inflecto (0.0.2)
     ipaddress (0.8.0)
+    jobba (1.6.0)
+      redis (~> 3.2)
+      redis-namespace
     jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -795,7 +789,7 @@ DEPENDENCIES
   guard-rspec
   hashie
   httparty
-  jobba!
+  jobba (~> 1.6.0)
   jquery-rails
   json-schema
   keyword_search
