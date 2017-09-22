@@ -60,6 +60,13 @@ module Api::V1
       }
     end
 
+    property :feature_flags, writeable: false, readable: true, getter: ->(*) {
+      {
+        is_highlighting_allowed: Settings::Highlighting.is_allowed,
+        is_payments_enabled: Settings::Payments.payments_enabled
+      }
+    }
+
     property :flash,
              readable: true,
              writeable: false,

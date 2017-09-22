@@ -76,3 +76,6 @@ en:
       raise_if_salesforce_user_missing:
         name: 'Raise exception if Salesforce user is missing'
         help_block: 'Raise an exception (and notify devs) if the Salesforce user is missing'
+      is_highlighting_allowed:
+        name: 'Allow highlighting?'
+        help_block: 'If false (unchecked), disables highlighting; if true (checked), may enable highlighting (other checks used too)'
