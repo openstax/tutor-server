@@ -87,3 +87,6 @@ en:
       prebuilt_preview_course_count:
         name: '# Prebuilt Preview Courses'
         help_block: 'The number of prebuilt preview courses to keep at the ready'
+      is_highlighting_allowed:
+        name: 'Allow highlighting?'
+        help_block: 'If false (unchecked), disables highlighting; if true (checked), may enable highlighting (other checks used too)'
