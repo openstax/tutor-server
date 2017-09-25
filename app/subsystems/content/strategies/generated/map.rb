@@ -30,8 +30,8 @@ module Content
         # to a Content::Page in the to_ecosystem
         # Unmapped Content::Exercises map to nil
         def map_exercises_to_pages(exercises:)
-          exercise_ids = exercises.map{ |exercise| exercise.id.to_s }
-          page_ids = exercise_ids.map{ |ex_id| @exercise_id_to_page_id_map[ex_id] }
+          exercise_ids = exercises.map { |exercise| exercise.id.to_s }
+          page_ids = exercise_ids.map { |ex_id| @exercise_id_to_page_id_map[ex_id] }
           pages_by_ids = to_ecosystem_pages_by_ids(*page_ids)
 
           exercise_to_page_map = {}
@@ -48,8 +48,8 @@ module Content
         # to a Content::Page in the to_ecosystem
         # Unmapped Content::Pages map to nil
         def map_pages_to_pages(pages:)
-          from_page_ids = pages.map{ |page| page.id.to_s }
-          to_page_ids = from_page_ids.map{ |pg_id| @page_id_to_page_id_map[pg_id] }
+          from_page_ids = pages.map { |page| page.id.to_s }
+          to_page_ids = from_page_ids.map { |pg_id| @page_id_to_page_id_map[pg_id] }
           pages_by_ids = to_ecosystem_pages_by_ids(*to_page_ids)
 
           page_to_page_map = {}
@@ -66,9 +66,9 @@ module Content
         # to Content::Exercises in the to_ecosystem that are in a Content::Pool of the given type
         # Unmapped Content::Pages map to empty arrays
         def map_pages_to_exercises(pages:, pool_type: :all_exercises)
-          page_id_to_exercise_ids_map = Hash.new{ |hash, key| hash[key] = [] }
+          page_id_to_exercise_ids_map = Hash.new { |hash, key| hash[key] = [] }
 
-          pages.map{ |page| page.id.to_s }.each do |pg_id|
+          pages.map { |page| page.id.to_s }.each do |pg_id|
             next unless @page_id_to_pool_type_exercise_ids_map.has_key?(pg_id)
 
             page_id_to_exercise_ids_map[pg_id] = \
@@ -82,7 +82,7 @@ module Content
 
           pages.each do |page|
             exercise_ids = page_id_to_exercise_ids_map[page.id.to_s]
-            page_to_exercises_map[page] = exercise_ids.map{ |ex_id| to_exercises_by_ids[ex_id] }
+            page_to_exercises_map[page] = exercise_ids.map { |ex_id| to_exercises_by_ids[ex_id] }
           end
 
           page_to_exercises_map
@@ -102,34 +102,22 @@ module Content
             existing_from_ecosystems_ids.include?(ecosystem.id)
           end
 
-          new_maps = create_or_find_maps(
+          new_maps = upsert_maps(
             from_ecosystems: missing_from_ecosystems, to_ecosystem: to_ecosystem
           )
 
           existing_maps + new_maps
         end
 
-        def create_or_find_maps(from_ecosystems:, to_ecosystem:)
-          # Safe find_or_create without Postgres 9.5 (find part already happened at this point)
-          # https://www.depesz.com/2012/06/10/why-is-upsert-so-complicated/
+        def upsert_maps(from_ecosystems:, to_ecosystem:)
           from_ecosystems.uniq.map do |from_ecosystem|
-            # We wrap each create in a transaction
-            # (requires_new ensures we get at least a savepoint)
-            new_map = Content::Models::Map.transaction(requires_new: true) do
-              # If this insert already happened in another transaction,
-              # it will block until the other transaction either rolls back or commits
-              # If the other transaction commits, this insert will raise a PG::UniqueViolation
-              # If the insert fails (with an exception), we rollback to the savepoint
-              # The outside transaction remains valid
-              # No need to retry the insert, since someone else succeeded
-              Content::Models::Map.create(
-                from_ecosystem: from_ecosystem.to_model, to_ecosystem: to_ecosystem.to_model
-              ) rescue raise ActiveRecord::Rollback
-            end
-
-            # Retry the find if the insert failed due to a Postgres exception
-            new_map || Content::Models::Map.find_by(from_ecosystem: from_ecosystem.to_model,
-                                                    to_ecosystem: to_ecosystem.to_model)
+            Content::Models::Map.new(
+              from_ecosystem: from_ecosystem.to_model, to_ecosystem: to_ecosystem.to_model
+            ).tap { |map| map.before_save_callbacks }
+          end.tap do |new_maps|
+            Content::Models::Map.import new_maps, validate: false, on_duplicate_key_ignore: {
+              conflict_target: [ :content_from_ecosystem_id, :content_to_ecosystem_id ]
+            }
           end
         end
 
