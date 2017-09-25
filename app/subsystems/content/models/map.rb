@@ -118,8 +118,8 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   end
 
   def before_save_callbacks
-    create_exercise_id_to_page_id_map,
-    create_page_id_to_page_id_map,
+    create_exercise_id_to_page_id_map
+    create_page_id_to_page_id_map
     create_page_id_to_pool_type_exercise_ids_map
     validate_maps
   end
