@@ -35,6 +35,3 @@ before_script:
   - export PARALLEL_TEST_PROCESSORS=2
   - export DEMO_MAX_PROCESSES=0
   - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
-before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
