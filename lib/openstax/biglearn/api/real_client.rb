@@ -2,7 +2,7 @@
 # or else they will introduce gaps in the sequence_number
 # If aborting a request in here is required in the future,
 # we will need to introduce a NO-OP CourseEvent in biglearn-api
-class OpenStax::Biglearn::Api::RealClient
+class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
 
   HEADER_OPTIONS = { 'Content-Type' => 'application/json' }.freeze
 

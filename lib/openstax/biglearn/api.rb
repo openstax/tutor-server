@@ -2,6 +2,7 @@ require_relative './api/configuration'
 require_relative './api/malformed_request'
 require_relative './api/result_type_error'
 require_relative './api/exercises_error'
+require_relative './api/client'
 require_relative './api/fake_client'
 require_relative './api/real_client'
 
@@ -80,11 +81,9 @@ module OpenStax::Biglearn::Api
         current_ecosystem = course.course_ecosystems.first.ecosystem
 
         # Course already exists in Biglearn, so just send the latest update
-        preparation_uuid = prepare_course_ecosystem(
+        sequentially_prepare_and_update_course_ecosystem(
           options.merge course: course, ecosystem: current_ecosystem
-        ).fetch(:preparation_uuid)
-
-        update_course_ecosystems(options.merge course: course, preparation_uuid: preparation_uuid)
+        )
       end
     end
 
@@ -141,6 +140,24 @@ module OpenStax::Biglearn::Api
         response_status_key: :update_status,
         accepted_response_status: [ 'updated_and_ready', 'updated_but_unready' ]
       )
+    end
+
+    # Executes prepare_course_ecosystem and update_course_ecosystems sequentially
+    def sequentially_prepare_and_update_course_ecosystem(*request)
+      request, options = extract_options request
+
+      preparation_uuid = SecureRandom.uuid
+
+      single_api_request options.merge(
+        method: :sequentially_prepare_and_update_course_ecosystem,
+        request: request.merge(preparation_uuid: preparation_uuid),
+        keys: [:preparation_uuid, :course, :ecosystem],
+        perform_later: true,
+        sequence_number_model_key: :course,
+        sequence_number_model_class: CourseProfile::Models::Course
+      )
+
+      { preparation_uuid: preparation_uuid }
     end
 
     # Updates Course rosters in Biglearn
@@ -473,10 +490,9 @@ module OpenStax::Biglearn::Api
       result
     end
 
-    # Any inline (perform_later: false) requests that require a sequence_number must either:
-    # 1. Happen after the sequence_number increment has been committed to the DB
-    #    in a background job that retries OR
-    # 2. Happen right before the sequence_number increment is committed to the DB
+    # Inline (perform_later: false) sequence_number requests are not recommended
+    # because they may cause the entire current transaction to rollback,
+    # depending on the transaction isolation settings
     def single_api_request(method:, request:, keys:, optional_keys: [],
                            result_class: Hash, uuid_key: :request_uuid,
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
