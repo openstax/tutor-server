@@ -1,8 +1,8 @@
-  class ExportAndUploadResearchData
+class ExportAndUploadResearchData
 
-  owncloud_secrets = Rails.application.secrets['owncloud']
-  RESEARCH_FOLDER = owncloud_secrets['research_folder']
-  WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{RESEARCH_FOLDER}"
+  box_secrets = Rails.application.secrets['box']
+  EXPORT_FOLDER = box_secrets['export_folder']
+  WEBDAV_URL = "#{box_secrets['base_url']}/#{EXPORT_FOLDER}"
 
   lev_routine active_job_enqueue_options: { queue: :long_running }, express_output: :filename
 
@@ -155,12 +155,14 @@
   end
 
   def upload_export_file
-    own_cloud_secrets = Rails.application.secrets['owncloud']
-    auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
+    box_secrets = Rails.application.secrets['box']
+    auth = { username: box_secrets['username'], password: box_secrets['password'] }
 
     File.open(filepath, 'r') do |file|
-      HTTParty.put(webdav_url, basic_auth: auth, body_stream: file,
-                               headers: { 'Transfer-Encoding' => 'chunked' }).success?
+      HTTParty.put(
+        webdav_url(outputs[:filename]),
+        basic_auth: auth, body_stream: file, headers: { 'Transfer-Encoding' => 'chunked' }
+      ).success?
     end
   end
 
@@ -168,8 +170,8 @@
     File.delete(filepath) if File.exist?(filepath)
   end
 
-  def webdav_url
-    Addressable::URI.escape "#{WEBDAV_BASE_URL}/#{outputs[:filename]}"
+  def webdav_url(filename)
+    Addressable::URI.escape "#{WEBDAV_URL}/#{filename}".gsub(/(\/+)/, '/').gsub(':/', '://')
   end
 
 end

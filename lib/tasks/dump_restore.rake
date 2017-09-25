@@ -14,8 +14,7 @@
 #                          then /\d+_phys(.dump)?/, then /.*phys.*/
 # rake db:restore          defaults the name argument to 'tutor'
 #
-# To share these, upload dumps to owncloud (let's all use a consistent
-# directory).
+# To share these, upload dumps to Box (let's all use a consistent directory).
 #
 # Adapted from https://gist.github.com/hopsoft/56ba6f55fe48ad7f8b90
 

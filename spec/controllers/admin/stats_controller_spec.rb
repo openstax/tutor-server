@@ -89,7 +89,7 @@ RSpec.describe Admin::StatsController, type: :controller do
         before do
           expect(ExportExerciseExclusions).to(
             receive(:perform_later).with(
-              upload_by_course_to_owncloud: true, upload_by_exercise_to_owncloud: true
+              upload_by_course: true, upload_by_exercise: true
             ).and_return(true)
           )
         end

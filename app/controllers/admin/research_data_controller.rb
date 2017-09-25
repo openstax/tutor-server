@@ -20,15 +20,18 @@ module Admin
         return
       end
 
-      task_types = task_types_params.inject([]){ |result, task_types_param|
-        result.concat(mapping.fetch(task_types_param){|key| raise "Don't know about application #{key}"})
-      }
+      task_types = task_types_params.inject([]) do |result, task_types_param|
+        result.concat(
+          mapping.fetch(task_types_param) { |key| raise "Don't know about application #{key}" }
+        )
+      end
 
       from_date = params[:export_research_data][:from] || "1/1/1970"
       to_date = params[:export_research_data][:to] || Time.current.to_s
       ExportAndUploadResearchData.perform_later(filename: filename, from: from_date, to: to_date, task_types: task_types)
       redirect_to admin_research_data_path,
-                  notice: "#{ExportAndUploadResearchData::RESEARCH_FOLDER}/#{filename} should be available in a few minutes in ownCloud (does not refresh automatically)"
+                  notice: "#{ExportAndUploadResearchData::EXPORT_FOLDER}/#{filename
+                  } should be available in a few minutes in Box"
     end
 
   end

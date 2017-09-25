@@ -38,9 +38,9 @@ module Manager::StatsActions
     end
 
     ExportExerciseExclusions.perform_later(
-      upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
+      upload_by_course: by_course, upload_by_exercise: by_exercise
     )
-    flash[:success] = "The export should be available in a few minutes in ownCloud."
+    flash[:success] = "The export should be available in a few minutes in Box."
     redirect_to admin_stats_excluded_exercises_path
   end
 

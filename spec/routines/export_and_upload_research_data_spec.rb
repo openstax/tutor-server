@@ -100,10 +100,10 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       end
     end
 
-    it 'uploads the exported data to owncloud' do
+    it 'uploads the exported data to Box' do
       # We simply test that the call to HTTParty is made properly
       file_regex_string = 'export_\d+T\d+Z.csv'
-      webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+      webdav_url_regex = Regexp.new "#{described_class::WEBDAV_URL}/#{file_regex_string}"
       expect(HTTParty).to receive(:put).with(
         webdav_url_regex,
         basic_auth: {
