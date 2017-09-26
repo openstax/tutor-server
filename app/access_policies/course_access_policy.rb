@@ -20,7 +20,7 @@ class CourseAccessPolicy
       requestor.account.confirmed_faculty?
     when :clone
       UserIsCourseTeacher[user: requestor, course: course] &&
-      course.offering.try!(:is_available)
+        course.offering.try!(:is_available)
     else
       false
     end
