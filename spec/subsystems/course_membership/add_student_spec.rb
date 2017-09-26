@@ -12,6 +12,7 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
         result = CourseMembership::AddStudent.call(period: period, role: role)
       }.to change{ CourseMembership::Models::Student.count }.by(1)
       expect(result.errors).to be_empty
+      expect(course.reload.is_access_switchable).to eq false
     end
 
     it 'sets the payment_due_at to midnight of appropriate day' do
