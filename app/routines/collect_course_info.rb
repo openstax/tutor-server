@@ -56,6 +56,7 @@ class CollectCourseInfo
         is_concept_coach: course.is_concept_coach,
         is_college: course.is_college,
         is_preview: course.is_preview,
+        is_access_switchable: course.is_access_switchable,
         does_cost: course.does_cost,
         is_lms_enabling_allowed: course.is_lms_enabling_allowed,
         is_lms_enabled: course.is_lms_enabled,

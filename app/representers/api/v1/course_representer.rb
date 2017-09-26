@@ -163,6 +163,13 @@ module Api::V1
                type: 'boolean'
              }
 
+    property :is_access_switchable,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean'
+             }
+
     property :cloned_from_id,
              type: String,
              readable: true,
