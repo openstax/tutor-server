@@ -73,6 +73,13 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           1
         ],
         [
+          :sequentially_prepare_and_update_course_ecosystem,
+          -> { { course: @course, ecosystem: @ecosystem } },
+          Hash,
+          -> { @course },
+          2
+        ],
+        [
           :update_rosters,
           -> { [ { course: @course } ] },
           OpenStax::Biglearn::Api::JobWithSequenceNumber,

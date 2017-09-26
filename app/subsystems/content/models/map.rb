@@ -10,8 +10,7 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
   validates :from_ecosystem, :to_ecosystem, presence: true
   validates :to_ecosystem, uniqueness: { scope: :content_from_ecosystem_id }
 
-  before_save :create_exercise_id_to_page_id_map, :create_page_id_to_page_id_map,
-              :create_page_id_to_pool_type_exercise_ids_map, :validate_maps
+  before_save :before_save_callbacks
 
   def create_exercise_id_to_page_id_map
     return unless exercise_id_to_page_id_map.blank?
@@ -116,6 +115,13 @@ class Content::Models::Map < Tutor::SubSystems::BaseModel
     exercises_map_to_pages
     pages_map_to_pages
     pages_map_to_exercises
+  end
+
+  def before_save_callbacks
+    create_exercise_id_to_page_id_map
+    create_page_id_to_page_id_map
+    create_page_id_to_pool_type_exercise_ids_map
+    validate_maps
   end
 
   protected
