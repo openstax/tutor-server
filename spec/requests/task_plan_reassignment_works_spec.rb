@@ -36,10 +36,10 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
     expect(Tasks::Models::Tasking.count).to eq 1
 
     # The student signs up...
-    api_post('/api/enrollment_changes', student_token,
+    api_post('/api/enrollment', student_token,
              raw_post_data: { enrollment_code: period.enrollment_code })
     enrollment_change_id = response.body_as_hash[:id]
-    api_put("/api/enrollment_changes/#{enrollment_change_id}/approve", student_token)
+    api_put("/api/enrollment/#{enrollment_change_id}/approve", student_token)
 
     # ... and they have the assignment
     expect(Tasks::Models::Tasking.count).to eq 2
@@ -48,10 +48,10 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
   scenario 'undropped student gets assignments published while he was dropped' do
     # The student enrolls...
-    api_post('/api/enrollment_changes', student_token,
+    api_post('/api/enrollment', student_token,
              raw_post_data: { enrollment_code: period.enrollment_code })
     enrollment_change_id = response.body_as_hash[:id]
-    api_put("/api/enrollment_changes/#{enrollment_change_id}/approve", student_token)
+    api_put("/api/enrollment/#{enrollment_change_id}/approve", student_token)
     expect(CourseMembership::GetPeriodStudentRoles[periods: period]).not_to be_empty
 
     # The teacher drops the student...
