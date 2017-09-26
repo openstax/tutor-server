@@ -12,7 +12,7 @@ RSpec.describe Api::V1::EnrollmentController, type: :routing, api: true, version
     it 'routes to #choices' do
       uuid = 'cc3c6ff9-83d8-4375-94be-8c7ae3024938'
       expect(get "/api/enrollment/#{uuid}/choices").to(
-        route_to('api/v1/enrollment#choices', format: 'json', id: guuid)
+        route_to('api/v1/enrollment#choices', format: 'json', id: uuid)
       )
     end
   end
