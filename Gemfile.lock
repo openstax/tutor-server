@@ -103,6 +103,11 @@ GEM
       debug_inspector (>= 0.0.1)
     bootstrap-sass (3.2.0.2)
       sass (~> 3.2)
+    boxr (1.4.0)
+      addressable (~> 2.3)
+      hashie (~> 3.5)
+      httpclient (~> 2.8)
+      jwt (~> 1.4)
     brakeman (3.0.2)
       erubis (~> 2.6)
       fastercsv (~> 1.5)
@@ -363,6 +368,7 @@ GEM
     httparty (0.13.3)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
+    httpclient (2.8.3)
     i18n (0.8.6)
     ice_nine (0.11.1)
     inflecto (0.0.2)
@@ -757,6 +763,7 @@ DEPENDENCIES
   babbler (~> 1.0.1)
   best_in_place
   bootstrap-sass (~> 3.2.0)
+  boxr
   brakeman
   bullet
   byebug

@@ -1,9 +1,5 @@
 class ExportAndUploadResearchData
 
-  box_secrets = Rails.application.secrets['box']
-  EXPORT_FOLDER = box_secrets['export_folder']
-  WEBDAV_URL = "#{box_secrets['base_url']}/#{EXPORT_FOLDER}"
-
   lev_routine active_job_enqueue_options: { queue: :long_running }, express_output: :filename
 
   def exec(filename: nil, task_types: [], from: nil, to: nil)
@@ -155,23 +151,11 @@ class ExportAndUploadResearchData
   end
 
   def upload_export_file
-    box_secrets = Rails.application.secrets['box']
-    auth = { username: box_secrets['username'], password: box_secrets['password'] }
-
-    File.open(filepath, 'r') do |file|
-      HTTParty.put(
-        webdav_url(outputs[:filename]),
-        basic_auth: auth, body_stream: file, headers: { 'Transfer-Encoding' => 'chunked' }
-      ).success?
-    end
+    Box.upload_file filepath
   end
 
   def remove_export_file
     File.delete(filepath) if File.exist?(filepath)
-  end
-
-  def webdav_url(filename)
-    Addressable::URI.escape "#{WEBDAV_URL}/#{filename}".gsub(/(\/+)/, '/').gsub(':/', '://')
   end
 
 end

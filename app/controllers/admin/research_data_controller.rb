@@ -30,8 +30,7 @@ module Admin
       to_date = params[:export_research_data][:to] || Time.current.to_s
       ExportAndUploadResearchData.perform_later(filename: filename, from: from_date, to: to_date, task_types: task_types)
       redirect_to admin_research_data_path,
-                  notice: "#{ExportAndUploadResearchData::EXPORT_FOLDER}/#{filename
-                  } should be available in a few minutes in Box"
+                  notice: "#{filename} should be available in a few minutes in the exports folder"
     end
 
   end

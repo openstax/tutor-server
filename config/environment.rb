@@ -1,6 +1,7 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
+require 'box'
 require 'i_am'
 require 'date_time_utilities'
 require 'active_job/after_commit_runner'

@@ -1,9 +1,5 @@
 class ExportExerciseExclusions
 
-  box_secrets = Rails.application.secrets['box']
-  EXPORT_FOLDER = box_secrets['export_folder']
-  WEBDAV_URL = "#{box_secrets['base_url']}/#{EXPORT_FOLDER}"
-
   lev_routine active_job_enqueue_options: { queue: :long_running }
 
   protected
@@ -249,31 +245,12 @@ class ExportExerciseExclusions
     File.join 'tmp', 'exports'
   end
 
-  def auth
-    box_secrets = Rails.application.secrets['box']
-    { username: box_secrets['username'], password: box_secrets['password'] }
-  end
-
   def upload_by_course_csv
-    File.open(filepath_by_course, 'r') do |file|
-      HTTParty.put(
-        webdav_url(filepath_by_course.split("/").last),
-        basic_auth: auth, body_stream: file, headers: { 'Transfer-Encoding' => 'chunked' }
-      ).success?
-    end
+    Box.upload_file filepath_by_course
   end
 
   def upload_by_exercise_csv
-    File.open(filepath_by_exercise, 'r') do |file|
-      HTTParty.put(
-        webdav_url(filepath_by_exercise.split("/").last),
-        basic_auth: auth, body_stream: file, headers: { 'Transfer-Encoding' => 'chunked' }
-      ).success?
-    end
-  end
-
-  def webdav_url(fname)
-    Addressable::URI.escape "#{WEBDAV_URL}/#{fname}".gsub(/(\/+)/, '/').gsub(':/', '://')
+    Box.upload_file filepath_by_exercise
   end
 
   def remove_exported_files
