@@ -33,14 +33,15 @@ module Manager::StatsActions
     by_exercise = params.fetch(:export).fetch(:by).include? "exercise"
 
     unless by_course || by_exercise
-      flash[:alert] = "You must select at least one of two options to export"
-      redirect_to admin_stats_excluded_exercises_path and return
+      flash[:alert] = "You must select at least one of the two options to export"
+      redirect_to admin_stats_excluded_exercises_path
+      return
     end
 
     ExportExerciseExclusions.perform_later(
       upload_by_course: by_course, upload_by_exercise: by_exercise
     )
-    flash[:success] = "The export should be available in a few minutes in Box."
+    flash[:success] = "The export is being created and will be uploaded to Box when ready"
     redirect_to admin_stats_excluded_exercises_path
   end
 
