@@ -205,9 +205,15 @@ Rails.application.routes.draw do
     get 'terms', to: 'terms#index'
     put 'terms/:ids', to: 'terms#sign'
 
-    match :'*all', to: 'api#options', via: [:options]
+    namespace :lms do
+      resources :courses, only: [:show] do
+        member do
+          put :push_scores
+        end
+      end
+    end
 
-    get 'lms/:course_id', to: 'lms#index'
+    match :'*all', to: 'api#options', via: [:options]
 
   end # end of API scope
 
