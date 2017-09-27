@@ -14,7 +14,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     job_id = Tasks::ExportPerformanceReport.perform_later(course: course,
                                                           role: get_course_role(course: course))
 
-    render json: { job: api_job_path(job_id) }, status: :accepted
+    render_job_id_json(job_id)
   end
 
   api :GET, '/courses/:course_id/performance/exports',

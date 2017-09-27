@@ -21,7 +21,7 @@ RSpec.describe 'LMS Launch', type: :request do
 
         expect(response.body).to match("/enroll/#{course.uuid}")
         expect(UserIsCourseStudent[course: course, user: user]).to eq false
-        expect_course_grade_callback_count(1)
+        expect_course_score_callback_count(1)
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe 'LMS Launch', type: :request do
         expect_and_fake_trip_to_accounts_and_back(user)
 
         expect(response.body).to match("/course/#{course.id}")
-        expect_course_grade_callback_count(1)
+        expect_course_score_callback_count(1)
       end
     end
   end
@@ -54,7 +54,7 @@ RSpec.describe 'LMS Launch', type: :request do
 
         expect(response.body).to match("/course/#{course.id}")
         expect(UserIsCourseTeacher[course: course, user: user]).to eq true
-        expect_course_grade_callback_count(0)
+        expect_course_score_callback_count(0)
       end
     end
 
@@ -181,8 +181,8 @@ RSpec.describe 'LMS Launch', type: :request do
     get redirect_query_hash[:return_to]
   end
 
-  def expect_course_grade_callback_count(count)
-    expect(Lms::Models::CourseGradeCallback.where(course: course).where(profile: user.to_model).count).to eq count
+  def expect_course_score_callback_count(count)
+    expect(Lms::Models::CourseScoreCallback.where(course: course).where(profile: user.to_model).count).to eq count
   end
 
   def run_new_launch(*args, **keyword_args)

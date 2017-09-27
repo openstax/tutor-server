@@ -21,6 +21,10 @@ class CourseAccessPolicy
     when :clone
       UserIsCourseTeacher[user: requestor, course: course] &&
         course.offering.try!(:is_available)
+    when :lms_connection_info
+      UserIsCourseTeacher[user: requestor, course: course]
+    when :lms_sync_scores
+      UserIsCourseTeacher[user: requestor, course: course]
     else
       false
     end
