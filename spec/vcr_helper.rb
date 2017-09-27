@@ -64,6 +64,11 @@ VCR.configure do |c|
   filter_secret(['openstax', 'payments', 'client_id'])
   filter_secret(['openstax', 'payments', 'secret'])
   filter_secret(['openstax', 'payments', 'url'])
+
+  [ 'client_id', 'client_secret', 'jwt_public_key_id', 'jwt_private_key',
+    'jwt_private_key_password', 'enterprise_id', 'exports_folder' ].each do |field_name|
+    filter_secret(['box', field_name])
+  end
 end
 
 def vcr_friendly_uuids(count:, namespace: '')
