@@ -28,6 +28,10 @@ class Api::V1::ApiController < OpenStax::Api::V1::ApiController
     payment_overdue?(course, student) ? render_api_errors(:payment_overdue) : true
   end
 
+  def render_job_id_json(job_id)
+    render json: { job: api_job_path(job_id) }, status: :accepted
+  end
+
   protected
 
   def payment_overdue?(course, student)

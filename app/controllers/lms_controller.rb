@@ -118,10 +118,10 @@ class LmsController < ApplicationController
         # a Student later records).  It is possible that a teacher could add the Tutor assignment
         # more than once, so we could have multiple callback infos for ever course/user combination.
 
-        # TODO change to launch.create_grade_callback_if_missing(caller.to_model) - a lot of above
+        # TODO change to launch.create_score_callback_if_missing(caller.to_model) - a lot of above
         # comment goes into Launch method
 
-        Lms::Models::CourseGradeCallback.find_or_create_by(
+        Lms::Models::CourseScoreCallback.find_or_create_by(
           result_sourcedid: launch.result_sourcedid,
           outcome_url: launch.outcome_url,
           course: course,

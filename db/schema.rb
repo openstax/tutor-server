@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926170721) do
+ActiveRecord::Schema.define(version: 20170927024042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -351,12 +351,14 @@ ActiveRecord::Schema.define(version: 20170926170721) do
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
+    t.boolean  "is_preview_ready",                             default: false,               null: false
   end
 
   add_index "course_profile_courses", ["catalog_offering_id", "is_preview", "preview_claimed_at"], name: "preview_pending_indx", using: :btree
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
   add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
   add_index "course_profile_courses", ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed", using: :btree
+  add_index "course_profile_courses", ["is_preview", "is_preview_ready", "preview_claimed_at", "catalog_offering_id"], name: "preview_pending_index", using: :btree
   add_index "course_profile_courses", ["name"], name: "index_course_profile_courses_on_name", using: :btree
   add_index "course_profile_courses", ["school_district_school_id"], name: "index_course_profile_courses_on_school_district_school_id", using: :btree
   add_index "course_profile_courses", ["teach_token"], name: "index_course_profile_courses_on_teach_token", unique: true, using: :btree
@@ -459,16 +461,16 @@ ActiveRecord::Schema.define(version: 20170926170721) do
   add_index "lms_contexts", ["lti_id", "lms_tool_consumer_id", "course_profile_course_id"], name: "lms_contexts_lti_id_tool_consumer_id_course_id", unique: true, using: :btree
   add_index "lms_contexts", ["lti_id"], name: "index_lms_contexts_on_lti_id", using: :btree
 
-  create_table "lms_course_grade_callbacks", force: :cascade do |t|
+  create_table "lms_course_score_callbacks", force: :cascade do |t|
     t.string  "result_sourcedid",         null: false
     t.string  "outcome_url",              null: false
     t.integer "user_profile_id",          null: false
     t.integer "course_profile_course_id", null: false
   end
 
-  add_index "lms_course_grade_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_grade_callbacks_on_course_user_result_outcome", using: :btree
-  add_index "lms_course_grade_callbacks", ["result_sourcedid", "outcome_url"], name: "course_grade_callback_result_outcome", unique: true, using: :btree
-  add_index "lms_course_grade_callbacks", ["user_profile_id"], name: "course_grade_callbacks_on_user", using: :btree
+  add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_score_callbacks_on_course_user_result_outcome", using: :btree
+  add_index "lms_course_score_callbacks", ["result_sourcedid", "outcome_url"], name: "course_score_callback_result_outcome", unique: true, using: :btree
+  add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
 
   create_table "lms_nonces", force: :cascade do |t|
     t.string   "value",      limit: 128, null: false
@@ -1041,8 +1043,8 @@ ActiveRecord::Schema.define(version: 20170926170721) do
   add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "lms_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_contexts", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "lms_course_grade_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "lms_course_grade_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
