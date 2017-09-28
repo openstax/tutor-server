@@ -1,4 +1,4 @@
-class Lms::CoursesController < ActionController::Base
+class Api::V1::Lms::CoursesController < Api::V1::ApiController
 
   before_filter :get_course
 
@@ -38,7 +38,7 @@ class Lms::CoursesController < ActionController::Base
   EOS
   def push_scores
     OSU::AccessPolicy.require_action_allowed!(:lms_sync_scores, current_api_user, @course)
-    status_id = Lms::SendCourseScoresToLms.perform_later(course: @course)
+    status_id = ::Lms::SendCourseScores.perform_later(course: @course)
     render_job_id_json(status_id)
   end
 
