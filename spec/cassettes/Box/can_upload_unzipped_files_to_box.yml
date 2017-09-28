@@ -15,8 +15,6 @@ http_interactions:
       - Wed, 27 Sep 2017 17:34:57 GMT
       Content-Type:
       - application/x-www-form-urlencoded
-      Cookie:
-      - box_visitor_id=<box_visitor_id>; site_preference=mobile
   response:
     status:
       code: 200

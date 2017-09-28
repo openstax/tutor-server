@@ -16,9 +16,19 @@ module Box
     end
   end
 
-  def self.upload_file(filename)
-    foldername = Rails.application.secrets.box['exports_folder']
-    folder = client.folder_from_path(foldername)
-    client.upload_file(filename, folder)
+  def self.zip_file(filepath)
+    "#{filepath.gsub(File.extname(filepath), '')}.zip".tap do |zip_filepath|
+      Zip::File.open(zip_filepath, Zip::File::CREATE) do |zipfile|
+        zipfile.add(File.basename(filepath), filepath)
+      end
+    end
+  end
+
+  def self.upload_file(filepath, zip = true)
+    filepath = zip_file(filepath) if zip
+
+    folderpath = Rails.application.secrets.box['exports_folder']
+    folder = client.folder_from_path(folderpath)
+    client.upload_file(filepath, folder)
   end
 end

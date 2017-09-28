@@ -1,0 +1,225 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.box.com/oauth2/token
+    body:
+      encoding: UTF-8
+      string: grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&client_id=<box_client_id>&client_secret=<box_client_secret>&assertion=<box_assertion>
+    headers:
+      User-Agent:
+      - HTTPClient/1.0 (2.8.3, ruby 2.2.3 (2015-08-18))
+      Accept:
+      - "*/*"
+      Date:
+      - Thu, 28 Sep 2017 21:35:33 GMT
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Thu, 28 Sep 2017 21:35:33 GMT
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Vary:
+      - Accept-Encoding
+      Set-Cookie:
+      - box_visitor_id=<box_visitor_id>; expires=Fri, 28-Sep-2018 21:35:33
+        GMT; Max-Age=31536000; path=/; domain=.box.com; secure
+      - bv=OPS-41996; expires=Thu, 05-Oct-2017 21:35:33 GMT; Max-Age=604800; path=/;
+        domain=.app.box.com; secure
+      - cn=47; expires=Fri, 28-Sep-2018 21:35:33 GMT; Max-Age=31536000; path=/; domain=.app.box.com;
+        secure
+      - site_preference=mobile; path=/; domain=.box.com; secure
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"access_token":"<box_access_token>","expires_in":3853,"restricted_to":[],"token_type":"bearer"}'
+    http_version:
+  recorded_at: Thu, 28 Sep 2017 21:35:33 GMT
+- request:
+    method: get
+    uri: https://api.box.com/2.0/folders/0/items?fields=id,name&limit=1000&offset=0
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - HTTPClient/1.0 (2.8.3, ruby 2.2.3 (2015-08-18))
+      Accept:
+      - "*/*"
+      Date:
+      - Thu, 28 Sep 2017 21:35:33 GMT
+      Authorization:
+      - Bearer <box_access_token>
+      Cookie:
+      - box_visitor_id=<box_visitor_id>; site_preference=mobile
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Thu, 28 Sep 2017 21:35:34 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '261'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cache-Control:
+      - no-cache, no-store
+      Vary:
+      - Accept-Encoding
+      Age:
+      - '1'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"total_count":2,"entries":[{"type":"folder","id":"38614531014","etag":"0","name":"Exports"},{"type":"folder","id":"39095941777","etag":"0","name":"<box_exports_folder>"}],"offset":0,"limit":1000,"order":[{"by":"type","direction":"ASC"},{"by":"name","direction":"ASC"}]}'
+    http_version:
+  recorded_at: Thu, 28 Sep 2017 21:35:34 GMT
+- request:
+    method: options
+    uri: https://api.box.com/2.0/files/content
+    body:
+      encoding: UTF-8
+      string: '{"name":"excluded_exercises_stats_by_course_20170925T213441Z.zip","parent":{"id":"39095941777"},"size":603}'
+    headers:
+      User-Agent:
+      - HTTPClient/1.0 (2.8.3, ruby 2.2.3 (2015-08-18))
+      Accept:
+      - "*/*"
+      Date:
+      - Thu, 28 Sep 2017 21:35:34 GMT
+      Authorization:
+      - Bearer <box_access_token>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - box_visitor_id=<box_visitor_id>; site_preference=mobile
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Thu, 28 Sep 2017 21:35:34 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '138'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cache-Control:
+      - no-cache, no-store
+      Vary:
+      - Accept-Encoding
+      Age:
+      - '0'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"upload_url":"https:\/\/upload.box.com\/api\/2.0\/files\/content?upload_session_id=7D12C1268DF223A17A244F847A1EC702","upload_token":null}'
+    http_version:
+  recorded_at: Thu, 28 Sep 2017 21:35:34 GMT
+- request:
+    method: post
+    uri: https://upload.box.com/api/2.0/files/content
+    body:
+      encoding: UTF-8
+      base64_string: |
+        LS1jZjkzNDVmNzdiY2UyYmRjY2RiM2E0YmNkOWQ2YjEzZDdkNzYwM2U3DQpD
+        b250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dHJpYnV0
+        ZXMiDQoNCnsibmFtZSI6ImV4Y2x1ZGVkX2V4ZXJjaXNlc19zdGF0c19ieV9j
+        b3Vyc2VfMjAxNzA5MjVUMjEzNDQxWi56aXAiLCJwYXJlbnQiOnsiaWQiOiIz
+        OTA5NTk0MTc3NyJ9fQ0KLS1jZjkzNDVmNzdiY2UyYmRjY2RiM2E0YmNkOWQ2
+        YjEzZDdkNzYwM2U3DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7
+        IG5hbWU9ImZpbGUiOyBmaWxlbmFtZT0iZXhjbHVkZWRfZXhlcmNpc2VzX3N0
+        YXRzX2J5X2NvdXJzZV8yMDE3MDkyNVQyMTM0NDFaLnppcCI7IG1vZGlmaWNh
+        dGlvbi1kYXRlPSJUaHUsIDI4IFNlcCAyMDE3IDE2OjM1OjMyIC0wNTAwIjsg
+        cmVhZC1kYXRlPSJUaHUsIDI4IFNlcCAyMDE3IDE2OjM1OjM0IC0wNTAwIg0K
+        Q29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0NCg0KUEsD
+        BBQAAAAIAHCEPEt6bvDNiwEAAOsDAAA3AAAAZXhjbHVkZWRfZXhlcmNpc2Vz
+        X3N0YXRzX2J5X2NvdXJzZV8yMDE3MDkyNVQyMTM0NDFaLmNzdq1STYvbMBC9
+        768Q7nXk6MsfynHTHgrbpRQHyt4keZI1tS1jyWX77ytnE7bQLiTQg8TMvPdm
+        ngbt/DIHJJ8/wu41ejQDXuLm14TQoHHPOAf4QD69uH4JnR8DnMIW21TD2XWr
+        cBnsSvsb2X97OJdXLWm6AUM0wxRg9/id3Hv/I9Vij2/pfr8aumQP3pl4mrqW
+        vpojngh/pmnCXVmCWwYyetsF4hIdXcS4zNAs0c9w7y35YubYjaAgowoIlemI
+        dHgG2XOMU9huNnh2HWiLP3M/4Zi8vuR+Pr5Bm1V9m0DeKhC3CtZHCMYryjQV
+        RSP4VqqtYjmriycg/0R0+Q7CWfUewqunDILBCcloBjL4vu9iZ0ALbdpacFrU
+        jFMlKkE1r0t6OFjmmKrQsRoynnMgPBfna1z6PtmWqma2riRVhdZUoZDUcqmp
+        OdhCitbwUlggKdROFUiLsk4TiqqltmQlbaU1VkmWWO5a1nnwZcNpn8duPNK4
+        /pTcja/LTX8o4hjD5jp/Vza7zuB/bXZ67d1vUEsBAjQDFAAAAAgAcIQ8S3pu
+        8M2LAQAA6wMAADcAAAAAAAAAAQAAAKSBAAAAAGV4Y2x1ZGVkX2V4ZXJjaXNl
+        c19zdGF0c19ieV9jb3Vyc2VfMjAxNzA5MjVUMjEzNDQxWi5jc3ZQSwUGAAAA
+        AAEAAQBlAAAA4AEAAAAADQotLWNmOTM0NWY3N2JjZTJiZGNjZGIzYTRiY2Q5
+        ZDZiMTNkN2Q3NjAzZTctLQ0KDQo=
+    headers:
+      User-Agent:
+      - HTTPClient/1.0 (2.8.3, ruby 2.2.3 (2015-08-18))
+      Accept:
+      - "*/*"
+      Date:
+      - Thu, 28 Sep 2017 21:35:34 GMT
+      Authorization:
+      - Bearer <box_access_token>
+      Content-Md5:
+      - 6365cf3c017f0005c879bacb3ad6dcdcc60eb33e
+      Content-Type:
+      - multipart/form-data; boundary=cf9345f77bce2bdccdb3a4bcd9d6b13d7d7603e7
+      Cookie:
+      - box_visitor_id=<box_visitor_id>; site_preference=mobile
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Thu, 28 Sep 2017 21:35:35 GMT
+      Server:
+      - Server
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-cache, no-store
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '1267'
+      Age:
+      - '3'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"entries":[{"type":"file","id":"231087509291","file_version":{"type":"file_version","id":"243910330667","sha1":"6365cf3c017f0005c879bacb3ad6dcdcc60eb33e"},"sequence_id":"0","etag":"0","sha1":"6365cf3c017f0005c879bacb3ad6dcdcc60eb33e","name":"excluded_exercises_stats_by_course_20170925T213441Z.zip","description":"","size":603,"path_collection":{"total_count":2,"entries":[{"type":"folder","id":"0","sequence_id":null,"etag":null,"name":"All
+        Files"},{"type":"folder","id":"39095941777","sequence_id":"0","etag":"0","name":"<box_exports_folder>"}]},"created_at":"2017-09-28T14:35:35-07:00","modified_at":"2017-09-28T14:35:35-07:00","trashed_at":null,"purged_at":null,"content_created_at":"2017-09-28T14:35:35-07:00","content_modified_at":"2017-09-28T14:35:35-07:00","created_by":{"type":"user","id":"2643869773","name":"OpenStax
+        Tutor","login":"<box_app_login>"},"modified_by":{"type":"user","id":"2643869773","name":"OpenStax
+        Tutor","login":"<box_app_login>"},"owned_by":{"type":"user","id":"2644177455","name":"Greg
+        Fitch","login":"<box_folder_owner_login>"},"shared_link":null,"parent":{"type":"folder","id":"39095941777","sequence_id":"0","etag":"0","name":"<box_exports_folder>"},"item_status":"active"}]}'
+    http_version:
+  recorded_at: Thu, 28 Sep 2017 21:35:36 GMT
+recorded_with: VCR 2.9.3
