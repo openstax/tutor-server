@@ -29,6 +29,8 @@ class Lms::SendCourseScores
       send_one_score(callback, score_data)
       status.set_progress(ii, num_callbacks)
     end
+
+    # TODO report num errors, num callbacks, num scores
   end
 
   def course_score_data(user_profile_id)
@@ -56,6 +58,8 @@ class Lms::SendCourseScores
   end
 
   def send_one_score(callback, score_data)
+    # TODO note if score nil and return (no score to send)
+
     request_xml = basic_outcome_xml(score: score_data[:average_score],
                                     sourcedid: callback.result_sourcedid)
 
