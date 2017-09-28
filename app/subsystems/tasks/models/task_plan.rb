@@ -66,11 +66,11 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   protected
 
   def get_ecosystem_from_exercise_ids
-    Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids']).to_model
+    Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids']).try!(:to_model)
   end
 
   def get_ecosystem_from_page_ids
-    Content::Ecosystem.find_by_page_ids(*settings['page_ids']).to_model
+    Content::Ecosystem.find_by_page_ids(*settings['page_ids']).try!(:to_model)
   end
 
   def get_ecosystem_from_settings
