@@ -100,24 +100,16 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       end
     end
 
-    it 'uploads the exported data to owncloud' do
-      # We simply test that the call to HTTParty is made properly
-      file_regex_string = 'export_\d+T\d+Z.csv'
-      webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
-      expect(HTTParty).to receive(:put).with(
-        webdav_url_regex,
-        basic_auth: {
-          username: a_kind_of(String).or(be_nil),
-          password: a_kind_of(String).or(be_nil)
-        },
-        body_stream: a_kind_of(File),
-        headers: { 'Transfer-Encoding' => 'chunked' }
-      ).and_return OpenStruct.new(success?: true)
+    it 'uploads the exported data to Box' do
+      # We simply test that the call to Box.upload_file is made properly
+      filename_regex = /export_\d+T\d+Z\.csv/
+      expect(Box).to receive(:upload_file) do |filename|
+        expect(filename).to match filename_regex
+      end
 
       # Trigger the data export
       capture_stdout{ described_class.call(task_types: all_task_types) }
     end
-
 
   end
 

@@ -2,11 +2,6 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe ExportExerciseExclusions, type: :routine do
-  before(:each) do
-    WebMock.disable_net_connect!
-    stub_request(:put, /remote.php/).to_return(status: 200)
-  end
-
   context "with data" do
     before(:all) do
       @course = FactoryGirl.create :course_profile_course
@@ -138,11 +133,13 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           ee_numbers_urls = ee_numbers.map do |number|
             OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
           end
-          exclusion_dates = excluded_exercises.map{ |ee| DateTimeUtilities.to_api_s(ee.created_at) }
+          exclusion_dates = excluded_exercises.map do |ee|
+            DateTimeUtilities.to_api_s(ee.created_at)
+          end
           pages = [@page_1, @page_2, @page_2]
           page_uuids = pages.map(&:uuid) + ['null']
-          page_urls = pages.map{ |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
-          book_locations = pages.map{ |page| page.book_location.join('.') } + ['null']
+          page_urls = pages.map { |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
+          book_locations = pages.map { |page| page.book_location.join('.') } + ['null']
 
           with_rows_from_csv("by_course") do |rows|
             headers = rows.first
@@ -164,20 +161,14 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
         end
 
-        it 'uploads the exported data to owncloud' do
-          file_regex_string = 'excluded_exercises_stats_by_course_\d+T\d+Z.csv'
-          webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+        it 'uploads the exported data to Box' do
+          # We simply test that the call to Box.upload_file is made properly
+          filename_regex = /excluded_exercises_stats_by_course_\d+T\d+Z\.csv/
+          expect(Box).to receive(:upload_file) do |filename|
+            expect(filename).to match filename_regex
+          end
 
-          # We simply test that the call to HTTParty is made properly
-          expect(HTTParty).to receive(:put).with(
-            webdav_url_regex,
-            basic_auth: { username: a_kind_of(String).or(be_nil),
-                          password: a_kind_of(String).or(be_nil) },
-            body_stream: a_kind_of(File),
-            headers: { 'Transfer-Encoding' => 'chunked' }
-          ).and_return OpenStruct.new(success?: true)
-
-          described_class.call(upload_by_course_to_owncloud: true)
+          described_class.call(upload_by_course: true)
         end
       end
     end
@@ -250,7 +241,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             OpenStax::Exercises::V1.uri_for("/exercises/#{exercise_number}").to_s
           end
           page_uuids = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map(&:uuid)
-          page_urls = page_uuids.map{ |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
+          page_urls = page_uuids.map { |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
 
           with_rows_from_csv("by_exercise") do |rows|
             headers = rows.first
@@ -271,20 +262,14 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
         end
 
-        it 'uploads the exported data to owncloud' do
-          file_regex_string = 'excluded_exercises_stats_by_exercise_\d+T\d+Z.csv'
-          webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+        it 'uploads the exported data to Box' do
+          # We simply test that the call to Box.upload_file is made properly
+          filename_regex = /excluded_exercises_stats_by_exercise_\d+T\d+Z\.csv/
+          expect(Box).to receive(:upload_file) do |filename|
+            expect(filename).to match filename_regex
+          end
 
-          # We simply test that the call to HTTParty is made properly
-          expect(HTTParty).to receive(:put).with(
-            webdav_url_regex,
-            basic_auth: { username: a_kind_of(String).or(be_nil),
-                          password: a_kind_of(String).or(be_nil) },
-            body_stream: a_kind_of(File),
-            headers: { 'Transfer-Encoding' => 'chunked' }
-          ).and_return OpenStruct.new(success?: true)
-
-          described_class.call(upload_by_exercise_to_owncloud: true)
+          described_class.call(upload_by_exercise: true)
         end
       end
     end
@@ -307,7 +292,6 @@ def with_rows_from_csv(by_type, &block)
 
   by_course = by_type == "by_course"
   by_exercise = by_type == "by_exercise"
-  described_class.call(
-    upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
-  )
+  expect(Box).to receive(:upload_file)
+  described_class.call upload_by_course: by_course, upload_by_exercise: by_exercise
 end

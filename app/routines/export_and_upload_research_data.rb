@@ -1,8 +1,4 @@
-  class ExportAndUploadResearchData
-
-  owncloud_secrets = Rails.application.secrets['owncloud']
-  RESEARCH_FOLDER = owncloud_secrets['research_folder']
-  WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{RESEARCH_FOLDER}"
+class ExportAndUploadResearchData
 
   lev_routine active_job_enqueue_options: { queue: :long_running }, express_output: :filename
 
@@ -155,21 +151,11 @@
   end
 
   def upload_export_file
-    own_cloud_secrets = Rails.application.secrets['owncloud']
-    auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
-
-    File.open(filepath, 'r') do |file|
-      HTTParty.put(webdav_url, basic_auth: auth, body_stream: file,
-                               headers: { 'Transfer-Encoding' => 'chunked' }).success?
-    end
+    Box.upload_file filepath
   end
 
   def remove_export_file
     File.delete(filepath) if File.exist?(filepath)
-  end
-
-  def webdav_url
-    Addressable::URI.escape "#{WEBDAV_BASE_URL}/#{outputs[:filename]}"
   end
 
 end

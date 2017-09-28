@@ -91,3 +91,11 @@ RSpec.configure do |config|
 end
 
 RSpec::Matchers.define_negated_matcher :not_change, :change
+
+# Make the Boxr gem work with Webmock/VCR
+RSpec.configure do |config|
+  config.before(:suite) do
+    Boxr.send :remove_const, 'BOX_CLIENT'
+    Boxr::BOX_CLIENT = HTTPClient.new
+  end
+end

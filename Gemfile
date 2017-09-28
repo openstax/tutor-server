@@ -205,6 +205,9 @@ gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.gi
 # In place form editing on admin menu
 gem 'best_in_place'
 
+# Box integration
+gem 'boxr'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
