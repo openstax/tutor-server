@@ -1,5 +1,13 @@
 class LmsController < ApplicationController
 
+  # The LMS controller manages non-API LMS behavior, including:
+  #
+  #   * providing config info used when installing the Tutor app in an LMS
+  #   * running the standard launch (e.g. student or teacher accessing the
+  #     "Tutor" assignment)
+  #   * running the "content item" launch that helps teachers get the "Tutor"
+  #     assignment link in to their LMS course.
+
   skip_before_filter :verify_authenticity_token, only: [:launch, :ci_launch]
   skip_before_filter :authenticate_user!, only: [:configuration, :launch, :launch_authenticate, :ci_launch]
 
@@ -7,9 +15,28 @@ class LmsController < ApplicationController
 
   layout false
 
-  def configuration; end
+  def configuration
+    # provides configuration XML used when installing the Tutor app in an LMS
+  end
+
+  def ci_launch
+    # The "content item" launch.  The launch has slightly different parameters (e.g.
+    # a `content_item_return_url` where our rendered HTML needs to POST to); most of
+    # of the interesting work here happens in the view.
+
+    begin
+      @launch = Lms::Launch.from_request(request)
+    rescue Lms::Launch::Error => ee
+      fail_with_catchall_message(ee) and return
+    end
+  end
 
   def launch
+    # Part 1 of 3 in how Tutor processes the launch.  Validates the launch, does
+    # some error checking, makes the link between the right Tutor course and the
+    # LMS course being launched from, renders a page that makes sure we are not
+    # trapped in an iframe for the rest of the launch.
+
     begin
       launch = Lms::Launch.from_request(request)
 
@@ -68,9 +95,15 @@ class LmsController < ApplicationController
     rescue Lms::Launch::HandledError => ee
       fail_with_catchall_message(ee) and return
     end
+
+    # renders page that redirects to the authenticate step if the page is not in an
+    # iframe; if it is in an iframe, gives the user a link to the authenticate step
+    # that will open in a new tab
   end
 
   def launch_authenticate
+    # Part 2 of 3 in how Tutor processes the launch
+
     launch = Lms::Launch.from_id(session[:launch_id])
 
     # Always send users to accounts when a launch happens.  We may decide
@@ -96,6 +129,9 @@ class LmsController < ApplicationController
   end
 
   def complete_launch
+    # Part 3 of 3 in how Tutor processes the launch - gets the now authenticated user to
+    # their course (or the enrollment screen into it)
+
     launch = Lms::Launch.from_id(session.delete(:launch_id))
 
     # Later may be nil if we are supposed to handle admin-installed apps with a pairing step here
@@ -145,14 +181,6 @@ class LmsController < ApplicationController
       redirect_to token_enroll_url(course.uuid)
     else
       redirect_to course_dashboard_url(course)
-    end
-  end
-
-  def ci_launch
-    begin
-      @launch = Lms::Launch.from_request(request)
-    rescue Lms::Launch::Error => ee
-      fail_with_catchall_message(ee) and return
     end
   end
 
