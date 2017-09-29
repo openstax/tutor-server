@@ -15,7 +15,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
   end
 
   let(:spaced_practice_step_gold_data) do
-    [ { group_type: 'spaced_practice_group', klass: Tasks::Models::TaskedPlaceholder } ] * 3
+    [
+      {
+        labels: [ 'review' ],
+        group_type: 'spaced_practice_group',
+        klass: Tasks::Models::TaskedPlaceholder
+      }
+    ] * 3
   end
 
   let(:task_step_gold_data) do
@@ -131,6 +137,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_steps.count).to eq(task_step_gold_data.count)
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
@@ -318,6 +325,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
@@ -446,6 +454,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
@@ -575,17 +584,20 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         {
           klass: Tasks::Models::TaskedPlaceholder,
           title: nil,
-          group_type: 'spaced_practice_group'
+          group_type: 'spaced_practice_group',
+          labels: [ 'review' ]
         },
         {
           klass: Tasks::Models::TaskedPlaceholder,
           title: nil,
-          group_type: 'spaced_practice_group'
+          group_type: 'spaced_practice_group',
+          labels: [ 'review' ]
         },
         {
           klass: Tasks::Models::TaskedPlaceholder,
           title: nil,
-          group_type: 'spaced_practice_group'
+          group_type: 'spaced_practice_group',
+          labels: [ 'review' ]
         }
       ]
     end
@@ -629,6 +641,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expect(task_steps.count).to eq task_step_gold_data.count
       task_steps.each_with_index do |task_step, ii|
         expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+        expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
         expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
         next if task_step.placeholder?
 
