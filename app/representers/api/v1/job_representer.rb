@@ -30,6 +30,12 @@ module Api::V1
              getter: ->(*) { data.try :[], 'url' }, # data is not guaranteed to be a hash
              schema_info: { required: false }
 
+    property :data,
+             type: Hash,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
     collection :errors,
                extend: Api::V1::ErrorRepresenter,
                readable: true,

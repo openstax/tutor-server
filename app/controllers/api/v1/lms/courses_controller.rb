@@ -24,17 +24,32 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
            )
   end
 
-  api :GET, '/lms/courses/:id/push_scores', 'Sends average course scores to the LMS in a background job'
+  api :PUT, '/lms/courses/:id/push_scores', 'Sends average course scores to the LMS in a background job'
   description <<-EOS
     Returns JSON of the following form with HTTP status 202:
 
       `{ job: api_job_path(job_id) }`
 
-    * The job data will include an `errors` array with information about errors
-      encountered during the push.  Each entry is a hash with `score`, `student_name`,
-      `student_identifier`, and `lms_description` keys.  The `lms_description` is
-      text returned from the LMS.
-    * The job progress will be updated during the push.
+    When the job data is retrieved, it will contain a list of errors and a data field.
+
+    Each error in the list will have the following values:
+
+    * `score`: the score that we tried to send.
+    * `student_name`: the name of the student for which the error occurred.
+    * `student_identifier`: the student's self-supplied student ID
+    * `lms_description`: the text returned from the LMS about the error.
+
+    The data field will contain the following values:
+
+    * `num_callbacks`: The number of URL callbacks to the LMS that Tutor has for this course.  This
+      is the maximum number of socres that can be sent.
+    * `num_missing_scores`: The number of scores that were not found in Tutor (likely because the
+      student hasn't worked an assignment or because no assignments have become due)
+
+    The number of errors + `num_missing_scores` should equal `num_callbacks` unless some other
+    unhandled error occurred.
+
+    The job progress will be updated during the push.
   EOS
   def push_scores
     OSU::AccessPolicy.require_action_allowed!(:lms_sync_scores, current_api_user, @course)
