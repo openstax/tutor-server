@@ -261,3 +261,30 @@ Fastest way to get started `rake db:reset demo:content[mini]`.
 
 See
 [this napkin note](https://github.com/openstax/napkin-notes/blob/master/jp/profiling_tutor_server.md).
+
+## Features and Associated Code
+
+### LMS Integration
+
+*Tutor Responsibilities*
+
+1. Provide configuration info that lets teachers (later admins) configure Tutor within an LMS.
+2. Handling the "launch" when an LMS directs one of its users to Tutor.
+3. Sending scores back to the LMS.
+
+*Feature Flags*
+
+LMS integration within Tutor can be turned off/on by course-level feature flags.  Each course has a
+`is_lms_enabling_allowed` flag and an `is_lms_enabled` flag.  Admins control the former, teachers control
+the latter.  In order for a teacher to enable LMS integration, the `is_lms_enabling_allowed` flag must
+be `true`.  Admins can search by this flag and bulk set this flag on any admin course search query results.
+
+*Major Code Files*
+
+1. `app/controllers/lms_controller.rb` - Runs launches and provides config info when installing the Tutor app in an LMS.
+2. `app/controllers/api/v1/lms_controller.rb` - How the FE gets a course's LMS keys and triggers sending of scores to the LMS.
+3. `app/subsystems/lms/launch.rb` - wraps and interprets launch HTTP requests and provides convenience methods to interact with Tutor's LMS models.
+4. `app/subsystems/lms/send_course_scores.rb` - background job that sends scores to the LMS
+5. `app/subsystems/lms/models/...` - DB models that wrap LMS related data we need to persist
+
+
