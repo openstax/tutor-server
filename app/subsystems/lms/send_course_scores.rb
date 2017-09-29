@@ -22,20 +22,34 @@ class Lms::SendCourseScores
 
     callbacks = Lms::Models::CourseScoreCallback.where(course: course)
 
-    num_callbacks = callbacks.count
+    @num_callbacks = callbacks.count
+    @num_missing_scores = 0
+
+    save_status_data
 
     callbacks.each_with_index do |callback, ii|
       score_data = course_score_data(callback.user_profile_id)
-      send_one_score(callback, score_data)
-      status.set_progress(ii, num_callbacks)
-    end
 
-    # TODO report num errors, num callbacks, num scores
+      if score_data.present?
+        send_one_score(callback, score_data)
+      else
+        @num_missing_scores += 1
+        save_status_data
+      end
+      status.set_progress(ii, @num_callbacks)
+    end
+  end
+
+  def save_status_data
+    status.save({
+      num_callbacks: @num_callbacks,
+      num_missing_scores: @num_missing_scores,
+    })
   end
 
   def course_score_data(user_profile_id)
     @scores_by_user_profile_id ||= begin
-      perf_report = GetPerformanceReport[course: @course]
+      perf_report = Tasks::GetTpPerformanceReport[course: @course]
 
       scores = perf_report.flat_map do |period_perf_report|
         period_perf_report[:students]
@@ -58,8 +72,6 @@ class Lms::SendCourseScores
   end
 
   def send_one_score(callback, score_data)
-    # TODO note if score nil and return (no score to send)
-
     request_xml = basic_outcome_xml(score: score_data[:average_score],
                                     sourcedid: callback.result_sourcedid)
 
@@ -72,16 +84,18 @@ class Lms::SendCourseScores
     outcome_response = Lms::OutcomeResponse.new(response)
 
     if "failure" == outcome_response.code_major
-      message = {
+      error!({
         score: score_data[:average_score],
         student_name: score_data[:name],
         student_identifier: score_data[:student_identifier],
         lms_description: outcome_response.description
-      }
-
-      log_error("send_one_score failure: #{message.inspect}")
-      status.save(errors: (status.data[:errors] || []).push(message))
+      })
     end
+  end
+
+  def error!(message)
+    status.add_error(message)
+    log_error("send_one_score failure: #{message.inspect}")
   end
 
   def log_error(message)
