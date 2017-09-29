@@ -1,3 +1,5 @@
+require 'webmock/rspec'
+
 class Lms::Simulator
 
   def initialize(spec)
@@ -10,9 +12,11 @@ class Lms::Simulator
     @teachers = {}
     @administrators = {}
     @sourcedids = {}
+    @reverse_sourcedids = {}
     @next_int = -1
 
     succeed_when_receive_score_for_dropped_student!
+    stub_outcome_url
   end
 
   def tool_consumer_instance_guid
@@ -76,8 +80,6 @@ class Lms::Simulator
     request_params = {
       user_id: user,
       lis_person_name_full: "Full_Name For_#{user.gsub(/\W/,'_')}",
-      # oauth_nonce: next_int,
-      # oauth_consumer_key: app[:key],
       lti_message_type: "basic-lti-launch-request",
       tool_consumer_instance_guid: tool_consumer_instance_guid,
       context_id: course
@@ -85,7 +87,7 @@ class Lms::Simulator
 
     if is_active_student?(user) && assignment.present?
       request_params.merge!({
-        lis_outcome_service_url: "blah",
+        lis_outcome_service_url: outcome_url,
         lis_result_sourcedid: sourcedid!(user: user, assignment: assignment),
       })
     end
@@ -146,12 +148,80 @@ class Lms::Simulator
   end
 
   def sourcedid!(user:, assignment:)
-    @sourcedids["#{user}:#{assignment}"] ||= next_int.to_s
+    @sourcedids["#{user}:#{assignment}"] ||= begin
+      value = next_int.to_s
+      @reverse_sourcedids[value] = "#{user}:#{assignment}"
+      value
+    end
   end
 
   def next_int
     @next_int += 1
   end
+
+  #############################################################################
+  #
+  # Outcomes
+  #
+
+  def stub_outcome_url
+    spec.stub_request(:post, outcome_url).to_return do |request|
+      begin
+        xml = Nokogiri::XML.parse(request.body,&:noblanks)
+
+        sourcedid = xml.at_css('resultRecord sourcedGUID sourcedId').content
+        raise "Could not find sourcedid in XML" if sourcedid.blank?
+
+        user_assignment = @reverse_sourcedids[sourcedid]
+        raise "Unknown sourcedid #{sourcedid}" if user_assignment.blank?
+
+        user, assignment = user_assignment.split(":")
+        score = xml.at_css('resultScore textString').content.to_f
+        received_score(user: user, assignment: assignment, score: score)
+
+        { body: outcome_response_xml(code_major: "success") }
+      rescue StandardError => ee
+        { body: outcome_response_xml(code_major: "failure", description: ee.message) }
+      end
+    end
+  end
+
+  def outcome_response_xml(code_major:, description: "")
+    <<-EOS
+      <?xml version="1.0" encoding="UTF-8"?>
+      <imsx_POXEnvelopeResponse xmlns = "http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
+        <imsx_POXHeader>
+          <imsx_POXResponseHeaderInfo>
+            <imsx_version>V1.0</imsx_version>
+            <imsx_messageIdentifier>4560</imsx_messageIdentifier>
+            <imsx_statusInfo>
+              <imsx_codeMajor>#{code_major}</imsx_codeMajor>
+              <imsx_severity>status</imsx_severity>
+              <imsx_description>#{description}</imsx_description>
+              <imsx_messageRefIdentifier>999999123</imsx_messageRefIdentifier>
+              <imsx_operationRefIdentifier>replaceResult</imsx_operationRefIdentifier>
+            </imsx_statusInfo>
+          </imsx_POXResponseHeaderInfo>
+        </imsx_POXHeader>
+        <imsx_POXBody>
+          <replaceResultResponse/>
+        </imsx_POXBody>
+      </imsx_POXEnvelopeResponse>
+    EOS
+  end
+
+  def received_score(user:, assignment:, score:)
+  end
+
+  def expect_to_receive_score(user:, assignment:, score:)
+    this = self
+    spec.instance_eval do
+      expect(this).to receive(:received_score).with(user: user, assignment: assignment, score: score)
+    end
+  end
+
+  #
+  #############################################################################
 
   protected
 
@@ -177,6 +247,14 @@ class Lms::Simulator
 
   def is_administrator?(identifier)
     @administrators[identifier].present?
+  end
+
+  def simulator_url
+    "http://simlms/"
+  end
+
+  def outcome_url
+    "#{simulator_url}outcome"
   end
 
 end
