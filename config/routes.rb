@@ -316,8 +316,6 @@ Rails.application.routes.draw do
     end
   end
 
-  # match '/auth/salesforce/callback', to: 'admin/salesforce#callback', via: [:get, :post]
-
   # All CS routes
   namespace :customer_service do
     root 'console#index'
@@ -334,8 +332,6 @@ Rails.application.routes.draw do
     end
 
     resources :targeted_contracts, only: [:index]
-
-    resource :salesforce, only: [:show], controller: :salesforce
 
     resources :jobs, only: [:index, :show]
 
