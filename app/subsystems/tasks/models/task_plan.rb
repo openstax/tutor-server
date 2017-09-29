@@ -65,8 +65,26 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   protected
 
+  def get_ecosystem_from_exercise_ids
+    Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids']).try!(:to_model)
+  end
+
+  def get_ecosystem_from_page_ids
+    Content::Ecosystem.find_by_page_ids(*settings['page_ids']).try!(:to_model)
+  end
+
+  def get_ecosystem_from_settings
+    if settings['exercise_ids'].present?
+      get_ecosystem_from_exercise_ids
+    elsif settings['page_ids'].present?
+      get_ecosystem_from_page_ids
+    end
+  end
+
   def set_ecosystem
-    self.ecosystem ||= cloned_from.try!(:ecosystem) || owner.try(:ecosystems).try(:first)
+    self.ecosystem ||= cloned_from.try!(:ecosystem) ||
+                       get_ecosystem_from_settings ||
+                       owner.try(:ecosystems).try(:first)
   end
 
   def valid_settings
@@ -81,24 +99,17 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   def same_ecosystem
     return if ecosystem.nil?
-    ecosystem_wrapper = Content::Ecosystem.new(strategy: ecosystem.wrap)
 
     return_value = nil
     # Special checks for the page_ids and exercise_ids settings
-    if settings['exercise_ids'].present?
-      exercises_ecosystem = Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids'])
-      if exercises_ecosystem != ecosystem_wrapper
-        errors.add(:settings, '- Invalid exercises selected')
-        return_value = false
-      end
+    if settings['exercise_ids'].present? && ecosystem != get_ecosystem_from_exercise_ids
+      errors.add(:settings, '- Invalid exercises selected')
+      return_value = false
     end
 
-    if settings['page_ids'].present?
-      pages_ecosystem = Content::Ecosystem.find_by_page_ids(*settings['page_ids'])
-      if pages_ecosystem != ecosystem_wrapper
-        errors.add(:settings, '- Invalid pages selected')
-        return_value = false
-      end
+    if settings['page_ids'].present? && ecosystem != get_ecosystem_from_page_ids
+      errors.add(:settings, '- Invalid pages selected')
+      return_value = false
     end
 
     return_value

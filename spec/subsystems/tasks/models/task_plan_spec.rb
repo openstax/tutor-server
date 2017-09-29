@@ -38,6 +38,40 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
+  it "automatically infers the ecosystem from the settings or owner" do
+    ecosystem = task_plan.ecosystem
+    book = FactoryGirl.create :content_book, ecosystem: ecosystem
+    chapter = FactoryGirl.create :content_chapter, book: book
+    page = FactoryGirl.create :content_page, chapter: chapter
+    exercise = FactoryGirl.create :content_exercise, page: page
+
+    task_plan.ecosystem = nil
+    expect(task_plan).not_to be_valid
+    expect(task_plan.ecosystem).to be_nil
+
+    task_plan.settings = { exercise_ids: [exercise.id.to_s] }
+    expect(task_plan).to be_valid
+    expect(task_plan.ecosystem).to eq ecosystem
+
+    task_plan.settings = {}
+    task_plan.ecosystem = nil
+    expect(task_plan).not_to be_valid
+    expect(task_plan.ecosystem).to be_nil
+
+    task_plan.settings = { page_ids: [page.id.to_s] }
+    expect(task_plan).to be_valid
+    expect(task_plan.ecosystem).to eq ecosystem
+
+    task_plan.settings = {}
+    task_plan.ecosystem = nil
+    expect(task_plan).not_to be_valid
+    expect(task_plan.ecosystem).to be_nil
+
+    task_plan.owner.ecosystems << ecosystem
+    expect(task_plan).to be_valid
+    expect(task_plan.ecosystem).to eq ecosystem
+  end
+
   it "requires that any exercise_ids or page_ids be in the task_plan's ecosystem" do
     book = FactoryGirl.create :content_book, ecosystem: task_plan.ecosystem
     chapter = FactoryGirl.create :content_chapter, book: book
