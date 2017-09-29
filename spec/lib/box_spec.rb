@@ -12,17 +12,11 @@ RSpec.describe Box, type: :lib, vcr: VCR_OPTS do
   let(:filepath)     { "spec/fixtures/box/#{filename}" }
   let(:zip_filepath) { "spec/fixtures/box/#{zip_filename}" }
 
-  before(:each)      { RequestStore.clear! }
   after(:each)       { File.delete(zip_filepath) if File.exists?(zip_filepath) }
 
-  it 'returns one client instance per request' do
+  it 'can return new instances of Boxr::Client' do
     expect(client).to be_a(Boxr::Client)
-    expect(described_class.client).to eq client
-
-    RequestStore.clear!
-    client2 = described_class.client
-    expect(client2).not_to eq client
-    expect(client2).to be_a(Boxr::Client)
+    expect(described_class.client).not_to eq (client)
   end
 
   it 'can zip files' do
