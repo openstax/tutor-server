@@ -64,7 +64,11 @@ class Lms::Simulator
     @behavior_when_receive_score_for_dropped_student = :succeed
   end
 
-  def launch(user: nil, course: nil, assignment: nil)
+  def fail_when_receive_score_for_dropped_student?
+    :fail == @behavior_when_receive_score_for_dropped_student
+  end
+
+  def launch(user: nil, course: nil, assignment: nil, drop_these_fields: [])
     user ||= @launch_defaults[:user]
     course ||= @launch_defaults[:course]
     assignment ||= @launch_defaults[:assignment]
@@ -100,6 +104,8 @@ class Lms::Simulator
     request_params.merge!({
       roles: roles.join(',')
     })
+
+    [drop_these_fields].flatten.compact.each {|field| request_params.delete(field)}
 
     sign!(request_params, app)
 
@@ -176,8 +182,11 @@ class Lms::Simulator
         raise "Unknown sourcedid #{sourcedid}" if user_assignment.blank?
 
         user, assignment = user_assignment.split(":")
+
         score = xml.at_css('resultScore textString').content.to_f
         received_score(user: user, assignment: assignment, score: score)
+
+        raise "User is dropped" if !is_active_student?(user) && fail_when_receive_score_for_dropped_student?
 
         { body: outcome_response_xml(code_major: "success") }
       rescue StandardError => ee
@@ -210,13 +219,19 @@ class Lms::Simulator
     EOS
   end
 
-  def received_score(user:, assignment:, score:)
-  end
+  def received_score(user:, assignment:, score:); end
 
   def expect_to_receive_score(user:, assignment:, score:)
     this = self
     spec.instance_eval do
       expect(this).to receive(:received_score).with(user: user, assignment: assignment, score: score)
+    end
+  end
+
+  def expect_not_to_receive_score(user:, assignment:)
+    this = self
+    spec.instance_eval do
+      expect(this).not_to receive(:received_score).with(user: user, assignment: assignment, score: anything())
     end
   end
 
