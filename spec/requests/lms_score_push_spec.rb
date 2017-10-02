@@ -33,24 +33,76 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
     api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
     expect(response).to have_http_status :accepted
 
-    job_status_id = response.body_as_hash[:job].match(/api\/jobs\/(.*)/)[1]
-    job_status = Jobba.find(job_status_id)
-
-    expect(job_status.errors).to be_empty
-    expect(job_status.progress).to eq 1.0
-    expect(job_status.data).to eq({"num_callbacks" => 1, "num_missing_scores" => 0})
+    expect_job_info(data: {"num_callbacks" => 1, "num_missing_scores" => 0})
   end
 
   it 'works for users across two periods' do
+    simulator.add_student("bob")
+    simulator.launch(user: "bob")
+    launch_helper.complete_the_launch_locally
 
+    simulator.add_student("tim")
+    simulator.launch(user: "tim")
+    launch_helper.complete_the_launch_locally
+
+    bob_user = launch_helper.get_user("bob")
+    tim_user = launch_helper.get_user("tim")
+    stub_perf_report([{period: "1st", user: bob_user, score: 0.9111},
+                      {period: "2nd", user: tim_user, score: 1.0}])
+
+    simulator.expect_to_receive_score(user: "bob", assignment: "tutor", score: 0.9111)
+    simulator.expect_to_receive_score(user: "tim", assignment: "tutor", score: 1.0)
+
+    api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
+    expect(response).to have_http_status :accepted
+
+    expect_job_info(data: {"num_callbacks" => 2, "num_missing_scores" => 0})
   end
 
   it 'notes when a score cannot be sent because it is not yet in the perf report' do
+    simulator.add_student("bob")
+    simulator.launch(user: "bob")
+    launch_helper.complete_the_launch_locally
 
+    bob_user = launch_helper.get_user("bob")
+    stub_perf_report([{period: "1st", user: FactoryGirl.create(:user), score: 0}])
+
+    simulator.expect_not_to_receive_score(user: "bob", assignment: "tutor")
+
+    api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
+    expect(response).to have_http_status :accepted
+
+    expect_job_info(data: {"num_callbacks" => 1, "num_missing_scores" => 1})
   end
 
   it 'handles LMS erroring on receiving grade for a LMS-dropped student' do
+    simulator.add_student("bob")
+    simulator.launch(user: "bob")
+    launch_helper.complete_the_launch_locally
 
+    bob_user = launch_helper.get_user("bob")
+    stub_perf_report([{period: "1st", user: bob_user, score: 0.9111}])
+
+    simulator.fail_when_receive_score_for_dropped_student!
+    simulator.drop_student("bob")
+
+    # Should still get it
+    simulator.expect_to_receive_score(user: "bob", assignment: "tutor", score: 0.9111)
+
+    api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
+    expect(response).to have_http_status :accepted
+
+    expect_job_info(errors: [a_hash_including("lms_description" => /User is dropped/)],
+                    data: {"num_callbacks" => 1, "num_missing_scores" => 0})
+  end
+
+  def expect_job_info(errors: [], progress: 1.0, data:)
+    job_status_id = response.body_as_hash[:job].match(/api\/jobs\/(.*)/)[1]
+    job_status = Jobba.find(job_status_id)
+
+    expect(job_status.errors).to match a_collection_including(*errors)
+    expect(job_status.progress).to eq progress
+    expect(job_status.data).to match a_hash_including(data)
   end
 
   def stub_perf_report(entries)

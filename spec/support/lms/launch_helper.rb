@@ -13,16 +13,20 @@ class Lms::LaunchHelper
     @users[identifier]
   end
 
-  def get_user!(identifier)
+  def get_user!(identifier, default: nil)
     get_user(identifier) || begin
-      user = FactoryGirl.create(:user)
+      user = default || FactoryGirl.create(:user)
       identify_user(identifier, user)
     end
   end
 
-  def complete_the_launch_locally
+  def complete_the_launch_locally(log_in_as: nil)
     # Within Tutor the launch bounces around a bit, off to Accounts and back
     # simulate that here.
+    #
+    # When the user is not yet known, can use the `log_in_as` user (simulates
+    # a launched user saying "I already have an account" and logging in as that
+    # user
 
     this = self
 
@@ -35,10 +39,12 @@ class Lms::LaunchHelper
       expect(redirect_query_hash[:sp]["signature"]).not_to be_blank
 
       user_identifer = redirect_query_hash[:sp]["uuid"]
-      user = this.get_user!(user_identifer)
+      user = this.get_user!(user_identifer, default: log_in_as)
 
       stub_current_user(user)
       get redirect_query_hash[:return_to]
+
+      user
     end
   end
 
