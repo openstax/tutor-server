@@ -69,14 +69,14 @@ gem 'openstax_accounts', '~> 7.8.0'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', git: 'https://github.com/openstax/openstax_api.git', branch: 'sign-params'
-# ref: '1ae1a5174ad93c311463c48e924e9bcfdc3f2e6f'  # '~> 8.1.0'
+gem 'openstax_api', '~> 8.2.0'
 
 gem 'apipie-rails'
 gem 'maruku'
 
 # Fixes unreleased CotentItemSelectionRequest validation error
 # https://github.com/instructure/ims-lti/issues/128
+# This code appears to be in 2.2.1 now
 gem 'ims-lti', git: 'https://github.com/instructure/ims-lti.git', ref: '5134532d4043ee9a3e110dc5b9b41300f6c13a07'
 
 # API JSON rendering/parsing
