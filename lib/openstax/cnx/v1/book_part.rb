@@ -10,29 +10,29 @@ module OpenStax::Cnx::V1
 
     def title
       @title ||= hash.fetch('title') { |key|
-        raise "BookPart id=#{id} is missing #{key}"
+        raise "#{self.class.name} id=#{id} is missing #{key}"
       }
     end
 
     def contents
       @contents ||= hash.fetch('contents') { |key|
-        raise "BookPart id=#{id} is missing #{key}"
+        raise "#{self.class.name} id=#{id} is missing #{key}"
       }
-    end
-
-    def is_chapter?
-      # A collection is a chapter if it has no subcollections
-      @is_chapter ||= contents.none?{ |hash| hash['id'] == 'subcol' }
     end
 
     def parts
       @parts ||= contents.map do |hash|
-        if hash['id'] == 'subcol'
-          BookPart.new(hash: hash)
+        if hash.has_key? 'contents'
+          self.class.new(hash: hash)
         else
           OpenStax::Cnx::V1::Page.new(hash: hash)
         end
       end
+    end
+
+    def is_chapter?
+      # A BookPart is a chapter if none of its children are BookParts
+      @is_chapter ||= parts.none? { |part| part.is_a?(self.class) }
     end
 
   end
