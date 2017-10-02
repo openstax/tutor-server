@@ -72,23 +72,32 @@ class Lms::SendCourseScores
   end
 
   def send_one_score(callback, score_data)
-    request_xml = basic_outcome_xml(score: score_data[:average_score],
-                                    sourcedid: callback.result_sourcedid)
+    begin
+      request_xml = basic_outcome_xml(score: score_data[:average_score],
+                                      sourcedid: callback.result_sourcedid)
 
-    response = token.post(
-      callback.outcome_url, request_xml, {'Content-Type' => 'application/xml'}
-    )
+      response = token.post(
+        callback.outcome_url, request_xml, {'Content-Type' => 'application/xml'}
+      )
 
-    Rails.logger.debug { response.body }
+      Rails.logger.debug { response.body }
 
-    outcome_response = Lms::OutcomeResponse.new(response)
+      outcome_response = Lms::OutcomeResponse.new(response)
 
-    if "failure" == outcome_response.code_major
+      if "failure" == outcome_response.code_major
+        error!({
+          score: score_data[:average_score],
+          student_name: score_data[:name],
+          student_identifier: score_data[:student_identifier],
+          lms_description: outcome_response.description
+        })
+      end
+    rescue StandardError => ee
       error!({
         score: score_data[:average_score],
         student_name: score_data[:name],
         student_identifier: score_data[:student_identifier],
-        lms_description: outcome_response.description
+        unhandled_error: ee.message
       })
     end
   end
