@@ -96,13 +96,29 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
                     data: {"num_callbacks" => 1, "num_missing_scores" => 0})
   end
 
-  def expect_job_info(errors: [], progress: 1.0, data:)
+  it 'copes with exceptions when sending errors' do
+    simulator.add_student("bob")
+    simulator.launch(user: "bob")
+    launch_helper.complete_the_launch_locally
+
+    bob_user = launch_helper.get_user("bob")
+    stub_perf_report([{period: "1st", user: bob_user, score: 0.9111}])
+
+    allow_any_instance_of(Lms::SendCourseScores).to receive(:basic_outcome_xml) { raise "Wowsers!" }
+
+    api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
+    expect(response).to have_http_status :accepted
+
+    expect_job_info(errors: [a_hash_including("unhandled_error" => "Wowsers!")])
+  end
+
+  def expect_job_info(errors: [], progress: 1.0, data: nil)
     job_status_id = response.body_as_hash[:job].match(/api\/jobs\/(.*)/)[1]
     job_status = Jobba.find(job_status_id)
 
     expect(job_status.errors).to match a_collection_including(*errors)
     expect(job_status.progress).to eq progress
-    expect(job_status.data).to match a_hash_including(data)
+    expect(job_status.data).to match a_hash_including(data) if data.present?
   end
 
   def stub_perf_report(entries)
