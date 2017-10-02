@@ -51,7 +51,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     add_placeholder_steps!(
       task: task,
       group_type: :spaced_practice_group,
-      count: num_spes
+      count: num_spes,
+      labels: [ 'review' ]
     )
 
     task

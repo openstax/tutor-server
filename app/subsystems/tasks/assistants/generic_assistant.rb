@@ -176,9 +176,11 @@ class Tasks::Assistants::GenericAssistant
     ChooseExercises[exercises: filtered_exercises, count: count, history: history]
   end
 
-  def add_placeholder_steps!(task:, group_type:, count:, page: nil)
+  def add_placeholder_steps!(task:, group_type:, count:, labels: [], page: nil)
     count.times do
-      task_step = Tasks::Models::TaskStep.new(task: task, page: page.try!(:to_model))
+      task_step = Tasks::Models::TaskStep.new(
+        task: task, labels: labels, page: page.try!(:to_model)
+      )
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder

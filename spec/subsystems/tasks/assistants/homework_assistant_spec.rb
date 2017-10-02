@@ -121,6 +121,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         expect(spaced_practice_task_steps.count).to eq @tutor_selected_exercise_count
 
         spaced_practice_task_steps.each do |task_step|
+          expect(task_step.labels).to include 'review'
           tasked_placeholder = task_step.tasked
           expect(tasked_placeholder).to be_a(Tasks::Models::TaskedPlaceholder)
           expect(tasked_placeholder.exercise_type?).to be_truthy
