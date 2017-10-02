@@ -18,10 +18,6 @@ every 1.day, at: '8:30 AM' do  # ~ 2:30am central
   runner "OpenStax::RescueFrom.this{ PushSalesforceCourseStats.call(allow_error_email: true) }"
 end
 
-every 3.hours do
-  runner "Tasks::CcPageStatsView.refresh"
-end
-
 every 1.hour do
   runner "CourseProfile::BuildPreviewCourses.call"
 end
