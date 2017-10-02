@@ -6,7 +6,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
   let(:year)     { Time.current.year }
 
   context 'with preview available' do
-    let!(:course) do
+    let(:course) do
       CreateCourse[
         name: 'Unclaimed',
         term: term,
@@ -18,18 +18,38 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         estimated_student_count: 42
       ].tap { |course| course.update_attribute :is_preview_ready, true }
     end
+    let!(:task_plan) do
+      Timecop.freeze(Time.current - 3.months) do
+        FactoryGirl.create :tasked_task_plan, owner: course
+      end
+    end
 
-    it 'finds the course and updates its attributes' do
-      course.update_attributes!(created_at: 3.days.ago)
-      claimed_course = CourseProfile::ClaimPreviewCourse[
-        catalog_offering: offering, name: 'My New Preview Course'
-      ]
+    it 'finds the course, task plans and tasks and updates their attributes' do
+      current_time = Time.current
+      claimed_course = Timecop.freeze(current_time) do
+        CourseProfile::ClaimPreviewCourse[
+          catalog_offering: offering, name: 'My New Preview Course'
+        ]
+      end
       expect(claimed_course.id).to eq course.id
       expect(claimed_course.name).to eq 'My New Preview Course'
-      expect(claimed_course.preview_claimed_at).to be_within(1.minute).of(Time.current)
+      expect(claimed_course.preview_claimed_at).to eq current_time
+      expect(claimed_course.starts_at).to eq current_time.monday - 2.weeks
+      expect(claimed_course.ends_at).to eq current_time + 8.weeks - 1.second
+
+      task_plan.tasking_plans.each do |tasking_plan|
+        expect(tasking_plan.opens_at).to be_within(1).of(current_time)
+        expect(tasking_plan.due_at).to be_within(1).of(current_time + 1.week)
+      end
+
+      task_plan.tasks.each do |task|
+        expect(task.opens_at).to be_within(1).of(current_time)
+        expect(task.due_at).to be_within(1).of(current_time + 1.week)
+        expect(task.feedback_at).to be_nil
+        expect(task.last_worked_at).to be_nil
+      end
     end
   end
-
 
   context 'when no previews are pre-built' do
     it 'errors with api code and sends email' do
