@@ -21,16 +21,17 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response).to have_http_status(:created)
 
       last_period = CourseMembership::Models::Period.last
-      expect(response.body_as_hash).to match({
+      expect(response.body_as_hash).to match(a_hash_including(
         id: last_period.id.to_s,
         name: '7th Period',
+        num_enrolled_students: 0,
         enrollment_code: '012345',
         enrollment_url: a_string_matching(/enroll\/012345/),
         default_open_time: '00:01',
         default_due_time: '07:00',
         is_archived: false,
         teacher_student_role_id: last_period.entity_teacher_student_role_id.to_s
-      })
+      ))
     end
 
     it 'ensures the person is a teacher of the course' do

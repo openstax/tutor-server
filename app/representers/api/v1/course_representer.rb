@@ -50,7 +50,6 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(starts_at) },
              schema_info: { required: true }
 
-
     property :ends_at,
              type: String,
              readable: true,
@@ -206,6 +205,15 @@ module Api::V1
                 type: 'boolean',
                 description: "If true, indicates the teacher has chosen to integrate with " \
                              "an LMS; can be `nil` which indicates no choice yet"
+             }
+
+    property :last_lms_scores_push_job_id,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                required: false,
+                description: "Background job ID of last push of scores to LMS"
              }
 
     collection :periods,
