@@ -28,10 +28,13 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
     bob_user = launch_helper.get_user("bob")
     stub_perf_report([{period: "1st", user: bob_user, score: 0.9111}])
 
+    expect(course.last_lms_scores_push_job_id).to be_blank
     simulator.expect_to_receive_score(user: "bob", assignment: "tutor", score: 0.9111)
 
     api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
     expect(response).to have_http_status :accepted
+
+    expect(course.reload.last_lms_scores_push_job_id).not_to be_blank
 
     expect_job_info(data: {"num_callbacks" => 1, "num_missing_scores" => 0})
   end
