@@ -158,4 +158,28 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     expect(course.starts_at).to eq term_year.starts_at
     expect(course.ends_at).to eq term_year.ends_at
   end
+
+  context 'when is_lms_enabling_allowed is false' do
+    before(:each) { course.update_column(:is_lms_enabling_allowed, false) }
+
+    it 'can change is_lms_enabled from true to false' do
+      course.update_column(:is_lms_enabled, true)
+      expect(course.update_attributes(is_lms_enabled: false)).to eq true
+    end
+
+    it 'cannot change is_lms_enabled from false to true' do
+      course.update_column(:is_lms_enabled, false)
+      expect(course.update_attributes(is_lms_enabled: true)).to eq false
+    end
+  end
+
+  it 'prevents is_lms_enabled from changing when is_access_switchable false' do
+    course.update_column(:is_access_switchable, false)
+
+    course.update_column(:is_lms_enabled, true)
+    expect(course.update_attributes(is_lms_enabled: false)).to eq false
+
+    course.update_column(:is_lms_enabled, false)
+    expect(course.reload.update_attributes(is_lms_enabled: true)).to eq false
+  end
 end
