@@ -154,6 +154,14 @@ RSpec::Matchers.define :be_the_same_time_as do |expected|
   end
 end
 
+# Make the Boxr gem work with Webmock/VCR
+RSpec.configure do |config|
+  config.before(:suite) do
+    Boxr.send :remove_const, 'BOX_CLIENT'
+    Boxr::BOX_CLIENT = HTTPClient.new
+  end
+end
+
 def fake_flash(key, value)
   flash_hash = ActionDispatch::Flash::FlashHash.new
   flash_hash[key] = value
