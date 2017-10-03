@@ -5,7 +5,9 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
   let(:course) { FactoryGirl.create :course_profile_course }
   let(:period) { FactoryGirl.create :course_membership_period, course: course }
 
-  subject(:represented) { described_class.new(period).to_hash }
+  def represented
+    described_class.new(period).to_hash
+  end
 
   it 'includes the enrollment code' do
     allow(SecureRandom).to receive(:random_number) { 123456 }
@@ -40,6 +42,14 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
 
   it "includes the period\'s teacher_student role id" do
     expect(represented['teacher_student_role_id']).to eq period.entity_teacher_student_role_id.to_s
+  end
+
+  it "includes student count" do
+    student = AddUserAsPeriodStudent.call(period: period, user: FactoryGirl.create(:user)).outputs.student
+    expect(represented['num_enrolled_students']).to eq 1
+
+    CourseMembership::InactivateStudent.call(student: student)
+    expect(represented['num_enrolled_students']).to eq 0
   end
 
 end

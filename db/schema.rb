@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170927024042) do
+ActiveRecord::Schema.define(version: 20171002211007) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -350,11 +350,11 @@ ActiveRecord::Schema.define(version: 20170927024042) do
     t.datetime "preview_claimed_at"
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
-    t.boolean  "is_access_switchable",                         default: true,                null: false
     t.boolean  "is_preview_ready",                             default: false,               null: false
+    t.boolean  "is_access_switchable",                         default: true,                null: false
+    t.string   "last_lms_scores_push_job_id"
   end
 
-  add_index "course_profile_courses", ["catalog_offering_id", "is_preview", "preview_claimed_at"], name: "preview_pending_indx", using: :btree
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
   add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
   add_index "course_profile_courses", ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed", using: :btree

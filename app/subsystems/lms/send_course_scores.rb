@@ -22,6 +22,8 @@ class Lms::SendCourseScores
 
     callbacks = Lms::Models::CourseScoreCallback.where(course: course)
 
+    @course.update_attributes(last_lms_scores_push_job_id: status.id)
+
     @num_callbacks = callbacks.count
     @num_missing_scores = 0
 

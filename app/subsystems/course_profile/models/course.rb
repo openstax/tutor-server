@@ -51,7 +51,7 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 
-  validate :lms_enabling_allowed
+  validate :lms_enabling_changeable
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
@@ -117,9 +117,13 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
     false
   end
 
-  def lms_enabling_allowed
+  def lms_enabling_changeable
     errors.add(:is_lms_enabled, "Enabling LMS integration is not allowed for this course") \
       if is_lms_enabled_changed? && is_lms_enabled && !is_lms_enabling_allowed
+
+    errors.add(:is_lms_enabled, "Enabling or disabling LMS integration is not allowed for this course") \
+      if is_lms_enabled_changed? && !is_access_switchable
+
     errors.none?
   end
 
