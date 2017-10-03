@@ -20,7 +20,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
         filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
           described_class.call(course_name: 'Physics 101',
                                report: report_1,
-                               filename: "#{dir}/testfile")
+                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}")
         end
 
         # Uncomment this to open the file for visual inspection
