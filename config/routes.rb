@@ -231,6 +231,13 @@ Rails.application.routes.draw do
       get :'raise(/:type)', action: :test_raise, as: :raise
     end
 
+    resource :test do
+      collection do
+        get :minimal_error
+        get :minimal_error_iframe
+      end
+    end
+
     resources :users, except: :destroy do
       member do
         post :become

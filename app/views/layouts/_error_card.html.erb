@@ -1,0 +1,9 @@
+<div class="error_card <%= klass if local_assigns[:klass].present? %>">
+  <div class="title">
+    <span class="glyphicon glyphicon-alert"></span><%= yield :title %>
+  </div>
+
+  <div class="body">
+    <%= yield :body %>
+  </div>
+</div>
