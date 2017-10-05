@@ -74,10 +74,8 @@ gem 'openstax_api', '~> 8.2.0'
 gem 'apipie-rails'
 gem 'maruku'
 
-# Fixes unreleased CotentItemSelectionRequest validation error
-# https://github.com/instructure/ims-lti/issues/128
-# This code appears to be in 2.2.1 now
-gem 'ims-lti', git: 'https://github.com/instructure/ims-lti.git', ref: '5134532d4043ee9a3e110dc5b9b41300f6c13a07'
+# LTI helper
+gem 'ims-lti', '~> 2.2.1'
 
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4

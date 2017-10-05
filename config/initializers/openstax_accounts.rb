@@ -33,10 +33,17 @@ OpenStax::Accounts::ApplicationController.class_exec do
   helper ApplicationHelper, OpenStax::Utilities::OsuHelper
 end
 
-OpenStax::Accounts::Account.class_exec do
-  # TODO: Move this to accounts-rails
-  def name
-    full_name.present? ? \
-      full_name : ((first_name || last_name) ? [first_name, last_name].compact.join(" ") : username)
+Rails.application.config.to_prepare do
+  OpenStax::Accounts::Account.class_exec do
+    has_one :profile, primary_key: :id,
+            foreign_key: :account_id,
+            class_name: 'User::Models::Profile',
+            inverse_of: :account
+
+    # TODO: Move this to accounts-rails
+    def name
+      full_name.present? ? \
+        full_name : ((first_name || last_name) ? [first_name, last_name].compact.join(" ") : username)
+    end
   end
 end

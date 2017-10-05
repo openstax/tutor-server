@@ -1,17 +1,4 @@
 GIT
-  remote: https://github.com/instructure/ims-lti.git
-  revision: 5134532d4043ee9a3e110dc5b9b41300f6c13a07
-  ref: 5134532d4043ee9a3e110dc5b9b41300f6c13a07
-  specs:
-    ims-lti (2.1.6)
-      addressable (~> 2.5, >= 2.5.1)
-      builder (~> 3.2)
-      faraday (~> 0.8)
-      faraday_middleware (~> 0.8)
-      json-jwt (~> 1.7)
-      simple_oauth (= 0.2)
-
-GIT
   remote: https://github.com/openstax/active_force
   revision: 7caac1727d92206328e72ac9f7540805653f9d73
   ref: 7caac17
@@ -112,7 +99,7 @@ GEM
     best_in_place (3.1.1)
       actionpack (>= 3.2)
       railties (>= 3.2)
-    bindata (2.4.0)
+    bindata (2.4.1)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bootstrap-sass (3.3.7)
@@ -389,6 +376,13 @@ GEM
     httpclient (2.8.3)
     i18n (0.8.6)
     ice_nine (0.11.1)
+    ims-lti (2.2.1)
+      addressable (~> 2.5, >= 2.5.1)
+      builder (~> 3.2)
+      faraday (~> 0.8)
+      faraday_middleware (~> 0.8)
+      json-jwt (~> 1.7)
+      simple_oauth (= 0.2)
     inflecto (0.0.2)
     ipaddress (0.8.0)
     jobba (1.6.0)
@@ -820,7 +814,7 @@ DEPENDENCIES
   guard-rspec
   hashie
   httparty
-  ims-lti!
+  ims-lti (~> 2.2.1)
   jobba (~> 1.6.0)
   jquery-rails
   json-schema (~> 2.8.0)

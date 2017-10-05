@@ -164,6 +164,24 @@ class Lms::Launch
     # includes admin email addresses, LMS version, etc.
   end
 
+  def store_score_callback_if_needed(user)
+    # For assignment launches, store the score passback info.  We are currently
+    # only doing course-level score sync, so store the score callback info on the Student
+    # record. Since we may not actually have a Student record yet (if enrollment hasn't completed),
+    # we really attach it to the combination of course and user (which is essentially what
+    # a Student later records).  It is possible that a teacher could add the Tutor assignment
+    # more than once, so we could have multiple callback infos for ever course/user combination.
+
+    return if !is_assignment?
+
+    Lms::Models::CourseScoreCallback.find_or_create_by(
+      result_sourcedid: result_sourcedid,
+      outcome_url: outcome_url,
+      course: context.course,
+      profile: user.to_model
+    )
+  end
+
   protected
 
   def initialize(request_parameters:, request_url:, trusted: false)
