@@ -305,6 +305,8 @@ group :test do
   gem 'db-query-matchers'
 
   gem 'whenever-test'
+
+  gem 'capybara-screenshot', require: false
 end
 
 group :production do

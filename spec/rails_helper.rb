@@ -26,6 +26,8 @@ window_size = [1920, 6000]
 
 Capybara.asset_host = 'http://localhost:3001'
 
+require 'screenshots'
+
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
     :window_size => window_size
@@ -214,4 +216,9 @@ def create_contract!(name)
     contract.title   = name + ' title'
     contract.content = name + ' content'
   end
+end
+
+def with_test_routes(&block)
+  test_routes = ActionDispatch::Routing::RouteSet.new.send(:eval_block, block)
+  allow(Rails.application).to receive(:routes) { test_routes }
 end

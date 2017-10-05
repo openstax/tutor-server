@@ -45,7 +45,7 @@ class LmsController < ApplicationController
     begin
       launch = Lms::Launch.from_request(request)
 
-      Rails.logger.debug { launch.formatted_data(include_everything: true) }
+      log(:debug) { launch.formatted_data(include_everything: true) }
 
       # Persist the launch so we can load it after return from Accounts. Since
       # these persisted launches are going to be kept around for a while for
@@ -97,6 +97,10 @@ class LmsController < ApplicationController
       fail_for_lms_disabled(launch, context) and return
     rescue Lms::Launch::CourseKeysAlreadyUsed => ee
       fail_for_course_keys_already_used(launch) and return
+    rescue Lms::Launch::AlreadyUsed => ee
+      fail_for_already_used and return
+    rescue Lms::Launch::AppNotFound, Lms::Launch::InvalidSignature => ee
+      fail_for_invalid_key_secret(launch) and return
     rescue Lms::Launch::HandledError => ee
       fail_with_catchall_message(ee) and return
     end
@@ -196,30 +200,49 @@ class LmsController < ApplicationController
   end
 
   def fail_for_lms_disabled(launch, context)
-    Rails.logger.info { "Attempting to launch (#{session[:launch_id]}) into an " \
-                        "LMS-disabled course (#{context.nil? ? 'not set' : context.course.id})" }
-    render(:fail_lms_disabled, status: :unprocessable_entity)
+    log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \
+                 "LMS-disabled course (#{context.nil? ? 'not set' : context.course.id})" }
+    render_minimal_error(:fail_lms_disabled, locals: { launch: launch })
   end
 
   def fail_for_unsupported_role
-    Rails.logger.info { "Unsupported role launched in launch #{session[:launch_id]}"}
-    render(:fail_unsupported_role, status: :unprocessable_entity)
+    log(:info) { "Unsupported role launched in launch #{session[:launch_id]}"}
+    render_minimal_error(:fail_unsupported_role)
   end
 
   def fail_for_missing_required_fields(launch)
-    Rails.logger.info { "Launch #{session[:launch_id]} is missing required fields: " \
-                        "#{launch.missing_required_fields}" }
-    render(:fail_missing_required_fields, locals: { launch: launch }, status: :unprocessable_entity)
+    log(:info) { "Launch #{session[:launch_id]} is missing required fields: " \
+                 "#{launch.missing_required_fields}" }
+    render_minimal_error(:fail_missing_required_fields, locals: { launch: launch })
   end
 
   def fail_for_course_keys_already_used(launch)
-    Rails.logger.info { "Launch #{session[:launch_id]} failing because course keys already used for another context"}
-    render :fail_course_keys_already_used, locals: { launch: launch }, status: :unprocessable_entity
+    log(:info) { "Launch #{session[:launch_id]} failing because course keys already used for another context"}
+    render_minimal_error(:fail_course_keys_already_used, locals: { launch: launch })
+  end
+
+  def fail_for_already_used
+    log(:info) { "Nonce reused in launch #{session[:launch_id]}"}
+    render_minimal_error(:fail_already_used)
+  end
+
+  def fail_for_invalid_key_secret(launch)
+    log(:info) { "Invalid key and/or secret #{session[:launch_id]}"}
+    render_minimal_error(:fail_invalid_key_secret, locals: { launch: launch })
   end
 
   def fail_with_catchall_message(exception)
-    Rails.logger.info { "Launch failed: #{exception.try(:message)}" }
-    render(:fail_catchall, status: :unprocessable_entity)
+    log(:error) { "Launch failed: #{exception.try(:message)}" }
+    render_minimal_error(:fail_catchall)
   end
+
+  def render_minimal_error(action, options={})
+    render(action, options.merge(layout: 'minimal_error', status: :unprocessable_entity))
+  end
+
+  def log(level, &block)
+    Rails.logger.tagged(self.class.name) { |logger| logger.public_send(level, &block) }
+  end
+
 
 end

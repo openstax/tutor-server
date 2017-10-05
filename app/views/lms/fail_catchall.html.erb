@@ -1,1 +1,7 @@
-<p>Something went wrong when trying to open OpenStax Tutor.  Please go back and try to open the Tutor link again; that may resolve the issue.  If not, please <%= link_to "contact Support", TUTOR_HELPDESK_URL %>.</p>
+<% content_for :title do %>
+  An unexpected error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  We're sorry this error occurred.  Please try launching OpenStax Tutor again.  If that does not resolve the issue, please <%= link_to "contact Support", TUTOR_HELPDESK_URL %>.
+<% end %>

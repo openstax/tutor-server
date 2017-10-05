@@ -390,7 +390,12 @@ Rails.application.routes.draw do
   get 'lms/launch_failed', to: 'lms#launch_failed'
   get 'lms/complete_launch', to: 'lms#complete_launch'
 
+  if Rails.env.test?
+    scope :specs do
+      get 'lms_error_page/:page(/:case)' => 'lms_error_page_specs#page'
+    end
+  end
+
   # Catch-all frontend route
   match :'*other', to: 'webview#index', via: [:get, :post, :put, :patch, :delete]
-
 end

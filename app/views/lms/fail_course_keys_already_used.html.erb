@@ -1,7 +1,11 @@
-fail_course_keys_already_used.html.erb
+<% content_for :title do %>
+  Sorry, we can’t take you to your course
+<% end %>
 
-<% if launch.is_student? %>
-Message for students goes here
-<% else %>
-Message for teachers goes here
+<% content_for :body do %>
+  <% if launch.is_student? %>
+    This course may not have been integrated correctly. Please notify your instructor.
+  <% else %>
+    You cannot integrate your OpenStax Tutor course with more than one course in your LMS.  For help, visit our <%= link_to "knowledge base", TUTOR_HELPDESK_URL %>.
+  <% end %>
 <% end %>
