@@ -150,24 +150,7 @@ class LmsController < ApplicationController
     course = launch.context.course
 
     if launch.is_student?
-      if launch.is_assignment?
-        # For assignment launches, store the grade passback info.  We are currently
-        # only doing course-level grade sync, so store the grade attached to the Student.
-        # Since we may not actually have a Student record yet (if enrollment hasn't completed),
-        # we really attach it to the combination of course and user (which is essentially what
-        # a Student later records).  It is possible that a teacher could add the Tutor assignment
-        # more than once, so we could have multiple callback infos for ever course/user combination.
-
-        # TODO change to launch.create_score_callback_if_missing(caller.to_model) - a lot of above
-        # comment goes into Launch method
-
-        Lms::Models::CourseScoreCallback.find_or_create_by(
-          result_sourcedid: launch.result_sourcedid,
-          outcome_url: launch.outcome_url,
-          course: course,
-          profile: current_user.to_model
-        )
-      end
+      launch.store_score_callback_if_needed(current_user)
 
       # Note if the user is not yet a student in the course, so they can be sent through the
       # LMS-optimized enrollment flow.

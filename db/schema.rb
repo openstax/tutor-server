@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171002211007) do
+ActiveRecord::Schema.define(version: 20171005200431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -447,8 +447,8 @@ ActiveRecord::Schema.define(version: 20171002211007) do
     t.datetime "updated_at"
   end
 
-  add_index "lms_apps", ["key"], name: "index_lms_apps_on_key", using: :btree
-  add_index "lms_apps", ["owner_type", "owner_id"], name: "index_lms_apps_on_owner_type_and_owner_id", using: :btree
+  add_index "lms_apps", ["key"], name: "index_lms_apps_on_key", unique: true, using: :btree
+  add_index "lms_apps", ["owner_type", "owner_id"], name: "index_lms_apps_on_owner_type_and_owner_id", unique: true, using: :btree
 
   create_table "lms_contexts", force: :cascade do |t|
     t.string  "lti_id",                   null: false
@@ -468,7 +468,7 @@ ActiveRecord::Schema.define(version: 20171002211007) do
     t.integer "course_profile_course_id", null: false
   end
 
-  add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_score_callbacks_on_course_user_result_outcome", using: :btree
+  add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_score_callbacks_on_course_user_result_outcome", unique: true, using: :btree
   add_index "lms_course_score_callbacks", ["result_sourcedid", "outcome_url"], name: "course_score_callback_result_outcome", unique: true, using: :btree
   add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
 
@@ -490,7 +490,7 @@ ActiveRecord::Schema.define(version: 20171002211007) do
     t.string "contact_email"
   end
 
-  add_index "lms_tool_consumers", ["guid"], name: "index_lms_tool_consumers_on_guid", using: :btree
+  add_index "lms_tool_consumers", ["guid"], name: "index_lms_tool_consumers_on_guid", unique: true, using: :btree
 
   create_table "lms_trusted_launch_data", force: :cascade do |t|
     t.json     "request_params"

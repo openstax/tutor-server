@@ -382,13 +382,14 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'lms/configuration', to: 'lms#configuration'
-  get 'lms/ci_configuration', to: 'lms#ci_configuration'
-  post 'lms/launch', to: 'lms#launch'
-  get 'lms/launch_authenticate', to: 'lms#launch_authenticate'
-  post 'lms/ci_launch', to: 'lms#ci_launch'
-  get 'lms/launch_failed', to: 'lms#launch_failed'
-  get 'lms/complete_launch', to: 'lms#complete_launch'
+  scope '/lms', controller: :lms, as: :lms do
+    get :configuration
+    post :launch
+    get :launch_authenticate
+    get :complete_launch
+    get :ci_configuration
+    post :ci_launch
+  end
 
   if Rails.env.test?
     scope :specs do

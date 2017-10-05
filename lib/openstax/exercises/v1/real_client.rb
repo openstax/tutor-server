@@ -39,6 +39,7 @@ class OpenStax::Exercises::V1::RealClient
 
   protected
 
+  # NOT THREADSAFE!
   def oauth_worker
     # Lazily instantiate the oauth client and token primarily to ensure that
     # initialization does not occur before test code initialized (so that all

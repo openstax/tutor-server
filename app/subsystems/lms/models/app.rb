@@ -8,6 +8,8 @@ class Lms::Models::App < Tutor::SubSystems::BaseModel
   before_validation :initialize_tokens
 
   validates :owner, presence: true
+  validates :owner_id, uniqueness: { scope: :owner_type }
+  validates :key, presence: true, uniqueness: true
 
   protected
 
