@@ -32,6 +32,7 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     expect(representation['to']['course']['name']).to eq course.name
     expect(representation['to']['period']['id']).to eq period_2.id.to_s
     expect(representation['to']['period']['name']).to eq period_2.name
+    expect(representation['to']['period']['is_lms_enabled']).to eq course.is_lms_enabled
     expect(representation['conflict']).to be_nil
     expect(representation['status']).to eq enrollment_change.status.to_s
     expect(representation['requires_enrollee_approval']).to eq false

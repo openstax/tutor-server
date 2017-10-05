@@ -39,6 +39,12 @@ module Api::V1::Enrollment
                writeable: false,
                schema_info: { required: true }
 
+      property :is_lms_enabled,
+               getter: -> (*) { course.is_lms_enabled },
+               readable: true,
+               writeable: false,
+               schema_info: { required: true, type: 'boolean' }
+
       collection :teachers,
                  readable: true,
                  getter: ->(*) { teacher_roles.map{|role| role} },

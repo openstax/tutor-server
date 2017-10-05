@@ -30,5 +30,10 @@ class Api::V1::CourseEnrollmentsRepresenter < Roar::Decorator
              description: "The Course's name"
            }
 
+  property :is_lms_enabled,
+           readable: true,
+           writeable: false,
+           schema_info: { required: true, type: 'boolean' }
+
   collection :periods, extend: PeriodsRepresenter
 end
