@@ -217,8 +217,3 @@ def create_contract!(name)
     contract.content = name + ' content'
   end
 end
-
-def with_test_routes(&block)
-  test_routes = ActionDispatch::Routing::RouteSet.new.send(:eval_block, block)
-  allow(Rails.application).to receive(:routes) { test_routes }
-end

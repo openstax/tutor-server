@@ -14,11 +14,6 @@ class LmsController < ApplicationController
   before_filter :allow_embedding_in_iframe, only: [:launch, :ci_launch]
 
   layout false
-  layout 'minimal_error', only: [:fail_unsupported_role,
-                                 :fail_lms_disabled,
-                                 :fail_missing_required_fields,
-                                 :fail_course_keys_already_used,
-                                 :fail_catchall]
 
   def configuration
     # provides configuration XML used when installing the Tutor app in an LMS

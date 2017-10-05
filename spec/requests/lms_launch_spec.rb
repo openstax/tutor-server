@@ -82,7 +82,7 @@ RSpec.describe 'LMS Launch', type: :request do
   it 'gives an error for unsupported role' do
     simulator.add_administrator("admin")
     simulator.launch(user: "admin", assignment: "tutor")
-    expect_error("only supports")
+    expect_error("Only the course instructor and enrolled")
   end
 
   context 'missing required fields' do
@@ -101,7 +101,7 @@ RSpec.describe 'LMS Launch', type: :request do
 
         it 'errors' do
           simulator.launch(user: "student", drop_these_fields: :tool_consumer_instance_guid)
-          expect_error("to see instructions for providing these fields")
+          expect_error("may not have been integrated correctly")
         end
       end
     end
@@ -121,7 +121,7 @@ RSpec.describe 'LMS Launch', type: :request do
 
         it 'errors' do
           simulator.launch(user: "student", drop_these_fields: :context_id)
-          expect_error("to see instructions for providing these fields")
+          expect_error("may not have been integrated correctly")
         end
       end
     end
@@ -139,14 +139,14 @@ RSpec.describe 'LMS Launch', type: :request do
       course.update_attribute(:is_lms_enabled, false)
 
       simulator.launch(user: "user")
-      expect_error("fail_lms_disabled")
+      expect_error("teacher launches are also disabled")
     end
 
     it "errors if context doesn't exist yet" do
       course.update_attribute(:is_lms_enabled, false)
 
       simulator.launch(user: "user")
-      expect_error("fail_lms_disabled")
+      expect_error("teacher launches are also disabled")
     end
   end
 
@@ -163,7 +163,7 @@ RSpec.describe 'LMS Launch', type: :request do
       simulator.install_tutor(app: lms_app, course: "biology")
       simulator.launch(user: "teacher", course: "biology")
 
-      expect_error("Message for teachers")
+      expect_error("with more than one course")
     end
 
     it "gives a student-specific error" do
@@ -174,11 +174,11 @@ RSpec.describe 'LMS Launch', type: :request do
       simulator.install_tutor(app: lms_app, course: "biology")
       simulator.launch(user: "student", course: "biology")
 
-      expect_error("Message for students")
+      expect_error("may not have been integrated correctly")
     end
   end
 
-  def expect_course_score_callback_count(user: user, count:)
+  def expect_course_score_callback_count(user:, count:)
     expect(Lms::Models::CourseScoreCallback.where(course: course).where(profile: user.to_model).count).to eq count
   end
 
