@@ -26,6 +26,8 @@ window_size = [1920, 6000]
 
 Capybara.asset_host = 'http://localhost:3001'
 
+require 'screenshots'
+
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
     :window_size => window_size
