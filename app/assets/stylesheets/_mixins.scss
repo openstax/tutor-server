@@ -1,13 +1,13 @@
 @mixin tutor-button(){
   @extend .btn-lg;
   @extend .btn-primary;
-  border-radius: 4px;
+  border-radius: 0px;
   background-color: $os_orange;
   color: white;
   text-decoration: none;
   border: 1px solid darken( $os-orange, 5% );
   transition: background-color 0.4s, border-color 0.4s;
-  &:hover{
+  &:hover, &:active, &:focus{
     background-color: darken( $os-orange, 5% );
     border-color: darken( $os-orange, 25% );
   }
