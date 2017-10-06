@@ -9,8 +9,6 @@ ActionController::Base.class_exec do
 
   skip_after_action :set_date_header
 
-  use_openstax_exception_rescue
-
   protected
 
   def consumed(representer, **options)
