@@ -41,7 +41,6 @@ module Api::V1
              type: Integer,
              readable: true,
              writeable: false,
-             getter: ->(*) { to_model.students.where(deleted_at: nil).count },
              schema_info: {
                required: true
              }

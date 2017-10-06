@@ -68,6 +68,11 @@ class CourseMembership::Models::Period < ApplicationRecord
       .count
   end
 
+  def num_enrolled_students
+    students.loaded? ? students.to_a.count { |student| !student.dropped? } :
+                       students.without_deleted.count
+  end
+
   protected
 
   def build_teacher_student_role

@@ -7,7 +7,7 @@ class CourseMembership::Strategies::Direct::Period < Entitee
           :teacher_student_role, :entity_teacher_student_role_id,
           :default_open_time, :default_due_time,
           :enrollment_code, :enrollment_code_for_url,
-          :archived_at, :archived?
+          :archived_at, :archived?, :num_enrolled_students
 
   def to_model
     repository

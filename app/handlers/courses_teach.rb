@@ -25,7 +25,7 @@ class CoursesTeach
     raise InvalidTeachToken if course.nil?
     raise UserIsStudent if run(
       :user_is_course_student,
-      user: caller, course: course, include_dropped: true, include_archived: true
+      user: caller, course: course, include_dropped_students: true, include_archived_periods: true
     ).outputs.user_is_course_student
 
     run(:add_teacher, course: course, user: caller)

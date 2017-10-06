@@ -65,6 +65,10 @@ module CourseMembership
       verify_and_return @strategy.enrollment_code_for_url, klass: String, error: StrategyError
     end
 
+    def num_enrolled_students
+      verify_and_return @strategy.num_enrolled_students, klass: Integer, error: StrategyError
+    end
+
     def to_model
       @strategy.to_model
     end
