@@ -37,7 +37,7 @@ class Lms::Launch
   end
 
   def self.from_id(id)
-    launch_data = Lms::Models::TrustedLaunchData.find(id)
+    launch_data = Lms::Models::TrustedLaunchData.find_by(id: id)
     raise CouldNotLoadLaunch if launch_data.nil?
     new(request_parameters: ActiveSupport::HashWithIndifferentAccess.new(launch_data.request_params),
         request_url: launch_data.request_url,
