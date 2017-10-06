@@ -108,7 +108,11 @@ class LmsController < ApplicationController
   def launch_authenticate
     # Part 2 of 3 in how Tutor processes the launch
 
-    launch = Lms::Launch.from_id(session[:launch_id])
+    begin
+      launch = Lms::Launch.from_id(session[:launch_id])
+    rescue Lms::Launch::CouldNotLoadLaunch => ee
+      fail_for_already_used and return
+    end
 
     # Always send users to accounts when a launch happens.  We may decide
     # later to skip accounts when the user is already logged in, but in
@@ -136,7 +140,11 @@ class LmsController < ApplicationController
     # Part 3 of 3 in how Tutor processes the launch - gets the now authenticated user to
     # their course (or the enrollment screen into it)
 
-    launch = Lms::Launch.from_id(session.delete(:launch_id))
+    begin
+      launch = Lms::Launch.from_id(session.delete(:launch_id))
+    rescue Lms::Launch::CouldNotLoadLaunch => ee
+      fail_for_already_used and return
+    end
 
     # Later may be nil if we are supposed to handle admin-installed apps with a pairing step here
     raise "Context cannot be nil" if launch.context.nil?
@@ -221,6 +229,5 @@ class LmsController < ApplicationController
   def log(level, &block)
     Rails.logger.tagged(self.class.name) { |logger| logger.public_send(level, &block) }
   end
-
 
 end
