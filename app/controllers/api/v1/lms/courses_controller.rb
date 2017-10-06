@@ -16,7 +16,7 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
   def show
     OSU::AccessPolicy.require_action_allowed!(:lms_connection_info, current_api_user, @course)
 
-    app = Lms::Models::App.find_or_create_by(owner: @course)
+    app = ::Lms::Models::App.find_or_create_by(owner: @course)
 
     render json: app.as_json.merge(
              url: lms_configuration_url(format: :xml),
