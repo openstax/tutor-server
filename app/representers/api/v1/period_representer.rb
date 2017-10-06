@@ -37,6 +37,15 @@ module Api::V1
                description: "The period's enrollment URL"
              }
 
+    property :num_enrolled_students,
+             type: Integer,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { to_model.students.where(deleted_at: nil).count },
+             schema_info: {
+               required: true
+             }
+
     property :default_open_time,
              type: String,
              readable: true,

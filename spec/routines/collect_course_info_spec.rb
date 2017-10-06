@@ -34,6 +34,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           active?: course_1.active?,
           is_concept_coach: false,
           is_college: course_1.is_college,
+          is_access_switchable: course_1.is_access_switchable,
           time_zone: course_1.time_zone.name,
           default_open_time: course_1.default_open_time,
           default_due_time: course_1.default_due_time,

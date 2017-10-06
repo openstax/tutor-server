@@ -143,7 +143,7 @@ RSpec.describe "Students in archived old period sign up in new term",
   end
 
   def enroll_cc_student(student_token:, enrollment_code:, book_uuid:)
-    api_post(api_enrollment_changes_path,
+    api_post(api_enrollment_index_path,
              student_token,
              raw_post_data: {
                enrollment_code: enrollment_code, book_uuid: book_uuid
@@ -152,7 +152,7 @@ RSpec.describe "Students in archived old period sign up in new term",
     expect(response).to have_http_status(:created)
     enrollment_change_id = response.body_as_hash[:id]
 
-    api_put(approve_api_enrollment_change_path(id: enrollment_change_id), student_token)
+    api_put(approve_api_enrollment_path(id: enrollment_change_id), student_token)
     expect(response).to have_http_status(:success)
   end
 

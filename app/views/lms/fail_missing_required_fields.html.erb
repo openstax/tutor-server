@@ -1,0 +1,29 @@
+<% content_for :title do %>
+  Sorry, we can’t take you to your course
+<% end %>
+
+<% content_for :body do %>
+  <% if launch.is_student? %>
+    This course may not have been integrated correctly. Please notify your instructor.
+  <% else %>
+    Sometimes a school's learning management system (LMS) lets administrators and instructors limit the amount of data sent to external applications such as OpenStax Tutor.  If you set up your course's use of OpenStax Tutor, please try to include the following fields in the information sent to Tutor.  If an administrator did the setup, please refer him or her to this information.
+
+<p>
+  <ul>
+    <% launch.missing_required_fields.each do |missing_field| %>
+      <% text =
+           case missing_field
+           when :tool_consumer_instance_guid
+             '<b>tool_consumer_instance_guid</b>: Tells Tutor how to identify your school\'s course management system'
+           when :context_id
+             '<b>context_id</b>: A unique ID within your school\'s course management system that identifies your course'
+           else
+             "<b>#{missing_field}</b>"
+           end %>
+      <li><%= text.html_safe %></li>
+    <% end %>
+  </ul>
+</p>
+
+  <% end %>
+<% end %>

@@ -12,7 +12,7 @@ end
 gem 'rails', '4.2.4'
 
 # Bootstrap front-end framework
-gem 'bootstrap-sass', '~> 3.2.0'
+gem 'bootstrap-sass', '~> 3.3.7'
 
 # SCSS stylesheets
 gem 'sass-rails', '~> 5.0.0'
@@ -63,16 +63,19 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.6.0'
+gem 'openstax_accounts', '~> 7.8.0'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 8.1.0'
+gem 'openstax_api', '~> 8.2.0'
 
 gem 'apipie-rails'
 gem 'maruku'
+
+# LTI helper
+gem 'ims-lti', '~> 2.2.1'
 
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4
@@ -111,7 +114,7 @@ gem 'newrelic_rpm'
 gem 'validates_timeliness'
 
 # JSON schema validation
-gem 'json-schema'
+gem 'json-schema', '~> 2.8.0'
 
 # Cooler hashes
 gem 'hashie'
@@ -208,6 +211,9 @@ gem 'best_in_place'
 # Box integration
 gem 'boxr'
 
+# OAuth gem for generating and validating lti requests
+gem 'oauth', '~> 0.5.1'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
@@ -297,6 +303,8 @@ group :test do
   gem 'db-query-matchers'
 
   gem 'whenever-test'
+
+  gem 'capybara-screenshot', require: false
 end
 
 group :production do

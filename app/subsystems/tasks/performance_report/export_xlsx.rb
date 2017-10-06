@@ -218,8 +218,7 @@ module Tasks
         @helper.merge_and_style(sheet, "D7:F8",
           style!(
             b: true,
-            bg_color: 'C9F0F8',
-            border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
+            border: { edges: [:left, :top, :right], :color => '000000', :style => :thin},
             alignment: {horizontal: :center, vertical: :center, wrap_text: true}
           )
         )
@@ -228,7 +227,7 @@ module Tasks
 
         top_data_heading_columns =
           3.times.map{["", {style: @normal_T}]} +
-          ["Homework\nScore", "Homework\nProgress", "Reading\nProgress"].map{|text| [text, style: @bold]}
+          ["Course Average*\n(Homework Score)", "Homework\nProgress", "Reading\nProgress"].map{|text| [text, style: @bold]}
 
         center_bold_R_style = style!(
           b: true, border: {edges: [:right], :color => '000000', :style => :thin},
@@ -264,7 +263,7 @@ module Tasks
 
         # Final averages sub headings
         @helper.merge_and_style(sheet, "D9:D10", style!(
-          b: true, border: {edges: [:left], :color => '000000', :style => :thin},
+          b: true, bg_color: 'C9F0F8', border: {edges: [:left], :color => '000000', :style => :thin},
           alignment: {horizontal: :center, vertical: :center, wrap_text: true}))
         @helper.merge_and_style(sheet, "E9:E10", center_bold_style)
         @helper.merge_and_style(sheet, "F9:F10", center_bold_R_style)
@@ -335,7 +334,8 @@ module Tasks
         # then set all numerical columns to have a fixed width.
 
         data_widths = sheet.column_info.map(&:width)
-        data_widths[3..-1] = data_widths[3..-1].length.times.map{15}
+        data_widths[3..5] = data_widths[3..5].map{20}
+        data_widths[6..-1] = data_widths[6..-1].length.times.map{15}
 
         # AVERAGE ROW
 
@@ -412,6 +412,14 @@ module Tasks
         dropped_footer_columns =
           (report[:data_headings].count*5 + 6).times.map {["", {style: dropped_footer_style}]}
         @helper.add_row(sheet, dropped_footer_columns)
+
+        # Course average explanation
+
+        3.times { sheet.add_row }
+
+        @helper.add_row(sheet, [["* Course average is the average of all homework assignment scores. " \
+                                 "Reading scores and progress averages are not included.",
+                                 {style: @italic}]])
 
         # Normalize height
 

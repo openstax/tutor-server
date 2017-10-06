@@ -6,6 +6,9 @@ class CourseMembership::AddStudent
                as: :add_enrollment,
                translations: { outputs: { type: :verbatim } }
 
+  uses_routine CourseProfile::MarkCourseEnrolled,
+               as: :mark_course_enrolled, translations: { outputs: { type: :verbatim } }
+
   protected
 
   def exec(period:, role:, student_identifier: nil,
@@ -31,5 +34,7 @@ class CourseMembership::AddStudent
       reassign_published_period_task_plans: reassign_published_period_task_plans,
       send_to_biglearn: send_to_biglearn
     )
+
+    run(:mark_course_enrolled, course: course)
   end
 end

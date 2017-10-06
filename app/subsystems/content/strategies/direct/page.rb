@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Page < Entity
+      class Page < Entitee
 
         wraps ::Content::Models::Page
 

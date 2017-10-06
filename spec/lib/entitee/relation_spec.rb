@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-class Entity
+class Entitee
   describe Relation, type: :lib do
     let(:exercise)        { 5.times.map { FactoryGirl.create(:content_exercise) } }
     let(:relation)        { Content::Models::Exercise.all }
-    let(:entity_relation) { Entity::Relation.new(relation) }
+    let(:entitee_relation) { Entitee::Relation.new(relation) }
 
     it 'responds to all ActiveRecord::Relation methods that do not modify records' do
       [
@@ -17,17 +17,17 @@ class Entity
         :includes, :joins, :limit, :lock, :none, :offset, :order, :preload, :references, :reorder,
         :reverse_order, :rewhere, :select, :uniq, :unscope, :where, :find_each, :find_in_batches
       ].each do |method_name|
-        expect(entity_relation).to respond_to(method_name)
+        expect(entitee_relation).to respond_to(method_name)
 
-        next unless entity_relation.method(method_name).arity == 0
-        expect(entity_relation.send method_name).to eq(Entity._wrap(relation.send method_name))
+        next unless entitee_relation.method(method_name).arity == 0
+        expect(entitee_relation.send method_name).to eq(Entitee._wrap(relation.send method_name))
       end
 
     end
 
     it 'returns a properly formatted string from inspect' do
-      expect(entity_relation.inspect).to(
-        eq(relation.inspect.gsub('ActiveRecord::Relation', 'Entity::Relation')
+      expect(entitee_relation.inspect).to(
+        eq(relation.inspect.gsub('ActiveRecord::Relation', 'Entitee::Relation')
                            .gsub('Content::Models::Exercise',
                                  'Content::Strategies::Direct::Exercise'))
       )

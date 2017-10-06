@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Ecosystem < Entity
+      class Ecosystem < Entitee
 
         wraps ::Content::Models::Ecosystem
 

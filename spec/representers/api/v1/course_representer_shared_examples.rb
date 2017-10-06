@@ -115,5 +115,10 @@ module Api::V1
     it 'shows does_cost' do
       expect(represented['does_cost']).to eq false
     end
+
+    it 'shows the last_lms_scores_push_job_id' do
+      course.last_lms_scores_push_job_id = "howdy"
+      expect(represented['last_lms_scores_push_job_id']).to eq "howdy"
+    end
   end
 end

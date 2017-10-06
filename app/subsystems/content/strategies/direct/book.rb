@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Book < Entity
+      class Book < Entitee
 
         wraps ::Content::Models::Book
 
