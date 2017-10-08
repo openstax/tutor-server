@@ -11,7 +11,7 @@
     http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd">
 
     <blti:title>OpenStax Tutor</blti:title>
-    <blti:description>Description of OpenStax Tutor</blti:description>
+    <blti:description>Improve how your students learn with research-based technology.</blti:description>
     <blti:launch_url><%= lms_launch_url %></blti:launch_url>
     <blti:extensions platform="canvas.instructure.com">
       <lticm:property name="privacy_level">public</lticm:property>
@@ -22,7 +22,7 @@
       </lticm:options>
       <lticm:options name="assignment_selection">
         <lticm:property name="message_type">ContentItemSelectionRequest</lticm:property>
-        <lticm:property name="url">http://localhost:3001/lms/ci_launch</lticm:property>
+        <lticm:property name="url"><%= lms_ci_launch_url %></lticm:property>
       </lticm:options>
     </blti:extensions>
 

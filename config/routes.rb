@@ -387,7 +387,6 @@ Rails.application.routes.draw do
     post :launch
     get :launch_authenticate
     get :complete_launch
-    get :ci_configuration
     post :ci_launch
   end
 
