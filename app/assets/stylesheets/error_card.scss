@@ -3,13 +3,13 @@
   margin: 16px auto;
   background-color: white;
   font-size: 16px;
-
+  $title-background: rgb(248, 232, 234);
   .body, .title {
     padding: 30px;
   }
 
   .title {
-    background-color: rgb(248, 232, 234);
+    background-color: $title-background;
     color: rgb(194, 32, 50);
     font-weight: bold;
     margin-top: -2px;
@@ -30,6 +30,17 @@
     max-width: 540px;
     .body {
       padding: 30px 0;
+    }
+  }
+
+  &.browser_upgrade {
+    .title {
+      border: 1px solid darken($title-background, 10%);
+    }
+    .body {
+      border-width: 0 1px 1px 1px;
+      border-style: solid;
+      border-color: #c4c2c5;
     }
   }
 }
