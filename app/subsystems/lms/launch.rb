@@ -61,6 +61,10 @@ class Lms::Launch
     request_parameters[:user_id]
   end
 
+  def lms_tc_scoped_user_id
+    "#{lms_user_id}--#{tool_consumer_instance_guid}"
+  end
+
   def full_name
     request_parameters[:lis_person_name_full]
   end
