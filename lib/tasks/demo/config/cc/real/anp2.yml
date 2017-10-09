@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
-
-course_name: Anatomy & Physiology with Concept Coach 2
-salesforce_book_name: Anatomy & Physiology
-appearance_code: anatomy_physiology
-cnx_book_id: 99e127f8-f722-4907-a6b3-2d62fca135d6
-
-teachers:
-  - td

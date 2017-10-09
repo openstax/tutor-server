@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
-
-course_name: Biology with Concept Coach 2
-salesforce_book_name: Biology
-appearance_code: college_biology
-cnx_book_id: 3402dc53-113d-45f3-954e-8d2ad1e73659
-
-teachers:
-  - ct

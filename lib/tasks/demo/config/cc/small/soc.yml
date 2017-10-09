@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
-
-course_name: Introduction to Sociology 2e with Concept Coach
-salesforce_book_name: Introduction to Sociology
-appearance_code: intro_sociology
-cnx_book_id: d393e255-30b3-4ba7-bc78-2fd7a4324ec8
-
-teachers:
-  - ct
