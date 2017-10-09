@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171006150216) do
+ActiveRecord::Schema.define(version: 20171009182057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -337,7 +337,7 @@ ActiveRecord::Schema.define(version: 20171006150216) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                 null: false
     t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()"
+    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
     t.integer  "sequence_number",                              default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                      null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
@@ -348,9 +348,9 @@ ActiveRecord::Schema.define(version: 20171006150216) do
     t.boolean  "does_cost",                                    default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
+    t.boolean  "is_preview_ready",                             default: false,               null: false
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
-    t.boolean  "is_preview_ready",                             default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
   end
@@ -443,17 +443,19 @@ ActiveRecord::Schema.define(version: 20171006150216) do
     t.string   "owner_type", null: false
     t.string   "key",        null: false
     t.string   "secret",     null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "lms_apps", ["key"], name: "index_lms_apps_on_key", unique: true, using: :btree
   add_index "lms_apps", ["owner_type", "owner_id"], name: "index_lms_apps_on_owner_type_and_owner_id", unique: true, using: :btree
 
   create_table "lms_contexts", force: :cascade do |t|
-    t.string  "lti_id",                   null: false
-    t.integer "lms_tool_consumer_id",     null: false
-    t.integer "course_profile_course_id", null: false
+    t.string   "lti_id",                   null: false
+    t.integer  "lms_tool_consumer_id",     null: false
+    t.integer  "course_profile_course_id", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", unique: true, using: :btree
@@ -462,10 +464,12 @@ ActiveRecord::Schema.define(version: 20171006150216) do
   add_index "lms_contexts", ["lti_id"], name: "index_lms_contexts_on_lti_id", using: :btree
 
   create_table "lms_course_score_callbacks", force: :cascade do |t|
-    t.string  "result_sourcedid",         null: false
-    t.string  "outcome_url",              null: false
-    t.integer "user_profile_id",          null: false
-    t.integer "course_profile_course_id", null: false
+    t.string   "result_sourcedid",         null: false
+    t.string   "outcome_url",              null: false
+    t.integer  "user_profile_id",          null: false
+    t.integer  "course_profile_course_id", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_score_callbacks_on_course_user_result_outcome", unique: true, using: :btree
@@ -474,20 +478,23 @@ ActiveRecord::Schema.define(version: 20171006150216) do
 
   create_table "lms_nonces", force: :cascade do |t|
     t.string   "value",      limit: 128, null: false
-    t.datetime "created_at"
+    t.datetime "created_at",             null: false
     t.integer  "lms_app_id",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
 
   create_table "lms_tool_consumers", force: :cascade do |t|
-    t.string "guid",                null: false
-    t.string "product_family_code"
-    t.string "version"
-    t.string "name"
-    t.string "description"
-    t.string "url"
-    t.string "contact_email"
+    t.string   "guid",                null: false
+    t.string   "product_family_code"
+    t.string   "version"
+    t.string   "name"
+    t.string   "description"
+    t.string   "url"
+    t.string   "contact_email"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   add_index "lms_tool_consumers", ["guid"], name: "index_lms_tool_consumers_on_guid", unique: true, using: :btree
@@ -495,12 +502,17 @@ ActiveRecord::Schema.define(version: 20171006150216) do
   create_table "lms_trusted_launch_data", force: :cascade do |t|
     t.json     "request_params"
     t.string   "request_url"
-    t.datetime "created_at",     default: '2017-09-14 00:00:00', null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
+  add_index "lms_trusted_launch_data", ["created_at"], name: "index_lms_trusted_launch_data_on_created_at", using: :btree
+
   create_table "lms_users", force: :cascade do |t|
-    t.string  "lti_user_id",                   null: false
-    t.integer "openstax_accounts_accounts_id"
+    t.string   "lti_user_id",                   null: false
+    t.integer  "openstax_accounts_accounts_id"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   add_index "lms_users", ["lti_user_id"], name: "index_lms_users_on_lti_user_id", using: :btree
