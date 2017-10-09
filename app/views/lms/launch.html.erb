@@ -9,8 +9,8 @@
 
     <div id="lms-say-open-in-tab" style="display:none">
       <%= image_tag "openstax-tutor-beta-logo.svg", class: 'logo' %>
-      <div class="text">Continue to OpenStax Tutor in a new browser tab.</div>
-      <%= link_to "Continue", lms_launch_authenticate_path, target: :_blank, class: "btn" %>
+      <div class="text" id="message">Continue to OpenStax Tutor in a new browser tab.</div>
+      <%= link_to "Continue", lms_launch_authenticate_path, target: :_blank, class: "btn", id: 'continue' %>
     </div>
 
     <script>
@@ -30,8 +30,16 @@
       } else {
         window.location.href = '<%= lms_launch_authenticate_path %>';
       }
+
+      document.getElementById('continue').onclick=function() {
+        document.getElementById('message').innerHTML =
+          '<p>OpenStax Tutor was successfully loaded in a new browser tab.</p>' +
+          '<p>Reload the page to access it again.</p>';
+        document.getElementById('continue').style.display = 'none'
+      }
     })();
     </script>
 
   </body>
 </html>
+
