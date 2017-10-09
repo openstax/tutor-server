@@ -38,7 +38,7 @@ class Lms::LaunchHelper
       expect(redirect_path).to eq "/accounts/login"
       expect(redirect_query_hash[:sp]["signature"]).not_to be_blank
 
-      user_identifer = redirect_query_hash[:sp]["uuid"]
+      user_identifer = redirect_query_hash[:sp]["uuid"].split('--')[0]
       user = this.get_user!(user_identifer, default: log_in_as)
 
       stub_current_user(user)

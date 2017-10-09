@@ -124,7 +124,7 @@ class LmsController < ApplicationController
     redirect_to openstax_accounts.login_url(
       sp: OpenStax::Api::Params.sign(
         params: {
-          uuid:  launch.lms_user_id,
+          uuid:  launch.lms_tc_scoped_user_id,
           name:  launch.full_name,
           email: launch.email,
           school: launch.school,
