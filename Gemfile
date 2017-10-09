@@ -26,6 +26,9 @@ gem 'autoprefixer-rails'
 # JavaScript asset compressor
 gem 'uglifier', '>= 1.3.0'
 
+# Detect browser being used in order to display a "Please upgrade" message
+gem 'browser', '~> 2.5'
+
 # CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails', '~> 4.0.0'
 
