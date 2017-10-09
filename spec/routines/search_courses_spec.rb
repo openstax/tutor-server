@@ -42,6 +42,12 @@ RSpec.describe SearchCourses, type: :routine do
                               does_cost: true
     )
   end
+  let!(:course_4) do
+    FactoryGirl.create(
+      :course_profile_course, name: 'Howdy', school: tutor_school, offering: offering_1, year: 2017, term: :fall,
+                              does_cost: true, is_preview: true
+    )
+  end
 
   let(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
 
@@ -176,5 +182,15 @@ RSpec.describe SearchCourses, type: :routine do
   it 'returns courses that cost' do
     courses = described_class[query: "costs:true", order_by: 'ID asc'].to_a
     expect(courses).to eq [course_3]
+  end
+
+  it 'excludes preview courses by default' do
+    courses = described_class[query: "", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_1, course_2, course_3]
+  end
+
+  it 'can include preview courses' do
+    courses = described_class[query: "is_preview:true", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_4]
   end
 end

@@ -95,7 +95,7 @@ gem 'squeel'
 gem 'fine_print', '~> 3.1.0'
 
 # Keyword search
-gem "keyword_search"
+gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
 
 # File uploads
 gem 'remotipart'

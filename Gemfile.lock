@@ -8,6 +8,13 @@ GIT
       restforce (~> 2.1.0)
 
 GIT
+  remote: https://github.com/openstax/keyword_search.git
+  revision: 21785cb0f644f16c30886a3fa83213887d0f4cde
+  ref: 21785cb0f644
+  specs:
+    keyword_search (1.5.0)
+
+GIT
   remote: https://github.com/openstax/rescue_from.git
   revision: e0d60e68afc629361d8b0c142c5eb0283e523aaa
   ref: e0d60e68afc629361d8b0c142c5eb0283e523aaa
@@ -402,7 +409,6 @@ GEM
     json-schema (2.8.0)
       addressable (>= 2.4)
     jwt (1.5.1)
-    keyword_search (1.5.0)
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -818,7 +824,7 @@ DEPENDENCIES
   jobba (~> 1.6.0)
   jquery-rails
   json-schema (~> 2.8.0)
-  keyword_search
+  keyword_search!
   launchy
   lev (~> 8.0.0)
   lograge
