@@ -159,6 +159,15 @@ class SearchCourses
           @items = @items.where(does_cost: sanitized_queries)
         end
       end
+
+      with.keyword :is_preview, nil, "false" do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: false)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(is_preview: sanitized_queries)
+        end
+      end
     end
   end
 end
