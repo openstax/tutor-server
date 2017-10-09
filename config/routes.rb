@@ -235,6 +235,8 @@ Rails.application.routes.draw do
       collection do
         get :minimal_error
         get :minimal_error_iframe
+        get :launch_iframe
+        get :launch
       end
     end
 

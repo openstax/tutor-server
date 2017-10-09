@@ -1,0 +1,40 @@
+// Core variables and mixins
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+// Reset and dependencies
+@import "bootstrap/normalize";
+@import "bootstrap/buttons";
+@import "common_colors";
+@import "fonts";
+@import "mixins";
+
+body {
+  font-family: $tutor-default-font-list;
+  font-weight: 300;
+  color: #424242;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  #lms-say-open-in-tab {
+    background-color: white;
+    text-align: center;
+
+    .logo {
+      display: block;
+      height: 41px;
+      width: 265px;
+      margin: 0px auto 20px;
+    }
+
+    .text {
+      margin: 30px;
+    }
+
+    .btn {
+      @include tutor-button();
+    }
+  }
+}

@@ -33,7 +33,7 @@ class Lms::LaunchHelper
     spec.instance_eval do
       expect(response.status).to eq 200
 
-      get response.body.match(/a target=\"_blank\" href=\"(.*)\"/)[1] # 'click' open in new tab
+      get response.body.match(/a target=\"_blank\" .* href=\"(.*)\"/)[1] # 'click' open in new tab
 
       expect(redirect_path).to eq "/accounts/login"
       expect(redirect_query_hash[:sp]["signature"]).not_to be_blank
