@@ -31,4 +31,5 @@ class StaticPagesController < ApplicationController
   def stubbed_payments
     render layout: false
   end
+
 end
