@@ -50,6 +50,7 @@ body#enroll {
       justify-content: space-between;
 
       > div {
+        flex: 1;
         background-size: 100px auto;
         background-repeat: no-repeat;
         background-position: top center;
