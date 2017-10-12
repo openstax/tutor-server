@@ -1,9 +1,0 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base.yml')) %>
-
-course_name: Principles of Economics with Concept Coach
-salesforce_book_name: Economics
-appearance_code: principles_economics
-cnx_book_id: d2fbadca-e4f3-4432-a074-2438c216b62a
-
-teachers:
-  - ct
