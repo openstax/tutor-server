@@ -37,7 +37,7 @@ module Tasks
       is_cc = course.is_concept_coach
       klass = "Tasks::PerformanceReport::Export#{is_cc ? 'Cc' : ''}#{format.to_s.camelize}"
       exporter = klass.constantize
-      filename = [FilenameSanitizer.sanitize(course.name),
+      filename = [FilenameSanitizer.sanitize(course.name.first(200)),
                   'Scores',
                   Time.now.utc.strftime("%Y%m%d-%H%M%S")].join('_')
 
