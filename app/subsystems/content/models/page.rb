@@ -112,7 +112,7 @@ class Content::Models::Page < IndestructibleRecord
   end
 
   def parser
-    @parser ||= parser_class.new(title: title, content: content)
+    @parser ||= parser_class.new(url: url, title: title, content: content)
   end
 
   def fragment_splitter
