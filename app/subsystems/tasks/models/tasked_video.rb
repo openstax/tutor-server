@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedVideo < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedVideo < IndestructibleRecord
   acts_as_tasked
 
   validates :url, presence: true

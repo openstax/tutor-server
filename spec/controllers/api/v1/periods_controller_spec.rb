@@ -183,7 +183,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'does not restore periods that are not deleted' do
-      period.to_model.restore!(recursive: true)
+      period.to_model.restore!
 
       api_put :restore, teacher_token, parameters: { id: period.id }
 

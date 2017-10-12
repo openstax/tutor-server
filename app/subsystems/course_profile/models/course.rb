@@ -1,11 +1,13 @@
-class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
+class CourseProfile::Models::Course < ApplicationRecord
+
+  acts_as_paranoid without_default_scope: true
 
   include DefaultTimeValidations
 
   MIN_YEAR = 2015
   MAX_FUTURE_YEARS = 2
 
-  belongs_to_time_zone default: 'Central Time (US & Canada)', dependent: :destroy, autosave: true
+  belongs_to_time_zone default: 'Central Time (US & Canada)', autosave: true
 
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
                            class_name: 'CourseProfile::Models::Course'
@@ -13,23 +15,23 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
   belongs_to :school, subsystem: :school_district
   belongs_to :offering, subsystem: :catalog
 
-  has_many :periods, subsystem: :course_membership, dependent: :destroy
-  has_many :periods_with_deleted,
-           -> { with_deleted },
-           subsystem: :course_membership,
-           dependent: :destroy,
-           class_name: 'CourseMembership::Models::Period',
-           inverse_of: :course
+  has_many :periods, subsystem: :course_membership,
+                     dependent: :destroy,
+                     inverse_of: :course
 
-  has_many :teachers, subsystem: :course_membership, dependent: :destroy, inverse_of: :course
-  has_many :students, subsystem: :course_membership, dependent: :destroy, inverse_of: :course
+  has_many :teachers, subsystem: :course_membership,
+                      dependent: :destroy,
+                      inverse_of: :course
+  has_many :students, subsystem: :course_membership,
+                      dependent: :destroy,
+                      inverse_of: :course
 
-  has_many :excluded_exercises, subsystem: :course_content, dependent: :destroy
+  has_many :excluded_exercises, subsystem: :course_content
 
-  has_many :course_ecosystems, subsystem: :course_content, dependent: :destroy
+  has_many :course_ecosystems, subsystem: :course_content
   has_many :ecosystems, through: :course_ecosystems, subsystem: :content
 
-  has_many :course_assistants, subsystem: :tasks, dependent: :destroy
+  has_many :course_assistants, subsystem: :tasks
 
   has_many :taskings, through: :periods, subsystem: :tasks
 
@@ -90,7 +92,7 @@ class CourseProfile::Models::Course < Tutor::SubSystems::BaseModel
   end
 
   def deletable?
-    periods.empty? && teachers.empty? && students.empty?
+    periods.all?(&:archived?) && teachers.all?(&:deleted?) && students.all?(&:dropped?)
   end
 
   protected

@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedInteractive < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedInteractive < IndestructibleRecord
   acts_as_tasked
 
   validates :url, presence: true

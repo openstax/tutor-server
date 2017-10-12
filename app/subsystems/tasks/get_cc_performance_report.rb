@@ -13,7 +13,7 @@ module Tasks
       ecosystems_map = GetCourseEcosystemsMap[course: course]
       cc_tasks_map = get_cc_tasks_map(ecosystems_map, taskings)
 
-      outputs[:performance_report] = course.periods.map do |period|
+      outputs[:performance_report] = course.periods.reject(&:archived?).map do |period|
         period_cc_tasks_map = cc_tasks_map[period] || {}
 
         sorted_period_pages =
@@ -23,7 +23,10 @@ module Tasks
                              .uniq
                              .sort_by(&:book_location)
 
+        # Dropped students are excluded from the CC performance report
         period_students = period.latest_enrollments
+                                .joins(:student)
+                                .where(student: { dropped_at: nil })
                                 .preload(student: {role: {profile: :account}})
                                 .map(&:student)
 
@@ -40,7 +43,7 @@ module Tasks
             role: student.role.id,
             data: data,
             average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil}),
-            is_dropped: student.deleted_at.present?
+            is_dropped: false
           }
         end.sort_by do |hash|
           sort_name = "#{hash[:last_name]} #{hash[:first_name]}"
@@ -50,7 +53,7 @@ module Tasks
         Hashie::Mash.new({
           period: period,
           overall_average_score: average(
-            student_data.map{|sd| sd[:is_dropped] ? nil : sd[:average_score]}
+            student_data.map{ |sd| sd[:average_score] }
           ),
           data_headings: data_headings,
           students: student_data
@@ -87,7 +90,7 @@ module Tasks
             map_cc_task_to_page(page_to_page_map, tasking.task.concept_coach_task)
           end.each_with_object({}) do |(page, taskings), hash|
             hash[page] = taskings.map{ |tasking| tasking.task.concept_coach_task }
-            hash[:is_dropped] = role.student.deleted_at.present?
+            hash[:is_dropped] = role.student.dropped?
           end
         end
       end

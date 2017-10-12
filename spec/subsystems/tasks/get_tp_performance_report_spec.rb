@@ -546,7 +546,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
   end
 
   it 'returns nil when a student did not work a particular task' do
-    first_student_of_first_period.role.taskings.first.task.destroy
+    first_student_of_first_period.role.taskings.first.task.really_destroy!
     expect(first_period_report[:students].first[:data]).to include nil
   end
 

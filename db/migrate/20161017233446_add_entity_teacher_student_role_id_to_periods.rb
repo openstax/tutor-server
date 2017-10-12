@@ -4,8 +4,8 @@ class AddEntityTeacherStudentRoleIdToPeriods < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        print "\nMigrating #{CourseMembership::Models::Period.with_deleted.count} periods"
-        CourseMembership::Models::Period.with_deleted.find_each do |period|
+        print "\nMigrating #{CourseMembership::Models::Period.unscoped.count} periods"
+        CourseMembership::Models::Period.unscoped.find_each do |period|
           teacher_student_role = Entity::Role.create!(role_type: :teacher_student)
           period.update_attribute :entity_teacher_student_role_id, teacher_student_role.id
           print '.'

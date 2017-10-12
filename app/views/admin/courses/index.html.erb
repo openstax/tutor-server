@@ -20,15 +20,17 @@
                        job_path_proc: ->(job) { admin_job_path(job.id) },
                        extra_fields_procs: [ lambda do |course_info| %>
     <td>
-      <%= link_to 'List Students', admin_course_students_path(course_info.id), style: 'display:block' %>
-      <%= link_to 'Edit Course', edit_admin_course_path(course_info.id), style: 'display:block' %>
+      <%= link_to 'List Students', admin_course_students_path(course_info.id),
+                                   class: 'btn btn-sm btn-primary course-stats-button' %>
+      <%= link_to 'Edit', edit_admin_course_path(course_info.id),
+                          class: "btn btn-sm btn-primary course-stats-button" %>
       <% if course_info.teachers.empty? && course_info.periods.empty? %>
         <%= link_to 'Delete', admin_course_path(course_info.id),
                               method: :delete,
                               data: {
                                 confirm: "Are you sure you want to delete #{course_info.name}?"
                               },
-                              style: 'display:block' %>
+                              class: "btn btn-sm btn-primary course-stats-button" %>
       <% end %>
     </td>
   <% end ] } %>

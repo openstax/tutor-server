@@ -5,11 +5,10 @@ desc "Find users enrolled multiple times in the same course"
 task find_dupes: :environment do
   CSV.open(STUDENT_DUPES_EXPORT_PATH,'w+') do |csv|
 
-    csv << ["AccountID", "CourseID", "PeriodID", "NumStepsComplete", "LatestWorkedAt", "Deleted?", "EnrollmentCreatedAt"]
+    csv << ["AccountID", "CourseID", "PeriodID", "NumStepsComplete", "LatestWorkedAt", "Dropped?", "EnrollmentCreatedAt"]
 
     CourseMembership::Models::Enrollment
       .latest
-      .with_deleted
       .includes{student.role.role_user.profile}
       .includes{student.role.taskings.task}.find_each do |ee|
 
@@ -25,7 +24,7 @@ task find_dupes: :environment do
                ee.course_membership_period_id,
                completed_steps_count,
                latest_worked_at,
-               ee.deleted? ? "Deleted" : "Active",
+               ee.student.dropped? ? "Dropped" : "Active",
                ee.created_at ]
 
     end

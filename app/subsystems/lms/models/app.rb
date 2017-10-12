@@ -1,4 +1,4 @@
-class Lms::Models::App < Tutor::SubSystems::BaseModel
+class Lms::Models::App < ApplicationRecord
 
   # Currently, apps are only owned by individual courses; later they will also
   # be owned by schools or school systems
@@ -19,4 +19,3 @@ class Lms::Models::App < Tutor::SubSystems::BaseModel
   end
 
 end
-

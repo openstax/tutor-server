@@ -45,7 +45,7 @@ class Admin::PeriodsController < Admin::BaseController
   end
 
   def restore
-    if @period.restore(recursive: true)
+    if @period.restore
       flash[:notice] = "Period \"#{@period.name}\" restored."
     else
       flash[:error] = @period.errors.full_messages
@@ -72,7 +72,7 @@ class Admin::PeriodsController < Admin::BaseController
   end
 
   def get_period
-    @period = CourseMembership::Models::Period.with_deleted.find(params[:id])
+    @period = CourseMembership::Models::Period.find(params[:id])
     @course = @period.course
   end
 end

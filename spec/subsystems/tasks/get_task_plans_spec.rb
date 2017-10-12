@@ -27,7 +27,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     # Remove placeholder steps since they can sometimes be deleted, messing up our counting
     student_tasks.each do |task|
-      task.task_steps.select(&:placeholder?).each(&:really_destroy!)
+      task.task_steps.select(&:placeholder?).each(&:destroy!)
       task.pes_are_assigned = true
       task.spes_are_assigned = true
       task.update_step_counts!
@@ -88,5 +88,13 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
+  end
+
+  it 'does not return withdrawn task_plans' do
+    task_plan_2.destroy
+    out = described_class.call(owner: course).outputs
+    expect(out[:plans].length).to eq 2
+    expect(out[:plans]).to include(task_plan_1, task_plan_3)
+    expect(out[:trouble_plan_ids]).to be_nil
   end
 end

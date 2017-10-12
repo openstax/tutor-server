@@ -37,7 +37,9 @@ RSpec.feature 'Admin changing course Salesforce settings' do
 
     scenario 'a bad SF ID gives an error message' do
       go_to_salesforce_tab
-      allow_any_instance_of(Admin::CoursesAddSalesforce).to receive(:get_salesforce_object_for_id) { nil }
+      allow_any_instance_of(Admin::CoursesAddSalesforce).to(
+        receive(:get_salesforce_object_for_id) { nil }
+      )
       fill_in 'add_salesforce_salesforce_id', with: 'foo'
       click_button 'Add'
       expect(page).to have_content('does_not_exist')
@@ -58,7 +60,8 @@ RSpec.feature 'Admin changing course Salesforce settings' do
     end
 
     scenario 'a valid, used SF ID gives an error' do
-      existing_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'orig')
+      existing_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary,
+                                          id: 'orig')
       FactoryGirl.create(:salesforce_attached_record, tutor_object: @course,
                                                       salesforce_object: existing_sf_object)
       go_to_salesforce_tab
@@ -86,7 +89,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
     it "removes the same record from the relevant periods" do
       expect {
         click_button 'Remove'
-      }.to change{Salesforce::Models::AttachedRecord.count}.by(-2)
+      }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(-2)
       expect(page).not_to have_content(/orig.*orig/) # should just be one 'orig' now
     end
 
@@ -95,7 +98,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
       expect(page).to have_content(/orig/)
       expect{
         click_button 'Restore'
-      }.to change{Salesforce::Models::AttachedRecord.count}.by(1)
+      }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(1)
     end
   end
 

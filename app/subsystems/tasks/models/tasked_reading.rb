@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedReading < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedReading < IndestructibleRecord
   acts_as_tasked
 
   json_serialize :book_location, Integer, array: true

@@ -15,7 +15,7 @@ RSpec.describe Admin::PeriodsController do
     it 'archives the period' do
       expect {
         delete :destroy, course_id: course.id, id: period.id
-      }.to change { CourseMembership::Models::Period.count }.by(-1)
+      }.to change { period.reload.archived? }.from(false).to(true)
       expect(flash[:notice]).to eq 'Period "1st" archived.'
     end
   end
@@ -29,7 +29,7 @@ RSpec.describe Admin::PeriodsController do
 
       expect {
         put :restore, course_id: course.id, id: period.id
-      }.to change { CourseMembership::Models::Period.count }.by(1)
+      }.to change { period.reload.archived? }.from(true).to(false)
       expect(flash[:notice]).to eq 'Period "1st" restored.'
     end
   end

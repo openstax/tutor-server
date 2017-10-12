@@ -18,8 +18,4 @@ RSpec.describe User::Strategies::Direct::AnonymousUser, type: :strategy do
   it 'is not an application' do
     expect(anon.is_application?).to be_falsy
   end
-
-  it 'is not deleted' do
-    expect(anon.is_deleted?).to be_falsy
-  end
 end

@@ -1,4 +1,4 @@
-class Content::Models::Exercise < Tutor::SubSystems::BaseModel
+class Content::Models::Exercise < IndestructibleRecord
 
   attr_accessor :pool_types, :is_excluded
 

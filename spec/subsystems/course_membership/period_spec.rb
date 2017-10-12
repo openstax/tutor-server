@@ -16,9 +16,9 @@ module CourseMembership
                                                         course: period.course).outputs.role }
 
     it 'exposes course, name, student_roles, teacher_roles,
-        enrollment_code, deleted? and to_model' do
+        enrollment_code, archived? and to_model' do
       [:course, :name, :student_roles, :teacher_roles,
-       :enrollment_code, :deleted?, :to_model].each do |method_name|
+       :enrollment_code, :archived?, :to_model].each do |method_name|
         expect(period).to respond_to(method_name)
       end
 

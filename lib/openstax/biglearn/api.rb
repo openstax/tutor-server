@@ -174,9 +174,9 @@ module OpenStax::Biglearn::Api
 
         num_course_containers = 0
         num_students = 0
-        course.periods_with_deleted.each do |period|
+        course.periods.each do |period|
           num_course_containers += 1
-          num_students += period.latest_enrollments_with_deleted.length
+          num_students += period.latest_enrollments.length
         end
 
         if num_course_containers > MAX_CONTAINERS_PER_COURSE

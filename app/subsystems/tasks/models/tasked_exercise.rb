@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   acts_as_tasked
 

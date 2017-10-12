@@ -54,4 +54,24 @@ RSpec.describe GetUserCourses, type: :routine do
     expect(courses).to eq [course_1]
   end
 
+  it 'does not return courses where the user is a deleted teacher' do
+    user = FactoryGirl.create(:user)
+
+    course_1 = FactoryGirl.create :course_profile_course
+    course_1_period = FactoryGirl.create :course_membership_period, course: course_1
+    course_2 = FactoryGirl.create :course_profile_course
+    course_3 = FactoryGirl.create :course_profile_course
+    course_3_period = FactoryGirl.create :course_membership_period, course: course_3
+
+    course_2_role = AddUserAsCourseTeacher[user: user, course: course_2]
+    AddUserAsPeriodStudent[user: user, period: course_3_period]
+    AddUserAsPeriodStudent[user: user, period: course_1_period]
+
+    course_2_role.teacher.destroy
+
+    courses = GetUserCourses[user: user, types: :teacher]
+
+    expect(courses).to eq []
+  end
+
 end

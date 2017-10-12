@@ -280,7 +280,12 @@ Rails.application.routes.draw do
       end
 
       resources :students, only: [:index]
-      resources :teachers, only: [:destroy], shallow: true
+      resources :teachers, only: [], shallow: true do
+        member do
+          delete :delete
+          put :undelete
+        end
+      end
     end
 
     resources :students, only: :update do

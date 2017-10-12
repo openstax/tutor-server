@@ -16,10 +16,10 @@ class RenameStudentDeidentifierToRoleResearchIdentifier < ActiveRecord::Migratio
       print '.'
     end
 
-    task_plan_count = Tasks::Models::TaskPlan.where(type: 'external').count
+    task_plan_count = Tasks::Models::TaskPlan.unscoped.where(type: 'external').count
     print "\n\nMigrating #{task_plan_count} external task plans"
 
-    Tasks::Models::TaskPlan.where(type: 'external').find_each do |task_plan|
+    Tasks::Models::TaskPlan.unscoped.where(type: 'external').find_each do |task_plan|
       url = task_plan.settings['external_url']
       task_plan.settings['external_url'] = url.gsub('{{deidentifier}}', '{{research_identifier}}')
       task_plan.save(validate: false)

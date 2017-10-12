@@ -5,14 +5,25 @@
                      extra_headers: 'Actions',
                      extra_fields_proc: lambda do |teacher| %>
       <td>
+        <% if teacher.deleted? %>
+        <%= link_to 'Readd to course',
+                    undelete_admin_teacher_path(teacher),
+                    method: :put,
+                    class: 'btn btn-xs btn-primary',
+                    data: {
+                      confirm: "Are you sure you want to readd teacher \"#{teacher.role.name
+                               }\" to the course?"
+                    } %>
+        <% else %>
         <%= link_to 'Remove from course',
-                    admin_teacher_path(teacher),
+                    delete_admin_teacher_path(teacher),
                     method: :delete,
                     class: 'btn btn-xs btn-primary',
                     data: {
-                      confirm: "Are you sure you want to remove teacher \"#{teacher.role.name}\" from the course?"
+                      confirm: "Are you sure you want to remove teacher \"#{teacher.role.name
+                               }\" from the course?"
                     } %>
-
+        <% end %>
       </td>
 <% end } %>
 

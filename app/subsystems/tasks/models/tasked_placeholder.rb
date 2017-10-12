@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedPlaceholder < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedPlaceholder < ApplicationRecord
   acts_as_tasked
 
   enum placeholder_type: [:unknown_type, :exercise_type]

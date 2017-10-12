@@ -350,7 +350,7 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       num_periods = nil
 
       expect{
-        num_periods = @preloaded_course.periods_with_deleted.size
+        num_periods = @preloaded_course.periods.size
       }.not_to make_database_queries
 
       expect(num_periods).to eq 2
@@ -360,8 +360,8 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
       period_1_enrollments, period_2_enrollments = nil
 
       expect {
-        period_1_enrollments = @preloaded_course.periods_with_deleted[0].latest_enrollments_with_deleted.size
-        period_2_enrollments = @preloaded_course.periods_with_deleted[1].latest_enrollments_with_deleted.size
+        period_1_enrollments = @preloaded_course.periods[0].latest_enrollments.size
+        period_2_enrollments = @preloaded_course.periods[1].latest_enrollments.size
       }.not_to make_database_queries
 
       expect(period_1_enrollments).to eq 1

@@ -8,10 +8,9 @@ module Content
       ecosystem = Content::Models::Ecosystem.find(id)
       fatal_error(
         code: :ecosystem_cannot_be_deleted,
-        message: 'The ecosystem cannot be deleted because it is linked to ' +
-                 'a course',
+        message: 'The ecosystem cannot be deleted because it is linked to a course',
       ) unless ecosystem.deletable?
-      ecosystem.destroy
+      ecosystem.destroy!
       transfer_errors_from(ecosystem, { type: :verbatim }, true)
     end
   end

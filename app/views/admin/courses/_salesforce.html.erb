@@ -16,7 +16,6 @@
 <%
   find_id = ->(tutor_record) {
     Salesforce::Models::AttachedRecord
-      .with_deleted
       .where(tutor_gid: tutor_record.to_global_id.to_s)
       .map(&:salesforce_id)
   }
@@ -29,9 +28,7 @@
   }
 </style>
 
-<% course_ars = Salesforce::Models::AttachedRecord
-                  .with_deleted
-                  .where(tutor_gid: @course.to_global_id.to_s) %>
+<% course_ars = Salesforce::Models::AttachedRecord.where(tutor_gid: @course.to_global_id.to_s) %>
 
 <% available_course_sf_object_ids = course_ars.select{|car| !car.deleted? }.map(&:salesforce_id) %>
 
@@ -110,19 +107,20 @@
     <tr>
       <th style="width: 150px">Period</th>
       <th>Created At</th>
-      <th>Deleted At</th>
+      <th>Archived At</th>
       <th style="width: 300px">Link to SF</th>
       <th>Salesforce ID</th>
     </tr>
   </thead>
   <tbody>
-  <% @periods.with_deleted.each_with_index do |period,pp| %>
+  <% @periods.each_with_index do |period,pp| %>
     <% period_sf_object_id = Salesforce::Models::AttachedRecord
-                               .where(tutor_gid: period.to_global_id.to_s).first.try(:salesforce_id) %>
+                               .find_by(tutor_gid: period.to_global_id.to_s)
+                               .try!(:salesforce_id) %>
     <tr>
-      <td><span class="<%= 'deleted' if period.deleted? %>"><%= period.name %><span></td>
+      <td><span class="<%= 'deleted' if period.archived? %>"><%= period.name %><span></td>
       <td><small><%= period.created_at %></small></td>
-      <td><small><%= period.deleted_at %></small></td>
+      <td><small><%= period.archived_at %></small></td>
       <td><%= sf_linker.call(period_sf_object_id) %></td>
       <td>
           <%= lev_form_for :change_salesforce, url: change_salesforce_admin_period_path(period),

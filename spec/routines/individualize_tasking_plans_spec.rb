@@ -90,7 +90,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     end
 
     it 'returns no results for periods that have been deleted' do
-      period_1.delete
+      period_1.destroy!
       task_plan.reload
       tasking_plan.reload
 
@@ -147,7 +147,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     end
 
     it 'returns no results if the period has been deleted' do
-      period_1.delete
+      period_1.destroy!
       task_plan.reload
 
       expect(result).to be_empty

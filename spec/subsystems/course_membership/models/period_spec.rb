@@ -23,19 +23,21 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
 
-    expect{ period.destroy! }.to change{described_class.count}.by(-1)
+    expect{ period.destroy! }.to change{ period.reload.archived? }.from(false).to(true)
     expect(period.errors).to be_empty
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq false
 
-    expect{ period.restore!(recursive: true) }.to change{described_class.count}.by(1)
+    expect { period.restore!(recursive: true) }.to(
+      change{ period.reload.archived? }.from(true).to(false)
+    )
     expect(period.errors).to be_empty
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
   end
 
   it 'does not collide in name with deleted periods' do
-    expect{ period.destroy! }.to change{described_class.count}.by(-1)
+    expect{ period.destroy! }.to change{ period.reload.archived? }.from(false).to(true)
     new_period = FactoryGirl.create :course_membership_period, course: period.course,
                                                                name: period.name
     expect(new_period).to be_valid

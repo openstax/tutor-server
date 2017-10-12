@@ -8,6 +8,10 @@ module Content
         verify_and_return strategy_class.all, klass: self, error: StrategyError
       end
 
+      def without_deleted(strategy_class: ::Content::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.without_deleted, klass: self, error: StrategyError
+      end
+
       def create(comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
         verify_and_return strategy_class.create(comments: comments),

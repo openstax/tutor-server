@@ -33,10 +33,6 @@ module User
           true
         end
 
-        def is_deleted?
-          false
-        end
-
         def is_admin?
           false
         end

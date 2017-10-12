@@ -20,7 +20,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
       it "returns false" do
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: target_student_role)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_falsey
+        expect(result.outputs.is_course_student).to eq false
       end
     end
     context "multiple roles are given" do
@@ -31,7 +31,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
 
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_falsey
+        expect(result.outputs.is_course_student).to eq false
       end
     end
     context "when expressed called" do
@@ -40,7 +40,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
           course: target_course,
           roles: target_student_role
         ]
-        expect(is_course_student).to be_falsey
+        expect(is_course_student).to eq false
       end
     end
   end
@@ -56,7 +56,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
       it "returns true" do
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: target_student_role)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_truthy
+        expect(result.outputs.is_course_student).to eq true
       end
     end
     context "multiple roles are given" do
@@ -67,8 +67,8 @@ RSpec.describe CourseMembership::IsCourseStudent do
 
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_archived).to be_nil
-        expect(result.outputs.is_course_student).to be_truthy
+        expect(result.outputs.is_archived).to eq false
+        expect(result.outputs.is_course_student).to eq true
       end
     end
     context "when expressed called" do
@@ -77,7 +77,7 @@ RSpec.describe CourseMembership::IsCourseStudent do
           course: target_course,
           roles: target_student_role
         ]
-        expect(is_course_student).to be_truthy
+        expect(is_course_student).to eq true
       end
     end
     context "when period is archived" do
@@ -86,9 +86,9 @@ RSpec.describe CourseMembership::IsCourseStudent do
       end
       it "returns is_archived" do
         result = CourseMembership::IsCourseStudent.call(
-          course: target_course, roles: target_student_role, include_archived: true
+          course: target_course, roles: target_student_role, include_archived_periods: true
         )
-        expect(result.outputs.is_archived).to be true
+        expect(result.outputs.is_archived).to eq true
       end
     end
 
@@ -98,10 +98,10 @@ RSpec.describe CourseMembership::IsCourseStudent do
       end
       it "returns is_dropped" do
         result = CourseMembership::IsCourseStudent.call(
-          course: target_course, roles: target_student_role, include_dropped: true
+          course: target_course, roles: target_student_role, include_dropped_students: true
         )
-        expect(result.outputs.is_archived).to be_nil
-        expect(result.outputs.is_dropped).to be true
+        expect(result.outputs.is_archived).to eq false
+        expect(result.outputs.is_dropped).to eq true
       end
 
     end

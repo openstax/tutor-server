@@ -42,8 +42,7 @@ module User
           end
 
           def find_by_username(username)
-            profile = ::User::Models::Profile.with_deleted
-                                             .joins(:account)
+            profile = ::User::Models::Profile.joins(:account)
                                              .where(account: { username: username }).take
             return if profile.nil?
 
@@ -67,10 +66,6 @@ module User
 
         def is_anonymous?
           false
-        end
-
-        def is_deleted?
-          !repository.deleted_at.nil?
         end
 
         def is_admin?

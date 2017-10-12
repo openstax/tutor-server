@@ -41,7 +41,6 @@ module Api::V1
              type: Integer,
              readable: true,
              writeable: false,
-             getter: ->(*) { to_model.students.where(deleted_at: nil).count },
              schema_info: {
                required: true
              }
@@ -58,7 +57,7 @@ module Api::V1
              writeable: true,
              schema_info: { required: false }
 
-    property :deleted?,
+    property :archived?,
              as: :is_archived,
              readable: true,
              writeable: false,
@@ -70,7 +69,7 @@ module Api::V1
     property :archived_at,
              readable: true,
              writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(deleted_at) },
+             getter: ->(*) { DateTimeUtilities.to_api_s(archived_at) },
              schema_info: {
                type: 'date',
                description: 'When the period was deleted'

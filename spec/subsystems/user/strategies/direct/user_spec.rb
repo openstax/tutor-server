@@ -18,8 +18,4 @@ RSpec.describe User::Strategies::Direct::User, type: :strategy do
   it 'is not an application' do
     expect(user.is_application?).to be_falsy
   end
-
-  it 'doesn\'t start deleted' do
-    expect(user.is_deleted?).to be_falsy
-  end
 end

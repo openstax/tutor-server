@@ -1,4 +1,4 @@
-class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
+class Tasks::Models::Assistant < IndestructibleRecord
 
   has_many :course_assistants, dependent: :destroy
 

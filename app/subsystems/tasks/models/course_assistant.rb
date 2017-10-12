@@ -1,4 +1,4 @@
-class Tasks::Models::CourseAssistant < Tutor::SubSystems::BaseModel
+class Tasks::Models::CourseAssistant < IndestructibleRecord
 
   belongs_to :course, subsystem: :course_profile
   belongs_to :assistant

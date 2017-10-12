@@ -10,13 +10,18 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it { is_expected.to belong_to(:cloned_from) }
 
-  it { is_expected.to have_many(:tasking_plans).dependent(:destroy) }
-  it { is_expected.to have_many(:tasks).dependent(:destroy) }
+  it { is_expected.to have_many(:tasking_plans) }
+  it { is_expected.to have_many(:tasks) }
 
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:assistant) }
   it { is_expected.to validate_presence_of(:owner) }
-  it { is_expected.to validate_presence_of(:tasking_plans) }
+  it do
+    # shoulda-matchers fails to properly remove the associated records
+    subject.tasking_plans.delete_all :delete_all
+
+    is_expected.to validate_presence_of(:tasking_plans)
+  end
 
   it "validates settings against the assistant's schema" do
     book = FactoryGirl.create :content_book, ecosystem: task_plan.ecosystem

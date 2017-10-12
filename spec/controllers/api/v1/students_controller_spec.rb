@@ -240,7 +240,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
 
             student.reload
             expect(student.persisted?).to eq true
-            expect(student.deleted?).to eq true
+            expect(student.dropped?).to eq true
           end
         end
 
@@ -249,7 +249,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             expect{
               api_delete :destroy, student_token, parameters: valid_params
             }.to raise_error(SecurityTransgression)
-            expect(student.reload.deleted?).to eq false
+            expect(student.reload.dropped?).to eq false
           end
         end
       end
@@ -259,7 +259,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
           expect{
             api_delete :destroy, userless_token, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.deleted?).to eq false
+          expect(student.reload.dropped?).to eq false
         end
       end
 
@@ -268,7 +268,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
           expect{
             api_delete :destroy, nil, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.deleted?).to eq false
+          expect(student.reload.dropped?).to eq false
         end
       end
     end
@@ -284,7 +284,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
 
         student.reload
         expect(student.persisted?).to eq true
-        expect(student.deleted?).to eq true
+        expect(student.dropped?).to eq true
       end
     end
   end
@@ -305,7 +305,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
 
               student.reload
               expect(student.persisted?).to eq true
-              expect(student.deleted?).to eq false
+              expect(student.dropped?).to eq false
               expect(student.payment_due_at).to eq student_original_payment_due_at
             end
 
@@ -327,7 +327,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
 
               student.reload
               expect(student.persisted?).to eq true
-              expect(student.deleted?).to eq true
+              expect(student.dropped?).to eq true
             end
           end
         end
@@ -337,7 +337,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             expect{
               api_put :undrop, student_token, parameters: valid_params
             }.to raise_error(SecurityTransgression)
-            expect(student.reload.deleted?).to eq true
+            expect(student.reload.dropped?).to eq true
           end
         end
       end
@@ -347,7 +347,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
           expect{
             api_put :undrop, userless_token, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.deleted?).to eq true
+          expect(student.reload.dropped?).to eq true
         end
       end
 
@@ -356,7 +356,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
           expect{
             api_put :undrop, nil, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.deleted?).to eq true
+          expect(student.reload.dropped?).to eq true
         end
       end
     end
@@ -370,7 +370,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
 
         student.reload
         expect(student.persisted?).to eq true
-        expect(student.deleted?).to eq false
+        expect(student.dropped?).to eq false
       end
     end
   end

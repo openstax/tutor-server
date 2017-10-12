@@ -24,16 +24,16 @@ class ChooseCourseRole
   protected
 
   def exec(user:, course:, role_id: nil, allowed_role_type: :any)
-    # Don't include the user's own inactive student roles
+    # Don't include the user's own inactive student/teacher roles
     roles = run(:get_user_course_roles, courses: course, user: user, types: allowed_role_type,
-                                        include_inactive_students: false).outputs.roles
+                                        include_dropped_students: false).outputs.roles
     integer_role_id = Integer(role_id) rescue nil
 
     if integer_role_id
       if run(:user_is_course_teacher, user: user, course: course).outputs.user_is_course_teacher
         # Teacher is allowed to impersonate students
         roles += run(:get_course_roles, course: course, types: :student,
-                                        include_inactive_students: true).outputs.roles
+                                        include_dropped_students: true).outputs.roles
       end
 
       roles = roles.select { |r| r.id == integer_role_id }.uniq

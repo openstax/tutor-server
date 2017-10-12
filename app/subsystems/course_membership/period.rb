@@ -14,9 +14,9 @@ module CourseMembership
       verify_and_return @strategy.name, klass: String, error: StrategyError
     end
 
-    def student_roles(include_inactive_students: false)
+    def student_roles(include_dropped_students: false)
       verify_and_return @strategy.student_roles(
-        include_inactive_students: include_inactive_students
+        include_dropped_students: include_dropped_students
       ), klass: Entity::Role, error: StrategyError
     end
 
@@ -45,24 +45,28 @@ module CourseMembership
 
     def default_due_time
       verify_and_return @strategy.default_due_time, klass: String,
-                                                     error: StrategyError,
-                                                     allow_nil: true
+                                                    error: StrategyError,
+                                                    allow_nil: true
     end
 
     def assignments_count
       @strategy.assignments_count
     end
 
-    def deleted?
-      !!@strategy.deleted?
+    def archived?
+      !!@strategy.archived?
     end
 
-    def deleted_at
-      @strategy.deleted_at
+    def archived_at
+      @strategy.archived_at
     end
 
     def enrollment_code_for_url
       verify_and_return @strategy.enrollment_code_for_url, klass: String, error: StrategyError
+    end
+
+    def num_enrolled_students
+      verify_and_return @strategy.num_enrolled_students, klass: Integer, error: StrategyError
     end
 
     def to_model

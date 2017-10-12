@@ -6,10 +6,10 @@ module CourseMembership
 
     protected
 
-    def exec(course:, roles: [], include_archived: false)
+    def exec(course:, roles: [], include_archived_periods: false)
       roles = [roles].flatten
 
-      all_periods = include_archived ? course.periods.with_deleted : course.periods
+      all_periods = include_archived_periods ? course.periods : course.periods.without_deleted
       models = roles.any? ? periods_for_roles(course, all_periods, roles) : all_periods
 
       outputs[:periods] = models.map do |model|

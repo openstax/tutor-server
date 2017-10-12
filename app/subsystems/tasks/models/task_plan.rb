@@ -1,8 +1,8 @@
 require 'json-schema'
 
-class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskPlan < ApplicationRecord
 
-  acts_as_paranoid
+  acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description', 'first_published_at',
                                      'last_published_at', 'is_feedback_immediate']
@@ -18,8 +18,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   belongs_to :owner, polymorphic: true
   belongs_to :ecosystem, subsystem: :content
 
-  has_many :tasking_plans, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
-  has_many :tasks, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
+  has_many :tasking_plans, inverse_of: :task_plan
+  has_many :tasks, inverse_of: :task_plan
 
   json_serialize :settings, Hash
 
@@ -39,6 +39,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   scope :preload_tasking_plans, -> { preload(tasking_plans: :time_zone) }
 
   scope :preload_tasks_and_steps, -> { preload(tasks: [:taskings, task_steps: :tasked]) }
+
+  def withdrawn?
+    deleted?
+  end
 
   def out_to_students?(current_time: Time.current)
     tasks.any? do |task|

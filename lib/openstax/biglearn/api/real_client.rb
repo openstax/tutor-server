@@ -243,16 +243,16 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     biglearn_requests = requests.map do |request|
       course = request.fetch(:course)
       course_containers = []
-      students = course.periods_with_deleted.flat_map do |period|
+      students = course.periods.flat_map do |period|
         course_containers << {
           container_uuid: period.uuid,
           parent_container_uuid: course.uuid,
           created_at: period.created_at.utc.iso8601(6)
         }.tap do |hash|
-          hash[:archived_at] = period.deleted_at.utc.iso8601(6) if period.deleted?
+          hash[:archived_at] = period.archived_at.utc.iso8601(6) if period.archived?
         end
 
-        period.latest_enrollments_with_deleted.map do |enrollment|
+        period.latest_enrollments.map do |enrollment|
           student = enrollment.student
 
           {
@@ -261,7 +261,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
             enrolled_at: student.created_at.utc.iso8601(6),
             last_course_container_change_at: enrollment.created_at.utc.iso8601(6)
           }.tap do |hash|
-            hash[:dropped_at] = student.deleted_at.utc.iso8601(6) if student.deleted?
+            hash[:dropped_at] = student.dropped_at.utc.iso8601(6) if student.dropped?
           end
         end
       end
@@ -418,7 +418,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
         course_uuid: request.fetch(:course).uuid,
         sequence_number: request.fetch(:sequence_number),
         assignment_uuid: task.uuid,
-        is_deleted: task.deleted?,
+        is_deleted: task.task_plan.try!(:withdrawn?),
         ecosystem_uuid: ecosystem.tutor_uuid,
         student_uuid: student.uuid,
         assignment_type: task_type,

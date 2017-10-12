@@ -1,12 +1,10 @@
 module Entity
-  class Role < Tutor::SubSystems::BaseModel
+  class Role < IndestructibleRecord
     enum role_type: [:unassigned, :default, :teacher, :student, :teacher_student]
 
-    has_many :taskings, -> { with_deleted }, subsystem: :tasks, dependent: :destroy, inverse_of: :role
+    has_many :taskings, subsystem: :tasks, dependent: :destroy, inverse_of: :role
 
-    has_one :student, -> { with_deleted }, dependent: :destroy,
-                                           subsystem: :course_membership,
-                                           inverse_of: :role
+    has_one :student, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
     has_one :teacher, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
 
     has_one :role_user, dependent: :destroy, subsystem: :role, inverse_of: :role

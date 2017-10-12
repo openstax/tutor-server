@@ -1,4 +1,4 @@
-class Content::Models::ExerciseTag < Tutor::SubSystems::BaseModel
+class Content::Models::ExerciseTag < IndestructibleRecord
   belongs_to :exercise, inverse_of: :exercise_tags
   belongs_to :tag, inverse_of: :exercise_tags
 

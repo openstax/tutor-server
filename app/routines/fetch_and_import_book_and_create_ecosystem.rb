@@ -13,14 +13,15 @@ class FetchAndImportBookAndCreateEcosystem
     OpenStax::Cnx::V1.with_archive_url(archive_url) do
       cnx_book = OpenStax::Cnx::V1.book(id: book_cnx_id)
 
-      outputs[:ecosystem] = Content::Ecosystem.create! comments: comments
+      outputs.ecosystem = Content::Ecosystem.create! comments: comments
 
       run(:import_book, cnx_book: cnx_book,
-                        ecosystem: outputs[:ecosystem],
+                        ecosystem: outputs.ecosystem,
                         reading_processing_instructions: reading_processing_instructions,
                         exercise_uids: exercise_uids)
 
-      outputs[:ecosystem].to_model.update_title
+      ecosystem_model = outputs.ecosystem.to_model
+      ecosystem_model.update_attribute :title, ecosystem_model.set_title
     end
   end
 

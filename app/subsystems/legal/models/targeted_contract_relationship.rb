@@ -1,4 +1,4 @@
-class Legal::Models::TargetedContractRelationship < Tutor::SubSystems::BaseModel
+class Legal::Models::TargetedContractRelationship < ApplicationRecord
 
   validates :child_gid, presence: true, uniqueness: { scope: :parent_gid }
   validates :parent_gid, presence: true

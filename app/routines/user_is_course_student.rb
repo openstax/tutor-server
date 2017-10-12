@@ -7,12 +7,12 @@ class UserIsCourseStudent
 
   protected
 
-  def exec(user:, course:, include_dropped: false, include_archived: false)
+  def exec(user:, course:, include_dropped_students: false, include_archived_periods: false)
     run(Role::GetUserRoles, user)
     run(CourseMembership::IsCourseStudent,
         roles: outputs.roles,
         course: course,
-        include_dropped: include_dropped,
-        include_archived: include_archived)
+        include_dropped_students: include_dropped_students,
+        include_archived_periods: include_archived_periods)
   end
 end

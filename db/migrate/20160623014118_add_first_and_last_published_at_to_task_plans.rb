@@ -5,7 +5,7 @@ class AddFirstAndLastPublishedAtToTaskPlans < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        Tasks::Models::TaskPlan.update_all(
+        Tasks::Models::TaskPlan.unscoped.update_all(
           'last_published_at = GREATEST(first_published_at, publish_last_requested_at)'
         )
       end

@@ -6,15 +6,15 @@ class CourseMembership::AddEnrollment
   protected
 
   def exec(period:, student:, reassign_published_period_task_plans: true, send_to_biglearn: true)
-    outputs[:enrollment] = CourseMembership::Models::Enrollment.create(
+    enrollment = CourseMembership::Models::Enrollment.new(
       student: student, period: period.to_model
     )
-    transfer_errors_from(outputs[:enrollment], {type: :verbatim}, true)
-
-    student.enrollments << outputs[:enrollment]
-    student.restore if student.deleted?
-    outputs[:student] = student
-    transfer_errors_from(outputs[:student], {type: :verbatim}, true)
+    student.enrollments << enrollment
+    outputs.enrollment = enrollment
+    transfer_errors_from(enrollment, {type: :verbatim}, true)
+    student.restore if student.dropped?
+    outputs.student = student
+    transfer_errors_from(student, {type: :verbatim}, true)
 
     ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \
       if reassign_published_period_task_plans

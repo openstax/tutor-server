@@ -12,7 +12,7 @@ class GetTeacherGuide
     roles_by_period = {}
     course.periods.each do |period|
       roles_by_period[period] = run(:get_period_student_roles, periods: period,
-                                    include_inactive_students: false).outputs.roles
+                                    include_dropped_students: false).outputs.roles
     end
 
     all_roles = roles_by_period.values.flatten

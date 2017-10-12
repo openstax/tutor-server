@@ -47,13 +47,13 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :'completed?',
+      property :completed?,
                as: :complete,
                readable: true,
                writeable: false,
                schema_info: { type: 'boolean' }
 
-      property :deleted?,
+      property :withdrawn?,
                as: :is_deleted,
                readable: true,
                writeable: false,

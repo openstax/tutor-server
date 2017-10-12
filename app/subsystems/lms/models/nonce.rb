@@ -1,4 +1,4 @@
-class Lms::Models::Nonce < Tutor::SubSystems::BaseModel
+class Lms::Models::Nonce < ApplicationRecord
   belongs_to :app, subsystem: :lms
 
   validates :app, presence: true
