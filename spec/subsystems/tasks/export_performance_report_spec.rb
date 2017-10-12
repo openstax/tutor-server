@@ -41,4 +41,11 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
     }.not_to raise_error
   end
 
+  it 'does not blow up if the course name is too long' do
+    @course.update_attribute(:name, 'Tro' + (['lo'] * 150).join)
+    expect {
+      @output_filename = described_class[role: @role, course: @course]
+    }.not_to raise_error
+  end
+
 end
