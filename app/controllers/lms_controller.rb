@@ -163,7 +163,7 @@ class LmsController < ApplicationController
       # Note if the user is not yet a student in the course, so they can be sent through the
       # LMS-optimized enrollment flow.
 
-      if !UserIsCourseStudent[course: course, user: current_user]
+      if !UserIsCourseStudent[course: course, user: current_user, include_dropped_students: true]
         is_unenrolled_student = true
       end
     elsif launch.is_instructor?

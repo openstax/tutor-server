@@ -46,6 +46,22 @@ RSpec.describe 'LMS Launch', type: :request do
         expect_course_score_callback_count(user: bob_user, count: 1)
       end
     end
+
+    context "dropped" do
+      it 'redirects the student to the course, not enrollment' do
+        simulator.add_student("bob")
+        simulator.launch(user: "bob", assignment: "tutor")
+        bob_user = launch_helper.complete_the_launch_locally
+
+        student = AddUserAsPeriodStudent[period: period, user: bob_user].student
+        CourseMembership::InactivateStudent[student: student]
+
+        simulator.launch(user: "bob", assignment: "tutor")
+        bob_user = launch_helper.complete_the_launch_locally
+
+        expect(response.body).to match("/course/#{course.id}")
+      end
+    end
   end
 
   context "teacher launches" do
