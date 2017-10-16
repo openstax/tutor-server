@@ -21,12 +21,17 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
     end
 
     context "assigns default dates" do
+      let(:task_types) do
+        Tasks::Models::Task.task_types.values - [ Tasks::Models::Task.task_types[:concept_coach] ]
+      end
+
       specify "with invalid 'from' and 'to' parameters" do
         right_now = Time.current
         Timecop.freeze(right_now) do
           filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
-          expect(ExportAndUploadResearchData).to receive(:perform_later)
-                                                 .with( filename: filename, from: "1/1/1970", to: right_now.to_s, task_types: [*0..7] )
+          expect(ExportAndUploadResearchData).to receive(:perform_later).with(
+            filename: filename, from: Time.at(0).to_s, to: right_now.to_s, task_types: task_types
+          )
 
           post :create, from: "not-even", to: "valid", export_research_data: {task_types: ["tutor"]}
         end
@@ -36,8 +41,9 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
         right_now = Time.current
         Timecop.freeze(right_now) do
           filename = "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
-          expect(ExportAndUploadResearchData).to receive(:perform_later)
-                                                 .with( filename: filename, from: "1/1/1970", to: right_now.to_s, task_types: [*0..7] )
+          expect(ExportAndUploadResearchData).to receive(:perform_later).with(
+            filename: filename, from: Time.at(0).to_s, to: right_now.to_s, task_types: task_types
+          )
 
           post :create, from: "", to: "", export_research_data: {task_types: ["tutor"]}
         end
