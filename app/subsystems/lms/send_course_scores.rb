@@ -118,32 +118,33 @@ class Lms::SendCourseScores
 
     # https://www.imsglobal.org/specs/ltiomv1p0/specification
 
-    <<-EOS
-      <?xml version = "1.0" encoding = "UTF-8"?>
-      <imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
-        <imsx_POXHeader>
-          <imsx_POXRequestHeaderInfo>
-            <imsx_version>V1.0</imsx_version>
-            <imsx_messageIdentifier>#{message_identifier}</imsx_messageIdentifier>
-          </imsx_POXRequestHeaderInfo>
-        </imsx_POXHeader>
-        <imsx_POXBody>
-          <replaceResultRequest>
-            <resultRecord>
-              <sourcedGUID>
-                <sourcedId>#{sourcedid}</sourcedId>
-              </sourcedGUID>
-              <result>
-                <resultScore>
-                  <language>en</language>
-                  <textString>#{score}</textString>
-                </resultScore>
-              </result>
-            </resultRecord>
-          </replaceResultRequest>
-        </imsx_POXBody>
-      </imsx_POXEnvelopeRequest>
-    EOS
+    builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+      xml.imsx_POXEnvelopeRequest(xmlns: "http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0") {
+        xml.imsx_POXHeader {
+          xml.imsx_POXRequestHeaderInfo {
+            xml.imsx_version "V1.0"
+            xml.imsx_messageIdentifier message_identifier
+          }
+        }
+        xml.imsx_POXBody {
+          xml.replaceResultRequest {
+            xml.resultRecord {
+              xml.sourcedGUID {
+                xml.sourcedId sourcedid
+              }
+              xml.result {
+                xml.resultScore {
+                  xml.language "en"
+                  xml.textString score
+                }
+              }
+            }
+          }
+        }
+      }
+    end
+
+    builder.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
 end
