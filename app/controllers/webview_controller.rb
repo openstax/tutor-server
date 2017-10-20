@@ -34,7 +34,7 @@ class WebviewController < ApplicationController
   end
 
   def check_supported_browser
-    redirect_to browser_upgrade_path unless browser.modern?
+    redirect_to browser_upgrade_path(go: current_url) unless params.has_key?(:ignore_browser) || browser.modern?
     true
   end
 

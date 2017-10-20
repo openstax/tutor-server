@@ -1,19 +1,22 @@
+.warning_card,
 .error_card {
   width: 540px;
   margin: 16px auto;
   background-color: white;
   font-size: 16px;
-  $title-background: rgb(248, 232, 234);
+
   .body, .title {
     padding: 30px;
   }
 
   .title {
-    background-color: $title-background;
-    color: rgb(194, 32, 50);
     font-weight: bold;
-    margin-top: -2px;
-    line-height: 25px;
+    display: flex;
+    align-items: center;
+    svg {
+      height: 40px;
+      width: 40px;
+    }
 
     .icon {
       float: left;
@@ -33,14 +36,22 @@
     }
   }
 
-  &.browser_upgrade {
+  &.error_card {
     .title {
-      border: 1px solid darken($title-background, 10%);
-    }
-    .body {
-      border-width: 0 1px 1px 1px;
-      border-style: solid;
-      border-color: #c4c2c5;
+      background-color: rgb(248, 232, 234);
+      color: rgb(194, 32, 50);
     }
   }
+
+
+  &.warning_card {
+    .title {
+      background-color: rgb(249, 237, 187);
+      color: rgb(66, 66, 66);
+      svg path {
+        fill: rgb(238, 207, 85);
+      }
+    }
+  }
+
 }
