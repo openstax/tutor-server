@@ -1034,61 +1034,6 @@ http_interactions:
     http_version:
   recorded_at: Fri, 20 Oct 2017 19:14:51 GMT
 - request:
-    method: post
-    uri: https://<openstax_exercises_client_id>:<openstax_exercises_secret>@<openstax_exercises_url_without_protocol>/oauth/token
-    body:
-      encoding: UTF-8
-      string: grant_type=client_credentials
-    headers:
-      User-Agent:
-      - Faraday v0.9.2
-      Content-Type:
-      - application/x-www-form-urlencoded
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Cache-Control:
-      - no-store
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Fri, 20 Oct 2017 19:14:51 GMT
-      Etag:
-      - W/"cf5dd3e1d0d566604e98e78792939a86"
-      Pragma:
-      - no-cache
-      Server:
-      - nginx
-      Status:
-      - 200 OK
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - eab0af9e-7d56-403f-b782-6131cad5ec76
-      X-Runtime:
-      - '0.039582'
-      X-Xss-Protection:
-      - 1; mode=block
-      Content-Length:
-      - '129'
-      Connection:
-      - keep-alive
-    body:
-      encoding: UTF-8
-      string: '{"access_token":"<openstax_exercises_access_token>","token_type":"bearer","created_at":1508526891}'
-    http_version:
-  recorded_at: Fri, 20 Oct 2017 19:14:51 GMT
-- request:
     method: get
     uri: "<openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:f27eec7f-2937-45fc-bb44-60dab5261a3d,context-cnxmod:c31232cc-cf38-4301-9845-5b801e70fa9a,context-cnxmod:2c214a03-1f38-4937-ad34-b341a6792093,context-cnxmod:3d0b6428-3979-405e-8e81-06010035447c,context-cnxmod:0d37ed81-391d-45a8-ba98-530729b798f9%22"
     body:
@@ -1100,7 +1045,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer <openstax_exercises_access_token>
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:

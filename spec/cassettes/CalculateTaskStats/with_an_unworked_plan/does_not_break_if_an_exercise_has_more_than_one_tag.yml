@@ -41,7 +41,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:53 GMT
 - request:
     method: get
@@ -659,11 +659,11 @@ http_interactions:
         "revised": "2015-04-21T15:47:05Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:53 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:e26d1433-f8e4-41db-a757-0e061d6d2737,apbio-ch04-s02-lo01,apbio-ch04-s02-lo02,apbio-ch04-s02-aplo-1-32,apbio-ch04-s02-aplo-2-6,apbio-ch04-s02-aplo-2-7%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:e26d1433-f8e4-41db-a757-0e061d6d2737,apbio-ch04-s02-lo01,apbio-ch04-s02-lo02,apbio-ch04-s02-aplo-1-32,apbio-ch04-s02-aplo-2-6,apbio-ch04-s02-aplo-2-7%22
     body:
       encoding: US-ASCII
       string: ''
@@ -673,7 +673,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 70f16b987c8150e002669c696a096ac1834120eefcf301b3caf8af031f2ad665
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -2032,6 +2032,6 @@ http_interactions:
         cyB0aGUgdm9sdW1lIG9mIGN5dG9wbGFzbSJ9XSwiY29tbXVuaXR5X3NvbHV0
         aW9ucyI6W10sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:02 GMT
 recorded_with: VCR 2.9.3

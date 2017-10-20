@@ -2,9 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'demo'
 
-# Note: If you regenerate this cassette using production exercises, you must manually replace
-#       all instances of the access token in the OAuth response and subsequent API request(s) with
-#       <openstax_exercises_access_token>
 RSpec.describe Demo, type: :routine, speed: :slow, vcr: VCR_OPTS do
   context 'with demo fixtures' do
     before(:all) do

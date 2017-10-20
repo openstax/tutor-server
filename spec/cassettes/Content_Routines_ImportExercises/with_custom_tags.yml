@@ -581,7 +581,7 @@ http_interactions:
   recorded_at: Wed, 01 Jun 2016 19:17:28 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509,k12phys-ch03-s01-lo01,k12phys-ch03-s01-lo02%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509,k12phys-ch03-s01-lo01,k12phys-ch03-s01-lo02%22
     body:
       encoding: US-ASCII
       string: ''

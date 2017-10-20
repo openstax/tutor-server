@@ -57,7 +57,8 @@ VCR.configure do |c|
       # may be different from value.  Handle this.
       url_value = CGI::escape(value.to_s)
       if value != url_value
-        c.filter_sensitive_data("<#{salesforce_secret_name}_url>") { url_value } if url_value.present?
+        c.filter_sensitive_data("<#{salesforce_secret_name}_url>") { url_value } \
+          if url_value.present?
       end
     end
   end

@@ -36,9 +36,9 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "iGZlQwSxaz5sCaxZfOAELrv7GX1Vnt", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:25 GMT
 - request:
     method: get
@@ -52,7 +52,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer iGZlQwSxaz5sCaxZfOAELrv7GX1Vnt
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -75,7 +75,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"orders": []}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:25 GMT
 - request:
     method: post
@@ -113,9 +113,9 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "QwqwgjSFKzWVNY99G67xIRjgKDKRyf", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:25 GMT
 - request:
     method: post
@@ -129,7 +129,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer QwqwgjSFKzWVNY99G67xIRjgKDKRyf
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -153,7 +153,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"success": true, "created": "2017-07-17T21:44:25.502489+00:00", "identifier":
         "vz5qa972h55w"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:54 GMT
 - request:
     method: get
@@ -167,7 +167,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer QwqwgjSFKzWVNY99G67xIRjgKDKRyf
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -190,7 +190,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"paid": true, "purchased_at": "2017-07-17T21:44:53.806Z"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:54 GMT
 - request:
     method: post
@@ -228,9 +228,9 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "5zdpORtFjowOaSlVfa29e975U6g2NM", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:55 GMT
 - request:
     method: get
@@ -244,7 +244,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer 5zdpORtFjowOaSlVfa29e975U6g2NM
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -270,7 +270,7 @@ http_interactions:
         "1314.36", "sales_tax": "100.34", "is_refunded": false, "purchased_at": "2017-07-17T21:44:53.806974+00:00",
         "updated_at": "2017-07-17T21:44:53.806974+00:00", "product": {"uuid": "4aaf031b-10d6-4846-b16a-f2a746463bac",
         "name": "unit test product", "price": "1214.02"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:55 GMT
 - request:
     method: post
@@ -308,9 +308,9 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "lyfe5B7g2DHMIGyBlLJxNkSSic1tp4", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:55 GMT
 - request:
     method: post
@@ -324,7 +324,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer lyfe5B7g2DHMIGyBlLJxNkSSic1tp4
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -347,7 +347,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"success": true, "transaction_uuid": "8aw5c0yj"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:56 GMT
 - request:
     method: post
@@ -385,9 +385,9 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "r0T2lNA0gsNpjzeVw5qJNYTl8FzQxo", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:56 GMT
 - request:
     method: get
@@ -401,7 +401,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer r0T2lNA0gsNpjzeVw5qJNYTl8FzQxo
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -424,7 +424,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"paid": false, "purchased_at": "2017-07-17T21:44:53.806Z"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:56 GMT
 - request:
     method: post
@@ -462,9 +462,9 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "EiBoMJwsbilkBBbI8J3iCJKgC84Gva", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:57 GMT
 - request:
     method: post
@@ -478,7 +478,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer EiBoMJwsbilkBBbI8J3iCJKgC84Gva
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -502,7 +502,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"success": true, "created": "2017-07-17T21:44:57.250058+00:00", "identifier":
         "x3ef7hgv583e"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:58 GMT
 - request:
     method: get
@@ -516,7 +516,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer EiBoMJwsbilkBBbI8J3iCJKgC84Gva
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -539,6 +539,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"paid": true, "purchased_at": "2017-07-17T21:44:58.486Z"}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Jul 2017 21:44:58 GMT
 recorded_with: VCR 2.9.3

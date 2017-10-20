@@ -57,7 +57,7 @@ http_interactions:
 
         The resource was found at /contents/f10533ca-f803-490d-b935-88899941197f%403.2.json; you should be redirected automatically.
 
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -192,7 +192,7 @@ http_interactions:
         "publisher": {"surname": "feng", "suffix": null, "firstname": "wendy", "title":
         "", "fullname": "wendy feng", "id": "wendyfeng"}}, {"changes": "...", "version":
         "1.1", "revised": "2015-10-29T13:21:26Z", "publisher": null}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -322,7 +322,7 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T15:58:27Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -1135,7 +1135,7 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T16:00:38Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -1307,7 +1307,7 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T16:07:17Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -2503,7 +2503,7 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T16:08:24Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -2672,7 +2672,7 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T16:41:32Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -3028,7 +3028,7 @@ http_interactions:
         {"changes": "Created module", "version": "1", "revised": "2012-08-28T16:43:17Z",
         "publisher": {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title":
         "", "fullname": "OpenStax Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -3169,7 +3169,7 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T17:15:33Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
@@ -3704,11 +3704,11 @@ http_interactions:
         "id": "cnxbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2012-08-28T17:17:33Z", "publisher": {"surname": "Biology", "suffix": "",
         "firstname": "Cnx", "title": "", "fullname": "OpenStax Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:19 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c,context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3,context-cnxmod:7636a3bf-eb80-4898-8b2c-e81c1711b99f,context-cnxmod:be8818d0-2dba-4bf3-859a-737c25fb2c99,context-cnxmod:e98bdaec-4060-4b43-ac70-681555a30e22,context-cnxmod:003aedba-f354-4e57-ba45-f8b4eda66e12,context-cnxmod:a1a2f03a-701f-4e7a-ae0e-d8087880c6fd,context-cnxmod:40e1947a-5a8b-4314-a9e7-bae3cedb885d%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c,context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3,context-cnxmod:7636a3bf-eb80-4898-8b2c-e81c1711b99f,context-cnxmod:be8818d0-2dba-4bf3-859a-737c25fb2c99,context-cnxmod:e98bdaec-4060-4b43-ac70-681555a30e22,context-cnxmod:003aedba-f354-4e57-ba45-f8b4eda66e12,context-cnxmod:a1a2f03a-701f-4e7a-ae0e-d8087880c6fd,context-cnxmod:40e1947a-5a8b-4314-a9e7-bae3cedb885d%22
     body:
       encoding: US-ASCII
       string: ''
@@ -3718,7 +3718,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 9662a61c7dc5e64b896fa026698fa856979d840a6c3cf70b0fad984df2de33c9
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -5798,6 +5798,6 @@ http_interactions:
         b24gd2F0ZXIuIn1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMi
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:22 GMT
 recorded_with: VCR 2.9.3

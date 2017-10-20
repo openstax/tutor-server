@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?order_by=number%20DESC,%20version%20ASC&q=content:fOrCe
+    uri: <openstax_exercises_url>/api/exercises?order_by=number%20DESC,%20version%20ASC&q=content:fOrCe
     body:
       encoding: US-ASCII
       string: ''

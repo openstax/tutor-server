@@ -36,7 +36,7 @@ http_interactions:
       - '118'
     body:
       encoding: UTF-8
-      string: '{"access_token": "BVbLnLyLUG45SyJ3WyNjea9cnNkBsE", "expires_in": 36000,
+      string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
     http_version: 
   recorded_at: Tue, 18 Jul 2017 02:17:48 GMT
@@ -52,7 +52,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer BVbLnLyLUG45SyJ3WyNjea9cnNkBsE
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -90,7 +90,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer BVbLnLyLUG45SyJ3WyNjea9cnNkBsE
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
