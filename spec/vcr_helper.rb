@@ -62,9 +62,11 @@ VCR.configure do |c|
     end
   end
 
-  filter_secret(['openstax', 'payments', 'client_id'])
-  filter_secret(['openstax', 'payments', 'secret'])
-  filter_secret(['openstax', 'payments', 'url'])
+  [ 'client_id', 'secret', 'url' ].each do |field_name|
+    [ 'accounts', 'exercises', 'payments' ].each do |app_name|
+      filter_secret(['openstax', app_name, field_name])
+    end
+  end
 
   [ 'client_id', 'client_secret', 'jwt_public_key_id', 'jwt_private_key',
     'jwt_private_key_password', 'enterprise_id', 'exports_folder' ].each do |field_name|

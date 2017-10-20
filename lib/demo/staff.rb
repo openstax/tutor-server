@@ -46,19 +46,19 @@ class Demo::Staff < Demo::Base
 
   def administrators
     @admins ||= Hashie::Mash.load(
-      File.join(Rails.root, 'config/demo/people/staff/administrators.yml')
+      File.join(CONFIG_BASE_DIR, "people/staff/administrators.yml")
     )
   end
 
   def content_analysts
     @content_analysts ||= Hashie::Mash.load(
-      File.join(Rails.root, 'config/demo/people/staff/content_analysts.yml')
+      File.join(CONFIG_BASE_DIR, "people/staff/content_analysts.yml")
     )
   end
 
   def customer_support
     @customer_support ||= Hashie::Mash.load(
-      File.join(Rails.root, 'config/demo/people/staff/customer_support.yml')
+      File.join(CONFIG_BASE_DIR, "people/staff/customer_support.yml")
     )
   end
 end

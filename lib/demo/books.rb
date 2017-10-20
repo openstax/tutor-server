@@ -24,16 +24,13 @@ class Demo::Books < Demo::Base
     # Parallel step
     in_parallel(Demo::Config::Book[config], transaction: true) do |book_configs, idx_start|
       book_configs.each do |book_config|
-        book = book_config.cnx_book(version)
+        book_id = book_config.book_id(version)
 
-        log do
-          "Importing #{book_config.salesforce_book_name
-          } from #{book_config.archive_url_base}#{book}"
-        end
+        log { "Importing #{book_config.salesforce_book_name} from #{book_config.archive_url}" }
 
         ecosystem = run(
           :import_book,
-          book_cnx_id: book,
+          book_cnx_id: book_id,
           archive_url: book_config.archive_url_base,
           reading_processing_instructions: book_config.reading_processing_instructions
         ).outputs.ecosystem
@@ -57,10 +54,8 @@ class Demo::Books < Demo::Base
         appearance_code: book_config.appearance_code,
         title: book_config.default_course_name,
         description: book_config.default_course_name,
-        webview_url: (book_config.webview_url_base ||
-                      book_config.archive_url_base.sub(/archive\./,'')) + book_config.cnx_book,
-        pdf_url: book_config.archive_url_base.sub(%r{contents/$}, 'exports/') +
-                 book_config.cnx_book + '.pdf',
+        webview_url: book_config.webview_url,
+        pdf_url: book_config.pdf_url,
         is_tutor: book_config.is_tutor,
         is_concept_coach: book_config.is_concept_coach,
         is_available: true,

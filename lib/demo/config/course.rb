@@ -2,11 +2,12 @@ require_relative 'content'
 
 # Reads in a YAML file containg configuration for a course and its students
 class Demo::Config::Course < Demo::Config::Content
-  # Yaml files will be located inside this directory
-  DEFAULT_CONFIG_DIR = File.join(Rails.root, 'config/demo/courses')
-
   def_delegators :@configuration,
                  :id, :id=, :course_name, :salesforce_book_name, :is_college, :teachers
+
+  def self.config_dir
+    File.join(Demo::Base::CONFIG_BASE_DIR, 'courses')
+  end
 
   def assignments
     @configuration.assignments || []

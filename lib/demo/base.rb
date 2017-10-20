@@ -3,6 +3,8 @@ require 'fork_with_connection'
 require_relative 'config/content'
 
 class Demo::Base
+  CONFIG_BASE_DIR = "#{Rails.root}/config/demo"
+
   include ForkWithConnection
 
   protected
@@ -89,10 +91,10 @@ class Demo::Base
 
     results.each do |result|
       log(:debug) { "PID: #{result.first} - Status: #{result.last.exitstatus}" }
-      nonfatal_error(code: :process_failed) unless result.last.success?
+      fatal_error(code: :process_failed) unless result.last.success?
     end
 
-    log(:debug) { 'All child processes done' }
+    log(:debug) { 'All child processes exited' }
 
     results
   end
@@ -102,7 +104,7 @@ class Demo::Base
   def wait_for_parallel_completion!
     results = wait_for_parallel_completion
 
-    raise('Child process failed') if results.any?{ |result| !result.last.success? }
+    raise('Child process failed') if results.any? { |result| !result.last.success? }
   end
 
   def sign_contract(user:, name:)
@@ -186,11 +188,11 @@ class Demo::Base
   end
 
   def students
-    @students ||= Hashie::Mash.load(File.join(Rails.root, 'config/demo/people/students.yml'))
+    @students ||= Hashie::Mash.load(File.join(CONFIG_BASE_DIR, 'people/students.yml'))
   end
 
   def teachers
-    @teachers ||= Hashie::Mash.load(File.join(Rails.root, 'config/demo/people/teachers.yml'))
+    @teachers ||= Hashie::Mash.load(File.join(CONFIG_BASE_DIR, 'people/teachers.yml'))
   end
 
   def log(level = :info, &block)
