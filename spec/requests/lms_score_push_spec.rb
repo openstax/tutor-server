@@ -92,11 +92,15 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
     # Should still get it
     simulator.expect_to_receive_score(user: "bob", assignment: "tutor", score: 0.9111)
 
+    ActionMailer::Base.deliveries.clear
+
     api_put("/api/lms/courses/#{course.id}/push_scores", teacher_token)
     expect(response).to have_http_status :accepted
 
     expect_job_info(errors: [a_hash_including("lms_description" => /User is dropped/)],
                     data: {"num_callbacks" => 1, "num_missing_scores" => 0})
+
+    expect(ActionMailer::Base.deliveries.count).to eq 1
   end
 
   it 'copes with exceptions when sending errors' do

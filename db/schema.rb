@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171009182057) do
+ActiveRecord::Schema.define(version: 20171025173835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -335,7 +335,7 @@ ActiveRecord::Schema.define(version: 20171009182057) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                 null: false
     t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                                         default: "gen_random_uuid()"
     t.integer  "sequence_number",                              default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                      null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
@@ -346,12 +346,12 @@ ActiveRecord::Schema.define(version: 20171009182057) do
     t.boolean  "does_cost",                                    default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
-    t.boolean  "is_preview_ready",                             default: false,               null: false
-    t.datetime "deleted_at"
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
+    t.boolean  "is_preview_ready",                             default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
+    t.datetime "deleted_at"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
@@ -469,9 +469,10 @@ ActiveRecord::Schema.define(version: 20171009182057) do
     t.integer  "course_profile_course_id", null: false
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.string   "resource_link_id",         null: false
   end
 
-  add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "result_sourcedid", "outcome_url"], name: "course_score_callbacks_on_course_user_result_outcome", unique: true, using: :btree
+  add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "resource_link_id"], name: "course_score_callbacks_on_course_user_link", unique: true, using: :btree
   add_index "lms_course_score_callbacks", ["result_sourcedid", "outcome_url"], name: "course_score_callback_result_outcome", unique: true, using: :btree
   add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
 

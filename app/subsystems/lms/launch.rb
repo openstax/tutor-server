@@ -52,6 +52,10 @@ class Lms::Launch
     request_parameters[:lis_result_sourcedid]
   end
 
+  def resource_link_id
+    request_parameters[:resource_link_id]
+  end
+
   def outcome_url
     request_parameters[:lis_outcome_service_url] ||
     request_parameters[:ext_ims_lis_basic_outcome_url]
@@ -168,22 +172,33 @@ class Lms::Launch
     # includes admin email addresses, LMS version, etc.
   end
 
-  def store_score_callback_if_needed(user)
+  def store_score_callback(user)
     # For assignment launches, store the score passback info.  We are currently
     # only doing course-level score sync, so store the score callback info on the Student
     # record. Since we may not actually have a Student record yet (if enrollment hasn't completed),
     # we really attach it to the combination of course and user (which is essentially what
     # a Student later records).  It is possible that a teacher could add the Tutor assignment
     # more than once, so we could have multiple callback infos for ever course/user combination.
+    # Also, per the LTI implementation guide, we should only keep one sourcedid for every
+    # resource_link_id and user combination, so clear old ones before saving the new one.
 
     return if !is_assignment?
 
-    Lms::Models::CourseScoreCallback.find_or_create_by(
-      result_sourcedid: result_sourcedid,
-      outcome_url: outcome_url,
-      course: context.course,
-      profile: user.to_model
-    )
+    Lms::Models::CourseScoreCallback.transaction do
+      Lms::Models::CourseScoreCallback.where(
+        course: context.course,
+        profile: user.to_model,
+        resource_link_id: resource_link_id
+      ).destroy_all
+
+      Lms::Models::CourseScoreCallback.create!(
+        resource_link_id: resource_link_id,
+        result_sourcedid: result_sourcedid,
+        outcome_url: outcome_url,
+        course: context.course,
+        profile: user.to_model
+      )
+    end
   end
 
   protected
