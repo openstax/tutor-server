@@ -15,20 +15,7 @@ body#enroll {
   color: #424242;
   padding: 40px;
 
-  &::before {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    content: "";
-    z-index: -1;
-    background-image: image-url('openstax-logo-white.png'), image-url('ost-hero.jpg');
-    background-repeat: no-repeat, no-repeat;
-    background-size: 174px 40px, cover;
-    background-position: center 20px, center;
-  }
-
+  @include hero-fullpage-background();
 
   .splash {
     margin: 80px auto;
