@@ -56,7 +56,7 @@ RSpec.describe "Pardot" do
           scenario "non-fatal exceptions when using real BG jobs" do
             Delayed::Worker.with_delay_jobs(true) do
               visit '/pardot/toa'
-              expect(current_url).to eq redirect_url
+              expect(current_url).to include redirect_url
               expect(Delayed::Worker.new.work_off).to eq [0,1]
             end
           end
