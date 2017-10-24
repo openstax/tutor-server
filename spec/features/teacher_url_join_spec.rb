@@ -4,7 +4,10 @@ RSpec.feature 'Teachers' do
   let(:course) { FactoryGirl.create :course_profile_course }
   let(:user)   { FactoryGirl.create(:user) }
 
+  before(:each) { page.driver.header('User-Agent', chrome_ua) }
+
   context 'joining their courses' do
+
     context 'unauthenticated' do
       scenario 'redirects to login' do
         visit teach_course_path(course.teach_token)

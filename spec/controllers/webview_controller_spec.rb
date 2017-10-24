@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe WebviewController, type: :controller do
-  let!(:chrome_ua) {
-    { 'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.99 Safari/533.4' }
-  }
+
   let!(:contract)       { FinePrint::Contract.create!(name: 'general_terms_of_use',
                                                       title: 'General Terms of Use',
                                                       content: Faker::Lorem.paragraphs,
@@ -11,7 +9,7 @@ RSpec.describe WebviewController, type: :controller do
   let(:new_user)        { FactoryGirl.create(:user, skip_terms_agreement: true) }
   let(:registered_user) { FactoryGirl.create(:user) }
 
-  before(:each) { request.headers.merge! chrome_ua }
+  before(:each) { request.headers.merge! 'User-Agent': chrome_ua }
 
   describe 'GET home' do
     it 'renders a static page for anonymous' do
@@ -29,6 +27,12 @@ RSpec.describe WebviewController, type: :controller do
     it 'redirect to CC landing page when param set' do
       get :home, cc: "1"
       expect(response).to redirect_to('http://cc.openstax.org')
+    end
+
+    it 'redirects unsupported browsers to message' do
+      request.headers.merge! 'User-Agent': unsupported_ua
+      get :home
+      expect(response).to redirect_to(browser_upgrade_path(go: root_url))
     end
 
   end
