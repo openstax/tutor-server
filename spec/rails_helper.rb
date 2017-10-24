@@ -59,6 +59,7 @@ RSpec.configure do |config|
   config.include WithoutException
   config.include SigninHelper
   config.include PopulateExerciseContent
+  config.include UserAgentHelper
   config.extend VcrConfigurationHelper
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

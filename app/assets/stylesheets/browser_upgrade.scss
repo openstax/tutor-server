@@ -1,0 +1,20 @@
+body.static_pages-browser_upgrade {
+
+    @include hero-fullpage-background();
+
+    &::before {
+      top: 60px;
+    }
+
+    .warning_card {
+      margin-top: 80px;
+      a {
+        color: #337ab7;
+      }
+    }
+
+    footer {
+      display: none;
+    }
+
+}

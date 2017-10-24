@@ -2,7 +2,9 @@ require 'rails_helper'
 require 'feature_js_helper'
 
 RSpec.feature 'Administration', js: true do
+
   before do
+    page.driver.headers['User-Agent'] = chrome_ua
     # Log in as admin
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)

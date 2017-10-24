@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     get :'auth/failure', action: :omniauth_failure
     get :signup
     get :stubbed_payments
+    get :browser_upgrade
   end
 
   get :non_student_signup,

@@ -1,3 +1,4 @@
+.warning_card,
 .error_card {
   width: 540px;
   margin: 16px auto;
@@ -9,11 +10,13 @@
   }
 
   .title {
-    background-color: rgb(248, 232, 234);
-    color: rgb(194, 32, 50);
     font-weight: bold;
-    margin-top: -2px;
-    line-height: 25px;
+    display: flex;
+    align-items: center;
+    svg {
+      height: 40px;
+      width: 40px;
+    }
 
     .icon {
       float: left;
@@ -32,4 +35,23 @@
       padding: 30px 0;
     }
   }
+
+  &.error_card {
+    .title {
+      background-color: rgb(248, 232, 234);
+      color: rgb(194, 32, 50);
+    }
+  }
+
+
+  &.warning_card {
+    .title {
+      background-color: rgb(249, 237, 187);
+      color: rgb(66, 66, 66);
+      svg path {
+        fill: rgb(238, 207, 85);
+      }
+    }
+  }
+
 }
