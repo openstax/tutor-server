@@ -164,7 +164,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:27 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851%22
     body:
       encoding: US-ASCII
       string: ''
@@ -174,7 +174,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 9662a61c7dc5e64b896fa026698fa856979d840a6c3cf70b0fad984df2de33c9
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -587,7 +587,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:28 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a,k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a,k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02%22
     body:
       encoding: US-ASCII
       string: ''
@@ -597,7 +597,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 9662a61c7dc5e64b896fa026698fa856979d840a6c3cf70b0fad984df2de33c9
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:

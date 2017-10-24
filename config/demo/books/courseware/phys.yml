@@ -1,0 +1,23 @@
+<%= File.read(File.join(File.dirname(__FILE__), '../../courseware_book.yml')) %>
+
+salesforce_book_name: Physics w Courseware
+appearance_code: college_physics
+default_course_name: Physics with Courseware
+cnx_book_id: 405335a3-7cff-4df2-a9ad-29062a4af261
+
+reading_processing_instructions:
+- css: .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],
+    [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
+    [data-type="glossary"]
+  fragments: []
+- css: .phet-explorations-embedded
+  fragments:
+  - interactive
+  - exercise
+- css: .watch-physics
+  fragments:
+  - video
+  - exercise
+- css: .example-video, [data-type="example"]
+  fragments:
+  - reading

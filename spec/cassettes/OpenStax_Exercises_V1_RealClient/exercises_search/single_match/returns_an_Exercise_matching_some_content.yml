@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=content:%22WhAt%20Is%20KiNeMaTiCs?%22
+    uri: <openstax_exercises_url>/api/exercises?q=content:%22WhAt%20Is%20KiNeMaTiCs?%22
     body:
       encoding: US-ASCII
       string: ''

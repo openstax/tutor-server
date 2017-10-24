@@ -1,0 +1,17 @@
+<%= File.read(File.join(File.dirname(__FILE__), '../../courseware_book.yml')) %>
+
+salesforce_book_name: AP US History
+appearance_code: ap_us_history
+default_course_name: AP US History
+archive_url_base: https://archive-staging-tutor.cnx.org/contents/
+webview_url_base: https://staging-tutor.cnx.org/contents/
+cnx_book_id: dc10e469-5816-411d-8ea3-39a9b0706a48
+
+reading_processing_instructions:
+- css: .watch-physics
+  fragments:
+  - video
+  - exercise
+- css: .note
+  fragments:
+  - reading

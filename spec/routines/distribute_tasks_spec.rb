@@ -77,7 +77,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
       expect do
         pids = 5.times.map do
-          Tutor.fork_with_connection do
+          fork_with_connection do
             # Should no longer trigger ActiveRecord::TransactionIsolationConflicts
             # because after the first retry it detects that the plan
             # has already been distributed and does nothing

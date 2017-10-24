@@ -39,7 +39,7 @@ class Content::Routines::ImportExercises
       # Skip exercises that have any free response questions, as we can't handle them.
       # Could use `free-response` format, but let's cut to chase and look for no M/C answers.
 
-      next if wrapper.content_hash["questions"].any?{ |qq| qq["answers"].empty? }
+      next if wrapper.content_hash["questions"].any? { |qq| qq["answers"].empty? }
 
       # Assign exercise context if required
 
@@ -47,10 +47,18 @@ class Content::Routines::ImportExercises
         feature_ids = wrapper.feature_ids(exercise_page.uuid)
         wrapper.context = exercise_page.context_for_feature_ids(feature_ids)
 
-        Rails.logger.warn do
-          "Exercise #{wrapper.uid} requires context, but feature ID(s) [#{
-            feature_ids.join(', ')}] could not be found on #{exercise_page.url}"
-        end if wrapper.context.blank?
+        if wrapper.context.blank?
+          if feature_ids.empty?
+            Rails.logger.warn do
+              "Exercise #{wrapper.uid} requires context but it has no feature ID tags"
+            end
+          else
+            Rails.logger.warn do
+              "Exercise #{wrapper.uid} requires context but its feature ID(s) [ #{
+                feature_ids.join(', ')} ] could not be found on #{exercise_page.url}"
+            end
+          end
+        end
       end
 
       wrapper_to_exercise_page_map[wrapper] = exercise_page
@@ -58,7 +66,7 @@ class Content::Routines::ImportExercises
 
     # Pre-build all tags we are going to need in one shot
 
-    wrapper_tag_hashes = wrappers.flat_map(&:tag_hashes).uniq{ |hash| hash[:value] }
+    wrapper_tag_hashes = wrappers.flat_map(&:tag_hashes).uniq { |hash| hash[:value] }
     tags = run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes).outputs.tags
     tag_map = tags.index_by(&:value)
 
@@ -76,7 +84,7 @@ class Content::Routines::ImportExercises
                                                has_interactive: wrapper.has_interactive?,
                                                has_video: wrapper.has_video?)
 
-      relevant_tags = wrapper.tags.map{ |tag| tag_map[tag] }.compact
+      relevant_tags = wrapper.tags.map { |tag| tag_map[tag] }.compact
       run(:tag, exercise, relevant_tags, tagging_class: Content::Models::ExerciseTag, save: false)
 
       outputs[:exercises] << exercise

@@ -489,7 +489,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:23 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6,k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6,k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02%22
     body:
       encoding: US-ASCII
       string: ''
@@ -499,7 +499,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 128c69a5123e1079a4975f5783bee9f465ef6cb20ae382d7b72c9b53f8fd2b3a
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:

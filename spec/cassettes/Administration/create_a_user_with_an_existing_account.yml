@@ -40,7 +40,7 @@ http_interactions:
       - thin 1.5.1 codename Straight Razor
     body:
       encoding: UTF-8
-      string: '{"access_token":"ac34beb69b5282f60675b209a6fb9d9ceafd8c00476f52768681d82670119f58","token_type":"bearer"}'
+      string: '{"access_token":"<response_oauth_access_token>","token_type":"bearer"}'
     http_version: 
   recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 - request:
@@ -56,7 +56,7 @@ http_interactions:
       Accept:
       - application/vnd.accounts.openstax.v1
       Authorization:
-      - Bearer ac34beb69b5282f60675b209a6fb9d9ceafd8c00476f52768681d82670119f58
+      - Bearer <request_header_oauth_access_token>
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:
@@ -127,7 +127,7 @@ http_interactions:
       - thin 1.5.1 codename Straight Razor
     body:
       encoding: UTF-8
-      string: '{"access_token":"87e627f8aac12c15ee9cde5c74c263eac67b6db5923443deae8fd2da60e4d0cd","token_type":"bearer"}'
+      string: '{"access_token":"<response_oauth_access_token>","token_type":"bearer"}'
     http_version: 
   recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 - request:
@@ -143,7 +143,7 @@ http_interactions:
       Accept:
       - application/vnd.accounts.openstax.v1
       Authorization:
-      - Bearer 87e627f8aac12c15ee9cde5c74c263eac67b6db5923443deae8fd2da60e4d0cd
+      - Bearer <request_header_oauth_access_token>
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:

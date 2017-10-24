@@ -1,69 +1,118 @@
-desc 'Initializes data for the deployment demo (run all demo:* tasks), book can be either all, bio or phy.'
-task :demo, [:config, :version, :random_seed] => :environment do |tt, args|
-  failures = []
-  Rake::Task[:"demo:content"].invoke(args[:config], args[:version], args[:random_seed]) \
-    rescue failures << 'Content'
-  Rake::Task[:"demo:tasks"].invoke(args[:config], args[:random_seed]) \
-    rescue failures << 'Tasks'
-  unless ENV['NOWORK']
-    Rake::Task[:"demo:work"].invoke(args[:config], args[:random_seed]) \
-      rescue failures << 'Work'
+require 'demo'
+
+desc <<-DESC.strip_heredoc
+  Initializes data for the deployment demo (run all demo:* tasks)
+  Book can be either all, bio, phys or soc.
+DESC
+task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |tt, args|
+  Rails.logger.info do
+    max_processes = Demo::Base.max_processes
+
+    case max_processes
+    when 0
+      'Using inline processing (DEMO_MAX_PROCESSES = 0)'
+    when 1
+      "Using 1 child process (DEMO_MAX_PROCESSES = 1)"
+    else
+      "Using up to #{max_processes} child processes (DEMO_MAX_PROCESSES = #{max_processes})"
+    end
   end
 
-  if failures.empty?
-    puts 'All demo tasks successful!'
-  else
-    fail "Some demo tasks failed! (#{failures.join(', ')})"
+  Rake::Task[:'demo:staff'].invoke unless ENV['SKIP_STAFF']
+  Rake::Task[:'demo:books'].invoke(args[:config], args[:version]) unless ENV['SKIP_BOOKS']
+
+  unless ENV['SKIP_COURSES']
+    Rake::Task[:'demo:courses'].invoke(args[:config])
+
+    unless ENV['SKIP_TASKS']
+      Rake::Task[:'demo:tasks'].invoke(args[:config], args[:random_seed])
+
+      Rake::Task[:'demo:work'].invoke(args[:config], args[:random_seed]) unless ENV['SKIP_WORK']
+    end
   end
+
+  Rails.logger.info { 'All demo tasks successful!' }
 end
 
 namespace :demo do
-  require_relative 'demo'
+  desc 'Creates staff user accounts for the deployment demo'
+  task staff: :log_to_stdout do |tt, args|
+    result = Demo::Staff.call
 
-  desc 'Initializes book content for the deployment demo'
-  task :content, [:config, :version, :random_seed] => :environment do |tt, args|
+    unless result.errors.empty?
+      result.errors.each do |error|
+        Rails.logger.fatal do
+          "Error creating staff accounts: #{Lev::ErrorTranslator.translate(error)}"
+        end
+      end
 
-    result = Demo::Content.call(args.to_h.merge(print_logs: true))
-
-    if result.errors.none?
-      puts "Successfully imported content"
-    else
-      result.errors.each{ |error| puts "Content Error: " + Lev::ErrorTranslator.translate(error) }
-      fail "Failed to import content"
+      fail 'Failed to create staff accounts'
     end
   end
 
-  desc 'Creates assignments for students'
-  task :tasks, [:config, :random_seed] => :environment do |tt, args|
+  desc 'Imports book content for the deployment demo'
+  task :books, [ :config, :version ] => :log_to_stdout do |tt, args|
+    result = Demo::Books.call(args.to_h)
 
-    result = Demo::Tasks.call(args.to_h.merge(print_logs: true))
+    unless result.errors.empty?
+      result.errors.each do |error|
+        Rails.logger.fatal { "Error importing books: #{Lev::ErrorTranslator.translate(error)}" }
+      end
 
-    if result.errors.none?
-      puts "Successfully created tasks"
-    else
-      result.errors.each{ |error| puts "Tasks Error: " + Lev::ErrorTranslator.translate(error) }
-      fail "Failed to create tasks"
+      fail 'Failed to import books'
     end
   end
 
-  desc 'Works student assignments'
-  task :work, [:config, :random_seed] => :environment do |tt, args|
+  desc <<-DESC.strip_heredoc
+    Creates courses for the deployment demo
+    Calling this rake task directly will make it attempt to find and reuse the last demo books
+  DESC
+  task :courses, [ :config ] => :log_to_stdout do |tt, args|
+    result = Demo::Courses.call(args.to_h)
 
-    result = Demo::Work.call(args.to_h.merge(print_logs: true))
+    unless result.errors.empty?
+      result.errors.each do |error|
+        Rails.logger.fatal { "Error creating courses: #{Lev::ErrorTranslator.translate(error)}" }
+      end
 
-    if result.errors.none?
-      puts "Successfully worked tasks"
-    else
-      result.errors.each{ |error| puts "Tasks Error: " + Lev::ErrorTranslator.translate(error) }
-      fail "Failed to work tasks"
+      fail 'Failed to create courses'
     end
   end
 
-  desc 'Output student assignments'
-  task :show, [:config, :version, :random_seed] => :environment do |tt, args|
-    require_relative 'demo/show'
+  desc <<-DESC.strip_heredoc
+    Creates assignments for students
+    Calling this rake task directly will make it attempt to find and reuse the last demo courses
+  DESC
+  task :tasks, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
+    result = Demo::Tasks.call(args.to_h)
 
-    Demo::Show.call(args.to_h.merge(print_logs: true))
+    unless result.errors.empty?
+      result.errors.each do |error|
+        Rails.logger.fatal { "Error creating tasks: #{Lev::ErrorTranslator.translate(error)}" }
+      end
+
+      fail 'Failed to create tasks'
+    end
   end
 
+  desc <<-DESC.strip_heredoc
+    Works student assignments
+    Calling this rake task directly will make it attempt to find and reuse the last demo assignments
+  DESC
+  task :work, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
+    result = Demo::Work.call(args.to_h)
+
+    unless result.errors.empty?
+      result.errors.each do |error|
+        Rails.logger.fatal { "Error working assignments: #{Lev::ErrorTranslator.translate(error)}" }
+      end
+
+      fail 'Failed to work tasks'
+    end
+  end
+
+  desc 'Shows student assignments that would be created by the demo script'
+  task :show, [ :config ] => :log_to_stdout do |tt, args|
+    Demo::Show.call(args.to_h)
+  end
 end
