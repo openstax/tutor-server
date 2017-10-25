@@ -5,4 +5,10 @@
                      items: @user_search.items,
                      total_count: @user_search.total_count,
                      page: params[:page],
-                     per_page: @per_page } %>
+                     per_page: @per_page,
+                     extra_headers: 'Actions',
+                     extra_fields_proc: lambda do |user| %>
+          <td>
+              <%= link_to 'Info', info_customer_service_users_path(id: user.id), class: "btn btn-xs btn-primary" %>
+          </td>
+<% end } %>
