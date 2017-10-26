@@ -78,7 +78,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
           answer_id = step.exercise? ? tasked.answer_id : nil
           correct = step.exercise? ? tasked.is_correct?.to_s : nil
           free_response = step.exercise? ? tasked.free_response : nil
-          tags = step.exercise? ? tasked.tags.join(',') : nil
+          tags = step.exercise? ? tasked.tags : []
 
           expect(data['Student']).to eq(task.taskings.first.role.research_identifier)
           expect(data['Course ID']).to eq(course.id.to_s)
@@ -95,7 +95,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
           expect(data['Answer ID']).to eq(answer_id)
           expect(data['Correct?']).to eq(correct)
           expect(data['Free Response']).to eq(free_response)
-          expect(data['Tags']).to eq(tags)
+          expect((data['Tags'] || '').split(',')).to match_array(tags)
         end
       end
     end

@@ -335,7 +335,7 @@ ActiveRecord::Schema.define(version: 20171025173835) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                 null: false
     t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()"
+    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
     t.integer  "sequence_number",                              default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                      null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
@@ -346,12 +346,12 @@ ActiveRecord::Schema.define(version: 20171025173835) do
     t.boolean  "does_cost",                                    default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
+    t.boolean  "is_preview_ready",                             default: false,               null: false
+    t.datetime "deleted_at"
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
-    t.boolean  "is_preview_ready",                             default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
-    t.datetime "deleted_at"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
@@ -922,7 +922,7 @@ ActiveRecord::Schema.define(version: 20171025173835) do
   add_index "tasks_tasks", ["hidden_at"], name: "index_tasks_tasks_on_hidden_at", using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["opens_at_ntz"], name: "index_tasks_tasks_on_opens_at_ntz", using: :btree
-  add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
+  add_index "tasks_tasks", ["task_type", "created_at"], name: "index_tasks_tasks_on_task_type_and_created_at", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
   add_index "tasks_tasks", ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id", using: :btree
   add_index "tasks_tasks", ["uuid"], name: "index_tasks_tasks_on_uuid", unique: true, using: :btree

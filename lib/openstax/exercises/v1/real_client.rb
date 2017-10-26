@@ -50,7 +50,7 @@ class OpenStax::Exercises::V1::RealClient
 
       # Don't record access token requests in cassettes
       oauth_token  = oauth_client.client_credentials.get_token \
-        unless Rails.env.test? || @client_id.nil?
+        unless @client_id.nil? || Rails.env.test?
 
       oauth_token || oauth_client
     end
