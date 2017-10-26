@@ -194,8 +194,69 @@ RSpec.describe 'LMS Launch', type: :request do
     end
   end
 
+  context "LMS changes sourcedid on each launch" do
+    before(:each) { simulator.do_not_reuse_sourcedids! }
+
+    it "only keeps one per link / user combo" do
+      simulator.add_student("bob")
+      simulator.launch(user: "bob", assignment: "tutor")
+      bob_user = launch_helper.complete_the_launch_locally
+
+      AddUserAsPeriodStudent[period: period, user: bob_user]
+
+      callbacks = callbacks(bob_user)
+      expect(callbacks.count).to eq 1
+      first_sourcedid = callbacks.first.result_sourcedid
+
+      simulator.launch(user: "bob", assignment: "tutor")
+      bob_user = launch_helper.complete_the_launch_locally
+
+      callbacks = callbacks(bob_user)
+      expect(callbacks.count).to eq 1
+      expect(callbacks.first.result_sourcedid).not_to eq first_sourcedid
+
+      simulator.launch(user: "bob", assignment: "other_tutor_assignment")
+      bob_user = launch_helper.complete_the_launch_locally
+
+      callbacks = callbacks(bob_user)
+      expect(callbacks.count).to eq 2
+    end
+  end
+
+  context "LMS reuses sourcedid on each launch" do
+    it "only keeps one per link / user combo" do
+      simulator.add_student("bob")
+      simulator.launch(user: "bob", assignment: "tutor")
+      bob_user = launch_helper.complete_the_launch_locally
+
+      AddUserAsPeriodStudent[period: period, user: bob_user]
+
+      callbacks = callbacks(bob_user)
+      expect(callbacks.count).to eq 1
+      first_sourcedid = callbacks.first.result_sourcedid
+
+      simulator.launch(user: "bob", assignment: "tutor")
+      bob_user = launch_helper.complete_the_launch_locally
+
+      callbacks = callbacks(bob_user)
+      expect(callbacks.count).to eq 1
+      expect(callbacks.first.result_sourcedid).to eq first_sourcedid
+
+      simulator.launch(user: "bob", assignment: "other_tutor_assignment")
+      bob_user = launch_helper.complete_the_launch_locally
+
+      callbacks = callbacks(bob_user)
+      expect(callbacks.count).to eq 2
+      expect(callbacks.map(&:result_sourcedid).uniq.length).to eq 2
+    end
+  end
+
   def expect_course_score_callback_count(user:, count:)
     expect(Lms::Models::CourseScoreCallback.where(course: course).where(profile: user.to_model).count).to eq count
+  end
+
+  def callbacks(user)
+    Lms::Models::CourseScoreCallback.where(course: course).where(profile: user.to_model)
   end
 
   def expect_error(message, status_code=422)

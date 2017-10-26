@@ -13,6 +13,7 @@ class Lms::Simulator
     @administrators = {}
     @sourcedids = {}
     @reverse_sourcedids = {}
+    @reuse_sourcedids = true
     @next_int = -1
 
     succeed_when_receive_score_for_dropped_student!
@@ -68,6 +69,14 @@ class Lms::Simulator
     :fail == @behavior_when_receive_score_for_dropped_student
   end
 
+  def reuse_sourcedids!
+    @reuse_sourcedids = true
+  end
+
+  def do_not_reuse_sourcedids!
+    @reuse_sourcedids = false
+  end
+
   def launch(user: nil, course: nil, assignment: nil, drop_these_fields: [])
     user ||= @launch_defaults[:user]
     course ||= @launch_defaults[:course]
@@ -93,6 +102,7 @@ class Lms::Simulator
       request_params.merge!({
         lis_outcome_service_url: outcome_url,
         lis_result_sourcedid: sourcedid!(user: user, assignment: assignment),
+        resource_link_id: assignment,
       })
     end
 
@@ -154,8 +164,18 @@ class Lms::Simulator
   end
 
   def sourcedid!(user:, assignment:)
-    @sourcedids["#{user}:#{assignment}"] ||= begin
+    if @reuse_sourcedids
+      @sourcedids["#{user}:#{assignment}"] ||= begin
+        value = next_int.to_s
+        @reverse_sourcedids[value] = "#{user}:#{assignment}"
+        value
+      end
+    else
       value = next_int.to_s
+      # Don't really need to track in @sourcedids since not reusing (not reissuing)
+      # but keep for tracking purposes.
+      @sourcedids["#{user}:#{assignment}"] ||= []
+      @sourcedids["#{user}:#{assignment}"].push(value)
       @reverse_sourcedids[value] = "#{user}:#{assignment}"
       value
     end

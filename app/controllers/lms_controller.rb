@@ -158,7 +158,7 @@ class LmsController < ApplicationController
     course = launch.context.course
 
     if launch.is_student?
-      launch.store_score_callback_if_needed(current_user)
+      launch.store_score_callback(current_user)
 
       # Note if the user is not yet a student in the course, so they can be sent through the
       # LMS-optimized enrollment flow.

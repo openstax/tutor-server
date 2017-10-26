@@ -17,6 +17,8 @@ class Lms::SendCourseScores
   lev_routine transaction: :no_transaction
 
   def exec(course:)
+    @errors = []
+
     @course = course
     raise "Course cannot be nil" if course.nil?
 
@@ -40,6 +42,8 @@ class Lms::SendCourseScores
       end
       status.set_progress(ii, @num_callbacks)
     end
+
+    send_errors_to_devs
   end
 
   def save_status_data
@@ -105,12 +109,23 @@ class Lms::SendCourseScores
   end
 
   def error!(message)
+    @errors.push(message)
     status.add_error(message)
     log_error("send_one_score failure: #{message.inspect}")
   end
 
   def log_error(message)
     Rails.logger.error { "[#{self.class.name}] #{'(' + status.id + ')' if status.present?} #{message}"}
+  end
+
+  def send_errors_to_devs
+    DevMailer.inspect_object(
+      object: {
+        course: @course.id,
+        errors: @errors,
+      },
+      subject: "#{self.class.name} errors"
+    ).deliver_later
   end
 
   def basic_outcome_xml(score:, sourcedid:, message_identifier: nil)
