@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171025173835) do
+ActiveRecord::Schema.define(version: 20171027145335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -744,6 +744,21 @@ ActiveRecord::Schema.define(version: 20171025173835) do
   add_index "tasks_performance_report_exports", ["course_profile_course_id"], name: "index_t_performance_report_exports_on_c_p_course_id", using: :btree
   add_index "tasks_performance_report_exports", ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course", using: :btree
 
+  create_table "tasks_task_page_caches", force: :cascade do |t|
+    t.integer  "tasks_task_id",                null: false
+    t.integer  "content_page_id",              null: false
+    t.integer  "course_membership_student_id", null: false
+    t.integer  "num_assigned_exercises",       null: false
+    t.integer  "num_completed_exercises",      null: false
+    t.integer  "num_correct_exercises",        null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+  end
+
+  add_index "tasks_task_page_caches", ["content_page_id"], name: "index_tasks_task_page_caches_on_content_page_id", using: :btree
+  add_index "tasks_task_page_caches", ["course_membership_student_id", "content_page_id", "tasks_task_id"], name: "index_task_page_caches_on_student_and_page_and_task", unique: true, using: :btree
+  add_index "tasks_task_page_caches", ["tasks_task_id"], name: "index_tasks_task_page_caches_on_tasks_task_id", using: :btree
+
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id",                        null: false
     t.integer  "owner_id",                                  null: false
@@ -888,7 +903,6 @@ ActiveRecord::Schema.define(version: 20171025173835) do
     t.datetime "due_at_ntz"
     t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
-    t.integer  "tasks_taskings_count",                         default: 0,                   null: false
     t.integer  "steps_count",                                  default: 0,                   null: false
     t.integer  "completed_steps_count",                        default: 0,                   null: false
     t.integer  "core_steps_count",                             default: 0,                   null: false
@@ -1039,6 +1053,9 @@ ActiveRecord::Schema.define(version: 20171025173835) do
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_page_caches", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_page_caches", "course_membership_students", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_page_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_task_plans", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify

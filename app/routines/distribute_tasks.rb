@@ -107,6 +107,8 @@ class DistributeTasks
 
     Tasks::Models::Task.import tasks, recursive: true, validate: false
 
+    Tasks::UpdateTaskPageCaches.perform_later(tasks: tasks)
+
     tasks.each do |task|
       task.task_steps.reset
       task.tasked_exercises.reset
