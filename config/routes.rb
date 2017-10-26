@@ -345,7 +345,11 @@ Rails.application.routes.draw do
   namespace :customer_service do
     root 'console#index'
 
-    resources :users, only: [:index]
+    resources :users, only: [:index] do
+      collection do
+        get :info
+      end
+    end
 
     resources :ecosystems, only: [:index] do
       get :manifest, on: :member
