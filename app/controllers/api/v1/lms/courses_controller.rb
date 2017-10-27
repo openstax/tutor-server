@@ -11,20 +11,22 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
 
   api :GET, '/lms/courses/:id', 'Returns info on how to connect a course to a LMS system'
   description <<-EOS
-    TODO
+    Returns the key/secrets/urls for linking a given course to a LMS that implements the LTI standard
+    #{json_schema(::Api::V1::Lms::LinkingRepresenter, include: :readable)}
   EOS
   def show
     OSU::AccessPolicy.require_action_allowed!(:lms_connection_info, current_api_user, @course)
 
     app = ::Lms::Models::App.find_or_create_by(owner: @course)
 
-    render json: app.as_json(
-             except: [:id, :owner_id, :owner_type, :created_at, :updated_at]
-           ).merge(
-             configuration_url: lms_configuration_url(format: :xml),
-             launch_url: lms_launch_url,
-             xml: render_to_string(template: 'lms/configuration.xml')
-           )
+    respond_with(
+      app,
+      represent_with: ::Api::V1::Lms::LinkingRepresenter,
+      user_options: {
+        xml: render_to_string(template: 'lms/configuration.xml')
+      }
+    )
+
   end
 
   api :PUT, '/lms/courses/:id/push_scores', 'Sends average course scores to the LMS in a background job'
