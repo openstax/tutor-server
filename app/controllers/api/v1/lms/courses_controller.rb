@@ -18,8 +18,11 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
 
     app = ::Lms::Models::App.find_or_create_by(owner: @course)
 
-    render json: app.as_json.merge(
-             url: lms_configuration_url(format: :xml),
+    render json: app.as_json(
+             except: [:id, :owner_id, :owner_type, :created_at, :updated_at]
+           ).merge(
+             configuration_url: lms_configuration_url(format: :xml),
+             launch_url: lms_launch_url,
              xml: render_to_string(template: 'lms/configuration.xml')
            )
   end
