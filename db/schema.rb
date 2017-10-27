@@ -746,8 +746,9 @@ ActiveRecord::Schema.define(version: 20171027145335) do
 
   create_table "tasks_task_page_caches", force: :cascade do |t|
     t.integer  "tasks_task_id",                null: false
-    t.integer  "content_page_id",              null: false
     t.integer  "course_membership_student_id", null: false
+    t.integer  "content_page_id",              null: false
+    t.integer  "content_mapped_page_id"
     t.integer  "num_assigned_exercises",       null: false
     t.integer  "num_completed_exercises",      null: false
     t.integer  "num_correct_exercises",        null: false
@@ -755,9 +756,10 @@ ActiveRecord::Schema.define(version: 20171027145335) do
     t.datetime "updated_at",                   null: false
   end
 
+  add_index "tasks_task_page_caches", ["content_mapped_page_id"], name: "index_tasks_task_page_caches_on_content_mapped_page_id", using: :btree
   add_index "tasks_task_page_caches", ["content_page_id"], name: "index_tasks_task_page_caches_on_content_page_id", using: :btree
-  add_index "tasks_task_page_caches", ["course_membership_student_id", "content_page_id", "tasks_task_id"], name: "index_task_page_caches_on_student_and_page_and_task", unique: true, using: :btree
-  add_index "tasks_task_page_caches", ["tasks_task_id"], name: "index_tasks_task_page_caches_on_tasks_task_id", using: :btree
+  add_index "tasks_task_page_caches", ["course_membership_student_id", "content_mapped_page_id"], name: "index_task_page_caches_on_student_and_mapped_page", using: :btree
+  add_index "tasks_task_page_caches", ["tasks_task_id", "course_membership_student_id", "content_page_id"], name: "index_task_page_caches_on_task_and_student_and_page", unique: true, using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id",                        null: false
@@ -1053,6 +1055,7 @@ ActiveRecord::Schema.define(version: 20171027145335) do
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_page_caches", "content_pages", column: "content_mapped_page_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_task_page_caches", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_page_caches", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_page_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade

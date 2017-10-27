@@ -31,9 +31,18 @@ class CourseContent::AddEcosystemToCourse
                                                                 to_ecosystem: ecosystem,
                                                                 strategy_class: map_strategy_class)
 
-    # Saving is necessary so the course can be sent to Biglearn
-    # because we cannot serialize unsaved AR objects
-    course.save if course.new_record?
+    if course.new_record?
+      # Saving is necessary so the course can be sent to Biglearn
+      # because we cannot serialize unsaved AR objects
+      course.save
+    else
+      # Invalidate all TaskPageCaches since we need to map them to the new ecosystem
+      Tasks::Models::Task
+        .joins(taskings: { role: :student })
+        .where(taskings: { role: { student: { course_profile_course_id: course.id } } })
+        .update_all(is_cached: false)
+    end
+
     OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)
   end
 

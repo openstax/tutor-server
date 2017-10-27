@@ -22,6 +22,7 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
       expect(task_page_cache.task).to be_in tasks
       expect(task_page_cache.student).to be_in students
       expect(task_page_cache.page).to be_in pages
+      expect(task_page_cache.mapped_page).to be_in pages
 
       expect(task_page_cache.num_assigned_exercises).to eq 2
       expect(task_page_cache.num_completed_exercises).to eq 0
@@ -37,6 +38,7 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
       expect(task_page_cache.task).to be_in tasks
       expect(task_page_cache.student).to be_in students
       expect(task_page_cache.page).to be_in pages
+      expect(task_page_cache.mapped_page).to be_in pages
 
       expect(task_page_cache.num_assigned_exercises).to eq 2
       expect(task_page_cache.num_completed_exercises).to eq 0
@@ -55,6 +57,7 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
       expect(task_page_cache.task).to be_in tasks
       expect(task_page_cache.student).to be_in students
       expect(task_page_cache.page).to be_in pages
+      expect(task_page_cache.mapped_page).to be_in pages
 
       expect(task_page_cache.num_assigned_exercises).to eq is_first_task ? 8 : 2
       expect(task_page_cache.num_completed_exercises).to eq is_first_task ? 8 : 0
