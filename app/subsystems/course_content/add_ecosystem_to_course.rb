@@ -36,11 +36,14 @@ class CourseContent::AddEcosystemToCourse
       # because we cannot serialize unsaved AR objects
       course.save
     else
-      # Invalidate all TaskPageCaches since we need to map them to the new ecosystem
-      Tasks::Models::Task
+      # Recalculate all TaskPageCaches since we need to map them to the new ecosystem
+      tasks = Tasks::Models::Task
+        .select(:id)
         .joins(taskings: { role: :student })
         .where(taskings: { role: { student: { course_profile_course_id: course.id } } })
-        .update_all(is_cached: false)
+        .to_a
+
+      Tasks::UpdateTaskPageCaches.perform_later(tasks: tasks)
     end
 
     OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)

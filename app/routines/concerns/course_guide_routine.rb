@@ -5,214 +5,176 @@ module CourseGuideRoutine
 
   def self.included(base)
     base.lev_routine express_output: :course_guide
-    base.uses_routine GetHistory, as: :get_history
-    base.uses_routine GetCourseEcosystem, as: :get_course_ecosystem
-    base.uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
   end
 
-  def get_clues_by_book_container_uuids(roles, mapped_relevant_pages_by_chapter, type)
-    book_containers = mapped_relevant_pages_by_chapter.flat_map do |chapter, mapped_relevant_pages|
-      [chapter] + mapped_relevant_pages
+  def get_course_guide(students:, type:)
+    raise 'Course guide type must be either :student or :teacher' \
+      unless [ :student, :teacher ].include? type
+
+    students = [students].flatten
+    student_ids = students.map(&:id)
+
+    # Group students by their current period
+    ActiveRecord::Associations::Preloader.new.preload(students, :latest_enrollment)
+    students_by_period_id = students.group_by do |student|
+      student.latest_enrollment.course_membership_period_id
     end
 
-    responses = if roles.size == 1
-      # Student guide
-      requests = book_containers.map do |book_container|
-        { book_container: book_container, student: roles.first.student }
-      end
+    # Get cached Task stats split into pages
+    task_page_caches = Tasks::Models::TaskPageCache
+      .select([
+        '"tasks_task_page_caches"."tasks_task_id"',
+        '"tasks_task_page_caches"."course_membership_student_id"',
+        '"tasks_task_page_caches"."content_mapped_page_id"',
+        '"tasks_task_page_caches"."num_completed_exercises"',
+        '"content_pages"."content_chapter_id"',
+        '"content_chapters"."content_book_id"',
+      ])
+      .joins(mapped_page: :chapter)
+      .where(course_membership_student_id: student_ids)
 
-      OpenStax::Biglearn::Api.fetch_student_clues(requests)
-    else
-      # Teacher guide
-      periods = roles.map(&:student).map(&:period).uniq
-      raise NotImplementedError if periods.size != 1
+    # Get period and course information
+    period_ids = students_by_period_id.keys
+    period_by_period_id = CourseMembership::Models::Period
+      .select([:id, :uuid, :course_profile_course_id])
+      .where(id: period_ids)
+      .index_by(&:id)
 
-      requests = book_containers.map do |book_container|
-        { book_container: book_container, course_container: periods.first }
-      end
+    # Get book titles
+    course_ids = period_by_period_id.values.map(&:course_profile_course_id)
+    book_title_by_course_id = CourseProfile::Models::Course
+      .select(:id)
+      .where(id: course_ids)
+      .preload(ecosystems: :books)
+      .map do |course|
+      [course.id, course.ecosystems.first.books.map(&:title).join('; ')]
+    end.to_h
 
-      OpenStax::Biglearn::Api.fetch_teacher_clues(requests)
-    end
+    # Get chapter uuids, titles and book_locations
+    chapter_ids = task_page_caches.map(&:content_chapter_id)
+    chapter_by_chapter_id = Content::Models::Chapter
+      .select([:id, :tutor_uuid, :title, :book_location, :content_book_id])
+      .where(id: chapter_ids)
+      .preload(book: :ecosystem)
+      .index_by(&:id)
 
-    responses.map { |request, response| [request[:book_container].tutor_uuid, response] }.to_h
-  end
+    # Get mapped page uuids, titles and book_locations
+    page_ids = task_page_caches.map(&:content_mapped_page_id)
+    page_by_page_id = Content::Models::Page
+      .select([:id, :tutor_uuid, :title, :book_location, :content_chapter_id])
+      .where(id: page_ids)
+      .preload(chapter: { book: :ecosystem })
+      .index_by(&:id)
 
-  def get_page_guides(mapped_relevant_pages,
-                      clues_by_book_container_uuids,
-                      entity_role_ids_by_mapped_page_ids,
-                      questions_answered_counts_by_mapped_page_ids,
-                      practice_counts_by_mapped_page_ids)
-    mapped_relevant_pages.map do |mapped_relevant_page|
-      page_id = mapped_relevant_page.id
-      student_count = entity_role_ids_by_mapped_page_ids[page_id].uniq.size
-      questions_answered_count = questions_answered_counts_by_mapped_page_ids[page_id]
-      practice_count = practice_counts_by_mapped_page_ids[page_id]
-      clue = clues_by_book_container_uuids[mapped_relevant_page.tutor_uuid]
+    task_page_caches_by_student_id = task_page_caches.group_by(&:course_membership_student_id)
 
-      {
-        title: mapped_relevant_page.title,
-        book_location: mapped_relevant_page.book_location,
-        student_count: student_count,
-        questions_answered_count: questions_answered_count,
-        practice_count: practice_count,
-        clue: clue,
-        page_ids: [page_id]
-      }
-    end
-  end
-
-  def get_chapter_guides(mapped_relevant_pages_by_chapter,
-                         clues_by_book_container_uuids,
-                         entity_role_ids_by_mapped_page_ids,
-                         questions_answered_counts_by_mapped_page_ids,
-                         practice_counts_by_mapped_page_ids)
-
-    mapped_relevant_pages_by_chapter.map do |chapter, mapped_relevant_pages|
-      mapped_relevant_page_ids = mapped_relevant_pages.map(&:id)
-      student_count = entity_role_ids_by_mapped_page_ids
-                        .values_at(*mapped_relevant_page_ids).flatten.uniq.size
-      questions_answered_count = questions_answered_counts_by_mapped_page_ids
-                                   .values_at(*mapped_relevant_page_ids).reduce(0, :+)
-      practice_count = practice_counts_by_mapped_page_ids
-                         .values_at(*mapped_relevant_page_ids).reduce(0, :+)
-      clue = clues_by_book_container_uuids[chapter.tutor_uuid]
-      children = get_page_guides(mapped_relevant_pages,
-                                 clues_by_book_container_uuids,
-                                 entity_role_ids_by_mapped_page_ids,
-                                 questions_answered_counts_by_mapped_page_ids,
-                                 practice_counts_by_mapped_page_ids)
-
-      {
-        title: chapter.title,
-        book_location: chapter.book_location,
-        student_count: student_count,
-        questions_answered_count: questions_answered_count,
-        practice_count: practice_count,
-        clue: clue,
-        page_ids: mapped_relevant_page_ids,
-        children: children
-      }
-    end
-  end
-
-  def get_role_guides(roles, history, ecosystems_map, type)
-    # Assuming only 1 book per ecosystem
-    book = ecosystems_map.to_ecosystem.books.first
-
-    roles = [roles].flatten
-    return { title: book.title, page_ids: [], children: [] } if roles.size == 0
-
-    relevant_role_histories = history.values_at(*roles)
-
-    all_core_page_ids = relevant_role_histories.map do |role_history|
-      # Exclude unopened tasks in history
-      opens_ats = role_history.opens_ats
-      open_task_indices = opens_ats.each_index.select do |index|
-        opens_ats[index].nil? || opens_ats[index] <= Time.current
-      end
-      role_history.core_page_ids.values_at(*open_task_indices)
-    end.flatten
-
-    role_ids = roles.map(&:id)
-    # Assumes 1 tasking per task
-    page_role_stats = Tasks::Models::TaskedExercise
-      .joins(:exercise, { task_step: { task: :taskings } })
-      .where(task_step: { task: { taskings: { entity_role_id: role_ids } } })
-      .where{task_step.first_completed_at != nil}
-      .group(exercise: :content_page_id, task_step: { task: { taskings: :entity_role_id } })
-      .select(
-        [
-          { exercise: :content_page_id },
-          { task_step: { task: { taskings: :entity_role_id } } },
-          'COUNT(*) AS questions_answered_count'
-        ]
-      )
-    all_worked_page_ids = page_role_stats.map(&:content_page_id)
-
-    all_relevant_page_ids = (all_core_page_ids + all_worked_page_ids).uniq
-
-    all_relevant_pages_by_id = {}
-    Content::Models::Page.where(id: all_relevant_page_ids).select(:id).each do |content_page|
-      all_relevant_pages_by_id[content_page.id] = Content::Page.new strategy: content_page.wrap
-    end
-
-    all_relevant_pages = all_relevant_pages_by_id.values
-
-    # Map pages in tasks to the newest ecosystem
-    page_map = ecosystems_map.map_pages_to_pages(pages: all_relevant_pages)
-
-    all_mapped_page_ids = page_map.values.flatten.map(&:id)
-    mapped_relevant_pages_by_chapter = Content::Models::Page
-      .joins(:all_exercises_pool)
-      .where(id: all_mapped_page_ids)
-      .where{all_exercises_pool.content_exercise_ids != '[]'} # Skip intro pages
-      .select([Content::Models::Page.arel_table[:id],
-               Content::Models::Page.arel_table[:tutor_uuid],
-               Content::Models::Page.arel_table[:title],
-               Content::Models::Page.arel_table[:book_location],
-               Content::Models::Page.arel_table[:content_chapter_id]])
-      .preload(:chapter)
-      .sort_by(&:book_location)
-      .group_by(&:chapter)
-    mapped_relevant_page_ids_with_exercises = \
-      mapped_relevant_pages_by_chapter.values.flatten.map(&:id)
-
-    clues_by_book_container_uuids = get_clues_by_book_container_uuids(
-      roles, mapped_relevant_pages_by_chapter, type
+    # Get a list of practice task ids
+    task_ids = task_page_caches.map(&:tasks_task_id)
+    practice_task_types = Tasks::Models::Task.task_types.values_at(
+      :chapter_practice, :page_practice, :mixed_practice, :practice_worst_topics
     )
+    practice_task_ids = Tasks::Models::Task
+      .where(id: task_ids, task_type: practice_task_types)
+      .pluck(:id)
 
-    entity_role_ids_by_mapped_page_ids = Hash.new { |hash, key| hash[key] = [] }
-    questions_answered_counts_by_mapped_page_ids = Hash.new(0)
-    page_role_stats.each do |stats|
-      page = all_relevant_pages_by_id[stats.content_page_id]
-      mapped_page_id = page_map[page].id
+    # Create Biglearn Student/Teacher CLUe requests
+    biglearn_requests = students_by_period_id.flat_map do |period_id, students|
+      student_ids = students.map(&:id)
+      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).flatten.compact
 
-      entity_role_ids_by_mapped_page_ids[mapped_page_id] << stats.entity_role_id
-      questions_answered_counts_by_mapped_page_ids[mapped_page_id] += stats.questions_answered_count
-    end
+      chapter_ids = task_page_caches.map(&:content_chapter_id)
+      chapters = chapter_by_chapter_id.values_at(*chapter_ids)
+      page_ids = task_page_caches.map(&:content_mapped_page_id)
+      pages = page_by_page_id.values_at(*page_ids)
+      book_containers = chapters + pages
 
-    practice_counts_by_mapped_page_ids = Hash.new(0)
-    relevant_role_histories.each do |role_history|
-      task_types = role_history.task_types
-      practice_task_indices = task_types.each_index.select do |index|
-        task_types[index] == :practice
-      end
-      practice_core_page_ids = role_history.core_page_ids.values_at(*practice_task_indices)
-      practice_core_page_ids.each do |core_page_ids|
-        core_page_ids.each do |core_page_id|
-          page = all_relevant_pages_by_id[core_page_id]
-          mapped_page_id = page_map[page].id
+      if type == :student
+        students.flat_map do |student|
+          book_containers.map do |book_container|
+            { book_container: book_container, student: student }
+          end
+        end
+      else
+        period = period_by_period_id[period_id]
 
-          practice_counts_by_mapped_page_ids[mapped_page_id] += 1
+        book_containers.map do |book_container|
+          { book_container: book_container, course_container: period }
         end
       end
     end
 
-    {
-      title: book.title,
-      page_ids: mapped_relevant_page_ids_with_exercises,
-      children: get_chapter_guides(mapped_relevant_pages_by_chapter,
-                                   clues_by_book_container_uuids,
-                                   entity_role_ids_by_mapped_page_ids,
-                                   questions_answered_counts_by_mapped_page_ids,
-                                   practice_counts_by_mapped_page_ids)
-    }
-  end
+    # Get the Student/Teacher CLUes from Biglearn
+    biglearn_responses = if type == :student
+      OpenStax::Biglearn::Api.fetch_student_clues(biglearn_requests)
+    else
+      OpenStax::Biglearn::Api.fetch_teacher_clues(biglearn_requests)
+    end
+    biglearn_clue_by_book_container_uuid = biglearn_responses.map do |request, response|
+      [ request[:book_container].tutor_uuid, response ]
+    end.to_h
 
-  def exec(role:)
-    outputs.course_guide = get_course_guide(role)
-  end
+    # Create the Performance Forecast
+    students_by_period_id.map do |period_id, students|
+      student_ids = students.map(&:id)
+      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).flatten.compact
 
-  def get_history_for_roles(roles)
-    run(:get_history, roles: roles).outputs.history
-  end
+      period = period_by_period_id[period_id]
+      course_id = period.course_profile_course_id
+      book_title = book_title_by_course_id[course_id]
 
-  def get_course_ecosystems_map(course)
-    run(:get_course_ecosystems_map, course: course).outputs.ecosystems_map
-  end
+      chapter_guides = task_page_caches.group_by(&:content_chapter_id)
+                                       .map do |chapter_id, task_page_caches|
+        chapter = chapter_by_chapter_id[chapter_id]
+        student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
+        task_ids = task_page_caches.map(&:tasks_task_id)
+        practice_count = (practice_task_ids & task_ids).size
+        clue = biglearn_clue_by_book_container_uuid[chapter.tutor_uuid]
 
-  def get_period_guide(period, period_roles, history, ecosystems_map, type)
-    { period_id: period.id }.merge(get_role_guides(period_roles, history, ecosystems_map, type))
+        page_guides = task_page_caches.group_by(&:content_mapped_page_id)
+                                      .map do |page_id, task_page_caches|
+          page = page_by_page_id[page_id]
+          student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
+          task_ids = task_page_caches.map(&:tasks_task_id)
+          questions_answered_count = task_page_caches.map(&:num_completed_exercises).reduce(0, :+)
+          practice_count = (practice_task_ids & task_ids).size
+          clue = biglearn_clue_by_book_container_uuid[page.tutor_uuid]
+
+          {
+            title: page.title,
+            book_location: page.book_location,
+            student_count: student_count,
+            questions_answered_count: questions_answered_count,
+            practice_count: practice_count,
+            clue: clue,
+            page_ids: [ page_id ]
+          }
+        end
+
+        questions_answered_count = page_guides.map { |guide| guide[:questions_answered_count] }
+                                              .reduce(0, :+)
+        page_ids = page_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
+
+        {
+          title: chapter.title,
+          book_location: chapter.book_location,
+          student_count: student_count,
+          questions_answered_count: questions_answered_count,
+          practice_count: practice_count,
+          clue: clue,
+          page_ids: page_ids,
+          children: page_guides
+        }
+      end
+
+      page_ids = chapter_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
+
+      {
+        period_id: period_id,
+        title: book_title,
+        page_ids: page_ids,
+        children: chapter_guides
+      }
+    end
   end
 
 end

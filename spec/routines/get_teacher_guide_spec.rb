@@ -161,7 +161,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Representing Acceleration with Equations and Graphs",
+          "title" => "Representing Acceleration with Equations and Graphs",
           "book_location" => [3, 2],
           "student_count" => 0,
           "questions_answered_count" => 0,
@@ -183,7 +183,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's First Law of Motion: Inertia",
+          "title" => "Newton's First Law of Motion: Inertia",
           "book_location" => [4, 2],
           "student_count" => 1,
           "questions_answered_count" => 5,
@@ -192,7 +192,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Second Law of Motion",
+          "title" => "Newton's Second Law of Motion",
           "book_location" => [4, 3],
           "student_count" => 0,
           "questions_answered_count" => 0,
@@ -201,7 +201,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Third Law of Motion",
+          "title" => "Newton's Third Law of Motion",
           "book_location" => [4, 4],
           "student_count" => 0,
           "questions_answered_count" => 0,
@@ -223,7 +223,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Representing Acceleration with Equations and Graphs",
+          "title" => "Representing Acceleration with Equations and Graphs",
           "book_location" => [3, 2],
           "student_count" => 0,
           "questions_answered_count" => 0,
@@ -245,7 +245,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's First Law of Motion: Inertia",
+          "title" => "Newton's First Law of Motion: Inertia",
           "book_location" => [4, 2],
           "student_count" => 1,
           "questions_answered_count" => 5,
@@ -254,7 +254,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Second Law of Motion",
+          "title" => "Newton's Second Law of Motion",
           "book_location" => [4, 3],
           "student_count" => 0,
           "questions_answered_count" => 0,
@@ -263,7 +263,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Third Law of Motion",
+          "title" => "Newton's Third Law of Motion",
           "book_location" => [4, 4],
           "student_count" => 0,
           "questions_answered_count" => 0,
