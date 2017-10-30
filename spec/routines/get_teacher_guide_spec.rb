@@ -116,7 +116,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "student_count" => 1,
         "questions_answered_count" => 7,
         "clue" => clue_matcher,
-        "practice_count" => 0,
+        "practice_count" => 3,
         "page_ids" => [kind_of(Integer)]*4,
         "children" => [kind_of(Hash)]*4
       )
@@ -128,7 +128,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "student_count" => 1,
         "questions_answered_count" => 5,
         "clue" => clue_matcher,
-        "practice_count" => 0,
+        "practice_count" => 1,
         "page_ids" => [kind_of(Integer)]*2,
         "children" => [kind_of(Hash)]*2
       )
@@ -140,7 +140,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "student_count" => 1,
         "questions_answered_count" => 5,
         "clue" => clue_matcher,
-        "practice_count" => 0,
+        "practice_count" => 2,
         "page_ids" => [kind_of(Integer)]*4,
         "children" => [kind_of(Hash)]*4
       )
@@ -179,7 +179,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 1,
           "questions_answered_count" => 2,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -188,7 +188,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 1,
           "questions_answered_count" => 5,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -197,7 +197,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 0,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -206,7 +206,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 0,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         }
       ]
@@ -219,7 +219,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 1,
           "questions_answered_count" => 5,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -228,7 +228,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 0,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         }
       ]
@@ -241,7 +241,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 0,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -250,7 +250,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 1,
           "questions_answered_count" => 5,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -259,7 +259,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 0,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
@@ -268,7 +268,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 0,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         }
       ]

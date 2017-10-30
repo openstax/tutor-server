@@ -23,15 +23,13 @@ module CourseGuideRoutine
     # Get cached Task stats split into pages
     task_page_caches = Tasks::Models::TaskPageCache
       .select([
-        '"tasks_task_page_caches"."tasks_task_id"',
-        '"tasks_task_page_caches"."course_membership_student_id"',
-        '"tasks_task_page_caches"."content_mapped_page_id"',
-        '"tasks_task_page_caches"."num_completed_exercises"',
-        '"content_pages"."content_chapter_id"',
-        '"content_chapters"."content_book_id"',
+        :tasks_task_id,
+        :course_membership_student_id,
+        :content_mapped_page_id,
+        :num_completed_exercises
       ])
-      .joins(mapped_page: :chapter)
       .where(course_membership_student_id: student_ids)
+    task_page_caches_by_student_id = task_page_caches.group_by(&:course_membership_student_id)
 
     # Get period and course information
     period_ids = students_by_period_id.keys
@@ -50,23 +48,13 @@ module CourseGuideRoutine
       [course.id, course.ecosystems.first.books.map(&:title).join('; ')]
     end.to_h
 
-    # Get chapter uuids, titles and book_locations
-    chapter_ids = task_page_caches.map(&:content_chapter_id)
-    chapter_by_chapter_id = Content::Models::Chapter
-      .select([:id, :tutor_uuid, :title, :book_location, :content_book_id])
-      .where(id: chapter_ids)
-      .preload(book: :ecosystem)
-      .index_by(&:id)
-
     # Get mapped page uuids, titles and book_locations
     page_ids = task_page_caches.map(&:content_mapped_page_id)
-    page_by_page_id = Content::Models::Page
+    pages = Content::Models::Page
       .select([:id, :tutor_uuid, :title, :book_location, :content_chapter_id])
       .where(id: page_ids)
       .preload(chapter: { book: :ecosystem })
-      .index_by(&:id)
-
-    task_page_caches_by_student_id = task_page_caches.group_by(&:course_membership_student_id)
+    chapters = pages.map(&:chapter).uniq
 
     # Get a list of practice task ids
     task_ids = task_page_caches.map(&:tasks_task_id)
@@ -80,12 +68,8 @@ module CourseGuideRoutine
     # Create Biglearn Student/Teacher CLUe requests
     biglearn_requests = students_by_period_id.flat_map do |period_id, students|
       student_ids = students.map(&:id)
-      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).flatten.compact
+      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).compact.flatten
 
-      chapter_ids = task_page_caches.map(&:content_chapter_id)
-      chapters = chapter_by_chapter_id.values_at(*chapter_ids)
-      page_ids = task_page_caches.map(&:content_mapped_page_id)
-      pages = page_by_page_id.values_at(*page_ids)
       book_containers = chapters + pages
 
       if type == :student
@@ -113,26 +97,31 @@ module CourseGuideRoutine
       [ request[:book_container].tutor_uuid, response ]
     end.to_h
 
+    # A page that has been assigned to any period of this course
+    # will appear in the performance forecast for all periods
+    pages_by_chapter = pages.group_by(&:chapter)
+
     # Create the Performance Forecast
     students_by_period_id.map do |period_id, students|
       student_ids = students.map(&:id)
-      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).flatten.compact
+      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).compact.flatten
+      task_page_caches_by_page_id = task_page_caches.group_by(&:content_mapped_page_id)
 
       period = period_by_period_id[period_id]
       course_id = period.course_profile_course_id
       book_title = book_title_by_course_id[course_id]
 
-      chapter_guides = task_page_caches.group_by(&:content_chapter_id)
-                                       .map do |chapter_id, task_page_caches|
-        chapter = chapter_by_chapter_id[chapter_id]
+      chapter_guides = pages_by_chapter.map do |chapter, pages|
+        page_ids = pages.map(&:id)
+        task_page_caches = task_page_caches_by_page_id.values_at(*page_ids).compact.flatten
         student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
         task_ids = task_page_caches.map(&:tasks_task_id)
         practice_count = (practice_task_ids & task_ids).size
         clue = biglearn_clue_by_book_container_uuid[chapter.tutor_uuid]
 
-        page_guides = task_page_caches.group_by(&:content_mapped_page_id)
-                                      .map do |page_id, task_page_caches|
-          page = page_by_page_id[page_id]
+        page_guides = pages.map do |page|
+          page_id = page.id
+          task_page_caches = task_page_caches_by_page_id[page_id] || []
           student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
           task_ids = task_page_caches.map(&:tasks_task_id)
           questions_answered_count = task_page_caches.map(&:num_completed_exercises).reduce(0, :+)
