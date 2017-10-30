@@ -1,3 +1,5 @@
+# Updates the TaskPageCaches, used in the Performance Forecast and Quick Look
+# Tasks not assigned to a student (preview tasks) are ignored
 class Tasks::UpdateTaskPageCaches
   lev_routine
 

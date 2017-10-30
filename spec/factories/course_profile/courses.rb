@@ -29,6 +29,14 @@ FactoryGirl.define do
 
     association :offering, factory: :catalog_offering
 
+    after(:build) do |course|
+      course.course_ecosystems << build(
+        :course_content_course_ecosystem,
+        course: course,
+        ecosystem: course.offering.ecosystem
+      ) if course.offering.present?
+    end
+
     trait(:with_assistants) do
       after(:create) { |course| Tasks::CreateCourseAssistants[course: course] }
     end
@@ -37,12 +45,9 @@ FactoryGirl.define do
       after(:create) { |course| SchoolDistrict::ProcessSchoolChange[course: course] }
     end
 
-    #after(:build) do |course|
-    #  course.course_ecosystems << build(
-    #    :course_content_course_ecosystem,
-    #    course: course,
-    #    ecosystem: course.offering.ecosystem
-    #  ) unless course.offering.nil?
-    #end
+    trait(:without_ecosystem) do
+      after(:build) { |course| course.course_ecosystems.delete_all :delete_all }
+    end
+
   end
 end

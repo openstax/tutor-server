@@ -26,10 +26,9 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     ecosystem_model = @book.ecosystem
     ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
 
-    period_model = FactoryGirl.create(:course_membership_period)
+    @course = FactoryGirl.create :course_profile_course, :without_ecosystem, is_concept_coach: true
+    period_model = FactoryGirl.create :course_membership_period, course: @course
     period = CourseMembership::Period.new(strategy: period_model.wrap)
-    @course = period.course
-    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 

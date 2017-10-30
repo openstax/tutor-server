@@ -92,11 +92,14 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
 
   it 'is called when a new ecosystem is added to the course' do
     course = @task_plan.owner
-    ecosystem = course.ecosystems.first.clone
-    ecosystem.save!
+    ecosystem = course.ecosystems.first
+    course.course_ecosystems.delete_all :delete_all
 
     expect(described_class).to receive(:perform_later) do |tasks:|
-      expect(tasks).to match_array(@task_plan.reload.tasks)
+      student_tasks = @task_plan.tasks.select do |task|
+        task.taskings.any? { |tasking| tasking.role.student.present? }
+      end
+      expect(tasks).to match_array(student_tasks)
     end
 
     AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)

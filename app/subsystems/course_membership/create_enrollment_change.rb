@@ -51,7 +51,7 @@ class CourseMembership::CreateEnrollmentChange
         other_ecosystem = run(:get_ecosystem, course: other_course).outputs.ecosystem
         next false if other_ecosystem.nil?
 
-        other_ecosystem.books.first.uuid == course_book_uuid
+        other_ecosystem.books.any? { |book| book.uuid == course_book_uuid }
       end
 
       same_book_other_enrollments = same_book_other_roles.map do |role|

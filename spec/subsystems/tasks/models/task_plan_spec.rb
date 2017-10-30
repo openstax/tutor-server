@@ -50,6 +50,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     page = FactoryGirl.create :content_page, chapter: chapter
     exercise = FactoryGirl.create :content_exercise, page: page
 
+    task_plan.owner.course_ecosystems.delete_all :delete_all
     task_plan.ecosystem = nil
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil

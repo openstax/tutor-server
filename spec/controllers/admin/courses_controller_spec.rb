@@ -283,7 +283,9 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   context 'POST #set_ecosystem' do
-    let(:course)            { FactoryGirl.create(:course_profile_course, name: 'Physics I') }
+    let(:course)            do
+      FactoryGirl.create(:course_profile_course, :without_ecosystem, name: 'Physics I')
+    end
     let(:eco_1)             do
       model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)

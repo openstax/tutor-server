@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :catalog_offering, class: '::Catalog::Models::Offering' do
 
-    association :ecosystem, factory: :content_ecosystem
+    ecosystem { build(:content_book).ecosystem }
 
     salesforce_book_name { "#{Faker::Lorem.word.capitalize} #{SecureRandom.uuid}" }
     appearance_code      { Faker::Lorem.word                                      }
