@@ -752,13 +752,16 @@ ActiveRecord::Schema.define(version: 20171027145335) do
     t.integer  "num_assigned_exercises",       null: false
     t.integer  "num_completed_exercises",      null: false
     t.integer  "num_correct_exercises",        null: false
+    t.datetime "opens_at"
+    t.datetime "due_at"
+    t.datetime "feedback_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
 
   add_index "tasks_task_page_caches", ["content_mapped_page_id"], name: "index_tasks_task_page_caches_on_content_mapped_page_id", using: :btree
   add_index "tasks_task_page_caches", ["content_page_id"], name: "index_tasks_task_page_caches_on_content_page_id", using: :btree
-  add_index "tasks_task_page_caches", ["course_membership_student_id", "content_mapped_page_id"], name: "index_task_page_caches_on_student_and_mapped_page", using: :btree
+  add_index "tasks_task_page_caches", ["course_membership_student_id", "opens_at"], name: "index_task_page_caches_on_student_and_opens_at", using: :btree
   add_index "tasks_task_page_caches", ["tasks_task_id", "course_membership_student_id", "content_page_id"], name: "index_task_page_caches_on_task_and_student_and_page", unique: true, using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|

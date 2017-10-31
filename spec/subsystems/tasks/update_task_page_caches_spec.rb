@@ -24,9 +24,13 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
       expect(task_page_cache.page).to be_in pages
       expect(task_page_cache.mapped_page).to be_in pages
 
-      expect(task_page_cache.num_assigned_exercises).to eq 2
+      expect(task_page_cache.num_assigned_exercises).to eq 5 # 2 core + 3 personalized
       expect(task_page_cache.num_completed_exercises).to eq 0
       expect(task_page_cache.num_correct_exercises).to eq 0
+
+      expect(task_page_cache.opens_at).to be_within(1).of(task_page_cache.task.opens_at)
+      expect(task_page_cache.due_at).to be_within(1).of(task_page_cache.task.due_at)
+      expect(task_page_cache.feedback_at).to be_nil
     end
   end
 
@@ -40,9 +44,13 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
       expect(task_page_cache.page).to be_in pages
       expect(task_page_cache.mapped_page).to be_in pages
 
-      expect(task_page_cache.num_assigned_exercises).to eq 2
+      expect(task_page_cache.num_assigned_exercises).to eq 5 # 2 core + 3 personalized
       expect(task_page_cache.num_completed_exercises).to eq 0
       expect(task_page_cache.num_correct_exercises).to eq 0
+
+      expect(task_page_cache.opens_at).to be_within(1).of(task_page_cache.task.opens_at)
+      expect(task_page_cache.due_at).to be_within(1).of(task_page_cache.task.due_at)
+      expect(task_page_cache.feedback_at).to be_nil
     end
 
     first_task = tasks.first
@@ -59,7 +67,7 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
       expect(task_page_cache.page).to be_in pages
       expect(task_page_cache.mapped_page).to be_in pages
 
-      expect(task_page_cache.num_assigned_exercises).to eq is_first_task ? 8 : 2
+      expect(task_page_cache.num_assigned_exercises).to eq is_first_task ? 8 : 5
       expect(task_page_cache.num_completed_exercises).to eq is_first_task ? 8 : 0
       expect(task_page_cache.num_correct_exercises).to eq is_first_task ? 8 : 0
     end
@@ -88,6 +96,15 @@ RSpec.describe Tasks::UpdateTaskPageCaches, type: :routine, speed: :slow do
 
     task_step = task.task_steps.first
     MarkTaskStepCompleted.call(task_step: task_step)
+  end
+
+  it 'is called when placeholder steps are populated' do
+    task = @task_plan.tasks.first
+    # Queuing the background job 6 times is not ideal at all...
+    # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
+    expect(described_class).to receive(:perform_later).exactly(6).times.with(tasks: task)
+
+    Tasks::PopulatePlaceholderSteps.call(task: task)
   end
 
   it 'is called when a new ecosystem is added to the course' do

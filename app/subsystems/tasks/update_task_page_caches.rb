@@ -8,7 +8,10 @@ class Tasks::UpdateTaskPageCaches
   protected
 
   def exec(tasks:)
-    task_ids = [tasks].flatten.map(&:id)
+    tasks = [tasks].flatten
+    ActiveRecord::Associations::Preloader.new.preload tasks, :time_zone
+    tasks_by_id = tasks.index_by(&:id)
+    task_ids = tasks_by_id.keys
 
     # Get student and course IDs
     student_ids_by_task_id = Hash.new { |hash, key| hash[key] = [] }
@@ -21,19 +24,29 @@ class Tasks::UpdateTaskPageCaches
       task_ids_by_course_id[course_id] << task_id
     end
 
-    # Get exercise counts for each page of each task
-    exercise_counts_by_task_id = Tasks::Models::TaskedExercise
+    # Get exercise counts for each page of each task (including placeholder steps)
+    # Don't include spaced practice exercises whose page is currently unknown (NULL content_page_id)
+    exercise_counts_by_task_id = Tasks::Models::TaskStep
       .select([
         '"tasks_task_steps"."tasks_task_id"',
         '"tasks_task_steps"."content_page_id"',
         'COUNT(*) AS "assigned"',
         'COUNT("tasks_task_steps"."first_completed_at") AS "completed"',
-        'COUNT(*) FILTER (WHERE "tasks_tasked_exercises"."answer_id" =' +
-          '"tasks_tasked_exercises"."correct_answer_id") AS "correct"'
+        'COUNT(*) FILTER (WHERE "tasks_tasked_exercises"."answer_id" = ' +
+          '"tasks_tasked_exercises"."correct_answer_id") AS "correct"',
       ])
-      .joins(:task_step)
-      .where(task_step: { tasks_task_id: task_ids })
-      .group(task_step: [ :tasks_task_id, :content_page_id ])
+      .joins(
+        <<-JOIN_SQL.strip_heredoc
+          LEFT OUTER JOIN "tasks_tasked_exercises"
+            ON "tasks_task_steps"."tasked_type" = '#{Tasks::Models::TaskedExercise.name}'
+            AND "tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"
+        JOIN_SQL
+      )
+      .where(tasks_task_id: task_ids, tasked_type: [
+        Tasks::Models::TaskedExercise.name, Tasks::Models::TaskedPlaceholder.name
+      ])
+      .where('"tasks_task_steps"."content_page_id" IS NOT NULL')
+      .group(:tasks_task_id, :content_page_id)
       .group_by(&:tasks_task_id)
 
     # Get all relevant pages
@@ -53,6 +66,7 @@ class Tasks::UpdateTaskPageCaches
       ecosystem_map = run(:get_course_ecosystems_map, course: course).outputs.ecosystems_map
 
       task_ids.flat_map do |task_id|
+        task = tasks_by_id[task_id]
         exercise_counts = exercise_counts_by_task_id[task_id] || []
         page_ids = exercise_counts.map(&:content_page_id)
         pages = pages_by_page_id.values_at(*page_ids)
@@ -74,13 +88,17 @@ class Tasks::UpdateTaskPageCaches
               content_mapped_page_id: mapped_page_id,
               num_assigned_exercises: exercise_count.assigned,
               num_completed_exercises: exercise_count.completed,
-              num_correct_exercises: exercise_count.correct
+              num_correct_exercises: exercise_count.correct,
+              opens_at: task.opens_at,
+              due_at: task.due_at,
+              feedback_at: task.feedback_at
             )
           end
         end
       end
     end
 
+    # Update the TaskPageCaches
     Tasks::Models::TaskPageCache.import task_page_caches, validate: false,
                                                           on_duplicate_key_update: {
       conflict_target: [ :course_membership_student_id, :content_page_id, :tasks_task_id ],
@@ -88,8 +106,17 @@ class Tasks::UpdateTaskPageCaches
         :content_mapped_page_id,
         :num_assigned_exercises,
         :num_completed_exercises,
-        :num_correct_exercises
+        :num_correct_exercises,
+        :opens_at,
+        :due_at,
+        :feedback_at
       ]
     }
+
+    # Delete any TaskPageCaches that were not updated (for example, deleted placeholder steps)
+    task_page_cache_ids = task_page_caches.map(&:id)
+    Tasks::Models::TaskPageCache.where(tasks_task_id: task_ids)
+                                .where{ id.not_in task_page_cache_ids }
+                                .delete_all
   end
 end

@@ -7,7 +7,7 @@ module CourseGuideRoutine
     base.lev_routine express_output: :course_guide
   end
 
-  def get_course_guide(students:, type:)
+  def get_course_guide(students:, type:, current_time: Time.current)
     raise 'Course guide type must be either :student or :teacher' \
       unless [ :student, :teacher ].include? type
 
@@ -21,6 +21,9 @@ module CourseGuideRoutine
     end
 
     # Get cached Task stats split into pages
+    # The join on all_exercises_pool is used to exclude pages with no exercises (intro pages)
+    tpc = Tasks::Models::TaskPageCache.arel_table
+    cp = Content::Models::Pool.arel_table
     task_page_caches = Tasks::Models::TaskPageCache
       .select([
         :tasks_task_id,
@@ -28,7 +31,10 @@ module CourseGuideRoutine
         :content_mapped_page_id,
         :num_completed_exercises
       ])
+      .joins(mapped_page: :all_exercises_pool)
       .where(course_membership_student_id: student_ids)
+      .where(tpc[:opens_at].eq(nil).or tpc[:opens_at].lteq(current_time))
+      .where(cp[:content_exercise_ids].not_eq([]))
     task_page_caches_by_student_id = task_page_caches.group_by(&:course_membership_student_id)
 
     # Get period and course information
@@ -69,33 +75,38 @@ module CourseGuideRoutine
     biglearn_requests = students_by_period_id.flat_map do |period_id, students|
       student_ids = students.map(&:id)
       task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).compact.flatten
-
       book_containers = chapters + pages
 
-      if type == :student
-        students.flat_map do |student|
-          book_containers.map do |book_container|
-            { book_container: book_container, student: student }
-          end
-        end
-      else
+      if type == :teacher
         period = period_by_period_id[period_id]
 
         book_containers.map do |book_container|
           { book_container: book_container, course_container: period }
         end
+      else
+        students.flat_map do |student|
+          book_containers.map do |book_container|
+            { book_container: book_container, student: student }
+          end
+        end
       end
     end
 
     # Get the Student/Teacher CLUes from Biglearn
-    biglearn_responses = if type == :student
-      OpenStax::Biglearn::Api.fetch_student_clues(biglearn_requests)
+    if type == :teacher
+      biglearn_responses = OpenStax::Biglearn::Api.fetch_teacher_clues(biglearn_requests)
+      biglearn_clue_by_period_id_and_book_container_uuid = Hash.new { |hash, key| hash[key] = {} }
+      biglearn_responses.each do |request, resp|
+        period_id = request[:course_container].id
+        book_container_uuid = request[:book_container].tutor_uuid
+        biglearn_clue_by_period_id_and_book_container_uuid[period_id][book_container_uuid] = resp
+      end
     else
-      OpenStax::Biglearn::Api.fetch_teacher_clues(biglearn_requests)
+      biglearn_responses = OpenStax::Biglearn::Api.fetch_student_clues(biglearn_requests)
+      biglearn_clue_by_book_container_uuid = biglearn_responses.map do |request, response|
+        [ request[:book_container].tutor_uuid, response ]
+      end.to_h
     end
-    biglearn_clue_by_book_container_uuid = biglearn_responses.map do |request, response|
-      [ request[:book_container].tutor_uuid, response ]
-    end.to_h
 
     # A page that has been assigned to any period of this course
     # will appear in the performance forecast for all periods
@@ -106,19 +117,10 @@ module CourseGuideRoutine
       student_ids = students.map(&:id)
       task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).compact.flatten
       task_page_caches_by_page_id = task_page_caches.group_by(&:content_mapped_page_id)
-
-      period = period_by_period_id[period_id]
-      course_id = period.course_profile_course_id
-      book_title = book_title_by_course_id[course_id]
+      biglearn_clue_by_book_container_uuid =
+        biglearn_clue_by_period_id_and_book_container_uuid[period_id] if type == :teacher
 
       chapter_guides = pages_by_chapter.map do |chapter, pages|
-        page_ids = pages.map(&:id)
-        task_page_caches = task_page_caches_by_page_id.values_at(*page_ids).compact.flatten
-        student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
-        task_ids = task_page_caches.map(&:tasks_task_id)
-        practice_count = (practice_task_ids & task_ids).size
-        clue = biglearn_clue_by_book_container_uuid[chapter.tutor_uuid]
-
         page_guides = pages.map do |page|
           page_id = page.id
           task_page_caches = task_page_caches_by_page_id[page_id] || []
@@ -139,8 +141,14 @@ module CourseGuideRoutine
           }
         end
 
+        page_ids = pages.map(&:id)
+        task_page_caches = task_page_caches_by_page_id.values_at(*page_ids).compact.flatten
+        student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
+        task_ids = task_page_caches.map(&:tasks_task_id)
         questions_answered_count = page_guides.map { |guide| guide[:questions_answered_count] }
                                               .reduce(0, :+)
+        practice_count = (practice_task_ids & task_ids).size
+        clue = biglearn_clue_by_book_container_uuid[chapter.tutor_uuid]
         page_ids = page_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
 
         {
@@ -155,6 +163,9 @@ module CourseGuideRoutine
         }
       end
 
+      period = period_by_period_id[period_id]
+      course_id = period.course_profile_course_id
+      book_title = book_title_by_course_id[course_id]
       page_ids = chapter_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
 
       {

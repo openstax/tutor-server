@@ -14,6 +14,9 @@ class CreateTasksTaskPageCaches < ActiveRecord::Migration
       t.integer :num_assigned_exercises,       null: false
       t.integer :num_completed_exercises,      null: false
       t.integer :num_correct_exercises,        null: false
+      t.datetime :opens_at
+      t.datetime :due_at
+      t.datetime :feedback_at
 
       t.timestamps                             null: false
     end
@@ -23,8 +26,8 @@ class CreateTasksTaskPageCaches < ActiveRecord::Migration
               name: 'index_task_page_caches_on_task_and_student_and_page',
               unique: true
     add_index :tasks_task_page_caches,
-              [ :course_membership_student_id, :content_mapped_page_id ],
-              name: 'index_task_page_caches_on_student_and_mapped_page'
+              [ :course_membership_student_id, :opens_at ],
+              name: 'index_task_page_caches_on_student_and_opens_at'
 
     add_foreign_key :tasks_task_page_caches, :content_pages, column: :content_mapped_page_id,
                     on_update: :cascade, on_delete: :nullify
