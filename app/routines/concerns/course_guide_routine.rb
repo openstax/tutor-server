@@ -11,14 +11,16 @@ module CourseGuideRoutine
     raise 'Course guide type must be either :student or :teacher' \
       unless [ :student, :teacher ].include? type
 
+    # Preload each student's latest enrollment and period for the checks below
     students = [students].flatten
+    ActiveRecord::Associations::Preloader.new.preload(students, latest_enrollment: :period)
+
+    # Ignore dropped students and students in archived periods
+    students = students.reject { |student| student.dropped? || student.period.archived? }
     student_ids = students.map(&:id)
 
     # Group students by their current period
-    ActiveRecord::Associations::Preloader.new.preload(students, :latest_enrollment)
-    students_by_period_id = students.group_by do |student|
-      student.latest_enrollment.course_membership_period_id
-    end
+    students_by_period_id = students.group_by { |student| student.period.id }
 
     # Get cached Task stats split into pages
     # The join on all_exercises_pool is used to exclude pages with no exercises (intro pages)
