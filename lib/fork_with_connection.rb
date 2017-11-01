@@ -29,7 +29,9 @@ module ForkWithConnection
         # Run the closure passed to the fork_with_new_connection method
         exit_status = yield
       rescue Exception => exception
-        Rails.logger.fatal "Forked operation failed with exception: #{e}"
+        Rails.logger.fatal do
+          "Child process failed with exception: #{exception}\n#{exception.backtrace.first}"
+        end
 
         # The op failed, so note it for the Process exit
         exit_status = false
@@ -45,7 +47,7 @@ module ForkWithConnection
           !!exit_status
         end
 
-        # Exit without running any at_exit hooks
+        # Exit without running any at_exit hooks (leave those to the parent process)
         exit! exit_status
       end
     end.tap do |pid|
