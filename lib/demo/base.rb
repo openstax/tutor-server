@@ -99,14 +99,6 @@ class Demo::Base
     results
   end
 
-  # Same as wait_for_parallel_completion,
-  # but raises an exception if any of the child processes failed
-  def wait_for_parallel_completion!
-    results = wait_for_parallel_completion
-
-    raise('Child process failed') if results.any? { |result| !result.last.success? }
-  end
-
   def sign_contract(user:, name:)
     string_name = name.to_s
     return if FinePrint::Contract.where{name == string_name}.none?
