@@ -39,12 +39,14 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
 
       task_plan.tasking_plans.each do |tasking_plan|
         expect(tasking_plan.opens_at).to be_within(1).of(current_time)
-        expect(tasking_plan.due_at).to be_within(1).of(current_time + 1.week)
+        # In case Daylight Savings Time starts/ends
+        expect(tasking_plan.due_at).to be_within(1.hour + 1.second).of(current_time + 1.week)
       end
 
       task_plan.tasks.each do |task|
         expect(task.opens_at).to be_within(1).of(current_time)
-        expect(task.due_at).to be_within(1).of(current_time + 1.week)
+        # In case Daylight Savings Time starts/ends
+        expect(task.due_at).to be_within(1.hour + 1.second).of(current_time + 1.week)
         expect(task.feedback_at).to be_nil
         expect(task.last_worked_at).to be_nil
       end
@@ -61,5 +63,4 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
       expect(ActionMailer::Base.deliveries.last.body).to match("offering id #{offering.id}")
     end
   end
-
 end
