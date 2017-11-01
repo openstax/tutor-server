@@ -73,3 +73,6 @@ en:
       default_is_lms_enabling_allowed:
         name: 'Default for new course `is_lms_enabling_allowed`'
         help_block: 'Changing this only changes the default value stored in new courses; to change existing courses, see the courses admin page'
+      raise_if_salesforce_user_missing:
+        name: 'Raise exception if Salesforce user is missing'
+        help_block: 'Raise an exception (and notify devs) if the Salesforce user is missing'
