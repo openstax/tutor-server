@@ -158,6 +158,7 @@ module Api::V1
     property :is_college,
              readable: true,
              writeable: true,
+             getter: ->(*) { is_college.nil? ? true : is_college },
              schema_info: {
                type: 'boolean'
              }

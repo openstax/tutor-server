@@ -78,8 +78,17 @@ module Api::V1
       expect(represented['is_concept_coach']).to eq true
     end
 
-    it 'shows whether or not it is a college course' do
+    it 'shows whether or not it is a college course, defaulting to true' do
       expect(represented['is_college']).to eq false
+
+      course.update_attribute :is_college, nil
+      expect(described_class.new(course).as_json['is_college']).to eq true
+
+      course.update_attribute :is_college, true
+      expect(described_class.new(course).as_json['is_college']).to eq true
+
+      course.update_attribute :is_college, false
+      expect(described_class.new(course).as_json['is_college']).to eq false
     end
 
     it "shows the id of the source course's catalog offering" do
