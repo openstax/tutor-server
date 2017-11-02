@@ -744,25 +744,26 @@ ActiveRecord::Schema.define(version: 20171027145335) do
   add_index "tasks_performance_report_exports", ["course_profile_course_id"], name: "index_t_performance_report_exports_on_c_p_course_id", using: :btree
   add_index "tasks_performance_report_exports", ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course", using: :btree
 
-  create_table "tasks_task_page_caches", force: :cascade do |t|
-    t.integer  "tasks_task_id",                null: false
-    t.integer  "course_membership_student_id", null: false
-    t.integer  "content_page_id",              null: false
-    t.integer  "content_mapped_page_id"
-    t.integer  "num_assigned_exercises",       null: false
-    t.integer  "num_completed_exercises",      null: false
-    t.integer  "num_correct_exercises",        null: false
+  create_table "tasks_task_caches", force: :cascade do |t|
+    t.integer  "tasks_task_id",                       null: false
+    t.integer  "content_ecosystem_id",                null: false
+    t.integer  "task_type",                           null: false
     t.datetime "opens_at"
     t.datetime "due_at"
     t.datetime "feedback_at"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.integer  "student_ids",                         null: false, array: true
+    t.text     "as_toc",               default: "{}", null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
-  add_index "tasks_task_page_caches", ["content_mapped_page_id"], name: "index_tasks_task_page_caches_on_content_mapped_page_id", using: :btree
-  add_index "tasks_task_page_caches", ["content_page_id"], name: "index_tasks_task_page_caches_on_content_page_id", using: :btree
-  add_index "tasks_task_page_caches", ["course_membership_student_id", "opens_at"], name: "index_task_page_caches_on_student_and_opens_at", using: :btree
-  add_index "tasks_task_page_caches", ["tasks_task_id", "course_membership_student_id", "content_page_id"], name: "index_task_page_caches_on_task_and_student_and_page", unique: true, using: :btree
+  add_index "tasks_task_caches", ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id", using: :btree
+  add_index "tasks_task_caches", ["due_at"], name: "index_tasks_task_caches_on_due_at", using: :btree
+  add_index "tasks_task_caches", ["feedback_at"], name: "index_tasks_task_caches_on_feedback_at", using: :btree
+  add_index "tasks_task_caches", ["opens_at"], name: "index_tasks_task_caches_on_opens_at", using: :btree
+  add_index "tasks_task_caches", ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
+  add_index "tasks_task_caches", ["task_type"], name: "index_tasks_task_caches_on_task_type", using: :btree
+  add_index "tasks_task_caches", ["tasks_task_id", "content_ecosystem_id"], name: "index_task_caches_on_task_id_and_ecosystem_id", unique: true, using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id",                        null: false
@@ -1058,10 +1059,8 @@ ActiveRecord::Schema.define(version: 20171027145335) do
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_task_page_caches", "content_pages", column: "content_mapped_page_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "tasks_task_page_caches", "content_pages", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_task_page_caches", "course_membership_students", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_task_page_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_task_plans", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify

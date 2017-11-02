@@ -17,28 +17,12 @@ module CourseGuideRoutine
 
     # Ignore dropped students and students in archived periods
     students = students.reject { |student| student.dropped? || student.period.archived? }
+    return [] if students.empty?
+
     student_ids = students.map(&:id)
 
     # Group students by their current period
     students_by_period_id = students.group_by { |student| student.period.id }
-
-    # Get cached Task stats split into pages
-    # The join on all_exercises_pool is used to exclude pages with no exercises (intro pages)
-    tpc = Tasks::Models::TaskPageCache.arel_table
-    cp = Content::Models::Pool.arel_table
-    task_page_caches = Tasks::Models::TaskPageCache
-      .select([
-        :tasks_task_id,
-        :course_membership_student_id,
-        :content_mapped_page_id,
-        :num_completed_exercises,
-        '"content_pages"."content_chapter_id"'
-      ])
-      .joins(mapped_page: :all_exercises_pool)
-      .where(course_membership_student_id: student_ids)
-      .where(tpc[:opens_at].eq(nil).or tpc[:opens_at].lteq(current_time))
-      .where(cp[:content_exercise_ids].not_eq([]))
-    task_page_caches_by_student_id = task_page_caches.group_by(&:course_membership_student_id)
 
     # Get period and course information
     period_ids = students_by_period_id.keys
@@ -47,40 +31,67 @@ module CourseGuideRoutine
       .where(id: period_ids)
       .index_by(&:id)
 
-    # Get book titles
-    course_ids = period_by_period_id.values.map(&:course_profile_course_id)
-    book_title_by_course_id = CourseProfile::Models::Course
-      .select(:id)
-      .where(id: course_ids)
-      .preload(ecosystems: :books)
-      .map do |course|
-      [course.id, course.ecosystems.first.books.map(&:title).join('; ')]
-    end.to_h
+    # Get the current course ecosystem
+    course_ids = period_by_period_id.values.map(&:course_profile_course_id).uniq
+    raise(
+      NotImplementedError,
+      'Performance Forecast currently can only be calculated on a single course'
+    ) if course_ids.size > 1
 
-    # Get mapped page uuids, titles and book_locations
-    page_ids = task_page_caches.map(&:content_mapped_page_id)
+    # Get all course ecosystems
+    ecosystems = CourseProfile::Models::Course
+      .select(:id)
+      .preload(:ecosystems)
+      .find_by(id: course_ids.first)
+      .ecosystems
+    ecosystem_ids = ecosystems.map(&:id)
+
+    # Create an ordering of preferred ecosystems based on how recent they are
+    index_by_ecosystem_id = {}
+    ecosystem_ids.each_with_index do |ecosystem_id, index|
+      index_by_ecosystem_id[ecosystem_id] = index
+    end
+
+    # Get the preferred book title (from the most recent ecosystem)
+    preferred_books = ecosystems.first.books
+    book_title = preferred_books.map(&:title).uniq.sort.join('; ')
+
+    # Get cached Task stats, prioritizing the most recent ecosystem available for each one
+    tc = Tasks::Models::TaskCache.arel_table
+    task_caches = Tasks::Models::TaskCache
+      .select([ :tasks_task_id, :content_ecosystem_id, :task_type, :student_ids, :as_toc ])
+      .where(content_ecosystem_id: ecosystem_ids)
+      .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
+      .where(tc[:opens_at].eq(nil).or tc[:opens_at].lteq(current_time))
+      .sort_by { |task_cache| index_by_ecosystem_id[task_cache.content_ecosystem_id] }
+      .uniq { |task_cache| task_cache.tasks_task_id }
+
+    # Get mapped page and chapter UUIDs
+    page_ids = task_caches.flat_map do |task_cache|
+      task_cache.as_toc[:books].flat_map do |book|
+        book[:chapters].flat_map do |chapter|
+          chapter[:pages].reject { |page| page[:is_intro] }.map { |page| page[:id] }
+        end
+      end
+    end
     pages = Content::Models::Page
-      .select([:id, :tutor_uuid, :title, :book_location, :content_chapter_id])
+      .select([:tutor_uuid, :content_chapter_id])
       .where(id: page_ids)
       .preload(chapter: { book: :ecosystem })
-    page_by_page_id = pages.index_by(&:id)
-
     chapters = pages.map(&:chapter).uniq
-    chapter_by_chapter_id = chapters.index_by(&:id)
 
-    # Get a list of practice task ids
-    task_ids = task_page_caches.map(&:tasks_task_id)
-    practice_task_types = Tasks::Models::Task.task_types.values_at(
-      :chapter_practice, :page_practice, :mixed_practice, :practice_worst_topics
-    )
-    practice_task_ids = Tasks::Models::Task
-      .where(id: task_ids, task_type: practice_task_types)
-      .pluck(:id)
+    # Get cached Task stats by student_ids
+    task_caches_by_student_id = Hash.new { |hash, key| hash[key] = [] }
+    task_caches.each do |task_cache|
+      task_cache.student_ids.each do |student_id|
+        task_caches_by_student_id[student_id] << task_cache
+      end
+    end
 
     # Create Biglearn Student/Teacher CLUe requests
     biglearn_requests = students_by_period_id.flat_map do |period_id, students|
       student_ids = students.map(&:id)
-      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).compact.flatten
+      task_caches = task_caches_by_student_id.values_at(*student_ids).compact.flatten
       book_containers = chapters + pages
 
       if type == :teacher
@@ -114,49 +125,56 @@ module CourseGuideRoutine
       end.to_h
     end
 
-    # Create the Performance Forecast
+    # Merge the TaskCache ToCs and create the Performance Forecast
     students_by_period_id.map do |period_id, students|
       student_ids = students.map(&:id)
       biglearn_clue_by_book_container_uuid =
         biglearn_clue_by_period_id_and_book_container_uuid[period_id] if type == :teacher
-      task_page_caches = task_page_caches_by_student_id.values_at(*student_ids).compact.flatten
+      task_caches = task_caches_by_student_id.values_at(*student_ids).flatten
 
-      task_page_caches_by_chapter_id = task_page_caches.group_by(&:content_chapter_id)
+      chs = task_caches.flat_map do |task_cache|
+        task_cache.as_toc[:books].flat_map do |bk|
+          bk[:chapters].map do |ch|
+            ch.merge student_ids: task_cache.student_ids, practice: task_cache.practice?
+          end
+        end
+      end
 
-      chapter_guides = task_page_caches_by_chapter_id.map do |chapter_id, task_page_caches|
-        task_page_caches_by_page_id = task_page_caches.group_by(&:content_mapped_page_id)
+      chapter_guides = chs.group_by { |ch| ch[:book_location] }.sort.map do |book_location, chs|
+        pgs = chs.flat_map do |ch|
+          ch[:pages].reject { |pg| pg[:is_intro] }
+                    .map { |pg| pg.merge ch.slice(:student_ids, :practice) }
+        end
 
-        page_guides = task_page_caches_by_page_id.map do |page_id, task_page_caches|
-          student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
-          task_ids = task_page_caches.map(&:tasks_task_id)
-          questions_answered_count = task_page_caches.map(&:num_completed_exercises).reduce(0, :+)
-          practice_count = (practice_task_ids & task_ids).size
-          page = page_by_page_id[page_id]
-          clue = biglearn_clue_by_book_container_uuid[page.tutor_uuid]
+        page_guides = pgs.group_by { |pg| pg[:book_location] }.sort.map do |book_location, pgs|
+          preferred_pg = pgs.first
+          student_count = pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
+          questions_answered_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
+          practice_count = pgs.count { |pg| pg[:practice] }
+          clue = biglearn_clue_by_book_container_uuid[preferred_pg[:tutor_uuid]]
 
           {
-            title: page.title,
-            book_location: page.book_location,
+            title: preferred_pg[:title],
+            book_location: book_location,
             student_count: student_count,
             questions_answered_count: questions_answered_count,
             practice_count: practice_count,
             clue: clue,
-            page_ids: [ page_id ]
+            page_ids: [ preferred_pg[:id] ]
           }
         end
 
-        student_count = task_page_caches.map(&:course_membership_student_id).uniq.size
-        task_ids = task_page_caches.map(&:tasks_task_id)
+        preferred_ch = chs.first
+        student_count = chs.flat_map { |ch| ch[:student_ids] }.uniq.size
         questions_answered_count = page_guides.map { |guide| guide[:questions_answered_count] }
                                               .reduce(0, :+)
-        practice_count = (practice_task_ids & task_ids).size
-        chapter = chapter_by_chapter_id[chapter_id]
-        clue = biglearn_clue_by_book_container_uuid[chapter.tutor_uuid]
+        practice_count = chs.count { |ch| ch[:practice] }
+        clue = biglearn_clue_by_book_container_uuid[preferred_ch[:tutor_uuid]]
         page_ids = page_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
 
         {
-          title: chapter.title,
-          book_location: chapter.book_location,
+          title: preferred_ch[:title],
+          book_location: book_location,
           student_count: student_count,
           questions_answered_count: questions_answered_count,
           practice_count: practice_count,
@@ -166,9 +184,6 @@ module CourseGuideRoutine
         }
       end
 
-      period = period_by_period_id[period_id]
-      course_id = period.course_profile_course_id
-      book_title = book_title_by_course_id[course_id]
       page_ids = chapter_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
 
       {

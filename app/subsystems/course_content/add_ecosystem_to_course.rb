@@ -43,7 +43,7 @@ class CourseContent::AddEcosystemToCourse
         .where(taskings: { role: { student: { course_profile_course_id: course.id } } })
         .to_a
 
-      Tasks::UpdateTaskPageCaches.perform_later(tasks: tasks)
+      Tasks::UpdateTaskCaches.perform_later(tasks: tasks)
     end
 
     OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)
