@@ -9,34 +9,54 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
     tasks.select { |task| task.taskings.any? { |tasking| tasking.role.student.present? } }
   end
   let(:num_task_caches)       { student_tasks.size }
+  let(:ecosystem)             { @task_plan.ecosystem }
+  let(:book)                  { ecosystem.books.first }
+  let(:chapter)               { book.chapters.first }
+  let(:page)                  { chapter.pages.first }
   let(:expected_unworked_toc) do
     {
+      id: ecosystem.id,
+      tutor_uuid: ecosystem.tutor_uuid,
+      title: ecosystem.title,
+      num_assigned_steps: 11,
+      num_completed_steps: 0,
+      num_assigned_exercises: 2,
+      num_completed_exercises: 0,
+      num_correct_exercises: 0,
+      num_assigned_placeholders: 3,
       books: [
         {
-          id: kind_of(Integer),
-          tutor_uuid: kind_of(String),
-          title: kind_of(String),
+          id: book.id,
+          tutor_uuid: book.tutor_uuid,
+          title: book.title,
+          num_assigned_steps: 8,
+          num_completed_steps: 0,
           num_assigned_exercises: 2,
           num_completed_exercises: 0,
           num_correct_exercises: 0,
           num_assigned_placeholders: 3,
           chapters: [
             {
-              id: kind_of(Integer),
-              tutor_uuid: kind_of(String),
-              title: kind_of(String),
-              book_location: [1],
+              id: chapter.id,
+              tutor_uuid: chapter.tutor_uuid,
+              title: chapter.title,
+              book_location: chapter.book_location,
+              num_assigned_steps: 8,
+              num_completed_steps: 0,
               num_assigned_exercises: 2,
               num_completed_exercises: 0,
               num_correct_exercises: 0,
               num_assigned_placeholders: 3,
               pages: [
                 {
-                  id: kind_of(Integer),
-                  tutor_uuid: kind_of(String),
-                  title: "Newton's First Law of Motion: Inertia",
-                  book_location: [1, 1],
+                  id: page.id,
+                  tutor_uuid: page.tutor_uuid,
+                  title: page.title,
+                  book_location: page.book_location,
                   is_intro: false,
+                  is_spaced_practice: false,
+                  num_assigned_steps: 8,
+                  num_completed_steps: 0,
                   num_assigned_exercises: 2,
                   num_completed_exercises: 0,
                   num_correct_exercises: 0,
@@ -45,9 +65,12 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
                     {
                       id: kind_of(Integer),
                       uuid: kind_of(String),
+                      question_id: kind_of(String),
+                      answer_ids: kind_of(Array),
                       step_number: number,
+                      group_type: kind_of(String),
                       free_response: nil,
-                      answer_id: nil,
+                      selected_answer_id: nil,
                       completed: false,
                       correct: false
                     }
@@ -62,32 +85,48 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
   end
   let(:expected_worked_toc) do
     {
+      id: ecosystem.id,
+      tutor_uuid: ecosystem.tutor_uuid,
+      title: ecosystem.title,
+      num_assigned_steps: 11,
+      num_completed_steps: 11,
+      num_assigned_exercises: 8,
+      num_completed_exercises: 8,
+      num_correct_exercises: 8,
+      num_assigned_placeholders: 0,
       books: [
         {
-          id: kind_of(Integer),
-          tutor_uuid: kind_of(String),
-          title: kind_of(String),
+          id: book.id,
+          tutor_uuid: book.tutor_uuid,
+          title: book.title,
+          num_assigned_steps: 11,
+          num_completed_steps: 11,
           num_assigned_exercises: 8,
           num_completed_exercises: 8,
           num_correct_exercises: 8,
           num_assigned_placeholders: 0,
           chapters: [
             {
-              id: kind_of(Integer),
-              tutor_uuid: kind_of(String),
-              title: kind_of(String),
-              book_location: [1],
+              id: chapter.id,
+              tutor_uuid: chapter.tutor_uuid,
+              title: chapter.title,
+              book_location: chapter.book_location,
+              num_assigned_steps: 11,
+              num_completed_steps: 11,
               num_assigned_exercises: 8,
               num_completed_exercises: 8,
               num_correct_exercises: 8,
               num_assigned_placeholders: 0,
               pages: [
                 {
-                  id: kind_of(Integer),
-                  tutor_uuid: kind_of(String),
-                  title: "Newton's First Law of Motion: Inertia",
-                  book_location: [1, 1],
+                  id: page.id,
+                  tutor_uuid: page.tutor_uuid,
+                  title: page.title,
+                  book_location: page.book_location,
                   is_intro: false,
+                  is_spaced_practice: false,
+                  num_assigned_steps: 11,
+                  num_completed_steps: 11,
                   num_assigned_exercises: 8,
                   num_completed_exercises: 8,
                   num_correct_exercises: 8,
@@ -96,9 +135,12 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
                     {
                       id: kind_of(Integer),
                       uuid: kind_of(String),
+                      question_id: kind_of(String),
+                      answer_ids: kind_of(Array),
                       step_number: number,
+                      group_type: kind_of(String),
                       free_response: "A sentence explaining all the things!",
-                      answer_id: kind_of(String),
+                      selected_answer_id: kind_of(String),
                       completed: true,
                       correct: true
                     }
@@ -125,6 +167,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       expect(task_cache.task_type).to eq (task.task_type)
       expect(task_cache.ecosystem).to eq @task_plan.owner.ecosystems.first
       expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
+      expect(task_cache.student_names).to match_array(
+        task.taskings.map { |tt| tt.role.student.name }
+      )
 
       expect(task_cache.as_toc.deep_symbolize_keys).to match expected_unworked_toc
 
@@ -144,6 +189,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       expect(task_cache.task_type).to eq (task.task_type)
       expect(task_cache.ecosystem).to eq @task_plan.owner.ecosystems.first
       expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
+      expect(task_cache.student_names).to match_array(
+        task.taskings.map { |tt| tt.role.student.name }
+      )
 
       expect(task_cache.as_toc.deep_symbolize_keys).to match expected_unworked_toc
 

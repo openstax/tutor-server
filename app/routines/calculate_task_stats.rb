@@ -2,179 +2,194 @@ class CalculateTaskStats
 
   lev_routine express_output: :stats
 
-  uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
-
   protected
 
-  def assignee_names_for(task)
-    (@names ||= {})[task.id] ||= begin
-      roles = task.taskings.map(&:role)
-      users = run(:get_users_for_roles, roles).outputs.users
-      users.map(&:name)
-    end
-  end
+  def exec(tasks:, details: false)
+    # Preload each task's student and period
+    tasks = [tasks].flatten
+    ActiveRecord::Associations::Preloader.new.preload(tasks, taskings: [ :period, role: :student ])
 
-  def compute_answer_stats(tasked_exercises)
-    tasked_exercises.each_with_object(
+    tasks = tasks.reject do |task|
+      task.taskings.all? do |tasking|
+        period = tasking.period
+        student = tasking.role.student
+
+        period.nil? || period.archived? || student.nil? || student.dropped?
+      end
+    end
+    task_ids = tasks.map(&:id)
+
+    # Group tasks by period
+    tasks_by_period = tasks.group_by do |task|
+      periods = task.taskings.map(&:period).uniq
+      raise(
+        NotImplementedError, 'Each task in CalculateTaskStats must belong to exactly 1 period'
+      ) if periods.size != 1
+
+      periods.first
+    end
+
+    # Get unmapped cached Task stats (for the Task's original ecosystem)
+    tc = Tasks::Models::TaskCache.arel_table
+    task_caches = Tasks::Models::TaskCache
+      .select([ :tasks_task_id, :student_ids, :student_names, :as_toc ])
+      .joins(:task)
+      .where(tasks_task_id: task_ids)
+      .where('"tasks_tasks"."content_ecosystem_id" = "tasks_task_caches"."content_ecosystem_id"')
+    task_cache_by_task_id = task_caches.index_by(&:tasks_task_id)
+
+    # Get the page caches for each task
+    pgs_by_task_id = {}
+    task_caches.each do |task_cache|
+      pgs_by_task_id[task_cache.tasks_task_id] = task_cache.as_toc[:books].flat_map do |bk|
+        bk[:chapters].flat_map do |ch|
+          ch[:pages].map do |pg|
+            pg.merge student_ids: task_cache.student_ids, student_names: task_cache.student_names
+          end
+        end
+      end
+    end
+
+    # Populate the map of content by exercise id, if details have been requested
+    content_by_exercise_id = if details
+      exercise_ids = pgs_by_task_id.values.flatten.flat_map do |pg|
+        pg[:exercises].map { |ex| ex[:id] }
+      end
+
+      Content::Models::Exercise.where(id: exercise_ids).pluck(:id, :content).to_h
+    else
+      {}
+    end
+
+    outputs.stats = tasks_by_period.map do |period, tasks|
+      task_ids = tasks.map(&:id)
+      task_caches = task_cache_by_task_id.values_at(*task_ids).compact
+
+      total_count = task_caches.size
+      started_task_caches = task_caches.select do |task_cache|
+        task_cache.as_toc[:num_completed_steps] > 0
+      end
+      complete_count = started_task_caches.count do |task_cache|
+        task_cache.as_toc[:num_completed_steps] == task_cache.as_toc[:num_assigned_steps]
+      end
+      partially_complete_count = started_task_caches.size - complete_count
+
+      started_exercise_task_caches = started_task_caches.select do |task_cache|
+        task_cache.as_toc[:num_completed_exercises] > 0
+      end
+      num_started_exercise_task_caches = started_exercise_task_caches.size
+      mean_grade_percent = if num_started_exercise_task_caches == 0
+        nil
+      else
+        grades_array = started_exercise_task_caches.map do |task_cache|
+          task_cache.as_toc[:num_correct_exercises].to_f /
+          task_cache.as_toc[:num_assigned_exercises]
+        end
+        (grades_array.reduce(:+) * 100.0 / num_started_exercise_task_caches).round
+      end
+
+      pg_groups = pgs_by_task_id.values_at(*task_ids)
+                                .compact
+                                .flatten
+                                .sort_by { |pg| pg[:book_location] }
+                                .group_by { |pg| pg[:book_location] }
+      spaced_pg_groups, current_pg_groups = pg_groups.partition do |book_location, pgs|
+        pgs.all? { |pg| pg[:is_spaced_practice] }
+      end
+
+      current_page_stats = current_pg_groups.map do |book_location, pgs|
+        generate_page_stats(
+          pgs: pgs, details: details, content_by_exercise_id: content_by_exercise_id
+        )
+      end
+      spaced_page_stats = spaced_pg_groups.map do |book_location, pgs|
+        generate_page_stats(
+          pgs: pgs, details: details, content_by_exercise_id: content_by_exercise_id
+        )
+      end
+
+      # An assignment gets the trouble flag before the due date if over 50% of the total assigned
+      # questions for the entire assignment have been answered AND either over 50% of the completed
+      # questions for a teacher-assigned cnx page-module in the assignment are answered incorrectly
+      # OR over 50% of the completed questions for a Tutor-assigned spaced practice cnx page/module
+      # assigned to at least 25% of the class are answered incorrectly.
+
+      # An assignment gets the trouble flag after the due date if less than 50% of the total
+      # assigned questions for the entire assignment have been answered OR over 50% of the
+      # completed questions for a teacher-assigned cnx page-module in the assignment are answered
+      # incorrectly OR over 50% of the completed questions for a Tutor-assigned spaced practice cnx
+      # page/module assigned to at least 25% of the class are answered incorrectly.
+      all_page_stats = current_page_stats + spaced_page_stats
+
       {
-        selected_count: Hash.new(0)
-      }
-    ) do |tasked_exercise, stats|
-      stats[:selected_count][tasked_exercise.answer_id] += 1 if tasked_exercise.completed?
-    end
-  end
-
-  def average_step_number(taskeds)
-    taskeds.map{ |tasked| tasked.task_step.number }.reduce(0, :+) / Float(taskeds.size)
-  end
-
-  def exercise_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.group_by(&:exercise).map do |exercise, tasked_exercises|
-
-      {
-        content: exercise.content,
-
-        question_stats: tasked_exercises.group_by(&:question_id)
-                                        .map do |question_id, question_tasked_exercises|
-
-          answer_stats = compute_answer_stats(question_tasked_exercises)
-          all_answer_ids = question_tasked_exercises.first.answer_ids
-          completed_question_tasked_exercises = question_tasked_exercises.select(&:completed?)
-
-          {
-            question_id: question_id,
-
-            answered_count: completed_question_tasked_exercises.count,
-
-            answer_stats: all_answer_ids.map do |answer_id|
-              {
-                answer_id: answer_id,
-                selected_count: answer_stats[:selected_count][answer_id] || 0
-              }
-            end,
-
-            answers: completed_question_tasked_exercises.map do |te|
-              {
-                student_names: assignee_names_for(te.task_step.task),
-                free_response: te.free_response,
-                answer_id: te.answer_id
-              }
-            end
-          }
-        end,
-
-        average_step_number: average_step_number(tasked_exercises)
-      }
-    end.sort_by{ |exercise_stats| exercise_stats[:average_step_number] }
-  end
-
-  def page_stats_for_tasked_exercises(tasked_exercises, details)
-    completed = tasked_exercises.select(&:completed?)
-
-    some_completed_role_ids = completed.map do |tasked_exercise|
-      tasked_exercise.task_step.task.taskings.map(&:entity_role_id)
-    end.flatten.uniq
-
-    correct_count = completed.count(&:is_correct?)
-    incorrect_count = completed.length - correct_count
-
-    trouble = (incorrect_count > correct_count) && (completed.size > 0.25*tasked_exercises.size)
-
-    stats = {
-      student_count: some_completed_role_ids.length,
-      correct_count: correct_count,
-      incorrect_count: incorrect_count,
-      trouble: trouble
-    }
-    stats[:exercises] = exercise_stats_for_tasked_exercises(tasked_exercises) if details
-    stats
-  end
-
-  def generate_page_stats(page, tasked_exercises, details, include_previous=false)
-    stats = {
-      id:              page.id,
-      title:           page.title,
-      chapter_section: page.book_location
-    }
-
-    stats.merge page_stats_for_tasked_exercises(tasked_exercises, details)
-  end
-
-  def get_task_grade(task)
-    return if task.completed_exercise_steps_count == 0
-    task.correct_exercise_steps_count.to_f / task.completed_exercise_steps_count
-  end
-
-  def mean_grade_percent(tasks)
-    grades_array = tasks.map{ |task| get_task_grade(task) }.compact
-    sum_of_grades = grades_array.inject(:+)
-    return nil if sum_of_grades.nil?
-    (sum_of_grades*100.0/grades_array.count).round
-  end
-
-  def get_tasked_exercises_from_task_steps(task_steps)
-    tasked_exercise_ids = task_steps.flatten.select(&:exercise?).map(&:tasked_id)
-    Tasks::Models::TaskedExercise.joins { task_step }
-                                 .where { id.in tasked_exercise_ids }
-                                 .preload([{exercise: :page},
-                                           {task_step: {task: {taskings: :role}}}]).to_a
-  end
-
-  def generate_page_stats_for_task_steps(task_steps, details)
-    tasked_exercises = get_tasked_exercises_from_task_steps(task_steps)
-    grouped_tasked_exercises = tasked_exercises.group_by{ |te| te.exercise.page }
-    current_page_arrays, spaced_page_arrays = \
-      grouped_tasked_exercises.partition do |page, tasked_exercises|
-      tasked_exercises.any? { |te| !te.task_step.spaced_practice_group? }
-    end
-
-    current_page_stats = current_page_arrays.map do |page, tasked_exercises|
-      generate_page_stats(page, tasked_exercises, details)
-    end.sort_by { |page_stats| page_stats[:chapter_section] }
-    spaced_page_stats = spaced_page_arrays.map do |page, tasked_exercises|
-      generate_page_stats(page, tasked_exercises, details)
-    end.sort_by { |page_stats| page_stats[:chapter_section] }
-
-    [ current_page_stats, spaced_page_stats ]
-  end
-
-  def generate_period_stat_data(tasks, details)
-    active_student_tasks = tasks.joins(taskings: [:period, {role: :student}])
-                                .where(taskings: { role: { student: { dropped_at: nil } },
-                                                   period: { archived_at: nil } })
-                                .preload([:task_steps, { taskings: :period }])
-
-    grouped_tasks = active_student_tasks.group_by{ |task| task.taskings.first.try!(:period) }
-    grouped_tasks.map do |period, period_tasks|
-      task_steps = period_tasks.map(&:task_steps)
-
-      current_page_stats, spaced_page_stats = generate_page_stats_for_task_steps task_steps, details
-
-      Hashie::Mash.new(
         period_id: period.id,
-
         name: period.name,
-
-        mean_grade_percent: mean_grade_percent(period_tasks),
-
-        total_count: period_tasks.count,
-
-        complete_count: period_tasks.count(&:completed?),
-
-        partially_complete_count: period_tasks.count(&:in_progress?),
-
+        total_count: total_count,
+        complete_count: complete_count,
+        partially_complete_count: partially_complete_count,
+        mean_grade_percent: mean_grade_percent,
         current_pages: current_page_stats,
-
         spaced_pages: spaced_page_stats,
-
-        # For now personalized pages are the same as current pages, so it's fine to include them
-        trouble: (current_page_stats + spaced_page_stats).any?{ |page_stats| page_stats[:trouble] }
-      )
+        trouble: all_page_stats.any? { |page_stats| page_stats[:trouble] }
+      }
     end.compact
   end
 
-  def exec(tasks:, details: false)
-    outputs[:stats] = generate_period_stat_data(tasks, details)
+  def generate_page_stats(pgs:, details:, content_by_exercise_id:)
+    preferred_pg = pgs.first
+    started_pgs = pgs.select { |pg| pg[:num_completed_exercises] > 0 }
+    student_count = started_pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
+    assigned_count = pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+)
+    completed_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
+    correct_count = pgs.map { |pg| pg[:num_correct_exercises] }.reduce(0, :+)
+    incorrect_count = completed_count - correct_count
+    trouble = (incorrect_count > correct_count) && (completed_count >= 0.25 * assigned_count)
+
+    {
+      id: preferred_pg[:id],
+      title: preferred_pg[:title],
+      chapter_section: preferred_pg[:book_location],
+      student_count: student_count,
+      correct_count: correct_count,
+      incorrect_count: incorrect_count,
+      trouble: trouble
+    }.tap do |stats|
+      if details
+        exs = pgs.flat_map { |pg| pg[:exercises].map { |ex| ex.merge pg.slice(:student_names) } }
+
+        stats[:exercises] = exs.group_by { |ex| ex[:id] }.map do |exercise_id, exs|
+          content = content_by_exercise_id[exercise_id]
+          exs_by_question_id = exs.group_by { |ex| ex[:question_id] }
+
+          {
+            content: content,
+            question_stats: exs.group_by { |ex| ex[:question_id] }.map do |question_id, exs|
+              completed_exs = exs.select { |ex| ex[:completed] }
+              selected_count_by_answer_id = Hash.new 0
+              completed_exs.each { |ex| selected_count_by_answer_id[ex[:selected_answer_id]] += 1 }
+              answer_stats = exs.first[:answer_ids].map do |answer_id|
+                { answer_id: answer_id, selected_count: selected_count_by_answer_id[answer_id] }
+              end
+              answers = completed_exs.map do |ex|
+                {
+                  student_names: ex[:student_names],
+                  free_response: ex[:free_response],
+                  answer_id: ex[:selected_answer_id]
+                }
+              end
+
+              {
+                question_id: question_id,
+                answered_count: completed_exs.size,
+                answer_stats: answer_stats,
+                answers: answers
+              }
+            end,
+            average_step_number: exs.map { |ex| ex[:step_number] }.reduce(:+) / exs.size
+          }
+        end.sort_by { |exercise_stats| exercise_stats[:average_step_number] }
+      end
+    end
   end
 
 end

@@ -10,6 +10,7 @@ class CreateTasksTaskCaches < ActiveRecord::Migration
       t.datetime   :due_at,            index: true
       t.datetime   :feedback_at,       index: true
       t.integer    :student_ids,       null: false, array: true, index: { using: :gin }
+      t.string     :student_names,     null: false, array: true
       t.text       :as_toc,            null: false, default: '{}'
 
       t.timestamps                     null: false

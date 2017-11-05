@@ -16,6 +16,11 @@ class Tasks::Models::TaskCache < ApplicationRecord
   end
 
   def as_toc
-    super.deep_symbolize_keys
+    @toc ||= super.deep_symbolize_keys
+  end
+
+  def reload
+    @toc = nil
+    super
   end
 end

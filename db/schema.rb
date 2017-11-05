@@ -752,6 +752,7 @@ ActiveRecord::Schema.define(version: 20171027145335) do
     t.datetime "due_at"
     t.datetime "feedback_at"
     t.integer  "student_ids",                         null: false, array: true
+    t.string   "student_names",                       null: false, array: true
     t.text     "as_toc",               default: "{}", null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false

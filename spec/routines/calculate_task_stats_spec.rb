@@ -19,7 +19,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
   # Workaround for PostgreSQL bug where the task records
   # stop existing in SELECT ... FOR UPDATE queries (but not in regular SELECTs)
   # after the transaction rollback that happens in-between spec examples
-  before(:each)       { @task_plan.tasks.each(&:touch) }
+  before(:each)       { @task_plan.tasks.each(&:touch).each(&:reload) }
 
   let(:student_tasks) { @task_plan.tasks.joins(taskings: { role: :student }).to_a }
 
@@ -49,7 +49,8 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
         'title' => 'Prokaryotic Cells'
       })
       page = Content::Routines::ImportPage.call(
-        cnx_page: cnx_page, chapter: FactoryGirl.create(:content_chapter),
+        cnx_page: cnx_page,
+        chapter: FactoryGirl.create(:content_chapter),
         book_location: [1, 1]
       ).outputs.page
 

@@ -16,7 +16,9 @@ module CourseGuideRoutine
     ActiveRecord::Associations::Preloader.new.preload(students, latest_enrollment: :period)
 
     # Ignore dropped students and students in archived periods
-    students = students.reject { |student| student.dropped? || student.period.archived? }
+    students = students.reject do |student|
+      student.dropped? || student.period.nil? || student.period.archived?
+    end
     return [] if students.empty?
 
     student_ids = students.map(&:id)
