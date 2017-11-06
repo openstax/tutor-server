@@ -48,4 +48,4 @@ Settings::Db.store.defaults[:course_appearance_codes] = {
 
 Settings::Db.store.defaults[:pardot_toa_redirect] = ""
 
-Settings::Db.store.defaults[:raise_if_salesforce_user_missing] = true
+Settings::Db.store.defaults[:raise_if_salesforce_user_missing] = !Rails.env.development?
