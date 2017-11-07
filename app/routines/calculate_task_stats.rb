@@ -37,7 +37,7 @@ class CalculateTaskStats
       .select([ :tasks_task_id, :student_ids, :student_names, :due_at, :as_toc ])
       .joins(:task)
       .where(tasks_task_id: task_ids)
-      .where('"tasks_tasks"."content_ecosystem_id" = "tasks_task_caches"."content_ecosystem_id"')
+      .where('"tasks_task_caches"."content_ecosystem_id" = "tasks_tasks"."content_ecosystem_id"')
     task_cache_by_task_id = task_caches.index_by(&:tasks_task_id)
 
     # Get the page caches for each task
@@ -89,7 +89,7 @@ class CalculateTaskStats
       else
         grades_array = started_exercise_task_caches.map do |task_cache|
           task_cache.as_toc[:num_correct_exercises].to_f /
-          task_cache.as_toc[:num_assigned_exercises]
+          task_cache.as_toc[:num_completed_exercises]
         end
         (grades_array.reduce(:+) * 100.0 / num_started_exercise_task_caches).round
       end

@@ -33,17 +33,17 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     AddUserAsPeriodStudent[user: @user_2, period: @period]
 
     @tasks = [@page_1, @page_2, @page_3].flat_map do |page|
-      [@user_1, @user_2].flat_map do |user|
+      [@user_1, @user_2].map do |user|
         GetConceptCoach[user: user, book_uuid: page.chapter.book.uuid, page_uuid: page.uuid]
       end
     end
   end
 
   it "represents concept coach stats" do
-    task_step = @tasks.first.task_steps.select{ |ts| ts.tasked.exercise? }.first
+    task_step = @tasks.first.task_steps.select(&:exercise?).first
     Preview::AnswerExercise[task_step: task_step, is_correct: true]
 
-    task_step = @tasks.second.task_steps.select{ |ts| ts.tasked.exercise? }.first
+    task_step = @tasks.second.task_steps.select(&:exercise?).first
     Preview::AnswerExercise[task_step: task_step, is_correct: false]
 
     task_relation = Tasks::Models::Task.where(id: @tasks.map(&:id))

@@ -29,15 +29,15 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
     it "is all nil or zero for an unworked task_plan" do
       expect(stats.first.mean_grade_percent).to be_nil
-      expect(stats.first.total_count).to eq(student_tasks.length)
-      expect(stats.first.complete_count).to eq(0)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_count).to eq student_tasks.length
+      expect(stats.first.complete_count).to eq 0
+      expect(stats.first.partially_complete_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages[0]
-      expect(page.student_count).to eq(0) # no students have worked yet
-      expect(page.incorrect_count).to eq(0)
-      expect(page.correct_count).to eq(0)
+      expect(page.student_count).to eq 0 # no students have worked yet
+      expect(page.incorrect_count).to eq 0
+      expect(page.correct_count).to eq 0
       expect(page.trouble).to eq false
 
       expect(stats.first.spaced_pages).to be_empty
@@ -87,24 +87,24 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
       expect(stats.first.mean_grade_percent).to be_nil
-      expect(stats.first.complete_count).to eq(0)
-      expect(stats.first.partially_complete_count).to eq(1)
+      expect(stats.first.complete_count).to eq 0
+      expect(stats.first.partially_complete_count).to eq 1
       expect(stats.first.trouble).to eq false
 
       work_task(task: first_task, is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      expect(stats.first.mean_grade_percent).to eq (0)
-      expect(stats.first.complete_count).to eq(1)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq 0
+      expect(stats.first.complete_count).to eq 1
+      expect(stats.first.partially_complete_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       last_task = student_tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq (0)
-      expect(stats.first.complete_count).to eq(1)
-      expect(stats.first.partially_complete_count).to eq(1)
+      expect(stats.first.mean_grade_percent).to eq 0
+      expect(stats.first.complete_count).to eq 1
+      expect(stats.first.partially_complete_count).to eq 1
       expect(stats.first.trouble).to eq false
     end
 
@@ -116,74 +116,74 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       work_task(task: student_tasks[0], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      expect(stats.first.mean_grade_percent).to eq (100)
-      expect(stats.first.complete_count).to eq(1)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq 100
+      expect(stats.first.complete_count).to eq 1
+      expect(stats.first.partially_complete_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
-      expect(page['student_count']).to eq(1) # num students with completed task steps
-      expect(page['correct_count']).to eq(student_tasks[0].exercise_steps.size)
-      expect(page['incorrect_count']).to eq(0)
+      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['student_count']).to eq 1 # num students with completed task steps
+      expect(page['correct_count']).to eq student_tasks[0].exercise_steps.size
+      expect(page['incorrect_count']).to eq 0
       expect(page['trouble']).to eq false
 
       expect(stats.first.spaced_pages).to be_empty
 
       work_task(task: student_tasks[1], is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq (50)
-      expect(stats.first.complete_count).to eq(2)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq 50
+      expect(stats.first.complete_count).to eq 2
+      expect(stats.first.partially_complete_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
-      expect(page['student_count']).to eq(2)
-      expect(page['correct_count']).to eq(student_tasks[0].exercise_steps.size)
-      expect(page['incorrect_count']).to eq(student_tasks[1].exercise_steps.size)
-      expect(page['chapter_section']).to eq([1, 1])
+      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['student_count']).to eq 2
+      expect(page['correct_count']).to eq student_tasks[0].exercise_steps.size
+      expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
+      expect(page['chapter_section']).to eq [1, 1]
       expect(page['trouble']).to eq false
 
       expect(stats.first.spaced_pages).to be_empty
 
       work_task(task: student_tasks[2], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq (67)
-      expect(stats.first.complete_count).to eq(3)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq 67
+      expect(stats.first.complete_count).to eq 3
+      expect(stats.first.partially_complete_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
-      expect(page['student_count']).to eq(3)
+      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['student_count']).to eq 3
       expect(page['correct_count']).to eq(
         student_tasks[0].exercise_steps.size +
         student_tasks[2].exercise_steps.size
       )
-      expect(page['incorrect_count']).to eq(student_tasks[1].exercise_steps.size)
-      expect(page['chapter_section']).to eq([1, 1])
+      expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
+      expect(page['chapter_section']).to eq [1, 1]
       expect(page['trouble']).to eq false
 
       expect(stats.first.spaced_pages).to be_empty
 
       work_task(task: student_tasks[3], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq (75)
-      expect(stats.first.complete_count).to eq(4)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq 75
+      expect(stats.first.complete_count).to eq 4
+      expect(stats.first.partially_complete_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
-      expect(page['student_count']).to eq(4)
+      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['student_count']).to eq 4
       expect(page['correct_count']).to eq(
         student_tasks[0].exercise_steps.size +
         student_tasks[2].exercise_steps.size +
         student_tasks[3].exercise_steps.size
       )
-      expect(page['incorrect_count']).to eq(student_tasks[1].exercise_steps.size)
-      expect(page['chapter_section']).to eq([1, 1])
+      expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
+      expect(page['chapter_section']).to eq [1, 1]
       expect(page['trouble']).to eq false
 
       expect(stats.first.spaced_pages).to be_empty
@@ -333,29 +333,29 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       it "splits the students into their periods" do
         expect(stats.first.mean_grade_percent).to be_nil
-        expect(stats.first.total_count).to eq(student_tasks.length/2)
-        expect(stats.first.complete_count).to eq(0)
-        expect(stats.first.partially_complete_count).to eq(0)
+        expect(stats.first.total_count).to eq student_tasks.length/2
+        expect(stats.first.complete_count).to eq 0
+        expect(stats.first.partially_complete_count).to eq 0
         expect(stats.first.trouble).to eq false
 
         page = stats.first.current_pages[0]
-        expect(page.student_count).to eq(0)
-        expect(page.incorrect_count).to eq(0)
-        expect(page.correct_count).to eq(0)
+        expect(page.student_count).to eq 0
+        expect(page.incorrect_count).to eq 0
+        expect(page.correct_count).to eq 0
         expect(page.trouble).to eq false
 
         expect(stats.first.spaced_pages).to be_empty
 
         expect(stats.second.mean_grade_percent).to be_nil
-        expect(stats.second.total_count).to eq(student_tasks.length/2)
-        expect(stats.second.complete_count).to eq(0)
-        expect(stats.second.partially_complete_count).to eq(0)
+        expect(stats.second.total_count).to eq student_tasks.length/2
+        expect(stats.second.complete_count).to eq 0
+        expect(stats.second.partially_complete_count).to eq 0
         expect(stats.second.trouble).to eq false
 
         page = stats.second.current_pages[0]
-        expect(page.student_count).to eq(0)
-        expect(page.incorrect_count).to eq(0)
-        expect(page.correct_count).to eq(0)
+        expect(page.student_count).to eq 0
+        expect(page.incorrect_count).to eq 0
+        expect(page.correct_count).to eq 0
         expect(page.trouble).to eq false
 
         expect(stats.second.spaced_pages).to be_empty
@@ -366,15 +366,15 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
         it 'does not show the archived period' do
           expect(stats.first.mean_grade_percent).to be_nil
-          expect(stats.first.total_count).to eq(student_tasks.length/2)
-          expect(stats.first.complete_count).to eq(0)
-          expect(stats.first.partially_complete_count).to eq(0)
+          expect(stats.first.total_count).to eq student_tasks.length/2
+          expect(stats.first.complete_count).to eq 0
+          expect(stats.first.partially_complete_count).to eq 0
           expect(stats.first.trouble).to eq false
 
           page = stats.first.current_pages[0]
-          expect(page.student_count).to eq(0)
-          expect(page.incorrect_count).to eq(0)
-          expect(page.correct_count).to eq(0)
+          expect(page.student_count).to eq 0
+          expect(page.incorrect_count).to eq 0
+          expect(page.correct_count).to eq 0
           expect(page.trouble).to eq false
 
           expect(stats.first.spaced_pages).to be_empty
@@ -387,15 +387,15 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     context "if the students changed periods after the assignment was distributed" do
       it "shows students that changed periods in their original period" do
         expect(stats.first.mean_grade_percent).to be_nil
-        expect(stats.first.total_count).to eq(student_tasks.length)
-        expect(stats.first.complete_count).to eq(0)
-        expect(stats.first.partially_complete_count).to eq(0)
+        expect(stats.first.total_count).to eq student_tasks.length
+        expect(stats.first.complete_count).to eq 0
+        expect(stats.first.partially_complete_count).to eq 0
         expect(stats.first.trouble).to eq false
 
         page = stats.first.current_pages[0]
-        expect(page.student_count).to eq(0)
-        expect(page.incorrect_count).to eq(0)
-        expect(page.correct_count).to eq(0)
+        expect(page.student_count).to eq 0
+        expect(page.incorrect_count).to eq 0
+        expect(page.correct_count).to eq 0
         expect(page.trouble).to eq false
 
         expect(stats.first.spaced_pages).to be_empty
@@ -416,15 +416,15 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
         it "shows students that changed periods in their original period" do
           expect(stats.first.mean_grade_percent).to be_nil
-          expect(stats.first.total_count).to eq(student_tasks.length)
-          expect(stats.first.complete_count).to eq(0)
-          expect(stats.first.partially_complete_count).to eq(0)
+          expect(stats.first.total_count).to eq student_tasks.length
+          expect(stats.first.complete_count).to eq 0
+          expect(stats.first.partially_complete_count).to eq 0
           expect(stats.first.trouble).to eq false
 
           page = stats.first.current_pages[0]
-          expect(page.student_count).to eq(0)
-          expect(page.incorrect_count).to eq(0)
-          expect(page.correct_count).to eq(0)
+          expect(page.student_count).to eq 0
+          expect(page.incorrect_count).to eq 0
+          expect(page.correct_count).to eq 0
           expect(page.trouble).to eq false
 
           expect(stats.first.spaced_pages).to be_empty
