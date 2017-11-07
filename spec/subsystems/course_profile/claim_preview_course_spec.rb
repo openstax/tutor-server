@@ -1,11 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
-  let(:offering) { FactoryGirl.create :catalog_offering }
-  let(:term)     { :preview }
-  let(:year)     { Time.current.year }
+  let(:offering)     { FactoryGirl.create :catalog_offering }
+  let(:term)         { :preview }
+  let(:current_time) { Time.current }
+  let(:year)         { current_time.year }
 
   context 'with preview available' do
+    around(:all) { |example| Timecop.freeze(current_time - 3.months) { example.run } }
+
     let(:course) do
       CreateCourse[
         name: 'Unclaimed',
@@ -18,14 +21,9 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         estimated_student_count: 42
       ].tap { |course| course.update_attribute :is_preview_ready, true }
     end
-    let!(:task_plan) do
-      Timecop.freeze(Time.current - 3.months) do
-        FactoryGirl.create :tasked_task_plan, owner: course
-      end
-    end
+    let!(:task_plan) { FactoryGirl.create :tasked_task_plan, owner: course }
 
     it 'finds the course, task plans and tasks and updates their attributes' do
-      current_time = Time.current
       claimed_course = Timecop.freeze(current_time) do
         CourseProfile::ClaimPreviewCourse[
           catalog_offering: offering, name: 'My New Preview Course'
