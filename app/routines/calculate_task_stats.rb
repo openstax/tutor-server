@@ -45,7 +45,7 @@ class CalculateTaskStats
     task_caches.each do |task_cache|
       pgs_by_task_id[task_cache.tasks_task_id] = task_cache.as_toc[:books].flat_map do |bk|
         bk[:chapters].flat_map do |ch|
-          ch[:pages].map do |pg|
+          ch[:pages].reject { |pg| pg[:exercises].empty? }.map do |pg|
             pg.merge(
               student_ids: task_cache.student_ids,
               student_names: task_cache.student_names,

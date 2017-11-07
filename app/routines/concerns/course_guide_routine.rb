@@ -77,7 +77,7 @@ module CourseGuideRoutine
       student_ids.each do |student_id|
         chs_by_student_id[student_id].concat(
           task_cache.as_toc[:books].flat_map do |bk|
-            bk[:chapters].map do |ch|
+            bk[:chapters].select { |ch| ch[:has_exercises] }.map do |ch|
               pgs = ch[:pages].select { |pg| pg[:has_exercises] }.map do |pg|
                 pg.merge student_ids: student_ids, practice: practice
               end
