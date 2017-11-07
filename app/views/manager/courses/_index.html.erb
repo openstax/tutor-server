@@ -87,10 +87,29 @@
               <%= "CC /" if course_info.is_concept_coach %>
               <%= course_info.is_college ? "College /" : "High School /" \
                     unless course_info.is_college.nil? %>
-              <%= "#{course_info.periods.map do |period|
-                       period.latest_enrollments.length
-                     end.reduce(0, :+)} students /" %>
-              <%= "#{course_info.periods.length} periods" %> /
+              <%=
+                total_periods = 0
+                total_students = 0
+                dropped_students = 0
+                archived_periods = 0
+                archived_students = 0
+
+                course_info.periods.each do |period|
+                  students = period.students.to_a
+                  num_students = students.size
+
+                  total_periods += 1
+                  total_students += num_students
+                  dropped_students += students.count(&:dropped?)
+                  next unless period.archived?
+
+                  archived_periods += 1
+                  archived_students += num_students
+                end
+
+                "#{total_students} students (#{dropped_students} dropped, #{archived_students
+                } archived) / #{total_periods} periods (#{archived_periods} archived)"
+              %> /
               <%= course_info.does_cost ? "Does Cost" : "Does NOT Cost" %> /
               LMS: <%= course_info.is_lms_enabling_allowed ? "enable allowed" : "enable not allowed" %> -
               <% if course_info.is_lms_enabled.nil? %>
