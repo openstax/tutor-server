@@ -80,7 +80,15 @@ class Tasks::UpdateTaskCaches
     # Get all relevant pages
     page_ids = task_steps_by_task_id_and_page_id.values.flat_map(&:keys).uniq
     pages_by_id = Content::Models::Page
-      .select([ :id, :uuid, :tutor_uuid, :title, :book_location, :content_chapter_id ])
+      .select([
+        :id,
+        :uuid,
+        :tutor_uuid,
+        :title,
+        :book_location,
+        :content_chapter_id,
+        :content_all_exercises_pool_id
+      ])
       .where(id: page_ids)
       .map { |page| Content::Page.new strategy: page.wrap }
       .index_by(&:id)
@@ -110,9 +118,10 @@ class Tasks::UpdateTaskCaches
         hash[key] = Hash.new { |hash, key| hash[key] = Hash.new { |hash, key| hash[key] = [] } }
       end
       mapped_pages = page_to_page_map.values.compact
-      unmapped_pages = pages.map(&:to_model)
-      pages_to_preload = (mapped_pages + unmapped_pages).map(&:to_model)
-      ActiveRecord::Associations::Preloader.new.preload pages_to_preload, chapter: :book
+      pages_to_preload = (pages + mapped_pages).map(&:to_model)
+      ActiveRecord::Associations::Preloader.new.preload(
+        pages_to_preload, [ :all_exercises_pool, chapter: :book ]
+      )
       page_to_page_map.each do |page, mapped_page|
         mapped_page ||= page
         chapter = mapped_page.chapter
@@ -212,8 +221,9 @@ class Tasks::UpdateTaskCaches
             tutor_uuid: mapped_page.tutor_uuid,
             title: mapped_page.title,
             book_location: mapped_page.book_location,
-            is_intro: parser.is_intro?,
+            has_exercises: !mapped_page.all_exercises_pool.empty?,
             is_spaced_practice: is_spaced_practice,
+            is_intro: parser.is_intro?,
             num_assigned_steps: task_steps.size,
             num_completed_steps: task_steps.count(&:completed?),
             num_assigned_exercises: exercises_array.size,
@@ -230,6 +240,8 @@ class Tasks::UpdateTaskCaches
           tutor_uuid: mapped_chapter.tutor_uuid,
           title: mapped_chapter.title,
           book_location: mapped_chapter.book_location,
+          has_exercises: pages_array.any? { |pg| pg[:has_exercises] },
+          is_spaced_practice: pages_array.all? { |pg| pg[:is_spaced_practice] },
           num_assigned_steps: pages_array.map { |pg| pg[:num_assigned_steps] }
                                          .reduce(0, :+),
           num_completed_steps: pages_array.map { |pg| pg[:num_completed_steps] }
@@ -251,6 +263,7 @@ class Tasks::UpdateTaskCaches
         id: mapped_book.id,
         tutor_uuid: mapped_book.tutor_uuid,
         title: mapped_book.title,
+        has_exercises: chapters_array.any? { |ch| ch[:has_exercises] },
         num_assigned_steps: chapters_array.map { |ch| ch[:num_assigned_steps] }
                                           .reduce(0, :+),
         num_completed_steps: chapters_array.map { |ch| ch[:num_completed_steps] }
@@ -271,6 +284,7 @@ class Tasks::UpdateTaskCaches
       id: ecosystem.id,
       tutor_uuid: ecosystem.tutor_uuid,
       title: ecosystem.title,
+      has_exercises: books_array.any? { |bk| bk[:has_exercises] },
       num_assigned_steps: num_assigned_steps,
       num_completed_steps: books_array.map { |bk| bk[:num_completed_steps] }
                                       .reduce(0, :+),

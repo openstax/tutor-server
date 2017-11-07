@@ -68,33 +68,41 @@ module CourseGuideRoutine
       .sort_by { |task_cache| index_by_ecosystem_id[task_cache.content_ecosystem_id] }
       .uniq { |task_cache| task_cache.tasks_task_id }
 
-    # Get mapped page and chapter UUIDs
-    page_ids = task_caches.flat_map do |task_cache|
-      task_cache.as_toc[:books].flat_map do |book|
-        book[:chapters].flat_map do |chapter|
-          chapter[:pages].reject { |page| page[:is_intro] }.map { |page| page[:id] }
-        end
+    # Get cached Task stats by chapter by student_id
+    chs_by_student_id = Hash.new { |hash, key| hash[key] = [] }
+    task_caches.each do |task_cache|
+      student_ids = task_cache.student_ids
+      practice = task_cache.practice?
+
+      student_ids.each do |student_id|
+        chs_by_student_id[student_id].concat(
+          task_cache.as_toc[:books].flat_map do |bk|
+            bk[:chapters].map do |ch|
+              pgs = ch[:pages].select { |pg| pg[:has_exercises] }.map do |pg|
+                pg.merge student_ids: student_ids, practice: practice
+              end
+
+              ch.merge student_ids: student_ids, practice: practice, pages: pgs
+            end
+          end
+        )
       end
+    end
+
+    # Get mapped page and chapter UUIDs
+    page_ids = chs_by_student_id.values.flatten.flat_map do |ch|
+      ch[:pages].map { |page| page[:id] }
     end
     pages = Content::Models::Page
       .select([:tutor_uuid, :content_chapter_id])
       .where(id: page_ids)
       .preload(chapter: { book: :ecosystem })
     chapters = pages.map(&:chapter).uniq
-
-    # Get cached Task stats by student_ids
-    task_caches_by_student_id = Hash.new { |hash, key| hash[key] = [] }
-    task_caches.each do |task_cache|
-      task_cache.student_ids.each do |student_id|
-        task_caches_by_student_id[student_id] << task_cache
-      end
-    end
+    book_containers = chapters + pages
 
     # Create Biglearn Student/Teacher CLUe requests
     biglearn_requests = students_by_period_id.flat_map do |period_id, students|
       student_ids = students.map(&:id)
-      task_caches = task_caches_by_student_id.values_at(*student_ids).compact.flatten
-      book_containers = chapters + pages
 
       if type == :teacher
         period = period_by_period_id[period_id]
@@ -132,21 +140,10 @@ module CourseGuideRoutine
       student_ids = students.map(&:id)
       biglearn_clue_by_book_container_uuid =
         biglearn_clue_by_period_id_and_book_container_uuid[period_id] if type == :teacher
-      task_caches = task_caches_by_student_id.values_at(*student_ids).flatten
-
-      chs = task_caches.flat_map do |task_cache|
-        task_cache.as_toc[:books].flat_map do |bk|
-          bk[:chapters].map do |ch|
-            ch.merge student_ids: task_cache.student_ids, practice: task_cache.practice?
-          end
-        end
-      end
+      chs = chs_by_student_id.values_at(*student_ids).flatten
 
       chapter_guides = chs.group_by { |ch| ch[:book_location] }.sort.map do |book_location, chs|
-        pgs = chs.flat_map do |ch|
-          ch[:pages].reject { |pg| pg[:is_intro] }
-                    .map { |pg| pg.merge ch.slice(:student_ids, :practice) }
-        end
+        pgs = chs.flat_map { |ch| ch[:pages] }
 
         page_guides = pgs.group_by { |pg| pg[:book_location] }.sort.map do |book_location, pgs|
           preferred_pg = pgs.first
