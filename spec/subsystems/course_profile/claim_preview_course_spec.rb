@@ -1,11 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
-  let(:offering) { FactoryGirl.create :catalog_offering }
-  let(:term)     { :preview }
-  let(:year)     { Time.current.year }
+  let(:offering)     { FactoryGirl.create :catalog_offering }
+  let(:term)         { :preview }
+  let(:current_time) { Time.current }
+  let(:year)         { current_time.year }
 
   context 'with preview available' do
+    around(:all) { |example| Timecop.freeze(current_time - 3.months) { example.run } }
+
     let(:course) do
       CreateCourse[
         name: 'Unclaimed',
@@ -18,14 +21,9 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         estimated_student_count: 42
       ].tap { |course| course.update_attribute :is_preview_ready, true }
     end
-    let!(:task_plan) do
-      Timecop.freeze(Time.current - 3.months) do
-        FactoryGirl.create :tasked_task_plan, owner: course
-      end
-    end
+    let!(:task_plan) { FactoryGirl.create :tasked_task_plan, owner: course }
 
     it 'finds the course, task plans and tasks and updates their attributes' do
-      current_time = Time.current
       claimed_course = Timecop.freeze(current_time) do
         CourseProfile::ClaimPreviewCourse[
           catalog_offering: offering, name: 'My New Preview Course'
@@ -38,14 +36,16 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
       expect(claimed_course.ends_at).to eq current_time + 8.weeks - 1.second
 
       task_plan.tasking_plans.each do |tasking_plan|
-        expect(tasking_plan.opens_at).to be_within(1).of(current_time)
-        # In case Daylight Savings Time starts/ends
+        # In case Daylight Savings Time ended less than 3 months ago
+        expect(tasking_plan.opens_at).to be_within(1.hour + 1.second).of(current_time)
+        # In case Daylight Savings Time starts next week
         expect(tasking_plan.due_at).to be_within(1.hour + 1.second).of(current_time + 1.week)
       end
 
       task_plan.tasks.each do |task|
-        expect(task.opens_at).to be_within(1).of(current_time)
-        # In case Daylight Savings Time starts/ends
+        # In case Daylight Savings Time ended less than 3 months ago
+        expect(task.opens_at).to be_within(1.hour + 1.second).of(current_time)
+        # In case Daylight Savings Time starts next week
         expect(task.due_at).to be_within(1.hour + 1.second).of(current_time + 1.week)
         expect(task.feedback_at).to be_nil
         expect(task.last_worked_at).to be_nil
