@@ -82,9 +82,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
     it "records partial/complete status" do
       first_task = student_tasks.first
-      step = first_task.task_steps.where(
-        tasked_type: "Tasks::Models::TaskedReading"
-      ).first
+      step = first_task.task_steps.find_by(tasked_type: "Tasks::Models::TaskedReading")
       MarkTaskStepCompleted[task_step: step]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
@@ -99,7 +97,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.mean_grade_percent).to eq (0)
       expect(stats.first.complete_count).to eq(1)
       expect(stats.first.partially_complete_count).to eq(0)
-      expect(stats.first.trouble).to eq true
+      expect(stats.first.trouble).to eq false
 
       last_task = student_tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
@@ -107,7 +105,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       expect(stats.first.mean_grade_percent).to eq (0)
       expect(stats.first.complete_count).to eq(1)
       expect(stats.first.partially_complete_count).to eq(1)
-      expect(stats.first.trouble).to eq true
+      expect(stats.first.trouble).to eq false
     end
 
   end
@@ -193,7 +191,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
     # This test assumes that all of these tasks have the same numbers of steps,
     # which is true at least for now
-    it "sets trouble to true if >50% incorrect and >25% completed" do
+    it "sets trouble to true if >=50% completed and <50% correct" do
       stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
 
@@ -202,7 +200,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      # Less than 25% done: no trouble
+      # Less than 50% done: no trouble
       work_task(task: student_tasks[0], is_correct: false, num_steps: 5)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
@@ -212,8 +210,8 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      # Over 25% done: trouble
-      work_task(task: student_tasks[1], is_correct: false)
+      # 50% done: trouble
+      student_tasks[1..3].each { |task| work_task(task: task, is_correct: false) }
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq true
 
@@ -222,38 +220,8 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
       expect(stats.first.spaced_pages).to be_empty
 
-      work_task(task: student_tasks[2], is_correct: false)
-
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq true
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq true
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # 40% correct: still trouble
-      student_tasks[3..4].each { |task| work_task(task: task, is_correct: true) }
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq true
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq true
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # 50% correct: no more trouble
-      work_task(task: student_tasks[5], is_correct: true)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # 3 out of 7 correct: trouble again
-      work_task(task: student_tasks[6], is_correct: false)
+      # 37.5% correct: still trouble
+      student_tasks[4..6].each { |task| work_task(task: task, is_correct: true) }
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
       expect(stats.first.trouble).to eq true
 

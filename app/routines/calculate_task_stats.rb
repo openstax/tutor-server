@@ -5,6 +5,8 @@ class CalculateTaskStats
   protected
 
   def exec(tasks:, details: false)
+    current_time = Time.current
+
     # Preload each task's student and period
     tasks = [tasks].flatten
     ActiveRecord::Associations::Preloader.new.preload(tasks, taskings: [ :period, role: :student ])
@@ -32,7 +34,7 @@ class CalculateTaskStats
     # Get unmapped cached Task stats (for the Task's original ecosystem)
     tc = Tasks::Models::TaskCache.arel_table
     task_caches = Tasks::Models::TaskCache
-      .select([ :tasks_task_id, :student_ids, :student_names, :as_toc ])
+      .select([ :tasks_task_id, :student_ids, :student_names, :due_at, :as_toc ])
       .joins(:task)
       .where(tasks_task_id: task_ids)
       .where('"tasks_tasks"."content_ecosystem_id" = "tasks_task_caches"."content_ecosystem_id"')
@@ -44,7 +46,11 @@ class CalculateTaskStats
       pgs_by_task_id[task_cache.tasks_task_id] = task_cache.as_toc[:books].flat_map do |bk|
         bk[:chapters].flat_map do |ch|
           ch[:pages].map do |pg|
-            pg.merge student_ids: task_cache.student_ids, student_names: task_cache.student_names
+            pg.merge(
+              student_ids: task_cache.student_ids,
+              student_names: task_cache.student_names,
+              due_at: task_cache.due_at
+            )
           end
         end
       end
@@ -88,38 +94,44 @@ class CalculateTaskStats
         (grades_array.reduce(:+) * 100.0 / num_started_exercise_task_caches).round
       end
 
-      pg_groups = pgs_by_task_id.values_at(*task_ids)
-                                .compact
-                                .flatten
-                                .sort_by { |pg| pg[:book_location] }
-                                .group_by { |pg| pg[:book_location] }
+      pgs = pgs_by_task_id.values_at(*task_ids)
+                          .compact
+                          .flatten
+                          .sort_by { |pg| pg[:book_location] }
+      total_students = pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
+
+      pg_groups = pgs.group_by { |pg| pg[:book_location] }
       spaced_pg_groups, current_pg_groups = pg_groups.partition do |book_location, pgs|
         pgs.all? { |pg| pg[:is_spaced_practice] }
       end
 
+      # An assignment gets the trouble flag if any of its cnx page/modules
+      # assigned to at least 25% of the class have a trouble flag.
+      trouble = false
       current_page_stats = current_pg_groups.map do |book_location, pgs|
         generate_page_stats(
-          pgs: pgs, details: details, content_by_exercise_id: content_by_exercise_id
-        )
+          pgs: pgs,
+          details: details,
+          content_by_exercise_id: content_by_exercise_id,
+          current_time: current_time
+        ).tap do |page_stats|
+          trouble = true \
+            if page_stats[:trouble] &&
+               pgs.flat_map { |pg| pg[:student_ids] }.uniq.size >= 0.25 * total_students
+        end
       end
       spaced_page_stats = spaced_pg_groups.map do |book_location, pgs|
         generate_page_stats(
-          pgs: pgs, details: details, content_by_exercise_id: content_by_exercise_id
-        )
+          pgs: pgs,
+          details: details,
+          content_by_exercise_id: content_by_exercise_id,
+          current_time: current_time
+        ).tap do |page_stats|
+          trouble = true \
+            if page_stats[:trouble] &&
+               pgs.flat_map { |pg| pg[:student_ids] }.uniq.size >= 0.25 * total_students
+        end
       end
-
-      # An assignment gets the trouble flag before the due date if over 50% of the total assigned
-      # questions for the entire assignment have been answered AND either over 50% of the completed
-      # questions for a teacher-assigned cnx page-module in the assignment are answered incorrectly
-      # OR over 50% of the completed questions for a Tutor-assigned spaced practice cnx page/module
-      # assigned to at least 25% of the class are answered incorrectly.
-
-      # An assignment gets the trouble flag after the due date if less than 50% of the total
-      # assigned questions for the entire assignment have been answered OR over 50% of the
-      # completed questions for a teacher-assigned cnx page-module in the assignment are answered
-      # incorrectly OR over 50% of the completed questions for a Tutor-assigned spaced practice cnx
-      # page/module assigned to at least 25% of the class are answered incorrectly.
-      all_page_stats = current_page_stats + spaced_page_stats
 
       {
         period_id: period.id,
@@ -130,20 +142,29 @@ class CalculateTaskStats
         mean_grade_percent: mean_grade_percent,
         current_pages: current_page_stats,
         spaced_pages: spaced_page_stats,
-        trouble: all_page_stats.any? { |page_stats| page_stats[:trouble] }
+        trouble: trouble
       }
     end.compact
   end
 
-  def generate_page_stats(pgs:, details:, content_by_exercise_id:)
+  def generate_page_stats(pgs:, details:, content_by_exercise_id:, current_time:)
     preferred_pg = pgs.first
+
     started_pgs = pgs.select { |pg| pg[:num_completed_exercises] > 0 }
     student_count = started_pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
     assigned_count = pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+)
     completed_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
     correct_count = pgs.map { |pg| pg[:num_correct_exercises] }.reduce(0, :+)
     incorrect_count = completed_count - correct_count
-    trouble = (incorrect_count > correct_count) && (completed_count >= 0.25 * assigned_count)
+
+    # A cnx page-module gets the trouble flag if at least 50% of the total assigned questions for
+    # this cnx page/module have been answered AND over 50% of the completed questions for this cnx
+    # page/module are answered incorrectly OR after the due date AND less than 50% of the total
+    # assigned questions for this cnx page/module have been answered.
+    low_completion = completed_count < 0.5 * assigned_count
+    past_due = !preferred_pg[:due_at].nil? && preferred_pg[:due_at] <= current_time
+    low_performance = incorrect_count > correct_count
+    trouble = low_completion ? past_due : low_performance
 
     {
       id: preferred_pg[:id],

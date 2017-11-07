@@ -23,19 +23,50 @@ class GetTpDashboard
     load_plans(course, start_at_ntz, end_at_ntz) if :teacher == role_type
   end
 
-  def load_plans(course, start_at_ntz, end_at_ntz)
-    result = run(:get_plans, owner: course, start_at_ntz: start_at_ntz,
-                             end_at_ntz: end_at_ntz, include_trouble_flags: false).outputs
+  def load_plans(course, start_at_ntz, end_at_ntz, current_time = Time.current)
+    result = run(:get_plans, owner: course,
+                             start_at_ntz: start_at_ntz,
+                             end_at_ntz: end_at_ntz).outputs
+    task_plan_ids = result.plans.map(&:id)
+    task_caches_by_task_plan_id = Tasks::Models::TaskCache
+      .select([ '"tasks_tasks"."tasks_task_plan_id"', :due_at, :as_toc ])
+      .joins(:task)
+      .where(task: { tasks_task_plan_id: task_plan_ids })
+      .group_by(&:tasks_task_plan_id)
 
     outputs.plans = result.plans.map do |task_plan|
+      task_caches = task_caches_by_task_plan_id[task_plan.id] || []
+      pgs = task_caches.flat_map do |task_cache|
+        task_cache.as_toc[:books].flat_map do |bk|
+          bk[:chapters].flat_map { |ch| ch[:pages].merge due_at: task_cache.due_at }
+        end
+      end
+      not_due_pgs, due_pgs = pgs.partition { |pg| pg[:due_at].nil? || pg[:due_at] > current_time }
+
       task_plan.attributes.symbolize_keys.except(:is_draft, :is_publishing, :is_published).merge({
         is_draft?: task_plan.is_draft?,
         is_publishing?: task_plan.is_publishing?,
         is_published?: task_plan.is_published?,
-        is_trouble: false,
+        is_trouble: get_is_trouble(due_pgs, true) || get_is_trouble(not_due_pgs, false),
         shareable_url: run(:get_short_code_url, task_plan, suffix: task_plan.title).outputs.url,
         tasking_plans: task_plan.tasking_plans
       })
+    end
+  end
+
+  def get_is_trouble(pgs, past_due)
+    total_students = pgs.map { |pg| pg[:student_ids] }.uniq.size
+
+    pgs.group_by { |pg| pg[:book_location] }.any? do |book_location, pgs|
+      num_students = pgs.map { |pg| pg[:student_ids] }.uniq.size
+      next false if num_students < 0.25 * total_students
+
+      num_assigned = pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+)
+      num_completed = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
+      next past_due if num_completed < 0.5 * num_assigned
+
+      num_correct = pgs.map { |pg| pg[:num_correct_exercises] }.reduce(0, :+)
+      num_correct < 0.5 * num_completed
     end
   end
 
