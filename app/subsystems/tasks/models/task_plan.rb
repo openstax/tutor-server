@@ -4,8 +4,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
-  UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description', 'first_published_at',
-                                     'last_published_at', 'is_feedback_immediate']
+  UPDATABLE_ATTRIBUTES_AFTER_OPEN = [
+    'title', 'description', 'first_published_at', 'last_published_at', 'is_feedback_immediate'
+  ]
 
   attr_accessor :is_publish_requested
 
@@ -38,7 +39,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   scope :preload_tasking_plans, -> { preload(tasking_plans: :time_zone) }
 
-  scope :preload_tasks_and_steps, -> { preload(tasks: [:taskings, task_steps: :tasked]) }
+  scope :preload_tasks, -> { preload(tasks: :time_zone) }
 
   def withdrawn?
     deleted?
@@ -120,9 +121,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def changes_allowed
-    return unless out_to_students?
     forbidden_attributes = changes.except(*UPDATABLE_ATTRIBUTES_AFTER_OPEN)
     return if forbidden_attributes.empty?
+    return unless out_to_students?
 
     forbidden_attributes.each do |key, value|
       errors.add(key.to_sym, "cannot be updated after the open date")

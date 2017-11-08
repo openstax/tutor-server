@@ -16,6 +16,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:assistant) }
   it { is_expected.to validate_presence_of(:owner) }
+
   it do
     # shoulda-matchers fails to properly remove the associated records
     subject.tasking_plans.delete_all :delete_all
@@ -184,6 +185,19 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       student_task.update_attribute :opens_at_ntz, future_time
       expect(task_plan.reload.out_to_students?).to eq false
       expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
+    end
+
+    it 'can still be deleted and restored after tasks are available to students' do
+      expect(task_plan.withdrawn?).to eq false
+
+      student_task
+      expect(task_plan.reload.out_to_students?).to eq true
+
+      task_plan.destroy
+      expect(task_plan.withdrawn?).to eq true
+
+      task_plan.restore
+      expect(task_plan.withdrawn?).to eq false
     end
 
     it 'will not allow other fields to be updated after tasks are available to students' do
