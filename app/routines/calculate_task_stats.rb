@@ -32,7 +32,6 @@ class CalculateTaskStats
     end
 
     # Get unmapped cached Task stats (for the Task's original ecosystem)
-    tc = Tasks::Models::TaskCache.arel_table
     task_caches = Tasks::Models::TaskCache
       .select([ :tasks_task_id, :student_ids, :student_names, :due_at, :as_toc ])
       .joins(:task)
