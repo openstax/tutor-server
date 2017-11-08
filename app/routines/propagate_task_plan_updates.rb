@@ -20,18 +20,17 @@ class PropagateTaskPlanUpdates
   def exec(task_plan:)
     # For now we only handle tasking_plans that point to periods
     task_plan.tasking_plans.each do |tasking_plan|
-      period = tasking_plan.target
       raise 'Cannot propagate plan changes for plan not assigned to a period' \
-        unless period.is_a?(CourseMembership::Models::Period)
+        unless tasking_plan.target_type == CourseMembership::Models::Period.name
 
       task_plan.tasks.joins(:taskings)
-                     .where(taskings: { course_membership_period_id: period.id })
+                     .where(taskings: { course_membership_period_id: tasking_plan.target_id })
                      .update_all(updated_attributes_for(tasking_plan: tasking_plan))
     end
 
     task_plan.tasks.reset
 
-    requests = task_plan.tasks.map{ |task| { course: task_plan.owner, task: task } }
+    requests = task_plan.tasks.map { |task| { course: task_plan.owner, task: task } }
     OpenStax::Biglearn::Api.create_update_assignments(requests)
   end
 

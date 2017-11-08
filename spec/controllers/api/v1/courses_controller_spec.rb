@@ -16,7 +16,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
   let(:course)         do
-    FactoryGirl.create :course_profile_course, name: 'Physics 101', is_college: true
+    FactoryGirl.create :course_profile_course, :without_ecosystem,
+                       name: 'Physics 101', is_college: true
   end
   let!(:period)        { FactoryGirl.create :course_membership_period, course: course }
 
@@ -25,11 +26,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     strategy = Content::Strategies::Direct::Ecosystem.new(book.ecosystem.reload)
     Content::Ecosystem.new(strategy: strategy)
   end
-
-  def add_book_to_course(course:)
-    CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-
-    { book: book, ecosystem: ecosystem }
+  let(:offering)       { FactoryGirl.create :catalog_offering, ecosystem: ecosystem.to_model }
+  let(:course)         do
+    FactoryGirl.create :course_profile_course,
+                       offering: offering, name: 'Physics 101', is_college: true
   end
 
   context '#index' do
@@ -62,8 +62,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'includes all fields from the CourseRepresenter' do
-        add_book_to_course(course: course)[:ecosystem]
-
         api_get :index, user_1_token
 
         course_infos = CollectCourseInfo[user: user_1]
@@ -867,6 +865,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       course.is_concept_coach = true
       course.save!
 
+      course.course_ecosystems.delete_all :delete_all
+
       AddEcosystemToCourse[ecosystem: @ecosystem, course: course]
 
       @task_1 = GetConceptCoach[
@@ -1143,7 +1143,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#roster' do
     let(:application)        { FactoryGirl.create :doorkeeper_application }
 
-    let(:course)             { FactoryGirl.create :course_profile_course, does_cost: true }
+    let(:course)             do
+      FactoryGirl.create :course_profile_course, :without_ecosystem, does_cost: true
+    end
     let!(:period_2)          { FactoryGirl.create :course_membership_period, course: course }
 
     let(:student_user)       { FactoryGirl.create(:user) }
@@ -1325,7 +1327,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           starts_at: DateTimeUtilities.to_api_s(expected_term_year.starts_at),
           ends_at: DateTimeUtilities.to_api_s(expected_term_year.ends_at),
           is_active: be_in([true, false]),
-          is_access_switchable: (be_in [true, false]),
+          is_access_switchable: be_in([true, false]),
           periods: [a_kind_of(Hash)]*course.num_sections,
           students: [],
           roles: [a_kind_of(Hash)],

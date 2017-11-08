@@ -23,7 +23,10 @@ RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
   let(:practice_task) { result.outputs.task }
   let(:errors)        { result.errors }
 
-  before              { AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
+  before              do
+    course.course_ecosystems.delete_all :delete_all
+    AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+  end
 
   it 'errors when the course has ended' do
     current_time = Time.current

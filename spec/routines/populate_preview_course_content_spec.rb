@@ -11,8 +11,6 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     offering = FactoryGirl.create :catalog_offering, ecosystem: ecosystem.to_model
 
     @course = FactoryGirl.create :course_profile_course, offering: offering, is_preview: true
-
-    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
   end
 
   let(:expected_opens_at) do

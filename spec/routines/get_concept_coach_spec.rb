@@ -38,10 +38,9 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
     @page_4 = Content::Page.new(strategy: page_model_4.reload.wrap)
 
-    period_model = FactoryGirl.create(:course_membership_period)
+    @course = FactoryGirl.create :course_profile_course, :without_ecosystem, is_concept_coach: true
+    period_model = FactoryGirl.create :course_membership_period, course: @course
     period = CourseMembership::Period.new(strategy: period_model.wrap)
-    @course = period.course
-    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 

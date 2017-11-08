@@ -126,6 +126,8 @@ class GetConceptCoach
                        from: [ecosystem, { history: history.core_page_ids,
                                            spaced_practice: spaced_practice_status }])
 
+    Tasks::UpdateTaskCaches.perform_later(tasks: outputs.task)
+
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: outputs.task)
   end
 

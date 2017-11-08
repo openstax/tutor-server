@@ -10,7 +10,7 @@
 FactoryGirl.define do
   factory :tasks_tasked_exercise, class: '::Tasks::Models::TaskedExercise' do
     transient do
-      tasked_to { build(:user) }
+      tasked_to { build(:entity_role) }
       skip_task false
     end
 

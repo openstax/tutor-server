@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
-  let(:course_1)  { FactoryGirl.create :course_profile_course }
-  let(:course_2)  { FactoryGirl.create :course_profile_course }
-  let(:course_3)  { FactoryGirl.create :course_profile_course }
+  let(:course_1)  { FactoryGirl.create :course_profile_course, :without_ecosystem }
+  let(:course_2)  { FactoryGirl.create :course_profile_course, :without_ecosystem }
+  let(:course_3)  { FactoryGirl.create :course_profile_course, :without_ecosystem }
 
   let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
   let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }

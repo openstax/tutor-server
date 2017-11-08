@@ -56,6 +56,8 @@ class Tasks::Models::Task < ApplicationRecord
 
     # super is not needed here when there are changes because save! will update the timestamp
     changed? ? save_without_update_step_counts_callback!(validate: false) : super
+
+    Tasks::UpdateTaskCaches.perform_later(tasks: self)
   end
 
   def stepless?

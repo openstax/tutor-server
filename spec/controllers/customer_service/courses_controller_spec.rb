@@ -47,7 +47,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
   describe 'GET #show' do
     it 'assigns extra course info' do
-      course = FactoryGirl.create :course_profile_course, name: 'Hello World'
+      course = FactoryGirl.create :course_profile_course, :without_ecosystem, name: 'Hello World'
 
       get :show, id: course.id
 

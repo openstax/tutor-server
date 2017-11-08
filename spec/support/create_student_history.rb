@@ -87,7 +87,7 @@ class CreateStudentHistory
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)
-    page_ids = ecosystem.pages.map{ |pg| pg.id.to_s }
+    page_ids = ecosystem.pages.map { |pg| pg.id.to_s }
     task_plan = FactoryGirl.build(
       :tasks_task_plan,
       owner: course,
