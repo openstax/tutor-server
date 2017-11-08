@@ -24,7 +24,8 @@
                                    class: 'btn btn-sm btn-primary course-stats-button' %>
       <%= link_to 'Edit', edit_admin_course_path(course_info.id),
                           class: "btn btn-sm btn-primary course-stats-button" %>
-      <% if course_info.teachers.empty? && course_info.periods.empty? %>
+      <% if course_info.teachers.without_deleted.empty? &&
+            course_info.periods.without_deleted.empty? %>
         <%= link_to 'Delete', admin_course_path(course_info.id),
                               method: :delete,
                               data: {

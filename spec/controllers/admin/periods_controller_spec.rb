@@ -30,7 +30,7 @@ RSpec.describe Admin::PeriodsController do
       expect {
         put :restore, course_id: course.id, id: period.id
       }.to change { period.reload.archived? }.from(true).to(false)
-      expect(flash[:notice]).to eq 'Period "1st" restored.'
+      expect(flash[:notice]).to eq 'Period "1st" unarchived.'
     end
   end
 end

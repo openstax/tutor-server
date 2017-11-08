@@ -4,8 +4,13 @@
                      extra_fields_proc: lambda do |period| %>
   <td>
     <%= link_to 'Edit', edit_admin_period_path(period), class: 'btn btn-xs btn-primary' %>
-    <%= link_to 'Archive', admin_period_path(period), method: :delete,
-                                                     class: 'btn btn-xs btn-primary' %>
+    <% if period.archived? %>
+      <%= link_to 'Unarchive', restore_admin_period_path(period), method: :put,
+                                                                  class: 'btn btn-xs btn-primary' %>
+    <% else %>
+      <%= link_to 'Archive', admin_period_path(period), method: :delete,
+                                                        class: 'btn btn-xs btn-primary' %>
+    <% end %>
   </td>
 <% end } %>
 

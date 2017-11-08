@@ -50,7 +50,7 @@ class Admin::PeriodsController < Admin::BaseController
     result = CourseMembership::UnarchivePeriod.call(period: @period)
 
     if result.errors.empty?
-      flash[:notice] = "Period \"#{@period.name}\" restored."
+      flash[:notice] = "Period \"#{@period.name}\" unarchived."
     else
       flash[:error] = result.errors.full_messages
     end
