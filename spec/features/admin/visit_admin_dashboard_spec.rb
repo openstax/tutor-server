@@ -24,11 +24,7 @@ RSpec.feature 'Admnistration' do
       expect(page).to have_content('Excluded exercise IDs')
       fill_in 'settings_excluded_ids', with: '123456@7'
 
-      2.times { FactoryGirl.create :course_profile_course }
-      num_courses = CourseProfile::Models::Course.count
-      expect(OpenStax::Biglearn::Api).to(
-        receive(:update_globally_excluded_exercises).exactly(num_courses).times
-      )
+      expect(UpdateAdminExerciseExclusions).to receive(:perform_later).once
       click_button 'Save'
     end
 

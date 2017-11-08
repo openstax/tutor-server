@@ -28,11 +28,7 @@ Rails.application.config.to_prepare do
 
         Settings::Db.store.object('excluded_ids').expire_cache
         new_excluded_ids = Settings::Exercises.excluded_ids
-        return if new_excluded_ids == old_excluded_ids
-
-        CourseProfile::Models::Course.find_each do |course|
-          OpenStax::Biglearn::Api.update_globally_excluded_exercises course: course
-        end
+        UpdateAdminExerciseExclusions.perform_later if new_excluded_ids != old_excluded_ids
       end
     end
   end
