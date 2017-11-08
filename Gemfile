@@ -216,6 +216,8 @@ gem 'boxr'
 # OAuth gem for generating and validating lti requests
 gem 'oauth', '~> 0.5.1'
 
+gem 'scout_apm', '~> 3.0.x'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
