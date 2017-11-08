@@ -673,6 +673,7 @@ GEM
     scenic (1.4.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
+    scout_apm (3.0.0.pre13)
     securecompare (1.0.0)
     sexp_processor (4.5.0)
     shellany (0.0.1)
@@ -867,6 +868,7 @@ DEPENDENCIES
   rspec-rails (~> 3.0)
   sass-rails (~> 5.0.0)
   scenic (~> 1.4)
+  scout_apm (~> 3.0.x)
   shoulda-matchers
   sortability
   spring
