@@ -26,6 +26,7 @@ Rails.application.config.to_prepare do
 
         yield
 
+        Settings::Db.store.object('excluded_ids').expire_cache
         new_excluded_ids = Settings::Exercises.excluded_ids
         return if new_excluded_ids == old_excluded_ids
 
