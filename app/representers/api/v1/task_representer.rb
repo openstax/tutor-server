@@ -49,7 +49,9 @@ module Api::V1
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) },
-             schema_info: { description: "When the task was last worked (nil means not yet worked)" }
+             schema_info: {
+               description: "When the task was last worked (nil means not yet worked)"
+             }
 
     property :is_shared?,
              as: :is_shared,

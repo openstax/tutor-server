@@ -48,8 +48,8 @@ class TaskExercise
         url: exercise.url,
         title: title || exercise.title,
         context: exercise.context,
-        content: question[:content],
         question_id: question[:id],
+        content: question[:content],
         is_in_multipart: questions.size > 1
       )
 
