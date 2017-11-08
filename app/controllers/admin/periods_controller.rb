@@ -36,19 +36,23 @@ class Admin::PeriodsController < Admin::BaseController
   end
 
   def destroy
-    if @period.destroy
+    result = CourseMembership::ArchivePeriod.call(period: @period)
+
+    if result.errors.empty?
       flash[:notice] = "Period \"#{@period.name}\" archived."
     else
-      flash[:error] = @period.errors.full_messages
+      flash[:error] = result.errors.full_messages
     end
     redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end
 
   def restore
-    if @period.restore
+    result = CourseMembership::UnarchivePeriod.call(period: @period)
+
+    if result.errors.empty?
       flash[:notice] = "Period \"#{@period.name}\" restored."
     else
-      flash[:error] = @period.errors.full_messages
+      flash[:error] = result.errors.full_messages
     end
     redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end
