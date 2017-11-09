@@ -101,6 +101,13 @@ RSpec.describe 'LMS Launch', type: :request do
     expect_error("Only the course instructor and enrolled")
   end
 
+  it 'errors for invalid keys' do
+    unsaved_app = FactoryGirl.build(:lms_app)
+    simulator.install_tutor(app: unsaved_app, course: "other")
+    simulator.launch(user: "teacher", assignment: "tutor", course: "other")
+    expect_error("may not have been integrated correctly")
+  end
+
   context 'missing required fields' do
     context "tool_consumer_instance_guid" do
       context "teacher launch" do
