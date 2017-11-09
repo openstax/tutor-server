@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :content_pool, class: '::Content::Models::Pool' do
     association :ecosystem, factory: :content_ecosystem
     uuid { SecureRandom.uuid }

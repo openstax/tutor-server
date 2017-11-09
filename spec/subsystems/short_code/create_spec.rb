@@ -14,7 +14,7 @@ RSpec.describe ShortCode::Create, type: :routine do
   end
 
   it 'creates a short code using a object GID' do
-    task_plan = FactoryGirl.create :tasks_task_plan
+    task_plan = FactoryBot.create :tasks_task_plan
     short_code = described_class[task_plan.to_global_id.to_s]
     expect(ShortCode::Models::ShortCode.find_by_code(short_code).uri).to eq(task_plan.to_global_id.to_s)
   end

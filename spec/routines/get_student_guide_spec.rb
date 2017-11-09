@@ -5,14 +5,14 @@ require 'database_cleaner'
 RSpec.describe GetStudentGuide, type: :routine do
 
   before(:all) do
-    @course = FactoryGirl.create :course_profile_course
+    @course = FactoryBot.create :course_profile_course
 
-    @period = FactoryGirl.create :course_membership_period, course: @course
-    @second_period = FactoryGirl.create :course_membership_period, course: @course
+    @period = FactoryBot.create :course_membership_period, course: @course
+    @second_period = FactoryBot.create :course_membership_period, course: @course
 
-    @teacher = FactoryGirl.create(:user)
-    @student = FactoryGirl.create(:user)
-    @second_student = FactoryGirl.create(:user)
+    @teacher = FactoryBot.create(:user)
+    @student = FactoryBot.create(:user)
+    @second_student = FactoryBot.create(:user)
 
     @role = AddUserAsPeriodStudent[period: @period, user: @student]
     @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
@@ -35,7 +35,7 @@ RSpec.describe GetStudentGuide, type: :routine do
       @second_role.reload
       @teacher_role.reload
 
-      book = FactoryGirl.create :content_book, title: 'Physics (Demo)'
+      book = FactoryBot.create :content_book, title: 'Physics (Demo)'
       ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
     end

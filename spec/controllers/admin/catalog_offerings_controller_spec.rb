@@ -2,15 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Admin::CatalogOfferingsController, type: :controller do
   let(:admin) do
-    profile = FactoryGirl.create :user_profile,
+    profile = FactoryBot.create :user_profile,
                                  :administrator,
                                  username: 'admin',
                                  full_name: 'Administrator'
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   end
-  let(:offering)   { FactoryGirl.create(:catalog_offering) }
-  let(:attributes) { FactoryGirl.build(:catalog_offering).attributes }
+  let(:offering)   { FactoryBot.create(:catalog_offering) }
+  let(:attributes) { FactoryBot.build(:catalog_offering).attributes }
 
   before {
     controller.sign_in(admin)
@@ -22,7 +22,7 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
   end
 
   describe 'Creating an offering' do
-    let(:attributes) { FactoryGirl.build(:catalog_offering).attributes }
+    let(:attributes) { FactoryBot.build(:catalog_offering).attributes }
 
     it 'complains about blank fields' do
       expect{
@@ -39,7 +39,7 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
     end
 
     it 'can have duplicated sf book names' do
-      FactoryGirl.create(:catalog_offering, salesforce_book_name: "Blah")
+      FactoryBot.create(:catalog_offering, salesforce_book_name: "Blah")
       attributes["salesforce_book_name"] = "Blah"
       expect{
         response = post :create, { offering: attributes }

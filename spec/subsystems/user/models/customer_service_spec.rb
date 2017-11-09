@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User::Models::CustomerService, type: :model do
 
-  subject(:customer_service) { FactoryGirl.create(:user_customer_service) }
+  subject(:customer_service) { FactoryBot.create(:user_customer_service) }
 
   it { is_expected.to belong_to(:profile) }
 
@@ -11,7 +11,7 @@ RSpec.describe User::Models::CustomerService, type: :model do
   it { is_expected.to validate_uniqueness_of(:profile) }
 
   let(:anon) { User::Models::AnonymousProfile.instance }
-  let(:profile) { FactoryGirl.create(:user_profile) }
+  let(:profile) { FactoryBot.create(:user_profile) }
 
   it 'cannot refer to the anonymous profile' do
     expect{described_class.create(profile: anon)}.to raise_error(ActiveRecord::StatementInvalid)

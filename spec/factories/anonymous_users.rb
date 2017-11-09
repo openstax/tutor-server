@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :anonymous_user, class: '::User::User' do
     transient do
       profile { User::Models::AnonymousProfile.instance }

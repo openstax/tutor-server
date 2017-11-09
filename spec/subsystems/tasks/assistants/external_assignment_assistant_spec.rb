@@ -7,23 +7,23 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   let(:num_taskees)     { 3 }
 
   let(:assistant)      do
-    FactoryGirl.create(
+    FactoryBot.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
     )
   end
 
-  let(:course)         { FactoryGirl.create :course_profile_course }
-  let(:period)         { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)         { FactoryBot.create :course_profile_course }
+  let(:period)         { FactoryBot.create :course_membership_period, course: course }
 
   let(:task_plan_1)    do
-    FactoryGirl.create(:tasks_task_plan,
+    FactoryBot.create(:tasks_task_plan,
                        assistant: assistant,
                        settings: { external_url: url },
                        owner: course)
   end
 
   let(:task_plan_2)    do
-    FactoryGirl.create(:tasks_task_plan,
+    FactoryBot.create(:tasks_task_plan,
                        assistant: assistant,
                        settings: { external_url: templatized_url },
                        owner: course)
@@ -31,7 +31,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
 
   let!(:students)       do
     num_taskees.times.map do
-      user = FactoryGirl.create(:user)
+      user = FactoryBot.create(:user)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
   end

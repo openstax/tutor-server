@@ -1,29 +1,29 @@
 require 'rails_helper'
 
 RSpec.describe GetCourseRoster, type: :routine do
-  let(:course)   { FactoryGirl.create :course_profile_course }
-  let(:period_1) { FactoryGirl.create :course_membership_period, course: course }
-  let(:period_2) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)   { FactoryBot.create :course_profile_course }
+  let(:period_1) { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2) { FactoryBot.create :course_membership_period, course: course }
 
-  let(:other_course) { FactoryGirl.create :course_profile_course }
-  let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
+  let(:other_course) { FactoryBot.create :course_profile_course }
+  let(:other_period) { FactoryBot.create :course_membership_period, course: other_course }
 
-  let(:student_1) { FactoryGirl.create(:user) }
+  let(:student_1) { FactoryBot.create(:user) }
   let!(:student_1_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_1).outputs[:role]
   }
 
-  let(:student_2) { FactoryGirl.create(:user) }
+  let(:student_2) { FactoryBot.create(:user) }
   let!(:student_2_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_2).outputs[:role]
   }
 
-  let(:student_3) { FactoryGirl.create(:user) }
+  let(:student_3) { FactoryBot.create(:user) }
   let!(:student_3_role) {
     AddUserAsPeriodStudent.call(period: period_2, user: student_3).outputs[:role]
   }
 
-  let(:student_4) { FactoryGirl.create(:user) }
+  let(:student_4) { FactoryBot.create(:user) }
   let!(:student_4_role) {
     AddUserAsPeriodStudent.call(period: other_period, user: student_4).outputs[:role]
   }

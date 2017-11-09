@@ -9,7 +9,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
     begin
       RSpec::Mocks.setup
 
-      @task_plan = FactoryGirl.create :tasked_task_plan, number_of_students: @number_of_students
+      @task_plan = FactoryBot.create :tasked_task_plan, number_of_students: @number_of_students
       @period = @task_plan.owner.periods.first
     ensure
       RSpec::Mocks.teardown
@@ -50,20 +50,20 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
       })
       page = Content::Routines::ImportPage.call(
         cnx_page: cnx_page,
-        chapter: FactoryGirl.create(:content_chapter),
+        chapter: FactoryBot.create(:content_chapter),
         book_location: [1, 1]
       ).outputs.page
 
       Content::Routines::PopulateExercisePools[book: page.chapter.book]
 
-      course = FactoryGirl.create :course_profile_course, :with_assistants
+      course = FactoryBot.create :course_profile_course, :with_assistants
       AddEcosystemToCourse[course: course, ecosystem: page.ecosystem]
 
-      period = FactoryGirl.create :course_membership_period, course: course
-      student = FactoryGirl.create(:user)
+      period = FactoryBot.create :course_membership_period, course: course
+      student = FactoryBot.create(:user)
       AddUserAsPeriodStudent.call(user: student, period: period)
 
-      task_plan = FactoryGirl.create(
+      task_plan = FactoryBot.create(
         :tasks_task_plan,
         owner: course,
         ecosystem: page.ecosystem,
@@ -310,7 +310,7 @@ RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS d
 
   context "with multiple course periods" do
     let(:course)   { @task_plan.owner }
-    let(:period_2) { FactoryGirl.create :course_membership_period, course: course }
+    let(:period_2) { FactoryBot.create :course_membership_period, course: course }
     let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
     before do

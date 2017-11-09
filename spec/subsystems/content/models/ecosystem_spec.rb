@@ -16,7 +16,7 @@ RSpec.shared_examples 'ecosystem specs' do
 end
 
 RSpec.describe Content::Models::Ecosystem, type: :model do
-  subject(:ecosystem) { FactoryGirl.create :content_ecosystem }
+  subject(:ecosystem) { FactoryBot.create :content_ecosystem }
 
   it { is_expected.to have_many(:course_ecosystems) }
   it { is_expected.to have_many(:courses) }
@@ -39,7 +39,7 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
   end
 
   context 'with a single book' do
-    let!(:book)          { FactoryGirl.create :content_book, ecosystem: ecosystem }
+    let!(:book)          { FactoryBot.create :content_book, ecosystem: ecosystem }
     before(:each)        { ecosystem.reload }
 
     let(:expected_title) { "#{book.title} (#{book.cnx_id})" }

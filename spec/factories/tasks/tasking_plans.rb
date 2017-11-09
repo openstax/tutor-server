@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_tasking_plan, class: '::Tasks::Models::TaskingPlan' do
     transient do
       duration 1.week

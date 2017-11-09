@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :catalog_offering, class: '::Catalog::Models::Offering' do
 
     ecosystem { build(:content_book).ecosystem }

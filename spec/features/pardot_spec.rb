@@ -4,7 +4,7 @@ RSpec.describe "Pardot" do
   # No real SF tests here, lots of those in tracking routine spec
   before(:each) { disable_sfdc_client }
 
-  let(:user) { FactoryGirl.create :user }
+  let(:user) { FactoryBot.create :user }
   let(:anonymous_user) do
     profile = User::Models::AnonymousProfile.instance
     strategy = User::Strategies::Direct::AnonymousUser.new(profile)

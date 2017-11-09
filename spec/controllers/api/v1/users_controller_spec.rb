@@ -2,21 +2,21 @@ require "rails_helper"
 
 RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
 
-  let(:application)    { FactoryGirl.create :doorkeeper_application }
-  let(:user_1)         { FactoryGirl.create(:user) }
-  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:application)    { FactoryBot.create :doorkeeper_application }
+  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,
                                             application: application,
                                             resource_owner_id: user_1.id }
 
-  let(:admin)          { FactoryGirl.create(:user, :administrator) }
+  let(:admin)          { FactoryBot.create(:user, :administrator) }
   let(:admin_token)    do
-    FactoryGirl.create :doorkeeper_access_token,
+    FactoryBot.create :doorkeeper_access_token,
                        application: application,
                        resource_owner_id: admin.id
   end
 
   let(:userless_token) do
-    FactoryGirl.create :doorkeeper_access_token,
+    FactoryBot.create :doorkeeper_access_token,
                        application: application,
                        resource_owner_id: nil
   end

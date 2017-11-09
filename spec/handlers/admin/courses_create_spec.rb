@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesCreate, type: :handler do
-  let(:catalog_offering) { FactoryGirl.create :catalog_offering }
+  let(:catalog_offering) { FactoryBot.create :catalog_offering }
   let(:handler_result)   { described_class.handle(params: @params) }
   subject(:course)       { handler_result.outputs["[:create_course, :course]"] }
 

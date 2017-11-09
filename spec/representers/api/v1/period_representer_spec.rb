@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
 
-  let(:course) { FactoryGirl.create :course_profile_course }
-  let(:period) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course) { FactoryBot.create :course_profile_course }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
 
   def represented
     described_class.new(period).to_hash
@@ -45,7 +45,7 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
   end
 
   it "includes student count" do
-    student = AddUserAsPeriodStudent.call(period: period, user: FactoryGirl.create(:user)).outputs.student
+    student = AddUserAsPeriodStudent.call(period: period, user: FactoryBot.create(:user)).outputs.student
     expect(represented['num_enrolled_students']).to eq 1
 
     CourseMembership::InactivateStudent.call(student: student)

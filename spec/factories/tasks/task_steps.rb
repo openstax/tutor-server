@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_task_step, class: '::Tasks::Models::TaskStep' do
     association :task, factory: :tasks_task
     association :page, factory: :content_page
@@ -15,7 +15,7 @@ FactoryGirl.define do
                   content: evaluator.content, title: evaluator.title }
 
       task_step.tasked ||= \
-        FactoryGirl.build(evaluator.tasked_type, options.compact)
+        FactoryBot.build(evaluator.tasked_type, options.compact)
     end
   end
 end

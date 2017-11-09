@@ -3,8 +3,8 @@ require 'vcr_helper'
 
 RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
 
-  let(:course)         { FactoryGirl.create :course_profile_course, :without_ecosystem }
-  let(:period)         { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)         { FactoryBot.create :course_profile_course, :without_ecosystem }
+  let(:period)         { FactoryBot.create :course_membership_period, course: course }
 
   context 'with a real book' do
     before(:all) do

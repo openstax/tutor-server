@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Admin::UsersController, type: :controller do
-  let!(:admin) { FactoryGirl.create :user, :administrator,
+  let!(:admin) { FactoryBot.create :user, :administrator,
                                            username: 'admin',
                                            full_name: 'Administrator' }
-  let!(:user) { FactoryGirl.create :user, username: 'student', full_name: 'User One' }
+  let!(:user) { FactoryBot.create :user, username: 'student', full_name: 'User One' }
 
   before { controller.sign_in(admin) }
 

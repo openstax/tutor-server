@@ -4,34 +4,34 @@ require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine do
   let(:course) do
-    FactoryGirl.create :course_profile_course,
+    FactoryBot.create :course_profile_course,
                        :with_assistants,
                        time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
   end
-  let!(:period) { FactoryGirl.create :course_membership_period, course: course }
+  let!(:period) { FactoryBot.create :course_membership_period, course: course }
 
-  let(:teacher) { FactoryGirl.create(:user) }
+  let(:teacher) { FactoryBot.create(:user) }
   let(:teacher_token) do
-    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: teacher.id
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: teacher.id
   end
 
   let(:student_1) do
-    FactoryGirl.create :user, first_name: 'Student', last_name: 'One', full_name: 'Student One'
+    FactoryBot.create :user, first_name: 'Student', last_name: 'One', full_name: 'Student One'
   end
   let(:student_1_token) do
-    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: student_1.id
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: student_1.id
   end
 
   let(:student_2) do
-    FactoryGirl.create :user, first_name: 'Student', last_name: 'Two', full_name: 'Student Two'
+    FactoryBot.create :user, first_name: 'Student', last_name: 'Two', full_name: 'Student Two'
   end
 
   let(:student_3) do
-    FactoryGirl.create :user, first_name: 'Student', last_name: 'Three', full_name: 'Student Three'
+    FactoryBot.create :user, first_name: 'Student', last_name: 'Three', full_name: 'Student Three'
   end
 
   let(:student_4) do
-    FactoryGirl.create :user, first_name: 'Student', last_name: 'Four', full_name: 'Student Four'
+    FactoryBot.create :user, first_name: 'Student', last_name: 'Four', full_name: 'Student Four'
   end
 
   let(:all_task_types) { Tasks::Models::Task.task_types.values }
@@ -116,30 +116,30 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
   context "data to export can be filtered" do
     before(:each) do
       cc_tasks = 2.times.map do
-        FactoryGirl.create :tasks_task, task_type: :concept_coach,
+        FactoryBot.create :tasks_task, task_type: :concept_coach,
                                         step_types: [:tasks_tasked_exercise],
                                         num_random_taskings: 1
       end
 
-      reading_task = FactoryGirl.create :tasks_task, task_type: :reading,
+      reading_task = FactoryBot.create :tasks_task, task_type: :reading,
                                                      step_types: [:tasks_tasked_reading],
                                                      num_random_taskings: 1
 
       (cc_tasks + [reading_task]).each do |task|
         role = task.taskings.first.role
 
-        FactoryGirl.create :course_membership_student, course: course, role: role
+        FactoryBot.create :course_membership_student, course: course, role: role
       end
     end
 
     specify "by date range" do
       Timecop.freeze(Date.today - 30) do
-        old_reading_task = FactoryGirl.create :tasks_task, step_types: [:tasks_tasked_reading],
+        old_reading_task = FactoryBot.create :tasks_task, step_types: [:tasks_tasked_reading],
                                                            num_random_taskings: 1
 
         role = old_reading_task.taskings.first.role
 
-        FactoryGirl.create :course_membership_student, course: course, role: role
+        FactoryBot.create :course_membership_student, course: course, role: role
       end
 
       with_export_rows(all_task_types, Date.today - 10, Date.tomorrow) do |rows|

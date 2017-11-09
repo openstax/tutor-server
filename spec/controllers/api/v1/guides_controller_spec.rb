@@ -4,16 +4,16 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                           version: :v1, vcr: VCR_OPTS do
-  let(:user_1)              { FactoryGirl.create(:user) }
-  let(:user_1_token)        { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_1)              { FactoryBot.create(:user) }
+  let(:user_1_token)        { FactoryBot.create :doorkeeper_access_token,
                                                  resource_owner_id: user_1.id }
 
-  let(:user_2)              { FactoryGirl.create(:user) }
-  let(:user_2_token)        { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_2)              { FactoryBot.create(:user) }
+  let(:user_2_token)        { FactoryBot.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
-  let(:course)              { FactoryGirl.create :course_profile_course }
-  let(:period)              { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)              { FactoryBot.create :course_profile_course }
+  let(:period)              { FactoryBot.create :course_membership_period, course: course }
 
   describe 'Learning guides' do
     let!(:teacher_role)     do
@@ -27,7 +27,7 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         AddUserAsPeriodStudent.call(period: period, user: user_2).outputs[:role]
       }
 
-      let(:user_3)          { FactoryGirl.create(:user) }
+      let(:user_3)          { FactoryBot.create(:user) }
 
       let!(:student_3_role) {
         AddUserAsPeriodStudent.call(period: period, user: user_3).outputs[:role]

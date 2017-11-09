@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
   subject(:job_with_sequence_number)  { described_class.new }
 
-  let(:course)                        { FactoryGirl.create :course_profile_course }
+  let(:course)                        { FactoryBot.create :course_profile_course }
 
   let(:sequence_number_model_key)     { :course }
   let(:sequence_number_model_class)   { CourseProfile::Models::Course }

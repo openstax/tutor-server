@@ -8,14 +8,14 @@ class SetupPerformanceReportData
     students = [students].flatten
 
     # There should be at least 4 students
-    (4 - students.length).times { students << FactoryGirl.create(:user) }
+    (4 - students.length).times { students << FactoryBot.create(:user) }
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
     AddUserAsCourseTeacher[course: course, user: teacher] \
       unless CourseMembership::IsCourseTeacher[course: course, roles: teacher.to_model.roles]
     period_1 = course.periods.any? ? course.periods.first :
-                                     FactoryGirl.create(:course_membership_period, course: course)
-    period_2 = FactoryGirl.create(:course_membership_period, course: course)
+                                     FactoryBot.create(:course_membership_period, course: course)
+    period_2 = FactoryBot.create(:course_membership_period, course: course)
     # Add first 2 students to period 1
     students[0..1].each_with_index do |student, index|
       AddUserAsPeriodStudent[period: period_1, user: student, student_identifier: "S#{index + 1}"]

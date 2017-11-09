@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
-  before(:all) { @task_plan = FactoryGirl.create :tasked_task_plan }
+  before(:all) { @task_plan = FactoryBot.create :tasked_task_plan }
 
   let(:tasks)                 { @task_plan.tasks.to_a }
   let(:task_ids)              { tasks.map(&:id) }

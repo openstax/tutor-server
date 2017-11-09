@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_assistant, class: '::Tasks::Models::Assistant' do
     name { Faker::Name.name }
     code_class_name { Faker::App.name.gsub(/[ \-]/,'') }

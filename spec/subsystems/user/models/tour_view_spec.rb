@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe User::Models::TourView, type: :model do
 
-  let(:tour) {FactoryGirl.create(:user_tour)}
-  let(:profile) { FactoryGirl.create(:user_profile) }
+  let(:tour) {FactoryBot.create(:user_tour)}
+  let(:profile) { FactoryBot.create(:user_profile) }
   subject(:tour_view) {
     ::User::Models::TourView.create(tour: tour, profile: profile)
   }

@@ -6,11 +6,11 @@ RSpec.feature 'Administration', js: true do
   before do
     page.driver.headers['User-Agent'] = chrome_ua
     # Log in as admin
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
     # Create a user to add as a teacher
-    FactoryGirl.create(
+    FactoryBot.create(
       :user_profile, username: 'imateacher', first_name: 'Ima',
       last_name: 'Teacher', full_name: 'Ima Teacher'
     )

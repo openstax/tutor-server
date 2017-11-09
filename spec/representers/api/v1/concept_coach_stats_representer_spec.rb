@@ -20,14 +20,14 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
     @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
 
-    @course = FactoryGirl.create :course_profile_course, :without_ecosystem, is_concept_coach: true
-    period_model = FactoryGirl.create :course_membership_period, course: @course
+    @course = FactoryBot.create :course_profile_course, :without_ecosystem, is_concept_coach: true
+    period_model = FactoryBot.create :course_membership_period, course: @course
     @period = CourseMembership::Period.new(strategy: period_model.wrap)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
-    @user_1 = FactoryGirl.create(:user)
-    @user_2 = FactoryGirl.create(:user)
+    @user_1 = FactoryBot.create(:user)
+    @user_2 = FactoryBot.create(:user)
 
     AddUserAsPeriodStudent[user: @user_1, period: @period]
     AddUserAsPeriodStudent[user: @user_2, period: @period]

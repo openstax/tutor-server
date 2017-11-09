@@ -2,25 +2,25 @@ require "rails_helper"
 
 RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, version: :v1 do
 
-  let(:application)       { FactoryGirl.create :doorkeeper_application }
+  let(:application)       { FactoryBot.create :doorkeeper_application }
 
-  let(:period)            { FactoryGirl.create :course_membership_period }
+  let(:period)            { FactoryBot.create :course_membership_period }
 
-  let(:student_user)      { FactoryGirl.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
-  let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+  let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: student_user.id }
 
-  let(:other_user)        { FactoryGirl.create(:user) }
-  let(:other_user_token)  { FactoryGirl.create :doorkeeper_access_token,
+  let(:other_user)        { FactoryBot.create(:user) }
+  let(:other_user_token)  { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: other_user.id }
 
   describe "#check" do
     it 'gives accepted status when the student exists' do
-      student = FactoryGirl.create(:course_membership_student)
+      student = FactoryBot.create(:course_membership_student)
       expect(UpdatePaymentStatus).to receive(:perform_later).with(uuid: student.uuid)
       api_put :check, nil, parameters: { id: student.uuid }
       expect(response).to have_http_status(:accepted)

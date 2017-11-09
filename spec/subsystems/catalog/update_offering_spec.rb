@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Catalog::UpdateOffering, type: :routine do
 
-  let(:old_ecosystem) { FactoryGirl.create :content_ecosystem }
-  let(:new_ecosystem) { FactoryGirl.create :content_ecosystem }
+  let(:old_ecosystem) { FactoryBot.create :content_ecosystem }
+  let(:new_ecosystem) { FactoryBot.create :content_ecosystem }
 
-  let(:offering)      { FactoryGirl.create :catalog_offering, ecosystem: old_ecosystem }
+  let(:offering)      { FactoryBot.create :catalog_offering, ecosystem: old_ecosystem }
 
   let(:courses)       do
     3.times.map do
-      FactoryGirl.create(:course_profile_course, offering: offering).tap do |course|
+      FactoryBot.create(:course_profile_course, offering: offering).tap do |course|
         course.ecosystems << old_ecosystem
       end
     end

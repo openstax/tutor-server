@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe OpenStax::Biglearn::Api::Job, type: :job do
   subject(:job)  { described_class.new }
 
-  let(:course)   { FactoryGirl.create :course_profile_course }
+  let(:course)   { FactoryBot.create :course_profile_course }
 
   let(:method)   { :create_course }
   let(:requests) { { course: course } }

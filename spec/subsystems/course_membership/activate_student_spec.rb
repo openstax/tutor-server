@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::ActivateStudent, type: :routine do
-  let(:course)  { FactoryGirl.create :course_profile_course }
-  let(:period)  { FactoryGirl.create :course_membership_period, course: course }
-  let(:user)    { FactoryGirl.create(:user) }
+  let(:course)  { FactoryBot.create :course_profile_course }
+  let(:period)  { FactoryBot.create :course_membership_period, course: course }
+  let(:user)    { FactoryBot.create(:user) }
   let(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
 
   context "inactive student" do

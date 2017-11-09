@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, type: :representer do
   it "should represent a basic reading" do
-    task_step = FactoryGirl.create(:tasks_tasked_reading).task_step
+    task_step = FactoryBot.create(:tasks_tasked_reading).task_step
     json = Api::V1::Tasks::TaskedReadingRepresenter.new(task_step.tasked).to_json
 
     expect(JSON.parse(json)).to include({

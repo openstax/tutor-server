@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Catalog::Offering, type: :model do
 
-  let(:offering) { FactoryGirl.create :catalog_offering }
+  let(:offering) { FactoryBot.create :catalog_offering }
   let(:wrapper)  { described_class.new(strategy: offering) }
 
   it 'proxies to object' do

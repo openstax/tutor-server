@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesDestroy, type: :handler do
-  let!(:course) { FactoryGirl.create :course_profile_course }
+  let!(:course) { FactoryBot.create :course_profile_course }
 
   context 'destroyable course' do
     it 'deletes the course' do
@@ -14,7 +14,7 @@ RSpec.describe Admin::CoursesDestroy, type: :handler do
   end
 
   context 'non-destroyable course' do
-    before{ FactoryGirl.create :course_membership_period, course: course }
+    before{ FactoryBot.create :course_membership_period, course: course }
 
     it 'returns an error' do
       result = described_class.call(params: {id: course.id})

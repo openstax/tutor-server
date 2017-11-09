@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe DoesTaskingExist, type: :routine do
-  let(:nontaskee) { FactoryGirl.create(:user) }
-  let(:taskee)    { FactoryGirl.create(:user) }
-  let(:tasked)    { FactoryGirl.create(:tasks_tasked_exercise) }
-  let!(:tasking)  { FactoryGirl.create(:tasks_tasking,
+  let(:nontaskee) { FactoryBot.create(:user) }
+  let(:taskee)    { FactoryBot.create(:user) }
+  let(:tasked)    { FactoryBot.create(:tasks_tasked_exercise) }
+  let!(:tasking)  { FactoryBot.create(:tasks_tasking,
                                        role: Role::GetDefaultUserRole[taskee],
                                        task: tasked.task_step.task) }
 

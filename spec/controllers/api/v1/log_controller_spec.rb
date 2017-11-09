@@ -51,8 +51,8 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
 
   describe '#track' do
-    let(:user) { FactoryGirl.create(:user) }
-    let(:user_token)   { FactoryGirl.create :doorkeeper_access_token,
+    let(:user) { FactoryBot.create(:user) }
+    let(:user_token)   { FactoryBot.create :doorkeeper_access_token,
                                             resource_owner_id: user.id }
 
     it 'rejects student access' do

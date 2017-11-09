@@ -66,7 +66,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.8.0'
+gem 'openstax_accounts', '~> 7.9.0'
 
 # Datetime parsing
 gem 'chronic'
@@ -254,7 +254,7 @@ group :development, :test do
   gem 'pilfer', '~> 1.0.0'
 
   # Fixture replacement
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
 
   # Stubs HTTP requests
   gem 'webmock'

@@ -2,23 +2,23 @@ require 'rails_helper'
 
 RSpec.feature CustomerService::StatsController do
   background do
-    customer_service = FactoryGirl.create(:user, :customer_service)
+    customer_service = FactoryBot.create(:user, :customer_service)
     stub_current_user(customer_service)
   end
 
   context 'visiting the course stats page' do
     let(:school)         { SchoolDistrict::CreateSchool[name: 'Statistical School'] }
-    let(:course)         { FactoryGirl.create :course_profile_course, school: school }
+    let(:course)         { FactoryBot.create :course_profile_course, school: school }
     let(:periods)        do
-      3.times.map { FactoryGirl.create :course_membership_period, course: course }
+      3.times.map { FactoryBot.create :course_membership_period, course: course }
     end
 
-    let(:teacher_user)   { FactoryGirl.create :user }
+    let(:teacher_user)   { FactoryBot.create :user }
     let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
     let!(:student_roles) do
       5.times.map do
-        user = FactoryGirl.create :user
+        user = FactoryBot.create :user
         AddUserAsPeriodStudent[period: periods.sample, user: user]
       end
     end
@@ -37,28 +37,28 @@ RSpec.feature CustomerService::StatsController do
   end
 
   context 'visiting the excluded exercise stats page' do
-    let(:course)              { FactoryGirl.create :course_profile_course }
+    let(:course)              { FactoryBot.create :course_profile_course }
 
-    let(:teacher_user)        { FactoryGirl.create :user }
+    let(:teacher_user)        { FactoryBot.create :user }
     let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
-    let(:chapter)             { FactoryGirl.create :content_chapter }
+    let(:chapter)             { FactoryBot.create :content_chapter }
 
     let(:pages)               do
       5.times.map do |ii|
-        FactoryGirl.create :content_page, chapter: chapter, book_location: [1, ii + 1]
+        FactoryBot.create :content_page, chapter: chapter, book_location: [1, ii + 1]
       end
     end
 
     let(:exercises)           do
       pages.each_with_index.map do |page, ii|
-        FactoryGirl.create :content_exercise, page: page, number: ii - 5
+        FactoryBot.create :content_exercise, page: page, number: ii - 5
       end.sort_by(&:number)
     end
 
     let!(:excluded_exercises) do
       exercises.map do |exercise|
-        FactoryGirl.create :course_content_excluded_exercise, course: course,
+        FactoryBot.create :course_content_excluded_exercise, course: course,
                                                               exercise_number: exercise.number
       end
     end
@@ -95,18 +95,18 @@ RSpec.feature CustomerService::StatsController do
   end
 
   context 'visiting the concept coach stats page' do
-    let(:period)       { FactoryGirl.create :course_membership_period }
+    let(:period)       { FactoryBot.create :course_membership_period }
 
     let(:student_role) do
-      user = FactoryGirl.create :user
+      user = FactoryBot.create :user
       AddUserAsPeriodStudent[period: period, user: user]
     end
 
-    let(:tasks)        { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
+    let(:tasks)        { 3.times.map { FactoryBot.create :tasks_task, task_type: :concept_coach } }
 
     let!(:cc_tasks)    do
       tasks.map do |task|
-        FactoryGirl.create :tasks_concept_coach_task, task: task, role: student_role
+        FactoryBot.create :tasks_concept_coach_task, task: task, role: student_role
       end
     end
 

@@ -4,7 +4,7 @@ require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Fragment::Video, type: :external, vcr: VCR_OPTS do
   let(:reading_processing_instructions) {
-    FactoryGirl.build(:content_book).reading_processing_instructions
+    FactoryBot.build(:content_book).reading_processing_instructions
   }
   let(:fragment_splitter) {
     OpenStax::Cnx::V1::FragmentSplitter.new(reading_processing_instructions)

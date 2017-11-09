@@ -37,7 +37,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
 
   context '.representer_for' do
     it 'returns a tasked representer for a task step' do
-      task_step = FactoryGirl.create :tasks_task_step
+      task_step = FactoryBot.create :tasks_task_step
 
       expect(described_class.representer_for(task_step)).to(
         eq(Api::V1::Tasks::TaskedReadingRepresenter)
@@ -45,7 +45,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
     end
 
     it 'returns a tasked representer for a tasked' do
-      tasked_video = FactoryGirl.create :tasks_tasked_video
+      tasked_video = FactoryBot.create :tasks_tasked_video
 
       expect(described_class.representer_for(tasked_video)).to(
         eq(Api::V1::Tasks::TaskedVideoRepresenter)

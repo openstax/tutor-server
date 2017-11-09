@@ -2,17 +2,17 @@ require 'rails_helper'
 
 RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
 
-  let(:student)       { FactoryGirl.create :course_membership_student }
+  let(:student)       { FactoryBot.create :course_membership_student }
   let(:course)        { student.course }
   let(:role)          { student.role }
 
-  let(:page)          { FactoryGirl.create :content_page }
+  let(:page)          { FactoryBot.create :content_page }
 
   let(:ecosystem)     { Content::Ecosystem.new strategy: page.ecosystem.wrap }
 
   (1..5).each do |n|
     let!("exercise_#{n}".to_sym) do
-      FactoryGirl.create(:content_exercise, page: page).tap do |exercise|
+      FactoryBot.create(:content_exercise, page: page).tap do |exercise|
         new_exercise_ids = page.practice_widget_pool.content_exercise_ids + [exercise.id]
         page.practice_widget_pool.update_attribute :content_exercise_ids, new_exercise_ids
       end

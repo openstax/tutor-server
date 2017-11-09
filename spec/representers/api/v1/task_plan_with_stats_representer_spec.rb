@@ -6,7 +6,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
   let(:number_of_students) { 2 }
 
   let(:task_plan)          do
-    FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
+    FactoryBot.create :tasked_task_plan, number_of_students: number_of_students
   end
 
   let(:representation)     { described_class.new(task_plan).as_json }
@@ -43,7 +43,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
 
   context "shareable_url" do
     it "can be read" do
-      FactoryGirl.create :short_code_short_code, code: 'short', uri: task_plan.to_global_id.to_s
+      FactoryBot.create :short_code_short_code, code: 'short', uri: task_plan.to_global_id.to_s
       allow(task_plan).to receive(:title).and_return('Read ch 4')
       expect(representation).to include("shareable_url" => '/@/short/read-ch-4')
     end

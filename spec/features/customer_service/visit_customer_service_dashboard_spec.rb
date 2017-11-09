@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Customer Service' do
   scenario 'visit the customer service dashboard' do
-    stub_current_user(FactoryGirl.create(:user, :customer_service))
+    stub_current_user(FactoryBot.create(:user, :customer_service))
 
     visit customer_service_root_path
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Catalog::Models::Offering, type: :model do
-  subject{ FactoryGirl.create :catalog_offering }
+  subject{ FactoryBot.create :catalog_offering }
 
   it { is_expected.to belong_to(:ecosystem) }
 

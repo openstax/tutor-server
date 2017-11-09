@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe TrackTutorOnboardingEventPolicy, type: :access_policy do
 
   let(:anon) { User::User.anonymous }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
 
   it 'cannot be accessed by anonymous users' do

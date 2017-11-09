@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
 
-  let(:user)           { FactoryGirl.create(:user) }
+  let(:user)           { FactoryBot.create(:user) }
   let(:representation) do
     described_class.new(user).to_json(
       user_options: {

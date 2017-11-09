@@ -2,91 +2,91 @@ require 'rails_helper'
 
 RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
 
-  let(:page)                 { FactoryGirl.create :content_page }
+  let(:page)                 { FactoryBot.create :content_page }
   let(:book)                 { page.book }
   let(:ecosystem)            { book.ecosystem }
 
-  let(:k12phys_tag)          { FactoryGirl.create :content_tag, value: 'k12phys',
+  let(:k12phys_tag)          { FactoryBot.create :content_tag, value: 'k12phys',
                                                                 ecosystem: ecosystem }
-  let(:apbio_tag)            { FactoryGirl.create :content_tag, value: 'apbio',
-                                                                ecosystem: ecosystem }
-
-  let(:os_prac_conc_tag)     { FactoryGirl.create :content_tag, value: 'os-practice-concepts',
-                                                                ecosystem: ecosystem }
-  let(:os_prac_prob_tag)     { FactoryGirl.create :content_tag, value: 'os-practice-problems',
+  let(:apbio_tag)            { FactoryBot.create :content_tag, value: 'apbio',
                                                                 ecosystem: ecosystem }
 
-  let(:chapter_review_tag)   { FactoryGirl.create :content_tag, value: 'ost-chapter-review',
+  let(:os_prac_conc_tag)     { FactoryBot.create :content_tag, value: 'os-practice-concepts',
+                                                                ecosystem: ecosystem }
+  let(:os_prac_prob_tag)     { FactoryBot.create :content_tag, value: 'os-practice-problems',
                                                                 ecosystem: ecosystem }
 
-  let(:type_conceptual_tag)  { FactoryGirl.create :content_tag, value: 'type:conceptual',
-                                                                ecosystem: ecosystem }
-  let(:type_recall_tag)      { FactoryGirl.create :content_tag, value: 'type:recall',
-                                                                ecosystem: ecosystem }
-  let(:type_conc_recall_tag) { FactoryGirl.create :content_tag, value: 'type:conceptual-or-recall',
-                                                                ecosystem: ecosystem }
-  let(:type_practice_tag)    { FactoryGirl.create :content_tag, value: 'type:practice',
+  let(:chapter_review_tag)   { FactoryBot.create :content_tag, value: 'ost-chapter-review',
                                                                 ecosystem: ecosystem }
 
-  let(:review_tag)           { FactoryGirl.create :content_tag, value: 'review',
+  let(:type_conceptual_tag)  { FactoryBot.create :content_tag, value: 'type:conceptual',
                                                                 ecosystem: ecosystem }
-  let(:concept_tag)          { FactoryGirl.create :content_tag, value: 'concept',
+  let(:type_recall_tag)      { FactoryBot.create :content_tag, value: 'type:recall',
                                                                 ecosystem: ecosystem }
-  let(:problem_tag)          { FactoryGirl.create :content_tag, value: 'problem',
+  let(:type_conc_recall_tag) { FactoryBot.create :content_tag, value: 'type:conceptual-or-recall',
                                                                 ecosystem: ecosystem }
-  let(:crit_think_tag)       { FactoryGirl.create :content_tag, value: 'critical-thinking',
-                                                                ecosystem: ecosystem }
-  let(:ap_test_prep_tag)     { FactoryGirl.create :content_tag, value: 'ap-test-prep',
+  let(:type_practice_tag)    { FactoryBot.create :content_tag, value: 'type:practice',
                                                                 ecosystem: ecosystem }
 
-  let(:time_short_tag)       { FactoryGirl.create :content_tag, value: 'time:short',
+  let(:review_tag)           { FactoryBot.create :content_tag, value: 'review',
                                                                 ecosystem: ecosystem }
-  let(:time_medium_tag)      { FactoryGirl.create :content_tag, value: 'time:medium',
+  let(:concept_tag)          { FactoryBot.create :content_tag, value: 'concept',
                                                                 ecosystem: ecosystem }
-  let(:time_long_tag)        { FactoryGirl.create :content_tag, value: 'time:long',
+  let(:problem_tag)          { FactoryBot.create :content_tag, value: 'problem',
+                                                                ecosystem: ecosystem }
+  let(:crit_think_tag)       { FactoryBot.create :content_tag, value: 'critical-thinking',
+                                                                ecosystem: ecosystem }
+  let(:ap_test_prep_tag)     { FactoryBot.create :content_tag, value: 'ap-test-prep',
                                                                 ecosystem: ecosystem }
 
-  let(:requires_context_tag) { FactoryGirl.create :content_tag, value: 'requires-context:true',
+  let(:time_short_tag)       { FactoryBot.create :content_tag, value: 'time:short',
+                                                                ecosystem: ecosystem }
+  let(:time_medium_tag)      { FactoryBot.create :content_tag, value: 'time:medium',
+                                                                ecosystem: ecosystem }
+  let(:time_long_tag)        { FactoryBot.create :content_tag, value: 'time:long',
+                                                                ecosystem: ecosystem }
+
+  let(:requires_context_tag) { FactoryBot.create :content_tag, value: 'requires-context:true',
                                                                 tag_type: :requires_context,
                                                                 ecosystem: ecosystem }
 
-  let(:concept_coach_tag)    { FactoryGirl.create :content_tag, value: 'ost-type:concept-coach',
+  let(:concept_coach_tag)    { FactoryBot.create :content_tag, value: 'ost-type:concept-coach',
                                                                 ecosystem: ecosystem }
 
-  let(:untagged_exercise)         { FactoryGirl.create :content_exercise, page: page }
+  let(:untagged_exercise)         { FactoryBot.create :content_exercise, page: page }
 
-  let(:k12phys_read_dyn_exercise) { FactoryGirl.create :content_exercise, page: page }
-  let(:apbio_read_dyn_exercise)   { FactoryGirl.create :content_exercise, page: page }
+  let(:k12phys_read_dyn_exercise) { FactoryBot.create :content_exercise, page: page }
+  let(:apbio_read_dyn_exercise)   { FactoryBot.create :content_exercise, page: page }
 
-  let(:k12phys_hw_dyn_exercise_1) { FactoryGirl.create :content_exercise, page: page }
-  let(:k12phys_hw_dyn_exercise_2) { FactoryGirl.create :content_exercise, page: page }
-  let(:k12phys_hw_dyn_exercise_3) { FactoryGirl.create :content_exercise, page: page }
-  let(:k12phys_hw_dyn_exercise_4) { FactoryGirl.create :content_exercise, page: page }
-  let(:apbio_hw_dyn_exercise_1)   { FactoryGirl.create :content_exercise, page: page }
-  let(:apbio_hw_dyn_exercise_2)   { FactoryGirl.create :content_exercise, page: page }
-  let(:apbio_hw_dyn_exercise_3)   { FactoryGirl.create :content_exercise, page: page }
-  let(:apbio_hw_dyn_exercise_4)   { FactoryGirl.create :content_exercise, page: page }
+  let(:k12phys_hw_dyn_exercise_1) { FactoryBot.create :content_exercise, page: page }
+  let(:k12phys_hw_dyn_exercise_2) { FactoryBot.create :content_exercise, page: page }
+  let(:k12phys_hw_dyn_exercise_3) { FactoryBot.create :content_exercise, page: page }
+  let(:k12phys_hw_dyn_exercise_4) { FactoryBot.create :content_exercise, page: page }
+  let(:apbio_hw_dyn_exercise_1)   { FactoryBot.create :content_exercise, page: page }
+  let(:apbio_hw_dyn_exercise_2)   { FactoryBot.create :content_exercise, page: page }
+  let(:apbio_hw_dyn_exercise_3)   { FactoryBot.create :content_exercise, page: page }
+  let(:apbio_hw_dyn_exercise_4)   { FactoryBot.create :content_exercise, page: page }
 
-  let(:prac_prob_exercise)        { FactoryGirl.create :content_exercise, page: page }
-  let(:chapter_review_exercise)   { FactoryGirl.create :content_exercise, page: page }
+  let(:prac_prob_exercise)        { FactoryBot.create :content_exercise, page: page }
+  let(:chapter_review_exercise)   { FactoryBot.create :content_exercise, page: page }
 
-  let(:conceptual_exercise)       { FactoryGirl.create :content_exercise, page: page }
-  let(:recall_exercise)           { FactoryGirl.create :content_exercise, page: page }
-  let(:conc_recall_exercise)      { FactoryGirl.create :content_exercise, page: page }
-  let(:practice_exercise)         { FactoryGirl.create :content_exercise, page: page }
+  let(:conceptual_exercise)       { FactoryBot.create :content_exercise, page: page }
+  let(:recall_exercise)           { FactoryBot.create :content_exercise, page: page }
+  let(:conc_recall_exercise)      { FactoryBot.create :content_exercise, page: page }
+  let(:practice_exercise)         { FactoryBot.create :content_exercise, page: page }
 
-  let(:requires_context_exercise) { FactoryGirl.create :content_exercise, page: page }
+  let(:requires_context_exercise) { FactoryBot.create :content_exercise, page: page }
 
-  let(:concept_coach_exercise)    { FactoryGirl.create :content_exercise, page: page }
+  let(:concept_coach_exercise)    { FactoryBot.create :content_exercise, page: page }
 
-  let(:untagged_multi_exercise)   { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
+  let(:untagged_multi_exercise)   { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
 
-  let(:conc_multi_exercise)       { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
-  let(:recall_multi_exercise)     { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
-  let(:c_or_r_multi_exercise)     { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
-  let(:practice_multi_exercise)   { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
+  let(:conc_multi_exercise)       { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
+  let(:recall_multi_exercise)     { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
+  let(:c_or_r_multi_exercise)     { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
+  let(:practice_multi_exercise)   { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
 
-  let(:cc_multi_exercise)         { FactoryGirl.create :content_exercise, page: page, num_parts: 2 }
+  let(:cc_multi_exercise)         { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
 
   let(:exercise_tags) do
     {

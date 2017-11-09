@@ -5,8 +5,8 @@ RSpec.describe OpenStax::Biglearn::Api::Client, type: :external, vcr: VCR_OPTS d
   subject(:client)       { OpenStax::Biglearn::Api::Client.new }
 
   let(:preparation_uuid) { SecureRandom.uuid }
-  let(:course)           { FactoryGirl.create(:course_profile_course) }
-  let(:ecosystem)        { FactoryGirl.create(:content_ecosystem) }
+  let(:course)           { FactoryBot.create(:course_profile_course) }
+  let(:ecosystem)        { FactoryBot.create(:content_ecosystem) }
 
   let(:request)          do
     { preparation_uuid: preparation_uuid, course: course, ecosystem: ecosystem }

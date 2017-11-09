@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
-  let(:offering)       { FactoryGirl.create :catalog_offering }
+  let(:offering)       { FactoryBot.create :catalog_offering }
 
   let(:representation) { described_class.new(offering).as_json }
 

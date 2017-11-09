@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe CoursesTeach, type: :handler do
-  let(:user)       { FactoryGirl.create :user }
-  let(:course)     { FactoryGirl.create :course_profile_course }
+  let(:user)       { FactoryBot.create :user }
+  let(:course)     { FactoryBot.create :course_profile_course }
   subject(:result) { described_class.handle(caller: user, params: { teach_token: teach_token }) }
 
   context 'valid teach token' do
@@ -31,7 +31,7 @@ RSpec.describe CoursesTeach, type: :handler do
     end
 
     context 'user is already a course student' do
-      let(:period) { FactoryGirl.create :course_membership_period, course: course }
+      let(:period) { FactoryBot.create :course_membership_period, course: course }
       before       { AddUserAsPeriodStudent[user: user, period: period] }
 
       it 'raises an exception' do

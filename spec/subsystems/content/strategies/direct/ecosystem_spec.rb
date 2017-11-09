@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Strategies::Direct::Ecosystem do
-  let(:ecosystem_book) { FactoryGirl.create(:content_book) }
+  let(:ecosystem_book) { FactoryBot.create(:content_book) }
   let(:ecosystem)      { ecosystem_book.ecosystem }
   let(:strategy)       { described_class.new(ecosystem) }
 

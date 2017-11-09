@@ -13,7 +13,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
     let(:page_ids) { @old_pages[0..2].map(&:id) }
 
     let(:reading_plan) do
-      FactoryGirl.build(
+      FactoryBot.build(
         :tasks_task_plan,
         type: 'reading',
         ecosystem: @old_ecosystem.to_model,
@@ -43,7 +43,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
     let(:exercise_ids)  { core_pools.flat_map(&:exercises)[0..5].map{|e| e.id.to_s} }
 
     let(:homework_plan) do
-      FactoryGirl.build(
+      FactoryBot.build(
         :tasks_task_plan,
         type: 'homework',
         ecosystem: @old_ecosystem.to_model,
@@ -73,7 +73,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
     let(:snap_lab_ids) { page_ids.map{ |page_id| "#{page_id}:fs-id#{SecureRandom.hex}" } }
 
     let(:extra_plan) do
-      FactoryGirl.build(
+      FactoryBot.build(
         :tasks_task_plan,
         type: 'extra',
         ecosystem: @old_ecosystem.to_model,
@@ -103,7 +103,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
 
   context 'external task plan' do
     let(:external_plan) do
-      FactoryGirl.build(
+      FactoryBot.build(
         :tasks_task_plan,
         type: 'external',
         ecosystem: @old_ecosystem.to_model

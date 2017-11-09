@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe PurchasesController, type: :controller do
-  let(:course) { FactoryGirl.create :course_profile_course }
-  let(:period) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course) { FactoryBot.create :course_profile_course }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_1_user) { FactoryGirl.create(:user) }
+  let(:student_1_user) { FactoryBot.create(:user) }
   let(:student_1) { AddUserAsPeriodStudent[period: period, user: student_1_user].student }
 
-  let(:student_2_user) { FactoryGirl.create(:user) }
+  let(:student_2_user) { FactoryBot.create(:user) }
   let(:student_2) { AddUserAsPeriodStudent[period: period, user: student_2_user].student }
 
   it 'redirects users to sign in before access' do

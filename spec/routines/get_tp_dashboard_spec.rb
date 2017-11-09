@@ -3,21 +3,21 @@ require 'vcr_helper'
 
 RSpec.describe GetTpDashboard, type: :routine do
 
-  let(:course)         { FactoryGirl.create :course_profile_course, name: 'Physics 101' }
-  let(:period)         { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)         { FactoryBot.create :course_profile_course, name: 'Physics 101' }
+  let(:period)         { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)   { FactoryGirl.create(:user) }
+  let(:student_user)   { FactoryBot.create(:user) }
   let(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period)
                                                .outputs.role }
 
-  let(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
+  let(:teacher_user)   { FactoryBot.create(:user, first_name: 'Bob',
                                                    last_name: 'Newhart',
                                                    full_name: 'Bob Newhart') }
   let!(:teacher_role)  { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
                                                .outputs.role }
 
   let!(:hidden_reading_task) do
-    FactoryGirl.create(:tasks_task,
+    FactoryBot.create(:tasks_task,
                        task_type: :reading,
                        step_types: [:tasks_tasked_reading,
                                     :tasks_tasked_exercise,
@@ -29,7 +29,7 @@ RSpec.describe GetTpDashboard, type: :routine do
   end
 
   let!(:deleted_reading_task) do
-    FactoryGirl.create(:tasks_task,
+    FactoryBot.create(:tasks_task,
                        task_type: :reading,
                        step_types: [:tasks_tasked_reading,
                                     :tasks_tasked_exercise,
@@ -40,7 +40,7 @@ RSpec.describe GetTpDashboard, type: :routine do
   end
 
   let!(:reading_task) do
-    FactoryGirl.create(:tasks_task,
+    FactoryBot.create(:tasks_task,
                        task_type: :reading,
                        step_types: [:tasks_tasked_reading,
                                     :tasks_tasked_exercise,
@@ -49,7 +49,7 @@ RSpec.describe GetTpDashboard, type: :routine do
   end
 
   let!(:homework_task) do
-    FactoryGirl.create(:tasks_task,
+    FactoryBot.create(:tasks_task,
                        task_type: :reading,
                        opens_at: 1.day.from_now,
                        step_types: [:tasks_tasked_exercise,
@@ -58,7 +58,7 @@ RSpec.describe GetTpDashboard, type: :routine do
                        tasked_to: student_role)
   end
 
-  let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let!(:plan) { FactoryBot.create(:tasks_task_plan, owner: course) }
 
   context 'with no time period specified' do
     it "works for a student" do

@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe CourseMembership::IsCourseTeacher do
 
   context "when not a teacher of the given course" do
-    let(:target_course)       { FactoryGirl.create :course_profile_course }
-    let(:other_course)        { FactoryGirl.create :course_profile_course }
-    let(:target_teacher_role) { FactoryGirl.create :entity_role }
-    let(:other_teacher_role)  { FactoryGirl.create :entity_role }
+    let(:target_course)       { FactoryBot.create :course_profile_course }
+    let(:other_course)        { FactoryBot.create :course_profile_course }
+    let(:target_teacher_role) { FactoryBot.create :entity_role }
+    let(:other_teacher_role)  { FactoryBot.create :entity_role }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: other_course,  role: target_teacher_role)
@@ -26,8 +26,8 @@ RSpec.describe CourseMembership::IsCourseTeacher do
 
     context "when multiple roles are given" do
       it "returns false" do
-        other_role1 = FactoryGirl.create :entity_role
-        other_role2 = FactoryGirl.create :entity_role
+        other_role1 = FactoryBot.create :entity_role
+        other_role2 = FactoryBot.create :entity_role
         roles = [target_teacher_role, other_role1, other_role2]
 
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
@@ -48,8 +48,8 @@ RSpec.describe CourseMembership::IsCourseTeacher do
   end
 
   context "when a teacher of the given course" do
-    let(:target_course)       { FactoryGirl.create :course_profile_course }
-    let(:target_teacher_role) { FactoryGirl.create :entity_role }
+    let(:target_course)       { FactoryBot.create :course_profile_course }
+    let(:target_teacher_role) { FactoryBot.create :entity_role }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: target_course, role: target_teacher_role)
@@ -68,8 +68,8 @@ RSpec.describe CourseMembership::IsCourseTeacher do
 
     context "when multiple roles are given" do
       it "returns true" do
-        other_role1 = FactoryGirl.create :entity_role
-        other_role2 = FactoryGirl.create :entity_role
+        other_role1 = FactoryBot.create :entity_role
+        other_role2 = FactoryBot.create :entity_role
         roles = [target_teacher_role, other_role1, other_role2]
 
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)

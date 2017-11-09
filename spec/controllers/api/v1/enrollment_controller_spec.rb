@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true, version: :v1 do
-  let(:user)                 { FactoryGirl.create :user }
+  let(:user)                 { FactoryBot.create :user }
 
-  let(:user_2)               { FactoryGirl.create :user }
+  let(:user_2)               { FactoryBot.create :user }
 
-  let(:course)               { FactoryGirl.create :course_profile_course, is_concept_coach: true }
+  let(:course)               { FactoryBot.create :course_profile_course, is_concept_coach: true }
 
-  let(:period)               { FactoryGirl.create :course_membership_period, course: course }
-  let(:period_2)             { FactoryGirl.create :course_membership_period, course: course }
+  let(:period)               { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2)             { FactoryBot.create :course_membership_period, course: course }
 
-  let(:book)                 { FactoryGirl.create :content_book }
+  let(:book)                 { FactoryBot.create :content_book }
 
   let(:ecosystem)            do
     model = book.ecosystem

@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::EnrollmentChange, type: :wrapper do
-  let(:course)                { FactoryGirl.create :course_profile_course }
-  let(:period_1)              { FactoryGirl.create :course_membership_period, course: course }
-  let(:period_2)              { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)                { FactoryBot.create :course_profile_course }
+  let(:period_1)              { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2)              { FactoryBot.create :course_membership_period, course: course }
 
-  let(:user)                  { FactoryGirl.create :user }
+  let(:user)                  { FactoryBot.create :user }
 
   let!(:role)                 do
     AddUserAsPeriodStudent[user: user, period: period_1]

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TeacherRepresenter, type: :representer do
-  let(:user)    { FactoryGirl.create(:user) }
-  let(:course)  { FactoryGirl.create(:course_profile_course) }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:course)  { FactoryBot.create(:course_profile_course) }
   let(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user).outputs.teacher }
 
   it 'represents a teacher' do

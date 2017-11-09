@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe FilterExcludedExercises, type: :routine do
 
-  let(:exercises) { 5.times.map{ FactoryGirl.create :content_exercise } }
+  let(:exercises) { 5.times.map{ FactoryBot.create :content_exercise } }
 
   before do
     Settings::Exercises.excluded_ids = excluded_ids
@@ -21,9 +21,9 @@ RSpec.describe FilterExcludedExercises, type: :routine do
     let(:excluded_ids) { [exercises.first.uid, exercises.second.number].join(', ') }
 
     context 'with a course with excluded exercises' do
-      let(:course)             { FactoryGirl.create :course_profile_course }
+      let(:course)             { FactoryBot.create :course_profile_course }
       let!(:excluded_exercise) {
-        FactoryGirl.create :course_content_excluded_exercise,
+        FactoryBot.create :course_content_excluded_exercise,
                            course: course, exercise_number: exercises.third.number
       }
 
@@ -73,9 +73,9 @@ RSpec.describe FilterExcludedExercises, type: :routine do
     let(:excluded_ids) { '' }
 
     context 'with a course with excluded exercises' do
-      let(:course)             { FactoryGirl.create :course_profile_course }
+      let(:course)             { FactoryBot.create :course_profile_course }
       let!(:excluded_exercise) {
-        FactoryGirl.create :course_content_excluded_exercise,
+        FactoryBot.create :course_content_excluded_exercise,
                            course: course, exercise_number: exercises.third.number
       }
 

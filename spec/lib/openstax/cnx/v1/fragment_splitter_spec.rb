@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
   let(:reading_processing_instructions) {
-    FactoryGirl.build(:content_book).reading_processing_instructions
+    FactoryBot.build(:content_book).reading_processing_instructions
   }
 
   let(:fragment_splitter)  { described_class.new(reading_processing_instructions) }
@@ -60,7 +60,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
     end
 
     it "splits the given pages into the expected fragments for HS" do
-      hs_processing_instructions = FactoryGirl.build(:content_book).reading_processing_instructions
+      hs_processing_instructions = FactoryBot.build(:content_book).reading_processing_instructions
       fragment_splitter = described_class.new(hs_processing_instructions)
 
       @cnx_page_fragment_infos.each do |hash|

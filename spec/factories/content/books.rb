@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :content_book, class: '::Content::Models::Book' do
     transient do
       contents {{}}

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::PerformanceReportRepresenter, type: :representer do
 
-  let (:period)             { FactoryGirl.create(:course_membership_period) }
+  let (:period)             { FactoryBot.create(:course_membership_period) }
   let (:last_worked_at)     { Time.current                                  }
   let (:due_at)             { Time.current + 1.week                         }
   let (:accepted_late_at)   { Time.current + 2.weeks}

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreatePeriod, type: :routine do
-  let(:course)        { FactoryGirl.create :course_profile_course }
+  let(:course)        { FactoryBot.create :course_profile_course }
   let(:time_zone)     { course.time_zone.to_tz }
   let!(:period)       { described_class[course: course, name: 'Original period'] }
   let!(:other_period) { described_class[course: course, name: 'Other period'] }
@@ -17,14 +17,14 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'copies existing "coursewide" task plans to the new period' do
     Timecop.freeze do
-      expected = FactoryGirl.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      expected = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: expected,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now.tomorrow,
                                               target: period.to_model)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: expected,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now.tomorrow,
                                               target: other_period.to_model)
@@ -35,9 +35,9 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'does not copy task plans not applied to all periods' do
     Timecop.freeze do
-      single_period = FactoryGirl.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      single_period = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: single_period, target: period.to_model)
+      FactoryBot.create(:tasks_tasking_plan, task_plan: single_period, target: period.to_model)
 
       expect(task_plan_ids).not_to include(single_period.id)
     end
@@ -45,14 +45,14 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'does not copy task plans across all periods with mismatching due dates' do
     Timecop.freeze do
-      diff_due_dates = FactoryGirl.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      diff_due_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: diff_due_dates,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now.tomorrow,
                                               target: period.to_model)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: diff_due_dates,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now + 1.minute,
                                               target: other_period.to_model)
@@ -63,14 +63,14 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'does not copy task plans across all periods with mismatching open dates' do
     Timecop.freeze do
-      diff_open_dates = FactoryGirl.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      diff_open_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: diff_open_dates,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now + 2.minutes,
                                               target: period.to_model)
 
-      FactoryGirl.create(:tasks_tasking_plan, task_plan: diff_open_dates,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
                                               opens_at: time_zone.now + 1.minute,
                                               due_at: time_zone.now + 2.minutes,
                                               target: other_period.to_model)

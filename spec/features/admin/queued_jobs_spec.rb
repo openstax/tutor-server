@@ -2,9 +2,9 @@ require 'rails_helper'
 require 'feature_js_helper'
 
 RSpec.feature 'Administration of queued jobs', :js do
-  let(:course) { FactoryGirl.create :course_profile_course }
-  let(:admin)  { FactoryGirl.create(:user, :administrator) }
-  let(:user)   { FactoryGirl.create(:user) }
+  let(:course) { FactoryBot.create :course_profile_course }
+  let(:admin)  { FactoryBot.create(:user, :administrator) }
+  let(:user)   { FactoryBot.create(:user) }
   let(:role)   { AddUserAsCourseTeacher[course: course, user: user] }
 
   let(:status) { Jobba.find(@job_id) }

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Admin::SchoolsController, type: :controller do
-  let(:admin)  { FactoryGirl.create(:user, :administrator) }
-  let(:school) { FactoryGirl.build :school_district_school, name: 'Hello World' }
+  let(:admin)  { FactoryBot.create(:user, :administrator) }
+  let(:school) { FactoryBot.build :school_district_school, name: 'Hello World' }
 
   before { controller.sign_in(admin) }
 
@@ -85,7 +85,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
 
     context 'used name' do
-      before { FactoryGirl.create :school_district_school, name: 'Hello Again',
+      before { FactoryBot.create :school_district_school, name: 'Hello Again',
                                                            district: school.district }
 
       it 'displays an error message and assigns @school and @page_header' do
@@ -116,7 +116,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
 
     context 'with courses' do
-      before { FactoryGirl.create :course_profile_course, school: school }
+      before { FactoryBot.create :course_profile_course, school: school }
 
       it 'redirects to #index and displays an error message' do
         expect { delete :destroy, id: school.id }.not_to(

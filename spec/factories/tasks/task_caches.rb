@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_task_cache, class: 'Tasks::Models::TaskCache' do
     association   :task,      factory: :tasks_task
     association   :ecosystem, factory: :content_ecosystem

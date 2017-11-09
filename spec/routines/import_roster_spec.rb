@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ImportRoster, type: :routine do
-  let(:period)      { FactoryGirl.create :course_membership_period }
+  let(:period)      { FactoryBot.create :course_membership_period }
   let(:num_users)   { 10 }
   let(:user_hashes) do
     num_users.times.map do
@@ -49,7 +49,7 @@ RSpec.describe ImportRoster, type: :routine do
 
   it 'does not overwrite existing users\' info' do
     existing_users = user_hashes.map do |user_hash|
-      FactoryGirl.create :user, username: user_hash[:username]
+      FactoryBot.create :user, username: user_hash[:username]
     end
 
     expect { result }.to  not_change { User::Models::Profile.count }

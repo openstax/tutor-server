@@ -4,37 +4,37 @@ require 'webmock/rspec'
 RSpec.describe ExportExerciseExclusions, type: :routine do
   context "with data" do
     before(:all) do
-      @course = FactoryGirl.create :course_profile_course
-      @teacher_user = FactoryGirl.create :user, first_name: "Bob", last_name: "Martin"
+      @course = FactoryBot.create :course_profile_course
+      @teacher_user = FactoryBot.create :user, first_name: "Bob", last_name: "Martin"
       @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher_user]
 
-      chapter = FactoryGirl.create :content_chapter
+      chapter = FactoryBot.create :content_chapter
 
       @book = chapter.book
 
-      @page_1 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 1]
-      @page_2 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 2]
-      @page_removed = FactoryGirl.create :content_page, book_location: [42, 1]
+      @page_1 = FactoryBot.create :content_page, chapter: chapter, book_location: [1, 1]
+      @page_2 = FactoryBot.create :content_page, chapter: chapter, book_location: [1, 2]
+      @page_removed = FactoryBot.create :content_page, book_location: [42, 1]
 
       # Creating them in reverse order so @exercise_1 gets the lowest (negative) number
-      @exercise_removed = FactoryGirl.create :content_exercise, page: @page_removed
-      @exercise_3 = FactoryGirl.create :content_exercise, page: @page_2
-      @exercise_2 = FactoryGirl.create :content_exercise, page: @page_2
-      @exercise_1 = FactoryGirl.create :content_exercise, page: @page_1
+      @exercise_removed = FactoryBot.create :content_exercise, page: @page_removed
+      @exercise_3 = FactoryBot.create :content_exercise, page: @page_2
+      @exercise_2 = FactoryBot.create :content_exercise, page: @page_2
+      @exercise_1 = FactoryBot.create :content_exercise, page: @page_1
 
-      @exercise_another_eco = FactoryGirl.create :content_exercise, number: @exercise_1.number
+      @exercise_another_eco = FactoryBot.create :content_exercise, number: @exercise_1.number
 
       ecosystem_model = chapter.ecosystem
       ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
 
-      @ee_1 = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_1 = FactoryBot.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_1.number
-      @ee_2 = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_2 = FactoryBot.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_2.number
-      @ee_3 = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_3 = FactoryBot.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_3.number
-      @ee_removed = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_removed = FactoryBot.create :course_content_excluded_exercise,
                                        course: @course, exercise_number: @exercise_removed.number
     end
 

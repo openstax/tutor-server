@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Admin::DistrictsController, type: :controller do
-  let(:admin)    { FactoryGirl.create(:user, :administrator) }
-  let(:district) { FactoryGirl.build :school_district_district, name: 'Hello World' }
+  let(:admin)    { FactoryBot.create(:user, :administrator) }
+  let(:district) { FactoryBot.build :school_district_district, name: 'Hello World' }
 
   before { controller.sign_in(admin) }
 
@@ -81,7 +81,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
 
     context 'used name' do
-      before { FactoryGirl.create :school_district_district, name: 'Hello Again' }
+      before { FactoryBot.create :school_district_district, name: 'Hello Again' }
 
       it 'displays an error message and assigns @district and @page_header' do
         patch :update, id: district.id, district: { name: 'Hello Again' }
@@ -109,7 +109,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
 
     context 'with schools' do
-      before { FactoryGirl.create :school_district_school, district: district }
+      before { FactoryBot.create :school_district_school, district: district }
 
       it 'redirects to #index and displays an error message' do
         expect { delete :destroy, id: district.id }.not_to(

@@ -2,10 +2,10 @@ require "rails_helper"
 
 RSpec.describe 'LMS Launch', type: :request do
 
-  let(:course) { FactoryGirl.create(:course_profile_course, is_lms_enabled: true) }
-  let(:period) { FactoryGirl.create :course_membership_period, course: course }
-  let(:lms_app) { FactoryGirl.create(:lms_app, owner: course) }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:course) { FactoryBot.create(:course_profile_course, is_lms_enabled: true) }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
+  let(:lms_app) { FactoryBot.create(:lms_app, owner: course) }
+  let(:user) { FactoryBot.create(:user) }
 
   let(:simulator) { Lms::Simulator.new(self) }
   let(:launch_helper) { Lms::LaunchHelper.new(self) }
@@ -102,7 +102,7 @@ RSpec.describe 'LMS Launch', type: :request do
   end
 
   it 'errors for invalid keys' do
-    unsaved_app = FactoryGirl.build(:lms_app)
+    unsaved_app = FactoryBot.build(:lms_app)
     simulator.install_tutor(app: unsaved_app, course: "other")
     simulator.launch(user: "teacher", assignment: "tutor", course: "other")
     expect_error("may not have been integrated correctly")

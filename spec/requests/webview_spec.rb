@@ -24,7 +24,7 @@ RSpec.describe "Webview", type: :request do
   end
 
   describe "supported browser check" do
-    let(:user)        { FactoryGirl.create(:user) }
+    let(:user)        { FactoryBot.create(:user) }
 
     # list of browser UA
     # https://github.com/fnando/browser/blob/master/test/ua.yml

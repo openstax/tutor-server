@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::ResearchDataController, type: :controller do
-  let(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin) { FactoryBot.create(:user, :administrator) }
 
   before { controller.sign_in(admin) }
 

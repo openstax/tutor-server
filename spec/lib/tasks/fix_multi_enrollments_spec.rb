@@ -25,17 +25,17 @@ RSpec.describe "fix_multi_enrollments", type: :rake do
     @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
     @page_4 = Content::Page.new(strategy: page_model_4.reload.wrap)
 
-    @school = FactoryGirl.create :school_district_school
-    @course = FactoryGirl.create :course_profile_course, :without_ecosystem,
+    @school = FactoryBot.create :school_district_school
+    @course = FactoryBot.create :course_profile_course, :without_ecosystem,
                                  school: @school, is_concept_coach: true
-    @old_period = FactoryGirl.create :course_membership_period, course: @course
+    @old_period = FactoryBot.create :course_membership_period, course: @course
     old_period_wrapper = CourseMembership::Period.new(strategy: @old_period.wrap)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
-    @user_1 = FactoryGirl.create(:user)
-    @user_2 = FactoryGirl.create(:user)
-    @user_3 = FactoryGirl.create(:user)
+    @user_1 = FactoryBot.create(:user)
+    @user_2 = FactoryBot.create(:user)
+    @user_3 = FactoryBot.create(:user)
 
     @old_role_1 = AddUserAsPeriodStudent[user: @user_1, period: old_period_wrapper]
     @old_role_2 = AddUserAsPeriodStudent[user: @user_2, period: old_period_wrapper]
@@ -48,7 +48,7 @@ RSpec.describe "fix_multi_enrollments", type: :rake do
 
     @old_period.destroy
 
-    @new_period = FactoryGirl.create :course_membership_period, course: @course
+    @new_period = FactoryBot.create :course_membership_period, course: @course
     new_period_wrapper = CourseMembership::Period.new(strategy: @new_period.wrap)
     @new_role = AddUserAsPeriodStudent[user: @user_1, period: new_period_wrapper]
 

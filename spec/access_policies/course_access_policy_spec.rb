@@ -3,21 +3,21 @@ require 'rails_helper'
 RSpec.describe CourseAccessPolicy, type: :access_policy do
 
   before(:all) do
-    @course = FactoryGirl.create :course_profile_course
-    @period = FactoryGirl.create :course_membership_period, course: @course
+    @course = FactoryBot.create :course_profile_course
+    @period = FactoryBot.create :course_membership_period, course: @course
 
-    @clone_course = FactoryGirl.create :course_profile_course, cloned_from: @course
-    @clone_period = FactoryGirl.create :course_membership_period, course: @clone_course
+    @clone_course = FactoryBot.create :course_profile_course, cloned_from: @course
+    @clone_period = FactoryBot.create :course_membership_period, course: @clone_course
 
     @anonymous = User::User.anonymous
-    @user = FactoryGirl.create(:user)
-    @student = FactoryGirl.create(:user)
-    @teacher = FactoryGirl.create(:user)
-    @faculty = FactoryGirl.create(:user)
-    @new_faculty = FactoryGirl.create(:user)
-    @clone_student = FactoryGirl.create(:user)
-    @clone_teacher = FactoryGirl.create(:user)
-    @clone_faculty = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
+    @student = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user)
+    @faculty = FactoryBot.create(:user)
+    @new_faculty = FactoryBot.create(:user)
+    @clone_student = FactoryBot.create(:user)
+    @clone_teacher = FactoryBot.create(:user)
+    @clone_faculty = FactoryBot.create(:user)
 
     AddUserAsPeriodStudent[period: @period, user: @student]
     AddUserAsCourseTeacher[course: @course, user: @teacher]

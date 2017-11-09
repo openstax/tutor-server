@@ -3,26 +3,26 @@ require 'rails_helper'
 RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
 
   before(:all) do
-    @course = FactoryGirl.create :course_profile_course
-    @period = FactoryGirl.create :course_membership_period, course: @course
+    @course = FactoryBot.create :course_profile_course
+    @period = FactoryBot.create :course_membership_period, course: @course
 
-    @task_plan = FactoryGirl.create(:tasks_task_plan, owner: @course)
+    @task_plan = FactoryBot.create(:tasks_task_plan, owner: @course)
 
-    @clone_course = FactoryGirl.create :course_profile_course, cloned_from: @course
-    @clone_period = FactoryGirl.create :course_membership_period, course: @clone_course
+    @clone_course = FactoryBot.create :course_profile_course, cloned_from: @course
+    @clone_period = FactoryBot.create :course_membership_period, course: @clone_course
 
-    @clone_task_plan = FactoryGirl.create(:tasks_task_plan, owner: @clone_course)
+    @clone_task_plan = FactoryBot.create(:tasks_task_plan, owner: @clone_course)
 
     @anonymous = User::User.anonymous
-    @user = FactoryGirl.create(:user)
-    @student = FactoryGirl.create(:user)
-    @teacher = FactoryGirl.create(:user)
-    @clone_student = FactoryGirl.create(:user)
-    @clone_teacher = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
+    @student = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user)
+    @clone_student = FactoryBot.create(:user)
+    @clone_teacher = FactoryBot.create(:user)
 
-    @owner = FactoryGirl.create(:user)
+    @owner = FactoryBot.create(:user)
     # NotYetImplemented, but we can kid of simulate it by creating a task_plan and then updating it
-    @owned_task_plan = FactoryGirl.create(:tasks_task_plan)
+    @owned_task_plan = FactoryBot.create(:tasks_task_plan)
     @owned_task_plan.update_attribute :owner, @owner.to_model
 
     AddUserAsPeriodStudent[user: @student, period: @period]

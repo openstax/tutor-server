@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::GetTeachers do
   context "when there are no teachers for the given course" do
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:other_course)  { FactoryGirl.create :course_profile_course }
-    let(:other_role)    { FactoryGirl.create :entity_role }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:other_course)  { FactoryBot.create :course_profile_course }
+    let(:other_role)    { FactoryBot.create :entity_role }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: other_course, role: other_role)
@@ -18,10 +18,10 @@ RSpec.describe CourseMembership::GetTeachers do
   end
 
   context "when there is one teacher for the given course" do
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:target_role)   { FactoryGirl.create :entity_role }
-    let(:other_course)  { FactoryGirl.create :course_profile_course }
-    let(:other_role)    { FactoryGirl.create :entity_role }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:target_role)   { FactoryBot.create :entity_role }
+    let(:other_course)  { FactoryBot.create :course_profile_course }
+    let(:other_role)    { FactoryBot.create :entity_role }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: target_course, role: target_role)
@@ -41,11 +41,11 @@ RSpec.describe CourseMembership::GetTeachers do
   end
 
   context "when there are multiple teachers for the given course" do
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:target_role1)  { FactoryGirl.create :entity_role }
-    let(:target_role2)  { FactoryGirl.create :entity_role }
-    let(:other_course)  { FactoryGirl.create :course_profile_course }
-    let(:other_role)    { FactoryGirl.create :entity_role }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:target_role1)  { FactoryBot.create :entity_role }
+    let(:target_role2)  { FactoryBot.create :entity_role }
+    let(:other_course)  { FactoryBot.create :course_profile_course }
+    let(:other_role)    { FactoryBot.create :entity_role }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: target_course, role: target_role1)

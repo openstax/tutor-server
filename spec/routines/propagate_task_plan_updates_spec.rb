@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe PropagateTaskPlanUpdates, type: :routine do
-  let(:course)          { FactoryGirl.create :course_profile_course }
-  let(:period)          { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)          { FactoryBot.create :course_profile_course }
+  let(:period)          { FactoryBot.create :course_membership_period, course: course }
   let!(:user)           do
-    FactoryGirl.create(:user).tap do |user|
+    FactoryBot.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
@@ -13,7 +13,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let(:old_description) { 'Old description' }
 
   let(:task_plan)       do
-    FactoryGirl.create(:tasks_task_plan, owner: course,
+    FactoryBot.create(:tasks_task_plan, owner: course,
                                          title: old_title,
                                          description: old_description)
   end

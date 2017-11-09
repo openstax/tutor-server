@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::UsersController, type: :controller do
-  let!(:customer_service) { FactoryGirl.create :user, :customer_service,
+  let!(:customer_service) { FactoryBot.create :user, :customer_service,
                                                       username: 'cs',
                                                       full_name: 'Customer Service' }
-  let!(:user) { FactoryGirl.create :user, username: 'student', full_name: 'User One' }
+  let!(:user) { FactoryBot.create :user, username: 'student', full_name: 'User One' }
 
   before { controller.sign_in(customer_service) }
 

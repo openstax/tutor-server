@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe Role::GetUserRoles, type: :routine do
   context "there are no roles for the given user" do
     it "returns an empty array" do
-      target_user = FactoryGirl.create :user
-      other_user  = FactoryGirl.create :user
+      target_user = FactoryBot.create :user
+      other_user  = FactoryBot.create :user
 
-      role        = FactoryGirl.create :entity_role
+      role        = FactoryBot.create :entity_role
 
       Role::AddUserRole.call(user: other_user, role: role)
 
@@ -18,10 +18,10 @@ RSpec.describe Role::GetUserRoles, type: :routine do
   end
   context "there is one role for the given user" do
     it "returns that role" do
-      target_user = FactoryGirl.create :user
-      target_role = FactoryGirl.create :entity_role
-      other_user  = FactoryGirl.create :user
-      other_role  = FactoryGirl.create :entity_role
+      target_user = FactoryBot.create :user
+      target_role = FactoryBot.create :entity_role
+      other_user  = FactoryBot.create :user
+      other_role  = FactoryBot.create :entity_role
 
       Role::AddUserRole.call(user: target_user, role: target_role)
       Role::AddUserRole.call(user: other_user,  role: other_role)
@@ -35,12 +35,12 @@ RSpec.describe Role::GetUserRoles, type: :routine do
   end
   context "there are multiple roles for the given user" do
     it "returns all user roles" do
-      target_user  = FactoryGirl.create :user
-      target_role1 = FactoryGirl.create :entity_role
-      target_role2 = FactoryGirl.create :entity_role
+      target_user  = FactoryBot.create :user
+      target_role1 = FactoryBot.create :entity_role
+      target_role2 = FactoryBot.create :entity_role
 
-      other_user = FactoryGirl.create :user
-      other_role = FactoryGirl.create :entity_role
+      other_user = FactoryBot.create :user
+      other_role = FactoryBot.create :entity_role
 
       Role::AddUserRole.call(user: target_user, role: target_role1)
       Role::AddUserRole.call(user: target_user, role: target_role2)

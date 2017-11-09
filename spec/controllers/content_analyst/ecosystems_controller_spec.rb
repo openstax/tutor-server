@@ -2,11 +2,11 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe ContentAnalyst::EcosystemsController, type: :controller do
-  let(:content_analyst) { FactoryGirl.create(:user, :content_analyst) }
+  let(:content_analyst) { FactoryBot.create(:user, :content_analyst) }
 
-  let(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
+  let(:book_1) { FactoryBot.create :content_book, title: 'Physics', version: '1' }
   let!(:ecosystem_1) { Content::Ecosystem.find(book_1.ecosystem.id) }
-  let(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
+  let(:book_2) { FactoryBot.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
 
   before { controller.sign_in(content_analyst) }

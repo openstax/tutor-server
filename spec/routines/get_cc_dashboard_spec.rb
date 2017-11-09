@@ -4,24 +4,24 @@ require 'vcr_helper'
 RSpec.describe GetCcDashboard, type: :routine do
 
   before(:all) do
-    @course   = FactoryGirl.create :course_profile_course, is_concept_coach: true, name: 'Biology 101'
-    @period   = FactoryGirl.create :course_membership_period, course: @course
-    @period_2 = FactoryGirl.create :course_membership_period, course: @course
+    @course   = FactoryBot.create :course_profile_course, is_concept_coach: true, name: 'Biology 101'
+    @period   = FactoryBot.create :course_membership_period, course: @course
+    @period_2 = FactoryBot.create :course_membership_period, course: @course
 
-    @student_user = FactoryGirl.create(:user)
+    @student_user = FactoryBot.create(:user)
     @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
 
-    @student_user_2 = FactoryGirl.create(:user)
+    @student_user_2 = FactoryBot.create(:user)
     @student_role_2 = AddUserAsPeriodStudent[user: @student_user_2, period: @period_2]
 
-    @teacher_user = FactoryGirl.create(:user, first_name: 'Bob',
+    @teacher_user = FactoryBot.create(:user, first_name: 'Bob',
                                               last_name: 'Newhart',
                                               full_name: 'Bob Newhart')
     @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]
 
-    @book = FactoryGirl.create :content_book
-    @chapter_1 = FactoryGirl.create :content_chapter, book: @book, book_location: [1]
-    @chapter_2 = FactoryGirl.create :content_chapter, book: @book, book_location: [2]
+    @book = FactoryBot.create :content_book
+    @chapter_1 = FactoryBot.create :content_chapter, book: @book, book_location: [1]
+    @chapter_2 = FactoryBot.create :content_chapter, book: @book, book_location: [2]
     cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: 'ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c',
                                              title: 'Sample module 1')
     cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '6a0568d8-23d7-439b-9a01-16e4e73886b3',

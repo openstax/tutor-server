@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe CollectCourseInfo, type: :routine do
-  let(:course_1)  { FactoryGirl.create(:course_profile_course) }
-  let(:course_2)  { FactoryGirl.create(:course_profile_course) }
+  let(:course_1)  { FactoryBot.create(:course_profile_course) }
+  let(:course_2)  { FactoryBot.create(:course_profile_course) }
 
-  let!(:period_1) { FactoryGirl.create :course_membership_period, course: course_1 }
-  let!(:period_2) { FactoryGirl.create :course_membership_period, course: course_1 }
-  let!(:period_3) { FactoryGirl.create :course_membership_period, course: course_2 }
+  let!(:period_1) { FactoryBot.create :course_membership_period, course: course_1 }
+  let!(:period_2) { FactoryBot.create :course_membership_period, course: course_1 }
+  let!(:period_3) { FactoryBot.create :course_membership_period, course: course_2 }
 
-  let(:profile_1) { FactoryGirl.create :user_profile }
-  let(:profile_2) { FactoryGirl.create :user_profile }
+  let(:profile_1) { FactoryBot.create :user_profile }
+  let(:profile_2) { FactoryBot.create :user_profile }
 
   let(:user_1)    { User::User.new(strategy: profile_1.wrap) }
   let(:user_2)    { User::User.new(strategy: profile_2.wrap) }
@@ -52,10 +52,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
   end
 
   context "when multiple courses are given" do
-    let(:ecosystem_model_1) { FactoryGirl.create :content_ecosystem }
+    let(:ecosystem_model_1) { FactoryBot.create :content_ecosystem }
     let(:ecosystem_1)       { Content::Ecosystem.new(strategy: ecosystem_model_1.wrap) }
 
-    let(:ecosystem_model_2) { FactoryGirl.create :content_ecosystem }
+    let(:ecosystem_model_2) { FactoryBot.create :content_ecosystem }
     let(:ecosystem_2)       { Content::Ecosystem.new(strategy: ecosystem_model_2.wrap) }
 
     let(:args)              { { user: user_1, courses: [course_1, course_2] } }
