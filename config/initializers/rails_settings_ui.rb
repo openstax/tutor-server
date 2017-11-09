@@ -28,7 +28,7 @@ Rails.application.config.to_prepare do
 
         Settings::Db.store.object('excluded_ids').expire_cache
         new_excluded_ids = Settings::Exercises.excluded_ids
-        UpdateAdminExerciseExclusions.perform_later if new_excluded_ids != old_excluded_ids
+        SendGlobalExerciseExclusionsToBiglearn.perform_later if new_excluded_ids != old_excluded_ids
       end
     end
   end

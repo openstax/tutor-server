@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UpdateAdminExerciseExclusions, type: :routine do
+RSpec.describe SendGlobalExerciseExclusionsToBiglearn, type: :routine do
   let(:num_extra_courses) { 2 }
   let!(:courses)          do
     num_extra_courses.times.map { FactoryGirl.create :course_profile_course }

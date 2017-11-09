@@ -1,5 +1,5 @@
-class UpdateAdminExerciseExclusions
-  lev_routine
+class SendGlobalExerciseExclusionsToBiglearn
+  lev_routine active_job_enqueue_options: { queue: :high_priority }
 
   protected
 
