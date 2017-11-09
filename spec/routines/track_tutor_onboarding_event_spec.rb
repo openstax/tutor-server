@@ -13,8 +13,8 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     # To use placeholders for the user UUIDs, we have to set them up in a before(:all)
     # call, because `define_cassette_placeholder` doesn't work well from a before(:each)
 
-    @user_no_sf = FactoryGirl.create(:user)
-    @user_sf_a = FactoryGirl.create(:user, salesforce_contact_id: @sf_contact_a.id)
+    @user_no_sf = FactoryBot.create(:user)
+    @user_sf_a = FactoryBot.create(:user, salesforce_contact_id: @sf_contact_a.id)
 
     VCR.configure do |config|
       config.define_cassette_placeholder("<USER_NO_SF_UUID>") { @user_no_sf.uuid }

@@ -2,11 +2,11 @@ require 'rails_helper'
 
 module CourseMembership
   describe Period, type: :wrapper do
-    subject(:period)     { FactoryGirl.create :course_membership_period }
+    subject(:period)     { FactoryBot.create :course_membership_period }
 
-    let(:student_1_user) { FactoryGirl.create(:user) }
-    let(:student_2_user) { FactoryGirl.create(:user) }
-    let(:teacher_user)   { FactoryGirl.create(:user) }
+    let(:student_1_user) { FactoryBot.create(:user) }
+    let(:student_2_user) { FactoryBot.create(:user) }
+    let(:teacher_user)   { FactoryBot.create(:user) }
 
     let!(:student_1)      { AddUserAsPeriodStudent.call(user: student_1_user,
                                                         period: period).outputs.role }

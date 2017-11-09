@@ -4,19 +4,19 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
 
   context "a user" do
 
-    let(:user)           { FactoryGirl.create :user }
-    let(:course)         { FactoryGirl.create :course_profile_course }
-    let(:period)         { FactoryGirl.create :course_membership_period, course: course }
+    let(:user)           { FactoryBot.create :user }
+    let(:course)         { FactoryBot.create :course_profile_course }
+    let(:period)         { FactoryBot.create :course_membership_period, course: course }
     let(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }
-    let(:default_task)   { FactoryGirl.create(:tasks_task) }
+    let(:default_task)   { FactoryBot.create(:tasks_task) }
     let(:task_count)     { rand(5..10) }
-    let(:ecosystem)      { FactoryGirl.create(:content_ecosystem) }
+    let(:ecosystem)      { FactoryBot.create(:content_ecosystem) }
     let(:tasks)          do
-      task_count.times.map{ FactoryGirl.create(:tasks_task, ecosystem: ecosystem) }
+      task_count.times.map{ FactoryBot.create(:tasks_task, ecosystem: ecosystem) }
     end
 
     let!(:taskings)       do
-      tasks.map{ |task| FactoryGirl.create(:tasks_tasking, task: task, role: role) }
+      tasks.map{ |task| FactoryBot.create(:tasks_tasking, task: task, role: role) }
     end
 
     let(:output)         { Hashie::Mash.new(items: GetCourseUserTasks[course: course, user: user]) }

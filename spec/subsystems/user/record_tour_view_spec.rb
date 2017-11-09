@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe User::RecordTourView, type: :routine do
-  let(:user) { FactoryGirl.create :user_profile }
+  let(:user) { FactoryBot.create :user_profile }
 
   context 'a new tour' do
     let(:view){ described_class[user: user, tour_identifier: 'whirlwind'] }
@@ -18,7 +18,7 @@ RSpec.describe User::RecordTourView, type: :routine do
   end
 
   context 'an existing tour' do
-    let(:tour){ FactoryGirl.create :user_tour }
+    let(:tour){ FactoryBot.create :user_tour }
     let(:view){ described_class[user: user, tour_identifier: tour.identifier] }
 
     it 'marks the user as having viewed it' do

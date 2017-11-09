@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Administration' do
   before do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
   end
 
@@ -19,7 +19,7 @@ RSpec.feature 'Administration' do
   end
 
   scenario 'create a blank course with a catalog_offering' do
-    catalog_offering = FactoryGirl.create :catalog_offering
+    catalog_offering = FactoryBot.create :catalog_offering
 
     visit admin_courses_path
     click_link 'Add Course'

@@ -22,24 +22,24 @@ RSpec.describe "Students in archived old period sign up in new term",
   context "CC course" do
 
     before(:all) do
-      @course = FactoryGirl.create :course_profile_course, is_concept_coach: true
-      semester_1_period = FactoryGirl.create :course_membership_period, course: @course
+      @course = FactoryBot.create :course_profile_course, is_concept_coach: true
+      semester_1_period = FactoryBot.create :course_membership_period, course: @course
 
-      @student_user = FactoryGirl.create(:user)
+      @student_user = FactoryBot.create(:user)
 
-      teacher_user = FactoryGirl.create(:user)
+      teacher_user = FactoryBot.create(:user)
       teacher_role = AddUserAsCourseTeacher[user: teacher_user, course: @course]
       teacher = teacher_role.teacher
 
-      application = FactoryGirl.create :doorkeeper_application
-      @teacher_token =  FactoryGirl.create :doorkeeper_access_token,
+      application = FactoryBot.create :doorkeeper_application
+      @teacher_token =  FactoryBot.create :doorkeeper_access_token,
                                            application: application,
                                            resource_owner_id: teacher_user.id
-      @student_token =  FactoryGirl.create :doorkeeper_access_token,
+      @student_token =  FactoryBot.create :doorkeeper_access_token,
                                            application: application,
                                            resource_owner_id: @student_user.id
 
-      @book = FactoryGirl.create :content_book, :standard_contents_2
+      @book = FactoryBot.create :content_book, :standard_contents_2
       ecosystem = Content::Ecosystem.new(strategy: @book.ecosystem.wrap)
 
       # Associate the book to the course and make sure each page has 1 cc exercise
@@ -66,7 +66,7 @@ RSpec.describe "Students in archived old period sign up in new term",
       # teacher, preparing to teach this course again in the current approach,
       # archives the period she has and makes a new one
       semester_1_period.to_model.destroy!
-      semester_2_period = FactoryGirl.create :course_membership_period, course: @course
+      semester_2_period = FactoryBot.create :course_membership_period, course: @course
 
       # the same student user signs up for the next semester in the same course
       # (maybe he failed or dropped in the first semester)
@@ -135,7 +135,7 @@ RSpec.describe "Students in archived old period sign up in new term",
 
   def add_a_cc_exercise_to_each_page(book)
     book.pages.each do |page|
-      exercise = FactoryGirl.create(:content_exercise)
+      exercise = FactoryBot.create(:content_exercise)
       cc_pool = page.concept_coach_pool
       cc_pool.content_exercise_ids = [exercise.id]
       cc_pool.save!

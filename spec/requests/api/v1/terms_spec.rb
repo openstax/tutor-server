@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe "Terms", type: :request, api: true, version: :v1 do
 
-  let(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)         { FactoryGirl.create(:user) }
-  let(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
+  let(:application)     { FactoryBot.create :doorkeeper_application }
+  let!(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1_token)    { FactoryBot.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_1.id }
 

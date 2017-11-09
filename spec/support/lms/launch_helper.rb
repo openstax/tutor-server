@@ -15,7 +15,7 @@ class Lms::LaunchHelper
 
   def get_user!(identifier, default: nil)
     get_user(identifier) || begin
-      user = default || FactoryGirl.create(:user)
+      user = default || FactoryBot.create(:user)
       identify_user(identifier, user)
     end
   end

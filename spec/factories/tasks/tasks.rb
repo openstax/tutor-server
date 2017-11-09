@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_task, class: '::Tasks::Models::Task' do
     transient do
       duration 1.week
@@ -9,7 +9,7 @@ FactoryGirl.define do
 
     task_type :reading
 
-    ecosystem   { FactoryGirl.create(:content_ecosystem) }
+    ecosystem   { FactoryBot.create(:content_ecosystem) }
     task_plan   { build :tasks_task_plan, ecosystem: ecosystem }
     title       { task_plan.title }
     description { task_plan.description }
@@ -21,16 +21,16 @@ FactoryGirl.define do
       AddSpyInfo[to: task, from: task.ecosystem]
 
       evaluator.step_types.each_with_index do |type, i|
-        tasked = FactoryGirl.build(type, skip_task: true)
+        tasked = FactoryBot.build(type, skip_task: true)
         task.task_steps << tasked.task_step
       end
 
       evaluator.num_random_taskings.times do
-        task.taskings << FactoryGirl.build(:tasks_tasking, task: task)
+        task.taskings << FactoryBot.build(:tasks_tasking, task: task)
       end
 
       [evaluator.tasked_to].flatten.each do |role|
-        task.taskings << FactoryGirl.build(:tasks_tasking, task: task, role: role)
+        task.taskings << FactoryBot.build(:tasks_tasking, task: task, role: role)
       end
     end
   end

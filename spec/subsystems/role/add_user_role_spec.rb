@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Role::AddUserRole, type: :routine do
   context "when adding a new user role" do
     it "succeeds" do
-      role = FactoryGirl.create :entity_role
-      user = FactoryGirl.create :user
+      role = FactoryBot.create :entity_role
+      user = FactoryBot.create :user
 
       result = nil
       expect {
@@ -15,8 +15,8 @@ RSpec.describe Role::AddUserRole, type: :routine do
   end
   context "when adding an existing user role" do
     it "fails" do
-      role = FactoryGirl.create :entity_role
-      user = FactoryGirl.create :user
+      role = FactoryBot.create :entity_role
+      user = FactoryBot.create :user
 
       result = nil
       expect {

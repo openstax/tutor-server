@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::Assistant, type: :model do
-  subject { FactoryGirl.create :tasks_assistant }
+  subject { FactoryBot.create :tasks_assistant }
 
   it { is_expected.to have_many(:course_assistants).dependent(:destroy) }
   it { is_expected.to have_many(:task_plans).dependent(:destroy) }

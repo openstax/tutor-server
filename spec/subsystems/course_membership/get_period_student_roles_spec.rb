@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::GetPeriodStudentRoles do
-  let(:target_course) { FactoryGirl.create :course_profile_course }
-  let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
+  let(:target_course) { FactoryBot.create :course_profile_course }
+  let(:target_period) { FactoryBot.create :course_membership_period, course: target_course }
 
-  let(:other_course) { FactoryGirl.create :course_profile_course }
-  let(:other_period) { FactoryGirl.create :course_membership_period, course: other_course }
+  let(:other_course) { FactoryBot.create :course_profile_course }
+  let(:other_period) { FactoryBot.create :course_membership_period, course: other_course }
 
   let!(:other_student_role) {
-    other_role = FactoryGirl.create :entity_role
+    other_role = FactoryBot.create :entity_role
     CourseMembership::AddStudent.call(
       period: other_period,
       role:   other_role
@@ -17,7 +17,7 @@ RSpec.describe CourseMembership::GetPeriodStudentRoles do
   }
 
   let!(:other_teacher_role) {
-    other_role = FactoryGirl.create :entity_role
+    other_role = FactoryBot.create :entity_role
     CourseMembership::AddTeacher.call(
       course: other_course,
       role:   other_role
@@ -35,7 +35,7 @@ RSpec.describe CourseMembership::GetPeriodStudentRoles do
 
   context "when there is one student role for the target period" do
     let!(:target_student_role) {
-      target_role = FactoryGirl.create :entity_role
+      target_role = FactoryBot.create :entity_role
       CourseMembership::AddStudent.call(
         period: target_period,
         role:   target_role
@@ -53,7 +53,7 @@ RSpec.describe CourseMembership::GetPeriodStudentRoles do
 
   context "when there is one teacher role for the target course" do
     let!(:target_teacher_role) {
-      target_role = FactoryGirl.create :entity_role
+      target_role = FactoryBot.create :entity_role
       CourseMembership::AddTeacher.call(
         course: target_course,
         role:   target_role
@@ -70,19 +70,19 @@ RSpec.describe CourseMembership::GetPeriodStudentRoles do
 
   context "when there are multiple teacher/student roles for the target course/period" do
     let!(:target_roles) {
-      target_role1 = FactoryGirl.create :entity_role
+      target_role1 = FactoryBot.create :entity_role
       CourseMembership::AddTeacher.call(
         course: target_course,
         role:   target_role1
       )
 
-      target_role2 = FactoryGirl.create :entity_role
+      target_role2 = FactoryBot.create :entity_role
       CourseMembership::AddStudent.call(
         period: target_period,
         role:   target_role2
       )
 
-      target_role3 = FactoryGirl.create :entity_role
+      target_role3 = FactoryBot.create :entity_role
       CourseMembership::AddStudent.call(
         period: target_period,
         role:   target_role3

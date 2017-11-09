@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Role::CreateUserRole, type: :routine do
   it "creates and returns a new role for the given user" do
-    user = FactoryGirl.create(:user)
+    user = FactoryBot.create(:user)
 
     result = nil
     expect {

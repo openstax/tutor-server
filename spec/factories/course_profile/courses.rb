@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :course_profile_course, class: '::CourseProfile::Models::Course' do
     transient             { consistent_times { false } }
 

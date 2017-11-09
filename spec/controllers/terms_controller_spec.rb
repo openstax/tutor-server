@@ -6,7 +6,7 @@ RSpec.describe TermsController, type: :controller do
                                                title: 'General Terms of Use',
                                                content: Faker::Lorem.paragraphs,
                                                version: 10) }
-  let(:new_user) { FactoryGirl.create(:user, skip_terms_agreement: true) }
+  let(:new_user) { FactoryBot.create(:user, skip_terms_agreement: true) }
 
   describe 'terms of service' do
 

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Lms::CoursesController, type: :controller, api: true, version: :v1 do
-  let(:course)  { FactoryGirl.create :course_profile_course }
-  let!(:lms_app) { FactoryGirl.create(:lms_app, owner: course) }
-  let(:user)    { FactoryGirl.create(:user) }
-  let(:token)   { FactoryGirl.create(:doorkeeper_access_token,
+  let(:course)  { FactoryBot.create :course_profile_course }
+  let!(:lms_app) { FactoryBot.create(:lms_app, owner: course) }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:token)   { FactoryBot.create(:doorkeeper_access_token,
                                            resource_owner_id: user.id) }
 
   it 'allows teachers to retrieve secrets' do

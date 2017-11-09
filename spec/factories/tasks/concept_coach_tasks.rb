@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_concept_coach_task, class: '::Tasks::Models::ConceptCoachTask' do
     association :page, factory: :content_page
     association :role, factory: :entity_role

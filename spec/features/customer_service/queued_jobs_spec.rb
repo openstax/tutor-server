@@ -2,9 +2,9 @@ require 'rails_helper'
 require 'feature_js_helper'
 
 RSpec.feature 'Viewing queued jobs as Customer Service', :js do
-  let(:course)           { FactoryGirl.create :course_profile_course }
-  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
-  let(:user)             { FactoryGirl.create(:user) }
+  let(:course)           { FactoryBot.create :course_profile_course }
+  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
+  let(:user)             { FactoryBot.create(:user) }
   let(:role)             { AddUserAsCourseTeacher[course: course, user: user] }
 
   let(:status)           { Jobba.find(@job_id) }

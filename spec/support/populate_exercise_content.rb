@@ -33,7 +33,7 @@ module PopulateExerciseContent
 
     cnx_pages = cnx_page_hashes.map { |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
 
-    @chapter = FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
+    @chapter = FactoryBot.create :content_chapter, title: "Forces and Newton's Laws of Motion"
 
     @ecosystem = ::Content::Ecosystem.new(strategy: ::Content::Strategies::Direct::Ecosystem.new(@chapter.book.ecosystem))
 

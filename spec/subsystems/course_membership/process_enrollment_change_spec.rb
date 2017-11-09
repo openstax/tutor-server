@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
-  let(:course_1)  { FactoryGirl.create :course_profile_course }
-  let(:course_2)  { FactoryGirl.create :course_profile_course }
-  let(:course_3)  { FactoryGirl.create :course_profile_course }
+  let(:course_1)  { FactoryBot.create :course_profile_course }
+  let(:course_2)  { FactoryBot.create :course_profile_course }
+  let(:course_3)  { FactoryBot.create :course_profile_course }
 
-  let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
-  let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }
-  let(:period_3)  { FactoryGirl.create :course_membership_period, course: course_2 }
-  let(:period_4)  { FactoryGirl.create :course_membership_period, course: course_3 }
+  let(:period_1)  { FactoryBot.create :course_membership_period, course: course_1 }
+  let(:period_2)  { FactoryBot.create :course_membership_period, course: course_1 }
+  let(:period_3)  { FactoryBot.create :course_membership_period, course: course_2 }
+  let(:period_4)  { FactoryBot.create :course_membership_period, course: course_3 }
 
-  let(:book)      { FactoryGirl.create :content_book }
+  let(:book)      { FactoryBot.create :content_book }
 
   let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
   let(:user)      do
-    profile = FactoryGirl.create :user_profile
+    profile = FactoryBot.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end

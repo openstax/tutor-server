@@ -217,10 +217,10 @@ GEM
       activesupport (>= 4.0, < 6)
     excon (0.45.3)
     execjs (2.7.0)
-    factory_girl (4.5.0)
+    factory_bot (4.8.2)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.5.0)
-      factory_girl (~> 4.5.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
     faker (1.4.3)
       i18n (~> 0.5)
@@ -809,7 +809,7 @@ DEPENDENCIES
   delayed_job_active_record
   dotenv-rails
   error_page_assets
-  factory_girl_rails
+  factory_bot_rails
   faker
   fakeredis
   fine_print (~> 3.1.0)

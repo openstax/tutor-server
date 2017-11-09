@@ -3,15 +3,15 @@ require 'rails_helper'
 RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
   before(:all) do
-    @course = FactoryGirl.create :course_profile_course, :with_assistants
-    period = FactoryGirl.create :course_membership_period, course: @course
+    @course = FactoryBot.create :course_profile_course, :with_assistants
+    period = FactoryBot.create :course_membership_period, course: @course
 
-    @user = FactoryGirl.create(:user)
-    @teacher = FactoryGirl.create(:user)
-    student = FactoryGirl.create(:user)
-    @unaffiliated_teacher = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user)
+    student = FactoryBot.create(:user)
+    @unaffiliated_teacher = FactoryBot.create(:user)
 
-    @published_task_plan = FactoryGirl.create(
+    @published_task_plan = FactoryBot.create(
       :tasked_task_plan,
       number_of_students: 0,
       owner: @course,
@@ -22,7 +22,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     @ecosystem = @published_task_plan.ecosystem
     @page = @ecosystem.pages.first
 
-    @task_plan = FactoryGirl.build(
+    @task_plan = FactoryBot.build(
       :tasks_task_plan,
       owner: @course,
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       num_tasking_plans: 0
     )
 
-    FactoryGirl.create(
+    FactoryBot.create(
       :tasks_tasking_plan,
       task_plan: @task_plan,
       target: period.to_model,
@@ -41,7 +41,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
     @teacher_student_role = period.teacher_student_role
 
-    teacher_student_task = FactoryGirl.create :tasks_task, tasked_to: [@teacher_student_role]
+    teacher_student_task = FactoryBot.create :tasks_task, tasked_to: [@teacher_student_role]
 
     @course.time_zone.update_attribute(:name, 'Pacific Time (US & Canada)')
 
@@ -73,7 +73,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
 
     let!(:orig_task_plan_2) do
-      FactoryGirl.create(:tasks_task_plan,
+      FactoryBot.create(:tasks_task_plan,
                          owner: orig_course,
                          assistant: get_assistant(course: orig_course, task_plan_type: 'reading'),
                          content_ecosystem_id: @ecosystem.id,
@@ -82,7 +82,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
 
     let!(:cloned_task_plan) do
-      FactoryGirl.create(:tasks_task_plan,
+      FactoryBot.create(:tasks_task_plan,
                          owner: cloned_course,
                          assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
                          content_ecosystem_id: @ecosystem.id,
@@ -92,7 +92,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
 
     let!(:orig_task_plan_3) do
-      FactoryGirl.create(:tasks_task_plan,
+      FactoryBot.create(:tasks_task_plan,
                          owner: cloned_course,
                          assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
                          content_ecosystem_id: @ecosystem.id,
@@ -363,7 +363,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
 
     context 'when cloned_from_id is set' do
-      let!(:source_task_plan) { FactoryGirl.create :tasks_task_plan, ecosystem: @ecosystem }
+      let!(:source_task_plan) { FactoryBot.create :tasks_task_plan, ecosystem: @ecosystem }
       let(:valid_json)        do
         Api::V1::TaskPlanRepresenter.new(@task_plan).to_hash
                                     .merge('cloned_from_id' => source_task_plan.id.to_s).to_json
@@ -417,7 +417,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
 
     it 'automatically updates preview tasks' do
-      old_preview_task = FactoryGirl.create :tasks_task, task_plan: @task_plan,
+      old_preview_task = FactoryBot.create :tasks_task, task_plan: @task_plan,
                                                          tasked_to: [@teacher_student_role]
 
       controller.sign_in @teacher

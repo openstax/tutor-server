@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
-  let(:course_1)  { FactoryGirl.create :course_profile_course }
-  let(:course_2)  { FactoryGirl.create :course_profile_course }
+  let(:course_1)  { FactoryBot.create :course_profile_course }
+  let(:course_2)  { FactoryBot.create :course_profile_course }
 
-  let(:period_1)  { FactoryGirl.create :course_membership_period, course: course_1 }
-  let(:period_2)  { FactoryGirl.create :course_membership_period, course: course_1 }
-  let(:period_3)  { FactoryGirl.create :course_membership_period, course: course_2 }
+  let(:period_1)  { FactoryBot.create :course_membership_period, course: course_1 }
+  let(:period_2)  { FactoryBot.create :course_membership_period, course: course_1 }
+  let(:period_3)  { FactoryBot.create :course_membership_period, course: course_2 }
 
-  let(:book)      { FactoryGirl.create :content_book }
+  let(:book)      { FactoryBot.create :content_book }
 
   let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
   let(:user)                  do
-    profile = FactoryGirl.create :user_profile
+    profile = FactoryBot.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
@@ -56,7 +56,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
       course_2.update_attribute :is_concept_coach, true
       expect(enrollment_change).to be_valid
 
-      enrollment_change.update_attribute :conflicting_enrollment, FactoryGirl.create(
+      enrollment_change.update_attribute :conflicting_enrollment, FactoryBot.create(
         :course_membership_enrollment, period: period_3, student: conflicting_student
       )
       expect(enrollment_change).to be_valid
@@ -70,13 +70,13 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
       expect(enrollment_change).to be_valid
 
       enrollment_change.conflicting_enrollment.student = \
-        FactoryGirl.create :course_membership_student
+        FactoryBot.create :course_membership_student
       expect(enrollment_change).not_to be_valid
       expect(enrollment_change.errors[:conflicting_enrollment]).to include 'is invalid'
       enrollment_change.conflicting_enrollment.student = conflicting_student
       expect(enrollment_change).to be_valid
 
-      enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment
+      enrollment_change.conflicting_enrollment = FactoryBot.create :course_membership_enrollment
       expect(enrollment_change).not_to be_valid
     end
 
@@ -121,7 +121,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
     it 'requires the profile and the enrollment\'s student to refer to the same user' do
       expect(enrollment_change).to be_valid
 
-      enrollment_change.profile = FactoryGirl.create :user_profile
+      enrollment_change.profile = FactoryBot.create :user_profile
       expect(enrollment_change).not_to be_valid
       expect(enrollment_change.errors[:base]).to include(
         'the given user does not match the given enrollment'
@@ -141,7 +141,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
       )
 
       conflicting_student = AddUserAsPeriodStudent[user: user, period: period_3].student
-      enrollment_change.conflicting_enrollment = FactoryGirl.create :course_membership_enrollment,
+      enrollment_change.conflicting_enrollment = FactoryBot.create :course_membership_enrollment,
                                                                     period: period_3,
                                                                     student: conflicting_student
       expect(enrollment_change).to be_valid

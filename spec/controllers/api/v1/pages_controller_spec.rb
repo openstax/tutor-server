@@ -48,7 +48,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       before(:all) do
         page_hash = { id: "#{@page_uuid}@2", title: 'Force' }
 
-        chapter = FactoryGirl.create :content_chapter
+        chapter = FactoryBot.create :content_chapter
         cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
         VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
           @old_page = Content::Routines::ImportPage.call(cnx_page: cnx_page,

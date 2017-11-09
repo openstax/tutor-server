@@ -2,35 +2,35 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::StudentsController, type: :controller, api: true, version: :v1 do
 
-  let(:application)       { FactoryGirl.create :doorkeeper_application }
+  let(:application)       { FactoryBot.create :doorkeeper_application }
 
-  let(:course)            { FactoryGirl.create :course_profile_course }
-  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
-  let(:period_2)          { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)            { FactoryBot.create :course_profile_course }
+  let(:period)            { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)      { FactoryGirl.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
   let!(:student_original_payment_due_at) { student.payment_due_at }
-  let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+  let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: student_user.id }
 
-  let(:teacher_user)      { FactoryGirl.create(:user) }
+  let(:teacher_user)      { FactoryBot.create(:user) }
   let!(:teacher)          { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-  let(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
+  let(:teacher_token)     { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: teacher_user.id }
 
-  let(:student_user_2)    { FactoryGirl.create(:user) }
+  let(:student_user_2)    { FactoryBot.create(:user) }
   let(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
   let!(:student_2)        { student_role_2.student }
 
-  let(:student_user_3)    { FactoryGirl.create(:user) }
+  let(:student_user_3)    { FactoryBot.create(:user) }
   let(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
   let!(:student_3)        { student_role_3.student }
 
-  let(:userless_token)    { FactoryGirl.create :doorkeeper_access_token,
+  let(:userless_token)    { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: nil }
 
@@ -106,7 +106,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
       context 'caller is a course student' do
         context 'updating the student\'s identifier' do
           it 'always succeeds' do
-            FactoryGirl.create :course_membership_student, course: course,
+            FactoryBot.create :course_membership_student, course: course,
                                                            student_identifier: new_id
             api_patch :update_self, student_token, parameters: valid_params,
                                                    raw_post_data: valid_body
@@ -185,7 +185,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             let(:new_id) { '123456789' }
 
             it 'always succeeds' do
-              FactoryGirl.create :course_membership_student, course: course,
+              FactoryBot.create :course_membership_student, course: course,
                                                              student_identifier: new_id
               api_patch :update, teacher_token, parameters: valid_params,
                                  raw_post_data: valid_body.merge({ student_identifier: new_id })
@@ -312,7 +312,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
             it 'fails if the student\'s identifier is taken by someone else' do
               student_id = '123456789'
               student.update_attribute :student_identifier, student_id
-              FactoryGirl.create :course_membership_student, course: course,
+              FactoryBot.create :course_membership_student, course: course,
                                                              student_identifier: student_id
 
               api_put :undrop, teacher_token, parameters: valid_params

@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::UpdatesController, type: :controller, api: true, version: :v1 do
 
-  let(:course)           { FactoryGirl.create :course_profile_course }
+  let(:course)           { FactoryBot.create :course_profile_course }
 
-  let(:instructor_user)  { FactoryGirl.create(:user) }
+  let(:instructor_user)  { FactoryBot.create(:user) }
   let!(:instructor_role) { AddUserAsCourseTeacher[user: instructor_user, course: course] }
   let(:instructor_token) do
-    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: instructor_user.id
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: instructor_user.id
   end
 
   context '#index' do

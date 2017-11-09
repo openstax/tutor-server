@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe EcosystemAccessPolicy, type: :access_policy do
-  let(:course)          { FactoryGirl.create :course_profile_course }
-  let(:period)          { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)          { FactoryBot.create :course_profile_course }
+  let(:period)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student)         { FactoryGirl.create(:user) }
-  let(:teacher)         { FactoryGirl.create(:user) }
+  let(:student)         { FactoryBot.create(:user) }
+  let(:teacher)         { FactoryBot.create(:user) }
 
-  let(:content_analyst) { FactoryGirl.create(:user, :content_analyst) }
-  let(:admin)           { FactoryGirl.create(:user, :administrator) }
+  let(:content_analyst) { FactoryBot.create(:user, :content_analyst) }
+  let(:admin)           { FactoryBot.create(:user, :administrator) }
 
   let(:ecosystem)       do
-    content_ecosystem = FactoryGirl.create(:content_ecosystem)
+    content_ecosystem = FactoryBot.create(:content_ecosystem)
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
     ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   end
@@ -37,7 +37,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) { FactoryGirl.create(:user) }
+    let(:requestor) { FactoryBot.create(:user) }
 
     [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do

@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe GetCourseTeacherUsers, type: :routine do
 
   context "when a course has no teachers" do
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:other_course)  { FactoryGirl.create :course_profile_course }
-    let(:other_user)    { FactoryGirl.create(:user) }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:other_course)  { FactoryBot.create :course_profile_course }
+    let(:other_user)    { FactoryBot.create(:user) }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(course: other_course, user: other_user)
@@ -20,10 +20,10 @@ RSpec.describe GetCourseTeacherUsers, type: :routine do
   end
 
   context "when a course has one teacher" do
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:other_course)  { FactoryGirl.create :course_profile_course }
-    let(:target_user)   { FactoryGirl.create(:user) }
-    let(:other_user)    { FactoryGirl.create(:user) }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:other_course)  { FactoryBot.create :course_profile_course }
+    let(:target_user)   { FactoryBot.create(:user) }
+    let(:other_user)    { FactoryBot.create(:user) }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(course: other_course, user: other_user)
@@ -41,11 +41,11 @@ RSpec.describe GetCourseTeacherUsers, type: :routine do
   end
 
   context "when a course has multiple teachers" do
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:other_course)  { FactoryGirl.create :course_profile_course }
-    let(:target_user1)  { FactoryGirl.create(:user) }
-    let(:target_user2)  { FactoryGirl.create(:user) }
-    let(:other_user)    { FactoryGirl.create(:user) }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:other_course)  { FactoryBot.create :course_profile_course }
+    let(:target_user1)  { FactoryBot.create(:user) }
+    let(:target_user2)  { FactoryBot.create(:user) }
+    let(:other_user)    { FactoryBot.create(:user) }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(course: other_course, user: other_user)

@@ -6,11 +6,11 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                                                       version: :v1, speed: :slow, vcr: VCR_OPTS do
 
   before(:all) do
-    @course = FactoryGirl.create :course_profile_course, :with_assistants
-    @period = FactoryGirl.create :course_membership_period, course: @course
+    @course = FactoryBot.create :course_profile_course, :with_assistants
+    @period = FactoryBot.create :course_membership_period, course: @course
 
-    @teacher = FactoryGirl.create(:user)
-    @teacher_token = FactoryGirl.create :doorkeeper_access_token, resource_owner_id: @teacher.id
+    @teacher = FactoryBot.create(:user)
+    @teacher_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: @teacher.id
 
     @role = AddUserAsCourseTeacher[course: @course, user: @teacher]
   end
@@ -34,21 +34,21 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       before(:all) do
         DatabaseCleaner.start
 
-        student_1 = FactoryGirl.create(:user, first_name: 'Student',
+        student_1 = FactoryBot.create(:user, first_name: 'Student',
                                               last_name: 'One',
                                               full_name: 'Student One')
-        @student_1_token = FactoryGirl.create :doorkeeper_access_token,
+        @student_1_token = FactoryBot.create :doorkeeper_access_token,
                                               resource_owner_id: student_1.id
 
-        student_2 = FactoryGirl.create(:user, first_name: 'Student',
+        student_2 = FactoryBot.create(:user, first_name: 'Student',
                                               last_name: 'Two',
                                               full_name: 'Student Two')
 
-        student_3 = FactoryGirl.create(:user, first_name: 'Student',
+        student_3 = FactoryBot.create(:user, first_name: 'Student',
                                               last_name: 'Three',
                                               full_name: 'Student Three')
 
-        student_4 = FactoryGirl.create(:user, first_name: 'Student',
+        student_4 = FactoryBot.create(:user, first_name: 'Student',
                                               last_name: 'Four',
                                               full_name: 'Student Four')
 
@@ -80,8 +80,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 403 for users not in the course' do
-        unknown = FactoryGirl.create(:user)
-        unknown_token = FactoryGirl.create :doorkeeper_access_token, resource_owner_id: unknown.id
+        unknown = FactoryBot.create(:user)
+        unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do
           api_get :index, unknown_token, parameters: { id: @course.id }
@@ -129,7 +129,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
       it 'does not blow up when period names collide for the first 31 characters' do
         @period.update_attributes(name: 'Super duper long period name number 1')
-        FactoryGirl.create :course_membership_period, course: @course,
+        FactoryBot.create :course_membership_period, course: @course,
                                                       name: 'Super duper long period name number 2'
         api_post :export, @teacher_token, parameters: { id: @course.id }
         expect(response.status).to eq(202)
@@ -138,8 +138,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 for students' do
-        student = FactoryGirl.create(:user)
-        student_token = FactoryGirl.create(:doorkeeper_access_token,
+        student = FactoryBot.create(:user)
+        student_token = FactoryBot.create(:doorkeeper_access_token,
                                            resource_owner_id: student.id)
         AddUserAsPeriodStudent[period: @period, user: student]
 
@@ -149,8 +149,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 403 unauthorized users' do
-        unknown = FactoryGirl.create(:user)
-        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+        unknown = FactoryBot.create(:user)
+        unknown_token = FactoryBot.create :doorkeeper_access_token,
                                            resource_owner_id: unknown.id
 
         expect do
@@ -170,7 +170,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     context 'success' do
       before(:each) do
         @export = Tempfile.open(['test_export', '.xls']) do |file|
-          FactoryGirl.create(:tasks_performance_report_export,
+          FactoryBot.create(:tasks_performance_report_export,
                              export: file, course: @course, role: @role)
         end
       end
@@ -194,8 +194,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 for students' do
-        student = FactoryGirl.create(:user)
-        student_token = FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: student.id)
+        student = FactoryBot.create(:user)
+        student_token = FactoryBot.create(:doorkeeper_access_token, resource_owner_id: student.id)
         AddUserAsPeriodStudent[period: @period, user: student]
 
         expect do
@@ -204,8 +204,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 403 for users who are not teachers of the course' do
-        unknown = FactoryGirl.create(:user)
-        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+        unknown = FactoryBot.create(:user)
+        unknown_token = FactoryBot.create :doorkeeper_access_token,
                                            resource_owner_id: unknown.id
 
         expect do

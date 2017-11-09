@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe UserAccessPolicy, type: :access_policy do
   let(:anon)        { User::User.anonymous }
-  let(:user)        { FactoryGirl.create(:user) }
-  let(:application) { FactoryGirl.create(:doorkeeper_application) }
+  let(:user)        { FactoryBot.create(:user) }
+  let(:application) { FactoryBot.create(:doorkeeper_application) }
 
   context 'index' do
     it 'cannot be accessed by anonymous users' do

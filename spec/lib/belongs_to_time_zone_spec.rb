@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe BelongsToTimeZone, type: :lib do
-  let(:time_zone) { FactoryGirl.create :time_zone }
+  let(:time_zone) { FactoryBot.create :time_zone }
 
   context 'default' do
-    let(:course) { FactoryGirl.build :course_profile_course }
+    let(:course) { FactoryBot.build :course_profile_course }
 
     it 'creates a time zone on save' do
       expect(course.time_zone).to be_nil
@@ -16,8 +16,8 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   end
 
   context 'fields' do
-    let(:tasking_plan) { FactoryGirl.build :tasks_tasking_plan, time_zone: time_zone }
-    let(:task)         { FactoryGirl.build :tasks_task,         time_zone: time_zone }
+    let(:tasking_plan) { FactoryBot.build :tasks_tasking_plan, time_zone: time_zone }
+    let(:task)         { FactoryBot.build :tasks_task,         time_zone: time_zone }
 
     it 'adds accessor methods for the listed fields' do
       expect(tasking_plan).to respond_to(:opens_at)
@@ -67,7 +67,7 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   end
 
   context 'time_zone updates' do
-    let(:task) { FactoryGirl.build :tasks_task, time_zone: time_zone }
+    let(:task) { FactoryBot.build :tasks_task, time_zone: time_zone }
 
     it 'updates all associated times automagically' do
       task_tz = time_zone.to_tz
@@ -95,7 +95,7 @@ RSpec.describe BelongsToTimeZone, type: :lib do
 
   it 'preserves previous_changes when no time zone set' do
     tz = ::TimeZone.create(name: 'Central Time (US & Canada)')
-    course = FactoryGirl.create :course_profile_course
+    course = FactoryBot.create :course_profile_course
     expect(course).to be_persisted
     expect(course.previous_changes).not_to be_empty
   end

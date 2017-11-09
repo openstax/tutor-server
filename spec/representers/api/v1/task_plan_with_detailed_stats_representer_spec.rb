@@ -6,7 +6,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
   let(:number_of_students) { 2 }
 
   let(:task_plan)          do
-    FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
+    FactoryBot.create :tasked_task_plan, number_of_students: number_of_students
   end
 
   let(:representation)     { described_class.new(task_plan).as_json }

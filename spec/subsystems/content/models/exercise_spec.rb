@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::Exercise, type: :model do
-  subject{ FactoryGirl.create :content_exercise }
+  subject{ FactoryBot.create :content_exercise }
 
   it { is_expected.to have_many(:exercise_tags).dependent(:destroy) }
 
@@ -9,7 +9,7 @@ RSpec.describe Content::Models::Exercise, type: :model do
   it { is_expected.to validate_presence_of(:version) }
 
   it 'splits parts' do
-    multipart = FactoryGirl.create(:content_exercise, num_parts: 2)
+    multipart = FactoryBot.create(:content_exercise, num_parts: 2)
     separated = multipart.content_as_independent_questions
     expect(separated.length).to eq 2
 

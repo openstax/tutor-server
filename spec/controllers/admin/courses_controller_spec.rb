@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesController, type: :controller do
-  let(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin) { FactoryBot.create(:user, :administrator) }
 
   before      { controller.sign_in(admin) }
 
   context 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      FactoryGirl.create :course_profile_course, name: 'Hello World'
+      FactoryBot.create :course_profile_course, name: 'Hello World'
 
       get :index
 
@@ -24,7 +24,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
     context "pagination" do
       it "paginates the results" do
-        3.times { FactoryGirl.create(:course_profile_course) }
+        3.times { FactoryBot.create(:course_profile_course) }
 
         get :index, page: 1, per_page: 2
         expect(assigns[:course_infos].length).to eq(2)
@@ -35,7 +35,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
       context "with more than 25 courses" do
         before(:each) do
-          26.times { FactoryGirl.create(:course_profile_course) }
+          26.times { FactoryBot.create(:course_profile_course) }
         end
 
         context "with per_page param" do
@@ -82,7 +82,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
         is_concept_coach: false,
         is_college: true,
         num_sections: num_sections,
-        catalog_offering_id: FactoryGirl.create(:catalog_offering).id
+        catalog_offering_id: FactoryBot.create(:catalog_offering).id
       }
     end
 
@@ -106,11 +106,11 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   context 'POST #roster' do
-    let(:physics)        { FactoryGirl.create :course_profile_course }
-    let(:physics_period) { FactoryGirl.create :course_membership_period, course: physics }
+    let(:physics)        { FactoryBot.create :course_profile_course }
+    let(:physics_period) { FactoryBot.create :course_membership_period, course: physics }
 
-    let(:biology)        { FactoryGirl.create :course_profile_course }
-    let(:biology_period) { FactoryGirl.create :course_membership_period, course: biology }
+    let(:biology)        { FactoryBot.create :course_profile_course }
+    let(:biology_period) { FactoryBot.create :course_membership_period, course: biology }
 
     let(:file_1) do
       fixture_file_upload('roster/test_courses_post_roster_1.csv', 'text/csv')
@@ -209,21 +209,21 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
   context 'GET #edit' do
     let!(:eco_1)            do
-      model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
+      model = FactoryBot.create(:content_book, title: 'Physics').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     end
     let(:catalog_offering)  do
-      FactoryGirl.create :catalog_offering, ecosystem: eco_1.to_model
+      FactoryBot.create :catalog_offering, ecosystem: eco_1.to_model
     end
     let(:course)            do
-      FactoryGirl.create :course_profile_course, name: 'Physics I', offering: catalog_offering
+      FactoryBot.create :course_profile_course, name: 'Physics I', offering: catalog_offering
     end
     let(:book_1)            { eco_1.books.first }
     let(:uuid_1)            { book_1.uuid }
     let(:version_1)         { book_1.version }
     let!(:eco_2)            do
-      model = FactoryGirl.create(:content_book, title: 'Biology').ecosystem
+      model = FactoryBot.create(:content_book, title: 'Biology').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     end
@@ -255,7 +255,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   context 'DELETE #destroy' do
-    let(:course) { FactoryGirl.create :course_profile_course }
+    let(:course) { FactoryBot.create :course_profile_course }
 
     context 'destroyable course' do
       it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
@@ -268,7 +268,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     context 'non-destroyable course' do
-      before { FactoryGirl.create :course_membership_period, course: course }
+      before { FactoryBot.create :course_membership_period, course: course }
 
       it 'delegates to the Admin::CoursesDestroy handler and displays a failure message' do
         expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
@@ -284,15 +284,15 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
   context 'POST #set_ecosystem' do
     let(:course)            do
-      FactoryGirl.create(:course_profile_course, :without_ecosystem, name: 'Physics I')
+      FactoryBot.create(:course_profile_course, :without_ecosystem, name: 'Physics I')
     end
     let(:eco_1)             do
-      model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
+      model = FactoryBot.create(:content_book, title: 'Physics', version: '1').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     end
     let(:eco_2)             do
-      model = FactoryGirl.create(:content_book, title: 'Biology', version: '2').ecosystem
+      model = FactoryBot.create(:content_book, title: 'Biology', version: '2').ecosystem
       strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
       ::Content::Ecosystem.new(strategy: strategy)
     end
@@ -364,7 +364,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      controller.sign_in(FactoryGirl.create(:user))
+      controller.sign_in(FactoryBot.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { get :new }.to raise_error(SecurityTransgression)

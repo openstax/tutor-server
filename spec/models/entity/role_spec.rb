@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Entity::Role, type: :model do
-  subject(:role) { FactoryGirl.create :entity_role }
+  subject(:role) { FactoryBot.create :entity_role }
 
   it { is_expected.to have_many(:taskings).dependent(:destroy) }
 
@@ -35,7 +35,7 @@ RSpec.describe Entity::Role, type: :model do
     end
 
     it 'contains the latest enrollment date' do
-      enrollment = FactoryGirl.create(:course_membership_enrollment).reload
+      enrollment = FactoryBot.create(:course_membership_enrollment).reload
       expect(enrollment.student.role.latest_enrollment_at).to eq enrollment.created_at
     end
   end

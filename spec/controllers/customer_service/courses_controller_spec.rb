@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::CoursesController, type: :controller do
-  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
 
   before                 { controller.sign_in(customer_service) }
 
   describe 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      FactoryGirl.create :course_profile_course, name: 'Hello World'
+      FactoryBot.create :course_profile_course, name: 'Hello World'
 
       get :index
 
@@ -23,7 +23,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     context "pagination" do
       context "when the are any results" do
         it "paginates the results" do
-          4.times {FactoryGirl.create(:course_profile_course, name: "Algebra #{rand(1000)}")}
+          4.times {FactoryBot.create(:course_profile_course, name: "Algebra #{rand(1000)}")}
           expect(CourseProfile::Models::Course.count).to eq(4)
 
           get :index, page: 1, per_page: 2
@@ -47,7 +47,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
   describe 'GET #show' do
     it 'assigns extra course info' do
-      course = FactoryGirl.create :course_profile_course, :without_ecosystem, name: 'Hello World'
+      course = FactoryBot.create :course_profile_course, :without_ecosystem, name: 'Hello World'
 
       get :show, id: course.id
 
@@ -72,7 +72,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     end
 
     it 'disallows non-customer-service authenticated visitors' do
-      controller.sign_in(FactoryGirl.create(:user))
+      controller.sign_in(FactoryBot.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { get :show, id: 1 }.to raise_error(SecurityTransgression)

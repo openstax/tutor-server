@@ -2,22 +2,22 @@ require 'rails_helper'
 
 RSpec.describe GetHistory, type: :routine, speed: :slow do
   before(:all) do
-    homework_assistant = FactoryGirl.create(
+    homework_assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
     )
 
-    period = FactoryGirl.create :course_membership_period
+    period = FactoryBot.create :course_membership_period
     course = period.course
 
-    user = FactoryGirl.create :user
+    user = FactoryBot.create :user
 
     @role = AddUserAsPeriodStudent[user: user, period: period]
 
-    reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: course, number_of_students: 0)
+    reading_plan_1 = FactoryBot.create(:tasked_task_plan, owner: course, number_of_students: 0)
     page_ids_1 = reading_plan_1.settings['page_ids']
     pages_1 = Content::Models::Page.where(id: page_ids_1).to_a
     homework_exercises_1 = pages_1.flat_map(&:exercises).sort_by(&:uid).first(5)
-    homework_plan_1 = FactoryGirl.create(
+    homework_plan_1 = FactoryBot.create(
       :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
@@ -27,11 +27,11 @@ RSpec.describe GetHistory, type: :routine, speed: :slow do
                                      'exercises_count_dynamic' => 2 }
     )
 
-    reading_plan_2 = FactoryGirl.create(:tasked_task_plan, owner: course, number_of_students: 0)
+    reading_plan_2 = FactoryBot.create(:tasked_task_plan, owner: course, number_of_students: 0)
     page_ids_2 = reading_plan_2.settings['page_ids']
     pages_2 = Content::Models::Page.where(id: page_ids_2).to_a
     homework_exercises_2 = pages_2.flat_map(&:exercises).sort_by(&:uid).first(4)
-    homework_plan_2 = FactoryGirl.create(
+    homework_plan_2 = FactoryBot.create(
       :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
@@ -41,11 +41,11 @@ RSpec.describe GetHistory, type: :routine, speed: :slow do
                                      'exercises_count_dynamic' => 3 }
     )
 
-    reading_plan_3 = FactoryGirl.create(:tasked_task_plan, owner: course, number_of_students: 0)
+    reading_plan_3 = FactoryBot.create(:tasked_task_plan, owner: course, number_of_students: 0)
     page_ids_3 = reading_plan_3.settings['page_ids']
     pages_3 = Content::Models::Page.where(id: page_ids_3).to_a
     homework_exercises_3 = pages_3.flat_map(&:exercises).sort_by(&:uid).first(3)
-    homework_plan_3 = FactoryGirl.create(
+    homework_plan_3 = FactoryBot.create(
       :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
@@ -96,7 +96,7 @@ RSpec.describe GetHistory, type: :routine, speed: :slow do
   context "when there are more than GetHistory::TASK_BATCH_SIZE tasks" do
     before do
       stub_const("GetHistory::TASK_BATCH_SIZE", 3) # instead of 10k for a faster spec
-      ecosystem = FactoryGirl.create :content_ecosystem
+      ecosystem = FactoryBot.create :content_ecosystem
 
       tasks = GetHistory::TASK_BATCH_SIZE.times.map do |index|
         task = Tasks::Models::Task.new(

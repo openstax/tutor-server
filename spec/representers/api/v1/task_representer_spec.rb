@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TaskRepresenter, type: :representer do
-  let(:ecosystem) { FactoryGirl.create(:content_ecosystem) }
+  let(:ecosystem) { FactoryBot.create(:content_ecosystem) }
 
-  let(:task)      { FactoryGirl.create(:tasks_task, ecosystem: ecosystem) }
+  let(:task)      { FactoryBot.create(:tasks_task, ecosystem: ecosystem) }
 
   it 'includes the last_worked_at property' do
     time = Time.current

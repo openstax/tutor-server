@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'DistrictTermsWork' do
   scenario 'normal creation, no deletion or editing' do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
     visit admin_districts_path
@@ -40,9 +40,9 @@ RSpec.feature 'DistrictTermsWork' do
     check 'targeted_contract_is_proxy_signed'
     click_button 'Submit'
 
-    user   = FactoryGirl.create :user
+    user   = FactoryBot.create :user
     course = CourseProfile::Models::Course.last
-    period = FactoryGirl.create :course_membership_period, course: course
+    period = FactoryBot.create :course_membership_period, course: course
 
     # AddUserAsPeriodStudent[user: user, period: period]
 
@@ -57,10 +57,10 @@ RSpec.feature 'DistrictTermsWork' do
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
     school_d = SchoolDistrict::CreateSchool[name: 'SchoolD', district: district_b]
 
-    course_e = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseE',
+    course_e = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseE',
                                                                           school: school_c
 
-    course_f = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseF',
+    course_f = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseF',
                                                                           school: school_d
 
     FinePrint::Contract.create(
@@ -75,7 +75,7 @@ RSpec.feature 'DistrictTermsWork' do
       content: 'blah'
     ).publish
 
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
     create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name)
@@ -108,21 +108,21 @@ RSpec.feature 'DistrictTermsWork' do
   scenario 'blah' do
     district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
-    course_e = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseE',
+    course_e = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseE',
                                                                           school: school_c
-    course_f = FactoryGirl.create :course_profile_course, :process_school_change, name: 'CourseF'
+    course_f = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseF'
 
     FinePrint::Contract.create(name: 'district_a_terms', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'privacy_policy', title: 'a', content: 'a').publish
 
-    user_1 = FactoryGirl.create(:user, skip_terms_agreement: true)
-    user_2 = FactoryGirl.create(:user, skip_terms_agreement:true)
+    user_1 = FactoryBot.create(:user, skip_terms_agreement: true)
+    user_2 = FactoryBot.create(:user, skip_terms_agreement:true)
 
     AddUserAsCourseTeacher[user: user_1, course: course_e]
     AddUserAsCourseTeacher[user: user_2, course: course_f]
 
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
 
     stub_current_user(admin)
     create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name,

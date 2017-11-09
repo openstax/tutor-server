@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user_profile, aliases: [:profile], class: 'User::Models::Profile' do
     transient do
       username { SecureRandom.hex.to_s }
@@ -11,7 +11,7 @@ FactoryGirl.define do
     end
 
     after(:build) do |profile, evaluator|
-      profile.account ||= FactoryGirl.build(:openstax_accounts_account,
+      profile.account ||= FactoryBot.build(:openstax_accounts_account,
                                             username: evaluator.username,
                                             first_name: evaluator.first_name,
                                             last_name: evaluator.last_name,
@@ -22,19 +22,19 @@ FactoryGirl.define do
 
     trait :administrator do
       after(:build) do |profile|
-        profile.administrator = FactoryGirl.build(:user_administrator, profile: profile)
+        profile.administrator = FactoryBot.build(:user_administrator, profile: profile)
       end
     end
 
     trait :customer_service do
       after(:build) do |profile|
-        profile.customer_service = FactoryGirl.build(:user_customer_service, profile: profile)
+        profile.customer_service = FactoryBot.build(:user_customer_service, profile: profile)
       end
     end
 
     trait :content_analyst do
       after(:build) do |profile|
-        profile.content_analyst = FactoryGirl.build(:user_content_analyst, profile: profile)
+        profile.content_analyst = FactoryBot.build(:user_content_analyst, profile: profile)
       end
     end
 

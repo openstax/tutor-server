@@ -2,18 +2,18 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, version: :v1 do
 
-  let!(:available_offering_1)         { FactoryGirl.create :catalog_offering, number: 2 }
-  let!(:available_offering_2)         { FactoryGirl.create :catalog_offering, number: 1 }
-  let!(:unavailable_offering)         { FactoryGirl.create :catalog_offering, is_available: false }
+  let!(:available_offering_1)         { FactoryBot.create :catalog_offering, number: 2 }
+  let!(:available_offering_2)         { FactoryBot.create :catalog_offering, number: 1 }
+  let!(:unavailable_offering)         { FactoryBot.create :catalog_offering, is_available: false }
 
   let(:anon)                          { User::User.anonymous }
   let(:verified_faculty)              do
-    FactoryGirl.create(:user).tap do |vf|
+    FactoryBot.create(:user).tap do |vf|
       vf.account.update_attribute :faculty_status, :confirmed_faculty
     end
   end
   let(:verified_faculty_access_token) do
-    FactoryGirl.create :doorkeeper_access_token, resource_owner_id: verified_faculty.id
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: verified_faculty.id
   end
 
   context '#index' do

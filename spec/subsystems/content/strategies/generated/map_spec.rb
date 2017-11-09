@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Content::Strategies::Generated::Map do
-  let(:old_content_exercise)         { FactoryGirl.create :content_exercise }
+  let(:old_content_exercise)         { FactoryBot.create :content_exercise }
   let!(:old_content_pool) do
     pool = old_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [old_content_exercise.id])
     pool
   end
 
-  let(:new_content_exercise)         { FactoryGirl.create :content_exercise }
+  let(:new_content_exercise)         { FactoryBot.create :content_exercise }
   let!(:new_content_pool) do
     pool = new_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [new_content_exercise.id])
@@ -16,16 +16,16 @@ RSpec.describe Content::Strategies::Generated::Map do
   end
 
   let(:another_old_content_chapter)  {
-    FactoryGirl.create :content_chapter, book: old_content_exercise.book
+    FactoryBot.create :content_chapter, book: old_content_exercise.book
   }
   let!(:another_old_content_page)    {
-    FactoryGirl.create :content_page, chapter: another_old_content_chapter
+    FactoryBot.create :content_page, chapter: another_old_content_chapter
   }
   let(:another_old_content_exercise) {
-    FactoryGirl.create :content_exercise, page: another_old_content_page
+    FactoryBot.create :content_exercise, page: another_old_content_page
   }
   let!(:another_old_content_page_2)  {
-    FactoryGirl.create :content_page, chapter: old_content_exercise.chapter
+    FactoryBot.create :content_page, chapter: old_content_exercise.chapter
   }
   let!(:another_old_content_pool) do
     pool = another_old_content_exercise.page.all_exercises_pool
@@ -34,16 +34,16 @@ RSpec.describe Content::Strategies::Generated::Map do
   end
 
   let(:another_new_content_chapter)  {
-    FactoryGirl.create :content_chapter, book: new_content_exercise.book
+    FactoryBot.create :content_chapter, book: new_content_exercise.book
   }
   let!(:another_new_content_page)    {
-    FactoryGirl.create :content_page, chapter: another_new_content_chapter
+    FactoryBot.create :content_page, chapter: another_new_content_chapter
   }
   let(:another_new_content_exercise) {
-    FactoryGirl.create :content_exercise, page: another_new_content_page
+    FactoryBot.create :content_exercise, page: another_new_content_page
   }
   let!(:another_new_content_page_2)  {
-    FactoryGirl.create :content_page, chapter: new_content_exercise.chapter
+    FactoryBot.create :content_page, chapter: new_content_exercise.chapter
   }
   let!(:another_new_content_pool) do
     pool = another_new_content_exercise.page.all_exercises_pool
@@ -52,58 +52,58 @@ RSpec.describe Content::Strategies::Generated::Map do
   end
 
   let!(:old_lo_tag)                  {
-    FactoryGirl.create :content_tag, ecosystem: old_content_exercise.ecosystem,
+    FactoryBot.create :content_tag, ecosystem: old_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo01'
   }
   let!(:old_exercise_tag)            {
-    FactoryGirl.create :content_exercise_tag, exercise: old_content_exercise,
+    FactoryBot.create :content_exercise_tag, exercise: old_content_exercise,
                                               tag: old_lo_tag
   }
   let!(:old_page_tag)                {
-    FactoryGirl.create :content_page_tag, page: old_content_exercise.page,
+    FactoryBot.create :content_page_tag, page: old_content_exercise.page,
                                           tag: old_lo_tag
   }
 
   let!(:new_lo_tag)                  {
-    FactoryGirl.create :content_tag, ecosystem: new_content_exercise.ecosystem,
+    FactoryBot.create :content_tag, ecosystem: new_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo01'
   }
   let!(:new_exercise_tag)            {
-    FactoryGirl.create :content_exercise_tag, exercise: new_content_exercise,
+    FactoryBot.create :content_exercise_tag, exercise: new_content_exercise,
                                               tag: new_lo_tag
   }
   let!(:new_page_tag)                {
-    FactoryGirl.create :content_page_tag, page: new_content_exercise.page,
+    FactoryBot.create :content_page_tag, page: new_content_exercise.page,
                                           tag: new_lo_tag
   }
 
   let!(:another_old_lo_tag)          {
-    FactoryGirl.create :content_tag, ecosystem: old_content_exercise.ecosystem,
+    FactoryBot.create :content_tag, ecosystem: old_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo02'
   }
   let!(:another_old_exercise_tag)    {
-    FactoryGirl.create :content_exercise_tag, exercise: another_old_content_exercise,
+    FactoryBot.create :content_exercise_tag, exercise: another_old_content_exercise,
                                               tag: another_old_lo_tag
   }
   let!(:another_old_page_tag)        {
-    FactoryGirl.create :content_page_tag, page: another_old_content_exercise.page,
+    FactoryBot.create :content_page_tag, page: another_old_content_exercise.page,
                                           tag: another_old_lo_tag
   }
 
   let!(:another_new_lo_tag)          {
-    FactoryGirl.create :content_tag, ecosystem: new_content_exercise.ecosystem,
+    FactoryBot.create :content_tag, ecosystem: new_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo02'
   }
   let!(:another_new_exercise_tag)    {
-    FactoryGirl.create :content_exercise_tag, exercise: another_new_content_exercise,
+    FactoryBot.create :content_exercise_tag, exercise: another_new_content_exercise,
                                               tag: another_new_lo_tag
   }
   let!(:another_new_page_tag)        {
-    FactoryGirl.create :content_page_tag, page: another_new_content_exercise.page,
+    FactoryBot.create :content_page_tag, page: another_new_content_exercise.page,
                                           tag: another_new_lo_tag
   }
 

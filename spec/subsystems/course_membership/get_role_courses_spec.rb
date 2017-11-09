@@ -1,18 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::GetRoleCourses do
-  let(:course_1)        { FactoryGirl.create :course_profile_course }
-  let(:course_1_period) { FactoryGirl.create :course_membership_period, course: course_1 }
+  let(:course_1)        { FactoryBot.create :course_profile_course }
+  let(:course_1_period) { FactoryBot.create :course_membership_period, course: course_1 }
 
-  let(:course_2)        { FactoryGirl.create :course_profile_course }
-  let(:course_2_period) { FactoryGirl.create :course_membership_period, course: course_2 }
+  let(:course_2)        { FactoryBot.create :course_profile_course }
+  let(:course_2_period) { FactoryBot.create :course_membership_period, course: course_2 }
 
-  let(:course_3)        { FactoryGirl.create :course_profile_course }
-  let(:course_3_period) { FactoryGirl.create :course_membership_period, course: course_3 }
+  let(:course_3)        { FactoryBot.create :course_profile_course }
+  let(:course_3_period) { FactoryBot.create :course_membership_period, course: course_3 }
 
-  let(:role_a) { FactoryGirl.create :entity_role }
-  let(:role_b) { FactoryGirl.create :entity_role }
-  let(:role_c) { FactoryGirl.create :entity_role }
+  let(:role_a) { FactoryBot.create :entity_role }
+  let(:role_b) { FactoryBot.create :entity_role }
+  let(:role_c) { FactoryBot.create :entity_role }
 
   before do
     CourseMembership::AddTeacher[course: course_1,        role: role_a]

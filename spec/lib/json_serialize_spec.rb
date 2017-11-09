@@ -4,7 +4,7 @@ RSpec.describe JsonSerialize, type: :lib do
   context 'serializes and deserializes' do
     context 'single' do
       it 'hashes' do
-        instance = FactoryGirl.build :tasks_task
+        instance = FactoryBot.build :tasks_task
         instance.spy = {}
         expect(instance.spy).to eq({})
 
@@ -43,7 +43,7 @@ RSpec.describe JsonSerialize, type: :lib do
 
     context 'arrays of' do
       it 'integers' do
-        instance = FactoryGirl.build :tasks_tasked_reading
+        instance = FactoryBot.build :tasks_tasked_reading
         instance.book_location = []
         expect(instance.book_location).to eq []
 
@@ -114,7 +114,7 @@ RSpec.describe JsonSerialize, type: :lib do
       end
 
       it 'hashes' do
-        instance = FactoryGirl.create :content_book,
+        instance = FactoryBot.create :content_book,
                                       reading_processing_instructions: [{ testing: [1, 2, 3] }]
         expect(instance.reading_processing_instructions).to eq [{ 'testing' => [1, 2, 3] }]
 

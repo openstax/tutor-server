@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskCache, type: :model do
-  subject(:task_page_cache) { FactoryGirl.create :tasks_task_cache }
+  subject(:task_page_cache) { FactoryBot.create :tasks_task_cache }
 
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:ecosystem) }

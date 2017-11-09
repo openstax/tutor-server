@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskingPlan, type: :model do
-  subject(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan }
+  subject(:tasking_plan) { FactoryBot.create :tasks_tasking_plan }
 
   let(:task_plan)       { tasking_plan.task_plan }
   let(:target)          { tasking_plan.target }
@@ -53,14 +53,14 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   it "requires target to be unique for the task_plan" do
     expect(tasking_plan).to be_valid
 
-    expect(FactoryGirl.build(:tasks_tasking_plan,
+    expect(FactoryBot.build(:tasks_tasking_plan,
                              task_plan: task_plan,
                              target: target)).to_not be_valid
   end
 
   it "does not allow owner to assign to a period in another course" do
-    period_1 = FactoryGirl.create(:course_membership_period, course: course)
-    period_2 = FactoryGirl.create(:course_membership_period)
+    period_1 = FactoryBot.create(:course_membership_period, course: course)
+    period_2 = FactoryBot.create(:course_membership_period)
 
     expect(tasking_plan).to be_valid
     tasking_plan.target = period_1
@@ -70,7 +70,7 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   end
 
   it "validates even if the period has been deleted" do
-    period = FactoryGirl.create(:course_membership_period, course: course)
+    period = FactoryBot.create(:course_membership_period, course: course)
 
     expect(tasking_plan).to be_valid
     tasking_plan.target = period

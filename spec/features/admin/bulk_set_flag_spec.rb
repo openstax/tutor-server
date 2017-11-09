@@ -3,12 +3,12 @@ require 'feature_js_helper'
 
 RSpec.feature 'Bulk set course flag', js: true do
   before do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
-    @course_1 = FactoryGirl.create :course_profile_course, year: 2016
-    @course_2 = FactoryGirl.create :course_profile_course, year: 2017
-    @course_3 = FactoryGirl.create :course_profile_course, year: 2017
+    @course_1 = FactoryBot.create :course_profile_course, year: 2016
+    @course_2 = FactoryBot.create :course_profile_course, year: 2017
+    @course_3 = FactoryBot.create :course_profile_course, year: 2017
   end
 
   scenario 'select all on page with no query' do

@@ -1,6 +1,6 @@
 require_relative '../../mocks/assistants/dummy_assistant'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
       duration                  1.week

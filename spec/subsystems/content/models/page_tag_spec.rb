@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::PageTag, type: :model do
-  subject { FactoryGirl.create :content_page_tag }
+  subject { FactoryBot.create :content_page_tag }
 
   it { is_expected.to belong_to(:page) }
   it { is_expected.to belong_to(:tag) }

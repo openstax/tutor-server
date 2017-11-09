@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe PushSalesforceCourseStats, type: :routine do
 
   context "#best_sf_contact_id_for_course" do
-    let(:course)        { FactoryGirl.create :course_profile_course }
-    let(:user_no_sf)    { FactoryGirl.create(:user) }
-    let(:user_sf_a)     { FactoryGirl.create(:user, salesforce_contact_id: 'a') }
-    let(:user_sf_b)     { FactoryGirl.create(:user, salesforce_contact_id: 'b') }
+    let(:course)        { FactoryBot.create :course_profile_course }
+    let(:user_no_sf)    { FactoryBot.create(:user) }
+    let(:user_sf_a)     { FactoryBot.create(:user, salesforce_contact_id: 'a') }
+    let(:user_sf_b)     { FactoryBot.create(:user, salesforce_contact_id: 'b') }
 
     subject { instance.best_sf_contact_id_for_course(course) }
 
@@ -40,7 +40,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
   end
 
   context "#base_year_for_course" do
-    let(:course) { FactoryGirl.create :course_profile_course, term: @term, year: @year }
+    let(:course) { FactoryBot.create :course_profile_course, term: @term, year: @year }
     subject { instance.base_year_for_course(course) }
 
     it "gives 2016 for Fall 2016" do
@@ -69,7 +69,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
   end
 
   context '#salesforce_school_year_for_course' do
-    let(:course) { FactoryGirl.create :course_profile_course, term: @term, year: @year }
+    let(:course) { FactoryBot.create :course_profile_course, term: @term, year: @year }
     subject { instance.salesforce_school_year_for_course(course) }
 
     it "gives 2016 for Fall 2016" do
@@ -99,10 +99,10 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
   context "#applicable_courses" do
     it 'limits by ends_at' do
-      a = FactoryGirl.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
+      a = FactoryBot.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
                                                      ends_at: Chronic.parse("6/30/2017"),
                                                      term: "spring")
-      b = FactoryGirl.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
+      b = FactoryBot.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
                                                      ends_at: Chronic.parse("7/2/2017"),
                                                      term: "spring")
 
@@ -116,10 +116,10 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     end
 
     it 'excludes excluded courses' do
-      a = FactoryGirl.create(:course_profile_course, consistent_times: true,
+      a = FactoryBot.create(:course_profile_course, consistent_times: true,
                                                      term: :fall, year: 2018,
                                                      is_excluded_from_salesforce: true)
-      b = FactoryGirl.create(:course_profile_course, consistent_times: true,
+      b = FactoryBot.create(:course_profile_course, consistent_times: true,
                                                      term: :fall, year: 2018)
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
@@ -128,10 +128,10 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     end
 
     it 'excludes test courses' do
-      a = FactoryGirl.create(:course_profile_course, consistent_times: true,
+      a = FactoryBot.create(:course_profile_course, consistent_times: true,
                                                      term: :fall, year: 2018,
                                                      is_test: true)
-      b = FactoryGirl.create(:course_profile_course, consistent_times: true,
+      b = FactoryBot.create(:course_profile_course, consistent_times: true,
                                                      term: :fall, year: 2018)
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do

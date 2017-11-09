@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Content::Routines::TagResource, type: :routine do
-  let(:tag_1)    { FactoryGirl.create :content_tag }
-  let(:tag_2)    { FactoryGirl.create :content_tag }
-  let(:lo_tag_1) { FactoryGirl.create :content_tag, tag_type: :lo }
-  let(:lo_tag_2) { FactoryGirl.create :content_tag, tag_type: :lo }
+  let(:tag_1)    { FactoryBot.create :content_tag }
+  let(:tag_2)    { FactoryBot.create :content_tag }
+  let(:lo_tag_1) { FactoryBot.create :content_tag, tag_type: :lo }
+  let(:lo_tag_2) { FactoryBot.create :content_tag, tag_type: :lo }
 
   resource_definitions = [
     {
@@ -21,7 +21,7 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
 
   resource_definitions.each do |resource_definition|
     it "assigns the given Tags to the given #{resource_definition.class_name}" do
-      resource = FactoryGirl.create resource_definition.factory
+      resource = FactoryBot.create resource_definition.factory
 
       result = nil
       expect {

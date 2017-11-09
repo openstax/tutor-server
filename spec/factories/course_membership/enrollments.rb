@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :course_membership_enrollment, class: '::CourseMembership::Models::Enrollment' do
     association :period, factory: :course_membership_period
 

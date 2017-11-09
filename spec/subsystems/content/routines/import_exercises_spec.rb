@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   context 'with a single tag' do
-    let(:page)      { FactoryGirl.create(:content_page) }
+    let(:page)      { FactoryBot.create(:content_page) }
     let(:ecosystem) { page.book.ecosystem }
 
     before do
@@ -33,7 +33,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
   end
 
   context 'with multiple tags' do
-    let(:page)      { FactoryGirl.create(:content_page) }
+    let(:page)      { FactoryBot.create(:content_page) }
     let(:ecosystem) { page.book.ecosystem }
 
     before do
@@ -125,7 +125,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     end
 
     before(:all) do
-      chapter = FactoryGirl.create :content_chapter
+      chapter = FactoryBot.create :content_chapter
 
       @ecosystem = chapter.book.ecosystem
 
@@ -170,7 +170,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
   context 'incoming free response exercises' do
     before(:all) do
-      chapter = FactoryGirl.create :content_chapter
+      chapter = FactoryBot.create :content_chapter
       @ecosystem = chapter.book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509',

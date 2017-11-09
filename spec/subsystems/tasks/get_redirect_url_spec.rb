@@ -1,23 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::GetRedirectUrl, type: :routine do
-  let(:course) { FactoryGirl.create :course_profile_course }
-  let(:period) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course) { FactoryBot.create :course_profile_course }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
 
-  let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let(:task_plan) { FactoryBot.create(:tasks_task_plan, owner: course) }
   let(:task_plan_gid) { task_plan.to_global_id.to_s }
 
-  let(:task) { FactoryGirl.create(:tasks_task, task_plan: task_plan) }
+  let(:task) { FactoryBot.create(:tasks_task, task_plan: task_plan) }
 
-  let(:student)       { FactoryGirl.create(:user) }
+  let(:student)       { FactoryBot.create(:user) }
   let!(:student_role) { AddUserAsPeriodStudent[period: period, user: student] }
 
-  let(:teacher)       { FactoryGirl.create(:user) }
+  let(:teacher)       { FactoryBot.create(:user) }
   let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
 
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
-  let!(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task) }
+  let!(:tasking) { FactoryBot.create(:tasks_tasking, role: student_role, task: task) }
 
   it 'returns the edit task plan page for teachers' do
     result = described_class.call(gid: task_plan_gid, user: teacher)

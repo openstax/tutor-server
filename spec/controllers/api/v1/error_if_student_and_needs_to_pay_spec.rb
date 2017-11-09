@@ -19,20 +19,20 @@ RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay', type:
 
 
 
-  let(:application)       { FactoryGirl.create :doorkeeper_application }
-  let(:course)            { FactoryGirl.create :course_profile_course }
-  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
+  let(:application)       { FactoryBot.create :doorkeeper_application }
+  let(:course)            { FactoryBot.create :course_profile_course }
+  let(:period)            { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)      { FactoryGirl.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
-  let(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+  let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: student_user.id }
 
 
-  let(:non_student_user)      { FactoryGirl.create(:user) }
-  let(:non_student_token)     { FactoryGirl.create :doorkeeper_access_token,
+  let(:non_student_user)      { FactoryBot.create(:user) }
+  let(:non_student_token)     { FactoryBot.create :doorkeeper_access_token,
                                                    application: application,
                                                    resource_owner_id: non_student_user.id }
 

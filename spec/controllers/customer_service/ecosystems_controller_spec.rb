@@ -2,11 +2,11 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe CustomerService::EcosystemsController, type: :controller do
-  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
 
-  let(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
+  let(:book_1) { FactoryBot.create :content_book, title: 'Physics', version: '1' }
   let!(:ecosystem_1) { Content::Ecosystem.find(book_1.ecosystem.id) }
-  let(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
+  let(:book_2) { FactoryBot.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
 
   before { controller.sign_in(customer_service) }

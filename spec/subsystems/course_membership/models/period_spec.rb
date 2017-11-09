@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Period, type: :model do
-  subject!(:period) { FactoryGirl.create :course_membership_period }
+  subject!(:period) { FactoryBot.create :course_membership_period }
 
   it { is_expected.to belong_to(:course) }
 
@@ -18,7 +18,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }
 
   it 'can be deleted and restored even if it has active students' do
-    student_user = FactoryGirl.create(:user)
+    student_user = FactoryBot.create(:user)
     AddUserAsPeriodStudent[period: period, user: student_user]
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
@@ -38,7 +38,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
 
   it 'does not collide in name with deleted periods' do
     expect{ period.destroy! }.to change{ period.reload.archived? }.from(false).to(true)
-    new_period = FactoryGirl.create :course_membership_period, course: period.course,
+    new_period = FactoryBot.create :course_membership_period, course: period.course,
                                                                name: period.name
     expect(new_period).to be_valid
     expect(new_period).to be_persisted

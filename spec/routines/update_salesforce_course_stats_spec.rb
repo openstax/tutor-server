@@ -6,24 +6,24 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
     # Includes 1 deleted period, 2 orphaned periods
     # (one of which requires a new SF object), 1 dropped student
 
-    let(:course_1) { FactoryGirl.create :course_profile_course }
+    let(:course_1) { FactoryBot.create :course_profile_course }
 
-    let(:period_1) { FactoryGirl.create :course_membership_period, course: course_1 }
-    let(:period_2) { FactoryGirl.create :course_membership_period, course: course_1 }
-    let(:period_3) { FactoryGirl.create :course_membership_period, course: course_1 }
+    let(:period_1) { FactoryBot.create :course_membership_period, course: course_1 }
+    let(:period_2) { FactoryBot.create :course_membership_period, course: course_1 }
+    let(:period_3) { FactoryBot.create :course_membership_period, course: course_1 }
 
     let!(:student_1_role) do
-      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1]
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period_1]
     end
     let!(:student_2_role) do
-      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2]
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period_2]
     end
     let!(:student_3_role) do
-      AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_2]
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period_2]
     end
 
     before(:each) do
-      3.times { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course_1] }
+      3.times { AddUserAsCourseTeacher[user: FactoryBot.create(:user), course: course_1] }
 
       CourseMembership::InactivateStudent[student: student_3_role.student]
 
@@ -42,10 +42,10 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
 
       allow_any_instance_of(UpdateSalesforceCourseStats).to receive(:attached_records).and_return(
         [
-          FactoryGirl.create(:salesforce_attached_record,
+          FactoryBot.create(:salesforce_attached_record,
                              tutor_object: period_1.to_model,
                              salesforce_object: @existing_sf_object).wrap,
-          FactoryGirl.create(:salesforce_attached_record,
+          FactoryBot.create(:salesforce_attached_record,
                              tutor_object: course_1,
                              salesforce_object: @existing_sf_object).wrap,
         ]
@@ -138,10 +138,10 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "#attach_orphaned_periods_to_sf_objects" do
-    let(:course)          { FactoryGirl.create :course_profile_course }
-    let(:period_1)        { FactoryGirl.create :course_membership_period, course: course }
-    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
-    let(:period_3)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:course)          { FactoryBot.create :course_profile_course }
+    let(:period_1)        { FactoryBot.create :course_membership_period, course: course }
+    let(:period_2)        { FactoryBot.create :course_membership_period, course: course }
+    let(:period_3)        { FactoryBot.create :course_membership_period, course: course }
     let(:sf_object)       { OpenStruct.new(changed?: true, save: nil) }
     let(:attached_record) { OpenStruct.new(record: sf_object) }
 
@@ -217,15 +217,15 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "#write_stats_to_salesforce" do
-    let(:course)          { FactoryGirl.create :course_profile_course }
-    let(:period_1)        { FactoryGirl.create :course_membership_period, course: course }
-    let(:period_2)        { FactoryGirl.create :course_membership_period, course: course }
+    let(:course)          { FactoryBot.create :course_profile_course }
+    let(:period_1)        { FactoryBot.create :course_membership_period, course: course }
+    let(:period_2)        { FactoryBot.create :course_membership_period, course: course }
     let(:record)          { OpenStruct.new(changed?: true, save: nil) }
     let(:attached_record) { OpenStruct.new(record: record) }
 
     before(:each) do
-      @s1, @s2, @s3 = 3.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period_1] }
-      2.times { AddUserAsCourseTeacher[user: FactoryGirl.create(:user), course: course] }
+      @s1, @s2, @s3 = 3.times.map { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period_1] }
+      2.times { AddUserAsCourseTeacher[user: FactoryBot.create(:user), course: course] }
 
       stub_organizer do |organizer|
         allow(organizer).to receive(:each).and_yield(record, course, [period_1.to_model, period_2.to_model])
@@ -320,12 +320,12 @@ RSpec.describe UpdateSalesforceCourseStats, type: :routine do
   end
 
   context "preloading deleted periods" do
-    let(:course_1) { FactoryGirl.create :course_profile_course }
-    let(:period_1) { FactoryGirl.create :course_membership_period, course: course_1 }
-    let(:period_2) { FactoryGirl.create :course_membership_period, course: course_1 }
+    let(:course_1) { FactoryBot.create :course_profile_course }
+    let(:period_1) { FactoryBot.create :course_membership_period, course: course_1 }
+    let(:period_2) { FactoryBot.create :course_membership_period, course: course_1 }
 
-    let(:user_1)   { FactoryGirl.create :user }
-    let(:user_2)   { FactoryGirl.create :user }
+    let(:user_1)   { FactoryBot.create :user }
+    let(:user_2)   { FactoryBot.create :user }
 
     let!(:student_1_role) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
     let(:enrollment_1)    { student_1_role.student.latest_enrollment }

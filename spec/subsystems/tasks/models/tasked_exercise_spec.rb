@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskedExercise, type: :model do
-  let(:content_exercise)    { FactoryGirl.create :content_exercise }
+  let(:content_exercise)    { FactoryBot.create :content_exercise }
   subject(:tasked_exercise) do
-    FactoryGirl.create :tasks_tasked_exercise, exercise: content_exercise
+    FactoryBot.create :tasks_tasked_exercise, exercise: content_exercise
   end
 
   it { is_expected.to validate_presence_of(:url) }

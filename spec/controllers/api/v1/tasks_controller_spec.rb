@@ -2,37 +2,37 @@ require "rails_helper"
 
 RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
-  let(:course)            { FactoryGirl.create :course_profile_course }
-  let(:period)            { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)            { FactoryBot.create :course_profile_course }
+  let(:period)            { FactoryBot.create :course_membership_period, course: course }
 
-  let(:task_plan_1)       { FactoryGirl.create :tasks_task_plan, owner: course }
-  let(:task_1)             { FactoryGirl.create :tasks_task, title: 'A Task Title',
+  let(:task_plan_1)       { FactoryBot.create :tasks_task_plan, owner: course }
+  let(:task_1)             { FactoryBot.create :tasks_task, title: 'A Task Title',
                                                 task_plan: task_plan_1,
                                                 step_types: [:tasks_tasked_reading,
                                                              :tasks_tasked_exercise] }
 
-  let(:application)        { FactoryGirl.create :doorkeeper_application }
-  let(:user_1)             { FactoryGirl.create(:user) }
-  let(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
+  let(:application)        { FactoryBot.create :doorkeeper_application }
+  let(:user_1)             { FactoryBot.create(:user) }
+  let(:user_1_token)       { FactoryBot.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: user_1.id }
 
   let!(:user_1_role)        { AddUserAsPeriodStudent[user: user_1, period: period] }
 
-  let(:user_2)             { FactoryGirl.create(:user) }
-  let(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_2)             { FactoryBot.create(:user) }
+  let(:user_2_token)       { FactoryBot.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: user_2.id }
 
-  let(:userless_token)     { FactoryGirl.create :doorkeeper_access_token,
+  let(:userless_token)     { FactoryBot.create :doorkeeper_access_token,
                                                 application: application }
 
-  let!(:tasking_1)         { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task_1 }
+  let!(:tasking_1)         { FactoryBot.create :tasks_tasking, role: user_1_role, task: task_1 }
 
-  let(:teacher_user)       { FactoryGirl.create(:user) }
+  let(:teacher_user)       { FactoryBot.create(:user) }
   let!(:teacher_role)      { AddUserAsCourseTeacher[course: course,
                                                     user: teacher_user] }
-  let(:teacher_user_token) { FactoryGirl.create :doorkeeper_access_token,
+  let(:teacher_user_token) { FactoryBot.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: teacher_user.id }
 

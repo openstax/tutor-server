@@ -1,6 +1,6 @@
 require 'ims/lis'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :launch_request, class: OpenStruct do
     user_id { SecureRandom.hex(10) }
     full_name { Faker::Name.name }

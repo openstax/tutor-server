@@ -2,49 +2,49 @@ require "rails_helper"
 
 RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
 
-  let(:course)           { FactoryGirl.create :course_profile_course }
-  let(:period)           { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)           { FactoryBot.create :course_profile_course }
+  let(:period)           { FactoryBot.create :course_membership_period, course: course }
 
-  let(:application)      { FactoryGirl.create :doorkeeper_application }
-  let(:user_1)           { FactoryGirl.create :user }
+  let(:application)      { FactoryBot.create :doorkeeper_application }
+  let(:user_1)           { FactoryBot.create :user }
   let(:user_1_token)     do
-    FactoryGirl.create :doorkeeper_access_token, application: application,
+    FactoryBot.create :doorkeeper_access_token, application: application,
                                                  resource_owner_id: user_1.id
   end
   let(:user_1_role)      { AddUserAsPeriodStudent[user: user_1, period: period] }
 
-  let(:user_2)           { FactoryGirl.create(:user) }
+  let(:user_2)           { FactoryBot.create(:user) }
   let(:user_2_token)     do
-    FactoryGirl.create :doorkeeper_access_token, application: application,
+    FactoryBot.create :doorkeeper_access_token, application: application,
                                                  resource_owner_id: user_2.id
   end
 
-  let(:userless_token)   { FactoryGirl.create :doorkeeper_access_token, application: application }
+  let(:userless_token)   { FactoryBot.create :doorkeeper_access_token, application: application }
 
   let(:task_step)        do
-    FactoryGirl.create :tasks_task_step, title: 'title', url: 'http://u.rl', content: 'content'
+    FactoryBot.create :tasks_task_step, title: 'title', url: 'http://u.rl', content: 'content'
   end
 
   let(:task) { task_step.task.reload }
 
-  let!(:tasking) { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task }
+  let!(:tasking) { FactoryBot.create :tasks_tasking, role: user_1_role, task: task }
 
   let!(:tasked_exercise) do
-    te = FactoryGirl.build :tasks_tasked_exercise
+    te = FactoryBot.build :tasks_tasked_exercise
     te.task_step.task = task
     te.save!
     te
   end
 
-  let(:lo) { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
-  let(:pp) { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
+  let(:lo) { FactoryBot.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let(:pp) { FactoryBot.create :content_tag, value: 'os-practice-problems' }
 
-  let(:related_exercise) { FactoryGirl.create :content_exercise, tags: [lo.value, pp.value] }
+  let(:related_exercise) { FactoryBot.create :content_exercise, tags: [lo.value, pp.value] }
 
   let!(:tasked_exercise_with_related) do
     content = OpenStax::Exercises::V1::FakeClient.new_exercise_hash(tags: [lo.value]).to_json
-    ce = FactoryGirl.build :content_exercise, content: content
-    FactoryGirl.build(:tasks_tasked_exercise, exercise: ce).tap do |te|
+    ce = FactoryBot.build :content_exercise, content: content
+    FactoryBot.build(:tasks_tasked_exercise, exercise: ce).tap do |te|
       te.task_step.task = task
       te.task_step.related_exercise_ids = [related_exercise.id]
       te.save!
@@ -287,12 +287,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples
+  # TODO: could replace with FactoryBot calls like in TaskedExercise factory examples
   def create_tasked(type, owner)
     # Make sure the type has the tasks_ prefix
     type = type.to_s.starts_with?("tasks_") ? type : "tasks_#{type}".to_sym
-    tasked = FactoryGirl.create(type)
-    tasking = FactoryGirl.create(:tasks_tasking, role: owner, task: tasked.task_step.task)
+    tasked = FactoryBot.create(type)
+    tasking = FactoryBot.create(:tasks_tasking, role: owner, task: tasked.task_step.task)
     tasked
   end
 

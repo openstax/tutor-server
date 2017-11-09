@@ -3,24 +3,24 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
-  let(:user_1)         { FactoryGirl.create(:user) }
-  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_1.id }
+  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id }
 
-  let(:user_2)         { FactoryGirl.create(:user) }
-  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user_2.id }
+  let(:user_2)         { FactoryBot.create(:user) }
+  let(:user_2_token)   { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id }
 
-  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token) { FactoryBot.create :doorkeeper_access_token }
 
-  let(:course)         { FactoryGirl.create :course_profile_course, :without_ecosystem }
-  let(:period)         { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)         { FactoryBot.create :course_profile_course, :without_ecosystem }
+  let(:period)         { FactoryBot.create :course_membership_period, course: course }
 
-  let(:page)           { FactoryGirl.create :content_page }
+  let(:page)           { FactoryBot.create :content_page }
 
-  let!(:exercise_1)    { FactoryGirl.create :content_exercise, page: page }
-  let!(:exercise_2)    { FactoryGirl.create :content_exercise, page: page }
-  let!(:exercise_3)    { FactoryGirl.create :content_exercise, page: page }
-  let!(:exercise_4)    { FactoryGirl.create :content_exercise, page: page }
-  let!(:exercise_5)    { FactoryGirl.create :content_exercise, page: page }
+  let!(:exercise_1)    { FactoryBot.create :content_exercise, page: page }
+  let!(:exercise_2)    { FactoryBot.create :content_exercise, page: page }
+  let!(:exercise_3)    { FactoryBot.create :content_exercise, page: page }
+  let!(:exercise_4)    { FactoryBot.create :content_exercise, page: page }
+  let!(:exercise_5)    { FactoryBot.create :content_exercise, page: page }
 
   let!(:ecosystem)     do
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)

@@ -19,7 +19,7 @@ RSpec.describe 'admin/ecosystems/index', type: :view do
   context 'when there are incomplete and failed jobs' do
     let(:num_incomplete_jobs) { 2 }
     let(:incomplete_jobs)     do
-      num_incomplete_jobs.times.map { FactoryGirl.create(:delayed_job) }
+      num_incomplete_jobs.times.map { FactoryBot.create(:delayed_job) }
     end
     let(:incomplete_statuses) do
       incomplete_jobs.map do |job|
@@ -34,7 +34,7 @@ RSpec.describe 'admin/ecosystems/index', type: :view do
     let(:num_failed_jobs) { 2 }
     let(:failed_jobs)     do
       num_failed_jobs.times.map do
-        FactoryGirl.create(:delayed_job).tap do |job|
+        FactoryBot.create(:delayed_job).tap do |job|
           job.fail!
         end
       end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::ExerciseTag, type: :model do
-  subject { FactoryGirl.create :content_exercise_tag }
+  subject { FactoryBot.create :content_exercise_tag }
 
   it { is_expected.to belong_to(:exercise) }
   it { is_expected.to belong_to(:tag) }

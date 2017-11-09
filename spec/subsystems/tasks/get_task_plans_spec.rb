@@ -2,10 +2,10 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::GetTaskPlans, type: :routine do
-  let!(:task_plan_1) { FactoryGirl.create :tasked_task_plan }
+  let!(:task_plan_1) { FactoryBot.create :tasked_task_plan }
   let(:course)       { task_plan_1.owner }
-  let!(:task_plan_2) { FactoryGirl.create :tasks_task_plan, owner: course }
-  let!(:task_plan_3) { FactoryGirl.create :tasks_task_plan, owner: course }
+  let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, owner: course }
+  let!(:task_plan_3) { FactoryBot.create :tasks_task_plan, owner: course }
 
   it 'gets all task_plans in a course' do
     out = described_class.call(owner: course).outputs

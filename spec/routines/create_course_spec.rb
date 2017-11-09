@@ -4,7 +4,7 @@ RSpec.describe CreateCourse, type: :routine do
   let(:term)             { CourseProfile::Models::Course.terms.keys.sample }
   let(:year)             { Time.current.year }
   let(:is_college)       { [true, false].sample }
-  let(:catalog_offering) { FactoryGirl.create :catalog_offering }
+  let(:catalog_offering) { FactoryBot.create :catalog_offering }
 
   it "creates a new regular course" do
     result = described_class.call(

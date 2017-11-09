@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::TagsController do
-  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
-  let!(:tag_1) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-ex003' }
-  let!(:tag_2) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-s03-lo01' }
-  let!(:tag_3) { FactoryGirl.create :content_tag, value: 'ost-tag-teks-112-39-c-4d' }
+  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
+  let!(:tag_1) { FactoryBot.create :content_tag, value: 'k12phys-ch04-ex003' }
+  let!(:tag_2) { FactoryBot.create :content_tag, value: 'k12phys-ch04-s03-lo01' }
+  let!(:tag_3) { FactoryBot.create :content_tag, value: 'ost-tag-teks-112-39-c-4d' }
 
   before { controller.sign_in(customer_service) }
 
@@ -37,7 +37,7 @@ RSpec.describe CustomerService::TagsController do
     end
 
     it 'disallows non-customer-service authenticated visitors' do
-      controller.sign_in(FactoryGirl.create(:user))
+      controller.sign_in(FactoryBot.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
     end

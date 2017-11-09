@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::LoTeksTag, type: :model do
-  subject { FactoryGirl.create :content_lo_teks_tag }
+  subject { FactoryBot.create :content_lo_teks_tag }
 
   it { is_expected.to belong_to :lo }
   it { is_expected.to belong_to :teks }

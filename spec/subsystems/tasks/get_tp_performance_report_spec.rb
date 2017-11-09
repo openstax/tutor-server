@@ -9,14 +9,14 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = FactoryGirl.create :course_profile_course, :with_assistants
+    @course = FactoryBot.create :course_profile_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    @teacher = FactoryGirl.create(:user)
-    @student_1 = FactoryGirl.create(:user)
-    @student_2 = FactoryGirl.create(:user)
-    @student_3 = FactoryGirl.create(:user)
-    @student_4 = FactoryGirl.create(:user)
+    @teacher = FactoryBot.create(:user)
+    @student_1 = FactoryBot.create(:user)
+    @student_2 = FactoryBot.create(:user)
+    @student_3 = FactoryBot.create(:user)
+    @student_4 = FactoryBot.create(:user)
     SetupPerformanceReportData[
       course: @course,
       teacher: @teacher,

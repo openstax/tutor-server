@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :content_chapter, class: '::Content::Models::Chapter' do
     transient do
       contents {{}}
@@ -12,7 +12,7 @@ FactoryGirl.define do
     after(:create) do |chapter, evaluator|
       ecosystem = evaluator.book.ecosystem
       (evaluator.contents[:pages] || {}).each do |page|
-        the_page = FactoryGirl.create(:content_page,
+        the_page = FactoryBot.create(:content_page,
                                       title: page[:title],
                                       book_location: page[:book_location],
                                       chapter: chapter)
@@ -21,7 +21,7 @@ FactoryGirl.define do
         tags = Content::Routines::FindOrCreateTags[ecosystem: ecosystem,
                                                    input: lo_hashes + aplo_hashes]
         Content::Routines::TagResource[the_page, tags]
-        chapter.all_exercises_pool ||= FactoryGirl.create :content_pool, ecosystem: ecosystem
+        chapter.all_exercises_pool ||= FactoryBot.create :content_pool, ecosystem: ecosystem
       end
     end
 

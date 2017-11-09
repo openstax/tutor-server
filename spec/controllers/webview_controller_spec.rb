@@ -6,8 +6,8 @@ RSpec.describe WebviewController, type: :controller do
                                                       title: 'General Terms of Use',
                                                       content: Faker::Lorem.paragraphs,
                                                       version: 10) }
-  let(:new_user)        { FactoryGirl.create(:user, skip_terms_agreement: true) }
-  let(:registered_user) { FactoryGirl.create(:user) }
+  let(:new_user)        { FactoryBot.create(:user, skip_terms_agreement: true) }
+  let(:registered_user) { FactoryBot.create(:user) }
 
   before(:each) { request.headers.merge! 'User-Agent': chrome_ua }
 

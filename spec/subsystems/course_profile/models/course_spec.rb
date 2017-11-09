@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseProfile::Models::Course, type: :model do
-  subject(:course) { FactoryGirl.create :course_profile_course }
+  subject(:course) { FactoryBot.create :course_profile_course }
 
   it { is_expected.to belong_to(:time_zone).autosave(true) }
 
@@ -49,8 +49,8 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it 'knows if it is deletable' do
     expect(course).to be_deletable
 
-    user = FactoryGirl.create :user
-    period = FactoryGirl.create(:course_membership_period, course: course)
+    user = FactoryBot.create :user
+    period = FactoryBot.create(:course_membership_period, course: course)
 
     expect(course.reload).not_to be_deletable
 
@@ -94,8 +94,8 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
   it 'can get non-ended courses' do
     described_class.destroy_all
-    a = FactoryGirl.create :course_profile_course, ends_at: 1.day.ago
-    b = FactoryGirl.create :course_profile_course, ends_at: 1.day.from_now
+    a = FactoryBot.create :course_profile_course, ends_at: 1.day.ago
+    b = FactoryBot.create :course_profile_course, ends_at: 1.day.from_now
 
     expect(described_class.not_ended.to_a).to eq [b]
 

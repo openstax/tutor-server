@@ -9,10 +9,10 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = FactoryGirl.create :course_profile_course, :with_assistants, is_concept_coach: true
+    @course = FactoryBot.create :course_profile_course, :with_assistants, is_concept_coach: true
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    @teacher = FactoryGirl.create(:user)
+    @teacher = FactoryBot.create(:user)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
 
     # Transform the course into a CC course

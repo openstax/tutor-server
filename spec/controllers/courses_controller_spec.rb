@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe CoursesController, type: :controller do
-  let(:user)   { FactoryGirl.create :user }
-  let(:course) { FactoryGirl.create :course_profile_course }
+  let(:user)   { FactoryBot.create :user }
+  let(:course) { FactoryBot.create :course_profile_course }
 
   context '#teach' do
     let(:teach_token) { course.teach_token }

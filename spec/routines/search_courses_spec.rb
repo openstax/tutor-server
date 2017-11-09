@@ -2,54 +2,54 @@ require 'rails_helper'
 
 RSpec.describe SearchCourses, type: :routine do
 
-  let(:tutor_school) { FactoryGirl.create(:school_district_school, name: 'TTS') }
-  let(:cc_school)    { FactoryGirl.create(:school_district_school, name: 'CCS') }
+  let(:tutor_school) { FactoryBot.create(:school_district_school, name: 'TTS') }
+  let(:cc_school)    { FactoryBot.create(:school_district_school, name: 'CCS') }
 
-  let(:book_1)       { FactoryGirl.create :content_book, title: 'College Physics' }
+  let(:book_1)       { FactoryBot.create :content_book, title: 'College Physics' }
   let(:ecosystem_1)  { Content::Ecosystem.new strategy: book_1.ecosystem.wrap }
   let(:offering_1)   do
-    FactoryGirl.create(:catalog_offering,
+    FactoryBot.create(:catalog_offering,
                        salesforce_book_name: 'College Physics (Algebra)',
                        title: 'College Physics',
                        description: 'Introductory two-semester physics book',
                        ecosystem: ecosystem_1.to_model)
   end
 
-  let(:book_2)       { FactoryGirl.create :content_book, title: 'Biology'     }
+  let(:book_2)       { FactoryBot.create :content_book, title: 'Biology'     }
   let(:ecosystem_2)  { Content::Ecosystem.new strategy: book_2.ecosystem.wrap }
   let(:offering_2)   do
-    FactoryGirl.create(:catalog_offering,
+    FactoryBot.create(:catalog_offering,
                        salesforce_book_name: 'Biology',
                        description: 'Biology',
                        ecosystem: ecosystem_2.to_model)
   end
 
   let!(:course_1) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :course_profile_course, name: 'Physics', school: tutor_school, offering: offering_1,
                               year: 2016, term: :fall, is_lms_enabling_allowed: true
     )
   end
   let!(:course_2) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :course_profile_course, name: 'Biology', school: tutor_school, offering: offering_2,
                               year: 2016, term: :spring, is_lms_enabled: true
     )
   end
   let!(:course_3) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :course_profile_course, name: 'Concept Coach', school: cc_school, offering: offering_1,
                               year: 2017, term: :fall, does_cost: true
     )
   end
   let!(:course_4) do
-    FactoryGirl.create(
+    FactoryBot.create(
       :course_profile_course, name: 'Howdy', school: tutor_school, offering: offering_1,
                               year: 2017, term: :fall, does_cost: true, is_preview: true
     )
   end
 
-  let(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
+  let(:teacher_user) { FactoryBot.create(:user, first_name: 'Charles') }
 
   before do
     AddUserAsCourseTeacher[course: course_1, user: teacher_user]

@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  let(:chapter) { FactoryGirl.create :content_chapter }
+  let(:chapter) { FactoryBot.create :content_chapter }
 
   context 'tutor page' do
     let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(

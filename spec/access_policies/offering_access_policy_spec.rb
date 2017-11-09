@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe OfferingAccessPolicy, type: :access_policy do
-  let(:offering)         { FactoryGirl.create :catalog_offering }
+  let(:offering)         { FactoryBot.create :catalog_offering }
 
   let(:anon)             { User::User.anonymous }
-  let(:user)             { FactoryGirl.create(:user) }
-  let(:application)      { FactoryGirl.create(:doorkeeper_application) }
+  let(:user)             { FactoryBot.create(:user) }
+  let(:application)      { FactoryBot.create(:doorkeeper_application) }
   let(:verified_faculty) do
-    FactoryGirl.create(:user).tap do |vf|
+    FactoryBot.create(:user).tap do |vf|
       vf.account.update_attribute :faculty_status, :confirmed_faculty
     end
   end

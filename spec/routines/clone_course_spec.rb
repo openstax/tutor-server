@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe CloneCourse, type: :routine do
 
-  let(:course) { FactoryGirl.create :course_profile_course }
-  let(:user)   { FactoryGirl.create :user }
+  let(:course) { FactoryBot.create :course_profile_course }
+  let(:user)   { FactoryBot.create :user }
 
   it 'creates a copy of a course' do
 
@@ -28,7 +28,7 @@ RSpec.describe CloneCourse, type: :routine do
 
   it "copies the course's question library if requested" do
 
-    10.times{ FactoryGirl.create :course_content_excluded_exercise, course: course }
+    10.times{ FactoryBot.create :course_content_excluded_exercise, course: course }
 
     result = described_class.call(course: course, teacher_user: user, copy_question_library: true)
 

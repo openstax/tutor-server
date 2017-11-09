@@ -254,7 +254,7 @@ group :development, :test do
   gem 'pilfer', '~> 1.0.0'
 
   # Fixture replacement
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
 
   # Stubs HTTP requests
   gem 'webmock'
