@@ -19,6 +19,13 @@ RSpec.feature 'Admnistration' do
 
       click_link 'System Setting'
       click_link 'Settings'
+
+      expect(page).to have_content('Global Settings')
+      expect(page).to have_content('Excluded exercise IDs')
+      fill_in 'settings_excluded_ids', with: '123456@7'
+
+      expect(SendGlobalExerciseExclusionsToBiglearn).to receive(:perform_later).once
+      click_button 'Save'
     end
 
     scenario 'Salesforce' do
