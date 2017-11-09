@@ -566,12 +566,12 @@ ActiveRecord::Schema.define(version: 20171109215245) do
     t.string   "last_name"
     t.string   "full_name"
     t.string   "title"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.integer  "faculty_status",        default: 0, null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
+    t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.string   "uuid"
-    t.integer  "role",                  default: 0, null: false
+    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
+    t.integer  "role",                  default: 0,                   null: false
   end
 
   add_index "openstax_accounts_accounts", ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true, using: :btree
