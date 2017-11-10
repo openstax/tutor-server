@@ -39,7 +39,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   before(:each) {
     period1 = CreatePeriod[course: course]
-    p1students = 4.times.map { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period1] }
+    p1students = 4.times.map do
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period1]
+    end
 
     p1students[0].student.update_attribute(:is_paid, true)
     p1students[1].student.update_attribute(:is_comped, true)
@@ -53,9 +55,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       [p1students[1], 7],
       [p1students[2], 9]
     ].each do |options|
-      task = Tasks::BuildTask[title: "A", task_type: :homework, content_ecosystem_id: 1, completed_steps_count: options[1]]
-      task.save
-      Tasks::CreateTasking[role: options[0], task: task]
+      FactoryBot.create :tasks_task,
+                        title: "A",
+                        task_type: :homework,
+                        task_plan: nil,
+                        tasked_to: options[0],
+                        completed_steps_count: options[1]
     end
 
     period2 = CreatePeriod[course: course]

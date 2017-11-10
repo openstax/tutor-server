@@ -5,17 +5,18 @@ FactoryBot.define do
       step_types []
       tasked_to []
       num_random_taskings 0
+      current_time { time_zone.try!(:to_tz).try!(:now) || Time.current }
     end
 
     task_type :reading
 
     ecosystem   { FactoryBot.create(:content_ecosystem) }
     task_plan   { build :tasks_task_plan, ecosystem: ecosystem }
-    title       { task_plan.title }
-    description { task_plan.description }
-    time_zone   { task_plan.owner.time_zone }
-    opens_at    { time_zone.to_tz.now }
-    due_at      { (opens_at || time_zone.to_tz.now) + duration }
+    title       { task_plan.try!(:title) }
+    description { task_plan.try!(:description) }
+    time_zone   { task_plan.try!(:owner).try!(:time_zone) }
+    opens_at    { current_time }
+    due_at      { (opens_at || current_time) + duration }
 
     after(:build) do |task, evaluator|
       AddSpyInfo[to: task, from: task.ecosystem]
