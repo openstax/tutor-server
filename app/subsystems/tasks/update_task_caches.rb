@@ -1,7 +1,7 @@
 # Updates the TaskCaches, used by the Trouble Flag, Quick Look and Performance Forecast
 # Tasks not assigned to a student (preview tasks) are ignored
 class Tasks::UpdateTaskCaches
-  lev_routine
+  lev_routine transaction: :read_committed
 
   uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
 
@@ -9,9 +9,21 @@ class Tasks::UpdateTaskCaches
 
   def exec(tasks:)
     tasks = [tasks].flatten
-    ActiveRecord::Associations::Preloader.new.preload tasks, [ :ecosystem, :time_zone ]
-    tasks_by_id = tasks.index_by(&:id)
+
+    # Attempt to lock the tasks; Skip tasks already locked by someone else
+    locked_tasks = Tasks::Models::Task
+      .where(id: tasks.map(&:id))
+      .lock('FOR NO KEY UPDATE SKIP LOCKED')
+      .preload(:ecosystem, :time_zone)
+    tasks_by_id = locked_tasks.index_by(&:id)
     task_ids = tasks_by_id.keys
+
+    # Retry tasks that we couldn't lock later
+    skipped_tasks = tasks - locked_tasks
+    self.class.perform_later(tasks: skipped_tasks) unless skipped_tasks.empty?
+
+    # Stop if we couldn't lock any tasks at all
+    return if task_ids.empty?
 
     # Get student and course IDs
     students = CourseMembership::Models::Student

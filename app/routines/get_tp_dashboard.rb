@@ -38,7 +38,9 @@ class GetTpDashboard
       task_caches = task_caches_by_task_plan_id[task_plan.id] || []
       pgs = task_caches.flat_map do |task_cache|
         task_cache.as_toc[:books].flat_map do |bk|
-          bk[:chapters].flat_map { |ch| ch[:pages].merge due_at: task_cache.due_at }
+          bk[:chapters].flat_map do |ch|
+            ch[:pages].map { |page| page.merge due_at: task_cache.due_at }
+          end
         end
       end
       not_due_pgs, due_pgs = pgs.partition { |pg| pg[:due_at].nil? || pg[:due_at] > current_time }
