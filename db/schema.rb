@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109215245) do
+ActiveRecord::Schema.define(version: 20171110155706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1072,6 +1072,7 @@ ActiveRecord::Schema.define(version: 20171109215245) do
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade
