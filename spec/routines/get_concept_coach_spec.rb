@@ -38,15 +38,14 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
     @page_4 = Content::Page.new(strategy: page_model_4.reload.wrap)
 
-    period_model = FactoryGirl.create(:course_membership_period)
+    @course = FactoryBot.create :course_profile_course, :without_ecosystem, is_concept_coach: true
+    period_model = FactoryBot.create :course_membership_period, course: @course
     period = CourseMembership::Period.new(strategy: period_model.wrap)
-    @course = period.course
-    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
-    @user_1 = FactoryGirl.create(:user)
-    @user_2 = FactoryGirl.create(:user)
+    @user_1 = FactoryBot.create(:user)
+    @user_2 = FactoryBot.create(:user)
 
     AddUserAsPeriodStudent[user: @user_1, period: period]
     AddUserAsPeriodStudent[user: @user_2, period: period]
@@ -210,7 +209,7 @@ it 'should create a new task for a different page and properly assign spaced pra
 
     it 'returns an error if the page has no exercises' do
       chapter_model = Content::Models::Chapter.find(@book.chapters.first.id)
-      page = FactoryGirl.create :content_page, chapter: chapter_model
+      page = FactoryBot.create :content_page, chapter: chapter_model
       result = nil
       expect{ result = described_class.call(
         user: @user_1, book_uuid: @book.uuid, page_uuid: page.uuid

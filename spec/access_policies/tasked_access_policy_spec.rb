@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe TaskedAccessPolicy, type: :access_policy do
-  let(:period)       { FactoryGirl.create(:course_membership_period) }
-  let(:requestor)    { FactoryGirl.create(:user) }
+  let(:period)       { FactoryBot.create(:course_membership_period) }
+  let(:requestor)    { FactoryBot.create(:user) }
   let(:student_role) { AddUserAsPeriodStudent[user: requestor, period: period] }
-  let(:tasked)       { FactoryGirl.create(:tasks_tasked_exercise, :with_tasking,
-                                           tasked_to: student_role) }
+  let(:tasked)       do
+    FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: student_role)
+  end
 
   subject(:action_allowed) do
     TaskedAccessPolicy.action_allowed?(action, requestor, tasked)
@@ -23,7 +24,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
 
           context "and the task is deleted" do
             before do
-              allow(tasked.task_step.task).to receive(:deleted?) { true }
+              allow(tasked.task_step.task).to receive(:withdrawn?) { true }
               allow(tasked.task_step.task).to receive(:past_open?) { true }
             end
 

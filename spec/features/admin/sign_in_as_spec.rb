@@ -2,9 +2,10 @@ require 'rails_helper'
 
 RSpec.feature 'Administrator' do
   scenario 'signs in as another user' do
-    FactoryGirl.create(:user_profile, username: 'a_user')
+    FactoryBot.create(:user_profile, username: 'a_user')
+    page.driver.header('User-Agent', 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.99 Safari/533.4')
 
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
 
     # Not logged in
     visit dashboard_path

@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe MarkTaskStepCompleted, type: :routine do
 
-  let(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
-  let(:tasked_exercise) { FactoryGirl.create(:tasks_tasked_exercise) }
+  let(:tasked_reading)  { FactoryBot.create(:tasks_tasked_reading) }
+  let(:tasked_exercise) { FactoryBot.create(:tasks_tasked_exercise) }
 
   it 'can mark a reading step as completed' do
     result = MarkTaskStepCompleted.call(task_step: tasked_reading.task_step)

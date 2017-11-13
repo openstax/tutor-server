@@ -4,11 +4,11 @@ module CourseMembership
 
     def exec(student:)
       fatal_error(code: :already_inactive,
-                  message: 'Student is already inactive') if student.deleted?
+                  message: 'Student is already inactive') if student.dropped?
       student.destroy
       student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
-      outputs[:student] = student
+      outputs.student = student
 
       OpenStax::Biglearn::Api.update_rosters(course: student.course)
 

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
-  let(:content_page_1) { FactoryGirl.create :content_page }
-  let(:content_page_2) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
-  let(:content_page_3) { FactoryGirl.create :content_page, chapter: content_page_1.chapter }
+  let(:content_page_1) { FactoryBot.create :content_page }
+  let(:content_page_2) { FactoryBot.create :content_page, chapter: content_page_1.chapter }
+  let(:content_page_3) { FactoryBot.create :content_page, chapter: content_page_1.chapter }
 
   let!(:page_1) {
     strategy = ::Content::Strategies::Direct::Page.new(content_page_1)

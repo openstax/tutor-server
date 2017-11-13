@@ -5,13 +5,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
 
   it { is_expected.to belong_to(:time_zone) }
 
-  it { is_expected.to have_many(:task_steps).dependent(:destroy) }
+  it { is_expected.to have_many(:task_steps) }
   it { is_expected.to have_many(:taskings) }
 
   it { is_expected.to validate_presence_of(:title) }
 
   it 'is late when last_worked_at is past due_at' do
-    task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+    task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week,
                                            due_at: Time.current - 1.day)
 
     expect(task).not_to be_late
@@ -23,13 +23,13 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it 'is always open if opens_at is nil' do
-    task = FactoryGirl.create(:tasks_task, opens_at: nil, due_at: Time.current + 1.week)
+    task = FactoryBot.create(:tasks_task, opens_at: nil, due_at: Time.current + 1.week)
 
     expect(task).to be_past_open
   end
 
   it 'is never due or late if due_at is nil' do
-    task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week, due_at: nil)
+    task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week, due_at: nil)
 
     expect(task).not_to be_past_due
     expect(task).not_to be_late
@@ -44,7 +44,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
   describe '#handle_task_step_completion!' do
     it 'sets #last_worked_at to completed_at' do
       time = Time.current
-      task = FactoryGirl.create(:tasks_task)
+      task = FactoryBot.create(:tasks_task)
 
       task.handle_task_step_completion!(completed_at: time)
 
@@ -53,19 +53,19 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it "requires non-nil due_at to be after opens_at" do
-    task = FactoryGirl.build(:tasks_task, due_at: nil)
+    task = FactoryBot.build(:tasks_task, due_at: nil)
     expect(task).to be_valid
 
-    task = FactoryGirl.build(:tasks_task, due_at: Time.current - 1.week)
+    task = FactoryBot.build(:tasks_task, due_at: Time.current - 1.week)
     expect(task).to_not be_valid
   end
 
   it "reports is_shared? correctly" do
-    task1 = FactoryGirl.create(:tasks_task)
-    FactoryGirl.create(:tasks_tasking, task: task1)
+    task1 = FactoryBot.create(:tasks_task)
+    FactoryBot.create(:tasks_tasking, task: task1)
     expect(task1.is_shared?).to be_falsy
 
-    FactoryGirl.create(:tasks_tasking, task: task1)
+    FactoryBot.create(:tasks_tasking, task: task1)
     expect(task1.is_shared?).to be_truthy
   end
 
@@ -140,7 +140,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it 'knows when feedback should be available' do
-    task = FactoryGirl.build(:tasks_task, due_at: nil)
+    task = FactoryBot.build(:tasks_task, due_at: nil)
     task.feedback_at = nil
     expect(task.feedback_available?).to eq true
 
@@ -152,7 +152,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
   end
 
   it 'counts exercise steps' do
-    task = FactoryGirl.create(:tasks_task,
+    task = FactoryBot.create(:tasks_task,
                               task_type: :homework,
                               step_types: [:tasks_tasked_exercise,
                                            :tasks_tasked_reading,
@@ -525,7 +525,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates on_time counts when the due date changes" do
-        task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+        task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week,
                                                due_at: Time.current - 1.day,
                                                step_types: ['tasks_tasked_exercise'])
         Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
@@ -544,8 +544,8 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
 
       it "updates counts after any change to the task" do
-        tasked_to = [ FactoryGirl.create(:entity_role) ]
-        task = FactoryGirl.create :tasks_task, tasked_to: tasked_to, step_types: [
+        tasked_to = [ FactoryBot.create(:entity_role) ]
+        task = FactoryBot.create :tasks_task, tasked_to: tasked_to, step_types: [
           :tasks_tasked_exercise, :tasks_tasked_exercise,
           :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
         ]
@@ -633,7 +633,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
 
     it 'is hidden only if it has been hidden after being deleted for the last time' do
-      task = FactoryGirl.create :tasks_task
+      task = FactoryBot.create :tasks_task
       expect(task.reload).not_to be_hidden
 
       task.task_plan.destroy!
@@ -653,7 +653,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
 
     it 'holds on to accepted late stats regardless of future work' do
-      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+      task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week,
                                              due_at: Time.current,
                                              step_types: [:tasks_tasked_exercise,
                                                           :tasks_tasked_exercise,
@@ -714,7 +714,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     end
 
     it 'holds on to accepted late stats regardless of future work' do
-      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+      task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week,
                                              due_at: Time.current,
                                              step_types: [:tasks_tasked_exercise,
                                                           :tasks_tasked_exercise,

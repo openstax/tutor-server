@@ -35,6 +35,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
       status: 'succeeded',
       progress: 1.0,
       url: publish_job_url,
+      data: { url: publish_job_url },
       errors: []
     }.stringify_keys
   }
@@ -78,7 +79,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           actual_and_placeholder_exercise_count: 5,
           completed_exercise_count: 4,
           correct_exercise_count: 3,
-          deleted?: true
+          withdrawn?: true
         }),
         Hashie::Mash.new({
           id: 37,
@@ -89,7 +90,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed?: false,
           actual_and_placeholder_exercise_count: 7,
           completed_exercise_count: 6,
-          deleted?: false
+          withdrawn?: false
         }),
         Hashie::Mash.new({
           id: 89,
@@ -103,7 +104,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           actual_and_placeholder_exercise_count: 8,
           completed_exercise_count: 8,
           correct_exercise_count: 3,
-          deleted?: false
+          withdrawn?: false
         }),
         Hashie::Mash.new({
           id: 99,
@@ -114,7 +115,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           task_type: :external,
           completed?: true,
           past_due?: true,
-          deleted?: false
+          withdrawn?: false
         }),
       ]
       mash.course = {
@@ -158,7 +159,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "first_published_at" => be_kind_of(String),
           "last_published_at" => be_kind_of(String),
           "publish_last_requested_at" => be_kind_of(String),
-          "publish_job" => publish_job_representation,
+          "publish_job" => publish_job_representation.deep_stringify_keys,
           "tasking_plans" => [
             {
               "target_id" => '42',

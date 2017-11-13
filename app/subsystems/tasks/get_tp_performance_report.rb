@@ -11,7 +11,7 @@ module Tasks
     def exec(course:)
       taskings = get_course_taskings(course)
 
-      outputs[:performance_report] = course.periods.map do |period|
+      outputs[:performance_report] = course.periods.reject(&:archived?).map do |period|
         # Filter tasking_plans period and sort by due date
         tasking_plans = filter_and_sort_tasking_plans(taskings, course, period)
 
@@ -50,7 +50,7 @@ module Tasks
             student_tasks[col_num] = tasking.task
           end
 
-          is_dropped = student_role.student.deleted_at.present?
+          is_dropped = student_role.student.dropped?
 
           # Gather the non-dropped student tasks into the heading_stats_plan_to_task_map hash
           if !is_dropped
@@ -67,6 +67,7 @@ module Tasks
             last_name: student_role.last_name,
             student_identifier: student_role.student.student_identifier,
             role: student_role.id,
+            user: student_role.profile.id,
             data: data,
             average_score: average_scores(data.map{ |datum| datum.present? ? datum[:task] : nil }),
             is_dropped: is_dropped
@@ -98,6 +99,7 @@ module Tasks
       course.taskings
             .joins(task: { task_plan: :tasking_plans })
             .where(task: {task_type: task_types})
+            .where(task: { task_plan: { withdrawn_at: nil } })
             .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
                      role: [{student: {enrollments: :period}}, {profile: :account}])
             .reorder(nil).uniq.to_a.select{ |tasking| tasking.task.past_open? }

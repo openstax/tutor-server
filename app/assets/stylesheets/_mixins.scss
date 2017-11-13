@@ -1,14 +1,40 @@
 @mixin tutor-button(){
   @extend .btn-lg;
   @extend .btn-primary;
-  border-radius: 4px;
-  background-color: $os_orange;
+  border-radius: 2px;
+  background-color: #F36B32;
+  border-color: #F36B32;
   color: white;
   text-decoration: none;
-  border: 1px solid darken( $os-orange, 5% );
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 30px;
+  padding-right: 30px;
   transition: background-color 0.4s, border-color 0.4s;
-  &:hover{
-    background-color: darken( $os-orange, 5% );
-    border-color: darken( $os-orange, 25% );
+
+  &:hover, &:focus{
+    background-color: rgb(233, 97, 40);
+    border-color: rgb(233, 97, 40);
+  }
+
+  &:active {
+    background-color: rgb(223, 87, 30);
+    border-color: rgb(223, 87, 30);
+  }
+}
+
+@mixin hero-fullpage-background() {
+  &::before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    content: "";
+    z-index: -1;
+    background-image: image-url('openstax-logo-white.png'), image-url('ost-hero.jpg');
+    background-repeat: no-repeat, no-repeat;
+    background-size: 174px 40px, cover;
+    background-position: center 20px, center;
   }
 }

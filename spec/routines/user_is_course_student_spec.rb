@@ -4,20 +4,20 @@ RSpec.describe UserIsCourseStudent, type: :routine do
 
   context "when the user is not a student for the given course" do
     it "returns false" do
-      target_user         = FactoryGirl.create :user
+      target_user         = FactoryBot.create :user
 
-      target_student_role = FactoryGirl.create :entity_role
-      target_teacher_role = FactoryGirl.create :entity_role
+      target_student_role = FactoryBot.create :entity_role
+      target_teacher_role = FactoryBot.create :entity_role
 
-      other_user          = FactoryGirl.create :user
+      other_user          = FactoryBot.create :user
 
-      other_student_role  = FactoryGirl.create :entity_role
+      other_student_role  = FactoryBot.create :entity_role
 
-      target_course       = FactoryGirl.create :course_profile_course
-      target_period       = FactoryGirl.create :course_membership_period, course: target_course
+      target_course       = FactoryBot.create :course_profile_course
+      target_period       = FactoryBot.create :course_membership_period, course: target_course
 
-      other_course        = FactoryGirl.create :course_profile_course
-      other_period        = FactoryGirl.create :course_membership_period, course: other_course
+      other_course        = FactoryBot.create :course_profile_course
+      other_period        = FactoryBot.create :course_membership_period, course: other_course
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       Role::AddUserRole.call(user: target_user, role: target_teacher_role)
@@ -38,11 +38,11 @@ RSpec.describe UserIsCourseStudent, type: :routine do
   end
 
   context "when the user is a student for the given course" do
-    let(:target_user)         { FactoryGirl.create(:user) }
-    let(:target_student_role) { FactoryGirl.create :entity_role }
+    let(:target_user)         { FactoryBot.create(:user) }
+    let(:target_student_role) { FactoryBot.create :entity_role }
 
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:target_period) { FactoryBot.create :course_membership_period, course: target_course }
 
     before {
       Role::AddUserRole.call(user: target_user, role: target_student_role)
@@ -66,8 +66,8 @@ RSpec.describe UserIsCourseStudent, type: :routine do
     end
 
     context "and is also a member of a non-archived period" do
-      let(:new_period)       { FactoryGirl.create :course_membership_period, course: target_course }
-      let(:new_student_role) { FactoryGirl.create :entity_role }
+      let(:new_period)       { FactoryBot.create :course_membership_period, course: target_course }
+      let(:new_student_role) { FactoryBot.create :entity_role }
       before {
         Role::AddUserRole.call(user: target_user, role: new_student_role)
         CourseMembership::AddStudent.call(period: new_period, role: new_student_role)

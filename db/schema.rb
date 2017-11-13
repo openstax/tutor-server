@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724162437) do
+ActiveRecord::Schema.define(version: 20171110155706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.text     "comments"
     t.uuid     "tutor_uuid",      default: "gen_random_uuid()"
     t.integer  "sequence_number", default: 0,                   null: false
+    t.datetime "deleted_at"
   end
 
   add_index "content_ecosystems", ["created_at"], name: "index_content_ecosystems_on_created_at", using: :btree
@@ -243,14 +244,12 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.datetime "enrollee_approved_at"
     t.datetime "created_at",                                                 null: false
     t.datetime "updated_at",                                                 null: false
-    t.datetime "deleted_at"
     t.integer  "course_membership_conflicting_enrollment_id"
   end
 
   add_index "course_membership_enrollment_changes", ["course_membership_conflicting_enrollment_id"], name: "index_c_m_enrollment_changes_on_c_m_conflicting_enrollment_id", using: :btree
   add_index "course_membership_enrollment_changes", ["course_membership_enrollment_id"], name: "index_course_membership_enrollments_on_enrollment_id", using: :btree
   add_index "course_membership_enrollment_changes", ["course_membership_period_id"], name: "index_course_membership_enrollment_changes_on_period_id", using: :btree
-  add_index "course_membership_enrollment_changes", ["deleted_at"], name: "index_course_membership_enrollment_changes_on_deleted_at", using: :btree
   add_index "course_membership_enrollment_changes", ["user_profile_id"], name: "index_course_membership_enrollment_changes_on_user_profile_id", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|
@@ -258,13 +257,11 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.integer  "course_membership_student_id", null: false
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
-    t.datetime "deleted_at"
     t.integer  "sequence_number",              null: false
   end
 
   add_index "course_membership_enrollments", ["course_membership_period_id", "course_membership_student_id"], name: "course_membership_enrollments_period_student", using: :btree
   add_index "course_membership_enrollments", ["course_membership_student_id", "sequence_number"], name: "index_enrollments_on_student_id_and_sequence_number", unique: true, using: :btree
-  add_index "course_membership_enrollments", ["deleted_at"], name: "index_course_membership_enrollments_on_deleted_at", using: :btree
 
   create_table "course_membership_periods", force: :cascade do |t|
     t.integer  "course_profile_course_id",                                     null: false
@@ -272,15 +269,15 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.datetime "created_at",                                                   null: false
     t.datetime "updated_at",                                                   null: false
     t.string   "enrollment_code",                                              null: false
-    t.datetime "deleted_at"
+    t.datetime "archived_at"
     t.string   "default_open_time"
     t.string   "default_due_time"
     t.integer  "entity_teacher_student_role_id",                               null: false
     t.uuid     "uuid",                           default: "gen_random_uuid()"
   end
 
+  add_index "course_membership_periods", ["archived_at"], name: "index_course_membership_periods_on_archived_at", using: :btree
   add_index "course_membership_periods", ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id", using: :btree
-  add_index "course_membership_periods", ["deleted_at"], name: "index_course_membership_periods_on_deleted_at", using: :btree
   add_index "course_membership_periods", ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true, using: :btree
   add_index "course_membership_periods", ["entity_teacher_student_role_id"], name: "index_c_m_periods_on_e_teacher_student_role_id", unique: true, using: :btree
   add_index "course_membership_periods", ["name", "course_profile_course_id"], name: "index_c_m_periods_on_name_and_c_p_course_id", using: :btree
@@ -289,7 +286,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "course_profile_course_id",                               null: false
     t.integer  "entity_role_id",                                         null: false
-    t.datetime "deleted_at"
+    t.datetime "dropped_at"
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.string   "student_identifier"
@@ -303,7 +300,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
-  add_index "course_membership_students", ["deleted_at"], name: "index_course_membership_students_on_deleted_at", using: :btree
+  add_index "course_membership_students", ["dropped_at"], name: "index_course_membership_students_on_dropped_at", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
   add_index "course_membership_students", ["uuid"], name: "index_course_membership_students_on_uuid", unique: true, using: :btree
 
@@ -312,6 +309,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.integer  "entity_role_id",           null: false
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.datetime "deleted_at"
   end
 
   add_index "course_membership_teachers", ["course_profile_course_id"], name: "index_course_membership_teachers_on_course_profile_course_id", using: :btree
@@ -349,10 +347,16 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
     t.boolean  "is_preview_ready",                             default: false,               null: false
+    t.datetime "deleted_at"
+    t.boolean  "is_lms_enabled"
+    t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
+    t.boolean  "is_access_switchable",                         default: true,                null: false
+    t.string   "last_lms_scores_push_job_id"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
   add_index "course_profile_courses", ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id", using: :btree
+  add_index "course_profile_courses", ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed", using: :btree
   add_index "course_profile_courses", ["is_preview", "is_preview_ready", "preview_claimed_at", "catalog_offering_id"], name: "preview_pending_index", using: :btree
   add_index "course_profile_courses", ["name"], name: "index_course_profile_courses_on_name", using: :btree
   add_index "course_profile_courses", ["school_district_school_id"], name: "index_course_profile_courses_on_school_district_school_id", using: :btree
@@ -433,6 +437,87 @@ ActiveRecord::Schema.define(version: 20170724162437) do
 
   add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
 
+  create_table "lms_apps", force: :cascade do |t|
+    t.integer  "owner_id",   null: false
+    t.string   "owner_type", null: false
+    t.string   "key",        null: false
+    t.string   "secret",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "lms_apps", ["key"], name: "index_lms_apps_on_key", unique: true, using: :btree
+  add_index "lms_apps", ["owner_type", "owner_id"], name: "index_lms_apps_on_owner_type_and_owner_id", unique: true, using: :btree
+
+  create_table "lms_contexts", force: :cascade do |t|
+    t.string   "lti_id",                   null: false
+    t.integer  "lms_tool_consumer_id",     null: false
+    t.integer  "course_profile_course_id", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", unique: true, using: :btree
+  add_index "lms_contexts", ["lms_tool_consumer_id"], name: "index_lms_contexts_on_lms_tool_consumer_id", using: :btree
+  add_index "lms_contexts", ["lti_id", "lms_tool_consumer_id", "course_profile_course_id"], name: "lms_contexts_lti_id_tool_consumer_id_course_id", unique: true, using: :btree
+  add_index "lms_contexts", ["lti_id"], name: "index_lms_contexts_on_lti_id", using: :btree
+
+  create_table "lms_course_score_callbacks", force: :cascade do |t|
+    t.string   "result_sourcedid",         null: false
+    t.string   "outcome_url",              null: false
+    t.integer  "user_profile_id",          null: false
+    t.integer  "course_profile_course_id", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.string   "resource_link_id",         null: false
+  end
+
+  add_index "lms_course_score_callbacks", ["course_profile_course_id", "user_profile_id", "resource_link_id"], name: "course_score_callbacks_on_course_user_link", unique: true, using: :btree
+  add_index "lms_course_score_callbacks", ["result_sourcedid", "outcome_url"], name: "course_score_callback_result_outcome", unique: true, using: :btree
+  add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
+
+  create_table "lms_nonces", force: :cascade do |t|
+    t.string   "value",      limit: 128, null: false
+    t.datetime "created_at",             null: false
+    t.integer  "lms_app_id",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
+
+  create_table "lms_tool_consumers", force: :cascade do |t|
+    t.string   "guid",                null: false
+    t.string   "product_family_code"
+    t.string   "version"
+    t.string   "name"
+    t.string   "description"
+    t.string   "url"
+    t.string   "contact_email"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "lms_tool_consumers", ["guid"], name: "index_lms_tool_consumers_on_guid", unique: true, using: :btree
+
+  create_table "lms_trusted_launch_data", force: :cascade do |t|
+    t.json     "request_params"
+    t.string   "request_url"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "lms_trusted_launch_data", ["created_at"], name: "index_lms_trusted_launch_data_on_created_at", using: :btree
+
+  create_table "lms_users", force: :cascade do |t|
+    t.string   "lti_user_id",                   null: false
+    t.integer  "openstax_accounts_accounts_id"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "lms_users", ["lti_user_id"], name: "index_lms_users_on_lti_user_id", using: :btree
+  add_index "lms_users", ["openstax_accounts_accounts_id"], name: "index_lms_users_on_openstax_accounts_accounts_id", using: :btree
+
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
     t.integer  "application_id",    null: false
@@ -481,12 +566,12 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.string   "last_name"
     t.string   "full_name"
     t.string   "title"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.integer  "faculty_status",        default: 0, null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
+    t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.string   "uuid"
-    t.integer  "role",                  default: 0, null: false
+    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
+    t.integer  "role",                  default: 0,                   null: false
   end
 
   add_index "openstax_accounts_accounts", ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true, using: :btree
@@ -628,12 +713,10 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "entity_role_id",  null: false
-    t.datetime "deleted_at"
     t.integer  "tasks_task_id",   null: false
   end
 
   add_index "tasks_concept_coach_tasks", ["content_page_id"], name: "index_tasks_concept_coach_tasks_on_content_page_id", using: :btree
-  add_index "tasks_concept_coach_tasks", ["deleted_at"], name: "index_tasks_concept_coach_tasks_on_deleted_at", using: :btree
   add_index "tasks_concept_coach_tasks", ["entity_role_id", "content_page_id"], name: "index_tasks_concept_coach_tasks_on_e_r_id_and_c_p_id", unique: true, using: :btree
   add_index "tasks_concept_coach_tasks", ["tasks_task_id"], name: "index_tasks_concept_coach_tasks_on_tasks_task_id", unique: true, using: :btree
 
@@ -661,6 +744,28 @@ ActiveRecord::Schema.define(version: 20170724162437) do
   add_index "tasks_performance_report_exports", ["course_profile_course_id"], name: "index_t_performance_report_exports_on_c_p_course_id", using: :btree
   add_index "tasks_performance_report_exports", ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course", using: :btree
 
+  create_table "tasks_task_caches", force: :cascade do |t|
+    t.integer  "tasks_task_id",                       null: false
+    t.integer  "content_ecosystem_id",                null: false
+    t.integer  "task_type",                           null: false
+    t.datetime "opens_at"
+    t.datetime "due_at"
+    t.datetime "feedback_at"
+    t.integer  "student_ids",                         null: false, array: true
+    t.string   "student_names",                       null: false, array: true
+    t.text     "as_toc",               default: "{}", null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  add_index "tasks_task_caches", ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id", using: :btree
+  add_index "tasks_task_caches", ["due_at"], name: "index_tasks_task_caches_on_due_at", using: :btree
+  add_index "tasks_task_caches", ["feedback_at"], name: "index_tasks_task_caches_on_feedback_at", using: :btree
+  add_index "tasks_task_caches", ["opens_at"], name: "index_tasks_task_caches_on_opens_at", using: :btree
+  add_index "tasks_task_caches", ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
+  add_index "tasks_task_caches", ["task_type"], name: "index_tasks_task_caches_on_task_type", using: :btree
+  add_index "tasks_task_caches", ["tasks_task_id", "content_ecosystem_id"], name: "index_task_caches_on_task_id_and_ecosystem_id", unique: true, using: :btree
+
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id",                        null: false
     t.integer  "owner_id",                                  null: false
@@ -676,7 +781,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.datetime "updated_at",                                null: false
     t.integer  "content_ecosystem_id",                      null: false
     t.boolean  "is_feedback_immediate",     default: true,  null: false
-    t.datetime "deleted_at"
+    t.datetime "withdrawn_at"
     t.datetime "last_published_at"
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                default: false
@@ -684,9 +789,9 @@ ActiveRecord::Schema.define(version: 20170724162437) do
 
   add_index "tasks_task_plans", ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id", using: :btree
   add_index "tasks_task_plans", ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id", using: :btree
-  add_index "tasks_task_plans", ["deleted_at"], name: "index_tasks_task_plans_on_deleted_at", using: :btree
   add_index "tasks_task_plans", ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type", using: :btree
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id", using: :btree
+  add_index "tasks_task_plans", ["withdrawn_at"], name: "index_tasks_task_plans_on_withdrawn_at", using: :btree
 
   create_table "tasks_task_steps", force: :cascade do |t|
     t.integer  "tasks_task_id",                       null: false
@@ -698,14 +803,12 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.integer  "group_type",           default: 0,    null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
-    t.datetime "deleted_at"
     t.text     "related_exercise_ids", default: "[]", null: false
     t.text     "labels",               default: "[]", null: false
     t.text     "spy",                  default: "{}", null: false
     t.integer  "content_page_id"
   end
 
-  add_index "tasks_task_steps", ["deleted_at"], name: "index_tasks_task_steps_on_deleted_at", using: :btree
   add_index "tasks_task_steps", ["first_completed_at"], name: "index_tasks_task_steps_on_first_completed_at", using: :btree
   add_index "tasks_task_steps", ["last_completed_at"], name: "index_tasks_task_steps_on_last_completed_at", using: :btree
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
@@ -723,13 +826,11 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.string   "correct_answer_id",                                 null: false
     t.boolean  "is_in_multipart",     default: false,               null: false
     t.string   "question_id",                                       null: false
-    t.datetime "deleted_at"
     t.text     "context"
     t.uuid     "uuid",                default: "gen_random_uuid()"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
-  add_index "tasks_tasked_exercises", ["deleted_at"], name: "index_tasks_tasked_exercises_on_deleted_at", using: :btree
   add_index "tasks_tasked_exercises", ["question_id"], name: "index_tasks_tasked_exercises_on_question_id", using: :btree
   add_index "tasks_tasked_exercises", ["uuid"], name: "index_tasks_tasked_exercises_on_uuid", unique: true, using: :btree
 
@@ -738,10 +839,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
   end
-
-  add_index "tasks_tasked_external_urls", ["deleted_at"], name: "index_tasks_tasked_external_urls_on_deleted_at", using: :btree
 
   create_table "tasks_tasked_interactives", force: :cascade do |t|
     t.string   "url",        null: false
@@ -749,19 +847,13 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
   end
-
-  add_index "tasks_tasked_interactives", ["deleted_at"], name: "index_tasks_tasked_interactives_on_deleted_at", using: :btree
 
   create_table "tasks_tasked_placeholders", force: :cascade do |t|
     t.integer  "placeholder_type", default: 0, null: false
-    t.datetime "deleted_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
-
-  add_index "tasks_tasked_placeholders", ["deleted_at"], name: "index_tasks_tasked_placeholders_on_deleted_at", using: :btree
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
     t.string   "url",                          null: false
@@ -769,11 +861,8 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.string   "title"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
-    t.datetime "deleted_at"
     t.text     "book_location", default: "[]", null: false
   end
-
-  add_index "tasks_tasked_readings", ["deleted_at"], name: "index_tasks_tasked_readings_on_deleted_at", using: :btree
 
   create_table "tasks_tasked_videos", force: :cascade do |t|
     t.string   "url",        null: false
@@ -781,10 +870,7 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
   end
-
-  add_index "tasks_tasked_videos", ["deleted_at"], name: "index_tasks_tasked_videos_on_deleted_at", using: :btree
 
   create_table "tasks_tasking_plans", force: :cascade do |t|
     t.integer  "target_id",          null: false
@@ -795,10 +881,8 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.integer  "time_zone_id",       null: false
-    t.datetime "deleted_at"
   end
 
-  add_index "tasks_tasking_plans", ["deleted_at"], name: "index_tasks_tasking_plans_on_deleted_at", using: :btree
   add_index "tasks_tasking_plans", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasking_plans", ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz", using: :btree
   add_index "tasks_tasking_plans", ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true, using: :btree
@@ -810,12 +894,10 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.integer  "course_membership_period_id"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
-    t.datetime "deleted_at"
     t.integer  "tasks_task_id",               null: false
   end
 
   add_index "tasks_taskings", ["course_membership_period_id"], name: "index_tasks_taskings_on_course_membership_period_id", using: :btree
-  add_index "tasks_taskings", ["deleted_at"], name: "index_tasks_taskings_on_deleted_at", using: :btree
   add_index "tasks_taskings", ["entity_role_id"], name: "index_tasks_taskings_on_entity_role_id", using: :btree
   add_index "tasks_taskings", ["tasks_task_id", "entity_role_id"], name: "index_tasks_taskings_on_tasks_task_id_and_entity_role_id", unique: true, using: :btree
 
@@ -828,7 +910,6 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.datetime "due_at_ntz"
     t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
-    t.integer  "tasks_taskings_count",                         default: 0,                   null: false
     t.integer  "steps_count",                                  default: 0,                   null: false
     t.integer  "completed_steps_count",                        default: 0,                   null: false
     t.integer  "core_steps_count",                             default: 0,                   null: false
@@ -849,7 +930,6 @@ ActiveRecord::Schema.define(version: 20170724162437) do
     t.integer  "completed_accepted_late_exercise_steps_count", default: 0,                   null: false
     t.integer  "completed_accepted_late_steps_count",          default: 0,                   null: false
     t.integer  "time_zone_id"
-    t.datetime "deleted_at"
     t.datetime "hidden_at"
     t.text     "spy",                                          default: "{}",                null: false
     t.uuid     "uuid",                                         default: "gen_random_uuid()"
@@ -859,12 +939,11 @@ ActiveRecord::Schema.define(version: 20170724162437) do
   end
 
   add_index "tasks_tasks", ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id", using: :btree
-  add_index "tasks_tasks", ["deleted_at"], name: "index_tasks_tasks_on_deleted_at", using: :btree
   add_index "tasks_tasks", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasks", ["hidden_at"], name: "index_tasks_tasks_on_hidden_at", using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["opens_at_ntz"], name: "index_tasks_tasks_on_opens_at_ntz", using: :btree
-  add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
+  add_index "tasks_tasks", ["task_type", "created_at"], name: "index_tasks_tasks_on_task_type_and_created_at", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
   add_index "tasks_tasks", ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id", using: :btree
   add_index "tasks_tasks", ["uuid"], name: "index_tasks_tasks_on_uuid", unique: true, using: :btree
@@ -903,14 +982,12 @@ ActiveRecord::Schema.define(version: 20170724162437) do
 
   create_table "user_profiles", force: :cascade do |t|
     t.integer  "account_id",  null: false
-    t.datetime "deleted_at"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.text     "ui_settings"
   end
 
   add_index "user_profiles", ["account_id"], name: "index_user_profiles_on_account_id", unique: true, using: :btree
-  add_index "user_profiles", ["deleted_at"], name: "index_user_profiles_on_deleted_at", using: :btree
 
   create_table "user_tour_views", force: :cascade do |t|
     t.integer "view_count",      default: 0, null: false
@@ -967,27 +1044,35 @@ ActiveRecord::Schema.define(version: 20170724162437) do
   add_foreign_key "course_profile_courses", "catalog_offerings", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade
+  add_foreign_key "lms_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_contexts", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_concept_coach_tasks", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_concept_coach_tasks", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_concept_coach_tasks", "tasks_tasks"
+  add_foreign_key "tasks_concept_coach_tasks", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_task_plans", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_tasking_plans", "time_zones", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "tasks_tasking_plans", "time_zones", on_update: :cascade
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_taskings", "tasks_tasks"
+  add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade
@@ -1011,13 +1096,12 @@ ActiveRecord::Schema.define(version: 20170724162437) do
      FROM (((((content_exercises
        JOIN tasks_tasked_exercises ON ((tasks_tasked_exercises.content_exercise_id = content_exercises.id)))
        JOIN tasks_task_steps ON (((tasks_task_steps.tasked_id = tasks_tasked_exercises.id) AND ((tasks_task_steps.tasked_type)::text = 'Tasks::Models::TaskedExercise'::text))))
-       JOIN tasks_tasks ON (((tasks_tasks.id = tasks_task_steps.tasks_task_id) AND (tasks_tasks.deleted_at IS NULL) AND (tasks_tasks.completed_exercise_steps_count > 0))))
-       JOIN tasks_taskings ON (((tasks_taskings.tasks_task_id = tasks_tasks.id) AND (tasks_taskings.deleted_at IS NULL))))
-       JOIN course_membership_periods ON (((course_membership_periods.id = tasks_taskings.course_membership_period_id) AND (course_membership_periods.deleted_at IS NULL))))
+       JOIN tasks_tasks ON (((tasks_tasks.id = tasks_task_steps.tasks_task_id) AND (tasks_tasks.hidden_at IS NULL) AND (tasks_tasks.completed_exercise_steps_count > 0))))
+       JOIN tasks_taskings ON ((tasks_taskings.tasks_task_id = tasks_tasks.id)))
+       JOIN course_membership_periods ON (((course_membership_periods.id = tasks_taskings.course_membership_period_id) AND (course_membership_periods.archived_at IS NULL))))
     GROUP BY course_membership_periods.course_profile_course_id, course_membership_periods.id, content_exercises.content_page_id, tasks_task_steps.group_type;
   SQL
 
   add_index "cc_page_stats", ["course_period_id", "coach_task_content_page_id", "group_type"], name: "cc_page_stats_uniq", unique: true, using: :btree
-  add_index "cc_page_stats", ["course_period_id"], name: "index_cc_page_stats_on_course_period_id", using: :btree
 
 end

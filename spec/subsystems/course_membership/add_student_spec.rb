@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::AddStudent, type: :routine do
   context "when adding a new student role to a period" do
-    let(:role) { FactoryGirl.create :entity_role }
-    let(:course) { FactoryGirl.create :course_profile_course }
-    let(:period) { FactoryGirl.create :course_membership_period, course: course }
+    let(:role) { FactoryBot.create :entity_role }
+    let(:course) { FactoryBot.create :course_profile_course }
+    let(:period) { FactoryBot.create :course_membership_period, course: course }
 
     it "succeeds" do
       result = nil
@@ -12,6 +12,7 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
         result = CourseMembership::AddStudent.call(period: period, role: role)
       }.to change{ CourseMembership::Models::Student.count }.by(1)
       expect(result.errors).to be_empty
+      expect(course.reload.is_access_switchable).to eq false
     end
 
     it 'sets the payment_due_at to midnight of appropriate day' do
@@ -41,10 +42,10 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
 
   context "when adding an existing student role to a course" do
     it "fails" do
-      role     = FactoryGirl.create :entity_role
-      course   = FactoryGirl.create :course_profile_course
-      period_1 = FactoryGirl.create :course_membership_period, course: course
-      period_2 = FactoryGirl.create :course_membership_period, course: course
+      role     = FactoryBot.create :entity_role
+      course   = FactoryBot.create :course_profile_course
+      period_1 = FactoryBot.create :course_membership_period, course: course
+      period_2 = FactoryBot.create :course_membership_period, course: course
 
       result = nil
       expect {

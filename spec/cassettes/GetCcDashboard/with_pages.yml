@@ -191,7 +191,7 @@ http_interactions:
   recorded_at: Tue, 03 May 2016 01:02:57 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c%22
     body:
       encoding: US-ASCII
       string: ''
@@ -201,7 +201,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer b7f8c3edf3f837ba7a020f978aed120183c0c6fdb8f12f04b1aca13348c1b497
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -1387,7 +1387,7 @@ http_interactions:
   recorded_at: Tue, 03 May 2016 01:02:58 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
     body:
       encoding: US-ASCII
       string: ''
@@ -1397,7 +1397,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer b7f8c3edf3f837ba7a020f978aed120183c0c6fdb8f12f04b1aca13348c1b497
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -2725,7 +2725,7 @@ http_interactions:
   recorded_at: Tue, 03 May 2016 01:03:00 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:7636a3bf-eb80-4898-8b2c-e81c1711b99f%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:7636a3bf-eb80-4898-8b2c-e81c1711b99f%22
     body:
       encoding: US-ASCII
       string: ''
@@ -2735,7 +2735,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer b7f8c3edf3f837ba7a020f978aed120183c0c6fdb8f12f04b1aca13348c1b497
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:

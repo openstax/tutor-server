@@ -11,7 +11,8 @@ class GetUserCourseRoles
 
   protected
 
-  def exec(user:, courses:, types: :any, include_inactive_students: false, preload: nil)
+  def exec(user:, courses:, types: :any, include_dropped_students: false,
+           include_deleted_teachers: false, preload: nil)
     types = [types].flatten
     if types.include?(:any)
       includes_student = true
@@ -33,17 +34,24 @@ class GetUserCourseRoles
         .where(course_membership_periods: { course_profile_course_id: course_ids })
 
       student_subquery = student_subquery.where(
-        student: { deleted_at: nil }, course_membership_periods: { deleted_at: nil }
-      ) unless include_inactive_students
+        course_membership_students: { dropped_at: nil },
+        course_membership_periods: { archived_at: nil }
+      ) unless include_dropped_students
 
       subqueries << student_subquery
     end
 
     if includes_teacher
-      subqueries << Entity::Role
+      teacher_subquery = Entity::Role
         .select('entity_roles.*, course_membership_teachers.course_profile_course_id')
         .joins(:teacher)
-        .where(teacher: { course_profile_course_id: course_ids })
+        .where(course_membership_teachers: { course_profile_course_id: course_ids })
+
+      teacher_subquery = teacher_subquery.where(
+        course_membership_teachers: { deleted_at: nil }
+      ) unless include_deleted_teachers
+
+      subqueries << teacher_subquery
     end
 
     subquery = subqueries.size == 1 ? subqueries.first.arel : subqueries.reduce(:union)

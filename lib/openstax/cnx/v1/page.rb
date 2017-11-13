@@ -30,11 +30,12 @@ module OpenStax::Cnx::V1
       node.at_css(feature_id_css)
     end
 
-    def initialize(hash: {}, id: nil, title: nil, content: nil)
-      @hash            = hash
-      @id              = id
-      @title           = title
-      @content         = content
+    def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil)
+      @hash    = hash
+      @id      = id
+      @url     = url
+      @title   = title
+      @content = content
     end
 
     attr_reader :hash
@@ -195,7 +196,7 @@ module OpenStax::Cnx::V1
 
         # Skip invalid links
         if uri.nil?
-          Rails.logger.warn{ "Invalid embed url: \"#{uri}\" when parsing page: #{url}" }
+          Rails.logger.warn { "Invalid embed url: \"#{src.value}\" when parsing page: #{url}" }
           next
         end
 
@@ -221,7 +222,7 @@ module OpenStax::Cnx::V1
 
         # Skip invalid links
         if uri.nil?
-          Rails.logger.warn{ "Invalid link url: \"#{uri}\" when parsing page: #{url}" }
+          Rails.logger.warn { "Invalid link url: \"#{href.value}\" when parsing page: #{url}" }
           next
         end
 

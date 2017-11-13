@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_tasked_video, class: '::Tasks::Models::TaskedVideo' do
     transient do
       skip_task false
@@ -13,7 +13,7 @@ FactoryGirl.define do
       options = { tasked: tasked_video }
       options[:task] = nil if evaluator.skip_task
 
-      tasked_video.task_step ||= FactoryGirl.build(:tasks_task_step, options)
+      tasked_video.task_step ||= FactoryBot.build(:tasks_task_step, options)
     end
   end
 end

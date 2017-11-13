@@ -14,20 +14,20 @@ module Api::V1
     property :accounts_api_url,
              readable: true,
              writeable: false,
-             getter: ->(*) {
+             getter: ->(*) do
                OpenStax::Utilities.generate_url(
                  OpenStax::Accounts.configuration.openstax_accounts_url, "api"
                )
-             }
+             end
 
     property :accounts_profile_url,
              readable: true,
              writeable: false,
-             getter: ->(*) {
+             getter: ->(*) do
                OpenStax::Utilities.generate_url(
                  OpenStax::Accounts.configuration.openstax_accounts_url, "profile"
                )
-             }
+             end
 
     property :hypothesis, writeable: false, readable: true, getter: ->(*) {
         {
@@ -51,7 +51,6 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
-
     property :payments, writeable: false, readable: true, getter: ->(*) {
       {
         is_enabled: Settings::Payments.payments_enabled,
@@ -59,7 +58,7 @@ module Api::V1
         base_url: Rails.application.secrets['openstax']['payments']['url'],
         product_uuid: Rails.application.secrets['openstax']['payments']['product_uuid']
       }
-    }
+    end
 
     property :feature_flags, writeable: false, readable: true, getter: ->(*) {
       {

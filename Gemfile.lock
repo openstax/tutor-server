@@ -1,19 +1,4 @@
 GIT
-  remote: https://github.com/lml/lev.git
-  revision: 351d0b0a49e296d312a1920c4803bc8b7619fb80
-  ref: 351d0b0a49e296d312a1920c4803bc8b7619fb80
-  specs:
-    lev (7.1.0)
-      actionpack (>= 4.2)
-      active_attr
-      activejob
-      activemodel (>= 4.2)
-      activerecord (>= 4.2)
-      hashie
-      transaction_isolation
-      transaction_retry
-
-GIT
   remote: https://github.com/openstax/active_force
   revision: 7caac1727d92206328e72ac9f7540805653f9d73
   ref: 7caac17
@@ -23,22 +8,11 @@ GIT
       restforce (~> 2.1.0)
 
 GIT
-  remote: https://github.com/openstax/jobba.git
-  revision: def4b3e5b578d90e13454538de0e576447ee9b2c
-  ref: def4b3e5b578d90e13454538de0e576447ee9b2c
+  remote: https://github.com/openstax/keyword_search.git
+  revision: 21785cb0f644f16c30886a3fa83213887d0f4cde
+  ref: 21785cb0f644
   specs:
-    jobba (1.5.0)
-      redis (~> 3.2)
-      redis-namespace
-
-GIT
-  remote: https://github.com/openstax/rescue_from.git
-  revision: e0d60e68afc629361d8b0c142c5eb0283e523aaa
-  ref: e0d60e68afc629361d8b0c142c5eb0283e523aaa
-  specs:
-    openstax_rescue_from (1.8.0)
-      exception_notification (>= 4.1, < 5.0)
-      rails (>= 3.1, < 5.0)
+    keyword_search (1.5.0)
 
 GIT
   remote: https://github.com/procore/with_advisory_lock.git
@@ -74,7 +48,7 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    active_attr (0.10.1)
+    active_attr (0.10.2)
       activemodel (>= 3.0.2, < 5.2)
       activesupport (>= 3.0.2, < 5.2)
     active_record_query_trace (1.4)
@@ -98,13 +72,13 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.3.7)
+    addressable (2.5.1)
+      public_suffix (~> 2.0, >= 2.0.2)
     apipie-rails (0.3.3)
       json
     arel (6.0.4)
-    autoprefixer-rails (5.1.7.1)
+    autoprefixer-rails (7.1.4.1)
       execjs
-      json
     awesome_print (1.6.1)
     aws-ses (0.6.0)
       builder
@@ -123,10 +97,17 @@ GEM
     best_in_place (3.1.1)
       actionpack (>= 3.2)
       railties (>= 3.2)
+    bindata (2.4.1)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bootstrap-sass (3.2.0.2)
-      sass (~> 3.2)
+    bootstrap-sass (3.3.7)
+      autoprefixer-rails (>= 5.2.1)
+      sass (>= 3.3.4)
+    boxr (1.4.0)
+      addressable (~> 2.3)
+      hashie (~> 3.5)
+      httpclient (~> 2.8)
+      jwt (~> 1.4)
     brakeman (3.0.2)
       erubis (~> 2.6)
       fastercsv (~> 1.5)
@@ -137,6 +118,7 @@ GEM
       ruby_parser (~> 3.6.2)
       sass (~> 3.0)
       terminal-table (~> 1.4)
+    browser (2.5.1)
     builder (3.2.3)
     bullet (4.14.7)
       activesupport (>= 3.0.0)
@@ -152,6 +134,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-screenshot (1.0.14)
+      capybara (>= 1.0, < 3)
+      launchy
     carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -219,7 +204,7 @@ GEM
     diff-lcs (1.2.5)
     diffy (3.2.0)
     docile (1.1.5)
-    doorkeeper (4.2.5)
+    doorkeeper (4.2.6)
       railties (>= 4.2)
     dotenv (2.0.1)
     dotenv-rails (2.0.1)
@@ -227,15 +212,15 @@ GEM
     equalizer (0.0.11)
     error_page_assets (0.3)
     erubis (2.7.0)
-    exception_notification (4.2.1)
+    exception_notification (4.2.2)
       actionmailer (>= 4.0, < 6)
       activesupport (>= 4.0, < 6)
     excon (0.45.3)
-    execjs (2.4.0)
-    factory_girl (4.5.0)
+    execjs (2.7.0)
+    factory_bot (4.8.2)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.5.0)
-      factory_girl (~> 4.5.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
     faker (1.4.3)
       i18n (~> 0.5)
@@ -375,7 +360,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.5.5)
+    hashie (3.5.6)
     highline (1.6.21)
     hike (1.2.3)
     html2haml (2.0.0)
@@ -387,22 +372,47 @@ GEM
     httparty (0.13.3)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
+    httpclient (2.8.3)
     i18n (0.8.6)
     ice_nine (0.11.1)
+    ims-lti (2.2.1)
+      addressable (~> 2.5, >= 2.5.1)
+      builder (~> 3.2)
+      faraday (~> 0.8)
+      faraday_middleware (~> 0.8)
+      json-jwt (~> 1.7)
+      simple_oauth (= 0.2)
     inflecto (0.0.2)
     ipaddress (0.8.0)
+    jobba (1.6.0)
+      redis (~> 3.2)
+      redis-namespace
     jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.6)
-    json-schema (2.5.1)
-      addressable (~> 2.3.7)
+    json-jwt (1.7.2)
+      activesupport
+      bindata
+      multi_json (>= 1.3)
+      securecompare
+      url_safe_base64
+    json-schema (2.8.0)
+      addressable (>= 2.4)
     jwt (1.5.1)
-    keyword_search (1.5.0)
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
+    lev (8.0.0)
+      actionpack (>= 4.2)
+      active_attr
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
+      hashie
+      transaction_isolation
+      transaction_retry
     libv8 (3.16.14.15)
     listen (3.0.5)
       rb-fsevent (>= 0.9.3)
@@ -414,7 +424,7 @@ GEM
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.10)
-    mail (2.6.5)
+    mail (2.6.6)
       mime-types (>= 1.16, < 4)
     maruku (0.7.2)
     method_source (0.8.2)
@@ -438,6 +448,7 @@ GEM
     notiffany (0.1.0)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    oauth (0.5.3)
     oauth2 (1.1.0)
       faraday (>= 0.8, < 0.10)
       jwt (~> 1.0, < 1.5.2)
@@ -455,7 +466,7 @@ GEM
     omniauth-salesforce (1.0.5)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
-    openstax_accounts (7.6.0)
+    openstax_accounts (7.9.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -464,11 +475,11 @@ GEM
       omniauth-oauth2 (>= 1.1)
       openstax_api (>= 3.1.0)
       openstax_utilities (>= 4.1.0)
+      pg
       rails (>= 4.1)
       representable (>= 2.0)
       roar (>= 1.0)
-      squeel (>= 0.5.0)
-    openstax_api (8.1.1)
+    openstax_api (8.2.0)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
       lev (>= 1.0.0)
@@ -479,6 +490,9 @@ GEM
       roar (>= 1.0)
       roar-rails (>= 1.0)
       uber (< 0.1.0)
+    openstax_rescue_from (2.1.0)
+      exception_notification (>= 4.1, < 5.0)
+      rails (>= 3.1, < 6.0)
     openstax_salesforce (0.19.0)
       active_force
       omniauth-salesforce (~> 1.0.5)
@@ -494,8 +508,8 @@ GEM
     parallel (1.9.0)
     parallel_tests (2.10.0)
       parallel
-    paranoia (2.1.5)
-      activerecord (~> 4.0)
+    paranoia (2.3.1)
+      activerecord (>= 4.0, < 5.2)
     pg (0.18.1)
     pilfer (1.0.2)
       rblineprof (~> 0.3.2)
@@ -518,6 +532,7 @@ GEM
     pry-stack_explorer (0.4.9.2)
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
+    public_suffix (2.0.5)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.8)
@@ -648,7 +663,7 @@ GEM
       sexp_processor (~> 4.1)
     rubyzip (1.1.7)
     safe_yaml (1.0.4)
-    sass (3.4.13)
+    sass (3.4.25)
     sass-rails (5.0.1)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
@@ -658,10 +673,13 @@ GEM
     scenic (1.4.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
+    scout_apm (3.0.0.pre13)
+    securecompare (1.0.0)
     sexp_processor (4.5.0)
     shellany (0.0.1)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
+    simple_oauth (0.2.0)
     simplecov (0.12.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -694,7 +712,7 @@ GEM
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
-    thor (0.19.4)
+    thor (0.20.0)
     thread_safe (0.3.6)
     tilt (1.4.1)
     timecop (0.7.3)
@@ -724,6 +742,7 @@ GEM
       unicorn (~> 4)
     uniform_notifier (1.9.0)
     url (0.3.2)
+    url_safe_base64 (0.2.2)
     validates_timeliness (3.0.14)
       timeliness (~> 0.3.6)
     vcr (2.9.3)
@@ -768,10 +787,13 @@ DEPENDENCIES
   axlsx (~> 2.1.0.pre)
   babbler (~> 1.0.1)
   best_in_place
-  bootstrap-sass (~> 3.2.0)
+  bootstrap-sass (~> 3.3.7)
+  boxr
   brakeman
+  browser (~> 2.5)
   bullet
   byebug
+  capybara-screenshot
   carrierwave
   cheat
   chronic
@@ -787,7 +809,7 @@ DEPENDENCIES
   delayed_job_active_record
   dotenv-rails
   error_page_assets
-  factory_girl_rails
+  factory_bot_rails
   faker
   fakeredis
   fine_print (~> 3.1.0)
@@ -795,28 +817,30 @@ DEPENDENCIES
   guard-rspec
   hashie
   httparty
-  jobba!
+  ims-lti (~> 2.2.1)
+  jobba (~> 1.6.0)
   jquery-rails
-  json-schema
-  keyword_search
+  json-schema (~> 2.8.0)
+  keyword_search!
   launchy
-  lev!
+  lev (~> 8.0.0)
   lograge
   maruku
   mini_magick
   newrelic_rpm
   nifty-generators
+  oauth (~> 0.5.1)
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts (~> 7.6.0)
-  openstax_api (~> 8.1.0)
-  openstax_rescue_from!
+  openstax_accounts (~> 7.9.0)
+  openstax_api (~> 8.2.0)
+  openstax_rescue_from (~> 2.1.0)
   openstax_salesforce (~> 0.19.0)
   openstax_utilities (~> 4.2.0)
   p3p
   parallel_tests
-  paranoia (~> 2.1.3)
+  paranoia
   pg
   pilfer (~> 1.0.0)
   poltergeist
@@ -844,6 +868,7 @@ DEPENDENCIES
   rspec-rails (~> 3.0)
   sass-rails (~> 5.0.0)
   scenic (~> 1.4)
+  scout_apm (~> 3.0.x)
   shoulda-matchers
   sortability
   spring
@@ -866,4 +891,4 @@ DEPENDENCIES
   with_advisory_lock!
 
 BUNDLED WITH
-   1.14.6
+   1.15.4

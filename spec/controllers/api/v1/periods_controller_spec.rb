@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version: :v1 do
-  let(:course)        { FactoryGirl.create :course_profile_course }
-  let(:other_course)  { FactoryGirl.create :course_profile_course }
+  let(:course)        { FactoryBot.create :course_profile_course }
+  let(:other_course)  { FactoryBot.create :course_profile_course }
 
-  let(:teacher_user)  { FactoryGirl.create(:user) }
+  let(:teacher_user)  { FactoryBot.create(:user) }
 
-  let(:teacher_token) { FactoryGirl.create(:doorkeeper_access_token,
+  let(:teacher_token) { FactoryBot.create(:doorkeeper_access_token,
                                            resource_owner_id: teacher_user.id) }
 
   before { AddUserAsCourseTeacher[course: course, user: teacher_user] }
@@ -21,16 +21,17 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response).to have_http_status(:created)
 
       last_period = CourseMembership::Models::Period.last
-      expect(response.body_as_hash).to match({
+      expect(response.body_as_hash).to match(a_hash_including(
         id: last_period.id.to_s,
         name: '7th Period',
+        num_enrolled_students: 0,
         enrollment_code: '012345',
         enrollment_url: a_string_matching(/enroll\/012345/),
         default_open_time: '00:01',
         default_due_time: '07:00',
         is_archived: false,
         teacher_student_role_id: last_period.entity_teacher_student_role_id.to_s
-      })
+      ))
     end
 
     it 'ensures the person is a teacher of the course' do
@@ -43,7 +44,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it "allows same name on periods if the previous one was deleted" do
-      period = FactoryGirl.create :course_membership_period, course: course, name: '8th Period'
+      period = FactoryBot.create :course_membership_period, course: course, name: '8th Period'
       period.to_model.destroy
 
       api_post :create, teacher_token, parameters: { course_id: course.id },
@@ -55,7 +56,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   describe '#update' do
-    let(:period) { FactoryGirl.create :course_membership_period, course: course, name: '8th Period' }
+    let(:period) { FactoryBot.create :course_membership_period, course: course, name: '8th Period' }
 
     it 'allows teachers to rename periods' do
       api_patch :update, teacher_token, parameters: { id: period.id },
@@ -75,7 +76,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'ensures the person is a teacher of the course' do
-      other_period = FactoryGirl.create :course_membership_period, course: other_course
+      other_period = FactoryBot.create :course_membership_period, course: other_course
 
       rescuing_exceptions do
         api_put :update, teacher_token, parameters: { id: other_period.id },
@@ -125,7 +126,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   context '#destroy' do
-    let(:period) { FactoryGirl.create :course_membership_period, course: course, name: '8th Period' }
+    let(:period) { FactoryBot.create :course_membership_period, course: course, name: '8th Period' }
 
     it 'allows teachers to delete periods' do
       api_delete :destroy, teacher_token, parameters: { id: period.id }
@@ -158,7 +159,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   context '#restore' do
-    let(:period) { FactoryGirl.create :course_membership_period, course: course }
+    let(:period) { FactoryBot.create :course_membership_period, course: course }
 
     before { period.to_model.destroy! }
 
@@ -182,7 +183,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'does not restore periods that are not deleted' do
-      period.to_model.restore!(recursive: true)
+      period.to_model.restore!
 
       api_put :restore, teacher_token, parameters: { id: period.id }
 
@@ -192,7 +193,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'returns a proper error message if there is a name conflict' do
-      conflicting_period = FactoryGirl.create :course_membership_period, course: course,
+      conflicting_period = FactoryBot.create :course_membership_period, course: course,
                                                                          name: period.name
 
       api_put :restore, teacher_token, parameters: { id: period.id }

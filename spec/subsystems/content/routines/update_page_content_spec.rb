@@ -17,9 +17,9 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     })
   }
 
-  let(:chapter_1)  { FactoryGirl.create :content_chapter, book_location: [1] }
+  let(:chapter_1)  { FactoryBot.create :content_chapter, book_location: [1] }
   let(:book)       { chapter_1.book }
-  let(:chapter_20) { FactoryGirl.create :content_chapter, book: book, book_location: [20] }
+  let(:chapter_20) { FactoryBot.create :content_chapter, book: book, book_location: [20] }
 
   let!(:page_1) do
     OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do

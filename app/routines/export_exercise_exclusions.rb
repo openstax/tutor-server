@@ -1,20 +1,17 @@
 class ExportExerciseExclusions
-  owncloud_secrets = Rails.application.secrets['owncloud']
-  EE_STATS_FOLDER = owncloud_secrets['excluded_exercises_stats_folder']
-  WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{EE_STATS_FOLDER}"
 
   lev_routine active_job_enqueue_options: { queue: :long_running }
 
   protected
 
-  def exec(upload_by_course_to_owncloud: false, upload_by_exercise_to_owncloud: false)
-    if upload_by_course_to_owncloud || upload_by_exercise_to_owncloud
-      if upload_by_course_to_owncloud
+  def exec(upload_by_course: false, upload_by_exercise: false)
+    if upload_by_course || upload_by_exercise
+      if upload_by_course
         generate_by_course_csv
         upload_by_course_csv
       end
 
-      if upload_by_exercise_to_owncloud
+      if upload_by_exercise
         generate_by_exercise_csv
         upload_by_exercise_csv
       end
@@ -216,12 +213,12 @@ class ExportExerciseExclusions
     end
   end
 
-  def owncloud_csv_by_course
-    File.join EE_STATS_FOLDER, filename_by_course
+  def box_csv_by_course
+    File.join EXPORT_FOLDER, filename_by_course
   end
 
-  def owncloud_csv_by_exercise
-    File.join EE_STATS_FOLDER, filename_by_exercise
+  def box_csv_by_exercise
+    File.join EXPORT_FOLDER, filename_by_exercise
   end
 
   def current_time
@@ -249,35 +246,16 @@ class ExportExerciseExclusions
   end
 
   def upload_by_course_csv
-    own_cloud_secrets = Rails.application.secrets['owncloud']
-    auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
-
-    File.open(filepath_by_course, 'r') do |file|
-      HTTParty.put(
-        webdav_url(filepath_by_course.split("/").last),
-        basic_auth: auth, body_stream: file, headers: { 'Transfer-Encoding' => 'chunked' }
-      ).success?
-    end
+    Box.upload_file filepath_by_course
   end
 
   def upload_by_exercise_csv
-    own_cloud_secrets = Rails.application.secrets['owncloud']
-    auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
-
-    File.open(filepath_by_exercise, 'r') do |file|
-      HTTParty.put(
-        webdav_url(filepath_by_exercise.split("/").last),
-        basic_auth: auth, body_stream: file, headers: { 'Transfer-Encoding' => 'chunked' }
-      ).success?
-    end
-  end
-
-  def webdav_url(fname)
-    Addressable::URI.escape "#{WEBDAV_BASE_URL}/#{fname}"
+    Box.upload_file filepath_by_exercise
   end
 
   def remove_exported_files
     File.delete(filepath_by_course) if File.exists?(filepath_by_course)
     File.delete(filepath_by_exercise) if File.exists?(filepath_by_exercise)
   end
+
 end

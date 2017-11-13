@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_tasked_reading, class: '::Tasks::Models::TaskedReading' do
     transient do
       skip_task false
@@ -14,7 +14,7 @@ FactoryGirl.define do
       options = { tasked: tasked_reading }
       options[:task] = nil if evaluator.skip_task
 
-      tasked_reading.task_step ||= FactoryGirl.build(:tasks_task_step, options)
+      tasked_reading.task_step ||= FactoryBot.build(:tasks_task_step, options)
     end
   end
 end

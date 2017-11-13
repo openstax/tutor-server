@@ -1,8 +1,10 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :content_book, class: '::Content::Models::Book' do
     transient do
       contents {{}}
     end
+
+    association :ecosystem, factory: :content_ecosystem
 
     title { contents[:title] || Faker::Lorem.words(3).join(' ') }
     content { contents.to_json }
@@ -31,14 +33,6 @@ FactoryGirl.define do
         { css: '.ost-feature, .ost-assessed-feature', fragments: ['reading'] }
       ]
     }
-
-    after(:build) do |book|
-      book.ecosystem ||= build(:content_ecosystem, books: [ book ])
-    end
-
-    after(:create) do |book|
-      book.ecosystem.update_title
-    end
 
     after(:create) do |book, evaluator|
       (evaluator.contents[:chapters] || {}).each do |chapter|

@@ -10,7 +10,7 @@ class ExportUsersInfoToMatchWithConsentForms
 
   def info
     output_users = []
-    User::Models::Profile.with_deleted.joins(:account).find_each do |user|
+    User::Models::Profile.joins(:account).find_each do |user|
       output_users << Hashie::Mash.new({
         user_id: user.account.openstax_uid,
         student_identifiers: user.roles.map(&:student).compact.map(&:student_identifier),

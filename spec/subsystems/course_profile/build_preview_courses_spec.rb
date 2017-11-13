@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseProfile::BuildPreviewCourses, type: :routine, truncation: true do
-  let!(:offerings) { 2.times.map { FactoryGirl.create :catalog_offering, is_tutor: true } }
+  let!(:offerings) { 2.times.map { FactoryBot.create :catalog_offering, is_tutor: true } }
 
   it 'queries for needed offerings' do
     needed = described_class.new.send(:offering_that_needs_previews, 2)

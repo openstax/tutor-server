@@ -14,7 +14,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slo
     end
 
     it 'imports a book even if the book already exists' do
-      FactoryGirl.create(:content_book,
+      FactoryBot.create(:content_book,
                          title: 'Physics',
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '4.4')
@@ -25,7 +25,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slo
     end
 
     it 'imports a book with a different version' do
-      FactoryGirl.create(:content_book,
+      FactoryBot.create(:content_book,
                          title: 'Physics',
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '4.4')
@@ -47,7 +47,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slo
     end
 
     it 'imports a book even if the book already exists' do
-      FactoryGirl.create(:content_book,
+      FactoryBot.create(:content_book,
                          title: 'Derived copy of Biology',
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '2.1')
@@ -58,7 +58,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slo
     end
 
     it 'imports a book with a different version' do
-      FactoryGirl.create(:content_book,
+      FactoryBot.create(:content_book,
                          title: 'Derived copy of Biology',
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '2.1')

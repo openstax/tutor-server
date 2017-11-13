@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
   include ActiveJob::TestHelper
 
-  let(:user) { FactoryGirl.create(:user) }
-  let(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:user) { FactoryBot.create(:user) }
+  let(:admin) { FactoryBot.create(:user, :administrator) }
 
-  let(:user_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: user.id) }
-  let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
+  let(:user_token) { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: user.id) }
+  let(:admin_token) { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
   before(:all) { Jobba.all.to_a.each(&:delete!) }
 
@@ -76,9 +76,9 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       end
 
       it 'works end-2-end for ExportPerformanceReport' do
-        user = FactoryGirl.create(:user)
-        course = FactoryGirl.create :course_profile_course
-        user_token = FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user.id
+        user = FactoryBot.create(:user)
+        course = FactoryBot.create :course_profile_course
+        user_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: user.id
 
         AddUserAsCourseTeacher[course: course, user: user]
 

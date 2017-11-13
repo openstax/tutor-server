@@ -3,10 +3,9 @@
 <%= render partial: 'manager/courses/tabs',
            locals: { incomplete_jobs: @incomplete_jobs, failed_jobs: @failed_jobs } %>
 <br>
-<%= render partial: 'manager/courses/search', locals: { query: @query } %>
-
-Results per page:
-<%= select_tag "Results per page", options_for_select([25, 50, 100, 200, 400, "all"], params[:per_page]), id: "search-courses-results-pp" %>
+<%= render partial: 'manager/courses/search', locals: {
+             query: @query, order_by: @order_by, total_count: @course_infos.try(:count)
+           } %>
 
 <%= render partial: 'manager/courses/index',
            locals: { course_infos: @course_infos,
@@ -18,8 +17,7 @@ Results per page:
                      job_path_proc: ->(job) { customer_service_job_path(job.id) },
                      extra_fields_procs: [ lambda do |course_info| %>
   <td>
-    <%= link_to 'List Students', customer_service_course_students_path(course_info.id),
-                                 class: 'btn btn-sm btn-primary course-stats-button' %>
-    <%= link_to 'Show', customer_service_course_path(course_info.id), class: "btn btn-sm btn-primary  course-stats-button" %>
+    <%= link_to 'List Students', customer_service_course_students_path(course_info.id) %>
+    <%= link_to 'Show', customer_service_course_path(course_info.id) %>
   </td>
 <% end ] } %>

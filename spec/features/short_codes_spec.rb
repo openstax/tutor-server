@@ -3,22 +3,22 @@ require 'rails_helper'
 RSpec.describe "short codes" do
 
   context "students accessing tasks via short code" do
-    let(:course)           { FactoryGirl.create :course_profile_course }
-    let(:period)           { FactoryGirl.create :course_membership_period, course: course }
+    let(:course)           { FactoryBot.create :course_profile_course }
+    let(:period)           { FactoryBot.create :course_membership_period, course: course }
 
-    let(:task_plan_1)      { FactoryGirl.create(:tasks_task_plan, owner: course) }
+    let(:task_plan_1)      { FactoryBot.create(:tasks_task_plan, owner: course) }
     let(:task_1)           do
-      FactoryGirl.create(:tasks_task, task_plan: task_plan_1, opens_at: 1.day.from_now)
+      FactoryBot.create(:tasks_task, task_plan: task_plan_1, opens_at: 1.day.from_now)
     end
-    let!(:tasking_1)       { FactoryGirl.create(:tasks_tasking, role: student_role, task: task_1) }
-    let(:task_plan_1_code) { FactoryGirl.create(:short_code_short_code,
+    let!(:tasking_1)       { FactoryBot.create(:tasks_tasking, role: student_role, task: task_1) }
+    let(:task_plan_1_code) { FactoryBot.create(:short_code_short_code,
                                                 uri: task_plan_1.to_global_id.to_s).code }
 
-    let(:task_plan_2)      { FactoryGirl.create(:tasks_task_plan, owner: course) }
-    let(:task_plan_2_code) { FactoryGirl.create(:short_code_short_code,
+    let(:task_plan_2)      { FactoryBot.create(:tasks_task_plan, owner: course) }
+    let(:task_plan_2_code) { FactoryBot.create(:short_code_short_code,
                                                  uri: task_plan_2.to_global_id.to_s).code }
 
-    let(:student_user)     { FactoryGirl.create(:user) }
+    let(:student_user)     { FactoryBot.create(:user) }
     let!(:student_role)    { AddUserAsPeriodStudent[period: period, user: student_user] }
 
     before { stub_current_user(student_user) }

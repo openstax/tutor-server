@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Admnistration' do
   scenario 'visit the admin dashboard' do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
     visit admin_root_path
@@ -13,16 +13,23 @@ RSpec.feature 'Admnistration' do
 
   context 'pages are reachable via the menu' do
     scenario 'System Setting/Settings' do
-      admin = FactoryGirl.create(:user, :administrator)
+      admin = FactoryBot.create(:user, :administrator)
       stub_current_user(admin)
       visit admin_root_path
 
       click_link 'System Setting'
       click_link 'Settings'
+
+      expect(page).to have_content('Global Settings')
+      expect(page).to have_content('Excluded exercise IDs')
+      fill_in 'settings_excluded_ids', with: '123456@7'
+
+      expect(SendGlobalExerciseExclusionsToBiglearn).to receive(:perform_later).once
+      click_button 'Save'
     end
 
     scenario 'Salesforce' do
-      admin = FactoryGirl.create(:user, :administrator)
+      admin = FactoryBot.create(:user, :administrator)
       stub_current_user(admin)
       stub_current_user(admin, OpenStax::Salesforce::SettingsController)
       visit admin_root_path
@@ -33,7 +40,7 @@ RSpec.feature 'Admnistration' do
     end
 
     scenario 'Payments' do
-      admin = FactoryGirl.create(:user, :administrator)
+      admin = FactoryBot.create(:user, :administrator)
       stub_current_user(admin)
       visit admin_root_path
 

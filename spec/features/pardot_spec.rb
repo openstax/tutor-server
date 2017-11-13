@@ -4,7 +4,7 @@ RSpec.describe "Pardot" do
   # No real SF tests here, lots of those in tracking routine spec
   before(:each) { disable_sfdc_client }
 
-  let(:user) { FactoryGirl.create :user }
+  let(:user) { FactoryBot.create :user }
   let(:anonymous_user) do
     profile = User::Models::AnonymousProfile.instance
     strategy = User::Strategies::Direct::AnonymousUser.new(profile)
@@ -56,7 +56,7 @@ RSpec.describe "Pardot" do
           scenario "non-fatal exceptions when using real BG jobs" do
             Delayed::Worker.with_delay_jobs(true) do
               visit '/pardot/toa'
-              expect(current_url).to eq redirect_url
+              expect(current_url).to include redirect_url
               expect(Delayed::Worker.new.work_off).to eq [0,1]
             end
           end

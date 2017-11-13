@@ -3,9 +3,12 @@
 <%= render partial: 'manager/courses/tabs',
            locals: { incomplete_jobs: @incomplete_jobs, failed_jobs: @failed_jobs } %>
 <br>
-<%= render partial: 'manager/courses/search', locals: { query: @query } %>
-
-<%= form_tag bulk_update_admin_courses_path, method: :post do |f| %>
+<%= render partial: 'manager/courses/search', locals: {
+             query: @query, order_by: @order_by, total_count: @course_infos.try(:count)
+           } %>
+<%= form_tag bulk_update_admin_courses_path, method: :post do %>
+  <%= hidden_field_tag :query, @query %>
+  <%= hidden_field_tag :order_by, @order_by %>
   <%= render partial: 'manager/courses/index',
              locals: { course_infos: @course_infos,
                        bulk_actions: true,
@@ -19,14 +22,16 @@
     <td>
       <%= link_to 'List Students', admin_course_students_path(course_info.id),
                                    class: 'btn btn-sm btn-primary course-stats-button' %>
-      <%= link_to 'Edit', edit_admin_course_path(course_info.id), class: "btn btn-sm btn-primary course-stats-button" %>
-      <% if course_info.teachers.empty? && course_info.periods.empty? %>
+      <%= link_to 'Edit', edit_admin_course_path(course_info.id),
+                          class: "btn btn-sm btn-primary course-stats-button" %>
+      <% if course_info.teachers.without_deleted.empty? &&
+            course_info.periods.without_deleted.empty? %>
         <%= link_to 'Delete', admin_course_path(course_info.id),
                               method: :delete,
                               data: {
                                 confirm: "Are you sure you want to delete #{course_info.name}?"
                               },
-                              class: 'btn btn-xs btn-primary course-stats-button' %>
+                              class: "btn btn-sm btn-primary course-stats-button" %>
       <% end %>
     </td>
   <% end ] } %>

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
-  let(:exercise_model) { FactoryGirl.create :content_exercise }
+  let(:exercise_model) { FactoryBot.create :content_exercise }
   let(:exercise)       {
     strategy = ::Content::Strategies::Direct::Exercise.new(exercise_model)
     ::Content::Exercise.new(strategy: strategy)
@@ -11,28 +11,28 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
   context 'with tags' do
     before do
-      lo = FactoryGirl.create :content_tag,
+      lo = FactoryBot.create :content_tag,
                               tag_type: :lo,
                               value: 'ost-tag-lo-k12phys-ch04-s02-lo01',
                               name: nil,
                               description: 'Describe Newton\'s first law and friction'
 
-      lo2 = FactoryGirl.create :content_tag,
+      lo2 = FactoryBot.create :content_tag,
                                tag_type: :lo,
                                value: 'ost-tag-lo-k12phys-ch04-s02-lo02',
                                name: 'Learning Objective 2',
                                description: nil,
                                visible: false
 
-      teks = FactoryGirl.create :content_tag,
+      teks = FactoryBot.create :content_tag,
                                 value: 'ost-tag-teks-112-39-c-4d',
                                 name: '(D)',
                                 description: 'calculate the effect of forces on objects'
 
-      FactoryGirl.create :content_lo_teks_tag, lo: lo, teks: teks
-      FactoryGirl.create :content_exercise_tag, exercise: exercise_model, tag: lo
-      FactoryGirl.create :content_exercise_tag, exercise: exercise_model, tag: lo2
-      FactoryGirl.create :content_exercise_tag, exercise: exercise_model, tag: teks
+      FactoryBot.create :content_lo_teks_tag, lo: lo, teks: teks
+      FactoryBot.create :content_exercise_tag, exercise: exercise_model, tag: lo
+      FactoryBot.create :content_exercise_tag, exercise: exercise_model, tag: lo2
+      FactoryBot.create :content_exercise_tag, exercise: exercise_model, tag: teks
     end
 
     it 'represents an exercise' do

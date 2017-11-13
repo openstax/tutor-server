@@ -194,7 +194,7 @@ class PushSalesforceCourseStats
       os_ancillary.reset_stats
 
       students = periods.flat_map do |period|
-        period.students_with_deleted.preload({role: {taskings: :task}})
+        period.students.preload({role: {taskings: :task}})
       end
 
       students.each do |student|
@@ -202,7 +202,7 @@ class PushSalesforceCourseStats
         os_ancillary.num_students_paid += 1 if student.is_paid
         os_ancillary.num_students_comped += 1 if student.is_comped
         os_ancillary.num_students_refunded += 1 if student.first_paid_at.present? && !student.is_paid
-        os_ancillary.num_students_dropped += 1 if student.deleted?
+        os_ancillary.num_students_dropped += 1 if student.dropped?
 
         num_steps_completed = student.role.taskings.map{ |tasking|
           tasking.task.completed_steps_count

@@ -1,5 +1,4 @@
 require_relative 'subsystems/association_extensions'
-require_relative 'subsystems/base_model'
 
 module Tutor
 

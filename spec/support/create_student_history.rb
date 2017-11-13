@@ -39,10 +39,10 @@ class CreateStudentHistory
 
   def setup_student_role
     puts "=== Creating a course period ==="
-    outputs.period = FactoryGirl.create :course_membership_period, course: course
+    outputs.period = FactoryBot.create :course_membership_period, course: course
 
     puts "=== Creating a student ==="
-    student = FactoryGirl.create(:user)
+    student = FactoryBot.create(:user)
 
     puts "=== Add student to course ==="
     run(:add_user_as_period_student, period: outputs.period, user: student).outputs.role
@@ -82,13 +82,13 @@ class CreateStudentHistory
     @ireading_assistant ||= begin
       args = { code_class_name: 'Tasks::Assistants::IReadingAssistant' }
 
-      Tasks::Models::Assistant.find_by(args) || FactoryGirl.create(:tasks_assistant, args)
+      Tasks::Models::Assistant.find_by(args) || FactoryBot.create(:tasks_assistant, args)
     end
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)
-    page_ids = ecosystem.pages.map{ |pg| pg.id.to_s }
-    task_plan = FactoryGirl.build(
+    page_ids = ecosystem.pages.map { |pg| pg.id.to_s }
+    task_plan = FactoryBot.build(
       :tasks_task_plan,
       owner: course,
       assistant: ireading_assistant,
@@ -101,7 +101,7 @@ class CreateStudentHistory
     )
 
     periods.each do |period|
-      tasking_plan = FactoryGirl.build(
+      tasking_plan = FactoryBot.build(
         :tasks_tasking_plan,
         task_plan: task_plan,
         target: period
@@ -118,14 +118,14 @@ class CreateStudentHistory
     @homework_assistant ||= begin
       args = { code_class_name: 'Tasks::Assistants::HomeworkAssistant' }
 
-      Tasks::Models::Assistant.find_by(args) || FactoryGirl.create(:tasks_assistant, args)
+      Tasks::Models::Assistant.find_by(args) || FactoryBot.create(:tasks_assistant, args)
     end
   end
 
   def create_homework_task_plan(ecosystem, course, periods)
     exercise_ids = [ecosystem.chapters[2].pages[1].exercises[0].id.to_s]
 
-    task_plan = FactoryGirl.build(
+    task_plan = FactoryBot.build(
       :tasks_task_plan,
       owner: course,
       assistant: homework_assistant,
@@ -140,7 +140,7 @@ class CreateStudentHistory
     )
 
     periods.each do |period|
-      tasking_plan = FactoryGirl.build(
+      tasking_plan = FactoryBot.build(
         :tasks_tasking_plan,
         task_plan: task_plan,
         target: period

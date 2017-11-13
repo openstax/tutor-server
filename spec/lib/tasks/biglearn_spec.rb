@@ -8,17 +8,17 @@ RSpec.describe 'biglearn:initialize', type: :rake do
     DatabaseCleaner.clean_with :truncation
 
     # Each tasked TP has its own ecosystem and course and some number of students
-    task_plan_1 = FactoryGirl.create :tasked_task_plan, number_of_students: 10
-    task_plan_2 = FactoryGirl.create :tasked_task_plan, number_of_students: 5
+    task_plan_1 = FactoryBot.create :tasked_task_plan, number_of_students: 10
+    task_plan_2 = FactoryBot.create :tasked_task_plan, number_of_students: 5
 
     ecosystem_1 = Content::Ecosystem.new strategy: task_plan_1.ecosystem.wrap
     ecosystem_2 = Content::Ecosystem.new strategy: task_plan_2.ecosystem.wrap
 
     # Other courses using the same ecosystem as the task_plans above including updates
-    course_1 = FactoryGirl.create :course_profile_course, offering: nil
-    course_2 = FactoryGirl.create :course_profile_course, offering: nil
-    course_3 = FactoryGirl.create :course_profile_course, offering: nil
-    course_4 = FactoryGirl.create :course_profile_course, offering: nil
+    course_1 = FactoryBot.create :course_profile_course, offering: nil
+    course_2 = FactoryBot.create :course_profile_course, offering: nil
+    course_3 = FactoryBot.create :course_profile_course, offering: nil
+    course_4 = FactoryBot.create :course_profile_course, offering: nil
 
     AddEcosystemToCourse[ecosystem: ecosystem_1, course: course_1]
     AddEcosystemToCourse[ecosystem: ecosystem_2, course: course_2]
@@ -28,7 +28,7 @@ RSpec.describe 'biglearn:initialize', type: :rake do
     AddEcosystemToCourse[ecosystem: ecosystem_2, course: course_4]
 
     # Courses without an ecosystem are not sent to Biglearn until they get one
-    10.times { FactoryGirl.create :course_profile_course, offering: nil }
+    10.times { FactoryBot.create :course_profile_course, offering: nil }
 
     # Pick 20 random responses to send to Biglearn
     Tasks::Models::TaskedExercise.preload(task_step: :task).take(20).each do |tasked_exercise|

@@ -2,44 +2,39 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe ExportExerciseExclusions, type: :routine do
-  before(:each) do
-    WebMock.disable_net_connect!
-    stub_request(:put, /remote.php/).to_return(status: 200)
-  end
-
   context "with data" do
     before(:all) do
-      @course = FactoryGirl.create :course_profile_course
-      @teacher_user = FactoryGirl.create :user, first_name: "Bob", last_name: "Martin"
+      @course = FactoryBot.create :course_profile_course
+      @teacher_user = FactoryBot.create :user, first_name: "Bob", last_name: "Martin"
       @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher_user]
 
-      chapter = FactoryGirl.create :content_chapter
+      chapter = FactoryBot.create :content_chapter
 
       @book = chapter.book
 
-      @page_1 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 1]
-      @page_2 = FactoryGirl.create :content_page, chapter: chapter, book_location: [1, 2]
-      @page_removed = FactoryGirl.create :content_page, book_location: [42, 1]
+      @page_1 = FactoryBot.create :content_page, chapter: chapter, book_location: [1, 1]
+      @page_2 = FactoryBot.create :content_page, chapter: chapter, book_location: [1, 2]
+      @page_removed = FactoryBot.create :content_page, book_location: [42, 1]
 
       # Creating them in reverse order so @exercise_1 gets the lowest (negative) number
-      @exercise_removed = FactoryGirl.create :content_exercise, page: @page_removed
-      @exercise_3 = FactoryGirl.create :content_exercise, page: @page_2
-      @exercise_2 = FactoryGirl.create :content_exercise, page: @page_2
-      @exercise_1 = FactoryGirl.create :content_exercise, page: @page_1
+      @exercise_removed = FactoryBot.create :content_exercise, page: @page_removed
+      @exercise_3 = FactoryBot.create :content_exercise, page: @page_2
+      @exercise_2 = FactoryBot.create :content_exercise, page: @page_2
+      @exercise_1 = FactoryBot.create :content_exercise, page: @page_1
 
-      @exercise_another_eco = FactoryGirl.create :content_exercise, number: @exercise_1.number
+      @exercise_another_eco = FactoryBot.create :content_exercise, number: @exercise_1.number
 
       ecosystem_model = chapter.ecosystem
       ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
 
-      @ee_1 = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_1 = FactoryBot.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_1.number
-      @ee_2 = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_2 = FactoryBot.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_2.number
-      @ee_3 = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_3 = FactoryBot.create :course_content_excluded_exercise,
                                  course: @course, exercise_number: @exercise_3.number
-      @ee_removed = FactoryGirl.create :course_content_excluded_exercise,
+      @ee_removed = FactoryBot.create :course_content_excluded_exercise,
                                        course: @course, exercise_number: @exercise_removed.number
     end
 
@@ -138,11 +133,13 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           ee_numbers_urls = ee_numbers.map do |number|
             OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
           end
-          exclusion_dates = excluded_exercises.map{ |ee| DateTimeUtilities.to_api_s(ee.created_at) }
+          exclusion_dates = excluded_exercises.map do |ee|
+            DateTimeUtilities.to_api_s(ee.created_at)
+          end
           pages = [@page_1, @page_2, @page_2]
           page_uuids = pages.map(&:uuid) + ['null']
-          page_urls = pages.map{ |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
-          book_locations = pages.map{ |page| page.book_location.join('.') } + ['null']
+          page_urls = pages.map { |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
+          book_locations = pages.map { |page| page.book_location.join('.') } + ['null']
 
           with_rows_from_csv("by_course") do |rows|
             headers = rows.first
@@ -164,20 +161,14 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
         end
 
-        it 'uploads the exported data to owncloud' do
-          file_regex_string = 'excluded_exercises_stats_by_course_\d+T\d+Z.csv'
-          webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+        it 'uploads the exported data to Box' do
+          # We simply test that the call to Box.upload_file is made properly
+          filename_regex = /excluded_exercises_stats_by_course_\d+T\d+Z\.csv/
+          expect(Box).to receive(:upload_file) do |filename|
+            expect(filename).to match filename_regex
+          end
 
-          # We simply test that the call to HTTParty is made properly
-          expect(HTTParty).to receive(:put).with(
-            webdav_url_regex,
-            basic_auth: { username: a_kind_of(String).or(be_nil),
-                          password: a_kind_of(String).or(be_nil) },
-            body_stream: a_kind_of(File),
-            headers: { 'Transfer-Encoding' => 'chunked' }
-          ).and_return OpenStruct.new(success?: true)
-
-          described_class.call(upload_by_course_to_owncloud: true)
+          described_class.call(upload_by_course: true)
         end
       end
     end
@@ -250,7 +241,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             OpenStax::Exercises::V1.uri_for("/exercises/#{exercise_number}").to_s
           end
           page_uuids = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map(&:uuid)
-          page_urls = page_uuids.map{ |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
+          page_urls = page_uuids.map { |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
 
           with_rows_from_csv("by_exercise") do |rows|
             headers = rows.first
@@ -271,20 +262,14 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
         end
 
-        it 'uploads the exported data to owncloud' do
-          file_regex_string = 'excluded_exercises_stats_by_exercise_\d+T\d+Z.csv'
-          webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
+        it 'uploads the exported data to Box' do
+          # We simply test that the call to Box.upload_file is made properly
+          filename_regex = /excluded_exercises_stats_by_exercise_\d+T\d+Z\.csv/
+          expect(Box).to receive(:upload_file) do |filename|
+            expect(filename).to match filename_regex
+          end
 
-          # We simply test that the call to HTTParty is made properly
-          expect(HTTParty).to receive(:put).with(
-            webdav_url_regex,
-            basic_auth: { username: a_kind_of(String).or(be_nil),
-                          password: a_kind_of(String).or(be_nil) },
-            body_stream: a_kind_of(File),
-            headers: { 'Transfer-Encoding' => 'chunked' }
-          ).and_return OpenStruct.new(success?: true)
-
-          described_class.call(upload_by_exercise_to_owncloud: true)
+          described_class.call(upload_by_exercise: true)
         end
       end
     end
@@ -307,7 +292,6 @@ def with_rows_from_csv(by_type, &block)
 
   by_course = by_type == "by_course"
   by_exercise = by_type == "by_exercise"
-  described_class.call(
-    upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
-  )
+  expect(Box).to receive(:upload_file)
+  described_class.call upload_by_course: by_course, upload_by_exercise: by_exercise
 end

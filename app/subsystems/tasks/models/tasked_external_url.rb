@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedExternalUrl < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedExternalUrl < IndestructibleRecord
   acts_as_tasked
 
   validates :url, presence: true

@@ -6,12 +6,14 @@ RSpec.describe WebviewController, type: :controller do
                                                       title: 'General Terms of Use',
                                                       content: Faker::Lorem.paragraphs,
                                                       version: 10) }
-  let(:new_user)        { FactoryGirl.create(:user, skip_terms_agreement: true) }
-  let(:registered_user) { FactoryGirl.create(:user) }
+  let(:new_user)        { FactoryBot.create(:user, skip_terms_agreement: true) }
+  let(:registered_user) { FactoryBot.create(:user) }
+
+  before(:each) { request.headers.merge! 'User-Agent': chrome_ua }
 
   describe 'GET home' do
     it 'renders a static page for anonymous' do
-      get :home
+      get :home, headers: chrome_ua
       expect(response).to have_http_status(:success)
     end
 
@@ -26,6 +28,13 @@ RSpec.describe WebviewController, type: :controller do
       get :home, cc: "1"
       expect(response).to redirect_to('http://cc.openstax.org')
     end
+
+    it 'redirects unsupported browsers to message' do
+      request.headers.merge! 'User-Agent': unsupported_ua
+      get :home
+      expect(response).to redirect_to(browser_upgrade_path(go: root_url))
+    end
+
   end
 
   describe 'GET *anything' do

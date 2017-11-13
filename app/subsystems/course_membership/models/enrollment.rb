@@ -1,11 +1,9 @@
-class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
+class CourseMembership::Models::Enrollment < IndestructibleRecord
 
-  acts_as_paranoid
+  belongs_to :period,  inverse_of: :enrollments
+  belongs_to :student, inverse_of: :enrollments
 
-  belongs_to :period, -> { with_deleted }, inverse_of: :enrollments
-  belongs_to :student, -> { with_deleted }, inverse_of: :enrollments
-
-  has_one :enrollment_change, -> { with_deleted }, dependent: :destroy, inverse_of: :enrollment
+  has_one :enrollment_change, dependent: :destroy, inverse_of: :enrollment
 
   before_validation :assign_sequence_number
 

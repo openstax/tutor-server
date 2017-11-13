@@ -4,17 +4,17 @@ require 'vcr_helper'
 RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
                                                    version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let(:user_1)         { FactoryGirl.create(:user) }
-  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,
                                              resource_owner_id: user_1.id }
 
-  let(:user_2)         { FactoryGirl.create(:user) }
-  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_2)         { FactoryBot.create(:user) }
+  let(:user_2_token)   { FactoryBot.create :doorkeeper_access_token,
                                              resource_owner_id: user_2.id }
 
-  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token) { FactoryBot.create :doorkeeper_access_token }
 
-  let(:course)         { FactoryGirl.create :course_profile_course }
+  let(:course)         { FactoryBot.create :course_profile_course, :without_ecosystem }
 
   context 'with a real book' do
     before(:all) do
@@ -68,7 +68,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
         end
 
         it 'returns exercises in the given ecosystem if an ecosystem_id is specified' do
-          new_ecosystem_model = FactoryGirl.create :content_ecosystem
+          new_ecosystem_model = FactoryBot.create :content_ecosystem
           # We don't use AddEcosystemToCourse here because the ecosystem mapping would be invalid
           course.course_ecosystems << CourseContent::Models::CourseEcosystem.new(
             course: course, ecosystem: new_ecosystem_model
@@ -161,7 +161,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
         end
 
         it 'can reinclude an exercise' do
-          FactoryGirl.create :course_content_excluded_exercise,
+          FactoryBot.create :course_content_excluded_exercise,
                              course: course, exercise_number: exercise.number
 
           expect{

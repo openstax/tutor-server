@@ -5,7 +5,7 @@ class AddStartAtAndEndAtToCourses < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        CourseProfile::Models::Course.update_all(
+        CourseProfile::Models::Course.unscoped.update_all(
           starts_at: TermYear::LEGACY_TERM_STARTS_AT, ends_at: TermYear::LEGACY_TERM_ENDS_AT
         )
       end

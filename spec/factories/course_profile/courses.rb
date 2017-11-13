@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :course_profile_course, class: '::CourseProfile::Models::Course' do
     transient             { consistent_times { false } }
 
@@ -25,7 +25,17 @@ FactoryGirl.define do
     biglearn_assignment_pes_algorithm_name       { Faker::Hacker.abbreviation }
     biglearn_practice_worst_areas_algorithm_name { Faker::Hacker.abbreviation }
 
+    is_lms_enabling_allowed { is_lms_enabled == true ? true : false }
+
     association :offering, factory: :catalog_offering
+
+    after(:build) do |course|
+      course.course_ecosystems << build(
+        :course_content_course_ecosystem,
+        course: course,
+        ecosystem: course.offering.ecosystem
+      ) if course.offering.present?
+    end
 
     trait(:with_assistants) do
       after(:create) { |course| Tasks::CreateCourseAssistants[course: course] }
@@ -35,12 +45,9 @@ FactoryGirl.define do
       after(:create) { |course| SchoolDistrict::ProcessSchoolChange[course: course] }
     end
 
-    #after(:build) do |course|
-    #  course.course_ecosystems << build(
-    #    :course_content_course_ecosystem,
-    #    course: course,
-    #    ecosystem: course.offering.ecosystem
-    #  ) unless course.offering.nil?
-    #end
+    trait(:without_ecosystem) do
+      after(:build) { |course| course.course_ecosystems.delete_all :delete_all }
+    end
+
   end
 end

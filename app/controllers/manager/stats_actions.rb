@@ -6,12 +6,12 @@ module Manager::StatsActions
   def courses
     @courses = CourseProfile::Models::Course.where(is_preview: false).preload(
       teachers: { role: { role_user: :profile } },
-      periods_with_deleted: :latest_enrollments_with_deleted
+      periods: :latest_enrollments
     ).order(:name).to_a
 
     @total_students = @courses.map do |course|
-      course.periods_with_deleted.map do |period|
-        period.latest_enrollments_with_deleted.length
+      course.periods.map do |period|
+        period.latest_enrollments.length
       end.reduce(0, :+)
     end.reduce(0, :+)
 
@@ -33,14 +33,15 @@ module Manager::StatsActions
     by_exercise = params.fetch(:export).fetch(:by).include? "exercise"
 
     unless by_course || by_exercise
-      flash[:alert] = "You must select at least one of two options to export"
-      redirect_to admin_stats_excluded_exercises_path and return
+      flash[:alert] = "You must select at least one of the two options to export"
+      redirect_to admin_stats_excluded_exercises_path
+      return
     end
 
     ExportExerciseExclusions.perform_later(
-      upload_by_course_to_owncloud: by_course, upload_by_exercise_to_owncloud: by_exercise
+      upload_by_course: by_course, upload_by_exercise: by_exercise
     )
-    flash[:success] = "The export should be available in a few minutes in ownCloud."
+    flash[:success] = "The export is being created and will be uploaded to Box when ready"
     redirect_to admin_stats_excluded_exercises_path
   end
 

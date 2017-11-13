@@ -22,7 +22,7 @@ namespace :biglearn do
         .where(id: course_ids)
         .joins(:ecosystems)
         .preload(
-          :ecosystems, periods_with_deleted: { latest_enrollments_with_deleted: :student }
+          :ecosystems, periods: { latest_enrollments: :student }
         ).distinct
 
       print_each("Creating #{courses.count} course(s)", courses.find_in_batches) do |courses|
@@ -45,7 +45,7 @@ namespace :biglearn do
             ecosystem_updates << preparation_hash.merge(course: course)
           end
 
-          next if course.periods_with_deleted.empty?
+          next if course.periods.empty?
 
           roster_updates << { course: course }
         end

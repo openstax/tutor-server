@@ -7,7 +7,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   before(:all) do
     @assistant = \
-      FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+      FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
   end
 
   context "for Introduction and Force" do
@@ -30,7 +30,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       @assignment_exercise_count = teacher_selected_exercise_ids.count +
                                    @tutor_selected_exercise_count
 
-      task_plan = FactoryGirl.build(:tasks_task_plan,
+      task_plan = FactoryBot.build(:tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
         description: "Hello!",
@@ -46,18 +46,18 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
       end
 
-      period = FactoryGirl.create :course_membership_period, course: course
+      period = FactoryBot.create :course_membership_period, course: course
 
       num_taskees = 3
 
       @taskee_users = num_taskees.times.map do
-        FactoryGirl.create(:user).tap do |user|
+        FactoryBot.create(:user).tap do |user|
           AddUserAsPeriodStudent.call(user: user, period: period)
         end
       end
 
       @taskee_users.each do |taskee|
-        task_plan.tasking_plans << FactoryGirl.create(
+        task_plan.tasking_plans << FactoryBot.create(
           :tasks_tasking_plan,
           task_plan: task_plan,
           target:    taskee.to_model
@@ -121,6 +121,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         expect(spaced_practice_task_steps.count).to eq @tutor_selected_exercise_count
 
         spaced_practice_task_steps.each do |task_step|
+          expect(task_step.labels).to include 'review'
           tasked_placeholder = task_step.tasked
           expect(tasked_placeholder).to be_a(Tasks::Models::TaskedPlaceholder)
           expect(tasked_placeholder.exercise_type?).to be_truthy

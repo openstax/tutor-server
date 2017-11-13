@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user, class: '::User::User' do
     transient do
       username { SecureRandom.hex.to_s }

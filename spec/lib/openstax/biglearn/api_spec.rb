@@ -20,7 +20,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
     before(:all) do
       DatabaseCleaner.start
 
-      task_plan = FactoryGirl.create :tasked_task_plan, number_of_students: 1
+      task_plan = FactoryBot.create :tasked_task_plan, number_of_students: 1
       @ecosystem = task_plan.ecosystem
       @page = @ecosystem.pages.first
       @exercises = @page.exercises
@@ -71,6 +71,13 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
+        ],
+        [
+          :sequentially_prepare_and_update_course_ecosystem,
+          -> { { course: @course, ecosystem: @ecosystem } },
+          Hash,
+          -> { @course },
+          2
         ],
         [
           :update_rosters,

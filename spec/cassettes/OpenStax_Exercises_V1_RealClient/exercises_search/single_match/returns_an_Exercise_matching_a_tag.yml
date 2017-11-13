@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
+    uri: <openstax_exercises_url>/api/exercises?q=tag:k12phys-ch04-ex002
     body:
       encoding: US-ASCII
       string: ''

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Content::Strategies::Generated::Map do
-  let(:old_content_exercise)         { FactoryGirl.create :content_exercise }
+  let(:old_content_exercise)         { FactoryBot.create :content_exercise }
   let!(:old_content_pool) do
     pool = old_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [old_content_exercise.id])
     pool
   end
 
-  let(:new_content_exercise)         { FactoryGirl.create :content_exercise }
+  let(:new_content_exercise)         { FactoryBot.create :content_exercise }
   let!(:new_content_pool) do
     pool = new_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [new_content_exercise.id])
@@ -16,16 +16,16 @@ RSpec.describe Content::Strategies::Generated::Map do
   end
 
   let(:another_old_content_chapter)  {
-    FactoryGirl.create :content_chapter, book: old_content_exercise.book
+    FactoryBot.create :content_chapter, book: old_content_exercise.book
   }
-  let!(:another_old_content_page)     {
-    FactoryGirl.create :content_page, chapter: another_old_content_chapter
+  let!(:another_old_content_page)    {
+    FactoryBot.create :content_page, chapter: another_old_content_chapter
   }
   let(:another_old_content_exercise) {
-    FactoryGirl.create :content_exercise, page: another_old_content_page
+    FactoryBot.create :content_exercise, page: another_old_content_page
   }
-  let!(:another_old_content_page_2)   {
-    FactoryGirl.create :content_page, chapter: old_content_exercise.chapter
+  let!(:another_old_content_page_2)  {
+    FactoryBot.create :content_page, chapter: old_content_exercise.chapter
   }
   let!(:another_old_content_pool) do
     pool = another_old_content_exercise.page.all_exercises_pool
@@ -34,16 +34,16 @@ RSpec.describe Content::Strategies::Generated::Map do
   end
 
   let(:another_new_content_chapter)  {
-    FactoryGirl.create :content_chapter, book: new_content_exercise.book
+    FactoryBot.create :content_chapter, book: new_content_exercise.book
   }
-  let!(:another_new_content_page)     {
-    FactoryGirl.create :content_page, chapter: another_new_content_chapter
+  let!(:another_new_content_page)    {
+    FactoryBot.create :content_page, chapter: another_new_content_chapter
   }
   let(:another_new_content_exercise) {
-    FactoryGirl.create :content_exercise, page: another_new_content_page
+    FactoryBot.create :content_exercise, page: another_new_content_page
   }
-  let!(:another_new_content_page_2)   {
-    FactoryGirl.create :content_page, chapter: new_content_exercise.chapter
+  let!(:another_new_content_page_2)  {
+    FactoryBot.create :content_page, chapter: new_content_exercise.chapter
   }
   let!(:another_new_content_pool) do
     pool = another_new_content_exercise.page.all_exercises_pool
@@ -51,59 +51,59 @@ RSpec.describe Content::Strategies::Generated::Map do
     pool
   end
 
-  let!(:old_lo_tag)                   {
-    FactoryGirl.create :content_tag, ecosystem: old_content_exercise.ecosystem,
+  let!(:old_lo_tag)                  {
+    FactoryBot.create :content_tag, ecosystem: old_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo01'
   }
-  let!(:old_exercise_tag)             {
-    FactoryGirl.create :content_exercise_tag, exercise: old_content_exercise,
+  let!(:old_exercise_tag)            {
+    FactoryBot.create :content_exercise_tag, exercise: old_content_exercise,
                                               tag: old_lo_tag
   }
-  let!(:old_page_tag)                 {
-    FactoryGirl.create :content_page_tag, page: old_content_exercise.page,
+  let!(:old_page_tag)                {
+    FactoryBot.create :content_page_tag, page: old_content_exercise.page,
                                           tag: old_lo_tag
   }
 
-  let!(:new_lo_tag)                   {
-    FactoryGirl.create :content_tag, ecosystem: new_content_exercise.ecosystem,
+  let!(:new_lo_tag)                  {
+    FactoryBot.create :content_tag, ecosystem: new_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo01'
   }
-  let!(:new_exercise_tag)             {
-    FactoryGirl.create :content_exercise_tag, exercise: new_content_exercise,
+  let!(:new_exercise_tag)            {
+    FactoryBot.create :content_exercise_tag, exercise: new_content_exercise,
                                               tag: new_lo_tag
   }
-  let!(:new_page_tag)                 {
-    FactoryGirl.create :content_page_tag, page: new_content_exercise.page,
+  let!(:new_page_tag)                {
+    FactoryBot.create :content_page_tag, page: new_content_exercise.page,
                                           tag: new_lo_tag
   }
 
-  let!(:another_old_lo_tag)           {
-    FactoryGirl.create :content_tag, ecosystem: old_content_exercise.ecosystem,
+  let!(:another_old_lo_tag)          {
+    FactoryBot.create :content_tag, ecosystem: old_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo02'
   }
-  let!(:another_old_exercise_tag)     {
-    FactoryGirl.create :content_exercise_tag, exercise: another_old_content_exercise,
+  let!(:another_old_exercise_tag)    {
+    FactoryBot.create :content_exercise_tag, exercise: another_old_content_exercise,
                                               tag: another_old_lo_tag
   }
-  let!(:another_old_page_tag)         {
-    FactoryGirl.create :content_page_tag, page: another_old_content_exercise.page,
+  let!(:another_old_page_tag)        {
+    FactoryBot.create :content_page_tag, page: another_old_content_exercise.page,
                                           tag: another_old_lo_tag
   }
 
-  let!(:another_new_lo_tag)           {
-    FactoryGirl.create :content_tag, ecosystem: new_content_exercise.ecosystem,
+  let!(:another_new_lo_tag)          {
+    FactoryBot.create :content_tag, ecosystem: new_content_exercise.ecosystem,
                                      tag_type: :lo,
                                      value: 'lo02'
   }
-  let!(:another_new_exercise_tag)     {
-    FactoryGirl.create :content_exercise_tag, exercise: another_new_content_exercise,
+  let!(:another_new_exercise_tag)    {
+    FactoryBot.create :content_exercise_tag, exercise: another_new_content_exercise,
                                               tag: another_new_lo_tag
   }
-  let!(:another_new_page_tag)         {
-    FactoryGirl.create :content_page_tag, page: another_new_content_exercise.page,
+  let!(:another_new_page_tag)        {
+    FactoryBot.create :content_page_tag, page: another_new_content_exercise.page,
                                           tag: another_new_lo_tag
   }
 
@@ -239,12 +239,12 @@ RSpec.describe Content::Strategies::Generated::Map do
     expect(reverse_map.is_valid).to eq true
 
     # Pretend lo02 and its page were added only in the new ecosystem
-    another_old_lo_tag.exercises.first.destroy
-    another_old_lo_tag.pages.first.destroy
-    another_old_lo_tag.destroy
+    Content::Models::Exercise.where(id: another_old_lo_tag.exercises.map(&:id)).delete_all
+    Content::Models::Page.where(id: another_old_lo_tag.pages.map(&:id)).delete_all
+    Content::Models::Tag.where(id: another_old_lo_tag.id).delete_all
 
     # Rewrap the old ecosystem so we pick up the changes properly
-    modified_old_strategy = another_old_lo_tag.ecosystem.wrap
+    modified_old_strategy = another_old_lo_tag.ecosystem.reload.wrap
     modified_old_ecosystem = Content::Ecosystem.new(strategy: modified_old_strategy)
 
     # The map validity is cached, so it is still valid
@@ -254,7 +254,7 @@ RSpec.describe Content::Strategies::Generated::Map do
       strategy_class: described_class
     )
     expect(modified_map.is_valid).to eq true
-    reverse_modified_map = Content::Map.find_or_create_by(
+    reverse_modified_map = Content::Map.find_or_create_by!(
       from_ecosystems: [modified_old_ecosystem, new_ecosystem],
       to_ecosystem: modified_old_ecosystem,
       strategy_class: described_class
@@ -281,12 +281,12 @@ RSpec.describe Content::Strategies::Generated::Map do
 
   it 'outputs diagnostics when mapping fails' do
     # Create an invalid ecosystem mapping
-    another_old_lo_tag.exercises.first.destroy
-    another_old_lo_tag.pages.first.destroy
-    another_old_lo_tag.destroy
+    Content::Models::Exercise.where(id: another_old_lo_tag.exercises.map(&:id)).delete_all
+    Content::Models::Page.where(id: another_old_lo_tag.pages.map(&:id)).delete_all
+    Content::Models::Tag.where(id: another_old_lo_tag.id).delete_all
 
     # Rewrap the old ecosystem so we pick up the changes properly
-    modified_old_strategy = another_old_lo_tag.ecosystem.wrap
+    modified_old_strategy = another_old_lo_tag.ecosystem.reload.wrap
     modified_old_ecosystem = Content::Ecosystem.new(strategy: modified_old_strategy)
 
     expect{

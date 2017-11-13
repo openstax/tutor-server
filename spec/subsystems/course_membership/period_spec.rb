@@ -2,11 +2,11 @@ require 'rails_helper'
 
 module CourseMembership
   describe Period, type: :wrapper do
-    subject(:period)     { FactoryGirl.create :course_membership_period }
+    subject(:period)     { FactoryBot.create :course_membership_period }
 
-    let(:student_1_user) { FactoryGirl.create(:user) }
-    let(:student_2_user) { FactoryGirl.create(:user) }
-    let(:teacher_user)   { FactoryGirl.create(:user) }
+    let(:student_1_user) { FactoryBot.create(:user) }
+    let(:student_2_user) { FactoryBot.create(:user) }
+    let(:teacher_user)   { FactoryBot.create(:user) }
 
     let!(:student_1)      { AddUserAsPeriodStudent.call(user: student_1_user,
                                                         period: period).outputs.role }
@@ -16,9 +16,9 @@ module CourseMembership
                                                         course: period.course).outputs.role }
 
     it 'exposes course, name, student_roles, teacher_roles,
-        enrollment_code, deleted? and to_model' do
+        enrollment_code, archived? and to_model' do
       [:course, :name, :student_roles, :teacher_roles,
-       :enrollment_code, :deleted?, :to_model].each do |method_name|
+       :enrollment_code, :archived?, :to_model].each do |method_name|
         expect(period).to respond_to(method_name)
       end
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ShortCode::FindShortCode, type: :routine do
-  let(:task_plan) { FactoryGirl.create :tasks_task_plan }
+  let(:task_plan) { FactoryBot.create :tasks_task_plan }
 
   it 'can find the short code for a model by using the id' do
     created_code = ShortCode::Create[task_plan.to_global_id.to_s]

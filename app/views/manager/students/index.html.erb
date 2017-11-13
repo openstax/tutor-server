@@ -6,6 +6,7 @@
       <th>Username</th>
       <th>Name</th>
       <th>Student Identifier</th>
+      <th>Dropped?</th>
     </tr>
   </thead>
   <tbody>
@@ -14,6 +15,7 @@
       <td><%= student.username %></td>
       <td><%= student.name %></td>
       <td><%= student.student_identifier %></td>
+      <td><%= tf_to_yn student.dropped? %></td>
     </tr>
   <% end %>
   </tbody>

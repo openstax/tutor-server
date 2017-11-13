@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseProfile::UpdateCourse, type: :routine do
-  let(:course) { FactoryGirl.create :course_profile_course, is_college: true }
+  let(:course) { FactoryBot.create :course_profile_course, is_college: true }
 
   it 'updates the course name' do
     described_class.call(course.id, { name: 'Physics' })

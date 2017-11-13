@@ -5,7 +5,7 @@ class PurchasedItem
   end
 
   def self.find(uuid:)
-    CourseMembership::Models::Student.with_deleted.find_by(uuid: uuid) ||
+    CourseMembership::Models::Student.find_by(uuid: uuid) ||
     OpenStax::Payments::FakePurchasedItem.find(uuid)
   end
 

@@ -1,31 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskPlan, type: :model do
-  subject(:task_plan) { FactoryGirl.create :tasks_task_plan }
+  subject(:task_plan) { FactoryBot.create :tasks_task_plan }
 
-  let(:new_task)      { FactoryGirl.build :tasks_task, opens_at: Time.current.yesterday }
+  let(:new_task)      { FactoryBot.build :tasks_task, opens_at: Time.current.yesterday }
 
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }
 
   it { is_expected.to belong_to(:cloned_from) }
 
-  it { is_expected.to have_many(:tasking_plans).dependent(:destroy) }
-  it { is_expected.to have_many(:tasks).dependent(:destroy) }
+  it { is_expected.to have_many(:tasking_plans) }
+  it { is_expected.to have_many(:tasks) }
 
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:assistant) }
   it { is_expected.to validate_presence_of(:owner) }
-  it { is_expected.to validate_presence_of(:tasking_plans) }
+
+  it do
+    # shoulda-matchers fails to properly remove the associated records
+    subject.tasking_plans.delete_all :delete_all
+
+    is_expected.to validate_presence_of(:tasking_plans)
+  end
 
   it "validates settings against the assistant's schema" do
-    book = FactoryGirl.create :content_book, ecosystem: task_plan.ecosystem
-    chapter = FactoryGirl.create :content_chapter, book: book
-    page = FactoryGirl.create :content_page, chapter: chapter
-    exercise = FactoryGirl.create :content_exercise, page: page
+    book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
+    chapter = FactoryBot.create :content_chapter, book: book
+    page = FactoryBot.create :content_page, chapter: chapter
+    exercise = FactoryBot.create :content_exercise, page: page
     task_plan.reload
 
-    task_plan.assistant = FactoryGirl.create(
+    task_plan.assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: '::Tasks::Assistants::IReadingAssistant'
     )
     task_plan.settings = { exercise_ids: [exercise.id.to_s] }
@@ -38,14 +44,49 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
+  it "automatically infers the ecosystem from the settings or owner" do
+    ecosystem = task_plan.ecosystem
+    book = FactoryBot.create :content_book, ecosystem: ecosystem
+    chapter = FactoryBot.create :content_chapter, book: book
+    page = FactoryBot.create :content_page, chapter: chapter
+    exercise = FactoryBot.create :content_exercise, page: page
+
+    task_plan.owner.course_ecosystems.delete_all :delete_all
+    task_plan.ecosystem = nil
+    expect(task_plan).not_to be_valid
+    expect(task_plan.ecosystem).to be_nil
+
+    task_plan.settings = { exercise_ids: [exercise.id.to_s] }
+    expect(task_plan).to be_valid
+    expect(task_plan.ecosystem).to eq ecosystem
+
+    task_plan.settings = {}
+    task_plan.ecosystem = nil
+    expect(task_plan).not_to be_valid
+    expect(task_plan.ecosystem).to be_nil
+
+    task_plan.settings = { page_ids: [page.id.to_s] }
+    expect(task_plan).to be_valid
+    expect(task_plan.ecosystem).to eq ecosystem
+
+    task_plan.settings = {}
+    task_plan.ecosystem = nil
+    expect(task_plan).not_to be_valid
+    expect(task_plan.ecosystem).to be_nil
+
+    task_plan.owner.ecosystems << ecosystem
+    expect(task_plan).to be_valid
+    expect(task_plan.ecosystem).to eq ecosystem
+  end
+
   it "requires that any exercise_ids or page_ids be in the task_plan's ecosystem" do
-    book = FactoryGirl.create :content_book, ecosystem: task_plan.ecosystem
-    chapter = FactoryGirl.create :content_chapter, book: book
-    page = FactoryGirl.create :content_page, chapter: chapter
-    exercise = FactoryGirl.create :content_exercise, page: page
+    book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
+    chapter = FactoryBot.create :content_chapter, book: book
+    page = FactoryBot.create :content_page, chapter: chapter
+    exercise = FactoryBot.create :content_exercise, page: page
     task_plan.reload
 
-    task_plan.assistant = FactoryGirl.create(
+    task_plan.assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: '::Tasks::Assistants::HomeworkAssistant'
     )
     task_plan.settings = {
@@ -103,7 +144,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   end
 
   it "automatically sets its ecosystem to the original's if cloned_from is specified" do
-    clone = FactoryGirl.build :tasks_task_plan, cloned_from: task_plan
+    clone = FactoryBot.build :tasks_task_plan, cloned_from: task_plan
     clone.ecosystem = nil
     expect(clone.valid?).to eq true
     expect(clone.ecosystem).to eq task_plan.ecosystem
@@ -111,24 +152,24 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it "automatically sets its ecosystem to the owner's if cloned_from is not specified" do
     course = task_plan.owner
-    ecosystem_model = FactoryGirl.create :content_ecosystem
+    ecosystem_model = FactoryBot.create :content_ecosystem
     ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-    new_task_plan = FactoryGirl.build :tasks_task_plan, owner: course
+    new_task_plan = FactoryBot.build :tasks_task_plan, owner: course
     new_task_plan.ecosystem = nil
     expect(new_task_plan.valid?).to eq true
     expect(new_task_plan.ecosystem).to eq ecosystem_model
   end
 
   context 'with tasks assigned to students' do
-    let(:teacher_student_role) { FactoryGirl.create :entity_role, role_type: :teacher_student }
+    let(:teacher_student_role) { FactoryBot.create :entity_role, role_type: :teacher_student }
     let(:teacher_student_task) do
-      FactoryGirl.create :tasks_task, task_plan: task_plan, tasked_to: [teacher_student_role]
+      FactoryBot.create :tasks_task, task_plan: task_plan, tasked_to: [teacher_student_role]
     end
 
-    let(:student_role) { FactoryGirl.create :entity_role, role_type: :student }
+    let(:student_role) { FactoryBot.create :entity_role, role_type: :student }
     let(:student_task) do
-      FactoryGirl.create :tasks_task, task_plan: task_plan, tasked_to: [student_role]
+      FactoryBot.create :tasks_task, task_plan: task_plan, tasked_to: [student_role]
     end
 
     it 'knows if tasks are available to students' do
@@ -144,6 +185,19 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       student_task.update_attribute :opens_at_ntz, future_time
       expect(task_plan.reload.out_to_students?).to eq false
       expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
+    end
+
+    it 'can still be deleted and restored after tasks are available to students' do
+      expect(task_plan.withdrawn?).to eq false
+
+      student_task
+      expect(task_plan.reload.out_to_students?).to eq true
+
+      task_plan.destroy
+      expect(task_plan.withdrawn?).to eq true
+
+      task_plan.restore
+      expect(task_plan.withdrawn?).to eq false
     end
 
     it 'will not allow other fields to be updated after tasks are available to students' do

@@ -7,9 +7,7 @@ module ActsAsTasked
   module ClassMethods
     def acts_as_tasked
       class_exec do
-        acts_as_paranoid
-
-        has_one :task_step, -> { with_deleted }, as: :tasked, inverse_of: :tasked
+        has_one :task_step, as: :tasked, inverse_of: :tasked
 
         after_update :touch_task_step
 

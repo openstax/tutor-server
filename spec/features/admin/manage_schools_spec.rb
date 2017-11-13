@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Administration' do
   before do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
     visit admin_schools_path
@@ -30,7 +30,7 @@ RSpec.feature 'Administration' do
   end
 
   scenario 'add a district' do
-    FactoryGirl.create(:school_district_district, name: 'Good district')
+    FactoryBot.create(:school_district_district, name: 'Good district')
 
     click_link 'edit'
 
@@ -52,7 +52,7 @@ RSpec.feature 'Administration' do
 
   scenario 'attempt destroying a school with courses assigned' do
     school = SchoolDistrict::Models::School.last
-    course = FactoryGirl.create :course_profile_course, name: 'Physics', school: school
+    course = FactoryBot.create :course_profile_course, name: 'Physics', school: school
 
     click_link 'delete'
 

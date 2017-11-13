@@ -8,13 +8,13 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   let(:num_taskees)       { 3 }
 
   let(:assistant)        do
-    FactoryGirl.create(
+    FactoryBot.create(
       :tasks_assistant,
       code_class_name: 'Tasks::Assistants::ExtraAssignmentAssistant')
   end
 
-  let(:course)           { FactoryGirl.create :course_profile_course }
-  let(:period)           { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)           { FactoryBot.create :course_profile_course }
+  let(:period)           { FactoryBot.create :course_membership_period, course: course }
 
   let(:ecosystem)        do
     VCR.use_cassette('Tasks_Assistants_ExtraAssignmentAssistant/with_book', VCR_OPTS) do
@@ -27,7 +27,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
     ecosystem.pages.each do |page|
       snap_lab_ids << "#{page.id}:#{page.snap_labs.first[:id]}" if page.snap_labs.present?
     end
-    FactoryGirl.create(:tasks_task_plan,
+    FactoryBot.create(:tasks_task_plan,
                        assistant: assistant,
                        ecosystem: ecosystem.to_model,
                        settings: { snap_lab_ids: snap_lab_ids },
@@ -36,7 +36,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
 
   let!(:students)         do
     num_taskees.times.map do
-      user = FactoryGirl.create(:user)
+      user = FactoryBot.create(:user)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
   end

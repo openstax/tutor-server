@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Role::GetUsersForRoles, type: :routine do
   context "when there are no users for the given roles" do
-    let(:role1) { FactoryGirl.create :entity_role }
-    let(:role2) { FactoryGirl.create :entity_role }
+    let(:role1) { FactoryBot.create :entity_role }
+    let(:role2) { FactoryBot.create :entity_role }
     let(:roles) { [role1, role2] }
 
     it "returns an empty array" do
@@ -14,12 +14,12 @@ RSpec.describe Role::GetUsersForRoles, type: :routine do
   end
 
   context "when there is one user for the given roles" do
-    let(:target_user)  { FactoryGirl.create :user }
-    let(:other_user)   { FactoryGirl.create :user }
-    let(:target_role1) { FactoryGirl.create :entity_role }
-    let(:target_role2) { FactoryGirl.create :entity_role }
-    let(:other_role)   { FactoryGirl.create :entity_role }
-    let(:dummy_role)   { FactoryGirl.create :entity_role }
+    let(:target_user)  { FactoryBot.create :user }
+    let(:other_user)   { FactoryBot.create :user }
+    let(:target_role1) { FactoryBot.create :entity_role }
+    let(:target_role2) { FactoryBot.create :entity_role }
+    let(:other_role)   { FactoryBot.create :entity_role }
+    let(:dummy_role)   { FactoryBot.create :entity_role }
     let(:roles)        { [target_role1, dummy_role, target_role2] }
 
     before(:each) do
@@ -37,13 +37,13 @@ RSpec.describe Role::GetUsersForRoles, type: :routine do
   end
 
   context "when there are multiple users for the given roles" do
-    let(:target_user1) { FactoryGirl.create :user }
-    let(:target_user2) { FactoryGirl.create :user }
-    let(:other_user)   { FactoryGirl.create :user }
-    let(:target_role1) { FactoryGirl.create :entity_role }
-    let(:target_role2) { FactoryGirl.create :entity_role }
-    let(:other_role)   { FactoryGirl.create :entity_role }
-    let(:dummy_role)   { FactoryGirl.create :entity_role }
+    let(:target_user1) { FactoryBot.create :user }
+    let(:target_user2) { FactoryBot.create :user }
+    let(:other_user)   { FactoryBot.create :user }
+    let(:target_role1) { FactoryBot.create :entity_role }
+    let(:target_role2) { FactoryBot.create :entity_role }
+    let(:other_role)   { FactoryBot.create :entity_role }
+    let(:dummy_role)   { FactoryBot.create :entity_role }
     let(:roles)        { [target_role1, dummy_role, target_role2] }
 
     before(:each) do

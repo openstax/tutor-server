@@ -1,4 +1,5 @@
 default: &default
+  host: localhost
   adapter: postgresql
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>

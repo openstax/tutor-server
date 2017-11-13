@@ -19,12 +19,6 @@ class CollectCourseInfo
     CourseProfile::Models::Course.preload(*preloads)
   end
 
-  def get_roles(courses:, user:)
-    run(
-      :get_user_course_roles, courses: courses, user: user
-    ).outputs.roles.group_by(&:course_profile_course_id)
-  end
-
   def get_course_infos(courses:, user:)
     courses = get_courses(courses: courses, user: user)
     roles_by_course_id = get_roles_by_course_id(courses: courses, user: user)
@@ -35,7 +29,7 @@ class CollectCourseInfo
       students = get_students(course: course, roles: roles)
       periods = get_periods(course: course, roles: roles, students: students)
 
-      #       This routine the entire Course object + some extra attributes
+      #       This routine returns the entire Course object + some extra attributes
       # TODO: Figure out a better way to handle this.
       #       Maybe create a CourseInfo class that contains the course model + the extra attributes?
       Hashie::Mash.new(
@@ -56,7 +50,11 @@ class CollectCourseInfo
         is_concept_coach: course.is_concept_coach,
         is_college: course.is_college,
         is_preview: course.is_preview,
+        is_access_switchable: course.is_access_switchable,
         does_cost: course.does_cost,
+        is_lms_enabling_allowed: course.is_lms_enabling_allowed,
+        is_lms_enabled: course.is_lms_enabled,
+        last_lms_scores_push_job_id: course.last_lms_scores_push_job_id,
         school_name: course.school_name,
         salesforce_book_name: offering.try!(:salesforce_book_name),
         appearance_code: course.appearance_code.blank? ? offering.try!(:appearance_code) :
@@ -71,18 +69,22 @@ class CollectCourseInfo
   end
 
   def get_roles_by_course_id(courses:, user:)
-    run(:get_user_course_roles, courses: courses, user: user,
-                                preload: { student: { latest_enrollment: :period },
-                                           profile: :account })
-      .outputs.roles.group_by(&:course_profile_course_id)
+    run(
+      :get_user_course_roles,
+      courses: courses,
+      user: user,
+      preload: { student: { latest_enrollment: :period }, profile: :account }
+    ).outputs.roles.group_by(&:course_profile_course_id)
   end
 
   def get_students(course:, roles:)
     roles.map(&:student).compact
   end
 
+  # If the user is an active teacher, return all course periods
+  # Otherwise, return only the periods the user is in
   def get_periods(course:, roles:, students:)
-    roles.any?(&:teacher?) ? course.periods.with_deleted :
-                             students.map { |student| student.latest_enrollment.period }
+    roles.any? { |role| role.teacher? && !role.teacher.try!(:deleted?) } ?
+      course.periods : students.map(&:period)
   end
 end

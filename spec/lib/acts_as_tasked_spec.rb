@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ActsAsTasked, type: :lib do
   context 'tasked_reading' do
-    subject(:tasked) { FactoryGirl.create :tasks_tasked_reading }
+    subject(:tasked) { FactoryBot.create :tasks_tasked_reading }
 
     it { is_expected.to have_one(:task_step) }
 
@@ -18,7 +18,7 @@ RSpec.describe ActsAsTasked, type: :lib do
   end
 
   context 'tasked_exercise' do
-    subject(:tasked) { FactoryGirl.create :tasks_tasked_exercise }
+    subject(:tasked) { FactoryBot.create :tasks_tasked_exercise }
 
     it { is_expected.to have_one(:task_step) }
 

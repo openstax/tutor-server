@@ -54,9 +54,15 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def destroy
-    # CourseMembership models do not have touch: true
-    # and paranoia destroy does not trigger .touch, so delay_touching is not useful here
-    standard_destroy(@period.to_model, Api::V1::PeriodRepresenter)
+    period_model = @period.to_model
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, period_model)
+    result = CourseMembership::ArchivePeriod.call(period: @period)
+
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.period,
+      represent_with: Api::V1::PeriodRepresenter,
+      responder: ResponderWithPutPatchDeleteContent
+    )
   end
 
   api :PUT, '/periods/:id/restore', 'Restores an archived period for the teacher'
@@ -71,12 +77,16 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   EOS
   def restore
     period_model = @period.to_model
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, period_model)
     return render_api_errors(period_model.errors) unless period_model.valid?
 
-    # Paranoia restore triggers .touch several times, so delay_touching is useful here
-    ActiveRecord::Base.delay_touching do
-      standard_restore(period_model, Api::V1::PeriodRepresenter)
-    end
+    result = CourseMembership::UnarchivePeriod.call(period: @period)
+
+    render_api_errors(result.errors) || respond_with(
+      result.outputs.period,
+      represent_with: Api::V1::PeriodRepresenter,
+      responder: ResponderWithPutPatchDeleteContent
+    )
   end
 
   private

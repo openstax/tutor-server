@@ -1,7 +1,7 @@
 module User
   module Strategies
     module Direct
-      class AnonymousUser < Entity
+      class AnonymousUser < Entitee
         wraps ::User::Models::AnonymousProfile
 
         exposes :instance, :anonymous, from_class: ::User::Models::AnonymousProfile
@@ -31,10 +31,6 @@ module User
 
         def is_anonymous?
           true
-        end
-
-        def is_deleted?
-          false
         end
 
         def is_admin?

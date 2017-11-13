@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskStep, type: :model do
 
-  subject(:task_step) { FactoryGirl.create :tasks_task_step }
+  subject(:task_step) { FactoryBot.create :tasks_task_step }
 
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:tasked) }
@@ -25,11 +25,11 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
   it "requires tasked to be unique" do
     expect(task_step).to be_valid
 
-    expect(FactoryGirl.build(:tasks_task_step, tasked: task_step.tasked)).not_to be_valid
+    expect(FactoryBot.build(:tasks_task_step, tasked: task_step.tasked)).not_to be_valid
   end
 
   it "invalidates task's cache when updated" do
-    task_step.tasked = FactoryGirl.build :tasks_tasked_exercise, task_step: task_step
+    task_step.tasked = FactoryBot.build :tasks_tasked_exercise, task_step: task_step
     expect { task_step.save! }.to change{ task_step.task.cache_key }
   end
 

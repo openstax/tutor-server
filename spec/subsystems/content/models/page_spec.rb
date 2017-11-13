@@ -4,7 +4,7 @@ require 'database_cleaner'
 
 RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
 
-  subject(:page) { FactoryGirl.create :content_page }
+  subject(:page) { FactoryBot.create :content_page }
 
   it { is_expected.to belong_to(:chapter) }
   it { is_expected.to validate_presence_of(:title) }
@@ -19,7 +19,7 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
         OpenStax::Cnx::V1::Page.new(id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8').content
       end
 
-      @snap_lab_page = FactoryGirl.create :content_page, content: snap_lab_page_content,
+      @snap_lab_page = FactoryBot.create :content_page, content: snap_lab_page_content,
                                                          fragments: nil, snap_labs: nil
     end
 

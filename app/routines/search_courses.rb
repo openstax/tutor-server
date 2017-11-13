@@ -19,7 +19,7 @@ class SearchCourses
 
   def exec(params = {}, options = {})
     params[:order_by] ||= :name
-    relation = CourseProfile::Models::Course.joins do
+    relation = CourseProfile::Models::Course.without_deleted.joins do
       [school.outer,
        offering.outer,
        teachers.outer.role.outer.profile.outer.account.outer,
@@ -114,6 +114,78 @@ class SearchCourses
           @items = @items.where(catalog_offering_id: sanitized_queries)
         end
       end
+
+      with.keyword :is_lms_enabled do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: true)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(is_lms_enabled: sanitized_queries)
+        end
+      end
+
+      with.keyword :is_lms_enabling_allowed do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: false)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(is_lms_enabling_allowed: sanitized_queries)
+        end
+      end
+
+      with.keyword :term do |terms|
+        terms.each do |term|
+          sanitized_term_values = to_string_array(term).map{|tt| CourseProfile::Models::Course.terms[tt.downcase]}
+          next @items = @items.none if sanitized_term_values.empty?
+
+          @items = @items.where(term: sanitized_term_values)
+        end
+      end
+
+      with.keyword :year do |years|
+        years.each do |year|
+          sanitized_years = to_number_array(year)
+          next @items = @items.none if sanitized_years.empty?
+
+          @items = @items.where(year: sanitized_years)
+        end
+      end
+
+      with.keyword :costs do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: false)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(does_cost: sanitized_queries)
+        end
+      end
+
+      with.keyword :is_preview, nil, "false" do |queries|
+        queries.each do |query|
+          sanitized_queries = to_boolean_array(query, allow_nil: false)
+          next @items = @items.none if sanitized_queries.empty?
+
+          @items = @items.where(is_preview: sanitized_queries)
+        end
+      end
     end
+  end
+end
+
+class OpenStax::Utilities::SearchRelation
+  def to_boolean_array(input, allow_nil: false)
+    array = to_string_array(input).map do |ii|
+      ii.downcase!
+      if ii == "false"
+        false
+      elsif ii == "true"
+        true
+      elsif ii == "nil" || ii == "null"
+        nil
+      end
+    end
+
+    array.compact! if !allow_nil
+    array
   end
 end

@@ -5,9 +5,9 @@ class TaskAccessPolicy
       requestor.is_human? &&
       ((user_is_tasked?(requestor, task) && task.past_open?) || user_is_teacher?(requestor, task))
     when :accept_or_reject_late_work
-      requestor.is_human? && !task.deleted? && user_is_teacher?(requestor, task)
+      requestor.is_human? && !task.withdrawn? && user_is_teacher?(requestor, task)
     when :hide
-      requestor.is_human? && task.deleted? && user_is_tasked?(requestor, task)
+      requestor.is_human? && task.withdrawn? && user_is_tasked?(requestor, task)
     else
       false
     end

@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe AuthController, type: :controller do
 
-  let(:user)     { FactoryGirl.create(:user) }
+  let(:user)     { FactoryBot.create(:user) }
   let(:new_user) {  FinePrint::Contract.create!(name: 'general_terms_of_use',
                                                 title: 'General Terms of Use',
                                                 content: Faker::Lorem.paragraphs,
                                                 version: 10)
-    FactoryGirl.create(:user, skip_terms_agreement: true)
+    FactoryBot.create(:user, skip_terms_agreement: true)
   }
 
   context "as an non-signed in user" do

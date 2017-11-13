@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::ActivateStudent, type: :routine do
-  let(:course)  { FactoryGirl.create :course_profile_course }
-  let(:period)  { FactoryGirl.create :course_membership_period, course: course }
-  let(:user)    { FactoryGirl.create(:user) }
+  let(:course)  { FactoryBot.create :course_profile_course }
+  let(:period)  { FactoryBot.create :course_membership_period, course: course }
+  let(:user)    { FactoryBot.create(:user) }
   let(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
 
   context "inactive student" do
@@ -13,12 +13,10 @@ RSpec.describe CourseMembership::ActivateStudent, type: :routine do
       result = nil
       expect {
         result = described_class.call(student: student)
-      }.to change{ CourseMembership::Models::Student.count }.by(1)
+      }.to change{ student.reload.dropped? }.from(true).to(false)
       expect(result.errors).to be_empty
 
-      expect(student.reload.course).to eq course
-      expect(student).to be_persisted
-      expect(student).not_to be_deleted
+      expect(student.course).to eq course
     end
   end
 
@@ -26,8 +24,6 @@ RSpec.describe CourseMembership::ActivateStudent, type: :routine do
     it "returns an error" do
       result = described_class.call(student: student)
       expect(result.errors.first.code).to eq :already_active
-      expect(student).to be_persisted
-      expect(student).not_to be_deleted
     end
   end
 end

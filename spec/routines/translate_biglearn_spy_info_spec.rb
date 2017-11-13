@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe TranslateBiglearnSpyInfo, type: :routine do
 
   before(:all) do
-    @current_task = FactoryGirl.create :tasks_task
-    @spaced_task = FactoryGirl.create :tasks_task
+    @current_task = FactoryBot.create :tasks_task
+    @spaced_task = FactoryBot.create :tasks_task
 
-    @page_1 = FactoryGirl.create :content_page
+    @page_1 = FactoryBot.create :content_page
     @chapter = @page_1.chapter
-    @page_2 = FactoryGirl.create :content_page, chapter: @chapter
+    @page_2 = FactoryBot.create :content_page, chapter: @chapter
   end
 
   let(:given_exercise_uuid_1) { SecureRandom.uuid }

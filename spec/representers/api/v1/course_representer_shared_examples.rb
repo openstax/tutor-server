@@ -2,10 +2,10 @@ require 'rails_helper'
 
 module Api::V1
   RSpec.shared_examples 'api_v1_course_representer' do
-    let(:ecosystem)        { FactoryGirl.create :content_ecosystem }
+    let(:ecosystem)        { FactoryBot.create :content_ecosystem }
 
     let(:catalog_offering) do
-      FactoryGirl.create :catalog_offering, salesforce_book_name: 'book',
+      FactoryBot.create :catalog_offering, salesforce_book_name: 'book',
                                             appearance_code: 'appearance',
                                             webview_url: 'web_url',
                                             pdf_url: 'pdf_url',
@@ -13,10 +13,10 @@ module Api::V1
                                             ecosystem: ecosystem
     end
 
-    let(:original_course)  { FactoryGirl.create :course_profile_course }
+    let(:original_course)  { FactoryBot.create :course_profile_course }
 
     let(:course)           do
-      FactoryGirl.create :course_profile_course, name: 'Test course',
+      FactoryBot.create :course_profile_course, name: 'Test course',
                                                  appearance_code: 'appearance override',
                                                  offering: catalog_offering,
                                                  is_preview: true,
@@ -78,8 +78,17 @@ module Api::V1
       expect(represented['is_concept_coach']).to eq true
     end
 
-    it 'shows whether or not it is a college course' do
+    it 'shows whether or not it is a college course, defaulting to true' do
       expect(represented['is_college']).to eq false
+
+      course.update_attribute :is_college, nil
+      expect(described_class.new(course).as_json['is_college']).to eq true
+
+      course.update_attribute :is_college, true
+      expect(described_class.new(course).as_json['is_college']).to eq true
+
+      course.update_attribute :is_college, false
+      expect(described_class.new(course).as_json['is_college']).to eq false
     end
 
     it "shows the id of the source course's catalog offering" do
@@ -91,9 +100,9 @@ module Api::V1
     end
 
     it 'shows students' do
-      period = FactoryGirl.create :course_membership_period, course: course
-      student_1_user = FactoryGirl.create :user
-      student_2_user = FactoryGirl.create :user
+      period = FactoryBot.create :course_membership_period, course: course
+      student_1_user = FactoryBot.create :user
+      student_2_user = FactoryBot.create :user
       student_1 = AddUserAsPeriodStudent[user: student_1_user, period: period].student
       student_2 = AddUserAsPeriodStudent[user: student_2_user, period: period].student
 
@@ -104,16 +113,21 @@ module Api::V1
     end
 
     it 'shows the number of sections in the course' do
-      period_1 = FactoryGirl.create :course_membership_period, course: course
-      period_2 = FactoryGirl.create :course_membership_period, course: course
-      period_3 = FactoryGirl.create :course_membership_period, course: course
-      period_4 = FactoryGirl.create :course_membership_period, course: course
+      period_1 = FactoryBot.create :course_membership_period, course: course
+      period_2 = FactoryBot.create :course_membership_period, course: course
+      period_3 = FactoryBot.create :course_membership_period, course: course
+      period_4 = FactoryBot.create :course_membership_period, course: course
 
       expect(represented["num_sections"]).to eq 4
     end
 
     it 'shows does_cost' do
       expect(represented['does_cost']).to eq false
+    end
+
+    it 'shows the last_lms_scores_push_job_id' do
+      course.last_lms_scores_push_job_id = "howdy"
+      expect(represented['last_lms_scores_push_job_id']).to eq "howdy"
     end
   end
 end

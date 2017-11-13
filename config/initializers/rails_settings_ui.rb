@@ -10,14 +10,6 @@ RailsSettingsUi.parent_controller = 'Admin::BaseController' # default: '::Applic
 
 RailsSettingsUi.settings_class = "Settings::Db::Store"
 
-RailsSettingsUi.settings_displayed_as_select_tag = [
-  :biglearn_student_clues_algorithm_name,
-  :biglearn_teacher_clues_algorithm_name,
-  :biglearn_assignment_spes_algorithm_name,
-  :biglearn_assignment_pes_algorithm_name,
-  :biglearn_practice_worst_areas_algorithm_name
-]
-
 Rails.application.config.to_prepare do
   # If you use a *custom layout*, make route helpers available to RailsSettingsUi:
   RailsSettingsUi.inline_main_app_routes!
@@ -34,12 +26,9 @@ Rails.application.config.to_prepare do
 
         yield
 
+        Settings::Db.store.object('excluded_ids').expire_cache
         new_excluded_ids = Settings::Exercises.excluded_ids
-        return if new_excluded_ids == old_excluded_ids
-
-        CourseProfile::Models::Course.find_each do |course|
-          OpenStax::Biglearn::Api.update_globally_excluded_exercises course: course
-        end
+        SendGlobalExerciseExclusionsToBiglearn.perform_later if new_excluded_ids != old_excluded_ids
       end
     end
   end

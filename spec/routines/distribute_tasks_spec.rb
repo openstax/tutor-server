@@ -3,20 +3,20 @@ require 'fork_with_connection'
 
 RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
-  let(:course)    { FactoryGirl.create :course_profile_course }
-  let(:period)    { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)    { FactoryBot.create :course_profile_course }
+  let(:period)    { FactoryBot.create :course_membership_period, course: course }
   let!(:user)     do
-    FactoryGirl.create(:user).tap do |user|
+    FactoryBot.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
   let!(:new_user) do
-    FactoryGirl.create(:user).tap do |user|
+    FactoryBot.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
   let(:task_plan) do
-    task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
+    task_plan = FactoryBot.build(:tasks_task_plan, owner: course)
     task_plan.tasking_plans.first.target = period.to_model
     task_plan.save!
     task_plan
@@ -24,10 +24,10 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
   context 'a homework' do
     let(:assistant)     do
-      FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+      FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
     end
     let(:homework_plan) do
-      task_plan = FactoryGirl.build(
+      task_plan = FactoryBot.build(
         :tasks_task_plan,
         assistant: assistant,
         owner: course,
@@ -77,7 +77,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true do
 
       expect do
         pids = 5.times.map do
-          Tutor.fork_with_connection do
+          fork_with_connection do
             # Should no longer trigger ActiveRecord::TransactionIsolationConflicts
             # because after the first retry it detects that the plan
             # has already been distributed and does nothing

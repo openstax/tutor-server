@@ -6,6 +6,7 @@ class Admin::CoursesController < Admin::BaseController
 
   def index
     @query = params[:query]
+    @order_by = params[:order_by]
     result = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
     per_page = params[:per_page] || 25
     per_page = result.outputs.total_count if params[:per_page] == 'all'
@@ -17,12 +18,9 @@ class Admin::CoursesController < Admin::BaseController
     end
 
     @course_infos = result.outputs.items.preload(
-      [
-        { teachers: { role: [:role_user, :profile] },
-          periods_with_deleted: :latest_enrollments_with_deleted,
-          ecosystems: :books },
-        :periods
-      ]
+      teachers: { role: [:role_user, :profile] },
+      periods: { latest_enrollments: :student },
+      ecosystems: :books
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
@@ -76,7 +74,6 @@ class Admin::CoursesController < Admin::BaseController
 
   def restore_salesforce
     Salesforce::Models::AttachedRecord
-      .with_deleted
       .find(params[:restore_salesforce][:attached_record_id])
       .restore
     redirect_to edit_admin_course_path(params[:id], anchor: "salesforce")
@@ -119,6 +116,8 @@ class Admin::CoursesController < Admin::BaseController
     case params[:commit]
     when 'Set Ecosystem'
       bulk_set_ecosystem
+    when 'Set Flag'
+      bulk_set_flag
     end
   end
 
@@ -150,6 +149,27 @@ class Admin::CoursesController < Admin::BaseController
     end
 
     redirect_to admin_courses_path
+  end
+
+  def bulk_set_flag
+    if params[:flag_name].blank?
+      flash[:error] = 'Select a flag to modify'
+    else
+      # if select all on all pages, rerun query and get all course IDs
+
+      if params[:courses_select_all_on_all_pages] == 'on'
+        course_ids = SearchCourses[query: params[:query]].reorder(nil).pluck(:id)
+      else
+        course_ids = params[:course_id]
+      end
+
+      CourseProfile::Models::Course.where(id: course_ids).update_all(
+        params[:flag_name] => params[:flag_value].to_s == "true"
+      )
+      flash[:notice] = 'Flag values were updated'
+    end
+
+    redirect_to admin_courses_path(query: params[:query], order_by: params[:order_by])
   end
 
   def roster
@@ -216,6 +236,7 @@ class Admin::CoursesController < Admin::BaseController
         :appearance_code,
         :school_district_school_id,
         :is_excluded_from_salesforce,
+        :is_lms_enabling_allowed,
         teacher_ids: []
       )
     }

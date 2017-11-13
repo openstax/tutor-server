@@ -12,7 +12,7 @@ end
 gem 'rails', '4.2.4'
 
 # Bootstrap front-end framework
-gem 'bootstrap-sass', '~> 3.2.0'
+gem 'bootstrap-sass', '~> 3.3.7'
 
 # SCSS stylesheets
 gem 'sass-rails', '~> 5.0.0'
@@ -25,6 +25,9 @@ gem 'autoprefixer-rails'
 
 # JavaScript asset compressor
 gem 'uglifier', '>= 1.3.0'
+
+# Detect browser being used in order to display a "Please upgrade" message
+gem 'browser', '~> 2.5'
 
 # CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails', '~> 4.0.0'
@@ -63,16 +66,19 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.6.0'
+gem 'openstax_accounts', '~> 7.9.0'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 8.1.0'
+gem 'openstax_api', '~> 8.2.0'
 
 gem 'apipie-rails'
 gem 'maruku'
+
+# LTI helper
+gem 'ims-lti', '~> 2.2.1'
 
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4
@@ -80,10 +86,10 @@ gem 'maruku'
 gem 'roar', '1.0.3'
 
 # Background job status store
-gem 'jobba', github: 'openstax/jobba', ref: 'def4b3e5b578d90e13454538de0e576447ee9b2c'
+gem 'jobba', '~> 1.6.0'
 
 # Lev framework
-gem 'lev', github: 'lml/lev', ref: '351d0b0a49e296d312a1920c4803bc8b7619fb80'
+gem 'lev', '~> 8.0.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -92,7 +98,7 @@ gem 'squeel'
 gem 'fine_print', '~> 3.1.0'
 
 # Keyword search
-gem "keyword_search"
+gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
 
 # File uploads
 gem 'remotipart'
@@ -111,7 +117,7 @@ gem 'newrelic_rpm'
 gem 'validates_timeliness'
 
 # JSON schema validation
-gem 'json-schema'
+gem 'json-schema', '~> 2.8.0'
 
 # Cooler hashes
 gem 'hashie'
@@ -148,14 +154,13 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'openstax_rescue_from', github: 'openstax/rescue_from',
-                            ref: 'e0d60e68afc629361d8b0c142c5eb0283e523aaa'
+gem 'openstax_rescue_from', '~> 2.1.0'
 
 # Generate memorable codes
 gem 'babbler', '~> 1.0.1'
 
 # Soft-deletion
-gem 'paranoia', '~> 2.1.3'
+gem 'paranoia'
 
 # Salesforce
 gem 'openstax_salesforce', '~> 0.19.0'
@@ -205,6 +210,14 @@ gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.gi
 # In place form editing on admin menu
 gem 'best_in_place'
 
+# Box integration
+gem 'boxr'
+
+# OAuth gem for generating and validating lti requests
+gem 'oauth', '~> 0.5.1'
+
+gem 'scout_apm', '~> 3.0.x'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
@@ -241,7 +254,7 @@ group :development, :test do
   gem 'pilfer', '~> 1.0.0'
 
   # Fixture replacement
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
 
   # Stubs HTTP requests
   gem 'webmock'
@@ -294,6 +307,8 @@ group :test do
   gem 'db-query-matchers'
 
   gem 'whenever-test'
+
+  gem 'capybara-screenshot', require: false
 end
 
 group :production do

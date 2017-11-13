@@ -2,10 +2,10 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::GetTaskPlans, type: :routine do
-  let!(:task_plan_1) { FactoryGirl.create :tasked_task_plan }
+  let!(:task_plan_1) { FactoryBot.create :tasked_task_plan }
   let(:course)       { task_plan_1.owner }
-  let!(:task_plan_2) { FactoryGirl.create :tasks_task_plan, owner: course }
-  let!(:task_plan_3) { FactoryGirl.create :tasks_task_plan, owner: course }
+  let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, owner: course }
+  let!(:task_plan_3) { FactoryBot.create :tasks_task_plan, owner: course }
 
   it 'gets all task_plans in a course' do
     out = described_class.call(owner: course).outputs
@@ -14,7 +14,8 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:trouble_plan_ids]).to be_nil
   end
 
-  it 'can return the task_plan ids for which there is trouble' do
+  # TODO: Move to GetTpDashboard spec
+  xit 'can return the task_plan ids for which there is trouble' do
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
@@ -27,7 +28,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     # Remove placeholder steps since they can sometimes be deleted, messing up our counting
     student_tasks.each do |task|
-      task.task_steps.select(&:placeholder?).each(&:really_destroy!)
+      task.task_steps.select(&:placeholder?).each(&:destroy!)
       task.pes_are_assigned = true
       task.spes_are_assigned = true
       task.update_step_counts!
@@ -88,5 +89,13 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
+  end
+
+  it 'does not return withdrawn task_plans' do
+    task_plan_2.destroy
+    out = described_class.call(owner: course).outputs
+    expect(out[:plans].length).to eq 2
+    expect(out[:plans]).to include(task_plan_1, task_plan_3)
+    expect(out[:trouble_plan_ids]).to be_nil
   end
 end

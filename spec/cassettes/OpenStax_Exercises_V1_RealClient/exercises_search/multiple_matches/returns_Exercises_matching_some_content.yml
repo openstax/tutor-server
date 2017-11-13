@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=content:FoRcE
+    uri: <openstax_exercises_url>/api/exercises?q=content:FoRcE
     body:
       encoding: US-ASCII
       string: ''

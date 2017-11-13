@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::GetCoursePeriods do
-  let(:target_course) { FactoryGirl.create :course_profile_course }
+  let(:target_course) { FactoryBot.create :course_profile_course }
 
   context "when there are no periods for the target course" do
     it "returns an empty enumerable" do
@@ -13,7 +13,7 @@ RSpec.describe CourseMembership::GetCoursePeriods do
 
   context "when there is one period for the target course" do
     let!(:target_period) do
-      model = FactoryGirl.create :course_membership_period, course: target_course
+      model = FactoryBot.create :course_membership_period, course: target_course
       CourseMembership::Period.new(strategy: model.wrap)
     end
 
@@ -28,7 +28,7 @@ RSpec.describe CourseMembership::GetCoursePeriods do
   context "when there are multiple periods for the target course" do
     let!(:target_periods) do
       2.times.map do
-        model = FactoryGirl.create :course_membership_period, course: target_course
+        model = FactoryBot.create :course_membership_period, course: target_course
         CourseMembership::Period.new(strategy: model.wrap)
       end
     end

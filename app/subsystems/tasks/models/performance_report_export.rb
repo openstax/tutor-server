@@ -1,11 +1,11 @@
 module Tasks::Models
-  class PerformanceReportExport < Tutor::SubSystems::BaseModel
+  class PerformanceReportExport < IndestructibleRecord
     mount_uploader :export, ExportUploader
 
     default_scope { order(created_at: :desc) }
 
     belongs_to :course, subsystem: :course_profile
-    belongs_to :role, subsystem: :entity
+    belongs_to :role,   subsystem: :entity
 
     def filename
       export.file.filename

@@ -7,7 +7,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   let(:bio_cnx_book)   { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
   let(:bio_cc_book)    { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
 
-  let(:ecosystem)      { FactoryGirl.create :content_ecosystem }
+  let(:ecosystem)      { FactoryBot.create :content_ecosystem }
 
   it 'creates a new Book structure and Pages and sets their attributes' do
     expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem)

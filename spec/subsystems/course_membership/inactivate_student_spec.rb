@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::InactivateStudent, type: :routine do
-  let(:student)  { FactoryGirl.create(:course_membership_student) }
+  let(:student)  { FactoryBot.create(:course_membership_student) }
   let!(:course)  { student.course }
 
   context "active student" do
@@ -10,14 +10,12 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
       expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid)
 
       result = nil
-      expect {
+      expect do
         result = described_class.call(student: student)
-      }.to change{ CourseMembership::Models::Student.count }.by(-1)
+      end.to change{ student.reload.dropped? }.from(false).to(true)
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
-      expect(student).to be_persisted
-      expect(student).to be_deleted
     end
 
     it "does not refund student after refund period elapses" do
@@ -31,10 +29,11 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
     before { student.destroy }
 
     it "returns an error" do
-      result = described_class.call(student: student)
+      result = nil
+      expect do
+        result = described_class.call(student: student)
+      end.not_to change { student.reload.dropped? }.from(true)
       expect(result.errors.first.code).to eq :already_inactive
-      expect(student).to be_persisted
-      expect(student).to be_deleted
     end
   end
 

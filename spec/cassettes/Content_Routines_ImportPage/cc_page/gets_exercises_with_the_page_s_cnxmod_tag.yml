@@ -57,7 +57,7 @@ http_interactions:
 
         The resource was found at /contents/6a0568d8-23d7-439b-9a01-16e4e73886b3%4012.json; you should be redirected automatically.
 
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:51 GMT
 - request:
     method: get
@@ -870,11 +870,11 @@ http_interactions:
         module", "version": "1", "revised": "2012-08-28T16:00:38Z", "publisher": {"surname":
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:51 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
     body:
       encoding: US-ASCII
       string: ''
@@ -884,7 +884,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 54f7e8d85fe9bc9d98f78e7101ca5419f634344473c7296993e59b9814fe7f35
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -1959,6 +1959,6 @@ http_interactions:
         XSwiY29tbXVuaXR5X3NvbHV0aW9ucyI6W10sImhpbnRzIjpbXSwiZm9ybWF0
         cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJv
         X2Nob2ljZXMiOltdfV19XX0=
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:55 GMT
 recorded_with: VCR 2.9.3

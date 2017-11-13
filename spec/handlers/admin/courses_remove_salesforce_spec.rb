@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
-  let(:course)   { FactoryGirl.create :course_profile_course }
-  let(:period_1) { FactoryGirl.create :course_membership_period, course: course }
-  let(:period_2) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)   { FactoryBot.create :course_profile_course }
+  let(:period_1) { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2) { FactoryBot.create :course_membership_period, course: course }
 
   it 'freaks out if there is nothing to remove' do
     expect(
@@ -14,7 +14,7 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
   it 'freaks out with rollback if stats not cleared' do
     fake_sf_object = OpenStruct.new(id: 'fakeid', save: false)
     [course, period_1, period_2].each do |tutor_object|
-      FactoryGirl.create(:salesforce_attached_record, tutor_object: tutor_object,
+      FactoryBot.create(:salesforce_attached_record, tutor_object: tutor_object,
                                                       salesforce_object: fake_sf_object)
     end
     allow_any_instance_of(Salesforce::Models::AttachedRecord)
@@ -25,7 +25,7 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
     ).to have_routine_error(:could_not_clear_salesforce_stats)
 
     # no removals stick...
-    expect(Salesforce::Models::AttachedRecord.count).to eq 3
+    expect(Salesforce::Models::AttachedRecord.without_deleted.count).to eq 3
   end
 
   it 'removes and resets stats' do
@@ -37,24 +37,24 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
     fake_sf_object_2.num_students = 38
 
     [course, period_1].each do |tutor_object|
-      FactoryGirl.create(:salesforce_attached_record, tutor_object: tutor_object,
+      FactoryBot.create(:salesforce_attached_record, tutor_object: tutor_object,
                                                       salesforce_object: fake_sf_object_1)
     end
 
     [course, period_2].each do |tutor_object|
-      FactoryGirl.create(:salesforce_attached_record, tutor_object: tutor_object,
+      FactoryBot.create(:salesforce_attached_record, tutor_object: tutor_object,
                                                       salesforce_object: fake_sf_object_2)
     end
 
     expect{
       call(course_id: course.id, salesforce_id: 'earlier')
-    }.to change{Salesforce::Models::AttachedRecord.count}.by(-2)
+    }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(-2)
 
-    expect(Salesforce::Models::AttachedRecord.all.map(&:tutor_gid))
+    expect(Salesforce::Models::AttachedRecord.without_deleted.map(&:tutor_gid))
       .to contain_exactly(course.to_global_id.to_s, period_2.to_global_id.to_s)
 
     # Course AR should be soft deleted, period AR should be really deleted
-    expect(Salesforce::Models::AttachedRecord.with_deleted.all.map(&:tutor_gid))
+    expect(Salesforce::Models::AttachedRecord.all.map(&:tutor_gid))
       .to contain_exactly(course.to_global_id.to_s, course.to_global_id.to_s,
                           period_2.to_global_id.to_s)
 
@@ -65,7 +65,7 @@ RSpec.describe Admin::CoursesRemoveSalesforce, type: :handler do
   it 'does not explode if the SF object is no longer in SF' do
     disable_sfdc_client
 
-    FactoryGirl.create(:salesforce_attached_record,
+    FactoryBot.create(:salesforce_attached_record,
                        tutor_object: course,
                        salesforce_class_name: "OpenStax::Salesforce::Remote::ClassSize",
                        salesforce_id: "something",

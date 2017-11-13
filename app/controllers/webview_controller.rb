@@ -5,6 +5,7 @@ class WebviewController < ApplicationController
 
   layout :resolve_layout
 
+  before_filter :check_supported_browser
   skip_before_filter :authenticate_user!, only: [:home, :enroll]
 
   def home
@@ -31,6 +32,11 @@ class WebviewController < ApplicationController
       convert_and_clear_webview_flash
       'webview'
     end
+  end
+
+  def check_supported_browser
+    redirect_to browser_upgrade_path(go: current_url) unless params.has_key?(:ignore_browser) || browser.modern?
+    true
   end
 
 end

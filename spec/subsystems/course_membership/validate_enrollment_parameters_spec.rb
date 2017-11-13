@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::ValidateEnrollmentParameters, type: :routine do
 
-  let(:course)     { FactoryGirl.create :course_profile_course }
-  let(:period)     { FactoryGirl.create :course_membership_period, course: course }
-  let(:book)       { FactoryGirl.create :content_book }
+  let(:course)     { FactoryBot.create :course_profile_course }
+  let(:period)     { FactoryBot.create :course_membership_period, course: course }
+  let(:book)       { FactoryBot.create :content_book }
   let!(:ecosystem) do
     ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
     AddEcosystemToCourse[course: course, ecosystem: ecosystem]
@@ -12,7 +12,7 @@ RSpec.describe CourseMembership::ValidateEnrollmentParameters, type: :routine do
   end
 
   let(:user)       do
-    profile = FactoryGirl.create :user_profile
+    profile = FactoryBot.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end

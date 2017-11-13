@@ -1213,11 +1213,11 @@ http_interactions:
         "Created module", "version": "1", "revised": "2011-12-22T15:45:42Z", "publisher":
         {"surname": "Williamson", "suffix": "", "firstname": "Collins", "title": "",
         "fullname": "Collins Williamson", "id": "dcwillman"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:102e9604-daa7-4a09-9f9e-232251d1a4ee%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:102e9604-daa7-4a09-9f9e-232251d1a4ee%22
     body:
       encoding: US-ASCII
       string: ''
@@ -1227,7 +1227,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer ce86221530fb5fa480454ece54a9203540391b5563990e466ac9edea35f1c2c8
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -1318,7 +1318,7 @@ http_interactions:
         ImNvbW11bml0eV9zb2x1dGlvbnMiOltdLCJoaW50cyI6W10sImZvcm1hdHMi
         OlsiZnJlZS1yZXNwb25zZSIsIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19j
         aG9pY2VzIjpbXX1dfV19
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
@@ -1455,11 +1455,11 @@ http_interactions:
         "2012-01-20T22:57:29Z", "publisher": {"surname": "Physics", "suffix": "",
         "firstname": "College", "title": "", "fullname": "OpenStax College Physics",
         "id": "cnxcap"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:127f63f7-d67f-4710-8625-2b1d4128ef6b%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:127f63f7-d67f-4710-8625-2b1d4128ef6b%22
     body:
       encoding: US-ASCII
       string: ''
@@ -1469,7 +1469,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer ce86221530fb5fa480454ece54a9203540391b5563990e466ac9edea35f1c2c8
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -1513,6 +1513,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"total_count":0,"items":[]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:39 GMT
 recorded_with: VCR 2.9.3

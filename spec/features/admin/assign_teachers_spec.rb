@@ -2,13 +2,15 @@ require 'rails_helper'
 require 'feature_js_helper'
 
 RSpec.feature 'Administration', js: true do
+
   before do
+    page.driver.headers['User-Agent'] = chrome_ua
     # Log in as admin
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
     # Create a user to add as a teacher
-    FactoryGirl.create(
+    FactoryBot.create(
       :user_profile, username: 'imateacher', first_name: 'Ima',
       last_name: 'Teacher', full_name: 'Ima Teacher'
     )
@@ -43,12 +45,13 @@ RSpec.feature 'Administration', js: true do
     # Search for the user and add the user to the course
     autocomplete '#course_teacher', with: 'imatea'
     expect(page).to have_css('.flash_notice', text: 'Teachers updated.')
+    expect(page).to have_text('Ima Teacher No')
 
     # Remove the teacher
     click_link 'Remove from course'
     expect(page).to have_css('.flash_notice', text: 'Teacher "Ima Teacher" removed from course.')
 
     # Check that the teacher is now not in the list of teachers
-    expect(page).not_to have_text('imateacher')
+    expect(page).to have_text('Ima Teacher Yes')
   end
 end

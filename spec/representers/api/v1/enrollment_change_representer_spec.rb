@@ -2,16 +2,16 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   let(:user)              do
-    profile = FactoryGirl.create :user_profile
+    profile = FactoryBot.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
 
-  let(:course)            { FactoryGirl.create :course_profile_course }
-  let(:period_1)          { FactoryGirl.create :course_membership_period, course: course }
-  let(:period_2)          { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)            { FactoryBot.create :course_profile_course }
+  let(:period_1)          { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:teacher_user)      { FactoryGirl.create(:user) }
+  let(:teacher_user)      { FactoryBot.create(:user) }
   let!(:teacher_role)     { AddUserAsCourseTeacher[user: teacher_user, course: course] }
 
   let(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
@@ -32,6 +32,7 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     expect(representation['to']['course']['name']).to eq course.name
     expect(representation['to']['period']['id']).to eq period_2.id.to_s
     expect(representation['to']['period']['name']).to eq period_2.name
+    expect(representation['to']['period']['is_lms_enabled']).to eq course.is_lms_enabled
     expect(representation['conflict']).to be_nil
     expect(representation['status']).to eq enrollment_change.status.to_s
     expect(representation['requires_enrollee_approval']).to eq false
@@ -53,8 +54,8 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   end
 
   context 'with a conflicting period' do
-    let(:course_2) { FactoryGirl.create :course_profile_course, is_concept_coach: true }
-    let(:period_3) { FactoryGirl.create :course_membership_period, course: course_2 }
+    let(:course_2) { FactoryBot.create :course_profile_course, is_concept_coach: true }
+    let(:period_3) { FactoryBot.create :course_membership_period, course: course_2 }
 
     before do
       course.update_attribute :is_concept_coach, true

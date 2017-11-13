@@ -3,10 +3,12 @@ class CourseMembership::IsCourseTeacher
 
   protected
 
-  def exec(course:, roles:)
-    role_ids = [roles].flatten.map(&:id)
+  def exec(course:, roles:, include_deleted_teachers: false)
+    teachers = course.teachers.where(entity_role_id: roles)
+    teachers = teachers.without_deleted unless include_deleted_teachers
 
-    outputs.is_course_teacher = CourseMembership::Models::Teacher.exists?(course: course,
-                                                                          entity_role_id: role_ids)
+    outputs.teacher = teachers.find { |teacher| !teacher.deleted? }
+    outputs.is_deleted = outputs.teacher.nil? && !teachers.empty?
+    outputs.is_course_teacher = outputs.teacher.present? || outputs.is_deleted
   end
 end

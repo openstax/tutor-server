@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
-  let(:course)   { FactoryGirl.create :course_profile_course }
-  let(:period_1) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)   { FactoryBot.create :course_profile_course }
+  let(:period_1) { FactoryBot.create :course_membership_period, course: course }
 
   it 'freaks out if the requested salesforce ID is not attached to course' do
     expect(
@@ -11,11 +11,11 @@ RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
   end
 
   it 'freaks out if there are multiple attached records for one period' do
-    FactoryGirl.create(:salesforce_attached_record, tutor_object: course,
+    FactoryBot.create(:salesforce_attached_record, tutor_object: course,
                                                     salesforce_object: OpenStruct.new(id: 'foo'))
-    FactoryGirl.create(:salesforce_attached_record, tutor_object: period_1,
+    FactoryBot.create(:salesforce_attached_record, tutor_object: period_1,
                                                     salesforce_object: OpenStruct.new(id: 'one'))
-    FactoryGirl.create(:salesforce_attached_record, tutor_object: period_1,
+    FactoryBot.create(:salesforce_attached_record, tutor_object: period_1,
                                                     salesforce_object: OpenStruct.new(id: 'two'))
     expect(
       call(period_id: period_1.id, salesforce_id: 'foo')
@@ -24,7 +24,7 @@ RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
 
   context "when the course has a SF record" do
     before(:each) do
-      FactoryGirl.create(:salesforce_attached_record,
+      FactoryBot.create(:salesforce_attached_record,
                          tutor_object: course,
                          salesforce_object: OpenStruct.new(id: 'foo'))
     end
@@ -46,13 +46,13 @@ RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
       it 'works when the incoming SF ID is blank' do
         expect{
           call(period_id: period_1.id, salesforce_id: '')
-        }.to change{Salesforce::Models::AttachedRecord.count}.by(0)
+        }.not_to change{Salesforce::Models::AttachedRecord.count}
       end
     end
 
     context "when the period already has a SF record" do
       before(:each) do
-        FactoryGirl.create(:salesforce_attached_record,
+        FactoryBot.create(:salesforce_attached_record,
                            tutor_object: period_1,
                            salesforce_object: OpenStruct.new(id: 'something else'))
       end
@@ -62,15 +62,15 @@ RSpec.describe Admin::PeriodsChangeSalesforce, type: :handler do
 
         expect{
           call(period_id: period_1.id, salesforce_id: 'foo')
-        }.to change{Salesforce::Models::AttachedRecord.count}.by(0)
+        }.not_to change{Salesforce::Models::AttachedRecord.count}
 
         expect(Salesforce::Models::AttachedRecord.where(salesforce_id: 'foo').count).to eq 2
       end
 
-      it 'delets the existing AR when the incoming SF ID is blank' do
+      it 'deletes the existing AR when the incoming SF ID is blank' do
         expect{
           call(period_id: period_1.id, salesforce_id: '')
-        }.to change{Salesforce::Models::AttachedRecord.count}.by(-1)
+        }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(-1)
       end
     end
   end

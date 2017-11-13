@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     get :'auth/failure', action: :omniauth_failure
     get :signup
     get :stubbed_payments
+    get :browser_upgrade
   end
 
   get :non_student_signup,
@@ -192,9 +193,10 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :enrollment_changes, only: [:create] do
+    resources :enrollment, only: [:create] do
       put :approve, on: :member
       post :prevalidate, on: :collection
+      get :choices, on: :member
     end
 
     resources :offerings, only: [:index]
@@ -204,8 +206,17 @@ Rails.application.routes.draw do
     get 'terms', to: 'terms#index'
     put 'terms/:ids', to: 'terms#sign'
 
+    namespace :lms do
+      resources :courses, only: [:show] do
+        member do
+          put :push_scores
+        end
+      end
+    end
+
     match :'*all', to: 'api#options', via: [:options]
-  end
+
+  end # end of API scope
 
   # Teacher enrollment
   scope to: 'courses#teach' do
@@ -219,6 +230,15 @@ Rails.application.routes.draw do
       root action: :index
 
       get :'raise(/:type)', action: :test_raise, as: :raise
+    end
+
+    resource :test do
+      collection do
+        get :minimal_error
+        get :minimal_error_iframe
+        get :launch_iframe
+        get :launch
+      end
     end
 
     resources :users, except: :destroy do
@@ -261,7 +281,12 @@ Rails.application.routes.draw do
       end
 
       resources :students, only: [:index]
-      resources :teachers, only: [:destroy], shallow: true
+      resources :teachers, only: [], shallow: true do
+        member do
+          delete :delete
+          put :undelete
+        end
+      end
     end
 
     resources :students, only: :update do
@@ -316,13 +341,15 @@ Rails.application.routes.draw do
     end
   end
 
-  # match '/auth/salesforce/callback', to: 'admin/salesforce#callback', via: [:get, :post]
-
   # All CS routes
   namespace :customer_service do
     root 'console#index'
 
-    resources :users, only: [:index]
+    resources :users, only: [:index] do
+      collection do
+        get :info
+      end
+    end
 
     resources :ecosystems, only: [:index] do
       get :manifest, on: :member
@@ -334,8 +361,6 @@ Rails.application.routes.draw do
     end
 
     resources :targeted_contracts, only: [:index]
-
-    resource :salesforce, only: [:show], controller: :salesforce
 
     resources :jobs, only: [:index, :show]
 
@@ -369,7 +394,20 @@ Rails.application.routes.draw do
     end
   end
 
+  scope '/lms', controller: :lms, as: :lms do
+    get :configuration
+    post :launch
+    get :launch_authenticate
+    get :complete_launch
+    post :ci_launch
+  end
+
+  if Rails.env.test?
+    scope :specs do
+      get 'lms_error_page/:page(/:case)' => 'lms_error_page_specs#page'
+    end
+  end
+
   # Catch-all frontend route
   match :'*other', to: 'webview#index', via: [:get, :post, :put, :patch, :delete]
-
 end

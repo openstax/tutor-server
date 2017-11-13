@@ -1,6 +1,6 @@
 module SchoolDistrict
   module Models
-    class District < Tutor::SubSystems::BaseModel
+    class District < ApplicationRecord
       has_many :schools
 
       validates :name, presence: true, uniqueness: true

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasks_tasking, class: '::Tasks::Models::Tasking' do
     association :task, factory: :tasks_task
 

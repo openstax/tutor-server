@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesAddSalesforce, type: :handler do
-  let(:course) { FactoryGirl.create :course_profile_course }
+  let(:course) { FactoryBot.create :course_profile_course }
 
   it 'freaks out if the SF object does not exist' do
     allow_any_instance_of(described_class).to receive(:get_salesforce_object_for_id) { nil }
@@ -27,7 +27,7 @@ RSpec.describe Admin::CoursesAddSalesforce, type: :handler do
     end
 
     it 'adds to a course already with an SF object' do
-      FactoryGirl.create(:salesforce_attached_record,
+      FactoryBot.create(:salesforce_attached_record,
                          tutor_object: course,
                          salesforce_object: OpenStruct.new(id: 'some other SF object'))
       result = nil
@@ -38,7 +38,7 @@ RSpec.describe Admin::CoursesAddSalesforce, type: :handler do
     end
 
     it 'freaks out if this specific SF record already linked' do
-      FactoryGirl.create(:salesforce_attached_record,
+      FactoryBot.create(:salesforce_attached_record,
                          tutor_object: course,
                          salesforce_object: sf_object)
       expect(

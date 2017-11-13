@@ -1,7 +1,7 @@
 module Content
   module Strategies
     module Direct
-      class Tag < Entity
+      class Tag < Entitee
 
         wraps ::Content::Models::Tag
 

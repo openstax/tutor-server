@@ -13,8 +13,13 @@ class UserIsCourseTeacher
 
   protected
 
-  def exec(user:, course:)
+  def exec(user:, course:, include_deleted_teachers: false)
     run(Role::GetUserRoles, user)
-    run(CourseMembership::IsCourseTeacher, roles: outputs.roles, course: course)
+    run(
+      CourseMembership::IsCourseTeacher,
+      roles: outputs.roles,
+      course: course,
+      include_deleted_teachers: include_deleted_teachers
+    )
   end
 end

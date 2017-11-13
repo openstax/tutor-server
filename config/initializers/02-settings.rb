@@ -24,6 +24,8 @@ Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = 'student
 Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = 'local_query'
 Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = 'local_query'
 
+Settings::Db.store.defaults[:default_is_lms_enabling_allowed] = false
+
 redis_secrets = secrets['redis']
 Settings::Redis.store = Redis::Store.new(
   url: redis_secrets['url'],
@@ -46,3 +48,5 @@ Settings::Db.store.defaults[:course_appearance_codes] = {
 }
 
 Settings::Db.store.defaults[:pardot_toa_redirect] = ""
+
+Settings::Db.store.defaults[:raise_if_salesforce_user_missing] = !Rails.env.development?

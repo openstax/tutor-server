@@ -1,0 +1,57 @@
+.warning_card,
+.error_card {
+  width: 540px;
+  margin: 16px auto;
+  background-color: white;
+  font-size: 16px;
+
+  .body, .title {
+    padding: 30px;
+  }
+
+  .title {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    svg {
+      height: 40px;
+      width: 40px;
+    }
+
+    .icon {
+      float: left;
+      font-size: 26px;
+      padding-right: 10px;
+    }
+
+    .text {
+    }
+  }
+
+  &.iframe {
+    width: 90%;
+    max-width: 540px;
+    .body {
+      padding: 30px 0;
+    }
+  }
+
+  &.error_card {
+    .title {
+      background-color: rgb(248, 232, 234);
+      color: rgb(194, 32, 50);
+    }
+  }
+
+
+  &.warning_card {
+    .title {
+      background-color: rgb(249, 237, 187);
+      color: rgb(66, 66, 66);
+      svg path {
+        fill: rgb(238, 207, 85);
+      }
+    }
+  }
+
+}

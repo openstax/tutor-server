@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe CourseMembership::AddEnrollment, type: :routine do
   context "when adding a new student role to a period" do
     it "succeeds" do
-      role    = FactoryGirl.create :entity_role
-      course  = FactoryGirl.create :course_profile_course
-      period  = FactoryGirl.create :course_membership_period, course: course
-      student = FactoryGirl.create :course_membership_student, role: role, course: course
+      role    = FactoryBot.create :entity_role
+      course  = FactoryBot.create :course_profile_course
+      period  = FactoryBot.create :course_membership_period, course: course
+      student = FactoryBot.create :course_membership_student, role: role, course: course
 
       result = nil
       expect {
@@ -18,10 +18,10 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
 
   context "when moving an existing student role to another period in the same course" do
     it "succeeds" do
-      role     = FactoryGirl.create :entity_role
-      course   = FactoryGirl.create :course_profile_course
-      period_1 = FactoryGirl.create :course_membership_period, course: course
-      period_2 = FactoryGirl.create :course_membership_period, course: course
+      role     = FactoryBot.create :entity_role
+      course   = FactoryBot.create :course_profile_course
+      period_1 = FactoryBot.create :course_membership_period, course: course
+      period_2 = FactoryBot.create :course_membership_period, course: course
       student  = CourseMembership::AddStudent[period: period_1, role: role]
 
       result = nil
@@ -45,11 +45,11 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
 
   context "when adding an existing student role to another period in a different course" do
     it "fails" do
-      role     = FactoryGirl.create :entity_role
-      course_1 = FactoryGirl.create :course_profile_course
-      course_2 = FactoryGirl.create :course_profile_course
-      period_1 = FactoryGirl.create :course_membership_period, course: course_1
-      period_2 = FactoryGirl.create :course_membership_period, course: course_2
+      role     = FactoryBot.create :entity_role
+      course_1 = FactoryBot.create :course_profile_course
+      course_2 = FactoryBot.create :course_profile_course
+      period_1 = FactoryBot.create :course_membership_period, course: course_1
+      period_2 = FactoryBot.create :course_membership_period, course: course_2
       student  = CourseMembership::AddStudent[period: period_1, role: role]
 
       result = nil

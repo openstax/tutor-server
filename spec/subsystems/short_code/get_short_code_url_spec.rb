@@ -1,24 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe ShortCode::GetShortCodeUrl, type: :routine do
-  let(:absolute_url) { FactoryGirl.create :short_code_short_code,
+  let(:absolute_url) { FactoryBot.create :short_code_short_code,
                                           uri: 'http://www.openstaxcollege.org/' }
 
-  let(:relative_url) { FactoryGirl.create :short_code_short_code,
+  let(:relative_url) { FactoryBot.create :short_code_short_code,
                                           uri: '/courses/1/' }
 
-  let(:task_plan) { FactoryGirl.create :tasks_task_plan }
+  let(:task_plan) { FactoryBot.create :tasks_task_plan }
   let(:task_plan_gid) { task_plan.to_global_id.to_s }
 
-  let(:task_plan_url) { FactoryGirl.create :short_code_short_code,
+  let(:task_plan_url) { FactoryBot.create :short_code_short_code,
                                            uri: task_plan_gid }
 
-  let(:tasking) { FactoryGirl.create :tasks_tasking }
+  let(:tasking) { FactoryBot.create :tasks_tasking }
   let(:tasking_gid) { tasking.to_global_id.to_s }
-  let(:tasking_url) { FactoryGirl.create :short_code_short_code,
+  let(:tasking_url) { FactoryBot.create :short_code_short_code,
                                          uri: tasking_gid }
 
-  let(:user) { FactoryGirl.create :user }
+  let(:user) { FactoryBot.create :user }
 
   it 'returns absolute urls' do
     result = described_class.call(short_code: absolute_url.code, user: user)

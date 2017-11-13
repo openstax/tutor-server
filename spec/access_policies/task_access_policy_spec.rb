@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe TaskAccessPolicy, type: :access_policy do
-  let(:requestor)          { FactoryGirl.create(:user) }
-  let(:task)               { FactoryGirl.create(:tasks_task) }
+  let(:requestor)          { FactoryBot.create(:user) }
+  let(:task)               { FactoryBot.create(:tasks_task) }
 
   subject(:action_allowed) { TaskAccessPolicy.action_allowed?(action, requestor, task) }
 
@@ -67,9 +67,9 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
     context 'and the requestor is human' do
       # already true for User
 
-      context 'and the task is deleted' do
+      context 'and the task_plan is withdrawn' do
         before do
-          task.destroy!
+          task.task_plan.destroy!
           allow(DoesTaskingExist).to receive(:[]) { true }
           allow(UserIsCourseTeacher).to receive(:[]) { true }
         end
@@ -77,7 +77,7 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
         it { should eq false }
       end
 
-      context 'and the task is not deleted' do
+      context 'and the task_plan is not withdrawn' do
         context 'and the requestor is a course teacher' do
           before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
 
@@ -105,8 +105,8 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
     context 'and the requestor is human' do
       # already true for User
 
-      context 'and the task is deleted' do
-        before { task.destroy! }
+      context 'and the task_plan is withdrawn' do
+        before { task.task_plan.destroy! }
 
         context 'and the requestor has taskings in the task' do
           before { allow(DoesTaskingExist).to receive(:[]) { true } }
@@ -121,7 +121,7 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
         end
       end
 
-      context 'and the task is not deleted' do
+      context 'and the task_plan is not withdrawn' do
         before do
           allow(DoesTaskingExist).to receive(:[]) { true }
           allow(UserIsCourseTeacher).to receive(:[]) { true }

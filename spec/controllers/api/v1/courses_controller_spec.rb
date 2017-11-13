@@ -5,31 +5,31 @@ require 'database_cleaner'
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let(:user_1)         { FactoryGirl.create(:user) }
-  let(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,
                                             resource_owner_id: user_1.id }
 
-  let(:user_2)         { FactoryGirl.create(:user) }
-  let(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token,
+  let(:user_2)         { FactoryBot.create(:user) }
+  let(:user_2_token)   { FactoryBot.create :doorkeeper_access_token,
                                             resource_owner_id: user_2.id }
 
-  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
+  let(:userless_token) { FactoryBot.create :doorkeeper_access_token }
 
   let(:course)         do
-    FactoryGirl.create :course_profile_course, name: 'Physics 101', is_college: true
+    FactoryBot.create :course_profile_course, :without_ecosystem,
+                       name: 'Physics 101', is_college: true
   end
-  let!(:period)        { FactoryGirl.create :course_membership_period, course: course }
+  let!(:period)        { FactoryBot.create :course_membership_period, course: course }
 
-  let(:book)           { FactoryGirl.create(:content_book, :standard_contents_1) }
+  let(:book)           { FactoryBot.create(:content_book, :standard_contents_1) }
   let(:ecosystem)      do
     strategy = Content::Strategies::Direct::Ecosystem.new(book.ecosystem.reload)
     Content::Ecosystem.new(strategy: strategy)
   end
-
-  def add_book_to_course(course:)
-    CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-
-    { book: book, ecosystem: ecosystem }
+  let(:offering)       { FactoryBot.create :catalog_offering, ecosystem: ecosystem.to_model }
+  let(:course)         do
+    FactoryBot.create :course_profile_course,
+                       offering: offering, name: 'Physics 101', is_college: true
   end
 
   context '#index' do
@@ -37,7 +37,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) do
-      FactoryGirl.create :course_membership_period, course: course, name: '0th'
+      FactoryBot.create :course_membership_period, course: course, name: '0th'
     end
 
     before { zeroth_period.to_model.destroy! }
@@ -62,8 +62,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'includes all fields from the CourseRepresenter' do
-        add_book_to_course(course: course)[:ecosystem]
-
         api_get :index, user_1_token
 
         course_infos = CollectCourseInfo[user: user_1]
@@ -134,8 +132,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#create' do
     let(:term)             { TermYear::VISIBLE_TERMS.sample.to_s }
     let(:year)             { Time.current.year }
-    let(:book)             { FactoryGirl.create :content_book }
-    let(:catalog_offering) { FactoryGirl.create :catalog_offering, ecosystem: book.ecosystem }
+    let(:book)             { FactoryBot.create :content_book }
+    let(:catalog_offering) { FactoryBot.create :catalog_offering, ecosystem: book.ecosystem }
     let(:num_sections)     { 2 }
 
     before(:each) {
@@ -291,7 +289,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:roles)          { Role::GetUserRoles.call(user_1).outputs.roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
-    let!(:zeroth_period) { FactoryGirl.create :course_membership_period, course: course }
+    let!(:zeroth_period) { FactoryBot.create :course_membership_period, course: course }
 
     context 'course does not exist' do
       it 'raises RecordNotFound' do
@@ -412,6 +410,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
       end
 
+      it 'turns on LMS integration when allowed' do
+        course.update_attribute(:is_lms_enabling_allowed, true)
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { is_lms_enabled: true }.to_json
+        expect(response.body_as_hash[:is_lms_enabled]).to eq true
+        expect(course.reload.is_lms_enabled).to eq true
+      end
+
+      it 'cannot turn on LMS integration when not allowed' do
+        course.update_attribute(:is_lms_enabling_allowed, false)
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { is_lms_enabled: true }.to_json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(course.reload.is_lms_enabled).to eq nil
+      end
+
       it 'updates the time_zone' do
         time_zone = course.time_zone.to_tz
         opens_at = time_zone.now - 2.months
@@ -421,8 +435,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         opens_at_str = opens_at.strftime "%Y-%m-%d %H:%M:%S"
         due_at_str = due_at.strftime "%Y-%m-%d %H:%M:%S"
 
-        task_plan = FactoryGirl.build :tasks_task_plan, owner: course, num_tasking_plans: 0
-        tasking_plan = FactoryGirl.create :tasks_tasking_plan, task_plan: task_plan,
+        task_plan = FactoryBot.build :tasks_task_plan, owner: course, num_tasking_plans: 0
+        tasking_plan = FactoryBot.create :tasks_tasking_plan, task_plan: task_plan,
                                                                opens_at: opens_at_str,
                                                                due_at: due_at_str
 
@@ -509,20 +523,20 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   context '#dashboard' do
-    let(:student_user)    { FactoryGirl.create(:user) }
+    let(:student_user)    { FactoryBot.create(:user) }
     let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
-    let(:student_token)   { FactoryGirl.create :doorkeeper_access_token,
+    let(:student_token)   { FactoryBot.create :doorkeeper_access_token,
                                                resource_owner_id: student_user.id }
 
-    let(:teacher_user)    { FactoryGirl.create(:user, first_name: 'Bob',
+    let(:teacher_user)    { FactoryBot.create(:user, first_name: 'Bob',
                                                       last_name: 'Newhart',
                                                       full_name: 'Bob Newhart') }
     let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let(:teacher_token)   { FactoryGirl.create :doorkeeper_access_token,
+    let(:teacher_token)   { FactoryBot.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
     let(:time_zone)       { course.time_zone.to_tz }
-    let!(:reading_task)   { FactoryGirl.create(:tasks_task,
+    let!(:reading_task)   { FactoryBot.create(:tasks_task,
                                                task_type: :reading,
                                                opens_at: time_zone.now - 1.week,
                                                due_at: time_zone.now,
@@ -531,7 +545,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                             :tasks_tasked_exercise],
                                                tasked_to: student_role)}
 
-    let!(:hw1_task)   { FactoryGirl.create(:tasks_task,
+    let!(:hw1_task)   { FactoryBot.create(:tasks_task,
                                            task_type: :homework,
                                            opens_at: time_zone.now - 1.week,
                                            due_at: time_zone.now,
@@ -540,7 +554,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         :tasks_tasked_exercise],
                                            tasked_to: student_role)}
 
-    let!(:hw2_task)   { FactoryGirl.create(:tasks_task,
+    let!(:hw2_task)   { FactoryBot.create(:tasks_task,
                                            task_type: :homework,
                                            opens_at: time_zone.now - 1.week,
                                            due_at: time_zone.now,
@@ -549,7 +563,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         :tasks_tasked_exercise],
                                            tasked_to: student_role)}
 
-    let!(:hw3_task)   { FactoryGirl.create(:tasks_task,
+    let!(:hw3_task)   { FactoryBot.create(:tasks_task,
                                            task_type: :homework,
                                            opens_at: time_zone.now - 1.week,
                                            due_at: time_zone.now + 2.weeks,
@@ -559,7 +573,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            tasked_to: student_role)}
 
     let!(:plan) do
-      FactoryGirl.create(:tasks_task_plan, owner: course,
+      FactoryBot.create(:tasks_task_plan, owner: course,
                                            published_at: time_zone.now - 1.week,
                                            publish_job_uuid: SecureRandom.uuid)
     end
@@ -792,25 +806,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   context '#cc_dashboard' do
-    let(:student_user)    { FactoryGirl.create(:user) }
+    let(:student_user)    { FactoryBot.create(:user) }
     let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
-    let(:student_token)   { FactoryGirl.create :doorkeeper_access_token,
+    let(:student_token)   { FactoryBot.create :doorkeeper_access_token,
                                                resource_owner_id: student_user.id }
 
-    let(:student_user_2)  { FactoryGirl.create(:user) }
+    let(:student_user_2)  { FactoryBot.create(:user) }
     let!(:student_role_2) { AddUserAsPeriodStudent[user: student_user_2, period: period] }
 
-    let(:teacher_user)    { FactoryGirl.create(:user, first_name: 'Bob',
+    let(:teacher_user)    { FactoryBot.create(:user, first_name: 'Bob',
                                                       last_name: 'Newhart',
                                                       full_name: 'Bob Newhart') }
     let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let(:teacher_token)   { FactoryGirl.create :doorkeeper_access_token,
+    let(:teacher_token)   { FactoryBot.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
     before(:all)         do
-      @book = FactoryGirl.create :content_book
-      @chapter_1 = FactoryGirl.create :content_chapter, book: @book, book_location: [1]
-      @chapter_2 = FactoryGirl.create :content_chapter, book: @book, book_location: [2]
+      @book = FactoryBot.create :content_book
+      @chapter_1 = FactoryBot.create :content_chapter, book: @book, book_location: [1]
+      @chapter_2 = FactoryBot.create :content_chapter, book: @book, book_location: [2]
       cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: 'ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c',
                                                title: 'Sample module 1')
       cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '6a0568d8-23d7-439b-9a01-16e4e73886b3',
@@ -850,6 +864,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       course.name = 'Biology 101'
       course.is_concept_coach = true
       course.save!
+
+      course.course_ecosystems.delete_all :delete_all
 
       AddEcosystemToCourse[ecosystem: @ecosystem, course: course]
 
@@ -1125,29 +1141,31 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   context '#roster' do
-    let(:application)        { FactoryGirl.create :doorkeeper_application }
+    let(:application)        { FactoryBot.create :doorkeeper_application }
 
-    let(:course)             { FactoryGirl.create :course_profile_course, does_cost: true }
-    let!(:period_2)          { FactoryGirl.create :course_membership_period, course: course }
+    let(:course)             do
+      FactoryBot.create :course_profile_course, :without_ecosystem, does_cost: true
+    end
+    let!(:period_2)          { FactoryBot.create :course_membership_period, course: course }
 
-    let(:student_user)       { FactoryGirl.create(:user) }
+    let(:student_user)       { FactoryBot.create(:user) }
     let(:student_role)       { AddUserAsPeriodStudent[user: student_user, period: period] }
     let!(:student)           { student_role.student }
-    let(:student_token)      { FactoryGirl.create :doorkeeper_access_token,
+    let(:student_token)      { FactoryBot.create :doorkeeper_access_token,
                                                   application: application,
                                                   resource_owner_id: student_user.id }
 
-    let(:student_user_2)     { FactoryGirl.create(:user) }
+    let(:student_user_2)     { FactoryBot.create(:user) }
     let(:student_role_2)     { AddUserAsPeriodStudent[user: student_user_2, period: period] }
     let!(:student_2)         { student_role_2.student }
 
-    let(:teacher_user)       { FactoryGirl.create(:user) }
+    let(:teacher_user)       { FactoryBot.create(:user) }
     let!(:teacher_role)      { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let(:teacher_token)      { FactoryGirl.create :doorkeeper_access_token,
+    let(:teacher_token)      { FactoryBot.create :doorkeeper_access_token,
                                                   application: application,
                                                   resource_owner_id: teacher_user.id }
 
-    let(:student_user_3)     { FactoryGirl.create(:user) }
+    let(:student_user_3)     { FactoryBot.create(:user) }
     let(:student_role_3)     { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
     let!(:student_3)         { student_role_3.student }
 
@@ -1258,7 +1276,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) do
-      FactoryGirl.create :course_membership_period, course: course, name: '0th'
+      FactoryBot.create :course_membership_period, course: course, name: '0th'
     end
 
     let(:valid_params) { { id: course.id                } }
@@ -1309,6 +1327,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           starts_at: DateTimeUtilities.to_api_s(expected_term_year.starts_at),
           ends_at: DateTimeUtilities.to_api_s(expected_term_year.ends_at),
           is_active: be_in([true, false]),
+          is_access_switchable: be_in([true, false]),
           periods: [a_kind_of(Hash)]*course.num_sections,
           students: [],
           roles: [a_kind_of(Hash)],

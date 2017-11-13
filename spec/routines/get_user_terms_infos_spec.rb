@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe GetUserTermsInfos, type: :routine do
 
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
   it 'does not explode if standard terms are absent' do
     expect{described_class[user]}.not_to raise_error
   end
 
   context "normal flow" do
-    let(:period) { FactoryGirl.create :course_membership_period }
+    let(:period) { FactoryBot.create :course_membership_period }
     before {
       AddUserAsPeriodStudent[period: period, user: user]
       create_contract!('general_terms_of_use')

@@ -35,6 +35,7 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
   c.allow_http_connections_when_no_cassette = false
   c.ignore_localhost = true
+  c.preserve_exact_body_bytes { |http_message| !http_message.body.valid_encoding? }
 
   # Turn on debug logging, works in Travis too tho in full runs results
   # in Travis build logs that are too large and cause a Travis error
@@ -56,14 +57,22 @@ VCR.configure do |c|
       # may be different from value.  Handle this.
       url_value = CGI::escape(value.to_s)
       if value != url_value
-        c.filter_sensitive_data("<#{salesforce_secret_name}_url>") { url_value } if url_value.present?
+        c.filter_sensitive_data("<#{salesforce_secret_name}_url>") { url_value } \
+          if url_value.present?
       end
     end
   end
 
-  filter_secret(['openstax', 'payments', 'client_id'])
-  filter_secret(['openstax', 'payments', 'secret'])
-  filter_secret(['openstax', 'payments', 'url'])
+  [ 'client_id', 'secret', 'url' ].each do |field_name|
+    [ 'accounts', 'exercises', 'payments' ].each do |app_name|
+      filter_secret(['openstax', app_name, field_name])
+    end
+  end
+
+  [ 'client_id', 'client_secret', 'jwt_public_key_id', 'jwt_private_key',
+    'jwt_private_key_password', 'enterprise_id', 'exports_folder' ].each do |field_name|
+    filter_secret(['box', field_name])
+  end
 end
 
 def vcr_friendly_uuids(count:, namespace: '')

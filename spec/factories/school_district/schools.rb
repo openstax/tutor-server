@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :school_district_school, class: SchoolDistrict::Models::School do
-    sequence(:name) { |n| "FactoryGirl School #{n}" }
+    sequence(:name) { |n| "FactoryBot School #{n}" }
     association :district, factory: :school_district_district
   end
 end

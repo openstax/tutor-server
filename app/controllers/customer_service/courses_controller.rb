@@ -5,13 +5,14 @@ class CustomerService::CoursesController < CustomerService::BaseController
 
   def index
     @query = params[:query]
+    @order_by = params[:order_by]
     courses = SearchCourses.call(query: params[:query], order_by: params[:order_by]).outputs
     params[:per_page] = courses.total_count if params[:per_page] == "all"
     @total_courses = courses.total_count
     @course_infos = courses.items.preload(
       [
         { teachers: { role: [:role_user, :profile] },
-          periods_with_deleted: :latest_enrollments_with_deleted,
+          periods: :latest_enrollments,
           ecosystems: :books },
         :periods
       ]

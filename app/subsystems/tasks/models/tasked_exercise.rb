@@ -1,4 +1,4 @@
-class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
+class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   acts_as_tasked
 
@@ -9,6 +9,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   before_validation :set_correct_answer_id, on: :create
 
   validates :url, presence: true
+  validates :question_id, presence: true
   validates :content, presence: true
   validates :correct_answer_id, presence: true
   validates :free_response, length: { maximum: 10000 }

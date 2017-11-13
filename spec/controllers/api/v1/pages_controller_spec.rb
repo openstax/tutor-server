@@ -36,16 +36,20 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       api_get :get_page, nil, parameters: { uuid: @page_uuid }
 
       expect(response.body_as_hash[:content_html]).not_to include(
-        '#ost/api/ex/k12phys-ch04-ex001')
+        '#ost/api/ex/k12phys-ch04-ex001'
+      )
+
+      exercises_url_base = Rails.application.secrets.openstax['exercises']['url']
       expect(response.body_as_hash[:content_html]).to include(
-        'https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex001%22')
+        "#{exercises_url_base}/api/exercises?q=tag%3A%22k12phys-ch04-ex001%22"
+      )
     end
 
     context 'with an old version of force' do
       before(:all) do
         page_hash = { id: "#{@page_uuid}@2", title: 'Force' }
 
-        chapter = FactoryGirl.create :content_chapter
+        chapter = FactoryBot.create :content_chapter
         cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
         VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
           @old_page = Content::Routines::ImportPage.call(

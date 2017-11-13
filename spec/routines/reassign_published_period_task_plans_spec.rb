@@ -2,26 +2,26 @@ require 'rails_helper'
 
 RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
-  let(:course)       { FactoryGirl.create :course_profile_course }
-  let(:period)       { FactoryGirl.create :course_membership_period, course: course }
+  let(:course)       { FactoryBot.create :course_profile_course }
+  let(:period)       { FactoryBot.create :course_membership_period, course: course }
   let!(:user)        do
-    FactoryGirl.create(:user).tap do |user|
+    FactoryBot.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
   let!(:new_user)    do
-    FactoryGirl.create(:user).tap do |user|
+    FactoryBot.create(:user).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
   let!(:task_plan_1) do
-    FactoryGirl.build(:tasks_task_plan, owner: course).tap do |task_plan|
+    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period.to_model
       task_plan.save!
     end
   end
   let!(:task_plan_2) do
-    FactoryGirl.build(:tasks_task_plan, owner: course).tap do |task_plan|
+    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period.to_model
       task_plan.save!
     end

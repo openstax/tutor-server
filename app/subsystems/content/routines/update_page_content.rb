@@ -33,7 +33,7 @@ class Content::Routines::UpdatePageContent
 
   # If the link goes to a page in the book, change the link to just the page's book_location
   def change_page_link(href_attr, pages_by_uuid)
-    url = Addressable::URI.parse(href_attr.value)
+    url = Addressable::URI.parse(href_attr.value) rescue return
     path = url.path
     matches = CNX_ID_REGEX.match(path)
 

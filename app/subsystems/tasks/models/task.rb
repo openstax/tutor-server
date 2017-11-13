@@ -1,9 +1,9 @@
-class Tasks::Models::Task < Tutor::SubSystems::BaseModel
+class Tasks::Models::Task < ApplicationRecord
+
+  acts_as_paranoid column: :hidden_at, without_default_scope: true
 
   class_attribute :skip_update_step_counts_if_due_at_changed
   self.skip_update_step_counts_if_due_at_changed = false
-
-  acts_as_paranoid
 
   auto_uuid
 
@@ -17,12 +17,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
 
-  belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasks
+  belongs_to :task_plan, inverse_of: :tasks
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
-  sortable_has_many :task_steps, -> { with_deleted.order(:number) },
-                                 on: :number, dependent: :destroy, inverse_of: :task do
+  sortable_has_many :task_steps, on: :number, inverse_of: :task do
     # Because we update task_step counts in the middle of the following methods,
     # we cause the task_steps to reload and these methods behave oddly (giving us duplicate records)
     # So we reset after we call them to fix this issue
@@ -35,11 +34,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     alias_method :concat, :<<
     alias_method :push, :<<
   end
-  has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,
-                                                   source_type: 'Tasks::Models::TaskedExercise'
+  has_many :tasked_exercises, through: :task_steps, source: :tasked,
+                                                    source_type: 'Tasks::Models::TaskedExercise'
 
-  has_many :taskings, -> { with_deleted }, dependent: :destroy, inverse_of: :task
-  has_one :concept_coach_task, -> { with_deleted }, dependent: :destroy, inverse_of: :task
+  has_many :taskings, inverse_of: :task
+  has_one :concept_coach_task, inverse_of: :task
 
   validates :title, presence: true
 
@@ -57,6 +56,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
     # super is not needed here when there are changes because save! will update the timestamp
     changed? ? save_without_update_step_counts_callback!(validate: false) : super
+
+    Tasks::UpdateTaskCaches.perform_later(tasks: self)
   end
 
   def stepless?
@@ -79,8 +80,12 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     feedback_at.nil? || current_time >= feedback_at
   end
 
+  def withdrawn?
+    !task_plan.nil? && task_plan.withdrawn?
+  end
+
   def hidden?
-    deleted? && hidden_at.present? && hidden_at >= deleted_at
+    deleted? && withdrawn? && hidden_at >= task_plan.withdrawn_at
   end
 
   def completed?

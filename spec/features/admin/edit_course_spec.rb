@@ -4,10 +4,10 @@ require 'feature_js_helper'
 
 RSpec.feature 'Admin editing a course' do
   background do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
 
-    @catalog_offering = FactoryGirl.create :catalog_offering
+    @catalog_offering = FactoryBot.create :catalog_offering
 
     visit admin_courses_path
 
@@ -18,7 +18,7 @@ RSpec.feature 'Admin editing a course' do
 
     @course = CourseProfile::Models::Course.order(:id).last
     @course.update_attribute :does_cost, true
-    FactoryGirl.create :course_membership_period, course: @course
+    FactoryBot.create :course_membership_period, course: @course
   end
 
   scenario 'Editing the name of a course' do
@@ -99,8 +99,28 @@ RSpec.feature 'Admin editing a course' do
     expect(CourseProfile::Models::Course.first.does_cost).to eq true
   end
 
+  scenario 'Changing "Is LMS Enabling Allowed"' do
+    visit admin_courses_path
+    click_link 'Edit'
+
+    expect(page).to have_content('Edit course')
+    check 'course_is_lms_enabling_allowed'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(@course.reload.is_lms_enabling_allowed).to eq true
+
+    uncheck 'course_is_lms_enabling_allowed'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(@course.reload.is_lms_enabling_allowed).to eq false
+  end
+
   scenario 'Assigning a school' do
-    FactoryGirl.create(:school_district_school, name: 'High high hi school')
+    FactoryBot.create(:school_district_school, name: 'High high hi school')
     visit admin_courses_path
     click_link 'Edit'
 
@@ -174,8 +194,8 @@ RSpec.feature 'Admin editing a course' do
   end
 
   scenario 'Check payment fields on student roster', js: true do
-    user_1 = FactoryGirl.create(:user, last_name: "AAAA")
-    user_2 = FactoryGirl.create(:user, last_name: "BBBB")
+    user_1 = FactoryBot.create(:user, last_name: "AAAA")
+    user_2 = FactoryBot.create(:user, last_name: "BBBB")
 
     student_1 = AddUserAsPeriodStudent[user: user_1, period: @course.periods.first].student
     student_2 = AddUserAsPeriodStudent[user: user_2, period: @course.periods.first].student
@@ -206,7 +226,7 @@ RSpec.feature 'Admin editing a course' do
   end
 
   scenario 'refunding student payment', js: true do
-    user = FactoryGirl.create(:user, last_name: "AAAA")
+    user = FactoryBot.create(:user, last_name: "AAAA")
     student = AddUserAsPeriodStudent[user: user, period: @course.periods.first].student
 
     OpenStax::Payments::Api.client.fake_pay(product_instance_uuid: student.uuid)

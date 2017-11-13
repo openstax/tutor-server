@@ -5,7 +5,7 @@ require 'database_cleaner'
 RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, version: :v1 do
 
   before(:all) do
-    chapter = FactoryGirl.create :content_chapter
+    chapter = FactoryBot.create :content_chapter
     cnx_page = OpenStax::Cnx::V1::Page.new(id: '7636a3bf-eb80-4898-8b2c-e81c1711b99f',
                                            title: 'Sample module 2')
     book_location = [2, 1]
@@ -26,29 +26,28 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     ecosystem_model = @book.ecosystem
     ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
 
-    period_model = FactoryGirl.create(:course_membership_period)
+    @course = FactoryBot.create :course_profile_course, :without_ecosystem, is_concept_coach: true
+    period_model = FactoryBot.create :course_membership_period, course: @course
     period = CourseMembership::Period.new(strategy: period_model.wrap)
-    @course = period.course
-    @course.update_attribute(:is_concept_coach, true)
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
-    application = FactoryGirl.create :doorkeeper_application
+    application = FactoryBot.create :doorkeeper_application
 
-    @user_1 = FactoryGirl.create(:user)
-    @user_2 = FactoryGirl.create(:user)
+    @user_1 = FactoryBot.create(:user)
+    @user_2 = FactoryBot.create(:user)
     anon_user = User::User.anonymous
 
     @role_1 = AddUserAsPeriodStudent[user: @user_1, period: period]
     @role_2 = AddUserAsPeriodStudent[user: @user_2, period: period]
 
-    @user_1_token = FactoryGirl.create :doorkeeper_access_token,
+    @user_1_token = FactoryBot.create :doorkeeper_access_token,
                                        application: application,
                                        resource_owner_id: @user_1.id
-    @user_2_token = FactoryGirl.create :doorkeeper_access_token,
+    @user_2_token = FactoryBot.create :doorkeeper_access_token,
                                        application: application,
                                        resource_owner_id: @user_2.id
-    @userless_token = FactoryGirl.create :doorkeeper_access_token,
+    @userless_token = FactoryBot.create :doorkeeper_access_token,
                                          application: application,
                                          resource_owner_id: nil
     @anon_user_token = nil
@@ -154,7 +153,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code page_has_no_exercises if the page has no exercises' do
-        page = FactoryGirl.create :content_page, chapter: @book.chapters.first
+        page = FactoryBot.create :content_page, chapter: @book.chapters.first
         expect{ show_api_call(@user_1_token, cnx_page_id: page.uuid) }.not_to(
           change{ Tasks::Models::Task.count }
         )

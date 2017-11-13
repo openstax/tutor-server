@@ -15,7 +15,7 @@ class CoursesController < ApplicationController
   def period_is_archived?
     return false if params[:enroll_token].blank?
     period = CourseMembership::GetPeriod[ enrollment_code: params[:enroll_token] ]
-    period.nil? || period.deleted?
+    period.nil? || period.archived?
   end
 
 end

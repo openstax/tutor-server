@@ -3,22 +3,22 @@ require 'webmock/rspec'
 
 RSpec.describe Admin::StatsController, type: :controller do
   context "with an admin signed in" do
-    let(:admin)   { FactoryGirl.create(:user, :administrator) }
+    let(:admin)   { FactoryBot.create(:user, :administrator) }
 
     before(:each) { controller.sign_in admin }
 
     context "GET #courses" do
-      let(:course)         { FactoryGirl.create :course_profile_course }
+      let(:course)         { FactoryBot.create :course_profile_course }
       let(:periods)        do
-        3.times.map { FactoryGirl.create :course_membership_period, course: course }
+        3.times.map { FactoryBot.create :course_membership_period, course: course }
       end
 
-      let(:teacher_user)        { FactoryGirl.create :user }
+      let(:teacher_user)        { FactoryBot.create :user }
       let!(:teacher_role)       { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
       let!(:student_roles) do
         5.times.map do
-          user = FactoryGirl.create :user
+          user = FactoryBot.create :user
           AddUserAsPeriodStudent[period: periods.sample, user: user]
         end
       end
@@ -31,13 +31,13 @@ RSpec.describe Admin::StatsController, type: :controller do
 
     context "GET #excluded_exercises" do
       context "with excluded exercises in the database" do
-        let(:course)         { FactoryGirl.create :course_profile_course }
+        let(:course)         { FactoryBot.create :course_profile_course }
 
-        let(:teacher_user)   { FactoryGirl.create :user }
+        let(:teacher_user)   { FactoryBot.create :user }
         let!(:teacher_role)  { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
         let!(:excluded_exercises) do
-          5.times.map { FactoryGirl.create :course_content_excluded_exercise, course: course }
+          5.times.map { FactoryBot.create :course_content_excluded_exercise, course: course }
         end
 
         it "returns http success" do
@@ -80,16 +80,16 @@ RSpec.describe Admin::StatsController, type: :controller do
     end
 
     context "POST #excluded_exercises_to_csv" do
-      let(:course)              { FactoryGirl.create :course_profile_course }
+      let(:course)              { FactoryBot.create :course_profile_course }
       let!(:excluded_exercises) do
-        5.times.map { FactoryGirl.create :course_content_excluded_exercise, course: course }
+        5.times.map { FactoryBot.create :course_content_excluded_exercise, course: course }
       end
 
       context "with by_course and by_exercise params" do
         before do
           expect(ExportExerciseExclusions).to(
             receive(:perform_later).with(
-              upload_by_course_to_owncloud: true, upload_by_exercise_to_owncloud: true
+              upload_by_course: true, upload_by_exercise: true
             ).and_return(true)
           )
         end
@@ -119,9 +119,9 @@ RSpec.describe Admin::StatsController, type: :controller do
     end
 
     context "GET #concept_coach" do
-      let(:tasks)     { 3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach } }
+      let(:tasks)     { 3.times.map { FactoryBot.create :tasks_task, task_type: :concept_coach } }
       let!(:cc_tasks) do
-        tasks.map{ |task| FactoryGirl.create :tasks_concept_coach_task, task: task }
+        tasks.map{ |task| FactoryBot.create :tasks_concept_coach_task, task: task }
       end
 
       it "returns http success" do

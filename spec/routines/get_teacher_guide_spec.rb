@@ -5,14 +5,14 @@ require 'database_cleaner'
 RSpec.describe GetTeacherGuide, type: :routine do
 
   before(:all) do
-    @course = FactoryGirl.create :course_profile_course
+    @course = FactoryBot.create :course_profile_course
 
-    @period = FactoryGirl.create :course_membership_period, course: @course
-    @second_period = FactoryGirl.create :course_membership_period, course: @course
+    @period = FactoryBot.create :course_membership_period, course: @course
+    @second_period = FactoryBot.create :course_membership_period, course: @course
 
-    @teacher = FactoryGirl.create(:user)
-    @student = FactoryGirl.create(:user)
-    @second_student = FactoryGirl.create(:user)
+    @teacher = FactoryBot.create(:user)
+    @student = FactoryBot.create(:user)
+    @second_student = FactoryBot.create(:user)
 
     @role = AddUserAsPeriodStudent[period: @period, user: @student]
     @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
@@ -35,7 +35,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
       @second_role.reload
       @teacher_role.reload
 
-      book = FactoryGirl.create :content_book, title: 'Physics (Demo)'
+      book = FactoryBot.create :content_book, title: 'Physics (Demo)'
       ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
     end
@@ -116,7 +116,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "student_count" => 1,
         "questions_answered_count" => 7,
         "clue" => clue_matcher,
-        "practice_count" => 0,
+        "practice_count" => kind_of(Integer),
         "page_ids" => [kind_of(Integer)]*4,
         "children" => [kind_of(Hash)]*4
       )
@@ -128,7 +128,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "student_count" => 1,
         "questions_answered_count" => 5,
         "clue" => clue_matcher,
-        "practice_count" => 0,
+        "practice_count" => 1,
         "page_ids" => [kind_of(Integer)]*2,
         "children" => [kind_of(Hash)]*2
       )
@@ -140,7 +140,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         "student_count" => 1,
         "questions_answered_count" => 5,
         "clue" => clue_matcher,
-        "practice_count" => 0,
+        "practice_count" => kind_of(Integer),
         "page_ids" => [kind_of(Integer)]*4,
         "children" => [kind_of(Hash)]*4
       )
@@ -161,9 +161,9 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Representing Acceleration with Equations and Graphs",
+          "title" => "Representing Acceleration with Equations and Graphs",
           "book_location" => [3, 2],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
           "practice_count" => 0,
@@ -179,34 +179,34 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 1,
           "questions_answered_count" => 2,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's First Law of Motion: Inertia",
+          "title" => "Newton's First Law of Motion: Inertia",
           "book_location" => [4, 2],
           "student_count" => 1,
           "questions_answered_count" => 5,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Second Law of Motion",
+          "title" => "Newton's Second Law of Motion",
           "book_location" => [4, 3],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Third Law of Motion",
+          "title" => "Newton's Third Law of Motion",
           "book_location" => [4, 4],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         }
       ]
@@ -219,13 +219,13 @@ RSpec.describe GetTeacherGuide, type: :routine do
           "student_count" => 1,
           "questions_answered_count" => 5,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => 1,
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Representing Acceleration with Equations and Graphs",
+          "title" => "Representing Acceleration with Equations and Graphs",
           "book_location" => [3, 2],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
           "practice_count" => 0,
@@ -238,37 +238,37 @@ RSpec.describe GetTeacherGuide, type: :routine do
         {
           "title" => "Force",
           "book_location" => [4, 1],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's First Law of Motion: Inertia",
+          "title" => "Newton's First Law of Motion: Inertia",
           "book_location" => [4, 2],
           "student_count" => 1,
           "questions_answered_count" => 5,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Second Law of Motion",
+          "title" => "Newton's Second Law of Motion",
           "book_location" => [4, 3],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         },
         {
-          "title"=>"Newton's Third Law of Motion",
+          "title" => "Newton's Third Law of Motion",
           "book_location" => [4, 4],
-          "student_count" => 0,
+          "student_count" => 1,
           "questions_answered_count" => 0,
           "clue" => clue_matcher,
-          "practice_count" => 0,
+          "practice_count" => kind_of(Integer),
           "page_ids" => [kind_of(Integer)]
         }
       ]

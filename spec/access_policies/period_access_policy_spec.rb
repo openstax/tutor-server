@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe PeriodAccessPolicy, type: :access_policy do
-  let(:course) { FactoryGirl.create :course_profile_course }
-  let(:period) { FactoryGirl.create :course_membership_period, course: course }
+  let(:course) { FactoryBot.create :course_profile_course }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
 
   let(:anon)    do
     profile = User::Models::AnonymousProfile.instance
     strategy = User::Strategies::Direct::AnonymousUser.new(profile)
     User::User.new(strategy: strategy)
   end
-  let(:user)    { FactoryGirl.create(:user) }
-  let(:student) { FactoryGirl.create(:user) }
-  let(:teacher) { FactoryGirl.create(:user) }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:student) { FactoryBot.create(:user) }
+  let(:teacher) { FactoryBot.create(:user) }
 
   before do
     AddUserAsCourseTeacher[course: course, user: teacher]

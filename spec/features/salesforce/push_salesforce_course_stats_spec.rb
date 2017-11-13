@@ -20,12 +20,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   before(:each) { load_salesforce_user }
 
   let(:sf_contact_a) { @proxy.new_contact }
-  let(:chemistry_offering) { FactoryGirl.create(:catalog_offering, salesforce_book_name: "Chemistry") }
-  let(:user_sf_a) { FactoryGirl.create(:user, salesforce_contact_id: sf_contact_a.id)}
-  let(:user_no_sf) { FactoryGirl.create(:user)}
+  let(:chemistry_offering) { FactoryBot.create(:catalog_offering, salesforce_book_name: "Chemistry") }
+  let(:user_sf_a) { FactoryBot.create(:user, salesforce_contact_id: sf_contact_a.id)}
+  let(:user_no_sf) { FactoryBot.create(:user)}
 
   let!(:course) {
-    FactoryGirl.create :course_profile_course,
+    FactoryBot.create :course_profile_course,
                        name: "A Fun Course",
                        term: :spring,
                        year: 2017,
@@ -39,7 +39,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   before(:each) {
     period1 = CreatePeriod[course: course]
-    p1students = 4.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period1] }
+    p1students = 4.times.map do
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period1]
+    end
 
     p1students[0].student.update_attribute(:is_paid, true)
     p1students[1].student.update_attribute(:is_comped, true)
@@ -53,20 +55,23 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       [p1students[1], 7],
       [p1students[2], 9]
     ].each do |options|
-      task = Tasks::BuildTask[title: "A", task_type: :homework, content_ecosystem_id: 1, completed_steps_count: options[1]]
-      task.save
-      Tasks::CreateTasking[role: options[0], task: task]
+      FactoryBot.create :tasks_task,
+                        title: "A",
+                        task_type: :homework,
+                        task_plan: nil,
+                        tasked_to: options[0],
+                        completed_steps_count: options[1]
     end
 
     period2 = CreatePeriod[course: course]
-    p2students = 2.times.map { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period1] }
+    p2students = 2.times.map { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period1] }
 
     CourseMembership::InactivateStudent[student: p2students.first.student]
 
     MoveStudent[student: p1students.first.student, period: period2]
 
     period3 = CreatePeriod[course: course]
-    6.times { AddUserAsPeriodStudent[user: FactoryGirl.create(:user), period: period3] }
+    6.times { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period3] }
 
     period3.to_model.destroy
   }
@@ -180,7 +185,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     it 'is ok with another course being in the same term same teacher' do
       other_course =
-        FactoryGirl.create :course_profile_course,
+        FactoryBot.create :course_profile_course,
                            term: :spring,
                            year: 2017,
                            starts_at: Chronic.parse("January 1, 2017"),

@@ -1,7 +1,7 @@
 # To allow use in the development environment
 require_relative '../../support/fake_exercise_uuids'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
 
     type 'reading'
@@ -9,14 +9,14 @@ FactoryGirl.define do
     assistant do
       Tasks::Models::Assistant.find_by(
         code_class_name: 'Tasks::Assistants::IReadingAssistant'
-      ) || FactoryGirl.create(
+      ) || FactoryBot.create(
         :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
       )
     end
 
     transient { number_of_students 10 }
 
-    owner     { FactoryGirl.build :course_profile_course, offering: nil }
+    owner     { FactoryBot.build :course_profile_course, offering: nil }
 
     ecosystem do
       require File.expand_path('../../../vcr_helper', __FILE__)
@@ -26,7 +26,7 @@ FactoryGirl.define do
                 'title' => 'Newton\'s First Law of Motion: Inertia' }
       )
 
-      chapter = FactoryGirl.create :content_chapter
+      chapter = FactoryBot.create :content_chapter
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
         OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
@@ -50,7 +50,7 @@ FactoryGirl.define do
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner
       period = course.periods.first ||
-               FactoryGirl.create(:course_membership_period, course: course)
+               FactoryBot.create(:course_membership_period, course: course)
 
       evaluator.number_of_students.times do
         user = create :user

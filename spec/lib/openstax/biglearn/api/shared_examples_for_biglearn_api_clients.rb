@@ -14,14 +14,14 @@ RSpec.shared_examples 'a biglearn api client' do
   end
 
   before(:all) do
-    task_plan_1 = FactoryGirl.create(:tasked_task_plan)
+    task_plan_1 = FactoryBot.create(:tasked_task_plan)
     @ecosystem_1 = task_plan_1.ecosystem
     @book_1 = @ecosystem_1.books.first
     @chapter_1 = @book_1.chapters.first
     @page_1 = @chapter_1.pages.first
     @exercise_1 = @page_1.exercises.first
 
-    task_plan_2 = FactoryGirl.create(:tasked_task_plan)
+    task_plan_2 = FactoryBot.create(:tasked_task_plan)
     @ecosystem_2 = task_plan_2.ecosystem
     @book_2 = @ecosystem_2.books.first
     @chapter_2 = @book_2.chapters.first
@@ -39,7 +39,7 @@ RSpec.shared_examples 'a biglearn api client' do
 
     @max_num_exercises = 5
 
-    @excluded_exercises = 3.times.map { FactoryGirl.create :content_exercise }
+    @excluded_exercises = 3.times.map { FactoryBot.create :content_exercise }
     @previous_globally_excluded_exercises = Settings::Exercises.excluded_ids
     Settings::Exercises.excluded_ids = @excluded_exercises.map(&:uid).join(', ')
     Settings::Db.store.object('excluded_ids').try!(:expire_cache)

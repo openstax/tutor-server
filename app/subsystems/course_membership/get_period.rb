@@ -5,10 +5,10 @@ class CourseMembership::GetPeriod
 
   def exec(id: nil, enrollment_code: nil)
     model = if id.present?
-      CourseMembership::Models::Period.with_deleted.preload(:course).find(id)
+      CourseMembership::Models::Period.preload(:course).find(id)
     elsif enrollment_code.present?
       enrollment_code = enrollment_code.gsub(/-/,' ') # for codes from URLs
-      CourseMembership::Models::Period.with_deleted.find_by(enrollment_code: enrollment_code)
+      CourseMembership::Models::Period.find_by(enrollment_code: enrollment_code)
     else
       raise IllegalArgument, "One of `id` or `enrollment_code` must be given."
     end

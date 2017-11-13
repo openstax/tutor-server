@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::Book, type: :model do
-  subject(:book) { FactoryGirl.create :content_book }
+  subject(:book) { FactoryBot.create :content_book }
 
   it { is_expected.to belong_to(:ecosystem) }
 

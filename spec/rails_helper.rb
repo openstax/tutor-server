@@ -26,6 +26,8 @@ window_size = [1920, 6000]
 
 Capybara.asset_host = 'http://localhost:3001'
 
+require 'screenshots'
+
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
     :window_size => window_size
@@ -57,6 +59,7 @@ RSpec.configure do |config|
   config.include WithoutException
   config.include SigninHelper
   config.include PopulateExerciseContent
+  config.include UserAgentHelper
   config.extend VcrConfigurationHelper
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
@@ -151,6 +154,14 @@ end
 RSpec::Matchers.define :be_the_same_time_as do |expected|
   match do |actual|
     expect(expected.strftime("%d-%m-%Y %H:%M:%S")).to eq(actual.strftime("%d-%m-%Y %H:%M:%S"))
+  end
+end
+
+# Make the Boxr gem work with Webmock/VCR
+RSpec.configure do |config|
+  config.before(:suite) do
+    Boxr.send :remove_const, 'BOX_CLIENT'
+    Boxr::BOX_CLIENT = HTTPClient.new
   end
 end
 

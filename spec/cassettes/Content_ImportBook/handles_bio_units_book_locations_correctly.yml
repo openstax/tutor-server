@@ -41,7 +41,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:23 GMT
 - request:
     method: get
@@ -645,7 +645,7 @@ http_interactions:
         "1.1", "revised": "2015-06-16T15:33:13Z", "publisher": {"surname": "APBio",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:23 GMT
 - request:
     method: get
@@ -847,7 +847,7 @@ http_interactions:
         "revised": "2015-04-21T15:21:32Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:23 GMT
 - request:
     method: get
@@ -1731,7 +1731,7 @@ http_interactions:
         "id": "tutor_apbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2015-04-21T15:24:53Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:23 GMT
 - request:
     method: get
@@ -2589,7 +2589,7 @@ http_interactions:
         "id": "tutor_apbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2015-04-21T15:25:34Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:23 GMT
 - request:
     method: get
@@ -2771,7 +2771,7 @@ http_interactions:
         "revised": "2015-04-21T15:36:42Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:24 GMT
 - request:
     method: get
@@ -3199,7 +3199,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T15:37:38Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:24 GMT
 - request:
     method: get
@@ -3929,7 +3929,7 @@ http_interactions:
         "1", "revised": "2015-04-21T15:38:29Z", "publisher": {"surname": "APBio",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:24 GMT
 - request:
     method: get
@@ -4722,7 +4722,7 @@ http_interactions:
         "1", "revised": "2015-04-21T15:40:00Z", "publisher": {"surname": "APBio",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:24 GMT
 - request:
     method: get
@@ -5583,7 +5583,7 @@ http_interactions:
         "revised": "2015-04-21T15:39:04Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:24 GMT
 - request:
     method: get
@@ -6241,7 +6241,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T15:44:31Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:25 GMT
 - request:
     method: get
@@ -6471,7 +6471,7 @@ http_interactions:
         "revised": "2015-04-21T15:59:33Z", "publisher": {"surname": "APBio", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:25 GMT
 - request:
     method: get
@@ -7060,7 +7060,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T16:00:36Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:25 GMT
 - request:
     method: get
@@ -7731,7 +7731,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T16:01:18Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:26 GMT
 - request:
     method: get
@@ -8156,7 +8156,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-04-21T16:01:51Z", "publisher": {"surname":
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:26 GMT
 - request:
     method: get
@@ -8589,7 +8589,7 @@ http_interactions:
         "tutor_apbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2015-04-21T16:02:30Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:26 GMT
 - request:
     method: get
@@ -9272,11 +9272,11 @@ http_interactions:
         "tutor_apbio"}}, {"changes": "Created module", "version": "1", "revised":
         "2015-04-21T16:03:02Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:26 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:dc74b6ed-d06a-4fef-8479-8eefd058b59a,context-cnxmod:4d5fc58c-cdea-4950-a91d-a5f141a38744,apbio-ch01-s01-lo01,apbio-ch01-s01-lo02,apbio-ch01-s01-aplo-2-03,context-cnxmod:cb7cf05b-7e16-4a53-a498-003b01ec3d7f,apbio-ch01-s02-lo01,apbio-ch01-s02-lo02,apbio-ch01-s02-lo03,apbio-ch01-s02-aplo-1-14,apbio-ch01-s02-aplo-1-18,context-cnxmod:d146e100-19c1-429d-9218-1ebb7325f594,context-cnxmod:85d6c500-9860-42e8-853a-e6940a50224f,apbio-ch03-s01-lo01,apbio-ch03-s01-lo02,apbio-ch03-s01-aplo-1-27,apbio-ch03-s01-aplo-1-28,context-cnxmod:cb5052e5-d776-4570-8e4b-61171b792703,apbio-ch03-s02-lo01,apbio-ch03-s02-lo02,apbio-ch03-s02-lo03,apbio-ch03-s02-aplo-4-1,apbio-ch03-s02-aplo-4-2,apbio-ch03-s02-aplo-4-3,context-cnxmod:84ab6fe4-c1c3-4d36-b4c8-6615d6100820,apbio-ch03-s03-lo01,apbio-ch03-s03-lo02,apbio-ch03-s03-lo03,apbio-ch03-s03-lo04,apbio-ch03-s03-lo05,apbio-ch03-s03-lo06,apbio-ch03-s03-aplo-4-1,apbio-ch03-s03-aplo-4-2,apbio-ch03-s03-aplo-4-3,context-cnxmod:cbbe54d1-c692-4405-a487-1c0f8ef8ea92,apbio-ch03-s04-lo01,apbio-ch03-s04-lo02,apbio-ch03-s04-lo03,apbio-ch03-s04-lo04%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:dc74b6ed-d06a-4fef-8479-8eefd058b59a,context-cnxmod:4d5fc58c-cdea-4950-a91d-a5f141a38744,apbio-ch01-s01-lo01,apbio-ch01-s01-lo02,apbio-ch01-s01-aplo-2-03,context-cnxmod:cb7cf05b-7e16-4a53-a498-003b01ec3d7f,apbio-ch01-s02-lo01,apbio-ch01-s02-lo02,apbio-ch01-s02-lo03,apbio-ch01-s02-aplo-1-14,apbio-ch01-s02-aplo-1-18,context-cnxmod:d146e100-19c1-429d-9218-1ebb7325f594,context-cnxmod:85d6c500-9860-42e8-853a-e6940a50224f,apbio-ch03-s01-lo01,apbio-ch03-s01-lo02,apbio-ch03-s01-aplo-1-27,apbio-ch03-s01-aplo-1-28,context-cnxmod:cb5052e5-d776-4570-8e4b-61171b792703,apbio-ch03-s02-lo01,apbio-ch03-s02-lo02,apbio-ch03-s02-lo03,apbio-ch03-s02-aplo-4-1,apbio-ch03-s02-aplo-4-2,apbio-ch03-s02-aplo-4-3,context-cnxmod:84ab6fe4-c1c3-4d36-b4c8-6615d6100820,apbio-ch03-s03-lo01,apbio-ch03-s03-lo02,apbio-ch03-s03-lo03,apbio-ch03-s03-lo04,apbio-ch03-s03-lo05,apbio-ch03-s03-lo06,apbio-ch03-s03-aplo-4-1,apbio-ch03-s03-aplo-4-2,apbio-ch03-s03-aplo-4-3,context-cnxmod:cbbe54d1-c692-4405-a487-1c0f8ef8ea92,apbio-ch03-s04-lo01,apbio-ch03-s04-lo02,apbio-ch03-s04-lo03,apbio-ch03-s04-lo04%22
     body:
       encoding: US-ASCII
       string: ''
@@ -9286,7 +9286,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 9662a61c7dc5e64b896fa026698fa856979d840a6c3cf70b0fad984df2de33c9
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -16606,11 +16606,11 @@ http_interactions:
         YW4gaXJvbiBhdG9tLiJ9XSwiY29tbXVuaXR5X3NvbHV0aW9ucyI6W10sImhp
         bnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJl
         c3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:37 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22apbio-ch03-s04-aplo-4-1,apbio-ch03-s04-aplo-4-2,apbio-ch03-s04-aplo-4-3,context-cnxmod:c20c3501-a63c-4b40-aa6c-0bdafa8a2d33,apbio-ch03-s05-lo01,apbio-ch03-s05-lo02,apbio-ch03-s05-lo03,apbio-ch03-s05-aplo-3-1,apbio-ch03-s05-aplo-3-6,apbio-ch03-s05-aplo-4-1,apbio-ch03-s05-aplo-4-2,apbio-ch03-s05-aplo-4-3,context-cnxmod:cc819477-32dc-425d-bdd6-f7a1279fdf29,context-cnxmod:29d90913-172b-4684-bd7d-c62ec7f639a0,apbio-ch06-s01-lo01,apbio-ch06-s01-lo02,apbio-ch06-s01-lo03,apbio-ch06-s01-aplo-1-14,apbio-ch06-s01-aplo-1-15,apbio-ch06-s01-aplo-1-16,apbio-ch06-s01-aplo-2-1,context-cnxmod:0b06de0f-e78d-4e82-83cd-08b6a4ab32f9,apbio-ch06-s02-lo01,apbio-ch06-s02-lo02,apbio-ch06-s02-lo03,apbio-ch06-s02-lo04,apbio-ch06-s02-aplo-2-1,apbio-ch06-s02-aplo-2-2,context-cnxmod:bfa2b300-4b44-4111-b198-893b9aaa4eca,apbio-ch06-s03-lo01,apbio-ch06-s03-lo02,apbio-ch06-s03-aplo-2-1,context-cnxmod:31b3b6de-638f-4a95-8df3-d186e513bc16,apbio-ch06-s04-lo01,apbio-ch06-s04-lo02,apbio-ch06-s04-aplo-2-1,context-cnxmod:b5dc02e5-d7c7-42a2-bc32-de96f7272a82,apbio-ch06-s05-lo01,apbio-ch06-s05-lo02%22
+    uri: <openstax_exercises_url>/api/exercises?q=tag:%22apbio-ch03-s04-aplo-4-1,apbio-ch03-s04-aplo-4-2,apbio-ch03-s04-aplo-4-3,context-cnxmod:c20c3501-a63c-4b40-aa6c-0bdafa8a2d33,apbio-ch03-s05-lo01,apbio-ch03-s05-lo02,apbio-ch03-s05-lo03,apbio-ch03-s05-aplo-3-1,apbio-ch03-s05-aplo-3-6,apbio-ch03-s05-aplo-4-1,apbio-ch03-s05-aplo-4-2,apbio-ch03-s05-aplo-4-3,context-cnxmod:cc819477-32dc-425d-bdd6-f7a1279fdf29,context-cnxmod:29d90913-172b-4684-bd7d-c62ec7f639a0,apbio-ch06-s01-lo01,apbio-ch06-s01-lo02,apbio-ch06-s01-lo03,apbio-ch06-s01-aplo-1-14,apbio-ch06-s01-aplo-1-15,apbio-ch06-s01-aplo-1-16,apbio-ch06-s01-aplo-2-1,context-cnxmod:0b06de0f-e78d-4e82-83cd-08b6a4ab32f9,apbio-ch06-s02-lo01,apbio-ch06-s02-lo02,apbio-ch06-s02-lo03,apbio-ch06-s02-lo04,apbio-ch06-s02-aplo-2-1,apbio-ch06-s02-aplo-2-2,context-cnxmod:bfa2b300-4b44-4111-b198-893b9aaa4eca,apbio-ch06-s03-lo01,apbio-ch06-s03-lo02,apbio-ch06-s03-aplo-2-1,context-cnxmod:31b3b6de-638f-4a95-8df3-d186e513bc16,apbio-ch06-s04-lo01,apbio-ch06-s04-lo02,apbio-ch06-s04-aplo-2-1,context-cnxmod:b5dc02e5-d7c7-42a2-bc32-de96f7272a82,apbio-ch06-s05-lo01,apbio-ch06-s05-lo02%22
     body:
       encoding: US-ASCII
       string: ''
@@ -16620,7 +16620,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 9662a61c7dc5e64b896fa026698fa856979d840a6c3cf70b0fad984df2de33c9
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -23408,11 +23408,11 @@ http_interactions:
         c3VlLiJ9XSwiY29tbXVuaXR5X3NvbHV0aW9ucyI6W10sImhpbnRzIjpbXSwi
         Zm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0s
         ImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:58 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch06-s05-aplo-4-17
+    uri: <openstax_exercises_url>/api/exercises?q=tag:apbio-ch06-s05-aplo-4-17
     body:
       encoding: US-ASCII
       string: ''
@@ -23422,7 +23422,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 9662a61c7dc5e64b896fa026698fa856979d840a6c3cf70b0fad984df2de33c9
+      - Bearer <request_header_oauth_access_token>
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -23651,6 +23651,6 @@ http_interactions:
         b21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMiOltdLCJmb3JtYXRzIjpb
         ImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9pY2UiXSwiY29tYm9fY2hv
         aWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:05 GMT
 recorded_with: VCR 2.9.3

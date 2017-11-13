@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ChooseExercises, type: :routine do
 
-  let(:exercises)          { 5.times.map{ FactoryGirl.create :content_exercise } }
+  let(:exercises)          { 5.times.map{ FactoryBot.create :content_exercise } }
   let(:worked_exercises)   { exercises.first(3) }
   let(:unworked_exercises) { exercises - worked_exercises }
 

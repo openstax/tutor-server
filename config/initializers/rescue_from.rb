@@ -2,7 +2,6 @@
 require 'openstax_rescue_from'
 
 secrets = Rails.application.secrets
-
 OpenStax::RescueFrom.configure do |config|
   config.raise_exceptions = Rails.application.config.consider_all_requests_local
 
@@ -24,7 +23,6 @@ end
 #                                         status: :not_found,
 #                                         notify: true,
 #                                         extras: ->(e) { {} })
-#
 
 OpenStax::RescueFrom.register_exception(
   'CoursesTeach::InvalidTeachToken',
@@ -66,4 +64,11 @@ OpenStax::RescueFrom.register_exception(
   notify: true # Change this to false once we are confident that Biglearn jobs work properly
 )
 
+# Exceptions in controllers might be reraised or not depending on the settings above
+ActionController::Base.use_openstax_exception_rescue
+
+# RescueFrom always reraises background exceptions so that the background job may properly fail
+ActiveJob::Base.use_openstax_exception_rescue
+
+# URL generation errors are caused by bad routes, for example, and should not be ignored
 ExceptionNotifier.ignored_exceptions.delete("ActionController::UrlGenerationError")

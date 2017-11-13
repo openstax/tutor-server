@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :content_exercise, class: '::Content::Models::Exercise' do
     association :page, factory: :content_page
 

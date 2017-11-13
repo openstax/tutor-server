@@ -1,26 +1,26 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::StudentsController do
-  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
 
   before                 { controller.sign_in(customer_service) }
 
   describe 'GET #index' do
-    let(:course)     { FactoryGirl.create :course_profile_course, name: 'Physics' }
-    let(:course_2)   { FactoryGirl.create :course_profile_course }
+    let(:course)     { FactoryBot.create :course_profile_course, name: 'Physics' }
+    let(:course_2)   { FactoryBot.create :course_profile_course }
 
     let(:periods)    do
       [
-        FactoryGirl.create(:course_membership_period, course: course),
-        FactoryGirl.create(:course_membership_period, course: course)
+        FactoryBot.create(:course_membership_period, course: course),
+        FactoryBot.create(:course_membership_period, course: course)
       ]
     end
-    let(:periods_2)  { [FactoryGirl.create(:course_membership_period, course: course_2)] }
+    let(:periods_2)  { [FactoryBot.create(:course_membership_period, course: course_2)] }
 
-    let(:user_1)     { FactoryGirl.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
-    let(:user_2)     { FactoryGirl.create(:user, first_name: 'Nikola', last_name: 'Tesla') }
-    let(:user_3)     { FactoryGirl.create(:user, first_name: 'Freja', last_name: 'Asgard') }
-    let(:user_4)     { FactoryGirl.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
+    let(:user_1)     { FactoryBot.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
+    let(:user_2)     { FactoryBot.create(:user, first_name: 'Nikola', last_name: 'Tesla') }
+    let(:user_3)     { FactoryBot.create(:user, first_name: 'Freja', last_name: 'Asgard') }
+    let(:user_4)     { FactoryBot.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
 
     let!(:student_1) {
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student
@@ -48,7 +48,7 @@ RSpec.describe CustomerService::StudentsController do
           'entity_role_id' => student_1.entity_role_id,
           'course_membership_period_id' => student_1.period.id,
           'student_identifier' => student_1.student_identifier,
-          'deleted?' => false
+          'dropped?' => false
         ),
         a_hash_including(
           'id' => student_3.id,
@@ -59,7 +59,7 @@ RSpec.describe CustomerService::StudentsController do
           'entity_role_id' => student_3.entity_role_id,
           'course_membership_period_id' => student_3.period.id,
           'student_identifier' => student_3.student_identifier,
-          'deleted?' => false
+          'dropped?' => false
         ),
         a_hash_including(
           'id' => student_2.id,
@@ -70,7 +70,7 @@ RSpec.describe CustomerService::StudentsController do
           'entity_role_id' => student_2.entity_role_id,
           'course_membership_period_id' => student_2.period.id,
           'student_identifier' => student_2.student_identifier,
-          'deleted?' => false
+          'dropped?' => false
         )
       )
     end
@@ -90,7 +90,7 @@ RSpec.describe CustomerService::StudentsController do
           'entity_role_id' => student_1.entity_role_id,
           'course_membership_period_id' => student_1.period.id,
           'student_identifier' => student_1.student_identifier,
-          'deleted?' => false
+          'dropped?' => false
         ),
         a_hash_including(
           'id' => student_3.id,
@@ -101,7 +101,7 @@ RSpec.describe CustomerService::StudentsController do
           'entity_role_id' => student_3.entity_role_id,
           'course_membership_period_id' => student_3.period.id,
           'student_identifier' => student_3.student_identifier,
-          'deleted?' => false
+          'dropped?' => false
         ),
         a_hash_including(
           'id' => student_2.id,
@@ -112,7 +112,7 @@ RSpec.describe CustomerService::StudentsController do
           'entity_role_id' => student_2.entity_role_id,
           'course_membership_period_id' => student_2.period.id,
           'student_identifier' => student_2.student_identifier,
-          'deleted?' => false
+          'dropped?' => false
         )
       )
     end

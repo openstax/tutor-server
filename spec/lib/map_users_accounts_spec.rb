@@ -17,7 +17,7 @@ RSpec.describe MapUsersAccounts, type: :lib do
     end
 
     context 'when the account can find a matching user' do
-      let(:found)  { FactoryGirl.create(:user) }
+      let(:found)  { FactoryBot.create(:user) }
       let(:account) { found.account }
 
       it 'returns the user' do
@@ -45,7 +45,7 @@ RSpec.describe MapUsersAccounts, type: :lib do
 
   context '.user_to_account' do
     it 'returns the associated user account' do
-      user = FactoryGirl.create(:user)
+      user = FactoryBot.create(:user)
 
       account = MapUsersAccounts.user_to_account(user)
 

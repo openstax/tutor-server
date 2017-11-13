@@ -1,4 +1,4 @@
-class Content::Models::Exercise < Tutor::SubSystems::BaseModel
+class Content::Models::Exercise < IndestructibleRecord
 
   attr_accessor :pool_types, :is_excluded
 
@@ -64,7 +64,8 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
       questions = exercise_hash['questions']
       questions.map do |question|
         content = exercise_hash.merge('questions' => [question]).to_json
-        {id: question['id'], content: content}
+
+        { id: question['id'], content: content }
       end
     end
   end

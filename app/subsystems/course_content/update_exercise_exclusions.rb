@@ -23,16 +23,19 @@ class CourseContent::UpdateExerciseExclusions
     excluded_exercises = []
     unexcluded_exercise_numbers = []
     outputs[:exercise_representations] = updates_array.map do |exercise_params|
-      fatal_error(:id_blank, 'Missing id for exercise exclusion') \
+      fatal_error(code: :id_blank, message: 'Missing id for exercise exclusion') \
         unless exercise_params.has_key?('id')
-      fatal_error(:is_excluded_blank, "Missing is_exclusion for exercise with 'id'=#{id}") \
-        unless exercise_params.has_key?('is_excluded')
+      fatal_error(
+        code: :is_excluded_blank, message: "Missing is_exclusion for exercise with 'id'=#{id}"
+      ) unless exercise_params.has_key?('is_excluded')
 
       id = exercise_params.fetch('id').to_s
       exercise = exercises_by_id[id]
       exercise_representation = exercise_representations_by_id[id]
-      fatal_error(:exercise_not_found, "Couldn't find Content::Models::Exercise with 'id'=#{id}") \
-        if exercise.nil? || exercise_representation.nil?
+      fatal_error(
+        code: :exercise_not_found,
+        message: "Couldn't find Content::Models::Exercise with 'id'=#{id}"
+      ) if exercise.nil? || exercise_representation.nil?
 
       is_excluded = !!exercise_params.fetch('is_excluded')
       exercise_representation['is_excluded'] = !!is_excluded

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::Chapter, type: :model do
-  subject(:chapter) { FactoryGirl.create :content_chapter }
+  subject(:chapter) { FactoryBot.create :content_chapter }
 
   it { is_expected.to belong_to(:book) }
   it { is_expected.to have_many(:pages).dependent(:destroy) }

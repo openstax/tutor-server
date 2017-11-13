@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe "domain: course roles", type: :integration do
 
   context "adding teachers to courses" do
-    let(:target_user)   { FactoryGirl.create(:user) }
-    let(:target_course) { FactoryGirl.create :course_profile_course }
+    let(:target_user)   { FactoryBot.create(:user) }
+    let(:target_course) { FactoryBot.create :course_profile_course }
 
     context "when a user is not a teacher of a course" do
       it "the user can be made a course teacher" do
@@ -31,9 +31,9 @@ RSpec.describe "domain: course roles", type: :integration do
       end
     end
     context "courses with multiple teachers" do
-      let(:target_user1)  { FactoryGirl.create(:user) }
-      let(:target_user2)  { FactoryGirl.create(:user) }
-      let(:target_course) { FactoryGirl.create :course_profile_course }
+      let(:target_user1)  { FactoryBot.create(:user) }
+      let(:target_user2)  { FactoryBot.create(:user) }
+      let(:target_course) { FactoryBot.create :course_profile_course }
 
       it "are allowed" do
         result = AddUserAsCourseTeacher.call(user: target_user1, course: target_course)
@@ -54,9 +54,9 @@ RSpec.describe "domain: course roles", type: :integration do
   end
 
   context "adding students to courses" do
-    let(:target_user)   { FactoryGirl.create :user }
-    let(:target_course) { FactoryGirl.create :course_profile_course }
-    let(:target_period) { FactoryGirl.create :course_membership_period, course: target_course }
+    let(:target_user)   { FactoryBot.create :user }
+    let(:target_course) { FactoryBot.create :course_profile_course }
+    let(:target_period) { FactoryBot.create :course_membership_period, course: target_course }
 
     context "when a user is not a teacher of a course" do
       context "and the user is not a student in the course" do

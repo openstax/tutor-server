@@ -2,50 +2,58 @@ require 'rails_helper'
 
 RSpec.describe SearchCourses, type: :routine do
 
-  let(:tutor_school) { FactoryGirl.create(:school_district_school, name: 'TTS') }
-  let(:cc_school)    { FactoryGirl.create(:school_district_school, name: 'CCS') }
+  let(:tutor_school) { FactoryBot.create(:school_district_school, name: 'TTS') }
+  let(:cc_school)    { FactoryBot.create(:school_district_school, name: 'CCS') }
 
-  let(:book_1)       { FactoryGirl.create :content_book, title: 'College Physics' }
+  let(:book_1)       { FactoryBot.create :content_book, title: 'College Physics' }
   let(:ecosystem_1)  { Content::Ecosystem.new strategy: book_1.ecosystem.wrap }
   let(:offering_1)   do
-    FactoryGirl.create(:catalog_offering,
+    FactoryBot.create(:catalog_offering,
                        salesforce_book_name: 'College Physics (Algebra)',
                        title: 'College Physics',
                        description: 'Introductory two-semester physics book',
                        ecosystem: ecosystem_1.to_model)
   end
 
-  let(:book_2)       { FactoryGirl.create :content_book, title: 'Biology'     }
+  let(:book_2)       { FactoryBot.create :content_book, title: 'Biology'     }
   let(:ecosystem_2)  { Content::Ecosystem.new strategy: book_2.ecosystem.wrap }
   let(:offering_2)   do
-    FactoryGirl.create(:catalog_offering,
+    FactoryBot.create(:catalog_offering,
                        salesforce_book_name: 'Biology',
                        description: 'Biology',
                        ecosystem: ecosystem_2.to_model)
   end
 
   let!(:course_1) do
-    FactoryGirl.create(
-      :course_profile_course, name: 'Physics', school: tutor_school, offering: offering_1
+    FactoryBot.create(
+      :course_profile_course, name: 'Physics', school: tutor_school, offering: offering_1,
+                              year: 2016, term: :fall, is_lms_enabling_allowed: true
     )
   end
   let!(:course_2) do
-    FactoryGirl.create(
-      :course_profile_course, name: 'Biology', school: tutor_school, offering: offering_2
+    FactoryBot.create(
+      :course_profile_course, name: 'Biology', school: tutor_school, offering: offering_2,
+                              year: 2016, term: :spring, is_lms_enabled: true
     )
   end
   let!(:course_3) do
-    FactoryGirl.create(
-      :course_profile_course, name: 'Concept Coach', school: cc_school, offering: offering_1
+    FactoryBot.create(
+      :course_profile_course, name: 'Concept Coach', school: cc_school, offering: offering_1,
+                              year: 2017, term: :fall, does_cost: true
+    )
+  end
+  let!(:course_4) do
+    FactoryBot.create(
+      :course_profile_course, name: 'Howdy', school: tutor_school, offering: offering_1,
+                              year: 2017, term: :fall, does_cost: true, is_preview: true
     )
   end
 
-  let(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
+  let(:teacher_user) { FactoryBot.create(:user, first_name: 'Charles') }
 
   before do
     AddUserAsCourseTeacher[course: course_1, user: teacher_user]
     AddUserAsCourseTeacher[course: course_3, user: teacher_user]
-    AddEcosystemToCourse[course: course_2, ecosystem: ecosystem_2]
   end
 
   it 'returns all courses in alphabetical order if the query is nil' do
@@ -147,5 +155,47 @@ RSpec.describe SearchCourses, type: :routine do
   it 'returns courses whose catalog offering id matches the given query' do
     courses = described_class[query: "offering_id:#{offering_1.id}"].to_a
     expect(courses).to eq [course_3, course_1]
+  end
+
+  it 'returns courses whose is_lms_enabled matches the given query' do
+    courses = described_class[query: "is_lms_enabled:true"].to_a
+    expect(courses).to eq [course_2]
+  end
+
+  it 'returns courses whose is_lms_enabling_allowed matches the given query' do
+    courses = described_class[query: "is_lms_enabling_allowed:true", order_by: "ID asc"].to_a
+    expect(courses).to eq [course_1, course_2]
+  end
+
+
+  it 'returns courses whose term matches the given query' do
+    courses = described_class[query: "term:SprinG"].to_a
+    expect(courses).to eq [course_2]
+  end
+
+  it 'returns courses whose year matches the given query' do
+    courses = described_class[query: "year:2016", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_1, course_2]
+  end
+
+  it 'returns courses that cost' do
+    courses = described_class[query: "costs:true", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_3]
+  end
+
+  it 'excludes preview courses by default' do
+    courses = described_class[query: "", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_1, course_2, course_3]
+  end
+
+  it 'can include preview courses' do
+    courses = described_class[query: "is_preview:true", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_4]
+  end
+
+  it 'does not return soft-deleted courses' do
+    course_3.destroy
+    courses = described_class[query: nil].to_a
+    expect(courses).to eq [course_2, course_1]
   end
 end

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe User::SearchUsers, type: :routine do
-  let!(:admin) { FactoryGirl.create :user, :administrator,
+  let!(:admin) { FactoryBot.create :user, :administrator,
                                            username: 'admin',
                                            first_name: 'Administrator',
                                            last_name: 'User' }
-  let!(:user_1) { FactoryGirl.create :user, username: 'student',
+  let!(:user_1) { FactoryBot.create :user, username: 'student',
                                             first_name: 'Chris',
                                             last_name: 'Mass' }
-  let!(:user_2) { FactoryGirl.create :user, username: 'teacher',
+  let!(:user_2) { FactoryBot.create :user, username: 'teacher',
                                             first_name: 'Stan',
                                             last_name: 'Dup' }
 

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :content_page, class: '::Content::Models::Page' do
     association :chapter, factory: :content_chapter
     url           { Faker::Internet.url }

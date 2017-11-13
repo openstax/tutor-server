@@ -2,17 +2,17 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
-  let(:user)             { FactoryGirl.create :user }
-  let(:period)           { FactoryGirl.create :course_membership_period }
+  let(:user)             { FactoryBot.create :user }
+  let(:period)           { FactoryBot.create :course_membership_period }
   let(:role)             { AddUserAsPeriodStudent[user: user, period: period] }
-  let(:page_model)       { FactoryGirl.create :content_page }
+  let(:page_model)       { FactoryBot.create :content_page }
   let(:page)             { Content::Page.new(strategy: page_model.wrap) }
 
-  let(:exercise_model_1) { FactoryGirl.create :content_exercise, page: page_model }
-  let(:exercise_model_2) { FactoryGirl.create :content_exercise, page: page_model }
-  let(:exercise_model_3) { FactoryGirl.create :content_exercise, page: page_model }
-  let(:exercise_model_4) { FactoryGirl.create :content_exercise, page: page_model }
-  let(:exercise_model_5) { FactoryGirl.create :content_exercise, page: page_model }
+  let(:exercise_model_1) { FactoryBot.create :content_exercise, page: page_model }
+  let(:exercise_model_2) { FactoryBot.create :content_exercise, page: page_model }
+  let(:exercise_model_3) { FactoryBot.create :content_exercise, page: page_model }
+  let(:exercise_model_4) { FactoryBot.create :content_exercise, page: page_model }
+  let(:exercise_model_5) { FactoryBot.create :content_exercise, page: page_model }
 
   let(:exercises)        do
     [exercise_model_5, exercise_model_4, exercise_model_3,

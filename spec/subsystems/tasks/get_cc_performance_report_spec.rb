@@ -9,10 +9,10 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = FactoryGirl.create :course_profile_course, :with_assistants, is_concept_coach: true
+    @course = FactoryBot.create :course_profile_course, :with_assistants, is_concept_coach: true
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    @teacher = FactoryGirl.create(:user)
+    @teacher = FactoryBot.create(:user)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
 
     # Transform the course into a CC course
@@ -95,7 +95,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
   end
 
   it 'returns nil when a student did not work a particular task' do
-    first_student_of_first_period.role.taskings.first.task.destroy
+    first_student_of_first_period.role.taskings.first.task.really_destroy!
     expect(first_period_report[:students].first[:data]).to include nil
   end
 

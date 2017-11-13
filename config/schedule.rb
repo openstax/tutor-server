@@ -18,10 +18,14 @@ every 1.day, at: '8:30 AM' do  # ~ 2:30am central
   runner "OpenStax::RescueFrom.this{ PushSalesforceCourseStats.call(allow_error_email: true) }"
 end
 
-every 3.hours do
-  runner "Tasks::CcPageStatsView.refresh"
+every 1.day, at: '10:30 AM' do
+  runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.where{created_at.lt Time.current - 1.year}.destroy_all }"
 end
 
 every 1.hour do
-  runner "CourseProfile::BuildPreviewCourses.call"
+  runner "OpenStax::RescueFrom.this { CourseProfile::BuildPreviewCourses.call }"
+end
+
+every 1.month, at: '9 AM' do  # ~ 3am central
+  runner "OpenStax::RescueFrom.this { Jobba.cleanup }"
 end

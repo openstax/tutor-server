@@ -1,13 +1,13 @@
 module Content
   module Strategies
     module Direct
-      class Ecosystem < Entity
+      class Ecosystem < Entitee
 
         wraps ::Content::Models::Ecosystem
 
         exposes :books, :chapters, :pages, :exercises, :pools, :tags, :tutor_uuid,
                 :title, :comments, :created_at, :deletable?, :manifest_hash
-        exposes :all, :create, :create!, :find, :deletable?,
+        exposes :all, :create, :create!, :find, :deletable?, :without_deleted,
                 from_class: ::Content::Models::Ecosystem
 
         def to_model
@@ -18,6 +18,13 @@ module Content
           alias_method :entity_all, :all
           def all
             entity_all.map do |entity|
+              ::Content::Ecosystem.new(strategy: entity)
+            end
+          end
+
+          alias_method :entity_without_deleted, :without_deleted
+          def without_deleted
+            entity_without_deleted.map do |entity|
               ::Content::Ecosystem.new(strategy: entity)
             end
           end

@@ -75,7 +75,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   def with_task_step_and_tasked
     Tasks::Models::TaskStep.transaction do
-      @task_step = Tasks::Models::TaskStep.with_deleted.lock.find_by(id: params[:id])
+      @task_step = Tasks::Models::TaskStep.lock.find_by(id: params[:id])
 
       return render_api_errors(:no_exercises, :not_found) if @task_step.nil?
 

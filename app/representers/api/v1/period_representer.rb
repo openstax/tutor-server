@@ -37,6 +37,14 @@ module Api::V1
                description: "The period's enrollment URL"
              }
 
+    property :num_enrolled_students,
+             type: Integer,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true
+             }
+
     property :default_open_time,
              type: String,
              readable: true,
@@ -49,7 +57,7 @@ module Api::V1
              writeable: true,
              schema_info: { required: false }
 
-    property :deleted?,
+    property :archived?,
              as: :is_archived,
              readable: true,
              writeable: false,
@@ -61,7 +69,7 @@ module Api::V1
     property :archived_at,
              readable: true,
              writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(deleted_at) },
+             getter: ->(*) { DateTimeUtilities.to_api_s(archived_at) },
              schema_info: {
                type: 'date',
                description: 'When the period was deleted'

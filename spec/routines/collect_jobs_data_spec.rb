@@ -24,13 +24,13 @@ RSpec.describe CollectJobsData, type: :routine do
   end
 
   context "when there are some jobs" do
-    let!(:school)           { FactoryGirl.build :school_district_school }
+    let!(:school)           { FactoryBot.build :school_district_school }
     let!(:course)           do
-      FactoryGirl.create :course_profile_course, school: school, name: "Learn how to learn"
+      FactoryBot.create :course_profile_course, school: school, name: "Learn how to learn"
     end
 
     let(:num_jobs)          { 2 }
-    let(:jobs)              { num_jobs.times.map { FactoryGirl.create :delayed_job } }
+    let(:jobs)              { num_jobs.times.map { FactoryBot.create :delayed_job } }
     let!(:statuses)         do
       jobs.map do |job|
         Jobba.create!.tap do |status|
@@ -109,7 +109,7 @@ RSpec.describe CollectJobsData, type: :routine do
     end
 
     context "with data hashes" do
-      let(:ecosystem)           { FactoryGirl.create :content_ecosystem }
+      let(:ecosystem)           { FactoryBot.create :content_ecosystem }
 
       before(:each) do
         jobs.each do |job|
