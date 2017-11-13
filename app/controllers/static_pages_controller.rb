@@ -5,7 +5,7 @@ class StaticPagesController < ApplicationController
   skip_before_filter :authenticate_user!,
                      only: [:about, :contact, :contact_form, :copyright, :developers,
                             :help, :privacy, :share, :status, :terms, :omniauth_failure,
-                            :signup]
+                            :signup, :browser_upgrade]
 
   before_filter :use_openstax_logo
 
