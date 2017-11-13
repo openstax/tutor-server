@@ -29,18 +29,6 @@ module Api::V1
                )
              end
 
-    property :hypothesis, writeable: false, readable: true, getter: ->(*) {
-        {
-            client_id: Rails.application.secrets['hypothesis']['client_id'],
-            embed_url: Rails.application.secrets['hypothesis']['embed_url'],
-            authority: Rails.application.secrets['hypothesis']['authority'],
-            client_url: Rails.application.secrets['hypothesis']['client_url'],
-            sidebar_app_url: Rails.application.secrets['hypothesis']['sidebar_app_url'],
-            api_url: Rails.application.secrets['hypothesis']['api_url'],
-            grant_token: Hypothesis.generate_grant_token(account.openstax_uid)
-        }
-    }
-
     property :errata_form_url,
              readable: true,
              writeable: false,
@@ -51,6 +39,17 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
+    property :hypothesis, writeable: false, readable: true, getter: ->(*) do
+        {
+            host: Rails.application.secrets['hypothesis']['host'],
+            client_id: Rails.application.secrets['hypothesis']['client_id'],
+            api_url: Rails.application.secrets['hypothesis']['api_url'],
+            app_url: Rails.application.secrets['hypothesis']['app_url'],
+            grant_token: Hypothesis.generate_grant_token(account.openstax_uid),
+            authority: Rails.application.secrets['hypothesis']['authority']
+        }
+    end
+
     property :payments, writeable: false, readable: true, getter: ->(*) do
       {
         is_enabled: Settings::Payments.payments_enabled,
@@ -60,12 +59,12 @@ module Api::V1
       }
     end
 
-    property :feature_flags, writeable: false, readable: true, getter: ->(*) {
+    property :feature_flags, writeable: false, readable: true, getter: ->(*) do
       {
         is_highlighting_allowed: Settings::Highlighting.is_allowed,
         is_payments_enabled: Settings::Payments.payments_enabled
       }
-    }
+    end
 
     property :flash,
              readable: true,
