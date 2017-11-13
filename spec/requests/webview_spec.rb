@@ -34,8 +34,7 @@ RSpec.describe "Webview", type: :request do
       ['IE 11', 'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko'],
       ['IE Mobile', 'Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 6.12)'],
       ['Blackberry', 'BlackBerry8100/4.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/103'],
-      ['Safari 9', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9'],
-
+      ['Safari 8', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_90) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25']
     ].each do |name, ua|
       it "#{name} is not supported" do
         stub_current_user(user)
@@ -49,7 +48,9 @@ RSpec.describe "Webview", type: :request do
       ['Firefox', 'Mozilla/5.0 (X11; Ubuntu; Linux armv7l; rv:17.0) Gecko/20100101 Firefox/17.0'],
       ['Chrome', 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.99 Safari/533.4'],
       ['Safari 10', 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_0_1 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/14A403 Safari/602.1'],
-      ['Safari 11', 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38']
+      ['Safari 11', 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38'],
+      ['Safari 9', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9'],
+      ['Newish Android', 'Mozilla/5.0 (Linux; Android 5.0; Nexus 5 Build/LPX13D) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36']
     ].each do |name, ua|
       it "#{name} is supported" do
         stub_current_user(user)
