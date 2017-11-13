@@ -89,7 +89,9 @@
 
   <div class="form-group">
     <%= f.label :is_college %>
-    <%= f.check_box :is_college, class: 'form-control' %>
+    <br>
+    <%= f.select :is_college, [[ "Unknown", nil ], [ "Yes", true ], [ "No", false ]],
+                 {}, class: 'form-control' %>
   </div>
 
   <div class="form-group">

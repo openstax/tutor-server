@@ -54,16 +54,41 @@ RSpec.feature 'Admin editing a course' do
 
 
   scenario 'Changing "Is College"' do
+    @course.update_attribute :is_college, nil
+
     visit admin_courses_path
     click_link 'Edit'
 
+    expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_content('Edit course')
-    check 'course_is_college'
+    expect(page).to have_content('Is college Unknown Yes No')
+    select 'Yes', from: 'course_is_college'
     click_button 'edit-save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
-    expect(CourseProfile::Models::Course.first.is_college).to be_truthy
+    expect(@course.reload.is_college).to eq true
+
+    expect(page).to have_content('Edit course')
+    expect(page).to have_content('Is college Unknown Yes No')
+    select 'No', from: 'course_is_college'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(@course.reload.is_college).to eq false
+
+    expect(page).to have_content('Edit course')
+    expect(page).to have_content('Is college Unknown Yes No')
+    select 'Unknown', from: 'course_is_college'
+    click_button 'edit-save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(@course.reload.is_college).to be_nil
+
+    expect(page).to have_content('Edit course')
+    expect(page).to have_content('Is college Unknown Yes No')
   end
 
   scenario 'Changing "Is Test"' do
