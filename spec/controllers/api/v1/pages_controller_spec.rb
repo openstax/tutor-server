@@ -21,8 +21,9 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
     end
 
     it 'returns not found if the uuid is not found' do
-      api_get :get_page, nil, parameters: { uuid: 'b5cd5a64-34a1-434e-b8ba-769000fbec30',
-                                            version: '1' }
+      api_get :get_page, nil, parameters: {
+        uuid: 'b5cd5a64-34a1-434e-b8ba-769000fbec30', version: '1'
+      }
       expect(response).to have_http_status(404)
     end
 
@@ -51,29 +52,33 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         chapter = FactoryBot.create :content_chapter
         cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
         VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
-          @old_page = Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                                         chapter: chapter,
-                                                         book_location: [1, 1]).outputs[:page]
+          @old_page = Content::Routines::ImportPage.call(
+            cnx_page: cnx_page, chapter: chapter, book_location: [1, 1]
+          ).outputs.page
         end
       end
 
       it 'returns the page with the correct uuid and version' do
         api_get :get_page, nil, parameters: { uuid: @page_uuid, version: '2' }
         expect(response).to have_http_status(200)
-        expect(response.body_as_hash).to eq({
-          spy: { ecosystem_title: @old_page.ecosystem.title },
-          content_html: @old_page.content
-        })
+        expect(response.body_as_hash).to eq(
+          title: @old_page.title,
+          chapter_section: @old_page.book_location,
+          content_html: @old_page.content,
+          spy: { ecosystem_title: @old_page.ecosystem.title }
+        )
       end
 
       it 'returns the page with the correct uuid and latest version if version is empty' do
         api_get :get_page, nil, parameters: { uuid: @page_uuid }
         page = Content::Models::Page.where(uuid: @page_uuid).order(version: :desc).first
         expect(response).to have_http_status(200)
-        expect(response.body_as_hash).to eq({
-          spy: { ecosystem_title: page.ecosystem.title },
-          content_html: page.content
-        })
+        expect(response.body_as_hash).to eq(
+          title: page.title,
+          chapter_section: page.book_location,
+          content_html: page.content,
+          spy: { ecosystem_title: page.ecosystem.title }
+        )
       end
     end
   end
