@@ -309,25 +309,17 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
               expect(student.payment_due_at).to eq student_original_payment_due_at
             end
 
-            it 'fails if the student\'s identifier is taken by someone else' do
+            it 'succeeds even if the student\'s identifier is taken by someone else' do
               student_id = '123456789'
               student.update_attribute :student_identifier, student_id
               FactoryGirl.create :course_membership_student, course: course,
                                                              student_identifier: student_id
 
               api_put :undrop, teacher_token, parameters: valid_params
-              expect(response).to have_http_status(:unprocessable_entity)
-              expect(response.body_as_hash[:status]).to eq 422
-              expect(response.body_as_hash[:errors].first[:code]).to(
-                eq 'student_identifier_has_already_been_taken'
-              )
-              expect(response.body_as_hash[:errors].first[:message]).to(
-                eq 'Student identifier has already been taken'
-              )
-
+              expect(response).to have_http_status(:ok)
               student.reload
               expect(student.persisted?).to eq true
-              expect(student.dropped?).to eq true
+              expect(student.dropped?).to eq false
             end
           end
         end
