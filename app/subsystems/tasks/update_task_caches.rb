@@ -39,7 +39,7 @@ class Tasks::UpdateTaskCaches
 
     # Get student names (throws an error if faculty_status is not loaded for some reason)
     student_name_by_account_id = OpenStax::Accounts::Account
-      .select([ :id, :first_name, :last_name, :full_name, :faculty_status ])
+      .select([ :id, :username, :first_name, :last_name, :full_name, :faculty_status ])
       .where(id: account_ids)
       .map { |account| [ account.id, account.name ] }
       .to_h
