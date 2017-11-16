@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'openstax_rescue_from'
+
 secrets = Rails.application.secrets
 OpenStax::RescueFrom.configure do |config|
   config.raise_exceptions = Rails.application.config.consider_all_requests_local
