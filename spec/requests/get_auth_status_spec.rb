@@ -31,6 +31,10 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           grant_token: kind_of(String),
           authority: Rails.application.secrets['hypothesis']['authority']
         ),
+        feature_flags: a_hash_including(
+          is_highlighting_allowed: false,
+          is_payments_enabled: false
+        ),
         payments: a_hash_including(
           is_enabled: Settings::Payments.payments_enabled,
           js_url: a_string_starting_with('http'),
