@@ -1,3 +1,7 @@
+# Generates SQL that can be used on a join with a values table, like so:
+# INNER JOIN (#{ValuesTable.new(values_array)}) AS "values" ("first_value", "second_value")
+#   ON "table"."first_value" = "values"."first_value"
+#     AND "table"."second_value" = "values"."second_value"
 class ValuesTable
   UUID_REGEX = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
 
