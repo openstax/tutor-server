@@ -191,9 +191,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
 
       { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.tutor_uuid }
     end.compact
-    prepared_at = request[:prepared_at] ||
-                  to_course_ecosystems.first.try!(:created_at) ||
-                  Time.current
+    prepared_at = request[:prepared_at] || course.course_ecosystems.find do |ce|
+      ce.content_ecosystem_id == to_ecosystem.id
+    end.try!(:created_at) || Time.current
 
     biglearn_request = {
       preparation_uuid: request.fetch(:preparation_uuid),
