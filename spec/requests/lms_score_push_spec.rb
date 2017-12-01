@@ -101,6 +101,7 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
                     data: {"num_callbacks" => 1, "num_missing_scores" => 0})
 
     expect(ActionMailer::Base.deliveries.count).to eq 1
+    expect(ActionMailer::Base.deliveries.last.subject).to eq "[Tutor] (test) Lms::SendCourseScores errors"
   end
 
   it 'copes with exceptions when sending errors' do

@@ -4,7 +4,7 @@ class DevMailer < ApplicationMailer
     @object = object
     mail to: to || Rails.application.secrets.exception['recipients'],
          from: from || Rails.application.secrets.exception['sender'],
-         subject: subject
+         subject: "[Tutor] (#{Rails.application.secrets.environment_name}) #{subject}"
   end
 
 end
