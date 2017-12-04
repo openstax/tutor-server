@@ -57,7 +57,7 @@ module Api::V1
              readable: true
 
     property :research_identifier,
-             getter: ->(*) { role.research_identifier },
+             getter: ->(*) { role.try(:research_identifier) },
              type: String,
              writeable: false,
              readable: true
