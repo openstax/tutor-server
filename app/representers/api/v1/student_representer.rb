@@ -56,6 +56,12 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :research_identifier,
+             getter: ->(*) { role.research_identifier },
+             type: String,
+             writeable: false,
+             readable: true
+
     property :is_active,
              writeable: false,
              readable: true,
