@@ -301,15 +301,13 @@ class Tasks::UpdateTaskCaches
       }
     end.compact.sort_by { |book| book[:title] }
 
-    calculated_num_assigned_steps = books_array.map { |bk| bk[:num_assigned_steps] }.reduce(0, :+)
     toc = {
       id: ecosystem.id,
       tutor_uuid: ecosystem.tutor_uuid,
       title: ecosystem.title,
       has_exercises: books_array.any? { |bk| bk[:has_exercises] },
-      num_assigned_steps: [ num_assigned_steps, calculated_num_assigned_steps ].max,
-      num_known_location_steps: calculated_num_assigned_steps,
-      num_unknown_location_steps: num_assigned_steps - calculated_num_assigned_steps,
+      num_assigned_steps: num_assigned_steps,
+      num_known_location_steps: books_array.map { |bk| bk[:num_assigned_steps] }.reduce(0, :+),
       num_completed_steps: books_array.map { |bk| bk[:num_completed_steps] }
                                       .reduce(0, :+),
       num_assigned_exercises: books_array.map { |bk| bk[:num_assigned_exercises] }
