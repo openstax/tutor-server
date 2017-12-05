@@ -69,16 +69,17 @@ class Tasks::UpdatePeriodCaches
     no_task_plan_period_caches, task_plan_period_caches = period_caches.partition do |period_cache|
       period_cache.tasks_task_plan_id.nil?
     end
+    columns = [ :opens_at, :due_at, :student_ids, :as_toc ]
     Tasks::Models::PeriodCache.import task_plan_period_caches, validate: false,
                                                                on_duplicate_key_update: {
       conflict_target: [ :course_membership_period_id, :content_ecosystem_id, :tasks_task_plan_id ],
-      columns: [ :opens_at, :due_at, :feedback_at, :student_ids, :as_toc ]
+      columns: columns
     }
     # activerecord-import surrounds the conflict_target with parens,
     # which is why the next bit of SQL looks slightly broken
     Tasks::Models::PeriodCache.import no_task_plan_period_caches, validate: false,
                                                                   on_duplicate_key_update: {
-      columns: [ :opens_at, :due_at, :feedback_at, :student_ids, :as_toc ],
+      columns: columns,
       conflict_target: <<-CONFLICT_SQL.strip_heredoc
         "course_membership_period_id", "content_ecosystem_id") WHERE ("tasks_task_plan_id" IS NULL
       CONFLICT_SQL
