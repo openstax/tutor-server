@@ -180,7 +180,6 @@ class Tasks::UpdatePeriodCaches
       has_exercises: tocs.any? { |toc| toc[:has_exercises] },
       num_assigned_steps: tocs.map { |toc| toc[:num_assigned_steps] }.reduce(0, :+),
       num_known_location_steps: tocs.map { |toc| toc[:num_known_location_steps] }.reduce(0, :+),
-      num_unknown_location_steps: tocs.map { |toc| toc[:num_unknown_location_steps] }.reduce(0, :+),
       num_completed_steps: tocs.map { |toc| toc[:num_completed_steps] }.reduce(0, :+),
       num_assigned_exercises: tocs.map { |toc| toc[:num_assigned_exercises] }.reduce(0, :+),
       num_completed_exercises: tocs.map { |toc| toc[:num_completed_exercises] }.reduce(0, :+),
