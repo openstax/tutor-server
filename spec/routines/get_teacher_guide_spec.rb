@@ -45,16 +45,16 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
       expect(guide).to match [
         {
-          "period_id" => @period.id,
-          "title" => 'Physics (Demo)',
-          "page_ids" => [],
-          "children" => []
+          period_id: @period.id,
+          title: 'Physics (Demo)',
+          page_ids: [],
+          children: []
         },
         {
-          "period_id" => @second_period.id,
-          "title" => 'Physics (Demo)',
-          "page_ids" => [],
-          "children" => []
+          period_id: @second_period.id,
+          title: 'Physics (Demo)',
+          page_ids: [],
+          children: []
         }
       ]
     end
@@ -80,16 +80,16 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
       expect(guide).to match [
         {
-          "period_id" => @period.id,
-          "title" => 'Physics (Demo)',
-          "page_ids" => [kind_of(Integer)]*6,
-          "children" => [kind_of(Hash)]*2
+          period_id: @period.id,
+          title: 'Physics (Demo)',
+          page_ids: [kind_of(Integer)]*6,
+          children: [kind_of(Hash)]*2
         },
         {
-          "period_id" => @second_period.id,
-          "title" => 'Physics (Demo)',
-          "page_ids" => [kind_of(Integer)]*6,
-          "children" => [kind_of(Hash)]*2
+          period_id: @second_period.id,
+          title: 'Physics (Demo)',
+          page_ids: [kind_of(Integer)]*6,
+          children: [kind_of(Hash)]*2
         }
       ]
     end
@@ -99,50 +99,50 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
       period_1_chapter_1 = guide.first['children'].first
       expect(period_1_chapter_1).to match(
-        "title" => "Acceleration",
-        "book_location" => [3],
-        "student_count" => 1,
-        "questions_answered_count" => 2,
-        "clue" => clue_matcher,
-        "practice_count" => 0,
-        "page_ids" => [kind_of(Integer)]*2,
-        "children" => [kind_of(Hash)]*2
+        title: "Acceleration",
+        book_location: [3],
+        student_count: 1,
+        questions_answered_count: 2,
+        clue: clue_matcher,
+        practice_count: 0,
+        page_ids: [kind_of(Integer)]*2,
+        children: [kind_of(Hash)]*2
       )
 
       period_1_chapter_2 = guide.first['children'].second
       expect(period_1_chapter_2).to match(
-        "title" => "Force and Newton's Laws of Motion",
-        "book_location" => [4],
-        "student_count" => 1,
-        "questions_answered_count" => 7,
-        "clue" => clue_matcher,
-        "practice_count" => kind_of(Integer),
-        "page_ids" => [kind_of(Integer)]*4,
-        "children" => [kind_of(Hash)]*4
+        title: "Force and Newton's Laws of Motion",
+        book_location: [4],
+        student_count: 1,
+        questions_answered_count: 7,
+        clue: clue_matcher,
+        practice_count: kind_of(Integer),
+        page_ids: [kind_of(Integer)]*4,
+        children: [kind_of(Hash)]*4
       )
 
       period_2_chapter_1 = guide.second['children'].first
       expect(period_2_chapter_1).to match(
-        "title" => "Acceleration",
-        "book_location" => [3],
-        "student_count" => 1,
-        "questions_answered_count" => 5,
-        "clue" => clue_matcher,
-        "practice_count" => 1,
-        "page_ids" => [kind_of(Integer)]*2,
-        "children" => [kind_of(Hash)]*2
+        title: "Acceleration",
+        book_location: [3],
+        student_count: 1,
+        questions_answered_count: 5,
+        clue: clue_matcher,
+        practice_count: 1,
+        page_ids: [kind_of(Integer)]*2,
+        children: [kind_of(Hash)]*2
       )
 
       period_2_chapter_2 = guide.second['children'].second
       expect(period_2_chapter_2).to match(
-        "title" => "Force and Newton's Laws of Motion",
-        "book_location" => [4],
-        "student_count" => 1,
-        "questions_answered_count" => 5,
-        "clue" => clue_matcher,
-        "practice_count" => kind_of(Integer),
-        "page_ids" => [kind_of(Integer)]*4,
-        "children" => [kind_of(Hash)]*4
+        title: "Force and Newton's Laws of Motion",
+        book_location: [4],
+        student_count: 1,
+        questions_answered_count: 5,
+        clue: clue_matcher,
+        practice_count: kind_of(Integer),
+        page_ids: [kind_of(Integer)]*4,
+        children: [kind_of(Hash)]*4
       )
     end
 
@@ -152,124 +152,124 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_1_chapter_1_pages = guide.first['children'].first['children']
       expect(period_1_chapter_1_pages).to match [
         {
-          "title" => "Acceleration",
-          "book_location" => [3, 1],
-          "student_count" => 1,
-          "questions_answered_count" => 2,
-          "clue" => clue_matcher,
-          "practice_count" => 0,
-          "page_ids" => [kind_of(Integer)]
+          title: "Acceleration",
+          book_location: [3, 1],
+          student_count: 1,
+          questions_answered_count: 2,
+          clue: clue_matcher,
+          practice_count: 0,
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Representing Acceleration with Equations and Graphs",
-          "book_location" => [3, 2],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => 0,
-          "page_ids" => [kind_of(Integer)]
+          title: "Representing Acceleration with Equations and Graphs",
+          book_location: [3, 2],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: 0,
+          page_ids: [kind_of(Integer)]
         }
       ]
 
       period_1_chapter_2_pages = guide.first['children'].second['children']
       expect(period_1_chapter_2_pages).to match [
         {
-          "title" => "Force",
-          "book_location" => [4, 1],
-          "student_count" => 1,
-          "questions_answered_count" => 2,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Force",
+          book_location: [4, 1],
+          student_count: 1,
+          questions_answered_count: 2,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Newton's First Law of Motion: Inertia",
-          "book_location" => [4, 2],
-          "student_count" => 1,
-          "questions_answered_count" => 5,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Newton's First Law of Motion: Inertia",
+          book_location: [4, 2],
+          student_count: 1,
+          questions_answered_count: 5,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Newton's Second Law of Motion",
-          "book_location" => [4, 3],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Newton's Second Law of Motion",
+          book_location: [4, 3],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Newton's Third Law of Motion",
-          "book_location" => [4, 4],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Newton's Third Law of Motion",
+          book_location: [4, 4],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         }
       ]
 
       period_2_chapter_1_pages = guide.second['children'].first['children']
       expect(period_2_chapter_1_pages).to match [
         {
-          "title" => "Acceleration",
-          "book_location" => [3, 1],
-          "student_count" => 1,
-          "questions_answered_count" => 5,
-          "clue" => clue_matcher,
-          "practice_count" => 1,
-          "page_ids" => [kind_of(Integer)]
+          title: "Acceleration",
+          book_location: [3, 1],
+          student_count: 1,
+          questions_answered_count: 5,
+          clue: clue_matcher,
+          practice_count: 1,
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Representing Acceleration with Equations and Graphs",
-          "book_location" => [3, 2],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => 0,
-          "page_ids" => [kind_of(Integer)]
+          title: "Representing Acceleration with Equations and Graphs",
+          book_location: [3, 2],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: 0,
+          page_ids: [kind_of(Integer)]
         }
       ]
 
       period_2_chapter_2_pages = guide.second['children'].second['children']
       expect(period_2_chapter_2_pages).to match [
         {
-          "title" => "Force",
-          "book_location" => [4, 1],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Force",
+          book_location: [4, 1],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Newton's First Law of Motion: Inertia",
-          "book_location" => [4, 2],
-          "student_count" => 1,
-          "questions_answered_count" => 5,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Newton's First Law of Motion: Inertia",
+          book_location: [4, 2],
+          student_count: 1,
+          questions_answered_count: 5,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Newton's Second Law of Motion",
-          "book_location" => [4, 3],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Newton's Second Law of Motion",
+          book_location: [4, 3],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         },
         {
-          "title" => "Newton's Third Law of Motion",
-          "book_location" => [4, 4],
-          "student_count" => 1,
-          "questions_answered_count" => 0,
-          "clue" => clue_matcher,
-          "practice_count" => kind_of(Integer),
-          "page_ids" => [kind_of(Integer)]
+          title: "Newton's Third Law of Motion",
+          book_location: [4, 4],
+          student_count: 1,
+          questions_answered_count: 0,
+          clue: clue_matcher,
+          practice_count: kind_of(Integer),
+          page_ids: [kind_of(Integer)]
         }
       ]
     end

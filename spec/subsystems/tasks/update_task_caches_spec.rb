@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
-  before(:all) { @task_plan = FactoryBot.create :tasked_task_plan }
+  before(:all)                { @task_plan = FactoryBot.create :tasked_task_plan }
 
+  let(:course)                { @task_plan.owner }
   let(:tasks)                 { @task_plan.tasks.to_a }
   let(:task_ids)              { tasks.map(&:id) }
   let(:student_tasks)         do
@@ -20,6 +21,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       title: ecosystem.title,
       has_exercises: true,
       num_assigned_steps: 11,
+      num_known_location_steps: 8,
       num_completed_steps: 0,
       num_assigned_exercises: 2,
       num_completed_exercises: 0,
@@ -95,6 +97,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       title: ecosystem.title,
       has_exercises: true,
       num_assigned_steps: 11,
+      num_known_location_steps: 11,
       num_completed_steps: 11,
       num_assigned_exercises: 8,
       num_completed_exercises: 8,
@@ -175,7 +178,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       task = task_cache.task
       expect(task).to be_in tasks
       expect(task_cache.task_type).to eq (task.task_type)
-      expect(task_cache.ecosystem).to eq @task_plan.owner.ecosystems.first
+      expect(task_cache.ecosystem).to eq course.ecosystems.first
       expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
       expect(task_cache.student_names).to match_array(
         task.taskings.map { |tt| tt.role.student.name }
@@ -197,7 +200,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       task = task_cache.task
       expect(task).to be_in tasks
       expect(task_cache.task_type).to eq (task.task_type)
-      expect(task_cache.ecosystem).to eq @task_plan.owner.ecosystems.first
+      expect(task_cache.ecosystem).to eq course.ecosystems.first
       expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
       expect(task_cache.student_names).to match_array(
         task.taskings.map { |tt| tt.role.student.name }
@@ -216,12 +219,12 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
     expect { described_class.call(tasks: tasks) }.not_to change { Tasks::Models::TaskCache.count }
 
     task_caches.each do |task_cache|
-      is_first_task = task_cache.reload.task == first_task
+      task = task_cache.reload.task
+      is_first_task = task == first_task
 
-      task = task_cache.task
       expect(task).to be_in tasks
       expect(task_cache.task_type).to eq (task.task_type)
-      expect(task_cache.ecosystem).to eq @task_plan.owner.ecosystems.first
+      expect(task_cache.ecosystem).to eq course.ecosystems.first
       expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
 
       expect(task_cache.as_toc.deep_symbolize_keys).to match(
@@ -269,7 +272,6 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
   end
 
   it 'is called when a new ecosystem is added to the course' do
-    course = @task_plan.owner
     ecosystem = course.ecosystems.first
     course.course_ecosystems.delete_all :delete_all
 
@@ -281,5 +283,17 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
     end
 
     AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
+  end
+
+  it 'is called when a new student joins the course' do
+    student_user = FactoryBot.create :user_profile
+    period = course.periods.first
+    existing_tasks = tasks
+    expect(described_class).to receive(:perform_later) do |tasks:|
+      expect(tasks.size).to eq 1
+      expect(existing_tasks).not_to include tasks.first
+    end
+
+    AddUserAsPeriodStudent.call(user: student_user, period: period)
   end
 end
