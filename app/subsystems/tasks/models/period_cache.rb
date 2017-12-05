@@ -10,7 +10,7 @@ class Tasks::Models::PeriodCache < ApplicationRecord
     scope: [ :course_membership_period_id, :content_ecosystem_id ]
   }
 
-  validates :opens_at, :due_at, :feedback_at, timeliness: { type: :date }, allow_nil: true
+  validates :opens_at, :due_at, timeliness: { type: :date }, allow_nil: true
 
   def practice?
     tasks_task_plan_id.nil?

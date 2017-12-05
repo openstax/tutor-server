@@ -31,7 +31,7 @@ class Tasks::UpdatePeriodCaches
 
     # Get relevant TaskCaches
     task_caches = Tasks::Models::TaskCache
-      .select([ :tasks_task_id, :content_ecosystem_id, :student_ids, :as_toc ])
+      .select([ :tasks_task_id, :content_ecosystem_id, :student_ids, :student_names, :as_toc ])
       .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
       .preload(
         :ecosystem,
@@ -87,10 +87,31 @@ class Tasks::UpdatePeriodCaches
   end
 
   def build_period_cache(period:, ecosystem:, task_plan:, tasking_plan:, task_caches:)
-    tocs = task_caches.map(&:as_toc)
+    tocs = task_caches.map do |task_cache|
+      toc = task_cache.as_toc
+      toc.merge(
+        books: toc[:books].map do |book|
+          book.merge(
+            chapters: book[:chapters].map do |chapter|
+              chapter.merge(
+                pages: chapter[:pages].map do |page|
+                  page.merge(
+                    exercises: page[:exercises].map do |exercise|
+                      exercise.merge(
+                        student_ids: task_cache.student_ids, student_names: task_cache.student_names
+                      )
+                    end
+                  )
+                end
+              )
+            end
+          )
+        end
+      )
+    end
 
     period_bks = tocs.flat_map { |toc| toc[:books] }.group_by { |bk| bk[:title] }
-                     .sort.map do |book_location, bks|
+                     .sort.map do |title, bks|
       period_chs = bks.flat_map { |bk| bk[:chapters] }.group_by { |ch| ch[:book_location] }
                       .sort.map do |book_location, chs|
         period_pgs = chs.flat_map { |ch| ch[:pages] }.group_by { |pg| pg[:book_location] }
@@ -139,7 +160,7 @@ class Tasks::UpdatePeriodCaches
       {
         id: preferred_bk[:id],
         tutor_uuid: preferred_bk[:tutor_uuid],
-        title: preferred_bk[:title],
+        title: title,
         has_exercises: bks.any? { |bk| bk[:has_exercises] },
         num_assigned_steps: bks.map { |bk| bk[:num_assigned_steps] }.reduce(0, :+),
         num_completed_steps: bks.map { |bk| bk[:num_completed_steps] }.reduce(0, :+),
@@ -158,6 +179,8 @@ class Tasks::UpdatePeriodCaches
       title: preferred_toc[:title],
       has_exercises: tocs.any? { |toc| toc[:has_exercises] },
       num_assigned_steps: tocs.map { |toc| toc[:num_assigned_steps] }.reduce(0, :+),
+      num_known_location_steps: tocs.map { |toc| toc[:num_known_location_steps] }.reduce(0, :+),
+      num_unknown_location_steps: tocs.map { |toc| toc[:num_unknown_location_steps] }.reduce(0, :+),
       num_completed_steps: tocs.map { |toc| toc[:num_completed_steps] }.reduce(0, :+),
       num_assigned_exercises: tocs.map { |toc| toc[:num_assigned_exercises] }.reduce(0, :+),
       num_completed_exercises: tocs.map { |toc| toc[:num_completed_exercises] }.reduce(0, :+),
