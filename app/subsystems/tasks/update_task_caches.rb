@@ -1,4 +1,4 @@
-# Updates the TaskCaches, used by the Trouble Flag, Quick Look and Performance Forecast
+# Updates the TaskCaches, used by the Quick Look and Student Performance Forecast
 # Tasks not assigned to a student (preview tasks) are ignored
 class Tasks::UpdateTaskCaches
   lev_routine transaction: :read_committed
@@ -14,7 +14,9 @@ class Tasks::UpdateTaskCaches
     locked_tasks = Tasks::Models::Task
       .where(id: tasks.map(&:id))
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
-      .preload(:ecosystem, :time_zone)
+      .preload(
+        :ecosystem, :time_zone, taskings: { role: { student: { latest_enrollment: :period } } }
+      )
     tasks_by_id = locked_tasks.index_by(&:id)
     task_ids = tasks_by_id.keys
 
@@ -35,6 +37,7 @@ class Tasks::UpdateTaskCaches
       ])
       .joins(role: [ :taskings, profile: :account ])
       .where(role: { taskings: { tasks_task_id: task_ids } })
+      .preload(:latest_enrollment)
     account_ids = students.map(&:account_id)
 
     # Get student names (throws an error if faculty_status is not loaded for some reason)
@@ -46,12 +49,14 @@ class Tasks::UpdateTaskCaches
     student_ids_by_task_id = Hash.new { |hash, key| hash[key] = [] }
     student_names_by_task_id = Hash.new { |hash, key| hash[key] = [] }
     task_ids_by_course_id = Hash.new { |hash, key| hash[key] = [] }
+    period_ids = []
     students.each do |student|
       task_id = student.tasks_task_id
       student_name = student_name_by_account_id[student.account_id]
       student_ids_by_task_id[task_id] << student.id
       student_names_by_task_id[task_id] << student_name
       task_ids_by_course_id[student.course_profile_course_id] << task_id
+      period_ids << student.latest_enrollment.course_membership_period_id
     end
 
     # Get TaskSteps for each given task
@@ -113,7 +118,7 @@ class Tasks::UpdateTaskCaches
     course_ids = task_ids_by_course_id.keys
     courses = CourseProfile::Models::Course.select(:id).where(id: course_ids).preload(:ecosystems)
 
-    # Cache results per task for Quick Look and Performance Forecast
+    # Cache results per task for Quick Look and Student Performance Forecast
     # Pages are mapped to the Course's most recent ecosystem
     task_caches = courses.flat_map do |course|
       task_ids = task_ids_by_course_id[course.id]
@@ -178,8 +183,12 @@ class Tasks::UpdateTaskCaches
     # Update the TaskCaches
     Tasks::Models::TaskCache.import task_caches, validate: false, on_duplicate_key_update: {
       conflict_target: [ :tasks_task_id, :content_ecosystem_id ],
-      columns: [ :opens_at, :due_at, :feedback_at, :student_ids, :as_toc ]
+      columns: [ :opens_at, :due_at, :feedback_at, :student_ids, :student_names, :as_toc ]
     }
+
+    # Update the PeriodCaches
+    periods = CourseMembership::Models::Period.select(:id).where(id: period_ids.uniq)
+    Tasks::UpdatePeriodCaches.perform_later(periods: periods.to_a)
   end
 
   def build_task_cache(
@@ -312,8 +321,8 @@ class Tasks::UpdateTaskCaches
     }
 
     Tasks::Models::TaskCache.new(
-      tasks_task_id: task.id,
-      content_ecosystem_id: ecosystem.id,
+      task: task,
+      ecosystem: ecosystem.to_model,
       task_type: task.task_type,
       opens_at: task.opens_at,
       due_at: task.due_at,

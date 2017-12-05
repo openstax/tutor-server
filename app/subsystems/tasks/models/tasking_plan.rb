@@ -6,7 +6,7 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   belongs_to :target, polymorphic: true
 
   validates :target, presence: true
-  validates :task_plan, presence: true, uniqueness: { scope: [:target_type, :target_id] }
+  validates :task_plan, presence: true, uniqueness: { scope: [ :target_type, :target_id ] }
 
   validates :opens_at_ntz, :due_at_ntz, presence: true, timeliness: { type: :date }
   validates :time_zone, presence: true
