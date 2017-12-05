@@ -28,18 +28,23 @@ class GetTpDashboard
                              start_at_ntz: start_at_ntz,
                              end_at_ntz: end_at_ntz).outputs
     task_plan_ids = result.plans.map(&:id)
-    task_caches_by_task_plan_id = Tasks::Models::TaskCache
-      .select([ '"tasks_tasks"."tasks_task_plan_id"', :due_at, :as_toc ])
-      .joins(:task)
-      .where(task: { tasks_task_plan_id: task_plan_ids })
+    period_caches_by_task_plan_id = Tasks::Models::PeriodCache
+      .select([ :tasks_task_plan_id, :due_at, :as_toc ])
+      .joins(:task_plan)
+      .where(task_plan: { id: task_plan_ids })
+      .where(
+        <<-WHERE_SQL.strip_heredoc
+          "tasks_period_caches"."content_ecosystem_id" = "tasks_task_plans"."content_ecosystem_id"
+        WHERE_SQL
+      )
       .group_by(&:tasks_task_plan_id)
 
     outputs.plans = result.plans.map do |task_plan|
-      task_caches = task_caches_by_task_plan_id[task_plan.id] || []
-      pgs = task_caches.flat_map do |task_cache|
-        task_cache.as_toc[:books].flat_map do |bk|
+      period_caches = period_caches_by_task_plan_id[task_plan.id] || []
+      pgs = period_caches.flat_map do |period_cache|
+        period_cache.as_toc[:books].flat_map do |bk|
           bk[:chapters].flat_map do |ch|
-            ch[:pages].map { |page| page.merge due_at: task_cache.due_at }
+            ch[:pages].map { |page| page.merge due_at: period_cache.due_at }
           end
         end
       end

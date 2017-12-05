@@ -3,11 +3,30 @@ module Api::V1
 
     include Roar::JSON
 
+    property :title,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true,
+               description: 'The title of the page'
+             }
+
+    property :book_location,
+             as: :chapter_section,
+             type: Array,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true,
+               description: 'The chapter and section in the book, e.g. [5, 2]'
+             }
+
     property :content,
              as: :content_html,
              type: String,
              readable: true,
-             writeabel: false
+             writeable: false
 
     property :spy,
              type: Object,

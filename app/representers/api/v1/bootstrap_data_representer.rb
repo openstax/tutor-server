@@ -29,6 +29,7 @@ module Api::V1
                )
              end
 
+
     property :errata_form_url,
              readable: true,
              writeable: false,
@@ -39,14 +40,32 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
-    property :payments, writeable: false, readable: true, getter: ->(*) do
+    property :hypothesis, writeable: false, readable: true, getter: ->(*) {
+        {
+            host: Rails.application.secrets['hypothesis']['host'],
+            client_id: Rails.application.secrets['hypothesis']['client_id'],
+            api_url: Rails.application.secrets['hypothesis']['api_url'],
+            app_url: Rails.application.secrets['hypothesis']['app_url'],
+            grant_token: Hypothesis.generate_grant_token(account.openstax_uid),
+            authority: Rails.application.secrets['hypothesis']['authority']
+        }
+    }
+
+    property :payments, writeable: false, readable: true, getter: ->(*) {
       {
         is_enabled: Settings::Payments.payments_enabled,
         js_url: OpenStax::Payments::Api.embed_js_url,
         base_url: Rails.application.secrets['openstax']['payments']['url'],
         product_uuid: Rails.application.secrets['openstax']['payments']['product_uuid']
       }
-    end
+    }
+
+    property :feature_flags, writeable: false, readable: true, getter: ->(*) {
+      {
+        is_highlighting_allowed: Settings::Highlighting.is_allowed,
+        is_payments_enabled: Settings::Payments.payments_enabled
+      }
+     }
 
     property :flash,
              readable: true,

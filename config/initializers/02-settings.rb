@@ -16,6 +16,7 @@ Settings::Db.store.defaults[:student_grace_period_days] = 14
 Settings::Db.store.defaults[:payments_enabled] = false
 Settings::Db.store.defaults[:ga_tracking_codes] = \
     (secrets.environment_name == "prodtutor") ? 'UA-66552106-1' : ''
+Settings::Db.store.defaults[:is_highlighting_allowed] = false
 
 Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = 'local_query'
 Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = 'local_query'
