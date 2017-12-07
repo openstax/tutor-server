@@ -161,9 +161,11 @@ class ExportAndUploadResearchData
             ))
 
             file << row
-          rescue StandardError => e
+          rescue StandardError => ex
+            raise ex if ex.is_a? Timeout::Error
+
             Rails.logger.error do
-              "Skipped step #{step.id} for #{e.inspect} @ #{e.try(:backtrace).try(:first)}\n"
+              "Skipped step #{step.id} for #{ex.inspect} @ #{ex.try(:backtrace).try(:first)}\n"
             end
           end
         end
