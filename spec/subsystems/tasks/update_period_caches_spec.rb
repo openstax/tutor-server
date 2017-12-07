@@ -71,22 +71,26 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
                   num_completed_exercises: 0,
                   num_correct_exercises: 0,
                   num_assigned_placeholders: 30,
-                  exercises: [3, 5].map do |number|
-                    {
-                      id: kind_of(Integer),
-                      uuid: kind_of(String),
-                      question_id: kind_of(String),
-                      answer_ids: kind_of(Array),
-                      step_number: number,
-                      group_type: kind_of(String),
-                      free_response: nil,
-                      selected_answer_id: nil,
-                      completed: false,
-                      correct: false,
-                      student_ids: kind_of(Array),
-                      student_names: kind_of(Array)
-                    }
-                  end * 10
+                  exercises: contain_exactly(
+                    *(
+                      [3, 5].map do |number|
+                        {
+                          id: kind_of(Integer),
+                          uuid: kind_of(String),
+                          question_id: kind_of(String),
+                          answer_ids: kind_of(Array),
+                          step_number: number,
+                          group_type: kind_of(String),
+                          free_response: nil,
+                          selected_answer_id: nil,
+                          completed: false,
+                          correct: false,
+                          student_ids: kind_of(Array),
+                          student_names: kind_of(Array)
+                        }
+                      end * 10
+                    )
+                  )
                 }
               ]
             }
@@ -149,37 +153,41 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
                   num_completed_exercises: 8,
                   num_correct_exercises: 8,
                   num_assigned_placeholders: 27,
-                  exercises: [3, 5].map do |number|
-                    {
-                      id: kind_of(Integer),
-                      uuid: kind_of(String),
-                      question_id: kind_of(String),
-                      answer_ids: kind_of(Array),
-                      step_number: number,
-                      group_type: kind_of(String),
-                      free_response: nil,
-                      selected_answer_id: nil,
-                      completed: false,
-                      correct: false,
-                      student_ids: kind_of(Array),
-                      student_names: kind_of(Array)
-                    }
-                  end * 9 + [3, 5, 6, 7, 8, 9, 10, 11].map do |number|
-                    {
-                      id: kind_of(Integer),
-                      uuid: kind_of(String),
-                      question_id: kind_of(String),
-                      answer_ids: kind_of(Array),
-                      step_number: number,
-                      group_type: kind_of(String),
-                      free_response: "A sentence explaining all the things!",
-                      selected_answer_id: kind_of(String),
-                      completed: true,
-                      correct: true,
-                      student_ids: kind_of(Array),
-                      student_names: kind_of(Array)
-                    }
-                  end
+                  exercises: contain_exactly(
+                    *(
+                      [3, 5].map do |number|
+                        {
+                          id: kind_of(Integer),
+                          uuid: kind_of(String),
+                          question_id: kind_of(String),
+                          answer_ids: kind_of(Array),
+                          step_number: number,
+                          group_type: kind_of(String),
+                          free_response: nil,
+                          selected_answer_id: nil,
+                          completed: false,
+                          correct: false,
+                          student_ids: kind_of(Array),
+                          student_names: kind_of(Array)
+                        }
+                      end * 9 + [3, 5, 6, 7, 8, 9, 10, 11].map do |number|
+                        {
+                          id: kind_of(Integer),
+                          uuid: kind_of(String),
+                          question_id: kind_of(String),
+                          answer_ids: kind_of(Array),
+                          step_number: number,
+                          group_type: kind_of(String),
+                          free_response: "A sentence explaining all the things!",
+                          selected_answer_id: kind_of(String),
+                          completed: true,
+                          correct: true,
+                          student_ids: kind_of(Array),
+                          student_names: kind_of(Array)
+                        }
+                      end
+                    )
+                  )
                 }
               ]
             }
