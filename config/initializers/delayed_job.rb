@@ -19,7 +19,7 @@ Delayed::Worker.sleep_delay = 1
 Delayed::Worker.default_queue_name = :default
 
 # max_run_time must be longer than the longest-running job
-Delayed::Worker.max_run_time = 4.hours
+Delayed::Worker.max_run_time = 8.hours
 
 # Default queue priorities
 Delayed::Worker.queue_attributes = {
