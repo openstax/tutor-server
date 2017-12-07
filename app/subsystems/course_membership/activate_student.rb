@@ -12,7 +12,11 @@ module CourseMembership
 
       OpenStax::Biglearn::Api.update_rosters(course: student.course)
 
+      period = student.period
       ReassignPublishedPeriodTaskPlans[period: student.period]
+
+      Tasks::UpdatePeriodCaches.perform_later(periods: period)
+
       outputs.student = student
     end
   end

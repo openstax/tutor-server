@@ -23,6 +23,18 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
         access_token: token,
         errata_form_url: 'https://oscms.openstax.org/errata/form',
         tutor_api_url: a_string_starting_with('http'),
+        hypothesis: a_hash_including(
+          host: Rails.application.secrets['hypothesis']['host'],
+          client_id: Rails.application.secrets['hypothesis']['client_id'],
+          api_url: a_string_starting_with('http'),
+          app_url: a_string_starting_with('http'),
+          grant_token: kind_of(String),
+          authority: Rails.application.secrets['hypothesis']['authority']
+        ),
+        feature_flags: a_hash_including(
+          is_highlighting_allowed: false,
+          is_payments_enabled: false
+        ),
         payments: a_hash_including(
           is_enabled: Settings::Payments.payments_enabled,
           js_url: a_string_starting_with('http'),

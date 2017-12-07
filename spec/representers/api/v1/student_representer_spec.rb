@@ -23,7 +23,8 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'payment_due_at' => be_kind_of(String),
       'first_paid_at' => be_kind_of(String),
       'is_refund_pending' => false,
-      'is_refund_allowed' => false
+      'is_refund_allowed' => false,
+      'research_identifier' => student.role.research_identifier
     )
 
     [:first_paid_at, :payment_due_at].each do |date_method|
