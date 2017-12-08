@@ -45,12 +45,14 @@ class GetTpDashboard
         period_cache.as_toc[:books].flat_map do |bk|
           bk[:chapters].flat_map do |ch|
             ch[:pages].map do |page|
-              page.merge due_at: period_cache.due_at, student_ids: period_cache.student_ids
+              page.merge due_at: period_cache.due_at
             end
           end
         end
       end
-      total_students = pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
+      total_students = pgs.flat_map do |pg|
+        pg[:exercises].flat_map { |ex| ex[:student_ids] }
+      end.uniq.size
       not_due_pgs, due_pgs = pgs.partition { |pg| pg[:due_at].nil? || pg[:due_at] > current_time }
 
       task_plan.attributes.symbolize_keys.except(:is_draft, :is_publishing, :is_published).merge({
@@ -67,7 +69,9 @@ class GetTpDashboard
 
   def get_is_trouble(pgs, total_students, past_due)
     pgs.group_by { |pg| pg[:book_location] }.any? do |book_location, pgs|
-      num_students = pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
+      num_students = pgs.flat_map do |pg|
+        pg[:exercises].flat_map { |ex| ex[:student_ids] }
+      end.uniq.size
       next false if num_students < 0.25 * total_students
 
       num_assigned = pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+)

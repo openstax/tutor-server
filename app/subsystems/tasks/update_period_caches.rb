@@ -12,81 +12,82 @@ class Tasks::UpdatePeriodCaches
       .select(:id)
       .where(id: periods.map(&:id))
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
-    period_ids = locked_periods.map(&:id)
 
     # Retry periods that we couldn't lock later
     skipped_periods = periods - locked_periods
     self.class.perform_later(periods: skipped_periods) unless skipped_periods.empty?
 
     # Stop if we couldn't lock any periods at all
-    return if period_ids.empty?
+    return if locked_periods.empty?
 
-    # Get active students IDs
-    student_ids = CourseMembership::Models::Student
-      .joins(:latest_enrollment)
-      .where(latest_enrollment: { course_membership_period_id: period_ids }, dropped_at: nil)
-      .pluck(:id)
-    # Stop if no active students
-    return if student_ids.empty?
+    locked_periods.each do |period|
+      # Get active students IDs
+      student_ids = CourseMembership::Models::Student
+        .joins(:latest_enrollment)
+        .where(latest_enrollment: { course_membership_period_id: period.id }, dropped_at: nil)
+        .pluck(:id)
+      # Stop if no active students
+      next if student_ids.empty?
 
-    # Get relevant TaskCaches
-    task_caches = Tasks::Models::TaskCache
-      .select([ :tasks_task_id, :content_ecosystem_id, :student_ids, :student_names, :as_toc ])
-      .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
-      .preload(
-        :ecosystem,
-        task: {
-          task_plan: { tasking_plans: :target },
-          taskings: { role: { student: { latest_enrollment: :period } } }
-        }
-      )
+      task_cache_query = Tasks::Models::TaskCache
+        .joins(:task)
+        .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
 
-    # Cache results per period for Teacher dashboard Trouble Flag and Performance Forecast
-    grouped_period_task_caches = task_caches.group_by do |task_cache|
-      task = task_cache.task
-      task_plan = task.task_plan
-      preferred_tasking = task.taskings.first
-      period = preferred_tasking.role.student.period
-      preferred_tasking_plan = task_plan.nil? ? nil : task_plan.tasking_plans.find do |tasking_plan|
-        tasking_plan.target == period
+      # Get relevant TaskPlans
+      task_plan_ids = task_cache_query.distinct.pluck('"tasks_tasks"."tasks_task_plan_id"')
+      task_plans = Tasks::Models::TaskPlan.select(:id)
+                                          .where(id: task_plan_ids)
+                                          .preload(:tasking_plans)
+      task_plans << nil if task_plan_ids.any?(&:nil?)
+
+      task_plans.each do |task_plan|
+        # Get relevant TaskCaches
+        task_caches = task_cache_query.select(
+          [ :content_ecosystem_id, :student_ids, :student_names, :as_toc ]
+        ).where(task: { tasks_task_plan_id: task_plan.try!(:id) })
+        task_caches_by_ecosystem_id = task_caches.group_by(&:content_ecosystem_id)
+        ecosystem_ids = task_caches_by_ecosystem_id.keys
+        ecosystems = Content::Models::Ecosystem.select(:id).where(id: ecosystem_ids)
+
+        # Cache results per ecosystem for Teacher dashboard Trouble Flag and Performance Forecast
+        period_caches = ecosystems.map do |ecosystem|
+          task_caches = task_caches_by_ecosystem_id[ecosystem.id]
+
+          build_period_cache(
+            period: period,
+            ecosystem: ecosystem,
+            task_plan: task_plan,
+            task_caches: task_caches
+          )
+        end
+
+        # Update the PeriodCaches
+        columns = [ :opens_at, :due_at, :student_ids, :as_toc ]
+        if task_plan.nil?
+          # activerecord-import surrounds the conflict_target with parens,
+          # which is why the next bit of SQL looks slightly broken
+          Tasks::Models::PeriodCache.import period_caches, validate: false,
+                                                           on_duplicate_key_update: {
+            columns: columns,
+            conflict_target: <<-CONFLICT_SQL.strip_heredoc
+              "course_membership_period_id", "content_ecosystem_id")
+              WHERE ("tasks_task_plan_id" IS NULL
+            CONFLICT_SQL
+          }
+        else
+          Tasks::Models::PeriodCache.import period_caches, validate: false,
+                                                           on_duplicate_key_update: {
+            columns: columns,
+            conflict_target: [
+              :course_membership_period_id, :content_ecosystem_id, :tasks_task_plan_id
+            ]
+          }
+        end
       end
-
-      [ period, task_cache.ecosystem, task_plan, preferred_tasking_plan ]
     end
-
-    period_caches = grouped_period_task_caches
-      .map do |(period, ecosystem, task_plan, tasking_plan), task_caches|
-      build_period_cache(
-        period: period,
-        ecosystem: ecosystem,
-        task_plan: task_plan,
-        tasking_plan: tasking_plan,
-        task_caches: task_caches
-      )
-    end
-
-    # Update the PeriodCaches
-    no_task_plan_period_caches, task_plan_period_caches = period_caches.partition do |period_cache|
-      period_cache.tasks_task_plan_id.nil?
-    end
-    columns = [ :opens_at, :due_at, :student_ids, :as_toc ]
-    Tasks::Models::PeriodCache.import task_plan_period_caches, validate: false,
-                                                               on_duplicate_key_update: {
-      conflict_target: [ :course_membership_period_id, :content_ecosystem_id, :tasks_task_plan_id ],
-      columns: columns
-    }
-    # activerecord-import surrounds the conflict_target with parens,
-    # which is why the next bit of SQL looks slightly broken
-    Tasks::Models::PeriodCache.import no_task_plan_period_caches, validate: false,
-                                                                  on_duplicate_key_update: {
-      columns: columns,
-      conflict_target: <<-CONFLICT_SQL.strip_heredoc
-        "course_membership_period_id", "content_ecosystem_id") WHERE ("tasks_task_plan_id" IS NULL
-      CONFLICT_SQL
-    }
   end
 
-  def build_period_cache(period:, ecosystem:, task_plan:, tasking_plan:, task_caches:)
+  def build_period_cache(period:, ecosystem:, task_plan:, task_caches:)
     tocs = task_caches.map do |task_cache|
       toc = task_cache.as_toc
       toc.merge(
@@ -188,7 +189,7 @@ class Tasks::UpdatePeriodCaches
       books: period_bks
     }
 
-    preferred_task_cache = task_caches.first
+    tasking_plan = task_plan.nil? ? nil : task_plan.tasking_plans.find { |tp| tp.target == period }
     Tasks::Models::PeriodCache.new(
       period: period,
       ecosystem: ecosystem,
