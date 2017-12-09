@@ -41,21 +41,17 @@ class GetTpDashboard
 
     outputs.plans = result.plans.map do |task_plan|
       period_caches = period_caches_by_task_plan_id[task_plan.id] || []
+      total_students = period_caches.flat_map { |pc| pc.student_ids }.uniq.size
       pgs = period_caches.flat_map do |period_cache|
         period_cache.as_toc[:books].flat_map do |bk|
           bk[:chapters].flat_map do |ch|
-            ch[:pages].map do |page|
-              page.merge due_at: period_cache.due_at
-            end
+            ch[:pages].map { |page| page.merge due_at: period_cache.due_at }
           end
         end
       end
-      total_students = pgs.flat_map do |pg|
-        pg[:exercises].flat_map { |ex| ex[:student_ids] }
-      end.uniq.size
       not_due_pgs, due_pgs = pgs.partition { |pg| pg[:due_at].nil? || pg[:due_at] > current_time }
 
-      task_plan.attributes.symbolize_keys.except(:is_draft, :is_publishing, :is_published).merge({
+      task_plan.attributes.symbolize_keys.except(:is_draft, :is_publishing, :is_published).merge(
         is_draft?: task_plan.is_draft?,
         is_publishing?: task_plan.is_publishing?,
         is_published?: task_plan.is_published?,
@@ -63,15 +59,13 @@ class GetTpDashboard
                     get_is_trouble(not_due_pgs, total_students, false),
         shareable_url: run(:get_short_code_url, task_plan, suffix: task_plan.title).outputs.url,
         tasking_plans: task_plan.tasking_plans
-      })
+      )
     end
   end
 
   def get_is_trouble(pgs, total_students, past_due)
     pgs.group_by { |pg| pg[:book_location] }.any? do |book_location, pgs|
-      num_students = pgs.flat_map do |pg|
-        pg[:exercises].flat_map { |ex| ex[:student_ids] }
-      end.uniq.size
+      num_students = pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
       next false if num_students < 0.25 * total_students
 
       num_assigned = pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+)
