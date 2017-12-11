@@ -275,8 +275,8 @@ class PushSalesforceCourseStats
   def courses_to_attached_records
     @courses_to_attached_records ||= begin
       ars = Salesforce::AttachedRecord
-              .without_deleted
               .preload(:salesforce_objects)
+              .reject(&:deleted?)
               .select{|ar| ar.attached_to_class_name == "CourseProfile::Models::Course"}
       ars.map{|ar| [ar.attached_to, ar]}.to_h
     end
