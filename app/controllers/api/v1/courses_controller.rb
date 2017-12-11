@@ -146,9 +146,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def roster
     OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, @course)
-
     roster = GetCourseRoster[course: @course]
-
     respond_with(roster, represent_with: Api::V1::RosterRepresenter)
   end
 

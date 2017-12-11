@@ -21,11 +21,11 @@ module Api::V1
                required: true
              }
 
-    property :role_id,
+    property :entity_role_id,
+             as: :role_id,
              type: String,
              writeable: false,
              readable: true,
-             getter: ->(*) { respond_to?(:role_id) ? role_id : entity_role_id },
              schema_info: {
                required: true
              }

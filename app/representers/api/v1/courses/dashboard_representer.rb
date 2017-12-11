@@ -114,13 +114,15 @@ module Api::V1::Courses
 
     class Teacher < Roar::Decorator
       include Roar::JSON
+      include Representable::Coercion
 
       property :id,
                readable: true,
                writeable: false,
                type: String
 
-      property :role_id,
+      property :entity_role_id,
+               as: :role_id,
                readable: true,
                writeable: false,
                type: String

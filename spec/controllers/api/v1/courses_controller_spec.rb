@@ -525,76 +525,96 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#dashboard' do
     let(:student_user)    { FactoryBot.create(:user) }
     let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
-    let(:student_token)   { FactoryBot.create :doorkeeper_access_token,
-                                               resource_owner_id: student_user.id }
+    let(:student_token)   do
+      FactoryBot.create :doorkeeper_access_token, resource_owner_id: student_user.id
+    end
 
-    let(:teacher_user)    { FactoryBot.create(:user, first_name: 'Bob',
-                                                      last_name: 'Newhart',
-                                                      full_name: 'Bob Newhart') }
+    let(:teacher_user)    do
+      FactoryBot.create :user, first_name: 'Bob',
+                               last_name: 'Newhart',
+                               full_name: 'Bob Newhart'
+    end
     let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let(:teacher_token)   { FactoryBot.create :doorkeeper_access_token,
-                                               resource_owner_id: teacher_user.id }
+    let(:teacher_token)   do
+      FactoryBot.create :doorkeeper_access_token, resource_owner_id: teacher_user.id
+    end
 
     let(:time_zone)       { course.time_zone.to_tz }
-    let!(:reading_task)   { FactoryBot.create(:tasks_task,
-                                               task_type: :reading,
-                                               opens_at: time_zone.now - 1.week,
-                                               due_at: time_zone.now,
-                                               step_types: [:tasks_tasked_reading,
-                                                            :tasks_tasked_exercise,
-                                                            :tasks_tasked_exercise],
-                                               tasked_to: student_role)}
+    let!(:reading_task)   do
+      FactoryBot.create :tasks_task,
+                        task_type: :reading,
+                        opens_at: time_zone.now - 1.week,
+                        due_at: time_zone.now,
+                        step_types: [
+                          :tasks_tasked_reading,
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise
+                        ],
+                        tasked_to: student_role
+    end
 
-    let!(:hw1_task)   { FactoryBot.create(:tasks_task,
-                                           task_type: :homework,
-                                           opens_at: time_zone.now - 1.week,
-                                           due_at: time_zone.now,
-                                           step_types: [:tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise],
-                                           tasked_to: student_role)}
+    let!(:hw1_task)   do
+      FactoryBot.create :tasks_task,
+                        task_type: :homework,
+                        opens_at: time_zone.now - 1.week,
+                        due_at: time_zone.now,
+                        step_types: [
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise
+                        ],
+                        tasked_to: student_role
+    end
 
-    let!(:hw2_task)   { FactoryBot.create(:tasks_task,
-                                           task_type: :homework,
-                                           opens_at: time_zone.now - 1.week,
-                                           due_at: time_zone.now,
-                                           step_types: [:tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise],
-                                           tasked_to: student_role)}
+    let!(:hw2_task)   do
+      FactoryBot.create :tasks_task,
+                        task_type: :homework,
+                        opens_at: time_zone.now - 1.week,
+                        due_at: time_zone.now,
+                        step_types: [
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise
+                        ],
+                        tasked_to: student_role
+    end
 
-    let!(:hw3_task)   { FactoryBot.create(:tasks_task,
-                                           task_type: :homework,
-                                           opens_at: time_zone.now - 1.week,
-                                           due_at: time_zone.now + 2.weeks,
-                                           step_types: [:tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise],
-                                           tasked_to: student_role)}
+    let!(:hw3_task)   do
+      FactoryBot.create :tasks_task,
+                        task_type: :homework,
+                        opens_at: time_zone.now - 1.week,
+                        due_at: time_zone.now + 2.weeks,
+                        step_types: [
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise,
+                          :tasks_tasked_exercise
+                        ],
+                        tasked_to: student_role
+    end
 
     let!(:plan) do
-      FactoryBot.create(:tasks_task_plan, owner: course,
-                                           published_at: time_zone.now - 1.week,
-                                           publish_job_uuid: SecureRandom.uuid)
+      FactoryBot.create :tasks_task_plan, owner: course,
+                                          published_at: time_zone.now - 1.week,
+                                          publish_job_uuid: SecureRandom.uuid
     end
 
     context 'anonymous' do
       it 'raises SecurityTransgression if user is anonymous or not in course' do
-        expect {
+        expect do
           api_get :dashboard, nil, parameters: { id: course.id }
-        }.to raise_error(SecurityTransgression)
+        end.to raise_error(SecurityTransgression)
 
-        expect {
+        expect do
           api_get :dashboard, user_1_token, parameters: { id: course.id }
-        }.to raise_error(SecurityTransgression)
+        end.to raise_error(SecurityTransgression)
       end
     end
 
     context 'not paid' do
       it "422's if needs to pay" do
-        make_payment_required_and_expect_422(course: course, student: student_role.student) {
+        make_payment_required_and_expect_422(course: course, student: student_role.student) do
           api_get :dashboard, student_token, parameters: {id: course.id}
-        }
+        end
       end
     end
 
@@ -809,17 +829,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:student_user)    { FactoryBot.create(:user) }
     let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
     let(:student_token)   { FactoryBot.create :doorkeeper_access_token,
-                                               resource_owner_id: student_user.id }
+                                              resource_owner_id: student_user.id }
 
     let(:student_user_2)  { FactoryBot.create(:user) }
     let!(:student_role_2) { AddUserAsPeriodStudent[user: student_user_2, period: period] }
 
     let(:teacher_user)    { FactoryBot.create(:user, first_name: 'Bob',
-                                                      last_name: 'Newhart',
-                                                      full_name: 'Bob Newhart') }
+                                                     last_name: 'Newhart',
+                                                     full_name: 'Bob Newhart') }
     let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-    let(:teacher_token)   { FactoryBot.create :doorkeeper_access_token,
-                                               resource_owner_id: teacher_user.id }
+    let(:teacher_token)   do
+      FactoryBot.create :doorkeeper_access_token, resource_owner_id: teacher_user.id
+    end
 
     before(:all)         do
       @book = FactoryBot.create :content_book
@@ -1189,57 +1210,72 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           )
 
           expect(roster).to include(
-            teachers: a_collection_containing_exactly(
+            teachers: [
               {
                 id: teacher_role.teacher.id.to_s,
+                course_id: course.id.to_s,
                 role_id: teacher_role.id.to_s,
                 first_name: teacher_user.first_name,
                 last_name: teacher_user.last_name,
+                name: teacher_user.name
               }
-            )
+            ]
           )
 
           expect(roster).to include(
             students: a_collection_containing_exactly(
-              a_hash_including({
+              {
                 id: student.id.to_s,
+                uuid: student.uuid,
                 first_name: student.first_name,
                 last_name: student.last_name,
                 name: student.name,
+                research_identifier: student.role.research_identifier,
                 period_id: period.id.to_s,
                 role_id: student_role.id.to_s,
                 is_active: true,
                 prompt_student_to_pay: true,
                 is_paid: false,
                 is_comped: false,
-                payment_due_at: be_kind_of(String)
-              }),
-              a_hash_including({
+                payment_due_at: be_kind_of(String),
+                is_refund_pending: false,
+                is_refund_allowed: false
+              },
+              {
                 id: student_2.id.to_s,
+                uuid: student_2.uuid,
                 first_name: student_2.first_name,
                 last_name: student_2.last_name,
                 name: student_2.name,
+                research_identifier: student_2.role.research_identifier,
                 period_id: period.id.to_s,
                 role_id: student_role_2.id.to_s,
                 is_active: true,
                 prompt_student_to_pay: false,
                 is_paid: true,
                 is_comped: false,
-                payment_due_at: be_kind_of(String)
-              }),
-              a_hash_including({
+                first_paid_at: be_kind_of(String),
+                payment_due_at: be_kind_of(String),
+                is_refund_pending: false,
+                is_refund_allowed: true
+              },
+              {
                 id: student_3.id.to_s,
+                uuid: student_3.uuid,
                 first_name: student_3.first_name,
                 last_name: student_3.last_name,
                 name: student_3.name,
+                research_identifier: student_3.role.research_identifier,
                 period_id: period_2.id.to_s,
                 role_id: student_role_3.id.to_s,
                 is_active: true,
                 prompt_student_to_pay: false,
                 is_paid: false,
                 is_comped: true,
-                payment_due_at: be_kind_of(String)
-              })
+                payment_due_at: be_kind_of(String),
+                is_refund_pending: false,
+                is_refund_allowed: false
+              }
             )
           )
         end

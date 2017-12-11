@@ -3,7 +3,6 @@ module DashboardRoutineMethods
     base.lev_routine
 
     base.uses_routine ::Tasks::GetTasks, as: :get_tasks
-    base.uses_routine GetCourseTeachers, as: :get_course_teachers
     base.uses_routine CourseMembership::IsCourseTeacher
     base.uses_routine CourseMembership::IsCourseStudent
   end
@@ -25,15 +24,15 @@ module DashboardRoutineMethods
   end
 
   def load_course(course, role_type)
-    teachers = run(:get_course_teachers, course).outputs.teachers
+    teachers = course.teachers.without_deleted.preload(role: { profile: :account })
 
-    outputs[:course] = { id: course.id, name: course.name, teachers: teachers }
+    outputs.course = { id: course.id, name: course.name, teachers: teachers }
   end
 
   def load_tasks(role, role_type, start_at_ntz = nil, end_at_ntz = nil)
     tasks = run(:get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
               .outputs.tasks.reject(&:hidden?)
     tasks = tasks.select(&:past_open?) if role_type != :teacher
-    outputs[:tasks] = tasks
+    outputs.tasks = tasks
   end
 end
