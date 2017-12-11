@@ -52,14 +52,14 @@ class Admin::PeriodsChangeSalesforce
   end
 
   def matching_course_ar
-    @matching_course_ar ||= (-> {
+    @matching_course_ar ||= begin
       course = period.course
 
-      Salesforce::Models::AttachedRecord.where(
+      Salesforce::Models::AttachedRecord.without_deleted.where(
         tutor_gid: course.to_global_id.to_s,
         salesforce_id: change_salesforce_params.salesforce_id
       ).first
-    }).call
+    end
   end
 
   def existing_period_ar
