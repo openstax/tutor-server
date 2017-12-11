@@ -37,5 +37,9 @@ module Salesforce
       @strategy.destroy!
     end
 
+    def deleted?
+      @strategy.deleted?
+    end
+
   end
 end

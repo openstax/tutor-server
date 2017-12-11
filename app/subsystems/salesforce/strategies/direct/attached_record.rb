@@ -6,7 +6,7 @@ module Salesforce
         wraps ::Salesforce::Models::AttachedRecord
         exposes :salesforce_object, :salesforce_id,
                 :attached_to, :attached_to_class_name, :attached_to_id,
-                :destroy!
+                :destroy!, :deleted?
 
         def self.all
           models = ::Salesforce::Models::AttachedRecord.all
