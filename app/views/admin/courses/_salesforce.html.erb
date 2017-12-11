@@ -30,7 +30,7 @@
 
 <% course_ars = Salesforce::Models::AttachedRecord.where(tutor_gid: @course.to_global_id.to_s) %>
 
-<% available_course_sf_object_ids = course_ars.select{|car| !car.deleted? }.map(&:salesforce_id) %>
+<% available_course_sf_object_ids = course_ars.reject(&:deleted?).map(&:salesforce_id) %>
 
 <h4 style="margin-top:30px">Course Info</h4>
 
