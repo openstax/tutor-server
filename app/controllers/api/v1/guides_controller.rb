@@ -18,7 +18,9 @@ module Api
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        guide = GetStudentGuide[role: role(@course, :student)]
+        role = get_role(@course, :student)
+        OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.student)
+        guide = GetStudentGuide[role: role]
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 
@@ -28,7 +30,9 @@ module Api
         #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
-        guide = GetTeacherGuide[role: role(@course, :teacher)]
+        role = get_role(@course, :teacher)
+        OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.teacher)
+        guide = GetTeacherGuide[role: role]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end
 
@@ -38,7 +42,7 @@ module Api
         @course = CourseProfile::Models::Course.find(params[:course_id])
       end
 
-      def role(course, types = :any)
+      def get_role(course, types = :any)
         result = ChooseCourseRole.call(user: current_human_user,
                                        course: course,
                                        allowed_role_type: types,
