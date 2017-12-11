@@ -18,7 +18,7 @@ class Admin::CoursesAddSalesforce
     sf_object = get_salesforce_object_for_id(add_salesforce_params.salesforce_id)
     fatal_error(code: :salesforce_object_does_not_exist) if sf_object.nil?
 
-    new_ar = Salesforce::Models::AttachedRecord.find_or_initialize_by(
+    new_ar = Salesforce::Models::AttachedRecord.without_deleted.find_or_initialize_by(
       tutor_gid: course.to_global_id.to_s,
       salesforce_class_name: sf_object.class.name,
       salesforce_id: sf_object.id
