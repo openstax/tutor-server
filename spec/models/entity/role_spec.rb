@@ -17,8 +17,8 @@ RSpec.describe Entity::Role, type: :model do
   it { is_expected.to validate_uniqueness_of(:research_identifier) }
 
   context 'research_identifier' do
-    it 'is generated before save and is 8 characters long' do
-      expect(role.research_identifier.length).to eq 8
+    it 'is generated before save and is 9 characters long' do
+      expect(role.research_identifier.length).to eq 9
     end
 
     it 'stays the same after multiple saves' do
