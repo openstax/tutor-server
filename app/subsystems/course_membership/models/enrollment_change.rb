@@ -11,8 +11,7 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
 
   validates :profile, presence: true
   validates :period, presence: true
-  validate :same_profile, :same_course, :course_not_ended,
-           :different_period_unless_conflict, :valid_conflict
+  validate :same_profile, :same_course, :course_not_ended, :different_period
 
   def from_period
     enrollment.try!(:period)
@@ -62,21 +61,9 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
     false
   end
 
-  def different_period_unless_conflict
-    return if enrollment.nil? || period.nil? || enrollment.period != period ||
-              conflicting_enrollment.present?
+  def different_period
+    return if enrollment.nil? || period.nil? || enrollment.period != period
     errors.add(:base, 'the given user is already enrolled in the given period')
-    false
-  end
-
-  def valid_conflict
-    return if conflicting_enrollment.nil? ||
-              ( conflicting_enrollment.period.course.is_concept_coach &&
-                ( profile.nil? || conflicting_enrollment.student.role.profile == profile ) &&
-                ( period.nil? ||
-                  ( period.course != conflicting_enrollment.period.course &&
-                    period.course.is_concept_coach ) ) )
-    errors.add(:conflicting_enrollment, 'is invalid')
     false
   end
 

@@ -16,26 +16,10 @@ RSpec.describe GetPerformanceReport, type: :routine do
     let(:user) { FactoryBot.create :user }
     let(:role) { AddUserAsCourseTeacher[user: FactoryBot.create(:user), course: course] }
 
-    context 'non-cc course' do
-      it 'calls GetTpPerformanceReport' do
-        expect_any_instance_of(Tasks::GetTpPerformanceReport).to(
-          receive(:exec).with(course: course)
-        )
+    it 'calls GetPerformanceReport' do
+      expect_any_instance_of(Tasks::GetPerformanceReport).to receive(:exec).with(course: course)
 
-        described_class[course: course, role: role]
-      end
-    end
-
-    context 'cc course' do
-      before(:each) { course.update_attribute(:is_concept_coach, true) }
-
-      it 'calls GetCcPerformanceReport' do
-        expect_any_instance_of(Tasks::GetCcPerformanceReport).to(
-          receive(:exec).with(course: course)
-        )
-
-        described_class[course: course, role: role]
-      end
+      described_class[course: course, role: role]
     end
   end
 

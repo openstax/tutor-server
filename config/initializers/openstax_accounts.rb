@@ -16,9 +16,7 @@ OpenStax::Accounts.configure do |config|
   config.enable_stubbing = ActiveAttr::Typecasting::BooleanTypecaster.new.call(secrets['stub'])
   config.logout_via = :delete
   config.account_user_mapper = MapUsersAccounts
-  config.logout_redirect_url = ->(request) do
-    LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
-  end
+  config.logout_redirect_url = ->(request) { config.default_logout_redirect_url }
   config.return_to_url_approver = ->(url) do
     begin
       uri = Addressable::URI.parse(url)

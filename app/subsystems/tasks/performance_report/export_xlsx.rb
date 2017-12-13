@@ -133,7 +133,7 @@ module Tasks
 
       def save
         success = @package.serialize(@filepath)
-        raise(StandardError, "PerformanceReport::ExportCcXlsx failed") unless success
+        raise(StandardError, "PerformanceReport::ExportXlsx failed") unless success
       end
 
       def write_data_worksheets
@@ -218,7 +218,7 @@ module Tasks
         @helper.merge_and_style(sheet, "D7:F8",
           style!(
             b: true,
-            border: { edges: [:left, :top, :right], :color => '000000', :style => :thin},
+            border: { edges: [:left, :top, :right], color: '000000', style: :thin},
             alignment: {horizontal: :center, vertical: :center, wrap_text: true}
           )
         )
@@ -230,7 +230,7 @@ module Tasks
           ["Course Average*\n(Homework Score)", "Homework\nProgress", "Reading\nProgress"].map{|text| [text, style: @bold]}
 
         center_bold_R_style = style!(
-          b: true, border: {edges: [:right], :color => '000000', :style => :thin},
+          b: true, border: {edges: [:right], color: '000000', style: :thin},
           alignment: {horizontal: :center, vertical: :center, wrap_text: true})
 
         report[:data_headings].count.times do
@@ -247,7 +247,7 @@ module Tasks
 
         center_style =   style!(alignment: {horizontal: :center}) # TODO have style! cache styles
         center_style_R = style!(alignment: {horizontal: :center},
-                                border: {edges: [:right], :color => '000000', :style => :thin})
+                                border: {edges: [:right], color: '000000', style: :thin})
 
         report[:data_headings].count.times do
           bottom_data_heading_columns.push("", "")
@@ -263,7 +263,7 @@ module Tasks
 
         # Final averages sub headings
         @helper.merge_and_style(sheet, "D9:D10", style!(
-          b: true, bg_color: 'C9F0F8', border: {edges: [:left], :color => '000000', :style => :thin},
+          b: true, bg_color: 'C9F0F8', border: {edges: [:left], color: '000000', style: :thin},
           alignment: {horizontal: :center, vertical: :center, wrap_text: true}))
         @helper.merge_and_style(sheet, "E9:E10", center_bold_style)
         @helper.merge_and_style(sheet, "F9:F10", center_bold_R_style)

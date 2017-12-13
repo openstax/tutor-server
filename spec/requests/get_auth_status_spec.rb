@@ -65,32 +65,6 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
         courses: []
       )
     end
-
-    it 'sets cors headers' do
-      get('/auth/status')
-      expect(response.headers.keys).to include('Access-Control-Allow-Origin',
-                                               'Access-Control-Allow-Methods',
-                                               'Access-Control-Request-Method',
-                                               'Access-Control-Allow-Headers',
-                                               'Access-Control-Allow-Credentials')
-    end
-
-    it 'returns blank allow-origin if given one doesnt match' do
-      get("/auth/status")
-      expect(response).to have_http_status(:success)
-      expect(response.headers['Access-Control-Allow-Origin']).to eq('')
-    end
-
-    it 'should reply to a CORS OPTIONS request' do
-      origin = Rails.application.secrets.cc_origins.first + '/foo/bar'
-      # It's difficult to test an OPTIONS request
-      # reset and __send__ hacks from https://github.com/rspec/rspec-rails/issues/925
-      reset!
-      integration_session.__send__ :process, 'OPTIONS', '/auth/status', nil, \
-        {'HTTP_ORIGIN' => origin, 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET'}
-      expect(response.headers['Access-Control-Allow-Origin']).to eq(origin)
-      expect(response.headers['Access-Control-Allow-Methods']).to eq 'GET, OPTIONS'
-    end
   end
 
 end

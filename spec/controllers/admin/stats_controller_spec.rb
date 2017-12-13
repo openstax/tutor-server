@@ -117,17 +117,5 @@ RSpec.describe Admin::StatsController, type: :controller do
         end
       end
     end
-
-    context "GET #concept_coach" do
-      let(:tasks)     { 3.times.map { FactoryBot.create :tasks_task, task_type: :concept_coach } }
-      let!(:cc_tasks) do
-        tasks.map{ |task| FactoryBot.create :tasks_concept_coach_task, task: task }
-      end
-
-      it "returns http success" do
-        get :concept_coach
-        expect(response).to have_http_status(:success)
-      end
-    end
   end
 end

@@ -3,33 +3,20 @@
 # We rely on the origin checking to prevent unauthorized sites from getting the user access token
 class AuthController < ApplicationController
 
-  before_filter :require_contracts, only: :iframe, unless: -> { current_user.is_anonymous? }
-
-  # Unlike other controllers, these cors headers allows cookies via the
-  # Access-Control-Allow-Credentials header
-  before_filter :set_cors_headers, only: [:status, :cors_preflight_check, :logout]
-
   # If a user's signed in make sure they've agreed to contracts
-  before_filter :require_contracts, only: :popup, unless: -> { current_user.is_anonymous? }
+  before_filter :require_contracts, only: [ :iframe, :popup ],
+                                    unless: -> { current_user.is_anonymous? }
 
   # Allow accessing iframe methods from inside an iframe
   before_filter :allow_iframe_access, only: [:logout]
 
   # Methods handle returning login status differently than the standard authenticate_user! filter
-  skip_before_filter :authenticate_user!,
-                     only: [:status, :cors_preflight_check, :popup, :logout]
+  skip_before_filter :authenticate_user!, only: [:status, :popup, :logout]
 
   # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors or iframe
-  skip_before_action :verify_authenticity_token,
-                     only: [:status, :cors_preflight_check, :popup, :logout]
+  skip_before_action :verify_authenticity_token, only: [:status, :popup, :logout]
 
   layout false
-
-  # Requested by an OPTIONS request type
-  def cors_preflight_check # the other CORS headers are set by the before_filter
-    headers['Access-Control-Max-Age'] = '1728000'
-    render text: '', content_type: 'text/plain'
-  end
 
   def status
     render json: user_status_update
@@ -81,21 +68,8 @@ class AuthController < ApplicationController
     GetUserTermsInfos[current_user].reject(&:is_signed).empty?
   end
 
-  def set_cors_headers
-    headers['Access-Control-Allow-Origin']   = validated_cors_origin
-    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # No PUT/POST/DELETE access
-    headers['Access-Control-Request-Method'] = '*'
-    headers['Access-Control-Allow-Credentials'] = 'true'
-    headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, ' +
-                                               'Content-Type, Accept, Authorization'
-  end
-
   def strategy
     @strategy ||= Doorkeeper::Server.new(self).token_request 'session'
-  end
-
-  def validated_cors_origin
-    OpenStax::Api.configuration.validate_cors_origin[request] ? request.headers["HTTP_ORIGIN"] : ''
   end
 
   def redirect_to_login_url

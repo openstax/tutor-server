@@ -1,5 +1,5 @@
 module Tasks
-  class GetTpPerformanceReport
+  class GetPerformanceReport
     include PerformanceReportRoutine
 
     # Overall average score and heading stats do not include dropped student data

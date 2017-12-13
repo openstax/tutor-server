@@ -56,8 +56,6 @@ class Demo::Books < Demo::Base
         description: book_config.default_course_name,
         webview_url: book_config.webview_url,
         pdf_url: book_config.pdf_url,
-        is_tutor: book_config.is_tutor,
-        is_concept_coach: book_config.is_concept_coach,
         is_available: true,
         content_ecosystem_id: ecosystem.id
       ]

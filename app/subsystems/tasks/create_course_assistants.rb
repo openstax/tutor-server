@@ -4,8 +4,6 @@ class Tasks::CreateCourseAssistants
   protected
 
   def exec(course:)
-    return if course.is_concept_coach
-
     find_or_create_course_assistant(
       course: course,
       assistant_name: "Homework Assistant",

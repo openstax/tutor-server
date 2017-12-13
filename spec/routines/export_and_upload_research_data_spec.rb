@@ -117,8 +117,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
     before(:each) do
       cc_tasks = 2.times.map do
         FactoryBot.create :tasks_task, task_type: :concept_coach,
-                                        step_types: [:tasks_tasked_exercise],
-                                        num_random_taskings: 1
+                                       step_types: [:tasks_tasked_exercise],
+                                       num_random_taskings: 1
       end
 
       reading_task = FactoryBot.create :tasks_task, task_type: :reading,

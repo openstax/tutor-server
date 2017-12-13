@@ -54,10 +54,7 @@
   <div class="form-group">
     <%= f.label :catalog_offering_id, 'Catalog Offering' %>
     <%= catalog_offering_select_options = @catalog_offerings.map do |co|
-          attrs = [co.salesforce_book_name, co.id,
-                   {'data-appearance_code' => co.appearance_code}]
-          attrs.last.merge!('data-is_concept_coach' => 1) if co.is_concept_coach
-          attrs
+          [ co.salesforce_book_name, co.id, {'data-appearance_code' => co.appearance_code} ]
         end
 
         f.select :catalog_offering_id,

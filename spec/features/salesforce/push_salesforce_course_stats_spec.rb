@@ -31,7 +31,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                        year: 2017,
                        starts_at: Chronic.parse("January 1, 2017"),
                        offering: chemistry_offering,
-                       is_concept_coach: false,
                        estimated_student_count: 42,
                        does_cost: true,
                        uuid: @uuids.shift
@@ -190,7 +189,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                            year: 2017,
                            starts_at: Chronic.parse("January 1, 2017"),
                            offering: chemistry_offering,
-                           is_concept_coach: false,
                            uuid: @uuids.shift
       AddUserAsCourseTeacher[course: other_course, user: user_sf_a]
 
@@ -300,7 +298,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   def create_osa(ia, course, contact)
     OpenStax::Salesforce::Remote::OsAncillary.new(
       individual_adoption_id: ia.id,
-      product: course.is_concept_coach ? "Concept Coach" : "Tutor",
+      product: "Tutor",
       contact_id: contact.id,
       course_uuid: course.uuid,
       term: "Spring"

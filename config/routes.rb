@@ -54,7 +54,6 @@ Rails.application.routes.draw do
 
   # User information and remote log in/out
   namespace :auth do
-    match :status, action: :cors_preflight_check, via: [:options]
     get :status
     match :popup, via: [:get, :post], as: :authenticate_via_popup
     get :logout, as: :logout_via_popup
@@ -126,17 +125,9 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :cc do
-      namespace :tasks do
-        get :':cnx_book_id/:cnx_page_id', action: :show
-        get :':course_id/:cnx_page_id/stats', action: :stats
-      end
-    end
-
     resources :courses, only: [:create, :show, :update] do
       member do
         get :'dashboard(/role/:role_id)', action: :dashboard
-        get :'cc/dashboard(/role/:role_id)', action: :cc_dashboard
         get :roster
         post :clone
 
@@ -322,7 +313,6 @@ Rails.application.routes.draw do
       get :courses
       get :excluded_exercises
       post :excluded_exercises_to_csv
-      get :concept_coach
     end
 
     resources :tags, only: [:index, :edit, :update, :show]
@@ -367,7 +357,6 @@ Rails.application.routes.draw do
     namespace :stats do
       get :courses
       get :excluded_exercises
-      get :concept_coach
     end
 
     resources :tags, only: [:index, :show]

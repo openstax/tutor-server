@@ -15,7 +15,7 @@ class CreateCourse
   uses_routine CourseProfile::ClaimPreviewCourse, as: :claim_preview_course,
                                                   translations: { outputs: { type: :verbatim } }
 
-  def exec(name:, is_preview:, is_college: nil, is_test: false, is_concept_coach: nil,
+  def exec(name:, is_preview:, is_college: nil, is_test: false,
            term: nil, year: nil, num_sections: 0, catalog_offering: nil, appearance_code: nil,
            starts_at: nil, ends_at: nil, school: nil, time_zone: nil, cloned_from: nil,
            default_open_time: nil, default_due_time: nil, estimated_student_count: nil,
@@ -34,14 +34,7 @@ class CreateCourse
       ) if term.blank? || year.blank?
     end
 
-    is_concept_coach = catalog_offering.try!(:is_concept_coach) if is_concept_coach.nil?
     does_cost = (catalog_offering.try!(:does_cost) || false) if does_cost.nil?
-
-    fatal_error(
-      code: :is_concept_coach_blank,
-      message: 'You must provide at least one of the following 2 options: ' +
-               ':is_concept_coach or :catalog_offering'
-    ) if is_concept_coach.nil?
 
     # Convert time_zone to a model
     # if it already is and has an associated course,
@@ -58,7 +51,6 @@ class CreateCourse
       :create_course,
       name: name,
       is_college: is_college,
-      is_concept_coach: is_concept_coach,
       is_test: is_test,
       is_preview: is_preview,
       does_cost: does_cost,

@@ -2,7 +2,7 @@ module Tasks
   class ExportPerformanceReport
     lev_routine express_output: :filepath
 
-    uses_routine GetPerformanceReport,
+    uses_routine ::GetPerformanceReport,
       translations: { outputs: { type: :verbatim } },
       as: :get_performance_report
 
@@ -34,8 +34,7 @@ module Tasks
     private
 
     def generate_temp_export_file!(course, format)
-      is_cc = course.is_concept_coach
-      klass = "Tasks::PerformanceReport::Export#{is_cc ? 'Cc' : ''}#{format.to_s.camelize}"
+      klass = "Tasks::PerformanceReport::Export#{format.to_s.camelize}"
       exporter = klass.constantize
       filename = [FilenameSanitizer.sanitize(course.name.first(200)),
                   'Scores',

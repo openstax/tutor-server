@@ -105,55 +105,9 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine do
       end
     end
 
-    context 'in a different Tutor course' do
+    context 'in a different course' do
       let!(:role) do
         AddUserAsPeriodStudent[user: user, period: period_3]
-      end
-
-      it 'creates an EnrollmentChange with a nil conflicting_period' do
-        result = nil
-        expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
-        expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period).to be_nil
-        expect(result.outputs.enrollment_change.status).to eq :pending
-        expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
-        expect(result.outputs.enrollment_change.conflicting_period).to be_nil
-      end
-    end
-
-    context 'in a different CC course with the same book' do
-      let!(:role) do
-        AddUserAsPeriodStudent[user: user, period: period_3]
-      end
-
-      before      do
-        course_1.update_attribute :is_concept_coach, true
-        course_2.update_attribute :is_concept_coach, true
-      end
-
-      it 'creates an EnrollmentChange with a conflicting_period' do
-        result = nil
-        expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
-        expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period).to be_nil
-        expect(result.outputs.enrollment_change.status).to eq :pending
-        expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
-        expect(result.outputs.enrollment_change.conflicting_period).to(
-          eq CourseMembership::Period.new(strategy: role.student.latest_enrollment.period.wrap)
-        )
-      end
-    end
-
-    context 'in a different CC course with a different book' do
-      let!(:role)       do
-        AddUserAsPeriodStudent[user: user, period: period_4]
-      end
-
-      before      do
-        course_1.update_attribute :is_concept_coach, true
-        course_3.update_attribute :is_concept_coach, true
       end
 
       it 'creates an EnrollmentChange with a nil conflicting_period' do

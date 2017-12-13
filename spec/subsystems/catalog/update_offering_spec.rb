@@ -19,8 +19,8 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
     {
       salesforce_book_name: 'new_book',
       appearance_code: 'new',
-      is_tutor: true,
-      is_concept_coach: false,
+      is_tutor: false,
+      is_concept_coach: true,
       is_available: true,
       title: 'New Book',
       description: 'Newest of the new',

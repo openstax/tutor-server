@@ -51,7 +51,7 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
                                                                 ecosystem: ecosystem }
 
   let(:concept_coach_tag)    { FactoryBot.create :content_tag, value: 'ost-type:concept-coach',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:untagged_exercise)         { FactoryBot.create :content_exercise, page: page }
 
@@ -136,10 +136,6 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
 
     it 'imports all exercises into the all exercises pool' do
       expect(Set.new page.all_exercises_pool.exercises).to eq all_exercises_set
-    end
-
-    it 'imports simple cc exercises into the cc exercises pool' do
-      expect(page.concept_coach_pool.exercises).to eq [concept_coach_exercise]
     end
 
     it 'imports simple exercises that don\'t require context into the practice widget pool' do

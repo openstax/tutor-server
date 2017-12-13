@@ -13,7 +13,6 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         year: Time.current.year,
         is_test: false,
         is_preview: false,
-        is_concept_coach: false,
         is_college: true,
         num_sections: 0,
         catalog_offering_id: catalog_offering.id
@@ -40,7 +39,6 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         year: Time.current.year,
         is_test: false,
         is_preview: false,
-        is_concept_coach: false,
         is_college: true,
         num_sections: 0,
         catalog_offering_id: catalog_offering.id,
@@ -64,7 +62,6 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         ends_at: ends_at,
         is_test: false,
         is_preview: false,
-        is_concept_coach: false,
         is_college: true,
         num_sections: 0,
         catalog_offering_id: catalog_offering.id
@@ -83,7 +80,6 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
         year: Time.current.year,
         is_test: false,
         is_preview: false,
-        is_concept_coach: false,
         is_college: true,
         num_sections: 2,
         catalog_offering_id: catalog_offering.id
