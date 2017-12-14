@@ -119,6 +119,8 @@ class Lms::SendCourseScores
   end
 
   def send_errors_to_devs
+    return if @errors.empty?
+
     DevMailer.inspect_object(
       object: {
         course: @course.id,
