@@ -141,8 +141,8 @@ class ExportAndUploadResearchData
               url
             ]
 
-            row.push(*(
-              case type
+            row.push(
+              *case type
               when 'Exercise'
                 [
                   url.gsub("org", "org/api") + ".json",
@@ -158,7 +158,7 @@ class ExportAndUploadResearchData
               else
                 [ nil ] * 5
               end
-            ))
+            )
 
             file << row
           rescue StandardError => e
