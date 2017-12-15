@@ -124,13 +124,13 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         teachers: [
           Hashie::Mash.new({
             id: '42',
-            role_id: '43',
+            entity_role_id: '43',
             first_name: 'Andrew',
             last_name: 'Garcia'
           }),
           Hashie::Mash.new({
             id: '44',
-            role_id: '45',
+            entity_role_id: '45',
             first_name: 'Bob',
             last_name: 'Newhart'
           })

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171205195424) do
+ActiveRecord::Schema.define(version: 20171213165746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20171205195424) do
   create_table "catalog_offerings", force: :cascade do |t|
     t.string   "salesforce_book_name",                 null: false
     t.integer  "content_ecosystem_id"
-    t.boolean  "is_tutor",             default: false, null: false
+    t.boolean  "is_tutor",             default: true,  null: false
     t.boolean  "is_concept_coach",     default: false, null: false
     t.string   "description",                          null: false
     t.string   "webview_url",                          null: false
@@ -320,7 +320,7 @@ ActiveRecord::Schema.define(version: 20171205195424) do
     t.string   "name",                                                                       null: false
     t.datetime "created_at",                                                                 null: false
     t.datetime "updated_at",                                                                 null: false
-    t.boolean  "is_concept_coach",                                                           null: false
+    t.boolean  "is_concept_coach",                             default: false,               null: false
     t.string   "teach_token",                                                                null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"

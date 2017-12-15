@@ -5,7 +5,7 @@ RSpec.describe Api::V1::ErrorRepresenter, type: :representer do
     {
       "is_fatal"=>true,
       "code"=>"exception",
-      "message"=>"undefined local variable or method `name' for #<Tasks::GetCcPerformanceReport:0x007f5fff1a7f00>",
+      "message"=>"undefined local variable or method `name' for #<Tasks::GetPerformanceReport:0x007f5fff1a7f00>",
       "data"=>"blah blah"
     }
   }

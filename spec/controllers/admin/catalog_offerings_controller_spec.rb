@@ -59,14 +59,15 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
     end
 
     it 'can update an offering' do
-      expect(offering.is_tutor).to be false
+      expect(offering.is_tutor).to be true
       expect(offering.is_concept_coach).to be false
       expect(offering.does_cost).to be false
-      response = put :update, { id: offering.id,
-                       offering: offering.attributes.merge({'is_tutor' => 't', 'is_concept_coach' => 't', 'does_cost' => 't' }) }
+      response = put :update, id: offering.id, offering: offering.attributes.merge(
+        'is_tutor' => 'f', 'is_concept_coach' => 't', 'does_cost' => 't'
+      )
       expect(response).to redirect_to action: 'index'
       offering.reload
-      expect(offering.is_tutor).to be true
+      expect(offering.is_tutor).to be false
       expect(offering.is_concept_coach).to be true
       expect(offering.does_cost).to be true
     end

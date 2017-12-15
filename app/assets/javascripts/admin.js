@@ -108,13 +108,9 @@ $(document).ready(function() {
     var offering = $('#course_catalog_offering_id option:selected').first();
     if (offering.prop('value')) {
       $('#course_appearance_code').prop('placeholder', offering.attr('data-appearance_code'));
-      $('#course_is_concept_coach').prop('disabled', true);
-      $('#course_is_concept_coach').prop('checked',
-                                         offering.attr('data-is_concept_coach') == '1');
     }
     else {
       $('#course_appearance_code').prop('placeholder', '');
-      $('#course_is_concept_coach').prop('disabled', false);
     }
   }
   $('#course_catalog_offering_id').change(updateCourseForm);

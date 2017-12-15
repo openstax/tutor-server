@@ -4,7 +4,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     :name, :is_preview, :num_sections, :catalog_offering_id
   ]
 
-  before_filter :get_course, only: [:show, :update, :dashboard, :cc_dashboard, :roster, :clone]
+  before_filter :get_course, only: [:show, :update, :dashboard, :roster, :clone]
   before_filter :error_if_student_and_needs_to_pay, only: [:dashboard]
 
   resource_description do
@@ -113,29 +113,13 @@ class Api::V1::CoursesController < Api::V1::ApiController
     end_at = DateTimeUtilities.from_s(params[:end_at])
     end_at_ntz = DateTimeUtilities.remove_tz(end_at)
 
-    result = GetTpDashboard.call(course: @course,
-                                 role: get_course_role(course: @course),
-                                 start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
+    result = GetDashboard.call(course: @course,
+                               role: get_course_role(course: @course),
+                               start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
 
     render_api_errors(result.errors) || respond_with(
       result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter,
                       user_options: { exclude_job_info: true }
-    )
-  end
-
-  api :GET, '/courses/:course_id/cc/dashboard(/role/:role_id)',
-            'Gets dashboard information for a given CC course.'
-  description <<-EOS
-    Possible error codes:
-      - non_cc_course
-
-    #{json_schema(Api::V1::Courses::Cc::DashboardRepresenter, include: :readable)}
-  EOS
-  def cc_dashboard
-    result = GetCcDashboard.call(course: @course, role: get_course_role(course: @course))
-
-    render_api_errors(result.errors) || respond_with(
-      result.outputs, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
     )
   end
 
@@ -146,9 +130,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def roster
     OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, @course)
-
     roster = GetCourseRoster[course: @course]
-
     respond_with(roster, represent_with: Api::V1::RosterRepresenter)
   end
 

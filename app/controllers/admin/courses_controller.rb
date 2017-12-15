@@ -210,7 +210,6 @@ class Admin::CoursesController < Admin::BaseController
     current_time = Time.current
 
     @course = CourseProfile::Models::Course.new(
-      is_concept_coach: false,
       is_college: true,
       term: 'demo',
       year: current_time.year,

@@ -20,7 +20,6 @@ module Api::V1
                                                  appearance_code: 'appearance override',
                                                  offering: catalog_offering,
                                                  is_preview: true,
-                                                 is_concept_coach: true,
                                                  is_college: false,
                                                  cloned_from: original_course
     end
@@ -75,7 +74,7 @@ module Api::V1
     end
 
     it 'shows whether or not the course is a concept coach course' do
-      expect(represented['is_concept_coach']).to eq true
+      expect(represented['is_concept_coach']).to eq false
     end
 
     it 'shows whether or not it is a college course, defaulting to true' do

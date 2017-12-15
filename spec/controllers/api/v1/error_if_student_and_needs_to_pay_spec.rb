@@ -1,9 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay', type: :controller, api: true, version: :v1 do
+RSpec.describe 'Api::V1::ApiController#error_if_student_and_needs_to_pay',
+               type: :controller, api: true, version: :v1 do
 
   controller(Api::V1::ApiController) do
-    skip_filter *(_process_action_callbacks.map(&:filter))
+    skip_filter *_process_action_callbacks.map(&:filter)
     before_filter :set_course_or_student
     before_filter :error_if_student_and_needs_to_pay
 

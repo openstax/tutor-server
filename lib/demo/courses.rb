@@ -62,7 +62,6 @@ class Demo::Courses < Demo::Base
         catalog_offering: catalog_offering,
         is_college: is_college,
         is_preview: false,
-        is_concept_coach: false,
         is_test: true,
         starts_at: starts_at,
         ends_at: ends_at,

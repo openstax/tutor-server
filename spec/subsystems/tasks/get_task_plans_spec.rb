@@ -14,7 +14,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     expect(out[:trouble_plan_ids]).to be_nil
   end
 
-  # TODO: Move to GetTpDashboard spec
+  # TODO: Move to GetDashboard spec
   xit 'can return the task_plan ids for which there is trouble' do
     out = described_class.call(owner: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3

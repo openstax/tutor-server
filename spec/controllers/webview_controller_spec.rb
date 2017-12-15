@@ -24,11 +24,6 @@ RSpec.describe WebviewController, type: :controller do
       expect(response).to redirect_to(dashboard_path)
     end
 
-    it 'redirect to CC landing page when param set' do
-      get :home, cc: "1"
-      expect(response).to redirect_to('http://cc.openstax.org')
-    end
-
     it 'redirects unsupported browsers to message' do
       request.headers.merge! 'User-Agent': unsupported_ua
       get :home

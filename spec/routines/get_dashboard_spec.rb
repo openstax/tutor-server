@@ -1,20 +1,22 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe GetTpDashboard, type: :routine do
+RSpec.describe GetDashboard, type: :routine do
 
   let(:course)         { FactoryBot.create :course_profile_course, name: 'Physics 101' }
   let(:period)         { FactoryBot.create :course_membership_period, course: course }
 
   let(:student_user)   { FactoryBot.create(:user) }
-  let(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period)
-                                               .outputs.role }
+  let(:student_role)   do
+    AddUserAsPeriodStudent.call(user: student_user, period: period).outputs.role
+  end
 
-  let(:teacher_user)   { FactoryBot.create(:user, first_name: 'Bob',
-                                                   last_name: 'Newhart',
-                                                   full_name: 'Bob Newhart') }
-  let!(:teacher_role)  { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
-                                               .outputs.role }
+  let(:teacher_user)   do
+    FactoryBot.create(:user, first_name: 'Bob', last_name: 'Newhart', full_name: 'Bob Newhart')
+  end
+  let!(:teacher_role)  do
+    AddUserAsCourseTeacher.call(user: teacher_user, course: course).outputs.role
+  end
 
   let!(:hidden_reading_task) do
     FactoryBot.create(:tasks_task,
@@ -68,20 +70,14 @@ RSpec.describe GetTpDashboard, type: :routine do
         course: {
           id: course.id,
           name: 'Physics 101',
-          teachers: [
-            { id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart' }
-          ]
+          teachers: [ teacher_role.teacher ]
         },
         role: {
           id: student_role.id,
           type: 'student'
         },
-        tasks: a_collection_including(
-          deleted_reading_task, reading_task # the un-opened homework_task is not included
-        )
+        # the un-opened homework_task is not included
+        tasks: a_collection_including(deleted_reading_task, reading_task)
       )
     end
 
@@ -92,14 +88,7 @@ RSpec.describe GetTpDashboard, type: :routine do
         course: {
           id: course.id,
           name: 'Physics 101',
-          teachers: [
-            {
-              id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart'
-            }
-          ]
+          teachers: [ teacher_role.teacher ]
         },
         role: {
           id: teacher_role.id,
@@ -141,12 +130,7 @@ RSpec.describe GetTpDashboard, type: :routine do
         course: {
           id: course.id,
           name: 'Physics 101',
-          teachers: [
-            { id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart' }
-          ]
+          teachers: [ teacher_role.teacher ]
         },
         role: {
           id: student_role.id,
@@ -166,14 +150,7 @@ RSpec.describe GetTpDashboard, type: :routine do
         course: {
           id: course.id,
           name: 'Physics 101',
-          teachers: [
-            {
-              id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart'
-            }
-          ]
+          teachers: [ teacher_role.teacher ]
         },
         role: {
           id: teacher_role.id,

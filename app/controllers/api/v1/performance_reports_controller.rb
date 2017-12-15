@@ -39,7 +39,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
   EOS
   def index
     course = CourseProfile::Models::Course.find(params[:id])
-    preport = GetPerformanceReport[course: course, role: get_course_role(course: course)]
+    preport = Tasks::GetPerformanceReport[course: course, role: get_course_role(course: course)]
 
     respond_with(preport, represent_with: Api::V1::PerformanceReportRepresenter)
   end

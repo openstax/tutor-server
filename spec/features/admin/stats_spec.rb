@@ -94,34 +94,4 @@ RSpec.feature 'admin stats' do
       expect(page).to have_content(1)
     end
   end
-
-  context 'visiting the concept coach stats page' do
-    let(:period)       { FactoryBot.create :course_membership_period }
-
-    let(:student_role) do
-      user = FactoryBot.create :user
-      AddUserAsPeriodStudent[period: period, user: user]
-    end
-
-    let(:tasks)        { 3.times.map { FactoryBot.create :tasks_task, task_type: :concept_coach } }
-
-    let!(:cc_tasks)     do
-      tasks.map do |task|
-        FactoryBot.create :tasks_concept_coach_task, task: task, role: student_role
-      end
-    end
-
-    scenario 'displays concept coach statistics' do
-      visit admin_stats_concept_coach_path
-
-      expect(page).to have_content('Concept Coach Stats')
-      cc_tasks.each do |cc_task|
-        expect(page).to have_content(cc_task.page.title)
-        expect(page).to have_content(cc_task.task.task_steps.size)
-      end
-
-      expect(page).to have_content(cc_tasks.size)
-      expect(page).to have_content(0)
-    end
-  end
 end

@@ -79,7 +79,6 @@ RSpec.describe Admin::CoursesController, type: :controller do
         year: Time.current.year,
         is_test: false,
         is_preview: false,
-        is_concept_coach: false,
         is_college: true,
         num_sections: num_sections,
         catalog_offering_id: FactoryBot.create(:catalog_offering).id

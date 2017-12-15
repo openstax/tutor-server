@@ -41,28 +41,6 @@ class CourseMembership::CreateEnrollmentChange
 
     course_roles, other_roles = student_roles.partition { |role| role.student.course == course }
 
-    if course.is_concept_coach
-      # Detect conflicting concept coach courses (other CC courses that use the same book)
-      # If any conflicts are detected, simply display an alert
-      same_book_other_roles = other_roles.select do |role|
-        other_course = role.student.course
-        next false unless other_course.is_concept_coach
-
-        other_ecosystem = run(:get_ecosystem, course: other_course).outputs.ecosystem
-        next false if other_ecosystem.nil?
-
-        other_ecosystem.books.any? { |book| book.uuid == course_book_uuid }
-      end
-
-      same_book_other_enrollments = same_book_other_roles.map do |role|
-        role.student.latest_enrollment
-      end
-
-      latest_other_enrollment = same_book_other_enrollments.max_by(&:created_at)
-    else
-      latest_other_enrollment = nil
-    end
-
     if course_roles.any?
       # We consider that your most recent role in a course is always the active one
       student = course_roles.max_by(&:created_at).student
@@ -73,23 +51,17 @@ class CourseMembership::CreateEnrollmentChange
 
       enrollment = student.latest_enrollment
 
-      conflicting_enrollment = latest_other_enrollment \
-        if latest_other_enrollment.present? &&
-           latest_other_enrollment.created_at >= enrollment.created_at
-
       fatal_error(code: :already_enrolled, message: 'You are already enrolled in the course') \
-        if enrollment.period.id == period.id && conflicting_enrollment.nil?
+        if enrollment.period.id == period.id
     else
       enrollment = nil
-      conflicting_enrollment = latest_other_enrollment
     end
 
     enrollment_change_model = CourseMembership::Models::EnrollmentChange.create(
       user_profile_id: user.id,
       enrollment: enrollment,
       period: period.to_model,
-      requires_enrollee_approval: requires_enrollee_approval,
-      conflicting_enrollment: conflicting_enrollment
+      requires_enrollee_approval: requires_enrollee_approval
     )
     transfer_errors_from(enrollment_change_model, {type: :verbatim}, true)
 

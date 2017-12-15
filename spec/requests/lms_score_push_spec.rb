@@ -149,7 +149,7 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
       })
     end
 
-    allow(Tasks::GetTpPerformanceReport).to receive(:[]) { report }
+    allow(Tasks::GetPerformanceReport).to receive(:[]) { report }
   end
 
 end

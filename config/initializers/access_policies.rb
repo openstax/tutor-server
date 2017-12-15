@@ -15,8 +15,6 @@ OSU::AccessPolicy.register(Jobba::Status, JobAccessPolicy)
 OSU::AccessPolicy.register(CourseMembership::Period, PeriodAccessPolicy)
 OSU::AccessPolicy.register(CourseMembership::Models::Period, PeriodAccessPolicy)
 OSU::AccessPolicy.register(CourseMembership::EnrollmentChange, EnrollmentChangeAccessPolicy)
-OSU::AccessPolicy.register(Tasks::Models::ConceptCoachTask, Cc::TaskAccessPolicy)
 OSU::AccessPolicy.register(Catalog::Models::Offering, OfferingAccessPolicy)
 OSU::AccessPolicy.register(TrackTutorOnboardingEvent, TrackTutorOnboardingEventPolicy)
 OSU::AccessPolicy.register(OpenStax::Payments::FakePurchasedItem, AllowAllAccessPolicy)
-

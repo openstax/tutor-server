@@ -54,11 +54,10 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   end
 
   context 'with a conflicting period' do
-    let(:course_2) { FactoryBot.create :course_profile_course, is_concept_coach: true }
+    let(:course_2) { FactoryBot.create :course_profile_course }
     let(:period_3) { FactoryBot.create :course_membership_period, course: course_2 }
 
     before do
-      course.update_attribute :is_concept_coach, true
       student = AddUserAsPeriodStudent[user: user, period: period_3].student
       enrollment_change.to_model.update_attribute :conflicting_enrollment, student.latest_enrollment
     end

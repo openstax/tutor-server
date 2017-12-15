@@ -1,4 +1,4 @@
-class GetTpDashboard
+class GetDashboard
 
   include DashboardRoutineMethods
 
@@ -8,11 +8,6 @@ class GetTpDashboard
   protected
 
   def exec(course:, role:, start_at_ntz: nil, end_at_ntz: nil)
-    if course.is_concept_coach
-      fatal_error(code: :cc_course)
-      return
-    end
-
     role_type = get_role_type(course, role)
 
     raise SecurityTransgression if role_type.nil?

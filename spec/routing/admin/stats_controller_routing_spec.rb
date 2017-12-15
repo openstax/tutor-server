@@ -8,10 +8,4 @@ RSpec.describe Admin::StatsController, type: :routing do
     end
   end
 
-  describe "/admin/stats/concept_coach" do
-    it "routes to #concept_coach" do
-      expect(get '/admin/stats/concept_coach').to route_to('admin/stats#concept_coach')
-    end
-  end
-
 end

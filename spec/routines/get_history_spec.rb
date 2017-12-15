@@ -81,8 +81,6 @@ RSpec.describe GetHistory, type: :routine, speed: :slow do
       when :homework
         exercise_ids = task.task_plan.settings['exercise_ids'].compact.map(&:to_i)
         Content::Models::Exercise.where(id: exercise_ids).map(&:content_page_id).uniq
-      when :concept_coach
-        [task.concept_coach_task.content_page_id]
       else
         task.tasked_exercises.map{ |te| te.exercise.content_page_id }.uniq
       end

@@ -12,20 +12,20 @@ class CloneCourse
 
   protected
 
-  def exec(course:, teacher_user:, copy_question_library:,
-           name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
-           time_zone: nil, default_open_time: nil, default_due_time: nil, estimated_student_count: nil)
+  def exec(course:, teacher_user:, copy_question_library:, name: nil, is_college: nil,
+           term: nil, year: nil, num_sections: nil, time_zone: nil,
+           default_open_time: nil, default_due_time: nil, estimated_student_count: nil)
 
     attrs = {
       name: name || course.name,
       is_college: is_college.nil? ? course.is_college : is_college,
-      is_concept_coach: course.is_concept_coach,
       term: term || course.term,
       year: year || course.year + 1,
       num_sections: num_sections || course.num_sections,
       school: course.school,
       catalog_offering: course.offering,
-      # don't copy `does_cost` from the course, because that course may not have cost but this one should
+      # don't copy `does_cost` from the course
+      # because the old course may not have cost but this one should
       does_cost: course.offering.does_cost,
       appearance_code: course.appearance_code,
       time_zone: time_zone || course.time_zone,
