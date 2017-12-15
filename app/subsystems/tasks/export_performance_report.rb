@@ -2,7 +2,7 @@ module Tasks
   class ExportPerformanceReport
     lev_routine express_output: :filepath
 
-    uses_routine ::GetPerformanceReport,
+    uses_routine Tasks::GetPerformanceReport,
       translations: { outputs: { type: :verbatim } },
       as: :get_performance_report
 
