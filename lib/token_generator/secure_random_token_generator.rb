@@ -9,7 +9,7 @@ class SecureRandomTokenGenerator
   def run
     result = send("run_#{mode}")
 
-    result.is_a?(String) ? "#{options[:prefix] || ''}#{result}#{options[:suffix] || ''}" : result
+    result.is_a?(String) ? "#{options[:prefix]}#{result}#{options[:suffix]}" : result
   end
 
   def self.handled_modes
