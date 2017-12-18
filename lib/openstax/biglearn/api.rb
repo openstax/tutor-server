@@ -60,13 +60,14 @@ module OpenStax::Biglearn::Api
       request, options = extract_options request
 
       course = request[:course]
+      course_ecosystems = course.course_ecosystems.to_a
 
       # Don't send course to Biglearn if it has no ecosystems
-      return if course.course_ecosystems.empty?
+      return if course_ecosystems.empty?
 
       if course.sequence_number.nil? || course.sequence_number == 0
         # The initial ecosystem is always course_ecosystems.last
-        ecosystem = course.course_ecosystems.last.ecosystem
+        ecosystem = course_ecosystems.last.ecosystem
 
         # New course, so create it in Biglearn
         create_course(options.merge course: course, ecosystem: ecosystem).tap do
@@ -78,11 +79,15 @@ module OpenStax::Biglearn::Api
           update_course_active_dates(options.merge course: course)
         end
       else
-        current_ecosystem = course.course_ecosystems.first.ecosystem
+        # nil from_ecosystem should not happen in reality because we keep courses at
+        # sequence_number == 0 until they receive their first ecosystem
+        # but it does happen in testing, where courses are initialized with random sequence_numbers
+        from_ecosystem = course_ecosystems.second.try! :ecosystem
+        to_ecosystem = course_ecosystems.first.ecosystem
 
         # Course already exists in Biglearn, so just send the latest update
         sequentially_prepare_and_update_course_ecosystem(
-          options.merge course: course, ecosystem: current_ecosystem
+          options.merge course: course, from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem
         )
       end
     end
@@ -114,7 +119,7 @@ module OpenStax::Biglearn::Api
       single_api_request options.merge(
         method: :prepare_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
-        keys: [:preparation_uuid, :course, :ecosystem],
+        keys: [:preparation_uuid, :course, :from_ecosystem, :to_ecosystem],
         perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
@@ -151,7 +156,7 @@ module OpenStax::Biglearn::Api
       single_api_request options.merge(
         method: :sequentially_prepare_and_update_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
-        keys: [:preparation_uuid, :course, :ecosystem],
+        keys: [:preparation_uuid, :course, :from_ecosystem, :to_ecosystem],
         perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course

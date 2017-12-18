@@ -21,8 +21,9 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       DatabaseCleaner.start
 
       task_plan = FactoryBot.create :tasked_task_plan, number_of_students: 1
-      @ecosystem = task_plan.ecosystem
-      @page = @ecosystem.pages.first
+      @ecosystem_1 = task_plan.ecosystem
+      @ecosystem_2 = FactoryBot.create :content_ecosystem
+      @page = @ecosystem_1.pages.first
       @exercises = @page.exercises
       @course = task_plan.owner
       @task = task_plan.tasks.first
@@ -36,7 +37,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     before(:each) do
       @course.reload
-      @ecosystem.reload
+      @ecosystem_1.reload
     end
 
     let(:max_num_exercises) { 5 }
@@ -45,22 +46,22 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       [
         [
           :create_ecosystem,
-          -> { { ecosystem: @ecosystem.tap{ |eco| eco.update_attribute :sequence_number, 0 } } },
+          -> { { ecosystem: @ecosystem_1.tap { |eco| eco.update_attribute :sequence_number, 0 } } },
           OpenStax::Biglearn::Api::JobWithSequenceNumber,
-          -> { @ecosystem },
+          -> { @ecosystem_1 },
           1
         ],
         [
           :create_course,
-          -> { { course: @course.tap{ |course| course.update_attribute :sequence_number, 0 },
-                 ecosystem: @ecosystem } },
+          -> { { course: @course.tap { |course| course.update_attribute :sequence_number, 0 },
+                 ecosystem: @ecosystem_1 } },
           OpenStax::Biglearn::Api::JobWithSequenceNumber,
           -> { @course },
           1
         ],
         [
           :prepare_course_ecosystem,
-          -> { { course: @course, ecosystem: @ecosystem } },
+          -> { { course: @course, from_ecosystem: @ecosystem_1, to_ecosystem: @ecosystem_2 } },
           Hash,
           -> { @course },
           1
@@ -74,7 +75,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         ],
         [
           :sequentially_prepare_and_update_course_ecosystem,
-          -> { { course: @course, ecosystem: @ecosystem } },
+          -> { { course: @course, from_ecosystem: @ecosystem_1, to_ecosystem: @ecosystem_2 } },
           Hash,
           -> { @course },
           2
@@ -248,7 +249,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
-              exercise_uuids: (max_num_exercises + 1).times.map{ SecureRandom.uuid },
+              exercise_uuids: (max_num_exercises + 1).times.map { SecureRandom.uuid },
               assignment_status: 'assignment_ready'
             }
           end
@@ -296,7 +297,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
-              exercise_uuids: max_num_exercises.times.map{ SecureRandom.uuid },
+              exercise_uuids: max_num_exercises.times.map { SecureRandom.uuid },
               assignment_status: 'assignment_ready'
             }
           end

@@ -37,12 +37,15 @@ namespace :biglearn do
 
           OpenStax::Biglearn::Api.update_course_excluded_exercises course: course
 
-          (ecosystems[1..-1]).each do |ecosystem|
+          from_ecosystem = ecosystems.first
+          ecosystems[1..-1].each do |to_ecosystem|
             preparation_hash = OpenStax::Biglearn::Api.prepare_course_ecosystem(
-              course: course, ecosystem: ecosystem
+              course: course, from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem
             )
 
             ecosystem_updates << preparation_hash.merge(course: course)
+
+            from_ecosystem = to_ecosystem
           end
 
           next if course.periods.empty?

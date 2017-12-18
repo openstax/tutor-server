@@ -172,14 +172,10 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   # Prepares Biglearn for a course ecosystem update
   def prepare_course_ecosystem(request)
     course = request.fetch(:course)
-    to_ecosystem_model = request.fetch(:ecosystem)
-    to_ecosystem = Content::Ecosystem.new strategy: to_ecosystem_model.wrap
-    to_course_ecosystems, other_course_ecosystems = course.course_ecosystems
-                                                          .partition do |course_ecosystem|
-      course_ecosystem.content_ecosystem_id == to_ecosystem.id
-    end
-    from_ecosystem_model = other_course_ecosystems.first.ecosystem
+    from_ecosystem_model = request.fetch(:from_ecosystem)
+    to_ecosystem_model = request.fetch(:to_ecosystem)
     from_ecosystem = Content::Ecosystem.new strategy: from_ecosystem_model.wrap
+    to_ecosystem = Content::Ecosystem.new strategy: to_ecosystem_model.wrap
     content_map = Content::Map.find_or_create_by(
       from_ecosystems: [from_ecosystem], to_ecosystem: to_ecosystem
     )
@@ -195,9 +191,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
 
       { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.tutor_uuid }
     end.compact
-    prepared_at = request[:prepared_at] ||
-                  to_course_ecosystems.first.try!(:created_at) ||
-                  Time.current
+    prepared_at = request[:prepared_at] || course.course_ecosystems.find do |ce|
+      ce.content_ecosystem_id == to_ecosystem.id
+    end.try!(:created_at) || Time.current
 
     biglearn_request = {
       preparation_uuid: request.fetch(:preparation_uuid),
