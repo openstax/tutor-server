@@ -46,7 +46,23 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                                       role_id: student_3_role.id }
       end
 
-      it "422's if needs to pay" do
+      it 'raises SecurityTransgression if the student has been dropped' do
+        student_role.student.destroy
+
+        expect do
+          api_get :student, user_2_token, parameters: { course_id: course.id }
+        end.to raise_error(SecurityTransgression)
+      end
+
+      it 'raises SecurityTransgression if the student has been dropped' do
+        period.destroy
+
+        expect do
+          api_get :student, user_2_token, parameters: { course_id: course.id }
+        end.to raise_error(SecurityTransgression)
+      end
+
+      it "returns 422 if needs to pay" do
         make_payment_required_and_expect_422(course: course, student: student_role.student) {
           api_get :student, user_2_token, parameters: { course_id: course.id }
         }
@@ -58,6 +74,14 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         expect(GetTeacherGuide).to receive(:[]).with(role: teacher_role).and_return([course_guide])
 
         api_get :teacher, user_1_token, parameters: { course_id: course.id }
+      end
+
+      it 'raises SecurityTransgression if the teacher was deleted' do
+        teacher_role.teacher.destroy
+
+        expect do
+          api_get :teacher, user_1_token, parameters: { course_id: course.id }
+        end.to raise_error(SecurityTransgression)
       end
     end
   end
