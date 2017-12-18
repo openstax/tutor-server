@@ -35,28 +35,47 @@ RSpec.describe GetTeacherGuide, type: :routine do
       @second_role.reload
       @teacher_role.reload
 
+      DatabaseCleaner.start
       book = FactoryBot.create :content_book, title: 'Physics (Demo)'
       ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
       AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
     end
 
-    it 'does not blow up' do
-      guide = described_class[role: @teacher_role]
+    after(:all) { DatabaseCleaner.clean }
 
-      expect(guide).to match [
-        {
-          period_id: @period.id,
-          title: 'Physics (Demo)',
-          page_ids: [],
-          children: []
-        },
-        {
-          period_id: @second_period.id,
-          title: 'Physics (Demo)',
-          page_ids: [],
-          children: []
-        }
-      ]
+    context 'without periods' do
+      before(:all) do
+        DatabaseCleaner.start
+        @period.destroy
+        @second_period.destroy
+      end
+
+      after(:all) { DatabaseCleaner.clean }
+
+      it 'returns an empty array' do
+        expect(described_class[role: @teacher_role.reload]).to eq []
+      end
+    end
+
+    context 'with periods' do
+      it 'returns an empty guide per period' do
+        guide = described_class[role: @teacher_role.reload]
+
+        expect(guide).to match [
+          {
+            period_id: @period.id,
+            title: 'Physics (Demo)',
+            page_ids: [],
+            children: []
+          },
+          {
+            period_id: @second_period.id,
+            title: 'Physics (Demo)',
+            page_ids: [],
+            children: []
+          }
+        ]
+      end
     end
 
   end
