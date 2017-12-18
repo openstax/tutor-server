@@ -1,6 +1,6 @@
 class ExportExerciseExclusions
 
-  lev_routine active_job_enqueue_options: { queue: :long_running }
+  lev_routine active_job_enqueue_options: { queue: :lowest_priority }
 
   protected
 

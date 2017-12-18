@@ -1,6 +1,6 @@
 class ExportAndUploadResearchData
 
-  lev_routine active_job_enqueue_options: { queue: :long_running }, express_output: :filename
+  lev_routine active_job_enqueue_options: { queue: :lowest_priority }, express_output: :filename
 
   def exec(filename: nil, task_types: [], from: nil, to: nil)
     fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") \

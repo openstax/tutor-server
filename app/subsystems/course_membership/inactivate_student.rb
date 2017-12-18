@@ -14,7 +14,7 @@ module CourseMembership
       RefundPayment.perform_later(uuid: student.uuid) if student.is_refund_allowed
 
       period = student.period
-      Tasks::UpdatePeriodCaches.perform_later(periods: period) unless period.nil?
+      Tasks::UpdatePeriodCaches.perform_later(periods: period, force: true)
 
       outputs.student = student
     end

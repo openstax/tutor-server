@@ -10,6 +10,7 @@ class Tasks::Models::TaskCache < ApplicationRecord
   validates :ecosystem,        presence: true, uniqueness: { scope: :tasks_task_id }
 
   validates :opens_at, :due_at, :feedback_at, timeliness: { type: :date }, allow_nil: true
+  validates :is_cached_for_period, inclusion: { in: [ true, false ] }
 
   def practice?
     chapter_practice? || page_practice? || mixed_practice? || practice_worst_topics?
