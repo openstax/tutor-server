@@ -30,8 +30,9 @@ require 'default_time_validations'
 require 'auto_uuid'
 require 'json_serialize'
 require 'configurable'
-require 'term_year'
 require 'hypothesis'
+require 'term_year'
+require 'values_table'
 
 %w(biglearn cnx exercises payments).each do |oxlib|
   Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
