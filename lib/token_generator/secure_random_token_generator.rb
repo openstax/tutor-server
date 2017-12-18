@@ -7,7 +7,9 @@ class SecureRandomTokenGenerator
   end
 
   def run
-    send("run_#{mode}")
+    result = send("run_#{mode}")
+
+    result.is_a?(String) ? "#{options[:prefix]}#{result}#{options[:suffix]}" : result
   end
 
   def self.handled_modes
@@ -30,7 +32,7 @@ class SecureRandomTokenGenerator
 
   def run_random_number
     length = options[:length] || 6
-    strategy.random_number(10 ** length).to_s.rjust(length,"0")
+    strategy.random_number(10 ** length).to_s.rjust(length, "0")
   end
 
   def run_uuid
