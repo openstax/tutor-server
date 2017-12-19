@@ -161,7 +161,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
   it 'creates a Tasks::PeriodCache for the given tasks' do
     Tasks::Models::PeriodCache.where(course_membership_period_id: period_ids).delete_all
 
-    expect { described_class.call(periods: periods) }
+    expect { described_class.call(periods: periods, force: true) }
       .to change { Tasks::Models::PeriodCache.count }.by(num_period_caches)
 
     period_caches = Tasks::Models::PeriodCache.where(course_membership_period_id: period_ids)
@@ -177,6 +177,12 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
       expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
       expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
     end
+
+    expect(
+      Tasks::Models::TaskCache.where(
+        tasks_task_id: @task_plan.tasks.map(&:id), is_cached_for_period: false
+      ).exists?
+    ).to eq false
   end
 
   it 'updates existing Tasks::PeriodCache for the given tasks' do
@@ -196,9 +202,21 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
       expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
     end
 
+    expect(
+      Tasks::Models::TaskCache.where(
+        tasks_task_id: @task_plan.tasks.map(&:id), is_cached_for_period: false
+      ).exists?
+    ).to eq false
+
     Preview::WorkTask.call(task: first_task, is_correct: true)
 
-    expect { described_class.call(periods: periods) }.not_to(
+    expect(
+      Tasks::Models::TaskCache.where(
+        tasks_task_id: @task_plan.tasks.map(&:id), is_cached_for_period: false
+      ).exists?
+    ).to eq false
+
+    expect { described_class.call(periods: periods, force: true) }.not_to(
       change { Tasks::Models::PeriodCache.count }
     )
 
@@ -218,6 +236,12 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
       expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
       expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
     end
+
+    expect(
+      Tasks::Models::TaskCache.where(
+        tasks_task_id: @task_plan.tasks.map(&:id), is_cached_for_period: false
+      ).exists?
+    ).to eq false
   end
 
   it 'is called when a task_plan is published' do
@@ -272,22 +296,24 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
     AddUserAsPeriodStudent.call(user: student_user, period: first_period)
   end
 
-  it 'is called when a student is dropped' do
+  it 'is called with force: true when a student is dropped' do
     student = first_period.students.first
 
-    expect(described_class).to receive(:perform_later) do |periods:|
+    expect(described_class).to receive(:perform_later) do |periods:, force:|
       expect(periods).to eq first_period
+      expect(force).to eq true
     end
 
     CourseMembership::InactivateStudent.call(student: student)
   end
 
-  it 'is called when a student is reactivated' do
+  it 'is called with force: true when a student is reactivated' do
     student = first_period.students.first
     CourseMembership::InactivateStudent.call(student: student)
 
-    expect(described_class).to receive(:perform_later) do |periods:|
+    expect(described_class).to receive(:perform_later) do |periods:, force:|
       expect(periods).to eq first_period
+      expect(force).to eq true
     end
 
     CourseMembership::ActivateStudent.call(student: student)

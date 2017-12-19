@@ -1,26 +1,12 @@
 # Updates the PeriodCaches, used by the Teacher dashboard Trouble Flag and Performance Forecast
 class Tasks::UpdatePeriodCaches
-  lev_routine transaction: :read_committed
+  lev_routine active_job_enqueue_options: { queue: :low_priority }, transaction: :read_committed
 
   protected
 
-  def exec(periods:)
+  def exec(periods:, force: false)
     periods = [periods].flatten
-
-    # Attempt to lock the periods; Skip periods already locked by someone else
-    locked_periods = CourseMembership::Models::Period
-      .select(:id)
-      .where(id: periods.map(&:id))
-      .lock('FOR NO KEY UPDATE SKIP LOCKED')
-
-    # Retry periods that we couldn't lock later
-    skipped_periods = periods - locked_periods
-    self.class.perform_later(periods: skipped_periods) unless skipped_periods.empty?
-
-    # Stop if we couldn't lock any periods at all
-    return if locked_periods.empty?
-
-    locked_periods.each do |period|
+    periods.each do |period|
       # Get active students IDs
       student_ids = CourseMembership::Models::Student
         .joins(:latest_enrollment)
@@ -34,30 +20,46 @@ class Tasks::UpdatePeriodCaches
         .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
 
       # Get relevant TaskPlans
-      task_plan_ids = task_cache_query.distinct.pluck('"tasks_tasks"."tasks_task_plan_id"')
+      task_plan_query = task_cache_query.dup
+      task_plan_query = task_plan_query.where(is_cached_for_period: false) unless force
+      task_plan_ids = task_plan_query.distinct.pluck('"tasks_tasks"."tasks_task_plan_id"')
       task_plans = Tasks::Models::TaskPlan.select(:id)
                                           .where(id: task_plan_ids)
                                           .preload(:tasking_plans)
       task_plans << nil if task_plan_ids.any?(&:nil?)
 
       task_plans.each do |task_plan|
-        # Get relevant TaskCaches
+        # Get and lock relevant TaskCaches
         task_caches = task_cache_query.select(
-          [ :content_ecosystem_id, :student_ids, :student_names, :as_toc ]
-        ).where(task: { tasks_task_plan_id: task_plan.try!(:id) })
+          [
+            :id,
+            :content_ecosystem_id,
+            :student_ids,
+            :student_names,
+            :as_toc,
+            :is_cached_for_period
+          ]
+        )
+        .where(task: { tasks_task_plan_id: task_plan.try!(:id) })
+        .lock('FOR NO KEY UPDATE')
+        .to_a
+        # Recheck if all task_caches have already been added to the PeriodCache
+        # (since we hadn't locked them before)
+        next if !force && task_caches.all?(&:is_cached_for_period)
+
         task_caches_by_ecosystem_id = task_caches.group_by(&:content_ecosystem_id)
         ecosystem_ids = task_caches_by_ecosystem_id.keys
         ecosystems = Content::Models::Ecosystem.select(:id).where(id: ecosystem_ids)
 
         # Cache results per ecosystem for Teacher dashboard Trouble Flag and Performance Forecast
         period_caches = ecosystems.map do |ecosystem|
-          task_caches = task_caches_by_ecosystem_id[ecosystem.id]
+          period_task_caches = task_caches_by_ecosystem_id[ecosystem.id]
 
           build_period_cache(
             period: period,
             ecosystem: ecosystem,
             task_plan: task_plan,
-            task_caches: task_caches
+            task_caches: period_task_caches
           )
         end
 
@@ -75,6 +77,10 @@ class Tasks::UpdatePeriodCaches
         Tasks::Models::PeriodCache.import period_caches, validate: false, on_duplicate_key_update: {
           columns: [ :opens_at, :due_at, :student_ids, :as_toc ], conflict_target: conflict_target
         }
+
+        # Mark the TaskCaches as cached for period
+        Tasks::Models::TaskCache.where(id: task_caches.map(&:id), is_cached_for_period: false)
+                                .update_all(is_cached_for_period: true)
       end
     end
   end

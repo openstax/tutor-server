@@ -170,6 +170,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
   it 'creates a Tasks::TaskCache for the given tasks' do
     Tasks::Models::TaskCache.where(tasks_task_id: task_ids).delete_all
 
+    expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
+
     expect { described_class.call(tasks: tasks) }
       .to change { Tasks::Models::TaskCache.count }.by(num_task_caches)
 
@@ -189,6 +191,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
       expect(task_cache.due_at).to be_within(1).of(task.due_at)
       expect(task_cache.feedback_at).to be_nil
+      expect(task_cache.is_cached_for_period).to eq false
     end
   end
 
@@ -211,10 +214,13 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
       expect(task_cache.due_at).to be_within(1).of(task.due_at)
       expect(task_cache.feedback_at).to be_nil
+      expect(task_cache.is_cached_for_period).to eq true
     end
 
     first_task = student_tasks.first
     Preview::WorkTask.call(task: first_task, is_correct: true)
+
+    expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
     expect { described_class.call(tasks: tasks) }.not_to change { Tasks::Models::TaskCache.count }
 
@@ -234,6 +240,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :slow do
       expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
       expect(task_cache.due_at).to be_within(1).of(task.due_at)
       expect(task_cache.feedback_at).to be_nil
+      expect(task_cache.is_cached_for_period).to eq false
     end
   end
 

@@ -1,6 +1,6 @@
 class DistributeTasks
 
-  lev_routine active_job_enqueue_options: { queue: :low_priority }
+  lev_routine
 
   uses_routine IndividualizeTaskingPlans, as: :individualize_tasking_plans
 

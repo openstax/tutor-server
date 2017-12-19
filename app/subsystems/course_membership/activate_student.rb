@@ -15,7 +15,7 @@ module CourseMembership
       period = student.period
       ReassignPublishedPeriodTaskPlans[period: student.period]
 
-      Tasks::UpdatePeriodCaches.perform_later(periods: period)
+      Tasks::UpdatePeriodCaches.perform_later(periods: period, force: true)
 
       outputs.student = student
     end

@@ -1,7 +1,7 @@
 # Updates the TaskCaches, used by the Quick Look and Student Performance Forecast
 # Tasks not assigned to a student (preview tasks) are ignored
 class Tasks::UpdateTaskCaches
-  lev_routine transaction: :read_committed
+  lev_routine active_job_enqueue_options: { queue: :low_priority }, transaction: :read_committed
 
   uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
 
@@ -183,7 +183,15 @@ class Tasks::UpdateTaskCaches
     # Update the TaskCaches
     Tasks::Models::TaskCache.import task_caches, validate: false, on_duplicate_key_update: {
       conflict_target: [ :tasks_task_id, :content_ecosystem_id ],
-      columns: [ :opens_at, :due_at, :feedback_at, :student_ids, :student_names, :as_toc ]
+      columns: [
+        :opens_at,
+        :due_at,
+        :feedback_at,
+        :student_ids,
+        :student_names,
+        :as_toc,
+        :is_cached_for_period
+      ]
     }
 
     # Update the PeriodCaches
@@ -330,7 +338,8 @@ class Tasks::UpdateTaskCaches
       feedback_at: task.feedback_at,
       student_ids: student_ids,
       student_names: student_names,
-      as_toc: toc
+      as_toc: toc,
+      is_cached_for_period: false
     )
   end
 end

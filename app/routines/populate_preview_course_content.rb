@@ -12,7 +12,7 @@ class PopulatePreviewCourseContent
   # Should correspond to the total preview course duration, in weeks
   MAX_NUM_ASSIGNED_CHAPTERS = 10
 
-  lev_routine active_job_enqueue_options: { queue: :long_running }
+  lev_routine active_job_enqueue_options: { queue: :lowest_priority }
 
   uses_routine User::CreateUser, as: :create_user
   uses_routine CourseMembership::CreatePeriod, as: :create_period

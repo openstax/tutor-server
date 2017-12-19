@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212165309) do
+ActiveRecord::Schema.define(version: 20171219012010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -777,11 +777,13 @@ ActiveRecord::Schema.define(version: 20171212165309) do
     t.text     "as_toc",               default: "{}", null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.boolean  "is_cached_for_period",                null: false
   end
 
   add_index "tasks_task_caches", ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id", using: :btree
   add_index "tasks_task_caches", ["due_at"], name: "index_tasks_task_caches_on_due_at", using: :btree
   add_index "tasks_task_caches", ["feedback_at"], name: "index_tasks_task_caches_on_feedback_at", using: :btree
+  add_index "tasks_task_caches", ["is_cached_for_period"], name: "index_tasks_task_caches_on_is_cached_for_period", using: :btree
   add_index "tasks_task_caches", ["opens_at"], name: "index_tasks_task_caches_on_opens_at", using: :btree
   add_index "tasks_task_caches", ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
   add_index "tasks_task_caches", ["task_type"], name: "index_tasks_task_caches_on_task_type", using: :btree

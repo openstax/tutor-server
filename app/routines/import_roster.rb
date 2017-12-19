@@ -1,6 +1,6 @@
 class ImportRoster
 
-  lev_routine active_job_enqueue_options: { queue: :long_running }
+  lev_routine active_job_enqueue_options: { queue: :lowest_priority }
 
   uses_routine User::FindOrCreateUser, as: :find_or_create_user,
                                        translations: { outputs: { type: :verbatim } }

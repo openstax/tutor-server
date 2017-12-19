@@ -23,10 +23,10 @@ Delayed::Worker.max_run_time = 4.hours
 
 # Default queue priorities
 Delayed::Worker.queue_attributes = {
-  high_priority: { priority: -5 },
-  default:       { priority:  0 },
-  low_priority:  { priority:  5 },
-  long_running:  { priority: 10 }
+  high_priority:   { priority: -5 },
+  default:         { priority:  0 },
+  low_priority:    { priority:  5 },
+  lowest_priority: { priority: 10 }
 }
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline
