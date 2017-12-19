@@ -7,7 +7,10 @@ class GetTeacherGuide
   def exec(role:, current_time: Time.current)
     course = role.teacher.course
     periods = course.periods.reject(&:archived?)
-    return [] if periods.empty?
+    if periods.empty?
+      outputs.teacher_guide = []
+      return
+    end
 
     ecosystems = course.ecosystems
     ecosystem_ids = ecosystems.map(&:id)
