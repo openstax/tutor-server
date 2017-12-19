@@ -9,7 +9,7 @@ git_source(:github) do |repo_name|
 end
 
 # Rails framework
-gem 'rails', '4.2.4'
+gem 'rails', '4.2.10'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.3.7'
@@ -33,7 +33,7 @@ gem 'browser', '~> 2.5'
 gem 'coffee-rails', '~> 4.0.0'
 
 # JavaScript asset compiler
-gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 
 # jQuery library
 gem 'jquery-rails'
@@ -111,7 +111,7 @@ gem 'mini_magick'
 gem 'deep_cloneable'
 
 # Real time application monitoring
-gem 'newrelic_rpm'
+gem 'newrelic_rpm', '~> 3.18.1'
 
 # Date validations
 gem 'validates_timeliness'
@@ -257,7 +257,7 @@ group :development, :test do
   gem 'factory_bot_rails'
 
   # Stubs HTTP requests
-  gem 'webmock'
+  gem 'webmock', '~> 1.20.4'
 
   # Records HTTP requests
   gem 'vcr'
@@ -316,7 +316,7 @@ group :production do
   gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 
   # Fog
-  gem 'fog', require: 'fog/aws'
+  gem 'fog-aws', require: true
 
   # Lograge for consistent logging
   gem 'lograge'
