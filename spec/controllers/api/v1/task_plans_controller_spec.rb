@@ -1,6 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
+                                             version: :v1, speed: :medium do
 
   before(:all) do
     @course = FactoryBot.create :course_profile_course, :with_assistants

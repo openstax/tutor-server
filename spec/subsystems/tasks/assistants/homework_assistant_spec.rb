@@ -1,9 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
-                                                     speed: :slow,
-                                                     vcr: VCR_OPTS do
+RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_OPTS do
 
   before(:all) do
     @assistant = \

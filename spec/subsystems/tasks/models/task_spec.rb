@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::Task, type: :model do
+RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   it { is_expected.to belong_to(:task_plan) }
 
   it { is_expected.to belong_to(:time_zone) }
@@ -41,7 +41,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task).not_to be_late
   end
 
-  describe '#handle_task_step_completion!' do
+  context '#handle_task_step_completion!' do
     it 'sets #last_worked_at to completed_at' do
       time = Time.current
       task = FactoryBot.create(:tasks_task)

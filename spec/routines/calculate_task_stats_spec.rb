@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow do
 
   before(:all) do
     @number_of_students = 8

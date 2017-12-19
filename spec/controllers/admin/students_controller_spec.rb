@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Admin::StudentsController do
+RSpec.describe Admin::StudentsController, type: :controller do
   let(:admin)        { FactoryBot.create(:user, :administrator) }
 
   before             { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     let(:course)     { FactoryBot.create :course_profile_course, name: 'Physics' }
     let(:course_2)   { FactoryBot.create :course_profile_course }
 

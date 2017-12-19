@@ -11,7 +11,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
   before { AddUserAsCourseTeacher[course: course, user: teacher_user] }
 
-  describe '#create' do
+  context '#create' do
     it 'allows teachers to create periods' do
       allow(SecureRandom).to receive(:random_number) { 12345 }
 
@@ -55,7 +55,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
   end
 
-  describe '#update' do
+  context '#update' do
     let(:period) { FactoryBot.create :course_membership_period, course: course, name: '8th Period' }
 
     it 'allows teachers to rename periods' do

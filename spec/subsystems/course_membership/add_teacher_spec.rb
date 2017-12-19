@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::AddTeacher do
+RSpec.describe CourseMembership::AddTeacher, type: :routine do
   context "when adding a new teacher role to a course" do
     it "succeeds" do
       role   = FactoryBot.create :entity_role

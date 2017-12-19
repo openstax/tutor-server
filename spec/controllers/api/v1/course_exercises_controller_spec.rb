@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
-                                                   version: :v1, speed: :slow, vcr: VCR_OPTS do
+                                                   version: :v1, vcr: VCR_OPTS, speed: :slow do
 
   let(:user_1)         { FactoryBot.create(:user) }
   let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,
@@ -30,7 +30,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       AddUserAsCourseTeacher.call(course: course, user: user_1)
     end
 
-    describe '#show' do
+    context '#show' do
       context 'for anonymous' do
         it 'raises SecurityTransgression if user is anonymous or not a teacher' do
           page_ids = Content::Models::Page.all.map(&:id)
@@ -123,7 +123,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       end
     end
 
-    describe '#update' do
+    context '#update' do
       let(:exercise) { @ecosystem.exercises.first }
 
       context 'for anonymous' do

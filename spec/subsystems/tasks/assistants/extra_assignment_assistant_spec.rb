@@ -1,7 +1,9 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vcr: VCR_OPTS do
+RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant,
+                                                            vcr: VCR_OPTS,
+                                                            speed: :medium do
 
   let(:fixture_path)      { 'spec/fixtures/content/sample_tutor_manifest.yml' }
   let(:manifest_contents) { File.open(fixture_path) { |file| file.read } }

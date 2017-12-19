@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::PeriodsController do
+RSpec.describe Admin::PeriodsController, type: :controller do
   let(:admin)  { FactoryBot.create(:user, :administrator) }
 
   let(:course) { FactoryBot.create :course_profile_course }

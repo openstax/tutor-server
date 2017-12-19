@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'demo'
 
-RSpec.describe Demo, type: :routine, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
   context 'with demo fixtures' do
     before(:all) do
       @old_max_processes = ENV['DEMO_MAX_PROCESSES']

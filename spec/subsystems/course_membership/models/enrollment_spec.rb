@@ -2,7 +2,7 @@ require 'rails_helper'
 
 module CourseMembership
   module Models
-    describe Enrollment, type: :model do
+    RSpec.describe Enrollment, type: :model do
       let(:course) { FactoryBot.create :course_profile_course }
       let(:period) { FactoryBot.create :course_membership_period, course: course }
       let(:role)   { FactoryBot.create :entity_role }

@@ -3,7 +3,7 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
-                                              version: :v1, speed: :slow, vcr: VCR_OPTS do
+                                              version: :v1, vcr: VCR_OPTS, speed: :slow do
 
   let(:user_1)          { FactoryBot.create(:user) }
   let(:user_1_token)    { FactoryBot.create :doorkeeper_access_token,
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       ecosystem
     }
 
-    describe '#index' do
+    context '#index' do
       it 'raises SecurityTransgression unless user is a content analyst' do
         expect {
           api_get :index, nil
@@ -50,7 +50,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       end
     end
 
-    describe "#readings" do
+    context "#readings" do
       it 'raises SecurityTransgression if user is anonymous or not in the course' do
         expect {
           api_get :readings, nil, parameters: { id: ecosystem.id }
@@ -152,7 +152,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       AddUserAsCourseTeacher.call(course: course, user: user_1)
     end
 
-    describe "#exercises" do
+    context "#exercises" do
       it 'raises SecurityTransgression if user is anonymous or not a teacher' do
         page_ids = Content::Models::Page.all.map(&:id)
 

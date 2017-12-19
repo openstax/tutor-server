@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe CourseProfile::BuildPreviewCourses, type: :routine, truncation: true do
+RSpec.describe CourseProfile::BuildPreviewCourses, type: :routine,
+                                                   truncation: true,
+                                                   speed: :medium do
   let!(:offerings) { 2.times.map { FactoryBot.create :catalog_offering, is_tutor: true } }
 
   it 'queries for needed offerings' do

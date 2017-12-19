@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
+RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium do
 
   before(:all) do
     task_plan = FactoryBot.create(:tasked_task_plan, number_of_students: 1)

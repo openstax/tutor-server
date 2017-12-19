@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PushSalesforceCourseStats, type: :routine do
+RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
 
   context "#best_sf_contact_id_for_course" do
     let(:course)        { FactoryBot.create :course_profile_course }

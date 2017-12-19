@@ -82,13 +82,13 @@ RSpec.describe ChooseCourseRole, type: :routine do
         ChooseCourseRole.call(user: student, course: course, role_id: teacher_role.id)
       }
 
-      describe "errors" do
+      context "errors" do
         subject { result.errors }
         it { should_not be_empty }
         it { expect(subject.first.code).to eq(:invalid_role) }
       end
 
-      describe "output" do
+      context "output" do
         subject{ result.outputs.role }
         it { should be_nil }
       end
@@ -126,13 +126,13 @@ RSpec.describe ChooseCourseRole, type: :routine do
         ChooseCourseRole.call(user: interloper, course: course)
       }
 
-      describe "errors" do
+      context "errors" do
         subject { result.errors }
         it { should_not be_empty }
         it { expect(subject.first.code).to eq(:user_not_in_course_with_required_role) }
       end
 
-      describe "output" do
+      context "output" do
         subject{ result.outputs.role }
         it { should be_nil }
       end
@@ -143,12 +143,12 @@ RSpec.describe ChooseCourseRole, type: :routine do
         ChooseCourseRole.call(user: teacher, course: course)
       }
 
-      describe "errors" do
+      context "errors" do
         subject { result.errors }
         it { should be_empty }
       end
 
-      describe "output" do
+      context "output" do
         subject{ result.outputs.role }
         it { should eq(teacher_role) }
       end

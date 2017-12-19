@@ -66,7 +66,7 @@ RSpec.describe Legal do
       expect(matching_contracts.size).to eq 1
     end
 
-    describe 'in a three-level ancestry' do
+    context 'in a three-level ancestry' do
 
       before(:each) {
         Legal::CreateTargetedContract[contract_name: 'contract_a', target_gid: 'A', target_name: 'A Name']

@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
+RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :slow do
   let(:user_1)         { FactoryBot.create(:user) }
   let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id }
 

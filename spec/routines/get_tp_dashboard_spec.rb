@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe GetTpDashboard, type: :routine do
+RSpec.describe GetTpDashboard, type: :routine, speed: :slow do
 
   let(:course)         { FactoryBot.create :course_profile_course, name: 'Physics 101' }
   let(:period)         { FactoryBot.create :course_membership_period, course: course }

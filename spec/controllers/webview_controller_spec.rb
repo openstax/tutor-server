@@ -11,7 +11,7 @@ RSpec.describe WebviewController, type: :controller do
 
   before(:each) { request.headers.merge! 'User-Agent': chrome_ua }
 
-  describe 'GET home' do
+  context 'GET home' do
     it 'renders a static page for anonymous' do
       get :home, headers: chrome_ua
       expect(response).to have_http_status(:success)
@@ -37,7 +37,7 @@ RSpec.describe WebviewController, type: :controller do
 
   end
 
-  describe 'GET *anything' do
+  context 'GET *anything' do
     it 'requires a user' do
       get :index
       expect(response).to redirect_to(controller.send(:openstax_accounts_login_path))

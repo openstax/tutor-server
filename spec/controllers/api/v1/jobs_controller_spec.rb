@@ -22,7 +22,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
     end
   end
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'is for admins only' do
       expect {
         api_get :index, user_token
@@ -43,7 +43,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
     end
   end
 
-  describe 'GET #show' do
+  context 'GET #show' do
     let(:job_id) { TestRoutine.perform_later }
 
     it 'returns the status of queued jobs' do

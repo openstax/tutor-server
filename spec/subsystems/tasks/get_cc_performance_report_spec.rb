@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
+RSpec.describe Tasks::GetCcPerformanceReport, type: :routine do
 
   before(:all) do
     VCR.use_cassette("Tasks_GetCcPerformanceReport/with_book", VCR_OPTS) do

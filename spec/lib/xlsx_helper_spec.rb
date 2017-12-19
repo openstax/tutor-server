@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe XlsxHelper, type: :lib do
 
-  describe '#sanitized_worksheet_name' do
+  context '#sanitized_worksheet_name' do
     let(:helper) { described_class.new }
 
     it 'objects if no name provided' do

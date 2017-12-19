@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CustomerService::TagsController do
+RSpec.describe CustomerService::TagsController, type: :controller do
   let(:customer_service) { FactoryBot.create(:user, :customer_service) }
   let!(:tag_1) { FactoryBot.create :content_tag, value: 'k12phys-ch04-ex003' }
   let!(:tag_2) { FactoryBot.create :content_tag, value: 'k12phys-ch04-s03-lo01' }
@@ -8,7 +8,7 @@ RSpec.describe CustomerService::TagsController do
 
   before { controller.sign_in(customer_service) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'does not list tags' do
       get :index
       expect(assigns[:tags]).to be_nil

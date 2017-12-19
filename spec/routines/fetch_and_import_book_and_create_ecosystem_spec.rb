@@ -1,7 +1,9 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
+                                                     vcr: VCR_OPTS,
+                                                     speed: :medium do
 
   context 'tutor book' do
     let(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }

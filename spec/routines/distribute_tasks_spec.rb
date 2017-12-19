@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'fork_with_connection'
 
-RSpec.describe DistributeTasks, type: :routine, truncation: true do
+RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium do
 
   let(:course)    { FactoryBot.create :course_profile_course }
   let(:period)    { FactoryBot.create :course_membership_period, course: course }

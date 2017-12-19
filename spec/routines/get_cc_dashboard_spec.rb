@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe GetCcDashboard, type: :routine do
+RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
 
   before(:all) do
     @course   = FactoryBot.create :course_profile_course, is_concept_coach: true, name: 'Biology 101'

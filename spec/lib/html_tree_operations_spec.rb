@@ -13,7 +13,7 @@ RSpec.describe HtmlTreeOperations, type: :lib do
   let(:right) { OpenStruct.new(parent: parent, remove: nil, content: 'right') }
   let(:node) { OpenStruct.new(parent: parent, remove: nil, content: 'node') }
 
-  describe '#recursive_compact' do
+  context '#recursive_compact' do
     it 'stops at the indicated stop_node' do
       expect(html_tree.recursive_compact(node, node)).to be_nil
     end
@@ -31,7 +31,7 @@ RSpec.describe HtmlTreeOperations, type: :lib do
     end
   end
 
-  describe '#remove_before' do
+  context '#remove_before' do
     it 'stops at the indicated stop_node' do
       expect(html_tree.remove_before(node, node)).to be_nil
     end
@@ -46,7 +46,7 @@ RSpec.describe HtmlTreeOperations, type: :lib do
     end
   end
 
-  describe '#remove_after' do
+  context '#remove_after' do
     it 'stops at the indicated stop_node' do
       expect(html_tree.remove_after(node, node)).to be_nil
     end

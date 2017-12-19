@@ -5,7 +5,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
   before                 { controller.sign_in(customer_service) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
       FactoryBot.create :course_profile_course, name: 'Hello World'
 
@@ -45,7 +45,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     end
   end
 
-  describe 'GET #show' do
+  context 'GET #show' do
     it 'assigns extra course info' do
       course = FactoryBot.create :course_profile_course, :without_ecosystem, name: 'Hello World'
 

@@ -6,7 +6,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
 
   before { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     before { district.save! }
 
     it 'assigns @districts and @page_header' do
@@ -18,7 +18,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
   end
 
-  describe 'GET #new' do
+  context 'GET #new' do
     it 'assigns @district and @page_header' do
       get :new
 
@@ -27,7 +27,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
   end
 
-  describe 'POST #create' do
+  context 'POST #create' do
     context 'unused name' do
       it 'creates the district and redirects to #index' do
         expect { post :create, district: { name: 'Hello World' } }.to(
@@ -57,7 +57,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
   end
 
-  describe 'GET #edit' do
+  context 'GET #edit' do
     before { district.save! }
 
     it 'assigns @district and @page_header' do
@@ -68,7 +68,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
   end
 
-  describe 'PATCH #update' do
+  context 'PATCH #update' do
     before { district.save! }
 
     context 'unused name' do
@@ -95,7 +95,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     end
   end
 
-  describe 'DELETE #destroy' do
+  context 'DELETE #destroy' do
     before { district.save! }
 
     context 'without schools' do

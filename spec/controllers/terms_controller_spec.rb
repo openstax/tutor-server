@@ -8,7 +8,7 @@ RSpec.describe TermsController, type: :controller do
                                                version: 10) }
   let(:new_user) { FactoryBot.create(:user, skip_terms_agreement: true) }
 
-  describe 'terms of service' do
+  context 'terms of service' do
 
     context "as a signed in new user" do
       render_views

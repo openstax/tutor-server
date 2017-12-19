@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe ExportAndUploadResearchData, type: :routine do
+RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
   let(:course) do
     FactoryBot.create :course_profile_course,
                        :with_assistants,

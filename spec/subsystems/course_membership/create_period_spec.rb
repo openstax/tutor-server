@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::CreatePeriod do
+RSpec.describe CourseMembership::CreatePeriod, type: :routine do
   it 'generates an enrollment_code' do
     allow(SecureRandom).to receive(:random_number) { 1 }
 

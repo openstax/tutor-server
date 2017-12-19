@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :medium do
 
   let(:phys_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
   let(:bio_cnx_book)   { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }

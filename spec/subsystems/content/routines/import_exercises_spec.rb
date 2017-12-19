@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS do
 
   context 'with a single tag' do
     let(:page)      { FactoryBot.create(:content_page) }

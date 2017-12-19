@@ -3,7 +3,7 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: true,
-                                                      version: :v1, speed: :slow, vcr: VCR_OPTS do
+                                                      version: :v1, vcr: VCR_OPTS do
 
   before(:all) do
     @course = FactoryBot.create :course_profile_course, :with_assistants
@@ -166,7 +166,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     end
   end
 
-  describe 'GET #exports' do
+  context 'GET #exports' do
     context 'success' do
       before(:each) do
         @export = Tempfile.open(['test_export', '.xls']) do |file|

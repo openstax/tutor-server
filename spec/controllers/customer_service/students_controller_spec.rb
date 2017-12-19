@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe CustomerService::StudentsController do
+RSpec.describe CustomerService::StudentsController, type: :controller do
   let(:customer_service) { FactoryBot.create(:user, :customer_service) }
 
   before                 { controller.sign_in(customer_service) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     let(:course)     { FactoryBot.create :course_profile_course, name: 'Physics' }
     let(:course_2)   { FactoryBot.create :course_profile_course }
 

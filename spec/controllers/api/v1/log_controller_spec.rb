@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v1 do
 
-  describe "#entry" do
+  context "#entry" do
 
     it 'requires a level' do
       expect(Rails.logger).not_to receive(:log)
@@ -50,7 +50,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
   end
 
 
-  describe '#track' do
+  context '#track' do
     let(:user) { FactoryBot.create(:user) }
     let(:user_token)   { FactoryBot.create :doorkeeper_access_token,
                                             resource_owner_id: user.id }
@@ -63,7 +63,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
       }.to raise_error(SecurityTransgression)
     end
 
-    describe 'as an instructor' do
+    context 'as an instructor' do
       before(:each) { user.account.role = :instructor }
 
       it 'rejects invalid codes' do

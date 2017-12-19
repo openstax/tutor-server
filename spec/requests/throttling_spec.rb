@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Throttles", type: :request, version: :v1 do
 
-  describe '/api/log/entry' do
+  context 'POST /api/log/entry' do
     let(:limit) { 50 }
 
     it 'allows requests under the limit, throttles at limit, and logs only once, all based on IP' do
@@ -31,7 +31,7 @@ RSpec.describe "Throttles", type: :request, version: :v1 do
     end
   end
 
-  describe '/api/purchases/:id/check' do
+  context 'PUT /api/purchases/:id/check' do
     let(:limit) { 10 }
 
     it 'allows requests under the limit, throttles at limit, and logs only once, all based on ID' do

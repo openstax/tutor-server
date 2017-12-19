@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::GetCoursePeriods do
+RSpec.describe CourseMembership::GetCoursePeriods, type: :routine do
   let(:target_course) { FactoryBot.create :course_profile_course }
 
   context "when there are no periods for the target course" do
