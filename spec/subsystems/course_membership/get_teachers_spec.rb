@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::GetTeachers do
+RSpec.describe CourseMembership::GetTeachers, type: :routine do
   context "when there are no teachers for the given course" do
     let(:target_course) { FactoryBot.create :course_profile_course }
     let(:other_course)  { FactoryBot.create :course_profile_course }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module Cc
-  describe TaskAccessPolicy, type: :access_policy do
+  RSpec.describe TaskAccessPolicy, type: :access_policy do
     let(:requestor) { FactoryBot.create(:user) }
 
     subject(:action_allowed) do

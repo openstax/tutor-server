@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::Strategies::Generated::Map do
+RSpec.describe Content::Strategies::Generated::Map, type: :strategy, speed: :medium do
   let(:old_content_exercise)         { FactoryBot.create :content_exercise }
   let!(:old_content_pool) do
     pool = old_content_exercise.page.all_exercises_pool

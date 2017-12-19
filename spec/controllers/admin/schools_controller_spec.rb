@@ -6,7 +6,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
 
   before { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     before { school.save! }
 
     it 'assigns @schools and @page_header' do
@@ -18,7 +18,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
   end
 
-  describe 'GET #new' do
+  context 'GET #new' do
     it 'assigns @school and @page_header' do
       get :new
 
@@ -27,7 +27,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
   end
 
-  describe 'POST #create' do
+  context 'POST #create' do
     before { school.save! }
 
     context 'unused name' do
@@ -59,7 +59,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
   end
 
-  describe 'GET #edit' do
+  context 'GET #edit' do
     before { school.save! }
 
     it 'assigns @school and @page_header' do
@@ -70,7 +70,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
   end
 
-  describe 'PATCH #update' do
+  context 'PATCH #update' do
     before { school.save! }
 
     context 'unused name' do
@@ -102,7 +102,7 @@ RSpec.describe Admin::SchoolsController, type: :controller do
     end
   end
 
-  describe 'DELETE #destroy' do
+  context 'DELETE #destroy' do
     before { school.save! }
 
     context 'without schools' do

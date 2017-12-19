@@ -1,6 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::StudentsController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
+                                            version: :v1, speed: :medium do
 
   let(:application)       { FactoryBot.create :doorkeeper_application }
 
@@ -97,7 +98,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
   #   end
   # end
 
-  describe '#update_self' do
+  context '#update_self' do
     let(:valid_params) { { course_id: course.id } }
     let(:new_id)       { '123456789' }
     let(:valid_body)   { { student_identifier: new_id } }
@@ -152,7 +153,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
     end
   end
 
-  describe '#update' do
+  context '#update' do
     let(:valid_params) { { id: student.id } }
     let(:valid_body)   { { period_id: period_2.id.to_s } }
 
@@ -227,7 +228,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
     end
   end
 
-  describe '#destroy' do
+  context '#destroy' do
     let(:valid_params) { { id: student.id } }
 
     context 'student is active' do
@@ -289,7 +290,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true, versio
     end
   end
 
-  describe '#undrop' do
+  context '#undrop' do
     let(:valid_params) { { id: student.id } }
 
     context 'student is inactive' do

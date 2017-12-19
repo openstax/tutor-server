@@ -1,11 +1,13 @@
 require "rails_helper"
 
 RSpec.describe "Webview", type: :request do
-  let(:chrome_ua) {
-    { 'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.99 Safari/533.4' }
-  }
+  let(:chrome_ua) do
+    {
+      'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.99 Safari/533.4'
+    }
+  end
 
-  describe 'GET /courses/enroll/blah' do
+  context 'GET /courses/enroll/blah' do
 
     it 'renders welcome screen' do
       get '/enroll/whatever', {}, chrome_ua
@@ -23,7 +25,7 @@ RSpec.describe "Webview", type: :request do
     end
   end
 
-  describe "supported browser check" do
+  context "supported browser check" do
     let(:user)        { FactoryBot.create(:user) }
 
     # list of browser UA

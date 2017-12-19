@@ -2,7 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true,
+                                             version: :v1, speed: :medium do
 
   before(:all) do
     chapter = FactoryBot.create :content_chapter

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module Content
-  describe Book do
+  RSpec.describe Book do
 
     context "construction" do
       it "accepts a strategy" do

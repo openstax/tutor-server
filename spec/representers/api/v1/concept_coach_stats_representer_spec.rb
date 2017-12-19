@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed: :medium do
+RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer do
 
   before(:all) do
     ecosystem = VCR.use_cassette('Api_V1_ConceptCoachStatsRepresenter/with_book', VCR_OPTS) do

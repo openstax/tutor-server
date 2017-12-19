@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 class Entitee
-  describe ClassMethods, type: :lib do
+  RSpec.describe ClassMethods, type: :lib do
     class DummyClass
       extend Entitee::ClassMethods
     end

@@ -16,13 +16,16 @@ sudo: false
 dist: trusty
 language: ruby
 rvm:
-  - "2.2.3"
+  - '2.2.3'
 cache: bundler
 bundler_args: --without production --retry=6
 addons:
- postgresql: "9.5"
+ postgresql: '9.5'
+env:
+  - TAG=~speed:slow
+  - TAG=speed:slow
 script:
-  - bundle exec parallel_rspec ./spec
+  - bundle exec parallel_rspec -o "-t $TAG" ./spec
 branches:
   only:
     - master
@@ -32,11 +35,15 @@ branches:
     - /^int-.*$/
     - /^release-.*$/
 before_install:
-  - "export PATH=$PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH"
-  - "if [ $(phantomjs --version) != '2.1.1' ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi"
-  - "if [ $(phantomjs --version) != '2.1.1' ]; then wget https://assets.membergetmember.co/software/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2; fi"
-  - "if [ $(phantomjs --version) != '2.1.1' ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
-  - "phantomjs --version"
+  - export PATH=$PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
+  - >-
+    if [ $(phantomjs --version) != '2.1.1' ]; then
+      rm -rf $PWD/travis_phantomjs;
+      mkdir -p $PWD/travis_phantomjs;
+      wget https://assets.membergetmember.co/software/phantomjs-2.1.1-linux-x86_64.tar.bz2
+      -O $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2;
+      tar -xvf $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs;
+    fi
 before_script:
   - export OXT_DB_USER=postgres
   - export OXT_DB_PASS=

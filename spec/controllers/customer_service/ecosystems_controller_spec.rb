@@ -11,7 +11,7 @@ RSpec.describe CustomerService::EcosystemsController, type: :controller do
 
   before { controller.sign_in(customer_service) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'lists ecosystems' do
       get :index
 
@@ -23,7 +23,7 @@ RSpec.describe CustomerService::EcosystemsController, type: :controller do
     end
   end
 
-  describe 'GET #manifest' do
+  context 'GET #manifest' do
     it 'allows the ecosystem\'s manifest to be downloaded' do
       get :manifest, id: ecosystem_1.id
 

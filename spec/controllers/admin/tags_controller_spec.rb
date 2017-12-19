@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::TagsController do
+RSpec.describe Admin::TagsController, type: :controller do
   let(:admin)  { FactoryBot.create(:user, :administrator) }
 
   let!(:tag_1) { FactoryBot.create :content_tag, value: 'k12phys-ch04-ex003' }
@@ -9,7 +9,7 @@ RSpec.describe Admin::TagsController do
 
   before { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'does not list tags' do
       get :index
       expect(assigns[:tags]).to be_nil
@@ -28,7 +28,7 @@ RSpec.describe Admin::TagsController do
     end
   end
 
-  describe 'PUT #update' do
+  context 'PUT #update' do
     it 'updates the name, description and visible flag of the tag' do
       put :update, id: tag_1.id, tag: {
         name: 'k12 physics chapter 4 exercise 3',

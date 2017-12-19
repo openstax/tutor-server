@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::Strategies::Generated::Manifest do
+RSpec.describe Content::Strategies::Generated::Manifest, type: :strategy do
   context 'tutor book' do
     let(:fixture_path)          { 'spec/fixtures/content/sample_tutor_manifest.yml' }
     let(:manifest_yaml)         { File.open(fixture_path) { |file| file.read } }

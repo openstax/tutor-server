@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module CourseMembership
-  describe Period, type: :wrapper do
+  RSpec.describe Period, type: :wrapper do
     subject(:period)     { FactoryBot.create :course_membership_period }
 
     let(:student_1_user) { FactoryBot.create(:user) }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module Content
-  describe Ecosystem, type: :wrapper do
+  RSpec.describe Ecosystem, type: :wrapper do
 
     let(:valid_id)   { 1 }
     let(:invalid_id) { Object.new }

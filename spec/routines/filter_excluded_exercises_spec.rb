@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe FilterExcludedExercises, type: :routine do
+RSpec.describe FilterExcludedExercises, type: :routine, speed: :medium do
 
   let(:exercises) { 5.times.map{ FactoryBot.create :content_exercise } }
 

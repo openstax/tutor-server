@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :medium do
+RSpec.describe WorkPreviewCourseTasks, type: :routine do
 
   before(:all) do
     ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do

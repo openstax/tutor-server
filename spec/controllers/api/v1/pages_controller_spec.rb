@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::PagesController, type: :controller, api: true,
-                                         version: :v1, speed: :slow, vcr: VCR_OPTS do
+                                         version: :v1, vcr: VCR_OPTS do
 
   context 'with book' do
     before(:all) do

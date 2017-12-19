@@ -5,14 +5,14 @@ require "rails_helper"
 
 RSpec.describe WarningMailer, type: :mailer do
 
-  let(:mail) {
+  let(:mail) do
     described_class.warning(
       subject: 'test', message: 'A test message',
       details: { value_one: 1, value_two: 2 }
     )
-  }
+  end
 
-  describe "log and deliver" do
+  context "log and deliver" do
 
     it 'can log strings' do
       expect(Rails.logger).to receive(:warn).with("Help! I'm stuck in the matrix")

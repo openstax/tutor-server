@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::PaymentsController do
+RSpec.describe Admin::PaymentsController, type: :controller do
   let(:admin)  { FactoryBot.create(:user, :administrator) }
   before       { controller.sign_in(admin) }
 

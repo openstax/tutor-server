@@ -2,8 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
-                                                     speed: :slow,
-                                                     vcr: VCR_OPTS do
+                                                     vcr: VCR_OPTS,
+                                                     speed: :medium do
 
   before(:all) do
     @assistant = \

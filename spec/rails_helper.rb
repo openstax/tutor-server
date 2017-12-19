@@ -29,9 +29,7 @@ Capybara.asset_host = 'http://localhost:3001'
 require 'screenshots'
 
 Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, {
-    :window_size => window_size
-  })
+  Capybara::Poltergeist::Driver.new(app, window_size: window_size)
 end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -77,7 +75,7 @@ RSpec.configure do |config|
   # You can disable this behaviour by removing the line below, and instead
   # explicitly tag your specs with their type, e.g.:
   #
-  #     describe UsersController, type: :controller do
+  #     RSpec.describe UsersController, type: :controller do
   #       # ...
   #     end
   #

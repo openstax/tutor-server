@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::InactivateStudent, type: :routine do
-  let(:student)  { FactoryBot.create(:course_membership_student) }
-  let!(:course)  { student.course }
+  let(:course)  { FactoryBot.create :course_profile_course }
+  let(:period)  { FactoryBot.create :course_membership_period, course: course }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
 
   context "active student" do
     it "inactivates but does not delete the given student" do

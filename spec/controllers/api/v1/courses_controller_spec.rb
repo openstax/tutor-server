@@ -3,7 +3,7 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
-                                           version: :v1, speed: :slow, vcr: VCR_OPTS do
+                                           version: :v1, vcr: VCR_OPTS, speed: :slow do
 
   let(:user_1)         { FactoryBot.create(:user) }
   let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,

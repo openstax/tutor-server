@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 class Entitee
-  describe Relation, type: :lib do
+  RSpec.describe Relation, type: :lib do
     let(:exercise)        { 5.times.map { FactoryBot.create(:content_exercise) } }
     let(:relation)        { Content::Models::Exercise.all }
     let(:entitee_relation) { Entitee::Relation.new(relation) }

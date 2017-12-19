@@ -21,7 +21,7 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
     expect(response).to have_http_status(:success)
   end
 
-  describe 'Creating an offering' do
+  context 'Creating an offering' do
     let(:attributes) { FactoryBot.build(:catalog_offering).attributes }
 
     it 'complains about blank fields' do
@@ -48,7 +48,7 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
     end
   end
 
-  describe 'Editing an offering' do
+  context 'Editing an offering' do
     it 'complains about blank fields' do
       attrs = offering.attributes
       attrs['webview_url']=''
@@ -71,6 +71,5 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
       expect(offering.does_cost).to be true
     end
   end
-
 
 end

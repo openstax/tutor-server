@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskStep, type: :model do
+RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
 
   subject(:task_step) { FactoryBot.create :tasks_task_step }
 
@@ -11,7 +11,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
   it { is_expected.to validate_presence_of(:tasked) }
   it { is_expected.to validate_presence_of(:group_type) }
 
-  describe '#complete' do
+  context '#complete' do
     let(:time) { Time.current }
 
     before { Timecop.freeze(time) { task_step.complete! } }

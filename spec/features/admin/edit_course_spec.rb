@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'feature_js_helper'
 
-RSpec.feature 'Admin editing a course' do
+RSpec.feature 'Admin editing a course', speed: :slow do
   background do
     admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
@@ -189,7 +189,7 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_content('first happy restrictions Edit')
   end
 
-  scenario 'bulk updating course ecosystem', speed: :slow, vcr: VCR_OPTS do
+  scenario 'bulk updating course ecosystem', vcr: VCR_OPTS do
     physics_old_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
     physics_old = FetchAndImportBookAndCreateEcosystem[
       book_cnx_id: physics_old_cnx_id]

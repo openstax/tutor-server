@@ -20,7 +20,7 @@ RSpec.describe Api::V1::TeachersController, type: :controller, api: true, versio
                                                application: application,
                                                resource_owner_id: teacher_user.id }
 
-  describe '#destroy' do
+  context '#destroy' do
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect {

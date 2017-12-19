@@ -18,7 +18,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
                                                application: application,
                                                resource_owner_id: other_user.id }
 
-  describe "#check" do
+  context "#check" do
     it 'gives accepted status when the student exists' do
       student = FactoryBot.create(:course_membership_student)
       expect(UpdatePaymentStatus).to receive(:perform_later).with(uuid: student.uuid)
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
     end
   end
 
-  describe "#refund" do
+  context "#refund" do
     it "gives not found status when the student does not exist" do
       api_put :refund, student_token, parameters: { id: 'some UUID' }
       expect(response).to have_http_status(:not_found)
@@ -72,7 +72,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
     end
   end
 
-  describe "#index" do
+  context "#index" do
     it 'returns JSON from payments' do
       expect(OpenStax::Payments::Api.client).to(
         receive(:orders_for_account)
@@ -85,7 +85,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
     end
   end
 
-  describe "#create_fake" do
+  context "#create_fake" do
     it 'creates new fake purchased items' do
       uuids = 2.times.map{ SecureRandom.uuid }
       api_post :create_fake, nil, raw_post_data: uuids.to_json

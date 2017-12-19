@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::GetCourseTeacherRoles do
+RSpec.describe CourseMembership::GetCourseTeacherRoles, type: :routine do
   let(:target_course) { FactoryBot.create :course_profile_course }
   let(:course_period) { FactoryBot.create :course_membership_period, course: target_course }
 

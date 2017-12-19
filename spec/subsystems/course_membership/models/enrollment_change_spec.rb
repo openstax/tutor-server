@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
+RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model, speed: :medium do
   let(:course_1)  { FactoryBot.create :course_profile_course }
   let(:course_2)  { FactoryBot.create :course_profile_course }
 

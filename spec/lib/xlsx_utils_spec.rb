@@ -4,7 +4,7 @@ RSpec.describe XlsxUtils, type: :lib do
 
   let(:dummy) { Class.new{ include XlsxUtils }.new }
 
-  describe '#cell_ref' do
+  context '#cell_ref' do
     it 'finds simple cells' do
       expect(dummy.cell_ref(row: 5, column: 0)).to eq('A5')
       expect(dummy.cell_ref(row: 99, column: 2)).to eq('C99')
@@ -23,7 +23,7 @@ RSpec.describe XlsxUtils, type: :lib do
     end
   end
 
-  describe '#disjoint_range' do
+  context '#disjoint_range' do
     it 'works for scalar vals' do
       expect(dummy.disjoint_range(cols: "B", rows: "2")).to eq "B2"
     end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::IsCourseStudent do
+RSpec.describe CourseMembership::IsCourseStudent, type: :routine do
 
   context "when not a student of the given course" do
     let(:target_course) { FactoryBot.create :course_profile_course }

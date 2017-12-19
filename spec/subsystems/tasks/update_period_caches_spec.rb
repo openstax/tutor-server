@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :slow do
+RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
   before(:all)                { @task_plan = FactoryBot.create :tasked_task_plan }
 
   let(:course)                { @task_plan.owner }

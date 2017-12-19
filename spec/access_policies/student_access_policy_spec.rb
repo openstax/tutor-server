@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe StudentAccessPolicy, type: :access_policy do
+RSpec.describe StudentAccessPolicy, type: :access_policy, speed: :medium do
   let(:requestor)    { FactoryBot.create(:user) }
   let(:course)       { FactoryBot.create :course_profile_course }
   let(:period)       { FactoryBot.create :course_membership_period, course: course }

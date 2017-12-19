@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
+RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS, speed: :medium do
 
   let(:expected_exercise_uids_set) {
     Set.new expected_exercise_numbers.each_with_index.map do |number, index|

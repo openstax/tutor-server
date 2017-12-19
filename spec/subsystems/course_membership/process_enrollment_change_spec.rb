@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine do
+RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed: :medium do
   let(:course_1)  { FactoryBot.create :course_profile_course }
   let(:course_2)  { FactoryBot.create :course_profile_course }
   let(:course_3)  { FactoryBot.create :course_profile_course }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, speed: :medium do
   let(:admin)        { FactoryBot.create(:user, :administrator) }
 
   let(:book_1)       { FactoryBot.create :content_book, title: 'Physics', version: '1' }
@@ -13,7 +13,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr
 
   before { controller.sign_in(admin) }
 
-  describe 'GET #index' do
+  context 'GET #index' do
     it 'lists ecosystems' do
       get :index
 
@@ -25,7 +25,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr
     end
   end
 
-  describe 'POST #create' do
+  context 'POST #create' do
     context 'tutor manifest' do
       let(:fixture_path)  { 'content/sample_tutor_manifest.yml' }
       let(:manifest_file) { fixture_file_upload(fixture_path) }
@@ -117,7 +117,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr
     end
   end
 
-  describe '#destroy' do
+  context '#destroy' do
     it 'deletes an ecosystem' do
       expect {
         delete :destroy, id: ecosystem_1.id
@@ -137,7 +137,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr
     end
   end
 
-  describe 'GET #manifest' do
+  context 'GET #manifest' do
     it 'allows the ecosystem\'s manifest to be downloaded' do
       get :manifest, id: ecosystem_1.id
 
