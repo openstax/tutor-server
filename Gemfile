@@ -9,7 +9,7 @@ git_source(:github) do |repo_name|
 end
 
 # Rails framework
-gem 'rails', '4.2.4'
+gem 'rails', '4.2.7.1'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.3.7'
@@ -142,7 +142,7 @@ gem 'daemons'
 gem 'virtus'
 
 # Create xlsx files
-gem 'axlsx', '~> 2.1.0.pre'
+gem 'axlsx', github: 'randym/axlsx', ref: 'c8ac844572b25fda358cc01d2104720c4c42f450'
 
 # Pagination library
 gem 'will_paginate', '~> 3.0.6'
@@ -241,7 +241,7 @@ group :development, :test do
   gem 'bullet'
 
   # Access an IRB console on exceptions page and /console in development
-  gem 'web-console', '~> 2.0.0'
+  gem 'web-console'
 
   # Mute asset pipeline log messages
   gem 'quiet_assets'
