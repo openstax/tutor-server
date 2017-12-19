@@ -240,9 +240,6 @@ group :development, :test do
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
 
-  # Access an IRB console on exceptions page and /console in development
-  gem 'web-console'
-
   # Mute asset pipeline log messages
   gem 'quiet_assets'
 
@@ -262,28 +259,6 @@ group :development, :test do
   # Records HTTP requests
   gem 'vcr'
 
-  # Automated security checks
-  gem 'brakeman'
-
-  # Command line reference
-  gem 'cheat'
-
-  # Assorted generators
-  gem 'nifty-generators'
-
-  # Class diagrams
-  gem 'rails-erd'
-  gem 'railroady'
-
-  # CoffeeScript source maps
-  gem 'coffee-rails-source-maps'
-
-  # Code Climate integration
-  gem "codeclimate-test-reporter", require: false
-
-  # Codecov integration
-  gem 'codecov', require: false
-
   # Testing excel files
   gem 'roo'
 
@@ -294,6 +269,27 @@ group :development, :test do
 
   # Trace AR queries
   gem 'active_record_query_trace'
+end
+
+group :development do
+  # Automated security checks
+  gem 'brakeman'
+
+  # Command line reference
+  gem 'cheat'
+
+  # CoffeeScript source maps
+  gem 'coffee-rails-source-maps'
+
+  # Assorted generators
+  gem 'nifty-generators'
+
+  # Class diagrams
+  gem 'rails-erd'
+  gem 'railroady'
+
+  # Access an IRB console on exceptions page and /console in development
+  gem 'web-console'
 end
 
 group :test do
@@ -309,6 +305,12 @@ group :test do
   gem 'whenever-test'
 
   gem 'capybara-screenshot', require: false
+
+  # Code Climate integration
+  gem "codeclimate-test-reporter", require: false
+
+  # Codecov integration
+  gem 'codecov', require: false
 end
 
 group :production do
