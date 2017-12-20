@@ -1,21 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe Admin::UsersController, type: :controller do
-  let!(:admin) { FactoryBot.create :user, :administrator,
-                                           username: 'admin',
-                                           full_name: 'Administrator' }
+  let!(:admin) do
+    FactoryBot.create :user, :administrator, first_name: 'Ad', last_name: 'Min',
+                                             username: 'admin', full_name: 'Admin'
+  end
   let!(:user) { FactoryBot.create :user, username: 'student', full_name: 'User One' }
 
   before { controller.sign_in(admin) }
 
-  it 'searches users by username and full name' do
-    get :index, query: 'STR'
-    expect(assigns[:user_search].items.length).to eq 1
-    expect(assigns[:user_search].items).to eq [ admin ]
+  context '#index' do
+    let(:query)    { 'some query' }
+    let(:order_by) { 'some_field some_direction' }
+    let(:page)     { 42 }
+    let(:per_page) { 21 }
+    let(:users)    { [ admin, user ] }
 
-    get :index, query: 'st'
-    expect(assigns[:user_search].items.length).to eq 2
-    expect(assigns[:user_search].items.sort_by { |a| a.id }).to eq [ admin, user ]
+    it 'passes query, order_by, page and per_page to User::SearchUsers and assigns the result' do
+      expect(User::SearchUsers).to receive(:call).with(
+        query: query, order_by: order_by, page: page.to_s, per_page: per_page.to_s
+      ).and_return(OpenStruct.new(outputs: OpenStruct.new(items: users)))
+
+      get :index, query: query, order_by: order_by, page: page, per_page: per_page
+
+      expect(assigns[:user_search].items).to eq users
+    end
   end
 
   it 'creates a new user' do

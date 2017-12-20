@@ -1,36 +1,26 @@
 module User
   class SearchUsers
-    include ::TypeVerification
 
-    lev_routine express_output: :users
+    lev_routine express_output: :items
+
+    uses_routine OpenStax::Accounts::SearchAccounts, as: :search
 
     protected
-    def exec(search:, order: 'last_name', page: nil, per_page: 30,
+
+    def exec(query: '', order_by: 'last_name', page: nil, per_page: 30,
              strategy_class: ::User::Strategies::Direct::User)
-      search = verify_and_return search, klass: String
-      profiles = find_profiles(search).order(order).paginate(page: page, per_page: per_page)
+      outs = run(:search, query: query, order_by: order_by, page: page, per_page: per_page).outputs
+      outputs.total_count = outs.total_count
+      account_ids = outs.items.map(&:id)
+      profiles_by_account_id = ::User::Models::Profile.where(account_id: account_ids)
+                                                      .index_by(&:account_id)
+      outputs.items = account_ids.map do |account_id|
+        profile = profiles_by_account_id[account_id]
+        next if profile.nil?
 
-      outputs[:users] = Hashie::Mash.new(
-        total_count: profiles.total_entries,
-        items: profiles.map do |profile|
-          strategy = strategy_class.new(profile)
-          ::User::User.new(strategy: strategy)
-        end
-      )
-    end
-
-    private
-
-    def profiles_query
-      ::User::Models::Profile.includes{account}.joins{account}
-    end
-
-    def find_profiles(search)
-      term = search.downcase
-      profiles_query.where{(lower(account.username).like term) |
-                           (lower(account.full_name).like term) |
-                           (lower(account.first_name).like term) |
-                           (lower(account.last_name).like term)}
+        strategy = strategy_class.new(profile)
+        ::User::User.new(strategy: strategy)
+      end.compact
     end
   end
 end
