@@ -393,7 +393,7 @@ GEM
     omniauth-salesforce (1.0.5)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
-    openstax_accounts (7.9.0)
+    openstax_accounts (7.11.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -403,7 +403,7 @@ GEM
       openstax_api (>= 3.1.0)
       openstax_utilities (>= 4.1.0)
       pg
-      rails (>= 4.1)
+      rails (>= 4.1, < 5.0)
       representable (>= 2.0)
       roar (>= 1.0)
     openstax_api (8.2.0)
@@ -759,7 +759,7 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts (~> 7.9.0)
+  openstax_accounts (~> 7.11.0)
   openstax_api (~> 8.2.0)
   openstax_rescue_from (~> 2.1.0)
   openstax_salesforce (~> 1.1.0)
