@@ -73,7 +73,6 @@ class GetStudentGuide
       page_guides = pgs.group_by { |pg| pg[:book_location] }.sort.map do |book_location, pgs|
         preferred_pg = pgs.first
         questions_answered_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
-        practice_count = pgs.count { |pg| pg[:practice] }
         clue = biglearn_clue_by_book_container_uuid[preferred_pg[:tutor_uuid]]
 
         {
@@ -81,7 +80,6 @@ class GetStudentGuide
           book_location: book_location,
           student_count: 1,
           questions_answered_count: questions_answered_count,
-          practice_count: practice_count,
           clue: clue,
           page_ids: [ preferred_pg[:id] ]
         }
@@ -90,7 +88,6 @@ class GetStudentGuide
       preferred_ch = chs.first
       questions_answered_count = page_guides.map { |guide| guide[:questions_answered_count] }
                                             .reduce(0, :+)
-      practice_count = chs.count { |ch| ch[:practice] }
       clue = biglearn_clue_by_book_container_uuid[preferred_ch[:tutor_uuid]]
       page_ids = page_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
 
@@ -99,7 +96,6 @@ class GetStudentGuide
         book_location: book_location,
         student_count: 1,
         questions_answered_count: questions_answered_count,
-        practice_count: practice_count,
         clue: clue,
         page_ids: page_ids,
         children: page_guides

@@ -27,7 +27,6 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter, type: :representer do
               book_location: [1, 4],
               student_count: 5,
               questions_answered_count: 25,
-              practice_count: 3,
               clue: {
                 minimum: 0.7,
                 most_likely: 0.89,
@@ -56,7 +55,6 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter, type: :representer do
             maximum: 0.9,
             is_real: true
           },
-          practice_count: 3,
           page_ids: ['4', '5', '6']
         }.deep_stringify_keys
       ]
