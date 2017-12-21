@@ -10,14 +10,14 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
   let(:user_1)           { FactoryBot.create :user }
   let(:user_1_token)     do
     FactoryBot.create :doorkeeper_access_token, application: application,
-                                                 resource_owner_id: user_1.id
+                                                resource_owner_id: user_1.id
   end
   let(:user_1_role)      { AddUserAsPeriodStudent[user: user_1, period: period] }
 
   let(:user_2)           { FactoryBot.create(:user) }
   let(:user_2_token)     do
     FactoryBot.create :doorkeeper_access_token, application: application,
-                                                 resource_owner_id: user_2.id
+                                                resource_owner_id: user_2.id
   end
 
   let(:userless_token)   { FactoryBot.create :doorkeeper_access_token, application: application }
@@ -52,6 +52,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     end
   end
 
+  let(:teacher_user)       { FactoryBot.create(:user) }
+  let!(:teacher_role)      { AddUserAsCourseTeacher[course: course, user: teacher_user] }
+  let(:teacher_user_token) do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: teacher_user.id
+  end
+
   context "#show" do
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
@@ -70,10 +77,21 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       })
     end
 
-    it "422's if needs to pay" do
-      make_payment_required_and_expect_422(course: course, user: user_1) {
-        api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
-      }
+    context 'student' do
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: course, user: user_1) do
+          api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
+        end
+      end
+    end
+
+    context 'teacher' do
+      it 'does not 422 if needs to pay' do
+        make_payment_required_and_expect_not_422(course: course, user: user_1) do
+          api_get :show, teacher_user_token,
+                  parameters: { task_id: task_step.task.id, id: task_step.id }
+        end
+      end
     end
 
     it 'raises SecurityTransgression when user is anonymous or not a teacher' do

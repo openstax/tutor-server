@@ -4,28 +4,31 @@
 class Api::V1::ApiController < OpenStax::Api::V1::ApiController
 
   def error_if_student_and_needs_to_pay
-    return true if current_api_user.human_user.is_anonymous?
+    return if current_api_user.human_user.is_anonymous?
 
-    if @student.present?
-      student = @student
-      course = @student.course
-    elsif @course.present?
-      course = @course
-      student = UserIsCourseStudent.call(
-        user: current_api_user.human_user, course: @course
-      ).outputs.student
+    course = if @course.present?
+      @course
+    elsif @student.present?
+      @student.course
     elsif @task.present?
-      student = @task.taskings.first.role.student
-      course = student.try!(:course)
+      # Assumes all tasks are assigned to one student
+      @task.taskings.first.role.student.try!(:course)
     elsif @task_step.present?
       # Assumes all tasks are assigned to one student
-      student = @task_step.task.taskings.first.role.student
-      course = student.try!(:course)
+      @task_step.task.taskings.first.role.student.try!(:course)
     else
-      raise "Either @student, @course, @task, or @task_step must be set"
+      raise "Either @course, @student, @task, or @task_step must be set"
     end
 
-    payment_overdue?(course, student) ? render_api_errors(:payment_overdue) : true
+    return if course.nil?
+
+    student = UserIsCourseStudent.call(
+      user: current_api_user.human_user, course: course
+    ).outputs.student
+
+    return if student.nil?
+
+    render_api_errors(:payment_overdue) if payment_overdue?(course, student)
   end
 
   def render_job_id_json(job_id)
@@ -35,15 +38,13 @@ class Api::V1::ApiController < OpenStax::Api::V1::ApiController
   protected
 
   def payment_overdue?(course, student)
-    return false if !Settings::Payments.payments_enabled
-    return false if student.nil?                        # only students need to pay
-    return false if course.is_preview                   # preview courses should never cost
-    return false if !course.does_cost
-    return false if student.payment_due_at.nil?
-    return false if Time.now < student.payment_due_at   # not overdue yet
-    return false if student.is_paid
-    return false if student.is_comped
-    return true
+    Settings::Payments.payments_enabled && # payments are enabled
+    !course.is_preview &&                  # not in a preview course
+    course.does_cost &&                    # course does cost
+    !student.is_paid &&                    # student has not paid yet
+    !student.is_comped &&                  # student has not been comped
+    student.payment_due_at.present? &&     # payment is eventually due
+    Time.current >= student.payment_due_at # payment due date has passed
   end
 
 end

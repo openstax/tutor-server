@@ -3,39 +3,41 @@ require "rails_helper"
 RSpec.describe Api::V1::TasksController, type: :controller, api: true,
                                          version: :v1, speed: :medium do
 
-  let(:course)            { FactoryBot.create :course_profile_course }
-  let(:period)            { FactoryBot.create :course_membership_period, course: course }
+  let(:course)             { FactoryBot.create :course_profile_course }
+  let(:period)             { FactoryBot.create :course_membership_period, course: course }
 
-  let(:task_plan_1)       { FactoryBot.create :tasks_task_plan, owner: course }
-  let(:task_1)             { FactoryBot.create :tasks_task, title: 'A Task Title',
-                                                task_plan: task_plan_1,
-                                                step_types: [:tasks_tasked_reading,
-                                                             :tasks_tasked_exercise] }
+  let(:task_plan_1)        { FactoryBot.create :tasks_task_plan, owner: course }
+  let(:task_1)             do
+    FactoryBot.create :tasks_task, title: 'A Task Title',
+                                   task_plan: task_plan_1,
+                                   step_types: [:tasks_tasked_reading, :tasks_tasked_exercise]
+  end
 
   let(:application)        { FactoryBot.create :doorkeeper_application }
   let(:user_1)             { FactoryBot.create(:user) }
-  let(:user_1_token)       { FactoryBot.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: user_1.id }
+  let(:user_1_token)       do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: user_1.id
+  end
 
-  let!(:user_1_role)        { AddUserAsPeriodStudent[user: user_1, period: period] }
+  let!(:user_1_role)       { AddUserAsPeriodStudent[user: user_1, period: period] }
 
   let(:user_2)             { FactoryBot.create(:user) }
-  let(:user_2_token)       { FactoryBot.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: user_2.id }
+  let(:user_2_token)       do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: user_2.id
+  end
 
-  let(:userless_token)     { FactoryBot.create :doorkeeper_access_token,
-                                                application: application }
+  let(:userless_token)     { FactoryBot.create :doorkeeper_access_token, application: application }
 
   let!(:tasking_1)         { FactoryBot.create :tasks_tasking, role: user_1_role, task: task_1 }
 
   let(:teacher_user)       { FactoryBot.create(:user) }
-  let!(:teacher_role)      { AddUserAsCourseTeacher[course: course,
-                                                    user: teacher_user] }
-  let(:teacher_user_token) { FactoryBot.create :doorkeeper_access_token,
-                                                application: application,
-                                                resource_owner_id: teacher_user.id }
+  let!(:teacher_role)      { AddUserAsCourseTeacher[course: course, user: teacher_user] }
+  let(:teacher_user_token) do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: teacher_user.id
+  end
 
   context "#show" do
     it "should work on the happy path" do
@@ -48,20 +50,30 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
       expect(response.body_as_hash[:steps][1]).to include(type: 'exercise')
     end
 
-    it "422's if needs to pay" do
-      make_payment_required_and_expect_422(course: course, user: user_1) {
-        api_get :show, user_1_token, parameters: {id: task_1.id}
-      }
+    context 'student' do
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: course, user: user_1) do
+          api_get :show, user_1_token, parameters: { id: task_1.id }
+        end
+      end
+    end
+
+    context 'teacher' do
+      it 'does not 422 if needs to pay' do
+        make_payment_required_and_expect_not_422(course: course, user: user_1) do
+          api_get :show, teacher_user_token, parameters: { id: task_1.id }
+        end
+      end
     end
 
     it 'raises SecurityTransgression when user is anonymous or not a teacher' do
-      expect {
+      expect do
         api_get :show, nil, parameters: { id: task_1.id }
-      }.to raise_error(SecurityTransgression)
+      end.to raise_error(SecurityTransgression)
 
-      expect {
+      expect do
         api_get :show, user_2_token, parameters: { id: task_1.id }
-      }.to raise_error(SecurityTransgression)
+      end.to raise_error(SecurityTransgression)
     end
   end
 
@@ -70,9 +82,9 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
       before{ task_1.task_plan.destroy! }
 
       it 'does not change is_late_work_accepted to true' do
-        expect {
+        expect do
           api_put :accept_late_work, teacher_user_token, parameters: {id: task_1.id}
-        }.to raise_error(SecurityTransgression)
+        end.to raise_error(SecurityTransgression)
 
         expect(task_1.accepted_late_at).to be_nil
       end
@@ -87,9 +99,9 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
       end
 
       it "can only be used by teachers" do
-        expect {
+        expect do
           api_put :accept_late_work, user_1_token, parameters: {id: task_1.id}
-        }.to raise_error(SecurityTransgression)
+        end.to raise_error(SecurityTransgression)
       end
     end
   end
