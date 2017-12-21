@@ -44,7 +44,9 @@ class CalculateTaskStats
     task_caches.each do |task_cache|
       pgs_by_task_id[task_cache.tasks_task_id] = task_cache.as_toc[:books].flat_map do |bk|
         bk[:chapters].flat_map do |ch|
-          ch[:pages].reject { |pg| pg[:exercises].empty? }.map do |pg|
+          ch[:pages].reject do |pg|
+            pg[:num_assigned_exercises] == 0 && pg[:num_assigned_placeholders] == 0
+          end.map do |pg|
             pg.merge(
               student_ids: task_cache.student_ids,
               student_names: task_cache.student_names,
@@ -151,7 +153,9 @@ class CalculateTaskStats
 
     started_pgs = pgs.select { |pg| pg[:num_completed_exercises] > 0 }
     student_count = started_pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
-    assigned_count = pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+)
+    assigned_count = pgs.map do |pg|
+      pg[:num_assigned_exercises] + pg[:num_assigned_placeholders]
+    end.reduce(0, :+)
     completed_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
     correct_count = pgs.map { |pg| pg[:num_correct_exercises] }.reduce(0, :+)
     incorrect_count = completed_count - correct_count
