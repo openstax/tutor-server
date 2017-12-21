@@ -39,6 +39,7 @@ class PopulatePreviewCourseContent
         acc.role = 'student'
         acc.uuid = SecureRandom.uuid
         acc.support_identifier = "cs_#{SecureRandom.hex(4)}"
+        acc.is_test = true
       end.tap do |acc|
         raise "Someone took the preview username #{acc.username}!" if acc.valid_openstax_uid?
       end

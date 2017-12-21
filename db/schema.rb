@@ -576,6 +576,7 @@ ActiveRecord::Schema.define(version: 20171228164817) do
     t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
+    t.boolean  "is_test"
   end
 
   add_index "openstax_accounts_accounts", ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true, using: :btree

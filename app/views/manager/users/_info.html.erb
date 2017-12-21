@@ -36,6 +36,10 @@
 
 <%= profile.account.support_identifier %>
 
+<h3>Test Account?</h3>
+
+<%= tf_to_yn profile.account.is_test %>
+
 <h3>Courses</h3>
 
 <% courses = GetUserCourses[user: user] %>

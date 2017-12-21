@@ -47,6 +47,12 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :is_test,
+             getter: ->(*) { account.is_test },
+             type: :boolean,
+             writeable: false,
+             readable: true
+
     property :terms_signatures_needed,
              readable: true,
              writeable: false,
