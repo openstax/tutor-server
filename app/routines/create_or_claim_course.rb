@@ -13,20 +13,24 @@ class CreateOrClaimCourse
                translations: { outputs: { type: :verbatim } }
 
   def exec(attributes)
+    user = attributes[:teacher]
+
     if attributes[:is_preview]
       run(:claim_preview_course, {
             name: attributes[:name],
             catalog_offering: attributes[:catalog_offering]
       })
     else
-      run(:create_course, attributes.except(:teacher))
+      run(:create_course, attributes.except(:teacher).merge(is_test: !!user.is_test))
     end
+
     if errors.none?
-      run(:add_user_as_teacher, course: outputs.course, user: attributes[:teacher])
+      run(:add_user_as_teacher, course: outputs.course, user: user)
+
       TrackTutorOnboardingEvent.perform_later(
         event: (outputs.course.is_preview? ? 'created_preview_course' : 'created_real_course'),
-        user: attributes[:teacher],
-        data: {course_id: outputs.course.id}
+        user: user,
+        data: { course_id: outputs.course.id }
       )
     end
   end

@@ -28,9 +28,9 @@ module User
       validates :account, presence: true, uniqueness: true
       validates :ui_settings, max_json_length: 10_000
 
-      delegate :username, :first_name, :last_name, :full_name, :title, :uuid,
-               :name, :casual_name, :salesforce_contact_id, :faculty_status, :role,
-               :first_name=, :last_name=, :full_name=, :title=, to: :account
+      delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
+               :salesforce_contact_id, :faculty_status, :role, :uuid, :support_identifier,
+               :is_test, :first_name=, :last_name=, :full_name=, :title=, to: :account
 
       def self.anonymous
         ::User::Models::AnonymousProfile.instance

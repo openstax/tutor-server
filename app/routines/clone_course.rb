@@ -20,6 +20,7 @@ class CloneCourse
       name: name || course.name,
       is_college: is_college.nil? ? course.is_college : is_college,
       is_concept_coach: course.is_concept_coach,
+      is_test: teacher_user.is_test || course.is_test,
       term: term || course.term,
       year: year || course.year + 1,
       num_sections: num_sections || course.num_sections,

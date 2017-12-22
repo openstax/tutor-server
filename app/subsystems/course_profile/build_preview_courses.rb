@@ -46,6 +46,7 @@ class CourseProfile::BuildPreviewCourses
         ::CreateCourse[
           name: "#{offering.description} Preview",
           is_preview: true,
+          is_test: false,
           is_college: true,
           num_sections: 2,
           time_zone: "Central Time (US & Canada)",
