@@ -3,19 +3,20 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
   protected
 
+  def build_task_step(task, page, fragment, fragment_index)
+    Tasks::Models::TaskStep.new(
+      task: task,
+      group_type: :core_group,
+      page: page.to_model,
+      labels: fragment.labels,
+      fragment_index: fragment_index
+    ).tap { |step| task.task_steps << step }
+  end
+
   def task_fragments(task:, fragments:, page_title:, page:)
     title = page_title
 
-    step_builder = ->(fragment) do
-      Tasks::Models::TaskStep.new(
-        task: task,
-        group_type: :core_group,
-        page: page.to_model,
-        labels: fragment.labels
-      ).tap { |step| task.task_steps << step }
-    end
-
-    fragments.each do |fragment|
+    fragments.each_with_index do |fragment, index|
 
       title ||= fragment.title
 
@@ -25,20 +26,28 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       case fragment
       # This is a subclass of Fragment::Exercise so it needs to come first
       when OpenStax::Cnx::V1::Fragment::OptionalExercise
-        store_related_exercises(exercise_fragment: fragment, page: page,
-                                previous_step: previous_step, title: title) \
-          unless previous_step.nil?
+        store_related_exercises(
+          exercise_fragment: fragment, page: page, title: title, previous_step: previous_step
+        ) unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Exercise
-        task_exercise(exercise_fragment: fragment, page: page, task: task,
-                      previous_step: previous_step, title: title)
+        task_exercise(
+          exercise_fragment: fragment, page: page, task: task, title: title,
+          previous_step: previous_step, fragment_index: index
+        )
       when OpenStax::Cnx::V1::Fragment::Video
-        task_video(video_fragment: fragment, step: step_builder.call(fragment), title: title)
+        task_video(
+          video_fragment: fragment, step: build_task_step(task, page, fragment, index), title: title
+        )
       when OpenStax::Cnx::V1::Fragment::Interactive
-        task_interactive(interactive_fragment: fragment,
-                         step: step_builder.call(fragment), title: title)
+        task_interactive(
+          interactive_fragment: fragment,
+          step: build_task_step(task, page, fragment, index), title: title
+        )
       else
-        task_reading(reading_fragment: fragment, page: page,
-                     step: step_builder.call(fragment), title: title)
+        task_reading(
+          reading_fragment: fragment, page: page,
+          step: build_task_step(task, page, fragment, index), title: title
+        )
       end
 
       # The page title applies only to the first step in the set of fragments given
@@ -56,7 +65,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   end
 
   # Exercise exclusions are ignored here
-  def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:)
+  def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:, fragment_index:)
     exercise = get_unused_page_exercises_with_tags(
       page: page, tags: exercise_fragment.embed_tags
     ).sample
@@ -95,8 +104,10 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     end
 
     # Assign the exercise
-    add_exercise_step!(task: task, exercise: exercise, title: title,
-                       group_type: :core_group, labels: exercise_fragment.labels)
+    add_exercise_step!(
+      task: task, exercise: exercise, title: title, group_type: :core_group,
+      labels: exercise_fragment.labels, fragment_index: fragment_index
+    )
   end
 
   def store_related_exercises(exercise_fragment:, page:, previous_step:, title: nil)

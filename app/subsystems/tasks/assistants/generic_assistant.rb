@@ -51,12 +51,16 @@ class Tasks::Assistants::GenericAssistant
     @used_exercise_numbers = Set.new
   end
 
-  def add_exercise_step!(task:, exercise:, group_type:, title: nil, labels: nil)
+  def add_exercise_step!(
+    task:, exercise:, group_type:, title: nil, labels: nil, fragment_index: nil
+  )
+    labels ||= []
     @used_exercise_numbers << exercise.number
 
     TaskExercise.call(task: task, exercise: exercise, title: title) do |step|
       step.group_type = group_type
-      step.labels = labels if labels.present?
+      step.labels = labels
+      step.fragment_index = fragment_index
     end.outputs.task_step
   end
 
