@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 28 Dec 2017 22:04:56 GMT
+      - Thu, 28 Dec 2017 22:32:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -35,12 +35,12 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=JbYglz_kQWWueu-DJONFAQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        26-Feb-2018 22:04:56 GMT;Max-Age=5184000
+      - BrowserId=TJFEeV0MQCqDt-3ANAc5WQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 22:32:32 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=833/48000
+      - api-usage=984/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -49,7 +49,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0ZW00000027grVMAQ"},"Id":"a0ZW00000027grVMAQ","Name":"Chemistry"},{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0ZW00000027graMAA"},"Id":"a0ZW00000027graMAA","Name":"Physics"}]}'
     http_version: 
-  recorded_at: Thu, 28 Dec 2017 22:04:56 GMT
+  recorded_at: Thu, 28 Dec 2017 22:32:32 GMT
 - request:
     method: get
     uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
@@ -73,7 +73,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 28 Dec 2017 22:04:57 GMT
+      - Thu, 28 Dec 2017 22:32:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -85,12 +85,12 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=UNX9uysPS9mLXXMAsJ2c8Q;Path=/;Domain=.salesforce.com;Expires=Mon,
-        26-Feb-2018 22:04:57 GMT;Max-Age=5184000
+      - BrowserId=wDt7ZYTQROGm7Jhq1WiGkw;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 22:32:32 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=832/48000
+      - api-usage=984/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -100,5 +100,5 @@ http_interactions:
       string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/001W000000cnIFcIAM"},"Id":"001W000000cnIFcIAM","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Thu, 28 Dec 2017 22:04:57 GMT
+  recorded_at: Thu, 28 Dec 2017 22:32:32 GMT
 recorded_with: VCR 2.9.3

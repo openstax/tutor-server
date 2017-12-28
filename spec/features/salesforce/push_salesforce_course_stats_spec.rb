@@ -373,6 +373,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.base_year).to eq 2016
     expect(osa.does_cost).to eq true
     expect(osa.latest_adoption_decision).to eq "For course credit"
+    expect(osa.campaign_member_id).to eq campaign_member.id
   end
 
   def expect_osa_attachment(osa, course)
