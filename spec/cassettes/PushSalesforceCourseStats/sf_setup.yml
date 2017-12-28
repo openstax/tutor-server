@@ -20,8 +20,10 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      Connection:
+      - close
       Date:
-      - Thu, 15 Jun 2017 17:55:21 GMT
+      - Thu, 28 Dec 2017 22:04:56 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -29,25 +31,25 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=RejfLlfwQxKMPcuLRRKpHw;Path=/;Domain=.salesforce.com;Expires=Mon,
-        14-Aug-2017 17:55:21 GMT
+      - BrowserId=JbYglz_kQWWueu-DJONFAQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 22:04:56 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=535/48000
+      - api-usage=833/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0Z0v000000DzubEAC"},"Id":"a0Z0v000000DzubEAC","Name":"Physics"},{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0Z0v000000DzuWEAS"},"Id":"a0Z0v000000DzuWEAS","Name":"Chemistry"}]}'
+      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0ZW00000027grVMAQ"},"Id":"a0ZW00000027grVMAQ","Name":"Chemistry"},{"attributes":{"type":"Book__c","url":"/services/data/v37.0/sobjects/Book__c/a0ZW00000027graMAA"},"Id":"a0ZW00000027graMAA","Name":"Physics"}]}'
     http_version: 
-  recorded_at: Thu, 15 Jun 2017 17:55:21 GMT
+  recorded_at: Thu, 28 Dec 2017 22:04:56 GMT
 - request:
     method: get
     uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
@@ -68,8 +70,10 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      Connection:
+      - close
       Date:
-      - Thu, 15 Jun 2017 17:55:21 GMT
+      - Thu, 28 Dec 2017 22:04:57 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -77,24 +81,24 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=FjtiPMl0Trqs38HiM1qtyQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        14-Aug-2017 17:55:21 GMT
+      - BrowserId=UNX9uysPS9mLXXMAsJ2c8Q;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 22:04:57 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=535/48000
+      - api-usage=832/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v000003uCSCAA2"},"Id":"0010v000003uCSCAA2","Name":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/001W000000cnIFcIAM"},"Id":"001W000000cnIFcIAM","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Thu, 15 Jun 2017 17:55:21 GMT
+  recorded_at: Thu, 28 Dec 2017 22:04:57 GMT
 recorded_with: VCR 2.9.3

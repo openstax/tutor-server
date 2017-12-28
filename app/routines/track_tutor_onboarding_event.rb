@@ -92,6 +92,14 @@ protected
   end
 
   def find_or_initialize_campaign_member(user:)
+    # Users we have been marketing to should already have a `CampaignMember` record
+    # by the time they get to this tracking code.  So our first attempt is to
+    # search for an existing CampaignMember by the active campaign ID and the user's
+    # SF contact ID.  If it doesn't exist, this user is someone who likely just
+    # happened upon Tutor, and our approach is to bundle them under a "nomad"
+    # campaign, whose ID we also have in our admin settings.  For these users we
+    # create a new CampaignMember.
+
     raise(CannotTrackOnboardingUser, "user is anonymous") if user.is_anonymous?
 
     sf_contact_id = user.salesforce_contact_id

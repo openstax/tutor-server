@@ -183,7 +183,7 @@ class PushSalesforceCourseStats
     os_ancillary.error = nil
 
     begin
-      periods = course.periods
+      periods = course.periods.without_deleted
 
       os_ancillary.course_id = course.id
       os_ancillary.course_uuid = course.uuid
