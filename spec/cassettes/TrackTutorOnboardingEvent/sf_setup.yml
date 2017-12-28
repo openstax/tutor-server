@@ -20,8 +20,10 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      Connection:
+      - close
       Date:
-      - Sun, 11 Jun 2017 03:47:26 GMT
+      - Thu, 28 Dec 2017 20:45:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -29,32 +31,32 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=1AFM3r7gSDSjr0KQxX8r5w;Path=/;Domain=.salesforce.com;Expires=Thu,
-        10-Aug-2017 03:47:26 GMT
+      - BrowserId=O52knlLiSMW5LrwE_NfnFQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 20:45:26 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=1154/48000
+      - api-usage=487/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v000003uCSCAA2"},"Id":"0010v000003uCSCAA2","Name":"JP
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/001W000000cnIFcIAM"},"Id":"001W000000cnIFcIAM","Name":"JP
         University"}]}'
     http_version: 
-  recorded_at: Sun, 11 Jun 2017 03:47:26 GMT
+  recorded_at: Thu, 28 Dec 2017 20:45:26 GMT
 - request:
     method: post
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Contact"
     body:
       encoding: UTF-8
-      string: '{"FirstName":"Lavonne","LastName":"Bode","AccountId":"0010v000003uCSCAA2"}'
+      string: '{"FirstName":"Kirstin","LastName":"Turner","AccountId":"001W000000cnIFcIAM"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -71,8 +73,10 @@ http_interactions:
       code: 201
       message: Created
     headers:
+      Connection:
+      - close
       Date:
-      - Sun, 11 Jun 2017 03:47:28 GMT
+      - Thu, 28 Dec 2017 20:45:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -80,25 +84,133 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       Content-Security-Policy:
-      - referrer origin-when-cross-origin; upgrade-insecure-requests
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=ks5BvCU0R2OSz2uzYxax2w;Path=/;Domain=.salesforce.com;Expires=Thu,
-        10-Aug-2017 03:47:28 GMT
+      - BrowserId=rsGPIl4NTZK7RqvCXozoEA;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 20:45:26 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=1168/48000
+      - api-usage=487/48000
       Location:
-      - "/services/data/v37.0/sobjects/Contact/0030v000002CiKnAAK"
+      - "/services/data/v37.0/sobjects/Contact/003W000000l6GA8IAM"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
-      Transfer-Encoding:
-      - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0030v000002CiKnAAK","success":true,"errors":[]}'
+      string: '{"id":"003W000000l6GA8IAM","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Sun, 11 Jun 2017 03:47:28 GMT
+  recorded_at: Thu, 28 Dec 2017 20:45:28 GMT
+- request:
+    method: post
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Campaign"
+    body:
+      encoding: UTF-8
+      string: '{"Name":"ec73727fc952b684"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Connection:
+      - close
+      Date:
+      - Thu, 28 Dec 2017 20:45:28 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - BrowserId=L2PYZHIdQcewQSMNEu04xg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 20:45:28 GMT;Max-Age=5184000
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=487/48000
+      Location:
+      - "/services/data/v37.0/sobjects/Campaign/701W0000000SlXFIA0"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"701W0000000SlXFIA0","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Thu, 28 Dec 2017 20:45:29 GMT
+- request:
+    method: post
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/Campaign"
+    body:
+      encoding: UTF-8
+      string: '{"Name":"fa4a084850d8efb3"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Connection:
+      - close
+      Date:
+      - Thu, 28 Dec 2017 20:45:29 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - BrowserId=2kCtGt3XR0OZwJ0ijJWVOg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        26-Feb-2018 20:45:29 GMT;Max-Age=5184000
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=487/48000
+      Location:
+      - "/services/data/v37.0/sobjects/Campaign/701W0000000SlXKIA0"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"701W0000000SlXKIA0","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Thu, 28 Dec 2017 20:45:29 GMT
 recorded_with: VCR 2.9.3

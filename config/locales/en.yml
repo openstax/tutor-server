@@ -79,3 +79,9 @@ en:
       is_highlighting_allowed:
         name: 'Allow highlighting?'
         help_block: 'If false (unchecked), disables highlighting; if true (checked), may enable highlighting (other checks used too)'
+      active_onboarding_salesforce_campaign_id:
+        name: 'Onboarding Campaign ID'
+        help_block: 'The current Salesforce campaign ID for onboarding'
+      active_nomad_onboarding_salesforce_campaign_id:
+        name: 'Nomad Onboarding Campaign ID'
+        help_block: 'The current Salesforce campaign ID for onboarding when we are creating new campaign members (cannot find an existing one)'

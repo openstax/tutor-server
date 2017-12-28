@@ -1,117 +1,118 @@
 class TrackTutorOnboardingEvent
 
-  lev_routine express_output: :tutor_onboarding_a
+  lev_routine express_output: :campaign_member
 
   class InstantFailStandardError < StandardError
     def instantly_fail_if_in_background_job?; true; end
   end
 
-  class CannotGetToa < InstantFailStandardError; end
   class MissingArgument < InstantFailStandardError; end
+  class CannotTrackOnboardingUser < InstantFailStandardError; end
+  class MissingOnboardingCampaignId < InstantFailStandardError; end
 
 protected
 
   # typing shortcut
-  TOA = OpenStax::Salesforce::Remote::TutorOnboardingA
+  CM = OpenStax::Salesforce::Remote::CampaignMember
 
   def exec(event:, user:, data: {})
     begin
 
-      toa = nil
+      cm = nil
 
       case event.to_sym
       when :arrived_tutor_marketing_page_from_pardot
-        raise(MissingArgument, "pardot_reported_contact_id") if data[:pardot_reported_contact_id].blank?
-        raise(MissingArgument, "pardot_reported_piaid") if data[:pardot_reported_piaid].blank?
-        raise(MissingArgument, "pardot_reported_picid") if data[:pardot_reported_picid].blank?
-
-        toa = find_or_initialize_toa(user: user, pardot_reported_contact_id: data[:pardot_reported_contact_id])
-
-        toa.pardot_reported_piaid ||= data[:pardot_reported_piaid]
-        toa.pardot_reported_picid ||= data[:pardot_reported_picid]
-        toa.arrived_marketing_page_from_pardot_at ||= DateTime.current
+        # Deprecated event, no longer handling
+        return
       when :arrived_tutor_marketing_page_not_from_pardot
-        toa = find_or_initialize_toa(user: user)
-        toa.arrived_marketing_page_not_from_pardot_at ||= DateTime.current
+        # Deprecated event, no longer handling
+        return
       when :arrived_my_courses
         # Nothing to do, just want to make sure a record gets created
-        toa = find_or_initialize_toa(user: user)
+        cm = find_or_initialize_campaign_member(user: user)
       when :created_preview_course
-        toa = find_or_initialize_toa(user: user)
-        toa.preview_created_at ||= DateTime.current
+        cm = find_or_initialize_campaign_member(user: user)
+        cm.preview_created_at ||= DateTime.current
       when :created_real_course
-        toa = find_or_initialize_toa(user: user)
-        toa.real_course_created_at ||= DateTime.current
+        cm = find_or_initialize_campaign_member(user: user)
+        cm.real_course_created_at ||= DateTime.current
       when :like_preview_ask_later
-        toa = find_or_initialize_toa(user: user)
-        toa.like_preview_ask_later_count ||= 0
-        toa.like_preview_ask_later_count += 1
+        cm = find_or_initialize_campaign_member(user: user)
+        cm.like_preview_ask_later_count ||= 0
+        cm.like_preview_ask_later_count += 1
       when :like_preview_yes
-        toa = find_or_initialize_toa(user: user)
-        toa.like_preview_yes_at ||= DateTime.current
+        cm = find_or_initialize_campaign_member(user: user)
+        cm.like_preview_yes_at ||= DateTime.current
       when :made_adoption_decision
         raise(MissingArgument, "decision") if data[:decision].blank?
 
-        toa = find_or_initialize_toa(user: user)
-        toa.latest_adoption_decision_at = DateTime.current
-        toa.latest_adoption_decision = data[:decision]
+        cm = find_or_initialize_campaign_member(user: user)
+        cm.latest_adoption_decision_at = DateTime.current
+        cm.latest_adoption_decision = data[:decision]
+
+        course = get_course(data)
+        course.latest_adoption_decision = data[:decision]
+        course.save!
       else
         raise InstantFailStandardError, "unknown tutor onboarding event: #{event}"
       end
 
-      toa.save_if_changed
+      cm.save_if_changed
 
-      if toa.errors.any?
-        raise "Could not save TutorOnboardingA #{toa.errors.full_messages}, user: #{user.uuid}, data: #{data}"
+      if cm.errors.any?
+        raise "Could not save CampaignMember #{cm.errors.full_messages}, user: #{user.uuid}, data: #{data}"
       end
 
-      outputs.tutor_onboarding_a = toa
+      outputs.campaign_member = cm
 
-    rescue CannotGetToa => ee
-      log(:error) { "Cannot get TOA for #{event} event because '#{ee.message}'" }
+      if event.to_sym == :created_real_course
+        # Save the CampaignMember ID in the course so it gets sent to Salesforce
+        # in the daily stats update; have to do this after `cm.save_if_changed`
+        # because if the CM is new it won't have an ID yet.
+
+        course = get_course(data)
+        course.creator_campaign_member_id = cm.id
+        course.save!
+      end
+
+    rescue CannotTrackOnboardingUser => ee
+      log(:error) { "Cannot get CampaignMember for #{event} event because '#{ee.message}'" }
       raise
     rescue MissingArgument => ee
       raise(MissingArgument, "Missing the `#{ee.message}` argument for event #{event}")
     rescue OpenStax::Salesforce::UserMissing => ee
-      log(:error) { "Cannot track TOA event because Salesforce user not set" }
+      log(:error) { "Cannot track onboarding event because Salesforce user not set" }
       raise if Settings::Db.store.raise_if_salesforce_user_missing
     end
-
   end
 
+  def get_course(data)
+    raise(MissingArgument, "course_id") if data[:course_id].blank?
+    CourseProfile::Models::Course.find(data[:course_id])
+  end
 
-  def find_or_initialize_toa(user:, pardot_reported_contact_id: nil)
-    if user.is_anonymous?
-      if pardot_reported_contact_id.blank?
-        raise CannotGetToa, "user is anonymous and no pardot SF contact ID given"
-      else
-        TOA.find_or_initialize_by(pardot_reported_contact_id: pardot_reported_contact_id)
-      end
-    else
-      # Find in priority order by local SF contact ID, UUID, pardot Contact ID; if
-      # not found, init by UUID.  Put Pardot ID later in priority because there is
-      # a chance that the ID could be shared by people forwarding emails around, whereas
-      # the local SF contact ID and UUID are more specific to one user. Then set missing
-      # fields as needed.
+  def find_or_initialize_campaign_member(user:)
+    raise(CannotTrackOnboardingUser, "user is anonymous") if user.is_anonymous?
 
-      toa = TOA.find_by(first_teacher_contact_id: user.salesforce_contact_id) \
-        if user.salesforce_contact_id.present?
+    sf_contact_id = user.salesforce_contact_id
+    raise(CannotTrackOnboardingUser, "user #{user.id} has no SF contact ID") if sf_contact_id.blank?
 
-      toa ||= TOA.find_by(accounts_uuid: user.uuid) if user.uuid.present?
+    onboarding_campaign_id = Settings::Salesforce.active_onboarding_salesforce_campaign_id
+    raise(MissingOnboardingCampaignId, "active campaign") if onboarding_campaign_id.blank?
 
-      toa ||= TOA.find_by(pardot_reported_contact_id: pardot_reported_contact_id) \
-        if pardot_reported_contact_id.present?
+    cm = CM.find_by(contact_id: sf_contact_id, campaign_id: onboarding_campaign_id)
 
-      toa ||= TOA.new(accounts_uuid: require_and_return_uuid!(user))
+    if cm.nil?
+      nomad_onboarding_campaign_id = Settings::Salesforce.active_nomad_onboarding_salesforce_campaign_id
+      raise(MissingOnboardingCampaignId, "nomad campaign") if nomad_onboarding_campaign_id.blank?
 
-      # TODO think through / spec different cases (e.g. teacher forwards pardot email to colleage at different times)
-
-      toa.first_teacher_contact_id ||= user.salesforce_contact_id
-      toa.pardot_reported_contact_id ||= pardot_reported_contact_id
-      toa.accounts_uuid ||= require_and_return_uuid!(user)
-
-      toa
+      cm = CM.new(contact_id: sf_contact_id, campaign_id: nomad_onboarding_campaign_id)
     end
+
+    cm.first_teacher_contact_id ||= user.salesforce_contact_id
+    cm.accounts_uuid ||= require_and_return_uuid!(user)
+
+    cm
   end
 
   def log(level, &block)

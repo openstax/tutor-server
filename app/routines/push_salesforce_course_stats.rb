@@ -224,6 +224,9 @@ class PushSalesforceCourseStats
       os_ancillary.base_year = base_year_for_course(course)
 
       os_ancillary.does_cost = course.does_cost
+
+      os_ancillary.latest_adoption_decision = course.latest_adoption_decision
+      os_ancillary.campaign_member_id = course.creator_campaign_member_id
     rescue Exception => ee
       # Add the error to the OSA and `error!` but non fatally so the error can get saved
       # to the OSA
