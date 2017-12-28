@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreateOrClaimCourse, type: :routine do
-  let(:mock_course) { OpenStruct.new('is_preview?': is_preview ) }
+  let(:mock_course) { OpenStruct.new('is_preview?': is_preview, id: 42 ) }
 
   context 'a preview course' do
 
@@ -17,7 +17,8 @@ RSpec.describe CreateOrClaimCourse, type: :routine do
         .to receive(:call).with(course: mock_course, user: 'TEACH') { |routine, *args| routine.send(:result)}
 
       expect(TrackTutorOnboardingEvent).to receive(:perform_later)
-                                             .with(event: 'created_preview_course', user: 'TEACH')
+                                             .with(event: 'created_preview_course', user: 'TEACH',
+                                                   data: { course_id: 42 })
 
       described_class.call(is_preview: true, teacher: 'TEACH', name:'TEST', catalog_offering: 123)
     end
@@ -37,7 +38,8 @@ RSpec.describe CreateOrClaimCourse, type: :routine do
         .to receive(:call) { |routine, *args| routine.send(:result)}
 
       expect(TrackTutorOnboardingEvent).to receive(:perform_later)
-                                             .with(event: 'created_real_course', user: 'TEACH')
+                                             .with(event: 'created_real_course', user: 'TEACH',
+                                                   data: { course_id: 42 })
 
       described_class.call(is_preview: false, teacher: 'TEACH')
     end
