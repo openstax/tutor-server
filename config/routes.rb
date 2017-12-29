@@ -384,6 +384,16 @@ Rails.application.routes.draw do
     resources :jobs, only: [:show]
   end
 
+  # All research routes
+  namespace :research do
+    root 'console#index'
+
+    resources :studies, only: [:index]
+    resources :survey_plans, except: :destroy do
+
+    end
+  end
+
   # Manage apps that use Tutor as an OAuth provider
   use_doorkeeper
 

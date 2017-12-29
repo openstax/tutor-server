@@ -1,0 +1,14 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "common_colors";
+@import "fonts";
+@import "jquery.datetimepicker";
+@import "jquery-ui-1.11.4.custom.min";
+@import "admin_navbar";
+@import "manager";
+
+ .underlined-spaced-row {
+   border-bottom: 1px solid gray;
+   padding-bottom: 20px;
+   margin-bottom: 20px
+ }
