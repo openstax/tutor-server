@@ -41,6 +41,7 @@
         <th>Admin?</th>
         <th>Customer Service?</th>
         <th>Content Analyst?</th>
+        <th>Researcher?</th>
         <% [extra_headers].flatten.each do |extra_header| %>
         <th><%= extra_header %></th>
         <% end %>
@@ -54,6 +55,7 @@
           <td><%= tf_to_yn user.is_admin? %></td>
           <td><%= tf_to_yn user.is_customer_service? %></td>
           <td><%= tf_to_yn user.is_content_analyst? %></td>
+          <td><%= tf_to_yn user.is_researcher? %></td>
           <%= capture(user, &extra_fields_proc) unless extra_fields_proc.nil? %>
         </tr>
       <% end %>

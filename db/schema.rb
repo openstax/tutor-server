@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171228164817) do
+ActiveRecord::Schema.define(version: 20171229173406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -336,7 +336,7 @@ ActiveRecord::Schema.define(version: 20171228164817) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                 null: false
     t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                                         default: "gen_random_uuid()"
     t.integer  "sequence_number",                              default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                      null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
@@ -573,7 +573,7 @@ ActiveRecord::Schema.define(version: 20171228164817) do
     t.datetime "updated_at",                                          null: false
     t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                  default: "gen_random_uuid()"
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
     t.boolean  "is_test"
@@ -1019,6 +1019,14 @@ ActiveRecord::Schema.define(version: 20171228164817) do
 
   add_index "user_profiles", ["account_id"], name: "index_user_profiles_on_account_id", unique: true, using: :btree
 
+  create_table "user_researchers", force: :cascade do |t|
+    t.integer  "user_profile_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "user_researchers", ["user_profile_id"], name: "index_user_researchers_on_user_profile_id", unique: true, using: :btree
+
   create_table "user_tour_views", force: :cascade do |t|
     t.integer "view_count",      default: 0, null: false
     t.integer "user_profile_id",             null: false
@@ -1112,6 +1120,7 @@ ActiveRecord::Schema.define(version: 20171228164817) do
   add_foreign_key "user_content_analysts", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_researchers", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_tour_views", "user_profiles"
   add_foreign_key "user_tour_views", "user_tours"
 

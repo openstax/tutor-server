@@ -22,6 +22,7 @@ module User
       has_one :administrator, dependent: :destroy, inverse_of: :profile
       has_one :customer_service, dependent: :destroy, inverse_of: :profile
       has_one :content_analyst, dependent: :destroy, inverse_of: :profile
+      has_one :researcher, dependent: :destroy, inverse_of: :profile
 
       json_serialize :ui_settings, Hash
 

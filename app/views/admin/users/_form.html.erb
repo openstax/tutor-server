@@ -60,6 +60,11 @@
     <%= check_box_tag 'user[content_analyst]', "1", @user.try(:is_content_analyst?) %>
   </div>
 
+  <div class='form-group'>
+    <%= f.label :researcher, class: 'col-sm-2 control-label' %>
+    <%= check_box_tag 'user[researcher]', "1", @user.try(:is_researcher?) %>
+  </div>
+
   <div>
     <%= f.submit 'Save', class: 'btn btn-primary' %>
   </div>

@@ -11,6 +11,7 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['is_admin']).to eq user.is_admin?
     expect(representation['is_customer_service']).to eq user.is_customer_service?
     expect(representation['is_content_analyst']).to eq user.is_content_analyst?
+    expect(representation['is_researcher']).to eq user.is_researcher?
     expect(representation['faculty_status']).to eq user.faculty_status
     expect(representation['viewed_tour_stats']).to eq []
     expect(representation['terms_signatures_needed']).to eq false
