@@ -14,6 +14,7 @@ RSpec.describe CreateCourse, type: :routine do
       time_zone: 'Indiana (East)',
       is_preview: false,
       is_college: is_college,
+      is_test: true,
       catalog_offering: catalog_offering,
       estimated_student_count: 42
     )
@@ -52,6 +53,7 @@ RSpec.describe CreateCourse, type: :routine do
       time_zone: 'Indiana (East)',
       is_preview: true,
       is_college: is_college,
+      is_test: false,
       catalog_offering: catalog_offering
     )
     expect(result.errors).to be_empty
@@ -72,6 +74,7 @@ RSpec.describe CreateCourse, type: :routine do
       time_zone: 'Indiana (East)',
       is_preview: false,
       is_college: is_college,
+      is_test: true,
       catalog_offering: catalog_offering,
       estimated_student_count: 42
     )
@@ -88,6 +91,7 @@ RSpec.describe CreateCourse, type: :routine do
       time_zone: 'Indiana (East)',
       is_preview: false,
       is_college: is_college,
+      is_test: true,
       catalog_offering: catalog_offering,
       estimated_student_count: 42
     ).outputs.course

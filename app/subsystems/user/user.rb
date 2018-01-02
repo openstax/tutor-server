@@ -117,6 +117,10 @@ module User
       !!@strategy.is_content_analyst?
     end
 
+    def is_test
+      !!@strategy.is_test
+    end
+
     def faculty_status
       verify_and_return @strategy.faculty_status, klass: String, error: StrategyError
     end

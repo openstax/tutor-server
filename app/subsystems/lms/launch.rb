@@ -229,7 +229,7 @@ class Lms::Launch
           request_parameters,
           app.secret
         )
-
+debugger if !authenticator.valid_signature?
         raise InvalidSignature if !authenticator.valid_signature?
 
         @message = authenticator.message
