@@ -1,1 +1,51 @@
-index.html.erb
+<% @page_header = "Survey Plans" %>
+
+<div class="studies_note">
+  Survey plans define the surveys you want to assign.  These plans are assigned to students, and their responses are
+  recorded in Survey records.
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Survey</th>
+      <th>Status</th>
+      <th width="25%">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <% Research::Models::SurveyPlan.includes(:study).find_each do |survey_plan| %>
+      <% study = survey_plan.study %>
+      <td><%= survey_plan.title %></td>
+      <td><%= study.name %> (ID: <%= study.id %>)</td>
+      <td><%= survey_plan.published? ? "Published" : "Draft" %> <%= "/ Hidden" if survey_plan.hidden? %></td>
+      <td>
+        <%= link_to "Edit", edit_research_survey_plan_path(survey_plan) %> |
+        <%= link_to "Preview", research_survey_plan_preview_path(survey_plan) %>&nbsp;&nbsp;
+        <% if !survey_plan.published? %>
+          <%= link_to "Publish", research_survey_plan_publish_path(survey_plan),
+                        method: :put,
+                        data: {
+                          confirm: "Are you sure? Plans cannot be unpublished.  Students in this plan's study will " \
+                                   "see this survey once it is published."
+                        },
+                        class: 'btn btn-xs btn-primary' %>
+        <% end %>
+        <% if !survey_plan.hidden? %>
+          <%= link_to "Permanently Hide", research_survey_plan_hide_path(survey_plan),
+                        method: :delete,
+                        data: {
+                          confirm: "Are you sure? Plans cannot be unhidden.  If already published, hiding a plan " \
+                                   "will make it disappear from student dashboards."
+                        },
+                        class: 'btn btn-xs btn-primary' %>
+        <% end %>
+      </td>
+    <% end %>
+
+  </tbody>
+</table>
+
+<%= link_to 'Add Survey Plan', new_research_survey_plan_path, class: "btn btn-primary" %>

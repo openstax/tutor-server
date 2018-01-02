@@ -390,7 +390,9 @@ Rails.application.routes.draw do
 
     resources :studies, only: [:index]
     resources :survey_plans, except: :destroy do
-
+      get :preview
+      put :publish
+      delete :hide
     end
   end
 
