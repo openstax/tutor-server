@@ -72,7 +72,8 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
               id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart'
+              last_name: 'Newhart',
+              deleted_at: nil
             }
           ],
           periods: a_collection_containing_exactly(
@@ -139,7 +140,8 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
             { id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart' }
+              last_name: 'Newhart',
+              deleted_at: nil }
           ]
         },
         role: {
@@ -233,7 +235,8 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
               id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart'
+              last_name: 'Newhart',
+              deleted_at: nil
             }
           ],
           periods: a_collection_containing_exactly(
@@ -345,7 +348,8 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
               id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart'
+              last_name: 'Newhart',
+              deleted_at: nil
             }
           ],
           periods: a_collection_containing_exactly(

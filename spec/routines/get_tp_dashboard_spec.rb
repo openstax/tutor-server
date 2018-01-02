@@ -72,7 +72,8 @@ RSpec.describe GetTpDashboard, type: :routine, speed: :slow do
             { id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart' }
+              last_name: 'Newhart',
+              deleted_at: nil }
           ]
         },
         role: {
@@ -97,7 +98,8 @@ RSpec.describe GetTpDashboard, type: :routine, speed: :slow do
               id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart'
+              last_name: 'Newhart',
+              deleted_at: nil
             }
           ]
         },
@@ -145,7 +147,8 @@ RSpec.describe GetTpDashboard, type: :routine, speed: :slow do
             { id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart' }
+              last_name: 'Newhart',
+              deleted_at: nil }
           ]
         },
         role: {
@@ -171,7 +174,8 @@ RSpec.describe GetTpDashboard, type: :routine, speed: :slow do
               id: teacher_role.teacher.id.to_s,
               role_id: teacher_role.id.to_s,
               first_name: 'Bob',
-              last_name: 'Newhart'
+              last_name: 'Newhart',
+              deleted_at: nil
             }
           ]
         },
