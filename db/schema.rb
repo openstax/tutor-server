@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171221002027) do
+ActiveRecord::Schema.define(version: 20171222160223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -830,6 +830,7 @@ ActiveRecord::Schema.define(version: 20171221002027) do
     t.text     "labels",               default: "[]", null: false
     t.text     "spy",                  default: "{}", null: false
     t.integer  "content_page_id"
+    t.integer  "fragment_index"
   end
 
   add_index "tasks_task_steps", ["first_completed_at"], name: "index_tasks_task_steps_on_first_completed_at", using: :btree

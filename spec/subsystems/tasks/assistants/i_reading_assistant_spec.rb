@@ -62,8 +62,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         group_type: 'core_group',
         klass: Tasks::Models::TaskedReading,
         title: "Forces and Newton's Laws of Motion",
-        related_content: [ { 'title' => "Forces and Newton's Laws of Motion",
-                             'book_location' => [8, 1] } ]
+        related_content: [
+          { 'title' => "Forces and Newton's Laws of Motion", 'book_location' => [8, 1] }
+        ],
+        fragment_index: 0
       }
     end
 
@@ -73,7 +75,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         {
           klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [ { 'title' => "Force", 'book_location' => [8, 2] } ]
+          related_content: [ { 'title' => "Force", 'book_location' => [8, 2] } ],
+          fragment_index: 0
         }
       ]
     end
@@ -138,6 +141,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
           expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
+          expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
@@ -228,23 +232,28 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       [
         {
           klass: Tasks::Models::TaskedReading,
-          title: "Newton's First Law of Motion: Inertia"
+          title: "Newton's First Law of Motion: Inertia",
+          fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedVideo,
-          title: "Newton’s First Law of Motion"
+          title: "Newton’s First Law of Motion",
+          fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedExercise,
-          title: nil
+          title: nil,
+          fragment_index: 1
         },
         {
           klass: Tasks::Models::TaskedInteractive,
-          title: "Virtual Physics: Forces and Motion: Basics"
+          title: "Virtual Physics: Forces and Motion: Basics",
+          fragment_index: 2
         },
         {
           klass: Tasks::Models::TaskedExercise,
-          title: nil
+          title: nil,
+          fragment_index: 3
         }
       ]
     end
@@ -326,6 +335,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
           expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
+          expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
@@ -413,29 +423,34 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         {
           klass: Tasks::Models::TaskedReading,
           title: "Newton's Second Law of Motion",
-          related_exercise_ids: []
+          related_exercise_ids: [],
+          fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedVideo,
           title: "Newton’s Second Law of Motion",
-          related_exercise_ids: []
+          related_exercise_ids: [],
+          fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_exercise_ids: []
+          related_exercise_ids: [],
+          fragment_index: 1
         },
         {
           klass: Tasks::Models::TaskedReading,
           title: nil,
-          related_exercise_ids: []
+          related_exercise_ids: [],
+          fragment_index: 2
         },
         {
           klass: Tasks::Models::TaskedExercise,
           title: nil,
           related_exercise_ids: page.reload.reading_context_pool.exercises.select do |exercise|
             exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
-          end.map(&:id)
+          end.map(&:id),
+          fragment_index: 3
         }
       ]
     end
@@ -455,6 +470,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
           expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
+          expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           next if task_step.placeholder?
 
@@ -567,19 +583,23 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       tasking_plan
     end
 
+    # The gaps in the fragment indices are caused by exercises combining with previous page content
     let(:task_step_gold_data) do
       [
         {
           klass: Tasks::Models::TaskedReading,
-          title: "Newton's Flaming Laser Sword"
+          title: "Newton's Flaming Laser Sword",
+          fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedExercise,
-          title: nil
+          title: nil,
+          fragment_index: 2
         },
         {
           klass: Tasks::Models::TaskedExercise,
-          title: nil
+          title: nil,
+          fragment_index: 4
         },
         {
           klass: Tasks::Models::TaskedPlaceholder,
@@ -642,6 +662,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       task_steps.each_with_index do |task_step, ii|
         expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
         expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
+        expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
         expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
         next if task_step.placeholder?
 

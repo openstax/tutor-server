@@ -20,6 +20,8 @@ class Tasks::Models::TaskStep < ApplicationRecord
   validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
+  validates :fragment_index,
+            numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 

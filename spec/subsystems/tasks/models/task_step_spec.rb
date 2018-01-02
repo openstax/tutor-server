@@ -11,6 +11,14 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
   it { is_expected.to validate_presence_of(:tasked) }
   it { is_expected.to validate_presence_of(:group_type) }
 
+  it do
+    is_expected.to(
+      validate_numericality_of(:fragment_index).only_integer
+                                               .is_greater_than_or_equal_to(0)
+                                               .allow_nil
+    )
+  end
+
   context '#complete' do
     let(:time) { Time.current }
 
