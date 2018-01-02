@@ -1195,6 +1195,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 role_id: teacher_role.id.to_s,
                 first_name: teacher_user.first_name,
                 last_name: teacher_user.last_name,
+                is_active: true,
               }
             )
           )

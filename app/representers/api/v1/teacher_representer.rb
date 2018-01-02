@@ -45,5 +45,10 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :is_active,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { !try!(:deleted_at) }
+
   end
 end

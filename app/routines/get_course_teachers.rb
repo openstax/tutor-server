@@ -9,10 +9,12 @@ class GetCourseTeachers
     run(CourseMembership::GetTeachers, course)
     teacher_ids = outputs[:teachers].map(&:id)
     roles = Entity::Role.where { id.in teacher_ids }
-      .eager_load([:teacher, profile: :account])
+              .eager_load([:teacher, profile: :account])
+
     outputs[:teachers] = roles.map do |role|
       { id: role.teacher.id.to_s,
         role_id: role.id.to_s,
+        deleted_at: role.teacher.deleted_at,
         first_name: role.profile.first_name,
         last_name: role.profile.last_name }
     end
