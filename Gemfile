@@ -9,7 +9,7 @@ git_source(:github) do |repo_name|
 end
 
 # Rails framework
-gem 'rails', '4.2.4'
+gem 'rails', '4.2.7.1'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.3.7'
@@ -142,7 +142,7 @@ gem 'daemons'
 gem 'virtus'
 
 # Create xlsx files
-gem 'axlsx', '~> 2.1.0.pre'
+gem 'axlsx', github: 'randym/axlsx', ref: 'c8ac844572b25fda358cc01d2104720c4c42f450'
 
 # Pagination library
 gem 'will_paginate', '~> 3.0.6'
@@ -240,9 +240,6 @@ group :development, :test do
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
 
-  # Access an IRB console on exceptions page and /console in development
-  gem 'web-console', '~> 2.0.0'
-
   # Mute asset pipeline log messages
   gem 'quiet_assets'
 
@@ -262,28 +259,6 @@ group :development, :test do
   # Records HTTP requests
   gem 'vcr'
 
-  # Automated security checks
-  gem 'brakeman'
-
-  # Command line reference
-  gem 'cheat'
-
-  # Assorted generators
-  gem 'nifty-generators'
-
-  # Class diagrams
-  gem 'rails-erd'
-  gem 'railroady'
-
-  # CoffeeScript source maps
-  gem 'coffee-rails-source-maps'
-
-  # Code Climate integration
-  gem "codeclimate-test-reporter", require: false
-
-  # Codecov integration
-  gem 'codecov', require: false
-
   # Testing excel files
   gem 'roo'
 
@@ -294,6 +269,27 @@ group :development, :test do
 
   # Trace AR queries
   gem 'active_record_query_trace'
+end
+
+group :development do
+  # Automated security checks
+  gem 'brakeman'
+
+  # Command line reference
+  gem 'cheat'
+
+  # CoffeeScript source maps
+  gem 'coffee-rails-source-maps'
+
+  # Assorted generators
+  gem 'nifty-generators'
+
+  # Class diagrams
+  gem 'rails-erd'
+  gem 'railroady'
+
+  # Access an IRB console on exceptions page and /console in development
+  gem 'web-console'
 end
 
 group :test do
@@ -309,6 +305,12 @@ group :test do
   gem 'whenever-test'
 
   gem 'capybara-screenshot', require: false
+
+  # Code Climate integration
+  gem "codeclimate-test-reporter", require: false
+
+  # Codecov integration
+  gem 'codecov', require: false
 end
 
 group :production do
