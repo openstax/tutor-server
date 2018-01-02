@@ -71,31 +71,43 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
         rows[1..-1].each do |row|
           data = headers.zip(row).to_h
           step = steps_by_id.fetch(data['Step ID'].to_i)
+          page = step.page
           task = step.task
           tasked = step.tasked
-          url = tasked.respond_to?(:url) ? tasked.url : nil
           correct_answer_id = step.exercise? ? tasked.correct_answer_id : nil
           answer_id = step.exercise? ? tasked.answer_id : nil
           correct = step.exercise? ? tasked.is_correct?.to_s : nil
           free_response = step.exercise? ? tasked.free_response : nil
           tags = step.exercise? ? tasked.tags : []
 
-          expect(data['Student']).to eq(task.taskings.first.role.research_identifier)
+          expect(data['Student Research Identifier']).to(
+            eq(task.taskings.first.role.research_identifier)
+          )
           expect(data['Course ID']).to eq(course.id.to_s)
-          expect(data['CC?']).to eq("FALSE")
+          expect(data['Concept Coach?']).to eq("FALSE")
           expect(data['Period ID']).to be_in(period_ids)
+          expect(data['Plan ID']).to eq(task.task_plan.try!(:id).try!(:to_s))
+          expect(data['Task ID'].to_i).to eq(task.id)
+          expect(data['Task Type']).to eq(task.task_type)
+          expect(data['Task Opens At']).to eq(format_time(task.opens_at))
+          expect(data['Task Due At']).to eq(format_time(task.due_at))
           expect(data['Step Type']).to eq(step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1))
-          expect(data['Group']).to eq(step.group_name)
-          expect(data['First Completed At']).to eq(format_time(step.first_completed_at))
-          expect(data['Last Completed At']).to eq(format_time(step.last_completed_at))
-          expect(data['Opens At']).to eq(format_time(task.opens_at))
-          expect(data['Due At']).to eq(format_time(task.due_at))
-          expect(data['URL']).to eq(url)
-          expect(data['Correct Answer ID']).to eq(correct_answer_id)
-          expect(data['Answer ID']).to eq(answer_id)
-          expect(data['Correct?']).to eq(correct)
-          expect(data['Free Response']).to eq(free_response)
-          expect((data['Tags'] || '').split(',')).to match_array(tags)
+          expect(data['Step Group']).to eq(step.group_name)
+          expect(data['Step Labels']).to eq(step.labels.join(','))
+          expect(data['Step First Completed At']).to eq(format_time(step.first_completed_at))
+          expect(data['Step Last Completed At']).to eq(format_time(step.last_completed_at))
+          expect(data['CNX Module JSON URL']).to eq("#{page.url}.json")
+          expect(data['CNX Module HTML URL']).to eq(page.url)
+          expect(data['HTML Fragment Number'].to_i).to eq(step.fragment_index + 1)
+          next unless step.exercise?
+
+          expect(data['Exercise JSON URL']).to eq(tasked.url.gsub("org", "org/api") + ".json")
+          expect(data['Exercise Editor URL']).to eq(tasked.url)
+          expect(data['Exercise Correct Answer ID']).to eq(correct_answer_id)
+          expect(data['Exercise Chosen Answer ID']).to eq(answer_id)
+          expect(data['Exercise Correct?']).to eq(correct)
+          expect(data['Exercise Free Response']).to eq(free_response)
+          expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
         end
       end
     end

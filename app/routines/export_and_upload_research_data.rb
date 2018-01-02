@@ -22,28 +22,32 @@ class ExportAndUploadResearchData
   def create_export_file(task_types, date_range)
     CSV.open(filepath, 'w') do |file|
       file << [
-        "Student",
+        "Student Research Identifier",
         "Course ID",
-        "CC?",
+        "Concept Coach?",
         "Period ID",
         "Plan ID",
         "Task ID",
         "Task Type",
+        "Task Opens At",
+        "Task Due At",
         "Step ID",
         "Step Number",
         "Step Type",
-        "Group",
-        "First Completed At",
-        "Last Completed At",
-        "Opens At",
-        "Due At",
-        "URL",
-        "API URL",
-        "Correct Answer ID",
-        "Answer ID",
-        "Correct?",
-        "Free Response",
-        "Tags"
+        "Step Group",
+        "Step Labels",
+        "Step First Completed At",
+        "Step Last Completed At",
+        "CNX Module JSON URL",
+        "CNX Module HTML URL",
+        "HTML Fragment Number",
+        "Exercise JSON URL",
+        "Exercise Editor URL",
+        "Exercise Correct Answer ID",
+        "Exercise Chosen Answer ID",
+        "Exercise Correct?",
+        "Exercise Free Response",
+        "Exercise Tags"
       ]
 
       steps = Tasks::Models::TaskStep
@@ -120,7 +124,7 @@ class ExportAndUploadResearchData
 
             type = step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1)
             course_id = r_info[:course_id]
-            url = tasked.url if tasked.respond_to?(:url)
+            page = step.page
 
             row = [
               r_info[:research_identifier],
@@ -130,33 +134,35 @@ class ExportAndUploadResearchData
               task.tasks_task_plan_id,
               task.id,
               task.task_type,
+              format_time(task.opens_at),
+              format_time(task.due_at),
               step.id,
               step.number,
               type,
               step.group_name,
+              step.labels.join(','),
               format_time(step.first_completed_at),
               format_time(step.last_completed_at),
-              format_time(task.opens_at),
-              format_time(task.due_at),
-              url
+              "#{page.url}.json",
+              page.url,
+              step.fragment_index + 1
             ]
 
             row.push(*(
               case type
               when 'Exercise'
                 [
-                  url.gsub("org", "org/api") + ".json",
+                  tasked.url.gsub("org", "org/api") + ".json",
+                  tasked.url,
                   tasked.correct_answer_id,
                   tasked.answer_id,
                   tasked.is_correct,
                   # escape so Excel doesn't see as formula
-                  tasked.free_response.try!(:gsub, /\A=/, "'="),
+                  tasked.free_response.try!(:sub, /\A=/, "'="),
                   tasked.tags_array.join(',')
                 ]
-              when 'Reading'
-                [ "#{url}.json" ] + [ nil ] * 4
               else
-                [ nil ] * 5
+                [ nil ] * 7
               end
             ))
 
