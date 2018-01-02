@@ -126,7 +126,6 @@ class Tasks::UpdatePeriodCaches
             book_location: book_location,
             has_exercises: pgs.any? { |pg| pg[:has_exercises] },
             is_spaced_practice: pgs.all? { |pg| pg[:is_spaced_practice] },
-            is_intro: pgs.all? { |pg| pg[:is_intro] },
             num_assigned_steps: pgs.map { |pg| pg[:num_assigned_steps] }.reduce(0, :+),
             num_completed_steps: pgs.map { |pg| pg[:num_completed_steps] }.reduce(0, :+),
             num_assigned_exercises: pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+),

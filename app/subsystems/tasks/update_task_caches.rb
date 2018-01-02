@@ -84,7 +84,7 @@ class Tasks::UpdateTaskCaches
     exercise_steps = task_steps.select(&:exercise?)
     ActiveRecord::Associations::Preloader.new.preload exercise_steps, :tasked
 
-    # Group TaskedSteps by task_id and page_id
+    # Group TaskSteps by task_id and page_id
     task_steps_by_task_id_and_page_id = Hash.new do |hash, key|
       hash[key] = Hash.new { |hash, key| hash[key] = [] }
     end
@@ -218,7 +218,6 @@ class Tasks::UpdateTaskCaches
           task_steps = task_steps_by_page_id.values_at(*page_ids).flatten
           tasked_exercises = task_steps.select(&:exercise?).map(&:tasked)
           num_tasked_placeholders = task_steps.count(&:placeholder?)
-          next if tasked_exercises.empty? && num_tasked_placeholders == 0
 
           exercises_array = tasked_exercises.map do |tasked_exercise|
             task_step = tasked_exercise.task_step
@@ -239,9 +238,6 @@ class Tasks::UpdateTaskCaches
             }
           end
 
-          # No need to parse the entire page content,
-          # since the title alone determines if a page is an intro page
-          parser = OpenStax::Cnx::V1::Page.new(title: mapped_page.title)
           is_spaced_practice = num_tasked_placeholders == 0 && exercises_array.all? do |ex|
             ex[:group_type] == 'spaced_practice_group'
           end
@@ -252,7 +248,6 @@ class Tasks::UpdateTaskCaches
             book_location: mapped_page.book_location,
             has_exercises: !mapped_page.all_exercises_pool.empty?,
             is_spaced_practice: is_spaced_practice,
-            is_intro: parser.is_intro?,
             num_assigned_steps: task_steps.size,
             num_completed_steps: task_steps.count(&:completed?),
             num_assigned_exercises: exercises_array.size,
@@ -261,8 +256,7 @@ class Tasks::UpdateTaskCaches
             num_assigned_placeholders: num_tasked_placeholders,
             exercises: exercises_array
           }
-        end.compact.sort_by { |page| page[:book_location] }
-        next if pages_array.empty?
+        end.sort_by { |page| page[:book_location] }
 
         {
           id: mapped_chapter.id,
@@ -285,8 +279,7 @@ class Tasks::UpdateTaskCaches
                                                 .reduce(0, :+),
           pages: pages_array
         }
-      end.compact.sort_by { |chapter| chapter[:book_location] }
-      next if chapters_array.empty?
+      end.sort_by { |chapter| chapter[:book_location] }
 
       {
         id: mapped_book.id,
@@ -307,7 +300,7 @@ class Tasks::UpdateTaskCaches
                                                  .reduce(0, :+),
         chapters: chapters_array
       }
-    end.compact.sort_by { |book| book[:title] }
+    end.sort_by { |book| book[:title] }
 
     toc = {
       id: ecosystem.id,

@@ -104,7 +104,6 @@ RSpec.describe GetStudentGuide, type: :routine do
           student_count: 1,
           questions_answered_count: 2,
           clue: clue_matcher,
-          practice_count: 0,
           page_ids: [kind_of(Integer)]*2,
           children: [kind_of(Hash)]*2
         )
@@ -116,7 +115,6 @@ RSpec.describe GetStudentGuide, type: :routine do
           student_count: 1,
           questions_answered_count: 7,
           clue: clue_matcher,
-          practice_count: kind_of(Integer),
           page_ids: [kind_of(Integer)]*4,
           children: [kind_of(Hash)]*4
         )
@@ -133,7 +131,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 2,
             clue: clue_matcher,
-            practice_count: 0,
             page_ids: [kind_of(Integer)]
           },
           {
@@ -142,7 +139,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
-            practice_count: 0,
             page_ids: [kind_of(Integer)]
           }
         ]
@@ -155,7 +151,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 2,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           },
           {
@@ -164,7 +159,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 5,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           },
           {
@@ -173,7 +167,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           },
           {
@@ -182,7 +175,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           }
         ]
@@ -241,7 +233,6 @@ RSpec.describe GetStudentGuide, type: :routine do
           student_count: 1,
           questions_answered_count: 4,
           clue: clue_matcher,
-          practice_count: 0,
           page_ids: [kind_of(Integer)]*2,
           children: [kind_of(Hash)]*2
         )
@@ -253,7 +244,6 @@ RSpec.describe GetStudentGuide, type: :routine do
           student_count: 1,
           questions_answered_count: 14,
           clue: clue_matcher,
-          practice_count: kind_of(Integer),
           page_ids: [kind_of(Integer)]*4,
           children: [kind_of(Hash)]*4
         )
@@ -270,7 +260,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 4,
             clue: clue_matcher,
-            practice_count: 0,
             page_ids: [kind_of(Integer)]
           },
           {
@@ -279,7 +268,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
-            practice_count: 0,
             page_ids: [kind_of(Integer)]
           }
         ]
@@ -292,7 +280,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 4,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           },
           {
@@ -301,7 +288,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 10,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           },
           {
@@ -310,7 +296,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           },
           {
@@ -319,7 +304,6 @@ RSpec.describe GetStudentGuide, type: :routine do
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
-            practice_count: kind_of(Integer),
             page_ids: [kind_of(Integer)]
           }
         ]

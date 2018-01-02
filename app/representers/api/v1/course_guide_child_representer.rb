@@ -26,12 +26,6 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :practice_count,
-             type: Integer,
-             readable: true,
-             writeable: false,
-             schema_info: { required: true }
-
     property :clue,
              extend: ClueRepresenter,
              readable: true,
