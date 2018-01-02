@@ -176,8 +176,8 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
             expect(student.reload.period).to eq period_2.to_model
           end
 
-          it "422's if needs to pay" do
-            make_payment_required_and_expect_422(course: course, student: student) {
+          it "does not 422 if needs to pay" do
+            make_payment_required_and_expect_not_422(course: course, student: student) {
               api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
             }
           end

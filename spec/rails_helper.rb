@@ -193,7 +193,7 @@ def disable_sfdc_client
     .and_return(double('null object').as_null_object)
 end
 
-def make_payment_required_and_expect_422(student: nil, course: nil, user: nil)
+def make_payment_required(student: nil, course: nil, user: nil)
   allow(Settings::Payments).to receive(:payments_enabled) { true }
   course.update_attribute(:does_cost, true) if course.present?
 
@@ -202,10 +202,17 @@ def make_payment_required_and_expect_422(student: nil, course: nil, user: nil)
     student = UserIsCourseStudent.call(user: user, course: course).outputs.student
   end
 
-  Timecop.freeze(student.payment_due_at + 1.day) do
-    yield
-  end
+  Timecop.freeze(student.payment_due_at + 1.day) { yield }
+end
+
+def make_payment_required_and_expect_422(student: nil, course: nil, user: nil, &block)
+  make_payment_required(student: student, course: course, user: user, &block)
   expect(response).to have_http_status(:unprocessable_entity)
+end
+
+def make_payment_required_and_expect_not_422(student: nil, course: nil, user: nil, &block)
+  make_payment_required(student: student, course: course, user: user, &block)
+  expect(response).not_to have_http_status(:unprocessable_entity)
 end
 
 def create_contract!(name)
