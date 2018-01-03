@@ -312,6 +312,9 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     end
 
     it 'retries if there are SF errors on save' do
+      stub_active_campaign_id
+      stub_active_nomad_campaign_id
+
       Delayed::Worker.with_delay_jobs(true) do
         # Stub the `errors` call in the track routine to return true so we simulate a SF error
         errors_call_count = 0
