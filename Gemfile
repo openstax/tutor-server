@@ -317,8 +317,8 @@ group :production do
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 
-  # Fog
-  gem 'fog', require: 'fog/aws'
+  # Fog AWS
+  gem 'fog-aws'
 
   # Lograge for consistent logging
   gem 'lograge'
