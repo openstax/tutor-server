@@ -52,7 +52,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
                                  teacher: teacher,
                                  students: [student_1, student_2, student_3, student_4],
                                  ecosystem: @ecosystem]
-      end
+    end
 
     it 'exports research data as a csv file' do
       # We replace the uploading of the research data with the test case itself
@@ -98,7 +98,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
           expect(data['Step Last Completed At']).to eq(format_time(step.last_completed_at))
           expect(data['CNX Module JSON URL']).to eq("#{page.url}.json")
           expect(data['CNX Module HTML URL']).to eq(page.url)
-          expect(data['HTML Fragment Number'].to_i).to eq(step.fragment_index + 1)
+          expect(data['HTML Fragment Number']).to eq(step.fragment_index.try!(:+, 1).try!(:to_s))
           next unless step.exercise?
 
           expect(data['Exercise JSON URL']).to eq(tasked.url.gsub("org", "org/api") + ".json")
@@ -129,13 +129,13 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
     before(:each) do
       cc_tasks = 2.times.map do
         FactoryBot.create :tasks_task, task_type: :concept_coach,
-                                        step_types: [:tasks_tasked_exercise],
-                                        num_random_taskings: 1
+                                       step_types: [:tasks_tasked_exercise],
+                                       num_random_taskings: 1
       end
 
       reading_task = FactoryBot.create :tasks_task, task_type: :reading,
-                                                     step_types: [:tasks_tasked_reading],
-                                                     num_random_taskings: 1
+                                                    step_types: [:tasks_tasked_reading],
+                                                    num_random_taskings: 1
 
       (cc_tasks + [reading_task]).each do |task|
         role = task.taskings.first.role
@@ -147,7 +147,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
     specify "by date range" do
       Timecop.freeze(Date.today - 30) do
         old_reading_task = FactoryBot.create :tasks_task, step_types: [:tasks_tasked_reading],
-                                                           num_random_taskings: 1
+                                                          num_random_taskings: 1
 
         role = old_reading_task.taskings.first.role
 
@@ -202,7 +202,7 @@ def with_export_rows(task_types = [], from = nil, to = nil, &block)
     block.call(rows)
   end
 
-  capture_stdout{ described_class.call(task_types: task_types, from: from, to: to) }
+  capture_stdout { described_class.call(task_types: task_types, from: from, to: to) }
 end
 
 def format_time(time)

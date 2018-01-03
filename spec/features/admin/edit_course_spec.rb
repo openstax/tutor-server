@@ -15,8 +15,9 @@ RSpec.feature 'Admin editing a course', speed: :slow do
     fill_in 'Name', with: 'Physics I'
     select @catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_on 'Save'
+    expect(page).to have_content('The course has been created.')
 
-    @course = CourseProfile::Models::Course.order(:id).last
+    @course = CourseProfile::Models::Course.order(:created_at).last
     @course.update_attribute :does_cost, true
     FactoryBot.create :course_membership_period, course: @course
   end
