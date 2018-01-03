@@ -23,6 +23,8 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   let(:chemistry_offering) { FactoryBot.create(:catalog_offering, salesforce_book_name: "Chemistry") }
   let(:user_sf_a) { FactoryBot.create(:user, salesforce_contact_id: sf_contact_a.id)}
   let(:user_no_sf) { FactoryBot.create(:user)}
+  let(:campaign) { @proxy.new_campaign }
+  let(:campaign_member) { @proxy.new_campaign_member(contact_id: sf_contact_a.id, campaign_id: campaign.id) }
 
   let!(:course) {
     FactoryBot.create :course_profile_course,
@@ -34,7 +36,9 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                        is_concept_coach: false,
                        estimated_student_count: 42,
                        does_cost: true,
-                       uuid: @uuids.shift
+                       uuid: @uuids.shift,
+                       latest_adoption_decision: "For course credit",
+                       creator_campaign_member_id: campaign_member.id
   }
 
   before(:each) {
@@ -368,6 +372,8 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     expect(osa.course_start_date).to eq Date.parse("2017-01-01")
     expect(osa.base_year).to eq 2016
     expect(osa.does_cost).to eq true
+    expect(osa.latest_adoption_decision).to eq "For course credit"
+    expect(osa.campaign_member_id).to eq campaign_member.id
   end
 
   def expect_osa_attachment(osa, course)

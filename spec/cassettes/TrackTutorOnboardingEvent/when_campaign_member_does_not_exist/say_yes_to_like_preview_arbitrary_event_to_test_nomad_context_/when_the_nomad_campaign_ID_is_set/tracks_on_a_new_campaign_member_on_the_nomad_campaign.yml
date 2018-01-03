@@ -1,0 +1,201 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000l8O4wIAE%27)%20AND%20(CampaignId%20=%20%27701W0000000SlxwIAC%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - close
+      Date:
+      - Wed, 03 Jan 2018 04:16:25 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - BrowserId=eUTj39tAQ36eXSFxRgQ8Ag;Path=/;Domain=.salesforce.com;Expires=Sun,
+        04-Mar-2018 04:16:25 GMT;Max-Age=5184000
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=54/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Sun, 23 Jul 2017 23:04:00 GMT
+- request:
+    method: post
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember"
+    body:
+      encoding: UTF-8
+      string: '{"CampaignId":"701W0000000Sly1IAC","ContactId":"003W000000l8O4wIAE","accounts_uuid__c":"<USER_SF_A_UUID>","first_teacher_contact_id__c":"003W000000l8O4wIAE","like_preview_yes_at__c":"2017-07-23T23:04:00.000+00:00"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Connection:
+      - close
+      Date:
+      - Wed, 03 Jan 2018 04:16:26 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - BrowserId=aZeAbm5NQqW5lRolMZXikA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        04-Mar-2018 04:16:26 GMT;Max-Age=5184000
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=52/48000
+      Location:
+      - "/services/data/v37.0/sobjects/CampaignMember/00vW0000003Q7CXIA0"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"00vW0000003Q7CXIA0","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Sun, 23 Jul 2017 23:04:00 GMT
+- request:
+    method: get
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700vW0000003Q7CXIA0%27)%20LIMIT%201"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - close
+      Date:
+      - Wed, 03 Jan 2018 04:16:26 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - BrowserId=iLOhfgRcSOeQfsq0AJJhcQ;Path=/;Domain=.salesforce.com;Expires=Sun,
+        04-Mar-2018 04:16:26 GMT;Max-Age=5184000
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=56/48000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003Q7CXIA0"},"Id":"00vW0000003Q7CXIA0","CampaignId":"701W0000000Sly1IAC","ContactId":"003W000000l8O4wIAE","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000l8O4wIAE","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+    http_version: 
+  recorded_at: Sun, 23 Jul 2017 23:04:00 GMT
+- request:
+    method: delete
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003Q7CXIA0"
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Authorization:
+      - OAuth <tutor_specs_oauth_token>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Wed, 03 Jan 2018 04:16:27 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - BrowserId=zLO0P2WeRiu0EmHJ7NXvXA;Path=/;Domain=.salesforce.com;Expires=Sun,
+        04-Mar-2018 04:16:27 GMT;Max-Age=5184000
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=55/48000
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Wed, 03 Jan 2018 04:16:27 GMT
+recorded_with: VCR 2.9.3

@@ -17,6 +17,8 @@ Settings::Db.store.defaults[:payments_enabled] = false
 Settings::Db.store.defaults[:ga_tracking_codes] = \
     (secrets.environment_name == "prodtutor") ? 'UA-66552106-1' : ''
 Settings::Db.store.defaults[:is_highlighting_allowed] = false
+Settings::Db.store.defaults[:active_onboarding_salesforce_campaign_id] = ''
+Settings::Db.store.defaults[:active_nomad_onboarding_salesforce_campaign_id] = ''
 
 Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = 'local_query'
 Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = 'local_query'

@@ -25,7 +25,8 @@ class CreateOrClaimCourse
       run(:add_user_as_teacher, course: outputs.course, user: attributes[:teacher])
       TrackTutorOnboardingEvent.perform_later(
         event: (outputs.course.is_preview? ? 'created_preview_course' : 'created_real_course'),
-        user: attributes[:teacher]
+        user: attributes[:teacher],
+        data: {course_id: outputs.course.id}
       )
     end
   end

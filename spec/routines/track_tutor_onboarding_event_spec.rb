@@ -8,6 +8,12 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
       load_salesforce_user
       @proxy.ensure_schools_exist(["JP University"])
       @sf_contact_a = @proxy.new_contact
+
+      # Note: In order to create campaigns, the SF user being used for this test must have
+      # the 'Marketing User' permission, which system admins do not have by default.
+
+      @campaign = @proxy.new_campaign
+      @nomad_campaign = @proxy.new_campaign
     end
 
     # To use placeholders for the user UUIDs, we have to set them up in a before(:all)
@@ -24,13 +30,13 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   # We are reusing one SF contact and the two users so that we can correctly
   # put placeholders in for the user's UUIDs.  But each spec expects that
-  # no TOAs have been created for the SF contact yet, so track which TOAs
-  # we create and destroy them after each spec.
+  # no CMs (CampaignMembers) have been created for the SF contact yet, so track
+  # which CMs we create and destroy them after each spec.
 
   before(:each) do
     @delete_me = []
 
-    allow_any_instance_of(OpenStax::Salesforce::Remote::TutorOnboardingA).to receive(:create!).and_wrap_original do |m, *args|
+    allow_any_instance_of(OpenStax::Salesforce::Remote::CampaignMember).to receive(:create!).and_wrap_original do |m, *args|
       m.call(*args).tap{|object| @delete_me.push(object)}
     end
   end
@@ -52,30 +58,44 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   end
 
   def expect_call_to_set_timestamp(timestamp_field)
+    cm = nil
     time = Chronic.parse("July 23, 2017 5:04pm")
     Timecop.freeze(time) do
-      toa = call
-      expect(toa).to be_persisted
-      expect(toa.send(timestamp_field)).to be_within(1.second).of(DateTime.parse(time.to_s))
+      cm = call
+      expect(cm).to be_persisted
+      expect(cm.send(timestamp_field)).to be_within(1.second).of(DateTime.parse(time.to_s))
     end
+    cm
   end
 
   def expect_2nd_call_to_not_change_timestamp(timestamp_field)
-    toa = call
-    first_time = toa.send(timestamp_field)
+    cm = call
+    first_time = cm.send(timestamp_field)
     Timecop.freeze(5.minutes.from_now) do
-      toa = call
-      expect(toa.send(timestamp_field)).to be_within(1.seconds).of(first_time)
+      cm = call
+      expect(cm.send(timestamp_field)).to be_within(1.seconds).of(first_time)
     end
   end
 
   def expect_2nd_call_to_change_timestamp(timestamp_field)
-    toa = call
-    first_time = toa.send(timestamp_field)
+    cm = call
+    first_time = cm.send(timestamp_field)
     Timecop.freeze(5.minutes.from_now) do
-      toa = call
-      expect(toa.send(timestamp_field)).to be_within(1.seconds).of(first_time + 5.minutes)
+      cm = call
+      expect(cm.send(timestamp_field)).to be_within(1.seconds).of(first_time + 5.minutes)
     end
+  end
+
+  def stub_active_campaign_id(value = nil)
+    allow(Settings::Salesforce).to receive(:active_onboarding_salesforce_campaign_id) {
+      value || @campaign.id
+    }
+  end
+
+  def stub_active_nomad_campaign_id(value = nil)
+    allow(Settings::Salesforce).to receive(:active_nomad_onboarding_salesforce_campaign_id) {
+      value || @nomad_campaign.id
+    }
   end
 
   context "when there is no SF user" do
@@ -83,218 +103,181 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     let(:user) { @user_sf_a }
 
     it "freaks out in production" do
+      stub_active_campaign_id
       clear_salesforce_user
       ActiveForce.clear_sfdc_client!
       expect{call}.to raise_error(OpenStax::Salesforce::UserMissing)
     end
   end
 
-  context 'when user anonymous and no pardot contact ID supplied' do
+  context 'when user anonymous' do
     let(:event) { :arrived_my_courses }
     let(:user) { anonymous_user }
 
     it 'raises an error' do
-      expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotGetToa)
+      expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
     end
   end
 
-  context 'arrive to marketing page from pardot' do
-    let(:event) { :arrived_tutor_marketing_page_from_pardot }
-    let(:data) {{
-      pardot_reported_contact_id: @sf_contact_a.id,
-      pardot_reported_piaid: "piaid",
-      pardot_reported_picid: "picid"
-    }}
+  context 'when user has no SF contact ID' do
+    let(:event) { :arrived_my_courses }
+    let(:user) { @user_no_sf }
 
-    context 'missing data' do
-      let(:user) { "whatever" }
+    it 'raises an error' do
+      expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
+    end
+  end
 
-      it 'requires pardot_reported_contact_id' do
-        data[:pardot_reported_contact_id] = ""
-        expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument,
-                                    /pardot_reported_contact_id.*arrived_tutor_marketing_page_from_pardot/)
+  context 'when user has an SF contact ID' do
+    let(:event) { :arrived_my_courses }
+    let(:user) { @user_sf_a }
+
+    it 'errors when the active campaign ID is not set' do
+      stub_active_campaign_id(" ")
+      expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingOnboardingCampaignId, /active/)
+    end
+  end
+
+  context 'when campaign member exists' do
+    before(:each) {
+      @campaign_member = @proxy.new_campaign_member(
+                           contact_id: @user_sf_a.salesforce_contact_id,
+                           campaign_id: @campaign.id
+                          )
+
+      stub_active_campaign_id
+    }
+
+    context 'created preview' do
+      let(:event) { :created_preview_course }
+      let(:user) { @user_sf_a }
+
+      it 'sets preview_created_at' do
+        expect_call_to_set_timestamp(:preview_created_at)
       end
 
-      it 'requires pardot_reported_piaid' do
-        data.delete(:pardot_reported_piaid)
-        expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument,
-                                    /pardot_reported_piaid.*arrived_tutor_marketing_page_from_pardot/)
-      end
-
-      it 'requires pardot_reported_picid' do
-        data.delete(:pardot_reported_picid)
-        expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument,
-                                    /pardot_reported_picid.*arrived_tutor_marketing_page_from_pardot/)
+      it 'does not change preview_created_at for 2nd time' do
+        expect_2nd_call_to_not_change_timestamp(:preview_created_at)
       end
     end
 
-    context 'anonymous user' do
-      let(:user) { anonymous_user }
+    context 'created real course' do
+      let(:event) { :created_real_course }
+      let(:user) { @user_sf_a }
+      let(:course) { FactoryBot.create :course_profile_course }
+      let(:data) { {course_id: course.id} }
 
-      it 'creates the TOA based on the pardot contact ID' do
-        toa = call
-        expect(toa.id).to be_present
-        expect(toa.pardot_reported_contact_id).to eq @sf_contact_a.id
+      it 'sets real_course_created_at' do
+        expect_call_to_set_timestamp(:real_course_created_at)
+      end
+
+      it 'sets the campaign member ID on the course' do
+        cm = call
+        expect(cm.id).to_not eq nil
+        expect(course.reload.creator_campaign_member_id).to eq cm.id
+      end
+
+      it 'does not change real_course_created_at for 2nd time' do
+        expect_2nd_call_to_not_change_timestamp(:real_course_created_at)
       end
     end
 
-    context 'signed in' do
-      context 'has salesforce contact ID' do
-        let(:user) { @user_sf_a }
+    context 'ask later about like preview' do
+      let(:event) { :like_preview_ask_later }
+      let(:user) { @user_sf_a }
 
-        it 'picks up the TOA by that SF ID' do
-          existing_toa = @proxy.new_tutor_onboarding_a(first_teacher_contact_id: @sf_contact_a.id)
-          toa = call
-          expect(toa.id).to eq existing_toa.id
-          expect(toa.pardot_reported_contact_id).to eq @sf_contact_a.id
-          expect(toa.accounts_uuid).to eq @user_sf_a.uuid
+      it 'updates the count' do
+        cm = call
+        expect(cm.like_preview_ask_later_count).to eq 1
+
+        cm = call
+        expect(cm.like_preview_ask_later_count).to eq 2
+      end
+    end
+
+    context 'say yes to like preview' do
+      let(:event) { :like_preview_yes }
+      let(:user) { @user_sf_a }
+
+      it 'sets like_preview_yes' do
+        expect_call_to_set_timestamp(:like_preview_yes_at)
+      end
+
+      it 'does not change like_preview_yes for 2nd preview' do
+        expect_2nd_call_to_not_change_timestamp(:like_preview_yes_at)
+      end
+    end
+
+    context 'adoption decision' do
+      let(:event) { :made_adoption_decision }
+      let(:user) { @user_sf_a }
+      let(:course) { FactoryBot.create :course_profile_course }
+      let(:data) {{
+        decision: "For course credit",
+        course_id: course.id
+      }}
+
+      it "errors if data missing" do
+        data[:decision] = ""
+        expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument)
+      end
+
+      it 'saves the timestamp' do
+        expect_call_to_set_timestamp(:latest_adoption_decision_at)
+      end
+
+      it 'saves the decision' do
+        cm = call
+        expect(cm.latest_adoption_decision).to eq "For course credit"
+        expect(course.reload.latest_adoption_decision).to eq "For course credit"
+      end
+
+      it 'overwrites the first timestamp if done again' do
+        expect_2nd_call_to_change_timestamp(:latest_adoption_decision_at)
+      end
+
+      it 'overwrites the first decision if done again' do
+        cm = call
+        data[:decision] = "For extra credit"
+        cm = call
+        expect(cm.latest_adoption_decision).to eq "For extra credit"
+      end
+    end
+
+    context "when event unknown" do
+      let(:event) { :booyah }
+      let(:user) { @user_sf_a }
+
+      it 'raise an exception' do
+        expect{call}.to raise_error(StandardError)
+      end
+    end
+
+  end
+
+  context 'when campaign member does not exist' do
+    before { stub_active_campaign_id }
+
+    context 'say yes to like preview (arbitrary event to test nomad context)' do
+      let(:event) { :like_preview_yes }
+      let(:user) { @user_sf_a }
+
+      context "when the nomad campaign ID is set" do
+        before { stub_active_nomad_campaign_id }
+
+        it 'tracks on a new campaign member on the nomad campaign' do
+          cm = expect_call_to_set_timestamp(:like_preview_yes_at)
+          expect(cm.campaign_id).to eq @nomad_campaign.id
         end
-
-        it 'sets the timestamp' do
-          expect_call_to_set_timestamp(:arrived_marketing_page_from_pardot_at)
-        end
-
-        it 'does not overwrite the timestamp on 2nd arrival' do
-          expect_2nd_call_to_not_change_timestamp(:arrived_marketing_page_from_pardot_at)
-        end
       end
 
-      context 'no salesforce contact ID' do
-        let(:user) { @user_no_sf }
+      context "when the nomad campaign ID is NOT set" do
+        before { stub_active_nomad_campaign_id(" ") }
 
-        it 'picks up the TOA by the pardot SF ID' do
-          existing_toa = @proxy.new_tutor_onboarding_a(pardot_reported_contact_id: @sf_contact_a.id)
-          toa = call
-          expect(toa.id).to eq existing_toa.id
-          expect(toa.pardot_reported_contact_id).to eq @sf_contact_a.id
-          expect(toa.first_teacher_contact_id).to be_blank
-          expect(toa.accounts_uuid).to eq @user_no_sf.uuid
+        it 'errors when the active campaign ID is not set' do
+          expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingOnboardingCampaignId, /nomad/)
         end
       end
-    end
-
-    context 'teacher 1 forwards email to teacher 2 who uses same link' do
-      xit 'does not reuse teacher 1\'s TOA' do
-
-      end
-
-      # TODO do all cases of signed in and not signed in?
-    end
-
-    context '2nd arrival from same user' do
-      xit 'does not overwrite the first timestamp' do
-
-      end
-    end
-  end
-
-  context 'arrived marketing page not from pardot' do
-    let(:event) { :arrived_tutor_marketing_page_not_from_pardot }
-    let(:user) { @user_sf_a }
-
-    context 'signed in but no SF contact ID' do
-      it 'sets the timestamp' do
-        expect_call_to_set_timestamp(:arrived_marketing_page_not_from_pardot_at)
-      end
-
-      it 'does not overwrite the timestamp on 2nd arrival' do
-        expect_2nd_call_to_not_change_timestamp(:arrived_marketing_page_not_from_pardot_at)
-      end
-    end
-
-  end
-
-  context 'created preview' do
-    let(:event) { :created_preview_course }
-    let(:user) { @user_sf_a }
-
-    it 'sets preview_created_at' do
-      expect_call_to_set_timestamp(:preview_created_at)
-    end
-
-    it 'does not change preview_created_at for 2nd time' do
-      expect_2nd_call_to_not_change_timestamp(:preview_created_at)
-    end
-  end
-
-  context 'created real course' do
-    let(:event) { :created_real_course }
-    let(:user) { @user_sf_a }
-
-    it 'sets real_course_created_at' do
-      expect_call_to_set_timestamp(:real_course_created_at)
-    end
-
-    it 'does not change real_course_created_at for 2nd time' do
-      expect_2nd_call_to_not_change_timestamp(:real_course_created_at)
-    end
-  end
-
-  context 'ask later about like preview' do
-    let(:event) { :like_preview_ask_later }
-    let(:user) { @user_sf_a }
-
-    it 'updates the count' do
-      toa = call
-      expect(toa.like_preview_ask_later_count).to eq 1
-
-      toa = call
-      expect(toa.like_preview_ask_later_count).to eq 2
-    end
-  end
-
-  context 'say yes to like preview' do
-    let(:event) { :like_preview_yes }
-    let(:user) { @user_sf_a }
-
-    it 'sets like_preview_yes' do
-      expect_call_to_set_timestamp(:like_preview_yes_at)
-    end
-
-    it 'does not change like_preview_yes for 2nd preview' do
-      expect_2nd_call_to_not_change_timestamp(:like_preview_yes_at)
-    end
-  end
-
-  context 'adoption decision' do
-    let(:event) { :made_adoption_decision }
-    let(:user) { @user_sf_a }
-    let(:data) {{
-      decision: "For course credit"
-    }}
-
-    it "errors if data missing" do
-      data[:decision] = ""
-      expect{call}.to raise_error(TrackTutorOnboardingEvent::MissingArgument)
-    end
-
-    it 'saves the timestamp' do
-      expect_call_to_set_timestamp(:latest_adoption_decision_at)
-    end
-
-    it 'saves the decision' do
-      toa = call
-      expect(toa.latest_adoption_decision).to eq "For course credit"
-    end
-
-    it 'overwrites the first timestamp if done again' do
-      expect_2nd_call_to_change_timestamp(:latest_adoption_decision_at)
-    end
-
-    it 'overwrites the first decision if done again' do
-      toa = call
-      data[:decision] = "For extra credit"
-      toa = call
-      expect(toa.latest_adoption_decision).to eq "For extra credit"
-    end
-  end
-
-  context "when event unknown" do
-    let(:event) { :booyah }
-    let(:user) { @user_sf_a }
-
-    it 'raise an exception' do
-      expect{call}.to raise_error(StandardError)
     end
   end
 
@@ -322,18 +305,21 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
       }
     end
 
-    it 'fails instantly when cannot get TOA' do
-      expect_instant_background_failure(TrackTutorOnboardingEvent::CannotGetToa) {
+    it 'fails instantly when cannot get CM' do
+      expect_instant_background_failure(TrackTutorOnboardingEvent::CannotTrackOnboardingUser) {
         described_class.perform_later(user: anonymous_user, event: "arrived_my_courses")
       }
     end
 
     it 'retries if there are SF errors on save' do
+      stub_active_campaign_id
+      stub_active_nomad_campaign_id
+
       Delayed::Worker.with_delay_jobs(true) do
         # Stub the `errors` call in the track routine to return true so we simulate a SF error
         errors_call_count = 0
         allow_any_instance_of(
-          OpenStax::Salesforce::Remote::TutorOnboardingA
+          OpenStax::Salesforce::Remote::CampaignMember
         ).to receive(:errors).and_wrap_original { |m, *args|
           errors_call_count += 1
           3 == errors_call_count ? ["blah"] : m.call(*args)

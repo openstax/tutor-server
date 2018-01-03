@@ -52,20 +52,6 @@ RSpec.describe "Pardot" do
       }
 
       context "anonymous user" do
-        context "data missing" do
-          scenario "non-fatal exceptions when using real BG jobs" do
-            Delayed::Worker.with_delay_jobs(true) do
-              visit '/pardot/toa'
-              expect(current_url).to include redirect_url
-              expect(Delayed::Worker.new.work_off).to eq [0,1]
-            end
-          end
-
-          scenario "exceptions are raised during the tracking" do
-            expect{ visit '/pardot/toa' }.to raise_error(TrackTutorOnboardingEvent::MissingArgument)
-          end
-        end
-
         context "data present" do
           scenario "happy path" do
             happy_path_test(anonymous_user)

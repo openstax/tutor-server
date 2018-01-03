@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171222160223) do
+ActiveRecord::Schema.define(version: 20171228164817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -352,6 +352,8 @@ ActiveRecord::Schema.define(version: 20171222160223) do
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
+    t.string   "creator_campaign_member_id"
+    t.string   "latest_adoption_decision"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
