@@ -90,7 +90,13 @@ class ExportAndUploadResearchData
                   ON "content_exercise_tags"."content_exercise_id" = "content_exercises"."id"
                 INNER JOIN "content_tags"
                   ON "content_tags"."id" = "content_exercise_tags"."content_tag_id"
+                INNER JOIN "content_pages"
+                  ON "content_pages"."id" = "content_exercises"."content_page_id"
                 WHERE "content_exercises"."id" = "tasks_tasked_exercises"."content_exercise_id"
+                AND (
+                  "content_tags"."tag_type" != #{Content::Models::Tag.tag_types[:cnxmod]}
+                  OR "content_tags"."value" = 'context-cnxmod:' || "content_pages"."uuid"
+                )
               ) AS "tags_array"
             TAGS_SQL
           ]

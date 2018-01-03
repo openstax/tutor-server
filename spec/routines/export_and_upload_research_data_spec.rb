@@ -78,7 +78,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
           answer_id = step.exercise? ? tasked.answer_id : nil
           correct = step.exercise? ? tasked.is_correct?.to_s : nil
           free_response = step.exercise? ? tasked.free_response : nil
-          tags = step.exercise? ? tasked.tags : []
+          # Exercises in this cassette get assigned to pages by their lo tag, not cnxmod tag
+          tags = step.exercise? ? tasked.tags.reject { |tag| tag.start_with? 'context-cnxmod' } : []
 
           expect(data['Student Research Identifier']).to(
             eq(task.taskings.first.role.research_identifier)
