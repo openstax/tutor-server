@@ -104,6 +104,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
 
           expect(data['Exercise JSON URL']).to eq(tasked.url.gsub("org", "org/api") + ".json")
           expect(data['Exercise Editor URL']).to eq(tasked.url)
+          expect(data['Exercise Question ID']).to eq(tasked.question_id)
           expect(data['Exercise Correct Answer ID']).to eq(correct_answer_id)
           expect(data['Exercise Chosen Answer ID']).to eq(answer_id)
           expect(data['Exercise Correct?']).to eq(correct)

@@ -43,6 +43,7 @@ class ExportAndUploadResearchData
         "HTML Fragment Number",
         "Exercise JSON URL",
         "Exercise Editor URL",
+        "Exercise Question ID",
         "Exercise Correct Answer ID",
         "Exercise Chosen Answer ID",
         "Exercise Correct?",
@@ -78,9 +79,10 @@ class ExportAndUploadResearchData
           [
             :id,
             :url,
-            :free_response,
-            :answer_id,
+            :question_id,
             :correct_answer_id,
+            :answer_id,
+            :free_response,
             'COALESCE("answer_id" = "correct_answer_id", FALSE) AS "is_correct"',
             <<-TAGS_SQL.strip_heredoc
               (
@@ -144,6 +146,7 @@ class ExportAndUploadResearchData
               step.exercise? ? [
                 tasked_exercise.url.gsub("org", "org/api") + ".json",
                 tasked_exercise.url,
+                tasked_exercise.question_id,
                 tasked_exercise.correct_answer_id,
                 tasked_exercise.answer_id,
                 tasked_exercise.is_correct,
