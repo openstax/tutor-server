@@ -22,28 +22,33 @@ class ExportAndUploadResearchData
   def create_export_file(task_types, date_range)
     CSV.open(filepath, 'w') do |file|
       file << [
-        "Student",
+        "Student Research Identifier",
         "Course ID",
-        "CC?",
+        "Concept Coach?",
         "Period ID",
         "Plan ID",
         "Task ID",
         "Task Type",
+        "Task Opens At",
+        "Task Due At",
         "Step ID",
         "Step Number",
         "Step Type",
-        "Group",
-        "First Completed At",
-        "Last Completed At",
-        "Opens At",
-        "Due At",
-        "URL",
-        "API URL",
-        "Correct Answer ID",
-        "Answer ID",
-        "Correct?",
-        "Free Response",
-        "Tags"
+        "Step Group",
+        "Step Labels",
+        "Step First Completed At",
+        "Step Last Completed At",
+        "CNX Module JSON URL",
+        "CNX Module HTML URL",
+        "HTML Fragment Number",
+        "Exercise JSON URL",
+        "Exercise Editor URL",
+        "Exercise Question ID",
+        "Exercise Correct Answer ID",
+        "Exercise Chosen Answer ID",
+        "Exercise Correct?",
+        "Exercise Free Response",
+        "Exercise Tags"
       ]
 
       steps = Tasks::Models::TaskStep
@@ -68,51 +73,43 @@ class ExportAndUploadResearchData
                                               .preload(:taskings, :time_zone)
                                               .index_by(&:id)
 
-        taskeds_by_tasked_type_and_tasked_id = Hash.new { |hash, key| hash[key] = {} }
-        steps.group_by(&:tasked_type).each do |tasked_type, steps|
-          tasked_class = tasked_type.constantize
-          tasked_ids = steps.map(&:tasked_id)
-          taskeds = tasked_class.where(id: tasked_ids).select(
-            case tasked_type
-            when Tasks::Models::TaskedExercise.name
-              [
-                :id,
-                :url,
-                :free_response,
-                :answer_id,
-                :correct_answer_id,
-                'COALESCE("answer_id" = "correct_answer_id", FALSE) AS "is_correct"',
-                <<-TAGS_SQL.strip_heredoc
-                  (
-                    SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
-                    FROM "content_exercises"
-                    INNER JOIN "content_exercise_tags"
-                      ON "content_exercise_tags"."content_exercise_id" = "content_exercises"."id"
-                    INNER JOIN "content_tags"
-                      ON "content_tags"."id" = "content_exercise_tags"."content_tag_id"
-                    WHERE "content_exercises"."id" = "tasks_tasked_exercises"."content_exercise_id"
-                  ) AS "tags_array"
-                TAGS_SQL
-              ]
-            when Tasks::Models::TaskedPlaceholder.name
-              [ :id ]
-            else
-              [ :id, :url ]
-            end
-          )
-
-          taskeds.each do |tasked|
-            taskeds_by_tasked_type_and_tasked_id[tasked_type][tasked.id] = tasked
-          end
-        end
+        exercise_steps = steps.select(&:exercise?)
+        tasked_exercise_ids = exercise_steps.map(&:tasked_id)
+        tasked_exercises_by_id = Tasks::Models::TaskedExercise.select(
+          [
+            :id,
+            :url,
+            :question_id,
+            :correct_answer_id,
+            :answer_id,
+            :free_response,
+            <<-TAGS_SQL.strip_heredoc
+              (
+                SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
+                FROM "content_exercises"
+                INNER JOIN "content_exercise_tags"
+                  ON "content_exercise_tags"."content_exercise_id" = "content_exercises"."id"
+                INNER JOIN "content_tags"
+                  ON "content_tags"."id" = "content_exercise_tags"."content_tag_id"
+                INNER JOIN "content_pages"
+                  ON "content_pages"."id" = "content_exercises"."content_page_id"
+                WHERE "content_exercises"."id" = "tasks_tasked_exercises"."content_exercise_id"
+                AND (
+                  "content_tags"."tag_type" != #{Content::Models::Tag.tag_types[:cnxmod]}
+                  OR "content_tags"."value" = 'context-cnxmod:' || "content_pages"."uuid"
+                )
+              ) AS "tags_array"
+            TAGS_SQL
+          ]
+        ).where(id: tasked_exercise_ids).index_by(&:id)
 
         steps.each do |step|
           begin
             task = tasks_by_task_id[step.tasks_task_id]
             next if task.nil?
 
-            tasked = taskeds_by_tasked_type_and_tasked_id[step.tasked_type][step.tasked_id]
-            next if tasked.nil?
+            tasked_exercise = tasked_exercises_by_id[step.tasked_id]
+            next if step.exercise? && tasked_exercise.nil?
 
             role_id = task.taskings.first.entity_role_id
             r_info = role_info[role_id]
@@ -120,7 +117,7 @@ class ExportAndUploadResearchData
 
             type = step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1)
             course_id = r_info[:course_id]
-            url = tasked.url if tasked.respond_to?(:url)
+            page = step.page
 
             row = [
               r_info[:research_identifier],
@@ -130,35 +127,33 @@ class ExportAndUploadResearchData
               task.tasks_task_plan_id,
               task.id,
               task.task_type,
+              format_time(task.opens_at),
+              format_time(task.due_at),
               step.id,
               step.number,
               type,
               step.group_name,
+              step.labels.join(','),
               format_time(step.first_completed_at),
               format_time(step.last_completed_at),
-              format_time(task.opens_at),
-              format_time(task.due_at),
-              url
+              "#{page.url}.json",
+              page.url,
+              step.fragment_index.try!(:+, 1)
             ]
 
-            row.push(*(
-              case type
-              when 'Exercise'
-                [
-                  url.gsub("org", "org/api") + ".json",
-                  tasked.correct_answer_id,
-                  tasked.answer_id,
-                  tasked.is_correct,
-                  # escape so Excel doesn't see as formula
-                  tasked.free_response.try!(:gsub, /\A=/, "'="),
-                  tasked.tags_array.join(',')
-                ]
-              when 'Reading'
-                [ "#{url}.json" ] + [ nil ] * 4
-              else
-                [ nil ] * 5
-              end
-            ))
+            row.concat(
+              step.exercise? ? [
+                tasked_exercise.url.gsub("org", "org/api") + ".json",
+                tasked_exercise.url,
+                tasked_exercise.question_id,
+                tasked_exercise.correct_answer_id,
+                tasked_exercise.answer_id,
+                tasked_exercise.is_correct?,
+                # escape so Excel doesn't see as formula
+                tasked_exercise.free_response.try!(:sub, /\A=/, "'="),
+                tasked_exercise.tags_array.join(',')
+              ] : [ nil ] * 7
+            )
 
             file << row
           rescue StandardError => ex
