@@ -83,7 +83,6 @@ class ExportAndUploadResearchData
             :correct_answer_id,
             :answer_id,
             :free_response,
-            'COALESCE("answer_id" = "correct_answer_id", FALSE) AS "is_correct"',
             <<-TAGS_SQL.strip_heredoc
               (
                 SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
@@ -149,7 +148,7 @@ class ExportAndUploadResearchData
                 tasked_exercise.question_id,
                 tasked_exercise.correct_answer_id,
                 tasked_exercise.answer_id,
-                tasked_exercise.is_correct,
+                tasked_exercise.is_correct?,
                 # escape so Excel doesn't see as formula
                 tasked_exercise.free_response.try!(:sub, /\A=/, "'="),
                 tasked_exercise.tags_array.join(',')
