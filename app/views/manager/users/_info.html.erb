@@ -1,6 +1,4 @@
-<%
-  is_admin ||= false
-%>
+<% is_admin ||= false %>
 
 <%
   profile = if params[:openstax_uid]
@@ -18,16 +16,29 @@
 
 <div style="float:right">
 <%= link_to "Profile on Accounts",
-             "#{Rails.application.secrets.openstax['accounts']['url']}/admin/users/#{profile.account.openstax_uid}/edit", class: "btn btn-xs btn-primary" %>
+             "#{Rails.application.secrets.openstax['accounts']['url']}/admin/users/#{
+             profile.account.openstax_uid}/edit", class: "btn btn-xs btn-primary" %>
 
-             <% if is_admin %>
-              <%= link_to 'Edit in Tutor', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %>
-              <%= link_to 'Sign in as in Tutor', become_admin_user_path(user.id),
-                                        method: :post, class: "btn btn-xs btn-primary" %>
-            <% end %>
+<% if is_admin %>
+  <%= link_to 'Edit in Tutor', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %>
+  <%= link_to 'Sign in as in Tutor', become_admin_user_path(user.id),
+              method: :post, class: "btn btn-xs btn-primary" %>
+<% end %>
 </div>
 
 <%= profile.name %>
+
+<h3>UUID</h3>
+
+<%= profile.account.uuid %>
+
+<h3>Support Identifier</h3>
+
+<%= profile.account.support_identifier %>
+
+<h3>Test Account?</h3>
+
+<%= tf_to_yn profile.account.is_test %>
 
 <h3>Courses</h3>
 
@@ -48,8 +59,7 @@
       <% roles.each do |role| %>
           [ <%= role.role_type %> |
           <%= role.created_at.in_time_zone('Central Time (US & Canada)')
-                             .strftime("%m/%d/%Y %H:%M:%S") %> Central |
-          <%= role.research_identifier %> ]
+                             .strftime("%m/%d/%Y %H:%M:%S") %> Central ]
       <% end %>
     </li>
   </ol>

@@ -17,6 +17,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         time_zone: 'Indiana (East)',
         is_preview: true,
         is_college: true,
+        is_test: false,
         catalog_offering: offering,
         estimated_student_count: 42
       ].tap { |course| course.update_attribute :is_preview_ready, true }

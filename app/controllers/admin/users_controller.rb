@@ -1,17 +1,7 @@
 class Admin::UsersController < Admin::BaseController
+  include Manager::SearchUsers
+
   before_action :get_user, only: [:edit, :update, :become]
-
-  def index
-    @per_page = 30
-    @user_search = User::SearchUsers[search: "%#{params[:query]}%",
-                                     page: params[:page],
-                                     per_page: @per_page]
-
-    respond_to do |format|
-      format.html
-      format.json { render json: Api::V1::Admin::UserSearchRepresenter.new(@user_search).to_json }
-    end
-  end
 
   def create
     handle_with(

@@ -15,10 +15,15 @@ module User
         if email.nil? && username.nil? && account_id.nil?
 
       account_id ||= find_or_create_account_id(
-        email: email, username: username, password: password,
-        first_name: first_name, last_name: last_name,
-        full_name: full_name, title: title,
-        faculty_status: faculty_status, salesforce_contact_id: salesforce_contact_id,
+        email: email,
+        username: username,
+        password: password,
+        first_name: first_name,
+        last_name: last_name,
+        full_name: full_name,
+        title: title,
+        faculty_status: faculty_status,
+        salesforce_contact_id: salesforce_contact_id,
         role: role
       )
 

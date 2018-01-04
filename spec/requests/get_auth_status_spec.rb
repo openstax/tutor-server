@@ -16,7 +16,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
 
     it 'returns a token and current_user when user is logged in' do
       stub_current_user(user)
-      expect{ get('/auth/status') }.to change{ Doorkeeper::AccessToken.count }.by(1)
+      expect{ get('/auth/status') }.to change { Doorkeeper::AccessToken.count }.by(1)
       expect(response).to have_http_status(:ok)
       token = Doorkeeper::AccessToken.find_by(resource_owner_id: user.id).token
       expect(response.body_as_hash).to match(
@@ -55,10 +55,12 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           is_admin: false,
           is_customer_service: false,
           is_content_analyst: false,
+          is_test: true,
           faculty_status: 'no_faculty_info',
           viewed_tour_stats: [],
           self_reported_role: user.account.role,
           account_uuid: user.account.uuid,
+          support_identifier: user.account.support_identifier,
           terms_signatures_needed: false,
           profile_url: a_string_starting_with('http')
         },

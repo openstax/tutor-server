@@ -24,8 +24,8 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
       is_available: true,
       title: 'New Book',
       description: 'Newest of the new',
-      webview_url: 'http://www.example.com',
-      pdf_url: 'http://www.example.pdf'
+      webview_url: 'https://www.example.com',
+      pdf_url: 'https://www.example.pdf'
     }
   end
 

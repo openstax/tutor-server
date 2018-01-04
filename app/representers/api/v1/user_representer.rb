@@ -41,6 +41,18 @@ module Api::V1
                description: "The UUID as set by Accounts"
              }
 
+    property :support_identifier,
+             getter: ->(*) { account.support_identifier },
+             type: String,
+             writeable: false,
+             readable: true
+
+    property :is_test,
+             getter: ->(*) { account.is_test },
+             type: :boolean,
+             writeable: false,
+             readable: true
+
     property :terms_signatures_needed,
              readable: true,
              writeable: false,

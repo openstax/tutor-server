@@ -179,6 +179,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             time_zone: 'Indiana (East)',
             is_preview: true,
             is_college: true,
+            is_test: false,
             num_sections: 2,
             catalog_offering: catalog_offering,
             estimated_student_count: 42

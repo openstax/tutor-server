@@ -15,7 +15,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
 
   let(:publish_job_uuid) { "394839483948" }
 
-  let(:publish_job_url) { 'http://www.example.com' }
+  let(:publish_job_url) { 'https://www.example.com' }
 
   let(:publish_job) {
     Hashie::Mash.new({

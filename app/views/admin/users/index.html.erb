@@ -5,7 +5,7 @@
                      items: @user_search.items,
                      total_count: @user_search.total_count,
                      page: params[:page],
-                     per_page: @per_page,
+                     per_page: params[:per_page],
                      extra_headers: 'Actions',
                      extra_fields_proc: lambda do |user| %>
           <td>

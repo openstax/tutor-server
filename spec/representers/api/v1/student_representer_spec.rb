@@ -10,8 +10,9 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
   it 'represents a student' do
     student.update_attributes(first_paid_at: 2.days.ago)
 
-    expect(representation).to include(
+    expect(representation).to match(
       'id' => student.id.to_s,
+      'uuid' => student.uuid,
       'period_id' => period.id.to_s,
       'role_id' => student.role.id.to_s,
       'first_name' => student.first_name,
@@ -24,7 +25,7 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'first_paid_at' => be_kind_of(String),
       'is_refund_pending' => false,
       'is_refund_allowed' => false,
-      'research_identifier' => student.role.research_identifier
+      'prompt_student_to_pay' => false
     )
 
     [:first_paid_at, :payment_due_at].each do |date_method|
