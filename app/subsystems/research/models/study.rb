@@ -4,4 +4,6 @@ class Research::Models::Study < ApplicationRecord
   has_many :courses, through: :study_courses, subsystem: :course_profile
 
   validates :name, presence: true
+
+  # TODO protections against destroying studies
 end

@@ -22,7 +22,8 @@ class AddResearchModels < ActiveRecord::Migration
     create_table :research_survey_plans do |t|
       t.references :research_study,             null: false, index: true,
                                                 foreign_key: { on_update: :cascade, on_delete: :cascade }
-      t.string :title,                          null: false
+      t.string :title_for_researchers,          null: false
+      t.string :title_for_students,             null: false
       t.text :description
       t.text :survey_js_model
       t.datetime :published_at,                 null: true, index: true

@@ -336,7 +336,7 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                 null: false
     t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()"
+    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
     t.integer  "sequence_number",                              default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                      null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
@@ -353,8 +353,6 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
-    t.string   "creator_campaign_member_id"
-    t.string   "latest_adoption_decision"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
@@ -573,7 +571,7 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.datetime "updated_at",                                          null: false
     t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.uuid     "uuid",                  default: "gen_random_uuid()"
+    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
     t.boolean  "is_test"
@@ -663,7 +661,8 @@ ActiveRecord::Schema.define(version: 20171229201156) do
 
   create_table "research_survey_plans", force: :cascade do |t|
     t.integer  "research_study_id",     null: false
-    t.string   "title",                 null: false
+    t.string   "title_for_researchers", null: false
+    t.string   "title_for_students",    null: false
     t.text     "description"
     t.text     "survey_js_model"
     t.datetime "published_at"

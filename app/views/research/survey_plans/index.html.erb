@@ -8,23 +8,23 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Title</th>
+      <th>Title for Researchers</th>
       <th>Survey</th>
       <th>Status</th>
       <th width="25%">Actions</th>
     </tr>
   </thead>
   <tbody>
-
     <% Research::Models::SurveyPlan.includes(:study).find_each do |survey_plan| %>
+    <tr>
       <% study = survey_plan.study %>
-      <td><%= survey_plan.title %></td>
+      <td><%= survey_plan.title_for_researchers %></td>
       <td><%= study.name %> (ID: <%= study.id %>)</td>
-      <td><%= survey_plan.published? ? "Published" : "Draft" %> <%= "/ Hidden" if survey_plan.hidden? %></td>
+      <td><%= survey_plan.is_published? ? "Published" : "Draft" %> <%= "/ Hidden" if survey_plan.is_hidden? %></td>
       <td>
         <%= link_to "Edit", edit_research_survey_plan_path(survey_plan) %> |
         <%= link_to "Preview", research_survey_plan_preview_path(survey_plan) %>&nbsp;&nbsp;
-        <% if !survey_plan.published? %>
+        <% if !survey_plan.is_published? %>
           <%= link_to "Publish", research_survey_plan_publish_path(survey_plan),
                         method: :put,
                         data: {
@@ -33,7 +33,7 @@
                         },
                         class: 'btn btn-xs btn-primary' %>
         <% end %>
-        <% if !survey_plan.hidden? %>
+        <% if !survey_plan.is_hidden? %>
           <%= link_to "Permanently Hide", research_survey_plan_hide_path(survey_plan),
                         method: :delete,
                         data: {
@@ -43,8 +43,8 @@
                         class: 'btn btn-xs btn-primary' %>
         <% end %>
       </td>
+    </tr>
     <% end %>
-
   </tbody>
 </table>
 

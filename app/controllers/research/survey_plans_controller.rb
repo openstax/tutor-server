@@ -1,16 +1,17 @@
 class Research::SurveyPlansController < Research::BaseController
 
+  before_filter :get_survey_plan, only: [:edit, :update, :preview, :publish]
+
   def new
     @survey_plan = Research::Models::SurveyPlan.new
   end
 
   def create
-    debugger
     @survey_plan = Research::Models::SurveyPlan.new(cleared_params)# params[:research_models_survey_plan])
 
     respond_to do |format|
       if @survey_plan.save
-        format.html { redirect_to research_survey_plan_path(@survey_plan),
+        format.html { redirect_to research_survey_plans_path,
                                   notice: 'Survey Plan was successfully created.' }
       else
         format.html { render action: "new" }
@@ -19,12 +20,9 @@ class Research::SurveyPlansController < Research::BaseController
   end
 
   def edit
-    @survey_plan = Research::Models::SurveyPlan.find(params[:id])
   end
 
   def update
-    @survey_plan = Research::Models::SurveyPlan.find(params[:id])
-
     respond_to do |format|
       if @survey_plan.update_attributes(cleared_params)
         format.html { redirect_to research_survey_plan_path(@survey_plan),
@@ -36,11 +34,33 @@ class Research::SurveyPlansController < Research::BaseController
   end
 
   def preview
-    @survey_plan = Research::Models::SurveyPlan.find(params[:survey_plan_id])
+  end
+
+  def publish
+    respond_to do |format|
+      begin
+        Research::PublishSurveyPlan[survey_plan: Research::Models::SurveyPlan.first]
+        format.html { redirect_to research_survey_plans_path, notice: "Published survey plan #{@survey_plan.id}"}
+      rescue
+        format.html { redirect_to research_survey_plans_path, alert: "Could not publish survey plan #{@survey_plan.id}"}
+      end
+    end
   end
 
   def cleared_params
-    params[:research_models_survey_plan].permit(:title, :description, :research_study_id, :survey_js_model)
+    params[:research_models_survey_plan].permit(
+      :title_for_researchers,
+      :title_for_students,
+      :description,
+      :research_study_id,
+      :survey_js_model
+    )
+  end
+
+  protected
+
+  def get_survey_plan
+    @survey_plan = Research::Models::SurveyPlan.find(params[:survey_plan_id] || params[:id])
   end
 
 end

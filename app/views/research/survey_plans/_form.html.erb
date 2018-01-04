@@ -11,8 +11,13 @@
   </div>
 
   <div class='form-group'>
-    <%= f.label :title %>
-    <%= f.text_field :title, class: 'form-control' %>
+    <%= f.label :title_for_researchers %>
+    <%= f.text_field :title_for_researchers, class: 'form-control' %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :title_for_students %>
+    <%= f.text_field :title_for_students, class: 'form-control' %>
   </div>
 
   <div class="form-group">
@@ -22,7 +27,7 @@
 
   <div class="form-group">
     <%= f.label :survey_js_model %>
-    <%= f.text_area :survey_js_model, rows: 15, class: 'form-control' %>
+    <%= f.text_area :survey_js_model, rows: 15, class: 'form-control', readonly: @survey_plan.is_published? %>
   </div>
 
 
