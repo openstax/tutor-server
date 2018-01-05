@@ -2,8 +2,8 @@ class EcosystemAccessPolicy
   def self.action_allowed?(action, requestor, ecosystem)
     return false unless requestor.is_human?
 
-    # Admins can do all things content
-    return true if requestor.is_admin?
+    # Admins and content analysts can do all things content
+    return true if requestor.is_admin? or requestor.is_content_analyst?
 
     case action
     when :index
