@@ -37,8 +37,8 @@ class AddFragmentIndexToTasksTaskSteps < ActiveRecord::Migration
           fragment_index = task_step.fragment_index
           next if fragment_index.nil?
 
-          fragment = exercise.page.fragments[fragment_index].to_html
-          next unless exercise.context.include? fragment
+          fragment = exercise.page.fragments[fragment_index]
+          next unless fragment.respond_to?(:to_html) && exercise.context.include?(fragment.to_html)
 
           Tasks::Models::TaskStep.where(
             tasks_task_id: task_step.tasks_task_id, content_page_id: task_step.content_page_id
