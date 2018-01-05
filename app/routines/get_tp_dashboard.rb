@@ -19,8 +19,13 @@ class GetTpDashboard
 
     load_role(role, role_type)
     load_course(course, role_type)
+    load_research_surveys(course, role) if :student == role_type
     load_tasks(role, role_type, start_at_ntz, end_at_ntz)
     load_plans(course, start_at_ntz, end_at_ntz) if :teacher == role_type
+  end
+
+  def load_research_surveys(course, role)
+    outputs.research_surveys = role.student.research_surveys(preload: :survey_plan)
   end
 
   def load_plans(course, start_at_ntz, end_at_ntz, current_time = Time.current)

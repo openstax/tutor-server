@@ -11,6 +11,7 @@ class CourseMembership::Models::Student < ApplicationRecord
 
   has_many :enrollments, inverse_of: :student
   has_one :latest_enrollment, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
+  has_many :research_surveys, subsystem: :research, class_name: '::Research::Models::Survey'
 
   has_many :surveys, subsystem: :research, inverse_of: :student
 
