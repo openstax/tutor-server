@@ -34,6 +34,8 @@ class AddFragmentIndexToTasksTaskSteps < ActiveRecord::Migration
                                      .find_each do |te|
           exercise = te.exercise
           task_step = te.task_step
+          next if task_step.nil?
+
           fragment_index = task_step.fragment_index
           next if fragment_index.nil?
 
