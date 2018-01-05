@@ -5,22 +5,33 @@ class ExportAndUploadResearchData
   def exec(filename: nil, task_types: [], from: nil, to: nil)
     fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") \
       if task_types.blank?
-    outputs[:filename] = FilenameSanitizer.sanitize(filename) ||
-                         "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+
+    filename = FilenameSanitizer.sanitize(filename) ||
+               "export_#{Time.current.strftime("%Y%m%dT%H%M%SZ")}.csv"
     date_range = (Chronic.parse(from))..(Chronic.parse(to)) unless to.blank? || from.blank?
-    create_export_file(task_types, date_range)
-    upload_export_file
-    remove_export_file
+
+    tutor_export_file = create_tutor_export_file("tutor_#{filename}", task_types, date_range)
+    cnx_export_file = create_cnx_export_file("cnx_#{filename}", task_types, date_range)
+    files = [ tutor_export_file, cnx_export_file ]
+
+    zip_filename = "#{filename.gsub(File.extname(filename), '')}.zip"
+    Box.upload_files zip_filename: zip_filename, files: files
+
+    files.each { |file| File.delete(file) if File.exist?(file) }
+
+    outputs.filename = filename
   end
 
   protected
 
-  def filepath
-    File.join 'tmp', 'exports', outputs[:filename]
+  def format_time(time)
+    return time if time.blank?
+
+    time.utc.iso8601
   end
 
-  def create_export_file(task_types, date_range)
-    CSV.open(filepath, 'w') do |file|
+  def create_tutor_export_file(filename, task_types, date_range)
+    CSV.open(File.join('tmp', 'exports', filename), 'w') do |file|
       file << [
         "Student Research Identifier",
         "Course ID",
@@ -69,9 +80,25 @@ class ExportAndUploadResearchData
       # find_in_batches completely ignores any sort of limit or order
       steps.find_in_batches do |steps|
         task_ids = steps.map(&:tasks_task_id)
-        tasks_by_task_id = Tasks::Models::Task.where(id: task_ids)
-                                              .preload(:taskings, :time_zone)
-                                              .index_by(&:id)
+        tasks = Tasks::Models::Task.where(id: task_ids).preload(:taskings, :time_zone)
+        tasks_by_task_id = tasks.index_by(&:id)
+
+        role_ids = tasks.map { |task| task.taskings.first.entity_role_id }.uniq
+
+        research_identifier_by_role_id = {}
+        course_id_by_role_id = {}
+        is_cc_by_role_id = {}
+        CourseMembership::Models::Student
+          .joins(:course, :role)
+          .where(entity_role_id: role_ids, course: { is_preview: false, is_test: false })
+          .pluck(
+            :entity_role_id, :research_identifier, :course_profile_course_id, :is_concept_coach
+          )
+          .each do |role_id, research_identifier, course_id, is_cc|
+            research_identifier_by_role_id[role_id] = research_identifier
+            course_id_by_role_id[role_id] = course_id
+            is_cc_by_role_id[role_id] = is_cc.to_s.upcase
+        end
 
         exercise_steps = steps.select(&:exercise?)
         tasked_exercise_ids = exercise_steps.map(&:tasked_id)
@@ -112,17 +139,19 @@ class ExportAndUploadResearchData
             next if step.exercise? && tasked_exercise.nil?
 
             role_id = task.taskings.first.entity_role_id
-            r_info = role_info[role_id]
-            next if r_info.nil?
+
+            research_identifier = research_identifier_by_role_id[role_id]
+            course_id = course_id_by_role_id[role_id]
+            is_cc = is_cc_by_role_id[role_id]
+            next if research_identifier.nil? || course_id.nil? || is_cc.nil?
 
             type = step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1)
-            course_id = r_info[:course_id]
             page = step.page
 
             row = [
-              r_info[:research_identifier],
+              research_identifier,
               course_id,
-              is_cc?(course_id),
+              is_cc,
               task.taskings.first.course_membership_period_id,
               task.tasks_task_plan_id,
               task.id,
@@ -168,39 +197,66 @@ class ExportAndUploadResearchData
     end
   end
 
-  # TODO: Fix (will OOM with too many students in the system)
-  def role_info
-    @role_info ||= {}.tap do |role_info|
-      CourseMembership::Models::Student
-        .joins(:course, :role)
-        .where(course: { is_preview: false, is_test: false })
-        .pluck(:entity_role_id, :course_profile_course_id, :research_identifier)
-        .each do |entity_role_id, course_profile_course_id, research_identifier|
-          role_info[entity_role_id] = {
-            research_identifier: research_identifier,
-            course_id: course_profile_course_id
-          }
+  def create_cnx_export_file(filename, task_types, date_range)
+    CSV.open(File.join('tmp', 'exports', filename), 'w') do |file|
+      file << [
+        "CNX Module JSON URL",
+        "CNX Module HTML URL",
+        "CNX Book Name",
+        "CNX Chapter Number",
+        "CNX Chapter Name",
+        "CNX Section Number",
+        "CNX Section Name",
+        "HTML Fragment Number",
+        "HTML Fragment Labels",
+        "HTML Fragment Content"
+      ]
+
+      pages = Content::Models::Page
+        .distinct
+        .joins(task_steps: { task: :taskings })
+        .where(task_steps: { task: { task_type: task_types } })
+        .where(
+          <<-SQL.strip_heredoc
+            NOT EXISTS (
+              SELECT *
+              FROM "tasks_task_plans"
+              WHERE "tasks_task_plans"."id" = "tasks_tasks"."tasks_task_plan_id"
+                AND "tasks_task_plans"."is_preview" = TRUE
+            )
+          SQL
+        )
+        .preload(chapter: :book)
+      pages = pages.where(task_steps: { task: { created_at: date_range } }) if date_range
+
+      # find_in_batches completely ignores any sort of limit or order
+      pages.find_each do |page|
+        page.fragments.each_with_index do |fragment, fragment_index|
+          begin
+            row = [
+              "#{page.url}.json",
+              page.url,
+              page.book.title,
+              page.chapter.number,
+              page.chapter.title,
+              page.number,
+              page.title,
+              fragment_index + 1,
+              fragment.labels.join(','),
+              fragment.try(:to_html)
+            ]
+
+            file << row
+          rescue StandardError => ex
+            raise ex if ex.is_a? Timeout::Error
+
+            Rails.logger.error do
+              "Skipped page #{page.id} for #{ex.inspect} @ #{ex.try(:backtrace).try(:first)}\n"
+            end
+          end
         end
+      end
     end
-  end
-
-  def is_cc?(course_id)
-    @is_cc_map ||= CourseProfile::Models::Course.pluck(:id, :is_concept_coach).to_h
-
-    @is_cc_map[course_id].to_s.upcase
-  end
-
-  def format_time(time)
-    return time if time.blank?
-    time.utc.iso8601
-  end
-
-  def upload_export_file
-    Box.upload_file filepath
-  end
-
-  def remove_export_file
-    File.delete(filepath) if File.exist?(filepath)
   end
 
 end
