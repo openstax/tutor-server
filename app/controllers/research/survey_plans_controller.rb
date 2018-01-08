@@ -7,7 +7,7 @@ class Research::SurveyPlansController < Research::BaseController
   end
 
   def create
-    @survey_plan = Research::Models::SurveyPlan.new(cleared_params)# params[:research_models_survey_plan])
+    @survey_plan = Research::Models::SurveyPlan.new(cleared_params)
 
     respond_to do |format|
       if @survey_plan.save
@@ -39,7 +39,7 @@ class Research::SurveyPlansController < Research::BaseController
   def publish
     respond_to do |format|
       begin
-        Research::PublishSurveyPlan[survey_plan: Research::Models::SurveyPlan.first]
+        Research::PublishSurveyPlan[survey_plan: @survey_plan]
         format.html { redirect_to research_survey_plans_path, notice: "Published survey plan #{@survey_plan.id}"}
       rescue
         format.html { redirect_to research_survey_plans_path, alert: "Could not publish survey plan #{@survey_plan.id}"}
