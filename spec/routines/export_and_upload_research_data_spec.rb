@@ -3,204 +3,281 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
-  let(:course) do
-    FactoryBot.create :course_profile_course,
-                       :with_assistants,
-                       time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
-  end
-  let!(:period) { FactoryBot.create :course_membership_period, course: course }
+  before(:all) do
+    @course = FactoryBot.create :course_profile_course,
+                                :with_assistants,
+                                time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
 
-  let(:teacher) { FactoryBot.create(:user) }
-  let(:teacher_token) do
-    FactoryBot.create :doorkeeper_access_token, resource_owner_id: teacher.id
-  end
+    @teacher = FactoryBot.create :user
 
-  let(:student_1) do
-    FactoryBot.create :user, first_name: 'Student', last_name: 'One', full_name: 'Student One'
-  end
-  let(:student_1_token) do
-    FactoryBot.create :doorkeeper_access_token, resource_owner_id: student_1.id
-  end
+    @student_1 = FactoryBot.create :user, first_name: 'Student',
+                                          last_name: 'One',
+                                          full_name: 'Student One'
 
-  let(:student_2) do
-    FactoryBot.create :user, first_name: 'Student', last_name: 'Two', full_name: 'Student Two'
-  end
+    @student_2 = FactoryBot.create :user, first_name: 'Student',
+                                          last_name: 'Two',
+                                          full_name: 'Student Two'
 
-  let(:student_3) do
-    FactoryBot.create :user, first_name: 'Student', last_name: 'Three', full_name: 'Student Three'
-  end
+    @student_3 = FactoryBot.create :user, first_name: 'Student',
+                                          last_name: 'Three',
+                                          full_name: 'Student Three'
 
-  let(:student_4) do
-    FactoryBot.create :user, first_name: 'Student', last_name: 'Four', full_name: 'Student Four'
+    @student_4 = FactoryBot.create :user, first_name: 'Student',
+                                          last_name: 'Four',
+                                          full_name: 'Student Four'
   end
 
   let(:all_task_types) { Tasks::Models::Task.task_types.values }
 
-  context 'with book' do
+  context 'with book and performance report data' do
     before(:all) do
+      DatabaseCleaner.start
+
       VCR.use_cassette("Api_V1_PerformanceReportsController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
         ]
       end
-    end
 
-    before(:each) do
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
+      CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-      SetupPerformanceReportData[course: course,
-                                 teacher: teacher,
-                                 students: [student_1, student_2, student_3, student_4],
+      SetupPerformanceReportData[course: @course,
+                                 teacher: @teacher,
+                                 students: [@student_1, @student_2, @student_3, @student_4],
                                  ecosystem: @ecosystem]
     end
 
-    it 'exports research data as a csv file' do
-      # We replace the uploading of the research data with the test case itself
-      with_export_rows(all_task_types) do |rows|
-        headers = rows.first
+    after(:all) { DatabaseCleaner.clean }
 
-        step_id_index = headers.index('Step ID')
-        step_ids = rows.map { |row| row[step_id_index] }
-        steps_by_id = Tasks::Models::TaskStep
-          .where(id: step_ids)
-          .preload(:tasked, task: [ :time_zone, taskings: :role ])
-          .index_by(&:id)
+    context 'Tutor export' do
+      let(:export) { :tutor }
 
-        period_ids = course.periods.map { |period| period.id.to_s }
+      it 'exports data to Box as a csv file' do
+        # We replace the uploading of the research data with the test case itself
+        with_export_rows(export, all_task_types) do |rows|
+          headers = rows.first
 
-        rows[1..-1].each do |row|
-          data = headers.zip(row).to_h
-          step = steps_by_id.fetch(data['Step ID'].to_i)
-          page = step.page
-          task = step.task
-          tasked = step.tasked
-          correct_answer_id = step.exercise? ? tasked.correct_answer_id : nil
-          answer_id = step.exercise? ? tasked.answer_id : nil
-          correct = step.exercise? ? tasked.is_correct?.to_s : nil
-          free_response = step.exercise? ? tasked.free_response : nil
-          # Exercises in this cassette get assigned to pages by their lo tag, not cnxmod tag
-          tags = step.exercise? ? tasked.tags.reject { |tag| tag.start_with? 'context-cnxmod' } : []
+          step_id_index = headers.index('Step ID')
+          step_ids = rows.map { |row| row[step_id_index] }
+          steps_by_id = Tasks::Models::TaskStep
+            .where(id: step_ids)
+            .preload(:tasked, task: [ :time_zone, taskings: :role ])
+            .index_by(&:id)
 
-          expect(data['Student Research Identifier']).to(
-            eq(task.taskings.first.role.research_identifier)
-          )
-          expect(data['Course ID']).to eq(course.id.to_s)
-          expect(data['Concept Coach?']).to eq("FALSE")
-          expect(data['Period ID']).to be_in(period_ids)
-          expect(data['Plan ID']).to eq(task.task_plan.try!(:id).try!(:to_s))
-          expect(data['Task ID'].to_i).to eq(task.id)
-          expect(data['Task Type']).to eq(task.task_type)
-          expect(data['Task Opens At']).to eq(format_time(task.opens_at))
-          expect(data['Task Due At']).to eq(format_time(task.due_at))
-          expect(data['Step Type']).to eq(step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1))
-          expect(data['Step Group']).to eq(step.group_name)
-          expect(data['Step Labels']).to eq(step.labels.join(','))
-          expect(data['Step First Completed At']).to eq(format_time(step.first_completed_at))
-          expect(data['Step Last Completed At']).to eq(format_time(step.last_completed_at))
-          expect(data['CNX Module JSON URL']).to eq("#{page.url}.json")
-          expect(data['CNX Module HTML URL']).to eq(page.url)
-          expect(data['HTML Fragment Number']).to eq(step.fragment_index.try!(:+, 1).try!(:to_s))
-          next unless step.exercise?
+          period_ids = @course.periods.map { |period| period.id.to_s }
 
-          expect(data['Exercise JSON URL']).to eq(tasked.url.gsub("org", "org/api") + ".json")
-          expect(data['Exercise Editor URL']).to eq(tasked.url)
-          expect(data['Exercise Question ID']).to eq(tasked.question_id)
-          expect(data['Exercise Correct Answer ID']).to eq(correct_answer_id)
-          expect(data['Exercise Chosen Answer ID']).to eq(answer_id)
-          expect(data['Exercise Correct?']).to eq(correct)
-          expect(data['Exercise Free Response']).to eq(free_response)
-          expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
+          rows[1..-1].each do |row|
+            data = headers.zip(row).to_h
+            step = steps_by_id.fetch(data['Step ID'].to_i)
+            page = step.page
+            task = step.task
+            tasked = step.tasked
+            correct_answer_id = step.exercise? ? tasked.correct_answer_id : nil
+            answer_id = step.exercise? ? tasked.answer_id : nil
+            correct = step.exercise? ? tasked.is_correct?.to_s : nil
+            free_response = step.exercise? ? tasked.free_response : nil
+            # Exercises in this cassette get assigned to pages by their lo tag, not cnxmod tag
+            tags = step.exercise? ?
+                   tasked.tags.reject { |tag| tag.start_with? 'context-cnxmod' } : []
+
+            expect(data['Student Research Identifier']).to(
+              eq(task.taskings.first.role.research_identifier)
+            )
+            expect(data['Course ID']).to eq(@course.id.to_s)
+            expect(data['Concept Coach?']).to eq("FALSE")
+            expect(data['Period ID']).to be_in(period_ids)
+            expect(data['Plan ID']).to eq(task.task_plan.try!(:id).try!(:to_s))
+            expect(data['Task ID'].to_i).to eq(task.id)
+            expect(data['Task Type']).to eq(task.task_type)
+            expect(data['Task Opens At']).to eq(format_time(task.opens_at))
+            expect(data['Task Due At']).to eq(format_time(task.due_at))
+            expect(data['Step Type']).to eq(step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1))
+            expect(data['Step Group']).to eq(step.group_name)
+            expect(data['Step Labels']).to eq(step.labels.join(','))
+            expect(data['Step First Completed At']).to eq(format_time(step.first_completed_at))
+            expect(data['Step Last Completed At']).to eq(format_time(step.last_completed_at))
+            expect(data['CNX Module JSON URL']).to eq("#{page.url}.json")
+            expect(data['CNX Module HTML URL']).to eq(page.url)
+            expect(data['HTML Fragment Number']).to eq(step.fragment_index.try!(:+, 1).try!(:to_s))
+            next unless step.exercise?
+
+            expect(data['Exercise JSON URL']).to eq(tasked.url.gsub("org", "org/api") + ".json")
+            expect(data['Exercise Editor URL']).to eq(tasked.url)
+            expect(data['Exercise Question ID']).to eq(tasked.question_id)
+            expect(data['Exercise Correct Answer ID']).to eq(correct_answer_id)
+            expect(data['Exercise Chosen Answer ID']).to eq(answer_id)
+            expect(data['Exercise Correct?']).to eq(correct)
+            expect(data['Exercise Free Response']).to eq(free_response)
+            expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
+          end
         end
       end
     end
 
-    it 'uploads the exported data to Box' do
-      # We simply test that the call to Box.upload_file is made properly
-      filename_regex = /export_\d+T\d+Z\.csv/
-      expect(Box).to receive(:upload_file) do |filename|
-        expect(filename).to match filename_regex
+    context 'CNX export' do
+      let(:export) { :cnx }
+
+      it 'exports data to Box as a csv file' do
+        # We replace the uploading of the research data with the test case itself
+        with_export_rows(export, all_task_types) do |rows|
+          headers = rows.first
+
+          url_index = headers.index('CNX Module HTML URL')
+          page_urls = rows.map { |row| row[url_index] }
+          pages_by_url = Content::Models::Page
+            .where(url: page_urls)
+            .preload(chapter: :book)
+            .index_by(&:url)
+
+          period_ids = @course.periods.map { |period| period.id.to_s }
+
+          rows[1..-1].each do |row|
+            data = headers.zip(row).to_h
+            page = pages_by_url.fetch(data['CNX Module HTML URL'])
+            chapter = page.chapter
+            book = chapter.book
+            fragment = page.fragments[data['HTML Fragment Number'].to_i - 1]
+
+            expect(data['CNX Module JSON URL']).to eq("#{page.url}.json")
+            expect(data['CNX Book Name']).to eq(book.title)
+            expect(data['CNX Chapter Number'].to_i).to eq(chapter.number)
+            expect(data['CNX Chapter Name']).to eq(chapter.title)
+            expect(data['CNX Section Number'].to_i).to eq(page.number)
+            expect(data['CNX Section Name']).to eq(page.title)
+            expect(data['HTML Fragment Labels']).to eq(fragment.labels.join(','))
+            expect(data['HTML Fragment Content']).to eq(fragment.try(:to_html))
+          end
+        end
       end
-
-      # Trigger the data export
-      capture_stdout{ described_class.call(task_types: all_task_types) }
     end
-
   end
 
-  context "data to export can be filtered" do
-    before(:each) do
+  context 'with filterable data' do
+    before(:all) do
+      DatabaseCleaner.start
+
+      Timecop.freeze(Date.today - 30) do
+        old_reading_task = FactoryBot.create :tasks_task, step_types: [:tasks_tasked_reading],
+                                                          num_random_taskings: 1
+        FactoryBot.create :tasks_task_step, task: old_reading_task,
+                                            page: old_reading_task.task_steps.first.page
+
+        role = old_reading_task.taskings.first.role
+
+        FactoryBot.create :course_membership_student, course: @course, role: role
+      end
+
       cc_tasks = 2.times.map do
-        FactoryBot.create :tasks_task, task_type: :concept_coach,
+        FactoryBot.create(:tasks_task, task_type: :concept_coach,
                                        step_types: [:tasks_tasked_exercise],
-                                       num_random_taskings: 1
+                                       num_random_taskings: 1).tap do |cc_task|
+          FactoryBot.create :tasks_task_step, task: cc_task,
+                                              page: cc_task.task_steps.first.page,
+                                              tasked_type: :tasks_tasked_exercise
+        end
       end
 
       reading_task = FactoryBot.create :tasks_task, task_type: :reading,
                                                     step_types: [:tasks_tasked_reading],
                                                     num_random_taskings: 1
+      FactoryBot.create :tasks_task_step, task: reading_task,
+                                          page: reading_task.task_steps.first.page
 
       (cc_tasks + [reading_task]).each do |task|
         role = task.taskings.first.role
 
-        FactoryBot.create :course_membership_student, course: course, role: role
+        FactoryBot.create :course_membership_student, course: @course, role: role
       end
+
+      expect(Tasks::Models::TaskStep.count).to eq 8
     end
 
-    specify "by date range" do
-      Timecop.freeze(Date.today - 30) do
-        old_reading_task = FactoryBot.create :tasks_task, step_types: [:tasks_tasked_reading],
-                                                          num_random_taskings: 1
+    after(:all) { DatabaseCleaner.clean }
 
-        role = old_reading_task.taskings.first.role
+    context 'Tutor export' do
+      let(:export) { :tutor }
 
-        FactoryBot.create :course_membership_student, course: course, role: role
-      end
-
-      with_export_rows(all_task_types, Date.today - 10, Date.tomorrow) do |rows|
-        expect(Tasks::Models::TaskStep.count).to eq 4
-        expect(rows.count - 1).to eq(3)
-      end
-    end
-
-    context "by application" do
-      let(:tutor_task_types) do
-        Tasks::Models::Task.task_types.values_at(
-          :homework, :reading, :chapter_practice, :page_practice,
-          :mixed_practice, :external, :event, :extra
-        )
-      end
-      let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
-
-      specify "only Concept Coach" do
-        with_export_rows(cc_task_types) do |rows|
-          expect(Tasks::Models::TaskStep.count).to eq 3
-          expect(rows.count - 1).to eq(2)
+      specify 'by date range' do
+        with_export_rows(export, all_task_types, Date.today - 10, Date.tomorrow) do |rows|
+          expect(rows.count - 1).to eq(6)
         end
       end
 
-      specify "only Tutor" do
-        with_export_rows(tutor_task_types) do |rows|
-          expect(Tasks::Models::TaskStep.count).to eq 3
-          expect(rows.count - 1).to eq(1)
+      context 'by application' do
+        let(:tutor_task_types) do
+          Tasks::Models::Task.task_types.values_at(
+            :homework, :reading, :chapter_practice, :page_practice,
+            :mixed_practice, :external, :event, :extra
+          )
+        end
+        let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
+
+        specify 'only Concept Coach' do
+          with_export_rows(export, cc_task_types) do |rows|
+            expect(rows.count - 1).to eq(4)
+          end
+        end
+
+        specify 'only Tutor' do
+          with_export_rows(export, tutor_task_types) do |rows|
+            expect(rows.count - 1).to eq(4)
+          end
+        end
+
+        specify 'Tutor and Concept Coach' do
+          with_export_rows(export, all_task_types) do |rows|
+            expect(rows.count - 1).to eq(8)
+          end
         end
       end
+    end
 
-      specify "Tutor and Concept Coach" do
-        with_export_rows(all_task_types) do |rows|
-          expect(Tasks::Models::TaskStep.count).to eq 3
+    context 'CNX export' do
+      let(:export) { :cnx }
+
+      specify 'by date range' do
+        with_export_rows(export, all_task_types, Date.today - 10, Date.tomorrow) do |rows|
           expect(rows.count - 1).to eq(3)
+        end
+      end
+
+      context 'by application' do
+        let(:tutor_task_types) do
+          Tasks::Models::Task.task_types.values_at(
+            :homework, :reading, :chapter_practice, :page_practice,
+            :mixed_practice, :external, :event, :extra
+          )
+        end
+        let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
+
+        specify 'only Concept Coach' do
+          with_export_rows(export, cc_task_types) do |rows|
+            expect(rows.count - 1).to eq(2)
+          end
+        end
+
+        specify 'only Tutor' do
+          with_export_rows(export, tutor_task_types) do |rows|
+            expect(rows.count - 1).to eq(2)
+          end
+        end
+
+        specify 'Tutor and Concept Coach' do
+          with_export_rows(export, all_task_types) do |rows|
+            expect(rows.count - 1).to eq(4)
+          end
         end
       end
     end
   end
 end
 
-def with_export_rows(task_types = [], from = nil, to = nil, &block)
-  expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
-    filepath = routine.send :filepath
-    expect(File.exist?(filepath)).to be true
-    expect(filepath.ends_with? '.csv').to be true
-    rows = CSV.read(filepath)
+def with_export_rows(export, task_types, from = nil, to = nil, &block)
+  expect(Box).to receive(:upload_files) do |zip_filename:, files:|
+    file = files.find { |file| file.include? export.to_s }
+    expect(File.exist?(file)).to be true
+    expect(file.ends_with? '.csv').to be true
+    rows = CSV.read(file)
     block.call(rows)
   end
 

@@ -1,4 +1,6 @@
 module Box
+  TMP_FOLDER = 'tmp/box'
+
   def self.client
     box_secrets = Rails.application.secrets.box
 
@@ -15,7 +17,8 @@ module Box
   end
 
   def self.with_zip(zip_filename:, files:)
-    zip_filepath = "tmp/box/#{zip_filename}"
+    Dir.mkdir(TMP_FOLDER) unless Dir.exist?(TMP_FOLDER)
+    zip_filepath = "#{TMP_FOLDER}/#{zip_filename}"
 
     begin
       Zip::File.open(zip_filepath, Zip::File::CREATE) do |zipfile|
@@ -24,7 +27,7 @@ module Box
 
       yield zip_filepath
     ensure
-      File.delete zip_filepath
+      File.delete(zip_filepath) if File.exist?(zip_filepath)
     end
   end
 

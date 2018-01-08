@@ -154,7 +154,7 @@ class ExportExerciseExclusions
   end
 
   def generate_by_course_csv
-    CSV.open(filepath_by_course, "w") do |file|
+    CSV.open(local_csv_by_course, "w") do |file|
       file.add_row([
         "Course ID",
         "Course Name",
@@ -192,7 +192,7 @@ class ExportExerciseExclusions
   end
 
   def generate_by_exercise_csv
-    CSV.open(filepath_by_exercise, "w") do |file|
+    CSV.open(local_csv_by_exercise, "w") do |file|
       file.add_row([
         "Excluded Exercise Number",
         "Excluded Exercise URL",
@@ -213,32 +213,32 @@ class ExportExerciseExclusions
     end
   end
 
-  def box_csv_by_course
-    File.join EXPORT_FOLDER, filename_by_course
-  end
-
-  def box_csv_by_exercise
-    File.join EXPORT_FOLDER, filename_by_exercise
-  end
-
   def current_time
     @current_time ||= Time.current.strftime("%Y%m%dT%H%M%SZ")
   end
 
   def filename_by_course
-    "excluded_exercises_stats_by_course_#{current_time}.csv"
+    "excluded_exercises_stats_by_course_#{current_time}"
   end
 
   def filename_by_exercise
-    "excluded_exercises_stats_by_exercise_#{current_time}.csv"
+    "excluded_exercises_stats_by_exercise_#{current_time}"
   end
 
-  def filepath_by_course
-    File.join exports_folder, filename_by_course
+  def local_csv_by_course
+    File.join exports_folder, "#{filename_by_course}.csv"
   end
 
-  def filepath_by_exercise
-    File.join exports_folder, filename_by_exercise
+  def local_csv_by_exercise
+    File.join exports_folder, "#{filename_by_exercise}.csv"
+  end
+
+  def box_csv_by_course
+    File.join EXPORT_FOLDER, "#{filename_by_course}.csv"
+  end
+
+  def box_csv_by_exercise
+    File.join EXPORT_FOLDER, "#{filename_by_exercise}.csv"
   end
 
   def exports_folder
@@ -246,16 +246,16 @@ class ExportExerciseExclusions
   end
 
   def upload_by_course_csv
-    Box.upload_file filepath_by_course
+    Box.upload_files zip_filename: "#{filename_by_course}.zip", files: [ local_csv_by_course ]
   end
 
   def upload_by_exercise_csv
-    Box.upload_file filepath_by_exercise
+    Box.upload_files zip_filename: "#{filename_by_exercise}.zip", files: [ local_csv_by_exercise ]
   end
 
   def remove_exported_files
-    File.delete(filepath_by_course) if File.exists?(filepath_by_course)
-    File.delete(filepath_by_exercise) if File.exists?(filepath_by_exercise)
+    File.delete(local_csv_by_course) if File.exist?(local_csv_by_course)
+    File.delete(local_csv_by_exercise) if File.exist?(local_csv_by_exercise)
   end
 
 end

@@ -38,7 +38,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
                                        course: @course, exercise_number: @exercise_removed.number
     end
 
-    let(:outputs){ described_class.call.outputs }
+    let(:outputs) { described_class.call.outputs }
 
     context "output by course" do
       let(:output) { outputs.by_course.first }
@@ -162,10 +162,12 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         end
 
         it 'uploads the exported data to Box' do
-          # We simply test that the call to Box.upload_file is made properly
+          # We simply test that the call to Box.upload_files is made properly
+          zip_filename_regex = /excluded_exercises_stats_by_course_\d+T\d+Z\.zip/
           filename_regex = /excluded_exercises_stats_by_course_\d+T\d+Z\.csv/
-          expect(Box).to receive(:upload_file) do |filename|
-            expect(filename).to match filename_regex
+          expect(Box).to receive(:upload_files) do |zip_filename:, files:|
+            expect(zip_filename).to match zip_filename_regex
+            expect(files.first).to match filename_regex
           end
 
           described_class.call(upload_by_course: true)
@@ -263,10 +265,12 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         end
 
         it 'uploads the exported data to Box' do
-          # We simply test that the call to Box.upload_file is made properly
+          # We simply test that the call to Box.upload_files is made properly
+          zip_filename_regex = /excluded_exercises_stats_by_exercise_\d+T\d+Z\.zip/
           filename_regex = /excluded_exercises_stats_by_exercise_\d+T\d+Z\.csv/
-          expect(Box).to receive(:upload_file) do |filename|
-            expect(filename).to match filename_regex
+          expect(Box).to receive(:upload_files) do |zip_filename:, files:|
+            expect(zip_filename).to match zip_filename_regex
+            expect(files.first).to match filename_regex
           end
 
           described_class.call(upload_by_exercise: true)
@@ -274,6 +278,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
       end
     end
   end
+
   context "without data" do
     it "does not raise an exception" do
       expect{described_class.call}.to_not raise_error
@@ -283,7 +288,7 @@ end
 
 def with_rows_from_csv(by_type, &block)
   expect_any_instance_of(described_class).to receive(:remove_exported_files) do |routine|
-    filepath = routine.send "filepath_#{by_type}".to_sym
+    filepath = routine.send "local_csv_#{by_type}".to_sym
     expect(File.exist?(filepath)).to be true
     expect(filepath.ends_with? '.csv').to be true
     rows = CSV.read(filepath)
@@ -292,6 +297,6 @@ def with_rows_from_csv(by_type, &block)
 
   by_course = by_type == "by_course"
   by_exercise = by_type == "by_exercise"
-  expect(Box).to receive(:upload_file)
+  expect(Box).to receive(:upload_files)
   described_class.call upload_by_course: by_course, upload_by_exercise: by_exercise
 end
