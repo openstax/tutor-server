@@ -39,7 +39,7 @@ class AddResearchModels < ActiveRecord::Migration
       t.references :course_membership_student,  null: false,
                                                 foreign_key: { on_update: :cascade, on_delete: :cascade },
                                                 index: { name: :research_surveys_on_student }
-      t.text :survey_js_response
+      t.jsonb :survey_js_response
       t.datetime :completed_at,                 null: true, index: true
       t.datetime :hidden_at,                    null: true, index: true
 

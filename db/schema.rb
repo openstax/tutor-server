@@ -680,7 +680,7 @@ ActiveRecord::Schema.define(version: 20171229201156) do
   create_table "research_surveys", force: :cascade do |t|
     t.integer  "research_survey_plan_id",      null: false
     t.integer  "course_membership_student_id", null: false
-    t.text     "survey_js_response"
+    t.jsonb    "survey_js_response"
     t.datetime "completed_at"
     t.datetime "hidden_at"
     t.datetime "created_at",                   null: false
