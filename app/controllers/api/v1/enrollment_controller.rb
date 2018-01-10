@@ -25,8 +25,6 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
     )
   end
 
-
-
   api :POST, '/prevalidate', 'Check if an enrollment code is valid for a given book uuid'
   description <<-EOS
     If the enrollment code is valid, returns the associated course and period.
@@ -61,8 +59,7 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
     end
   end
 
-  api :POST, '/enrollment_changes',
-             'Creates a new EnrollmentChange request or updates the current one'
+  api :POST, '/enrollment', 'Creates a new EnrollmentChange request or updates the current one'
   description <<-EOS
     Creates a new EnrollmentChange object, indicating the user's intention to enroll in a course
     or to switch periods.
@@ -75,11 +72,12 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
 
     Possible error codes:
       invalid_enrollment_code
+      preview_course
       course_ended
+      is_teacher (the user is a teacher)
       enrollment_code_does_not_match_book
+      dropped_student (dropped students cannot re-enroll by themselves)
       already_enrolled
-      multiple_roles (The user is a teacher with multiple roles - not supported)
-      dropped_student (Dropped students cannot re-enroll by themselves)
   EOS
   def create
     OSU::AccessPolicy.require_action_allowed!(
@@ -102,7 +100,7 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
     )
   end
 
-  api :PUT, '/enrollment_changes/:enrollment_change_id/approve',
+  api :PUT, '/enrollment/:enrollment_change_id/approve',
             'Approves an EnrollmentChange request'
   description <<-EOS
     Approves an EnrollmentChange object, causing the user's enrollment status to update.
