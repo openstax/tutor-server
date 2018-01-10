@@ -126,6 +126,8 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :research_surveys, only: [:update]
+
     namespace :cc do
       namespace :tasks do
         get :':cnx_book_id/:cnx_page_id', action: :show
