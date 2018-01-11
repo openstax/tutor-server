@@ -24,7 +24,7 @@
       <td>
         <%= link_to "Edit", edit_research_survey_plan_path(survey_plan) %> |
         <%= link_to "Preview", research_survey_plan_preview_path(survey_plan) %>&nbsp;&nbsp;
-        <% if !survey_plan.is_published? %>
+        <% if !survey_plan.is_published? && !survey_plan.is_hidden? %>
           <%= link_to "Publish", research_survey_plan_publish_path(survey_plan),
                         method: :put,
                         data: {

@@ -11,18 +11,12 @@ RSpec.feature 'Researcher working with survey plans' do
     @student_1 = AddUserAsPeriodStudent[period: @period, user: @student_1_user].student
     @student_2 = AddUserAsPeriodStudent[period: @period, user: @student_2_user].student
 
-    @study = FactoryBot.create :research_study
+    @study = FactoryBot.create :research_study, name: "Study 1"
     Research::AddCourseToStudy[course: @course, study: @study]
-  end
-
-  # let(:survey_plan) { FactoryBot.create :research_survey_plan, study: @study }
-
-
 
     researcher = FactoryBot.create(:user, :researcher)
     stub_current_user(researcher)
   end
-
 
   scenario 'view console' do
     visit research_root_path
@@ -31,147 +25,41 @@ RSpec.feature 'Researcher working with survey plans' do
 
   scenario 'add a survey plan' do
     visit research_survey_plans_path
-    click_button 'Add Survey Plan'
+    click_link 'Add Survey Plan'
     fill_in 'Title for researchers', with: 'Title for researchers'
     fill_in 'Title for students', with: 'Title for students'
     fill_in 'Survey js model', with: FactoryBot.build(:research_survey_plan).survey_js_model
+    click_button 'Save'
+    expect(page).to have_content("Survey Plan was successfully created.")
+    expect(page).to have_content(/Title for researchers.*Study 1.*Draft.*Edit.*Preview.*Publish.*Permanently Hide/)
   end
 
-  scenario 'set excluded from salesforce' do
-    go_to_salesforce_tab
-    expect(page).to have_unchecked_field('course_is_excluded_from_salesforce')
-    find(:css, '#course_is_excluded_from_salesforce').set(true)
-    click_button 'exclusion_save'
-    expect(@course.reload.is_excluded_from_salesforce).to eq true
-    go_to_salesforce_tab
-    expect(page).to have_checked_field('course_is_excluded_from_salesforce')
+  scenario 'publish a survey plan' do
+    survey_plan = FactoryBot.create :research_survey_plan, study: @study
+    visit research_survey_plans_path
+    click_link 'Publish'
+    expect(page).to have_content(/Published survey plan/)
+    expect(survey_plan.surveys.count).to eq 2
+    expect(page).to have_content("Published")
   end
 
-  scenario 'setting blank SF record on periods' do
-    go_to_salesforce_tab
-    click_button 'Change'
-    expect(current_path).to eq(edit_admin_course_path(@course))
-    expect(page).to have_content('Salesforce record changed.')
+  scenario 'hide an unpublished survey plan' do
+    survey_plan = FactoryBot.create :research_survey_plan, study: @study
+    visit research_survey_plans_path
+    click_link 'Permanently Hide'
+    expect(survey_plan.reload).to be_is_hidden
+    expect(page).to have_content(/Permanently hid survey plan/)
+    expect(page).to have_content("Draft / Hidden")
+    expect(page).not_to have_content("Publish")
   end
 
-  context "when adding a new course SF record" do
-    scenario 'leaving ID blank gives an error message' do
-      go_to_salesforce_tab
-      click_button 'Add'
-      expect(current_path).to eq(edit_admin_course_path(@course))
-      expect(page).to have_content('Salesforce can\'t be blank')
-    end
-
-    scenario 'a bad SF ID gives an error message' do
-      go_to_salesforce_tab
-      allow_any_instance_of(Admin::CoursesAddSalesforce).to(
-        receive(:get_salesforce_object_for_id) { nil }
-      )
-      fill_in 'add_salesforce_salesforce_id', with: 'foo'
-      click_button 'Add'
-      expect(page).to have_content('does_not_exist')
-    end
-
-    scenario 'a valid, unused SF ID works' do
-      existing_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'orig')
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @course,
-                                                      salesforce_object: existing_sf_object)
-      go_to_salesforce_tab
-      expect(page).to have_content('orig')
-
-      new_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'new')
-      fill_in 'add_salesforce_salesforce_id', with: 'new'
-      click_button 'Add'
-      expect(page).to have_content('orig')
-      expect(page).to have_content('new')
-    end
-
-    scenario 'a valid, used SF ID gives an error' do
-      existing_sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary,
-                                          id: 'orig')
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @course,
-                                                      salesforce_object: existing_sf_object)
-      go_to_salesforce_tab
-
-      fill_in 'add_salesforce_salesforce_id', with: 'orig'
-      click_button 'Add'
-      expect(page).to have_content('orig')
-      expect(page).to have_content('object_already_attached')
-    end
+  scenario 'hide an published survey plan' do
+    survey_plan = FactoryBot.create :research_survey_plan, study: @study
+    visit research_survey_plans_path
+    click_link 'Publish'
+    click_link 'Permanently Hide'
+    expect(survey_plan.reload).to be_is_hidden
+    expect(survey_plan.surveys(true).all?{|ss| ss.is_hidden?}).to eq true
   end
-
-  context "when removing a course SF record" do
-    before(:each) do
-      sf_object = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'orig')
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @course,
-                                                      salesforce_object: sf_object)
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @period_1,
-                                                      salesforce_object: sf_object)
-
-      go_to_salesforce_tab
-
-      expect(page).to have_content(/orig.*orig/) # maybe not the best test, but meh...
-    end
-
-    it "removes the same record from the relevant periods" do
-      expect {
-        click_button 'Remove'
-      }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(-2)
-      expect(page).not_to have_content(/orig.*orig/) # should just be one 'orig' now
-    end
-
-    it "can be restored" do
-      click_button 'Remove'
-      expect(page).to have_content(/orig/)
-      expect{
-        click_button 'Restore'
-      }.to change{Salesforce::Models::AttachedRecord.without_deleted.count}.by(1)
-    end
-  end
-
-  context "when there are two SF objects on a course with different periods on each" do
-    before(:each) do
-      period_2 = FactoryBot.create :course_membership_period, course: @course
-      sf_object_a = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'sfoa')
-      sf_object_b = fake_sf_object(klass: OpenStax::Salesforce::Remote::OsAncillary, id: 'sfob')
-
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @course,
-                                                      salesforce_object: sf_object_a)
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @period_1,
-                                                      salesforce_object: sf_object_a)
-
-      FactoryBot.create(:salesforce_attached_record, tutor_object: @course,
-                                                      salesforce_object: sf_object_b)
-      FactoryBot.create(:salesforce_attached_record, tutor_object: period_2,
-                                                      salesforce_object: sf_object_b)
-    end
-
-    it "defaults the period SF dropdowns correctly" do
-      go_to_salesforce_tab
-      expect(page.body).to match(/1st.*selected="selected" value="sfoa".*2nd.*selected="selected" value="sfob"/m)
-    end
-
-    it "lets you change a period from one SF object to the other" do
-      go_to_salesforce_tab
-      expect(Salesforce::Models::AttachedRecord.where(salesforce_id: 'sfob').count).to eq 2
-      select "sfob", from: "period_0_sf_select"
-      page.all("input[type='submit'][value='Change']")[0].click
-      expect(Salesforce::Models::AttachedRecord.where(salesforce_id: 'sfob').count).to eq 3
-    end
-  end
-
-  def go_to_salesforce_tab
-    visit edit_admin_course_path(@course)
-    find("a[href='#salesforce']").click
-    expect(page).to have_content('Salesforce Records')
-  end
-
-  def fake_sf_object(klass:, id:, save_outcome: true)
-    klass.new(id: id).tap do |fake|
-      allow(fake).to receive(:save) { save_outcome }   # stub save
-      allow(klass).to receive(:find).with(id) { fake } # let lookup work
-    end
-  end
-
 
 end
