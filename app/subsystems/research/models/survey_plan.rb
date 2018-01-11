@@ -5,6 +5,8 @@ class Research::Models::SurveyPlan < ApplicationRecord
   validates :title_for_students, presence: true
   validate :changes_allowed
 
+  scope :published, -> { where.not(published_at: nil) }
+
   def destroy
     false
   end
