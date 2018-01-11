@@ -3,7 +3,7 @@ class EcosystemAccessPolicy
     return false unless requestor.is_human?
 
     # Admins can do all things content
-    return true #if requestor.is_admin?
+    return true if requestor.is_admin?
 
     case action
     when :index
