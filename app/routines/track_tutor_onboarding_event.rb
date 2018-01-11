@@ -16,7 +16,6 @@ protected
   CM = OpenStax::Salesforce::Remote::CampaignMember
 
   def exec(event:, user:, data: {})
-    return
     begin
 
       cm = nil
