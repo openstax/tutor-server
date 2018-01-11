@@ -40,5 +40,12 @@ FactoryBot.define do
                                                profile: user.to_model)
       end
     end
+
+    trait :researcher do
+      after(:build) do |user|
+        user.to_model.researcher = build(:user_researcher,
+                                         profile: user.to_model)
+      end
+    end
   end
 end
