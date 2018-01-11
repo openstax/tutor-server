@@ -7,7 +7,7 @@ class Api::V1::ResearchSurveysController < Api::V1::ApiController
     Saves the student's responses to a survey.
   EOS
   def update
-    OSU::AccessPolicy.require_action_allowed!(:complete, current_human_user, survey)
+    OSU::AccessPolicy.require_action_allowed!(:complete, current_api_user, survey)
     result = Research::CompleteSurvey.call(
       survey: survey, **consumed(Api::V1::ResearchSurveyRepresenter)
     )
