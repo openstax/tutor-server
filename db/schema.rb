@@ -353,6 +353,8 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
     t.boolean  "is_access_switchable",                         default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
+    t.string   "creator_campaign_member_id"
+    t.string   "latest_adoption_decision"
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree
