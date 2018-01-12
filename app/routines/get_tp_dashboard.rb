@@ -25,7 +25,7 @@ class GetTpDashboard
   end
 
   def load_research_surveys(course, role)
-    surveys = role.student.research_surveys
+    surveys = role.student.surveys
                 .preload(:survey_plan)
                 .where(completed_at: nil, hidden_at: nil)
     outputs.research_surveys = surveys if surveys.any?
