@@ -4,6 +4,7 @@ class Research::CompleteSurvey
 
   def exec(survey:, response:)
     survey.update_attributes(survey_js_response: response, completed_at: Time.now)
+    transfer_errors_from(survey, {type: :verbatim})
   end
 
 end
