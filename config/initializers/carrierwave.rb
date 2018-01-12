@@ -12,6 +12,10 @@ CarrierWave.configure do |config|
 
     config.fog_attributes = { 'Cache-Control' => 'max-age=31536000' }
 
+    config.fog_directory  = secrets['bucket_name']
+
+    config.fog_provider = 'fog/aws'
+
     fog_credentials = secrets['access_key_id'].blank? ? \
                         { use_iam_profile: true } : \
                         { aws_access_key_id:     secrets['access_key_id'],
@@ -21,9 +25,6 @@ CarrierWave.configure do |config|
       region:   secrets['region'],
       endpoint: secrets['endpoint_server']
     )
-    config.fog_directory  = secrets['bucket_name']
-
-    config.fog_provider = 'fog/aws'
 
     :fog
   else
