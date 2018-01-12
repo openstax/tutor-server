@@ -247,7 +247,9 @@ class ExportAndUploadResearchData
           )
         pages = pages.where(task_steps: { task: { created_at: date_range } }) if date_range
 
-        ordered_find_in_batches(pages, [ :url, '"content_books"."title"' ]) do |pgs|
+        ordered_find_in_batches(
+          pages, [ :url, Content::Models::Book.arel_table[:title].as('book_title') ]
+        ) do |pgs|
           pgs.each do |page|
             page.fragments.each_with_index do |fragment, fragment_index|
               begin
@@ -356,9 +358,9 @@ class ExportAndUploadResearchData
   end
 
   def ordered_find_in_batches(relation, order_bys = :id, batch_size = BATCH_SIZE)
-    relation = relation.dup.reorder(order_bys).limit(batch_size)
     order_bys = [ order_bys ].flatten
-    arel_table = relation.arel_table
+    no_alias_order_bys = order_bys.map { |col, _| col.is_a?(Arel::Nodes::As) ? col.left : col }
+    relation = relation.dup.reorder(no_alias_order_bys).limit(batch_size)
 
     wheres = nil
     loop do
@@ -370,16 +372,32 @@ class ExportAndUploadResearchData
 
       last_record = records.last
       previous_eqs_array = []
-      wheres = order_bys.map do |column, direction|
-        value = last_record.public_send(column)
+      wheres = order_bys.map do |col, direction|
+        method_name = case col
+        when Arel::Nodes::As
+          col.right
+        when Arel::Attributes::Attribute
+          col.name
+        else
+          col
+        end
+        arel_attribute = case col
+        when Arel::Nodes::As
+          col.left
+        when Symbol
+          relation.arel_table[col]
+        else
+          col
+        end
+
+        value = last_record.public_send(method_name)
         operator = direction.to_s.upcase == 'DESC' ? :lt : :gt
 
-        previous_eqs = previous_eqs_array.reduce(:and)
-        clause = arel_table[column].public_send(operator, value)
-        clause = clause.and(previous_eqs) unless previous_eqs.empty?
-        previous_eqs_array << arel_table[column].eq(value)
+        clause = arel_attribute.public_send(operator, value)
+        clause = clause.and(previous_eqs_array.reduce(:and)) unless previous_eqs_array.empty?
+        previous_eqs_array << arel_attribute.eq(value)
         clause
-      end.reduce(:or)
+      end.map { |arel| Arel::Nodes::Grouping.new arel }.reduce(:or)
     end
   end
 
