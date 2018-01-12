@@ -1,6 +1,6 @@
 class Research::SurveyPlansController < Research::BaseController
 
-  before_filter :get_survey_plan, only: [:edit, :update, :preview, :publish]
+  before_filter :get_survey_plan, only: [:edit, :update, :preview, :publish, :hide]
 
   def new
     @survey_plan = Research::Models::SurveyPlan.new
@@ -43,6 +43,17 @@ class Research::SurveyPlansController < Research::BaseController
         format.html { redirect_to research_survey_plans_path, notice: "Published survey plan #{@survey_plan.id}"}
       rescue
         format.html { redirect_to research_survey_plans_path, alert: "Could not publish survey plan #{@survey_plan.id}"}
+      end
+    end
+  end
+
+  def hide
+    respond_to do |format|
+      begin
+        Research::HideSurveyPlan[survey_plan: @survey_plan]
+        format.html { redirect_to research_survey_plans_path, notice: "Hid survey plan #{@survey_plan.id}"}
+      rescue
+        format.html { redirect_to research_survey_plans_path, alert: "Could not hide survey plan #{@survey_plan.id}"}
       end
     end
   end

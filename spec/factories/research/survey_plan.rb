@@ -38,7 +38,7 @@ FactoryBot.define do
     end
 
     trait :hidden do
-      permanently_hidden_at { Time.now }
+      hidden_at { Time.now }
     end
   end
 end

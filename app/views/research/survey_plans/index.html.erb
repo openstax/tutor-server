@@ -24,7 +24,7 @@
       <td>
         <%= link_to "Edit", edit_research_survey_plan_path(survey_plan) %> |
         <%= link_to "Preview", research_survey_plan_preview_path(survey_plan) %>&nbsp;&nbsp;
-        <% if !survey_plan.is_published? %>
+        <% if !survey_plan.is_published? && !survey_plan.is_hidden? %>
           <%= link_to "Publish", research_survey_plan_publish_path(survey_plan),
                         method: :put,
                         data: {
@@ -34,10 +34,10 @@
                         class: 'btn btn-xs btn-primary' %>
         <% end %>
         <% if !survey_plan.is_hidden? %>
-          <%= link_to "Permanently Hide", research_survey_plan_hide_path(survey_plan),
+          <%= link_to "Hide", research_survey_plan_hide_path(survey_plan),
                         method: :delete,
                         data: {
-                          confirm: "Are you sure? Plans cannot be unhidden.  If already published, hiding a plan " \
+                          confirm: "Are you sure? If already published, hiding a plan " \
                                    "will make it disappear from student dashboards."
                         },
                         class: 'btn btn-xs btn-primary' %>

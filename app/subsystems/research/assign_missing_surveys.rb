@@ -10,7 +10,7 @@ class Research::AssignMissingSurveys
                       missing_surveys_for_course(course) ||
                       missing_surveys_for_survey_plan(survey_plan)
 
-    return if missing_surveys.empty? # e.g. if only non-published plans
+    return if missing_surveys.blank? # e.g. if only non-published plans
 
     Research::Models::Survey.import!(missing_surveys)
   end
@@ -23,6 +23,7 @@ class Research::AssignMissingSurveys
     survey_plan_ids_not_assigned =
       Research::Models::SurveyPlan
         .published
+        .not_hidden
         .joins{study.courses.students}
         .where{study.courses.students.id == my{student.id}}
         .where(
@@ -46,7 +47,9 @@ class Research::AssignMissingSurveys
   end
 
   def missing_surveys_for_survey_plan(survey_plan)
-    return nil if survey_plan.nil? || survey_plan.is_published?
+    return nil if survey_plan.nil? ||
+                  !survey_plan.is_published? ||
+                  survey_plan.is_hidden?
 
     # Can find multiple students missing this one survey
 
@@ -68,6 +71,7 @@ class Research::AssignMissingSurveys
     survey_plans =
       Research::Models::SurveyPlan
         .published
+        .not_hidden
         .joins{study.courses}
         .where{study.courses.id == my{course.id}}
 

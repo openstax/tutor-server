@@ -27,13 +27,13 @@ class AddResearchModels < ActiveRecord::Migration
       t.text :description
       t.text :survey_js_model
       t.datetime :published_at,                 null: true, index: true
-      t.datetime :permanently_hidden_at,        null: true, index: true
+      t.datetime :hidden_at,                    null: true, index: true
 
       t.timestamps                              null: false
     end
 
     create_table :research_surveys do |t|
-      t.references :research_survey_plan,      null: false,
+      t.references :research_survey_plan,       null: false,
                                                 foreign_key: { on_update: :cascade, on_delete: :cascade },
                                                 index: true
       t.references :course_membership_student,  null: false,
@@ -41,7 +41,7 @@ class AddResearchModels < ActiveRecord::Migration
                                                 index: { name: :research_surveys_on_student }
       t.text :survey_js_response
       t.datetime :completed_at,                 null: true, index: true
-      t.datetime :permanently_hidden_at,        null: true, index: true
+      t.datetime :hidden_at,                    null: true, index: true
 
       t.timestamps                              null: false
     end
