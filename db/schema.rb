@@ -668,12 +668,12 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.text     "description"
     t.text     "survey_js_model"
     t.datetime "published_at"
-    t.datetime "permanently_hidden_at"
+    t.datetime "hidden_at"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
   end
 
-  add_index "research_survey_plans", ["permanently_hidden_at"], name: "index_research_survey_plans_on_permanently_hidden_at", using: :btree
+  add_index "research_survey_plans", ["hidden_at"], name: "index_research_survey_plans_on_hidden_at", using: :btree
   add_index "research_survey_plans", ["published_at"], name: "index_research_survey_plans_on_published_at", using: :btree
   add_index "research_survey_plans", ["research_study_id"], name: "index_research_survey_plans_on_research_study_id", using: :btree
 
@@ -682,14 +682,14 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.integer  "course_membership_student_id", null: false
     t.text     "survey_js_response"
     t.datetime "completed_at"
-    t.datetime "permanently_hidden_at"
+    t.datetime "hidden_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
 
   add_index "research_surveys", ["completed_at"], name: "index_research_surveys_on_completed_at", using: :btree
   add_index "research_surveys", ["course_membership_student_id"], name: "research_surveys_on_student", using: :btree
-  add_index "research_surveys", ["permanently_hidden_at"], name: "index_research_surveys_on_permanently_hidden_at", using: :btree
+  add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
   add_index "research_surveys", ["research_survey_plan_id", "course_membership_student_id"], name: "research_surveys_on_plan_and_student", unique: true, using: :btree
   add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
 

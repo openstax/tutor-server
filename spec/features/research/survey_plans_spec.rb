@@ -31,7 +31,7 @@ RSpec.feature 'Researcher working with survey plans' do
     fill_in 'Survey js model', with: FactoryBot.build(:research_survey_plan).survey_js_model
     click_button 'Save'
     expect(page).to have_content("Survey Plan was successfully created.")
-    expect(page).to have_content(/Title for researchers.*Study 1.*Draft.*Edit.*Preview.*Publish.*Permanently Hide/)
+    expect(page).to have_content(/Title for researchers.*Study 1.*Draft.*Edit.*Preview.*Publish.*Hide/)
   end
 
   scenario 'publish a survey plan' do
@@ -46,9 +46,9 @@ RSpec.feature 'Researcher working with survey plans' do
   scenario 'hide an unpublished survey plan' do
     survey_plan = FactoryBot.create :research_survey_plan, study: @study
     visit research_survey_plans_path
-    click_link 'Permanently Hide'
+    click_link 'Hide'
     expect(survey_plan.reload).to be_is_hidden
-    expect(page).to have_content(/Permanently hid survey plan/)
+    expect(page).to have_content(/Hid survey plan/)
     expect(page).to have_content("Draft / Hidden")
     expect(page).not_to have_content("Publish")
   end
@@ -57,7 +57,7 @@ RSpec.feature 'Researcher working with survey plans' do
     survey_plan = FactoryBot.create :research_survey_plan, study: @study
     visit research_survey_plans_path
     click_link 'Publish'
-    click_link 'Permanently Hide'
+    click_link 'Hide'
     expect(survey_plan.reload).to be_is_hidden
     expect(survey_plan.surveys(true).all?{|ss| ss.is_hidden?}).to eq true
   end

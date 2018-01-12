@@ -5,7 +5,7 @@ class Research::Models::Survey < ApplicationRecord
   validates :student, uniqueness: { scope: :research_survey_plan_id }
 
   def is_hidden?
-    !permanently_hidden_at.nil?
+    !hidden_at.nil?
   end
 
   def destroy

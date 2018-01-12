@@ -51,7 +51,7 @@ class Research::SurveyPlansController < Research::BaseController
     respond_to do |format|
       begin
         Research::HideSurveyPlan[survey_plan: @survey_plan]
-        format.html { redirect_to research_survey_plans_path, notice: "Permanently hid survey plan #{@survey_plan.id}"}
+        format.html { redirect_to research_survey_plans_path, notice: "Hid survey plan #{@survey_plan.id}"}
       rescue
         format.html { redirect_to research_survey_plans_path, alert: "Could not hide survey plan #{@survey_plan.id}"}
       end
