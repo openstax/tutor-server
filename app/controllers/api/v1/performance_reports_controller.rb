@@ -35,13 +35,13 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance report for the user'
   description <<-EOS
-    #{json_schema(Api::V1::PerformanceReportRepresenter, include: :readable)}
+    #{json_schema(Api::V1::PerformanceReport::Representer, include: :readable)}
   EOS
   def index
     course = CourseProfile::Models::Course.find(params[:id])
     preport = GetPerformanceReport[course: course, role: get_course_role(course: course)]
 
-    respond_with(preport, represent_with: Api::V1::PerformanceReportRepresenter)
+    respond_with(preport, represent_with: Api::V1::PerformanceReport::Representer)
   end
 
   protected

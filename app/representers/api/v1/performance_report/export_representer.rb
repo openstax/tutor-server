@@ -1,5 +1,5 @@
-module Api::V1
-  class PerformanceReportExportRepresenter < Roar::Decorator
+module Api::V1::PerformanceReport
+  class ExportRepresenter < Roar::Decorator
     include Roar::JSON
 
     property :filename,
