@@ -4,14 +4,17 @@ module Api::V1::PerformanceReport
 
     property :filename,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :url,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :created_at,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
   end
 end

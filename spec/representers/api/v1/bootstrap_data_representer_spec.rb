@@ -13,7 +13,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
   end
 
   it "generates a JSON representation of data for a user to start work with" do
-    expect(JSON.parse representation).to match a_hash_including(
+    expect(JSON.parse representation).to match(
       "user" =>  Api::V1::UserRepresenter.new(user).as_json,
       "courses" => [], # not testing this since it's too expensive to generate meaningful course data
       "accounts_api_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'api',

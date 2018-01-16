@@ -4,15 +4,18 @@ module Api::V1::PerformanceReport::Student::Data
 
     property :title,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :plan_id,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :type,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :due_at,
              type: String,
@@ -22,10 +25,12 @@ module Api::V1::PerformanceReport::Student::Data
 
     property :average_score,
              type: Float,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completion_rate,
              type: Float,
-             readable: true
+             readable: true,
+             writeable: false
   end
 end

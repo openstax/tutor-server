@@ -34,7 +34,11 @@ class CloneCourse
       default_due_time: default_due_time || course.default_due_time,
       cloned_from: course,
       estimated_student_count: estimated_student_count,
-      is_preview: false
+      is_preview: false,
+      homework_score_weight: course.homework_score_weight,
+      homework_progress_weight: course.homework_progress_weight,
+      reading_score_weight: course.reading_score_weight,
+      reading_progress_weight: course.reading_progress_weight
     }
 
     run(:create_course, attrs)

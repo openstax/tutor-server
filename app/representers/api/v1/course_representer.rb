@@ -217,6 +217,42 @@ module Api::V1
                 description: "Background job ID of last push of scores to LMS"
              }
 
+    property :homework_score_weight,
+             type: Float,
+             writeable: true,
+             readable: true,
+             schema_info: {
+                required: true,
+                description: "The weight given to homework scores when calculating the average"
+             }
+
+    property :homework_progress_weight,
+             type: Float,
+             writeable: true,
+             readable: true,
+             schema_info: {
+                required: true,
+                description: "The weight given to homework progress when calculating the average"
+             }
+
+    property :reading_score_weight,
+             type: Float,
+             writeable: true,
+             readable: true,
+             schema_info: {
+                required: true,
+                description: "The weight given to reading scores when calculating the average"
+             }
+
+    property :reading_progress_weight,
+             type: Float,
+             writeable: true,
+             readable: true,
+             schema_info: {
+                required: true,
+                description: "The weight given to reading progress when calculating the average"
+             }
+
     collection :periods,
                extend: Api::V1::PeriodRepresenter,
                readable: true,
@@ -232,6 +268,5 @@ module Api::V1
                readable: true,
                writeable: false,
                if: ->(*) { respond_to?(:roles) }
-
   end
 end

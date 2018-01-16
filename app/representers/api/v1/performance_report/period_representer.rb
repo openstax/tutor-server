@@ -5,18 +5,22 @@ module Api::V1::PerformanceReport
     property :period_id,
              type: String,
              readable: true,
+             writeable: false,
              getter: ->(*) { period.id.to_s }
 
     property :overall_average_score,
              type: Float,
-             readable: true
+             readable: true,
+             writeable: false
 
     collection :data_headings,
                readable: true,
-               extend: Student::Data::HeadingsRepresenter
+               writeable: false,
+               extend: ::Api::V1::PerformanceReport::Student::Data::HeadingsRepresenter
 
     collection :students,
                readable: true,
-               extend: StudentRepresenter
+               writeable: false,
+               extend: ::Api::V1::PerformanceReport::Student::Representer
   end
 end

@@ -4,68 +4,84 @@ module Api::V1::PerformanceReport::Student::Data
 
     property :type,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :id,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :status,
              type: String,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :step_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completed_step_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completed_on_time_step_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completed_accepted_late_step_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :actual_and_placeholder_exercise_count,
              as: :exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completed_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completed_on_time_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :completed_accepted_late_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :correct_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :correct_on_time_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :correct_accepted_late_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :score,
              type: Float,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :recovered_exercise_count,
              type: Integer,
-             readable: true
+             readable: true,
+             writeable: false
 
     property :due_at,
              type: String,
