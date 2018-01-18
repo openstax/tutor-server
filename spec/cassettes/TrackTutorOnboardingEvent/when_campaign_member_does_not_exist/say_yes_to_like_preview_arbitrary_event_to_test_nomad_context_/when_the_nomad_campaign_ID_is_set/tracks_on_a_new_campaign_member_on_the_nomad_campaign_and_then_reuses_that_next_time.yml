@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcV1IAI%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr5OIAS%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcyuIAA%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr6vIAC%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:50 GMT
+      - Thu, 18 Jan 2018 21:32:16 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -37,12 +37,12 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=v77QBbiOTwyDuwW8ACJGZg;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:50 GMT;Max-Age=5184000
+      - BrowserId=cY1QJj7WTaq5s6C4A9xeiQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:16 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=175/48000
+      - api-usage=627/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -54,7 +54,7 @@ http_interactions:
   recorded_at: Sun, 23 Jul 2017 23:04:00 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcV1IAI%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr5TIAS%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcyuIAA%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr70IAC%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -75,7 +75,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:50 GMT
+      - Thu, 18 Jan 2018 21:32:16 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -89,12 +89,12 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=mMiy8tYLRPWIC2y6NVTIsA;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:50 GMT;Max-Age=5184000
+      - BrowserId=covl8uocRZSkvH2Z0zKNmg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:16 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=179/48000
+      - api-usage=634/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -109,7 +109,7 @@ http_interactions:
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember"
     body:
       encoding: UTF-8
-      string: '{"CampaignId":"701W0000000Sr5TIAS","ContactId":"003W000000ljcV1IAI","accounts_uuid__c":"<USER_SF_A_UUID>","first_teacher_contact_id__c":"003W000000ljcV1IAI","like_preview_yes_at__c":"2017-07-23T23:04:00.000+00:00"}'
+      string: '{"CampaignId":"701W0000000Sr70IAC","ContactId":"003W000000ljcyuIAA","accounts_uuid__c":"<USER_SF_A_UUID>","first_teacher_contact_id__c":"003W000000ljcyuIAA","like_preview_yes_at__c":"2017-07-23T23:04:00.000+00:00"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -129,7 +129,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:51 GMT
+      - Thu, 18 Jan 2018 21:32:17 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -143,26 +143,26 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=Fc9xvWvoQgqLyGjNoYGm4Q;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:51 GMT;Max-Age=5184000
+      - BrowserId=WQz085NeR6KvW5pnPBHqdw;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:17 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=174/48000
+      - api-usage=628/48000
       Location:
-      - "/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMazIAG"
+      - "/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMhgIAG"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"00vW0000003QMazIAG","success":true,"errors":[]}'
+      string: '{"id":"00vW0000003QMhgIAG","success":true,"errors":[]}'
     http_version: 
   recorded_at: Sun, 23 Jul 2017 23:04:00 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700vW0000003QMazIAG%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700vW0000003QMhgIAG%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -183,7 +183,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:52 GMT
+      - Thu, 18 Jan 2018 21:32:17 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -197,24 +197,24 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=C0MhDDPQRuePBxVGC0B5oQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:52 GMT;Max-Age=5184000
+      - BrowserId=PyUayz4iTIKf0Aa0O2-iLA;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:17 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=180/48000
+      - api-usage=635/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMazIAG"},"Id":"00vW0000003QMazIAG","CampaignId":"701W0000000Sr5TIAS","ContactId":"003W000000ljcV1IAI","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000ljcV1IAI","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMhgIAG"},"Id":"00vW0000003QMhgIAG","CampaignId":"701W0000000Sr70IAC","ContactId":"003W000000ljcyuIAA","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000ljcyuIAA","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
   recorded_at: Sun, 23 Jul 2017 23:04:00 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcV1IAI%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr5OIAS%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcyuIAA%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr6vIAC%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -235,7 +235,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:52 GMT
+      - Thu, 18 Jan 2018 21:32:18 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -249,12 +249,12 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=LVcG8yIYSFq3Vw0SBdg1Ug;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:52 GMT;Max-Age=5184000
+      - BrowserId=QaMuzXzpTy6WKxamHLljaQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:18 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=185/48000
+      - api-usage=638/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -263,10 +263,10 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
     http_version: 
-  recorded_at: Thu, 18 Jan 2018 20:49:52 GMT
+  recorded_at: Thu, 18 Jan 2018 21:32:18 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcV1IAI%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr5TIAS%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcyuIAA%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr70IAC%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -287,7 +287,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:53 GMT
+      - Thu, 18 Jan 2018 21:32:18 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -301,27 +301,27 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=SBD9z9rZRJKoF3d5kSntMQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:53 GMT;Max-Age=5184000
+      - BrowserId=e6SLGPO5STyJLkf8FHl0tg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:18 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=181/48000
+      - api-usage=628/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMazIAG"},"Id":"00vW0000003QMazIAG","CampaignId":"701W0000000Sr5TIAS","ContactId":"003W000000ljcV1IAI","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000ljcV1IAI","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMhgIAG"},"Id":"00vW0000003QMhgIAG","CampaignId":"701W0000000Sr70IAC","ContactId":"003W000000ljcyuIAA","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000ljcyuIAA","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
-  recorded_at: Thu, 18 Jan 2018 20:49:53 GMT
+  recorded_at: Thu, 18 Jan 2018 21:32:18 GMT
 - request:
     method: patch
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMazIAG"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMhgIAG"
     body:
       encoding: UTF-8
-      string: '{"latest_adoption_decision__c":"For extra credit","latest_adoption_decision_at__c":"2018-01-18T20:49:53.438+00:00"}'
+      string: '{"latest_adoption_decision__c":"For extra credit","latest_adoption_decision_at__c":"2018-01-18T21:32:18.906+00:00"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -339,7 +339,7 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Thu, 18 Jan 2018 20:49:54 GMT
+      - Thu, 18 Jan 2018 21:32:19 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -353,20 +353,20 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=ivsn_2LPRCGZ99D7jgVxIA;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:54 GMT;Max-Age=5184000
+      - BrowserId=ky0SGjdPR_eCp2atXz_hZQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:19 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=172/48000
+      - api-usage=636/48000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Thu, 18 Jan 2018 20:49:54 GMT
+  recorded_at: Thu, 18 Jan 2018 21:32:19 GMT
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700vW0000003QMazIAG%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700vW0000003QMhgIAG%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -387,7 +387,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Thu, 18 Jan 2018 20:49:54 GMT
+      - Thu, 18 Jan 2018 21:32:19 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -401,25 +401,25 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=3Q_2rSIARciXjJcVhaGj1Q;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:54 GMT;Max-Age=5184000
+      - BrowserId=zzVohHrgSMa_POdcjj8k4A;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:19 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=182/48000
+      - api-usage=629/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMazIAG"},"Id":"00vW0000003QMazIAG","CampaignId":"701W0000000Sr5TIAS","ContactId":"003W000000ljcV1IAI","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000ljcV1IAI","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":"For
-        extra credit","latest_adoption_decision_at__c":"2018-01-18T20:49:53.000+0000","Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMhgIAG"},"Id":"00vW0000003QMhgIAG","CampaignId":"701W0000000Sr70IAC","ContactId":"003W000000ljcyuIAA","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"003W000000ljcyuIAA","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":"2017-07-23T23:04:00.000+0000","latest_adoption_decision__c":"For
+        extra credit","latest_adoption_decision_at__c":"2018-01-18T21:32:18.000+0000","Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
-  recorded_at: Thu, 18 Jan 2018 20:49:54 GMT
+  recorded_at: Thu, 18 Jan 2018 21:32:19 GMT
 - request:
     method: delete
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMazIAG"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMhgIAG"
     body:
       encoding: US-ASCII
       string: ''
@@ -438,7 +438,7 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Thu, 18 Jan 2018 20:49:55 GMT
+      - Thu, 18 Jan 2018 21:32:20 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -452,15 +452,15 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=JI-mV8A6SHSiYYoSIhi2ZQ;Path=/;Domain=.salesforce.com;Expires=Mon,
-        19-Mar-2018 20:49:55 GMT;Max-Age=5184000
+      - BrowserId=ERi6aZsGSt-w-VS9blpdKw;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 21:32:20 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=183/48000
+      - api-usage=637/48000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Thu, 18 Jan 2018 20:49:55 GMT
+  recorded_at: Thu, 18 Jan 2018 21:32:20 GMT
 recorded_with: VCR 2.9.3

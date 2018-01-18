@@ -28,9 +28,9 @@ protected
         # Deprecated event, no longer handling
         return
       when :arrived_my_courses
-        # Nothing to do, just want to make sure a record gets created
         return if user.salesforce_contact_id.blank? # no use if sf ID blank, which may happen
         cm = find_or_initialize_campaign_member(user: user)
+        cm.first_arrived_my_courses_at ||= DateTime.current
       when :created_preview_course
         cm = find_or_initialize_campaign_member(user: user)
         cm.preview_created_at ||= DateTime.current
