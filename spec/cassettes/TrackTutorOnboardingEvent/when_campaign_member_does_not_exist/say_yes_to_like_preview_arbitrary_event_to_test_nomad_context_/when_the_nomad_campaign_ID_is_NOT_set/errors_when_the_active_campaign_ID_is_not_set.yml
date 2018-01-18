@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000l8O4wIAE%27)%20AND%20(CampaignId%20=%20%27701W0000000SlxwIAC%27)%20LIMIT%201"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%27003W000000ljcV1IAI%27)%20AND%20(CampaignId%20=%20%27701W0000000Sr5OIAS%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Wed, 03 Jan 2018 04:16:27 GMT
+      - Thu, 18 Jan 2018 20:49:56 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -32,15 +32,17 @@ http_interactions:
       - 1; mode=block
       Content-Security-Policy:
       - upgrade-insecure-requests
+      X-Robots-Tag:
+      - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=Uub9nKuAQ_OBwjNZ_HhssQ;Path=/;Domain=.salesforce.com;Expires=Sun,
-        04-Mar-2018 04:16:27 GMT;Max-Age=5184000
+      - BrowserId=xajxsOeeRUKvQRdbnRcIpQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 20:49:56 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=57/48000
+      - api-usage=172/48000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -49,5 +51,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
     http_version: 
-  recorded_at: Wed, 03 Jan 2018 04:16:27 GMT
+  recorded_at: Thu, 18 Jan 2018 20:49:56 GMT
 recorded_with: VCR 2.9.3

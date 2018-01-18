@@ -114,7 +114,7 @@ protected
       nomad_onboarding_campaign_id = Settings::Salesforce.active_nomad_onboarding_salesforce_campaign_id
       raise(MissingOnboardingCampaignId, "nomad campaign") if nomad_onboarding_campaign_id.blank?
 
-      cm = CM.new(contact_id: sf_contact_id, campaign_id: nomad_onboarding_campaign_id)
+      cm = CM.find_or_initialize_by(contact_id: sf_contact_id, campaign_id: nomad_onboarding_campaign_id)
     end
 
     cm.first_teacher_contact_id ||= user.salesforce_contact_id
