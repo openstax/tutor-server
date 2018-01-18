@@ -111,8 +111,8 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   end
 
   context 'when user anonymous' do
-    let(:event) { :arrived_my_courses }
-    let(:user) { anonymous_user }
+    let(:event) { :created_preview_course }
+    let(:user) { anonymous_user } # this combo can't really happen, but just tests code
 
     it 'raises an error' do
       expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
@@ -120,12 +120,25 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   end
 
   context 'when user has no SF contact ID' do
-    let(:event) { :arrived_my_courses }
+
     let(:user) { @user_no_sf }
 
-    it 'raises an error' do
-      expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
+    context 'arrived my courses' do
+      let(:event) { :arrived_my_courses }
+
+      it 'does nothing' do
+        expect{call}.not_to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
+      end
     end
+
+    context 'other' do
+      let(:event) { :created_preview_course }
+
+      it 'raises an error' do
+        expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
+      end
+    end
+
   end
 
   context 'when user has an SF contact ID' do
@@ -307,7 +320,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
     it 'fails instantly when cannot get CM' do
       expect_instant_background_failure(TrackTutorOnboardingEvent::CannotTrackOnboardingUser) {
-        described_class.perform_later(user: anonymous_user, event: "arrived_my_courses")
+        described_class.perform_later(user: anonymous_user, event: "created_preview_course")
       }
     end
 
