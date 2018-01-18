@@ -11,7 +11,7 @@ class LmsController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: [:launch, :ci_launch]
   skip_before_filter :authenticate_user!, only: [:configuration, :launch, :launch_authenticate, :ci_launch]
 
-  before_filter :allow_embedding_in_iframe, only: [:launch, :ci_launch]
+  before_filter :allow_iframe_access, only: [:launch, :ci_launch]
 
   layout false
 
@@ -180,10 +180,6 @@ class LmsController < ApplicationController
   end
 
   protected
-
-  def allow_embedding_in_iframe
-    response.headers["X-FRAME-OPTIONS"] = 'ALLOWALL'
-  end
 
   def fail_for_lms_disabled(launch, context)
     log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \
