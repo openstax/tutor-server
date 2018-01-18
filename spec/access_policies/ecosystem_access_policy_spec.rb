@@ -79,30 +79,23 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy, speed: :medium do
     end
   end
 
-  context 'content analysts' do
-    let(:requestor) { content_analyst }
-
-    context 'index' do
-      let(:action) { :index }
-      it { should eq true }
-    end
-
-    [:create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
+  [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
+    context 'admins' do
+      let(:requestor) { admin }
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should eq false }
+        it { should eq true }
       end
     end
-  end
 
-  context 'admins' do
-    let(:requestor) { admin }
+    context 'content analysts' do
+      let(:requestor) { content_analyst }
 
-    [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq true }
       end
     end
   end
+
 end
