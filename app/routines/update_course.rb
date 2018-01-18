@@ -11,7 +11,9 @@ class UpdateCourse
 
     return unless params[:time_zone]
 
-    ::TimeZone.joins(:course).where(course: {id: id}).update_all(name: params[:time_zone])
+    time_zone = ::TimeZone.joins(:course).find_by(course: { id: id })
+    time_zone.name = params[:time_zone]
+    fatal_error(code: :invalid_time_zone) unless time_zone.save
   end
 
 end
