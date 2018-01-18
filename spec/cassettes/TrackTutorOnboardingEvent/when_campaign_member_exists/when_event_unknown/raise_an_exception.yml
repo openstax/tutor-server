@@ -5,7 +5,7 @@ http_interactions:
     uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember"
     body:
       encoding: UTF-8
-      string: '{"CampaignId":"701W0000000SlxwIAC","ContactId":"003W000000l8O4wIAE"}'
+      string: '{"CampaignId":"701W0000000Sr5OIAS","ContactId":"003W000000ljcV1IAI"}'
     headers:
       User-Agent:
       - Faraday v0.9.2
@@ -25,7 +25,7 @@ http_interactions:
       Connection:
       - close
       Date:
-      - Wed, 03 Jan 2018 04:16:24 GMT
+      - Thu, 18 Jan 2018 20:49:44 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -34,29 +34,31 @@ http_interactions:
       - 1; mode=block
       Content-Security-Policy:
       - upgrade-insecure-requests
+      X-Robots-Tag:
+      - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=haQrhwbgSyu896EMcVKRKA;Path=/;Domain=.salesforce.com;Expires=Sun,
-        04-Mar-2018 04:16:24 GMT;Max-Age=5184000
+      - BrowserId=mclrgIwISQKT-XEFNK4eaQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 20:49:44 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=53/48000
+      - api-usage=161/48000
       Location:
-      - "/services/data/v37.0/sobjects/CampaignMember/00vW0000003Q7CSIA0"
+      - "/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMapIAG"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"00vW0000003Q7CSIA0","success":true,"errors":[]}'
+      string: '{"id":"00vW0000003QMapIAG","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Wed, 03 Jan 2018 04:16:24 GMT
+  recorded_at: Thu, 18 Jan 2018 20:49:45 GMT
 - request:
     method: delete
-    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003Q7CSIA0"
+    uri: "<tutor_specs_instance_url>/services/data/v37.0/sobjects/CampaignMember/00vW0000003QMapIAG"
     body:
       encoding: US-ASCII
       string: ''
@@ -75,7 +77,7 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Wed, 03 Jan 2018 04:16:24 GMT
+      - Thu, 18 Jan 2018 20:49:45 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -84,18 +86,20 @@ http_interactions:
       - 1; mode=block
       Content-Security-Policy:
       - upgrade-insecure-requests
+      X-Robots-Tag:
+      - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=S0cYXG1_RW-ocETrcwOuHQ;Path=/;Domain=.salesforce.com;Expires=Sun,
-        04-Mar-2018 04:16:24 GMT;Max-Age=5184000
+      - BrowserId=y98_ClTKStuHhEWRiWNDvw;Path=/;Domain=.salesforce.com;Expires=Mon,
+        19-Mar-2018 20:49:45 GMT;Max-Age=5184000
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=53/48000
+      - api-usage=151/48000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Wed, 03 Jan 2018 04:16:25 GMT
+  recorded_at: Thu, 18 Jan 2018 20:49:45 GMT
 recorded_with: VCR 2.9.3

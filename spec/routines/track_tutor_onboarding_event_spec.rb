@@ -282,6 +282,18 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
           cm = expect_call_to_set_timestamp(:like_preview_yes_at)
           expect(cm.campaign_id).to eq @nomad_campaign.id
         end
+
+        it 'tracks on a new campaign member on the nomad campaign and then reuses that next time' do
+          cm = expect_call_to_set_timestamp(:like_preview_yes_at)
+          expect(cm.campaign_id).to eq @nomad_campaign.id
+
+          course = FactoryBot.create(:course_profile_course)
+          cm2 = described_class[user: user,
+                                event: :made_adoption_decision,
+                                data: {decision: "For extra credit",
+                                       course_id: course.id}].reload
+          expect(cm2.id).to eq cm.id
+        end
       end
 
       context "when the nomad campaign ID is NOT set" do
