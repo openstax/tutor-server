@@ -1,4 +1,6 @@
 module Box
+  TMP_FOLDER = 'tmp/box'
+
   def self.client
     box_secrets = Rails.application.secrets.box
 
@@ -14,19 +16,27 @@ module Box
     Boxr::Client.new enterprise_token['access_token']
   end
 
-  def self.zip_file(filepath)
-    "#{filepath.gsub(File.extname(filepath), '')}.zip".tap do |zip_filepath|
+  def self.with_zip(zip_filename:, files:)
+    Dir.mkdir(TMP_FOLDER) unless Dir.exist?(TMP_FOLDER)
+    zip_filepath = "#{TMP_FOLDER}/#{zip_filename}"
+
+    begin
       Zip::File.open(zip_filepath, Zip::File::CREATE) do |zipfile|
-        zipfile.add(File.basename(filepath), filepath)
+        files.each { |file| zipfile.add(File.basename(file), file) }
       end
+
+      yield zip_filepath
+    ensure
+      File.delete(zip_filepath) if File.exist?(zip_filepath)
     end
   end
 
-  def self.upload_file(filepath, zip = true)
-    filepath = zip_file(filepath) if zip
-
+  def self.upload_files(zip_filename:, files:)
     folderpath = Rails.application.secrets.box['exports_folder']
     folder = client.folder_from_path(folderpath)
-    client.upload_file(filepath, folder)
+
+    with_zip(zip_filename: zip_filename, files: files) do |zip_filepath|
+      client.upload_file(zip_filepath, folder)
+    end
   end
 end
