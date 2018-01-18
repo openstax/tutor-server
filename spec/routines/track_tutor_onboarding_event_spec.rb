@@ -54,7 +54,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   let(:data) { {} }
 
   def call
-    described_class[user: user, event: event, data: data].reload
+    described_class[user: user, event: event, data: data].try(:reload)
   end
 
   def expect_call_to_set_timestamp(timestamp_field)
@@ -127,7 +127,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
       let(:event) { :arrived_my_courses }
 
       it 'does nothing' do
-        expect{call}.not_to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
+        expect{call}.not_to raise_error
       end
     end
 
@@ -160,6 +160,19 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
       stub_active_campaign_id
     }
+
+    context 'arrived my courses' do
+      let(:event) { :arrived_my_courses }
+      let(:user) { @user_sf_a }
+
+      it 'sets first_arrived_my_courses_at' do
+        expect_call_to_set_timestamp(:first_arrived_my_courses_at)
+      end
+
+      it 'does not change first_arrived_my_courses_at for 2nd time' do
+        expect_2nd_call_to_not_change_timestamp(:first_arrived_my_courses_at)
+      end
+    end
 
     context 'created preview' do
       let(:event) { :created_preview_course }
