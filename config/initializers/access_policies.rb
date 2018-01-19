@@ -19,4 +19,4 @@ OSU::AccessPolicy.register(Tasks::Models::ConceptCoachTask, Cc::TaskAccessPolicy
 OSU::AccessPolicy.register(Catalog::Models::Offering, OfferingAccessPolicy)
 OSU::AccessPolicy.register(TrackTutorOnboardingEvent, TrackTutorOnboardingEventPolicy)
 OSU::AccessPolicy.register(OpenStax::Payments::FakePurchasedItem, AllowAllAccessPolicy)
-
+OSU::AccessPolicy.register(Research::Models::Survey, ResearchSurveyAccessPolicy)

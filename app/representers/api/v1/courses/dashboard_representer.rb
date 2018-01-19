@@ -184,6 +184,11 @@ module Api::V1::Courses
              writeable: false,
              extend: Course
 
+    collection :research_surveys,
+               readable: true,
+               writeable: false,
+               extend: ::Api::V1::ResearchSurveyRepresenter
+
   end
 
 end

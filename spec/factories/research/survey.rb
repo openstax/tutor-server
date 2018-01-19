@@ -1,6 +1,6 @@
 FactoryBot.define do
-  factory :research_survey, class: '::Research::Models::ToolConsumer' do
-    association :survey_plan, factory: :research_study
+  factory :research_survey, class: '::Research::Models::Survey' do
+    association :survey_plan, factory: :research_survey_plan
     association :student, factory: :course_membership_student
 
     trait :completed do
