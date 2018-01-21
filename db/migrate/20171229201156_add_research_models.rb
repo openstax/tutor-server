@@ -16,8 +16,8 @@ class AddResearchModels < ActiveRecord::Migration
       t.timestamps                              null: false
     end
 
-    add_index :research_study_courses, [:research_study_id, :course_profile_course_id], unique: true,
-              name: :research_study_courses_on_study_and_course
+    add_index :research_study_courses, [:course_profile_course_id, :research_study_id], unique: true,
+              name: :research_study_courses_on_course_and_study
 
     create_table :research_survey_plans do |t|
       t.references :research_study,             null: false, index: true,
@@ -46,8 +46,8 @@ class AddResearchModels < ActiveRecord::Migration
       t.timestamps                              null: false
     end
 
-    add_index :research_surveys, [:research_survey_plan_id, :course_membership_student_id], unique: true,
-              name: :research_surveys_on_plan_and_student
+    add_index :research_surveys, [:course_membership_student_id, :research_survey_plan_id], unique: true,
+              name: :research_surveys_on_student_and_plan
 
   end
 end
