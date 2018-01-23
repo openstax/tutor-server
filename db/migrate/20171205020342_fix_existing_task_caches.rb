@@ -5,7 +5,7 @@ class FixExistingTaskCaches < ActiveRecord::Migration
         toc = task_cache.as_toc
 
         task_cache.as_toc = toc.merge(
-          num_known_location_steps: toc[:books].sum { |bk| bk[:num_assigned_steps] }
+          num_assigned_known_location_steps: toc[:books].sum { |bk| bk[:num_assigned_steps] }
         )
       end
 

@@ -72,10 +72,19 @@ class Tasks::UpdateTaskCaches
       ])
       .where(tasks_task_id: task_ids)
       .order(:number)
+      .to_a
 
-    # Count the number of task steps for each task, including ones without page_ids
+    # Count the number of assigned and completed task steps for each task,
+    # including ones without page_ids
     num_assigned_steps_by_task_id = Hash.new 0
-    task_steps.each { |task_step| num_assigned_steps_by_task_id[task_step.tasks_task_id] += 1 }
+    num_completed_steps_by_task_id = Hash.new 0
+    task_steps.each do |task_step|
+      task_id = task_step.tasks_task_id
+      num_assigned_steps_by_task_id[task_id] += 1
+      next unless task_step.completed?
+
+      num_completed_steps_by_task_id[task_id] += 1
+    end
 
     # Remove task_steps without a page_id (spaced practice placeholders)
     task_steps = task_steps.reject { |ts| ts.content_page_id.nil? }
@@ -150,6 +159,7 @@ class Tasks::UpdateTaskCaches
       task_ids.flat_map do |task_id|
         task = tasks_by_id[task_id]
         num_assigned_steps = num_assigned_steps_by_task_id[task_id]
+        num_completed_steps = num_completed_steps_by_task_id[task_id]
         task_steps_by_page_id = task_steps_by_task_id_and_page_id[task_id]
         student_ids = student_ids_by_task_id[task_id]
         student_names = student_names_by_task_id[task_id]
@@ -158,6 +168,7 @@ class Tasks::UpdateTaskCaches
           build_task_cache(
             pages_by_mapped_book_chapter_and_page: pages_by_mapped_book_chapter_and_page,
             num_assigned_steps: num_assigned_steps,
+            num_completed_steps: num_completed_steps,
             task_steps_by_page_id: task_steps_by_page_id,
             exercise_uuid_by_id: exercise_uuid_by_id,
             ecosystem: course_ecosystem,
@@ -169,6 +180,7 @@ class Tasks::UpdateTaskCaches
           task_caches << build_task_cache(
             pages_by_mapped_book_chapter_and_page: pages_by_book_chapter_and_page,
             num_assigned_steps: num_assigned_steps,
+            num_completed_steps: num_completed_steps,
             task_steps_by_page_id: task_steps_by_page_id,
             exercise_uuid_by_id: exercise_uuid_by_id,
             ecosystem: task.ecosystem,
@@ -202,6 +214,7 @@ class Tasks::UpdateTaskCaches
   def build_task_cache(
     pages_by_mapped_book_chapter_and_page:,
     num_assigned_steps:,
+    num_completed_steps:,
     task_steps_by_page_id:,
     exercise_uuid_by_id:,
     ecosystem:,
@@ -265,18 +278,12 @@ class Tasks::UpdateTaskCaches
           book_location: mapped_chapter.book_location,
           has_exercises: pages_array.any? { |pg| pg[:has_exercises] },
           is_spaced_practice: pages_array.all? { |pg| pg[:is_spaced_practice] },
-          num_assigned_steps: pages_array.map { |pg| pg[:num_assigned_steps] }
-                                         .reduce(0, :+),
-          num_completed_steps: pages_array.map { |pg| pg[:num_completed_steps] }
-                                          .reduce(0, :+),
-          num_assigned_exercises: pages_array.map { |pg| pg[:num_assigned_exercises] }
-                                             .reduce(0, :+),
-          num_completed_exercises: pages_array.map { |pg| pg[:num_completed_exercises] }
-                                              .reduce(0, :+),
-          num_correct_exercises: pages_array.map { |pg| pg[:num_correct_exercises] }
-                                            .reduce(0, :+),
-          num_assigned_placeholders: pages_array.map { |pg| pg[:num_assigned_placeholders] }
-                                                .reduce(0, :+),
+          num_assigned_steps: pages_array.sum { |pg| pg[:num_assigned_steps] },
+          num_completed_steps: pages_array.sum { |pg| pg[:num_completed_steps] },
+          num_assigned_exercises: pages_array.sum { |pg| pg[:num_assigned_exercises] },
+          num_completed_exercises: pages_array.sum { |pg| pg[:num_completed_exercises] },
+          num_correct_exercises: pages_array.sum { |pg| pg[:num_correct_exercises] },
+          num_assigned_placeholders: pages_array.sum { |pg| pg[:num_assigned_placeholders] },
           pages: pages_array
         }
       end.sort_by { |chapter| chapter[:book_location] }
@@ -286,18 +293,12 @@ class Tasks::UpdateTaskCaches
         tutor_uuid: mapped_book.tutor_uuid,
         title: mapped_book.title,
         has_exercises: chapters_array.any? { |ch| ch[:has_exercises] },
-        num_assigned_steps: chapters_array.map { |ch| ch[:num_assigned_steps] }
-                                          .reduce(0, :+),
-        num_completed_steps: chapters_array.map { |ch| ch[:num_completed_steps] }
-                                           .reduce(0, :+),
-        num_assigned_exercises: chapters_array.map { |ch| ch[:num_assigned_exercises] }
-                                              .reduce(0, :+),
-        num_completed_exercises: chapters_array.map { |ch| ch[:num_completed_exercises] }
-                                               .reduce(0, :+),
-        num_correct_exercises: chapters_array.map { |ch| ch[:num_correct_exercises] }
-                                             .reduce(0, :+),
-        num_assigned_placeholders: chapters_array.map { |ch| ch[:num_assigned_placeholders] }
-                                                 .reduce(0, :+),
+        num_assigned_steps: chapters_array.sum { |ch| ch[:num_assigned_steps] },
+        num_completed_steps: chapters_array.sum { |ch| ch[:num_completed_steps] },
+        num_assigned_exercises: chapters_array.sum { |ch| ch[:num_assigned_exercises] },
+        num_completed_exercises: chapters_array.sum { |ch| ch[:num_completed_exercises] },
+        num_correct_exercises: chapters_array.sum { |ch| ch[:num_correct_exercises] },
+        num_assigned_placeholders: chapters_array.sum { |ch| ch[:num_assigned_placeholders] },
         chapters: chapters_array
       }
     end.sort_by { |book| book[:title] }
@@ -308,17 +309,13 @@ class Tasks::UpdateTaskCaches
       title: ecosystem.title,
       has_exercises: books_array.any? { |bk| bk[:has_exercises] },
       num_assigned_steps: num_assigned_steps,
-      num_known_location_steps: books_array.map { |bk| bk[:num_assigned_steps] }.reduce(0, :+),
-      num_completed_steps: books_array.map { |bk| bk[:num_completed_steps] }
-                                      .reduce(0, :+),
-      num_assigned_exercises: books_array.map { |bk| bk[:num_assigned_exercises] }
-                                         .reduce(0, :+),
-      num_completed_exercises: books_array.map { |bk| bk[:num_completed_exercises] }
-                                          .reduce(0, :+),
-      num_correct_exercises: books_array.map { |bk| bk[:num_correct_exercises] }
-                                        .reduce(0, :+),
-      num_assigned_placeholders: books_array.map { |bk| bk[:num_assigned_placeholders] }
-                                            .reduce(0, :+),
+      num_assigned_known_location_steps: books_array.sum { |bk| bk[:num_assigned_steps] },
+      num_completed_steps: num_completed_steps,
+      num_completed_known_location_steps: books_array.sum { |bk| bk[:num_completed_steps] },
+      num_assigned_exercises: books_array.sum { |bk| bk[:num_assigned_exercises] },
+      num_completed_exercises: books_array.sum { |bk| bk[:num_completed_exercises] },
+      num_correct_exercises: books_array.sum { |bk| bk[:num_correct_exercises] },
+      num_assigned_placeholders: books_array.sum { |bk| bk[:num_assigned_placeholders] },
       books: books_array
     }
 

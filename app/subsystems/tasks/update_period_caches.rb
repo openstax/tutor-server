@@ -126,13 +126,12 @@ class Tasks::UpdatePeriodCaches
             book_location: book_location,
             has_exercises: pgs.any? { |pg| pg[:has_exercises] },
             is_spaced_practice: pgs.all? { |pg| pg[:is_spaced_practice] },
-            num_assigned_steps: pgs.map { |pg| pg[:num_assigned_steps] }.reduce(0, :+),
-            num_completed_steps: pgs.map { |pg| pg[:num_completed_steps] }.reduce(0, :+),
-            num_assigned_exercises: pgs.map { |pg| pg[:num_assigned_exercises] }.reduce(0, :+),
-            num_completed_exercises: pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+),
-            num_correct_exercises: pgs.map { |pg| pg[:num_correct_exercises] }.reduce(0, :+),
-            num_assigned_placeholders: pgs.map { |pg| pg[:num_assigned_placeholders] }
-                                          .reduce(0, :+),
+            num_assigned_steps: pgs.sum { |pg| pg[:num_assigned_steps] },
+            num_completed_steps: pgs.sum { |pg| pg[:num_completed_steps] },
+            num_assigned_exercises: pgs.sum { |pg| pg[:num_assigned_exercises] },
+            num_completed_exercises: pgs.sum { |pg| pg[:num_completed_exercises] },
+            num_correct_exercises: pgs.sum { |pg| pg[:num_correct_exercises] },
+            num_assigned_placeholders: pgs.sum { |pg| pg[:num_assigned_placeholders] },
             student_ids: pgs.flat_map { |pg| pg[:student_ids] }.uniq,
             student_names: pgs.flat_map { |pg| pg[:student_names] }.uniq
           }
@@ -146,12 +145,13 @@ class Tasks::UpdatePeriodCaches
           book_location: book_location,
           has_exercises: chs.any? { |ch| ch[:has_exercises] },
           is_spaced_practice: chs.all? { |ch| ch[:is_spaced_practice] },
-          num_assigned_steps: chs.map { |ch| ch[:num_assigned_steps] }.reduce(0, :+),
-          num_completed_steps: chs.map { |ch| ch[:num_completed_steps] }.reduce(0, :+),
-          num_assigned_exercises: chs.map { |ch| ch[:num_assigned_exercises] }.reduce(0, :+),
-          num_completed_exercises: chs.map { |ch| ch[:num_completed_exercises] }.reduce(0, :+),
-          num_correct_exercises: chs.map { |ch| ch[:num_correct_exercises] }.reduce(0, :+),
-          num_assigned_placeholders: chs.map { |ch| ch[:num_assigned_placeholders] }.reduce(0, :+),          student_ids: chs.flat_map { |ch| ch[:student_ids] }.uniq,
+          num_assigned_steps: chs.sum { |ch| ch[:num_assigned_steps] },
+          num_completed_steps: chs.sum { |ch| ch[:num_completed_steps] },
+          num_assigned_exercises: chs.sum { |ch| ch[:num_assigned_exercises] },
+          num_completed_exercises: chs.sum { |ch| ch[:num_completed_exercises] },
+          num_correct_exercises: chs.sum { |ch| ch[:num_correct_exercises] },
+          num_assigned_placeholders: chs.sum { |ch| ch[:num_assigned_placeholders] },
+          student_ids: chs.flat_map { |ch| ch[:student_ids] }.uniq,
           student_names: chs.flat_map { |ch| ch[:student_names] }.uniq,
           pages: period_pgs
         }
@@ -163,12 +163,13 @@ class Tasks::UpdatePeriodCaches
         tutor_uuid: preferred_bk[:tutor_uuid],
         title: title,
         has_exercises: bks.any? { |bk| bk[:has_exercises] },
-        num_assigned_steps: bks.map { |bk| bk[:num_assigned_steps] }.reduce(0, :+),
-        num_completed_steps: bks.map { |bk| bk[:num_completed_steps] }.reduce(0, :+),
-        num_assigned_exercises: bks.map { |bk| bk[:num_assigned_exercises] }.reduce(0, :+),
-        num_completed_exercises: bks.map { |bk| bk[:num_completed_exercises] }.reduce(0, :+),
-        num_correct_exercises: bks.map { |bk| bk[:num_correct_exercises] }.reduce(0, :+),
-        num_assigned_placeholders: bks.map { |bk| bk[:num_assigned_placeholders] }.reduce(0, :+),          student_ids: bks.flat_map { |bk| bk[:student_ids] }.uniq,
+        num_assigned_steps: bks.sum { |bk| bk[:num_assigned_steps] },
+        num_completed_steps: bks.sum { |bk| bk[:num_completed_steps] },
+        num_assigned_exercises: bks.sum { |bk| bk[:num_assigned_exercises] },
+        num_completed_exercises: bks.sum { |bk| bk[:num_completed_exercises] },
+        num_correct_exercises: bks.sum { |bk| bk[:num_correct_exercises] },
+        num_assigned_placeholders: bks.sum { |bk| bk[:num_assigned_placeholders] },
+        student_ids: bks.flat_map { |bk| bk[:student_ids] }.uniq,
         student_names: bks.flat_map { |bk| bk[:student_names] }.uniq,
         chapters: period_chs
       }
@@ -180,13 +181,19 @@ class Tasks::UpdatePeriodCaches
       tutor_uuid: preferred_toc[:tutor_uuid],
       title: preferred_toc[:title],
       has_exercises: tocs.any? { |toc| toc[:has_exercises] },
-      num_assigned_steps: tocs.map { |toc| toc[:num_assigned_steps] }.reduce(0, :+),
-      num_known_location_steps: tocs.map { |toc| toc[:num_known_location_steps] }.reduce(0, :+),
-      num_completed_steps: tocs.map { |toc| toc[:num_completed_steps] }.reduce(0, :+),
-      num_assigned_exercises: tocs.map { |toc| toc[:num_assigned_exercises] }.reduce(0, :+),
-      num_completed_exercises: tocs.map { |toc| toc[:num_completed_exercises] }.reduce(0, :+),
-      num_correct_exercises: tocs.map { |toc| toc[:num_correct_exercises] }.reduce(0, :+),
-      num_assigned_placeholders: tocs.map { |toc| toc[:num_assigned_placeholders] }.reduce(0, :+),          student_ids: tocs.flat_map { |toc| toc[:student_ids] }.uniq,
+      num_assigned_steps: tocs.sum { |toc| toc[:num_assigned_steps] },
+      num_assigned_known_location_steps: tocs.sum do |toc|
+        toc[:num_assigned_known_location_steps]
+      end,
+      num_completed_steps: tocs.sum { |toc| toc[:num_completed_steps] },
+      num_completed_known_location_steps: tocs.sum do |toc|
+        toc[:num_completed_known_location_steps]
+      end,
+      num_assigned_exercises: tocs.sum { |toc| toc[:num_assigned_exercises] },
+      num_completed_exercises: tocs.sum { |toc| toc[:num_completed_exercises] },
+      num_correct_exercises: tocs.sum { |toc| toc[:num_correct_exercises] },
+      num_assigned_placeholders: tocs.sum { |toc| toc[:num_assigned_placeholders] },
+      student_ids: tocs.flat_map { |toc| toc[:student_ids] }.uniq,
       student_names: tocs.flat_map { |toc| toc[:student_names] }.uniq,
       books: period_bks
     }
