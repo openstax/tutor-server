@@ -183,11 +183,11 @@ class Tasks::UpdatePeriodCaches
       has_exercises: tocs.any? { |toc| toc[:has_exercises] },
       num_assigned_steps: tocs.sum { |toc| toc[:num_assigned_steps] },
       num_assigned_known_location_steps: tocs.sum do |toc|
-        toc[:num_assigned_known_location_steps]
+        toc[:num_assigned_known_location_steps] || toc[:num_assigned_steps]
       end,
       num_completed_steps: tocs.sum { |toc| toc[:num_completed_steps] },
       num_completed_known_location_steps: tocs.sum do |toc|
-        toc[:num_completed_known_location_steps]
+        toc[:num_completed_known_location_steps] || toc[:num_completed_steps]
       end,
       num_assigned_exercises: tocs.sum { |toc| toc[:num_assigned_exercises] },
       num_completed_exercises: tocs.sum { |toc| toc[:num_completed_exercises] },
