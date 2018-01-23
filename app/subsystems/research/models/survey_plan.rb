@@ -1,7 +1,8 @@
 class Research::Models::SurveyPlan < ApplicationRecord
-  belongs_to :study
-  has_many :surveys
+  belongs_to :study, inverse_of: :survey_plans
+  has_many :surveys, inverse_of: :survey_plan
 
+  validates :study, presence: true
   validates :title_for_researchers, presence: true
   validates :title_for_students, presence: true
   validate :changes_allowed

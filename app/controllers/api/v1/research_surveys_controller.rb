@@ -1,7 +1,5 @@
 class Api::V1::ResearchSurveysController < Api::V1::ApiController
 
-  before_filter :verify_survey_exists
-
   api :PUT, '/research_surveys/:id', 'Submit response to research survey'
   description <<-EOS
     Saves the student's responses to a survey.
@@ -23,10 +21,6 @@ class Api::V1::ResearchSurveysController < Api::V1::ApiController
 
   def survey
     @survey ||= Research::Models::Survey.find(params[:id])
-  end
-
-  def verify_survey_exists
-    head(:not_found) if survey.nil?
   end
 
 end

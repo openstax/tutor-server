@@ -391,10 +391,13 @@ Rails.application.routes.draw do
     root 'console#index'
 
     resources :studies, only: [:index]
+
     resources :survey_plans, except: :destroy do
-      get :preview
-      put :publish
-      delete :hide
+      member do
+        get :preview
+        put :publish
+        delete :hide
+      end
     end
   end
 

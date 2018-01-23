@@ -657,8 +657,8 @@ ActiveRecord::Schema.define(version: 20171229201156) do
     t.datetime "updated_at",               null: false
   end
 
+  add_index "research_study_courses", ["course_profile_course_id", "research_study_id"], name: "research_study_courses_on_course_and_study", unique: true, using: :btree
   add_index "research_study_courses", ["course_profile_course_id"], name: "index_research_study_courses_on_course_profile_course_id", using: :btree
-  add_index "research_study_courses", ["research_study_id", "course_profile_course_id"], name: "research_study_courses_on_study_and_course", unique: true, using: :btree
   add_index "research_study_courses", ["research_study_id"], name: "index_research_study_courses_on_research_study_id", using: :btree
 
   create_table "research_survey_plans", force: :cascade do |t|
@@ -688,9 +688,9 @@ ActiveRecord::Schema.define(version: 20171229201156) do
   end
 
   add_index "research_surveys", ["completed_at"], name: "index_research_surveys_on_completed_at", using: :btree
+  add_index "research_surveys", ["course_membership_student_id", "research_survey_plan_id"], name: "research_surveys_on_student_and_plan", unique: true, using: :btree
   add_index "research_surveys", ["course_membership_student_id"], name: "research_surveys_on_student", using: :btree
   add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
-  add_index "research_surveys", ["research_survey_plan_id", "course_membership_student_id"], name: "research_surveys_on_plan_and_student", unique: true, using: :btree
   add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
 
   create_table "role_role_users", force: :cascade do |t|

@@ -38,8 +38,8 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :cloned_courses, foreign_key: 'cloned_from_id',
                             class_name: 'CourseProfile::Models::Course'
 
-  has_many :study_courses, subsystem: :research
-  has_many :studies, through: :study_courses, subsystem: :research
+  has_many :study_courses, subsystem: :research, inverse_of: :course
+  has_many :studies, through: :study_courses, subsystem: :research, inverse_of: :courses
 
   unique_token :teach_token
 

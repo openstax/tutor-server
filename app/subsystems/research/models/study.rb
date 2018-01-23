@@ -1,9 +1,7 @@
-class Research::Models::Study < ApplicationRecord
-  has_many :survey_plans
-  has_many :study_courses
-  has_many :courses, through: :study_courses, subsystem: :course_profile
+class Research::Models::Study < IndestructibleRecord
+  has_many :survey_plans, inverse_of: :study
+  has_many :study_courses, inverse_of: :study
+  has_many :courses, through: :study_courses, subsystem: :course_profile, inverse_of: :studies
 
   validates :name, presence: true
-
-  # TODO protections against destroying studies
 end

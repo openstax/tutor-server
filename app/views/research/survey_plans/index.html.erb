@@ -23,9 +23,9 @@
       <td><%= survey_plan.is_published? ? "Published" : "Draft" %> <%= "/ Hidden" if survey_plan.is_hidden? %></td>
       <td>
         <%= link_to "Edit", edit_research_survey_plan_path(survey_plan) %> |
-        <%= link_to "Preview", research_survey_plan_preview_path(survey_plan) %>&nbsp;&nbsp;
+        <%= link_to "Preview", preview_research_survey_plan_path(survey_plan) %>&nbsp;&nbsp;
         <% if !survey_plan.is_published? && !survey_plan.is_hidden? %>
-          <%= link_to "Publish", research_survey_plan_publish_path(survey_plan),
+          <%= link_to "Publish", publish_research_survey_plan_path(survey_plan),
                         method: :put,
                         data: {
                           confirm: "Are you sure? Plans cannot be unpublished.  Students in this plan's study will " \
@@ -34,7 +34,7 @@
                         class: 'btn btn-xs btn-primary' %>
         <% end %>
         <% if !survey_plan.is_hidden? %>
-          <%= link_to "Hide", research_survey_plan_hide_path(survey_plan),
+          <%= link_to "Hide", hide_research_survey_plan_path(survey_plan),
                         method: :delete,
                         data: {
                           confirm: "Are you sure? If already published, hiding a plan " \
