@@ -50,7 +50,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           login: a_string_starting_with('http'),
           accounts_iframe: a_string_starting_with('http')
         },
-        user: {
+        user: a_hash_including(
           name: user.name,
           is_admin: false,
           is_customer_service: false,
@@ -63,7 +63,7 @@ RSpec.describe 'Get authentication status', type: :request, version: :v1 do
           support_identifier: user.account.support_identifier,
           terms_signatures_needed: false,
           profile_url: a_string_starting_with('http')
-        },
+        ),
         courses: []
       )
     end

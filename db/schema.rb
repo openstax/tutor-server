@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171228164817) do
+ActiveRecord::Schema.define(version: 20171229201156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -643,6 +643,56 @@ ActiveRecord::Schema.define(version: 20171228164817) do
     t.datetime "updated_at"
   end
 
+  create_table "research_studies", force: :cascade do |t|
+    t.string   "name",        null: false
+    t.text     "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "research_study_courses", force: :cascade do |t|
+    t.integer  "research_study_id",        null: false
+    t.integer  "course_profile_course_id", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "research_study_courses", ["course_profile_course_id", "research_study_id"], name: "research_study_courses_on_course_and_study", unique: true, using: :btree
+  add_index "research_study_courses", ["course_profile_course_id"], name: "index_research_study_courses_on_course_profile_course_id", using: :btree
+  add_index "research_study_courses", ["research_study_id"], name: "index_research_study_courses_on_research_study_id", using: :btree
+
+  create_table "research_survey_plans", force: :cascade do |t|
+    t.integer  "research_study_id",     null: false
+    t.string   "title_for_researchers", null: false
+    t.string   "title_for_students",    null: false
+    t.text     "description"
+    t.text     "survey_js_model"
+    t.datetime "published_at"
+    t.datetime "hidden_at"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  add_index "research_survey_plans", ["hidden_at"], name: "index_research_survey_plans_on_hidden_at", using: :btree
+  add_index "research_survey_plans", ["published_at"], name: "index_research_survey_plans_on_published_at", using: :btree
+  add_index "research_survey_plans", ["research_study_id"], name: "index_research_survey_plans_on_research_study_id", using: :btree
+
+  create_table "research_surveys", force: :cascade do |t|
+    t.integer  "research_survey_plan_id",      null: false
+    t.integer  "course_membership_student_id", null: false
+    t.jsonb    "survey_js_response"
+    t.datetime "completed_at"
+    t.datetime "hidden_at"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+  end
+
+  add_index "research_surveys", ["completed_at"], name: "index_research_surveys_on_completed_at", using: :btree
+  add_index "research_surveys", ["course_membership_student_id", "research_survey_plan_id"], name: "research_surveys_on_student_and_plan", unique: true, using: :btree
+  add_index "research_surveys", ["course_membership_student_id"], name: "research_surveys_on_student", using: :btree
+  add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
+  add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
+
   create_table "role_role_users", force: :cascade do |t|
     t.integer  "user_profile_id", null: false
     t.integer  "entity_role_id",  null: false
@@ -1019,6 +1069,14 @@ ActiveRecord::Schema.define(version: 20171228164817) do
 
   add_index "user_profiles", ["account_id"], name: "index_user_profiles_on_account_id", unique: true, using: :btree
 
+  create_table "user_researchers", force: :cascade do |t|
+    t.integer  "user_profile_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "user_researchers", ["user_profile_id"], name: "index_user_researchers_on_user_profile_id", unique: true, using: :btree
+
   create_table "user_tour_views", force: :cascade do |t|
     t.integer "view_count",      default: 0, null: false
     t.integer "user_profile_id",             null: false
@@ -1080,6 +1138,11 @@ ActiveRecord::Schema.define(version: 20171228164817) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_study_courses", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_study_courses", "research_studies", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_survey_plans", "research_studies", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_surveys", "course_membership_students", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_surveys", "research_survey_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
@@ -1112,6 +1175,7 @@ ActiveRecord::Schema.define(version: 20171228164817) do
   add_foreign_key "user_content_analysts", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_researchers", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_tour_views", "user_profiles"
   add_foreign_key "user_tour_views", "user_tours"
 

@@ -38,6 +38,15 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
       expect(result.errors).to be_empty
       expect(result.outputs.student.student_identifier).to eq sid
     end
+
+    it "assigns any published surveys" do
+      study = FactoryBot.create :research_study
+      Research::AddCourseToStudy[course: course, study: study]
+      survey_plan = FactoryBot.create :research_survey_plan, :published, study: study
+
+      student = described_class[period: period, role: role]
+      expect(student.surveys.map(&:research_survey_plan_id)).to eq [survey_plan.id]
+    end
   end
 
   context "when adding an existing student role to a course" do
@@ -64,4 +73,5 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
       expect(student.period.id).to eq period_1.id
     end
   end
+
 end

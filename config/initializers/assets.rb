@@ -19,4 +19,6 @@ Rails.application.config.assets.precompile += %w( home.css
                                                   payments/stub.css
                                                   payments/stub.js
                                                   customer_service.css
-                                                  customer_service.js )
+                                                  customer_service.js
+                                                  research.css
+                                                  research.js )

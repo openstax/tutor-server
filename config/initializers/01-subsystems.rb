@@ -23,4 +23,5 @@ Tutor::SubSystems.valid_namespaces = %w(
   catalog
   salesforce
   lms
+  research
 )

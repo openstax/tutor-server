@@ -8,6 +8,7 @@ class Admin::UsersCreate
   uses_routine User::SetAdministratorState, as: :set_administrator
   uses_routine User::SetCustomerServiceState, as: :set_customer_service
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
+  uses_routine User::SetResearcherState, as: :set_researcher
 
   paramify :user do
     attribute :username, type: String
@@ -21,6 +22,7 @@ class Admin::UsersCreate
     attribute :administrator, type: boolean
     attribute :customer_service, type: boolean
     attribute :content_analyst, type: boolean
+    attribute :researcher, type: boolean
 
     validates :username, presence: true
     validates :password, presence: true
@@ -41,5 +43,6 @@ class Admin::UsersCreate
     run(:set_administrator, user: user, administrator: user_params.administrator)
     run(:set_customer_service, user: user, customer_service: user_params.customer_service)
     run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
+    run(:set_researcher, user: user, researcher: user_params.researcher)
   end
 end

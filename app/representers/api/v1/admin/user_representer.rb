@@ -18,6 +18,9 @@ module Api::V1
       property :is_content_analyst?,
                as: :is_content_analyst
 
+      property :is_researcher?,
+               as: :is_researcher
+
     end
   end
 end

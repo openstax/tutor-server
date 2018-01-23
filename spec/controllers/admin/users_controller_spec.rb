@@ -35,7 +35,8 @@ RSpec.describe Admin::UsersController, type: :controller do
       last_name: 'User',
       full_name: 'Overriden!',
       customer_service: true,
-      content_analyst: true
+      content_analyst: true,
+      researcher: true
     }
 
     get :index, query: 'new'
@@ -48,6 +49,7 @@ RSpec.describe Admin::UsersController, type: :controller do
     expect(user.is_admin?).to eq false
     expect(user.is_customer_service?).to eq true
     expect(user.is_content_analyst?).to eq true
+    expect(user.is_researcher?).to eq true
   end
 
   it 'updates a user' do
@@ -55,7 +57,8 @@ RSpec.describe Admin::UsersController, type: :controller do
       username: 'updated',
       full_name: 'Updated Name',
       customer_service: true,
-      content_analyst: true
+      content_analyst: true,
+      researcher: true
     }
 
     user.to_model.reload
@@ -65,5 +68,6 @@ RSpec.describe Admin::UsersController, type: :controller do
     expect(user.is_admin?).to eq false
     expect(user.is_customer_service?).to eq true
     expect(user.is_content_analyst?).to eq true
+    expect(user.is_researcher?).to eq true
   end
 end

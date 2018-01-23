@@ -126,6 +126,8 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :research_surveys, only: [:update]
+
     namespace :cc do
       namespace :tasks do
         get :':cnx_book_id/:cnx_page_id', action: :show
@@ -382,6 +384,21 @@ Rails.application.routes.draw do
     end
 
     resources :jobs, only: [:show]
+  end
+
+  # All research routes
+  namespace :research do
+    root 'console#index'
+
+    resources :studies, only: [:index]
+
+    resources :survey_plans, except: :destroy do
+      member do
+        get :preview
+        put :publish
+        delete :hide
+      end
+    end
   end
 
   # Manage apps that use Tutor as an OAuth provider

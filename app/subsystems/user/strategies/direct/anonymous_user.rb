@@ -41,6 +41,10 @@ module User
           false
         end
 
+        def is_researcher?
+          false
+        end
+
         def viewed_tour_ids
           []
         end

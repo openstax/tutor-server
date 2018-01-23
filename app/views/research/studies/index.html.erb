@@ -1,0 +1,22 @@
+<% @page_header = "Studies" %>
+
+<div class="studies_note">
+  Note that studies and the courses in them must be manually added by developers for the moment.
+</div>
+
+<% Research::Models::Study.includes(:courses).find_each do |study| %>
+  <div class="study_entry">
+    <div class="study_info"><b><%= study.name %></b> (ID: <%= study.id %>)</div>
+    <div class="course_listing">
+      <div class="course_listing_title">Courses:</div>
+      <div class="course_listing_entries">
+        <% study.courses.each do |course| %>
+          <div class="course_entry">
+            <%= course.name %> (ID: <%= course.id %>)
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+

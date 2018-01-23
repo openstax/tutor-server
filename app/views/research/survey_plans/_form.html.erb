@@ -1,0 +1,37 @@
+<% @page_header = "New Survey Plan" %>
+
+<%= form_for @survey_plan, url: url do |f| %>
+  <div class='form-group'>
+    <%= f.label :study %>
+    <%= f.collection_select :research_study_id,
+                            Research::Models::Study.all,
+                            :id, :name,
+                            { include_blank: false },
+                            class: 'form-control' %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :title_for_researchers %>
+    <%= f.text_field :title_for_researchers, class: 'form-control' %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :title_for_students %>
+    <%= f.text_field :title_for_students, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :survey_js_model %>
+    <%= f.text_area :survey_js_model, rows: 15, class: 'form-control', readonly: @survey_plan.is_published? %>
+  </div>
+
+
+
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
+<% end %>
+
