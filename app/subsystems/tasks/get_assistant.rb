@@ -19,8 +19,6 @@ class Tasks::GetAssistant
     end
   end
 
-  private
-
   def get_assistant(course:, task_plan:)
     outputs[:assistant] = Tasks::Models::Assistant
                             .joins(:course_assistants)

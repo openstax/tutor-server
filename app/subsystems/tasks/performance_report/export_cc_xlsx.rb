@@ -2,30 +2,26 @@ module Tasks
   module PerformanceReport
     class ExportCcXlsx
 
+      lev_routine transaction: :no_transaction
+
       include ::XlsxUtils
 
-      def self.call(course_name:, report:, filename:, options: {})
-        filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
-        export = new(course_name: course_name, report: report, filepath: filename, options: options)
-        export.create
-        filename
-      end
+      protected
 
-      # So can be called like other exporters
-      def self.[](course:, report:, filename:, options: {})
-        call(course_name: course.name, report: report, filename: filename, options: options)
-      end
-
-      def initialize(course_name:, report:, filepath:, options:)
-        @course_name = course_name
+      def exec(course:, report:, filename:, options: {})
+        @course = course
         @report = report
-        @filepath = filepath
+        @filename = filename.ends_with?(".xlsx") ? filename : "#{filename}.xlsx"
         @helper = XlsxHelper.new
         @options = options
         @eq = options[:stringify_formulas] ? "" : "="
+
+        create_export
+
+        outputs.filename = @filename
       end
 
-      def create
+      def create_export
         @package = Axlsx::Package.new
         @helper.standard_package_settings(@package)
 
@@ -35,8 +31,6 @@ module Tasks
         make_first_sheet_active
         save
       end
-
-      protected
 
       def style!(hash) # TODO move into a helper
         @styles ||= {}
@@ -59,34 +53,34 @@ module Tasks
           @italic = s.add_style i: true
           @pct = s.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
           @italic_pct = s.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, i: true
-          @bold_L = s.add_style b: true, border: {edges: [:left], :color => '000000', :style => :thin}
-          @bold_R = s.add_style b: true, border: {edges: [:right], :color => '000000', :style => :thin}
-          @bold_T = s.add_style b: true, border: {edges: [:top], :color => '000000', :style => :thin}
+          @bold_L = s.add_style b: true, border: {edges: [:left], color: '000000', style: :thin}
+          @bold_R = s.add_style b: true, border: {edges: [:right], color: '000000', style: :thin}
+          @bold_T = s.add_style b: true, border: {edges: [:top], color: '000000', style: :thin}
           @reading_title = s.add_style b: true,
-                                       border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
+                                       border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin},
                                        alignment: {horizontal: :center, wrap_text: true}
-          @normal_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}
-          @count_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, format_code: "#"
+          @normal_L = s.add_style border: {edges: [:left], color: '000000', style: :thin}
+          @count_L = s.add_style border: {edges: [:left], color: '000000', style: :thin}, format_code: "#"
           @count = s.add_style format_code: "#"
-          @pct_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, num_fmt: Axlsx::NUM_FMT_PERCENT
-          @right_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, alignment: {horizontal: :right}
-          @date_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, num_fmt: 14
-          @average_style = s.add_style b: true, border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+          @pct_L = s.add_style border: {edges: [:left], color: '000000', style: :thin}, num_fmt: Axlsx::NUM_FMT_PERCENT
+          @right_R = s.add_style border: {edges: [:right], color: '000000', style: :thin}, alignment: {horizontal: :right}
+          @date_R = s.add_style border: {edges: [:right], color: '000000', style: :thin}, num_fmt: 14
+          @average_style = s.add_style b: true, border: { edges: [:top, :bottom], color: '000000', style: :thin},
                                        border_top: {style: :medium}, format_code: "#", bg_color: 'F2F2F2'
-          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], color: '000000', style: :thin},
                                    border_top: {style: :medium}, format_code: "#", bg_color: 'F2F2F2'
           @average_pct = s.add_style b: true,
-                                     border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     border: { edges: [:top, :bottom], color: '000000', style: :thin},
                                      border_top: {style: :medium},
                                      num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
           @average_pct_R = s.add_style b: true,
-                                     border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                     border: { edges: [:top, :bottom, :right], color: '000000', style: :thin},
                                      border_top: {style: :medium},
                                      num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
-          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], color: '000000', style: :thin},
                                  border_right: {style: :thin}, format_code: "#", bg_color: 'F2F2F2', border_top: {style: :medium}
           @average_pct = s.add_style b: true,
-                                     border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     border: { edges: [:top, :bottom], color: '000000', style: :thin},
                                      num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2', border_top: {style: :medium}
         end
       end
@@ -138,7 +132,7 @@ module Tasks
 
         meta_rows = [
           [["Concept Coach Student Scores", {style: @title}]],
-          [[@course_name, {style: @course_section}]],
+          [[@course.name, {style: @course_section}]],
           [["Exported #{Date.today.strftime("%-m/%-d/%Y")}", {style: @italic}]],
           [[""]],
           [[report[:period][:name], {style: @course_section}]],
@@ -169,14 +163,14 @@ module Tasks
                 included,
                 { cols: 1 + counts_extra_cols,
                   data_validation: {
-                    :type => :list,
-                    :formula1 => "\"#{included},#{excluded}\"",
-                    :showDropDown => false,
-                    :showErrorMessage => true,
-                    :errorTitle => '',
-                    :error => "Please use the dropdown menu to choose either '#{included}' or '#{excluded}'.",
-                    :errorStyle => :stop,
-                    :showInputMessage => false
+                    type: :list,
+                    formula1: "\"#{included},#{excluded}\"",
+                    showDropDown: false,
+                    showErrorMessage: true,
+                    errorTitle: '',
+                    error: "Please use the dropdown menu to choose either '#{included}' or '#{excluded}'.",
+                    errorStyle: :stop,
+                    showInputMessage: false
                   },
                   style: style!(alignment: {horizontal: :center}, fg_color: '555555')
                 }
@@ -273,7 +267,7 @@ module Tasks
           style!(
             b: true,
             bg_color: 'C9F0F8',
-            border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin},
             alignment: {horizontal: :center, vertical: :center, wrap_text: true}
           )
         )
@@ -282,11 +276,11 @@ module Tasks
           style!(alignment: {horizontal: :center, vertical: :center, wrap_text: true}, b: true)
 
         center_bold_R_style = style!(
-          b: true, border: {edges: [:right], :color => '000000', :style => :thin},
+          b: true, border: {edges: [:right], color: '000000', style: :thin},
           alignment: {horizontal: :center, vertical: :center, wrap_text: true})
 
         center_bold_L_style = style!(
-          b: true, border: {edges: [:left], :color => '000000', :style => :thin},
+          b: true, border: {edges: [:left], color: '000000', style: :thin},
           alignment: {horizontal: :center, vertical: :center, wrap_text: true})
 
         if format == :counts
@@ -457,7 +451,7 @@ module Tasks
         5.times { sheet.add_row }
 
         dropped_heading_style =
-          style!(border: { edges: [:bottom], :color => '000000', :style => :thin},
+          style!(border: { edges: [:bottom], color: '000000', style: :thin},
                  alignment: {horizontal: :left},
                  b: true)
         dropped_heading_columns =
@@ -470,7 +464,7 @@ module Tasks
 
         student_data_writer.call(dropped_students)
 
-        dropped_footer_style = style!(border: { edges: [:top], :color => '000000', :style => :thin})
+        dropped_footer_style = style!(border: { edges: [:top], color: '000000', style: :thin})
         dropped_footer_columns =
           (report[:data_headings].count*(format == :counts ? 4 : 3) + (format == :counts ? 5 : 4)).times.map {
             ["", {style: dropped_footer_style}]
@@ -500,7 +494,7 @@ module Tasks
       end # end write_period_worksheet
 
       def save
-        success = @package.serialize(@filepath)
+        success = @package.serialize(@filename)
         raise(StandardError, "PerformanceReport::ExportCcXlsx failed") unless success
       end
 

@@ -1,34 +1,27 @@
-# Explicit requires to make testing faster (not loading whole app)
-
-require 'spec_helper'
-
-require 'xlsx_utils'
-require_relative '../../../../app/subsystems/tasks/performance_report/export_xlsx'
-require 'active_support/all'
-require 'chronic'
-require 'axlsx'
-require 'xlsx_helper'
-require 'roo'
-require 'timecop'
-require 'byebug'
+require 'rails_helper'
 
 RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
 
+  before(:all) { @course = FactoryBot.create :course_profile_course }
+
   context 'report_1' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: 'Physics 101',
+        filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course: @course,
                                report: report_1,
-                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}")
+                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}").outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filename}"` and sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'has good sheet titles' do
       expect(@wb.sheets).to eq ["1st - %", "1st - #"]
@@ -39,81 +32,92 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
 
     it 'does not include a task due in the future' do
-      (7..12).to_a.map{|row| expect(cell(row,17,0)).to be_blank}
+      (7..12).to_a.map{|row| expect(cell(row,19,0)).to be_blank}
     end
 
     it 'puts dropped students at the bottom' do
       expect(cell(19,1,0)).to eq "DROPPED"
       expect(cell(20,1,0)).to eq "Droppy"
-      expect(cell(20,7,0)).to eq 2/9.0
+      expect(cell(20,9,0)).to eq 2/9.0
     end
 
     context 'zeter\'s scores' do
       it 'has good HW scores' do
-        expect(cell(12,7,0)).to eq 7/9.0
-        expect(cell(12,8,0)).to eq 1.0
+        expect(cell(12,9,0)).to eq 7/9.0
+        expect(cell(12,10,0)).to eq 1.0
       end
 
       it 'shows reading\'s late comment and pending late work' do
-        expect(cell(12,12,0)).to eq 1/3.0
-        expect(comment(12,12,0)).to match /on due date: 33%/
-        expect(cell(12,13,0)).to eq 2/3.0
-        expect(cell(12,14,0)).to eq 2/3.0
-        expect(cell(12,15,0)).to eq 1.0
-        expect(cell(12,16,0).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
+        expect(cell(12,14,0)).to eq 1/3.0
+        expect(comment(12,14,0)).to match /on due date: 33%/
+        expect(cell(12,15,0)).to eq 2/3.0
+        expect(cell(12,16,0)).to eq 2/3.0
+        expect(cell(12,17,0)).to eq 1.0
+        expect(cell(12,18,0).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
       end
     end
 
     context 'abby\'s scores' do
       it 'shows homework late content and no pending late' do
-        expect(cell(11,7,0)).to eq 4/9.0
-        expect(comment(11,7,0)).to match /on due date: 22%/
-        expect(cell(11,8,0)).to eq 1.0
-        (9..11).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
+        expect(cell(11,9,0)).to eq 4/9.0
+        expect(comment(11,9,0)).to match /on due date: 22%/
+        expect(cell(11,10,0)).to eq 1.0
+        (11..13).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
       end
 
       it 'shows nothing for her reading scores' do
-        (12..16).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
+        (14..18).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
       end
     end
   end
 
   context 'report_1 when all due' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = Timecop.freeze(Chronic.parse("8/1/2016 1:30PM")) do
-          described_class.call(course_name: 'Physics 101',
+        filename = Timecop.freeze(Chronic.parse("8/1/2016 1:30PM")) do
+          # stringify_formulas so we can inspect them
+          described_class.call(course: @course,
                                report: report_1,
                                filename: "#{dir}/testfile",
-                               options: {stringify_formulas: true}) # so we can inspect formulas
+                               options: { stringify_formulas: true }).outputs.filename
         end
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
         @sheet1 = @wb.sheet(@wb.sheets.first)
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'has averages with disjoint cells' do
-      expect(cell(11,4,0)).to match /.*AVERAGE\(G11,Q11\).*/
+      expect(cell(11,5,0)).to match /AVERAGE\(I11,S11\)/
+    end
+
+    it 'has a course average based on the other averages' do
+      expect(cell(11,4,0)).to match /SUM\(1\.0\*E11,0\.0\*F11,0\.0\*G11,0\.0\*H11\)/
     end
   end
 
   context 'when a period has no students' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: 'Physics 101',
+        filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course: @course,
                                report: report_with_empty_students,
                                filename: "#{dir}/testfile",
-                               options: {stringify_formulas: false})
+                               options: {stringify_formulas: false}).outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filename}"` and sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'inserts an empty row so it does not explode with a circular reference' do
       [0,1].each do |sheet_number|
@@ -125,23 +129,26 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
   end
 
   context 'with students who have nil names' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       report_data = report_1
       report_data[0][:students][2][:first_name] = nil
       report_data[0][:students][2][:last_name] = nil
 
       Dir.mktmpdir do |dir|
-        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: 'Physics 101',
+        filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course: @course,
                                report: report_data,
-                               filename: "#{dir}/testfile")
+                               filename: "#{dir}/testfile").outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        # `open "#{filename}"` and sleep(0.5)
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'sorts them at the top (and does not blow up)' do
       names = (11..12).map{|row| "#{cell(row,1,0)}:#{cell(row,2,0)}" }
@@ -150,19 +157,22 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
   end
 
   context "when no HWs or Reading cols" do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = described_class.call(course_name: 'Physics 101',
+        filename = described_class.call(course: @course,
                                         report: report_with_empty_data,
                                         filename: "#{dir}/testfile",
-                                        options: {stringify_formulas: false})
+                                        options: {stringify_formulas: false}).outputs.filename
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filename}"` and sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'does not put in invalid formulas, e.g. "AVERAGE()" and "SUM()"' do
       invalid_formula = /AVERAGE\(\)|SUM\(\)/

@@ -95,7 +95,7 @@ class XlsxHelper
     end
 
     sheet.merge_cells(range)
-    sheet[range].each{|cell| cell.style = styles} unless styles.blank?
+    sheet[range].each {|cell| cell.style = styles} unless styles.blank?
   end
 
   private
