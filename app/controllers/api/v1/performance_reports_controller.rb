@@ -33,7 +33,8 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     respond_with exports, represent_with: Api::V1::PerformanceReport::ExportsRepresenter
   end
 
-  api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance report for the user'
+  api :GET, '/courses/:course_id/performance(/role/:role_id)',
+            'Returns performance report for the user'
   description <<-EOS
     #{json_schema(Api::V1::PerformanceReport::Representer, include: :readable)}
   EOS

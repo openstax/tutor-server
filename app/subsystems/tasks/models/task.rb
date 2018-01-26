@@ -271,8 +271,16 @@ class Tasks::Models::Task < ApplicationRecord
     correct_on_time_exercise_count + correct_accepted_late_exercise_count
   end
 
+  def effective_completed_steps_count
+    completed_on_time_steps_count + completed_accepted_late_steps_count
+  end
+
   def score
     effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f rescue nil
+  end
+
+  def progress
+    effective_completed_steps_count / steps_count.to_f rescue nil
   end
 
   def accept_late_work

@@ -73,11 +73,6 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :score,
-             type: Float,
-             readable: true,
-             writeable: false
-
     property :recovered_exercise_count,
              type: Integer,
              readable: true,
@@ -108,6 +103,16 @@ module Api::V1::PerformanceReport::Student::Data
                description: "Will only be set when late work has been accepted; " +
                             "will go away if accepted late work is later rejected."
              }
+
+    property :score,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :progress,
+             type: Float,
+             readable: true,
+             writeable: false
 
     property :is_included_in_averages,
              readable: true,

@@ -34,10 +34,9 @@ module Tasks
       end
 
       def remove_excluded_tasks
-        # We decided to pull out non due tasks and non exported task types here instead of
-        # where the report is originally generated because that code is currently generic,
-        # and leaving it serving all needs will probably help us later if we cache generated
-        # report data.
+        # We decided to pull out non due tasks and non exported task types here instead of where
+        # the report is originally generated because that code is currently generic, and leaving
+        # it serving all needs will probably help us later if we cache generated report data
 
         @report.each do |period_report|
           excluded_indices = []
@@ -139,19 +138,19 @@ module Tasks
             num_fmt: 14
           )
 
-          @average_L = s.add_style(
+          @overall_L = s.add_style(
             b: true,
             border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
             bg_color: 'F2F2F2'
           )
-          @average = s.add_style(
+          @overall = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
             bg_color: 'F2F2F2'
           )
-          @average_R = s.add_style(
+          @overall_R = s.add_style(
             b: true,
             border: { edges: [:top, :right, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
@@ -473,16 +472,16 @@ module Tasks
           num_average_columns.times.map { 18.5 }
         data_widths[num_non_task_columns..-1] = data_widths[num_non_task_columns..-1].map { 11 }
 
-        # CLASS AVERAGE ROW
+        # OVERALL ROW
 
         average_style_L = format == :counts ? @average_num_L : @average_pct_L
         average_style = format == :counts ? @average_num : @average_pct
         average_style_R = format == :counts ? @average_num_R : @average_pct_R
 
         average_columns = [
-          ["Class Average", style: @average_L],
-          ["", style: @average],
-          ["", style: @average_R]
+          ["Overall", style: @overall_L],
+          ["", style: @overall],
+          ["", style: @overall_R]
         ]
         average_columns += [
           [
@@ -647,7 +646,8 @@ module Tasks
               correct_count,
               {
                 style: @normal_L,
-                comment: some_late_work_accepted ? late_accepted_comment(on_time_correct_count) : nil
+                comment: some_late_work_accepted ?
+                  late_accepted_comment(on_time_correct_count) : nil
               }
             ])
             columns.push(completed_count)

@@ -27,11 +27,6 @@ module Api::V1::PerformanceReport::Student
              readable: true,
              writeable: false
 
-    property :course_average,
-             type: Float,
-             readable: true,
-             writeable: false
-
     property :homework_score,
              type: Float,
              readable: true,
@@ -48,6 +43,11 @@ module Api::V1::PerformanceReport::Student
              writeable: false
 
     property :reading_progress,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :course_average,
              type: Float,
              readable: true,
              writeable: false

@@ -1,5 +1,5 @@
 module Api::V1::PerformanceReport::Student::Data
-  class HeadingsRepresenter < Roar::Decorator
+  class HeadingRepresenter < Roar::Decorator
     include Roar::JSON
 
     property :title,
@@ -28,7 +28,7 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :completion_rate,
+    property :average_progress,
              type: Float,
              readable: true,
              writeable: false
