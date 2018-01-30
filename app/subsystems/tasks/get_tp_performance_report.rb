@@ -68,10 +68,10 @@ module Tasks
           homework_progress = average_progress(homework_tasks)
           reading_score = average_score(reading_tasks)
           reading_progress = average_progress(reading_tasks)
-          course_average = course.homework_score_weight * (homework_score || 0) +
-                           course.homework_progress_weight * (homework_progress || 0) +
-                           course.reading_score_weight * (reading_score || 0) +
-                           course.reading_progress_weight * (reading_progress || 0)
+          course_average = course.homework_score_weight.to_f * (homework_score || 0) +
+                           course.homework_progress_weight.to_f * (homework_progress || 0) +
+                           course.reading_score_weight.to_f * (reading_score || 0) +
+                           course.reading_progress_weight.to_f * (reading_progress || 0)
 
           OpenStruct.new(
             name: student_role.name,

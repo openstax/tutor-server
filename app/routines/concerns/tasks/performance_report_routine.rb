@@ -33,16 +33,12 @@ module Tasks::PerformanceReportRoutine
     average(applicable_tasks, ->(task) { task.progress })
   end
 
-  def average(array, value_getter=nil)
-    num_values = 0
+  def average(array, value_getter = nil)
+    values = array.map { |item| value_getter.nil? ? item : value_getter.call(item) }.compact
+    num_values = values.length
+    return if num_values == 0
 
-    value_sum = array.reduce(0) do |sum, item|
-      value = value_getter.nil? ? item : value_getter.call(item)
-      num_values += 1 if value.present?
-      sum + (value || 0)
-    end
-
-    num_values == 0 ? nil : value_sum / num_values
+    values.sum / num_values.to_f
   end
 
   def get_task_data(tasks)
