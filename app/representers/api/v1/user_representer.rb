@@ -6,6 +6,8 @@ module Api::V1
     include ::Roar::JSON
 
     property :name
+    property :first_name
+    property :last_name
 
     property :is_admin?,
              as: :is_admin
