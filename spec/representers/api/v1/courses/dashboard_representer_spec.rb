@@ -17,19 +17,17 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
 
   let(:publish_job_url) { 'https://www.example.com' }
 
-  let(:publish_job) {
-    Hashie::Mash.new({
+  let(:publish_job) do
+    OpenStruct.new(
       id: publish_job_uuid,
-      state: {
-        name: 'succeeded'
-      },
+      state: OpenStruct.new(name: 'succeeded'),
       progress: 1.0,
-      data: { url: publish_job_url },
+      data: { url: publish_job_url }.stringify_keys,
       errors: []
-    })
-  }
+    )
+  end
 
-  let(:publish_job_representation) {
+  let(:publish_job_representation) do
     {
       id: publish_job_uuid,
       status: 'succeeded',
@@ -37,37 +35,37 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
       url: publish_job_url,
       data: { url: publish_job_url },
       errors: []
-    }.stringify_keys
-  }
+    }.deep_stringify_keys
+  end
 
-  let(:data) {
-    Hashie::Mash.new.tap do |mash|
-      mash.plans = [
-        Hashie::Mash.new({
+  let(:data) do
+    OpenStruct.new(
+      plans: [
+        OpenStruct.new(
           id: 23,
           title: 'HW1',
           is_trouble: false,
           type: 'homework',
-          is_draft: false,
-          is_publishing: true,
-          is_published: true,
+          is_draft?: false,
+          is_publishing?: true,
+          is_published?: true,
           first_published_at: published_at,
           last_published_at: published_at,
           publish_last_requested_at: published_at,
           publish_job_uuid: publish_job_uuid,
           publish_job: publish_job,
           tasking_plans: [
-            Hashie::Mash.new(
+            OpenStruct.new(
               target_id: 42,
               target_type: 'CourseMembership::Models::Period',
               opens_at: opens_at,
               due_at: due_at
             )
           ]
-        })
-      ]
-      mash.tasks = [
-        Hashie::Mash.new({
+        )
+      ],
+      tasks: [
+        OpenStruct.new(
           id: 34,
           title: 'HW2',
           opens_at: opens_at,
@@ -80,8 +78,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_exercise_count: 4,
           correct_exercise_count: 3,
           withdrawn?: true
-        }),
-        Hashie::Mash.new({
+        ),
+        OpenStruct.new(
           id: 37,
           title: 'Reading 1',
           due_at: due_at,
@@ -91,8 +89,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           actual_and_placeholder_exercise_count: 7,
           completed_exercise_count: 6,
           withdrawn?: false
-        }),
-        Hashie::Mash.new({
+        ),
+        OpenStruct.new(
           id: 89,
           title: 'HW3',
           opens_at: opens_at,
@@ -105,8 +103,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_exercise_count: 8,
           correct_exercise_count: 3,
           withdrawn?: false
-        }),
-        Hashie::Mash.new({
+        ),
+        OpenStruct.new(
           id: 99,
           title: 'Ext1',
           opens_at: opens_at,
@@ -116,32 +114,32 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed?: true,
           past_due?: true,
           withdrawn?: false
-        }),
-      ]
-      mash.course = {
+        ),
+      ],
+      course: OpenStruct.new(
         course_id: 2,
         name: 'Physics 101',
         teachers: [
-          Hashie::Mash.new({
+          OpenStruct.new(
             id: '42',
             role_id: '43',
             first_name: 'Andrew',
             last_name: 'Garcia'
-          }),
-          Hashie::Mash.new({
+          ),
+          OpenStruct.new(
             id: '44',
             role_id: '45',
             first_name: 'Bob',
             last_name: 'Newhart'
-          })
+          )
         ]
-      }
-      mash.role = {
+      ),
+      role: OpenStruct.new(
         id: 34,
         type: 'teacher'
-      }
-    end
-  }
+      )
+    )
+  end
 
   it "represents dashboard output" do
     representation = described_class.new(data).as_json

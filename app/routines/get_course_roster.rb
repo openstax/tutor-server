@@ -12,7 +12,7 @@ class GetCourseRoster
       teach_url: UrlGenerator.teach_course_url(course.teach_token),
       teachers: run(GetCourseTeachers,course).outputs.teachers,
       students: students.map do |student|
-        Hashie::Mash.new({
+        {
           id: student.id,
           first_name: student.first_name,
           last_name: student.last_name,
@@ -26,7 +26,7 @@ class GetCourseRoster
           is_paid: student.is_paid,
           is_comped: student.is_comped,
           payment_due_at: student.payment_due_at
-        })
+        }
       end
     }
   end

@@ -32,7 +32,7 @@ class CollectCourseInfo
       #       This routine returns the entire Course object + some extra attributes
       # TODO: Figure out a better way to handle this.
       #       Maybe create a CourseInfo class that contains the course model + the extra attributes?
-      Hashie::Mash.new(
+      OpenStruct.new(
         id: course.id,
         uuid: course.uuid,
         name: course.name,
@@ -60,6 +60,10 @@ class CollectCourseInfo
         appearance_code: course.appearance_code.blank? ? offering.try!(:appearance_code) :
                                                          course.appearance_code,
         cloned_from_id: course.cloned_from_id,
+        homework_score_weight: course.homework_score_weight,
+        homework_progress_weight: course.homework_progress_weight,
+        reading_score_weight: course.reading_score_weight,
+        reading_progress_weight: course.reading_progress_weight,
         ecosystems: course.ecosystems,
         periods: periods,
         students: students,

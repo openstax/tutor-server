@@ -318,43 +318,47 @@ ActiveRecord::Schema.define(version: 20180123165516) do
 
   create_table "course_profile_courses", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.string   "name",                                                                       null: false
-    t.datetime "created_at",                                                                 null: false
-    t.datetime "updated_at",                                                                 null: false
-    t.boolean  "is_concept_coach",                                                           null: false
-    t.string   "teach_token",                                                                null: false
+    t.string   "name",                                                                                               null: false
+    t.datetime "created_at",                                                                                         null: false
+    t.datetime "updated_at",                                                                                         null: false
+    t.boolean  "is_concept_coach",                                                                                   null: false
+    t.string   "teach_token",                                                                                        null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "default_open_time"
     t.string   "default_due_time"
-    t.integer  "time_zone_id",                                                               null: false
+    t.integer  "time_zone_id",                                                                                       null: false
     t.boolean  "is_college"
-    t.datetime "starts_at",                                                                  null: false
-    t.datetime "ends_at",                                                                    null: false
-    t.integer  "term",                                                                       null: false
-    t.integer  "year",                                                                       null: false
+    t.datetime "starts_at",                                                                                          null: false
+    t.datetime "ends_at",                                                                                            null: false
+    t.integer  "term",                                                                                               null: false
+    t.integer  "year",                                                                                               null: false
     t.integer  "cloned_from_id"
-    t.boolean  "is_preview",                                                                 null: false
-    t.boolean  "is_excluded_from_salesforce",                  default: false,               null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()", null: false
-    t.integer  "sequence_number",                              default: 0,                   null: false
-    t.string   "biglearn_student_clues_algorithm_name",                                      null: false
-    t.string   "biglearn_teacher_clues_algorithm_name",                                      null: false
-    t.string   "biglearn_assignment_spes_algorithm_name",                                    null: false
-    t.string   "biglearn_assignment_pes_algorithm_name",                                     null: false
-    t.string   "biglearn_practice_worst_areas_algorithm_name",                               null: false
-    t.boolean  "is_test",                                      default: false,               null: false
-    t.boolean  "does_cost",                                    default: false,               null: false
+    t.boolean  "is_preview",                                                                                         null: false
+    t.boolean  "is_excluded_from_salesforce",                                          default: false,               null: false
+    t.uuid     "uuid",                                                                 default: "gen_random_uuid()", null: false
+    t.integer  "sequence_number",                                                      default: 0,                   null: false
+    t.string   "biglearn_student_clues_algorithm_name",                                                              null: false
+    t.string   "biglearn_teacher_clues_algorithm_name",                                                              null: false
+    t.string   "biglearn_assignment_spes_algorithm_name",                                                            null: false
+    t.string   "biglearn_assignment_pes_algorithm_name",                                                             null: false
+    t.string   "biglearn_practice_worst_areas_algorithm_name",                                                       null: false
+    t.boolean  "is_test",                                                              default: false,               null: false
+    t.boolean  "does_cost",                                                            default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
-    t.boolean  "is_preview_ready",                             default: false,               null: false
+    t.boolean  "is_preview_ready",                                                     default: false,               null: false
     t.datetime "deleted_at"
     t.boolean  "is_lms_enabled"
-    t.boolean  "is_lms_enabling_allowed",                      default: false,               null: false
-    t.boolean  "is_access_switchable",                         default: true,                null: false
+    t.boolean  "is_lms_enabling_allowed",                                              default: false,               null: false
+    t.boolean  "is_access_switchable",                                                 default: true,                null: false
     t.string   "last_lms_scores_push_job_id"
     t.string   "creator_campaign_member_id"
     t.string   "latest_adoption_decision"
+    t.decimal  "homework_score_weight",                        precision: 3, scale: 2, default: 1.0,                 null: false
+    t.decimal  "homework_progress_weight",                     precision: 3, scale: 2, default: 0.0,                 null: false
+    t.decimal  "reading_score_weight",                         precision: 3, scale: 2, default: 0.0,                 null: false
+    t.decimal  "reading_progress_weight",                      precision: 3, scale: 2, default: 0.0,                 null: false
   end
 
   add_index "course_profile_courses", ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id", using: :btree

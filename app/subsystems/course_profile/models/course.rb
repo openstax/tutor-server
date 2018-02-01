@@ -56,11 +56,11 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 
-  validate :lms_enabling_changeable
+  validate :lms_enabling_changeable, :weights_add_up
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at
+  before_validation :set_starts_at_and_ends_at, :set_weights
 
   scope :not_ended, -> { where{ends_at.gt Time.now} }
 
@@ -108,6 +108,15 @@ class CourseProfile::Models::Course < ApplicationRecord
     self.ends_at   ||= ty.try!(:ends_at)
   end
 
+  def set_weights
+    self.homework_progress_weight ||= 0
+    self.reading_score_weight ||= 0
+    self.reading_progress_weight ||= 0
+    self.homework_score_weight ||= 1 - [
+      homework_progress_weight, reading_score_weight, reading_progress_weight
+    ].sum
+  end
+
   def ends_after_it_starts
     return if starts_at.nil? || ends_at.nil? || ends_at > starts_at
     errors.add :base, 'cannot end before it starts'
@@ -130,6 +139,15 @@ class CourseProfile::Models::Course < ApplicationRecord
       if is_lms_enabled_changed? && !is_access_switchable
 
     errors.none?
+  end
+
+  def weights_add_up
+    return if [
+      homework_score_weight, homework_progress_weight, reading_score_weight, reading_progress_weight
+    ].sum == 1
+
+    errors.add(:base, 'weights must add up to exactly 1')
+    false
   end
 
 end

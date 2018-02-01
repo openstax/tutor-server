@@ -1,36 +1,29 @@
-# Explicit requires to make testing faster (not loading whole app)
-
-require 'spec_helper'
-
-require 'xlsx_utils'
-require_relative '../../../../app/subsystems/tasks/performance_report/export_cc_xlsx'
-require 'active_support/all'
-require 'chronic'
-require 'axlsx'
-require 'xlsx_helper'
-require 'roo'
-require 'timecop'
-# require 'byebug'
+require 'rails_helper'
 
 RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
 
+  before(:all) { @course = FactoryBot.create :course_profile_course }
+
   context 'report_1' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+        filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
           # stringify formulas otherwise formulas are read as nil by roo
-          described_class.call(course_name: 'Physics 101',
+          described_class.call(course: @course,
                                report: report_1,
                                filename: "#{dir}/testfile",
-                               options: {stringify_formulas: true})
+                               options: {stringify_formulas: true}).outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filename}"` and sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'has good sheets' do
       expect(@wb.sheets).to eq ["1st Period - %", "1st Period - #"]
@@ -78,21 +71,24 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
   end
 
   context 'when a period has no students' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
-          described_class.call(course_name: 'Physics 101',
+        filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          described_class.call(course: @course,
                                report: report_with_empty_period,
                                filename: "#{dir}/testfile",
-                               options: {stringify_formulas: false})
+                               options: {stringify_formulas: false}).outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filename}"` and sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     it 'inserts an empty row so it does not explode with a circular reference' do
       [0,1].each do |sheet_number|
@@ -104,19 +100,22 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
   end
 
   context 'when a period has no data' do
-    before(:context) do
+    before(:all) do
+      DatabaseCleaner.start
+
       Dir.mktmpdir do |dir|
-        filepath = described_class.call(course_name: 'Physics 101',
+        filename = described_class.call(course: @course,
                                         report: report_with_empty_data,
                                         filename: "#{dir}/testfile",
-                                        options: {stringify_formulas: false})
+                                        options: {stringify_formulas: false}).outputs.filename
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filename}"` and sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
+    after(:all) { DatabaseCleaner.clean }
 
     # it 'does not put in invalid formulas that explode when open in Excel (requires manual testing)' do
     #   # uncomment this example and the `open` call above to manually test that the file

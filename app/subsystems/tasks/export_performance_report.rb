@@ -14,7 +14,7 @@ module Tasks
         @temp_filepath = generate_temp_export_file!(course, format)
 
         export = File.open(@temp_filepath) do |file|
-          Models::PerformanceReportExport.create!(
+          Tasks::Models::PerformanceReportExport.create!(
             course: course,
             role: role,
             export: file
@@ -37,13 +37,17 @@ module Tasks
       is_cc = course.is_concept_coach
       klass = "Tasks::PerformanceReport::Export#{is_cc ? 'Cc' : ''}#{format.to_s.camelize}"
       exporter = klass.constantize
-      filename = [FilenameSanitizer.sanitize(course.name.first(200)),
-                  'Scores',
-                  Time.now.utc.strftime("%Y%m%d-%H%M%S")].join('_')
+      filename = [
+        FilenameSanitizer.sanitize(course.name.first(200)),
+        'Scores',
+        Time.now.utc.strftime("%Y%m%d-%H%M%S")
+      ].join('_')
 
-      exporter[course: course,
-               report: outputs.performance_report,
-               filename: "./tmp/#{filename}"]
+      exporter.call(
+        course: course,
+        report: outputs.performance_report,
+        filename: "./tmp/#{filename}"
+      ).outputs.filename
     end
   end
 end

@@ -13,54 +13,56 @@ module Tasks::PerformanceReportRoutine
     task.exercise_count > 0 &&
     (
       ( task.task_type == 'concept_coach' ) ||
-      ( task.task_type == 'homework' && task.past_due? )
+      ( ['reading', 'homework'].include?(task.task_type) && task.past_due? )
     )
   end
 
-  def average_scores(tasks)
-    applicable_tasks = tasks.compact.select{|task| included_in_averages?(task)}
+  def average_score(tasks)
+    applicable_tasks = tasks.compact.select { |task| included_in_averages?(task) }
 
     return nil if applicable_tasks.none?
 
-    average(applicable_tasks, ->(task) {task.score})
+    average(applicable_tasks, ->(task) { task.score })
   end
 
-  def average(array, value_getter=nil)
-    num_values = 0
+  def average_progress(tasks)
+    applicable_tasks = tasks.compact.select { |task| included_in_averages?(task) }
 
-    value_sum = array.reduce(0) do |sum, item|
-      value = value_getter.nil? ? item : value_getter.call(item)
-      num_values += 1 if value.present?
-      sum + (value || 0)
-    end
+    return nil if applicable_tasks.none?
 
-    num_values == 0 ? nil : value_sum / num_values
+    average(applicable_tasks, ->(task) { task.progress })
   end
 
-  def get_student_data(tasks)
+  def average(array, value_getter = nil)
+    values = array.map { |item| value_getter.nil? ? item : value_getter.call(item) }.compact
+    num_values = values.length
+    return if num_values == 0
+
+    values.sum / num_values.to_f
+  end
+
+  def get_task_data(tasks)
     tasks.map do |task|
       # Skip if the student hasn't worked this particular task_plan/page
       next if task.nil?
 
-      data = {
-        task: task,
-        late: task.late?,
-        status: task.status,
-        type: task.task_type,
-        id: task.id,
-        due_at: task.due_at,
-        last_worked_at: task.last_worked_at,
-        is_late_work_accepted: task.accepted_late_at.present?,
-        accepted_late_at: task.accepted_late_at
-      }
-
-      if %w(homework concept_coach reading).include?(task.task_type)
-        data.merge!(task_counts(task))
-      end
-
-      data.merge!(is_included_in_averages: included_in_averages?(task))
-
-      data
+      OpenStruct.new(
+        {
+          task: task,
+          late: task.late?,
+          status: task.status,
+          type: task.task_type,
+          id: task.id,
+          due_at: task.due_at,
+          last_worked_at: task.last_worked_at,
+          is_late_work_accepted: task.accepted_late_at.present?,
+          accepted_late_at: task.accepted_late_at,
+          is_included_in_averages: included_in_averages?(task)
+        }.tap do |data|
+          data.merge!(task_counts(task)) \
+            if %w(homework reading concept_coach).include?(task.task_type)
+        end
+      )
     end
   end
 
@@ -78,7 +80,8 @@ module Tasks::PerformanceReportRoutine
       correct_on_time_exercise_count:         task.correct_on_time_exercise_count,
       correct_accepted_late_exercise_count:   task.correct_accepted_late_exercise_count,
       recovered_exercise_count:               task.recovered_exercise_steps_count,
-      score:                                  task.score
+      score:                                  task.score,
+      progress:                               task.progress
     }
   end
 

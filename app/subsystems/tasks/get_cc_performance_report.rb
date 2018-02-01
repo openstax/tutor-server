@@ -42,7 +42,7 @@ module Tasks
             student_identifier: student.student_identifier,
             role: student.role.id,
             data: data,
-            average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil}),
+            average_score: average_score(data.map{|datum| datum.present? ? datum[:task] : nil}),
             is_dropped: false
           }
         end.sort_by do |hash|
@@ -110,7 +110,7 @@ module Tasks
           cnx_page_id: page.uuid,
           title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
-          average_score: average_scores(non_dropped_page_tasks),
+          average_score: average_score(non_dropped_page_tasks),
           average_actual_and_placeholder_exercise_count: average(
             non_dropped_page_tasks, ->(tt) {tt.actual_and_placeholder_exercise_count}
           ),
@@ -130,7 +130,7 @@ module Tasks
         cc_tasks.first.task
       end
 
-      get_student_data(tasks)
+      get_task_data(tasks)
     end
   end
 end

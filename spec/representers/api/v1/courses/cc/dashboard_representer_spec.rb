@@ -13,69 +13,69 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
 
   let(:published_at) { opens_at }
 
-  let(:data) {
-    Hashie::Mash.new.tap do |mash|
-      mash.tasks = [
-        Hashie::Mash.new({
+  let(:data) do
+    OpenStruct.new(
+      tasks: [
+        OpenStruct.new(
           id: 34,
           title: 'CC2',
           opens_at: opens_at,
           last_worked_at: last_worked_at,
           task_type: :concept_coach,
           completed?: false
-        }),
-        Hashie::Mash.new({
+        ),
+        OpenStruct.new(
           id: 37,
           title: 'CC1',
           last_worked_at: last_worked_at,
           task_type: :concept_coach,
           completed?: false
-        }),
-        Hashie::Mash.new({
+        ),
+        OpenStruct.new(
           id: 89,
           title: 'CC3',
           opens_at: opens_at,
           last_worked_at: last_worked_at,
           task_type: :concept_coach,
           completed?: true
-        }),
-        Hashie::Mash.new({
+        ),
+        OpenStruct.new(
           id: 99,
           title: 'CC4',
           opens_at: opens_at,
           last_worked_at: last_worked_at,
           task_type: :concept_coach,
           completed?: true
-        }),
-      ]
-      mash.course = {
+        ),
+      ],
+      course: OpenStruct.new(
         course_id: 2,
         name: 'Physics 101',
         teachers: [
-          Hashie::Mash.new({
+          OpenStruct.new(
             id: '42',
             role_id: '43',
             first_name: 'Andrew',
             last_name: 'Garcia'
-          }),
-          Hashie::Mash.new({
+          ),
+          OpenStruct.new(
             id: '44',
             role_id: '45',
             first_name: 'Bob',
             last_name: 'Newhart'
-          })
+          )
         ],
         periods: [
-          Hashie::Mash.new({
+          OpenStruct.new(
             id: '46',
             name: '1st',
             chapters: [
-              Hashie::Mash.new({
+              OpenStruct.new(
                 id: '47',
                 title: 'Ch 1',
                 book_location: [1],
                 pages: [
-                  Hashie::Mash.new({
+                  OpenStruct.new(
                     id: '48',
                     title: 'Pg 1',
                     uuid: 'u48',
@@ -86,8 +86,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                     not_started: 2,
                     original_performance: 0.0,
                     spaced_practice_performance: 0.1
-                  }),
-                  Hashie::Mash.new({
+                  ),
+                  OpenStruct.new(
                     id: '49',
                     title: 'Pg 2',
                     uuid: 'u49',
@@ -98,15 +98,15 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                     not_started: 5,
                     original_performance: 0.2,
                     spaced_practice_performance: 0.3
-                  })
+                  )
                 ]
-              }),
-              Hashie::Mash.new({
+              ),
+              OpenStruct.new(
                 id: '50',
                 title: 'Ch 2',
                 book_location: [2],
                 pages: [
-                  Hashie::Mash.new({
+                  OpenStruct.new(
                     id: '51',
                     title: 'Pg 3',
                     uuid: 'u51',
@@ -117,8 +117,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                     not_started: 8,
                     original_performance: 0.4,
                     spaced_practice_performance: 0.5
-                  }),
-                  Hashie::Mash.new({
+                  ),
+                  OpenStruct.new(
                     id: '52',
                     title: 'Pg 4',
                     uuid: 'u52',
@@ -129,21 +129,21 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                     not_started: 11,
                     original_performance: 0.6,
                     spaced_practice_performance: 0.7
-                  })
+                  )
                 ]
-              })
+              )
             ]
-          }),
-          Hashie::Mash.new({
+          ),
+          OpenStruct.new(
             id: '53',
             name: '2nd',
             chapters: [
-              Hashie::Mash.new({
+              OpenStruct.new(
                 id: '47',
                 title: 'Ch 1',
                 book_location: [1],
                 pages: [
-                  Hashie::Mash.new({
+                  OpenStruct.new(
                     id: '48',
                     title: 'Pg 1',
                     uuid: 'u48',
@@ -154,8 +154,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                     not_started: 14,
                     original_performance: 0.7,
                     spaced_practice_performance: 0.8
-                  }),
-                  Hashie::Mash.new({
+                  ),
+                  OpenStruct.new(
                     id: '49',
                     title: 'Pg 2',
                     uuid: 'u49',
@@ -166,19 +166,19 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                     not_started: 17,
                     original_performance: 0.9,
                     spaced_practice_performance: 1.0
-                  })
+                  )
                 ]
-              })
+              )
             ]
-          })
+          )
         ]
-      }
-      mash.role = {
+      ),
+      role: OpenStruct.new(
         id: 34,
         type: 'teacher'
-      }
-    end
-  }
+      )
+    )
+  end
 
   it "represents dashboard output" do
     representation = described_class.new(data).as_json

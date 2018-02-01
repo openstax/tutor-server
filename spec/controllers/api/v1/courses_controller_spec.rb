@@ -1324,6 +1324,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let(:expected_response)  do
         Api::V1::CourseRepresenter.new(course).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
+          uuid: a_kind_of(String),
           year: expected_year,
           is_preview: false,
           starts_at: DateTimeUtilities.to_api_s(expected_term_year.starts_at),
@@ -1344,10 +1345,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         api_post :clone, user_1_token, parameters: valid_params, raw_post_data: valid_body
         expect(response).to have_http_status(:success)
         new_course = response.body_as_hash
-        # the new course will have a different uuid
+        # the new course will have a different id and uuid
+        expect(new_course[:id]).not_to eq(expected_response[:id])
         expect(new_course[:uuid]).not_to eq(expected_response[:uuid])
         # but will otherwise be the same
-        expect(new_course).to match expected_response.merge(uuid: new_course[:uuid])
+        expect(new_course).to match expected_response
       end
     end
   end

@@ -60,11 +60,12 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
       after(:all)  { DatabaseCleaner.clean }
 
-      it 'calls GetPerformanceReport and PerformanceReportRepresenter with the proper arguments' do
+      it 'calls GetPerformanceReport and the' +
+         'PerformanceReport::Representer with the proper arguments' do
         expect(GetPerformanceReport).to receive(:[])
           .with(course: @course, role: @role)
           .and_wrap_original { |method, *args| @result = method.call(*args) }
-        expect(Api::V1::PerformanceReportRepresenter).to(
+        expect(Api::V1::PerformanceReport::Representer).to(
           receive(:new).and_wrap_original do |method, hash|
             expect(hash).to eq @result
 
