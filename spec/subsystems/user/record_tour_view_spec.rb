@@ -50,6 +50,11 @@ RSpec.describe User::RecordTourView, type: :routine do
       expect(error_code).to eq(:invalid)
     end
 
+    it 'allows digits' do
+      @identifier = 'test-1'
+      expect(error_code).to be_nil
+    end
+
     it 'cant be blank' do
       @identifier = ''
       expect(error_code).to eq(:blank)
