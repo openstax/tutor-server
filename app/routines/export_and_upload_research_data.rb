@@ -2,7 +2,9 @@ class ExportAndUploadResearchData
 
   BATCH_SIZE = 1000
 
-  lev_routine active_job_enqueue_options: { queue: :lowest_priority }, express_output: :filename
+  lev_routine active_job_enqueue_options: { queue: :lowest_priority },
+              express_output: :filename,
+              transaction: :no_transaction
 
   def exec(filename: nil, task_types: [], from: nil, to: nil)
     fatal_error(code: :tasks_types_missing, message: "You must specify the types of Tasks") \
@@ -12,12 +14,22 @@ class ExportAndUploadResearchData
                "export_#{Time.current.strftime("%Y%m%dT%H%M%SZ")}.csv"
     date_range = (Chronic.parse(from))..(Chronic.parse(to)) unless to.blank? || from.blank?
 
-    tutor_export_file = create_tutor_export_file("tutor_#{filename}", task_types, date_range)
-    cnx_export_file = create_cnx_export_file("cnx_#{filename}", task_types, date_range)
-    exercises_export_file = create_exercises_export_file(
-      "exercises_#{filename}", task_types, date_range
-    )
-    files = [ tutor_export_file, cnx_export_file, exercises_export_file ]
+    nested_transaction = ActiveRecord::Base.connection.transaction_open?
+    files = ActiveRecord::Base.transaction do
+      ActiveRecord::Base.connection.execute(
+        'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE READ ONLY DEFERRABLE'
+      ) unless nested_transaction
+
+      tutor_export_file, page_ids, exercise_ids = create_tutor_export_file(
+        "tutor_#{filename}", task_types, date_range
+      )
+
+      [
+        tutor_export_file,
+        create_cnx_export_file("cnx_#{filename}", page_ids),
+        create_exercises_export_file("exercises_#{filename}", exercise_ids)
+      ]
+    end
 
     zip_filename = "#{filename.gsub(File.extname(filename), '')}.zip"
     Box.upload_files zip_filename: zip_filename, files: files
@@ -36,7 +48,10 @@ class ExportAndUploadResearchData
   end
 
   def create_tutor_export_file(filename, task_types, date_range)
-    File.join('tmp', 'exports', filename).tap do |filepath|
+    page_ids = []
+    exercise_ids = []
+
+    export_file = File.join('tmp', 'exports', filename).tap do |filepath|
       CSV.open(filepath, 'w') do |file|
         file << [
           "Student Research Identifier",
@@ -68,8 +83,56 @@ class ExportAndUploadResearchData
           "Question Correct?"
         ]
 
+        te = Tasks::Models::TaskedExercise.arel_table
+        pg = Content::Models::Page.arel_table
+        er = Entity::Role.arel_table
+        co = CourseProfile::Models::Course.arel_table
         steps = Tasks::Models::TaskStep
-          .joins(task: :taskings)
+          .select([
+            Tasks::Models::TaskStep.arel_table[ Arel.star ],
+            te[:content_exercise_id].as('exercise_id'),
+            te[:url].as('exercise_url'),
+            te[:question_id],
+            te[:correct_answer_id],
+            te[:answer_id],
+            te[:free_response],
+            pg[:id].as('page_id'),
+            pg[:url].as('page_url'),
+            er[:research_identifier],
+            co[:id].as('course_id'),
+            co[:is_concept_coach],
+            <<-TAGS_SQL.strip_heredoc
+              (
+                SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
+                FROM "content_exercises"
+                INNER JOIN "content_exercise_tags"
+                  ON "content_exercise_tags"."content_exercise_id" = "content_exercises"."id"
+                INNER JOIN "content_tags"
+                  ON "content_tags"."id" = "content_exercise_tags"."content_tag_id"
+                INNER JOIN "content_pages"
+                  ON "content_pages"."id" = "content_exercises"."content_page_id"
+                WHERE "content_exercises"."id" = "tasks_tasked_exercises"."content_exercise_id"
+                  AND (
+                    "content_tags"."tag_type" != #{Content::Models::Tag.tag_types[:cnxmod]}
+                    OR "content_tags"."value" = 'context-cnxmod:' || "content_pages"."uuid"
+                  )
+              ) AS "tags_array"
+            TAGS_SQL
+          ])
+          .joins(task: { taskings: { role: { student: :course } } })
+          .joins(
+            <<-JOIN_SQL.strip_heredoc
+              LEFT OUTER JOIN "tasks_tasked_exercises"
+                ON "tasks_task_steps"."tasked_type" = 'Tasks::Models::TaskedExercise'
+                AND "tasks_task_steps"."tasked_id" = "tasks_tasked_exercises"."id"
+            JOIN_SQL
+          )
+          .joins(
+            <<-JOIN_SQL.strip_heredoc
+              LEFT OUTER JOIN "content_pages"
+                ON "content_pages"."id" = "tasks_task_steps"."content_page_id"
+            JOIN_SQL
+          )
           .where(task: { task_type: task_types })
           .where(
             <<-SQL.strip_heredoc
@@ -82,83 +145,25 @@ class ExportAndUploadResearchData
             SQL
           )
           .order(:id)
+          .preload(task: :time_zone)
         steps = steps.where(task: { created_at: date_range }) if date_range
 
-        ordered_find_in_batches(steps) do |steps|
-          task_ids = steps.map(&:tasks_task_id)
-          tasks = Tasks::Models::Task.where(id: task_ids).preload(:taskings, :time_zone)
-          tasks_by_task_id = tasks.index_by(&:id)
+        ordered_find_in_batches(steps) do |sts|
+          page_ids.concat sts.map(&:page_id)
+          exercise_ids.concat sts.map(&:exercise_id)
 
-          role_ids = tasks.map { |task| task.taskings.first.entity_role_id }.uniq
-
-          research_identifier_by_role_id = {}
-          course_id_by_role_id = {}
-          is_cc_by_role_id = {}
-          CourseMembership::Models::Student
-            .joins(:course, :role)
-            .where(entity_role_id: role_ids, course: { is_preview: false, is_test: false })
-            .pluck(
-              :entity_role_id, :research_identifier, :course_profile_course_id, :is_concept_coach
-            )
-            .each do |role_id, research_identifier, course_id, is_cc|
-              research_identifier_by_role_id[role_id] = research_identifier
-              course_id_by_role_id[role_id] = course_id
-              is_cc_by_role_id[role_id] = is_cc.to_s.upcase
-          end
-
-          exercise_steps = steps.select(&:exercise?)
-          tasked_exercise_ids = exercise_steps.map(&:tasked_id)
-          tasked_exercises_by_id = Tasks::Models::TaskedExercise.select(
-            [
-              :id,
-              :url,
-              :question_id,
-              :correct_answer_id,
-              :answer_id,
-              :free_response,
-              <<-TAGS_SQL.strip_heredoc
-                (
-                  SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
-                  FROM "content_exercises"
-                  INNER JOIN "content_exercise_tags"
-                    ON "content_exercise_tags"."content_exercise_id" = "content_exercises"."id"
-                  INNER JOIN "content_tags"
-                    ON "content_tags"."id" = "content_exercise_tags"."content_tag_id"
-                  INNER JOIN "content_pages"
-                    ON "content_pages"."id" = "content_exercises"."content_page_id"
-                  WHERE "content_exercises"."id" = "tasks_tasked_exercises"."content_exercise_id"
-                  AND (
-                    "content_tags"."tag_type" != #{Content::Models::Tag.tag_types[:cnxmod]}
-                    OR "content_tags"."value" = 'context-cnxmod:' || "content_pages"."uuid"
-                  )
-                ) AS "tags_array"
-              TAGS_SQL
-            ]
-          ).where(id: tasked_exercise_ids).index_by(&:id)
-
-          steps.each do |step|
+          sts.each do |step|
             begin
-              task = tasks_by_task_id[step.tasks_task_id]
-              next if task.nil?
-
-              tasked_exercise = tasked_exercises_by_id[step.tasked_id]
-              next if step.exercise? && tasked_exercise.nil?
-
-              role_id = task.taskings.first.entity_role_id
-
-              research_identifier = research_identifier_by_role_id[role_id]
-              course_id = course_id_by_role_id[role_id]
-              is_cc = is_cc_by_role_id[role_id]
-              next if research_identifier.nil? || course_id.nil? || is_cc.nil?
-
+              task = step.task
               type = step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1)
-              page_url = step.page.try!(:url)
+
+              page_url = step.page_url
               page_json_url = "#{page_url}.json" unless page_url.nil?
 
               row = [
-                research_identifier,
-                course_id,
-                is_cc,
+                step.research_identifier,
+                step.course_id,
+                step.is_concept_coach.to_s.upcase,
                 task.taskings.first.course_membership_period_id,
                 task.tasks_task_plan_id,
                 task.id,
@@ -179,15 +184,15 @@ class ExportAndUploadResearchData
 
               row.concat(
                 step.exercise? ? [
-                  "#{tasked_exercise.url.gsub('org', 'org/api')}.json",
-                  tasked_exercise.url,
-                  tasked_exercise.tags_array.join(','),
-                  tasked_exercise.question_id,
-                  tasked_exercise.correct_answer_id,
+                  "#{step.exercise_url.gsub('org', 'org/api')}.json",
+                  step.exercise_url,
+                  step.tags_array.join(','),
+                  step.question_id,
+                  step.correct_answer_id,
                   # escape so Excel doesn't see as formula
-                  tasked_exercise.free_response.try!(:sub, /\A=/, "'="),
-                  tasked_exercise.answer_id,
-                  tasked_exercise.is_correct?
+                  step.free_response.try!(:sub, /\A=/, "'="),
+                  step.answer_id,
+                  step.answer_id == step.correct_answer_id
                 ] : [ nil ] * 7
               )
 
@@ -203,9 +208,11 @@ class ExportAndUploadResearchData
         end
       end
     end
+
+    [ export_file, page_ids.uniq, exercise_ids.uniq ]
   end
 
-  def create_cnx_export_file(filename, task_types, date_range)
+  def create_cnx_export_file(filename, page_ids)
     File.join('tmp', 'exports', filename).tap do |filepath|
       CSV.open(filepath, 'w') do |file|
         file << [
@@ -233,19 +240,8 @@ class ExportAndUploadResearchData
               :fragments
             ]
           )
-          .joins(task_steps: { task: :taskings }, chapter: :book)
-          .where(task_steps: { task: { task_type: task_types } })
-          .where(
-            <<-SQL.strip_heredoc
-              NOT EXISTS (
-                SELECT *
-                FROM "tasks_task_plans"
-                WHERE "tasks_task_plans"."id" = "tasks_tasks"."tasks_task_plan_id"
-                  AND "tasks_task_plans"."is_preview" = TRUE
-              )
-            SQL
-          )
-        pages = pages.where(task_steps: { task: { created_at: date_range } }) if date_range
+          .joins(chapter: :book)
+          .where(id: page_ids)
 
         ordered_find_in_batches(
           pages, [ :url, Content::Models::Book.arel_table[:title].as('book_title') ]
@@ -282,7 +278,7 @@ class ExportAndUploadResearchData
     end
   end
 
-  def create_exercises_export_file(filename, task_types, date_range)
+  def create_exercises_export_file(filename, exercise_ids)
     File.join('tmp', 'exports', filename).tap do |filepath|
       CSV.open(filepath, 'w') do |file|
         file << [
@@ -309,21 +305,7 @@ class ExportAndUploadResearchData
               TAGS_SQL
             ]
           )
-          .joins(tasked_exercises: { task_step: { task: :taskings } })
-          .where(tasked_exercises: { task_step: { task: { task_type: task_types } } })
-          .where(
-            <<-SQL.strip_heredoc
-              NOT EXISTS (
-                SELECT *
-                FROM "tasks_task_plans"
-                WHERE "tasks_task_plans"."id" = "tasks_tasks"."tasks_task_plan_id"
-                  AND "tasks_task_plans"."is_preview" = TRUE
-              )
-            SQL
-          )
-        exercises = exercises.where(
-          tasked_exercises: { task_step: { task: { created_at: date_range } } }
-        ) if date_range
+          .where(id: exercise_ids)
 
         ordered_find_in_batches(exercises, :url) do |exs|
           exs.each do |exercise|
