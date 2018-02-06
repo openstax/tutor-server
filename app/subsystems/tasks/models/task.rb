@@ -51,13 +51,18 @@ class Tasks::Models::Task < ApplicationRecord
 
   before_update :update_step_counts_if_due_at_changed
 
+  def is_preview
+    task_plan.present? && task_plan.is_preview
+  end
+
   def touch
     update_step_counts
 
     # super is not needed here when there are changes because save! will update the timestamp
     changed? ? save_without_update_step_counts_callback!(validate: false) : super
 
-    Tasks::UpdateTaskCaches.perform_later(tasks: self)
+    queue = is_preview ? :lowest_priority : :low_priority
+    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: self, queue: queue)
   end
 
   def stepless?

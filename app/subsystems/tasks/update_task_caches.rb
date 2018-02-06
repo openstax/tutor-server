@@ -7,7 +7,7 @@ class Tasks::UpdateTaskCaches
 
   protected
 
-  def exec(tasks:)
+  def exec(tasks:, queue: :low_priority)
     tasks = [tasks].flatten
 
     # Attempt to lock the tasks; Skip tasks already locked by someone else
@@ -208,7 +208,7 @@ class Tasks::UpdateTaskCaches
 
     # Update the PeriodCaches
     periods = CourseMembership::Models::Period.select(:id).where(id: period_ids.uniq)
-    Tasks::UpdatePeriodCaches.perform_later(periods: periods.to_a)
+    Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(periods: periods.to_a)
   end
 
   def build_task_cache(
