@@ -21,8 +21,18 @@ RSpec.describe 'exercises:remove', type: :rake do
   let(:uid)       { @tasks.first.tasked_exercises.first.exercise.uid }
   let(:num_tasks) { @tasks.size }
 
+  let(:queue)          { :low_priority }
+  let(:configured_job) { Lev::ActiveJob::ConfiguredJob.new(described_class, queue: queue) }
+
+  before do
+    allow(Tasks::UpdateTaskCaches).to receive(:set) do |options|
+      expect(options[:queue]).to eq queue
+      configured_job
+    end
+  end
+
   it 'removes the given exercises from the assignments, scores and caches' do
-    expect(Tasks::UpdateTaskCaches).to receive(:perform_later).exactly(num_tasks).times
+    expect(configured_job).to receive(:perform_later).exactly(num_tasks).times
 
     expect do
       call(uid)
