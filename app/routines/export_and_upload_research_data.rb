@@ -83,13 +83,16 @@ class ExportAndUploadResearchData
           "Question Correct?"
         ]
 
+        tk = Tasks::Models::Tasking.arel_table
         te = Tasks::Models::TaskedExercise.arel_table
         pg = Content::Models::Page.arel_table
         er = Entity::Role.arel_table
         co = CourseProfile::Models::Course.arel_table
+        boolean_typecaster = ActiveAttr::Typecasting::BooleanTypecaster.new
         steps = Tasks::Models::TaskStep
           .select([
             Tasks::Models::TaskStep.arel_table[ Arel.star ],
+            tk[:course_membership_period_id],
             te[:content_exercise_id].as('exercise_id'),
             te[:url].as('exercise_url'),
             te[:question_id],
@@ -145,16 +148,18 @@ class ExportAndUploadResearchData
             SQL
           )
           .order(:id)
-          .preload(task: :time_zone)
         steps = steps.where(task: { created_at: date_range }) if date_range
 
-        ordered_find_in_batches(steps) do |sts|
+        each_batch(steps) do |sts|
           page_ids.concat sts.map(&:page_id)
           exercise_ids.concat sts.map(&:exercise_id)
 
+          task_ids = sts.map(&:tasks_task_id)
+          tasks_by_id = Tasks::Models::Task.where(id: task_ids).preload(:time_zone).index_by(&:id)
+
           sts.each do |step|
             begin
-              task = step.task
+              task = tasks_by_id[step.tasks_task_id]
               type = step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1)
 
               page_url = step.page_url
@@ -163,8 +168,8 @@ class ExportAndUploadResearchData
               row = [
                 step.research_identifier,
                 step.course_id,
-                step.is_concept_coach.to_s.upcase,
-                task.taskings.first.course_membership_period_id,
+                boolean_typecaster.call(step.is_concept_coach).to_s.upcase,
+                step.course_membership_period_id,
                 task.tasks_task_plan_id,
                 task.id,
                 task.task_type,
@@ -186,7 +191,7 @@ class ExportAndUploadResearchData
                 step.exercise? ? [
                   "#{step.exercise_url.gsub('org', 'org/api')}.json",
                   step.exercise_url,
-                  step.tags_array.join(','),
+                  array_decoder.decode(step.tags_array).join(','),
                   step.question_id,
                   step.correct_answer_id,
                   # escape so Excel doesn't see as formula
@@ -242,10 +247,9 @@ class ExportAndUploadResearchData
           )
           .joins(chapter: :book)
           .where(id: page_ids)
+          .order(:url, Content::Models::Book.arel_table[:title])
 
-        ordered_find_in_batches(
-          pages, [ :url, Content::Models::Book.arel_table[:title].as('book_title') ]
-        ) do |pgs|
+        each_batch(pages) do |pgs|
           pgs.each do |page|
             page.fragments.each_with_index do |fragment, fragment_index|
               begin
@@ -306,12 +310,13 @@ class ExportAndUploadResearchData
             ]
           )
           .where(id: exercise_ids)
+          .order(:url)
 
-        ordered_find_in_batches(exercises, :url) do |exs|
+        each_batch(exercises) do |exs|
           exs.each do |exercise|
             url = exercise.url
             api_url = "#{exercise.url.gsub('org', 'org/api')}.json"
-            tags = exercise.tags_array.join(',')
+            tags = array_decoder.decode(exercise.tags_array).join(',')
 
             exercise.content_as_independent_questions.each do |question|
               begin
@@ -339,48 +344,34 @@ class ExportAndUploadResearchData
     end
   end
 
-  def ordered_find_in_batches(relation, order_bys = :id, batch_size = BATCH_SIZE)
-    order_bys = [ order_bys ].flatten
-    no_alias_order_bys = order_bys.map { |col, _| col.is_a?(Arel::Nodes::As) ? col.left : col }
-    relation = relation.dup.reorder(no_alias_order_bys).limit(batch_size)
+  def each_batch(relation, batch_size = BATCH_SIZE)
+    klass = relation.klass
+    cursor = relation.each_instance
+    done = false
 
-    wheres = nil
     loop do
-      records = relation.where(wheres || {}).to_a
+      records = batch_size.times.map do
+        next if done
+
+        hash = cursor.fetch
+        if hash.nil?
+          done = true
+          next
+        end
+
+        klass.send :instantiate, hash
+      end.compact
 
       yield records
 
-      break if records.size < batch_size
-
-      last_record = records.last
-      previous_eqs_array = []
-      wheres = order_bys.map do |col, direction|
-        method_name = case col
-        when Arel::Nodes::As
-          col.right
-        when Arel::Attributes::Attribute
-          col.name
-        else
-          col
-        end
-        arel_attribute = case col
-        when Arel::Nodes::As
-          col.left
-        when Symbol
-          relation.arel_table[col]
-        else
-          col
-        end
-
-        value = last_record.public_send(method_name)
-        operator = direction.to_s.upcase == 'DESC' ? :lt : :gt
-
-        clause = arel_attribute.public_send(operator, value)
-        clause = clause.and(previous_eqs_array.reduce(:and)) unless previous_eqs_array.empty?
-        previous_eqs_array << arel_attribute.eq(value)
-        clause
-      end.map { |arel| Arel::Nodes::Grouping.new arel }.reduce(:or)
+      break if done
     end
+
+    cursor.close
+  end
+
+  def array_decoder
+    @array_decoder ||= PG::TextDecoder::Array.new
   end
 
 end
