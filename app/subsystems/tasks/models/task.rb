@@ -62,7 +62,7 @@ class Tasks::Models::Task < ApplicationRecord
     changed? ? save_without_update_step_counts_callback!(validate: false) : super
 
     queue = is_preview ? :lowest_priority : :low_priority
-    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: self, queue: queue)
+    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: self, queue: queue.to_s)
   end
 
   def stepless?

@@ -108,7 +108,7 @@ class DistributeTasks
     Tasks::Models::Task.import tasks, recursive: true, validate: false
 
     queue = task_plan.is_preview ? :lowest_priority : :low_priority
-    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: tasks, queue: queue)
+    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: tasks, queue: queue.to_s)
 
     tasks.each do |task|
       task.task_steps.reset
