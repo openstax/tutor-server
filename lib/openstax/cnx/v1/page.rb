@@ -63,7 +63,7 @@ module OpenStax::Cnx::V1
     end
 
     def full_hash
-      @full_hash ||= OpenStax::Cnx::V1.fetch(id)
+      @full_hash ||= OpenStax::Cnx::V1.fetch(url)
     end
 
     def uuid

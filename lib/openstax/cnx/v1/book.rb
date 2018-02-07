@@ -11,12 +11,12 @@ module OpenStax::Cnx::V1
 
     attr_reader :id
 
-    def hash
-      @hash ||= OpenStax::Cnx::V1.fetch(id)
-    end
-
     def url
       @url ||= OpenStax::Cnx::V1.archive_url_for(id)
+    end
+
+    def hash
+      @hash ||= OpenStax::Cnx::V1.fetch(url)
     end
 
     def uuid

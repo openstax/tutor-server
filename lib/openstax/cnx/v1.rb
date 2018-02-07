@@ -70,9 +70,7 @@ module OpenStax::Cnx::V1
       Addressable::URI.join(configuration.webview_url_base, '/contents/', path).to_s
     end
 
-    def fetch(id)
-      url = archive_url_for(id)
-
+    def fetch(url)
       begin
         Rails.logger.debug { "Fetching #{url}" }
         JSON.parse open(url, 'ACCEPT' => 'text/json').read

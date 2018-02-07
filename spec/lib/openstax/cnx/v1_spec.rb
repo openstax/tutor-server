@@ -24,8 +24,8 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
   end
 
   it "can fetch collections and modules from CNX" do
-    collection_hash = OpenStax::Cnx::V1.fetch(cnx_collection_id)
-    module_hash = OpenStax::Cnx::V1.fetch(cnx_module_id)
+    collection_hash = OpenStax::Cnx::V1.fetch(OpenStax::Cnx::V1.archive_url_for(cnx_collection_id))
+    module_hash = OpenStax::Cnx::V1.fetch(OpenStax::Cnx::V1.archive_url_for(cnx_module_id))
 
     expect(collection_hash).to be_a Hash
     expect(collection_hash).not_to be_empty
@@ -42,7 +42,7 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
 
   it 'rescues OpenURI::HTTPError for intended URL clarification' do
     expect {
-      OpenStax::Cnx::V1.fetch('no-exist')
+      OpenStax::Cnx::V1.fetch(OpenStax::Cnx::V1.archive_url_for('no-exist'))
     }.to raise_error(
       OpenStax::HTTPError,
       "404 Not Found for URL https://archive-staging-tutor.cnx.org/contents/no-exist"
