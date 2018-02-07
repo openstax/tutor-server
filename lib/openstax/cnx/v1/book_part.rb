@@ -1,12 +1,13 @@
 module OpenStax::Cnx::V1
   class BookPart
 
-    def initialize(hash: {}, is_root: false)
+    def initialize(hash: {}, is_root: false, book: nil)
       @hash = hash
       @is_root = is_root
+      @book = book
     end
 
-    attr_reader :hash, :is_root
+    attr_reader :hash, :is_root, :book
 
     def title
       @title ||= hash.fetch('title') { |key|
@@ -23,9 +24,9 @@ module OpenStax::Cnx::V1
     def parts
       @parts ||= contents.map do |hash|
         if hash.has_key? 'contents'
-          self.class.new(hash: hash)
+          self.class.new(hash: hash, book: book)
         else
-          OpenStax::Cnx::V1::Page.new(hash: hash)
+          OpenStax::Cnx::V1::Page.new(hash: hash, book: book)
         end
       end
     end

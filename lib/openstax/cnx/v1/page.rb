@@ -30,16 +30,17 @@ module OpenStax::Cnx::V1
       node.at_css(feature_id_css)
     end
 
-    def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil)
+    def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil, book: nil)
       @hash    = hash
       @id      = id
       @url     = url
       @title   = title
       @content = content
+      @book = book
     end
 
-    attr_reader :hash
     attr_accessor :chapter_section
+    attr_reader :hash, :book
 
     def id
       @id ||= hash.fetch('id') { |key| raise "Page is missing #{key}" }
@@ -78,7 +79,10 @@ module OpenStax::Cnx::V1
     end
 
     def canonical_url
-      @canonical_url ||= OpenStax::Cnx::V1.archive_url_for("#{uuid}@#{version}")
+      @canonical_url ||= begin
+        path = "#{uuid}@#{version}"
+        book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
+      end
     end
 
     def content
