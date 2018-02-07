@@ -23,6 +23,33 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       students: [@student_1, @student_2, @student_3, @student_4],
       ecosystem: @ecosystem
     ]
+
+    reading_assistant = @course.course_assistants
+                               .find_by(tasks_task_plan_type: 'reading')
+                               .assistant
+
+    # Draft assignment, not included in the scores
+    draft_task_plan = Tasks::Models::TaskPlan.new(
+      title: 'Draft task plan',
+      owner: @course,
+      type: 'reading',
+      assistant: reading_assistant,
+      content_ecosystem_id: @ecosystem.id,
+      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) }
+    )
+
+    draft_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: @course,
+      task_plan: draft_task_plan,
+      opens_at: @course.time_zone.to_tz.now,
+      due_at: @course.time_zone.to_tz.now + 1.week,
+      time_zone: @course.time_zone
+    )
+
+    draft_task_plan.save!
+
+    # Create the preview task, which might interfere with the scores
+    DistributeTasks.call(task_plan: draft_task_plan, preview: true)
   end
 
   let(:expected_periods)              { 2 }
