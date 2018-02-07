@@ -47,7 +47,7 @@ module OpenStax::Cnx::V1
     end
 
     def url
-      @url ||= OpenStax::Cnx::V1.archive_url_for(id)
+      @url ||= url_for(id)
     end
 
     # Use the title in the collection hash
@@ -79,10 +79,7 @@ module OpenStax::Cnx::V1
     end
 
     def canonical_url
-      @canonical_url ||= begin
-        path = "#{uuid}@#{version}"
-        book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
-      end
+      @canonical_url ||= url_for("#{uuid}@#{version}")
     end
 
     def content
@@ -188,6 +185,10 @@ module OpenStax::Cnx::V1
     end
 
     protected
+
+    def url_for(path)
+      book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
+    end
 
     def absolutize_and_secure_urls(node)
       # Absolutize exercise urls
