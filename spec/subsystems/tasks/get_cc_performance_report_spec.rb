@@ -39,6 +39,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine do
   end
 
   let(:teacher_role)                  { @teacher.to_model.roles.first }
+  let(:student_role)                  { @course.students.first.role }
 
   let(:expected_periods)              { 2 }
   let(:expected_students)             { 2 }
@@ -82,6 +83,12 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine do
         end
       end
     end
+  end
+
+  it 'raises SecurityTransgression for a student role' do
+    expect { described_class[course: @course, role: student_role] }.to(
+      raise_error(SecurityTransgression)
+    )
   end
 
   context 'for incomplete CC tasks' do

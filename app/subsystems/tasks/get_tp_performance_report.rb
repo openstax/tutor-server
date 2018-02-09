@@ -9,9 +9,11 @@ module Tasks
     protected
 
     def exec(course:, role:)
-      taskings = get_course_taskings(course, role)
+      is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]]
+      taskings = get_course_taskings(course, role, is_teacher)
+      periods = is_teacher ? course.periods.reject(&:archived?) : [ role.student.period ]
 
-      outputs.performance_report = course.periods.reject(&:archived?).map do |period|
+      outputs.performance_report = periods.map do |period|
         # Filter tasking_plans period and sort by due date
         tasking_plans = filter_and_sort_tasking_plans(taskings, course, period)
 
@@ -113,7 +115,7 @@ module Tasks
     # Return reading, homework and external tasks for a student
     # .reorder(nil) removes the ordering from the period default scope so .distinct won't blow up
     # .distinct is necessary for the preloading to work...
-    def get_course_taskings(course, role)
+    def get_course_taskings(course, role, is_teacher)
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       rel = course.taskings
                   .joins(task: { task_plan: :tasking_plans })
@@ -122,8 +124,7 @@ module Tasks
                   .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
                            role: [{student: {enrollments: :period}}, {profile: :account}])
                   .reorder(nil).distinct
-      rel = rel.where(entity_role_id: role.id) \
-        unless CourseMembership::IsCourseTeacher[course: course, roles: [role]]
+      rel = rel.where(entity_role_id: role.id) unless is_teacher
       rel.to_a.select { |tasking| tasking.task.past_open? }
     end
 
