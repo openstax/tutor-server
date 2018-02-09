@@ -8,8 +8,8 @@ module Tasks
 
     protected
 
-    def exec(course:)
-      taskings = get_course_taskings(course)
+    def exec(course:, role:)
+      taskings = get_course_taskings(course, role)
 
       outputs.performance_report = course.periods.reject(&:archived?).map do |period|
         # Filter tasking_plans period and sort by due date
@@ -110,18 +110,21 @@ module Tasks
       end.uniq.sort_by { |tp| [tp.due_at_ntz, tp.created_at] }.reverse
     end
 
-    def get_course_taskings(course)
+    # Return reading, homework and external tasks for a student
+    # .reorder(nil) removes the ordering from the period default scope so .distinct won't blow up
+    # .distinct is necessary for the preloading to work...
+    def get_course_taskings(course, role)
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
-      # Return reading, homework and external tasks for a student
-      # .reorder(nil) removes the ordering from the period default scope so .uniq won't blow up
-      # .uniq is necessary for the preloading to work...
-      course.taskings
-            .joins(task: { task_plan: :tasking_plans })
-            .where(task: {task_type: task_types})
-            .where(task: { task_plan: { withdrawn_at: nil } })
-            .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
-                     role: [{student: {enrollments: :period}}, {profile: :account}])
-            .reorder(nil).uniq.to_a.select { |tasking| tasking.task.past_open? }
+      rel = course.taskings
+                  .joins(task: { task_plan: :tasking_plans })
+                  .where(task: {task_type: task_types})
+                  .where(task: { task_plan: { withdrawn_at: nil } })
+                  .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
+                           role: [{student: {enrollments: :period}}, {profile: :account}])
+                  .reorder(nil).distinct
+      rel = rel.where(entity_role_id: role.id) \
+        unless CourseMembership::IsCourseTeacher[course: course, roles: [role]]
+      rel.to_a.select { |tasking| tasking.task.past_open? }
     end
 
     def get_data_headings(tasking_plans, heading_stats_plan_to_task_map)

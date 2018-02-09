@@ -11,8 +11,9 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
-    job_id = Tasks::ExportPerformanceReport.perform_later(course: course,
-                                                          role: get_course_role(course: course))
+    job_id = Tasks::ExportPerformanceReport.perform_later(
+      course: course, role: get_course_role(course: course, type: :teacher)
+    )
 
     render_job_id_json(job_id)
   end
@@ -27,8 +28,9 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
-    exports = Tasks::GetPerformanceReportExports[course: course,
-                                                 role: get_course_role(course: course)]
+    exports = Tasks::GetPerformanceReportExports[
+      course: course, role: get_course_role(course: course, type: :teacher)
+    ]
 
     respond_with exports, represent_with: Api::V1::PerformanceReport::ExportsRepresenter
   end
@@ -40,6 +42,9 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
   EOS
   def index
     course = CourseProfile::Models::Course.find(params[:id])
+
+    OSU::AccessPolicy.require_action_allowed!(:performance, current_api_user, course)
+
     preport = GetPerformanceReport[course: course, role: get_course_role(course: course)]
 
     respond_with(preport, represent_with: Api::V1::PerformanceReport::Representer)
@@ -47,11 +52,15 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
   protected
 
-  def get_course_role(course:)
-    result = ChooseCourseRole.call(user: current_human_user,
-                                   course: course,
-                                   allowed_role_type: :teacher,
-                                   role_id: params[:role_id])
+  def get_course_role(course:, type: :any)
+    args = {
+      user: current_human_user,
+      course: course,
+      role_id: params[:role_id]
+    }
+    args[:allowed_role_type] = type unless type == :any
+
+    result = ChooseCourseRole.call(args)
     raise(SecurityTransgression, :invalid_role) if result.errors.any?
     result.outputs.role
   end

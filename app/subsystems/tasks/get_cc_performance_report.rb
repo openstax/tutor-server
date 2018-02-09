@@ -8,7 +8,10 @@ module Tasks
 
     protected
 
-    def exec(course:)
+    def exec(course:, role:)
+      raise(SecurityTransgression, 'The caller is not a teacher in this course') \
+        unless CourseMembership::IsCourseTeacher[course: course, roles: [role]]
+
       taskings = get_cc_taskings(course)
       ecosystems_map = GetCourseEcosystemsMap[course: course]
       cc_tasks_map = get_cc_tasks_map(ecosystems_map, taskings)

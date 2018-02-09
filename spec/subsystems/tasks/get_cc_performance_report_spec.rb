@@ -38,6 +38,8 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine do
     File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
   end
 
+  let(:teacher_role)                  { @teacher.to_model.roles.first }
+
   let(:expected_periods)              { 2 }
   let(:expected_students)             { 2 }
 
@@ -53,7 +55,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine do
     end.first
   end
 
-  let(:reports)                       { described_class[course: @course] }
+  let(:reports)                       { described_class[course: @course, role: teacher_role] }
   let(:first_period_report)           do
     reports.find { |report| report[:period] == first_period }
   end

@@ -52,6 +52,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
     DistributeTasks.call(task_plan: draft_task_plan, preview: true)
   end
 
+  let(:teacher_role)                  { @teacher.to_model.roles.first }
+
   let(:expected_periods)              { 2 }
   let(:expected_students)             { 2 }
 
@@ -70,7 +72,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
 
   # Make homework assignments due so that their scores are included in the averages
   let(:reports)                       do
-    Timecop.freeze(Time.current + 1.1.days) { described_class[course: @course] }
+    Timecop.freeze(Time.current + 1.1.days) { described_class[course: @course, role: teacher_role] }
   end
   let(:first_period_report)           do
     reports.find { |report| report.period == first_period }
