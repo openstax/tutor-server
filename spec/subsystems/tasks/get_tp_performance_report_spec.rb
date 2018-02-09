@@ -52,9 +52,9 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
     DistributeTasks.call(task_plan: draft_task_plan, preview: true)
   end
 
-
-  let(:student_reports)      do
-    Timecop.freeze(Time.current + 1.1.days) { described_class[course: @course, role: student_role] }
+  # Make homework assignments due so that their scores are included in the averages
+  let(:reports) do
+    Timecop.freeze(Time.current + 1.1.days) { described_class[course: @course, role: role] }
   end
 
   context 'teacher' do
@@ -76,10 +76,6 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       end.first
     end
 
-    # Make homework assignments due so that their scores are included in the averages
-    let(:reports) do
-      Timecop.freeze(Time.current + 1.1.days) { described_class[course: @course, role: role] }
-    end
     let(:first_period_report)  { reports.find { |report| report.period == first_period } }
     let(:second_period_report) { reports.find { |report| report.period == second_period } }
 
@@ -320,10 +316,6 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
     let(:expected_tasks)                { 3 }
     let(:expected_task_types)           { ['homework', 'reading', 'homework'] }
 
-    # Make homework assignments due so that their scores are included in the averages
-    let(:reports) do
-      Timecop.freeze(Time.current + 1.1.days) { described_class[course: @course, role: role] }
-    end
     let(:report)  { reports.first }
     let(:student) { report.students.first }
 
@@ -413,6 +405,14 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
         expect(data.is_late_work_accepted).to be_in [true, false]
         expect(data.is_included_in_averages).to be_in [true, false]
       end
+    end
+  end
+
+  context 'random role' do
+    let(:role) { FactoryBot.create :entity_role }
+
+    it 'raises SecurityTransgression' do
+      expect { reports }.to raise_error(SecurityTransgression)
     end
   end
 end

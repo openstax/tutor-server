@@ -10,8 +10,15 @@ module Tasks
 
     def exec(course:, role:)
       is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]]
+      periods = if is_teacher
+        course.periods.reject(&:archived?)
+      else
+        raise(SecurityTransgression) \
+          if role.student.nil? || role.student.course_profile_course_id != course.id
+
+        [ role.student.period ]
+      end
       taskings = get_course_taskings(course, role, is_teacher)
-      periods = is_teacher ? course.periods.reject(&:archived?) : [ role.student.period ]
 
       outputs.performance_report = periods.map do |period|
         # Filter tasking_plans period and sort by due date
