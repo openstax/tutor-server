@@ -122,7 +122,7 @@ module Tasks
                   .where(task: {task_type: task_types})
                   .where(task: { task_plan: { withdrawn_at: nil } })
                   .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
-                           role: [{student: {enrollments: :period}}, {profile: :account}])
+                           role: [{student: {latest_enrollment: :period}}, {profile: :account}])
                   .reorder(nil).distinct
       rel = rel.where(entity_role_id: role.id) unless is_teacher
       rel.to_a.select { |tasking| tasking.task.past_open? }
