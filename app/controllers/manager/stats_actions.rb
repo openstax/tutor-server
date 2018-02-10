@@ -97,9 +97,9 @@ module Manager::StatsActions
     completed = tasks.select(&:completed?).length
     not_started = total - (in_progress + completed)
     exercises = tasks.map(&:exercise_steps_count).reduce(0, :+)
-    completed_exercises = tasks.map(&:completed_exercise_steps_count).reduce(0, :+)
+    completed_exercises = tasks.sum(&:completed_exercise_steps_count)
     incomplete_exercises = exercises - completed_exercises
-    correct_exercises = tasks.map(&:correct_exercise_steps_count).reduce(0, :+)
+    correct_exercises = tasks.sum(&:correct_exercise_steps_count)
 
     {
       tasks: total,

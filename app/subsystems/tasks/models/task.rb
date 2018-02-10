@@ -1,9 +1,23 @@
 class Tasks::Models::Task < ApplicationRecord
 
-  acts_as_paranoid column: :hidden_at, without_default_scope: true
+  attr_accessor :step_counts_updated
 
-  class_attribute :skip_update_step_counts_if_due_at_changed
-  self.skip_update_step_counts_if_due_at_changed = false
+  CACHE_COLUMNS = [
+    :steps_count,
+    :completed_steps_count,
+    :completed_on_time_steps_count,
+    :core_steps_count,
+    :completed_core_steps_count,
+    :exercise_steps_count,
+    :completed_exercise_steps_count,
+    :completed_on_time_exercise_steps_count,
+    :correct_exercise_steps_count,
+    :correct_on_time_exercise_steps_count,
+    :placeholder_steps_count,
+    :placeholder_exercise_steps_count,
+  ]
+
+  acts_as_paranoid column: :hidden_at, without_default_scope: true
 
   auto_uuid
 
@@ -49,20 +63,58 @@ class Tasks::Models::Task < ApplicationRecord
 
   validate :due_at_on_or_after_opens_at
 
-  before_update :update_step_counts_if_due_at_changed
+  before_validation :update_step_counts
+  after_create :update_caches_now
+  after_touch :update_counts_and_caches_later
 
   def is_preview
     task_plan.present? && task_plan.is_preview
   end
 
-  def touch
-    update_step_counts
+  def update_step_counts(steps: nil)
+    steps ||= persisted? ? task_steps.reload.to_a : task_steps.to_a
 
-    # super is not needed here when there are changes because save! will update the timestamp
-    changed? ? save_without_update_step_counts_callback!(validate: false) : super
+    completed_steps = steps.select(&:completed?)
+    core_steps = steps.select(&:core_group?)
+    completed_core_steps = completed_steps & core_steps
+    exercise_steps = steps.select(&:exercise?)
+    completed_exercise_steps = completed_steps & exercise_steps
 
+    correct_exercise_steps = exercise_steps.select { |step| step.tasked.is_correct? }
+
+    placeholder_steps = steps.select(&:placeholder?)
+
+    self.steps_count = steps.count
+    self.completed_steps_count = completed_steps.count
+    self.completed_on_time_steps_count = completed_steps.count { |step| step_on_time?(step) }
+    self.core_steps_count = core_steps.count
+    self.completed_core_steps_count = completed_core_steps.count
+    self.exercise_steps_count = exercise_steps.count
+    self.completed_exercise_steps_count = completed_exercise_steps.count
+    self.completed_on_time_exercise_steps_count = completed_exercise_steps.count do |step|
+      step_on_time?(step)
+    end
+    self.correct_exercise_steps_count = correct_exercise_steps.count
+    self.correct_on_time_exercise_steps_count = correct_exercise_steps.count do |step|
+      step_on_time?(step)
+    end
+    self.placeholder_steps_count = placeholder_steps.count
+
+    self.placeholder_exercise_steps_count = placeholder_steps.count do |step|
+      step.tasked.exercise_type?
+    end
+
+    self
+  end
+
+  def update_caches_now
+    Tasks::UpdateTaskCaches.call(task_ids: id)
+  end
+
+  def update_counts_and_caches_later
     queue = is_preview ? :lowest_priority : :low_priority
-    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: self, queue: queue.to_s)
+    Tasks::UpdateTaskCaches.set(queue: queue)
+                           .perform_later(task_ids: id, update_step_counts: true, queue: queue.to_s)
   end
 
   def stepless?
@@ -93,12 +145,21 @@ class Tasks::Models::Task < ApplicationRecord
     deleted? && withdrawn? && hidden_at >= task_plan.withdrawn_at
   end
 
+  def started?
+    task_steps.loaded? ? task_steps.any?(&:completed?) : task_steps.complete.exists?
+  end
+
   def completed?
-    steps_count == completed_steps_count
+    task_steps.loaded? ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
   end
 
   def in_progress?
-    completed_steps_count > 0 && !completed?
+    started? && !completed?
+  end
+
+  def core_task_steps_completed?
+    task_steps.loaded? ? task_steps.select(&:core_group?).all?(&:completed?) :
+                         !task_steps.core_group.incomplete.exists?
   end
 
   def hide(current_time: Time.current)
@@ -157,83 +218,8 @@ class Tasks::Models::Task < ApplicationRecord
     task_steps.to_a.select(&:personalized_group?)
   end
 
-  def core_task_steps_completed?
-    core_steps_count == completed_core_steps_count
-  end
-
   def handle_task_step_completion!(completed_at: Time.current)
     set_last_worked_at(last_worked_at: completed_at).save!
-  end
-
-  def update_step_counts
-    steps = persisted? ? task_steps.reload.to_a : task_steps.to_a
-
-    completed_steps = steps.select(&:completed?)
-    core_steps = steps.select(&:core_group?)
-    completed_core_steps = completed_steps & core_steps
-    exercise_steps = steps.select(&:exercise?)
-    completed_exercise_steps = completed_steps & exercise_steps
-
-    correct_exercise_steps = if persisted?
-      tasked_exercise_ids = exercise_steps.map(&:tasked_id)
-      correct_tasked_exercise_ids = Tasks::Models::TaskedExercise
-                                      .correct
-                                      .where(id: tasked_exercise_ids)
-                                      .pluck(:id)
-      exercise_steps.select { |step| correct_tasked_exercise_ids.include? step.tasked_id }
-    else
-      exercise_steps.select { |step| step.tasked.is_correct? }
-    end
-
-    placeholder_steps = steps.select(&:placeholder?)
-
-    self.steps_count = steps.count
-    self.completed_steps_count = completed_steps.count
-    self.completed_on_time_steps_count = completed_steps.count { |step| step_on_time?(step) }
-    self.core_steps_count = core_steps.count
-    self.completed_core_steps_count = completed_core_steps.count
-    self.exercise_steps_count = exercise_steps.count
-    self.completed_exercise_steps_count = completed_exercise_steps.count
-    self.completed_on_time_exercise_steps_count = completed_exercise_steps.count do |step|
-      step_on_time?(step)
-    end
-    self.correct_exercise_steps_count = correct_exercise_steps.count
-    self.correct_on_time_exercise_steps_count = correct_exercise_steps.count do |step|
-      step_on_time?(step)
-    end
-    self.placeholder_steps_count = placeholder_steps.count
-
-    self.placeholder_exercise_steps_count = if persisted?
-      tasked_placeholder_ids = placeholder_steps.map(&:tasked_id)
-      exercise_placeholder_ids = Tasks::Models::TaskedPlaceholder
-                                   .exercise_type
-                                   .where(id: tasked_placeholder_ids)
-                                   .pluck(:id)
-      placeholder_steps.count { |step| exercise_placeholder_ids.include? step.tasked_id }
-    else
-      placeholder_steps.count { |step| step.tasked.exercise_type? }
-    end
-
-    self
-  end
-
-  def save_without_update_step_counts_callback!(*args)
-    self.skip_update_step_counts_if_due_at_changed = true
-    save!(*args)
-  ensure
-    self.skip_update_step_counts_if_due_at_changed = false
-  end
-
-  def update_step_counts!(*args)
-    update_step_counts
-
-    save_without_update_step_counts_callback!(*args)
-  end
-
-  def update_step_counts_if_due_at_changed
-    return true if skip_update_step_counts_if_due_at_changed || !due_at_changed?
-
-    update_step_counts
   end
 
   def exercise_count
@@ -289,19 +275,19 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def accept_late_work
-    self.correct_accepted_late_exercise_steps_count =
-      correct_exercise_steps_count - correct_on_time_exercise_steps_count
-    self.completed_accepted_late_exercise_steps_count =
-      completed_exercise_steps_count - completed_on_time_exercise_steps_count
     self.completed_accepted_late_steps_count =
       completed_steps_count - completed_on_time_steps_count
+    self.completed_accepted_late_exercise_steps_count =
+      completed_exercise_steps_count - completed_on_time_exercise_steps_count
+    self.correct_accepted_late_exercise_steps_count =
+      correct_exercise_steps_count - correct_on_time_exercise_steps_count
     self.accepted_late_at = Time.current
   end
 
   def reject_late_work
-    self.correct_accepted_late_exercise_steps_count = 0
-    self.completed_accepted_late_exercise_steps_count = 0
     self.completed_accepted_late_steps_count = 0
+    self.completed_accepted_late_exercise_steps_count = 0
+    self.correct_accepted_late_exercise_steps_count = 0
     self.accepted_late_at = nil
   end
 

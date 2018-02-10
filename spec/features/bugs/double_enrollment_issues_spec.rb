@@ -53,10 +53,10 @@ RSpec.describe "Students in archived old period sign up in new term",
         book_uuid: @book.uuid
       )
 
-      cc_task_sem_1_page_0 = GetConceptCoach[
+      @cc_task_sem_1_page_0 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[0].uuid
       ]
-      Preview::AnswerExercise[task_step: cc_task_sem_1_page_0.task_steps[0], is_correct: true]
+      Preview::AnswerExercise[task_step: @cc_task_sem_1_page_0.task_steps[0], is_correct: true]
 
       cc_task_sem_1_page_1 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[1].uuid
@@ -80,7 +80,8 @@ RSpec.describe "Students in archived old period sign up in new term",
     it 'lets the student work a CC from scratch that he did in the first semester' do
       cc_task_sem_2_page_0 = GetConceptCoach[
         user: @student_user, book_uuid: @book.uuid, page_uuid: @book.pages[0].uuid
-      ]
+      ].reload
+      expect(cc_task_sem_2_page_0).not_to eq @cc_task_sem_1_page_0
       expect(cc_task_sem_2_page_0).not_to be_completed
     end
 

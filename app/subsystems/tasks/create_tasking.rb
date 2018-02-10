@@ -4,8 +4,7 @@ class Tasks::CreateTasking
   protected
 
   def exec(role:, task:, period: nil)
-    outputs[:tasking] = Tasks::Models::Tasking.create!(
-      role: role, task: task, period: period
-    )
+    outputs.tasking = Tasks::Models::Tasking.new(role: role, task: task, period: period)
+    task.taskings << outputs.tasking
   end
 end

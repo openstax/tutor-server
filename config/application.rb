@@ -6,6 +6,13 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Prevent pg deprecation warning:
+# The PGconn, PGresult, and PGError constants are deprecated, and will be removed as of version 1.0.
+# You should use PG::Connection, PG::Result, and PG::Error instead, respectively.
+PGconn = PG::Connection
+PGresult = PG::Result
+PGError = PG::Error
+
 module Tutor
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.

@@ -31,7 +31,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine, speed: :medium do
       task.task_steps.select(&:placeholder?).each(&:destroy!)
       task.pes_are_assigned = true
       task.spes_are_assigned = true
-      task.update_step_counts!
+      task.touch
     end
 
     student_tasks.first(2).each { |task| Preview::WorkTask[task: task, is_correct: false] }

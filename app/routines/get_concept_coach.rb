@@ -22,7 +22,7 @@ class GetConceptCoach
 
   def exec(user:, book_uuid:, page_uuid:)
     role, book = get_role_and_book(user: user, book_uuid: book_uuid)
-    page = book.pages.find{ |page| page.uuid == page_uuid }
+    page = book.pages.find { |page| page.uuid == page_uuid }
     fatal_error(code: :invalid_page) if page.nil?
 
     course = role.student.course
@@ -33,7 +33,7 @@ class GetConceptCoach
     existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.task
     unless existing_cc_task.nil?
       outputs.task = existing_cc_task
-      spy_history = history.core_page_ids.map{ |page_ids| { page_id: page_ids.first } }
+      spy_history = history.core_page_ids.map { |page_ids| { page_id: page_ids.first } }
       run(:add_spy_info, to: outputs.task, from: [ecosystem, { history: spy_history }])
       return
     end
@@ -117,16 +117,15 @@ class GetConceptCoach
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
 
     exercises = core_exercises + spaced_exercises
-    group_types = core_exercises.map{ :core_group } + spaced_exercises.map{ :spaced_practice_group }
+    group_types = core_exercises.map { :core_group } +
+                  spaced_exercises.map { :spaced_practice_group }
 
     # Create the new concept coach task, and put the exercises into steps
     run(:create_cc_task, role: role, page: page, exercises: exercises, group_types: group_types)
 
-    run(:add_spy_info, to: outputs.task,
-                       from: [ecosystem, { history: history.core_page_ids,
-                                           spaced_practice: spaced_practice_status }])
-
-    Tasks::UpdateTaskCaches.perform_later(tasks: outputs.task)
+    run(:add_spy_info, to: outputs.task, from: [
+      ecosystem, { history: history.core_page_ids, spaced_practice: spaced_practice_status }
+    ])
 
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: outputs.task)
   end
@@ -134,7 +133,7 @@ class GetConceptCoach
   def get_role_and_book(user:, book_uuid:)
     roles = Role::GetUserRoles[user, :student]
 
-    cc_roles = roles.select{ |role| role.student.try!(:course).try!(:is_concept_coach) }
+    cc_roles = roles.select { |role| role.student.try!(:course).try!(:is_concept_coach) }
 
     valid_books = []
     selected_role_book_array_array = []

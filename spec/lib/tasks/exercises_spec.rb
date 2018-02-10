@@ -22,7 +22,7 @@ RSpec.describe 'exercises:remove', type: :rake do
   let(:num_tasks) { @tasks.size }
 
   let(:queue)          { :low_priority }
-  let(:configured_job) { Lev::ActiveJob::ConfiguredJob.new(described_class, queue: queue) }
+  let(:configured_job) { Lev::ActiveJob::ConfiguredJob.new(Tasks::UpdateTaskCaches, queue: queue) }
 
   before do
     allow(Tasks::UpdateTaskCaches).to receive(:set) do |options|
@@ -32,7 +32,7 @@ RSpec.describe 'exercises:remove', type: :rake do
   end
 
   it 'removes the given exercises from the assignments, scores and caches' do
-    expect(configured_job).to receive(:perform_later).exactly(num_tasks).times
+    expect(configured_job).to receive(:perform_later).exactly(num_tasks).times.and_call_original
 
     expect do
       call(uid)
@@ -41,11 +41,11 @@ RSpec.describe 'exercises:remove', type: :rake do
     end.to change { Tasks::Models::TaskedExercise.count }.by(-num_tasks)
        .and change { Tasks::Models::TaskStep.count }.by(-num_tasks)
        .and not_change { Tasks::Models::Task.count }
-       .and change { @tasks.map(&:steps_count).reduce(0, :+) }.by(-num_tasks)
-       .and change { @tasks.map(&:completed_steps_count).reduce(0, :+) }.by(-num_tasks)
-       .and change { @tasks.map(&:exercise_steps_count).reduce(0, :+) }.by(-num_tasks)
-       .and change { @tasks.map(&:completed_exercise_steps_count).reduce(0, :+) }.by(-num_tasks)
-       .and change { @tasks.map(&:correct_exercise_steps_count).reduce(0, :+) }.by(-num_tasks)
+       .and change { @tasks.sum(&:steps_count) }.by(-num_tasks)
+       .and change { @tasks.sum(&:completed_steps_count) }.by(-num_tasks)
+       .and change { @tasks.sum(&:exercise_steps_count) }.by(-num_tasks)
+       .and change { @tasks.sum(&:completed_exercise_steps_count) }.by(-num_tasks)
+       .and change { @tasks.sum(&:correct_exercise_steps_count) }.by(-num_tasks)
 
     @tasks.each { |task| expect(task.tasked_exercises.first.exercise.uid).not_to eq uid }
   end

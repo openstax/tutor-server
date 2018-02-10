@@ -198,7 +198,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                                                           .and_return(Tasks::UpdatePeriodCaches)
         expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-        expect { described_class.call(tasks: tasks, queue: queue.to_s) }
+        expect { described_class.call(task_ids: task_ids, queue: queue.to_s) }
           .to change { Tasks::Models::TaskCache.count }.by(num_task_caches)
 
         task_caches = Tasks::Models::TaskCache.where(tasks_task_id: task_ids)
@@ -254,7 +254,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                                                           .and_return(Tasks::UpdatePeriodCaches)
         expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-        expect { described_class.call(tasks: tasks, queue: queue.to_s) }.not_to(
+        expect { described_class.call(task_ids: task_ids, queue: queue.to_s) }.not_to(
           change { Tasks::Models::TaskCache.count }
         )
 
@@ -281,8 +281,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       end
 
       it 'is called when a task_plan is published' do
-        expect(configured_job).to receive(:perform_later) do |tasks:, queue:|
-          expect(tasks).to match_array(@task_plan.reload.tasks)
+        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
+          expect(task_ids).to match_array(@task_plan.tasks.pluck(:id))
           expect(queue).to eq queue.to_s
         end
 
@@ -291,8 +291,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
       it 'is called when a task step is updated' do
         task = @task_plan.tasks.first
-        expect(configured_job).to(
-          receive(:perform_later).with(tasks: task, queue: queue.to_s)
+        expect(configured_job).to receive(:perform_later).with(
+          task_ids: task.id, update_step_counts: true, queue: queue.to_s
         )
 
         tasked_exercise = task.tasked_exercises.first
@@ -302,8 +302,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
       it 'is called when a task step is marked as completed' do
         task = @task_plan.tasks.first
-        expect(configured_job).to(
-          receive(:perform_later).with(tasks: task, queue: queue.to_s)
+        expect(configured_job).to receive(:perform_later).with(
+          task_ids: task.id, update_step_counts: true, queue: queue.to_s
         )
 
         task_step = task.task_steps.first
@@ -314,8 +314,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task = @task_plan.tasks.first
         # Queuing the background job 6 times is not ideal at all...
         # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
-        expect(configured_job).to(
-          receive(:perform_later).exactly(6).times.with(tasks: task, queue: queue.to_s)
+        expect(configured_job).to receive(:perform_later).exactly(6).times.with(
+          task_ids: task.id, update_step_counts: true, queue: queue.to_s
         )
 
         Tasks::PopulatePlaceholderSteps.call(task: task)
@@ -325,11 +325,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         ecosystem = course.ecosystems.first
         course.course_ecosystems.delete_all :delete_all
 
-        expect(configured_job).to receive(:perform_later) do |tasks:, queue:|
-          student_tasks = @task_plan.tasks.select do |task|
+        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
+          student_task_ids = @task_plan.tasks.select do |task|
             task.taskings.any? { |tasking| tasking.role.student.present? }
-          end
-          expect(tasks).to match_array(student_tasks)
+          end.map(&:id)
+          expect(task_ids).to match_array(student_task_ids)
           expect(queue).to eq queue.to_s
         end
 
@@ -339,11 +339,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a new student joins the course' do
         student_user = FactoryBot.create :user_profile
         period = course.periods.first
-        existing_tasks = tasks
-        expect(configured_job).to receive(:perform_later) do |tasks:, queue:|
-          expect(tasks.size).to eq 1
+        existing_task_ids = tasks.map(&:id)
+        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
+          expect(task_ids.size).to eq 1
           expect(queue).to eq queue.to_s
-          expect(existing_tasks).not_to include tasks.first
+          expect(existing_task_ids).not_to include task_ids.first
         end
 
         AddUserAsPeriodStudent.call(user: student_user, period: period)
@@ -360,7 +360,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                                                           .and_return(Tasks::UpdatePeriodCaches)
         expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-        expect { described_class.call(tasks: tasks, queue: queue.to_s) }
+        expect { described_class.call(task_ids: task_ids, queue: queue.to_s) }
           .to change { Tasks::Models::TaskCache.count }.by(num_task_caches)
 
         task_caches = Tasks::Models::TaskCache.where(tasks_task_id: task_ids)
@@ -416,7 +416,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                                                           .and_return(Tasks::UpdatePeriodCaches)
         expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-        expect { described_class.call(tasks: tasks, queue: queue.to_s) }.not_to(
+        expect { described_class.call(task_ids: task_ids, queue: queue.to_s) }.not_to(
           change { Tasks::Models::TaskCache.count }
         )
 
@@ -443,8 +443,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       end
 
       it 'is called when a task_plan is published' do
-        expect(configured_job).to receive(:perform_later) do |tasks:, queue:|
-          expect(tasks).to match_array(@task_plan.reload.tasks)
+        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
+          expect(task_ids).to match_array(@task_plan.tasks.pluck(:id))
           expect(queue).to eq queue.to_s
         end
 
@@ -453,7 +453,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
       it 'is called when a task step is updated' do
         task = @task_plan.tasks.first
-        expect(configured_job).to receive(:perform_later).with(tasks: task, queue: queue.to_s)
+        expect(configured_job).to receive(:perform_later).with(
+          task_ids: task.id, update_step_counts: true, queue: queue.to_s
+        )
 
         tasked_exercise = task.tasked_exercises.first
         tasked_exercise.free_response = 'Something'
@@ -462,7 +464,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
       it 'is called when a task step is marked as completed' do
         task = @task_plan.tasks.first
-        expect(configured_job).to receive(:perform_later).with(tasks: task, queue: queue.to_s)
+        expect(configured_job).to(
+          receive(:perform_later).with(
+            task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          )
+        )
 
         task_step = task.task_steps.first
         MarkTaskStepCompleted.call(task_step: task_step)
@@ -473,7 +479,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         # Queuing the background job 6 times is not ideal at all...
         # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
         expect(configured_job).to(
-          receive(:perform_later).exactly(6).times.with(tasks: task, queue: queue.to_s)
+          receive(:perform_later).exactly(6).times.with(
+            task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          )
         )
 
         Tasks::PopulatePlaceholderSteps.call(task: task)
@@ -483,11 +491,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         ecosystem = course.ecosystems.first
         course.course_ecosystems.delete_all :delete_all
 
-        expect(configured_job).to receive(:perform_later) do |tasks:, queue:|
-          student_tasks = @task_plan.tasks.select do |task|
+        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
+          student_task_ids = @task_plan.tasks.select do |task|
             task.taskings.any? { |tasking| tasking.role.student.present? }
-          end
-          expect(tasks).to match_array(student_tasks)
+          end.map(&:id)
+          expect(task_ids).to match_array(student_task_ids)
           expect(queue).to eq queue.to_s
         end
 
@@ -497,11 +505,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a new student joins the course' do
         student_user = FactoryBot.create :user_profile
         period = course.periods.first
-        existing_tasks = tasks
-        expect(configured_job).to receive(:perform_later) do |tasks:, queue:|
-          expect(tasks.size).to eq 1
+        existing_task_ids = tasks.map(&:id)
+        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
+          expect(task_ids.size).to eq 1
           expect(queue).to eq queue.to_s
-          expect(existing_tasks).not_to include tasks.first
+          expect(existing_task_ids).not_to include task_ids.first
         end
 
         AddUserAsPeriodStudent.call(user: student_user, period: period)
@@ -567,7 +575,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       expect(Tasks::UpdatePeriodCaches).to receive(:set).and_return(Tasks::UpdatePeriodCaches)
       expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-      expect { described_class.call(tasks: tasks) }
+      expect { described_class.call(task_ids: task_ids) }
         .to change { Tasks::Models::TaskCache.count }.by(num_task_caches)
 
       task_caches = Tasks::Models::TaskCache.where(tasks_task_id: task_ids)
@@ -618,7 +626,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       expect(Tasks::UpdatePeriodCaches).to receive(:set).and_return(Tasks::UpdatePeriodCaches)
       expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-      expect { described_class.call(tasks: tasks) }.not_to change { Tasks::Models::TaskCache.count }
+      expect { described_class.call(task_ids: task_ids) }.not_to(
+        change { Tasks::Models::TaskCache.count }
+      )
 
       task_caches.each do |task_cache|
         task = task_cache.reload.task

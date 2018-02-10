@@ -105,10 +105,12 @@ class DistributeTasks
       end
     end
 
+    tasks.each(&:update_step_counts)
     Tasks::Models::Task.import tasks, recursive: true, validate: false
 
     queue = task_plan.is_preview ? :lowest_priority : :low_priority
-    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(tasks: tasks, queue: queue.to_s)
+    Tasks::UpdateTaskCaches.set(queue: queue)
+                           .perform_later(task_ids: tasks.map(&:id), queue: queue.to_s)
 
     tasks.each do |task|
       task.task_steps.reset

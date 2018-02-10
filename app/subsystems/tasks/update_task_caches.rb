@@ -7,25 +7,72 @@ class Tasks::UpdateTaskCaches
 
   protected
 
-  def exec(tasks:, queue: 'low_priority')
-    tasks = [tasks].flatten
+  def exec(task_ids:, update_step_counts: false, queue: 'low_priority')
+    task_ids = [task_ids].flatten
 
     # Attempt to lock the tasks; Skip tasks already locked by someone else
     locked_tasks = Tasks::Models::Task
-      .where(id: tasks.map(&:id))
+      .where(id: task_ids)
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
       .preload(
         :ecosystem, :time_zone, taskings: { role: { student: { latest_enrollment: :period } } }
       )
+      .to_a
     tasks_by_id = locked_tasks.index_by(&:id)
-    task_ids = tasks_by_id.keys
+    locked_task_ids = tasks_by_id.keys
 
     # Retry tasks that we couldn't lock later
-    skipped_tasks = tasks - locked_tasks
-    self.class.perform_later(tasks: skipped_tasks) unless skipped_tasks.empty?
+    skipped_task_ids = task_ids - locked_task_ids
+    self.class.perform_later(task_ids: skipped_task_ids) unless skipped_task_ids.empty?
 
     # Stop if we couldn't lock any tasks at all
     return if task_ids.empty?
+
+    # Get TaskSteps for each given task
+    task_steps = Tasks::Models::TaskStep
+      .select([
+        :tasks_task_id,
+        :number,
+        :first_completed_at,
+        :last_completed_at,
+        :content_page_id,
+        :group_type,
+        :tasked_type,
+        :tasked_id
+      ])
+      .where(tasks_task_id: task_ids)
+      .order(:number)
+      .to_a
+
+    # Preload all TaskedExercises
+    exercise_steps = task_steps.select(&:exercise?)
+    ActiveRecord::Associations::Preloader.new.preload exercise_steps, :tasked
+
+    # Preload all TaskedPlaceholders
+    placeholder_steps = task_steps.select(&:placeholder?)
+    ActiveRecord::Associations::Preloader.new.preload placeholder_steps, :tasked
+
+    # Group TaskSteps by task_id and page_id
+    task_steps_by_task_id_and_page_id = Hash.new do |hash, key|
+      hash[key] = Hash.new { |hash, key| hash[key] = [] }
+    end
+    task_steps.each do |task_step|
+      task_id = task_step.tasks_task_id
+      page_id = task_step.content_page_id
+      task_steps_by_task_id_and_page_id[task_id][page_id] << task_step
+    end
+
+    if update_step_counts
+      tasks = locked_tasks.map do |task|
+        task_steps = task_steps_by_task_id_and_page_id[task.id].values.flatten
+        task.update_step_counts steps: task_steps
+      end
+
+      # Update the Task cache columns (scores cache)
+      Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
+        conflict_target: [ :id ], columns: Tasks::Models::Task::CACHE_COLUMNS
+      }
+    end
 
     # Get student and course IDs
     students = CourseMembership::Models::Student
@@ -38,6 +85,9 @@ class Tasks::UpdateTaskCaches
       .joins(role: [ :taskings, profile: :account ])
       .where(role: { taskings: { tasks_task_id: task_ids } })
       .preload(:latest_enrollment)
+
+    return if students.empty?
+
     account_ids = students.map(&:account_id)
 
     # Get student names (throws an error if faculty_status is not loaded for some reason)
@@ -59,52 +109,8 @@ class Tasks::UpdateTaskCaches
       period_ids << student.latest_enrollment.course_membership_period_id
     end
 
-    # Get TaskSteps for each given task
-    task_steps = Tasks::Models::TaskStep
-      .select([
-        :tasks_task_id,
-        :number,
-        :first_completed_at,
-        :content_page_id,
-        :group_type,
-        :tasked_type,
-        :tasked_id
-      ])
-      .where(tasks_task_id: task_ids)
-      .order(:number)
-      .to_a
-
-    # Count the number of assigned and completed task steps for each task,
-    # including ones without page_ids
-    num_assigned_steps_by_task_id = Hash.new 0
-    num_completed_steps_by_task_id = Hash.new 0
-    task_steps.each do |task_step|
-      task_id = task_step.tasks_task_id
-      num_assigned_steps_by_task_id[task_id] += 1
-      next unless task_step.completed?
-
-      num_completed_steps_by_task_id[task_id] += 1
-    end
-
-    # Remove task_steps without a page_id (spaced practice placeholders)
-    task_steps = task_steps.reject { |ts| ts.content_page_id.nil? }
-
-    # Preload all TaskedExercises
-    exercise_steps = task_steps.select(&:exercise?)
-    ActiveRecord::Associations::Preloader.new.preload exercise_steps, :tasked
-
-    # Group TaskSteps by task_id and page_id
-    task_steps_by_task_id_and_page_id = Hash.new do |hash, key|
-      hash[key] = Hash.new { |hash, key| hash[key] = [] }
-    end
-    task_steps.each do |task_step|
-      task_id = task_step.tasks_task_id
-      page_id = task_step.content_page_id
-      task_steps_by_task_id_and_page_id[task_id][page_id] << task_step
-    end
-
     # Get all relevant pages
-    page_ids = task_steps_by_task_id_and_page_id.values.flat_map(&:keys).uniq
+    page_ids = task_steps_by_task_id_and_page_id.values.flat_map(&:keys).compact.uniq
     pages_by_id = Content::Models::Page
       .select([
         :id,
@@ -133,7 +139,10 @@ class Tasks::UpdateTaskCaches
       task_ids = task_ids_by_course_id[course.id]
       ecosystem_map = run(:get_course_ecosystems_map, course: course).outputs.ecosystems_map
       course_ecosystem = ecosystem_map.to_ecosystem
-      page_ids = task_steps_by_task_id_and_page_id.values_at(*task_ids).flat_map(&:keys).uniq
+      page_ids = task_steps_by_task_id_and_page_id.values_at(*task_ids)
+                                                  .flat_map(&:keys)
+                                                  .compact
+                                                  .uniq
       pages = pages_by_id.values_at(*page_ids)
       page_to_page_map = ecosystem_map.map_pages_to_pages pages: pages
 
@@ -158,9 +167,11 @@ class Tasks::UpdateTaskCaches
 
       task_ids.flat_map do |task_id|
         task = tasks_by_id[task_id]
-        num_assigned_steps = num_assigned_steps_by_task_id[task_id]
-        num_completed_steps = num_completed_steps_by_task_id[task_id]
         task_steps_by_page_id = task_steps_by_task_id_and_page_id[task_id]
+        task_steps = task_steps_by_page_id.values.flatten
+
+        num_assigned_steps = task_steps.size
+        num_completed_steps = task_steps.count(&:completed?)
         student_ids = student_ids_by_task_id[task_id]
         student_names = student_names_by_task_id[task_id]
 
@@ -207,8 +218,7 @@ class Tasks::UpdateTaskCaches
     }
 
     # Update the PeriodCaches
-    periods = CourseMembership::Models::Period.select(:id).where(id: period_ids.uniq)
-    Tasks::UpdatePeriodCaches.set(queue: queue.to_sym).perform_later(periods: periods.to_a)
+    Tasks::UpdatePeriodCaches.set(queue: queue.to_sym).perform_later(period_ids: period_ids.uniq)
   end
 
   def build_task_cache(
