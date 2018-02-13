@@ -143,7 +143,7 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
             name: entry[:user].name,
             student_identifier: entry[:user].name + "_sid",
             user: entry[:user].id,
-            average_score: entry[:score]
+            course_average: entry[:score]
           }
         end
       })
