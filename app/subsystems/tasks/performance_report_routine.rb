@@ -1,4 +1,3 @@
-# Note: Not a real ActiveSupport::Concern but no reason it couldn't be
 module Tasks::PerformanceReportRoutine
 
   protected

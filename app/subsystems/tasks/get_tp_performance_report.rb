@@ -18,55 +18,57 @@ module Tasks
 
         [ role.student.period ]
       end
-      taskings = get_course_taskings(course, role, is_teacher)
+      tasks = get_course_tasks(course, role, is_teacher)
+      tasks_by_period_id = tasks.group_by(&:course_membership_period_id)
 
       outputs.performance_report = periods.map do |period|
-        # Filter tasking_plans period and sort by due date
-        tasking_plans = filter_and_sort_tasking_plans(taskings, course, period)
+        period_tasks = tasks_by_period_id[period.id] || []
+        tasking_plans = filter_and_sort_tasking_plans(period_tasks, course, period)
 
         # Assign column numbers in the performance report to task_plans
-        task_plan_col_nums = {}
+        col_nums_by_task_plan_id = {}
         tasking_plans.each_with_index do |tasking_plan, col_num|
-          task_plan_col_nums[tasking_plan.tasks_task_plan_id] = col_num
+          col_nums_by_task_plan_id[tasking_plan.tasks_task_plan_id] = col_num
         end
 
         # Sort the students into the performance report rows by name
-        role_taskings = taskings.group_by(&:role)
-        period_role_taskings = role_taskings.select do |student_role, taskings|
-          student_role.student.try!(:period) == period
-        end
-        sorted_period_student_data = period_role_taskings.sort_by do |student_role, _|
-          sort_name = "#{student_role.last_name} #{student_role.first_name}"
-          (sort_name.blank? ? student_role.name : sort_name).downcase
+        period_tasks_by_role_id = period_tasks.group_by(&:role_id)
+        sorted_role_id_tasks_array = period_tasks_by_role_id.sort_by do |_, tasks|
+          first_task = tasks.first
+          name = "#{first_task.last_name} #{first_task.first_name}"
+          name = first_task.username if name.blank?
+          name.downcase
         end
 
         # This hash will accumulate student tasks to calculate header stats later
-        heading_stats_plan_to_task_map = Hash.new { |hash, key| hash[key] = [] }
+        task_plan_id_to_task_map = Hash.new { |hash, key| hash[key] = [] }
+        student_data = sorted_role_id_tasks_array.map do |role_id, tasks|
+          first_task = tasks.first
 
-        student_data = sorted_period_student_data.map do |student_role, student_taskings|
+          name = "#{first_task.first_name} #{first_task.last_name}"
+          name = first_task.username if name.blank?
+
           # Populate the student_tasks array but leave empty spaces (nils)
           # for assignments the student hasn't done
           student_tasks = Array.new(tasking_plans.size)
 
-          student_taskings.each do |tasking|
-            col_num = task_plan_col_nums[tasking.task.tasks_task_plan_id]
+          tasks.each do |task|
+            col_num = col_nums_by_task_plan_id[task.tasks_task_plan_id]
             # Skip if there is no column in the report for this task
             # (which means it is not assigned to the current period)
-            # Could be individual, like practice widget,
-            # or assigned only to a different period and done by the student while in that period
+            # Could be individual, like practice widget, or assigned
+            # only to a different period and done by the student before transferring
             next if col_num.nil?
 
-            student_tasks[col_num] = tasking.task
+            student_tasks[col_num] = task
           end
 
-          is_dropped = student_role.student.dropped?
+          is_dropped = !first_task.dropped_at.nil?
 
-          # Gather the non-dropped student tasks into the heading_stats_plan_to_task_map hash
-          if !is_dropped
-            student_tasks.compact.each do |task|
-              heading_stats_plan_to_task_map[task.task_plan] << task
-            end
-          end
+          # Gather the non-dropped student tasks into the task_plan_id_to_task_map hash
+          student_tasks.compact.each do |task|
+            task_plan_id_to_task_map[task.tasks_task_plan_id] << task
+          end if !is_dropped
 
           data = get_task_data(student_tasks)
           non_nil_data = data.compact
@@ -83,12 +85,12 @@ module Tasks
                            course.reading_progress_weight.to_f * (reading_progress || 0)
 
           OpenStruct.new(
-            name: student_role.name,
-            first_name: student_role.first_name,
-            last_name: student_role.last_name,
-            student_identifier: student_role.student.student_identifier,
-            role: student_role.id,
-            user: student_role.profile.id,
+            name: name,
+            first_name: first_task.first_name,
+            last_name: first_task.last_name,
+            student_identifier: first_task.student_identifier,
+            role: role_id,
+            user: first_task.user_id,
             data: data,
             homework_score: homework_score,
             homework_progress: homework_progress,
@@ -107,45 +109,76 @@ module Tasks
           overall_reading_score: average(overall_students.map(&:reading_score)),
           overall_reading_progress: average(overall_students.map(&:reading_progress)),
           overall_course_average: average(overall_students.map(&:course_average)),
-          data_headings: get_data_headings(tasking_plans, heading_stats_plan_to_task_map),
+          data_headings: get_data_headings(tasking_plans, task_plan_id_to_task_map),
           students: student_data
         )
       end
     end
 
-    def filter_and_sort_tasking_plans(taskings, course, period)
-      taskings.flat_map { |tk| tk.task.task_plan.tasking_plans }.select do |tp|
-        (tp.target == period  || tp.target == course) && tp.task_plan.is_published?
-      end.uniq.sort_by { |tp| [tp.due_at_ntz, tp.created_at] }.reverse
-    end
-
     # Return reading, homework and external tasks for a student
-    # .reorder(nil) removes the ordering from the period default scope so .distinct won't blow up
-    # .distinct is necessary for the preloading to work...
-    def get_course_taskings(course, role, is_teacher)
+    def get_course_tasks(course, role, is_teacher)
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
-      rel = course.taskings
-                  .joins(task: { task_plan: :tasking_plans })
-                  .where(task: {task_type: task_types})
-                  .where(task: { task_plan: { withdrawn_at: nil } })
-                  .preload(task: [{task_plan: {tasking_plans: [:target, :time_zone]}}, :time_zone],
-                           role: [{student: {latest_enrollment: :period}}, {profile: :account}])
-                  .reorder(nil).distinct
-      rel = rel.where(entity_role_id: role.id) unless is_teacher
-      rel.to_a.select { |tasking| tasking.task.past_open? }
+      tt = Tasks::Models::Task.arel_table
+      er = Entity::Role.arel_table
+      st = CourseMembership::Models::Student.arel_table
+      en = CourseMembership::Models::Enrollment.arel_table
+      up = User::Models::Profile.arel_table
+      ac = OpenStax::Accounts::Account.arel_table
+      rel = Tasks::Models::Task
+        .select(
+          [
+            tt[ Arel.star ],
+            er[:id].as('role_id'),
+            st[:student_identifier],
+            st[:dropped_at],
+            en[:course_membership_period_id],
+            up[:id].as('user_id'),
+            ac[:username],
+            ac[:first_name],
+            ac[:last_name]
+          ]
+        )
+        .joins(
+          task_plan: :tasking_plans,
+          taskings: { role: [ student: :latest_enrollment, profile: :account ] }
+        )
+        .where(
+          task_type: task_types,
+          task_plan: { withdrawn_at: nil },
+          taskings: { role: { student: { course_profile_course_id: course.id } } }
+        )
+        .preload(:time_zone, task_plan: { tasking_plans: :time_zone })
+        .reorder(nil).distinct
+      rel = rel.joins(:taskings).where(taskings: { entity_role_id: role.id }) unless is_teacher
+      rel.to_a.select(&:past_open?)
     end
 
-    def get_data_headings(tasking_plans, heading_stats_plan_to_task_map)
+    def filter_and_sort_tasking_plans(tasks, course, period)
+      tasks.map(&:task_plan).select(&:is_published?).flat_map do |task_plan|
+        task_plan.tasking_plans.select do |tp|
+          case tp.target_type
+          when CourseProfile::Models::Course.name
+            tp.target_id == course.id
+          when CourseMembership::Models::Period.name
+            tp.target_id == period.id
+          end
+        end
+      end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.created_at ] }.reverse
+    end
+
+    def get_data_headings(tasking_plans, task_plan_id_to_task_map)
       tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
+        task_plan_id = task_plan.id
+        tasks = task_plan_id_to_task_map[task_plan_id]
 
         OpenStruct.new(
+          plan_id: task_plan_id,
           title: task_plan.title,
-          plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average_score: average_score(heading_stats_plan_to_task_map[task_plan]),
-          average_progress: completion_fraction(heading_stats_plan_to_task_map[task_plan])
+          average_score: average_score(tasks),
+          average_progress: completion_fraction(tasks)
         )
       end
     end
