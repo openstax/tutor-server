@@ -1,6 +1,8 @@
 FROM m1yag1/ruby-ubuntu:2.2.3
 
-MAINTAINER OpenStax
+LABEL author="OpenStax"
+
+RUN apt-get install -y postgresql-client-9.5
 
 # Set important environmental variabls
 ENV GEM_HOME /usr/local/bundle
@@ -22,6 +24,3 @@ RUN gem install bundler && bundle install
 
 # Copy over the application code
 COPY . ./
-
-# ENTRYPOINT bin/rails s
-CMD ["bin/rails", "s"]

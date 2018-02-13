@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:latest
+  elasticsearch:
+    image: nickstenning/elasticsearch-icu
+  rabbit:
+    image: rabbitmq:3.6-management-alpine
+  h:
+    image: openstax/hypothesis-server:dev
+    env_file: .env.hypothesis
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    links:
+      - rabbit
+      - elasticsearch
+      - db
+  web:
+    build:
+      context: .
+    env_file: .env
+    command: bin/rails s -b 0.0.0.0
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+    links:
+      - db
+      - redis
+      - h
