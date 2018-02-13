@@ -51,7 +51,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       @tasked.save
       result = MarkTaskStepCompleted.call(task_step: @task_step)
 
-      render_api_errors(result.errors) || render_api_errors(@tasked.errors) || respond_with(
+      raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
+      raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+
+      respond_with(
         @task_step.task,
         responder: ResponderWithPutPatchDeleteContent,
         represent_with: Api::V1::TaskRepresenter
