@@ -16,9 +16,7 @@ $(document).ready(function() {
   var day = date.getDate();
   var dateString = year + (month < 10 ? '-0' : '-') + month + (day < 10 ? '-0' : '-') + day;
 
-  $('.datepicker.start').val(dateString + ' 00:00:00');
-  $('.datepicker.end').val(dateString + ' 23:59:59');
-
+  $('.datepicker.research').val(dateString + ' 00:00:00');
   $('.datepicker').datetimepicker({
     format: 'Y-m-d H:i:s'
   });
