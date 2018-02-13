@@ -105,9 +105,9 @@ module Tasks
     end
 
     def filter_and_sort_tasking_plans(taskings, course, period)
-      taskings.flat_map do |tg|
-        tg.task.task_plan.tasking_plans.select { |tp| tp.target == period  || tp.target == course }
-      end.uniq.sort { |a, b| [b.due_at_ntz, b.created_at] <=> [a.due_at_ntz, a.created_at] }
+      taskings.flat_map { |tk| tk.task.task_plan.tasking_plans }.select do |tp|
+        (tp.target == period  || tp.target == course) && tp.task_plan.is_published?
+      end.uniq.sort_by { |tp| [tp.due_at_ntz, tp.created_at] }.reverse
     end
 
     def get_course_taskings(course)

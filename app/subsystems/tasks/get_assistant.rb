@@ -20,12 +20,12 @@ class Tasks::GetAssistant
   end
 
   def get_assistant(course:, task_plan:)
-    outputs[:assistant] = Tasks::Models::Assistant
-                            .joins(:course_assistants)
-                            .where(course_assistants: {
-                              course_profile_course_id: course.id,
-                              tasks_task_plan_type: task_plan.type
-                            }).first
+    outputs.assistant = Tasks::Models::Assistant.joins(:course_assistants).find_by(
+      course_assistants: {
+        course_profile_course_id: course.id,
+        tasks_task_plan_type: task_plan.type
+      }
+    )
   end
 
   def create_default_course_assistants(course:)
