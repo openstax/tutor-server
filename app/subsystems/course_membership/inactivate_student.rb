@@ -14,7 +14,8 @@ module CourseMembership
       RefundPayment.perform_later(uuid: student.uuid) if student.is_refund_allowed
 
       period = student.period
-      Tasks::UpdatePeriodCaches.perform_later(periods: period, force: true)
+      queue = student.course.is_preview ? :lowest_priority : :low_priority
+      Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(periods: period, force: true)
 
       outputs.student = student
     end

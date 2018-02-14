@@ -89,7 +89,7 @@ gem 'roar', '1.0.3'
 gem 'jobba', '~> 1.6.0'
 
 # Lev framework
-gem 'lev', '~> 8.0.0'
+gem 'lev', '~> 8.1.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
