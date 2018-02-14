@@ -12,11 +12,14 @@ module Tasks
       raise(SecurityTransgression, 'The caller is not a teacher in this course') \
         unless CourseMembership::IsCourseTeacher[course: course, roles: [role]]
 
+      tz = course.time_zone.try!(:to_tz) || Time.zone
+      current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
+
       taskings = get_cc_taskings(course)
       ecosystems_map = GetCourseEcosystemsMap[course: course]
       cc_tasks_map = get_cc_tasks_map(ecosystems_map, taskings)
 
-      outputs[:performance_report] = course.periods.reject(&:archived?).map do |period|
+      outputs.performance_report = course.periods.reject(&:archived?).map do |period|
         period_cc_tasks_map = cc_tasks_map[period] || {}
 
         sorted_period_pages =
@@ -33,10 +36,14 @@ module Tasks
                                 .preload(student: {role: {profile: :account}})
                                 .map(&:student)
 
-        data_headings = get_cc_data_headings(period_cc_tasks_map.values, sorted_period_pages)
+        data_headings = get_cc_data_headings(
+          period_cc_tasks_map.values, sorted_period_pages, current_time_ntz
+        )
 
         student_data = period_students.map do |student|
-          data = get_student_cc_data(period_cc_tasks_map[student.role], sorted_period_pages)
+          data = get_student_cc_data(
+            period_cc_tasks_map[student.role], sorted_period_pages, tz, current_time_ntz
+          )
 
           {
             name: student.role.name,
@@ -45,7 +52,10 @@ module Tasks
             student_identifier: student.student_identifier,
             role: student.role.id,
             data: data,
-            average_score: average_score(data.map{|datum| datum.present? ? datum[:task] : nil}),
+            average_score: average_score(
+              tasks: data.map{|datum| datum.present? ? datum[:task] : nil},
+              current_time_ntz: current_time_ntz
+            ),
             is_dropped: false
           }
         end.sort_by do |hash|
@@ -55,9 +65,7 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          overall_average_score: average(
-            student_data.map{ |sd| sd[:average_score] }
-          ),
+          overall_average_score: average(array: student_data.map { |sd| sd[:average_score] }),
           data_headings: data_headings,
           students: student_data
         })
@@ -99,7 +107,7 @@ module Tasks
       end
     end
 
-    def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
+    def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages, current_time_ntz)
       # Only include non-dropped students in the heading stats
 
       sorted_period_pages.map do |page|
@@ -113,16 +121,19 @@ module Tasks
           cnx_page_id: page.uuid,
           title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
-          average_score: average_score(non_dropped_page_tasks),
-          average_actual_and_placeholder_exercise_count: average(
-            non_dropped_page_tasks, ->(tt) {tt.actual_and_placeholder_exercise_count}
+          average_score: average_score(
+            tasks: non_dropped_page_tasks, current_time_ntz: current_time_ntz
           ),
-          completion_rate: completion_fraction(non_dropped_page_tasks)
+          average_actual_and_placeholder_exercise_count: average(
+            array: non_dropped_page_tasks,
+            value_getter: ->(tt) { tt.actual_and_placeholder_exercise_count }
+          ),
+          completion_rate: completion_fraction(tasks: non_dropped_page_tasks)
         }
       end
     end
 
-    def get_student_cc_data(page_cc_tasks_map_for_role, sorted_pages)
+    def get_student_cc_data(page_cc_tasks_map_for_role, sorted_pages, tz, current_time_ntz)
       return [nil]*sorted_pages.size if page_cc_tasks_map_for_role.nil?
 
       tasks = sorted_pages.map do |page|
@@ -133,7 +144,7 @@ module Tasks
         cc_tasks.first.task
       end
 
-      get_task_data(tasks)
+      get_task_data(tasks: tasks, tz: tz, current_time_ntz: current_time_ntz)
     end
   end
 end

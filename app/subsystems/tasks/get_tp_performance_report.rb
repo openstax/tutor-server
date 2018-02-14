@@ -18,7 +18,11 @@ module Tasks
 
         [ role.student.period ]
       end
-      tasks = get_course_tasks(course, role, is_teacher)
+
+      tz = course.time_zone.try!(:to_tz) || Time.zone
+      current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
+
+      tasks = get_course_tasks(course, role, is_teacher, current_time_ntz)
       tasks_by_period_id = tasks.group_by(&:course_membership_period_id)
 
       outputs.performance_report = periods.map do |period|
@@ -70,15 +74,23 @@ module Tasks
             task_plan_id_to_task_map[task.tasks_task_plan_id] << task
           end if !is_dropped
 
-          data = get_task_data(student_tasks)
+          data = get_task_data(tasks: student_tasks, tz: tz, current_time_ntz: current_time_ntz)
           non_nil_data = data.compact
           homework_tasks = non_nil_data.select { |dd| dd.type == 'homework' }.map(&:task)
           reading_tasks = non_nil_data.select { |dd| dd.type == 'reading' }.map(&:task)
 
-          homework_score = average_score(homework_tasks)
-          homework_progress = average_progress(homework_tasks)
-          reading_score = average_score(reading_tasks)
-          reading_progress = average_progress(reading_tasks)
+          homework_score = average_score(
+            tasks: homework_tasks, current_time_ntz: current_time_ntz
+          )
+          homework_progress = average_progress(
+            tasks: homework_tasks, current_time_ntz: current_time_ntz
+          )
+          reading_score = average_score(
+            tasks: reading_tasks, current_time_ntz: current_time_ntz
+          )
+          reading_progress = average_progress(
+            tasks: reading_tasks, current_time_ntz: current_time_ntz
+          )
           course_average = course.homework_score_weight.to_f * (homework_score || 0) +
                            course.homework_progress_weight.to_f * (homework_progress || 0) +
                            course.reading_score_weight.to_f * (reading_score || 0) +
@@ -104,19 +116,23 @@ module Tasks
         overall_students = student_data.reject(&:is_dropped)
         OpenStruct.new(
           period: period,
-          overall_homework_score: average(overall_students.map(&:homework_score)),
-          overall_homework_progress: average(overall_students.map(&:homework_progress)),
-          overall_reading_score: average(overall_students.map(&:reading_score)),
-          overall_reading_progress: average(overall_students.map(&:reading_progress)),
-          overall_course_average: average(overall_students.map(&:course_average)),
-          data_headings: get_data_headings(tasking_plans, task_plan_id_to_task_map),
+          overall_homework_score: average(array: overall_students.map(&:homework_score)),
+          overall_homework_progress: average(array: overall_students.map(&:homework_progress)),
+          overall_reading_score: average(array: overall_students.map(&:reading_score)),
+          overall_reading_progress: average(array: overall_students.map(&:reading_progress)),
+          overall_course_average: average(array: overall_students.map(&:course_average)),
+          data_headings: get_data_headings(
+            tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz
+          ),
           students: student_data
         )
       end
     end
 
     # Return reading, homework and external tasks for a student
-    def get_course_tasks(course, role, is_teacher)
+    # reorder(nil) is required for distinct to work
+    # distinct is required for preloading to work
+    def get_course_tasks(course, role, is_teacher, current_time_ntz)
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
@@ -147,10 +163,10 @@ module Tasks
           task_plan: { withdrawn_at: nil },
           taskings: { role: { student: { course_profile_course_id: course.id } } }
         )
-        .preload(:time_zone, task_plan: { tasking_plans: :time_zone })
+        .preload(task_plan: :tasking_plans)
         .reorder(nil).distinct
       rel = rel.joins(:taskings).where(taskings: { entity_role_id: role.id }) unless is_teacher
-      rel.to_a.select(&:past_open?)
+      rel.to_a.select { |task| task.opens_at_ntz.nil? || current_time_ntz > task.opens_at_ntz }
     end
 
     def filter_and_sort_tasking_plans(tasks, course, period)
@@ -166,7 +182,7 @@ module Tasks
       end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.created_at ] }.reverse
     end
 
-    def get_data_headings(tasking_plans, task_plan_id_to_task_map)
+    def get_data_headings(tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz)
       tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
         task_plan_id = task_plan.id
@@ -176,9 +192,9 @@ module Tasks
           plan_id: task_plan_id,
           title: task_plan.title,
           type: task_plan.type,
-          due_at: tasking_plan.due_at,
-          average_score: average_score(tasks),
-          average_progress: completion_fraction(tasks)
+          due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
+          average_score: average_score(tasks: tasks, current_time_ntz: current_time_ntz),
+          average_progress: completion_fraction(tasks: tasks)
         )
       end
     end
