@@ -56,7 +56,6 @@ class ExportAndUploadResearchData
         file << [
           "Student Research Identifier",
           "Course ID",
-          "Concept Coach?",
           "Period ID",
           "Plan ID",
           "Task ID",
@@ -87,8 +86,7 @@ class ExportAndUploadResearchData
         te = Tasks::Models::TaskedExercise.arel_table
         pg = Content::Models::Page.arel_table
         er = Entity::Role.arel_table
-        co = CourseProfile::Models::Course.arel_table
-        boolean_typecaster = ActiveAttr::Typecasting::BooleanTypecaster.new
+        st = CourseMembership::Models::Student.arel_table
         steps = Tasks::Models::TaskStep
           .select([
             Tasks::Models::TaskStep.arel_table[ Arel.star ],
@@ -102,8 +100,7 @@ class ExportAndUploadResearchData
             pg[:id].as('page_id'),
             pg[:url].as('page_url'),
             er[:research_identifier],
-            co[:id].as('course_id'),
-            co[:is_concept_coach],
+            st[:course_profile_course_id].as('course_id'),
             <<-TAGS_SQL.strip_heredoc
               (
                 SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
@@ -168,7 +165,6 @@ class ExportAndUploadResearchData
               row = [
                 step.research_identifier,
                 step.course_id,
-                boolean_typecaster.call(step.is_concept_coach).to_s.upcase,
                 step.course_membership_period_id,
                 task.tasks_task_plan_id,
                 task.id,
@@ -197,7 +193,7 @@ class ExportAndUploadResearchData
                   # escape so Excel doesn't see as formula
                   step.free_response.try!(:sub, /\A=/, "'="),
                   step.answer_id,
-                  step.answer_id == step.correct_answer_id
+                  step.completed? ? step.answer_id == step.correct_answer_id : nil
                 ] : [ nil ] * 7
               )
 
