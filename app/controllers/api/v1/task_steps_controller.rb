@@ -43,14 +43,23 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
   EOS
   def completed
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
-    result = MarkTaskStepCompleted.call(task_step: @task_step)
-    render_api_errors(result.errors) || respond_with(
-      @task_step.task,
-      responder: ResponderWithPutPatchDeleteContent,
-      represent_with: Api::V1::TaskRepresenter
-    )
+    @tasked.with_lock do
+      consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+      @tasked.save
+      result = MarkTaskStepCompleted.call(task_step: @task_step)
+
+      raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
+      raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+
+      respond_with(
+        @task_step.task,
+        responder: ResponderWithPutPatchDeleteContent,
+        represent_with: Api::V1::TaskRepresenter
+      )
+    end
   end
 
   ###############################################################
