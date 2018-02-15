@@ -12,10 +12,7 @@ class GetPerformanceReport
   protected
 
   def exec(course:, role:)
-    raise(SecurityTransgression, 'The caller is not a teacher in this course') \
-      unless CourseMembership::IsCourseTeacher[course: course, roles: [role]]
-
-    course.is_concept_coach ? run(:get_cc_performance_report, course: course) : \
-                              run(:get_tp_performance_report, course: course)
+    course.is_concept_coach ? run(:get_cc_performance_report, course: course, role: role) : \
+                              run(:get_tp_performance_report, course: course, role: role)
   end
 end

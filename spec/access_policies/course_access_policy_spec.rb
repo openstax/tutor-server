@@ -38,8 +38,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'anonymous user' do
       let(:requestor) { @anonymous }
 
-      [:index, :read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone, :create].each do |test_action|
+      [
+        :index, :create_practice, :performance, :read, :read_task_plans, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone, :create
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -55,8 +57,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone, :create].each do |test_action|
+      [
+        :create_practice, :performance, :read, :read_task_plans, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone, :create
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -67,15 +71,17 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'student in original course' do
       let(:requestor) { @student }
 
-      [:index, :read].each do |test_action|
+      [:index, :read, :create_practice, :performance].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq true }
         end
       end
 
-      [:read_task_plans, :export, :roster, :add_period, :update,
-       :stats, :exercises, :clone, :create].each do |test_action|
+      [
+        :read_task_plans, :export, :roster, :add_period,
+        :update, :stats, :exercises, :clone, :create
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -91,8 +97,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:create, :read, :read_task_plans, :export, :roster,
-       :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :create, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -108,8 +116,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq false }
       end
 
-      [:index, :read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :index, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq true }
@@ -127,8 +137,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [:create, :read, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :create, :read, :create_practice, :performance, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -139,8 +151,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'verified faculty in original course' do
       let(:requestor) { @faculty }
 
-      [:index, :create, :read, :read_task_plans, :export, :roster,
-       :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :index, :create, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq true }
@@ -158,8 +172,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [:read, :export, :roster, :add_period, :update,
-       :stats, :exercises, :clone].each do |test_action|
+      [
+        :read, :create_practice, :performance, :export, :roster,
+        :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -177,8 +193,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [:read, :read_task_plans, :export, :roster, :add_period,
-      :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :read, :read_task_plans, :create_practice, :performance, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -194,8 +212,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'anonymous user' do
       let(:requestor) { @anonymous }
 
-      [:index, :read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone, :create].each do |test_action|
+      [
+        :index, :read, :create_practice, :performance, :read_task_plans, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone, :create
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -211,8 +231,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone, :create].each do |test_action|
+      [
+        :read, :create_practice, :performance, :read_task_plans, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone, :create
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -228,8 +250,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:create, :read, :read_task_plans, :export, :roster,
-       :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :create, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -240,15 +264,17 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'student in cloned course' do
       let(:requestor) { @clone_student }
 
-      [:index, :read].each do |test_action|
+      [:index, :read, :create_practice, :performance].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq true }
         end
       end
 
-      [:read_task_plans, :export, :roster, :add_period, :update,
-       :stats, :exercises, :clone, :create].each do |test_action|
+      [
+        :read_task_plans, :export, :roster, :add_period,
+        :update, :stats, :exercises, :clone, :create
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -264,8 +290,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:create, :read, :read_task_plans, :export, :roster,
-       :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :create, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+       ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -281,8 +309,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         it { should eq false }
       end
 
-      [:index, :read, :read_task_plans, :export, :roster,
-       :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :index, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq true }
@@ -300,8 +330,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [:read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :read, :create_practice, :performance, :read_task_plans, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
@@ -312,8 +344,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'verified faculty in cloned course' do
       let(:requestor) { @clone_faculty }
 
-      [:index, :create, :read, :read_task_plans, :export, :roster,
-       :add_period, :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :index, :create, :read, :create_practice, :performance, :read_task_plans,
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq true }
@@ -331,8 +365,10 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [:read, :read_task_plans, :export, :roster, :add_period,
-       :update, :stats, :exercises, :clone].each do |test_action|
+      [
+        :read, :create_practice, :performance, :read_task_plans, :export,
+        :roster, :add_period, :update, :stats, :exercises, :clone
+      ].each do |test_action|
         context "#{test_action}" do
           let(:action) { test_action }
           it { should eq false }
