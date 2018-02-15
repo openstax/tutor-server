@@ -41,7 +41,7 @@ class Tasks::UpdatePeriodCaches
           ]
         )
         .where(task: { tasks_task_plan_id: task_plan.try!(:id) })
-        .lock('FOR NO KEY UPDATE')
+        .lock('FOR NO KEY UPDATE OF "tasks_task_caches"')
         .to_a
         # Recheck if all task_caches have already been added to the PeriodCache
         # (since we hadn't locked them before)
