@@ -129,10 +129,7 @@ GEM
     bullet (4.14.7)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.9.0)
-    byebug (3.5.1)
-      columnize (~> 0.8)
-      debugger-linecache (~> 1.2)
-      slop (~> 3.6)
+    byebug (10.0.0)
     capybara (2.11.0)
       addressable
       mime-types (>= 1.16)
@@ -171,7 +168,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1)
-    columnize (0.9.0)
     compass (1.0.3)
       chunky_png (~> 1.2)
       compass-core (~> 1.0.2)
@@ -196,7 +192,6 @@ GEM
     database_cleaner (1.4.1)
     db-query-matchers (0.5.0)
     debug_inspector (0.0.3)
-    debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.3.8)
     declarative (0.0.9)
     deep_cloneable (2.1.1)
@@ -436,7 +431,7 @@ GEM
       parallel
     paranoia (2.3.1)
       activerecord (>= 4.0, < 5.2)
-    pg (0.18.1)
+    pg (0.21.0)
     pilfer (1.0.2)
       rblineprof (~> 0.3.2)
     poltergeist (1.11.0)
@@ -766,7 +761,7 @@ DEPENDENCIES
   p3p
   parallel_tests
   paranoia
-  pg
+  pg (~> 0.21.0)
   pilfer (~> 1.0.0)
   poltergeist
   postgresql_cursor
@@ -816,4 +811,4 @@ DEPENDENCIES
   with_advisory_lock!
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

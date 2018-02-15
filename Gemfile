@@ -42,7 +42,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 
 # PostgreSQL database
-gem 'pg'
+gem 'pg', '~> 0.21.0'
 
 # Run unicorn when using the `rails server` or `rails s` command
 gem 'unicorn-rails'
