@@ -8,10 +8,10 @@
 <%= lev_form_for :export_research_data, url: admin_research_data_path, method: :post do |f| %>
     <div>
       <%= label_tag :from %>
-      <%= f.text_field :from, class: "datepicker" %>
+      <%= f.text_field :from, class: "datepicker research" %>
 
       <%= label_tag :to %>
-      <%= f.text_field :to, class: "datepicker" %>
+      <%= f.text_field :to, class: "datepicker research" %>
       <div>
         <%= f.collection_check_boxes :task_types, \
               [["tutor", "Include Tutor"], ["concept_coach", "Include Concept Coach"]], \
