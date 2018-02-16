@@ -7,7 +7,7 @@ class AddFragmentIndexToTasksTaskSteps < ActiveRecord::Migration
         reading_type = Tasks::Models::Task.task_types[:reading]
         Tasks::Models::TaskStep.update_all(
           <<-UPDATE_SQL.strip_heredoc
-            "fragment_index" = "steps_with_row_number"."row_number"
+            "fragment_index" = "steps_with_row_number"."row_number" - 1
             FROM (
               SELECT "steps_with_row_number"."id",
                      "steps_with_row_number"."tasks_task_id",
