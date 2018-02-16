@@ -78,7 +78,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             tasked = step.tasked
             correct_answer_id = step.exercise? ? tasked.correct_answer_id : nil
             answer_id = step.exercise? ? tasked.answer_id : nil
-            correct = step.exercise? ? tasked.is_correct?.to_s : nil
+            correct = step.exercise? && step.completed? ? tasked.is_correct?.to_s : nil
             free_response = step.exercise? ? tasked.free_response : nil
             # Exercises in this cassette get assigned to pages by their lo tag, not cnxmod tag
             tags = step.exercise? ?
@@ -88,7 +88,6 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
               eq(task.taskings.first.role.research_identifier)
             )
             expect(data['Course ID']).to eq(@course.id.to_s)
-            expect(data['Concept Coach?']).to eq("FALSE")
             expect(data['Period ID']).to be_in(period_ids)
             expect(data['Plan ID']).to eq(task.task_plan.try!(:id).try!(:to_s))
             expect(data['Task ID'].to_i).to eq(task.id)

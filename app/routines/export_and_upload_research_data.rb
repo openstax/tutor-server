@@ -133,7 +133,12 @@ class ExportAndUploadResearchData
                 ON "content_pages"."id" = "tasks_task_steps"."content_page_id"
             JOIN_SQL
           )
-          .where(task: { task_type: task_types })
+          .where(
+            task: {
+              task_type: task_types,
+              taskings: { role: { student: { course: { is_preview: false, is_test: false } } } }
+            }
+          )
           .where(
             <<-SQL.strip_heredoc
               NOT EXISTS (
@@ -248,6 +253,21 @@ class ExportAndUploadResearchData
         each_batch(pages) do |pgs|
           pgs.each do |page|
             page.fragments.each_with_index do |fragment, fragment_index|
+              content = case fragment
+              when OpenStax::Cnx::V1::Fragment::Exercise
+                embed_tags = fragment.embed_tags.join(',')
+
+                <<-CONTENT_HTML.strip_heredoc
+                  <div data-type="exercise" id="#{fragment.node_id}" class="exercise">
+                    <a href="#ost/api/ex/#{embed_tags}">
+                      Exercise associated with this page with tags: "#{embed_tags}"
+                    </a>
+                  </div>
+                CONTENT_HTML
+              else
+                fragment.try(:to_html)
+              end
+
               begin
                 row = [
                   "#{page.url}.json",
@@ -259,7 +279,7 @@ class ExportAndUploadResearchData
                   page.title,
                   fragment_index + 1,
                   fragment.labels.join(','),
-                  fragment.try(:to_html)
+                  content
                 ]
 
                 file << row
