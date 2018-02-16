@@ -594,7 +594,7 @@ GEM
     scenic (1.4.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
-    scout_apm (3.0.0.pre17)
+    scout_apm (3.0.0.pre20)
     securecompare (1.0.0)
     sexp_processor (4.10.0)
     shellany (0.0.1)
