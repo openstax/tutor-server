@@ -25,10 +25,10 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
-  scope :complete,   -> { where{first_completed_at != nil} }
-  scope :incomplete, -> { where{first_completed_at == nil} }
+  scope :complete,   -> { where.not(first_completed_at: nil) }
+  scope :incomplete, -> { where(first_completed_at: nil) }
 
-  scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
+  scope :exercises,  -> { where(tasked_type: Tasks::Models::TaskedExercise.name) }
 
   # Lock the task instead, but don't explode if task is nil
   def lock!(*args)

@@ -42,7 +42,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def is_correct?
-    correct_answer_id == answer_id
+    !correct_answer_id.nil? && answer_id == correct_answer_id
   end
 
   def exercise?

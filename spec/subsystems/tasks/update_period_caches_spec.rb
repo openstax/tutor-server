@@ -168,7 +168,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
     it 'creates a Tasks::PeriodCache for the given tasks' do
       Tasks::Models::PeriodCache.where(course_membership_period_id: period_ids).delete_all
 
-      expect { described_class.call(periods: periods, force: true) }
+      expect { described_class.call(period_ids: period_ids, force: true) }
         .to change { Tasks::Models::PeriodCache.count }.by(num_period_caches)
 
       period_caches = Tasks::Models::PeriodCache.where(course_membership_period_id: period_ids)
@@ -223,7 +223,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         ).exists?
       ).to eq false
 
-      expect { described_class.call(periods: periods, force: true) }.not_to(
+      expect { described_class.call(period_ids: period_ids, force: true) }.not_to(
         change { Tasks::Models::PeriodCache.count }
       )
 
@@ -270,15 +270,15 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         let(:queue) { :lowest_priority }
 
         it 'is called when a task_plan is published' do
-          expect(configured_job).to receive(:perform_later) do |periods:|
-            expect(periods).to match_array(@task_plan.tasking_plans.map(&:target))
+          expect(configured_job).to receive(:perform_later) do |period_ids:|
+            expect(period_ids).to match_array(@task_plan.tasking_plans.map(&:target_id))
           end
 
           DistributeTasks.call(task_plan: @task_plan)
         end
 
         it 'is called when a task step is updated' do
-          expect(configured_job).to receive(:perform_later).with(periods: [ first_period ])
+          expect(configured_job).to receive(:perform_later).with(period_ids: [ first_period.id ])
 
           tasked_exercise = first_task.tasked_exercises.first
           tasked_exercise.free_response = 'Something'
@@ -286,7 +286,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         end
 
         it 'is called when a task step is marked as completed' do
-          expect(configured_job).to receive(:perform_later).with(periods: [ first_period ])
+          expect(configured_job).to receive(:perform_later).with(period_ids: [ first_period.id ])
 
           task_step = first_task.task_steps.first
           MarkTaskStepCompleted.call(task_step: task_step)
@@ -295,8 +295,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called when placeholder steps are populated' do
           # Queuing the background job 6 times is not ideal at all...
           # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
-          expect(configured_job).to receive(:perform_later).exactly(6).times.with(
-            periods: [ first_period ]
+          expect(configured_job).to(
+            receive(:perform_later).exactly(6).with(period_ids: [ first_period.id ])
           )
 
           Tasks::PopulatePlaceholderSteps.call(task: first_task)
@@ -306,8 +306,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           ecosystem = course.ecosystems.first
           course.course_ecosystems.delete_all :delete_all
 
-          expect(configured_job).to receive(:perform_later) do |periods:|
-            expect(periods).to match_array course.periods
+          expect(configured_job).to receive(:perform_later) do |period_ids:|
+            expect(period_ids).to eq [ first_period.id ]
           end
 
           AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
@@ -316,8 +316,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called when a new student joins the period' do
           student_user = FactoryBot.create :user_profile
 
-          expect(configured_job).to receive(:perform_later) do |periods:|
-            expect(periods).to eq [ first_period ]
+          expect(configured_job).to receive(:perform_later) do |period_ids:|
+            expect(period_ids).to eq [ first_period.id ]
           end
 
           AddUserAsPeriodStudent.call(user: student_user, period: first_period)
@@ -326,8 +326,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called with force: true when a student is dropped' do
           student = first_period.students.first
 
-          expect(configured_job).to receive(:perform_later) do |periods:, force:|
-            expect(periods).to eq first_period
+          expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
+            expect(period_ids).to eq first_period.id
             expect(force).to eq true
           end
 
@@ -338,8 +338,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           student = first_period.students.first
           CourseMembership::InactivateStudent.call(student: student)
 
-          expect(configured_job).to receive(:perform_later) do |periods:, force:|
-            expect(periods).to eq first_period
+          expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
+            expect(period_ids).to eq first_period.id
             expect(force).to eq true
           end
 
@@ -351,15 +351,15 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         let(:queue) { :low_priority }
 
         it 'is called when a task_plan is published' do
-          expect(configured_job).to receive(:perform_later) do |periods:|
-            expect(periods).to match_array(@task_plan.tasking_plans.map(&:target))
+          expect(configured_job).to receive(:perform_later) do |period_ids:|
+            expect(period_ids).to match_array(@task_plan.tasking_plans.map(&:target_id))
           end
 
           DistributeTasks.call(task_plan: @task_plan)
         end
 
         it 'is called when a task step is updated' do
-          expect(configured_job).to receive(:perform_later).with(periods: [ first_period ])
+          expect(configured_job).to receive(:perform_later).with(period_ids: [ first_period.id ])
 
           tasked_exercise = first_task.tasked_exercises.first
           tasked_exercise.free_response = 'Something'
@@ -367,7 +367,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         end
 
         it 'is called when a task step is marked as completed' do
-          expect(configured_job).to receive(:perform_later).with(periods: [ first_period ])
+          expect(configured_job).to receive(:perform_later).with(period_ids: [ first_period.id ])
 
           task_step = first_task.task_steps.first
           MarkTaskStepCompleted.call(task_step: task_step)
@@ -377,7 +377,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           # Queuing the background job 6 times is not ideal at all...
           # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
           expect(configured_job).to(
-            receive(:perform_later).exactly(6).with(periods: [ first_period ])
+            receive(:perform_later).exactly(6).with(period_ids: [ first_period.id ])
           )
 
           Tasks::PopulatePlaceholderSteps.call(task: first_task)
@@ -387,8 +387,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           ecosystem = course.ecosystems.first
           course.course_ecosystems.delete_all :delete_all
 
-          expect(configured_job).to receive(:perform_later) do |periods:|
-            expect(periods).to match_array course.periods
+          expect(configured_job).to receive(:perform_later) do |period_ids:|
+            expect(period_ids).to eq [ first_period.id ]
           end
 
           AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
@@ -397,8 +397,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called when a new student joins the period' do
           student_user = FactoryBot.create :user_profile
 
-          expect(configured_job).to receive(:perform_later) do |periods:|
-            expect(periods).to eq [ first_period ]
+          expect(configured_job).to receive(:perform_later) do |period_ids:|
+            expect(period_ids).to eq [ first_period.id ]
           end
 
           AddUserAsPeriodStudent.call(user: student_user, period: first_period)
@@ -407,8 +407,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called with force: true when a student is dropped' do
           student = first_period.students.first
 
-          expect(configured_job).to receive(:perform_later) do |periods:, force:|
-            expect(periods).to eq first_period
+          expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
+            expect(period_ids).to eq first_period.id
             expect(force).to eq true
           end
 
@@ -419,8 +419,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           student = first_period.students.first
           CourseMembership::InactivateStudent.call(student: student)
 
-          expect(configured_job).to receive(:perform_later) do |periods:, force:|
-            expect(periods).to eq first_period
+          expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
+            expect(period_ids).to eq first_period.id
             expect(force).to eq true
           end
 
@@ -492,7 +492,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
     it 'creates a Tasks::PeriodCache for the given tasks' do
       Tasks::Models::PeriodCache.where(course_membership_period_id: period_ids).delete_all
 
-      expect { described_class.call(periods: periods, force: true) }
+      expect { described_class.call(period_ids: period_ids, force: true) }
         .to change { Tasks::Models::PeriodCache.count }.by(num_period_caches)
 
       period_caches = Tasks::Models::PeriodCache.where(course_membership_period_id: period_ids)
@@ -547,7 +547,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         ).exists?
       ).to eq false
 
-      expect { described_class.call(periods: periods, force: true) }.not_to(
+      expect { described_class.call(period_ids: period_ids, force: true) }.not_to(
         change { Tasks::Models::PeriodCache.count }
       )
 

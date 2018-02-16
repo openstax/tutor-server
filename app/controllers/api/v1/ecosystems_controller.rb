@@ -34,13 +34,15 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
 
-    render(json: Rails.cache.fetch(ecosystem.to_model.cache_key) do
-      # For the moment, we're assuming just one book per ecosystem
-      books = ecosystem.books(preload: true)
-      raise NotYetImplemented if books.count > 1
+    render(
+      json: Rails.cache.fetch(ecosystem.to_model.cache_key) do
+        # For the moment, we're assuming just one book per ecosystem
+        books = ecosystem.books(preload: true)
+        raise NotYetImplemented if books.count > 1
 
-      Api::V1::BookTocsRepresenter.new(books).to_json
-    end) if stale?(ecosystem.to_model, template: false)
+        Api::V1::BookTocsRepresenter.new(books).to_json
+      end
+    ) if stale?(ecosystem.to_model, template: false)
   end
 
   api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',

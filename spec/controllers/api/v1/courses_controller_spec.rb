@@ -537,41 +537,46 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                resource_owner_id: teacher_user.id }
 
     let(:time_zone)       { course.time_zone.to_tz }
-    let!(:reading_task)   { FactoryBot.create(:tasks_task,
-                                               task_type: :reading,
-                                               opens_at: time_zone.now - 1.week,
-                                               due_at: time_zone.now,
-                                               step_types: [:tasks_tasked_reading,
-                                                            :tasks_tasked_exercise,
-                                                            :tasks_tasked_exercise],
-                                               tasked_to: student_role)}
 
-    let!(:hw1_task)   { FactoryBot.create(:tasks_task,
-                                           task_type: :homework,
-                                           opens_at: time_zone.now - 1.week,
-                                           due_at: time_zone.now,
-                                           step_types: [:tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise],
-                                           tasked_to: student_role)}
+    let!(:reading_task)   do
+      FactoryBot.create(:tasks_task, task_type: :reading,
+                                     opens_at: time_zone.now - 1.week,
+                                     due_at: time_zone.now,
+                                     step_types: [ :tasks_tasked_reading,
+                                                   :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise ],
+                                     tasked_to: student_role)
+    end
 
-    let!(:hw2_task)   { FactoryBot.create(:tasks_task,
-                                           task_type: :homework,
-                                           opens_at: time_zone.now - 1.week,
-                                           due_at: time_zone.now,
-                                           step_types: [:tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise],
-                                           tasked_to: student_role)}
+    let!(:hw1_task)       do
+      FactoryBot.create(:tasks_task, task_type: :homework,
+                                     opens_at: time_zone.now - 1.week,
+                                     due_at: time_zone.now,
+                                     step_types: [ :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise ],
+                                     tasked_to: student_role)
+    end
 
-    let!(:hw3_task)   { FactoryBot.create(:tasks_task,
-                                           task_type: :homework,
-                                           opens_at: time_zone.now - 1.week,
-                                           due_at: time_zone.now + 2.weeks,
-                                           step_types: [:tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise,
-                                                        :tasks_tasked_exercise],
-                                           tasked_to: student_role)}
+    let!(:hw2_task)       do
+      FactoryBot.create(:tasks_task, task_type: :homework,
+                                     opens_at: time_zone.now - 1.week,
+                                     due_at: time_zone.now,
+                                     step_types: [ :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise ],
+                                     tasked_to: student_role)
+    end
+
+    let!(:hw3_task)       do
+      FactoryBot.create(:tasks_task, task_type: :homework,
+                                     opens_at: time_zone.now - 1.week,
+                                     due_at: time_zone.now + 2.weeks,
+                                     step_types: [ :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise,
+                                                   :tasks_tasked_exercise ],
+                                     tasked_to: student_role)
+    end
 
     let!(:plan) do
       FactoryBot.create(:tasks_task_plan, owner: course,

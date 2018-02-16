@@ -1,5 +1,19 @@
 require 'rails-settings-ui'
 
+# Prevent deprecation warning:
+# respond_to?(:respond_to_missing?) is old fashion which takes only one parameter
+module RailsSettingsUi::MainAppRouteDelegator
+  def respond_to?(method, include_private_methods = false)
+    super || main_app_route_method?(method, include_private_methods)
+  end
+
+  private
+
+  def main_app_route_method?(method, include_private_methods = false)
+    method.to_s =~ /_(?:path|url)$/ && main_app.respond_to?(method, include_private_methods)
+  end
+end
+
 #= Application-specific
 #
 # # You can specify a controller for RailsSettingsUi::ApplicationController to inherit from:

@@ -4,13 +4,13 @@ class Tasks::UpdatePeriodCaches
 
   protected
 
-  def exec(periods:, force: false)
-    periods = [periods].flatten
-    periods.each do |period|
+  def exec(period_ids:, force: false)
+    period_ids = [period_ids].flatten
+    period_ids.each do |period_id|
       # Get active students IDs
       student_ids = CourseMembership::Models::Student
         .joins(:latest_enrollment)
-        .where(latest_enrollment: { course_membership_period_id: period.id }, dropped_at: nil)
+        .where(latest_enrollment: { course_membership_period_id: period_id }, dropped_at: nil)
         .pluck(:id)
       # Stop if no active students
       next if student_ids.empty?
@@ -56,7 +56,7 @@ class Tasks::UpdatePeriodCaches
           period_task_caches = task_caches_by_ecosystem_id[ecosystem.id]
 
           build_period_cache(
-            period: period,
+            period_id: period_id,
             ecosystem: ecosystem,
             task_plan: task_plan,
             task_caches: period_task_caches
@@ -85,7 +85,7 @@ class Tasks::UpdatePeriodCaches
     end
   end
 
-  def build_period_cache(period:, ecosystem:, task_plan:, task_caches:)
+  def build_period_cache(period_id:, ecosystem:, task_plan:, task_caches:)
     tocs = task_caches.map do |task_cache|
       toc = task_cache.as_toc
       toc.merge(
@@ -198,9 +198,11 @@ class Tasks::UpdatePeriodCaches
       books: period_bks
     }
 
-    tasking_plan = task_plan.nil? ? nil : task_plan.tasking_plans.find { |tp| tp.target == period }
+    tasking_plan = task_plan.nil? ? nil : task_plan.tasking_plans.find do |tp|
+      tp.target_type == CourseMembership::Models::Period.name && tp.target_id == period_id
+    end
     Tasks::Models::PeriodCache.new(
-      period: period,
+      course_membership_period_id: period_id,
       ecosystem: ecosystem,
       task_plan: task_plan,
       opens_at: tasking_plan.try!(:opens_at),
