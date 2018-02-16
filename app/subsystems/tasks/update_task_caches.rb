@@ -11,19 +11,20 @@ class Tasks::UpdateTaskCaches
     task_ids = [task_ids].flatten
 
     # Attempt to lock the tasks; Skip tasks already locked by someone else
-    locked_tasks = Tasks::Models::Task
+    tasks = Tasks::Models::Task
       .where(id: task_ids)
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
       .preload(
         :ecosystem, :time_zone, taskings: { role: { student: { latest_enrollment: :period } } }
       )
       .to_a
-    tasks_by_id = locked_tasks.index_by(&:id)
+    tasks_by_id = tasks.index_by(&:id)
     locked_task_ids = tasks_by_id.keys
 
     # Retry tasks that we couldn't lock later
     skipped_task_ids = task_ids - locked_task_ids
     self.class.perform_later(task_ids: skipped_task_ids) unless skipped_task_ids.empty?
+    task_ids = locked_task_ids
 
     # Stop if we couldn't lock any tasks at all
     return if task_ids.empty?
@@ -63,7 +64,7 @@ class Tasks::UpdateTaskCaches
     end
 
     if update_step_counts
-      tasks = locked_tasks.map do |task|
+      tasks = tasks.map do |task|
         task_steps = task_steps_by_task_id_and_page_id[task.id].values.flatten
         task.update_step_counts steps: task_steps
       end
