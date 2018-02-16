@@ -56,7 +56,6 @@ class ExportAndUploadResearchData
         file << [
           "Student Research Identifier",
           "Course ID",
-          "Concept Coach?",
           "Period ID",
           "Plan ID",
           "Task ID",
@@ -87,8 +86,7 @@ class ExportAndUploadResearchData
         te = Tasks::Models::TaskedExercise.arel_table
         pg = Content::Models::Page.arel_table
         er = Entity::Role.arel_table
-        co = CourseProfile::Models::Course.arel_table
-        boolean_typecaster = ActiveAttr::Typecasting::BooleanTypecaster.new
+        st = CourseMembership::Models::Student.arel_table
         steps = Tasks::Models::TaskStep
           .select([
             Tasks::Models::TaskStep.arel_table[ Arel.star ],
@@ -102,8 +100,7 @@ class ExportAndUploadResearchData
             pg[:id].as('page_id'),
             pg[:url].as('page_url'),
             er[:research_identifier],
-            co[:id].as('course_id'),
-            co[:is_concept_coach],
+            st[:course_profile_course_id].as('course_id'),
             <<-TAGS_SQL.strip_heredoc
               (
                 SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
@@ -136,7 +133,12 @@ class ExportAndUploadResearchData
                 ON "content_pages"."id" = "tasks_task_steps"."content_page_id"
             JOIN_SQL
           )
-          .where(task: { task_type: task_types })
+          .where(
+            task: {
+              task_type: task_types,
+              taskings: { role: { student: { course: { is_preview: false, is_test: false } } } }
+            }
+          )
           .where(
             <<-SQL.strip_heredoc
               NOT EXISTS (
@@ -168,7 +170,6 @@ class ExportAndUploadResearchData
               row = [
                 step.research_identifier,
                 step.course_id,
-                boolean_typecaster.call(step.is_concept_coach).to_s.upcase,
                 step.course_membership_period_id,
                 task.tasks_task_plan_id,
                 task.id,
@@ -197,7 +198,7 @@ class ExportAndUploadResearchData
                   # escape so Excel doesn't see as formula
                   step.free_response.try!(:sub, /\A=/, "'="),
                   step.answer_id,
-                  step.answer_id == step.correct_answer_id
+                  step.completed? ? step.answer_id == step.correct_answer_id : nil
                 ] : [ nil ] * 7
               )
 
@@ -252,6 +253,21 @@ class ExportAndUploadResearchData
         each_batch(pages) do |pgs|
           pgs.each do |page|
             page.fragments.each_with_index do |fragment, fragment_index|
+              content = case fragment
+              when OpenStax::Cnx::V1::Fragment::Exercise
+                embed_tags = fragment.embed_tags.join(',')
+
+                <<-CONTENT_HTML.strip_heredoc
+                  <div data-type="exercise" id="#{fragment.node_id}" class="exercise">
+                    <a href="#ost/api/ex/#{embed_tags}">
+                      Exercise associated with this page with tags: "#{embed_tags}"
+                    </a>
+                  </div>
+                CONTENT_HTML
+              else
+                fragment.try(:to_html)
+              end
+
               begin
                 row = [
                   "#{page.url}.json",
@@ -263,7 +279,7 @@ class ExportAndUploadResearchData
                   page.title,
                   fragment_index + 1,
                   fragment.labels.join(','),
-                  fragment.try(:to_html)
+                  content
                 ]
 
                 file << row
