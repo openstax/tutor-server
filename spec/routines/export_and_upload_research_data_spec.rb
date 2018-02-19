@@ -107,7 +107,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             expect(data['Exercise JSON URL']).to eq("#{tasked.url.gsub("org", "org/api")}.json")
             expect(data['Exercise Editor URL']).to eq(tasked.url)
             expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
-            expect(data['Question ID']).to eq(tasked.question_id)
+            expect(data['Question Number']).to eq 1
             expect(data['Question Correct Answer ID']).to eq(correct_answer_id)
             expect(data['Question Chosen Answer ID']).to eq(answer_id)
             expect(data['Question Correct?']).to eq(correct)
@@ -176,9 +176,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             url = data['Exercise Editor URL']
             exercise = exercises_by_url.fetch(url)
             tags = exercise.tags.map(&:value)
-            question = exercise.content_as_independent_questions.find do |question|
-              question[:id] == data['Question ID'].to_i
-            end
+            question_index = data['Question Number'].to_i - 1
+            question = exercise.content_as_independent_questions[question_index]
 
             expect(data['Exercise JSON URL']).to eq("#{url.gsub('org', 'org/api')}.json")
             expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)

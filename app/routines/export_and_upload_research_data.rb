@@ -75,7 +75,7 @@ class ExportAndUploadResearchData
           "Exercise JSON URL",
           "Exercise Editor URL",
           "Exercise Tags",
-          "Question ID",
+          "Question Number",
           "Question Correct Answer ID",
           "Question Free Response",
           "Question Chosen Answer ID",
@@ -93,7 +93,7 @@ class ExportAndUploadResearchData
             tk[:course_membership_period_id],
             te[:content_exercise_id].as('exercise_id'),
             te[:url].as('exercise_url'),
-            te[:question_id],
+            te[:question_index],
             te[:correct_answer_id],
             te[:answer_id],
             te[:free_response],
@@ -193,7 +193,7 @@ class ExportAndUploadResearchData
                   "#{step.exercise_url.gsub('org', 'org/api')}.json",
                   step.exercise_url,
                   array_decoder.decode(step.tags_array).join(','),
-                  step.question_id,
+                  step.question_index + 1,
                   step.correct_answer_id,
                   # escape so Excel doesn't see as formula
                   step.free_response.try!(:sub, /\A=/, "'="),
@@ -305,7 +305,7 @@ class ExportAndUploadResearchData
           "Exercise JSON URL",
           "Exercise Editor URL",
           "Exercise Tags",
-          "Question ID",
+          "Question Number",
           "Question Content"
         ]
 
