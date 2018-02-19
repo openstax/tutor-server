@@ -8,6 +8,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it { is_expected.to validate_presence_of(:url) }
   it { is_expected.to validate_presence_of(:question_id) }
+  it { is_expected.to validate_presence_of(:question_index) }
   it { is_expected.to validate_presence_of(:content) }
   it { is_expected.to validate_presence_of(:correct_answer_id) }
   it { is_expected.to validate_length_of(:free_response).is_at_most(10000) }

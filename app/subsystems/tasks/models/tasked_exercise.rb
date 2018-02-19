@@ -8,10 +8,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   before_validation :set_correct_answer_id, on: :create
 
-  validates :url, presence: true
-  validates :question_id, presence: true
-  validates :content, presence: true
-  validates :correct_answer_id, presence: true
+  validates :url, :question_id, :question_index, :content, :correct_answer_id, presence: true
   validates :free_response, length: { maximum: 10000 }
 
   validate :free_response_required, on: :update
