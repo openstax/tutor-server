@@ -78,7 +78,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             tasked = step.tasked
             correct_answer_id = step.exercise? ? tasked.correct_answer_id : nil
             answer_id = step.exercise? ? tasked.answer_id : nil
-            correct = step.exercise? && step.completed? ? tasked.is_correct?.to_s : nil
+            correct = step.exercise? && step.completed? ? (tasked.is_correct? ? 1 : 0).to_s : nil
             free_response = step.exercise? ? tasked.free_response : nil
             # Exercises in this cassette get assigned to pages by their lo tag, not cnxmod tag
             tags = step.exercise? ?
@@ -107,7 +107,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             expect(data['Exercise JSON URL']).to eq("#{tasked.url.gsub("org", "org/api")}.json")
             expect(data['Exercise Editor URL']).to eq(tasked.url)
             expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
-            expect(data['Question Number']).to eq 1
+            expect(data['Question Number']).to eq '1'
             expect(data['Question Correct Answer ID']).to eq(correct_answer_id)
             expect(data['Question Chosen Answer ID']).to eq(answer_id)
             expect(data['Question Correct?']).to eq(correct)
@@ -163,25 +163,47 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
         with_export_rows(export, all_task_types) do |rows|
           headers = rows.first
 
-          exercise_url_index = headers.index('Exercise Editor URL')
-          exercise_urls = rows.map { |row| row[exercise_url_index] }
-          exercises_by_url = Content::Models::Exercise
-            .select('DISTINCT ON ("content_exercises"."url") *')
-            .where(url: exercise_urls)
-            .preload(:tags)
-            .index_by(&:url)
+          exercise_number_index = headers.index('Exercise Number')
+          exercise_numbers = rows.map { |row| row[exercise_number_index] }
+          exercises_by_number_and_version = Hash.new { |hash, key| hash[key] = {} }
+          Content::Models::Exercise
+            .select('DISTINCT ON ("content_exercises"."number", "content_exercises"."version") *')
+            .where(number: exercise_numbers)
+            .each do |exercise|
+            exercises_by_number_and_version[exercise.number][exercise.version] = exercise
+          end
 
           rows[1..-1].each do |row|
             data = headers.zip(row).to_h
-            url = data['Exercise Editor URL']
-            exercise = exercises_by_url.fetch(url)
-            tags = exercise.tags.map(&:value)
-            question_index = data['Question Number'].to_i - 1
-            question = exercise.content_as_independent_questions[question_index]
+            number = data['Exercise Number'].to_i
+            version = data['Exercise Version'].to_i
+            exercise = exercises_by_number_and_version.fetch(number).fetch(version)
 
-            expect(data['Exercise JSON URL']).to eq("#{url.gsub('org', 'org/api')}.json")
-            expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
-            expect(data['Question Content']).to eq(question[:content])
+            tags = exercise.content_hash['tags'].join(',')
+            stimulus = exercise.content_hash['stimulus_html']
+            json = exercise.content
+
+            expect(data['Exercise Tags']).to eq tags
+            expect(data['Exercise Stimulus HTML']).to eq stimulus
+            expect(data['Exercise JSON']).to eq json
+
+            question_index = data['Question Number'].to_i - 1
+            question = exercise.questions_hash[question_index]
+
+            solution = (question['collaborator_solutions'] || []).first
+
+            expect(data['Question Stem HTML']).to eq question['stem_html']
+            expect(data['Question Solution HTML']).to eq solution.try!(:[], 'content') || ''
+            expect(data['Question Answer Order Important?']).to(
+              eq (question['is_answer_order_important'] ? 1 : 0).to_s
+            )
+
+            question['answers'].each_with_index do |answer, ii|
+              expect(data["Answer #{ii + 1} ID"]).to eq answer['id'].to_s
+              expect(data["Answer #{ii + 1} Content HTML"]).to eq answer['content_html']
+              expect(data["Answer #{ii + 1} Correctness"]).to eq answer['correctness']
+              expect(data["Answer #{ii + 1} Feedback"]).to eq answer['feedback_html']
+            end
           end
         end
       end
@@ -355,7 +377,7 @@ def with_export_rows(export, task_types, from = nil, to = nil, &block)
     block.call(rows)
   end
 
-  capture_stdout { described_class.call(task_types: task_types, from: from, to: to) }
+  described_class.call(task_types: task_types, from: from, to: to)
 end
 
 def format_time(time)

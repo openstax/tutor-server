@@ -1,5 +1,8 @@
 class ExportAndUploadResearchData
 
+  # There's no good way to query this number in Tutor; Could make it an admin setting instead
+  MAX_ANSWERS = 7
+
   BATCH_SIZE = 1000
 
   lev_routine active_job_enqueue_options: { queue: :lowest_priority },
@@ -193,12 +196,12 @@ class ExportAndUploadResearchData
                   "#{step.exercise_url.gsub('org', 'org/api')}.json",
                   step.exercise_url,
                   array_decoder.decode(step.tags_array).join(','),
-                  step.question_index + 1,
+                  step.question_index.to_i + 1,
                   step.correct_answer_id,
                   # escape so Excel doesn't see as formula
                   step.free_response.try!(:sub, /\A=/, "'="),
                   step.answer_id,
-                  step.completed? ? step.answer_id == step.correct_answer_id : nil
+                  step.completed? ? bool_to_int(step.answer_id == step.correct_answer_id) : nil
                 ] : [ nil ] * 7
               )
 
@@ -301,49 +304,68 @@ class ExportAndUploadResearchData
   def create_exercises_export_file(filename, exercise_ids)
     File.join('tmp', 'exports', filename).tap do |filepath|
       CSV.open(filepath, 'w') do |file|
-        file << [
-          "Exercise JSON URL",
-          "Exercise Editor URL",
+        headers = [
+          "Exercise Number",
+          "Exercise Version",
           "Exercise Tags",
+          "Exercise Stimulus HTML",
+          "Exercise JSON",
           "Question Number",
-          "Question Content"
+          "Question Stem HTML",
+          "Question Solution HTML",
+          "Question Answer Order Important?"
         ]
+        MAX_ANSWERS.times do |ii|
+          headers.concat [
+            "Answer #{ii + 1} ID",
+            "Answer #{ii + 1} Content HTML",
+            "Answer #{ii + 1} Correctness",
+            "Answer #{ii + 1} Feedback"
+          ]
+        end
+        file << headers
 
+        select_sql = <<-DISTINCT_SQL.strip_heredoc
+          DISTINCT ON ("content_exercises"."number", "content_exercises"."version")
+            "content_exercises"."number",
+            "content_exercises"."version",
+            "content_exercises"."content"
+        DISTINCT_SQL
         exercises = Content::Models::Exercise
-          .select(
-            [
-              'DISTINCT ON ("content_exercises"."url") "content_exercises"."url"',
-              :content,
-              <<-TAGS_SQL.strip_heredoc
-                (
-                  SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
-                  FROM "content_exercise_tags"
-                  INNER JOIN "content_tags"
-                    ON "content_tags"."id" = "content_exercise_tags"."content_tag_id"
-                  WHERE "content_exercise_tags"."content_exercise_id" = "content_exercises"."id"
-                ) AS "tags_array"
-              TAGS_SQL
-            ]
-          )
+          .select(select_sql)
           .where(id: exercise_ids)
-          .order(:url)
+          .order(:number, :version)
 
         each_batch(exercises) do |exs|
           exs.each do |exercise|
-            url = exercise.url
-            api_url = "#{exercise.url.gsub('org', 'org/api')}.json"
-            tags = array_decoder.decode(exercise.tags_array).join(',')
+            number = exercise.number
+            version = exercise.version
+            tags = exercise.content_hash['tags'].join(',')
+            stimulus = exercise.content_hash['stimulus_html']
+            json = exercise.content
 
-            exercise.content_as_independent_questions.each do |question|
+            exercise.questions_hash.each_with_index do |question, index|
               begin
+                solution = (question['collaborator_solutions'] || []).first
                 row = [
-                  api_url,
-                  url,
+                  number,
+                  version,
                   tags,
-                  question[:id],
-                  question[:content]
+                  stimulus,
+                  json,
+                  index + 1,
+                  question['stem_html'],
+                  solution.try!(:[], 'content') || '',
+                  bool_to_int(question['is_answer_order_important'])
                 ]
-
+                question['answers'].each do |answer|
+                  row.concat [
+                    answer['id'],
+                    answer['content_html'],
+                    answer['correctness'],
+                    answer['feedback_html']
+                  ]
+                end
                 file << row
               rescue StandardError => ex
                 raise ex if !Rails.env.production? || ex.is_a?(Timeout::Error)
@@ -388,6 +410,10 @@ class ExportAndUploadResearchData
 
   def array_decoder
     @array_decoder ||= PG::TextDecoder::Array.new
+  end
+
+  def bool_to_int(bool)
+    bool ? 1 : 0
   end
 
 end

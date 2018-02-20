@@ -30,6 +30,9 @@ config/deploy_settings.yml
 # Ignore XLS files (from report generators)
 *.xls*
 
+# Ignore byebug history
+.byebug_history
+
 # Ignore Cucumber and RSpec failure information
 cucumber_rerun.txt
 .rspec_last_failures
