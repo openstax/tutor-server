@@ -200,7 +200,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
 
             correct_answers = []
             question['answers'].each_with_index do |answer, ii|
-              correct_answers << ii if answer['correctness'].to_f == 1.0
+              correct_answers << ii + 1 if answer['correctness'].to_f == 1.0
 
               expect(data["Answer #{ii + 1} ID"]).to eq answer['id'].to_s
               expect(data["Answer #{ii + 1} Content HTML"]).to eq answer['content_html']

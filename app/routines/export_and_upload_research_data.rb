@@ -349,7 +349,7 @@ class ExportAndUploadResearchData
                 solution = (question['collaborator_solutions'] || []).first
                 correct_answers = []
                 answer_columns = question['answers'].each_with_index.flat_map do |answer, a_index|
-                  correct_answers << a_index if answer['correctness'].to_f == 1.0
+                  correct_answers << a_index + 1 if answer['correctness'].to_f == 1.0
 
                   answer.values_at 'id', 'content_html', 'feedback_html'
                 end
