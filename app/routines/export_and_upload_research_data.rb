@@ -355,7 +355,7 @@ class ExportAndUploadResearchData
                   json,
                   index + 1,
                   question['stem_html'],
-                  solution.try!(:[], 'content') || '',
+                  solution.try!(:[], 'content_html') || '',
                   bool_to_int(question['is_answer_order_important'])
                 ]
                 question['answers'].each do |answer|
