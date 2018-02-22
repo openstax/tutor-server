@@ -193,17 +193,21 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             solution = (question['collaborator_solutions'] || []).first
 
             expect(data['Question Stem HTML']).to eq question['stem_html']
-            expect(data['Question Solution HTML']).to eq solution.try!(:[], 'content') || ''
+            expect(data['Question Solution HTML']).to eq solution.try!(:[], 'content_html') || ''
             expect(data['Question Answer Order Important?']).to(
               eq (question['is_answer_order_important'] ? 1 : 0).to_s
             )
 
+            correct_answers = []
             question['answers'].each_with_index do |answer, ii|
+              correct_answers << ii if answer['correctness'].to_f == 1.0
+
               expect(data["Answer #{ii + 1} ID"]).to eq answer['id'].to_s
               expect(data["Answer #{ii + 1} Content HTML"]).to eq answer['content_html']
-              expect(data["Answer #{ii + 1} Correctness"]).to eq answer['correctness']
               expect(data["Answer #{ii + 1} Feedback"]).to eq answer['feedback_html']
             end
+
+            expect(data['Question Correct Answer Numbers']).to eq correct_answers.join(',')
           end
         end
       end

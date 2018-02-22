@@ -313,13 +313,13 @@ class ExportAndUploadResearchData
           "Question Number",
           "Question Stem HTML",
           "Question Solution HTML",
-          "Question Answer Order Important?"
+          "Question Answer Order Important?",
+          "Question Correct Answer Numbers"
         ]
         MAX_ANSWERS.times do |ii|
           headers.concat [
             "Answer #{ii + 1} ID",
             "Answer #{ii + 1} Content HTML",
-            "Answer #{ii + 1} Correctness",
             "Answer #{ii + 1} Feedback"
           ]
         end
@@ -344,28 +344,28 @@ class ExportAndUploadResearchData
             stimulus = exercise.content_hash['stimulus_html']
             json = exercise.content
 
-            exercise.questions_hash.each_with_index do |question, index|
+            exercise.questions_hash.each_with_index do |question, q_index|
               begin
                 solution = (question['collaborator_solutions'] || []).first
+                correct_answers = []
+                answer_columns = question['answers'].each_with_index.flat_map do |answer, a_index|
+                  correct_answers << a_index if answer['correctness'].to_f == 1.0
+
+                  answer.values_at 'id', 'content_html', 'feedback_html'
+                end
                 row = [
                   number,
                   version,
                   tags,
                   stimulus,
                   json,
-                  index + 1,
+                  q_index + 1,
                   question['stem_html'],
                   solution.try!(:[], 'content_html') || '',
-                  bool_to_int(question['is_answer_order_important'])
-                ]
-                question['answers'].each do |answer|
-                  row.concat [
-                    answer['id'],
-                    answer['content_html'],
-                    answer['correctness'],
-                    answer['feedback_html']
-                  ]
-                end
+                  bool_to_int(question['is_answer_order_important']),
+                  correct_answers.join(',')
+                ] + answer_columns
+
                 file << row
               rescue StandardError => ex
                 raise ex if !Rails.env.production? || ex.is_a?(Timeout::Error)
