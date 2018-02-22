@@ -53,6 +53,11 @@ class CourseProfile::Models::Course < ApplicationRecord
             :biglearn_assignment_pes_algorithm_name,
             :biglearn_practice_worst_areas_algorithm_name,
             presence: true
+  validates :homework_score_weight,
+            :homework_progress_weight,
+            :reading_score_weight,
+            :reading_progress_weight,
+            presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
 
   validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
 

@@ -32,6 +32,31 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
   it { is_expected.to validate_uniqueness_of(:time_zone) }
 
+  it do
+    is_expected.to(
+      validate_numericality_of(:homework_score_weight).is_greater_than_or_equal_to(0)
+                                                      .is_less_than_or_equal_to(1)
+    )
+  end
+  it do
+    is_expected.to(
+      validate_numericality_of(:homework_progress_weight).is_greater_than_or_equal_to(0)
+                                                         .is_less_than_or_equal_to(1)
+    )
+  end
+  it do
+    is_expected.to(
+      validate_numericality_of(:reading_score_weight).is_greater_than_or_equal_to(0)
+                                                     .is_less_than_or_equal_to(1)
+    )
+  end
+  it do
+    is_expected.to(
+      validate_numericality_of(:reading_progress_weight).is_greater_than_or_equal_to(0)
+                                                        .is_less_than_or_equal_to(1)
+    )
+  end
+
   it 'validates format of default times' do
     course.default_open_time = '16:32'
     expect(course).to be_valid
