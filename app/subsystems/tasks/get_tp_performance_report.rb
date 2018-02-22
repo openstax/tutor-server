@@ -93,10 +93,23 @@ module Tasks
           reading_progress = average_progress(
             tasks: reading_tasks, current_time_ntz: current_time_ntz
           )
-          course_average = course.homework_score_weight.to_f * (homework_score || 0) +
-                           course.homework_progress_weight.to_f * (homework_progress || 0) +
-                           course.reading_score_weight.to_f * (reading_score || 0) +
-                           course.reading_progress_weight.to_f * (reading_progress || 0)
+
+          homework_score_weight = course.homework_score_weight.to_f
+          homework_progress_weight = course.homework_progress_weight.to_f
+          reading_score_weight = course.reading_score_weight.to_f
+          reading_progress_weight = course.reading_progress_weight.to_f
+
+          course_average = if (homework_score_weight    > 0 && homework_score.nil?   ) ||
+                              (homework_progress_weight > 0 && homework_progress.nil?) ||
+                              (reading_score_weight     > 0 && reading_score.nil?    ) ||
+                              (reading_progress_weight  > 0 && reading_progress.nil? )
+            nil
+          else
+            homework_score_weight    * (homework_score    || 0) +
+            homework_progress_weight * (homework_progress || 0) +
+            reading_score_weight     * (reading_score     || 0) +
+            reading_progress_weight  * (reading_progress  || 0)
+          end
 
           OpenStruct.new(
             name: name,

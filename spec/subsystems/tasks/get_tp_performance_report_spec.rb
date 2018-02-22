@@ -427,7 +427,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(report.overall_homework_progress).to eq 1.0
       expect(report.overall_reading_score).to be_nil
       expect(report.overall_reading_progress).to be_nil
-      expect(report.overall_course_average).to eq 0.0 # No score defaults to 0
+      expect(report.overall_course_average).to be_nil
 
       expect(report.data_headings[0].title).to eq 'Homework 2 task plan'
       expect(report.data_headings[0].plan_id).to be_a Integer
@@ -461,7 +461,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(student.homework_progress).to eq 1.0
       expect(student.reading_score).to be_nil
       expect(student.reading_progress).to be_nil
-      expect(student.course_average).to eq 0.0
+      expect(student.course_average).to be_nil
 
       expect(student.is_dropped).to eq false
 
