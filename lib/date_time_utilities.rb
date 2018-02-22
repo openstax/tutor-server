@@ -1,4 +1,4 @@
-Time::DATE_FORMATS[:w3cz] = lambda { |time| time.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ") }
+Time::DATE_FORMATS[:w3cz] = ->(time) { time.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ") }
 
 module DateTimeUtilities
   # Convert the given DateTime to a W3CZ formatted string
@@ -17,14 +17,14 @@ module DateTimeUtilities
   def self.apply_tz(date_time, time_zone = Time.zone)
     return if date_time.nil?
 
-    date_time = date_time.in_time_zone(time_zone)
+    date_time = date_time.to_datetime.in_time_zone(time_zone)
     date_time - date_time.utc_offset
   end
 
   # Removes the time_zone from DateTime object (removing its offset)
   # Example: 2 PM EST -> 2 PM UTC
   def self.remove_tz(date_time)
-    date_time.try(:change, offset: 0).try(:in_time_zone, 'UTC')
+    date_time.try(:to_datetime).try(:change, offset: 0).try(:in_time_zone, 'UTC')
   end
 
  def self.parse_in_zone(string:, zone:)
