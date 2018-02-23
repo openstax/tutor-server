@@ -53,8 +53,9 @@ module Tasks
             role: student.role.id,
             data: data,
             average_score: average_score(
-              tasks: data.map{|datum| datum.present? ? datum[:task] : nil},
-              current_time_ntz: current_time_ntz
+              tasks: data.map { |datum| datum.try!(:[], :task) },
+              current_time_ntz: current_time_ntz,
+              is_teacher: true
             ),
             is_dropped: false
           }
@@ -122,7 +123,7 @@ module Tasks
           title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
           average_score: average_score(
-            tasks: non_dropped_page_tasks, current_time_ntz: current_time_ntz
+            tasks: non_dropped_page_tasks, current_time_ntz: current_time_ntz, is_teacher: true
           ),
           average_actual_and_placeholder_exercise_count: average(
             array: non_dropped_page_tasks,
@@ -144,7 +145,7 @@ module Tasks
         cc_tasks.first.task
       end
 
-      get_task_data(tasks: tasks, tz: tz, current_time_ntz: current_time_ntz)
+      get_task_data(tasks: tasks, tz: tz, current_time_ntz: current_time_ntz, is_teacher: true)
     end
   end
 end

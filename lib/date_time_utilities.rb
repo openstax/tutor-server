@@ -17,7 +17,7 @@ module DateTimeUtilities
   def self.apply_tz(date_time, time_zone = Time.zone)
     return if date_time.nil?
 
-    date_time = date_time.to_datetime.in_time_zone(time_zone)
+    date_time = date_time.in_time_zone(time_zone)
     date_time - date_time.utc_offset
   end
 
