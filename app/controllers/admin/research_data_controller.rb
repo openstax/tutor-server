@@ -12,11 +12,12 @@ module Admin
         "concept_coach" => concept_coach_values
       }
 
-      task_types_params = params.fetch(:export_research_data).fetch(:task_types).reject(&:blank?)
+      task_types_params = params.fetch(:export_research_data)
+                                .fetch(:task_types, [])
+                                .reject(&:blank?)
 
       if task_types_params.blank?
-        flash.now[:alert] = "You must select at least one type of Tasks"
-        render :index
+        redirect_to admin_research_data_path, alert: "You must select either Tutor or Concept Coach"
         return
       end
 

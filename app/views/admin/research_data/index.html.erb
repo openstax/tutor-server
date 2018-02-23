@@ -20,15 +20,18 @@
     </div>
 
     <div>
-      <%= check_box_tag :tutor %>
-      <%= label_tag :tutor, 'Include Tutor' %>
+      <%= check_box_tag 'export_research_data[task_types][]', :tutor, true,
+                        id: 'export_research_data_task_types_tutor' %>
+      <%= f.label :task_types_tutor, 'Include Tutor' %>
     </div>
     <div>
-      <%= check_box_tag :concept_coach %>
-      <%= label_tag :concept_coach, 'Include Concept Coach' %>
+      <%= check_box_tag 'export_research_data[task_types][]', :concept_coach, false,
+                        id: 'export_research_data_task_types_concept_coach' %>
+      <%= f.label :task_types_concept_coach, 'Include Concept Coach' %>
     </div>
 
     <div>
-      <%= submit_tag "Export Data", class: "btn btn-primary" %>
+      <%= submit_tag "Export Data", class: "btn btn-primary",
+                                    data: { disable_with: "Exporting..." } %>
     </div>
   <% end %>
