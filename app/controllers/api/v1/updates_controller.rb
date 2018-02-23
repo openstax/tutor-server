@@ -16,18 +16,14 @@ class Api::V1::UpdatesController < Api::V1::ApiController
 
   def updates
     notifications = get_notifications(:general)
-    notifications.concat(get_notifications(:instructor)) if current_human_user.to_model.roles.any?(&:teacher?)
+    notifications.concat(get_notifications(:instructor)) \
+      if current_human_user.to_model.roles.any?(&:teacher?)
 
-    OpenStruct.new({
-      notifications: notifications
-    })
-
+    OpenStruct.new notifications: notifications
   end
 
   def get_notifications(type)
-    Settings::Notifications.messages(type).map do |id, message|
-      OpenStruct.new(type: type.to_s, id: id, message: message)
-    end
+    Settings::Notifications.active(type: type)
   end
 
 end

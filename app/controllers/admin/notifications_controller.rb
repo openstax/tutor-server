@@ -4,18 +4,19 @@ class Admin::NotificationsController < Admin::BaseController
   end
 
   def create
-    redirect_to :admin_notifications, error: "Invalid notification type \"#{params['type']}\"" \
-      unless Settings::Notifications.valid_type?(params['type'])
+    type = params[:type]
+    redirect_to :admin_notifications, error: "Invalid notification type \"#{type}\"" \
+      unless Settings::Notifications.valid_type?(type: type)
 
-    Settings::Notifications.add(params['type'], params['message'])
+    Settings::Notifications.add **params.slice(:type, :message, :from, :to).symbolize_keys
 
-    redirect_to :admin_notifications, notice: "#{params['type'].humanize} notification created"
+    redirect_to :admin_notifications, notice: "#{type.humanize} notification created"
   end
 
   def destroy
-    Settings::Notifications.remove(params['type'], params['id'])
+    Settings::Notifications.remove **params.slice(:type, :id).symbolize_keys
 
-    redirect_to :admin_notifications, notice: "#{params['type'].humanize} notification deleted"
+    redirect_to :admin_notifications, notice: "#{params[:type].humanize} notification deleted"
   end
 
 end

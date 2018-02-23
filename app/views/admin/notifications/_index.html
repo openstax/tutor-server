@@ -2,7 +2,7 @@
   # Client of this partial must provide the :type argument,
   # which can be either :general or :faculty
   raise ArgumentError, 'Invalid notification type', caller \
-    unless Settings::Notifications.valid_type?(type)
+    unless Settings::Notifications.valid_type?(type: type)
 
   humanized_type = type.to_s.humanize
 %>
@@ -10,29 +10,56 @@
 <div>
   <h2><%= humanized_type %> Notifications</h2>
 
-<% Settings::Notifications.messages(type).each do |id, message| -%>
-  <div class='row underlined-spaced-row'>
-    <div class='col-xs-12'>
+  <% Settings::Notifications.all(type: type).each do |notification| -%>
+    <div class='row underlined-spaced-row'>
+      <div class='col-xs-5'>
+        <%= notification.message %>
+      </div>
 
-      <%= link_to 'Remove', { action: :destroy, type: type, id: id },
-          data: { confirm: 'Are you sure? Notifications can not be re-created once removed' },
-          method: :delete, class: 'btn btn-warning' %>
+      <div class='col-xs-3'>
+        From: <%= notification.from.try!(:strftime, "%Y-%m-%d %H:%M:%S UTC") ||
+                  'Beginning of Time' %>
+      </div>
 
-      <%= message %>
+      <div class='col-xs-3'>
+        To: <%= notification.to.try!(:strftime, "%Y-%m-%d %H:%M:%S UTC") || 'End of Time' %>
+      </div>
+
+      <div class='col-xs-1'>
+        <%= link_to 'Remove', { action: :destroy, type: type, id: notification.id },
+            data: { confirm: 'Are you sure? Notifications can not be re-created once removed' },
+            method: :delete, class: 'btn btn-warning' %>
+      </div>
     </div>
-  </div>
-<% end -%>
+  <% end -%>
 
   <%= form_tag admin_notifications_path do  %>
     <div class='row'>
       <%= hidden_field_tag :type, type %>
 
-      <div class='col-xs-11'>
-        <%= label_tag :message, "New #{humanized_type} Notification" %>
+      <div class='col-xs-12'>
+        <%= label_tag "message_#{type}", "New #{humanized_type} Notification" %>
       </div>
-      <div class='col-xs-11'>
+
+      <div class='col-xs-5'>
         <div class='form-group'>
-          <%= text_field_tag :message, '', class: 'form-control' %>
+          <%= text_field_tag :message, '', id: "message_#{type}", class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class='col-xs-3'>
+        <div class='form-group'>
+          <%= label_tag "from_#{type}", 'From:' %>
+          <%= text_field_tag :from, '', id: "from_#{type}", class: "datepicker start" %>
+          <%= label_tag "from_#{type}", 'UTC' %>
+        </div>
+      </div>
+
+      <div class='col-xs-3'>
+        <div class='form-group'>
+          <%= label_tag "to_#{type}", 'To:' %>
+          <%= text_field_tag :to, '', id: "to_#{type}", class: "datepicker end" %>
+          <%= label_tag "to_#{type}", 'UTC' %>
         </div>
       </div>
 
