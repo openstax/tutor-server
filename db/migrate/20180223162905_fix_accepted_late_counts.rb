@@ -1,0 +1,38 @@
+# Not idempotent, cannot run in the background
+class FixAcceptedLateCounts < ActiveRecord::Migration
+  def up
+    Tasks::Models::Task.select(:id).where.not(accepted_late_at: nil).find_in_batches do |tasks|
+      Tasks::Models::Task.where(id: tasks.map(&:id)).update_all(
+        <<-UPDATE_SQL.strip_heredoc
+          "correct_accepted_late_exercise_steps_count" =
+            "correct_accepted_late_exercise_steps_count" +
+            "correct_on_time_exercise_steps_count",
+          "completed_accepted_late_exercise_steps_count" =
+            "completed_accepted_late_exercise_steps_count" +
+            "completed_on_time_exercise_steps_count",
+          "completed_accepted_late_steps_count" =
+            "completed_accepted_late_steps_count" +
+            "completed_on_time_steps_count"
+        UPDATE_SQL
+      )
+    end
+  end
+
+  def down
+    Tasks::Models::Task.select(:id).where.not(accepted_late_at: nil).find_in_batches do |tasks|
+      Tasks::Models::Task.where(id: tasks.map(&:id)).update_all(
+        <<-UPDATE_SQL.strip_heredoc
+          "correct_accepted_late_exercise_steps_count" =
+            "correct_accepted_late_exercise_steps_count" -
+            "correct_on_time_exercise_steps_count",
+          "completed_accepted_late_exercise_steps_count" =
+            "completed_accepted_late_exercise_steps_count" -
+            "completed_on_time_exercise_steps_count",
+          "completed_accepted_late_steps_count" =
+            "completed_accepted_late_steps_count" -
+            "completed_on_time_steps_count"
+        UPDATE_SQL
+      )
+    end
+  end
+end
