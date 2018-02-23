@@ -10,7 +10,7 @@ module Settings
         VALID_TYPES.include? type.to_s
       end
 
-      def add(type:, message:, from:, to:)
+      def add(type:, message:, from: nil, to: nil)
         key = key(type: type)
 
         json = { message: message, from: from, to: to }.to_json

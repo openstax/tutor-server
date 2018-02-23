@@ -13,8 +13,12 @@ RSpec.describe Api::V1::UpdatesController, type: :controller, api: true, version
   context '#index' do
 
     before do
-      3.times { |num| Settings::Notifications.add(:general, "General message #{num + 1}") }
-      3.times { |num| Settings::Notifications.add(:instructor, "Instructor message #{num + 1}") }
+      3.times do |num|
+        Settings::Notifications.add(type: :general, message: "General message #{num + 1}")
+      end
+      3.times do |num|
+        Settings::Notifications.add(type: :instructor, message: "Instructor message #{num + 1}")
+      end
     end
 
     after  do
@@ -25,8 +29,8 @@ RSpec.describe Api::V1::UpdatesController, type: :controller, api: true, version
       end
     end
 
-    let(:general_notifications)         { Settings::Notifications.active(:general)    }
-    let(:instructor_notifications)      { Settings::Notifications.active(:instructor) }
+    let(:general_notifications)         { Settings::Notifications.active(type: :general)    }
+    let(:instructor_notifications)      { Settings::Notifications.active(type: :instructor) }
 
     let(:general_notifications_hash)    do
       general_notifications.map do |notification|
