@@ -381,7 +381,7 @@ def with_export_rows(export, task_types, from = nil, to = nil, &block)
     block.call(rows)
   end
 
-  described_class.call(task_types: task_types, from: from, to: to)
+  described_class.call(task_types: task_types, from: from.to_s, to: to.to_s)
 end
 
 def format_time(time)

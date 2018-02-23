@@ -5,19 +5,30 @@
 <p>Use the button below to trigger an export of research data into the Box export
    folder. The export will take several minutes, so check back later.</p>
 
+<p>Current time on page load: <%= Time.current.to_s %></p>
+
 <%= lev_form_for :export_research_data, url: admin_research_data_path, method: :post do |f| %>
     <div>
-      <%= label_tag :from %>
+      <%= f.label :from, 'From:' %>
       <%= f.text_field :from, class: "datepicker start" %>
-
-      <%= label_tag :to %>
-      <%= f.text_field :to, class: "datepicker end" %>
-      <div>
-        <%= f.collection_check_boxes :task_types, \
-              [["tutor", "Include Tutor"], ["concept_coach", "Include Concept Coach"]], \
-              :first, :second %>
-      </div>
-
+      <%= f.label :from, 'UTC' %>
     </div>
-    <%= submit_tag "Export Data", class: "btn btn-primary" %>
+    <div>
+      <%= f.label :to, 'To:' %>
+      <%= f.text_field :to, class: "datepicker end" %>
+      <%= f.label :to, 'UTC' %>
+    </div>
+
+    <div>
+      <%= check_box_tag :tutor %>
+      <%= label_tag :tutor, 'Include Tutor' %>
+    </div>
+    <div>
+      <%= check_box_tag :concept_coach %>
+      <%= label_tag :concept_coach, 'Include Concept Coach' %>
+    </div>
+
+    <div>
+      <%= submit_tag "Export Data", class: "btn btn-primary" %>
+    </div>
   <% end %>

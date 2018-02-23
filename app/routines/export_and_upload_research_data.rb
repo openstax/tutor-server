@@ -15,7 +15,7 @@ class ExportAndUploadResearchData
 
     filename = FilenameSanitizer.sanitize(filename) ||
                "export_#{Time.current.strftime("%Y%m%dT%H%M%SZ")}.csv"
-    date_range = (Chronic.parse(from))..(Chronic.parse(to)) unless to.blank? || from.blank?
+    date_range = DateTime.parse(from)..DateTime.parse(to) unless to.blank? || from.blank?
 
     nested_transaction = ActiveRecord::Base.connection.transaction_open?
     files = ActiveRecord::Base.transaction do
