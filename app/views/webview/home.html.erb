@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:fb="http://ogp.me/ns/fb#">
+<html xmlns:fb="http://ogp.me/ns/fb#" lang="en" xml:lang="en">
 <head>
   <title>OpenStax Tutor</title>
 
@@ -15,13 +15,13 @@
   <%= render 'webview/google_analytics' %>
 </head>
 
-<body id="home">
+<body id="home" role="main" aria-label="main content">
 <div class="body tutor-home">
 
 <!-- HEADER
 ============================================= -->
 <header>
-  <nav class="navbar navbar-default navbar-fixed-top top-nav " role="navigation">
+  <nav class="navbar navbar-default navbar-fixed-top top-nav" role="navigation">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -30,14 +30,14 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#home"></a>
+        <a class="navbar-brand" href="#home" aria-label="home"></a>
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
         <ul class="nav navbar-nav links">
           <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
         </ul>
-        <a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank"></a>
+        <a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank" aria-label="rice university"></a>
       </div>
       <!-- /.navbar-collapse -->
     </div>
