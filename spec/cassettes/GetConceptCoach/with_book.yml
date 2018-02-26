@@ -196,7 +196,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c@2
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c@2
     body:
       encoding: US-ASCII
       string: ''
@@ -326,7 +326,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/6a0568d8-23d7-439b-9a01-16e4e73886b3@12
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:6a0568d8-23d7-439b-9a01-16e4e73886b3@12
     body:
       encoding: US-ASCII
       string: ''
@@ -1139,7 +1139,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/7636a3bf-eb80-4898-8b2c-e81c1711b99f@2
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:7636a3bf-eb80-4898-8b2c-e81c1711b99f@2
     body:
       encoding: US-ASCII
       string: ''
@@ -1311,7 +1311,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/be8818d0-2dba-4bf3-859a-737c25fb2c99@13
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:be8818d0-2dba-4bf3-859a-737c25fb2c99@13
     body:
       encoding: US-ASCII
       string: ''
@@ -2507,7 +2507,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/e98bdaec-4060-4b43-ac70-681555a30e22@2
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:e98bdaec-4060-4b43-ac70-681555a30e22@2
     body:
       encoding: US-ASCII
       string: ''
@@ -2676,7 +2676,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/003aedba-f354-4e57-ba45-f8b4eda66e12@8
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:003aedba-f354-4e57-ba45-f8b4eda66e12@8
     body:
       encoding: US-ASCII
       string: ''
@@ -3032,7 +3032,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/a1a2f03a-701f-4e7a-ae0e-d8087880c6fd@2
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:a1a2f03a-701f-4e7a-ae0e-d8087880c6fd@2
     body:
       encoding: US-ASCII
       string: ''
@@ -3173,7 +3173,7 @@ http_interactions:
   recorded_at: Mon, 02 May 2016 23:30:03 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/40e1947a-5a8b-4314-a9e7-bae3cedb885d@9
+    uri: https://archive.cnx.org/contents/f10533ca-f803-490d-b935-88899941197f@3.2:40e1947a-5a8b-4314-a9e7-bae3cedb885d@9
     body:
       encoding: US-ASCII
       string: ''
