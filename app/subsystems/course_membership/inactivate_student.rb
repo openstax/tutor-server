@@ -18,6 +18,8 @@ module CourseMembership
       Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(period_ids: period_id, force: true)
 
       outputs.student = student
+
+      # TODO deactive cohort memberships
     end
   end
 end

@@ -12,6 +12,9 @@ class CourseMembership::AddStudent
   uses_routine Research::AssignMissingSurveys, as: :assign_missing_surveys,
                                                translations: { outputs: { type: :verbatim } }
 
+  uses_routine Research::AdmitStudentsToStudies, as: :admint_students_to_studies,
+                                                 translations: { outputs: { type: :verbatim } }
+
   protected
 
   def exec(period:, role:, student_identifier: nil,
@@ -42,5 +45,7 @@ class CourseMembership::AddStudent
     run(:mark_course_enrolled, course: course)
 
     run(:assign_missing_surveys, student: student)
+
+    run(:admint_students_to_studies, students: student, studies: course.studies)
   end
 end

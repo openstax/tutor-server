@@ -19,6 +19,8 @@ module CourseMembership
       Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(period_ids: period.id, force: true)
 
       outputs.student = student
+
+      # TODO reactivate cohort memberships (check with research)
     end
   end
 end
