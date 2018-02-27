@@ -18,11 +18,11 @@
 
       <div class='col-xs-3'>
         From: <%= notification.from.try!(:strftime, "%Y-%m-%d %H:%M:%S UTC") ||
-                  'Beginning of Time' %>
+                  'The Beginning of Time' %>
       </div>
 
       <div class='col-xs-3'>
-        To: <%= notification.to.try!(:strftime, "%Y-%m-%d %H:%M:%S UTC") || 'End of Time' %>
+        To: <%= notification.to.try!(:strftime, "%Y-%m-%d %H:%M:%S UTC") || 'The End of Time' %>
       </div>
 
       <div class='col-xs-1'>
