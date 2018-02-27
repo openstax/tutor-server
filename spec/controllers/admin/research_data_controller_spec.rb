@@ -50,22 +50,26 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
       end
     end
 
-    it "raises an exception when export_research_data is missing" do
-      allow(ExportAndUploadResearchData).to receive(:perform_later)
-      expect{post :create}.to raise_error StandardError
+    it "does not export when export_research_data is missing" do
+      expect(ExportAndUploadResearchData).not_to receive(:perform_later)
+
+      post :create
+      expect(response).to redirect_to admin_research_data_path
     end
 
-    it "raises an exception when export_research_data does not contain task_types" do
-      allow(ExportAndUploadResearchData).to receive(:perform_later)
-      expect{post :create, export_research_data: {}}.to raise_error StandardError
+    it "does not export when export_research_data does not contain task_types" do
+      expect(ExportAndUploadResearchData).not_to receive(:perform_later)
+
+      post :create, export_research_data: {}
+      expect(response).to redirect_to admin_research_data_path
     end
 
-    it "raises an exception with invalid task_types parameters" do
-      allow(ExportAndUploadResearchData).to receive(:perform_later)
+    it "does not export with invalid task_types parameters" do
+      expect(ExportAndUploadResearchData).not_to receive(:perform_later)
 
-      expect{post :create, from: Date.yesterday.to_s, to: Date.today.to_s,
-                    export_research_data: {task_types: ["whatev"]}
-            }.to raise_error StandardError
+      post :create, from: Date.yesterday.to_s, to: Date.today.to_s,
+                    export_research_data: { task_types: ["whatev"] }
+      expect(response).to redirect_to admin_research_data_path
     end
   end
 end

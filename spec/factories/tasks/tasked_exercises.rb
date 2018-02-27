@@ -15,10 +15,11 @@ FactoryBot.define do
     end
 
     association :exercise, factory: :content_exercise
-    question_id { exercise.content_as_independent_questions.first[:id] }
-    content     { exercise.content }
-    url         { exercise.url }
-    title       { exercise.title }
+    question_id    { exercise.content_as_independent_questions.first[:id] }
+    question_index 0
+    content        { exercise.content }
+    url            { exercise.url }
+    title          { exercise.title }
 
     after(:build) do |tasked_exercise, evaluator|
       options = { tasked: tasked_exercise }

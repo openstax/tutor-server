@@ -49,6 +49,7 @@ class TaskExercise
         title: title || exercise.title,
         context: exercise.context,
         question_id: question[:id],
+        question_index: ii,
         content: question[:content],
         is_in_multipart: questions.size > 1
       )

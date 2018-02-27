@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123165516) do
+ActiveRecord::Schema.define(version: 20180223002900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -912,6 +912,7 @@ ActiveRecord::Schema.define(version: 20180123165516) do
     t.string   "question_id",                                       null: false
     t.text     "context"
     t.uuid     "uuid",                default: "gen_random_uuid()"
+    t.integer  "question_index",                                    null: false
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree

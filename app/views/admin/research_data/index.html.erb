@@ -5,19 +5,33 @@
 <p>Use the button below to trigger an export of research data into the Box export
    folder. The export will take several minutes, so check back later.</p>
 
+<p>Current time on page load: <%= Time.current.to_s %></p>
+
 <%= lev_form_for :export_research_data, url: admin_research_data_path, method: :post do |f| %>
     <div>
-      <%= label_tag :from %>
-      <%= f.text_field :from, class: "datepicker research" %>
-
-      <%= label_tag :to %>
-      <%= f.text_field :to, class: "datepicker research" %>
-      <div>
-        <%= f.collection_check_boxes :task_types, \
-              [["tutor", "Include Tutor"], ["concept_coach", "Include Concept Coach"]], \
-              :first, :second %>
-      </div>
-
+      <%= f.label :from, 'From:' %>
+      <%= f.text_field :from, class: "datepicker start" %>
+      <%= f.label :from, 'UTC' %>
     </div>
-    <%= submit_tag "Export Data", class: "btn btn-primary" %>
+    <div>
+      <%= f.label :to, 'To:' %>
+      <%= f.text_field :to, class: "datepicker end" %>
+      <%= f.label :to, 'UTC' %>
+    </div>
+
+    <div>
+      <%= check_box_tag 'export_research_data[task_types][]', :tutor, true,
+                        id: 'export_research_data_task_types_tutor' %>
+      <%= f.label :task_types_tutor, 'Include Tutor' %>
+    </div>
+    <div>
+      <%= check_box_tag 'export_research_data[task_types][]', :concept_coach, false,
+                        id: 'export_research_data_task_types_concept_coach' %>
+      <%= f.label :task_types_concept_coach, 'Include Concept Coach' %>
+    </div>
+
+    <div>
+      <%= submit_tag "Export Data", class: "btn btn-primary",
+                                    data: { disable_with: "Exporting..." } %>
+    </div>
   <% end %>

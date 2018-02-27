@@ -14,9 +14,15 @@ $(document).ready(function() {
   var year = date.getFullYear();
   var month = date.getMonth() + 1;
   var day = date.getDate();
-  var dateString = year + (month < 10 ? '-0' : '-') + month + (day < 10 ? '-0' : '-') + day;
+  var tomorrow = day + 1;
+  var timeString = ' 00:00:00';
+  var yearMonthString = year + (month < 10 ? '-0' : '-') + month;
+  var startDateTimeString = yearMonthString + (day < 10 ? '-0' : '-') + day + timeString;
+  var endDateTimeString   = yearMonthString + (tomorrow < 10 ? '-0' : '-') + tomorrow + timeString;
 
-  $('.datepicker.research').val(dateString + ' 00:00:00');
+  $('.datepicker.start').val(startDateTimeString);
+  $('.datepicker.end'  ).val(endDateTimeString  );
+
   $('.datepicker').datetimepicker({
     format: 'Y-m-d H:i:s'
   });

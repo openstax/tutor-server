@@ -21,6 +21,7 @@ RSpec.describe TaskExercise, type: :routine do
     expect(task_step.tasked).to be_a(Tasks::Models::TaskedExercise)
     expect(task_step.tasked).to be_persisted
     expect(task_step.tasked.is_in_multipart).to eq false
+    expect(task_step.tasked.question_index).to eq 0
     expect(task_step.tasked.question_id).to be_kind_of(String)
     expect(task_step.tasked.task_step).to eq task_step
     parser = task_step.tasked.parser
@@ -34,16 +35,24 @@ RSpec.describe TaskExercise, type: :routine do
 
     TaskExercise[exercise: multipart_exercise, task_step: task_step, task: task]
 
+    question_ids = multipart_exercise.content_as_independent_questions.map { |qq| qq[:id] }
+
     expect(task.task_steps.length).to eq 2
-    expect(task.task_steps.first).to eq task_step
 
-    expected_content = ["(0)", "(1)"]
-
-    task.tasked_exercises.each_with_index do |tasked_exercise, index|
-      expect(tasked_exercise.is_in_multipart).to eq true
-      expect(tasked_exercise.context).to eq 'Some context'
-      expect(tasked_exercise.content).to include expected_content[index]
+    task.task_steps.each do |task_step|
+      expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
+      expect(task_step.tasked.is_in_multipart).to eq true
+      expect(task_step.tasked.context).to eq 'Some context'
+      expect(task_step.group_type).to eq 'unknown_group'
+      expect(task_step.page).to eq multipart_exercise.page.to_model
+      expect(task_step.labels).to eq []
     end
+    expect(task.task_steps[0].tasked.question_index).to eq 0
+    expect(task.task_steps[0].tasked.question_id).to eq question_ids[0]
+    expect(task.task_steps[0].tasked.content).to match("(0)")
+    expect(task.task_steps[1].tasked.question_index).to eq 1
+    expect(task.task_steps[1].tasked.question_id).to eq question_ids[1]
+    expect(task.task_steps[1].tasked.content).to match("(1)")
   end
 
   it 'can insert multiple exercise steps in order for a single placeholder step' do
@@ -67,13 +76,16 @@ RSpec.describe TaskExercise, type: :routine do
     task.task_steps[1..2].each do |task_step|
       expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
       expect(task_step.tasked.is_in_multipart).to eq true
+      expect(task_step.tasked.context).to eq 'Some context'
       expect(task_step.group_type).to eq 'personalized_group'
       expect(task_step.page).to eq multipart_exercise.page.to_model
       expect(task_step.labels).to eq ['test']
     end
+    expect(task.task_steps[1].tasked.question_index).to eq 0
     expect(task.task_steps[1].tasked.question_id).to eq question_ids[0]
-    expect(task.task_steps[2].tasked.question_id).to eq question_ids[1]
     expect(task.task_steps[1].tasked.content).to match("(0)")
+    expect(task.task_steps[2].tasked.question_index).to eq 1
+    expect(task.task_steps[2].tasked.question_id).to eq question_ids[1]
     expect(task.task_steps[2].tasked.content).to match("(1)")
 
     expect(task.task_steps[3]).to eq exercise_step
