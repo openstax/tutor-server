@@ -261,6 +261,7 @@ class Tasks::UpdateTaskCaches
               correct: tasked_exercise.is_correct?
             }
           end
+          completed_exercises_array = exercises_array.select { |exercise| exercise[:completed] }
 
           is_spaced_practice = num_tasked_placeholders == 0 && exercises_array.all? do |ex|
             ex[:group_type] == 'spaced_practice_group'
@@ -275,8 +276,10 @@ class Tasks::UpdateTaskCaches
             num_assigned_steps: task_steps.size,
             num_completed_steps: task_steps.count(&:completed?),
             num_assigned_exercises: exercises_array.size,
-            num_completed_exercises: exercises_array.count { |exercise| exercise[:completed] },
-            num_correct_exercises: exercises_array.count { |exercise| exercise[:correct] },
+            num_completed_exercises: completed_exercises_array.size,
+            num_correct_exercises: completed_exercises_array.count do |exercise|
+              exercise[:correct]
+            end,
             num_assigned_placeholders: num_tasked_placeholders,
             exercises: exercises_array
           }
