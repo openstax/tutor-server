@@ -5,14 +5,12 @@ module Hypothesis
 
       payload = {
         aud: Rails.application.secrets[:hypothesis]['host'],
-        iss: Rails.application.secrets[:hypothesis]['client_id'],
+        iss: Rails.application.secrets[:hypothesis]['client_id'] || '',
         sub: user_id,
         nbf: now,
         exp: now + 600
       }
-      JWT.encode payload,
-      Rails.application.secrets[:hypothesis]['client_secret'], 'HS256'
+      JWT.encode payload, Rails.application.secrets[:hypothesis]['client_secret'] || '', 'HS256'
   end
 
 end
-

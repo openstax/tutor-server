@@ -5,26 +5,22 @@
 //= require jquery-ui-1.11.4.custom.min
 //= require best_in_place.jquery-ui
 //= require bootstrap-sprockets
+//= require moment.min
 //= require manager
 
 //=============== Date Time Picker ============//
 $(document).ready(function() {
-  // https://stackoverflow.com/a/18005868
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth() + 1;
-  var day = date.getDate();
-  var tomorrow = day + 1;
-  var timeString = ' 00:00:00';
-  var yearMonthString = year + (month < 10 ? '-0' : '-') + month;
-  var startDateTimeString = yearMonthString + (day < 10 ? '-0' : '-') + day + timeString;
-  var endDateTimeString   = yearMonthString + (tomorrow < 10 ? '-0' : '-') + tomorrow + timeString;
+  var midnight_today = moment().startOf('day');
+  var midnight_tomorrow = midnight_today.clone().add(1, 'day');
 
-  $('.datepicker.start').val(startDateTimeString);
-  $('.datepicker.end'  ).val(endDateTimeString  );
+  var moment_format = 'YYYY-MM-DD HH:mm:ss';
+  var datepicker_format = 'Y-m-d H:i:s';
+
+  $('.datepicker.start').val(midnight_today.format(moment_format));
+  $('.datepicker.end'  ).val(midnight_tomorrow.format(moment_format));
 
   $('.datepicker').datetimepicker({
-    format: 'Y-m-d H:i:s'
+    format: datepicker_format
   });
 });
 

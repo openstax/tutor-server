@@ -1,5 +1,7 @@
 <% @page_header = "Active Notifications" %>
 
+Current time on page load: <%= Time.current.to_s %>
+
 <%= render partial: 'index', locals: { type: :general } %>
 
 <%= render partial: 'index', locals: { type: :instructor } %>
