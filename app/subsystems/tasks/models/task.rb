@@ -259,11 +259,11 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def effective_correct_exercise_count
-    correct_on_time_exercise_count + correct_accepted_late_exercise_count
+    [ correct_on_time_exercise_count, correct_accepted_late_exercise_count ].max
   end
 
   def effective_completed_steps_count
-    completed_on_time_steps_count + completed_accepted_late_steps_count
+    [ completed_on_time_steps_count, completed_accepted_late_steps_count ].max
   end
 
   def score
@@ -275,12 +275,9 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def accept_late_work
-    self.completed_accepted_late_steps_count =
-      completed_steps_count - completed_on_time_steps_count
-    self.completed_accepted_late_exercise_steps_count =
-      completed_exercise_steps_count - completed_on_time_exercise_steps_count
-    self.correct_accepted_late_exercise_steps_count =
-      correct_exercise_steps_count - correct_on_time_exercise_steps_count
+    self.completed_accepted_late_steps_count = completed_steps_count
+    self.completed_accepted_late_exercise_steps_count = completed_exercise_steps_count
+    self.correct_accepted_late_exercise_steps_count = correct_exercise_steps_count
     self.accepted_late_at = Time.current
   end
 
