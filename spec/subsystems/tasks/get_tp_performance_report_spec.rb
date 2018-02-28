@@ -98,7 +98,13 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       end
     end
 
-    it 'returns the proper numbers' do
+    it 'returns the proper numbers (feedback_at does not matter)' do
+      tasks = Tasks::Models::Task.where(title: 'Homework task plan')
+      tasks.each do |task|
+        task.feedback_at = task.time_zone.to_tz.now + 1.2.days
+        task.save!
+      end
+
       expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
       expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(11/14.0)
       expect(first_period_report.overall_reading_score).to be_nil
@@ -373,8 +379,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       )
       expect(student.homework_score).to eq 1.0
       expect(student.homework_progress).to eq 1.0
-      expect(student.reading_score).to eq nil
-      expect(student.reading_progress).to eq nil
+      expect(student.reading_score).to be_nil
+      expect(student.reading_progress).to be_nil
       expect(student.course_average).to eq 1.0
 
       expect(student.is_dropped).to eq false
@@ -398,6 +404,82 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
         expect(data.correct_on_time_exercise_count).to be_a Integer
         expect(data.correct_accepted_late_exercise_count).to be_a Integer
         expect(data.score).to be_a Float
+        expect(data.progress).to be_a Float
+        expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.due_at).to be_a Time
+        expect(data.last_worked_at).to be_nil.or(be_a Time)
+        expect(data.is_late_work_accepted).to be_in [true, false]
+        expect(data.is_included_in_averages).to be_in [true, false]
+      end
+    end
+
+    it 'does not include tasks with feedback_at in the future' do
+      task = Tasks::Models::Task.joins(:taskings).find_by(
+        taskings: { entity_role_id: @student_1.to_model.roles.first.id },
+        title: 'Homework task plan'
+      )
+      task.feedback_at = task.time_zone.to_tz.now + 1.2.days
+      task.save!
+
+      expect(report.data_headings.size).to eq expected_tasks
+
+      expect(report.overall_homework_score).to be_nil
+      expect(report.overall_homework_progress).to eq 1.0
+      expect(report.overall_reading_score).to be_nil
+      expect(report.overall_reading_progress).to be_nil
+      expect(report.overall_course_average).to be_nil
+
+      expect(report.data_headings[0].title).to eq 'Homework 2 task plan'
+      expect(report.data_headings[0].plan_id).to be_a Integer
+      expect(report.data_headings[0].type).to eq 'homework'
+      expect(report.data_headings[0].due_at).to be_a Time
+      expect(report.data_headings[0].average_score).to be_nil
+      expect(report.data_headings[0].average_progress).to eq 1.0
+
+      expect(report.data_headings[1].title).to eq 'Reading task plan'
+      expect(report.data_headings[1].plan_id).to be_a Integer
+      expect(report.data_headings[1].type).to eq 'reading'
+      expect(report.data_headings[1].due_at).to be_a Time
+      expect(report.data_headings[1].average_score).to be_nil
+      expect(report.data_headings[1].average_progress).to eq 1.0
+
+      expect(report.data_headings[2].title).to eq 'Homework task plan'
+      expect(report.data_headings[2].plan_id).to be_a Integer
+      expect(report.data_headings[2].type).to eq 'homework'
+      expect(report.data_headings[2].due_at).to be_a Time
+      expect(report.data_headings[2].average_score).to be_nil
+      expect(report.data_headings[2].average_progress).to eq 1.0
+
+      expect(student.name).to eq @student_1.name
+      expect(student.first_name).to eq @student_1.first_name
+      expect(student.last_name).to eq @student_1.last_name
+      expect(student.role).to eq @student_1.to_model.roles.first.id
+      expect(student.student_identifier).to(
+        eq @student_1.to_model.roles.first.student.student_identifier
+      )
+      expect(student.homework_score).to be_nil
+      expect(student.homework_progress).to eq 1.0
+      expect(student.reading_score).to be_nil
+      expect(student.reading_progress).to be_nil
+      expect(student.course_average).to be_nil
+
+      expect(student.is_dropped).to eq false
+
+      data = student.data
+      expect(data.size).to eq 3
+      expect(data.map(&:type)).to eq ['homework', 'reading', 'homework']
+
+      data.each do |data|
+        expect(data.id).to be_a Integer
+        expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
+        expect(data.step_count).to be_a Integer
+        expect(data.completed_step_count).to be_a Integer
+        expect(data.completed_on_time_step_count).to be_a Integer
+        expect(data.completed_accepted_late_step_count).to be_a Integer
+        expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+        expect(data.completed_exercise_count).to be_a Integer
+        expect(data.completed_on_time_exercise_count).to be_a Integer
+        expect(data.completed_accepted_late_exercise_count).to be_a Integer
         expect(data.progress).to be_a Float
         expect(data.recovered_exercise_count).to be_a Integer
         expect(data.due_at).to be_a Time

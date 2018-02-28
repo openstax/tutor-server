@@ -74,27 +74,42 @@ module Tasks
             task_plan_id_to_task_map[task.tasks_task_plan_id] << task
           end if !is_dropped
 
-          data = get_task_data(tasks: student_tasks, tz: tz, current_time_ntz: current_time_ntz)
+          data = get_task_data(
+            tasks: student_tasks, tz: tz, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+          )
           non_nil_data = data.compact
           homework_tasks = non_nil_data.select { |dd| dd.type == 'homework' }.map(&:task)
           reading_tasks = non_nil_data.select { |dd| dd.type == 'reading' }.map(&:task)
 
           homework_score = average_score(
-            tasks: homework_tasks, current_time_ntz: current_time_ntz
+            tasks: homework_tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
           )
           homework_progress = average_progress(
             tasks: homework_tasks, current_time_ntz: current_time_ntz
           )
           reading_score = average_score(
-            tasks: reading_tasks, current_time_ntz: current_time_ntz
+            tasks: reading_tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
           )
           reading_progress = average_progress(
             tasks: reading_tasks, current_time_ntz: current_time_ntz
           )
-          course_average = course.homework_score_weight.to_f * (homework_score || 0) +
-                           course.homework_progress_weight.to_f * (homework_progress || 0) +
-                           course.reading_score_weight.to_f * (reading_score || 0) +
-                           course.reading_progress_weight.to_f * (reading_progress || 0)
+
+          homework_score_weight = course.homework_score_weight.to_f
+          homework_progress_weight = course.homework_progress_weight.to_f
+          reading_score_weight = course.reading_score_weight.to_f
+          reading_progress_weight = course.reading_progress_weight.to_f
+
+          course_average = if (homework_score_weight    > 0 && homework_score.nil?   ) ||
+                              (homework_progress_weight > 0 && homework_progress.nil?) ||
+                              (reading_score_weight     > 0 && reading_score.nil?    ) ||
+                              (reading_progress_weight  > 0 && reading_progress.nil? )
+            nil
+          else
+            homework_score_weight    * (homework_score    || 0) +
+            homework_progress_weight * (homework_progress || 0) +
+            reading_score_weight     * (reading_score     || 0) +
+            reading_progress_weight  * (reading_progress  || 0)
+          end
 
           OpenStruct.new(
             name: name,
@@ -122,7 +137,7 @@ module Tasks
           overall_reading_progress: average(array: overall_students.map(&:reading_progress)),
           overall_course_average: average(array: overall_students.map(&:course_average)),
           data_headings: get_data_headings(
-            tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz
+            tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher
           ),
           students: student_data
         )
@@ -163,10 +178,13 @@ module Tasks
           task_plan: { withdrawn_at: nil },
           taskings: { role: { student: { course_profile_course_id: course.id } } }
         )
+        .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
         .preload(task_plan: :tasking_plans)
         .reorder(nil).distinct
+
       rel = rel.joins(:taskings).where(taskings: { entity_role_id: role.id }) unless is_teacher
-      rel.to_a.select { |task| task.opens_at_ntz.nil? || current_time_ntz > task.opens_at_ntz }
+
+      rel.to_a
     end
 
     def filter_and_sort_tasking_plans(tasks, course, period)
@@ -182,7 +200,7 @@ module Tasks
       end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.created_at ] }.reverse
     end
 
-    def get_data_headings(tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz)
+    def get_data_headings(tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher)
       tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
         task_plan_id = task_plan.id
@@ -193,7 +211,9 @@ module Tasks
           title: task_plan.title,
           type: task_plan.type,
           due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
-          average_score: average_score(tasks: tasks, current_time_ntz: current_time_ntz),
+          average_score: average_score(
+            tasks: tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+          ),
           average_progress: completion_fraction(tasks: tasks)
         )
       end
