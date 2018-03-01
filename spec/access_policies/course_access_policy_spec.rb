@@ -26,9 +26,17 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     AddUserAsCourseTeacher[course: @clone_course, user: @clone_teacher]
     AddUserAsCourseTeacher[course: @clone_course, user: @clone_faculty]
 
-    @faculty.account.update_attribute :faculty_status, :confirmed_faculty
-    @new_faculty.account.update_attribute :faculty_status, :confirmed_faculty
-    @clone_faculty.account.update_attribute :faculty_status, :confirmed_faculty
+    @teacher.account.confirmed_faculty!
+    @clone_teacher.account.confirmed_faculty!
+    @faculty.account.confirmed_faculty!
+    @new_faculty.account.confirmed_faculty!
+    @clone_faculty.account.confirmed_faculty!
+
+    @teacher.account.other_school_type!
+    @clone_teacher.account.other_school_type!
+    @faculty.account.college!
+    @new_faculty.account.college!
+    @clone_faculty.account.college!
   end
 
   context 'original course' do
@@ -68,138 +76,144 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       end
     end
 
-    context 'student in original course' do
-      let(:requestor) { @student }
+    context 'student' do
+      context 'in original course' do
+        let(:requestor) { @student }
 
-      [:index, :read, :create_practice, :performance].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
+        [:index, :read, :create_practice, :performance].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
+
+        [
+          :read_task_plans, :export, :roster, :add_period,
+          :update, :stats, :exercises, :clone, :create
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
 
-      [
-        :read_task_plans, :export, :roster, :add_period,
-        :update, :stats, :exercises, :clone, :create
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
+      context 'in cloned course' do
+        let(:requestor) { @clone_student }
+
+        context 'index' do
+          let(:action) { :index }
+          it { should eq true }
+        end
+
+        [
+          :create, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
+        end
+      end
+    end
+
+    context 'verified non-college teacher' do
+      context 'in original course' do
+        let(:requestor) { @teacher }
+
+        context 'create' do
+          let(:action) { :create }
           it { should eq false }
         end
+
+        [
+          :index, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
       end
-    end
 
-    context 'student in cloned course' do
-      let(:requestor) { @clone_student }
+      context 'in cloned course' do
+        let(:requestor) { @clone_teacher }
 
-      context 'index' do
-        let(:action) { :index }
-        it { should eq true }
-      end
+        [:index, :read_task_plans].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
 
-      [
-        :create, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
+        [
+          :create, :read, :create_practice, :performance, :export,
+          :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
     end
 
-    context 'unverified faculty in original course' do
-      let(:requestor) { @teacher }
+    context 'verified college faculty' do
+      context 'in original course' do
+        let(:requestor) { @faculty }
 
-      context 'create' do
-        let(:action) { :create }
-        it { should eq false }
-      end
-
-      [
-        :index, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
-        end
-      end
-    end
-
-    context 'unverified faculty in cloned course' do
-      let(:requestor) { @clone_teacher }
-
-      [:index, :read_task_plans].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
+        [
+          :index, :create, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
         end
       end
 
-      [
-        :create, :read, :create_practice, :performance, :export,
-        :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
+      context 'in cloned course' do
+        let(:requestor) { @clone_faculty }
+
+        [:index, :create, :read_task_plans].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
         end
-      end
-    end
 
-    context 'verified faculty in original course' do
-      let(:requestor) { @faculty }
-
-      [
-        :index, :create, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
-        end
-      end
-    end
-
-    context 'verified faculty in cloned course' do
-      let(:requestor) { @clone_faculty }
-
-      [:index, :create, :read_task_plans].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
+        [
+          :read, :create_practice, :performance, :export, :roster,
+          :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
 
-      [
-        :read, :create_practice, :performance, :export, :roster,
-        :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
+      context 'without a course' do
+        let(:requestor) { @new_faculty }
+
+        [:index, :create].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
         end
-      end
-    end
 
-    context 'verified faculty without a course' do
-      let(:requestor) { @new_faculty }
-
-      [:index, :create].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
-        end
-      end
-
-      [
-        :read, :read_task_plans, :create_practice, :performance, :export,
-        :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
+        [
+          :read, :read_task_plans, :create_practice, :performance, :export,
+          :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
     end
@@ -242,136 +256,142 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       end
     end
 
-    context 'student in original course' do
-      let(:requestor) { @student }
+    context 'student' do
+      context 'in original course' do
+        let(:requestor) { @student }
 
-      context 'index' do
-        let(:action) { :index }
-        it { should eq true }
-      end
-
-      [
-        :create, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
-        end
-      end
-    end
-
-    context 'student in cloned course' do
-      let(:requestor) { @clone_student }
-
-      [:index, :read, :create_practice, :performance].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
+        context 'index' do
+          let(:action) { :index }
           it { should eq true }
         end
+
+        [
+          :create, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
+        end
       end
 
-      [
-        :read_task_plans, :export, :roster, :add_period,
-        :update, :stats, :exercises, :clone, :create
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
+      context 'in cloned course' do
+        let(:requestor) { @clone_student }
+
+        [:index, :read, :create_practice, :performance].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
+
+        [
+          :read_task_plans, :export, :roster, :add_period,
+          :update, :stats, :exercises, :clone, :create
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
     end
 
-    context 'unverified faculty in original course' do
-      let(:requestor) { @teacher }
+    context 'verified non-college teacher' do
+      context 'in original course' do
+        let(:requestor) { @teacher }
 
-      context 'index' do
-        let(:action) { :index }
-        it { should eq true }
-      end
-
-      [
-        :create, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-       ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
-        end
-      end
-    end
-
-    context 'unverified faculty in cloned course' do
-      let(:requestor) { @clone_teacher }
-
-      context 'create' do
-        let(:action) { :create }
-        it { should eq false }
-      end
-
-      [
-        :index, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
+        context 'index' do
+          let(:action) { :index }
           it { should eq true }
         end
-      end
-    end
 
-    context 'verified faculty in original course' do
-      let(:requestor) { @faculty }
-
-      [:index, :create].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
+        [
+          :create, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+         ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
 
-      [
-        :read, :create_practice, :performance, :read_task_plans, :export,
-        :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
+      context 'in cloned course' do
+        let(:requestor) { @clone_teacher }
+
+        context 'create' do
+          let(:action) { :create }
           it { should eq false }
         end
-      end
-    end
 
-    context 'verified faculty in cloned course' do
-      let(:requestor) { @clone_faculty }
-
-      [
-        :index, :create, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
+        [
+          :index, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
         end
       end
     end
 
-    context 'verified faculty without a course' do
-      let(:requestor) { @new_faculty }
+    context 'verified college faculty' do
+      context 'in original course' do
+        let(:requestor) { @faculty }
 
-      [:index, :create].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq true }
+        [:index, :create].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
+
+        [
+          :read, :create_practice, :performance, :read_task_plans, :export,
+          :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
 
-      [
-        :read, :create_practice, :performance, :read_task_plans, :export,
-        :roster, :add_period, :update, :stats, :exercises, :clone
-      ].each do |test_action|
-        context "#{test_action}" do
-          let(:action) { test_action }
-          it { should eq false }
+      context 'in cloned course' do
+        let(:requestor) { @clone_faculty }
+
+        [
+          :index, :create, :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
+      end
+
+      context 'without a course' do
+        let(:requestor) { @new_faculty }
+
+        [:index, :create].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
+          end
+        end
+
+        [
+          :read, :create_practice, :performance, :read_task_plans, :export,
+          :roster, :add_period, :update, :stats, :exercises, :clone
+        ].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq false }
+          end
         end
       end
     end
