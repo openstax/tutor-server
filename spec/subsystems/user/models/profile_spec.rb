@@ -18,7 +18,7 @@ RSpec.describe User::Models::Profile, type: :model do
   end
 
   [:username, :first_name, :last_name, :full_name, :title,
-   :name, :casual_name, :faculty_status].each do |method|
+   :name, :casual_name, :faculty_status, :role, :school_type].each do |method|
     it { is_expected.to delegate_method(method).to(:account) }
   end
 

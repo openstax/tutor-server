@@ -156,7 +156,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before(:all) do
         DatabaseCleaner.start
 
-        @user_1.account.update_attribute :faculty_status, :confirmed_faculty
+        @user_1.account.confirmed_faculty!
+        @user_1.account.college!
 
         @preview_course = CreateCourse.call(
           name: 'Unclaimed',

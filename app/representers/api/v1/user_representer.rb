@@ -24,18 +24,28 @@ module Api::V1
     property :faculty_status,
              type: String,
              schema_info: {
+               description: "The user's faculty status, one of [#{
+                 OpenStax::Accounts::Account.faculty_statuses.keys.map(&:to_s).join(', ')
+               }]",
                required: true
              }
 
-    property :viewed_tour_stats
-
-    property :self_reported_role,
+    property :role,
+             as: :self_reported_role,
              type: String,
-             getter: ->(*) { account.role },
              schema_info: {
                description: "The user's uncorroborated role, one of [#{
-                        OpenStax::Accounts::Account.roles.keys.map(&:to_s).join(', ')
-                      }]",
+                 OpenStax::Accounts::Account.roles.keys.map(&:to_s).join(', ')
+               }]",
+               required: true
+             }
+
+    property :school_type,
+             type: String,
+             schema_info: {
+               description: "The user's school type, one of [#{
+                 OpenStax::Accounts::Account.school_types.keys.map(&:to_s).join(', ')
+               }]",
                required: true
              }
 
@@ -64,11 +74,13 @@ module Api::V1
              getter: ->(*) { GetUserTermsInfos[self].any?{|info| !info.is_signed} }
 
     property :profile_url,
-             getter: ->(*) {
+             getter: ->(*) do
                Addressable::URI.join(
                  OpenStax::Accounts.configuration.openstax_accounts_url, '/profile'
                ).to_s
-             }
+             end
+
+    property :viewed_tour_stats
 
   end
 end
