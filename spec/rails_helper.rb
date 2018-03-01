@@ -41,7 +41,6 @@ include OpenStax::Salesforce::SpecHelpers
 require 'shoulda/matchers'
 
 require 'selenium/webdriver'
-require 'screenshots'
 
 # https://robots.thoughtbot.com/headless-feature-specs-with-chrome
 Capybara.register_driver :selenium_chrome do |app|
