@@ -35,13 +35,13 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
       before(:each) { student.update_attributes!(is_paid: true) }
 
       it 'allows refunds after paying before 14 days elapse' do
-        Timecop.freeze(Time.now + 13.8.days) do
+        Timecop.freeze(Time.current + 13.8.days) do
           expect(student.is_refund_allowed).to eq true
         end
       end
 
       it 'does not allows refunds after paying after 14 days elapse' do
-        Timecop.freeze(Time.now + 14.01.days) do
+        Timecop.freeze(Time.current + 14.01.days) do
           expect(student.is_refund_allowed).to eq false
         end
       end

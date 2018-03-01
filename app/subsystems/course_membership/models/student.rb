@@ -28,7 +28,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   end
 
   def is_refund_allowed
-    is_paid ? first_paid_at + REFUND_PERIOD > Time.now : false
+    is_paid ? first_paid_at + REFUND_PERIOD > Time.current : false
   end
 
   def new_payment_due_at
@@ -42,7 +42,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   def init_first_paid_at
     # Better for this value to be set using actual payment time from Payments,
     # but this is better than nothing
-    self.first_paid_at ||= Time.now if is_paid
+    self.first_paid_at ||= Time.current if is_paid
   end
 
   def init_payment_due_at
