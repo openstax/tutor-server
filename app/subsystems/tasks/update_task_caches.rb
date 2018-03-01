@@ -8,6 +8,8 @@ class Tasks::UpdateTaskCaches
   protected
 
   def exec(task_ids:, update_step_counts: false, queue: 'low_priority')
+    ScoutHelper.ignore!(0.995)
+
     task_ids = [task_ids].flatten
 
     # Attempt to lock the tasks; Skip tasks already locked by someone else

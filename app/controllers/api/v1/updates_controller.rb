@@ -9,6 +9,7 @@ class Api::V1::UpdatesController < Api::V1::ApiController
     # Note: this endpoint is unsecure by design.
     # General notifications are intended to be viewable by anyone
 
+    ScoutHelper.ignore!(0.99)
     respond_with updates, represent_with: Api::V1::UpdatesRepresenter
   end
 

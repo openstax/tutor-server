@@ -27,6 +27,7 @@ class Api::V1::TasksController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
   EOS
   def show
+    ScoutHelper.ignore!(0.8)
     standard_read(@task, Api::V1::TaskRepresenter, true)
   end
 
