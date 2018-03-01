@@ -44,11 +44,11 @@ require 'selenium/webdriver'
 require 'screenshots'
 
 # https://robots.thoughtbot.com/headless-feature-specs-with-chrome
-Capybara.register_driver :chrome do |app|
+Capybara.register_driver :selenium_chrome do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome)
 end
 
-Capybara.register_driver :headless_chrome do |app|
+Capybara.register_driver :selenium_chrome_headless do |app|
   capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
     chromeOptions: { args: ['headless', 'disable-gpu'] }
   )
@@ -60,7 +60,7 @@ Capybara.register_driver :headless_chrome do |app|
   )
 end
 
-Capybara.javascript_driver = :headless_chrome
+Capybara.javascript_driver = :selenium_chrome_headless
 
 Capybara.asset_host = 'http://localhost:3001'
 

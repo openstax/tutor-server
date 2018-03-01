@@ -4,16 +4,23 @@ if do_screenshots
   require 'capybara-screenshot/rspec'
   Capybara::Screenshot.autosave_on_failure = false
   Capybara::Screenshot.append_timestamp = false
-  window_size = [1920, 6000]
+  WINDOW_SIZE = [1920, 6000]
 
   def screenshots_dir
-    $screenshots_dir ||= Rails.root.join "tmp/capybara/screenshots_#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}"
+    $screenshots_dir ||= Rails.root.join(
+      "tmp/capybara/screenshots_#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}"
+    ).tap do |path|
+      Dir.mkdir('tmp/capybara') unless Dir.exist? 'tmp/capybara'
+      Dir.mkdir(path) unless Dir.exist? path
+    end
   end
 
   def screenshot!(suffix: nil, width: nil, height: nil)
     include_html_screenshots = false
 
-    page.driver.resize(width || window_size[0], height || window_size[1])
+    Capybara.current_session.current_window.resize_to(
+      width || WINDOW_SIZE[0], height || WINDOW_SIZE[1]
+    )
 
     original_save_path = Capybara.save_path
     begin
@@ -26,7 +33,7 @@ if do_screenshots
       wait_for_animations
 
       if saver.save
-        {:html => saver.html_path, :image => saver.screenshot_path}
+        { html: saver.html_path, image: saver.screenshot_path }
       end
     ensure
       Capybara.save_path = original_save_path
