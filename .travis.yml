@@ -20,7 +20,8 @@ rvm:
 cache: bundler
 bundler_args: --without production --retry=6
 addons:
- postgresql: '9.5'
+  chrome: stable
+  postgresql: '9.5'
 env:
   - TAG=~speed:slow
   - TAG=speed:slow

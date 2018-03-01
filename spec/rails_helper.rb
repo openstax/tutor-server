@@ -48,9 +48,10 @@ Capybara.register_driver :selenium_chrome do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome)
 end
 
+# no-sandbox is required for it to work with Docker (Travis)
 Capybara.register_driver :selenium_chrome_headless do |app|
   capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: ['headless', 'disable-gpu'] }
+    chromeOptions: { args: ['headless', 'no-sandbox'] }
   )
 
   Capybara::Selenium::Driver.new(
