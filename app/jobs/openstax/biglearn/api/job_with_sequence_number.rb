@@ -18,6 +18,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
     method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:,
     response_status_key: nil, accepted_response_status: []
   )
+    ScoutHelper.ignore!(0.8)
     req = [requests].flatten
     return [] if req.empty?
 

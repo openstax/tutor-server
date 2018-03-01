@@ -8,7 +8,7 @@ class Tasks::UpdateTaskCaches
   protected
 
   def exec(task_ids:, update_step_counts: false, queue: 'low_priority')
-    ScoutApm::RequestManager.lookup.ignore_request!
+    ScoutHelper.ignore!(0.995)
 
     task_ids = [task_ids].flatten
 
