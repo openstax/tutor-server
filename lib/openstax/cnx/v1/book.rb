@@ -1,8 +1,7 @@
 module OpenStax::Cnx::V1
   class Book
 
-    def initialize(id: nil, hash: nil, title: nil,
-                   tree: nil, root_book_part: nil)
+    def initialize(id: nil, hash: nil, title: nil, tree: nil, root_book_part: nil)
       @id             = id
       @hash           = hash
       @title          = title
@@ -12,12 +11,12 @@ module OpenStax::Cnx::V1
 
     attr_reader :id
 
-    def hash
-      @hash ||= OpenStax::Cnx::V1.fetch(id)
-    end
-
     def url
       @url ||= OpenStax::Cnx::V1.archive_url_for(id)
+    end
+
+    def hash
+      @hash ||= OpenStax::Cnx::V1.fetch(url)
     end
 
     def uuid
@@ -53,7 +52,7 @@ module OpenStax::Cnx::V1
     end
 
     def root_book_part
-      @root_book_part ||= BookPart.new(hash: tree, is_root: true)
+      @root_book_part ||= BookPart.new(hash: tree, is_root: true, book: self)
     end
 
   end

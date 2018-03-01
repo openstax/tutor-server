@@ -30,23 +30,24 @@ module OpenStax::Cnx::V1
       node.at_css(feature_id_css)
     end
 
-    def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil)
+    def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil, book: nil)
       @hash    = hash
       @id      = id
       @url     = url
       @title   = title
       @content = content
+      @book = book
     end
 
-    attr_reader :hash
     attr_accessor :chapter_section
+    attr_reader :hash, :book
 
     def id
       @id ||= hash.fetch('id') { |key| raise "Page is missing #{key}" }
     end
 
     def url
-      @url ||= OpenStax::Cnx::V1.archive_url_for(id)
+      @url ||= url_for(id)
     end
 
     # Use the title in the collection hash
@@ -62,7 +63,7 @@ module OpenStax::Cnx::V1
     end
 
     def full_hash
-      @full_hash ||= OpenStax::Cnx::V1.fetch(id)
+      @full_hash ||= OpenStax::Cnx::V1.fetch(url)
     end
 
     def uuid
@@ -78,7 +79,7 @@ module OpenStax::Cnx::V1
     end
 
     def canonical_url
-      @canonical_url ||= OpenStax::Cnx::V1.archive_url_for("#{uuid}@#{version}")
+      @canonical_url ||= url_for("#{uuid}@#{version}")
     end
 
     def content
@@ -184,6 +185,10 @@ module OpenStax::Cnx::V1
     end
 
     protected
+
+    def url_for(path)
+      book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
+    end
 
     def absolutize_and_secure_urls(node)
       # Absolutize exercise urls

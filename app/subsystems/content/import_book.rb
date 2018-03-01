@@ -85,7 +85,7 @@ class Content::ImportBook
     pools = outs.pools
     chapters = outs.chapters
     pages = outs.pages
-    pages = run(:update_page_content, pages: pages, save: false).outputs.pages
+    pages = run(:update_page_content, book: book, pages: pages, save: false).outputs.pages
 
     outputs[:book] = book
     outputs[:chapters] = chapters

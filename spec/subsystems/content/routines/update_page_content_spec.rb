@@ -1,76 +1,152 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OPTS do
+RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
 
-  let(:cnx_page_1) {
-    OpenStax::Cnx::V1::Page.new({
+  before(:all) do
+    cnx_page_1 = OpenStax::Cnx::V1::Page.new(
       id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
       title: 'Physical Quantities and Units'
-    })
-  }
-
-  let(:cnx_page_2) {
-    OpenStax::Cnx::V1::Page.new({
+    )
+    cnx_page_2 = OpenStax::Cnx::V1::Page.new(
       id: '127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
       title: "Introduction to Electric Current, Resistance, and Ohm's Law"
-    })
-  }
+    )
 
-  let(:chapter_1)  { FactoryBot.create :content_chapter, book_location: [1] }
-  let(:book)       { chapter_1.book }
-  let(:chapter_20) { FactoryBot.create :content_chapter, book: book, book_location: [20] }
+    chapter_1 = FactoryBot.create :content_chapter, book_location: [1]
+    @book = chapter_1.book
+    chapter_20 = FactoryBot.create :content_chapter, book: @book, book_location: [20]
 
-  let!(:page_1) do
-    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage[
-        cnx_page: cnx_page_1, chapter: chapter_1, book_location: [1, 2]
-      ]
+    @pages = OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
+      VCR.use_cassette("Content_Routines_UpdatePageContent/with_book", VCR_OPTS) do
+        [
+          Content::Routines::ImportPage[
+            cnx_page: cnx_page_1, chapter: chapter_1, book_location: [1, 2]
+          ],
+          Content::Routines::ImportPage[
+            cnx_page: cnx_page_2, chapter: chapter_20, book_location: [20, 0]
+          ]
+        ]
+      end
+    end
+    @page_1 = @pages.first
+    @page_2 = @pages.second
+  end
+
+  let(:link_text) do
+    [
+      "Introduction to Electric Current, Resistance, and Ohm's Law",
+      'Accuracy, Precision, and Significant Figures',
+      'Appendix A'
+    ]
+  end
+
+  let(:before_hrefs) do
+    [
+      'https://cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
+      'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
+      'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
+    ]
+  end
+
+  let(:book_before_href) { "https://cnx.org/contents/#{@book.uuid}@#{@book.version}" }
+
+  before { @page_1.reload }
+
+  context 'page links' do
+    context 'simple' do
+      let(:after_hrefs) do
+        [ "/books/#{@book.id}/section/#{@page_2.book_location.reject(&:zero?).join('.')}" ] +
+        before_hrefs[1..-1]
+      end
+
+      it 'updates page links in content to relative urls if the links point to pages in the book' do
+        doc = Nokogiri::HTML(@page_1.content)
+
+        link_text.each_with_index do |value, index|
+          link = doc.xpath("//a[text()=\"#{value}\"]").first
+          expect(link.attribute('href').value).to eq before_hrefs[index]
+        end
+
+        described_class.call(book: @book, pages: @pages)
+        @pages.each(&:save!)
+
+        doc = Nokogiri::HTML(@page_1.reload.content)
+
+        link_text.each_with_index do |value, index|
+          link = doc.xpath("//a[text()=\"#{value}\"]").first
+          expect(link.attribute('href').value).to eq after_hrefs[index]
+        end
+      end
+    end
+
+    context 'composite' do
+      let(:composite_before_hrefs) do
+        before_hrefs.map do |href|
+          href.sub 'https://cnx.org/contents/', "#{book_before_href}:"
+        end
+      end
+
+      let(:composite_after_hrefs) do
+        [ "/books/#{@book.id}/section/#{@page_2.book_location.reject(&:zero?).join('.')}" ] +
+        composite_before_hrefs[1..-1]
+      end
+
+      before do
+        before_hrefs.each_with_index do |href, index|
+          @page_1.content.gsub! href, composite_before_hrefs[index]
+        end
+
+        @page_1.save!
+      end
+
+      it 'updates page links in content to relative urls if the links point to pages in the book' do
+        doc = Nokogiri::HTML(@page_1.content)
+
+        link_text.each_with_index do |value, index|
+          link = doc.xpath("//a[text()=\"#{value}\"]").first
+          expect(link.attribute('href').value).to eq composite_before_hrefs[index]
+        end
+
+        described_class.call(book: @book, pages: @pages)
+        @pages.each(&:save!)
+
+        doc = Nokogiri::HTML(@page_1.reload.content)
+
+        link_text.each_with_index do |value, index|
+          link = doc.xpath("//a[text()=\"#{value}\"]").first
+          expect(link.attribute('href').value).to eq composite_after_hrefs[index]
+        end
+      end
     end
   end
-  let!(:page_2) do
-    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage[
-        cnx_page: cnx_page_2, chapter: chapter_20, book_location: [20, 0]
-      ]
-    end
-  end
 
-  let(:link_text) { [
-    "Introduction to Electric Current, Resistance, and Ohm's Law",
-    'Accuracy, Precision, and Significant Figures',
-    'Appendix A'
-  ] }
+  context 'book links' do
+    let(:book_after_href) { "/books/#{@book.id}" }
 
-  let(:before_hrefs) { [
-    'https://cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
-    'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
-    'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
-  ] }
+    before do
+      before_hrefs.each { |href| @page_1.content.gsub! href, book_before_href }
 
-  let(:after_hrefs) { [
-    '20',
-    'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
-    'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
-  ] }
-
-  it 'updates page content links to relative url if the link points to the book' do
-    doc = Nokogiri::HTML(page_1.content)
-
-    link_text.each_with_index do |value, i|
-      link = doc.xpath("//a[text()=\"#{value}\"]").first
-      expect(link.attribute('href').value).to eq before_hrefs[i]
+      @page_1.save!
     end
 
-    pages = [page_1, page_2]
-    Content::Routines::UpdatePageContent.call(pages: pages)
-    pages.each(&:save!)
+    it 'updates links to the current book in content to relative urls' do
+      doc = Nokogiri::HTML(@page_1.content)
 
-    doc = Nokogiri::HTML(page_1.reload.content)
+      link_text.each do |value|
+        link = doc.xpath("//a[text()=\"#{value}\"]").first
+        expect(link.attribute('href').value).to eq book_before_href
+      end
 
-    link_text.each_with_index do |value, i|
-      link = doc.xpath("//a[text()=\"#{value}\"]").first
-      expect(link.attribute('href').value).to eq after_hrefs[i]
+      described_class.call(book: @book, pages: @pages)
+      @pages.each(&:save!)
+
+      doc = Nokogiri::HTML(@page_1.reload.content)
+
+      link_text.each do |value|
+        link = doc.xpath("//a[text()=\"#{value}\"]").first
+        expect(link.attribute('href').value).to eq book_after_href
+      end
     end
   end
 end
