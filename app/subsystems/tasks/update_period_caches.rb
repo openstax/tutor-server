@@ -5,6 +5,8 @@ class Tasks::UpdatePeriodCaches
   protected
 
   def exec(period_ids:, force: false)
+    ScoutApm::RequestManager.lookup.ignore_request!
+
     period_ids = [period_ids].flatten
     period_ids.each do |period_id|
       # Get active students IDs
