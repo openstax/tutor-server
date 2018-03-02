@@ -68,17 +68,17 @@ RSpec.describe Research::ExportAndUploadSurveyData, type: :routine do
       end
     end
   end
-end
 
-def with_export_rows(survey_plan:, &block)
-  expect(Box).to receive(:upload_files) do |zip_filename:, files:|
-    expect(files.size).to eq 1
-    file = files.first
-    expect(File.exist?(file)).to be true
-    expect(file.ends_with? '.csv').to be true
-    rows = CSV.read(file)
-    block.call(rows)
+  def with_export_rows(survey_plan:, &block)
+    expect(Box).to receive(:upload_files) do |zip_filename:, files:|
+      expect(files.size).to eq 1
+      file = files.first
+      expect(File.exist?(file)).to be true
+      expect(file.ends_with? '.csv').to be true
+      rows = CSV.read(file)
+      block.call(rows)
+    end
+
+    described_class.call(survey_plan: survey_plan)
   end
-
-  described_class.call(survey_plan: survey_plan)
 end
