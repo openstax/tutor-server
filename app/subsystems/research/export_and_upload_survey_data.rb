@@ -29,10 +29,10 @@ class Research::ExportAndUploadSurveyData
 
   def create_survey_export_file(survey_plan:, filename:)
     surveys = survey_plan.surveys
-      .select(:id, '"entity_roles"."research_identifier"', :survey_js_response)
+      .select([ :id, '"entity_roles"."research_identifier"', :survey_js_response ])
       .joins(student: :role)
 
-    field_names = results.map(&:survey_js_response).flat_map(&:keys).uniq
+    field_names = surveys.map(&:survey_js_response).compact.flat_map(&:keys).uniq
 
     File.join('tmp', 'exports', filename).tap do |filepath|
       CSV.open(filepath, 'w') do |file|
@@ -43,6 +43,8 @@ class Research::ExportAndUploadSurveyData
             response_hash = survey.survey_js_response
 
             row = [ survey.research_identifier ] + field_names.map do |field_name|
+              next if response_hash.nil?
+
               response = response_hash[field_name]
 
               case response

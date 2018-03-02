@@ -29,7 +29,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
 
   let(:all_task_types) { Tasks::Models::Task.task_types.values }
 
-  # Cover ordered_find_in_batches in the spec
+  # Cover each_batch in the spec
   before { stub_const("#{described_class.name}::BATCH_SIZE", 3) }
 
   context 'with book and performance report data' do

@@ -5,7 +5,7 @@ FactoryBot.define do
     title_for_researchers { Faker::Lorem.sentence }
     title_for_students { Faker::Lorem.sentence }
 
-    survey_js_model <<-MODEL
+    survey_js_model(
       {
        pages: [
         {
@@ -28,8 +28,8 @@ FactoryBot.define do
          ]
         }
        ]
-      }
-    MODEL
+     }.to_json
+   )
 
     trait :published do
       after(:create) do |plan|
