@@ -53,13 +53,32 @@ RSpec.feature 'Researcher working with survey plans' do
     expect(page).not_to have_content("Publish")
   end
 
-  scenario 'hide an published survey plan' do
+  scenario 'hide a published survey plan' do
     survey_plan = FactoryBot.create :research_survey_plan, study: @study
     visit research_survey_plans_path
     click_link 'Publish'
     click_link 'Hide'
     expect(survey_plan.reload).to be_is_hidden
     expect(survey_plan.surveys(true).all?{|ss| ss.is_hidden?}).to eq true
+  end
+
+  scenario 'hide a published survey plan' do
+    survey_plan = FactoryBot.create :research_survey_plan, study: @study
+    visit research_survey_plans_path
+    click_link 'Publish'
+    click_link 'Hide'
+    expect(survey_plan.reload).to be_is_hidden
+    expect(survey_plan.surveys(true).all?{|ss| ss.is_hidden?}).to eq true
+  end
+
+  scenario 'export a published survey plan' do
+    survey_plan = FactoryBot.create :research_survey_plan, study: @study
+    expect(Research::ExportAndUploadSurveyData).to(
+      receive(:perform_later).with(survey_plan: survey_plan, filename: kind_of(String))
+    )
+    visit research_survey_plans_path
+    click_link 'Publish'
+    click_link 'Export'
   end
 
 end

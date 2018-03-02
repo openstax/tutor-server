@@ -397,6 +397,7 @@ Rails.application.routes.draw do
         get :preview
         put :publish
         delete :hide
+        post :export
       end
     end
   end
