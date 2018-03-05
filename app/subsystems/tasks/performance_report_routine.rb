@@ -16,7 +16,7 @@ module Tasks::PerformanceReportRoutine
   end
 
   def completion_fraction(tasks:)
-    completed_count = tasks.count(&:completed?)
+    completed_count = tasks.count { |tt| tt.completed?(use_cache: true) }
 
     completed_count.to_f / tasks.count
   end
@@ -64,7 +64,7 @@ module Tasks::PerformanceReportRoutine
         {
           task: tt,
           late: late,
-          status: tt.status,
+          status: tt.status(use_cache: true),
           type: type,
           id: tt.id,
           due_at: due_at,
