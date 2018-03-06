@@ -214,7 +214,7 @@ module Tasks
           average_score: average_score(
             tasks: tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
           ),
-          average_progress: completion_fraction(tasks: tasks)
+          average_progress: average_progress(tasks: tasks, current_time_ntz: current_time_ntz)
         )
       end
     end

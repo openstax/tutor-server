@@ -122,35 +122,35 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(first_period_report.data_headings[0].type).to eq 'homework'
       expect(first_period_report.data_headings[0].due_at).to be_a Time
       expect(first_period_report.data_headings[0].average_score).to be_nil
-      expect(first_period_report.data_headings[0].average_progress).to eq 0.5
+      expect(first_period_report.data_headings[0].average_progress).to be_nil
 
       expect(second_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
       expect(second_period_report.data_headings[0].plan_id).to be_a Integer
       expect(second_period_report.data_headings[0].type).to eq 'homework'
       expect(second_period_report.data_headings[0].due_at).to be_a Time
       expect(second_period_report.data_headings[0].average_score).to be_nil
-      expect(second_period_report.data_headings[0].average_progress).to eq 0.0
+      expect(second_period_report.data_headings[0].average_progress).to be_nil
 
       expect(first_period_report.data_headings[1].title).to eq 'Reading task plan'
       expect(first_period_report.data_headings[1].plan_id).to be_a Integer
       expect(first_period_report.data_headings[1].type).to eq 'reading'
       expect(first_period_report.data_headings[1].due_at).to be_a Time
       expect(first_period_report.data_headings[1].average_score).to be_nil
-      expect(first_period_report.data_headings[1].average_progress).to eq 0.5
+      expect(first_period_report.data_headings[1].average_progress).to be_nil
 
       expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
       expect(second_period_report.data_headings[1].plan_id).to be_a Integer
       expect(second_period_report.data_headings[1].type).to eq 'reading'
       expect(second_period_report.data_headings[1].due_at).to be_a Time
       expect(second_period_report.data_headings[1].average_score).to be_nil
-      expect(second_period_report.data_headings[1].average_progress).to eq 0.0
+      expect(second_period_report.data_headings[1].average_progress).to be_nil
 
       expect(first_period_report.data_headings[2].title).to eq 'Homework task plan'
       expect(first_period_report.data_headings[2].plan_id).to be_a Integer
       expect(first_period_report.data_headings[2].type).to eq 'homework'
       expect(first_period_report.data_headings[2].due_at).to be_a Time
       expect(first_period_report.data_headings[2].average_score).to be_within(1e-6).of(9/14.0)
-      expect(first_period_report.data_headings[2].average_progress).to eq 0.5
+      expect(first_period_report.data_headings[2].average_progress).to be_within(1e-6).of(11/14.0)
 
       expect(second_period_report.data_headings[2].title).to eq 'Homework task plan'
       expect(second_period_report.data_headings[2].plan_id).to be_a Integer
@@ -354,14 +354,14 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(report.data_headings[0].type).to eq 'homework'
       expect(report.data_headings[0].due_at).to be_a Time
       expect(report.data_headings[0].average_score).to be_nil
-      expect(report.data_headings[0].average_progress).to eq 1.0
+      expect(report.data_headings[0].average_progress).to be_nil
 
       expect(report.data_headings[1].title).to eq 'Reading task plan'
       expect(report.data_headings[1].plan_id).to be_a Integer
       expect(report.data_headings[1].type).to eq 'reading'
       expect(report.data_headings[1].due_at).to be_a Time
       expect(report.data_headings[1].average_score).to be_nil
-      expect(report.data_headings[1].average_progress).to eq 1.0
+      expect(report.data_headings[1].average_progress).to be_nil
 
       expect(report.data_headings[2].title).to eq 'Homework task plan'
       expect(report.data_headings[2].plan_id).to be_a Integer
@@ -434,14 +434,14 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(report.data_headings[0].type).to eq 'homework'
       expect(report.data_headings[0].due_at).to be_a Time
       expect(report.data_headings[0].average_score).to be_nil
-      expect(report.data_headings[0].average_progress).to eq 1.0
+      expect(report.data_headings[0].average_progress).to be_nil
 
       expect(report.data_headings[1].title).to eq 'Reading task plan'
       expect(report.data_headings[1].plan_id).to be_a Integer
       expect(report.data_headings[1].type).to eq 'reading'
       expect(report.data_headings[1].due_at).to be_a Time
       expect(report.data_headings[1].average_score).to be_nil
-      expect(report.data_headings[1].average_progress).to eq 1.0
+      expect(report.data_headings[1].average_progress).to be_nil
 
       expect(report.data_headings[2].title).to eq 'Homework task plan'
       expect(report.data_headings[2].plan_id).to be_a Integer
