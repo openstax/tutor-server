@@ -154,7 +154,10 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'openstax_rescue_from', '~> 2.1.0'
+gem 'openstax_rescue_from', '~> 3.0.0', github: 'openstax/rescue_from', ref: 'ccd0a0d'
+
+# Sentry integration (the require disables automatic Rails integration since we use rescue_from)
+gem 'sentry-raven', require: 'raven/base'
 
 # Generate memorable codes
 gem 'babbler', '~> 1.0.1'
