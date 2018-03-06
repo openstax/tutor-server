@@ -145,16 +145,34 @@ class Tasks::Models::Task < ApplicationRecord
     deleted? && withdrawn? && hidden_at >= task_plan.withdrawn_at
   end
 
-  def started?
-    task_steps.loaded? ? task_steps.any?(&:completed?) : task_steps.complete.exists?
+  def started?(use_cache: false)
+    if use_cache
+      completed_steps_count > 0
+    else
+      task_steps.loaded? ? task_steps.any?(&:completed?) : task_steps.complete.exists?
+    end
   end
 
-  def completed?
-    task_steps.loaded? ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
+  def completed?(use_cache: false)
+    if use_cache
+      completed_steps_count == steps_count
+    else
+      task_steps.loaded? ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
+    end
   end
 
-  def in_progress?
-    started? && !completed?
+  def in_progress?(use_cache: false)
+    started?(use_cache: use_cache) && !completed?(use_cache: use_cache)
+  end
+
+  def status(use_cache: false)
+    if completed?(use_cache: use_cache)
+      'completed'
+    elsif started?(use_cache: use_cache)
+      'in_progress'
+    else
+      'not_started'
+    end
   end
 
   def core_task_steps_completed?
@@ -170,16 +188,6 @@ class Tasks::Models::Task < ApplicationRecord
   def set_last_worked_at(last_worked_at:)
     self.last_worked_at = last_worked_at
     self
-  end
-
-  def status
-    if completed?
-      'completed'
-    elsif completed_steps_count > 0
-      'in_progress'
-    else
-      'not_started'
-    end
   end
 
   def late?
