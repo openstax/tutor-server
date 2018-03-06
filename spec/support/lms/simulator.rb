@@ -2,6 +2,8 @@ require 'webmock/rspec'
 
 class Lms::Simulator
 
+  attr_reader :last_launch
+
   def initialize(spec)
     @spec = spec
     @apps_by_key = {}
@@ -15,6 +17,7 @@ class Lms::Simulator
     @reverse_sourcedids = {}
     @reuse_sourcedids = true
     @next_int = -1
+    @last_launch = nil
 
     succeed_when_receive_score_for_dropped_student!
     stub_outcome_url
@@ -120,6 +123,16 @@ class Lms::Simulator
     sign!(request_params, app)
 
     spec.post app[:launch_path], request_params
+
+    @last_launch = {
+      launch_path: app[:launch_path],
+      request_params: request_params
+    }
+  end
+
+  def repeat_last_launch
+    raise "There is no 'last launch' to repeat" if @last_launch.nil?
+    spec.post @last_launch[:launch_path], @last_launch[:request_params]
   end
 
   def sign!(request_params, app)

@@ -219,7 +219,7 @@ class Lms::Launch
     else
       begin
         Lms::Models::Nonce.create!({ lms_app_id: app.id, value: request_parameters[:oauth_nonce] })
-      rescue ActiveRecord::RecordNotUnique => ee
+      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => ee
         raise AlreadyUsed
       end
 

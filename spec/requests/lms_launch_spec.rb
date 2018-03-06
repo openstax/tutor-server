@@ -45,6 +45,13 @@ RSpec.describe 'LMS Launch', type: :request do
         expect(response.body).to match("/course/#{course.id}")
         expect_course_score_callback_count(user: bob_user, count: 1)
       end
+
+      it 'complains about reused launch nonce' do
+        simulator.add_student("bob")
+        simulator.launch(user: "bob", assignment: "tutor")
+        simulator.repeat_last_launch
+        expect_error("Please try launching OpenStax Tutor again.")
+      end
     end
 
     context "dropped" do
