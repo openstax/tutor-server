@@ -423,8 +423,7 @@ GEM
       uber (< 0.1.0)
     openstax_healthcheck (0.0.3)
       rails (>= 3.0)
-    openstax_rescue_from (2.1.0)
-      exception_notification (>= 4.1, < 5.0)
+    openstax_rescue_from (3.0.0)
       rails (>= 3.1, < 6.0)
     openstax_salesforce (1.2.0)
       active_force
@@ -607,6 +606,8 @@ GEM
     selenium-webdriver (3.9.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
+    sentry-raven (2.7.2)
+      faraday (>= 0.7.6, < 1.0)
     sexp_processor (4.10.0)
     shellany (0.0.1)
     shoulda-matchers (2.8.0)
@@ -766,7 +767,7 @@ DEPENDENCIES
   openstax_accounts (~> 7.12.0)
   openstax_api (~> 8.2.0)
   openstax_healthcheck
-  openstax_rescue_from (~> 2.1.0)
+  openstax_rescue_from (~> 3.0.0)
   openstax_salesforce (~> 1.2.0)
   openstax_utilities (~> 4.2.0)
   p3p
@@ -799,6 +800,7 @@ DEPENDENCIES
   sass-rails (~> 5.0.0)
   scenic (~> 1.4)
   scout_apm (~> 3.0.x)
+  sentry-raven
   shoulda-matchers
   sortability
   spring
