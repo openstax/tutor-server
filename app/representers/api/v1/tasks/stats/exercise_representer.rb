@@ -8,7 +8,8 @@ module Api::V1
         property :content,
                  type: String,
                  writeable: false,
-                 readable: true
+                 readable: true,
+                 getter: ->(*) { respond_to?(:content_hash) ? content_hash : content }
 
         collection :question_stats,
                    writeable: false,
