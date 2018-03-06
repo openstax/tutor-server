@@ -60,9 +60,14 @@ RSpec.describe Api::V1::UpdatesController, type: :controller, api: true, version
 
     end
 
+    it 'includes the tutor js url' do
+      api_get :index, nil
+      expect(response.body_as_hash[:tutor_js_url]).to eq Rails.application.secrets.js_url
+    end
+
     it 'includes the payment status' do
       api_get :index, nil
-      expect(response.body_as_hash[:payments]).to eq(is_enabled: Settings::Payments.payments_enabled)
+      expect(response.body_as_hash[:payments]).to eq is_enabled: Settings::Payments.payments_enabled
     end
 
   end

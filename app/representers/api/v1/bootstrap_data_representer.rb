@@ -12,6 +12,7 @@ module Api::V1
              getter: ->(*) { self }
 
     property :accounts_api_url,
+             type: String,
              readable: true,
              writeable: false,
              getter: ->(*) do
@@ -21,6 +22,7 @@ module Api::V1
              end
 
     property :accounts_profile_url,
+             type: String,
              readable: true,
              writeable: false,
              getter: ->(*) do
@@ -30,11 +32,13 @@ module Api::V1
              end
 
     property :errata_form_url,
+             type: String,
              readable: true,
              writeable: false,
              getter: ->(*) { Rails.application.secrets['openstax']['osweb']['errata_form_url'] }
 
     property :tutor_api_url,
+             type: String,
              readable: true,
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
