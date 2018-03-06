@@ -2,7 +2,7 @@ class Research::SurveyPlansController < Research::BaseController
 
   respond_to :html
 
-  before_filter :get_survey_plan, only: [:edit, :update, :preview, :publish, :hide]
+  before_filter :get_survey_plan, only: [:edit, :update, :preview, :publish, :hide, :export]
 
   def new
     @survey_plan = Research::Models::SurveyPlan.new
@@ -48,8 +48,16 @@ class Research::SurveyPlansController < Research::BaseController
       Research::HideSurveyPlan[survey_plan: @survey_plan]
       redirect_to research_survey_plans_path, notice: "Hid survey plan #{@survey_plan.id}"
     rescue StandardError => ee
-      redirect_to research_survey_plans_path, alert: "Could not hide survey plan #{@survey_plan.id}; #{ee.message}"
+      redirect_to research_survey_plans_path, alert: "Could not hide survey plan #{
+                                                     @survey_plan.id}; #{ee.message}"
     end
+  end
+
+  def export
+    filename = "export_#{Time.current.strftime("%Y%m%dT%H%M%SZ")}.csv"
+    Research::ExportAndUploadSurveyData.perform_later(survey_plan: @survey_plan, filename: filename)
+    redirect_to research_survey_plans_path,
+                notice: "#{filename} is being created and will be uploaded to Box when ready"
   end
 
   def cleared_params

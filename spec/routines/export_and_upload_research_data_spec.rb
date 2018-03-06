@@ -29,7 +29,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
 
   let(:all_task_types) { Tasks::Models::Task.task_types.values }
 
-  # Cover ordered_find_in_batches in the spec
+  # Cover each_batch in the spec
   before { stub_const("#{described_class.name}::BATCH_SIZE", 3) }
 
   context 'with book and performance report data' do
@@ -370,21 +370,21 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
       end
     end
   end
-end
 
-def with_export_rows(export, task_types, from = nil, to = nil, &block)
-  expect(Box).to receive(:upload_files) do |zip_filename:, files:|
-    file = files.find { |file| file.include? export.to_s }
-    expect(File.exist?(file)).to be true
-    expect(file.ends_with? '.csv').to be true
-    rows = CSV.read(file)
-    block.call(rows)
+  def with_export_rows(export, task_types, from = nil, to = nil, &block)
+    expect(Box).to receive(:upload_files) do |zip_filename:, files:|
+      file = files.find { |file| file.include? export.to_s }
+      expect(File.exist?(file)).to be true
+      expect(file.ends_with? '.csv').to be true
+      rows = CSV.read(file)
+      block.call(rows)
+    end
+
+    described_class.call(task_types: task_types, from: from.to_s, to: to.to_s)
   end
 
-  described_class.call(task_types: task_types, from: from.to_s, to: to.to_s)
-end
-
-def format_time(time)
-  return time if time.blank?
-  time.utc.iso8601
+  def format_time(time)
+    return time if time.blank?
+    time.utc.iso8601
+  end
 end

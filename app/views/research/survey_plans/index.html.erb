@@ -24,22 +24,30 @@
       <td>
         <%= link_to "Edit", edit_research_survey_plan_path(survey_plan) %> |
         <%= link_to "Preview", preview_research_survey_plan_path(survey_plan) %>&nbsp;&nbsp;
-        <% if !survey_plan.is_published? && !survey_plan.is_hidden? %>
-          <%= link_to "Publish", publish_research_survey_plan_path(survey_plan),
-                        method: :put,
-                        data: {
-                          confirm: "Are you sure? Plans cannot be unpublished.  Students in this plan's study will " \
-                                   "see this survey once it is published."
-                        },
-                        class: 'btn btn-xs btn-primary' %>
-        <% end %>
         <% if !survey_plan.is_hidden? %>
+          <% if !survey_plan.is_published? %>
+            <%= link_to "Publish", publish_research_survey_plan_path(survey_plan),
+                          method: :put,
+                          data: {
+                            confirm: "Are you sure? Plans cannot be unpublished. " \
+                                     "Students in this plan's study will " \
+                                     "see this survey once it is published."
+                          },
+                          class: 'btn btn-xs btn-primary' %>
+          <% end %>
+
           <%= link_to "Hide", hide_research_survey_plan_path(survey_plan),
                         method: :delete,
                         data: {
                           confirm: "Are you sure? If already published, hiding a plan " \
                                    "will make it disappear from student dashboards."
                         },
+                        class: 'btn btn-xs btn-danger' %>
+        <% end %>
+        <% if survey_plan.is_published? %>
+          <%= link_to "Export", export_research_survey_plan_path(survey_plan),
+                        method: :post,
+                        data: { disable_with: "Exporting..." },
                         class: 'btn btn-xs btn-primary' %>
         <% end %>
       </td>
