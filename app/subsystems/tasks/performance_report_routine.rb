@@ -3,7 +3,7 @@ module Tasks::PerformanceReportRoutine
   protected
 
   def included_in_progress_averages?(task:, current_time_ntz:)
-    return false if task.exercise_count == 0
+    return false if task.actual_and_placeholder_exercise_count == 0
     return true if task.task_type == 'concept_coach'
     return false unless ['reading', 'homework'].include?(task.task_type)
     task.due_at_ntz.present? && task.due_at_ntz <= current_time_ntz
