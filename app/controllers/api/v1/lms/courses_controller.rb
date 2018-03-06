@@ -58,7 +58,7 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
   EOS
   def push_scores
     OSU::AccessPolicy.require_action_allowed!(:lms_sync_scores, current_api_user, @course)
-    status_id = ::Lms::SendCourseScores.perform_later(course: @course, role: get_teacher_role)
+    status_id = ::Lms::SendCourseScores.perform_later(course: @course)
     render_job_id_json(status_id)
   end
 
@@ -66,16 +66,6 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
 
   def get_course
     @course = CourseProfile::Models::Course.find(params[:id])
-  end
-
-  def get_teacher_role
-    result = ChooseCourseRole.call(user: current_human_user,
-                                   course: @course,
-                                   allowed_role_type: :teacher)
-
-    errors = result.errors
-    raise(SecurityTransgression, errors.map(&:message).to_sentence) unless errors.empty?
-    result.outputs.role
   end
 
 end

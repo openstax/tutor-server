@@ -8,8 +8,13 @@ module Tasks
 
     protected
 
-    def exec(course:, role:)
-      is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]]
+    def exec(course:, role: nil, is_teacher: nil)
+      raise ArgumentError, 'you must supply the role when is_teacher is not true' \
+        if role.nil? && !is_teacher
+
+      is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]] \
+        if is_teacher.nil?
+
       periods = if is_teacher
         course.periods.reject(&:archived?)
       else

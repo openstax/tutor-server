@@ -17,10 +17,10 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
 
   it 'calls Tasks::GetTpPerformanceReport to get the report information' do
     expect(Tasks::GetTpPerformanceReport).to(
-      receive(:[]).with(course: @course, role: @teacher_role).once.and_call_original
+      receive(:[]).with(course: @course, is_teacher: true).once.and_call_original
     )
 
-    expect { described_class.call(course: @course, role: @teacher_role) }.not_to raise_error
+    expect { described_class.call(course: @course) }.not_to raise_error
   end
 
   it 'does not have blank space before the XML declaration' do
