@@ -218,6 +218,9 @@ gem 'oauth', '~> 0.5.1'
 
 gem 'scout_apm', '~> 3.0.x'
 
+# Respond to ELB healthchecks in /ping and /ping/
+gem 'openstax_healthcheck'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
