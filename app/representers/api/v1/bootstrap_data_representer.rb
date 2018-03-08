@@ -31,11 +31,11 @@ module Api::V1
                )
              end
 
-    property :errata_form_url,
+    property :osweb_base_url,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { Rails.application.secrets['openstax']['osweb']['errata_form_url'] }
+             getter: ->(*) { Rails.application.secrets.openstax['osweb']['base_url'] }
 
     property :tutor_api_url,
              type: String,
