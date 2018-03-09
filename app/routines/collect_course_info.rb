@@ -13,7 +13,7 @@ class CollectCourseInfo
   def get_courses(courses:, user:)
     return [courses].flatten unless courses.nil?
 
-    preloads = [ :time_zone, :offering, :periods, { ecosystems: :books } ]
+    preloads = [ :time_zone, :offering, periods: :students, ecosystems: :books ]
     return run(:get_user_courses, user: user, preload: preloads).outputs.courses unless user.nil?
 
     CourseProfile::Models::Course.preload(*preloads)
@@ -26,8 +26,12 @@ class CollectCourseInfo
     courses.map do |course|
       offering = course.offering
       roles = roles_by_course_id.fetch(course.id, [])
-      students = get_students(course: course, roles: roles)
-      periods = get_periods(course: course, roles: roles, students: students)
+      students = roles.map(&:student).compact
+
+      # If the user is an active teacher, return all course periods
+      # Otherwise, return only the periods the user is in
+      is_teacher = roles.any? { |role| role.teacher? && !role.teacher.try!(:deleted?) }
+      periods = is_teacher ? course.periods : students.map(&:period)
 
       #       This routine returns the entire Course object + some extra attributes
       # TODO: Figure out a better way to handle this.
@@ -77,18 +81,7 @@ class CollectCourseInfo
       :get_user_course_roles,
       courses: courses,
       user: user,
-      preload: [ :teacher, student: [ :latest_enrollment, :period ], profile: :account ]
+      preload: [ :teacher, student: [ :period, :latest_enrollment ], profile: :account ]
     ).outputs.roles.group_by(&:course_profile_course_id)
-  end
-
-  def get_students(course:, roles:)
-    roles.map(&:student).compact
-  end
-
-  # If the user is an active teacher, return all course periods
-  # Otherwise, return only the periods the user is in
-  def get_periods(course:, roles:, students:)
-    roles.any? { |role| role.teacher? && !role.teacher.try!(:deleted?) } ?
-      course.periods : students.map(&:period)
   end
 end
