@@ -23,9 +23,7 @@
       <td><%= course.is_college.nil? ? 'Unknown' : (course.is_college ? 'Yes' : 'No') %></td>
       <td><%= course.teachers.map(&:name).join(', ') %></td>
       <td><%= course.periods.length %></td>
-      <td><%= course.periods.map do |period|
-                period.latest_enrollments.length
-              end.reduce(0, :+) %></td>
+      <td><%= course.periods.to_a.sum(&:num_enrolled_students) %></td>
     </tr>
   <% end %>
   </tbody>

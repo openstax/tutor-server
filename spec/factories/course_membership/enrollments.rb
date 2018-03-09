@@ -3,7 +3,8 @@ FactoryBot.define do
     association :period, factory: :course_membership_period
 
     after(:build) do |enrollment|
-      enrollment.student ||= build :course_membership_student, course: enrollment.period.course
+      enrollment.student ||= build :course_membership_student, course: enrollment.period.course,
+                                                               period: enrollment.period
     end
   end
 end

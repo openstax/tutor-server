@@ -19,7 +19,7 @@ class Admin::CoursesController < Admin::BaseController
 
     @course_infos = result.outputs.items.preload(
       teachers: { role: [:role_user, :profile] },
-      periods: { latest_enrollments: :student },
+      periods: :students,
       ecosystems: :books
     ).try(:paginate, params_for_pagination)
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180223162905) do
+ActiveRecord::Schema.define(version: 20180309195712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -285,19 +285,20 @@ ActiveRecord::Schema.define(version: 20180223162905) do
   add_index "course_membership_periods", ["uuid"], name: "index_course_membership_periods_on_uuid", unique: true, using: :btree
 
   create_table "course_membership_students", force: :cascade do |t|
-    t.integer  "course_profile_course_id",                               null: false
-    t.integer  "entity_role_id",                                         null: false
+    t.integer  "course_profile_course_id",                                  null: false
+    t.integer  "entity_role_id",                                            null: false
     t.datetime "dropped_at"
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
     t.string   "student_identifier"
-    t.uuid     "uuid",                     default: "gen_random_uuid()"
+    t.uuid     "uuid",                        default: "gen_random_uuid()"
     t.datetime "first_paid_at"
-    t.boolean  "is_paid",                  default: false,               null: false
-    t.boolean  "is_comped",                default: false,               null: false
-    t.datetime "payment_due_at",                                         null: false
-    t.boolean  "is_refund_pending",        default: false,               null: false
-    t.jsonb    "refund_survey_response",   default: {}
+    t.boolean  "is_paid",                     default: false,               null: false
+    t.boolean  "is_comped",                   default: false,               null: false
+    t.datetime "payment_due_at",                                            null: false
+    t.boolean  "is_refund_pending",           default: false,               null: false
+    t.jsonb    "refund_survey_response",      default: {}
+    t.integer  "course_membership_period_id",                               null: false
   end
 
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree

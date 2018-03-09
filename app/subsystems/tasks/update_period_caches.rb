@@ -11,8 +11,7 @@ class Tasks::UpdatePeriodCaches
     period_ids.each do |period_id|
       # Get active students IDs
       student_ids = CourseMembership::Models::Student
-        .joins(:latest_enrollment)
-        .where(latest_enrollment: { course_membership_period_id: period_id }, dropped_at: nil)
+        .where(course_membership_period_id: period_id, dropped_at: nil)
         .pluck(:id)
       # Stop if no active students
       next if student_ids.empty?

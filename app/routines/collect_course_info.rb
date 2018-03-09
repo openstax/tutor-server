@@ -77,7 +77,7 @@ class CollectCourseInfo
       :get_user_course_roles,
       courses: courses,
       user: user,
-      preload: [ :teacher, student: { latest_enrollment: :period }, profile: :account ]
+      preload: [ :teacher, student: [ :latest_enrollment, :period ], profile: :account ]
     ).outputs.roles.group_by(&:course_profile_course_id)
   end
 

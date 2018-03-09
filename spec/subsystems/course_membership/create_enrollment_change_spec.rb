@@ -141,7 +141,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
         expect(result.outputs.enrollment_change.conflicting_period).to(
-          eq CourseMembership::Period.new(strategy: role.student.latest_enrollment.period.wrap)
+          eq CourseMembership::Period.new(strategy: role.student.period.wrap)
         )
       end
     end

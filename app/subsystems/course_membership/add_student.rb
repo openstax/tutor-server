@@ -27,6 +27,7 @@ class CourseMembership::AddStudent
 
     student = CourseMembership::Models::Student.create(role: role,
                                                        course: course,
+                                                       period: period.to_model,
                                                        student_identifier: student_identifier)
     transfer_errors_from(student, {type: :verbatim}, true)
 

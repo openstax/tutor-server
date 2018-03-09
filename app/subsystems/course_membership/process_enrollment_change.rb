@@ -30,9 +30,10 @@ class CourseMembership::ProcessEnrollmentChange
                         student_identifier: student_identifier)
     else
       # Existing student
-      student = enrollment.student
-      student.student_identifier = student_identifier unless student_identifier.nil?
-      student.save!
+      enrollment.student.update_attribute(
+        :student_identifier, student_identifier
+      ) unless student_identifier.nil?
+
       run(:add_enrollment, student: student, period: enrollment_change.to_period)
     end
 

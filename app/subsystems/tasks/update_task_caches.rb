@@ -17,7 +17,7 @@ class Tasks::UpdateTaskCaches
       .where(id: task_ids)
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
       .preload(
-        :ecosystem, :time_zone, taskings: { role: { student: { latest_enrollment: :period } } }
+        :ecosystem, :time_zone, taskings: { role: { student: :period } }
       )
       .to_a
     tasks_by_id = tasks.index_by(&:id)
@@ -82,12 +82,12 @@ class Tasks::UpdateTaskCaches
       .select([
         :id,
         :course_profile_course_id,
+        :course_membership_period_id,
         '"tasks_taskings"."tasks_task_id"',
         '"user_profiles"."account_id"'
       ])
       .joins(role: [ :taskings, profile: :account ])
       .where(role: { taskings: { tasks_task_id: task_ids } })
-      .preload(:latest_enrollment)
 
     return if students.empty?
 
@@ -109,7 +109,7 @@ class Tasks::UpdateTaskCaches
       student_ids_by_task_id[task_id] << student.id
       student_names_by_task_id[task_id] << student_name
       task_ids_by_course_id[student.course_profile_course_id] << task_id
-      period_ids << student.latest_enrollment.course_membership_period_id
+      period_ids << student.course_membership_period_id
     end
 
     # Get all relevant pages

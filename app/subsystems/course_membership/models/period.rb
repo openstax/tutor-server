@@ -20,7 +20,7 @@ class CourseMembership::Models::Period < ApplicationRecord
 
   has_many :enrollment_changes, inverse_of: :period
 
-  has_many :students, through: :latest_enrollments
+  has_many :students, inverse_of: :period
 
   has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
@@ -44,9 +44,9 @@ class CourseMembership::Models::Period < ApplicationRecord
   end
 
   def student_roles(include_dropped_students: false)
-    students = latest_enrollments.preload(student: :role).map(&:student)
-    students = students.reject(&:dropped?) unless include_dropped_students
-    students.map(&:role)
+    st = students.preload(:role)
+    st = st.reject(&:dropped?) unless include_dropped_students
+    st.map(&:role)
   end
 
   def default_open_time

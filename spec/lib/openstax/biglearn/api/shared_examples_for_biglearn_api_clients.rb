@@ -32,7 +32,7 @@ RSpec.shared_examples 'a biglearn api client' do
     @tasked_exercise = @task.tasked_exercises.first
 
     @student = @task.taskings.first.role.student
-    @period = @student.latest_enrollment.period
+    @period = @student.period
     @course = @period.course
 
     @preparation_uuid = SecureRandom.uuid

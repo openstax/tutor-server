@@ -152,7 +152,6 @@ module Tasks
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
       st = CourseMembership::Models::Student.arel_table
-      en = CourseMembership::Models::Enrollment.arel_table
       up = User::Models::Profile.arel_table
       ac = OpenStax::Accounts::Account.arel_table
       rel = Tasks::Models::Task
@@ -161,8 +160,8 @@ module Tasks
             tt[ Arel.star ],
             er[:id].as('role_id'),
             st[:student_identifier],
+            st[:course_membership_period_id],
             st[:dropped_at],
-            en[:course_membership_period_id],
             up[:id].as('user_id'),
             ac[:username],
             ac[:first_name],
@@ -171,7 +170,7 @@ module Tasks
         )
         .joins(
           task_plan: :tasking_plans,
-          taskings: { role: [ student: :latest_enrollment, profile: :account ] }
+          taskings: { role: [ :student, profile: :account ] }
         )
         .where(
           task_type: task_types,

@@ -9,9 +9,11 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
   end
 
   it { is_expected.to belong_to(:course) }
+  it { is_expected.to belong_to(:period) }
   it { is_expected.to belong_to(:role) }
 
   it { is_expected.to validate_presence_of(:course) }
+  it { is_expected.to validate_presence_of(:period) }
   it { is_expected.to validate_presence_of(:role) }
 
   it { is_expected.to validate_uniqueness_of(:role) }
