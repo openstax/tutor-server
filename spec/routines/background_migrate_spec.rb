@@ -5,7 +5,7 @@ RSpec.describe BackgroundMigrate, type: :routine do
   let(:direction) { ['up', 'down'].sample }
   let(:version)   { Time.current.strftime("%Y%m%d%H%M%S") }
 
-  before(:all)    { Rails.application.load_tasks }
+  before(:all)    { BackgroundMigrate.load_rake_tasks_if_needed }
 
   it 'calls ActiveRecord::Migrator.run with the correct arguments and the db:_dump rake task' do
     Rake::Task['db:load_config'].invoke
