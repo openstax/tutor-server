@@ -266,7 +266,7 @@ RSpec.feature 'Admin editing a course', speed: :slow do
     expect(page).to have_content(/.*Yes \(Refund\).*/)
 
     click_link('Refund')
-    page.driver.browser.switch_to.alert.accept
+    alert.accept
 
     expect(page).to have_content(/.*Yes \(Refund pending\).*/)
 

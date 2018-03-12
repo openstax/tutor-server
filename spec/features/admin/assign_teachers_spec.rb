@@ -48,7 +48,8 @@ RSpec.feature 'Administration', js: true do
 
     # Remove the teacher
     click_link 'Remove from course'
-    page.driver.browser.switch_to.alert.accept
+    alert.accept
+
     expect(page).to have_css('.flash_notice', text: 'Teacher "Ima Teacher" removed from course.')
 
     # Check that the teacher is now not in the list of teachers

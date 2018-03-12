@@ -201,7 +201,6 @@ def fake_flash(key, value)
   session['flash'] = flash_hash.to_session_value
 end
 
-
 def redirect_path
   redirect_uri.path
 end
