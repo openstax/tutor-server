@@ -8,7 +8,7 @@ module Catalog
         exposes :id, :number, :salesforce_book_name, :appearance_code,
                 :is_tutor, :is_concept_coach, :is_available, :title, :description,
                 :webview_url, :pdf_url, :ecosystem, :content_ecosystem_id, :default_course_name,
-                :does_cost
+                :does_cost, :deletable?
 
         def self.find_by(*args)
           model = ::Catalog::Models::Offering.find_by(*args)
