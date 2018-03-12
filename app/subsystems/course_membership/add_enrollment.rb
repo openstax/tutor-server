@@ -6,10 +6,10 @@ class CourseMembership::AddEnrollment
   protected
 
   def exec(period:, student:, reassign_published_period_task_plans: true, send_to_biglearn: true)
-    enrollment = CourseMembership::Models::Enrollment.new(
-      student: student, period: period.to_model
-    )
+    period_model = period.to_model
+    enrollment = CourseMembership::Models::Enrollment.new(student: student, period: period_model)
     student.enrollments << enrollment
+    student.update_attribute :period, period_model
     outputs.enrollment = enrollment
     transfer_errors_from(enrollment, {type: :verbatim}, true)
     student.restore if student.dropped?

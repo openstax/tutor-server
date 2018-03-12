@@ -6,9 +6,7 @@ class Legal::GetContractNames
   def exec(applicable_to:, contract_names_signed_by_everyone: [])
     applicable_to = [applicable_to].flatten.compact
 
-    targeted_contracts = applicable_to.map { |item|
-      Legal::GetTargetedContracts[applicable_to: item]
-    }.flatten
+    targeted_contracts = Legal::GetTargetedContracts[applicable_to: applicable_to]
 
     proxy_signed_contracts, non_proxy_signed_contracts =
       targeted_contracts.partition(&:is_proxy_signed)

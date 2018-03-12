@@ -55,9 +55,9 @@ class GetCcDashboard
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
-    outputs.course.periods = course.periods.preload(latest_enrollments: :student).map do |period|
+    outputs.course.periods = course.periods.preload(:students).map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
-      active_role_ids = period.latest_enrollments.map { |en| en.student.entity_role_id }.uniq
+      active_role_ids = period.students.map(&:entity_role_id).uniq
       core_map, spaced_map = get_period_performance_maps_from_cc_tasks(
         period, cc_tasks, ecosystems_map
       )

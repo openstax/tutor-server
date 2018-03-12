@@ -152,7 +152,7 @@ class GetConceptCoach
 
     # If we have more than 1 role, the user is in multiple CC courses with the same book
     # In that case, select their latest enrollment as the active one
-    selected_role_book_array_array.max_by{ |role, book| role.student.latest_enrollment.created_at }
+    selected_role_book_array_array.max_by { |role, book| role.latest_enrollment_at }
   end
 
 end

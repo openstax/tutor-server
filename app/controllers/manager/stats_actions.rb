@@ -5,15 +5,10 @@ module Manager::StatsActions
 
   def courses
     @courses = CourseProfile::Models::Course.where(is_preview: false).preload(
-      teachers: { role: { role_user: :profile } },
-      periods: :latest_enrollments
+      teachers: { role: { role_user: :profile } }, periods: :students
     ).order(:name).to_a
 
-    @total_students = @courses.map do |course|
-      course.periods.map do |period|
-        period.latest_enrollments.length
-      end.reduce(0, :+)
-    end.reduce(0, :+)
+    @total_students = @courses.sum { |course| course.periods.to_a.sum(&:num_enrolled_students) }
 
     @course_url_proc = course_url_proc
 

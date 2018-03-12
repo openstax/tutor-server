@@ -85,7 +85,9 @@ module User
         end
 
         def viewed_tour_stats
-          repository.tour_views.map {|t| { id: t.tour.identifier, view_count: t.view_count } }
+          repository.tour_views.preload(:tour).map do |tv|
+            { id: tv.tour.identifier, view_count: tv.view_count }
+          end
         end
 
         def to_model

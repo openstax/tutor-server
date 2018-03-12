@@ -30,11 +30,9 @@ module Tasks
                              .sort_by(&:book_location)
 
         # Dropped students are excluded from the CC performance report
-        period_students = period.latest_enrollments
-                                .joins(:student)
-                                .where(student: { dropped_at: nil })
-                                .preload(student: {role: {profile: :account}})
-                                .map(&:student)
+        period_students = period.students
+                                .where(dropped_at: nil)
+                                .preload(role: {profile: :account})
 
         data_headings = get_cc_data_headings(
           period_cc_tasks_map.values, sorted_period_pages, current_time_ntz

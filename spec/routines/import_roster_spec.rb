@@ -35,7 +35,7 @@ RSpec.describe ImportRoster, type: :routine do
                      .and change { CourseMembership::Models::Enrollment.count }.by(num_users)
 
     new_users = User::Models::Profile.order(:created_at).preload(
-      role_users: { role: { student: { latest_enrollment: :period } } }
+      role_users: { role: { student: :period } }
     ).last(num_users)
     new_users.each do |new_user|
       expect(new_user.role_users.first.role.student.period).to eq period
