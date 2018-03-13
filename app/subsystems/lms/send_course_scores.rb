@@ -17,10 +17,11 @@ class Lms::SendCourseScores
   lev_routine transaction: :no_transaction
 
   def exec(course:)
+    raise "Course cannot be nil" if course.nil?
+
     @errors = []
 
     @course = course
-    raise "Course cannot be nil" if course.nil?
 
     callbacks = Lms::Models::CourseScoreCallback.where(course: course)
 
@@ -55,7 +56,7 @@ class Lms::SendCourseScores
 
   def course_score_data(user_profile_id)
     @scores_by_user_profile_id ||= begin
-      perf_report = Tasks::GetTpPerformanceReport[course: @course]
+      perf_report = Tasks::GetTpPerformanceReport[course: @course, is_teacher: true]
 
       scores = perf_report.flat_map do |period_perf_report|
         period_perf_report[:students]

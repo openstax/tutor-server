@@ -9,6 +9,6 @@ class Lms::Models::CourseScoreCallback < ApplicationRecord
   belongs_to :course, subsystem: :course_profile
   belongs_to :profile, subsystem: :user
 
-  validates :outcome_url, presence: true
+  validates :resource_link_id, :outcome_url, presence: true
   validates :result_sourcedid, presence: true, uniqueness: { scope: :outcome_url }
 end
