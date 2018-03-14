@@ -32,7 +32,7 @@ module DashboardRoutineMethods
 
   def load_tasks(role, role_type, start_at_ntz = nil, end_at_ntz = nil, current_time = Time.current)
     tasks = run(:get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
-              .outputs.tasks.preload(:time_zone).reject(&:hidden?)
+              .outputs.tasks.preload(:time_zone, :task_plan, :task_steps).reject(&:hidden?)
 
     tasks = tasks.select do |task|
       task.past_open? current_time: current_time
