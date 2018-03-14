@@ -1,12 +1,16 @@
 class BackgroundMigrate
   lev_routine
 
-  protected
-
-  def exec(direction, version)
+  def self.load_rake_tasks_if_needed
     Rails.application.load_tasks unless defined?(Rake::Task) &&
                                         Rake::Task.task_defined?('db:load_config') &&
                                         Rake::Task.task_defined?('db:_dump')
+  end
+
+  protected
+
+  def exec(direction, version)
+    self.class.load_rake_tasks_if_needed
 
     Rake::Task['db:load_config'].invoke
 
