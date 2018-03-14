@@ -26,11 +26,19 @@ class GetExercises
     excl_exercise_numbers_set = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
       unless course.nil?
 
-    all_exercises = []
+    # Preload exercises, pages and teks tags
+    all_pools = pools_map.values.flatten
+    all_exercise_ids = all_pools.flat_map(&:content_exercise_ids).uniq
+    all_content_exercises = Content::Models::Exercise
+      .where(id: all_exercise_ids)
+      .preload(:page, tags: :teks_tags)
+    all_exercises = all_content_exercises.map { |ce| Content::Exercise.new strategy: ce.wrap }
+    all_exercises_by_id = all_exercises.index_by(&:id)
 
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
-      pool_exercises = pools.flat_map{ |pool| pool.exercises(preload: [:page, {tags: :teks_tags}]) }
+      pool_exercise_ids = pools.flat_map(&:content_exercise_ids).uniq
+      pool_exercises = all_exercises_by_id.values_at *pool_exercise_ids
       exercises = run(:filter, exercises: pool_exercises).outputs.exercises
 
       exercises.each do |exercise|
@@ -43,12 +51,10 @@ class GetExercises
 
         hash[exercise.uid]['pool_types'] << pool_type
       end
-
-      all_exercises += exercises
     end
 
-    outputs[:exercises] = all_exercises.uniq
-    outputs[:exercise_search] = Hashie::Mash.new(items: exercise_representations.values)
+    outputs.exercises = all_exercises
+    outputs.exercise_search = Hashie::Mash.new(items: exercise_representations.values)
   end
 
 end
