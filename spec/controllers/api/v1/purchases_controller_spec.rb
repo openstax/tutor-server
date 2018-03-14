@@ -39,9 +39,9 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
     end
 
     it "gives 403 when user does not own student" do
-      expect{
+      expect do
         api_put :refund, other_user_token, parameters: { id: student.uuid }
-      }.to raise_error(SecurityTransgression)
+      end.to raise_error(SecurityTransgression)
     end
 
     it "gives 422 not paid if not paid" do
@@ -53,7 +53,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
     end
 
     it "gives 422 if paid too long ago" do
-      Timecop.freeze(Time.now - 14.days) do
+      Timecop.freeze(Time.now - 14.days - 2.hours) do
         student.update_attributes!(is_paid: true)
       end
       api_put :refund, student_token, parameters: { id: student.uuid }
@@ -65,7 +65,7 @@ RSpec.describe Api::V1::PurchasesController, type: :controller, api: true, versi
 
     it "gives 202 accepted if all good" do
       student.update_attributes!(is_paid: true)
-      survey = { 'why' => "too-expensive", "comments"=>"gimme my money back"}
+      survey = { 'why' => "too-expensive", "comments" => "gimme my money back"}
       expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid, survey: survey)
       api_put :refund, student_token, parameters: { id: student.uuid, survey: survey }
       expect(response).to have_http_status(:accepted)
