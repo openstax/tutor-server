@@ -27,13 +27,17 @@ module DashboardRoutineMethods
   def load_course(course, role_type)
     teachers = run(:get_course_teachers, course).outputs.teachers
 
-    outputs[:course] = { id: course.id, name: course.name, teachers: teachers }
+    outputs.course = { id: course.id, name: course.name, teachers: teachers }
   end
 
-  def load_tasks(role, role_type, start_at_ntz = nil, end_at_ntz = nil)
+  def load_tasks(role, role_type, start_at_ntz = nil, end_at_ntz = nil, current_time = Time.current)
     tasks = run(:get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
-              .outputs.tasks.reject(&:hidden?)
-    tasks = tasks.select(&:past_open?) if role_type != :teacher
-    outputs[:tasks] = tasks
+              .outputs.tasks.preload(:time_zone).reject(&:hidden?)
+
+    tasks = tasks.select do |task|
+      task.past_open? current_time: current_time
+    end if role_type != :teacher
+
+    outputs.tasks = tasks
   end
 end
