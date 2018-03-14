@@ -300,13 +300,15 @@ group :test do
   gem 'fakeredis'
 
   gem 'shoulda-matchers', require: false
-  gem 'poltergeist'
   gem 'launchy'
   gem 'database_cleaner'
   gem 'db-query-matchers'
 
   gem 'whenever-test'
 
+  gem 'chromedriver-helper'
+
+  gem 'capybara-selenium'
   gem 'capybara-screenshot', require: false
 
   # Code Climate integration

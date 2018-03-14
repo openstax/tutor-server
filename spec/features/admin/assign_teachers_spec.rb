@@ -4,7 +4,6 @@ require 'feature_js_helper'
 RSpec.feature 'Administration', js: true do
 
   before do
-    page.driver.headers['User-Agent'] = chrome_ua
     # Log in as admin
     admin = FactoryBot.create(:user, :administrator)
     stub_current_user(admin)
@@ -49,6 +48,8 @@ RSpec.feature 'Administration', js: true do
 
     # Remove the teacher
     click_link 'Remove from course'
+    alert.accept
+
     expect(page).to have_css('.flash_notice', text: 'Teacher "Ima Teacher" removed from course.')
 
     # Check that the teacher is now not in the list of teachers

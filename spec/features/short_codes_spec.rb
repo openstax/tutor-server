@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "short codes" do
+RSpec.describe "short codes", type: :feature do
 
   context "students accessing tasks via short code" do
     let(:course)           { FactoryBot.create :course_profile_course }

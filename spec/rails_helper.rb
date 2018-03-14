@@ -40,18 +40,29 @@ include OpenStax::Salesforce::SpecHelpers
 
 require 'shoulda/matchers'
 
-require 'capybara'
-require 'capybara/poltergeist'
-Capybara.javascript_driver = :poltergeist
-window_size = [1920, 6000]
+require 'selenium/webdriver'
+
+# https://robots.thoughtbot.com/headless-feature-specs-with-chrome
+Capybara.register_driver :selenium_chrome do |app|
+  Capybara::Selenium::Driver.new(app, browser: :chrome)
+end
+
+# no-sandbox is required for it to work with Docker (Travis)
+Capybara.register_driver :selenium_chrome_headless do |app|
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+    chromeOptions: { args: ['headless', 'no-sandbox'] }
+  )
+
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :chrome,
+    desired_capabilities: capabilities
+  )
+end
+
+Capybara.javascript_driver = :selenium_chrome_headless
 
 Capybara.asset_host = 'http://localhost:3001'
-
-require 'screenshots'
-
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, window_size: window_size)
-end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -189,7 +200,6 @@ def fake_flash(key, value)
   flash_hash[key] = value
   session['flash'] = flash_hash.to_session_value
 end
-
 
 def redirect_path
   redirect_uri.path
