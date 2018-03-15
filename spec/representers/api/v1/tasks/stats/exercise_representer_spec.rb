@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Tasks::Stats::ExerciseRepresenter, type: :representer do
-  let(:exercise_stats) { { content: 'Cool content',
+  let(:exercise_stats) { { content: '{ "some": "json" }',
+                           content_hash: { 'some' => 'json' },
                            question_stats: [{
                              answered_count: 1,
                              answers: [{
@@ -22,7 +23,7 @@ RSpec.describe Api::V1::Tasks::Stats::ExerciseRepresenter, type: :representer do
 
   it 'represents exercise stats' do
     expect(represented).to eq({
-      'content' => 'Cool content',
+      'content' => exercise_stats[:content_hash],
       'question_stats' => [{
         'answered_count' => 1,
         'answers' => [{ 'student_names' => ['Jim', 'Jack'],

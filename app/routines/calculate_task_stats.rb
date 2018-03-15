@@ -187,6 +187,7 @@ class CalculateTaskStats
 
           {
             content: content,
+            content_hash: JSON.parse(content),
             question_stats: exs.group_by { |ex| ex[:question_id] }.map do |question_id, exs|
               completed_exs = exs.select { |ex| ex[:completed] }
               selected_count_by_answer_id = Hash.new 0

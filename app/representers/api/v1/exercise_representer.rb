@@ -33,7 +33,7 @@ module Api::V1
              writeable: false
 
     property :content,
-             type: String,
+             type: Object,
              readable: true,
              writeable: false,
              getter: ->(*) { respond_to?(:content_hash) ? content_hash : content },

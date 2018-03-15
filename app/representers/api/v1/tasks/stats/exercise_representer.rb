@@ -6,9 +6,10 @@ module Api::V1
         include Roar::JSON
 
         property :content,
-                 type: String,
+                 type: Object,
                  writeable: false,
-                 readable: true
+                 readable: true,
+                 getter: ->(*) { respond_to?(:content_hash) ? content_hash : content }
 
         collection :question_stats,
                    writeable: false,
