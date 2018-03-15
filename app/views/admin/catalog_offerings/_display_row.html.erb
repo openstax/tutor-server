@@ -10,6 +10,15 @@
 
     <%= link_to 'Edit',
                 edit_admin_catalog_offering_url(offering.id, anchor: "offering_#{offering.id}") %>
+
+    <% if offering.deletable? %>
+      |
+
+      <%= link_to 'Delete',
+                  admin_catalog_offering_url(offering.id),
+                  method: :delete,
+                  data: { confirm: "Permanently delete #{offering.title}?" } %>
+    <% end %>
   </span>
   <div>
     <b>Number:</b> <%= offering.number %>

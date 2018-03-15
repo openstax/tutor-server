@@ -22,6 +22,10 @@ module Catalog
                                                         error: StrategyError
     end
 
+    def deletable?
+      !!@strategy.deletable?
+    end
+
     def self.find_by(*args)
       verify_and_return strategy_class.find_by(*args), klass: self,
                                                        error: StrategyError,

@@ -5,7 +5,7 @@ class Catalog::ListOfferings
   protected
 
   def exec
-    outputs.offerings = Catalog::Models::Offering.all.map do |offering|
+    outputs.offerings = Catalog::Models::Offering.preload_deletable.map do |offering|
       Catalog::Offering.new(strategy: offering.wrap)
     end
   end

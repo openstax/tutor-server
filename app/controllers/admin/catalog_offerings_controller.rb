@@ -1,8 +1,11 @@
 module Admin
   class CatalogOfferingsController < BaseController
 
-    before_filter :set_template_variables
+    before_filter :get_offerings_and_ecosystems
     before_filter :get_salesforce_book_names, only: [:new, :edit]
+
+    def index
+    end
 
     def new
       @offerings.unshift @offering
@@ -45,11 +48,27 @@ module Admin
                  )
     end
 
-    private
+    def destroy
+      offering_model = @offering.to_model
 
-    def set_template_variables
+      if offering_model.destroy
+        redirect_to admin_catalog_offerings_path, alert: "#{offering_model.title} deleted"
+      else
+        flash.now[:error] = offering_model.errors.map do |att, msg|
+          att = offering_model.title if att == :base
+
+          [att, msg].join(' ')
+        end
+
+        render :index
+      end
+    end
+
+    protected
+
+    def get_offerings_and_ecosystems
       @offerings = Catalog::ListOfferings[]
-      @offering = params[:id] ? @offerings.find{ |offering| offering.id.to_s == params[:id] } :
+      @offering = params[:id] ? @offerings.find { |offering| offering.id.to_s == params[:id] } :
                                 Catalog::Offering.new(strategy: Catalog::Models::Offering.new.wrap)
       @ecosystems = Content::ListEcosystems[]
     end
