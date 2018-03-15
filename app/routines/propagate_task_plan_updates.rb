@@ -30,7 +30,8 @@ class PropagateTaskPlanUpdates
 
     task_plan.tasks.reset
 
-    requests = task_plan.tasks.map { |task| { course: task_plan.owner, task: task } }
+    requests = task_plan.tasks.preload(taskings: { role: :student })
+                              .map { |task| { course: task_plan.owner, task: task } }
     OpenStax::Biglearn::Api.create_update_assignments(requests)
   end
 
