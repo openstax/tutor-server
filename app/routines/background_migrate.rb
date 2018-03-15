@@ -1,5 +1,5 @@
 class BackgroundMigrate
-  lev_routine
+  lev_routine transaction: :no_transaction
 
   def self.load_rake_tasks_if_needed
     Rails.application.load_tasks unless defined?(Rake::Task) &&
