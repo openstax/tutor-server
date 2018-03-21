@@ -275,11 +275,12 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def score
-    effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f rescue nil
+    actual_and_placeholder_exercise_count == 0 ?
+      nil : effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
   end
 
   def progress
-    effective_completed_steps_count / steps_count.to_f rescue nil
+    steps_count == 0 ? nil : effective_completed_steps_count / steps_count.to_f
   end
 
   def accept_late_work

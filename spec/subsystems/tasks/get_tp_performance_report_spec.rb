@@ -24,6 +24,32 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       ecosystem: @ecosystem
     ]
 
+    external_assistant = @course.course_assistants
+                                .find_by(tasks_task_plan_type: 'external')
+                                .assistant
+
+    # External assignment
+    external_task_plan = Tasks::Models::TaskPlan.new(
+      title: 'External assignment',
+      owner: @course,
+      type: 'external',
+      assistant: external_assistant,
+      content_ecosystem_id: @ecosystem.id,
+      settings: { external_url: 'https://www.example.com' }
+    )
+
+    external_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: @course,
+      task_plan: external_task_plan,
+      opens_at: @course.time_zone.to_tz.now - 4.weeks,
+      due_at: @course.time_zone.to_tz.now - 3.weeks,
+      time_zone: @course.time_zone
+    )
+
+    external_task_plan.save!
+
+    DistributeTasks.call(task_plan: external_task_plan)
+
     reading_assistant = @course.course_assistants
                                .find_by(tasks_task_plan_type: 'reading')
                                .assistant
@@ -63,8 +89,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
     let(:expected_periods)              { 2 }
     let(:expected_students)             { 2 }
 
-    let(:expected_tasks)                { 3 }
-    let(:expected_task_types)           { ['homework', 'reading', 'homework'] }
+    let(:expected_task_types)           { ['homework', 'reading', 'homework', 'external'] }
+    let(:expected_tasks)                { expected_task_types.size }
 
     let(:first_period)                  { @course.periods.order(:created_at).first }
     let(:second_period)                 { @course.periods.order(:created_at).second }
@@ -158,6 +184,20 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(second_period_report.data_headings[2].average_score).to eq 0.5
       expect(second_period_report.data_headings[2].average_progress).to eq 0.5
 
+      expect(first_period_report.data_headings[3].title).to eq 'External assignment'
+      expect(first_period_report.data_headings[3].plan_id).to be_a Integer
+      expect(first_period_report.data_headings[3].type).to eq 'external'
+      expect(first_period_report.data_headings[3].due_at).to be_a Time
+      expect(first_period_report.data_headings[3].average_score).to be_nil
+      expect(first_period_report.data_headings[3].average_progress).to eq 0.0
+
+      expect(second_period_report.data_headings[3].title).to eq 'External assignment'
+      expect(second_period_report.data_headings[3].plan_id).to be_a Integer
+      expect(second_period_report.data_headings[3].type).to eq 'external'
+      expect(second_period_report.data_headings[3].due_at).to be_a Time
+      expect(second_period_report.data_headings[3].average_score).to be_nil
+      expect(second_period_report.data_headings[3].average_progress).to eq 0.0
+
       first_period_students = first_period_report.students
       expect(first_period_students.map(&:name)).to match_array [
         @student_1.name, @student_2.name
@@ -218,8 +258,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
         expect(student.is_dropped).to eq false
 
         data = student.data
-        expect(data.size).to eq 3
-        expect(data.map(&:type)).to eq ['homework', 'reading', 'homework']
+        expect(data.size).to eq expected_tasks
+        expect(data.map(&:type)).to eq expected_task_types
 
         data.each do |data|
           expect(data.id).to be_a Integer
@@ -235,9 +275,9 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
           expect(data.correct_exercise_count).to be_a Integer
           expect(data.correct_on_time_exercise_count).to be_a Integer
           expect(data.correct_accepted_late_exercise_count).to be_a Integer
-          expect(data.score).to be_a Float
-          expect(data.progress).to be_a Float
           expect(data.recovered_exercise_count).to be_a Integer
+          expect(data.score).to be_a data.type == 'external' ? NilClass : Float
+          expect(data.progress).to be_a Float
           expect(data.due_at).to be_a Time
           expect(data.last_worked_at).to be_nil.or(be_a Time)
           expect(data.is_late_work_accepted).to be_in [true, false]
@@ -318,8 +358,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
   context 'student' do
     let(:role)                          { @student_1.to_model.roles.first }
 
-    let(:expected_tasks)                { 3 }
-    let(:expected_task_types)           { ['homework', 'reading', 'homework'] }
+    let(:expected_task_types)           { ['homework', 'reading', 'homework', 'external'] }
+    let(:expected_tasks)                { expected_task_types.size }
 
     let(:report)  { reports.first }
     let(:student) { report.students.first }
@@ -369,6 +409,13 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(report.data_headings[2].average_score).to eq 1.0
       expect(report.data_headings[2].average_progress).to eq 1.0
 
+      expect(report.data_headings[3].title).to eq 'External assignment'
+      expect(report.data_headings[3].plan_id).to be_a Integer
+      expect(report.data_headings[3].type).to eq 'external'
+      expect(report.data_headings[3].due_at).to be_a Time
+      expect(report.data_headings[3].average_score).to be_nil
+      expect(report.data_headings[3].average_progress).to eq 0.0
+
       expect(student.name).to eq @student_1.name
       expect(student.first_name).to eq @student_1.first_name
       expect(student.last_name).to eq @student_1.last_name
@@ -385,8 +432,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(student.is_dropped).to eq false
 
       data = student.data
-      expect(data.size).to eq 3
-      expect(data.map(&:type)).to eq ['homework', 'reading', 'homework']
+      expect(data.size).to eq expected_tasks
+      expect(data.map(&:type)).to eq expected_task_types
 
       data.each do |data|
         expect(data.id).to be_a Integer
@@ -402,9 +449,9 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
         expect(data.correct_exercise_count).to be_a Integer
         expect(data.correct_on_time_exercise_count).to be_a Integer
         expect(data.correct_accepted_late_exercise_count).to be_a Integer
-        expect(data.score).to be_a Float
-        expect(data.progress).to be_a Float
         expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.score).to be_a data.type == 'external' ? NilClass : Float
+        expect(data.progress).to be_a Float
         expect(data.due_at).to be_a Time
         expect(data.last_worked_at).to be_nil.or(be_a Time)
         expect(data.is_late_work_accepted).to be_in [true, false]
@@ -412,7 +459,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       end
     end
 
-    it 'does not include tasks with feedback_at in the future' do
+    it 'does not include correctness and score for tasks with feedback_at in the future' do
       task = Tasks::Models::Task.joins(:taskings).find_by(
         taskings: { entity_role_id: @student_1.to_model.roles.first.id },
         title: 'Homework task plan'
@@ -449,6 +496,13 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(report.data_headings[2].average_score).to be_nil
       expect(report.data_headings[2].average_progress).to eq 1.0
 
+      expect(report.data_headings[3].title).to eq 'External assignment'
+      expect(report.data_headings[3].plan_id).to be_a Integer
+      expect(report.data_headings[3].type).to eq 'external'
+      expect(report.data_headings[3].due_at).to be_a Time
+      expect(report.data_headings[3].average_score).to be_nil
+      expect(report.data_headings[3].average_progress).to eq 0.0
+
       expect(student.name).to eq @student_1.name
       expect(student.first_name).to eq @student_1.first_name
       expect(student.last_name).to eq @student_1.last_name
@@ -465,8 +519,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       expect(student.is_dropped).to eq false
 
       data = student.data
-      expect(data.size).to eq 3
-      expect(data.map(&:type)).to eq ['homework', 'reading', 'homework']
+      expect(data.size).to eq expected_tasks
+      expect(data.map(&:type)).to eq expected_task_types
 
       data.each do |data|
         expect(data.id).to be_a Integer
@@ -479,8 +533,8 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
         expect(data.completed_exercise_count).to be_a Integer
         expect(data.completed_on_time_exercise_count).to be_a Integer
         expect(data.completed_accepted_late_exercise_count).to be_a Integer
-        expect(data.progress).to be_a Float
         expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.progress).to be_a Float
         expect(data.due_at).to be_a Time
         expect(data.last_worked_at).to be_nil.or(be_a Time)
         expect(data.is_late_work_accepted).to be_in [true, false]
