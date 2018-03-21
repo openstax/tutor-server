@@ -91,12 +91,9 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine do
   end
 
   context 'for incomplete CC tasks' do
-    it 'does say they are included in averages' do
+    it 'includes them in averages' do
       incomplete_cc = first_period_report.students.second.data.first
-      expect(incomplete_cc.is_included_in_averages).to be_truthy
-    end
-
-    it 'does not actually include them in averages' do
+      expect(incomplete_cc.is_included_in_averages).to eq true
       # First task would have an average of 1.0 if incomplete not included
       expect(first_period_report.data_headings.first.average_score).to be_within(1e-6).of(2/3.0)
     end
