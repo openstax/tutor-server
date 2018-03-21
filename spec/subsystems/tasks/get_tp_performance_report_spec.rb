@@ -24,11 +24,11 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       ecosystem: @ecosystem
     ]
 
+    # External assignment
     external_assistant = @course.course_assistants
                                 .find_by(tasks_task_plan_type: 'external')
                                 .assistant
 
-    # External assignment
     external_task_plan = Tasks::Models::TaskPlan.new(
       title: 'External assignment',
       owner: @course,
@@ -50,11 +50,36 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
 
     DistributeTasks.call(task_plan: external_task_plan)
 
+    # Event
+    event_assistant = @course.course_assistants
+                             .find_by(tasks_task_plan_type: 'event')
+                             .assistant
+
+    event_task_plan = Tasks::Models::TaskPlan.new(
+      title: 'Event',
+      owner: @course,
+      type: 'event',
+      assistant: event_assistant,
+      content_ecosystem_id: @ecosystem.id
+    )
+
+    event_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: @course,
+      task_plan: event_task_plan,
+      opens_at: @course.time_zone.to_tz.now - 1.week,
+      due_at: @course.time_zone.to_tz.now,
+      time_zone: @course.time_zone
+    )
+
+    event_task_plan.save!
+
+    DistributeTasks.call(task_plan: event_task_plan)
+
+    # Draft assignment, not included in the scores
     reading_assistant = @course.course_assistants
                                .find_by(tasks_task_plan_type: 'reading')
                                .assistant
 
-    # Draft assignment, not included in the scores
     draft_task_plan = Tasks::Models::TaskPlan.new(
       title: 'Draft task plan',
       owner: @course,
