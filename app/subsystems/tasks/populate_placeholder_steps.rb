@@ -1,6 +1,6 @@
 class Tasks::PopulatePlaceholderSteps
 
-  lev_routine express_output: :task
+  lev_routine transaction: :read_committed, express_output: :task
 
   uses_routine GetTaskCorePageIds, as: :get_task_core_page_ids
   uses_routine TaskExercise, as: :task_exercise
