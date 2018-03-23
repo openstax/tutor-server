@@ -16,7 +16,8 @@ protected
   CM = OpenStax::Salesforce::Remote::CampaignMember
 
   def exec(event:, user:, data: {})
-    return if EnvUtilities.load_boolean(name: 'DO_NOT_TRACK_TUTOR_ONBOARDING', default: false)
+    return if EnvUtilities.load_boolean(name: 'DO_NOT_TRACK_TUTOR_ONBOARDING', default: false) ||
+              user.respond_to?(:is_test) && user.is_test
 
     begin
 
@@ -106,7 +107,10 @@ protected
     raise(CannotTrackOnboardingUser, "user is anonymous") if user.is_anonymous?
 
     sf_contact_id = user.salesforce_contact_id
-    raise(CannotTrackOnboardingUser, "user #{user.id} has no SF contact ID") if sf_contact_id.blank?
+    raise(
+      CannotTrackOnboardingUser,
+      "user #{user.id} has no SF contact ID and is not marked as a test user"
+    ) if sf_contact_id.blank?
 
     onboarding_campaign_id = Settings::Salesforce.active_onboarding_salesforce_campaign_id
     raise(MissingOnboardingCampaignId, "active campaign") if onboarding_campaign_id.blank?

@@ -7,6 +7,7 @@ FactoryBot.define do
       last_name { SecureRandom.hex.to_s }
       skip_terms_agreement { false }
       salesforce_contact_id { nil }
+      is_test nil
 
       profile { create(:user_profile,
                        first_name: first_name,
@@ -14,7 +15,8 @@ FactoryBot.define do
                        full_name: full_name,
                        username: username,
                        skip_terms_agreement: skip_terms_agreement,
-                       salesforce_contact_id: salesforce_contact_id) }
+                       salesforce_contact_id: salesforce_contact_id,
+                       is_test: is_test) }
       strategy { User::Strategies::Direct::User.new(profile) }
     end
 
