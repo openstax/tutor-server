@@ -88,7 +88,7 @@ class CourseProfile::BuildPreviewCourses
       .where(['coalesce(course_preview_count, 0) < ?', desired_count])
       .select('coalesce(course_preview_count, 0) as course_preview_count, catalog_offerings.*')
       .reorder(1, :number) # Work on offerings with lower course_preview_count first
-      .lock('FOR NO KEY UPDATE OF catalog_offerings SKIP LOCKED') # Skip offerings being worked on
+      .lock('FOR NO KEY UPDATE OF "catalog_offerings" SKIP LOCKED') # Skip offerings being worked on
       .first # Only lock 1 offering at a time
   end
 
