@@ -48,20 +48,19 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
-    @tasked.with_lock do
-      consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
-      @tasked.save
-      result = MarkTaskStepCompleted.call(task_step: @task_step)
+    consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    @tasked.save
+    # Task already locked in around_action
+    result = MarkTaskStepCompleted.call(task_step: @task_step, lock: false)
 
-      raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
-      raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
+    raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
-      respond_with(
-        @task_step.task,
-        responder: ResponderWithPutPatchDeleteContent,
-        represent_with: Api::V1::TaskRepresenter
-      )
-    end
+    respond_with(
+      @task_step.task,
+      responder: ResponderWithPutPatchDeleteContent,
+      represent_with: Api::V1::TaskRepresenter
+    )
   end
 
   ###############################################################
@@ -86,7 +85,9 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   def with_task_step_and_tasked
     Tasks::Models::TaskStep.transaction do
-      @task_step = Tasks::Models::TaskStep.lock.find_by(id: params[:id])
+      @task_step = Tasks::Models::TaskStep.joins(:task)
+                                          .lock('FOR NO KEY UPDATE OF "tasks_tasks"')
+                                          .find_by(id: params[:id])
 
       return render_api_errors(:no_exercises, :not_found) if @task_step.nil?
 
@@ -99,7 +100,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   def populate_placeholders_if_needed
     return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
 
-    Tasks::PopulatePlaceholderSteps[task: @task_step.task]
+    # Task already locked in around_action
+    Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock: false]
 
     @tasked.reload
   end
