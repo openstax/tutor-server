@@ -1,7 +1,7 @@
 module Hypothesis
   def self.generate_grant_token(account_uuid)
       now = Time.now.to_i
-      user_id = "acct:" + account_uuid.abs.to_s + "@openstax.org"
+      user_id = "acct:" + account_uuid.try!(:abs).to_s + "@openstax.org"
 
       payload = {
         aud: Rails.application.secrets[:hypothesis]['host'],
