@@ -5,6 +5,7 @@
   background-color:  $tutor-neutral-bright;
   padding: 50px;
 
+
   h3 {
     text-align: center;
     margin-bottom: 40px;
@@ -22,49 +23,6 @@
     flex: 0 0 100%;
     padding: 0 1.5rem;
     width: 100%;
-  }
-
-  .sv_main {
-
-    display: flex;
-    justify-content: center;
-
-  }
-
-  .sv_nav {
-    margin-top: 40px;
-    input[type=button] {
-      padding: 10px 20px;
-    }
-  }
-
-  .sv_row {
-    margin-bottom: 40px;
-  }
-
-
-  .sv_q_title {
-    font-size: 1.6rem;
-    font-weight: normal;
-    margin-bottom: 20px;
-    color: $tutor-neutral-darker;
-  }
-
-  // answer choices wrapper
-  label {
-    font-weight: normal;
-    color: $tutor-neutral-thin-dark;
-    display: flex;
-    align-items: center;
-    input { margin: 0; }
-  }
-  .sv_q_radiogroup_label {
-    input { margin-right: 0.5rem; }
-  }
-
-  input[type="radio"],
-  input[type="checkbox"] {
-    height: inherit; // override pattern library default of 5rem
   }
 
   .btn, [type=button], [type=reset], [type=submit], button {
@@ -89,6 +47,65 @@
     color: #424242;
     font-weight: 400;
     background-color: #f1f1f1;
+  }
+
+  .sv_q_rating {
+    @extend .btn-group;
+    > label {
+      @extend .btn;
+      @extend .btn-default;
+      @extend .btn-sm;
+      padding: 3px 6px;
+      height: inherit; // override pattern library default of 5rem
+    }
+  }
+
+  .sv_container {
+    max-width: 570px;
+  }
+
+  .sv_main {
+
+    display: flex;
+    justify-content: center;
+
+  }
+
+  .sv_nav {
+    margin-top: 40px;
+    input[type=button] {
+      padding: 10px 20px;
+    }
+  }
+
+  .sv_row {
+    margin-bottom: 40px;
+  }
+
+
+  .sv_q_title {
+    font-size: 1.6rem;
+    font-weight: normal;
+    line-height: 2.4rem;
+    margin-bottom: 20px;
+    color: $tutor-neutral-darker;
+  }
+
+  // answer choices wrapper
+  label {
+    font-weight: normal;
+    color: $tutor-neutral-thin-dark;
+    display: flex;
+    align-items: center;
+    input { margin: 0; }
+  }
+  .sv_q_radiogroup_label {
+    input { margin-right: 0.5rem; }
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    height: inherit; // override pattern library default of 5rem
   }
 
   .sv_next_btn,
