@@ -3,19 +3,33 @@ require 'vcr_helper'
 
 RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :medium do
 
-  let(:phys_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
-  let(:bio_cnx_book)   { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
-  let(:bio_cc_book)    { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
+  let(:phys_cnx_book) { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
+  let(:bio_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
+  let(:bio_cc_book)   { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
 
-  let(:ecosystem)      { FactoryBot.create :content_ecosystem }
+  let(:ecosystem)     { FactoryBot.create :content_ecosystem }
 
   it 'creates a new Book structure and Pages and sets their attributes' do
+    expect_any_instance_of(Content::Routines::PopulateExercisePools).to(
+      receive(:call).and_wrap_original do |method, book:, save: true|
+        expect(save).to eq true
+
+        method.call book: book#, save: true
+      end
+    )
+    expect_any_instance_of(Content::Routines::UpdatePageContent).to(
+      receive(:call).and_wrap_original do |method, book:, pages:, save: true|
+        expect(save).to eq true
+
+        method.call book: book, pages: pages#, save: true
+      end
+    )
     expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem)
 
     result = nil
-    expect {
+    expect do
       result = Content::ImportBook.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
-    }.to change{ Content::Models::Chapter.count }.by(4)
+    end.to change{ Content::Models::Chapter.count }.by(4)
     expect(result.errors).to be_empty
 
     expect(ecosystem.id).not_to be_nil
