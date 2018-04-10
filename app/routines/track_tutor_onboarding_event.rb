@@ -16,6 +16,8 @@ protected
   CM = OpenStax::Salesforce::Remote::CampaignMember
 
   def exec(event:, user:, data: {})
+    return if EnvUtilities.load_boolean(name: 'DO_NOT_TRACK_TUTOR_ONBOARDING', default: false)
+
     begin
 
       cm = nil
