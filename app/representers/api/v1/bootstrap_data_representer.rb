@@ -49,7 +49,7 @@ module Api::V1
             client_id: Rails.application.secrets['hypothesis']['client_id'],
             api_url: Rails.application.secrets['hypothesis']['api_url'],
             app_url: Rails.application.secrets['hypothesis']['app_url'],
-            grant_token: Hypothesis.generate_grant_token(account.openstax_uid),
+            grant_token: Hypothesis.generate_grant_token(account),
             authority: Rails.application.secrets['hypothesis']['authority']
         }
     end
