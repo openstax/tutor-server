@@ -8,6 +8,7 @@ FactoryBot.define do
       skip_terms_agreement { false }
       title nil
       salesforce_contact_id nil
+      is_test nil
     end
 
     after(:build) do |profile, evaluator|
@@ -17,7 +18,8 @@ FactoryBot.define do
                                             last_name: evaluator.last_name,
                                             full_name: evaluator.full_name,
                                             title: evaluator.title,
-                                            salesforce_contact_id: evaluator.salesforce_contact_id)
+                                            salesforce_contact_id: evaluator.salesforce_contact_id,
+                                            is_test: evaluator.is_test)
     end
 
     trait :administrator do

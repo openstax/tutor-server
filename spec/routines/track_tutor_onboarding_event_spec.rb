@@ -19,8 +19,8 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     # To use placeholders for the user UUIDs, we have to set them up in a before(:all)
     # call, because `define_cassette_placeholder` doesn't work well from a before(:each)
 
-    @user_no_sf = FactoryBot.create(:user)
-    @user_sf_a = FactoryBot.create(:user, salesforce_contact_id: @sf_contact_a.id)
+    @user_no_sf = FactoryBot.create(:user, is_test: false)
+    @user_sf_a = FactoryBot.create(:user, is_test: false, salesforce_contact_id: @sf_contact_a.id)
 
     VCR.configure do |config|
       config.define_cassette_placeholder("<USER_NO_SF_UUID>") { @user_no_sf.uuid }
@@ -96,6 +96,19 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     allow(Settings::Salesforce).to receive(:active_nomad_onboarding_salesforce_campaign_id) {
       value || @nomad_campaign.id
     }
+  end
+
+  context "when the user is a test user" do
+    let(:event) { :booyah }
+    let(:user)  { FactoryBot.create :user, is_test: true }
+
+    it "does not error for any reason" do
+      stub_active_campaign_id(" ")
+      stub_active_nomad_campaign_id(" ")
+      clear_salesforce_user
+      ActiveForce.clear_sfdc_client!
+      expect{ call }.not_to raise_error
+    end
   end
 
   context "when there is no SF user" do

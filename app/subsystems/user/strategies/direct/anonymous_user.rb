@@ -45,6 +45,10 @@ module User
           false
         end
 
+        def is_test
+          false
+        end
+
         def viewed_tour_ids
           []
         end
