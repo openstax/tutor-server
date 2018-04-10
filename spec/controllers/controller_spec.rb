@@ -19,14 +19,20 @@ RSpec.describe TestExceptionsController, type: :controller do
       allow(request).to receive(:remote_ip) { '96.21.0.39' }
     end
 
-    it 'fires off an email for some error' do
+    it 'notifies sentry for some error' do
+      expect(Raven).to receive(:capture_exception) do |exception, *args|
+        expect(exception).to be_a(NameError)
+      end
       expect { get :bad_action }.to raise_error(NameError)
-      expect(ActionMailer::Base.deliveries.size).to eq(1)
+      expect(ActionMailer::Base.deliveries.size).to eq 0
     end
 
-    it 'fires off an email for a UrlGenerationError' do
+    it 'notifies sentry for a UrlGenerationError' do
+      expect(Raven).to receive(:capture_exception) do |exception, *args|
+        expect(exception).to be_a(ActionController::UrlGenerationError)
+      end
       expect { get :url_generation_error }.to raise_error(ActionController::UrlGenerationError)
-      expect(ActionMailer::Base.deliveries.size).to eq(1)
+      expect(ActionMailer::Base.deliveries.size).to eq 0
     end
   end
 end

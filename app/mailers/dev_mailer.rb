@@ -1,10 +1,12 @@
 class DevMailer < ApplicationMailer
 
-  def inspect_object(object:, to: nil, from: nil, subject:)
+  def inspect_object(object:, from: nil, to: nil, subject:)
     @object = object
-    mail to: to || Rails.application.secrets.exception['recipients'],
-         from: from || Rails.application.secrets.exception['sender'],
-         subject: "[Tutor] (#{Rails.application.secrets.environment_name}) #{subject}"
+    mail_params = { subject: "[Tutor] (#{Rails.application.secrets.environment_name}) #{subject}" }
+    mail_params[:from] = from unless from.nil?
+    mail_params[:to] = to unless to.nil?
+
+    mail mail_params
   end
 
 end
