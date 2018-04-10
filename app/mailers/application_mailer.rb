@@ -1,4 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'noreply@openstax.org'
+  default from: Rails.application.secrets.exception['sender'],
+          to: Rails.application.secrets.exception['recipients']
+
   layout 'mailer'
 end

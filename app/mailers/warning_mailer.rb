@@ -2,15 +2,10 @@ require 'rails/backtrace_cleaner'
 
 class WarningMailer < ApplicationMailer
 
-  default(
-    to: Rails.application.secrets.exception['recipients'],
-    from: Rails.application.secrets.exception['sender']
-  )
-
   def warning(subject:, message:, details: {})
     @message = message
     @details = details
-    mail(subject: "[Tutor] (#{OpenStax::RescueFrom.configuration.app_env}) [Warning] #{subject}")
+    mail subject: "[Tutor] (#{Rails.application.secrets.environment_name}) [Warning] #{subject}"
   end
 
   def self.log_and_deliver(args = {})
