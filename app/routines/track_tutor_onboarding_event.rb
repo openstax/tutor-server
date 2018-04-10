@@ -16,6 +16,8 @@ protected
   CM = OpenStax::Salesforce::Remote::CampaignMember
 
   def exec(event:, user:, data: {})
+    return if EnvUtilities.load_boolean(name: 'DO_NOT_TRACK_TUTOR_ONBOARDING', default: false)
+
     begin
 
       cm = nil
@@ -78,12 +80,12 @@ protected
 
     rescue CannotTrackOnboardingUser => ee
       log(:error) { "Cannot get CampaignMember for #{event} event because '#{ee.message}'" }
-      raise if Rails.env.production?
+      raise
     rescue MissingArgument => ee
       raise(MissingArgument, "Missing the `#{ee.message}` argument for event #{event}")
     rescue OpenStax::Salesforce::UserMissing => ee
       log(:error) { "Cannot track onboarding event because Salesforce user not set" }
-      raise if Settings::Db.store.raise_if_salesforce_user_missing && Rails.env.production?
+      raise if Settings::Db.store.raise_if_salesforce_user_missing
     end
   end
 
