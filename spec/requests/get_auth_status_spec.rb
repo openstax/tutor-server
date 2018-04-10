@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe 'Get authentication status', type: :request, version: :v1 do
 
   let(:application) { FactoryBot.create :doorkeeper_application }
-  let(:user)        { FactoryBot.create(:user) }
+  let(:user)        { FactoryBot.create :user, is_test: true }
   let(:anon_user)   { User::User.anonymous }
 
   context '#status' do
