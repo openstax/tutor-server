@@ -8,12 +8,15 @@ class Tasks::PopulatePlaceholderSteps
 
   protected
 
-  def exec(task:, force: false, lock: true)
+  def exec(task:, force: false, lock_task: true)
+    task.lock! if lock_task
     outputs.task = task
-    task.lock! if lock
     outputs.accepted = true
 
     return if task.pes_are_assigned && task.spes_are_assigned
+
+    # Lock the task_steps to ensure they don't get updated without us noticing
+    task.task_steps.lock('FOR NO KEY UPDATE').reload
 
     # If the task is a practice widget, we give Biglearn control of the number of PE slots
     biglearn_controls_pe_slots = task.practice?
@@ -65,7 +68,7 @@ class Tasks::PopulatePlaceholderSteps
       end
     end
 
-    # Save pes_are_assigned/spes_are_assigned and ensure the lock works
+    # Save pes_are_assigned/spes_are_assigned
     task.save validate: false
 
     # Ensure the task will reload and return the correct steps next time

@@ -51,7 +51,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
     @tasked.save
     # Task already locked in around_action
-    result = MarkTaskStepCompleted.call(task_step: @task_step, lock: false)
+    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
 
     raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
@@ -85,9 +85,12 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   def with_task_step_and_tasked
     Tasks::Models::TaskStep.transaction do
-      @task_step = Tasks::Models::TaskStep.joins(:task)
-                                          .lock('FOR NO KEY UPDATE OF "tasks_tasks"')
-                                          .find_by(id: params[:id])
+      # The explicit listing of the tables to lock is required here
+      # because we want to lock the tables in exactly this order to avoid deadlocks
+      @task_step = Tasks::Models::TaskStep
+        .joins(:task)
+        .lock('FOR NO KEY UPDATE OF "tasks_tasks", "tasks_task_steps"')
+        .find_by(id: params[:id])
 
       return render_api_errors(:no_exercises, :not_found) if @task_step.nil?
 
@@ -101,7 +104,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
 
     # Task already locked in around_action
-    Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock: false]
+    Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock_task: false]
 
     @tasked.reload
   end
