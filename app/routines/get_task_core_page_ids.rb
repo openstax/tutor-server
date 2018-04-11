@@ -4,7 +4,7 @@ class GetTaskCorePageIds
   CORE_STEP_GROUP_TYPES = Tasks::Models::TaskStep.group_types
                                                  .values_at(:core_group, :personalized_group)
 
-  lev_routine express_output: :task_id_to_core_page_ids_map
+  lev_routine transaction: :read_committed, express_output: :task_id_to_core_page_ids_map
 
   protected
 

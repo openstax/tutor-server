@@ -1,6 +1,6 @@
 class TaskExercise
 
-  lev_routine
+  lev_routine transaction: :read_committed
 
   protected
 
