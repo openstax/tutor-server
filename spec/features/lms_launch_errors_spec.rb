@@ -43,68 +43,67 @@ if screenshots_enabled?
 
     scenario 'unsupported role' do
       visit 'specs/lms_error_page/unsupported_role'
-      screenshot!(width: 600, height: 600)
+      screenshot!
     end
 
     context 'lms disabled' do
       scenario 'students' do
         visit 'specs/lms_error_page/lms_disabled/student'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
 
       scenario 'teachers' do
         visit 'specs/lms_error_page/lms_disabled/teacher'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
     end
 
     context 'course keys already used' do
       scenario 'students' do
         visit 'specs/lms_error_page/course_keys_already_used/student'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
 
       scenario 'teacher' do
         visit 'specs/lms_error_page/course_keys_already_used/teacher'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
     end
 
     scenario 'catchall' do
       visit 'specs/lms_error_page/catchall'
-      screenshot!(width: 600, height: 600)
+      screenshot!
     end
 
     scenario 'reused old launch' do
       visit 'specs/lms_error_page/already_used'
-      screenshot!(width: 600, height: 600)
+      screenshot!
     end
 
     context 'invalid_key_secret' do
       scenario 'students' do
         visit 'specs/lms_error_page/invalid_key_secret/student'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
 
       scenario 'teacher' do
         visit 'specs/lms_error_page/invalid_key_secret/teacher'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
     end
 
     context 'missing required fields' do
       scenario 'students' do
         visit 'specs/lms_error_page/missing_required_fields/student'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
 
       scenario 'teacher' do
         visit 'specs/lms_error_page/missing_required_fields/teacher'
-        screenshot!(width: 600, height: 600)
+        screenshot!
       end
     end
 
   end
 
 end
-
