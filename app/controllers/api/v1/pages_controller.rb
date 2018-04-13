@@ -8,9 +8,8 @@ class Api::V1::PagesController < Api::V1::ApiController
     params_uuid = params[:uuid]
     params_version = params[:version]
 
-    query = Content::Models::Page.where { uuid == params_uuid }
+    query = Content::Models::Page.where { uuid == params_uuid }.order(version: :desc, id: :desc)
     query = query.where { version == params_version } if params_version.present?
-    query = query.order(version: :desc)
     page = query.first
 
     page.nil? ?
