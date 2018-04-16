@@ -68,13 +68,13 @@ class Content::Routines::UpdatePageContent
 
       # The link actually points to the book itself
       # Remove the path from the link
-      "/books/#{book.ecosystem.id}"
+      "/book/#{book.ecosystem.id}"
     else
       # Check if the page's version is correct
       return if page_version.present? && page.version != page_version
 
       # Change the link's path to the page's book_location
-      "/books/#{book.ecosystem.id}/section/#{page.book_location.reject(&:zero?).join('.')}"
+      "/book/#{book.ecosystem.id}/section/#{page.book_location.reject(&:zero?).join('.')}"
     end
 
     href_attr.value = url.to_s
