@@ -22,6 +22,7 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'is_active' => !student.dropped?,
       'is_paid' => false,
       'is_comped' => false,
+      'registered_at' => be_kind_of(String),
       'payment_due_at' => be_kind_of(String),
       'first_paid_at' => be_kind_of(String),
       'is_refund_pending' => false,
@@ -29,8 +30,11 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'prompt_student_to_pay' => false
     )
 
-    [:first_paid_at, :payment_due_at].each do |date_method|
-      actual_value = Chronic.parse(representation[date_method.to_s])
+    [ :first_paid_at, :payment_due_at, [ :registered_at, :created_at ] ].each do |dd|
+      param = dd.is_a?(Array) ? dd.first : dd
+      date_method = dd.is_a?(Array) ? dd.second : dd
+
+      actual_value = Chronic.parse(representation[param.to_s])
       expected_value = student.send(date_method)
       expect(actual_value).to be_within(1.seconds).of(expected_value)
     end
