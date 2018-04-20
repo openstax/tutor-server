@@ -34,4 +34,10 @@ RSpec.describe Api::V1::CoursesController, type: :routing, api: true, version: :
     end
   end
 
+  context '/api/courses/dates' do
+    it 'routes to #dates' do
+      expect(post '/api/courses/dates').to route_to('api/v1/courses#dates', format: 'json')
+    end
+  end
+
 end

@@ -29,7 +29,7 @@ class SetupPerformanceReportData
 
     # Exclude introduction pages b/c they don't have LOs
     pages = ecosystem.books.first.chapters.flat_map do |ch|
-      ch.pages.reject{ |page| page.title == "Introduction" }
+      ch.pages.reject { |page| page.title == "Introduction" }
     end
 
     student_tasks = course.is_concept_coach ? setup_cc_tasks(roles, pages) :

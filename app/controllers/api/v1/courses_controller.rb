@@ -177,6 +177,62 @@ class Api::V1::CoursesController < Api::V1::ApiController
                  location: nil
   end
 
+  api :POST, '/course_dates', 'Returns a mapping of course UUIDs to start/end dates'
+  description <<-EOS
+    Returns a mapping of course UUIDs to start/end dates
+    The request body must contain only an array of course UUIDs:
+    <pre class="code">{
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      }
+    }</pre>
+
+    The response body will contain a mapping from course UUIDs to start and end dates:
+
+    <pre class="code">{
+      "type": "object",
+      "patternProperties": {
+        "^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$": {
+          "type": "object",
+          "properties": {
+            "starts_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "ends_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [ "starts_at", "ends_at" ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }</pre>
+  EOS
+  def dates
+    uuid_array = begin
+      JSON.parse request.body.read
+    rescue JSON::ParserError
+      return bad_request('Request body is invalid JSON')
+    end
+    return bad_request('Request body must contain only a JSON array') unless uuid_array.is_a?(Array)
+    return bad_request('Request body array elements must all be UUID strings') \
+      unless uuid_array.all? { |uuid| uuid.is_a? String }
+
+    course_dates_map = {}
+    CourseProfile::Models::Course.where(uuid: uuid_array)
+                                 .pluck(:uuid, :starts_at, :ends_at)
+                                 .each do |uuid, starts_at, ends_at|
+      course_dates_map[uuid] = { starts_at: starts_at, ends_at: ends_at }
+    end
+
+    render json: course_dates_map
+  end
+
   protected
 
   def get_course
@@ -196,5 +252,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
     errors = result.errors
     raise(SecurityTransgression, errors.map(&:message).to_sentence) unless errors.empty?
     result.outputs.role
+  end
+
+  def bad_request(message)
+    render json: { errors: [ { message: message } ] }, status: :bad_request
   end
 end
