@@ -2,15 +2,15 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::AddStudent, type: :routine do
   context "when adding a new student role to a period" do
-    let(:role) { FactoryBot.create :entity_role }
+    let(:role)   { FactoryBot.create :entity_role }
     let(:course) { FactoryBot.create :course_profile_course }
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
     it "succeeds" do
       result = nil
-      expect {
+      expect do
         result = CourseMembership::AddStudent.call(period: period, role: role)
-      }.to change{ CourseMembership::Models::Student.count }.by(1)
+      end.to change{ CourseMembership::Models::Student.count }.by(1)
       expect(result.errors).to be_empty
       expect(course.reload.is_access_switchable).to eq false
     end
@@ -22,8 +22,29 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
         student = result.outputs.student
         grace_days = Settings::Payments.student_grace_period_days
 
-        expect(student.payment_due_at - Time.now).to be_within(1.day).of(Settings::Payments.student_grace_period_days.days)
-        expect(student.payment_due_at.in_time_zone(course.time_zone.to_tz).to_s).to include("23:59:59")
+        expect(student.payment_due_at - Time.now).to(
+          be_within(1.day).of(Settings::Payments.student_grace_period_days.days)
+        )
+        expect(student.payment_due_at.in_time_zone(course.time_zone.to_tz).to_s).to(
+          include("23:59:59")
+        )
+      end
+    end
+
+    it 'extends the payment_due_at when the course hasn\'t started yet' do
+      # Freeze at a time where the due date will cross into daylight savings time
+      Timecop.freeze(Chronic.parse("March 2, 2017 5:04pm")) do
+        course.update_attribute :starts_at, Time.now + 1.week
+        result = CourseMembership::AddStudent.call(period: period, role: role)
+        student = result.outputs.student
+        grace_days = Settings::Payments.student_grace_period_days
+
+        expect(student.payment_due_at - course.starts_at).to(
+          be_within(1.day).of(Settings::Payments.student_grace_period_days.days)
+        )
+        expect(student.payment_due_at.in_time_zone(course.time_zone.to_tz).to_s).to(
+          include("23:59:59")
+        )
       end
     end
 
