@@ -14,14 +14,16 @@ RSpec.feature 'Bulk set course flag', js: true do
   scenario 'select all on page with no query' do
     visit admin_courses_path(per_page: 1)
 
-    find('#courses_select_all_on_page').set(true)
-    find('#courses_select_all_on_all_pages').set(false)
+    check 'courses_select_all_on_page'
+    uncheck 'courses_select_all_on_all_pages'
 
     select "Allow teacher to enable LMS", from: 'flag_name'
     select "True / Yes", from: 'flag_value'
     click_button 'Set Flag'
 
-    flag_values = [@course_1, @course_2, @course_3].map{|course| course.reload.is_lms_enabling_allowed}
+    flag_values = [@course_1, @course_2, @course_3].map do |course|
+      course.reload.is_lms_enabling_allowed
+    end
 
     expect(flag_values).to eq [true, false, false]
 
@@ -33,7 +35,7 @@ RSpec.feature 'Bulk set course flag', js: true do
   scenario 'select all on all pages with no query' do
     visit admin_courses_path(per_page: 1)
 
-    find('#courses_select_all_on_all_pages').set(true)
+    check 'courses_select_all_on_all_pages'
 
     select "Allow teacher to enable LMS", from: 'flag_name'
     select "True / Yes", from: 'flag_value'
@@ -51,7 +53,7 @@ RSpec.feature 'Bulk set course flag', js: true do
   scenario 'select all on all pages with query' do
     visit admin_courses_path(per_page: 1, query: "year:2017")
 
-    find('#courses_select_all_on_all_pages').set(true)
+    check 'courses_select_all_on_all_pages'
 
     select "Allow teacher to enable LMS", from: 'flag_name'
     select "True / Yes", from: 'flag_value'
