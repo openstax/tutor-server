@@ -54,7 +54,7 @@ class Research::SurveyPlansController < Research::BaseController
   end
 
   def export
-    filename = "export_#{Time.current.strftime("%Y%m%dT%H%M%SZ")}.csv"
+    filename = "survey_#{@survey_plan.id}_#{Time.current.strftime("%Y%m%dT%H%M%SZ")}.csv"
     Research::ExportAndUploadSurveyData.perform_later(survey_plan: @survey_plan, filename: filename)
     redirect_to research_survey_plans_path,
                 notice: "#{filename} is being created and will be uploaded to Box when ready"
