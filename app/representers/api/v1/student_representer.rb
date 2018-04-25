@@ -112,7 +112,7 @@ module Api::V1
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(created_at) },
              schema_info: {
-                description: "Date when the student registered for this course"
+                description: "Date when the student first registered for this course"
              }
 
     property :first_paid_at,
