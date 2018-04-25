@@ -311,6 +311,7 @@ group :test do
 
   gem 'chromedriver-helper'
 
+  gem 'capybara', '< 3.0'
   gem 'capybara-selenium'
   gem 'capybara-screenshot', require: false
 

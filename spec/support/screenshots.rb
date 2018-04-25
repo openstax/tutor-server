@@ -1,18 +1,14 @@
-do_screenshots = EnvUtilities.load_boolean(name: 'SSHOT', default: false)
-
-if do_screenshots
+if EnvUtilities.load_boolean(name: 'SSHOT', default: false)
   require 'capybara-screenshot/rspec'
   Capybara::Screenshot.autosave_on_failure = false
   Capybara::Screenshot.append_timestamp = false
-  WINDOW_SIZE = [1920, 6000]
+  WINDOW_SIZE = [ 1024, 768 ]
+  CURRENT_TIME = Time.now.strftime('%Y-%m-%d-%H-%M-%S')
 
   def screenshots_dir
     $screenshots_dir ||= Rails.root.join(
-      "tmp/capybara/screenshots_#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}"
-    ).tap do |path|
-      Dir.mkdir('tmp/capybara') unless Dir.exist? 'tmp/capybara'
-      Dir.mkdir(path) unless Dir.exist? path
-    end
+      "tmp/capybara/screenshots_#{CURRENT_TIME}"
+    ).tap { |path| FileUtils.mkdir_p path }
   end
 
   def screenshot!(suffix: nil, width: nil, height: nil)

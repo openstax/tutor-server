@@ -40,24 +40,22 @@ include OpenStax::Salesforce::SpecHelpers
 
 require 'shoulda/matchers'
 
+Capybara.server = :webrick
+
 require 'selenium/webdriver'
 
 # https://robots.thoughtbot.com/headless-feature-specs-with-chrome
 Capybara.register_driver :selenium_chrome do |app|
-  Capybara::Selenium::Driver.new(app, browser: :chrome)
+  options = Selenium::WebDriver::Chrome::Options.new args: [ '--lang=en' ]
+
+  Capybara::Selenium::Driver.new app, browser: :chrome, options: options
 end
 
 # no-sandbox is required for it to work with Docker (Travis)
 Capybara.register_driver :selenium_chrome_headless do |app|
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: ['headless', 'no-sandbox'] }
-  )
+  options = Selenium::WebDriver::Chrome::Options.new args: [ 'headless', 'no-sandbox', '--lang=en' ]
 
-  Capybara::Selenium::Driver.new(
-    app,
-    browser: :chrome,
-    desired_capabilities: capabilities
-  )
+  Capybara::Selenium::Driver.new app, browser: :chrome, options: options
 end
 
 Capybara.javascript_driver = :selenium_chrome_headless
