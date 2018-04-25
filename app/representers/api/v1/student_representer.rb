@@ -107,6 +107,14 @@ module Api::V1
                 description: "True if student has been comped"
              }
 
+    property :registered_at,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(created_at) },
+             schema_info: {
+                description: "Date when the student first registered for this course"
+             }
+
     property :first_paid_at,
              writeable: false,
              readable: true,
