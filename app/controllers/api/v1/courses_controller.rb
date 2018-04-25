@@ -227,7 +227,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     CourseProfile::Models::Course.where(uuid: uuid_array)
                                  .pluck(:uuid, :starts_at, :ends_at)
                                  .each do |uuid, starts_at, ends_at|
-      course_dates_map[uuid] = { starts_at: starts_at, ends_at: ends_at }
+      course_dates_map[uuid] = {
+        starts_at: DateTimeUtilities.to_api_s(starts_at),
+        ends_at: DateTimeUtilities.to_api_s(ends_at)
+      }
     end
 
     render json: course_dates_map

@@ -1424,10 +1424,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response).to be_ok
       courses.each do |course|
         expect(response.body_as_hash[course.uuid.to_sym]).to eq(
-          {
-            starts_at: DateTimeUtilities.to_api_s(course.starts_at),
-            ends_at: DateTimeUtilities.to_api_s(course.ends_at)
-          }
+          starts_at: DateTimeUtilities.to_api_s(course.starts_at),
+          ends_at: DateTimeUtilities.to_api_s(course.ends_at)
         )
       end
       expect(response.body_as_hash.size).to eq courses.size
