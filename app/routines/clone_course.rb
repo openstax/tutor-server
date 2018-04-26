@@ -26,7 +26,8 @@ class CloneCourse
       num_sections: num_sections || course.num_sections,
       school: course.school,
       catalog_offering: course.offering,
-      # don't copy `does_cost` from the course, because that course may not have cost but this one should
+      # don't copy `does_cost` from the course,
+      # because that course may not have cost but this one should
       does_cost: course.offering.does_cost,
       appearance_code: course.appearance_code,
       time_zone: time_zone || course.time_zone,

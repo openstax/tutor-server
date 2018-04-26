@@ -224,7 +224,7 @@ end
 
 def make_payment_required(student: nil, course: nil, user: nil)
   allow(Settings::Payments).to receive(:payments_enabled) { true }
-  course.update_attribute(:does_cost, true) if course.present?
+  course.reload.update_attribute(:does_cost, true) if course.present?
 
   if student.nil?
     raise "user cannot be nil if student is nil" if user.nil?

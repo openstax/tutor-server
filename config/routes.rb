@@ -154,6 +154,7 @@ Rails.application.routes.draw do
           post :'worst(/role/:role_id)', action: :create_worst
         end
       end
+      post :dates, on: :collection
 
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
