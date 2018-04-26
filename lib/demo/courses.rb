@@ -86,7 +86,8 @@ class Demo::Courses < Demo::Base
     teacher_user = find_or_create_user_by_username(
       username,
       name: name,
-      faculty_status: :confirmed_faculty
+      faculty_status: :confirmed_faculty,
+      school_type: :college
     )
 
     log { "Teacher: #{username} (#{name})" }

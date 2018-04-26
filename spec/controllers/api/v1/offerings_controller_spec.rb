@@ -2,18 +2,19 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, version: :v1 do
 
-  let!(:available_offering_1)         { FactoryBot.create :catalog_offering, number: 2 }
-  let!(:available_offering_2)         { FactoryBot.create :catalog_offering, number: 1 }
-  let!(:unavailable_offering)         { FactoryBot.create :catalog_offering, is_available: false }
+  let!(:available_offering_1) { FactoryBot.create :catalog_offering, number: 2 }
+  let!(:available_offering_2) { FactoryBot.create :catalog_offering, number: 1 }
+  let!(:unavailable_offering) { FactoryBot.create :catalog_offering, is_available: false }
 
-  let(:anon)                          { User::User.anonymous }
-  let(:verified_faculty)              do
-    FactoryBot.create(:user).tap do |vf|
-      vf.account.update_attribute :faculty_status, :confirmed_faculty
+  let(:anon)                  { User::User.anonymous }
+  let(:faculty)               do
+    FactoryBot.create(:user).tap do |user|
+      user.account.confirmed_faculty!
+      user.account.college!
     end
   end
-  let(:verified_faculty_access_token) do
-    FactoryBot.create :doorkeeper_access_token, resource_owner_id: verified_faculty.id
+  let(:faculty_access_token)  do
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: faculty.id
   end
 
   context '#index' do
@@ -24,8 +25,8 @@ RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, versi
       expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
     end
 
-    it 'lists all available offerings for verified faculty, in order' do
-      api_get :index, verified_faculty_access_token
+    it 'lists all available offerings for verified college faculty, in order' do
+      api_get :index, faculty_access_token
       items = response.body_as_hash[:items].map(&:deep_stringify_keys)
       expect(items).to eq [
         Api::V1::OfferingRepresenter.new(available_offering_2).as_json,

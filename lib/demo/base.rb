@@ -105,7 +105,9 @@ class Demo::Base
     FinePrint.sign_contract(user.to_model, string_name)
   end
 
-  def new_user(username:, name: nil, password: nil, sign_contracts: true, faculty_status: nil)
+  def new_user(
+    username:, name: nil, password: nil, sign_contracts: true, faculty_status: nil, school_type: nil
+  )
     password ||= Rails.application.secrets.demo_user_password
 
     first_name, last_name = name.split(' ')
@@ -116,7 +118,8 @@ class Demo::Base
                                    password: password,
                                    first_name: first_name,
                                    last_name: last_name,
-                                   faculty_status: faculty_status).outputs.user
+                                   faculty_status: faculty_status,
+                                   school_type: school_type).outputs.user
 
     if sign_contracts
       sign_contract(user: user, name: :general_terms_of_use)

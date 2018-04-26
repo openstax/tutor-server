@@ -129,6 +129,10 @@ module User
       verify_and_return @strategy.faculty_status, klass: String, error: StrategyError
     end
 
+    def school_type
+      verify_and_return @strategy.school_type, klass: String, error: StrategyError
+    end
+
     def ui_settings
       verify_and_return @strategy.ui_settings, klass: Hash, allow_nil: true, error: StrategyError
     end

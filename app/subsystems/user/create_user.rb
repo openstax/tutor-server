@@ -10,7 +10,7 @@ module User
 
     def exec(account_id: nil, email: nil, username: nil, password: nil,
              first_name: nil, last_name: nil, full_name: nil, title: nil,
-             faculty_status: nil, salesforce_contact_id: nil, role: nil)
+             faculty_status: nil, salesforce_contact_id: nil, role: nil, school_type: nil)
       raise ArgumentError, 'Requires either an email, a username or an account_id' \
         if email.nil? && username.nil? && account_id.nil?
 
@@ -24,7 +24,8 @@ module User
         title: title,
         faculty_status: faculty_status,
         salesforce_contact_id: salesforce_contact_id,
-        role: role
+        role: role,
+        school_type: school_type
       )
 
       outputs.user = ::User::User.create account_id: account_id
