@@ -176,7 +176,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       after(:all)  do
         DatabaseCleaner.clean
 
-        @user_1.reload
+        @user_1.account.reload
       end
 
       context 'is_preview: true' do
