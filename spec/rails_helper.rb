@@ -53,7 +53,9 @@ end
 
 # no-sandbox is required for it to work with Docker (Travis)
 Capybara.register_driver :selenium_chrome_headless do |app|
-  options = Selenium::WebDriver::Chrome::Options.new args: [ 'headless', 'no-sandbox', '--lang=en' ]
+  options = Selenium::WebDriver::Chrome::Options.new args: [
+    'headless', 'no-sandbox', 'disable-dev-shm-usage', 'lang=en'
+  ]
 
   Capybara::Selenium::Driver.new app, browser: :chrome, options: options
 end
