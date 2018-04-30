@@ -1,0 +1,6 @@
+class Research::ActivateStudy
+
+
+
+
+end

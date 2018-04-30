@@ -1,0 +1,11 @@
+<%= form_for @study, url: url do |f| %>
+  <div class='form-group'>
+    <%= f.label :Name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  </div>
+
+
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
+
+<% end %>
+

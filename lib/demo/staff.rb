@@ -8,6 +8,7 @@ class Demo::Staff < Demo::Base
   uses_routine User::SetAdministratorState, as: :set_administrator
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
   uses_routine User::SetCustomerServiceState, as: :set_customer_service
+  uses_routine User::SetResearcherState, as: :set_researcher
 
   protected
 
@@ -30,6 +31,12 @@ class Demo::Staff < Demo::Base
       cs_user = find_or_create_user_by_username(cs_username, name: cs_name)
       run(:set_customer_service, user: cs_user, customer_service: true)
       log { "Customer Support: #{cs_username}" }
+    end
+
+    researchers.each do |rr_username, rr_name|
+      rr_user = find_or_create_user_by_username(rr_username, name: rr_name)
+      run(:set_researcher, user: rr_user, researcher: true)
+      log { "Researcher: #{rr_username}" }
     end
 
     zz_usernames = (0..99).map { |ii| "zz_#{ii.to_s.rjust(2, "0")}" }
@@ -59,6 +66,12 @@ class Demo::Staff < Demo::Base
   def customer_support
     @customer_support ||= Hashie::Mash.load(
       File.join(CONFIG_BASE_DIR, "people/staff/customer_support.yml")
+    )
+  end
+
+  def researchers
+    @researchers ||= Hashie::Mash.load(
+      File.join(CONFIG_BASE_DIR, "people/staff/researchers.yml")
     )
   end
 end

@@ -676,7 +676,7 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.text     "description"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.datetime "activate_at",   null: false
+    t.datetime "activate_at"
     t.datetime "deactivate_at"
     t.datetime "killed_at"
   end
