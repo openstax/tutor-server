@@ -32,18 +32,8 @@ class Admin::CoursesAddSalesforce
   end
 
   def get_salesforce_object_for_id(id)
-    # May be a ClassSize or an OsAncillary
-    get_os_ancillary_for_id(id) ||
-    get_class_size_for_id(id)
-  end
-
-  def get_class_size_for_id(id)
-    # `find` and `where(id: ...).first` don't handle non-existent IDs well
-    begin
-      OpenStax::Salesforce::Remote::ClassSize.find(id)
-    rescue Faraday::ClientError => e
-      nil
-    end
+    # An OsAncillary
+    get_os_ancillary_for_id(id)
   end
 
   def get_os_ancillary_for_id(id)

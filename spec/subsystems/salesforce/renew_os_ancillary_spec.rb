@@ -89,10 +89,10 @@ RSpec.describe Salesforce::RenewOsAncillary do
   end
 
   it "can find the methods it needs in potential SF object classes" do
-    # Have this check since we're mostly otherwise stubbing these classes
-    [OpenStax::Salesforce::Remote::OsAncillary, OpenStax::Salesforce::Remote::ClassSize].each do |sf_class|
-      expect(sf_class.new).to respond_to(:opportunity, :product, :save)
-    end
+    # Have this check since we're mostly otherwise stubbing this class
+    expect(OpenStax::Salesforce::Remote::OsAncillary.new).to(
+      respond_to(:opportunity, :product, :save)
+    )
   end
 
 end
