@@ -2,8 +2,8 @@ class Research::CreateCohort
 
   lev_routine
 
-  uses_routine Research::RebalanceCohorts, as: :create_offering,
-                                           translations: { outputs: { type: :verbatim } }
+  # uses_routine Research::RebalanceCohorts, as: :create_offering,
+  #                                          translations: { outputs: { type: :verbatim } }
 
   protected
 

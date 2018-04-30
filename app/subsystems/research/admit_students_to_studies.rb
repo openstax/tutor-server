@@ -1,4 +1,4 @@
-class Research::AdminStudentsToStudies
+class Research::AdmitStudentsToStudies
 
   lev_routine
 

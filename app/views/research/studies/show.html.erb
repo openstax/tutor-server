@@ -1,0 +1,41 @@
+<%= link_to 'Edit', edit_research_study_path(@study), class: "btn btn-primary", style: "float: right" %>
+
+
+<div class="study_entry">
+  <div class="study_info">
+    <b><%= @study.name %></b>
+    (ID: <%= @study.id %>)
+    Created: <%= @study.created_at %>
+    | <%= @study.active? ? "Active" : "Inactive" %>
+  </div>
+  <div class="course_listing">
+    <div class="course_listing_title">Courses:</div>
+    <div class="course_listing_entries">
+      <% @study.courses.each do |course| %>
+        <div class="course_entry">
+          <%= course.name %> (ID: <%= course.id %>)
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= render partial: 'shared/courses/search',
+           locals: {
+             course_infos: @course_infos,
+             query: @query,
+             order_by: @order_by,
+             total_count: @course_infos.try(:count),
+             page: params[:page] || 1,
+             per_page: params[:per_page] || Research::StudiesController::DEFAULT_PER_PAGE,
+             search_path: research_study_path(@study),
+             bulk_actions_path: add_courses_research_study_path(@study),
+             bulk_actions: ->() do %>
+              <div class="form-group input-group">
+                <span class="input-group-btn">
+                  <%= submit_tag 'Add selected courses to study (can be slow)', class: 'btn btn-primary' %>
+                </span>
+              </div>
+             <% end
+            }  %>
+

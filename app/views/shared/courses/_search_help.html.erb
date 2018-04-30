@@ -1,0 +1,28 @@
+<p>The search string is made up of a space-separated collection of search conditions on different fields.  Each condition is formatted as “field_name:comma-separated-values”. The resulting list of courses will match all of the conditions. Each condition will produce a list of courses that must match any one of the comma-separated-values. The fields names and their characteristics are given below. All conditions use a wildcard search (so whatever search terms you enter are automatically prepended and appended with wildcards).</p>
+
+<ul>
+  <li><b>name</b> - matches the course name</li>
+  <li><b>school</b> - matches the school name</li>
+  <li><b>offering</b> - matches the offering title, description, SF book name, or appearance code</li>
+  <li><b>offering_id</b> - matches the offering's integer ID in Tutor</li>
+  <li><b>teacher</b> - matches the teacher's username, first, last, or full name</li>
+  <li><b>ecosystem</b> - matches the ecosystem's title</li>
+  <li><b>is_lms_enabled</b> - accepts <b>false</b> (disabled), <b>true</b> (enabled), <b>nil</b> (not yet chosen)</li>
+  <li><b>is_lms_enabling_allowed</b> - accepts <b>false</b> or <b>true</b></li>
+  <li><b>term</b> - accepts <%= CourseProfile::Models::Course.terms.keys.map{|kk| "<b>#{kk}</b>"}.join(', ').html_safe %></li>
+  <li><b>year</b> - the year of the course, e.g. <b>2017</b></li>
+  <li><b>costs</b> - accepts <b>false</b> (does not cost) or <b>true</b> (does cost)</li>
+  <li><b>is_preview</b> - accepts <b>false</b> (is not preview) or <b>true</b> (is preview). Defaults to <b>false</b>.</li>
+</ul>
+
+<p>Examples:</p>
+
+<ul>
+  <li><b>school:Rice,Texas</b> - matches courses at Rice University or the University of Texas</li>
+  <li><b>school:Rice teacher:Baran</b> - matches courses at Rice taught by richb.</li>
+</ul>
+
+<p>You can also specify the sort field and the sort direction using the "Ordered by" field.  To sort by
+descending ID, you'd enter <b>id DESC</b>.  The sortable fields are <%=
+  SearchCourses::SORTABLE_FIELDS.keys.map{|kk| "<b>#{kk}</b>"}.join(', ').html_safe
+%>.</p>

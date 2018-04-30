@@ -391,7 +391,9 @@ Rails.application.routes.draw do
   namespace :research do
     root 'console#index'
 
-    resources :studies, only: [:index]
+    resources :studies do
+      post 'add_courses', on: :member
+    end
 
     resources :survey_plans, except: :destroy do
       member do

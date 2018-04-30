@@ -20,7 +20,7 @@ class AddResearchModels2 < ActiveRecord::Migration
       t.timestamps                              null: false
     end
 
-    add_column :research_studies, :activate_at, :datetime, null: false
+    add_column :research_studies, :activate_at, :datetime
     add_column :research_studies, :deactivate_at, :datetime
     add_column :research_studies, :killed_at, :datetime
 
