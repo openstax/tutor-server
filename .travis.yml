@@ -23,8 +23,8 @@ addons:
   chrome: stable
   postgresql: '9.5'
 env:
-  - TAG=~speed:slow
-  - TAG=speed:slow
+  - TAG=speed:fast
+  - TAG=~speed:fast
 script:
   - bundle exec parallel_rspec -o "-t $TAG" ./spec
 branches:
