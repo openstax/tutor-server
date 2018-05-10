@@ -14,7 +14,7 @@ require 'oauth'
 
 class Lms::SendCourseScores
 
-  lev_routine transaction: :no_transaction
+  lev_routine transaction: :no_transaction, use_jobba: true
 
   def exec(course:)
     raise "Course cannot be nil" if course.nil?

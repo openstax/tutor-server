@@ -1,6 +1,6 @@
 module Tasks
   class ExportPerformanceReport
-    lev_routine express_output: :filepath
+    lev_routine express_output: :filepath, use_jobba: true
 
     uses_routine GetPerformanceReport,
       translations: { outputs: { type: :verbatim } },

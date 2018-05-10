@@ -1,7 +1,7 @@
 # NOTE: Will save the given course if it is a new record
 class CourseContent::AddEcosystemToCourse
 
-  lev_routine express_output: :ecosystem_map
+  lev_routine express_output: :ecosystem_map, use_jobba: true
 
   protected
 
