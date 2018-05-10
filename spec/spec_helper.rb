@@ -88,6 +88,8 @@ RSpec.configure do |config|
     # `true` in RSpec 4.
     mocks.verify_partial_doubles = true
   end
+
+  config.define_derived_metadata { |metadata| metadata[:speed] ||= :fast }
 end
 
 RSpec::Matchers.define_negated_matcher :not_change, :change
