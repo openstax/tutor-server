@@ -90,15 +90,19 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
     end
 
     context 'same course' do
-      let(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
-
       let(:enrollment_change) do
         CourseMembership::CreateEnrollmentChange[
           user: user, enrollment_code: period_2.enrollment_code
         ]
       end
 
-      before(:each)           { enrollment_change.to_model.approve_by(user).save! }
+      before(:each)           do
+        AddUserAsPeriodStudent[user: user, period: period_1]
+
+        enrollment_change.to_model.approve_by(user).save!
+
+        expect(enrollment_change.to_model.enrollment).not_to be_nil
+      end
 
       it 'processes an approved EnrollmentChange' do
         result = nil
