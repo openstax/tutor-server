@@ -58,9 +58,9 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    active_attr (0.10.2)
-      activemodel (>= 3.0.2, < 5.2)
-      activesupport (>= 3.0.2, < 5.2)
+    active_attr (0.10.3)
+      activemodel (>= 3.0.2, < 6.0)
+      activesupport (>= 3.0.2, < 6.0)
     active_record_query_trace (1.4)
     activejob (4.2.7.1)
       activesupport (= 4.2.7.1)
@@ -290,7 +290,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.5.6)
+    hashie (3.5.7)
     highline (1.6.21)
     hike (1.2.3)
     html2haml (2.2.0)
@@ -303,7 +303,7 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
-    i18n (0.9.1)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.1)
     ims-lti (2.2.1)
@@ -315,7 +315,7 @@ GEM
       simple_oauth (= 0.2)
     io-like (0.3.0)
     ipaddress (0.8.3)
-    jobba (1.6.0)
+    jobba (1.7.0)
       redis (~> 3.2)
       redis-namespace
     jquery-rails (4.3.1)
@@ -335,7 +335,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (8.1.0)
+    lev (9.0.0)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -367,7 +367,7 @@ GEM
     mini_magick (4.2.0)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
-    minitest (5.11.1)
+    minitest (5.11.3)
     multi_json (1.12.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -463,7 +463,7 @@ GEM
     public_suffix (3.0.2)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
-    rack (1.6.9)
+    rack (1.6.10)
     rack-attack (4.3.1)
       rack
     rack-test (0.6.3)
@@ -519,8 +519,8 @@ GEM
     redis-activesupport (5.0.4)
       activesupport (>= 3, < 6)
       redis-store (>= 1.3, < 2)
-    redis-namespace (1.5.3)
-      redis (~> 3.0, >= 3.0.4)
+    redis-namespace (1.6.0)
+      redis (>= 3.0.4)
     redis-rack (2.0.4)
       rack (>= 1.5, < 3)
       redis-store (>= 1.2, < 2)
@@ -657,7 +657,7 @@ GEM
       transaction_isolation (>= 1.0.2)
     turbolinks (2.5.3)
       coffee-rails
-    tzinfo (1.2.4)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uber (0.0.15)
     uglifier (2.7.1)
@@ -750,12 +750,12 @@ DEPENDENCIES
   hashie
   httparty
   ims-lti (~> 2.2.1)
-  jobba (~> 1.6.0)
+  jobba (~> 1.7.0)
   jquery-rails
   json-schema (~> 2.8.0)
   keyword_search!
   launchy
-  lev (~> 8.1.0)
+  lev (~> 9.0.0)
   lograge
   maruku
   mini_magick

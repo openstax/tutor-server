@@ -1,6 +1,8 @@
 class ImportEcosystemManifest
 
-  lev_routine express_output: :ecosystem, active_job_enqueue_options: { queue: :lowest_priority }
+  lev_routine express_output: :ecosystem,
+              active_job_enqueue_options: { queue: :lowest_priority },
+              use_jobba: true
 
   uses_routine FetchAndImportBookAndCreateEcosystem, as: :fetch_and_import,
                                                      translations: { outputs: { type: :verbatim } }
