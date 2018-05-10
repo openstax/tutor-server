@@ -1,5 +1,14 @@
 require 'rails_helper'
 
+class TestRoutine
+  lev_routine use_jobba: true
+
+  protected
+
+  def exec
+  end
+end
+
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
   include ActiveJob::TestHelper
 
@@ -13,20 +22,11 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
   after(:all)  { Jobba.all.to_a.each(&:delete!) }
 
-  before do
-    stub_const 'TestRoutine', Class.new
-    TestRoutine.class_exec do
-      lev_routine
-      protected
-      def exec; end
-    end
-  end
-
   context 'GET #index' do
     it 'is for admins only' do
-      expect {
+      expect do
         api_get :index, user_token
-      }.to raise_error(SecurityTransgression)
+      end.to raise_error(SecurityTransgression)
     end
 
     it 'returns all the jobs that have been queued and worked' do
