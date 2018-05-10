@@ -17,9 +17,9 @@ RSpec.describe Salesforce::Models::AttachedRecord, type: :model do
     end
 
     it "can take sf object" do
-      cs = OpenStax::Salesforce::Remote::ClassSize.new(id: "blah")
-      ar = FactoryBot.create :salesforce_attached_record, salesforce_object: cs
-      expect(ar.salesforce_class).to eq OpenStax::Salesforce::Remote::ClassSize
+      oa = OpenStax::Salesforce::Remote::OsAncillary.new(id: "blah")
+      ar = FactoryBot.create :salesforce_attached_record, salesforce_object: oa
+      expect(ar.salesforce_class).to eq OpenStax::Salesforce::Remote::OsAncillary
       expect(ar.salesforce_id).to eq "blah"
     end
   end

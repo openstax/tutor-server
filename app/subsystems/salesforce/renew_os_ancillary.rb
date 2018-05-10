@@ -1,7 +1,7 @@
 module Salesforce
   class RenewOsAncillary
 
-    # `based_on` can either be an `OsAncillary` or the legacy `ClassSize`
+    # `based_on` is an `OsAncillary`
     def self.call(based_on:, renew_for_term_year:)
 
       # Would be nice to have preloaded opportunity, but have had problems making it work
