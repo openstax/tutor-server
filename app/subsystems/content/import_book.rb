@@ -84,7 +84,7 @@ class Content::ImportBook
 
     outputs.book = book
     outputs.chapters = outs.chapters
-    outputs.pages = outs.pages #run(:update_page_content, book: book, pages: outs.pages).outputs.pages
+    outputs.pages = run(:update_page_content, book: book, pages: outs.pages).outputs.pages
 
     # Send ecosystem information to Biglearn
     OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
