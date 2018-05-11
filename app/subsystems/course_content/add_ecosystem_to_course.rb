@@ -37,13 +37,16 @@ class CourseContent::AddEcosystemToCourse
       course.save
     else
       # Recalculate all TaskPageCaches since we need to map them to the new ecosystem
-      task_ids = Tasks::Models::Task
+      all_task_ids = Tasks::Models::Task
         .joins(taskings: { role: :student })
         .where(taskings: { role: { student: { course_profile_course_id: course.id } } })
         .pluck(:id)
 
       queue = course.is_preview ? :lowest_priority : :low_priority
-      Tasks::UpdateTaskCaches.set(queue: queue).perform_later(task_ids: task_ids, queue: queue.to_s)
+      all_task_ids.each_slice(100) do |task_ids|
+        Tasks::UpdateTaskCaches.set(queue: queue)
+                               .perform_later(task_ids: task_ids, queue: queue.to_s)
+      end
     end
 
     OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)
