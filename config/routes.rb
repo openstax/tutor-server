@@ -24,7 +24,7 @@ Rails.application.routes.draw do
       # this is handled by the FE
       get :'start/:enroll_token', action: :index, as: :start_enrollment, block_sign_up: false, straight_to_student_sign_up: true
       # we render this to display a splash screen before login/signup
-      get :':enroll_token(/:ignore)', as: :token_enroll, action: :enroll
+      get :':enroll_token(/*ignored)', as: :token_enroll, action: :enroll
     end
   end
 
