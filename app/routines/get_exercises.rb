@@ -8,12 +8,13 @@ class GetExercises
 
   # Returns Content::Exercises filtered "by":
   #   :ecosystem or :course
+  #   :exercise_ids (defaults to all)
   #   :page_ids (defaults to all)
   #   :pool_types (defaults to all)
   #
   # returns course-specific exclusion information with the exercises (if :course provided)
 
-  def exec(ecosystem: nil, course: nil, page_ids: nil, pool_types: nil)
+  def exec(ecosystem: nil, course: nil, page_ids: nil, exercise_ids: nil, pool_types: nil)
     raise ArgumentError, "Either :ecosystem or :course must be provided" \
       if ecosystem.nil? && course.nil?
 
@@ -28,7 +29,7 @@ class GetExercises
 
     # Preload exercises, pages and teks tags
     all_pools = pools_map.values.flatten
-    all_exercise_ids = all_pools.flat_map(&:exercise_ids).uniq
+    all_exercise_ids = (exercise_ids || all_pools.flat_map(&:exercise_ids)).uniq
     all_content_exercises = Content::Models::Exercise
       .where(id: all_exercise_ids)
       .preload(:page, tags: :teks_tags)
@@ -38,7 +39,7 @@ class GetExercises
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
       pool_exercise_ids = pools.flat_map(&:exercise_ids).uniq
-      pool_exercises = all_exercises_by_id.values_at *pool_exercise_ids
+      pool_exercises = all_exercises_by_id.values_at(*pool_exercise_ids).compact
       exercises = run(:filter, exercises: pool_exercises).outputs.exercises
 
       exercises.each do |exercise|
