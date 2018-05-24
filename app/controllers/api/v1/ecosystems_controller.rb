@@ -47,7 +47,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
   api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',
             'Returns exercises for a given ecosystem, filtered by the following params: ' +
-            'course_id, page_ids, pool_types'
+            'course_id, page_ids, exercise_ids, pool_types'
   description <<-EOS
     Returns a list of assignable exercises in the given ecosystem.
     The list is filtered by pages matching the given page_ids array
@@ -64,6 +64,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
     exercises = GetExercises[ecosystem: ecosystem,
                              course: course,
+                             exercise_ids: params[:exercise_ids],
                              page_ids: params[:page_ids],
                              pool_types: params[:pool_types]]
 
