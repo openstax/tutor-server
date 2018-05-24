@@ -23,9 +23,11 @@ class Tasks::UpdateTaskCaches
     tasks_by_id = tasks.index_by(&:id)
     locked_task_ids = tasks_by_id.keys
 
-    # Retry tasks that we couldn't lock later
+    # Requeue tasks that exist but we couldn't lock
     skipped_task_ids = task_ids - locked_task_ids
-    self.class.perform_later(task_ids: skipped_task_ids) unless skipped_task_ids.empty?
+    existing_skipped_task_ids = Tasks::Models::Task.where(id: skipped_task_ids).pluck(:id)
+    self.class.perform_later(task_ids: existing_skipped_task_ids) \
+      unless existing_skipped_task_ids.empty?
     task_ids = locked_task_ids
 
     # Stop if we couldn't lock any tasks at all
