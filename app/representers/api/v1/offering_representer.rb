@@ -35,6 +35,14 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
              type: 'boolean'
            }
 
+  property :is_available,
+           readable: true,
+           writeable: false,
+           schema_info: {
+             required: true,
+             type: 'boolean'
+           }
+
   property :appearance_code,
            type: String,
            readable: true,

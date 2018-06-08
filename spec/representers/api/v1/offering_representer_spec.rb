@@ -122,4 +122,17 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
       )
     end
   end
+
+  context 'is_available' do
+    it 'can be read' do
+      expect(representation['is_available']).to eq offering.is_available
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:is_available=)
+      expect{ described_class.new(offering).from_hash('is_available' => 'true') }.not_to(
+        change{ offering.is_available }
+      )
+    end
+  end
 end

@@ -88,17 +88,5 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
         end
       end
     end
-
-    context 'unavailable offering' do
-      before{ offering.update_attribute :is_available, false }
-
-      [:read, :create_course].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
-
-          it { should eq false }
-        end
-      end
-    end
   end
 end

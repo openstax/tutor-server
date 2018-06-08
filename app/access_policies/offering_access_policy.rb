@@ -6,10 +6,8 @@ class OfferingAccessPolicy
                     !requestor.account.college?
 
     case action.to_sym
-    when :index
+    when :index, :read, :create_course
       true
-    when :read, :create_course
-      offering.is_available
     else
       false
     end
