@@ -25,12 +25,13 @@ RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, versi
       expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
     end
 
-    it 'lists all available offerings for verified college faculty, in order' do
+    it 'lists all offerings for verified college faculty, in order' do
       api_get :index, faculty_access_token
       items = response.body_as_hash[:items].map(&:deep_stringify_keys)
       expect(items).to eq [
         Api::V1::OfferingRepresenter.new(available_offering_2).as_json,
-        Api::V1::OfferingRepresenter.new(available_offering_1).as_json
+        Api::V1::OfferingRepresenter.new(available_offering_1).as_json,
+        Api::V1::OfferingRepresenter.new(unavailable_offering).as_json,
       ]
     end
   end
