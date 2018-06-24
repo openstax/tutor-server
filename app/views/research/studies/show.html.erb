@@ -1,5 +1,6 @@
 <%= link_to 'Edit', edit_research_study_path(@study), class: "btn btn-primary", style: "float: right" %>
 
+<h3>Info</h3>
 
 <div class="study_entry">
   <div class="study_info">
@@ -18,7 +19,20 @@
       <% end %>
     </div>
   </div>
+  <div class="course_listing">
+    <div class="course_listing_title">Cohorts:</div>
+    <div class="course_listing_entries">
+      <% @study.cohorts.each do |cohort| %>
+        <div class="cohort_entry">
+          <%= link_to cohort.name, research_cohort_path(cohort) %> / ID: <%= cohort.id %> / <%= cohort.cohort_members_count %> Members
+        </div>
+      <% end %>
+      <%= link_to "Add new cohort", new_research_study_cohort_path(@study) %>
+    </div>
+  </div>
 </div>
+
+<h3>Add Courses</h3>
 
 <%= render partial: 'shared/courses/search',
            locals: {
@@ -38,4 +52,3 @@
               </div>
              <% end
             }  %>
-

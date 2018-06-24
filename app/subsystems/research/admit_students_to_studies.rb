@@ -22,6 +22,8 @@ class Research::AdmitStudentsToStudies
   def admit!(student, study)
     cohort_member = CohortMember.create(cohort: next_cohort_to_admit_to(study), student: student)
     transfer_errors_from(cohort_member, {type: :verbatim}, true)
+
+    # TODO assign_missing_surveys goes here? (and remove from CourseMembership::AddStudent)
   end
 
   def next_cohort_to_admit_to(study)
