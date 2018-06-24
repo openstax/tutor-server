@@ -12,7 +12,7 @@ class CourseMembership::AddStudent
   uses_routine Research::AssignMissingSurveys, as: :assign_missing_surveys,
                                                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Research::AdmitStudentsToStudies, as: :admint_students_to_studies,
+  uses_routine Research::AdmitStudentsToStudies, as: :admit_students_to_studies,
                                                  translations: { outputs: { type: :verbatim } }
 
   protected
@@ -46,6 +46,6 @@ class CourseMembership::AddStudent
 
     run(:assign_missing_surveys, student: student)
 
-    run(:admint_students_to_studies, students: student, studies: course.studies)
+    run(:admit_students_to_studies, students: student, studies: course.studies)
   end
 end

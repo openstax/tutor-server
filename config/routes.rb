@@ -393,6 +393,7 @@ Rails.application.routes.draw do
 
     resources :studies do
       post 'add_courses', on: :member
+      resources :cohorts, shallow: true
     end
 
     resources :survey_plans, except: :destroy do

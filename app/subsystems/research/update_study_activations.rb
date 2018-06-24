@@ -6,7 +6,7 @@ class Research::UpdateStudyActivations
   uses_routine Research::DeactivateStudy
 
   def exec
-    # Only auto
+    # Only autoactivate studies that have never been active
     Research::Models::Study.never_active.activate_at_has_passed.each do |study|
       run(Research::ActivateStudy, study)
     end
