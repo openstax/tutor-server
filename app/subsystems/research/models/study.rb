@@ -6,13 +6,30 @@ class Research::Models::Study < ApplicationRecord
 
   validates :name, presence: true
 
-  validate :activate_at_not_cleared, on: :update
-  validate :activate_at_not_changed_when_active, on: :update
+  before_destroy :only_destroy_if_inactive
 
-  before_destroy :only_destroy_if_active
+  scope :never_active, -> { where(last_activated_at: nil) }
+
+  scope :activate_at_has_passed, -> {
+    where.not(activate_at: nil).
+    where("activate_at < ?", Time.current)
+  }
+
+  scope :active, -> {
+    where.not(last_activated_at: nil).
+    where("last_deactivated_at IS NULL OR last_deactivated_at < last_activated_at")
+  }
+
+  scope :deactivate_at_has_passed, -> {
+    where.not(deactivate_at: nil).
+    where("deactivate_at < ?", Time.current)
+  }
 
   def active?
-    activate_at.present? && activate_at < Time.current
+    last_activated_at.present? && (
+      last_deactivated_at.nil? ||
+      last_activated_at > last_deactivated_at
+    )
   end
 
   protected
@@ -27,7 +44,7 @@ class Research::Models::Study < ApplicationRecord
     errors.none?
   end
 
-  def only_destroy_if_active
+  def only_destroy_if_inactive
     errors.add(:base, "Cannot destroy an active study") if active?
     errors.none?
   end
