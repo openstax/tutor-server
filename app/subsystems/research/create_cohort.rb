@@ -1,9 +1,7 @@
-class Research::CreateCohort
+class Research::CreateCohort # TODO maybe kill this - if go with plan to make dumb cohorts with
+                             # no other actions triggered
 
   lev_routine
-
-  # uses_routine Research::RebalanceCohorts, as: :create_offering,
-  #                                          translations: { outputs: { type: :verbatim } }
 
   protected
 
@@ -12,7 +10,5 @@ class Research::CreateCohort
 
     cohort = Research::Models::Cohort.create(name: name, study: study)
     transfer_errors_from(cohort, {type: :verbatim}, true)
-
-    run(:rebalance_cohorts, study: study)
   end
 end

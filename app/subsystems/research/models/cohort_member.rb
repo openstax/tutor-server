@@ -1,5 +1,5 @@
 class Research::Models::CohortMember < IndestructibleRecord
-  belongs_to :cohort, inverse_of: :cohort_members
+  belongs_to :cohort, inverse_of: :cohort_members, counter_cache: true
   belongs_to :student, subsystem: :course_membership, inverse_of: :cohort_members
 
   validates :cohort, presence: true

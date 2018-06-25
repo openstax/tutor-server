@@ -25,7 +25,7 @@ RSpec.feature 'Study Course Management', js: true do
 
     end
 
-    scenarion 'study active' do
+    scenario 'study active' do
 
     end
   end

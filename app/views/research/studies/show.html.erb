@@ -27,7 +27,9 @@
           <%= link_to cohort.name, research_cohort_path(cohort) %> / ID: <%= cohort.id %> / <%= cohort.cohort_members_count %> Members
         </div>
       <% end %>
-      <%= link_to "Add new cohort", new_research_study_cohort_path(@study) %>
+      <% if !@study.active? %>
+        <%= link_to "Add new cohort", new_research_study_cohort_path(@study) %>
+      <% end %>
     </div>
   </div>
 </div>
