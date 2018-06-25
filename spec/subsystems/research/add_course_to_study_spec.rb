@@ -19,8 +19,8 @@ RSpec.describe Research::AddCourseToStudy do
 
   it "adds the course to the study" do
     described_class[study: @study, course: @course]
-    expect(@study.courses).to include(@course)
-    expect(@course.studies).to include(@study)
+    expect(@study.courses(true)).to include(@course)
+    expect(@course.studies(true)).to include(@study)
   end
 
   it "freaks out if course already in study" do

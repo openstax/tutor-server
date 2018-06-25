@@ -10,35 +10,58 @@ RSpec.feature 'Cohorts', js: true do
 
   let!(:study) { Research::Models::Study.create(name: "A Study") }
 
-  xscenario 'default cohort and add cohort link present' do
-    visit research_study_path(study)
+  context 'when study inactive' do
 
-    # click_link 'Add Study'
-    # fill_in 'Name', with: 'A Study'
-    # click_button 'Save'
+    scenario 'can add a cohort' do
+      visit research_study_path(study)
 
-    # expect(page).to have_content(/A Study.*Inactive.*Delete/)
-  end
+      click_link 'Add new cohort'
+      fill_in 'Name', with: 'AAA'
+      click_button 'Save'
 
-  xscenario 'can change name of default cohort' do
-
-  end
-
-  context 'under certain conditions' do
-    xscenario 'can add a new cohort' do
-
+      expect(page).to have_content(/Cohorts:.*AAA \/ ID:/)
     end
   end
 
-  context 'under certain conditions' do
-    xscenario 'can delete a cohort' do
+  context "when study active" do
+    before { Research::ActivateStudy[study] }
 
+    scenario "cannot add a cohort" do
+      visit research_study_path(study)
+      expect(page).not_to have_link('Add new cohort')
     end
   end
 
-  xscenario 'shows count of students in each cohort' do
+  context "cohort exists" do
+    let!(:cohort) { Research::Models::Cohort.create(name: "AAA", study: study) }
 
+    scenario "can navigate to cohort and back to study" do
+      visit research_study_path(study)
+      click_link "AAA"
+      click_link "A Study"
+      expect(page).to have_current_path(research_study_path(study))
+    end
+
+    scenario 'can change name of a cohort' do
+      visit research_study_path(study)
+      click_link "AAA"
+      click_link "Edit"
+      fill_in 'Name', with: 'BBB'
+      click_button 'Save'
+      expect(page).to have_content(/Name: BBB/)
+    end
+
+    context 'under certain conditions' do
+      xscenario 'can delete a cohort' do
+
+      end
+    end
+
+    scenario 'shows count of students in each cohort' do
+      Research::Models::CohortMember.create(cohort: cohort, student: FactoryBot.create(:course_membership_student))
+      visit research_study_path(study)
+      expect(page).to have_content("1 Member")
+    end
   end
-
 
 end

@@ -10,8 +10,10 @@ class Research::CohortsController < Research::BaseController
   def create
     cohort = Research::Models::Cohort.new(name: params[:research_models_cohort][:name], study: @study)
     if cohort.save
-      redirect_to research_studies_path(@study)
+      flash[:notice] = "Cohort created"
+      redirect_to research_study_path(@study)
     else
+      flash[:alert] = cohort.errors.full_messages
       render :new
     end
   end

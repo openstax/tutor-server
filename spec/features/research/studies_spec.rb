@@ -43,10 +43,15 @@ RSpec.feature 'Studies', js: true do
     end
 
     context 'active' do
-      scenarion 'delete' do
+      before { Research::ActivateStudy[study] }
 
+      scenario 'delete' do
+        visit research_studies_path
+        expect(page).to have_content(/A Study.*Active.*Delete/)
+        click_link 'Delete'
+        alert.accept
+        expect(page).to have_content(/Cannot destroy an active study/)
       end
-
     end
   end
 
