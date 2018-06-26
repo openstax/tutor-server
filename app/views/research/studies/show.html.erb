@@ -43,7 +43,7 @@
              order_by: @order_by,
              total_count: @course_infos.try(:count),
              page: params[:page] || 1,
-             per_page: params[:per_page] || Research::StudiesController::DEFAULT_PER_PAGE,
+             per_page: params[:per_page] || Research::StudiesController.default_per_page,
              search_path: research_study_path(@study),
              bulk_actions_path: add_courses_research_study_path(@study),
              bulk_actions: ->() do %>
