@@ -2,8 +2,6 @@ class Research::StudiesController < Research::BaseController
 
   before_action :get_study, only: [:show, :edit, :update, :destroy, :add_courses]
 
-  DEFAULT_PER_PAGE = 50
-
   def index
   end
 
@@ -20,7 +18,7 @@ class Research::StudiesController < Research::BaseController
 
     if @query
       result = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
-      per_page = params[:per_page] || DEFAULT_PER_PAGE
+      per_page = params[:per_page] || self.class.default_per_page
       per_page = result.outputs.total_count if params[:per_page] == 'all'
       params_for_pagination = { page: (params[:page] || 1), per_page: per_page }
 
@@ -91,6 +89,10 @@ class Research::StudiesController < Research::BaseController
     end
 
     redirect_to research_study_path(@study)
+  end
+
+  def self.default_per_page
+    50
   end
 
   protected

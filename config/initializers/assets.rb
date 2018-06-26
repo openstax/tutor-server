@@ -14,6 +14,7 @@ Rails.application.config.assets.precompile += %w( home.css
                                                   home.js
                                                   admin.css
                                                   admin.js
+                                                  course_search.js
                                                   enroll.css
                                                   launch.css
                                                   payments/stub.css
