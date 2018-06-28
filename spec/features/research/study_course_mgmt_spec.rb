@@ -61,12 +61,24 @@ RSpec.feature 'Study Course Management', js: true do
   end
 
   context 'removing courses' do
-    scenario 'study inactive' do
+    before {
+      course = FactoryBot.create :course_profile_course
+      Research::AddCourseToStudy[course: course, study: study]
+    }
 
+    scenario 'study inactive' do
+      visit research_study_path(study)
+      click_link 'Remove'
+      alert.accept
+      wait_for_ajax
+      expect(study.courses(true)).to be_empty
+      expect(page).not_to have_link 'Remove'
     end
 
     scenario 'study active' do
-
+      Research::ActivateStudy[study]
+      visit research_study_path(study)
+      expect(page).not_to have_link 'Remove'
     end
   end
 

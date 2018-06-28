@@ -32,6 +32,10 @@ class Research::Models::Study < ApplicationRecord
     )
   end
 
+  def ever_active?
+    last_activated_at.present?
+  end
+
   protected
 
   def activate_at_not_cleared
