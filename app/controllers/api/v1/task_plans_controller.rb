@@ -126,9 +126,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
 
       # If this is a cloned assignment, update its ecosystem during creation
-      current_ecosystem = course.ecosystems.first
       task_plan = UpdateTaskPlanEcosystem[
-        task_plan: task_plan, ecosystem: current_ecosystem, save: false
+        task_plan: task_plan, ecosystem: course.ecosystem, save: false
       ] if task_plan.cloned_from_id.present?
 
       uuid = distribute_or_update_tasks(task_plan)

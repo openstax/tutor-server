@@ -4,8 +4,7 @@ class GetCourseEcosystem
   protected
 
   def exec(course:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
-    # The first ecosystem is the latest
-    content_ecosystem = course.ecosystems.first
+    content_ecosystem = course.ecosystem
 
     if content_ecosystem.nil?
       outputs[:ecosystem] = nil

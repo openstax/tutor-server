@@ -19,9 +19,7 @@ module Catalog
 
       return unless update_courses
 
-      courses_to_update = active_courses.select do |course|
-        course.ecosystems.first != new_ecosystem
-      end
+      courses_to_update = active_courses.select { |course| course.ecosystem != new_ecosystem }
       outputs.num_updated_courses = courses_to_update.length
 
       courses_to_update.each do |course|

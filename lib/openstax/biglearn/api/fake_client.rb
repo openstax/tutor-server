@@ -227,7 +227,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::Api::Client
   # Always returns 5 random exercises from the correct ecosystem in the FakeClient
   def fetch_practice_worst_areas_exercises(requests)
     requests.map do |request|
-      ecosystem = request[:student].course.ecosystems.first
+      ecosystem = request[:student].course.ecosystem
       exercises = ecosystem.nil? ? [] : ecosystem.exercises.sample(5)
 
       {

@@ -34,7 +34,7 @@ class Demo::Tasks < Demo::Base
 
 
   def get_ecosystem(course:)
-    ecosystem_model = course.ecosystems.first
+    ecosystem_model = course.ecosystem
     return if ecosystem_model.nil?
 
     strategy = Content::Strategies::Direct::Ecosystem.new(ecosystem_model)

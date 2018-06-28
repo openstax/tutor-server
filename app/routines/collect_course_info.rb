@@ -13,7 +13,8 @@ class CollectCourseInfo
   def get_courses(courses:, user:)
     return [courses].flatten unless courses.nil?
 
-    preloads = [ :time_zone, :offering, periods: :students, ecosystems: :books ]
+    preloads = [ :time_zone, :offering, periods: :students,
+                 course_ecosystems: { ecosystem: :books } ]
     return run(:get_user_courses, user: user, preload: preloads).outputs.courses unless user.nil?
 
     CourseProfile::Models::Course.preload(*preloads)

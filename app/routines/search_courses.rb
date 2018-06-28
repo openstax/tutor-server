@@ -23,7 +23,7 @@ class SearchCourses
       [school.outer,
        offering.outer,
        teachers.outer.role.outer.profile.outer.account.outer,
-       ecosystems.outer]
+       course_ecosystems.outer.ecosystem.outer]
     end.uniq
 
     run(:search, relation: relation, sortable_fields: SORTABLE_FIELDS, params: params) do |with|
@@ -46,7 +46,7 @@ class SearchCourses
             teachers.role.profile.account.first_name.like_any(sanitized_queries) |
             teachers.role.profile.account.last_name.like_any(sanitized_queries) |
             teachers.role.profile.account.full_name.like_any(sanitized_queries) |
-            ecosystems.title.like_any(sanitized_queries)
+            course_ecosystems.ecosystem.title.like_any(sanitized_queries)
           end
         end
       end
@@ -102,7 +102,9 @@ class SearchCourses
           sanitized_titles = to_string_array(title, append_wildcard: true, prepend_wildcard: true)
           next @items = @items.none if sanitized_titles.empty?
 
-          @items = @items.joins(:ecosystems).where { ecosystems.title.like_any(sanitized_titles) }
+          @items = @items.joins(course_ecosystems: :ecosystem).where do
+            course_ecosystems.ecosystem.title.like_any(sanitized_titles)
+          end
         end
       end
 

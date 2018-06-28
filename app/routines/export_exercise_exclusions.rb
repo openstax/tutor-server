@@ -117,7 +117,7 @@ class ExportExerciseExclusions
   def exercises_by_course
     excluded_exercises.group_by(&:course).map do |course, excluded_exercises|
       numbers = excluded_exercises.map(&:exercise_number)
-      ecosystem = course.ecosystems.first
+      ecosystem = course.ecosystem
       book = ecosystem.try!(:books).try!(:first)
       book_hash = { book_title: book.try!(:title), book_uuid: book.try!(:uuid) }
       exercises_hash = get_exercise_hashes_for_exercise_numbers(numbers: numbers)

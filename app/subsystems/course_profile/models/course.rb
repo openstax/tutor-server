@@ -29,7 +29,6 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :excluded_exercises, subsystem: :course_content
 
   has_many :course_ecosystems, subsystem: :course_content
-  has_many :ecosystems, through: :course_ecosystems, subsystem: :content
 
   has_many :course_assistants, subsystem: :tasks
 
@@ -68,6 +67,18 @@ class CourseProfile::Models::Course < ApplicationRecord
   before_validation :set_starts_at_and_ends_at, :set_weights
 
   scope :not_ended, -> { where{ends_at.gt Time.now} }
+
+  def ecosystems
+    # Keep the ecosystems in order
+    ce = course_ecosystems.to_a
+    ActiveRecord::Associations::Preloader.new.preload(ce, :ecosystem)
+    ce.map(&:ecosystem)
+  end
+
+  def ecosystem
+    # Slightly more efficient than .ecosystems.first
+    course_ecosystems.first.try!(:ecosystem)
+  end
 
   def default_due_time
     read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]

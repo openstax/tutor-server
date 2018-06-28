@@ -20,9 +20,9 @@ namespace :biglearn do
 
       courses = CourseProfile::Models::Course
         .where(id: course_ids)
-        .joins(:ecosystems)
+        .joins(course_ecosystems: :ecosystem)
         .preload(
-          :ecosystems, periods: { latest_enrollments: :student }
+          course_ecosystems: :ecosystem, periods: { latest_enrollments: :student }
         ).distinct
 
       print_each("Creating #{courses.count} course(s)", courses.find_in_batches) do |courses|

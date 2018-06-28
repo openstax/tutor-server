@@ -100,14 +100,14 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { ecosystems.first.try!(:id) },
+             getter: ->(*) { ecosystem.try!(:id) },
              schema_info: { description: "The ID of the course's current ecosystem, if available." }
 
     property :ecosystem_book_uuid,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { ecosystems.first.try!(:books).try!(:first).try!(:uuid) },
+             getter: ->(*) { ecosystem.try!(:books).try!(:first).try!(:uuid) },
              schema_info: {
                description: "The UUID of the book for the course's current ecosystem, if available."
              }

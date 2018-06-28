@@ -13,7 +13,7 @@ class CustomerService::CoursesController < CustomerService::BaseController
       [
         { teachers: { role: [:role_user, :profile] },
           periods: :students,
-          ecosystems: :books },
+          course_ecosystems: { ecosystem: :books } },
         :periods
       ]
     ).paginate(page: params.fetch(:page, 1), per_page: params.fetch(:per_page, 25))

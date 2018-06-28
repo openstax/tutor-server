@@ -13,7 +13,7 @@ module Manager::CourseDetails
     @ecosystems = Content::ListEcosystems[]
 
     @course_ecosystem = nil
-    ecosystem_model = @course.ecosystems.first
+    ecosystem_model = @course.ecosystem
     return if ecosystem_model.nil?
 
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
