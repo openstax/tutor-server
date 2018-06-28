@@ -391,8 +391,10 @@ Rails.application.routes.draw do
   namespace :research do
     root 'console#index'
 
+    get 'help', to: 'console#help'
+
     resources :studies do
-      post 'add_courses', on: :member
+      resources :study_courses, shallow: true, only: [:create, :destroy]
       resources :cohorts, shallow: true
     end
 
