@@ -22,7 +22,7 @@ class Research::CohortsController < Research::BaseController
   end
 
   def update
-    if @cohort.update_attributes(params[:research_models_cohort].permit(:name))
+    if @cohort.update_attributes(params[:research_models_cohort].permit(:name, :is_accepting_members))
       flash[:notice] = "Cohort updated"
       redirect_to research_cohort_path(@cohort)
     else
