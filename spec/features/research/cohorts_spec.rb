@@ -51,6 +51,15 @@ RSpec.feature 'Cohorts', js: true do
       expect(page).to have_content(/Name: BBB/)
     end
 
+    scenario 'can change is_accepting_members' do
+      visit research_study_path(study)
+      click_link "AAA"
+      click_link "Edit"
+      uncheck 'research_models_cohort_is_accepting_members'
+      click_button 'Save'
+      expect(page).to have_content(/Accepting new members: false/)
+    end
+
     context 'when there are members' do
       scenario 'can redistribute them to other cohorts' do
         3.times do

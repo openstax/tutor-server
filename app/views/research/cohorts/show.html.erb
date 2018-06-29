@@ -24,4 +24,5 @@
 <ul>
   <li>Name: <%= @cohort.name %></li>
   <li>Study: <%= link_to @cohort.study.name, research_study_path(@cohort.study) %></li>
+  <li>Accepting new members: <%= @cohort.is_accepting_members %></li>
 </ul>
