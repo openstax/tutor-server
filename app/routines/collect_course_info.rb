@@ -70,6 +70,7 @@ class CollectCourseInfo
         reading_score_weight: course.reading_score_weight,
         reading_progress_weight: course.reading_progress_weight,
         ecosystems: course.ecosystems,
+        ecosystem: course.ecosystem,
         periods: periods,
         students: students,
         roles: roles
