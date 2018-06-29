@@ -395,7 +395,9 @@ Rails.application.routes.draw do
 
     resources :studies do
       resources :study_courses, shallow: true, only: [:create, :destroy]
-      resources :cohorts, shallow: true
+      resources :cohorts, shallow: true do
+        put 'reassign_members'
+      end
     end
 
     resources :survey_plans, except: :destroy do
