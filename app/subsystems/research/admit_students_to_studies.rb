@@ -23,36 +23,18 @@ class Research::AdmitStudentsToStudies
   end
 
   def admit!(student, study)
-    cohort_member = Research::Models::CohortMember.create(cohort: next_cohort_to_admit_to(study),
-                                                          student: student)
+    cohort_member = membership_manager(study).add_student_to_a_cohort(student)
     transfer_errors_from(cohort_member, {type: :verbatim}, true)
 
     # TODO assign_missing_surveys goes here? (and remove from CourseMembership::AddStudent)
   end
 
-  def next_cohort_to_admit_to(study)
-    # Uses a local cache of cohorts so we for sure get the same cohort objects
-    # over and over, so the counter caches appear to be updated during the routine's
-    # transaction
-
-    # TODO really spec this!! fail review without spec
-
-    @study_cohorts ||= {}
-    all_cohorts = (@study_cohorts[study.id] ||= cohorts_with_default(study))
-    target_cohort = all_cohorts.sort(&:cohort_members_count).first
-  end
-
-  def cohorts_with_default(study)
-    # Return the study's cohorts, making sure there is at least one default cohort.
-
-    cohorts = study.cohorts
-
-    if cohorts.none?
-      default_cohort = Research::Models::Cohort.create(name: "Default", study: study)
-      transfer_errors_from(default_cohort, {type: :verbatim}, true)
-      cohorts.push(default_cohort)
+  def membership_manager(study)
+    begin
+      @membership_managers ||= {}
+      @membership_managers[study.id] ||= Research::CohortMembershipManager.new(study)
+    rescue Research::CohortMembershipManager::StudyHasBeenActive => ee
+      fatal_error(code: :cannot_manage_cohort_membership_if_study_ever_active)
     end
-
-    cohorts
   end
 end

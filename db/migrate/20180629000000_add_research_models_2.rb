@@ -3,10 +3,9 @@ class AddResearchModels2 < ActiveRecord::Migration
     create_table :research_cohorts do |t|
       t.references :research_study,             null: false, index: true,
                                                 foreign_key: { on_update: :cascade, on_delete: :cascade }
-
       t.string :name,                           null: false
-
       t.integer :cohort_members_count,          null: false, default: 0
+      t.boolean :is_accepting_members,          null: false, default: true
 
       t.timestamps                              null: false
     end

@@ -22,8 +22,23 @@ RSpec.describe Research::Models::Cohort, type: :model do
     Research::Models::CohortMember.create(cohort: cohort, student: students[2])
   end
 
-  xit "cannot be created for an active study" do
+  it "cannot be created for an active study" do
+    Research::ActivateStudy[study]
+    cohort = described_class.create(name: "Nuhuh", study: study)
+    expect(cohort).not_to be_persisted
+    expect(cohort.errors.full_messages).to include(/for an active study/)
+  end
 
+  it "cannot be destroyed if has members" do
+    Research::Models::CohortMember.create(cohort: cohort, student: students[0])
+    cohort.destroy
+    expect(cohort.errors.full_messages).to include(/destroy a cohort with members/)
+    expect{described_class.find(cohort.id)}.not_to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "can be destroyed if no members" do
+    cohort.destroy
+    expect{described_class.find(cohort.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
 end

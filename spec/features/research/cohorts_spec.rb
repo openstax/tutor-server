@@ -51,9 +51,39 @@ RSpec.feature 'Cohorts', js: true do
       expect(page).to have_content(/Name: BBB/)
     end
 
-    context 'under certain conditions' do
-      xscenario 'can delete a cohort' do
+    context 'when there are members' do
+      scenario 'can redistribute them to other cohorts' do
+        3.times do
+          Research::Models::CohortMember.create(
+            cohort: cohort,
+            student: FactoryBot.create(:course_membership_student)
+          )
+        end
 
+        Research::Models::Cohort.create(name: "BBB", study: study)
+        Research::Models::Cohort.create(name: "CCC", study: study)
+
+        visit research_study_path(study)
+        click_link "AAA"
+        click_link 'Reassign Members'
+        alert.accept
+        expect(page).to have_content(/Success/)
+        click_link 'A Study'
+        expect(page).to have_content(/0 Members/)
+        expect(page).to have_content(/2 Members/)
+        expect(page).to have_content(/1 Members/)
+      end
+    end
+
+    context 'when there are no members' do
+      scenario 'can delete a cohort' do
+        visit research_study_path(study)
+        expect(page).to have_content(/AAA \//)
+        click_link "AAA"
+        click_link "Delete"
+        alert.accept
+        expect(page).to have_content(/Cohorts:/)
+        expect(page).not_to have_content(/AAA \//)
       end
     end
 

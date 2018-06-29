@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180430162014) do
+ActiveRecord::Schema.define(version: 20180629000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -661,11 +661,12 @@ ActiveRecord::Schema.define(version: 20180430162014) do
   add_index "research_cohort_members", ["research_cohort_id"], name: "index_research_cohort_members_on_research_cohort_id", using: :btree
 
   create_table "research_cohorts", force: :cascade do |t|
-    t.integer  "research_study_id",                null: false
-    t.string   "name",                             null: false
-    t.integer  "cohort_members_count", default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.integer  "research_study_id",                   null: false
+    t.string   "name",                                null: false
+    t.integer  "cohort_members_count", default: 0,    null: false
+    t.boolean  "is_accepting_members", default: true, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   add_index "research_cohorts", ["research_study_id"], name: "index_research_cohorts_on_research_study_id", using: :btree
