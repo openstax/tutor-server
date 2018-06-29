@@ -10,7 +10,7 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
   let(:courses)       do
     3.times.map do
       FactoryBot.create(:course_profile_course, offering: offering).tap do |course|
-        course.ecosystems << old_ecosystem
+        AddEcosystemToCourse.call(course: course, ecosystem: old_ecosystem)
       end
     end
   end

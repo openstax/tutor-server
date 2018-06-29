@@ -74,7 +74,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    task_plan.owner.ecosystems << ecosystem
+    AddEcosystemToCourse.call(course: task_plan.owner, ecosystem: ecosystem)
     expect(task_plan).to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
   end
