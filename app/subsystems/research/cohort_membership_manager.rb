@@ -21,6 +21,11 @@ class Research::CohortMembershipManager
                                           student: student)
   end
 
+  def remove_students_from_cohorts(students)
+    cohort_members = Research::Models::CohortMember.where(course_membership_student_id: students.map(&:id))
+    cohort_members.destroy_all
+  end
+
   protected
 
   def initialize(study)

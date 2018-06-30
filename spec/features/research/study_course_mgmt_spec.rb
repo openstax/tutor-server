@@ -62,16 +62,25 @@ RSpec.feature 'Study Course Management', js: true do
 
   context 'removing courses' do
     before {
-      course = FactoryBot.create :course_profile_course
-      Research::AddCourseToStudy[course: course, study: study]
+      @course = FactoryBot.create :course_profile_course
+      Research::AddCourseToStudy[course: @course, study: study]
     }
 
-    scenario 'study inactive' do
+    scenario 'study never active' do
+      period = FactoryBot.create :course_membership_period, course: @course
+
+      3.times do
+        role = FactoryBot.create :entity_role
+        CourseMembership::AddStudent[period: period, role: role]
+      end
+
+      expect(study.cohorts(true).flat_map{|cc| cc.cohort_members(true)}).not_to be_empty
       visit research_study_path(study)
       click_link 'Remove'
       alert.accept
       wait_for_ajax
       expect(study.courses(true)).to be_empty
+      expect(study.cohorts(true).flat_map{|cc| cc.cohort_members(true)}).to be_empty
       expect(page).not_to have_link 'Remove'
     end
 
