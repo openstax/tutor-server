@@ -30,11 +30,13 @@ class Research::StudyCoursesController < Research::BaseController
     @study_course = Research::Models::StudyCourse.find(params[:id])
     study = @study_course.study
 
-    if @study_course.destroy
+    result = Research::RemoveCourseFromStudy.call(study_course: @study_course)
+
+    if result.errors.none?
       flash[:notice] = "Course #{@study_course.course.name} removed"
       redirect_to research_study_path(study)
     else
-      flash[:alert] = @study.errors.full_messages
+      flash[:alert] = result.errors.map(&:translate).join("; ")
       redirect_to research_study_path(study)
     end
   end
