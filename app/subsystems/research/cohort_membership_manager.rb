@@ -2,6 +2,7 @@ class Research::CohortMembershipManager
 
   class NoCohortsAvailable < StandardError; end
   class StudyHasBeenActive < StandardError; end
+  class StudentAlreadyInStudy < StandardError; end
 
   def reassign_cohort_members(cohort)
     raise StudyHasBeenActive if @study.ever_active?
@@ -19,6 +20,10 @@ class Research::CohortMembershipManager
   end
 
   def add_student_to_a_cohort(student)
+    if Research::Models::CohortMember.where(student: student, cohort: candidate_cohorts).any?
+      raise StudentAlreadyInStudy
+    end
+
     Research::Models::CohortMember.create(cohort: next_cohort_to_admit_to,
                                           student: student)
   end
@@ -35,13 +40,18 @@ class Research::CohortMembershipManager
   end
 
   def next_cohort_to_admit_to(excluding: [])
+    candidate_cohorts(excluding: excluding).sort_by(&:cohort_members_count).first
+  end
+
+  def candidate_cohorts(excluding: [])
     # Uses a local cache of cohorts so we for sure get the same cohort objects
     # over and over, so the counter caches appear to be updated during the routine's
     # transaction
 
-    @all_cohorts ||= open_cohorts_with_default
-    candidate_cohorts = @all_cohorts - [excluding].flatten
-    candidate_cohorts.sort_by(&:cohort_members_count).first
+    @candidate_cohorts ||= {}
+    @candidate_cohorts[excluding] ||= begin
+      open_cohorts_with_default - [excluding].flatten
+    end
   end
 
   def open_cohorts_with_default
