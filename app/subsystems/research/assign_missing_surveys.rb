@@ -24,8 +24,8 @@ class Research::AssignMissingSurveys
       Research::Models::SurveyPlan
         .published
         .not_hidden
-        .joins{study.cohorts.cohort_members}
-        .where{study.cohorts.cohort_members.id == my{student.id}}
+        .joins{study.courses.students}
+        .where{study.courses.students.id == my{student.id}}
         .where(
           <<-WHERE_SQL.strip_heredoc
             NOT EXISTS (

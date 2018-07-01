@@ -27,7 +27,7 @@ RSpec.describe Research::AdmitStudentsToStudies do
   it "assigns surveys" do
     student = FactoryBot.create(:course_membership_student)
     study = FactoryBot.create(:research_study)
-    Research::AddCourseToStudy
+    Research::AddCourseToStudy[course: student.course, study: study]
     survey_plan = FactoryBot.create :research_survey_plan, :published, study: study
 
     described_class.call(students: student, studies: study)
