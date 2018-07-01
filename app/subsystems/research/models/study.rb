@@ -36,6 +36,14 @@ class Research::Models::Study < ApplicationRecord
     last_activated_at.present?
   end
 
+  def activate!
+    update_attributes(last_activated_at: Time.current)
+  end
+
+  def deactivate!
+    update_attributes(last_deactivated_at: Time.current)
+  end
+
   protected
 
   def activate_at_not_cleared

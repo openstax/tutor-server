@@ -394,6 +394,11 @@ Rails.application.routes.draw do
     get 'help', to: 'console#help'
 
     resources :studies do
+      member do
+        put :activate
+        put :deactivate
+      end
+
       resources :study_courses, shallow: true, only: [:create, :destroy]
       resources :cohorts, shallow: true do
         put 'reassign_members'
