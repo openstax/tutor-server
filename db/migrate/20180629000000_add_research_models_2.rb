@@ -19,6 +19,9 @@ class AddResearchModels2 < ActiveRecord::Migration
       t.timestamps                              null: false
     end
 
+    add_index :research_cohort_members, [ :research_cohort_id, :course_membership_student_id ],
+              name: 'index_cohort_members_on_cohort_and_student', unique: true
+
     add_column :research_studies, :activate_at, :datetime
     add_column :research_studies, :deactivate_at, :datetime
 

@@ -658,6 +658,7 @@ ActiveRecord::Schema.define(version: 20180629000000) do
   end
 
   add_index "research_cohort_members", ["course_membership_student_id"], name: "index_research_cohort_members_on_course_membership_student_id", using: :btree
+  add_index "research_cohort_members", ["research_cohort_id", "course_membership_student_id"], name: "index_cohort_members_on_cohort_and_student", unique: true, using: :btree
   add_index "research_cohort_members", ["research_cohort_id"], name: "index_research_cohort_members_on_research_cohort_id", using: :btree
 
   create_table "research_cohorts", force: :cascade do |t|

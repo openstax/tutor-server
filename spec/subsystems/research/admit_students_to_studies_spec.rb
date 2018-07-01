@@ -35,5 +35,18 @@ RSpec.describe Research::AdmitStudentsToStudies do
     expect(student.surveys.count).to eq 1
   end
 
+  it "doesn't change anything when called twice" do
+    student = FactoryBot.create(:course_membership_student)
+    study = FactoryBot.create(:research_study)
+    FactoryBot.create :research_survey_plan, :published, study: study
+
+    described_class.call(students: student, studies: study)
+
+    expect{
+      result = described_class.call(students: student, studies: study)
+      expect(result.errors).to be_empty
+    }.not_to make_database_queries(manipulative: true)
+  end
+
 
 end
