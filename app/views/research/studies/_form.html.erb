@@ -4,6 +4,17 @@
     <%= f.text_field :name, class: 'form-control' %>
   </div>
 
+  <div class="form-group">
+    <%= f.label :activate_at %>
+    <%= f.text_field :activate_at, class: 'form-control datepicker' %>
+    <small class="form-text text-muted">Optional.  Tutor auto activates based on this every hour.  Time is in UTC.  Activations control manipulations, not surveys.</small>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :deactivate_at %>
+    <%= f.text_field :deactivate_at, class: 'form-control datepicker' %>
+    <small class="form-text text-muted">Optional.  Tutor auto deactivates based on this every hour.  Time is in UTC.</small>
+  </div>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>
 

@@ -39,9 +39,9 @@ class Research::StudiesController < Research::BaseController
   end
 
   def update
-    if @study.update_attributes(params[:research_models_study].permit(:name))
+    if @study.update_attributes(params[:research_models_study].permit(:name, :activate_at, :deactivate_at))
       flash[:notice] = "Study updated"
-      redirect_to research_studies_path(@study)
+      redirect_to research_study_path(@study)
     else
       flash[:alert] = @study.errors.full_messages
       render :edit
