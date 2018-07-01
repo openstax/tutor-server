@@ -4,6 +4,8 @@ class Research::CohortMembershipManager
   class StudyHasBeenActive < StandardError; end
 
   def reassign_cohort_members(cohort)
+    raise StudyHasBeenActive if study.ever_active?
+
     cohort.cohort_members.each do |cohort_member|
       new_cohort = next_cohort_to_admit_to(excluding: cohort)
       raise NoCohortsAvailable if new_cohort.nil?
@@ -29,7 +31,6 @@ class Research::CohortMembershipManager
   protected
 
   def initialize(study)
-    raise StudyHasBeenActive if study.ever_active?
     @study = study
   end
 

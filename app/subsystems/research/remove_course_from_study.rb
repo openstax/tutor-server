@@ -9,6 +9,8 @@ class Research::RemoveCourseFromStudy
 
     fatal_error(:cannot_remove_course_from_ever_active_study) if study.ever_active?
 
+    Research::Models::Survey.where(student: course.students.map(&:id)).destroy_all
+
     Research::CohortMembershipManager.new(study).remove_students_from_cohorts(course.students)
 
     study_course.destroy

@@ -21,9 +21,14 @@ class AddResearchModels2 < ActiveRecord::Migration
 
     add_column :research_studies, :activate_at, :datetime
     add_column :research_studies, :deactivate_at, :datetime
+
     add_column :research_studies, :last_activated_at, :datetime
-    add_column :research_studies, :last_deactivated_at, :datetime
     add_index :research_studies, :last_activated_at
+
+    add_column :research_studies, :last_deactivated_at, :datetime
     add_index :research_studies, :last_deactivated_at
+
+    add_column :research_surveys, :deleted_at, :datetime
+    add_index :research_surveys, :deleted_at
   end
 end

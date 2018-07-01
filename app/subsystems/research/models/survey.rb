@@ -1,4 +1,6 @@
-class Research::Models::Survey < IndestructibleRecord
+class Research::Models::Survey < ApplicationRecord
+  acts_as_paranoid without_default_scope: true
+
   belongs_to :survey_plan, subsystem: :research, inverse_of: :surveys
   belongs_to :student, subsystem: :course_membership, inverse_of: :surveys
 

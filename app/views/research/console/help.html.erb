@@ -7,6 +7,7 @@
   <li>Courses can only be removed from studies that have <b>never</b> been active</li>
   <li>If you want to remove a course from an active study, your only option is to inactivate the entire study.
       Will do something more nuanced in the future, but this approach is easier for the moment.</li>
+  <li>If a course is removed from a study, any assigned surveys in that course for that study will be deleted.</li>
 </ol>
 
 <h3>Cohorts</h3>
@@ -18,10 +19,14 @@
   <li>There is currently not an option to rebalance students across cohorts.  You can effectively achieve this by removing all courses from a study and then adding them back.  Later we will add more rebalancing options.</li>
 </ol>
 
-<h3>Survey Plans</h3>
+<h3>Surveys</h3>
 
 <ol>
   <li>Survey plans don't care if a study is active.  If a survey plan is published, it is visible to students in the study.
       A study's active/inactive state controls whether manipulations are active/inactive.  By not tying survey plans to this
     state, we allow researchers to administer surveys after manipulations are complete.</li>
+  <li>When a course is removed from a study, any surveys assigned for that course and study are soft-deleted (recoverable by a developer).</li>
+  <li>A researcher can hide a survey plan which will hide all surveys under it.  A developer can help unhide a survey plan and its
+    surveys.  Hiding and soft-deleting (see above) are intentionally different -- surveys can be soft-deleted from under a visible
+  survey plan, and hiding and unhiding a survey plan shouldn't impacted the deletedness of a survey.</li>
 </ol>

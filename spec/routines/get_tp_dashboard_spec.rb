@@ -61,6 +61,16 @@ RSpec.describe GetTpDashboard, type: :routine, speed: :slow do
   let!(:plan) { FactoryBot.create(:tasks_task_plan, owner: course) }
 
   context 'with no time period specified' do
+    it "only includes non-deleted surveys" do
+      existing_survey = FactoryBot.create(:research_survey, student: student_role.student)
+      deleted_survey = FactoryBot.create(:research_survey, student: student_role.student)
+      deleted_survey.destroy
+
+      outputs = described_class.call(course: course, role: student_role).outputs
+
+      expect(outputs.research_surveys.map(&:id)).to eq [existing_survey.id]
+    end
+
     it "works for a student" do
       outputs = described_class.call(course: course, role: student_role).outputs
 

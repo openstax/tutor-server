@@ -721,11 +721,13 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.datetime "hidden_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
+    t.datetime "deleted_at"
   end
 
   add_index "research_surveys", ["completed_at"], name: "index_research_surveys_on_completed_at", using: :btree
   add_index "research_surveys", ["course_membership_student_id", "research_survey_plan_id"], name: "research_surveys_on_student_and_plan", unique: true, using: :btree
   add_index "research_surveys", ["course_membership_student_id"], name: "research_surveys_on_student", using: :btree
+  add_index "research_surveys", ["deleted_at"], name: "index_research_surveys_on_deleted_at", using: :btree
   add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
   add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
 
