@@ -9,9 +9,6 @@ class CourseMembership::AddStudent
   uses_routine CourseProfile::MarkCourseEnrolled,
                as: :mark_course_enrolled, translations: { outputs: { type: :verbatim } }
 
-  uses_routine Research::AssignMissingSurveys, as: :assign_missing_surveys,
-                                               translations: { outputs: { type: :verbatim } }
-
   uses_routine Research::AdmitStudentsToStudies, as: :admit_students_to_studies,
                                                  translations: { outputs: { type: :verbatim } }
 
@@ -43,8 +40,6 @@ class CourseMembership::AddStudent
     )
 
     run(:mark_course_enrolled, course: course)
-
-    run(:assign_missing_surveys, student: student)
 
     run(:admit_students_to_studies, students: student, studies: course.studies)
   end

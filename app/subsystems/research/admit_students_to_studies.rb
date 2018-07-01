@@ -2,6 +2,9 @@ class Research::AdmitStudentsToStudies
 
   lev_routine
 
+  uses_routine Research::AssignMissingSurveys, as: :assign_missing_surveys,
+                                               translations: { outputs: { type: :verbatim } }
+
   protected
 
   def exec(students:, studies:)
@@ -23,18 +26,17 @@ class Research::AdmitStudentsToStudies
   end
 
   def admit!(student, study)
+    add_student_to_a_cohort(student, study)
+    run(:assign_missing_surveys, student: student)
+  end
+
+  def add_student_to_a_cohort(student, study)
     cohort_member = membership_manager(study).add_student_to_a_cohort(student)
     transfer_errors_from(cohort_member, {type: :verbatim}, true)
-
-    # TODO assign_missing_surveys goes here? (and remove from CourseMembership::AddStudent)
   end
 
   def membership_manager(study)
-    begin
-      @membership_managers ||= {}
-      @membership_managers[study.id] ||= Research::CohortMembershipManager.new(study)
-    rescue Research::CohortMembershipManager::StudyHasBeenActive => ee
-      fatal_error(code: :cannot_manage_cohort_membership_if_study_ever_active)
-    end
+    @membership_managers ||= {}
+    @membership_managers[study.id] ||= Research::CohortMembershipManager.new(study)
   end
 end

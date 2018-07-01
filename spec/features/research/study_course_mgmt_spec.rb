@@ -63,6 +63,7 @@ RSpec.feature 'Study Course Management', js: true do
   context 'removing courses' do
     before {
       @course = FactoryBot.create :course_profile_course
+      FactoryBot.create(:research_survey_plan, :published, study: study)
       Research::AddCourseToStudy[course: @course, study: study]
     }
 
@@ -74,13 +75,19 @@ RSpec.feature 'Study Course Management', js: true do
         CourseMembership::AddStudent[period: period, role: role]
       end
 
+      # Students in cohorts with surveys
       expect(study.cohorts(true).flat_map{|cc| cc.cohort_members(true)}).not_to be_empty
+      expect(study.survey_plans.flat_map{|sp| sp.surveys}.count).to eq 3
+
       visit research_study_path(study)
       click_link 'Remove'
       alert.accept
       wait_for_ajax
+
+      # Students no longer in cohorts and surveys gone
       expect(study.courses(true)).to be_empty
       expect(study.cohorts(true).flat_map{|cc| cc.cohort_members(true)}).to be_empty
+      expect(study.survey_plans.flat_map{|sp| sp.surveys.without_deleted}.count).to eq 0
       expect(page).not_to have_link 'Remove'
     end
 
