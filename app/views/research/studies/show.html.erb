@@ -1,5 +1,17 @@
 <%= link_to 'Edit', edit_research_study_path(@study), class: "btn btn-primary", style: "float: right" %>
 
+<% if @study.active? %>
+  <%= link_to 'Deactivate', deactivate_research_study_path(@study),
+                            class: "btn btn-primary", style: "float: right; clear: both; margin-top: 20px",
+                            method: :put,
+                            data: { confirm: "Are you sure you want to deactivate #{@study.name}?"} %>
+<% else %>
+  <%= link_to 'Activate', activate_research_study_path(@study),
+                          class: "btn btn-primary", style: "float: right; clear: both; margin-top: 20px",
+                          method: :put,
+                          data: { confirm: "Are you sure you want to activate #{@study.name}?"} %>
+<% end %>
+
 <h3>Info</h3>
 
 <div class="study_entry">

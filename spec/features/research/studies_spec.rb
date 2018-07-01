@@ -29,7 +29,7 @@ RSpec.feature 'Studies', js: true do
       fill_in 'Name', with: 'Something else'
       click_button 'Save'
 
-      expect(page).to have_content(/Something else.*Inactive.*Delete/)
+      expect(page).to have_content(/Something else \(ID/)
     end
 
     context 'inactive' do
@@ -39,6 +39,15 @@ RSpec.feature 'Studies', js: true do
         click_link 'Delete'
         alert.accept
         expect(page).not_to have_content(/A Study.*Inactive.*Delete/)
+      end
+
+      scenario 'activate it' do
+        visit research_study_path(study)
+        click_link 'Activate'
+        alert.accept
+        expect(page).to have_content(/ activated!/)
+        expect(page).to have_content(/| Active |/)
+        expect(study.reload).to be_active
       end
     end
 
@@ -51,6 +60,15 @@ RSpec.feature 'Studies', js: true do
         click_link 'Delete'
         alert.accept
         expect(page).to have_content(/Cannot destroy an active study/)
+      end
+
+      scenario 'activate it' do
+        visit research_study_path(study)
+        click_link 'Deactivate'
+        alert.accept
+        expect(page).to have_content(/deactivated!/)
+        expect(page).to have_content(/| Inactive |/)
+        expect(study.reload).not_to be_active
       end
     end
   end

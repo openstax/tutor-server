@@ -1,6 +1,6 @@
 class Research::StudiesController < Research::BaseController
 
-  before_action :get_study, only: [:show, :edit, :update, :destroy]
+  before_action :get_study, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
 
   def index
   end
@@ -61,6 +61,26 @@ class Research::StudiesController < Research::BaseController
     if @study.destroy
       flash[:notice] = "Study #{@study.name} deleted"
       redirect_to research_studies_path
+    else
+      flash[:alert] = @study.errors.full_messages
+      redirect_to research_study_path(@study)
+    end
+  end
+
+  def activate
+    if @study.activate!
+      flash[:notice] = "Study #{@study.name} activated!"
+      redirect_to research_study_path(@study)
+    else
+      flash[:alert] = @study.errors.full_messages
+      redirect_to research_study_path(@study)
+    end
+  end
+
+  def deactivate
+    if @study.deactivate!
+      flash[:notice] = "Study #{@study.name} deactivated!"
+      redirect_to research_study_path(@study)
     else
       flash[:alert] = @study.errors.full_messages
       redirect_to research_study_path(@study)

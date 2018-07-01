@@ -1,5 +1,12 @@
 <% @page_header = "Research Help" %>
 
+<h3>Study Activation</h3>
+
+<ol>
+  <li>A study's activation state controls whether or not manipulations are active. (does not control anything with surveys)</li>
+  <li>You can set times to make a study active or inactive.  Tutor will check for activations and deactivations based on these times every hour.</li>
+</ol>
+
 <h3>Study Courses</h3>
 
 <ol>
@@ -7,7 +14,7 @@
   <li>Courses can only be removed from studies that have <b>never</b> been active</li>
   <li>If you want to remove a course from an active study, your only option is to inactivate the entire study.
       Will do something more nuanced in the future, but this approach is easier for the moment.</li>
-  <li>If a course is removed from a study, any assigned surveys in that course for that study will be deleted.</li>
+  <li>If a course is removed from a study, any assigned surveys in that course for that study will be soft-deleted.</li>
 </ol>
 
 <h3>Cohorts</h3>
