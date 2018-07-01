@@ -7,7 +7,9 @@
     <b><%= @study.name %></b>
     (ID: <%= @study.id %>)
     Created: <%= @study.created_at %>
-    | <%= @study.active? ? "Active" : "Inactive" %>
+    | <%= @study.active? ? "Active" : "Inactive" %> |
+    Activate at: <%= @study.activate_at || "Not set" %> |
+    Deactivate at: <%= @study.deactivate_at || "Not set" %>
   </div>
   <div class="course_listing">
     <div class="course_listing_title">Courses:</div>
