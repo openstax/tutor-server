@@ -10,7 +10,7 @@ class CourseContent::AddEcosystemToCourse
            map_strategy_class: ::Content::Strategies::Generated::Map)
     fatal_error(code: :ecosystem_already_set,
                 message: 'The given ecosystem is already active for the given course') \
-      if course.lock!.course_ecosystems.first.try!(:content_ecosystem_id) == ecosystem.id
+      if course.lock!.ecosystem.try!(:id) == ecosystem.id
 
     ecosystem = Content::Ecosystem.new(strategy: ecosystem.wrap) \
       if ecosystem.is_a?(Content::Models::Ecosystem)

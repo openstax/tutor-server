@@ -10,7 +10,7 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
   let(:courses)       do
     3.times.map do
       FactoryBot.create(:course_profile_course, offering: offering).tap do |course|
-        course.ecosystems << old_ecosystem
+        AddEcosystemToCourse.call(course: course, ecosystem: old_ecosystem)
       end
     end
   end
@@ -37,21 +37,21 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
 
   context 'update_courses is true' do
     it "updates associated courses' ecosystems if the ecosystem is changed" do
-      courses.each{ |course| expect(course.ecosystems.first).to eq old_ecosystem }
+      courses.each{ |course| expect(course.ecosystem).to eq old_ecosystem }
 
       described_class.call(offering.id, {ecosystem: new_ecosystem}, true)
 
-      courses.each{ |course| expect(course.reload.ecosystems.first).to eq new_ecosystem }
+      courses.each{ |course| expect(course.reload.ecosystem).to eq new_ecosystem }
     end
   end
 
   context 'update_courses is false' do
     it "does not updates associated courses' ecosystems" do
-      courses.each{ |course| expect(course.ecosystems.first).to eq old_ecosystem }
+      courses.each{ |course| expect(course.ecosystem).to eq old_ecosystem }
 
       described_class.call(offering.id, {ecosystem: new_ecosystem}, false)
 
-      courses.each{ |course| expect(course.reload.ecosystems.first).to eq old_ecosystem }
+      courses.each{ |course| expect(course.reload.ecosystem).to eq old_ecosystem }
     end
   end
 

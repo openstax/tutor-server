@@ -203,7 +203,7 @@ RSpec.feature 'Admin editing a course', speed: :slow do
     click_on 'Set Ecosystem'
 
     expect(page).to have_content('Course ecosystem updates have been queued')
-    expect(@course.ecosystems.first.books.first.version).to eq('4.4')
+    expect(@course.ecosystem.books.first.version).to eq('4.4')
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics II'
@@ -215,8 +215,8 @@ RSpec.feature 'Admin editing a course', speed: :slow do
     find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
     click_on 'Set Ecosystem'
     expect(page).to have_content('Course ecosystem updates have been queued')
-    expect(@course.ecosystems.first.books.first.version).to eq('5.1')
-    expect(course_2.ecosystems.first.books.first.version).to eq('5.1')
+    expect(@course.ecosystem.books.first.version).to eq('5.1')
+    expect(course_2.ecosystem.books.first.version).to eq('5.1')
   end
 
   scenario 'Check payment fields on student roster', js: true do

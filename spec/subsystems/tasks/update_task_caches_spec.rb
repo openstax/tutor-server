@@ -206,7 +206,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           task = task_cache.task
           expect(task).to be_in tasks
           expect(task_cache.task_type).to eq (task.task_type)
-          expect(task_cache.ecosystem).to eq course.ecosystems.first
+          expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
@@ -231,7 +231,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           task = task_cache.task
           expect(task).to be_in tasks
           expect(task_cache.task_type).to eq (task.task_type)
-          expect(task_cache.ecosystem).to eq course.ecosystems.first
+          expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
@@ -264,7 +264,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task).to be_in tasks
           expect(task_cache.task_type).to eq (task.task_type)
-          expect(task_cache.ecosystem).to eq course.ecosystems.first
+          expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
@@ -322,7 +322,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       end
 
       it 'is called when a new ecosystem is added to the course' do
-        ecosystem = course.ecosystems.first
+        ecosystem = course.ecosystem
         course.course_ecosystems.delete_all :delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
@@ -368,7 +368,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           task = task_cache.task
           expect(task).to be_in tasks
           expect(task_cache.task_type).to eq (task.task_type)
-          expect(task_cache.ecosystem).to eq course.ecosystems.first
+          expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
@@ -393,7 +393,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           task = task_cache.task
           expect(task).to be_in tasks
           expect(task_cache.task_type).to eq (task.task_type)
-          expect(task_cache.ecosystem).to eq course.ecosystems.first
+          expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
@@ -426,7 +426,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task).to be_in tasks
           expect(task_cache.task_type).to eq (task.task_type)
-          expect(task_cache.ecosystem).to eq course.ecosystems.first
+          expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
@@ -488,7 +488,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       end
 
       it 'is called when a new ecosystem is added to the course' do
-        ecosystem = course.ecosystems.first
+        ecosystem = course.ecosystem
         course.course_ecosystems.delete_all :delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
@@ -583,7 +583,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task = task_cache.task
         expect(task).to be_in tasks
         expect(task_cache.task_type).to eq (task.task_type)
-        expect(task_cache.ecosystem).to eq course.ecosystems.first
+        expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
         expect(task_cache.student_names).to match_array(
           task.taskings.map { |tt| tt.role.student.name }
@@ -606,7 +606,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task = task_cache.task
         expect(task).to be_in tasks
         expect(task_cache.task_type).to eq (task.task_type)
-        expect(task_cache.ecosystem).to eq course.ecosystems.first
+        expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
         expect(task_cache.student_names).to match_array(
           task.taskings.map { |tt| tt.role.student.name }
@@ -636,7 +636,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
         expect(task).to be_in tasks
         expect(task_cache.task_type).to eq (task.task_type)
-        expect(task_cache.ecosystem).to eq course.ecosystems.first
+        expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
 
         expect(task_cache.as_toc.deep_symbolize_keys).to match(

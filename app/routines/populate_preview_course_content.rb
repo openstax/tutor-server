@@ -62,7 +62,7 @@ class PopulatePreviewCourseContent
 
     return if course.is_concept_coach
 
-    ecosystem = course.ecosystems.first
+    ecosystem = course.ecosystem
     return if ecosystem.nil?
 
     book = ecosystem.books.first

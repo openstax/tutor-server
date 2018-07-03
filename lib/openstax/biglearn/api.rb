@@ -402,7 +402,7 @@ module OpenStax::Biglearn::Api
         # Return the last response received from Biglearn regardless of what it was
         {
           exercises: get_ecosystem_exercises_by_uuids(
-            ecosystem: request[:student].course.ecosystems.first,
+            ecosystem: request[:student].course.ecosystem,
             exercise_uuids: response[:exercise_uuids],
             max_num_exercises: request[:max_num_exercises]
           ),

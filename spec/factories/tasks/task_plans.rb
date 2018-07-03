@@ -26,7 +26,7 @@ FactoryBot.define do
       task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) || \
                               build(:tasks_assistant, code_class_name_hash)
 
-      task_plan.content_ecosystem_id ||= task_plan.owner.ecosystems.first
+      task_plan.content_ecosystem_id ||= task_plan.owner.ecosystem
       task_plan.ecosystem ||= build(:content_ecosystem)
 
       task_plan.tasking_plans = evaluator.num_tasking_plans.times.map do

@@ -136,7 +136,8 @@ class Tasks::UpdateTaskCaches
 
     # Get all relevant courses
     course_ids = task_ids_by_course_id.keys
-    courses = CourseProfile::Models::Course.select(:id).where(id: course_ids).preload(:ecosystems)
+    courses = CourseProfile::Models::Course.select(:id).where(id: course_ids)
+                                           .preload(course_ecosystems: :ecosystem)
 
     # Cache results per task for Quick Look and Student Performance Forecast
     # Pages are mapped to the Course's most recent ecosystem

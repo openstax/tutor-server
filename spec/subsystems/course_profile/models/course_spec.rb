@@ -15,7 +15,6 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to have_many(:students).dependent(:destroy) }
 
   it { is_expected.to have_many(:course_ecosystems) }
-  it { is_expected.to have_many(:ecosystems) }
 
   it { is_expected.to have_many(:course_assistants) }
 

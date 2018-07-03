@@ -11,7 +11,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
     end
   end
   let(:num_period_caches)     { periods.size }
-  let(:ecosystem)             { course.ecosystems.first }
+  let(:ecosystem)             { course.ecosystem }
 
   context 'reading' do
     before(:all)                do
@@ -175,7 +175,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
       period_caches.each do |period_cache|
         period = period_cache.period
         expect(period).to be_in periods
-        expect(period_cache.ecosystem).to eq course.ecosystems.first
+        expect(period_cache.ecosystem).to eq course.ecosystem
         expect(period_cache.student_ids).to match_array period.students.map(&:id)
 
         expect(period_cache.as_toc.deep_symbolize_keys).to match expected_unworked_toc
@@ -199,7 +199,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
       period_caches.each do |period_cache|
         period = period_cache.period
         expect(period).to be_in periods
-        expect(period_cache.ecosystem).to eq course.ecosystems.first
+        expect(period_cache.ecosystem).to eq course.ecosystem
         expect(period_cache.student_ids).to match_array period.students.map(&:id)
 
         expect(period_cache.as_toc.deep_symbolize_keys).to match expected_unworked_toc
@@ -232,7 +232,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         is_first_period = period == first_period
 
         expect(period).to be_in periods
-        expect(period_cache.ecosystem).to eq course.ecosystems.first
+        expect(period_cache.ecosystem).to eq course.ecosystem
         expect(period_cache.student_ids).to match_array period.students.map(&:id)
 
         expect(period_cache.as_toc.deep_symbolize_keys).to match(
@@ -303,7 +303,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         end
 
         it 'is called when a new ecosystem is added to the course' do
-          ecosystem = course.ecosystems.first
+          ecosystem = course.ecosystem
           course.course_ecosystems.delete_all :delete_all
 
           expect(configured_job).to receive(:perform_later) do |period_ids:|
@@ -384,7 +384,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         end
 
         it 'is called when a new ecosystem is added to the course' do
-          ecosystem = course.ecosystems.first
+          ecosystem = course.ecosystem
           course.course_ecosystems.delete_all :delete_all
 
           expect(configured_job).to receive(:perform_later) do |period_ids:|
@@ -499,7 +499,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
       period_caches.each do |period_cache|
         period = period_cache.period
         expect(period).to be_in periods
-        expect(period_cache.ecosystem).to eq course.ecosystems.first
+        expect(period_cache.ecosystem).to eq course.ecosystem
         expect(period_cache.student_ids).to match_array period.students.map(&:id)
 
         expect(period_cache.as_toc.deep_symbolize_keys).to match expected_unworked_toc
@@ -523,7 +523,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
       period_caches.each do |period_cache|
         period = period_cache.period
         expect(period).to be_in periods
-        expect(period_cache.ecosystem).to eq course.ecosystems.first
+        expect(period_cache.ecosystem).to eq course.ecosystem
         expect(period_cache.student_ids).to match_array period.students.map(&:id)
 
         expect(period_cache.as_toc.deep_symbolize_keys).to match expected_unworked_toc
@@ -556,7 +556,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         is_first_period = period == first_period
 
         expect(period).to be_in periods
-        expect(period_cache.ecosystem).to eq course.ecosystems.first
+        expect(period_cache.ecosystem).to eq course.ecosystem
         expect(period_cache.student_ids).to match_array period.students.map(&:id)
 
         expect(period_cache.as_toc.deep_symbolize_keys).to match(

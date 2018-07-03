@@ -160,8 +160,7 @@ class Demo::Base
 
   def get_auto_assignments(content)
     content.auto_assign.map do |settings|
-      book_locations = content.course.ecosystems.first.pages.map(&:book_location)
-                                                            .sample(settings.steps)
+      book_locations = content.course.ecosystem.pages.map(&:book_location).sample(settings.steps)
 
       1.upto(settings.generate).map do |number|
         Hashie::Mash.new(

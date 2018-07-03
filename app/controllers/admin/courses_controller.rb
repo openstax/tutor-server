@@ -20,7 +20,7 @@ class Admin::CoursesController < Admin::BaseController
     @course_infos = result.outputs.items.preload(
       teachers: { role: [:role_user, :profile] },
       periods: :students,
-      ecosystems: :books
+      course_ecosystems: { ecosystem: :books }
     ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
@@ -131,8 +131,8 @@ class Admin::CoursesController < Admin::BaseController
       ecosystem = Content::Models::Ecosystem.find(params[:ecosystem_id])
       courses = CourseProfile::Models::Course
         .where { id.in course_ids }
-        .preload(:ecosystems)
-        .select { |course| course.ecosystems.first.try(:id) != ecosystem.id }
+        .preload(course_ecosystems: :ecosystem)
+        .select { |course| course.ecosystem.try!(:id) != ecosystem.id }
       courses.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
           course: course, ecosystem: ecosystem

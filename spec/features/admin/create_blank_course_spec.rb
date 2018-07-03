@@ -33,6 +33,6 @@ RSpec.feature 'Administration' do
     expect(page).to have_text('Hello hi ciao Hey World')
     course = CourseProfile::Models::Course.order(:created_at).last
     expect(course.offering).to eq catalog_offering
-    expect(course.ecosystems.first).to eq catalog_offering.ecosystem
+    expect(course.ecosystem).to eq catalog_offering.ecosystem
   end
 end

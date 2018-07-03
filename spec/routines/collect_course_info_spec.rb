@@ -55,6 +55,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           reading_score_weight: course_1.reading_score_weight,
           reading_progress_weight: course_1.reading_progress_weight,
           ecosystems: course_1.ecosystems,
+          ecosystem: course_1.ecosystem,
           periods: [],
           students: [],
           roles: []
@@ -111,6 +112,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           reading_score_weight: course_1.reading_score_weight,
           reading_progress_weight: course_1.reading_progress_weight,
           ecosystems: course_1.ecosystems,
+          ecosystem: course_1.ecosystem,
           periods: [],
           students: [],
           roles: []
@@ -147,6 +149,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           reading_score_weight: course_2.reading_score_weight,
           reading_progress_weight: course_2.reading_progress_weight,
           ecosystems: course_2.ecosystems,
+          ecosystem: course_2.ecosystem,
           periods: [],
           students: [],
           roles: []
@@ -199,6 +202,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             reading_score_weight: course_1.reading_score_weight,
             reading_progress_weight: course_1.reading_progress_weight,
             ecosystems: course_1.ecosystems,
+            ecosystem: course_1.ecosystem,
             periods: a_collection_containing_exactly(period_1, period_2),
             students: [],
             roles: user_1.to_model.roles
@@ -256,6 +260,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             reading_score_weight: course_1.reading_score_weight,
             reading_progress_weight: course_1.reading_progress_weight,
             ecosystems: course_1.ecosystems,
+            ecosystem: course_1.ecosystem,
             periods: periods,
             students: students,
             roles: roles
