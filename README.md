@@ -29,7 +29,7 @@ cd tutor-server
 Then install the proper version of ruby using rbenv:
 
 ```
-rbenv install 2.2.3
+rbenv install 2.3.6
 ```
 
 Make sure that `which ruby` and `which gem` point to your `.rbenv` folder,
@@ -286,5 +286,3 @@ be `true`.  Admins can search by this flag and bulk set this flag on any admin c
 3. `app/subsystems/lms/launch.rb` - wraps and interprets launch HTTP requests and provides convenience methods to interact with Tutor's LMS models.
 4. `app/subsystems/lms/send_course_scores.rb` - background job that sends scores to the LMS
 5. `app/subsystems/lms/models/...` - DB models that wrap LMS related data we need to persist
-
-
