@@ -1,0 +1,28 @@
+version: '3'
+services:
+  tutor:
+    build: . 
+    command: /bin/bash -c "rake about && bin/rails server -b '0.0.0.0'"
+    working_dir: "/code"
+    ports:
+     - "3001:3001"
+    volumes:
+     - .:/code
+    links:
+     - redis
+     - postgres
+    environment:
+     - REDIS_URL=redis://redis:6379/0
+     - OXT_DB_HOST=postgres
+  redis:
+    image: "redis:latest"
+  postgres:
+    image: "postgres:9.5"
+    volumes:
+     - pgdata:/var/lib/postgresql/data
+    environment:
+     - POSTGRES_USER=ox_tutor
+     - POSTGRES_PASSWORD=ox_tutor_secret_password
+     - POSTGRES_DB=ox_tutor_dev
+volumes:
+  pgdata:
