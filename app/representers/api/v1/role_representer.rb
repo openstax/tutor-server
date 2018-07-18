@@ -17,6 +17,11 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :research_identifier,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :joined_at,
              type: String,
              readable: true,
