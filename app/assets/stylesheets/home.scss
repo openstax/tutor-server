@@ -142,6 +142,10 @@ header {
       background: #fff;
     }
 
+    .navbar-header {
+      float: left;
+    }
+
     .navbar-brand {
       display: block;
       height: 41px;
@@ -151,7 +155,30 @@ header {
       background-size: 100%;
     }
 
-    .navbar-brand-rice {
+    .navbar-default {
+      .sign-in { @include tutor-button(); }
+    }
+
+    .navbar-right {
+      margin: 0;
+      float: right;
+
+      li {
+        float: left;
+      }
+    }
+
+    .navbar-nav.links {
+      li a {
+        // enforce uniform size for all navbar links
+        font-size: 16px;
+        line-height: 1.4;
+        padding: 9px 18px;
+        margin: 0 10px;
+      }
+    }
+
+    .navbar-nav.links li a.navbar-brand-rice {
       display: block;
       float: right;
       margin: 5px 0 0 30px;
@@ -160,25 +187,6 @@ header {
       height: 30px;
       width: 85px;
     }
-
-    .navbar-default {
-
-      .sign-in { @include tutor-button(); }
-
-    }
-
-    .navbar-nav.links {
-
-      li a {
-        // enforce uniform size for all navbar links
-        font-size: 16px;
-        line-height: 1.4;
-        padding: 9px 18px;
-        margin: 0 10px;
-      }
-
-    }
-
   }
 
 }
@@ -412,10 +420,6 @@ footer p a:hover {
 
   .tutor-home {
 
-    header .navbar-default .navbar-brand {
-      margin: 10px 0 0 15px !important;
-    }
-
     .intro-header {
       background-position: -40px -40px;
     }
@@ -427,21 +431,6 @@ footer p a:hover {
 
       }
 
-    }
-
-  }
-
-}
-
-/* #header fix
-================================================== */
-
-@media only screen and (min-width: 768px) and (max-width: 1020px) {
-
-  .tutor-home {
-
-    header .navbar-default .navbar-brand {
-      margin: 5px 0 0 0 !important;
     }
 
   }
@@ -460,10 +449,6 @@ footer p a:hover {
   }
 
   .tutor-home {
-
-    header .navbar-default .navbar-brand {
-      margin: 10px 0 0 15px !important;
-    }
 
     .intro-header {
       height: 600px;
@@ -505,10 +490,6 @@ footer p a:hover {
 @media only screen and (min-width: 480px) and (max-width: 680px) {
 
   .tutor-home {
-
-    header .navbar-default .navbar-brand {
-      margin: 10px 0 0 15px !important;
-    }
 
     .intro-header {
       height: 700px;
