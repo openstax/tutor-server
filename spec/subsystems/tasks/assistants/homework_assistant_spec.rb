@@ -28,7 +28,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       @assignment_exercise_count = teacher_selected_exercise_ids.count +
                                    @tutor_selected_exercise_count
 
-      task_plan = FactoryBot.build(:tasks_task_plan,
+      @task_plan = FactoryBot.build(:tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
         description: "Hello!",
@@ -40,7 +40,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         num_tasking_plans: 0
       )
 
-      course = task_plan.owner.tap do |course|
+      course = @task_plan.owner.tap do |course|
         AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
       end
 
@@ -55,16 +55,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       end
 
       @taskee_users.each do |taskee|
-        task_plan.tasking_plans << FactoryBot.create(
+        @task_plan.tasking_plans << FactoryBot.create(
           :tasks_tasking_plan,
-          task_plan: task_plan,
+          task_plan: @task_plan,
           target:    taskee.to_model
         )
       end
 
-      task_plan.save!
+      @task_plan.save!
 
-      @tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
+      @tasks = DistributeTasks.call(task_plan: @task_plan).outputs.tasks
     end
 
     after(:all)  { DatabaseCleaner.clean }
@@ -127,6 +127,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
         expect(task.personalized_task_steps).to be_empty
       end
+    end
+
+    it "allows from 0 to 4 tutor slots" do
+      (0..4).each { |tutor_slots| @task_plan.save! }
+
+      @task_plan.settings['exercises_count_dynamic'] = 5
+
+      expect(@task_plan.save).to eq false
+
+      expect { @task_plan.save! }.to raise_error ActiveRecord::RecordInvalid
     end
   end
 

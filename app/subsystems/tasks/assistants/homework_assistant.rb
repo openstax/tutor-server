@@ -18,7 +18,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
         },
         "exercises_count_dynamic": {
           "type": "integer",
-          "minimum": 2,
+          "minimum": 0,
           "maximum": 4
         },
         "page_ids": {
