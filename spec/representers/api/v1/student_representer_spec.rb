@@ -18,7 +18,6 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'first_name' => student.first_name,
       'last_name' => student.last_name,
       'name' => student.name,
-      'research_identifier' => student.role.research_identifier,
       'is_active' => !student.dropped?,
       'is_paid' => false,
       'is_comped' => false,

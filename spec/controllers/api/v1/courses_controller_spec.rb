@@ -64,6 +64,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash.first).to match a_hash_including(
           roles: a_collection_containing_exactly(
             id: teacher_role.id.to_s,
+            research_identifier: teacher_role.research_identifier,
             type: 'teacher',
             joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
           )
@@ -80,6 +81,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash.first).to match a_hash_including(
           roles: a_collection_containing_exactly(
             id: student_role.id.to_s,
+            research_identifier: student_role.research_identifier,
             type: 'student',
             joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
             latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
@@ -100,12 +102,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             {
               id: student_role.id.to_s,
               type: 'student',
+              research_identifier: student_role.research_identifier,
               joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
               latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
             },
             {
               id: teacher_role.id.to_s,
               type: 'teacher',
+              research_identifier: teacher_role.research_identifier,
               joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
             }
           ),
@@ -322,6 +326,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash).to match a_hash_including(
           roles: a_collection_containing_exactly(
             id: teacher_role.id.to_s,
+            research_identifier: teacher_role.research_identifier,
             type: 'teacher',
             joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
           )
@@ -339,6 +344,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           roles: a_collection_containing_exactly(
             id: student_role.id.to_s,
             type: 'student',
+            research_identifier: student_role.research_identifier,
             joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
             latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
           )
@@ -358,12 +364,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             {
               id: student_role.id.to_s,
               type: 'student',
+              research_identifier: student_role.research_identifier,
               joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
               latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
             },
             {
               id: teacher_role.id.to_s,
               type: 'teacher',
+              research_identifier: teacher_role.research_identifier,
               joined_at: DateTimeUtilities.to_api_s(teacher_role.created_at)
             }
           )
