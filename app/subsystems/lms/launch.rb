@@ -5,7 +5,7 @@ class Lms::Launch
   # A PORO that hides the details of a launch request's internals and
   # launch-related models from other LMS code.
 
-  attr_reader :app, :message
+  attr_reader :message
   attr_reader :request_parameters, :request_url
 
   class HandledError          < StandardError; end
@@ -108,8 +108,12 @@ class Lms::Launch
 
   def app
     if @app.nil?
-      @app = Lms::Models::App.find_by(key: request_parameters[:oauth_consumer_key])
-      raise AppNotFound if @app.nil?
+      key = request_parameters[:oauth_consumer_key]
+      [Lms::WillowLabs, Lms::Models::App].each do |model|
+        @app = model.find_by(key: request_parameters[:oauth_consumer_key])
+        return @app if @app
+      end
+      raise AppNotFound
     end
     @app
   end

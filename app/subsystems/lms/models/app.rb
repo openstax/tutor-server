@@ -11,6 +11,11 @@ class Lms::Models::App < ApplicationRecord
   validates :owner_id, uniqueness: { scope: :owner_type }
   validates :key, presence: true, uniqueness: true
 
+
+  def self.supports_key?(key)
+    find_by(key: request_parameters[:oauth_consumer_key])
+  end
+
   protected
 
   def initialize_tokens

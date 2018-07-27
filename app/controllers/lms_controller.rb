@@ -26,7 +26,8 @@ class LmsController < ApplicationController
 
     begin
       @launch = Lms::Launch.from_request(request)
-    rescue Lms::Launch::Error => ee
+    rescue => ee
+      debugger
       fail_with_catchall_message(ee) and return
     end
   end
