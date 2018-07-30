@@ -13,14 +13,14 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
 
-  let(:expected_tags)   {
-    [ 'k12phys-ch04-ex038', 'k12phys-ch04-ex039' ]
-  }
+  let(:expected_queries)   do
+    [ [ :tag, 'k12phys-ch04-ex038' ], [ :tag, 'k12phys-ch04-ex039' ] ]
+  end
 
   it "provides info about the optional exercise fragment" do
     expect(exercise_fragments.size).to eq 1
     fragment = exercise_fragments.first
     expect(fragment.title).to be_nil
-    expect(fragment.embed_tags).to eq expected_tags
+    expect(fragment.embed_queries).to eq expected_queries
   end
 end

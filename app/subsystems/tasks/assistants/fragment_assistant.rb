@@ -66,16 +66,16 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
   # Exercise exclusions are ignored here
   def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:, fragment_index:)
-    exercise = get_unused_page_exercises_with_tags(
-      page: page, tags: exercise_fragment.embed_tags
+    exercise = get_unused_page_exercises_with_queries(
+      page: page, queries: exercise_fragment.embed_queries
     ).sample
 
     if exercise.nil?
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
-      feature_tag = "context-cnxfeature:#{node_id}"
-      exercise = get_unused_page_exercises_with_tags(page: page, tags: feature_tag).sample
+      queries = { tag: "context-cnxfeature:#{node_id}" }
+      exercise = get_unused_page_exercises_with_queries(page: page, queries: queries).sample
 
       return if exercise.nil?
     end

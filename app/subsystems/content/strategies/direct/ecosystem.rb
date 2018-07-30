@@ -189,6 +189,13 @@ module Content
           end.sort_by{ |ex| number_indices[ex.number] }
         end
 
+        def exercises_by_nicknames(*nicks_array, pages: nil)
+          exercises = entity_exercises.reorder(nil).where(nickname: nicks_array.flatten)
+          exercises = exercises.where(content_page_id: [pages].flatten.map(&:id)) unless pages.nil?
+
+          exercises.map{ |entity_exercise| ::Content::Exercise.new(strategy: entity_exercise) }
+        end
+
         def exercises_with_tags(*tags_array, pages: nil, match_count: tags_array.size)
           exercises = entity_exercises.reorder(nil)
                                       .preload(:tags)

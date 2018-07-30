@@ -258,13 +258,26 @@ class ExportAndUploadResearchData
             page.fragments.each_with_index do |fragment, fragment_index|
               content = case fragment
               when OpenStax::Cnx::V1::Fragment::Exercise
-                embed_tags = fragment.embed_tags.join(',')
+                grouped_queries = Hash.new { |hash, key| hash[key] = [] }
+                fragment.embed_queries.each do |field, value|
+                  grouped_queries[field] << value
+                end
+                uri = OpenStax::Exercises::V1.uri_for('/api/exercises')
 
                 <<-CONTENT_HTML.strip_heredoc
                   <div data-type="exercise" id="#{fragment.node_id}" class="exercise">
-                    <a href="#ost/api/ex/#{embed_tags}">
-                      Exercise associated with this page with tags: "#{embed_tags}"
-                    </a>
+                    #{
+                      grouped_queries.map do |field, values|
+                        string_values = values.join(',')
+                        uri.query_values = { q: "#{field}:\"#{string_values}\"" }
+
+                        <<-EXERCISE_LINK.strip_heredoc
+                          <a href="#{uri.to_s}">
+                            Exercise associated with this page with #{field}: "#{string_values}"
+                          </a>
+                        EXERCISE_LINK
+                      end.join("\n")
+                    }
                   </div>
                 CONTENT_HTML
               else

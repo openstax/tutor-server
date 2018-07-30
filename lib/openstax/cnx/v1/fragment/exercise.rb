@@ -2,27 +2,38 @@ module OpenStax::Cnx::V1
   class Fragment::Exercise < Fragment
 
     # CSS to find the embed code attributes
-    EXERCISE_EMBED_CODE_CSS = 'a[href^="#ost/api/ex/"]'
+    EXERCISE_EMBED_URL_CSS = 'a[href^="#"]'
 
     # Regex to extract the appropriate tag from the embed code(s)
-    EXERCISE_EMBED_TAG_REGEX = /\A#ost\/api\/ex\/([\w-]+)\z/
+    EXERCISE_EMBED_URL_REGEXES = {
+      tag: /\A#ost\/api\/ex\/([\w-]+)\z/,
+      nickname: /\A#exercises?\/([\w-]+)\z/
+    }
 
-    # XPath to find the exercise embed code(s) after the url(s) are absolutized
-    ABSOLUTE_EMBED_CODE_XPATH = './/a[contains(@href, "/api/exercises")]'
+    # CSS to find the exercise embed queries after the urls are absolutized
+    ABSOLUTIZED_EMBED_URL_CSS = 'a[href*="/api/exercises"]'
 
-    # Regex to extract the appropriate embed tag(s) from the absolutized url(s)
-    ABSOLUTE_EMBED_TAG_REGEX = /\/api\/exercises\/?\?q=tag(?::|%3A)(?:"|%22)?([\w-]+)(?:"|%22)?\z/
+    # Regex to extract the appropriate embed queries from the absolutized urls
+    ABSOLUTIZED_EMBED_URL_REGEX = \
+      /\/api\/exercises\/?\?q=(tag|nickname)(?::|%3A)(?:"|%22)?([\w-]+)(?:"|%22)?\z/
 
-    attr_reader :embed_tags
+    attr_reader :embed_queries
 
     # This code is run from lib/openstax/cnx/v1/page.rb during import
     def self.absolutize_exercise_urls(node)
-      node.css(EXERCISE_EMBED_CODE_CSS).each do |anchor|
+      uri = OpenStax::Exercises::V1.uri_for('/api/exercises')
+
+      node.css(EXERCISE_EMBED_URL_CSS).each do |anchor|
         href = anchor.attribute('href')
-        embed_tag = EXERCISE_EMBED_TAG_REGEX.match(href.value).try(:[], 1)
-        uri = OpenStax::Exercises::V1.uri_for('/api/exercises')
-        uri.query_values = { q: "tag:\"#{embed_tag}\"" }
-        href.value = uri.to_s
+
+        EXERCISE_EMBED_URL_REGEXES.each do |field, regex|
+          embed_match = regex.match(href.value)
+          next if embed_match.nil?
+
+          uri.query_values = { q: "#{field}:\"#{embed_match[1]}\"" }
+          href.value = uri.to_s
+          break
+        end
       end
 
       node
@@ -31,16 +42,17 @@ module OpenStax::Cnx::V1
     def initialize(node:, title: nil, labels: [])
       super
 
-      embed_codes = node.xpath(ABSOLUTE_EMBED_CODE_XPATH).map do |anchor|
-        anchor.attribute('href').value
-      end
-      @embed_tags = embed_codes.map do |embed_code|
-        ABSOLUTE_EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
+      @embed_queries = node.css(ABSOLUTIZED_EMBED_URL_CSS).map do |anchor|
+        url = anchor.attribute('href').value
+        match = ABSOLUTIZED_EMBED_URL_REGEX.match(url)
+        next if match.nil?
+
+        [ match[1].to_sym, match[2] ]
       end.compact
     end
 
     def blank?
-      embed_tags.empty? && node_id.blank?
+      embed_queries.empty? && node_id.blank?
     end
 
   end

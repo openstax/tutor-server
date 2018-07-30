@@ -13,12 +13,14 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
 
-  let(:expected_tags)  { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
+  let(:expected_queries)   do
+    [ [ [ :tag, 'k12phys-ch04-ex017'] ], [ [ :tag, 'k12phys-ch04-ex073'] ] ]
+  end
 
   it "provides info about the exercise fragment" do
     exercise_fragments.each_with_index do |fragment, index|
       expect(fragment.title).to be_nil
-      expect(fragment.embed_tags).to eq expected_tags[index]
+      expect(fragment.embed_queries).to eq expected_queries[index]
     end
   end
 end
