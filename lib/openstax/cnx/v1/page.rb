@@ -102,7 +102,8 @@ module OpenStax::Cnx::V1
       @converted_doc ||= begin
         cd = doc.dup
         cd = OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes(cd)
-        absolutize_and_secure_urls(cd)
+        cd = absolutize_and_secure_urls(cd)
+        map_note_format(cd)
       end
     end
 
@@ -188,6 +189,33 @@ module OpenStax::Cnx::V1
 
     def url_for(path)
       book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
+    end
+
+    # add container div around note content for styling
+    def map_note_format(node)
+      note_selector = <<-eos
+        .note:not(.learning-objectives),
+        .example,
+        .grasp-check,
+        [data-type="note"],
+        [data-element-type="check-understanding"]
+      eos
+
+      note_selector = note_selector.gsub(/\s+/, "")
+
+      node.css(note_selector).each do |note|
+        note.set_attribute('data-tutor-transform', true)
+        body = Nokogiri::XML::Node.new('div', doc)
+        body.set_attribute('data-type', 'content')
+
+        content = note.css('>*:not([data-type=title])')
+        content.unlink()
+
+        body.children = content
+        note.add_child(body)
+      end
+
+      node
     end
 
     def absolutize_and_secure_urls(node)
