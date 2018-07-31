@@ -6,9 +6,9 @@ module Content
         wraps ::Content::Models::Exercise
 
         exposes :page, :tags, :los, :aplos, :url, :title, :preview, :context, :content, :uuid,
-                :group_uuid, :number, :version, :uid, :content_hash, :pool_types, :is_excluded,
-                :is_multipart?, :has_interactive, :has_video, :content_as_independent_questions,
-                :feature_ids
+                :group_uuid, :number, :version, :uid, :nickname, :content_hash, :pool_types,
+                :is_excluded, :is_multipart?, :has_interactive, :has_video,
+                :content_as_independent_questions, :feature_ids
 
         def to_model
           repository

@@ -100,7 +100,7 @@ class Tasks::Assistants::GenericAssistant
 
     exercises = get_pool_exercises(page: page, pool_type: pool_type)
 
-    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
+    exercises.reject { |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
   # Limits the history to tasks due before the given task's due date

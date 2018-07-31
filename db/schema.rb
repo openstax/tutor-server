@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180430162014) do
+ActiveRecord::Schema.define(version: 20180731170823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 20180430162014) do
     t.boolean  "has_video",       default: false, null: false
     t.uuid     "uuid",                            null: false
     t.uuid     "group_uuid",                      null: false
+    t.string   "nickname"
   end
 
   add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
