@@ -6,8 +6,8 @@ module OpenStax::Cnx::V1
 
     # Regex to extract the appropriate tag from the embed code(s)
     EXERCISE_EMBED_URL_REGEXES = {
-      tag: /\A#ost\/api\/ex\/([\w-]+)\z/,
-      nickname: /\A#exercises?\/([\w-]+)\z/
+      tag: /\A#ost\/api\/ex\/([\w\s-]+)\z/,
+      nickname: /\A#exercises?\/([\w\s-]+)\z/
     }
 
     # CSS to find the exercise embed queries after the urls are absolutized
@@ -15,7 +15,7 @@ module OpenStax::Cnx::V1
 
     # Regex to extract the appropriate embed queries from the absolutized urls
     ABSOLUTIZED_EMBED_URL_REGEX = \
-      /\/api\/exercises\/?\?q=(tag|nickname)(?::|%3A)(?:"|%22)?([\w-]+)(?:"|%22)?\z/
+      /\/api\/exercises\/?\?q=(tag|nickname)(?::|%3A)(?:"|%22)?([\w\s%-]+?)(?:"|%22)?\z/
 
     attr_reader :embed_queries
 
@@ -47,7 +47,7 @@ module OpenStax::Cnx::V1
         match = ABSOLUTIZED_EMBED_URL_REGEX.match(url)
         next if match.nil?
 
-        [ match[1].to_sym, match[2] ]
+        [ match[1].to_sym, URI.unescape(match[2]) ]
       end.compact
     end
 
