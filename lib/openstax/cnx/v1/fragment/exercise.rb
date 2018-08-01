@@ -32,6 +32,7 @@ module OpenStax::Cnx::V1
 
           uri.query_values = { q: "#{field}:\"#{embed_match[1]}\"" }
           href.value = uri.to_s
+          anchor['data-type'] = 'exercise'
           break
         end
       end
