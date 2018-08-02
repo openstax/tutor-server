@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
+  let(:nickname)  { 'Some Nickname' }
   let(:title)     { 'Some Title' }
   let(:context)   { 'Some Context' }
-  let(:hash)      { OpenStax::Exercises::V1::FakeClient.new_exercise_hash.merge(title: title) }
+  let(:hash)      do
+    OpenStax::Exercises::V1::FakeClient.new_exercise_hash.merge(nickname: nickname, title: title)
+  end
   let(:exercise)  do
     described_class.new(content: content).tap{ |exercise| exercise.context = context }
   end
@@ -17,6 +20,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.context).to eq context
       expect(exercise.content).to eq content
       expect(exercise.url).to eq "#{OpenStax::Exercises::V1.server_url}/exercises/#{hash[:uid]}"
+      expect(exercise.nickname).to eq nickname
       expect(exercise.title).to eq title
       expect(exercise.question_answers[0].length).to eq 2
       expect(exercise.correct_question_answer_ids[0][0]).to eq exercise.question_answers[0][0]['id']

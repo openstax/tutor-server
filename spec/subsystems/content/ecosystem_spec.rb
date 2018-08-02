@@ -3,8 +3,11 @@ require 'rails_helper'
 module Content
   RSpec.describe Ecosystem, type: :wrapper do
 
-    let(:valid_id)   { 1 }
-    let(:invalid_id) { Object.new }
+    let(:valid_id)       { 1 }
+    let(:invalid_id)     { Object.new }
+
+    let(:valid_nickname) { 'Test' }
+    let(:valid_tag)      { 'test:true' }
 
     let(:valid_book)   { ::Content::Book.new(strategy: Object.new) }
     let(:invalid_book) { Object.new }
@@ -23,14 +26,19 @@ module Content
 
     let(:strategy) {
       double("strategy").tap do |dbl|
-        allow(dbl).to receive(:id).with(no_args)
-                     .and_return(strategy_id)
+        allow(dbl).to receive(:id).with(no_args).and_return(strategy_id)
 
-        allow(dbl).to receive(:books).with(preload: false)
-                     .and_return(strategy_books)
+        allow(dbl).to receive(:books).with(preload: false).and_return(strategy_books)
 
-        allow(dbl).to receive(:exercises).with(no_args)
-                     .and_return(strategy_exercises)
+        allow(dbl).to receive(:exercises).with(no_args).and_return(strategy_exercises)
+
+        allow(dbl).to receive(:exercises_by_ids).with(valid_id).and_return(strategy_exercises)
+
+        allow(dbl).to receive(:exercises_by_nicknames).with(valid_nickname, pages: nil)
+                                                      .and_return(strategy_exercises)
+
+        allow(dbl).to receive(:exercises_with_tags).with(valid_tag, pages: nil)
+                                                   .and_return(strategy_exercises)
 
         allow(dbl).to receive(:reading_dynamic_pools).with(pages: strategy_expected_pages)
                      .and_return(strategy_reading_dynamic_pools)
@@ -47,8 +55,7 @@ module Content
         allow(dbl).to receive(:practice_widget_pools).with(pages: strategy_expected_pages)
                      .and_return(strategy_practice_widget_pools)
 
-        allow(dbl).to receive(:manifest).with(no_args)
-                     .and_return(strategy_manifest)
+        allow(dbl).to receive(:manifest).with(no_args).and_return(strategy_manifest)
       end
     }
 
@@ -153,6 +160,39 @@ module Content
           expect{
             ecosystem.exercises
           }.to raise_error(StrategyError)
+        end
+      end
+    end
+
+
+    {
+      exercises_by_ids: :valid_id,
+      exercises_by_nicknames: :valid_nickname,
+      exercises_with_tags: :valid_tag
+    }.each do |method, arg_name|
+      context method do
+        it "delegates to its strategy" do
+          ecosystem.public_send(method, public_send(arg_name))
+          expect(strategy).to have_received(method)
+        end
+
+        context "when the strategy returns Content::Exercises" do
+          let(:strategy_exercises) { [ valid_exercise ] }
+
+          it "returns the strategy's exercises" do
+            exercises = ecosystem.public_send(method, public_send(arg_name))
+            expect(exercises).to eq(strategy_exercises)
+          end
+        end
+
+        context "when the strategy doesn't return Content::Exercises" do
+          let(:strategy_exercises) { [ invalid_exercise ] }
+
+          it "raises StrategyError" do
+            expect do
+              ecosystem.public_send(method, public_send(arg_name))
+            end.to raise_error(StrategyError)
+          end
         end
       end
     end

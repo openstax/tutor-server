@@ -44,6 +44,10 @@ class OpenStax::Exercises::V1::Exercise
     @url ||= "#{@server_url}/exercises/#{uid}"
   end
 
+  def nickname
+    @nickname ||= content_hash['nickname']
+  end
+
   def title
     @title ||= content_hash['title']
   end

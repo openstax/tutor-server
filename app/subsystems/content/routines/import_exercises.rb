@@ -77,6 +77,7 @@ class Content::Routines::ImportExercises
                                                group_uuid: wrapper.group_uuid,
                                                number: wrapper.number,
                                                version: wrapper.version,
+                                               nickname: wrapper.nickname,
                                                title: wrapper.title,
                                                preview: wrapper.preview,
                                                context: wrapper.context,

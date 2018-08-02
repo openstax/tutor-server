@@ -31,6 +31,10 @@ module Content
       verify_and_return @strategy.uid, klass: String, error: StrategyError
     end
 
+    def nickname
+      verify_and_return @strategy.nickname, klass: String, error: StrategyError
+    end
+
     def title
       verify_and_return @strategy.title, klass: String, allow_nil: true, error: StrategyError
     end

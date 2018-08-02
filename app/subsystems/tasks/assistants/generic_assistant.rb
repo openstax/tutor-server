@@ -21,8 +21,8 @@ class Tasks::Assistants::GenericAssistant
 
     @ecosystems_map = {}
     @page_cache = {}
-    @tag_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
-    @pool_exercise_cache = Hash.new{ |hash, key| hash[key] = {} }
+    @exercise_cache = Hash.new { |hash, key| hash[key] = Hash.new { |hash, key| hash[key] = {} } }
+    @pool_exercise_cache = Hash.new { |hash, key| hash[key] = {} }
   end
 
   protected
@@ -64,12 +64,19 @@ class Tasks::Assistants::GenericAssistant
     end.outputs.task_step
   end
 
-  def get_all_page_exercises_with_tags(page:, tags:)
-    sorted_tags = [tags].flatten.uniq.sort
+  def get_all_page_exercises_with_queries(page:, queries:)
+    queries.flat_map do |field, values|
+      sorted_values = [values].flatten.uniq.sort
 
-    @tag_exercise_cache[page.id][sorted_tags] ||= ecosystem.exercises_with_tags(
-      sorted_tags, pages: page
-    )
+      @exercise_cache[page.id][field][sorted_values] ||= case field.to_sym
+      when :tag
+        ecosystem.exercises_with_tags(sorted_values, pages: page)
+      when :nickname
+        ecosystem.exercises_by_nicknames(sorted_values, pages: page)
+      else
+        raise NotImplementedError
+      end
+    end
   end
 
   def get_pool_exercises(page:, pool_type:)
@@ -78,11 +85,11 @@ class Tasks::Assistants::GenericAssistant
     @pool_exercise_cache[page.id][pool_type] ||= page.send(pool_method).exercises
   end
 
-  def get_unused_page_exercises_with_tags(page:, tags:)
-    raise 'You must call reset_used_exercises before get_unused_page_exercises_with_tags' \
+  def get_unused_page_exercises_with_queries(page:, queries:)
+    raise 'You must call reset_used_exercises before get_unused_page_exercises_with_queries' \
       if @used_exercise_numbers.nil?
 
-    exercises = get_all_page_exercises_with_tags(page: page, tags: tags)
+    exercises = get_all_page_exercises_with_queries(page: page, queries: queries)
 
     exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
   end
@@ -93,7 +100,7 @@ class Tasks::Assistants::GenericAssistant
 
     exercises = get_pool_exercises(page: page, pool_type: pool_type)
 
-    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
+    exercises.reject { |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
   # Limits the history to tasks due before the given task's due date
