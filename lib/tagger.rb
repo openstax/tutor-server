@@ -18,14 +18,18 @@ module Tagger
     length: /\Atime[:-](\w+)\z/,
     teks: /\A(?:teks:|ost-tag-teks-)[\w-]+-(\w+)\z/,
     requires_context: /\Arequires-context:(?:y(?:es)?|t(?:rue)?)\z/,
-    cnxfeature: /\A(?:context-)?cnxfeature:([\w-]+)\z/
+    cnxfeature: /\A(?:context-)?cnxfeature:([\w-]+)\z/,
+    tlo: /\Atlo:([\w\.-]+)\z/i,
+    kc: /\Akc:([\w\.-]+)\z/i
   })
 
   # The capture from the regex above is substituted into the template to form the tag name
   TAG_NAME_TEMPLATES = HashWithIndifferentAccess.new({
     dok: "DOK: %d",
     blooms: "Blooms: %d",
-    length: "Length: %.1s"
+    length: "Length: %.1s",
+    tlo: "Thematic Learning Objective: %s",
+    kc: "Key Concept: %s",
   })
 
   def self.get_type(tag_string)
@@ -44,7 +48,9 @@ module Tagger
     template = TAG_NAME_TEMPLATES[type]
     return if template.nil?
 
-    template % data.capitalize
+    # Capitalize first letter of data but do not downcase other letters
+    capitalized_data = "#{data[0].upcase}#{data[1..-1]}"
+    template % capitalized_data
   end
 
   def self.get_hash(tag_string)

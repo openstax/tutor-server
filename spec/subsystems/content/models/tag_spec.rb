@@ -66,7 +66,7 @@ RSpec.describe Content::Models::Tag, type: :model do
     expect(tag.visible).to be true
   end
 
-  it 'creates a Length tag' do
+  it 'creates Length tags' do
     tag = FactoryBot.create :content_tag, name: nil, value: 'time-short'
     expect(tag.name).to eq('Length: S')
     expect(tag.tag_type).to eq 'length'
@@ -83,6 +83,34 @@ RSpec.describe Content::Models::Tag, type: :model do
     expect(tag.name).to eq('Length: L')
     expect(tag.tag_type).to eq 'length'
     expect(tag.data).to eq 'long'
+    expect(tag.visible).to be true
+  end
+
+  it 'creates TLO tags' do
+    tag = FactoryBot.create :content_tag, name: nil, value: 'TLO:NAT-2.0'
+    expect(tag.name).to eq('Thematic Learning Objective: NAT-2.0')
+    expect(tag.tag_type).to eq 'tlo'
+    expect(tag.data).to eq 'NAT-2.0'
+    expect(tag.visible).to be true
+
+    tag = FactoryBot.create :content_tag, name: nil, value: 'TLO:WXT-3.0'
+    expect(tag.name).to eq('Thematic Learning Objective: WXT-3.0')
+    expect(tag.tag_type).to eq 'tlo'
+    expect(tag.data).to eq 'WXT-3.0'
+    expect(tag.visible).to be true
+  end
+
+  it 'creates KC tags' do
+    tag = FactoryBot.create :content_tag, name: nil, value: 'KC:3.1.I'
+    expect(tag.name).to eq('Key Concept: 3.1.I')
+    expect(tag.tag_type).to eq 'kc'
+    expect(tag.data).to eq '3.1.I'
+    expect(tag.visible).to be true
+
+    tag = FactoryBot.create :content_tag, name: nil, value: 'KC:9.3.I'
+    expect(tag.name).to eq('Key Concept: 9.3.I')
+    expect(tag.tag_type).to eq 'kc'
+    expect(tag.data).to eq '9.3.I'
     expect(tag.visible).to be true
   end
 end
