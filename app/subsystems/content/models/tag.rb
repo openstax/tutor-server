@@ -17,7 +17,7 @@ class Content::Models::Tag < IndestructibleRecord
 
   # List the different types of tags
   enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length,
-                   :cnxmod, :id, :requires_context, :cnxfeature ]
+                   :cnxmod, :id, :requires_context, :cnxfeature, :tlo, :kc ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
@@ -25,8 +25,7 @@ class Content::Models::Tag < IndestructibleRecord
   before_save :update_tag_type_data_and_visible
 
   IMPORT_TAG_TYPES  = Set[ :lo, :aplo, :cnxmod ]
-  MAPPING_TAG_TYPE = :lo
-  VISIBLE_TAG_TYPES = Set[ :lo, :aplo, :teks, :dok, :blooms, :length ]
+  VISIBLE_TAG_TYPES = Set[ :lo, :aplo, :teks, :dok, :blooms, :length, :tlo, :kc ]
 
   def book_location
     Tagger.get_book_location(value)
@@ -38,10 +37,6 @@ class Content::Models::Tag < IndestructibleRecord
 
   def import?
     IMPORT_TAG_TYPES.include?(tag_type.to_sym)
-  end
-
-  def mapping?
-    MAPPING_TAG_TYPE == tag_type.to_sym
   end
 
   protected
