@@ -145,16 +145,18 @@ class Lms::Launch
     end
   end
 
-  def can_auto_create_context?
-    app.owner.is_a? CourseProfile::Models::Course
+  def attempt_context_creation
+    context_id = request_parameters[:context_id]
+    if context.nil? && context_id.present?
+      @context = Lms::Models::Context.find_by(id: context_id) ||
+                 create_context!
+    end
+    context
   end
 
-  def auto_create_context!
-    raise "Cannot auto create context" if !can_auto_create_context?
-
+  def create_context!
     course = app.owner
-
-    raise LmsDisabled if !course.is_lms_enabled
+    raise LmsDisabled if course && !course.is_lms_enabled
 
     # In theory, we could allow multiple LTI context IDs to point to the same Tutor course (e.g. if
     # one teacher has 3 sections and uses 3 LMS courses to point to one Tutor course).  For this reason

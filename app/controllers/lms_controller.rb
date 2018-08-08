@@ -39,6 +39,7 @@ class LmsController < ApplicationController
     # trapped in an iframe for the rest of the launch.
 
     begin
+
       launch = Lms::Launch.from_request(request)
 
       log(:debug) { launch.formatted_data(include_everything: true) }
@@ -51,41 +52,39 @@ class LmsController < ApplicationController
 
       # Do some early error checking
 
+
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
 
       fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
 
-      # For the time being, all apps are course-owned, meaning we can infer the
-      # course associated to a launch by looking at the app keys inside the launch.
-      # This means if we don't have a context yet, we should be able to autocreate it.
-      # Do that here, and freak out if we can't.  When we add admin-installed apps,
-      # remove the freak-out.
-
-      context = launch.context
-
-      if context.nil? && launch.can_auto_create_context?
-        context = launch.auto_create_context!
-      end
-
-      raise "Context was not created for launch #{session[:launch_id]}" if context.nil?
+      context = launch.attempt_context_creation
 
       # FUTURE FUNCTIONALITY SKETCH
       #
-      # When we let admins install Tutor, we'll need teachers to pair their Tutor course
-      # with their LMS course.  At that point, something like the following logic will
-      # be needed.  context won't be nil now because all apps are owned by courses, so
+      # context won't be nil now because all apps are owned by courses, so
       # the auto create above should succeed.
       #
-      # if context.nil?
-      #   if launch.is_student?
-      #     # Show a "your teacher needs do something before you can open Tutor" message
-      #   else
-      #     # teacher will need to pair their course to the LMS course after
-      #     # authentication.  The `authenticate` action will either need to redirect
-      #     # to a `pair` action/flow, or `complete_launch` will need to redirect to
-      #     # such a flow before it calls its handler.
-      #   end
-      # end
+      # When we let admins install Tutor, we'll need teachers to pair
+      # Tutor course with their LMS course.  At that point, something like
+      # the following logic will be needed.
+      #
+
+      if context.course.nil?
+        if launch.is_instructor?
+          # teacher will need to pair their course to the LMS course
+          if current_user.is_anonymous?
+            redirect_to_accounts(return_to: lms_launch_url, context_id: context.id) and return
+          end
+
+        else
+          # Show a "your teacher needs do something before you can open Tutor" message
+          fail_for_unpaired and return
+          after
+          # authentication.  The `authenticate` action will either need to redirect
+          # to a `pair` action/flow, or `complete_launch` will need to redirect to
+          # such a flow before it calls its handler.
+        end
+      end
 
       fail_for_lms_disabled(launch, context) and return if !context.course.is_lms_enabled
 
@@ -181,6 +180,27 @@ class LmsController < ApplicationController
   end
 
   protected
+
+  def redirect_to_accounts(return_to: nil)
+    redirect_to openstax_accounts.login_url(
+                  sp: OpenStax::Api::Params.sign(
+                    params: {
+                      uuid:  launch.lms_tc_scoped_user_id,
+                      name:  launch.full_name,
+                      email: launch.email,
+                      school: launch.school,
+                      role:  launch.role
+                    },
+                    secret: OpenStax::Accounts.configuration.openstax_application_secret
+                  ),
+                  return_to: return_to
+                )
+  end
+
+  def fail_for_unpaired
+    log(:info) { "Attempting to launch (#{session[:launch_id]}) into an not-yet-paired course" }
+    render_minimal_error(:fail_unpaired)
+  end
 
   def fail_for_lms_disabled(launch, context)
     log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \

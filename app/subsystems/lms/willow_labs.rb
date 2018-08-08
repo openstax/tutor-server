@@ -10,8 +10,16 @@ class Lms::WillowLabs
     nil
   end
 
+  def owner
+    nil
+  end
+
   def self.config
     Rails.application.secrets.dig(:lms, ID) || {}
+  end
+
+  def key
+    self.class.config['key']
   end
 
   def secret

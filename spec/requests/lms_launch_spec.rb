@@ -16,6 +16,16 @@ RSpec.describe 'LMS Launch', type: :request do
   }
 
   context "student launches" do
+
+    context "not yet paired" do
+      before(:each) {
+        simulator.install_tutor(app: Lms::WillowLabs, course: "physics")
+        simulator.set_launch_defaults(course: "physics")
+      }
+
+
+    end
+
     context "not enrolled" do
       it 'redirects the student to enrollment' do
         expect_any_instance_of(Lms::Launch).to receive(:update_tool_consumer_metadata!)
@@ -26,6 +36,8 @@ RSpec.describe 'LMS Launch', type: :request do
 
         expect(response.body).to match("/enroll/#{course.uuid}")
         expect(UserIsCourseStudent[course: course, user: user]).to eq false
+
+
         expect_course_score_callback_count(user: bob_user, count: 1)
       end
     end
@@ -167,7 +179,6 @@ RSpec.describe 'LMS Launch', type: :request do
       launch_helper.complete_the_launch_locally
 
       course.update_attribute(:is_lms_enabled, false)
-
       simulator.launch(user: "user")
       expect_error("teacher launches are also disabled")
     end
