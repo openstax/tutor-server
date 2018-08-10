@@ -233,7 +233,6 @@ group :development, :test do
 
   # Show failing parallel specs instantly
   gem 'rspec-instafail'
-
   # Call 'debugger' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 
@@ -250,7 +249,7 @@ group :development, :test do
   gem 'quiet_assets'
 
   # Use RSpec for tests
-  gem 'rspec-rails', '~> 3.0'
+  gem 'rspec-rails', '~> 3.8.0'
 
   gem 'rspec-collection_matchers'
 
