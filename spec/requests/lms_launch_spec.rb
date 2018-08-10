@@ -18,12 +18,13 @@ RSpec.describe 'LMS Launch', type: :request do
   context "student launches" do
 
     context "not yet paired" do
-      before(:each) {
-        simulator.install_tutor(app: Lms::WillowLabs, course: "physics")
+      it 'displays message about unconfigured course' do
+        simulator.install_tutor(app: Lms::WillowLabs.new, course: "physics")
         simulator.set_launch_defaults(course: "physics")
-      }
-
-
+        simulator.add_student("bob")
+        simulator.launch(user: "bob", assignment: "tutor")
+        expect(response.body).to match 'course is not yet configured'
+      end
     end
 
     context "not enrolled" do
@@ -74,7 +75,6 @@ RSpec.describe 'LMS Launch', type: :request do
 
         student = AddUserAsPeriodStudent[period: period, user: bob_user].student
         CourseMembership::InactivateStudent[student: student]
-
         simulator.launch(user: "bob", assignment: "tutor")
         bob_user = launch_helper.complete_the_launch_locally
 
@@ -84,6 +84,20 @@ RSpec.describe 'LMS Launch', type: :request do
   end
 
   context "teacher launches" do
+
+    context "not yet paired" do
+      fit 'displays message about unconfigured course' do
+        simulator.install_tutor(app: Lms::WillowLabs.new, course: "physics")
+        simulator.set_launch_defaults(course: "physics")
+        simulator.add_teacher("teacher")
+        simulator.launch(user: "teacher", assignment: "tutor")
+        teacher_user = launch_helper.complete_the_launch_locally
+
+        launch_helper.pair_launch_to_course
+
+      end
+    end
+
     context "not course teacher yet" do
       it 'makes the user a teacher and redirects to course' do
         expect_any_instance_of(Lms::Launch).to receive(:update_tool_consumer_metadata!)

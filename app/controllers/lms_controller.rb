@@ -70,23 +70,18 @@ class LmsController < ApplicationController
       #
 
       if context.course.nil?
-        if launch.is_instructor?
-          # teacher will need to pair their course to the LMS course
-          if current_user.is_anonymous?
-            redirect_to_accounts(return_to: lms_launch_url, context_id: context.id) and return
-          end
+        if launch.is_student?
 
-        else
           # Show a "your teacher needs do something before you can open Tutor" message
           fail_for_unpaired and return
-          after
+
           # authentication.  The `authenticate` action will either need to redirect
           # to a `pair` action/flow, or `complete_launch` will need to redirect to
           # such a flow before it calls its handler.
         end
       end
 
-      fail_for_lms_disabled(launch, context) and return if !context.course.is_lms_enabled
+      fail_for_lms_disabled(launch, context) and return if context.course and !context.course.is_lms_enabled
 
     rescue Lms::Launch::LmsDisabled => ee
       fail_for_lms_disabled(launch, context) and return
@@ -141,7 +136,7 @@ class LmsController < ApplicationController
     # their course (or the enrollment screen into it)
 
     begin
-      launch = Lms::Launch.from_id(session.delete(:launch_id))
+      launch = Lms::Launch.from_id(session[:launch_id])
     rescue Lms::Launch::CouldNotLoadLaunch => ee
       fail_for_already_used and return
     end
@@ -167,6 +162,9 @@ class LmsController < ApplicationController
         is_unenrolled_student = true
       end
     elsif launch.is_instructor?
+      if course.nil?
+        redirect_to lms_pair_course_url and return
+      end
       if !UserIsCourseTeacher[user: current_user, course: course]
         AddUserAsCourseTeacher[user: current_user, course: course]
       end
@@ -179,23 +177,11 @@ class LmsController < ApplicationController
     end
   end
 
-  protected
-
-  def redirect_to_accounts(return_to: nil)
-    redirect_to openstax_accounts.login_url(
-                  sp: OpenStax::Api::Params.sign(
-                    params: {
-                      uuid:  launch.lms_tc_scoped_user_id,
-                      name:  launch.full_name,
-                      email: launch.email,
-                      school: launch.school,
-                      role:  launch.role
-                    },
-                    secret: OpenStax::Accounts.configuration.openstax_application_secret
-                  ),
-                  return_to: return_to
-                )
+  def pair_course
+    @course_infos = CollectCourseInfo[user: current_user]
   end
+
+  protected
 
   def fail_for_unpaired
     log(:info) { "Attempting to launch (#{session[:launch_id]}) into an not-yet-paired course" }

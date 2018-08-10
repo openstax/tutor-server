@@ -427,6 +427,7 @@ Rails.application.routes.draw do
     post :launch
     get :launch_authenticate
     get :complete_launch
+    get :pair_course
     post :ci_launch
   end
 
