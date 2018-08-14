@@ -11,7 +11,7 @@ module Tutor
     end
 
     # called by assets initializer as it boots
-    def self.read_manifiest
+    def self.read_manifest
       begin
         @manifest = JSON.parse Rails.root.join('public', 'assets', 'rev-manifest.json').read
         @manifest.default_proc = proc do |_, asset|
