@@ -51,9 +51,10 @@ RSpec.describe WebviewController, type: :controller do
 
     context "as a signed in user" do
       render_views
-
-      it 'sets boostrap data in script tag' do
+      before(:each) {
         controller.sign_in registered_user
+      }
+      it 'sets boostrap data in script tag' do
         fake_flash(:alert, "Alarm!")
 
         get :index
@@ -65,6 +66,11 @@ RSpec.describe WebviewController, type: :controller do
           'user' => Api::V1::UserRepresenter.new(registered_user).as_json,
           'flash' => {alert: "Alarm!"}.as_json
         })
+      end
+
+      it 'has url to tutor js asset' do
+        get :index
+        expect(response.body).to include "src='#{Rails.application.secrets.assets_url}/dist/tutor.js'"
       end
     end
 
