@@ -1,12 +1,13 @@
 module Tutor
   module Assets
 
-    def self.[](asset)
-      if @manifest.nil?
-        "#{Rails.application.secrets.assets_url}/dist/#{asset}"
+    def self.[](asset, ext)
+      if @manifest.present? # if it's in manifest it's minimized
+        asset = @manifest["#{asset}.min.#{ext}"]
       else
-        @manifest["/assets/#{asset}.min"]
+        asset = "#{asset}.#{ext}"
       end
+      "#{Rails.application.secrets.assets_url}/#{asset}"
     end
 
     # called by assets initializer as it boots
@@ -24,7 +25,7 @@ module Tutor
 
     module Scripts
       def self.[](asset)
-        Tutor::Assets[asset] + '.js'
+        Tutor::Assets["#{asset}", 'js']
       end
     end
 
