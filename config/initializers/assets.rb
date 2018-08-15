@@ -22,3 +22,7 @@ Rails.application.config.assets.precompile += %w( home.css
                                                   customer_service.js
                                                   research.css
                                                   research.js )
+
+# initialize Assets
+require 'tutor/assets'
+Tutor::Assets.read_manifest if Rails.env.production?
