@@ -22,6 +22,7 @@ class SearchCourses
     relation = CourseProfile::Models::Course.without_deleted.joins do
       [school.outer,
        offering.outer,
+       periods.outer,
        teachers.outer.role.outer.profile.outer.account.outer,
        course_ecosystems.outer.ecosystem.outer]
     end.uniq
@@ -36,6 +37,7 @@ class SearchCourses
           next @items = @items.none if sanitized_queries.empty?
 
           @items = @items.where do
+            id.in(sanitized_queries)
             name.like_any(sanitized_queries) |
             school.name.like_any(sanitized_queries) |
             offering.title.like_any(sanitized_queries) |
@@ -46,6 +48,7 @@ class SearchCourses
             teachers.role.profile.account.first_name.like_any(sanitized_queries) |
             teachers.role.profile.account.last_name.like_any(sanitized_queries) |
             teachers.role.profile.account.full_name.like_any(sanitized_queries) |
+            periods.enrollment_code.like_any(sanitized_queries) |
             course_ecosystems.ecosystem.title.like_any(sanitized_queries)
           end
         end
@@ -63,9 +66,7 @@ class SearchCourses
         ids.each do |id|
           sanitized_ids = to_string_array(id, append_wildcard: false, prepend_wildcard: false)
           next @items = @items.none if sanitized_ids.empty?
-          @items = @items.joins(:periods).where{
-            periods.enrollment_code.like_any sanitized_ids
-          }
+          @items = @items.where{ periods.enrollment_code.like_any sanitized_ids }
         end
       end
 
