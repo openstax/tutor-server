@@ -183,6 +183,17 @@ RSpec.describe SearchCourses, type: :routine, speed: :medium do
     expect(courses).to eq [course_3]
   end
 
+  it 'returns courses by id' do
+    courses = described_class[query: "id:#{course_1.id}", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_1]
+  end
+
+  it 'returns courses by enrollment code' do
+    period = FactoryBot.create :course_membership_period, course: course_1
+    courses = described_class[query: "enrollment:#{period.enrollment_code}", order_by: 'ID asc'].to_a
+    expect(courses).to eq [course_1]
+  end
+
   it 'excludes preview courses by default' do
     courses = described_class[query: "", order_by: 'ID asc'].to_a
     expect(courses).to eq [course_1, course_2, course_3]

@@ -51,6 +51,24 @@ class SearchCourses
         end
       end
 
+      with.keyword :id do |ids|
+        ids.each do |id|
+          sanitized_ids = to_string_array(id, append_wildcard: false, prepend_wildcard: false)
+          next @items = @items.none if sanitized_ids.empty?
+          @items = @items.where{self.id.in sanitized_ids}
+        end
+      end
+
+      with.keyword :enrollment do |ids|
+        ids.each do |id|
+          sanitized_ids = to_string_array(id, append_wildcard: false, prepend_wildcard: false)
+          next @items = @items.none if sanitized_ids.empty?
+          @items = @items.joins(:periods).where{
+            periods.enrollment_code.like_any sanitized_ids
+          }
+        end
+      end
+
       with.keyword :name do |names|
         names.each do |name|
           sanitized_names = to_string_array(name, append_wildcard: true, prepend_wildcard: true)
