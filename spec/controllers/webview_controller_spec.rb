@@ -70,7 +70,7 @@ RSpec.describe WebviewController, type: :controller do
 
       it 'has url to tutor js asset' do
         get :index
-        expect(response.body).to include "src='#{Rails.application.secrets.assets_url}/tutor.js'"
+        expect(response.body).to include "src='#{Rails.application.secrets.assets_url}/dist/tutor.js'"
       end
     end
 

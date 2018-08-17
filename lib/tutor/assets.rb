@@ -5,7 +5,7 @@ module Tutor
       if @manifest.present? # if it's in manifest it's minimized
         asset = @manifest["#{asset}.min.#{ext}"]
       else
-        asset = "#{asset}.#{ext}"
+        asset = "dist/#{asset}.#{ext}"
       end
       "#{Rails.application.secrets.assets_url}/#{asset}"
     end
