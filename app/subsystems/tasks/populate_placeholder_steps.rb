@@ -8,7 +8,7 @@ class Tasks::PopulatePlaceholderSteps
 
   protected
 
-  def exec(task:, force: false, lock_task: true)
+  def exec(task:, force: false, lock_task: true, background: false)
     task.lock! if lock_task
     outputs.task = task
     outputs.accepted = true
@@ -24,13 +24,15 @@ class Tasks::PopulatePlaceholderSteps
 
     unless task.pes_are_assigned
       # Populate PEs
-      outputs.accepted = false \
-        unless populate_placeholder_steps(task: task,
-                                          group_type: :personalized_group,
-                                          biglearn_api_method: :fetch_assignment_pes,
-                                          biglearn_controls_slots: biglearn_controls_pe_slots)
-
-      task.pes_are_assigned = true
+      task, accepted = populate_placeholder_steps(
+        task: task,
+        group_type: :personalized_group,
+        boolean_attribute: :pes_are_assigned,
+        biglearn_api_method: :fetch_assignment_pes,
+        biglearn_controls_slots: biglearn_controls_pe_slots,
+        background: background
+      )
+      outputs.accepted = false unless accepted
     end
 
     taskings = task.taskings
@@ -58,13 +60,15 @@ class Tasks::PopulatePlaceholderSteps
          end
 
         # Populate SPEs
-        outputs.accepted = false \
-          unless populate_placeholder_steps(task: task,
-                                            group_type: :spaced_practice_group,
-                                            biglearn_api_method: :fetch_assignment_spes,
-                                            biglearn_controls_slots: biglearn_controls_spe_slots)
-
-        task.spes_are_assigned = true
+        task, accepted = populate_placeholder_steps(
+          task: task,
+          group_type: :spaced_practice_group,
+          boolean_attribute: :spes_are_assigned,
+          biglearn_api_method: :fetch_assignment_spes,
+          biglearn_controls_slots: biglearn_controls_spe_slots,
+          background: background
+        )
+        outputs.accepted = false unless accepted
       end
     end
 
@@ -82,14 +86,23 @@ class Tasks::PopulatePlaceholderSteps
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
-  def populate_placeholder_steps(task:, group_type:, biglearn_api_method:, biglearn_controls_slots:)
+  def populate_placeholder_steps(task:, group_type:, boolean_attribute:,
+                                 biglearn_api_method:, biglearn_controls_slots:, background:)
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
+    max_attempts = background || task.practice? ? 30 : 1
+    sleep_interval = background || task.practice? ? 1.second : 0
 
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs
-      result = OpenStax::Biglearn::Api.public_send biglearn_api_method, task: task
+      result = OpenStax::Biglearn::Api.public_send biglearn_api_method,
+                                                   task: task,
+                                                   inline_max_attempts: max_attempts,
+                                                   inline_sleep_interval: sleep_interval
+      # Bail if we are doing this inline and Biglearn did not return a proper result
+      return [ task, false ] if !result[:accepted] && !background
+
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
@@ -168,7 +181,7 @@ class Tasks::PopulatePlaceholderSteps
       placeholder_steps = task.task_steps.select do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
-      return true if placeholder_steps.empty?
+      return [ task, true ] if placeholder_steps.empty?
 
       ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
@@ -176,8 +189,12 @@ class Tasks::PopulatePlaceholderSteps
       result = OpenStax::Biglearn::Api.public_send(
         biglearn_api_method,
         task: task,
-        max_num_exercises: placeholder_steps.size
+        max_num_exercises: placeholder_steps.size,
+        inline_max_attempts: max_attempts,
+        inline_sleep_interval: sleep_interval
       )
+      # Bail if we are doing this inline and Biglearn did not return a proper result
+      return [ task, false ] if !result[:accepted] && !background
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
@@ -215,11 +232,12 @@ class Tasks::PopulatePlaceholderSteps
       end
     end
 
-    task.update_attribute(:spy, task.spy.merge(spy_info.except('exercises')))
+    task.spy = task.spy.merge(spy_info.except('exercises'))
+    task.send "#{boolean_attribute}=", true
 
     task.task_steps.reset if task.persisted?
 
-    !!result[:accepted]
+    [ task, !!result[:accepted] ]
   end
 
 end

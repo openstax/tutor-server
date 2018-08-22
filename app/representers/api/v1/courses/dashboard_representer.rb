@@ -184,6 +184,10 @@ module Api::V1::Courses
              writeable: false,
              extend: Course
 
+    property :all_tasks_are_ready,
+             readable: true,
+             writeable: false
+
     collection :research_surveys,
                readable: true,
                writeable: false,

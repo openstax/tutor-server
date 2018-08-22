@@ -503,7 +503,7 @@ module OpenStax::Biglearn::Api
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
                            create: false, perform_later: false,
                            response_status_key: nil, accepted_response_status: [],
-                           inline_max_attempts: 30, inline_sleep_interval: 1.second)
+                           inline_max_attempts: 1, inline_sleep_interval: 0)
       include_sequence_number = sequence_number_model_key.present? &&
                                 sequence_number_model_class.present?
 
@@ -561,7 +561,7 @@ module OpenStax::Biglearn::Api
                          sequence_number_model_key: nil, sequence_number_model_class: nil,
                          create: false, perform_later: false,
                          response_status_key: nil, accepted_response_status: [],
-                         inline_max_attempts: 30, inline_sleep_interval: 1.second)
+                         inline_max_attempts: 1, inline_sleep_interval: 0)
       include_sequence_numbers = sequence_number_model_key.present? &&
                                  sequence_number_model_class.present?
 
