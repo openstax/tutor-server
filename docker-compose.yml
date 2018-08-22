@@ -8,6 +8,7 @@ services:
      - "3001:3001"
     volumes:
      - .:/code
+     - /code/tmp
     links:
      - redis
      - postgres
