@@ -47,6 +47,8 @@ module DashboardRoutineMethods
     end
 
     outputs.tasks = had_pes + got_pes
-    outputs.all_tasks_are_ready = still_need_pes.empty?
+    # TODO: Maybe make this boolean check background jobs (ReassignPublishedPeriodTaskPlans)
+    #       so we can return true when there are no tasks
+    outputs.all_tasks_are_ready = !outputs.tasks.empty? && still_need_pes.empty?
   end
 end
