@@ -85,7 +85,7 @@ class Tasks::PopulatePlaceholderSteps
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
-    max_attempts = background || task.practice? ? 30 : 1
+    max_attempts = background ? 600 : task.practice? ? 30 : 1
     sleep_interval = background || task.practice? ? 1.second : 0
 
     if biglearn_controls_slots

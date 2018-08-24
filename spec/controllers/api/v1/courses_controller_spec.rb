@@ -687,6 +687,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               complete_exercise_count: 3,
             )
           ),
+          all_tasks_are_ready: true,
           role: {
             id: @student_role.id.to_s,
             type: 'student'
@@ -758,6 +759,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             ]
           },
           tasks: [],
+          all_tasks_are_ready: true,
           plans: a_collection_including(
             a_hash_including(
               id: @plan.id.to_s,
@@ -799,6 +801,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           ]
         })
         expect(response.body_as_hash[:tasks]).not_to be_empty
+        expect(response.body_as_hash[:all_tasks_are_ready]).to eq true
         expect(response.body_as_hash[:plans]).to be_nil
       end
 
@@ -949,62 +952,61 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it "works without a role specified" do
         api_get :cc_dashboard, @student_token, parameters: { id: @course.id }
 
-        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
-
-          "tasks" => a_collection_including(
+        expect(response.body_as_hash).to match(
+          tasks: a_collection_including(
             a_hash_including(
-              "id" => @task_1.id.to_s,
-              "title" => @task_1.title,
-              "last_worked_at" => be_kind_of(String),
-              "type" => 'concept_coach',
-              "complete" => true
+              id: @task_1.id.to_s,
+              title: @task_1.title,
+              last_worked_at: be_kind_of(String),
+              type: 'concept_coach',
+              complete: true
             ),
             a_hash_including(
-              "id" => @task_2.id.to_s,
-              "title" => @task_2.title,
-              "last_worked_at" => be_kind_of(String),
-              "type" => 'concept_coach',
-              "complete" => true
+              id: @task_2.id.to_s,
+              title: @task_2.title,
+              last_worked_at: be_kind_of(String),
+              type: 'concept_coach',
+              complete: true
             ),
             a_hash_including(
-              "id" => @task_3.id.to_s,
-              "title" => @task_3.title,
-              "last_worked_at" => be_kind_of(String),
-              "type" => 'concept_coach',
-              "complete" => true
+              id: @task_3.id.to_s,
+              title: @task_3.title,
+              last_worked_at: be_kind_of(String),
+              type: 'concept_coach',
+              complete: true
             )
           ),
-          "role" => {
-            "id" => @student_role.id.to_s,
-            "type" => 'student'
+          role: {
+            id: @student_role.id.to_s,
+            type: 'student'
           },
-          "course" => {
-            "name" => 'Biology 101',
-            "teachers" => [
-              { 'id' => @teacher_role.teacher.id.to_s,
-                'role_id' => @teacher_role.id.to_s,
-                'first_name' => 'Bob',
-                'last_name' => 'Newhart' }
+          course: {
+            name: 'Biology 101',
+            teachers: [
+              { id: @teacher_role.teacher.id.to_s,
+                role_id: @teacher_role.id.to_s,
+                first_name: 'Bob',
+                last_name: 'Newhart' }
             ]
           },
-          "chapters" => [
+          chapters: [
             {
-              "id" => @chapter_2.id.to_s,
-              "title" => @chapter_2.title,
-              "chapter_section" => [2],
-              "pages" => [
+              id: @chapter_2.id.to_s,
+              title: @chapter_2.title,
+              chapter_section: [2],
+              pages: [
                 {
-                  "id" => @page_3.id.to_s,
-                  "title" => @page_3.title,
-                  "uuid" => @page_3.uuid,
-                  "version" => @page_3.version,
-                  "chapter_section" => [2, 1],
-                  "last_worked_at" => be_kind_of(String),
-                  "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  id: @page_3.id.to_s,
+                  title: @page_3.title,
+                  uuid: @page_3.uuid,
+                  version: @page_3.version,
+                  chapter_section: [2, 1],
+                  last_worked_at: be_kind_of(String),
+                  exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                     {
-                      "id" => a_kind_of(String),
-                      "is_completed" => true,
-                      "is_correct" => true
+                      id: a_kind_of(String),
+                      is_completed: true,
+                      is_correct: true
                     }
                   end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
                           .select{ |k_ago, ex_count| k_ago != :random && k_ago <= 2 }
@@ -1012,46 +1014,46 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                           .times
                           .map do
                     {
-                      "id" => a_kind_of(String),
-                      "is_completed" => true,
-                      "is_correct" => false
+                      id: a_kind_of(String),
+                      is_completed: true,
+                      is_correct: false
                     }
                   end
                 }
               ]
             },
             {
-              "id" => @chapter_1.id.to_s,
-              "title" => @chapter_1.title,
-              "chapter_section" => [1],
-              "pages" => [
+              id: @chapter_1.id.to_s,
+              title: @chapter_1.title,
+              chapter_section: [1],
+              pages: [
                 {
-                  "id" => @page_2.id.to_s,
-                  "title" => @page_2.title,
-                  "uuid" => @page_2.uuid,
-                  "version" => @page_2.version,
-                  "chapter_section" => [1, 2],
-                  "last_worked_at" => be_kind_of(String),
-                  "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  id: @page_2.id.to_s,
+                  title: @page_2.title,
+                  uuid: @page_2.uuid,
+                  version: @page_2.version,
+                  chapter_section: [1, 2],
+                  last_worked_at: be_kind_of(String),
+                  exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                     {
-                      "id" => a_kind_of(String),
-                      "is_completed" => true,
-                      "is_correct" => false
+                      id: a_kind_of(String),
+                      is_completed: true,
+                      is_correct: false
                     }
                   end
                 },
                 {
-                  "id" => @page_1.id.to_s,
-                  "title" => @page_1.title,
-                  "uuid" => @page_1.uuid,
-                  "version" => @page_1.version,
-                  "chapter_section" => [1, 1],
-                  "last_worked_at" => be_kind_of(String),
-                  "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  id: @page_1.id.to_s,
+                  title: @page_1.title,
+                  uuid: @page_1.uuid,
+                  version: @page_1.version,
+                  chapter_section: [1, 1],
+                  last_worked_at: be_kind_of(String),
+                  exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                     {
-                      "id" => a_kind_of(String),
-                      "is_completed" => true,
-                      "is_correct" => true
+                      id: a_kind_of(String),
+                      is_completed: true,
+                      is_correct: true
                     }
                   end
                 }
@@ -1075,74 +1077,74 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         Tasks::CcPageStatsView.refresh
         api_get :cc_dashboard, @teacher_token, parameters: { id: @course.id }
 
-        expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
-          "role" => {
-            "id" => @teacher_role.id.to_s,
-            "type" => 'teacher'
+        expect(response.body_as_hash).to match(
+          role: {
+            id: @teacher_role.id.to_s,
+            type: 'teacher'
           },
-          "course" => {
-            "name" => 'Biology 101',
-            "teachers" => [
-              { 'id' => @teacher_role.teacher.id.to_s,
-                'role_id' => @teacher_role.id.to_s,
-                'first_name' => 'Bob',
-                'last_name' => 'Newhart' }
+          course: {
+            name: 'Biology 101',
+            teachers: [
+              { id: @teacher_role.teacher.id.to_s,
+                role_id: @teacher_role.id.to_s,
+                first_name: 'Bob',
+                last_name: 'Newhart' }
             ],
-            "periods" => [
+            periods: [
               {
-                "id" => @zeroth_period.id.to_s,
-                "name" => @zeroth_period.name,
-                "chapters" => []
+                id: @zeroth_period.id.to_s,
+                name: @zeroth_period.name,
+                chapters: []
               },
               {
-                "id" => @period.id.to_s,
-                "name" => @period.name,
-                "chapters" => [
+                id: @period.id.to_s,
+                name: @period.name,
+                chapters: [
                   {
-                    "id" => @chapter_2.id.to_s,
-                    "title" => @chapter_2.title,
-                    "chapter_section" => [2],
-                    "pages" => [
+                    id: @chapter_2.id.to_s,
+                    title: @chapter_2.title,
+                    chapter_section: [2],
+                    pages: [
                       {
-                        "id" => @page_3.id.to_s,
-                        "title" => @page_3.title,
-                        "uuid" => @page_3.uuid,
-                        "version" => @page_3.version,
-                        "chapter_section" => [2, 1],
-                        "completed" => 1,
-                        "in_progress" => 0,
-                        "not_started" => 1,
-                        "original_performance" => 1.0
+                        id: @page_3.id.to_s,
+                        title: @page_3.title,
+                        uuid: @page_3.uuid,
+                        version: @page_3.version,
+                        chapter_section: [2, 1],
+                        completed: 1,
+                        in_progress: 0,
+                        not_started: 1,
+                        original_performance: 1.0
                       }
                     ]
                   },
                   {
-                    "id" => @chapter_1.id.to_s,
-                    "title" => @chapter_1.title,
-                    "chapter_section" => [1],
-                    "pages" => [
+                    id: @chapter_1.id.to_s,
+                    title: @chapter_1.title,
+                    chapter_section: [1],
+                    pages: [
                       {
-                        "id" => @page_2.id.to_s,
-                        "title" => @page_2.title,
-                        "uuid" => @page_2.uuid,
-                        "version" => @page_2.version,
-                        "chapter_section" => [1, 2],
-                        "completed" => 1,
-                        "in_progress" => 0,
-                        "not_started" => 1,
-                        "original_performance" => 0.0
+                        id: @page_2.id.to_s,
+                        title: @page_2.title,
+                        uuid: @page_2.uuid,
+                        version: @page_2.version,
+                        chapter_section: [1, 2],
+                        completed: 1,
+                        in_progress: 0,
+                        not_started: 1,
+                        original_performance: 0.0
                       },
                       {
-                        "id" => @page_1.id.to_s,
-                        "title" => @page_1.title,
-                        "uuid" => @page_1.uuid,
-                        "version" => @page_1.version,
-                        "chapter_section" => [1, 1],
-                        "completed" => 1,
-                        "in_progress" => 1,
-                        "not_started" => 0,
-                        "original_performance" => 0.8,
-                        "spaced_practice_performance" => 0.0
+                        id: @page_1.id.to_s,
+                        title: @page_1.title,
+                        uuid: @page_1.uuid,
+                        version: @page_1.version,
+                        chapter_section: [1, 1],
+                        completed: 1,
+                        in_progress: 1,
+                        not_started: 0,
+                        original_performance: 0.8,
+                        spaced_practice_performance: 0.0
                       }
                     ]
                   }
@@ -1150,7 +1152,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               }
             ]
           },
-          "tasks" => []
+          tasks: []
         )
       end
 
@@ -1158,22 +1160,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         api_get :cc_dashboard, @teacher_token,
                 parameters: { id: @course.id, role_id: @student_role }
 
-        response_body = HashWithIndifferentAccess[response.body_as_hash]
-        expect(response_body['role']).to eq({
-          'id' => @student_role.id.to_s,
-          'type' => 'student'
+        expect(response.body_as_hash[:role]).to match({
+          id: @student_role.id.to_s,
+          type: 'student'
         })
-        expect(response_body['course']).to eq({
-          'name' => 'Biology 101',
-          'teachers' => [
-            { 'id' => @teacher_role.teacher.id.to_s,
-              'role_id' => @teacher_role.id.to_s,
-              'first_name' => 'Bob',
-              'last_name' => 'Newhart' }
+        expect(response.body_as_hash[:course]).to match({
+          name: 'Biology 101',
+          teachers: [
+            { id: @teacher_role.teacher.id.to_s,
+              role_id: @teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart' }
           ]
         })
-        expect(response_body['chapters']).not_to be_empty
-        expect(response_body['tasks']).not_to be_empty
+        expect(response.body_as_hash[:chapters]).not_to be_empty
+        expect(response.body_as_hash[:tasks]).not_to be_empty
       end
     end
   end

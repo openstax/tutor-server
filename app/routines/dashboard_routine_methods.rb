@@ -47,8 +47,15 @@ module DashboardRoutineMethods
     end
 
     outputs.tasks = had_pes + got_pes
-    # TODO: Maybe make this boolean check background jobs (ReassignPublishedPeriodTaskPlans)
-    #       so we can return true when there are no tasks
-    outputs.all_tasks_are_ready = !outputs.tasks.empty? && still_need_pes.empty?
+    outputs.all_tasks_are_ready = still_need_pes.empty? && role_type != :student ||
+                                  Tasks::Models::TaskPlan
+                                    .joins(:tasking_plans)
+                                    .preload(:tasking_plans)
+                                    .where(tasking_plans: {
+                                      target_id: role.student.course_membership_period_id,
+                                      target_type: 'CourseMembership::Models::Period'
+                                    })
+                                    .where { first_published_at != nil }
+                                    .count <= outputs.tasks.size
   end
 end
