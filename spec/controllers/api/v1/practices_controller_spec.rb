@@ -85,6 +85,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
       expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
         {
+          accepted: true,
           exercises: [],
           spy_info: {}
         }
