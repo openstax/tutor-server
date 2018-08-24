@@ -87,6 +87,7 @@ class Tasks::PopulatePlaceholderSteps
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
     max_attempts = background ? 600 : task.practice? ? 30 : 1
     sleep_interval = background || task.practice? ? 1.second : 0
+    retry_in_background = !background && !task.practice?
 
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs
@@ -94,8 +95,8 @@ class Tasks::PopulatePlaceholderSteps
                                                    task: task,
                                                    inline_max_attempts: max_attempts,
                                                    inline_sleep_interval: sleep_interval
-      # Bail if we are doing this inline and Biglearn did not return a proper result
-      return [ task, false ] if !result[:accepted] && !background
+      # Bail if we are supposed to retry this in the background
+      return [ task, false ] if !result[:accepted] && retry_in_background
 
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
@@ -190,8 +191,8 @@ class Tasks::PopulatePlaceholderSteps
         inline_max_attempts: max_attempts,
         inline_sleep_interval: sleep_interval
       )
-      # Bail if we are doing this inline and Biglearn did not return a proper result
-      return [ task, false ] if !result[:accepted] && !background
+      # Bail if we are supposed to retry this in the background
+      return [ task, false ] if !result[:accepted] && retry_in_background
 
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info

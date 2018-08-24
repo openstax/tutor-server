@@ -31,7 +31,6 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium d
       expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_pes) do |requests|
         requests.map do |request|
           {
-            accepted: true,
             request_uuid: request[:request_uuid],
             assignment_uuid: request[:task].uuid,
             exercise_uuids: [],
@@ -43,7 +42,6 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium d
       expect(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_spes) do |requests|
         requests.map do |request|
           {
-            accepted: true,
             request_uuid: request[:request_uuid],
             assignment_uuid: request[:task].uuid,
             exercise_uuids: [],
@@ -96,7 +94,6 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium d
       allow(OpenStax::Biglearn::Api.client).to receive(:fetch_assignment_spes) do |requests|
         requests.map do |request|
           {
-            accepted: true,
             request_uuid: request[:request_uuid],
             assignment_uuid: request[:task].uuid,
             exercise_uuids: @spaced_page.exercises.map(&:uuid).sample(request[:max_num_exercises]),
