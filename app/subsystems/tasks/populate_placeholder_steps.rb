@@ -72,12 +72,6 @@ class Tasks::PopulatePlaceholderSteps
       end
     end
 
-    # Save pes_are_assigned/spes_are_assigned
-    task.save validate: false
-
-    # Ensure the task will reload and return the correct steps next time
-    task.task_steps.reset
-
     # Can't send the info to Biglearn if there's no course
     course = role.try!(:student).try!(:course)
     return if course.nil?
@@ -235,7 +229,11 @@ class Tasks::PopulatePlaceholderSteps
     task.spy = task.spy.merge(spy_info.except('exercises'))
     task.send "#{boolean_attribute}=", true
 
-    task.task_steps.reset if task.persisted?
+    # Save pes_are_assigned/spes_are_assigned
+    task.save validate: false
+
+    # Ensure the task will reload and return the correct steps next time
+    task.task_steps.reset
 
     [ task, !!result[:accepted] ]
   end
