@@ -175,7 +175,10 @@ class Tasks::PopulatePlaceholderSteps
       placeholder_steps = task.task_steps.select do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
-      return [ task, true ] if placeholder_steps.empty?
+      if placeholder_steps.empty?
+        task.update_attribute boolean_attribute, true
+        return [ task, true ]
+      end
 
       ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
@@ -189,6 +192,7 @@ class Tasks::PopulatePlaceholderSteps
       )
       # Bail if we are doing this inline and Biglearn did not return a proper result
       return [ task, false ] if !result[:accepted] && !background
+
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
