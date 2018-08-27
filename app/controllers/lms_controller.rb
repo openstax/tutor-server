@@ -163,7 +163,7 @@ class LmsController < ApplicationController
       end
     elsif launch.is_instructor?
       if course.nil?
-        redirect_to lms_pair_course_url and return
+        redirect_to lms_pair_url and return
       end
       if !UserIsCourseTeacher[user: current_user, course: course]
         AddUserAsCourseTeacher[user: current_user, course: course]
@@ -177,8 +177,8 @@ class LmsController < ApplicationController
     end
   end
 
-  def pair_course
-    @course_infos = CollectCourseInfo[user: current_user]
+  def pair
+    render layout: false
   end
 
   protected

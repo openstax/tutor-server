@@ -213,6 +213,7 @@ Rails.application.routes.draw do
       resources :courses, only: [:show] do
         member do
           put :push_scores
+          post :pair
         end
       end
     end
@@ -427,7 +428,7 @@ Rails.application.routes.draw do
     post :launch
     get :launch_authenticate
     get :complete_launch
-    get :pair_course
+    get :pair
     post :ci_launch
   end
 
