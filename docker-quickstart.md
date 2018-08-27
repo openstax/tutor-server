@@ -10,10 +10,18 @@ Follow the installation instructions for
 ## Run
 
 ``` bash
-docker-compose up
+docker-compose up -V
 ```
 
 the app will become available at `http://localhost:3001`
+
+the `-V` option is
+
+```
+-V, --renew-anon-volumes   Recreate anonymous volumes instead of retrieving
+                           data from the previous containers.
+```
+which forces docker-compose to recreate the tmp and log directories
 
 ## Notes
 

@@ -1,7 +1,7 @@
 version: '3'
 services:
   tutor:
-    build: . 
+    build: .
     command: /bin/bash -c "rake about && bin/rails server -b '0.0.0.0'"
     working_dir: "/code"
     ports:
@@ -9,6 +9,7 @@ services:
     volumes:
      - .:/code
      - /code/tmp
+     - /code/log
     links:
      - redis
      - postgres
