@@ -1,7 +1,28 @@
 from ruby:2.3.6
 
-copy Gemfile* /bundle/
+RUN apt-get update \
+  && apt-get install -y \
+    curl \
+    netcat \
+  && rm -rf /var/lib/apt/lists/*
 
-workdir /bundle
+RUN curl https://raw.githubusercontent.com/eficode/wait-for/master/wait-for -o /usr/local/bin/wait-for \
+  && chmod a+x /usr/local/bin/wait-for
 
-run bundle install
+RUN addgroup --system tutor \
+  && adduser --system --group --home /code tutor
+
+RUN mkdir /bundle && chown tutor:tutor /bundle
+
+USER tutor
+
+RUN mkdir /code/tmp && chown tutor:tutor /code/tmp \
+  && mkdir /code/log && chown tutor:tutor /code/log
+
+ENV BUNDLE_PATH=/bundle
+
+workdir /code
+
+copy . .
+
+RUN bundle install
