@@ -19,7 +19,7 @@ pipeline {
     stage('Publish Release') {
       when {
         expression {
-          reutrn sh(returnStdout: true, script: 'git tag -l --points-at HEAD | head -n 1').trim()
+          return sh(returnStdout: true, script: 'git tag -l --points-at HEAD | head -n 1').trim()
         }
       }
       steps {
