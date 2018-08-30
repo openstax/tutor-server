@@ -26,3 +26,5 @@ workdir /code
 copy . .
 
 RUN bundle install
+    
+CMD /bin/bash -c "rake about && bin/rails server -b '0.0.0.0'"

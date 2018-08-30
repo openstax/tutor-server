@@ -1,0 +1,15 @@
+version: '3.5'
+services:
+  tutor:
+    ports:
+      - "3001:3001"
+    networks:
+      - openstax
+    environment:
+      - HYPOTHESIS_HOST=hypothesis.sandbox.openstax.org
+      - REDIS_URL=redis://redis:6379/0
+      - OXT_DB_HOST=postgres95
+networks:
+  openstax:
+    external:
+      name: openstax
