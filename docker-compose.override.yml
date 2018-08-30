@@ -49,6 +49,8 @@ services:
       - AUTHORITY=localhost
   h_postgres:
     image: postgres:9.4-alpine
+    volumes:
+      - h_pgdata:/var/lib/postgresql/data
     networks:
       - hypothesis
   h_elasticsearch:
@@ -66,3 +68,4 @@ networks:
     name: openstax
 volumes:
   pgdata:
+  h_pgdata:
