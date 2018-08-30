@@ -48,6 +48,8 @@ services:
       - ELASTICSEARCH_HOST=http://h_elasticsearch:9200
       - ELASTICSEARCH_INDEX=hypothesis
       - AUTHORITY=localhost
+      - CLIENT_ID=nosuchid
+      - CLIENT_SECRET=nosuchsecret
   h_postgres:
     image: postgres:9.4-alpine
     volumes:
