@@ -17,6 +17,8 @@ services:
       - OXT_DB_HOST=postgres
   redis:
     image: "redis:latest"
+    networks:
+      - tutor
   postgres:
     image: "postgres:9.5"
     volumes:
