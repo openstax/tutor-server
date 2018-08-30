@@ -1,0 +1,66 @@
+version: '3.5'
+services:
+  tutor:
+    build: .
+    command: wait-for h:5000 -t 60 -- /bin/bash -c "rake about && bin/rails server -b '0.0.0.0'"
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/code
+      - /code/tmp
+      - /code/log
+    networks:
+      - tutor
+      - openstax
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - OXT_DB_HOST=postgres
+  redis:
+    image: "redis:latest"
+  postgres:
+    image: "postgres:9.5"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - tutor
+    environment:
+      - POSTGRES_USER=ox_tutor
+      - POSTGRES_PASSWORD=ox_tutor_secret_password
+      - POSTGRES_DB=ox_tutor_dev
+  h:
+    image: "openstax/hypothesis-server"
+    command: wait-for h_postgres:5432 -t 60 -- wait-for h_elasticsearch:9200 -t 60 -- make dev add_credentials_to=/tutor-server/.env
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/tutor-server
+    networks:
+      - tutor
+      - hypothesis
+    environment:
+      - APP_URL=http://localhost:5000
+      - BROKER_URL=amqp://guest:guest@h_rabbit:5672//
+      - SECRET_KEY=notverysecretafterall
+      - DATABASE_URL=postgresql://postgres@h_postgres/postgres
+      - ELASTICSEARCH_HOST=http://h_elasticsearch:9200
+      - ELASTICSEARCH_INDEX=hypothesis
+      - AUTHORITY=localhost
+  h_postgres:
+    image: postgres:9.4-alpine
+    networks:
+      - hypothesis
+  h_elasticsearch:
+    image: nickstenning/elasticsearch-icu
+    networks:
+      - hypothesis
+  h_rabbit:
+    image: rabbitmq:3.6-management-alpine
+    networks:
+      - hypothesis
+networks:
+  tutor:
+  hypothesis:
+  openstax:
+    name: openstax
+volumes:
+  pgdata:
