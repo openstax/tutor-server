@@ -1,4 +1,3 @@
-
 # Docker Quickstart
 
 ## Install
@@ -6,6 +5,14 @@
 Follow the installation instructions for
 [docker](https://docs.docker.com/install/) and
 [docker-compose](https://docs.docker.com/compose/install/)
+
+(docker-compose may or may not come with docker on your platform)
+
+## Dependencies
+
+the following projects must be separtely cloned and run for this project to work:
+
+[openstax/hypothesis-server](https://github.com/openstax/hypothesis-server)
 
 ## Run
 
