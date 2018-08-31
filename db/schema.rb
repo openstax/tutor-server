@@ -579,7 +579,7 @@ ActiveRecord::Schema.define(version: 20180912162358) do
     t.datetime "updated_at",                                          null: false
     t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.uuid     "uuid",                  default: "gen_random_uuid()"
+    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
     t.boolean  "is_test"

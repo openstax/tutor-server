@@ -1,6 +1,6 @@
-class Lms::WillowLabs
+class Lms::WilloLabs
 
-  ID = 'willow_labs'
+  ID = 'willo_labs'
 
   def self.find_by(key:)
     config['key'] == key ? self.new : nil
