@@ -5,9 +5,10 @@ services:
       - "3001:3001"
     networks:
       - openstax
+    secrets:
+      - hypothesis
     environment:
       - RAILS_ENV=test
-      - MAIL_SITE_URL=https://tutor.sandbox.openstax.org
       - ASSETS_URL=https://tutor-assets.sandbox.openstax.org
       - HYPOTHESIS_HOST=hypothesis.sandbox.openstax.org
       - HYPOTHESIS_APP_URL=https://hypothesis.sandbox.openstax.org
@@ -18,3 +19,6 @@ networks:
   openstax:
     external:
       name: openstax
+secrets:
+  hypothesis:
+    external: true

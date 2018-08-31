@@ -13,7 +13,7 @@ module Tutor
     # called by assets initializer as it boots
     def self.read_manifest
       begin
-        @manifest = JSON.parse Rails.root.join('public', 'assets', 'rev-manifest.json').read
+        @manifest = JSON.parse open("#{Rails.application.secrets.assets_url}/rev-manifest.json").read
         @manifest.default_proc = proc do |_, asset|
           raise("Asset #{asset} does not exist")
         end
