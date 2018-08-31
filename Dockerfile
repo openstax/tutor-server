@@ -1,7 +1,6 @@
-from ruby:2.3.6
+FROM ruby:2.3.6
 
-RUN apt-get update \
-  && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     curl \
     netcat \
   && rm -rf /var/lib/apt/lists/*
@@ -21,10 +20,12 @@ RUN mkdir /code/tmp && chown tutor:tutor /code/tmp \
 
 ENV BUNDLE_PATH=/bundle
 
-workdir /code
+WORKDIR /code
 
-copy . .
+COPY --chown=tutor . .
 
 RUN bundle install
-    
-CMD /bin/bash -c "rake about && bin/rails server -b '0.0.0.0'"
+
+ENTRYPOINT ["/code/docker/entrypoint"]
+
+CMD docker/start

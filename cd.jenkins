@@ -12,7 +12,7 @@ pipeline {
           sh "docker push openstax/tutor-server:dev"
         }
         withDockerServer([uri: env.SWARM_URI, credentialsId: '']) {
-          sh "docker stack deploy --prune -c docker-compose.yml -c docker-compose.dev.yml tutor-server"
+          sh "docker stack deploy --prune -c docker-compose.yml -c docker/docker-compose.dev.yml tutor-server"
         }
       }
     }

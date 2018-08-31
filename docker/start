@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+rake about
+bin/rails server -b '0.0.0.0'
