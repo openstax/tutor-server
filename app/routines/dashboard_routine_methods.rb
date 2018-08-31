@@ -38,6 +38,25 @@ module DashboardRoutineMethods
       task.past_open? current_time: current_time
     end if role_type != :teacher
 
-    outputs.tasks = tasks
+    had_pes, need_pes = tasks.partition(&:pes_are_assigned)
+    need_pes.each { |task| Tasks::PopulatePlaceholderSteps[task: task] }
+
+    got_pes, still_need_pes = need_pes.partition(&:pes_are_assigned)
+    still_need_pes.each do |task|
+      Tasks::PopulatePlaceholderSteps.set(queue: :low_priority)
+                                     .perform_later task: task, background: true
+    end
+
+    outputs.tasks = had_pes + got_pes
+    outputs.all_tasks_are_ready = still_need_pes.empty? && role_type != :student ||
+                                  Tasks::Models::TaskPlan
+                                    .joins(:tasking_plans)
+                                    .preload(:tasking_plans)
+                                    .where(tasking_plans: {
+                                      target_id: role.student.course_membership_period_id,
+                                      target_type: 'CourseMembership::Models::Period'
+                                    })
+                                    .where { first_published_at != nil }
+                                    .count <= outputs.tasks.size
   end
 end

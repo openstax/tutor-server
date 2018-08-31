@@ -28,7 +28,13 @@ class WorkPreviewCourseTasks
             task.task_steps.select(&:placeholder?).select(&:personalized_group?).size
           next if max_num_exercises == 0
 
-          { request_uuid: SecureRandom.uuid, task: task, max_num_exercises: max_num_exercises }
+          {
+            request_uuid: SecureRandom.uuid,
+            task: task,
+            max_num_exercises: max_num_exercises,
+            inline_max_attempts: 60,
+            inline_sleep_interval: 1.second
+          }
         end.compact
 
         pe_responses = OpenStax::Biglearn::Api.client.fetch_assignment_pes(pe_requests)
@@ -50,7 +56,13 @@ class WorkPreviewCourseTasks
             task.task_steps.select(&:placeholder?).select(&:spaced_practice_group?).size
           next if max_num_exercises == 0
 
-          { request_uuid: SecureRandom.uuid, task: task, max_num_exercises: max_num_exercises }
+          {
+            request_uuid: SecureRandom.uuid,
+            task: task,
+            max_num_exercises: max_num_exercises,
+            inline_max_attempts: 60,
+            inline_sleep_interval: 1.second
+          }
         end.compact
 
         spe_responses = OpenStax::Biglearn::Api.client.fetch_assignment_spes(spe_requests)

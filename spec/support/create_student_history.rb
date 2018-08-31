@@ -64,7 +64,10 @@ class CreateStudentHistory
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
     tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
-    tasks.each { |task| answer_correctly(task, 2) }
+    student_tasks = tasks.select do |task|
+      task.ecosystem.present? && task.taskings.first.try!(:role).try!(:student).present?
+    end
+    student_tasks.each { |task| answer_correctly(task, 2) }
   end
 
   def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)

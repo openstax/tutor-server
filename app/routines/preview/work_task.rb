@@ -10,7 +10,7 @@ module Preview
     protected
 
     def exec(task:, is_correct:, free_response: nil, is_completed: true, completed_at: Time.current)
-      run(:populate_placeholders, task: task, force: true)
+      run(:populate_placeholders, task: task, force: true, background: true)
 
       task.task_steps.preload(:tasked).each_with_index do |task_step, index|
         is_completed_value = is_completed.is_a?(Proc) ? is_completed.call(task, task_step, index) :

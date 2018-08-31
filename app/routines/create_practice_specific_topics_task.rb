@@ -44,7 +44,7 @@ class CreatePracticeSpecificTopicsTask
       outs = Tasks::PopulatePlaceholderSteps.call(task: @task).outputs
       outputs.task = outs.task
 
-      next unless outs.task.task_steps.empty?
+      next unless outs.task.task_steps.reject(&:placeholder?).empty?
 
       outs.accepted ? nonfatal_error(
         code: :no_exercises,
