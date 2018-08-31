@@ -6,6 +6,9 @@ services:
     networks:
       - openstax
     environment:
+      - RAILS_ENV=test
+      - MAIL_SITE_URL=https://tutor.sandbox.openstax.org
+      - ASSETS_URL=https://tutor-assets.sandbox.openstax.org
       - HYPOTHESIS_HOST=hypothesis.sandbox.openstax.org
       - HYPOTHESIS_APP_URL=https://hypothesis.sandbox.openstax.org
       - HYPOTHESIS_API_URL=https://hypothesis.sandbox.openstax.org/api/
