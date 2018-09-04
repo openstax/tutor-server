@@ -1,6 +1,7 @@
 version: '3.5'
 services:
   app:
+    image: "openstax/tutor-server:dev"
     ports:
       - "3001:3001"
     networks:
