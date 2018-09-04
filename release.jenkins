@@ -1,0 +1,21 @@
+pipeline {
+  agent { label 'docker' }
+  environment {
+    release = sh(returnStdout: true, script: 'git tag -l --points-at HEAD | head -1').trim()
+  }
+  stages {
+    stage('Build') {
+      steps {
+        sh "docker build -t openstax/tutor-server:latest -t openstax/tutor-server:${env.release} ."
+      }
+    }
+    stage('Publish Release') {
+      steps {
+        withDockerRegistry([credentialsId: 'docker-registry', url: '']) {
+          sh "docker push openstax/tutor-server:${env.release}"
+          sh "docker push openstax/tutor-server:latest"
+        }
+      }
+    }
+  }
+}
