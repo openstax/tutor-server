@@ -27,7 +27,6 @@ class LmsController < ApplicationController
     begin
       @launch = Lms::Launch.from_request(request)
     rescue => ee
-      debugger
       fail_with_catchall_message(ee) and return
     end
   end
@@ -52,26 +51,13 @@ class LmsController < ApplicationController
 
       # Do some early error checking
 
-
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
 
       fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
 
       context = launch.attempt_context_creation
-
-      # FUTURE FUNCTIONALITY SKETCH
-      #
-      # context won't be nil now because all apps are owned by courses, so
-      # the auto create above should succeed.
-      #
-      # When we let admins install Tutor, we'll need teachers to pair
-      # Tutor course with their LMS course.  At that point, something like
-      # the following logic will be needed.
-      #
-
       if context.course.nil?
         if launch.is_student?
-
           # Show a "your teacher needs do something before you can open Tutor" message
           fail_for_unpaired and return
 
@@ -149,15 +135,13 @@ class LmsController < ApplicationController
     launch.update_tool_consumer_metadata!
 
     # Add the user as a teacher or student
-
     course = launch.context.course
-
     if launch.is_student?
+      # students were checked to ensure trhe launch had
+      # a course in step 2 (launch_authenticate)
       launch.store_score_callback(current_user)
-
       # Note if the user is not yet a student in the course, so they can be sent through the
       # LMS-optimized enrollment flow.
-
       if !UserIsCourseStudent[course: course, user: current_user, include_dropped_students: true]
         is_unenrolled_student = true
       end
@@ -178,6 +162,7 @@ class LmsController < ApplicationController
   end
 
   def pair
+    # pair renders a stripped down HTML page that renders a React UI
     render layout: false
   end
 

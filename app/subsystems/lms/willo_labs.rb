@@ -1,3 +1,5 @@
+# A PORO that conforms to the interface expoed by Lms::Models::App
+# it's used to validate a LMS launches that originate from Willo Labs
 class Lms::WilloLabs
 
   ID = 'willo_labs'
