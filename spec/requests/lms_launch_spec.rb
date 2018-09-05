@@ -19,7 +19,7 @@ RSpec.describe 'LMS Launch', type: :request do
 
     context "not yet paired" do
       it 'displays message about unconfigured course' do
-        simulator.install_tutor(app: Lms::WillowLabs.new, course: "physics")
+        simulator.install_tutor(app: Lms::WilloLabs.new, course: "physics")
         simulator.set_launch_defaults(course: "physics")
         simulator.add_student("bob")
         simulator.launch(user: "bob", assignment: "tutor")
@@ -86,8 +86,8 @@ RSpec.describe 'LMS Launch', type: :request do
   context "teacher launches" do
 
     context "not yet paired" do
-      fit 'displays message about unconfigured course' do
-        simulator.install_tutor(app: Lms::WillowLabs.new, course: "physics")
+      it 'displays message about unconfigured course' do
+        simulator.install_tutor(app: Lms::WilloLabs.new, course: "physics")
         simulator.set_launch_defaults(course: "physics")
         simulator.add_teacher("teacher")
         simulator.launch(user: "teacher", assignment: "tutor")
