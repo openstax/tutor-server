@@ -1,0 +1,21 @@
+class Lms::PairLaunchToCourse
+
+  lev_routine
+
+  def exec(launch_id:, course:)
+    outputs.success = false
+    begin
+      launch = Lms::Launch.from_id(launch_id)
+    rescue Lms::Launch::CouldNotLoadLaunch => ee
+      fatal_error(code: :lms_launch_doesnt_exist, message: "LMS Launch was not found")
+    end
+
+    launch.context.course = course
+    launch.context.save
+    transfer_errors_from(launch.context, {type: :verbatim})
+
+    course.update_attributes!(is_lms_enabling_allowed: true, is_lms_enabled: true)
+    transfer_errors_from(course, {type: :verbatim})
+    outputs.success = true
+  end
+end

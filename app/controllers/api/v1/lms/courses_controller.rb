@@ -34,14 +34,10 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
   EOS
   def pair
     OSU::AccessPolicy.require_action_allowed!(:lms_sync_scores, current_api_user, @course)
-    begin
-      launch = Lms::Launch.from_id(session[:launch_id])
-    rescue Lms::Launch::CouldNotLoadLaunch => ee
-      fail_for_already_used and return
-    end
-    launch.context.course = @course
-    launch.context.save!
-    render json: { success: true }
+    result = Lms::PairLaunchToCourse.call(
+      launch_id: session[:launch_id], course: @course
+    )
+    render json: { success: result.outputs[:success], errors: result.errors }
   end
 
   api :PUT, '/lms/courses/:id/push_scores', 'Sends average course scores to the LMS in a background job'
