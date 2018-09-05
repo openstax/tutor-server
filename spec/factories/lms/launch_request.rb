@@ -30,7 +30,7 @@ FactoryBot.define do
       raise "Encountered an unknown role" if roles.any?{|rr| rr.nil?}
 
       new(
-        request_parameters: {
+        request_parameters: HashWithIndifferentAccess.new({
           user_id: user_id,
           lis_person_name_full: full_name,
           lis_outcome_service_url: outcome_url,
@@ -41,8 +41,9 @@ FactoryBot.define do
           roles: roles.join(','),
           tool_consumer_instance_guid: tool_consumer_instance_guid,
           lti_message_type: "basic-lti-launch-request",
+          lti_version: 'LTI-1p0',
           context_id: context_id
-        }.compact,
+        }).compact,
         request_url: request_url
       )
     }
