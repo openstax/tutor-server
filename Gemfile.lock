@@ -15,6 +15,17 @@ GIT
     keyword_search (1.5.0)
 
 GIT
+  remote: https://github.com/openstax/openstax_salesforce.git
+  revision: c90a9a7ed4ba103ed997965aabb804f65e469a70
+  ref: c90a9a7
+  specs:
+    openstax_salesforce (2.0.0)
+      active_force
+      omniauth-salesforce (~> 1.0.5)
+      rails (~> 4.2.0)
+      restforce (~> 2.1.3)
+
+GIT
   remote: https://github.com/procore/with_advisory_lock.git
   revision: aba1583ce8127370ed7098b03ab5e1952020c295
   ref: aba1583c
@@ -424,11 +435,6 @@ GEM
       rails (>= 3.0)
     openstax_rescue_from (3.0.0)
       rails (>= 3.1, < 6.0)
-    openstax_salesforce (1.2.0)
-      active_force
-      omniauth-salesforce (~> 1.0.5)
-      rails (~> 4.2.0)
-      restforce (~> 2.1.3)
     openstax_utilities (4.2.3)
       keyword_search
       lev
@@ -766,7 +772,7 @@ DEPENDENCIES
   openstax_api (~> 8.2.0)
   openstax_healthcheck
   openstax_rescue_from (~> 3.0.0)
-  openstax_salesforce (~> 1.2.0)
+  openstax_salesforce!
   openstax_utilities (~> 4.2.0)
   p3p
   parallel_tests

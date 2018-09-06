@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
 
+  let(:instance) { described_class.new }
+
   context "#best_sf_contact_id_for_course" do
     let(:course)        { FactoryBot.create :course_profile_course }
     let(:user_no_sf)    { FactoryBot.create(:user) }
@@ -11,12 +13,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
     subject { instance.best_sf_contact_id_for_course(course) }
 
     it 'errors if there are no teachers' do
-      expect{ subject }.to throw_symbol(:go_to_next_course)
+      expect{ subject }.to throw_symbol(:go_to_next_record)
     end
 
     it 'returns nil if there are no teachers with a SF contact ID' do
       AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      expect{ subject }.to throw_symbol(:go_to_next_course)
+      expect{ subject }.to throw_symbol(:go_to_next_record)
     end
 
     it 'returns the SF ID when there is one teacher with a SF ID' do
@@ -65,35 +67,6 @@ RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
       @term = :summer
       @year = 2017
       is_expected.to eq 2016
-    end
-  end
-
-  context '#salesforce_school_year_for_course' do
-    let(:course) { FactoryBot.create :course_profile_course, term: @term, year: @year }
-    subject { instance.salesforce_school_year_for_course(course) }
-
-    it "gives 2016 for Fall 2016" do
-      @term = :fall
-      @year = 2016
-      is_expected.to eq "2016 - 17"
-    end
-
-    it "gives 2016 for Winter 2017" do
-      @term = :winter
-      @year = 2017
-      is_expected.to eq "2016 - 17"
-    end
-
-    it "gives 2016 for Spring 2017" do
-      @term = :spring
-      @year = 2017
-      is_expected.to eq "2016 - 17"
-    end
-
-    it "gives 2016 for Summer 2017" do
-      @term = :summer
-      @year = 2017
-      is_expected.to eq "2016 - 17"
     end
   end
 
@@ -149,48 +122,28 @@ RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
     context "when error email allowed" do
       it 'logs but does not email if not real production' do
         real_production!(false)
-        @instance = instance
         expect(Rails.logger).to receive(:warn)
         expect(DevMailer).not_to receive(:inspect_object)
-        catch(:go_to_next_course) { @instance.error!(message: 'yo') }
-        @instance.notify_errors
+        catch(:go_to_next_record) { instance.error!(message: 'yo') }
+        run_notify_errors
       end
 
       it 'logs and emails if real production' do
         real_production!(true)
-        @instance = instance
         expect(Rails.logger).to receive(:warn)
-        catch(:go_to_next_course) { @instance.error!(message: 'yo') }
-        expect{ @instance.notify_errors }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        catch(:go_to_next_record) { instance.error!(message: 'yo') }
+        expect{ run_notify_errors }.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
-      it 'throws go_to_next_course' do
-        expect{ run_notify_errors('yo') }.to throw_symbol(:go_to_next_course)
+      it 'throws go_to_next_record' do
+        expect{ run_notify_errors('yo') }.to throw_symbol(:go_to_next_record)
       end
     end
 
     def run_notify_errors(message = nil)
-      @instance = instance
-      @instance.error!(message: message) if message.present?
-      @instance.notify_errors
+      instance.error!(message: message) if message.present?
+      instance.notify_errors(true)
     end
-  end
-
-  context "#book_names_to_sf_ids" do
-    it 'works' do
-      allow(OpenStax::Salesforce::Remote::Book).to receive(:all) { [
-        OpenStruct.new(id: 1, name: 'foo'),
-        OpenStruct.new(id: 2, name: 'bob')
-      ]}
-
-      expect(instance.book_names_to_sf_ids['bob']).to eq 2
-      expect(instance.book_names_to_sf_ids['foo']).to eq 1
-      expect(instance.book_names_to_sf_ids['boo']).to eq nil
-    end
-  end
-
-  def instance
-    described_class.new(allow_error_email: true)
   end
 
   def real_production!(true_or_false)

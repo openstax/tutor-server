@@ -1,6 +1,5 @@
 module Admin
   class SalesforceController < BaseController
-
     def actions
     end
 
@@ -14,6 +13,5 @@ module Admin
 
       redirect_to actions_admin_salesforce_path
     end
-
   end
 end

@@ -11,22 +11,24 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       @proxy.ensure_schools_exist(["JP University"])
     end
 
-    @uuids = 40.times.map{ SecureRandom.uuid }
     VCR.configure do |config|
-      @uuids.each_with_index{|uuid,ii| config.define_cassette_placeholder("<UUID_#{ii}>") { uuid }}
+      [ :course, :period1, :period2, :period3, :other_course, :other_period].each do |uuid_name|
+        uuid = SecureRandom.uuid
+        instance_variable_set "@#{uuid_name}_uuid".to_sym, uuid
+        config.define_cassette_placeholder("<#{uuid_name.upcase}_UUID>") { uuid }
+      end
     end
   end
 
-  before(:each) { load_salesforce_user }
-
+  let(:instance)     { PushSalesforceCourseStats.new }
   let(:sf_contact_a) { @proxy.new_contact }
-  let(:chemistry_offering) { FactoryBot.create(:catalog_offering, salesforce_book_name: "Chemistry") }
+  let(:chemistry_offering) do
+    FactoryBot.create(:catalog_offering, salesforce_book_name: "Chemistry")
+  end
   let(:user_sf_a) { FactoryBot.create(:user, salesforce_contact_id: sf_contact_a.id)}
   let(:user_no_sf) { FactoryBot.create(:user)}
-  let(:campaign) { @proxy.new_campaign }
-  let(:campaign_member) { @proxy.new_campaign_member(contact_id: sf_contact_a.id, campaign_id: campaign.id) }
 
-  let!(:course) {
+  let!(:course) do
     FactoryBot.create :course_profile_course,
                        name: "A Fun Course",
                        term: :spring,
@@ -36,153 +38,99 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                        is_concept_coach: false,
                        estimated_student_count: 42,
                        does_cost: true,
-                       uuid: @uuids.shift,
-                       latest_adoption_decision: "For course credit",
-                       creator_campaign_member_id: campaign_member.id
-  }
+                       uuid: @course_uuid,
+                       latest_adoption_decision: "For course credit"
+  end
+  let!(:period_uuids) { [ @period1_uuid, @period2_uuid, @period3_uuid ] }
 
-  before(:each) {
-    period1 = CreatePeriod[course: course]
+  before do
+    load_salesforce_user
+
+    @period1 = CreatePeriod[course: course, uuid: period_uuids.first]
     p1students = 4.times.map do
-      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period1]
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period1]
     end
-
     p1students[0].student.update_attribute(:is_paid, true)
     p1students[1].student.update_attribute(:is_comped, true)
     p1students[2].student.update_attribute(:is_comped, true)
     p1students[3].student.update_attribute(:first_paid_at, Time.now) # refunded
-
     # Add two fake tasks to test reporting of students with work (one above, one below threshold)
     [
       [p1students[0], 10],
       [p1students[1], 3], # this student should have enough across 2 tasks
       [p1students[1], 7],
       [p1students[2], 9]
-    ].each do |options|
-      FactoryBot.create :tasks_task,
-                        title: "A",
-                        task_type: :homework,
-                        task_plan: nil,
-                        tasked_to: options[0],
-                        completed_steps_count: options[1]
+    ].each do |student, num_steps|
+      task = FactoryBot.build :tasks_task,
+                              title: "A",
+                              task_type: :homework,
+                              task_plan: nil,
+                              tasked_to: student,
+                              completed_steps_count: num_steps
+      task.save validate: false
     end
 
-    period2 = CreatePeriod[course: course]
-    p2students = 2.times.map { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period1] }
-
+    @period2 = CreatePeriod[course: course, uuid: period_uuids.second]
+    p2students = 2.times.map do
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period1]
+    end
+    p2students.each { |user| MoveStudent[student: user.student, period: @period2] }
     CourseMembership::InactivateStudent[student: p2students.first.student]
 
-    MoveStudent[student: p1students.first.student, period: period2]
-
-    period3 = CreatePeriod[course: course]
-    6.times { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: period3] }
-
-    period3.to_model.destroy
-  }
-
-  context "when there is no existing OSA" do
-
-    before(:each) do
-      AddUserAsCourseTeacher[course: course, user: user_sf_a]
-    end
-
-    context "when there is no existing IA" do
-      it 'makes both and pushes stats' do
-        call_expecting_no_errors
-
-        ias = OpenStax::Salesforce::Remote::IndividualAdoption.where(
-          contact_id: user_sf_a.account.salesforce_contact_id
-        ).to_a
-
-        expect(ias.size).to eq 1
-        ia = ias.first
-
-        expect(ia.id).not_to be_blank
-        expect(ia.source).to eq "Tutor Signup"
-        expect(ia.book_name).to eq "Chemistry"
-        expect(ia.school.name).to eq "JP University"
-        expect(ia.contact_id).not_to be_blank
-        expect(ia.adoption_level).to eq "Confirmed Adoption Won"
-
-        osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
-
-        expect_osa_stats(osa)
-        expect_osa_attachment(osa,course)
-      end
-    end
-
-    context "when there is an existing IA" do
-      let!(:ia) { create_chemistry_ia }
-
-      it 'makes an OSA and pushes stats' do
-        call_expecting_no_errors
-
-        # The term start date should have been set on the IA during the call; check
-        # adoption level and description just to make sure, but would probably have
-        # exploded if they didn't get set.
-
-        ia.reload
-        expect(ia.adoption_level).not_to be_blank
-        expect(ia.description).not_to be_blank
-
-        osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
-
-        expect_osa_stats(osa)
-      end
-
-      it 'errors when cannot make an OSA' do
-        allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:save) { false }
-        call_expecting_errors(/Could not make new OsAncillary/)
-      end
-    end
-
+    @period3 = CreatePeriod[course: course, uuid: period_uuids.third]
+    6.times { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period3] }
+    @period3.to_model.destroy
   end
 
-  context "when there is an existing OSA" do
-    before(:each) do
-      AddUserAsCourseTeacher[course: course, user: user_sf_a]
-    end
+  context "when there is no existing TutorCoursePeriod" do
+    before { AddUserAsCourseTeacher[course: course, user: user_sf_a] }
 
-    let!(:ia) { create_chemistry_ia }
-    let!(:osa) { create_osa(ia, course, sf_contact_a) }
-
-    it 'pushes stats if not yet attached' do
+    it 'creates it and pushes stats' do
       call_expecting_no_errors
-      osa.reload
-      expect_osa_stats(osa)
-      expect_osa_attachment(osa,course)
-    end
 
-    it 'pushes stats if already attached' do
-      Salesforce::AttachRecord[record: osa, to: course]
-      expect_any_instance_of(PushSalesforceCourseStats).not_to receive(:best_sf_contact_id_for_course)
-      call_expecting_no_errors
-      expect_osa_stats(osa)
+      expect(OpenStax::Salesforce::Remote::TutorCoursePeriod.where(course_uuid: course.uuid).count)
+        .to eq 3
+      expect_tcp_stats(@period1, num_students: 4, num_students_paid: 1, num_students_comped: 2,
+                       num_students_refunded: 1, num_students_dropped: 0, num_students_with_work: 2)
+      expect_tcp_stats(@period2, num_students: 2, num_students_paid: 0, num_students_comped: 0,
+                       num_students_refunded: 0, num_students_dropped: 1, num_students_with_work: 0)
+      expect_tcp_stats(@period3, num_students: 6, num_students_paid: 0, num_students_comped: 0,
+                       num_students_refunded: 0, num_students_dropped: 0, num_students_with_work: 0)
     end
+  end
 
-    it 'recovers if the attached OSA no longer exists' do
-      Salesforce::AttachRecord[record: osa, to: course]
-      osa.destroy
+  context "when there is an existing TutorCoursePeriod" do
+    # TutorCoursePeriods already created by the spec above
+    before(:each) { AddUserAsCourseTeacher[course: course, user: user_sf_a] }
+
+    it 'pushes stats' do
       call_expecting_no_errors
-      new_osas = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).to_a
-      expect(new_osas.size).to eq 1
-      new_osa = new_osas.first
-      expect(new_osa.id).not_to eq osa.id
-      expect_osa_stats(new_osa)
+
+      expect_tcp_stats(@period1, num_students: 4, num_students_paid: 1, num_students_comped: 2,
+                       num_students_refunded: 1, num_students_dropped: 0, num_students_with_work: 2)
+      expect_tcp_stats(@period2, num_students: 2, num_students_paid: 0, num_students_comped: 0,
+                       num_students_refunded: 0, num_students_dropped: 1, num_students_with_work: 0)
+      expect_tcp_stats(@period3, num_students: 6, num_students_paid: 0, num_students_comped: 0,
+                       num_students_refunded: 0, num_students_dropped: 0, num_students_with_work: 0)
     end
 
     it 'handle exceptions around saving final stats' do
       # convenient to have the test here b/c of the setup that exists in this context
-      allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:changed?) { raise "kaboom" }
-      call_expecting_errors
+      exception = RuntimeError.new('kaboom')
+      allow_any_instance_of(OpenStax::Salesforce::Remote::TutorCoursePeriod).to(
+        receive(:changed?) { raise exception }
+      )
+      call_expecting_errors(exception: exception)
     end
 
-    it 'handles final OSA save errors' do
-      allow_any_instance_of(OpenStax::Salesforce::Remote::OsAncillary).to receive(:save).and_wrap_original do |m, *args|
-        m.call(*args)
-        m.receiver.errors.add(:base, "Test Error")
-        false
-      end
+    it 'handles final TCP save errors' do
+      allow_any_instance_of(OpenStax::Salesforce::Remote::TutorCoursePeriod).to(
+        receive(:save).and_wrap_original do |m, *args|
+          m.call(*args)
+          m.receiver.errors.add(:base, "Test Error")
+          false
+        end
+      )
 
       call_expecting_errors(/Test Error/)
     end
@@ -195,12 +143,25 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                            starts_at: Chronic.parse("January 1, 2017"),
                            offering: chemistry_offering,
                            is_concept_coach: false,
-                           uuid: @uuids.shift
+                           uuid: @other_course_uuid
+      other_period = FactoryBot.create :course_membership_period,
+                                       course: other_course,
+                                       uuid: @other_period_uuid
       AddUserAsCourseTeacher[course: other_course, user: user_sf_a]
 
       call_expecting_no_errors
 
-      expect(OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).count).to eq 2
+      expect(
+        OpenStax::Salesforce::Remote::TutorCoursePeriod.where(
+          period_uuid: period_uuids + [ other_period.uuid ]
+        ).count
+      ).to eq 4
+    end
+
+    it 'is ok with no offering' do
+      course.offering = nil
+      course.save!
+      call_expecting_no_errors
     end
   end
 
@@ -212,15 +173,19 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   context "errors happen" do
     it 'continues processing later courses when an earlier one errors' do
+      broken_course = FactoryBot.create :course_profile_course
       AddUserAsCourseTeacher[course: course, user: user_sf_a]
-      allow_any_instance_of(PushSalesforceCourseStats).to receive(:applicable_courses) {
-        [nil, course]
-      }
-      expect_any_instance_of(PushSalesforceCourseStats).to receive(:call_for_course).twice.and_call_original
+      expect(broken_course).to receive(:teachers) { raise 'boom' }
+      allow_any_instance_of(PushSalesforceCourseStats).to receive(:applicable_courses) do
+        [broken_course, course]
+      end
 
-      counts = call
-
-      expect(counts).to eq ({ num_courses: 2, num_updates: 1, num_errors: 1, num_skips: 0})
+      outputs = call.outputs
+      expect(outputs.num_courses).to eq 2
+      expect(outputs.num_periods).to eq 3
+      expect(outputs.num_updates).to eq 3
+      expect(outputs.num_errors).to eq 1
+      expect(outputs.num_skips).to eq 0
     end
 
     it 'errors when no teacher SF contact' do
@@ -228,56 +193,34 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
       call_expecting_errors(/No teachers have a SF contact ID/)
     end
 
-    # it 'errors when multiple IAs match' do
-    #   # Changes made to SF now prohibit duplicate IAs being made in this way, so commenting
-    #   # out this spec
-    #   2.times { create_chemistry_ia }
-    #   AddUserAsCourseTeacher[course: course, user: user_sf_a]
-    #   call_expecting_errors(/Too many IndividualAdoptions/)
-    # end
-
-    it 'errors when it cannot save a new IA' do
-      AddUserAsCourseTeacher[course: course, user: user_sf_a]
-      allow_any_instance_of(OpenStax::Salesforce::Remote::Contact).to receive(:school_id).and_return(nil)
-      capture_stdout{ call_expecting_errors(/Could not make new IndividualAdoption for inputs/) }
-    end
-
-    it 'errors when no offering' do
-      AddUserAsCourseTeacher[course: course, user: user_sf_a]
-      course.offering = nil
-      course.save!
-      call_expecting_errors(/No offering/)
-    end
-
     context "when there is an error (no teacher with SF contact)" do
       before(:each) { AddUserAsCourseTeacher[course: course, user: user_no_sf] }
 
       it 'does not send error email in non-production' do
-        expect{
-          call_expecting_errors
-        }.to change { ActionMailer::Base.deliveries.count }.by(0)
+        expect do
+          call_expecting_errors(/No teachers have a SF contact ID/)
+        end.to change { ActionMailer::Base.deliveries.count }.by(0)
       end
 
       it 'does send error email in production' do
         allow(Rails.application.secrets).to receive(:environment_name) { 'prodtutor' }
-        expect{
-          call_expecting_errors
-        }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect do
+          call_expecting_errors(/No teachers have a SF contact ID/)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
 
     context "when there is an error in writing stats" do
-      it 'writes the error to the OSA' do
-        allow(UrlGenerator).to receive(:teach_course_url) { raise "kaboom" }
+      it 'writes the error to the TCP' do
+        allow_any_instance_of(OpenStax::Salesforce::Remote::TutorCoursePeriod).to(
+          receive(:reset_stats) { raise "kaboom" }
+        )
         AddUserAsCourseTeacher[course: course, user: user_sf_a]
-        call_expecting_errors
+        call_expecting_errors(/Unable to update stats: kaboom/)
 
-        ia = OpenStax::Salesforce::Remote::IndividualAdoption.where(
-          contact_id: user_sf_a.account.salesforce_contact_id
-        ).to_a.first
-        osa = OpenStax::Salesforce::Remote::OsAncillary.where(individual_adoption_id: ia.id).first
-
-        expect(osa.error).to match /Unable to update stats: kaboom/
+        OpenStax::Salesforce::Remote::TutorCoursePeriod
+          .where(period_uuid: period_uuids)
+          .each { |tcp| expect(tcp.error).to match /Unable to update stats: kaboom/ }
       end
     end
 
@@ -286,102 +229,58 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
   #### HELPERS ####
 
-  def create_chemistry_ia
-    OpenStax::Salesforce::Remote::IndividualAdoption.new(
-      contact_id: sf_contact_a.id,
-      fall_start_date: "2016-08-01",
-      book_id: @proxy.book_id("Chemistry"),
-      school_id: @proxy.school_id("JP University"),
-      adoption_level: "Confirmed Adoption Won",
-      description: "blah"
-    ).tap do |ia|
-      if !ia.save
-        raise "didn't save IA"
-      end
-    end
-  end
-
-  def create_osa(ia, course, contact)
-    OpenStax::Salesforce::Remote::OsAncillary.new(
-      individual_adoption_id: ia.id,
-      product: course.is_concept_coach ? "Concept Coach" : "Tutor",
-      contact_id: contact.id,
-      course_uuid: course.uuid,
-      term: "Spring"
-    ).tap do |osa|
-      if !osa.save
-        raise "didn't save OSA"
-      end
-    end
-  end
-
   def call
     PushSalesforceCourseStats.call(allow_error_email: true)
   end
 
   def call_expecting_no_errors
-    instance = PushSalesforceCourseStats.new(allow_error_email: true)
     expect(instance).not_to receive(:error!)
-    instance.call
+    instance.call(allow_error_email: true)
   end
 
-  def call_expecting_errors(error_messages = [anything()])
-    error_messages = [error_messages].flatten
-    raise "nyi" if error_messages.size != 1
-    instance = PushSalesforceCourseStats.new(allow_error_email: true)
-    expect(instance)
-      .to receive(:error!)
-      .with(hash_including(message: error_messages.first))
-      .and_call_original
-    instance.call
+  def call_expecting_errors(hash_or_message)
+    hash = hash_or_message.is_a?(Hash) ? hash_or_message : { message: hash_or_message }
+    expect(instance).to receive(:error!).at_least(:once)
+                                        .with(hash_including(hash))
+                                        .and_call_original
+
+    instance.call(allow_error_email: true)
   end
 
-  def call_expecting_skips(skip_messages = [anything()])
-    skip_messages = [skip_messages].flatten
-    raise "nyi" if skip_messages.size != 1
-    instance = PushSalesforceCourseStats.new(allow_error_email: true)
-    expect(instance)
-      .to receive(:skip!)
-      .with(hash_including(message: skip_messages.first))
-      .and_call_original
-    instance.call
+  def call_expecting_skips(hash_or_message)
+    hash = hash_or_message.is_a?(Hash) ? hash_or_message : { message: hash_or_message }
+    expect(instance).to receive(:skip!).at_least(:once)
+                                       .with(hash_including(hash))
+                                       .and_call_original
+
+    instance.call(allow_error_email: true)
   end
 
-  def expect_osa_stats(osa)
-    expect(osa).not_to be_nil
-    osa.reload # make sure we have what actually made it to SF
+  def expect_tcp_stats(period, extras = {})
+    tcp = OpenStax::Salesforce::Remote::TutorCoursePeriod.where(
+      period_uuid: period.to_model.uuid
+    ).first
+    expect(tcp).not_to be_nil
 
-    expect(osa.num_sections).to eq 2
-    expect(osa.num_students).to eq 6
-    expect(osa.num_students_paid).to eq 1
-    expect(osa.num_students_comped).to eq 2
-    expect(osa.num_students_refunded).to eq 1
-    expect(osa.num_students_dropped).to eq 1
-    expect(osa.num_students_with_work).to eq 2
-    expect(osa.num_teachers).to eq 1
-    expect(osa.estimated_enrollment).to eq 42
-    expect(osa.course_id).to be_a(String)
-    expect(osa.course_uuid).to eq course.uuid
-    expect(osa.course_name).to eq course.name
-    expect(osa.created_at).to be_a(Date)
-    expect(osa.teacher_join_url).to be_a(String)
-    expect(osa.status).to be_a(String)
-    expect(osa.product).to eq "Tutor"
-    expect(osa.error).to be nil
-    expect(osa.term).to be_a(String)
-    expect(osa.course_start_date).to eq Date.parse("2017-01-01")
-    expect(osa.base_year).to eq 2016
-    expect(osa.does_cost).to eq true
-    expect(osa.latest_adoption_decision).to eq "For course credit"
-    expect(osa.campaign_member_id).to eq campaign_member.id
-  end
+    expect(tcp.base_year).to eq 2016
+    expect(tcp.book_name).to eq "Chemistry"
+    expect(tcp.contact_id).to eq sf_contact_a.id
+    expect(tcp.course_id).to be_a(String)
+    expect(tcp.course_name).to eq course.name
+    expect(tcp.course_start_date).to eq Date.parse("2017-01-01")
+    expect(tcp.course_uuid).to eq course.uuid
+    expect(tcp.does_cost).to eq true
+    expect(tcp.estimated_enrollment).to eq 14
+    expect(tcp.latest_adoption_decision).to eq "For course credit"
+    expect(tcp.num_periods).to eq 3
+    expect(tcp.num_teachers).to eq 1
+    expect(tcp.term).to be_a(String)
 
-  def expect_osa_attachment(osa, course)
-    expect(Salesforce::Models::AttachedRecord.count).to eq 1
-    ar = Salesforce::Models::AttachedRecord.first
-    expect(ar.salesforce_class_name).to eq 'OpenStax::Salesforce::Remote::OsAncillary'
-    expect(ar.salesforce_id).to eq osa.id
-    expect(ar.tutor_gid).to eq course.to_global_id.to_s
+    expect(tcp.error).to be nil
+    expect(tcp.created_at).to be_a(Date)
+    expect(tcp.status).to be_a(String)
+
+    expect(tcp.attributes).to match hash_including(extras.stringify_keys)
   end
 
 end

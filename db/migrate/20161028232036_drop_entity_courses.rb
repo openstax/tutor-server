@@ -44,9 +44,6 @@ class DropEntityCourses < ActiveRecord::Migration
     Tasks::Models::TaskingPlan.unscoped
                               .where(target_type: 'Entity::Course')
                               .update_all(target_type: 'CourseProfile::Models::Course')
-    Salesforce::Models::AttachedRecord.unscoped.where{tutor_gid.like '%Entity::Course%'}.update_all(
-      "tutor_gid = replace(tutor_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
-    )
     Legal::Models::TargetedContractRelationship.unscoped.where do
       parent_gid.like '%Entity::Course%'
     end.update_all(
