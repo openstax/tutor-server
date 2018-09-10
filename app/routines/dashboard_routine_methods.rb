@@ -31,8 +31,10 @@ module DashboardRoutineMethods
   end
 
   def load_tasks(role, role_type, start_at_ntz = nil, end_at_ntz = nil, current_time = Time.current)
-    tasks = run(:get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
-              .outputs.tasks.preload(:time_zone, :task_plan, :task_steps).reject(&:hidden?)
+    all_tasks = run(:get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
+                  .outputs.tasks.preload(:time_zone, :task_plan, :task_steps).to_a
+
+    tasks = all_tasks.reject(&:hidden?)
 
     tasks = tasks.select do |task|
       task.past_open? current_time: current_time
@@ -57,6 +59,6 @@ module DashboardRoutineMethods
                                       target_type: 'CourseMembership::Models::Period'
                                     })
                                     .where { first_published_at != nil }
-                                    .count <= outputs.tasks.size
+                                    .count <= all_tasks.size
   end
 end
