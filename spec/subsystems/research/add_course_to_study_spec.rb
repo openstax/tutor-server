@@ -23,6 +23,13 @@ RSpec.describe Research::AddCourseToStudy do
     expect(@course.studies(true)).to include(@study)
   end
 
+  it 'adds users to cohorts' do
+    cohort = Research::Models::Cohort.create(name: "study", study: @study)
+    expect{
+      described_class[study: @study, course: @course]
+    }.to change { cohort.reload.cohort_members_count }.by(@course.students.count)
+  end
+
   it "freaks out if course already in study" do
     described_class[study: @study, course: @course]
     expect{
