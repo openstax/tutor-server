@@ -626,10 +626,12 @@ module Tasks
           on_time_correct_count = data[:correct_on_time_exercise_count]
           on_time_completed_count = data[:completed_on_time_exercise_count]
 
-          correct_count = data[:correct_on_time_exercise_count] +
-                          data[:correct_accepted_late_exercise_count]
-          completed_count = data[:completed_on_time_exercise_count] +
-                            data[:completed_accepted_late_exercise_count]
+          correct_count = [
+            data[:correct_on_time_exercise_count], data[:correct_accepted_late_exercise_count]
+          ].max
+          completed_count = [
+            data[:completed_on_time_exercise_count], data[:completed_accepted_late_exercise_count]
+          ].max
 
           some_late_work_accepted = data[:completed_accepted_late_exercise_count] != 0
 
