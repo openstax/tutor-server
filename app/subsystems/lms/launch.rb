@@ -216,7 +216,9 @@ class Lms::Launch
     # ims-lti gem gives a lot of "unknown parameter" warnings even for params
     # that Canvas commonly sends; silence those except in dev env
     warning_verbosity = Rails.env.development? ? $VERBOSE : nil
-
+    puts "FROM REQ #{trusted}"
+    pp request_parameters
+    pp app
     if trusted
       with_warnings(warning_verbosity) do
         @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
