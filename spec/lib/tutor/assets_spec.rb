@@ -3,10 +3,6 @@ require 'vcr_helper'
 
 RSpec.describe Tutor::Assets, vcr: VCR_OPTS do
 
-  before(:all) do
-    VCR.use_cassette("TutorAssets", VCR_OPTS) { 'tutor-assets' }
-  end
-
   PathStub = Struct.new(:exist?, :mtime, :read) do
     def expand_path
       'foo/bar/baz'
@@ -40,13 +36,15 @@ RSpec.describe Tutor::Assets, vcr: VCR_OPTS do
   it 'reads remote url' do
     expect(Rails.application.secrets).to(
       receive(:assets_manifest_url).at_least(:once).and_return(
-        'http://localhost:3001/assets/rev-manifest.json'
+        'https://tutor-dev.openstax.org/assets/rev-manifest.json'
       )
     )
     Tutor::Assets.read_manifest
     expect(
       Tutor::Assets.instance_variable_get(:'@manifest')
     ).to be_kind_of Tutor::Assets::Manifest::Remote
-    expect(Tutor::Assets::Scripts[:tutor]).to eq 'http://localhost:8000/dist/tutor-dfcf0f8df2ee42b4e32f7034fef94abe2c338c91.min.js'
+    expect(Tutor::Assets::Scripts[:tutor]).to(
+      eq 'http://localhost:8000/dist/tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js'
+    )
   end
 end
