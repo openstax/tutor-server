@@ -95,7 +95,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
 
     it 'has a course average based on the other averages' do
-      expect(cell(11,4,0)).to match /SUM\(1\.0\*E11,0\.0\*F11,0\.0\*G11,0\.0\*H11\)/
+      expect(cell(11,4,0)).to match /SUM\(1\.0\*E11\)/
     end
   end
 
@@ -249,11 +249,11 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                 step_count:                             7,
                 completed_step_count:                   6,
                 completed_on_time_step_count:           5,
-                completed_accepted_late_step_count:     1,
+                completed_accepted_late_step_count:     6,
                 actual_and_placeholder_exercise_count:  3,
                 completed_exercise_count:               3,
                 completed_on_time_exercise_count:       1,
-                completed_accepted_late_exercise_count: 1,
+                completed_accepted_late_exercise_count: 2,
                 correct_exercise_count:                 2,
                 correct_on_time_exercise_count:         1,
                 correct_accepted_late_exercise_count:   0,
@@ -312,14 +312,14 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                 step_count:                             9,
                 completed_step_count:                   9,
                 completed_on_time_step_count:           5,
-                completed_accepted_late_step_count:     4,
+                completed_accepted_late_step_count:     9,
                 actual_and_placeholder_exercise_count:  9,
                 completed_exercise_count:               9,
                 completed_on_time_exercise_count:       5,
-                completed_accepted_late_exercise_count: 4,
+                completed_accepted_late_exercise_count: 9,
                 correct_exercise_count:                 5,
                 correct_on_time_exercise_count:         2,
-                correct_accepted_late_exercise_count:   2,
+                correct_accepted_late_exercise_count:   4,
               },
               {
                 last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
