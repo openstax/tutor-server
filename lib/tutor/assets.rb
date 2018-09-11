@@ -6,6 +6,7 @@ module Tutor
       SOURCE = Rails.root.join('public', 'assets', 'rev-manifest.json')
 
       def [](asset)
+        read if SOURCE.mtime != @mtime
         @contents[asset]
       end
 
@@ -18,11 +19,6 @@ module Tutor
         Rails.logger.info "read assets manifest at #{SOURCE.expand_path}"
       end
 
-      def updated
-        read if SOURCE.mtime != @mtime
-        self
-      end
-
       def present?
         SOURCE.exist?
       end
@@ -30,7 +26,7 @@ module Tutor
 
     def self.[](asset, ext)
       if @manifest.present?
-        asset = @manifest.updated["#{asset}.min.#{ext}"] # manifest assets are minimized
+        asset = @manifest["#{asset}.min.#{ext}"] # manifest assets are minimized
       else
         asset = "#{asset}.#{ext}"
       end
@@ -41,7 +37,7 @@ module Tutor
     def self.read_manifest
       @manifest = Manifest.new
       unless @manifest.present?
-        Rails.logger.info "assets manifest is missing, running in devopement mode with assets served by webpack at #{Rails.application.secrets.assets_url}"
+        Rails.logger.info "assets manifest is missing, running in development mode with assets served by webpack at #{Rails.application.secrets.assets_url}"
         @manifest = nil
       end
     end
