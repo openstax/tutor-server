@@ -50,15 +50,16 @@ module DashboardRoutineMethods
     end
 
     outputs.tasks = had_pes + got_pes
-    outputs.all_tasks_are_ready = still_need_pes.empty? && role_type != :student ||
-                                  Tasks::Models::TaskPlan
-                                    .joins(:tasking_plans)
-                                    .preload(:tasking_plans)
-                                    .where(tasking_plans: {
-                                      target_id: role.student.course_membership_period_id,
-                                      target_type: 'CourseMembership::Models::Period'
-                                    })
-                                    .where { first_published_at != nil }
-                                    .count <= all_tasks.size
+    outputs.all_tasks_are_ready = still_need_pes.empty? && (
+      role_type != :student || Tasks::Models::TaskPlan
+                                 .joins(:tasking_plans)
+                                 .preload(:tasking_plans)
+                                 .where(tasking_plans: {
+                                   target_id: role.student.course_membership_period_id,
+                                   target_type: 'CourseMembership::Models::Period'
+                                 })
+                                 .where { first_published_at != nil }
+                                 .count <= all_tasks.size
+    )
   end
 end
