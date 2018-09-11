@@ -137,6 +137,7 @@ RSpec.describe 'LMS Launch', type: :request do
   it 'errors for invalid keys' do
     unsaved_app = FactoryBot.build(:lms_app)
     simulator.install_tutor(app: unsaved_app, course: "other")
+    simulator.add_teacher("teacher")
     simulator.launch(user: "teacher", assignment: "tutor", course: "other")
     expect_error("may not have been integrated correctly")
   end

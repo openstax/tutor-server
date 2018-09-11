@@ -50,7 +50,6 @@ class LmsController < ApplicationController
       session[:launch_id] = launch.persist!
 
       # Do some early error checking
-
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
 
       fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
