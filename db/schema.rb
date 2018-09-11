@@ -492,7 +492,7 @@ ActiveRecord::Schema.define(version: 20180912162358) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
+  add_index "lms_nonces", ["lms_app_id"], name: "index_lms_nonces_on_lms_app_id", using: :btree
 
   create_table "lms_tool_consumers", force: :cascade do |t|
     t.string   "guid",                null: false
