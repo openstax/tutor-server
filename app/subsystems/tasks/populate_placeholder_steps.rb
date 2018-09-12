@@ -94,7 +94,8 @@ class Tasks::PopulatePlaceholderSteps
       result = OpenStax::Biglearn::Api.public_send biglearn_api_method,
                                                    task: task,
                                                    inline_max_attempts: max_attempts,
-                                                   inline_sleep_interval: sleep_interval
+                                                   inline_sleep_interval: sleep_interval,
+                                                   enable_warnings: !retry_in_background
       # Bail if we are supposed to retry this in the background
       return [ task, false ] if !result[:accepted] && retry_in_background
 
@@ -189,7 +190,8 @@ class Tasks::PopulatePlaceholderSteps
         task: task,
         max_num_exercises: placeholder_steps.size,
         inline_max_attempts: max_attempts,
-        inline_sleep_interval: sleep_interval
+        inline_sleep_interval: sleep_interval,
+        enable_warnings: !retry_in_background
       )
       # Bail if we are supposed to retry this in the background
       return [ task, false ] if !result[:accepted] && retry_in_background
