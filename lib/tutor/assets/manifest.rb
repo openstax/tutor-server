@@ -6,25 +6,30 @@ module Tutor
       # The assets will be inside another container and loaded over http
       class Remote
         def [](asset)
-          assets = Manifest.parse_source(source)
           assets[asset]
         end
+
         def url
           Rails.application.secrets.assets_manifest_url
         end
 
-        def source
+        def assets
+          RequestStore.store[:assets_manifest] ||= Manifest.parse_source(fetch)
+        end
+
+        def fetch
           response = Faraday.get url
           if response.success?
             response.body
           else
-            raise("status #{response.status} when reading remote url: #{url}")
+            Rails.logger.info "status #{response.status} when reading remote url: #{url}"
+            '{}'
           end
         end
 
         def present?
           begin
-            Faraday.get(url).success?
+            assets.present?
           rescue Faraday::ConnectionFailed
             false
           end
