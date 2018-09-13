@@ -1,9 +1,11 @@
+require_relative 'assets/manifest'
+
 module Tutor
   module Assets
 
     def self.[](asset, ext)
-      if @manifest.present? # if it's in manifest it's minimized
-        asset = @manifest["#{asset}.min.#{ext}"]
+      if @manifest.present?
+        asset = @manifest["#{asset}.min.#{ext}"] # manifest assets are minimized
       else
         asset = "#{asset}.#{ext}"
       end
@@ -12,12 +14,9 @@ module Tutor
 
     # called by assets initializer as it boots
     def self.read_manifest
-      begin
-        @manifest = JSON.parse open("#{Rails.application.secrets.assets_url}/rev-manifest.json").read
-        @manifest.default_proc = proc do |_, asset|
-          raise("Asset #{asset} does not exist")
-        end
-      rescue Errno::ENOENT
+      @manifest = Manifest.pick_local_or_remote
+      unless @manifest.present?
+        Rails.logger.info "assets manifest is missing, running in development mode with assets served by webpack at #{Rails.application.secrets.assets_url}"
         @manifest = nil
       end
     end

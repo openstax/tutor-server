@@ -15,7 +15,8 @@ module OpenStax::Biglearn::Api
     :response_status_key,
     :accepted_response_status,
     :inline_max_attempts,
-    :inline_sleep_interval
+    :inline_sleep_interval,
+    :enable_warnings
   ]
 
   extend Configurable
@@ -339,7 +340,8 @@ module OpenStax::Biglearn::Api
             exercise_uuids: response[:exercise_uuids],
             max_num_exercises: request[:max_num_exercises],
             accepted: accepted,
-            task: request[:task]
+            task: request[:task],
+            enable_warnings: options[:enable_warnings]
           ),
           spy_info: response.fetch(:spy_info, {})
         }
@@ -373,7 +375,8 @@ module OpenStax::Biglearn::Api
             exercise_uuids: response[:exercise_uuids],
             max_num_exercises: request[:max_num_exercises],
             accepted: accepted,
-            task: request[:task]
+            task: request[:task],
+            enable_warnings: options[:enable_warnings]
           ),
           spy_info: response.fetch(:spy_info, {})
         }
@@ -404,7 +407,8 @@ module OpenStax::Biglearn::Api
           exercises: get_ecosystem_exercises_by_uuids(
             ecosystem: request[:student].course.ecosystem,
             exercise_uuids: response[:exercise_uuids],
-            max_num_exercises: request[:max_num_exercises]
+            max_num_exercises: request[:max_num_exercises],
+            enable_warnings: options[:enable_warnings]
           ),
           spy_info: response.fetch(:spy_info, {})
         }
@@ -503,7 +507,7 @@ module OpenStax::Biglearn::Api
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
                            create: false, perform_later: false,
                            response_status_key: nil, accepted_response_status: [],
-                           inline_max_attempts: 1, inline_sleep_interval: 0)
+                           inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
       include_sequence_number = sequence_number_model_key.present? &&
                                 sequence_number_model_class.present?
 
@@ -547,7 +551,7 @@ module OpenStax::Biglearn::Api
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request: #{request}" +
           " - Attempts: #{inline_max_attempts} - Sleep Interval: #{inline_sleep_interval} second(s)"
-        end unless accepted
+        end if enable_warnings && !accepted
 
         verify_result(
           result: block_given? ? yield(request, response, accepted) : response,
@@ -561,7 +565,7 @@ module OpenStax::Biglearn::Api
                          sequence_number_model_key: nil, sequence_number_model_class: nil,
                          create: false, perform_later: false,
                          response_status_key: nil, accepted_response_status: [],
-                         inline_max_attempts: 1, inline_sleep_interval: 0)
+                         inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
       include_sequence_numbers = sequence_number_model_key.present? &&
                                  sequence_number_model_class.present?
 
@@ -626,7 +630,7 @@ module OpenStax::Biglearn::Api
           "Maximum number of attempts exceeded when calling Biglearn API inline" +
           " - API: #{method} - Request(s): #{requests_array.inspect}" +
           " - Attempts: #{inline_max_attempts} - Sleep Interval: #{inline_sleep_interval} second(s)"
-        end unless all_accepted
+        end if enable_warnings && !all_accepted
 
         responses_map = {}
         responses.each do |response|
@@ -645,9 +649,10 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    def get_ecosystem_exercises_by_uuids(
-      ecosystem:, exercise_uuids:, max_num_exercises:, accepted: true, task: nil
-    )
+    def get_ecosystem_exercises_by_uuids(ecosystem:, exercise_uuids:, max_num_exercises:,
+                                         accepted: true, task: nil, enable_warnings: nil)
+      enable_warnings = true if enable_warnings.nil?
+
       if accepted
         exercises_by_uuid = ecosystem.exercises.where(uuid: exercise_uuids).index_by(&:uuid)
         ordered_exercises = exercise_uuids.map do |uuid|
@@ -708,7 +713,7 @@ module OpenStax::Biglearn::Api
             "Assigned #{chosen_exercises.size} fallback personalized exercises for task with ID: #{
             task.id}, UUID: #{task.uuid}, Type: #{task.task_type
             } because Biglearn was not ready after the maximum number of attempts"
-          ) unless chosen_exercises.empty?
+          ) if enable_warnings && !chosen_exercises.empty?
         end
       end
     end

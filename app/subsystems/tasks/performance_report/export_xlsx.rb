@@ -411,17 +411,22 @@ module Tasks
               student[:last_name].to_s.gsub('=', ''),
               [student[:student_identifier].to_s.gsub('=', ''), style: @normal_R]
             ]
+            sum_formula = []
+            sum_formula << "#{@course.homework_score_weight}*#{
+              Axlsx::cell_r(num_student_info_columns + 1, first_student_row + ss - 1)
+            }" if @course.homework_score_weight > 0
+            sum_formula << "#{@course.homework_progress_weight}*#{
+              Axlsx::cell_r(num_student_info_columns + 2, first_student_row + ss - 1)
+            }" if @course.homework_progress_weight > 0
+            sum_formula << "#{@course.reading_score_weight}*#{
+              Axlsx::cell_r(num_student_info_columns + 3, first_student_row + ss - 1)
+            }" if @course.reading_score_weight > 0
+            sum_formula << "#{@course.reading_progress_weight}*#{
+              Axlsx::cell_r(num_student_info_columns + 4, first_student_row + ss - 1)
+            }" if @course.reading_progress_weight > 0
             student_columns += [
               [
-                "#{@eq}IFERROR(SUM(#{@course.homework_score_weight}*#{
-                  Axlsx::cell_r(num_student_info_columns + 1, first_student_row + ss - 1)
-                },#{@course.homework_progress_weight}*#{
-                  Axlsx::cell_r(num_student_info_columns + 2, first_student_row + ss - 1)
-                },#{@course.reading_score_weight}*#{
-                  Axlsx::cell_r(num_student_info_columns + 3, first_student_row + ss - 1)
-                },#{@course.reading_progress_weight}*#{
-                  Axlsx::cell_r(num_student_info_columns + 4, first_student_row + ss - 1)
-                }),NA())", style: @pct_L
+                "#{@eq}IFERROR(SUM(#{sum_formula.join(',')}),NA())", style: @pct_L
               ],
               [
                 "#{@eq}IFERROR(AVERAGE(#{
@@ -626,10 +631,12 @@ module Tasks
           on_time_correct_count = data[:correct_on_time_exercise_count]
           on_time_completed_count = data[:completed_on_time_exercise_count]
 
-          correct_count = data[:correct_on_time_exercise_count] +
-                          data[:correct_accepted_late_exercise_count]
-          completed_count = data[:completed_on_time_exercise_count] +
-                            data[:completed_accepted_late_exercise_count]
+          correct_count = [
+            data[:correct_on_time_exercise_count], data[:correct_accepted_late_exercise_count]
+          ].max
+          completed_count = [
+            data[:completed_on_time_exercise_count], data[:completed_accepted_late_exercise_count]
+          ].max
 
           some_late_work_accepted = data[:completed_accepted_late_exercise_count] != 0
 

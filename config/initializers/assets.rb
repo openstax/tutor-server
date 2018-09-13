@@ -25,4 +25,4 @@ Rails.application.config.assets.precompile += %w( home.css
 
 # initialize Assets
 require 'tutor/assets'
-Tutor::Assets.read_manifest unless Rails.env.development?
+Tutor::Assets.read_manifest
