@@ -33,18 +33,21 @@ RSpec.describe Tutor::Assets, vcr: VCR_OPTS do
     expect(Tutor::Assets[:foo, :bar]).to eq 'http://localhost:8000/dist/foo-2.min.bar'
   end
 
-  it 'reads remote url' do
-    expect(Rails.application.secrets).to(
-      receive(:assets_manifest_url).at_least(:once).and_return(
-        'https://tutor-dev.openstax.org/assets/rev-manifest.json'
+  describe 'loading remote manifest' do
+    before(:each) {
+      Rails.application.secrets.assets_manifest_url = 'https://tutor-dev.openstax.org/assets/rev-manifest.json'
+    }
+    after(:each) { Rails.application.secrets.assets_manifest_url = nil }
+
+    it 'uses remote json' do
+      Tutor::Assets.read_manifest
+      expect(Tutor::Assets.instance_variable_get(:'@manifest').present?).to be true
+      expect(
+        Tutor::Assets.instance_variable_get(:'@manifest')
+      ).to be_kind_of Tutor::Assets::Manifest::Remote
+      expect(Tutor::Assets::Scripts[:tutor]).to(
+        eq 'http://localhost:8000/dist/tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js'
       )
-    )
-    Tutor::Assets.read_manifest
-    expect(
-      Tutor::Assets.instance_variable_get(:'@manifest')
-    ).to be_kind_of Tutor::Assets::Manifest::Remote
-    expect(Tutor::Assets::Scripts[:tutor]).to(
-      eq 'http://localhost:8000/dist/tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js'
-    )
+    end
   end
 end
