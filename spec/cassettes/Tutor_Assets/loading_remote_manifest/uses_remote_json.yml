@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://tutor-dev.openstax.org/assets/rev-manifest.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 13 Sep 2018 17:45:53 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '404'
+      Last-Modified:
+      - Fri, 31 Aug 2018 21:21:15 GMT
+      Connection:
+      - keep-alive
+      Etag:
+      - '"5b89b14b-194"'
+      Expires:
+      - Fri, 13 Sep 2019 17:45:53 GMT
+      Cache-Control:
+      - max-age=31536000
+      - public
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "lmspair.min.js": "lmspair-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js",
+          "lmspair.min.js.map": "lmspair-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js.map",
+          "tutor.min.css": "tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.css",
+          "tutor.min.js": "tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js",
+          "tutor.min.js.map": "tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js.map"
+        }
+    http_version: 
+  recorded_at: Thu, 13 Sep 2018 17:45:53 GMT
+recorded_with: VCR 2.9.3

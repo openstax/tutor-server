@@ -51,7 +51,7 @@ brakeman.html
 
 # Ignore coverage reports
 coverage/*
-
+vendor/bundle
 # Ignore ERD diagrams and source maps
 erd*.pdf
 public/assets/source_maps/
