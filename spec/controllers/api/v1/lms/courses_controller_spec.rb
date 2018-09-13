@@ -7,6 +7,11 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :controller, api: true, ve
   let(:token)   { FactoryBot.create(:doorkeeper_access_token,
                                            resource_owner_id: user.id) }
 
+  let(:app) { Lms::WilloLabs.new }
+  let(:launch_request) { FactoryBot.create(:launch_request, app: app) }
+  let(:lms_launch_id) { Lms::Launch.from_request(launch_request).persist! }
+  let(:lms_launch) { Lms::Launch.from_id(lms_launch_id) }
+
   it 'allows teachers to retrieve secrets' do
     AddUserAsCourseTeacher[course: course, user: user]
 
@@ -30,5 +35,16 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :controller, api: true, ve
     }.to raise_error(SecurityTransgression)
   end
 
+  it 'pairs a course to lms' do
+    AddUserAsCourseTeacher[course: course, user: user]
+    expect_any_instance_of(
+      ::IMS::LTI::Services::MessageAuthenticator
+    ).to receive(:valid_signature?).and_return(true)
+    lms_launch.attempt_context_creation
+    response = api_get :pair, token, parameters: { id: course.id }, session: { launch_id: lms_launch_id }
+    expect(JSON.parse(response.body)['success']).to eq true
+    expect(lms_launch.context.reload.course).to eq course
+    expect(course.reload.is_lms_enabled).to be true
+  end
 
 end
