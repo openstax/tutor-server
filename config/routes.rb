@@ -269,9 +269,6 @@ Rails.application.routes.draw do
         post :set_ecosystem
         post :set_catalog_offering
         post :teachers, controller: :teachers
-        post :add_salesforce
-        delete :remove_salesforce
-        put :restore_salesforce
       end
 
       post :bulk_update, on: :collection
@@ -433,11 +430,9 @@ Rails.application.routes.draw do
     post :ci_launch
   end
 
-  if Rails.env.test?
-    scope :specs do
-      get 'lms_error_page/:page(/:case)' => 'lms_error_page_specs#page'
-    end
-  end
+  scope :specs do
+    get 'lms_error_page/:page(/:case)' => 'lms_error_page_specs#page'
+  end if Rails.env.test?
 
   # Catch-all frontend route
   match :'*other', to: 'webview#index', via: [:get, :post, :put, :patch, :delete]

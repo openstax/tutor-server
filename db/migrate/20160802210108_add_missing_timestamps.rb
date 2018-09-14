@@ -5,7 +5,6 @@ class AddMissingTimestamps < ActiveRecord::Migration
     Tasks::Models::TaskedPlaceholder
   ]
   MODELS_WITH_NULLABLE_TIMESTAMPS = [
-    Salesforce::Models::AttachedRecord,
     Tasks::Models::PerformanceReportExport
   ]
 

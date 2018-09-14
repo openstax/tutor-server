@@ -1,7 +1,7 @@
 class Admin::PeriodsController < Admin::BaseController
   before_action :get_course, only: [:new, :create]
 
-  before_action :get_period, only: [:edit, :update, :destroy, :restore, :change_salesforce]
+  before_action :get_period, only: [:edit, :update, :destroy, :restore]
 
   def new
   end
@@ -55,18 +55,6 @@ class Admin::PeriodsController < Admin::BaseController
       flash[:error] = result.errors.full_messages
     end
     redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
-  end
-
-  def change_salesforce
-    handle_with(Admin::PeriodsChangeSalesforce,
-                success: ->(*) {
-                  flash[:notice] = "Salesforce record changed. Stats won't update til next periodic update."
-                  redirect_to edit_admin_course_path(@course, anchor: "salesforce")
-                },
-                failure: ->(*) {
-                  flash[:error] = @handler_result.errors.map(&:translate).join(', ')
-                  redirect_to edit_admin_course_path(@course, anchor: "salesforce")
-                })
   end
 
   private

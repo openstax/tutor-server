@@ -338,7 +338,7 @@ ActiveRecord::Schema.define(version: 20180912162358) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                                         null: false
     t.boolean  "is_excluded_from_salesforce",                                          default: false,               null: false
-    t.uuid     "uuid",                                                                 default: "gen_random_uuid()"
+    t.uuid     "uuid",                                                                 default: "gen_random_uuid()", null: false
     t.integer  "sequence_number",                                                      default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                                              null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                                              null: false
@@ -349,12 +349,12 @@ ActiveRecord::Schema.define(version: 20180912162358) do
     t.boolean  "does_cost",                                                            default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
+    t.boolean  "is_preview_ready",                                                     default: false,               null: false
+    t.datetime "deleted_at"
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                                              default: false,               null: false
     t.boolean  "is_access_switchable",                                                 default: true,                null: false
-    t.boolean  "is_preview_ready",                                                     default: false,               null: false
     t.string   "last_lms_scores_push_job_id"
-    t.datetime "deleted_at"
     t.string   "creator_campaign_member_id"
     t.string   "latest_adoption_decision"
     t.decimal  "homework_score_weight",                        precision: 3, scale: 2, default: 1.0,                 null: false
@@ -461,7 +461,7 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   create_table "lms_contexts", force: :cascade do |t|
     t.string   "lti_id",                   null: false
     t.integer  "lms_tool_consumer_id",     null: false
-    t.integer  "course_profile_course_id"
+    t.integer  "course_profile_course_id", null: false
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
   end
@@ -486,12 +486,13 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
 
   create_table "lms_nonces", force: :cascade do |t|
-    t.string   "value",      limit: 128,             null: false
-    t.datetime "created_at",                         null: false
-    t.integer  "lms_app_id"
-    t.datetime "updated_at",                         null: false
-    t.integer  "app_type",               default: 0, null: false
+    t.string   "value",      limit: 128, null: false
+    t.datetime "created_at",             null: false
+    t.integer  "lms_app_id",             null: false
+    t.datetime "updated_at",             null: false
   end
+
+  add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
 
   create_table "lms_tool_consumers", force: :cascade do |t|
     t.string   "guid",                null: false
@@ -693,8 +694,8 @@ ActiveRecord::Schema.define(version: 20180912162358) do
     t.datetime "updated_at",               null: false
   end
 
+  add_index "research_study_courses", ["course_profile_course_id", "research_study_id"], name: "research_study_courses_on_course_and_study", unique: true, using: :btree
   add_index "research_study_courses", ["course_profile_course_id"], name: "index_research_study_courses_on_course_profile_course_id", using: :btree
-  add_index "research_study_courses", ["research_study_id", "course_profile_course_id"], name: "research_study_courses_on_study_and_course", unique: true, using: :btree
   add_index "research_study_courses", ["research_study_id"], name: "index_research_study_courses_on_research_study_id", using: :btree
 
   create_table "research_survey_plans", force: :cascade do |t|
@@ -725,10 +726,10 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   end
 
   add_index "research_surveys", ["completed_at"], name: "index_research_surveys_on_completed_at", using: :btree
+  add_index "research_surveys", ["course_membership_student_id", "research_survey_plan_id"], name: "research_surveys_on_student_and_plan", unique: true, using: :btree
   add_index "research_surveys", ["course_membership_student_id"], name: "research_surveys_on_student", using: :btree
   add_index "research_surveys", ["deleted_at"], name: "index_research_surveys_on_deleted_at", using: :btree
   add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
-  add_index "research_surveys", ["research_survey_plan_id", "course_membership_student_id"], name: "research_surveys_on_plan_and_student", unique: true, using: :btree
   add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
 
   create_table "role_role_users", force: :cascade do |t|
@@ -739,19 +740,6 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   end
 
   add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
-
-  create_table "salesforce_attached_records", force: :cascade do |t|
-    t.string   "tutor_gid",             null: false
-    t.string   "salesforce_class_name", null: false
-    t.string   "salesforce_id",         null: false
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-    t.datetime "deleted_at"
-  end
-
-  add_index "salesforce_attached_records", ["deleted_at"], name: "index_salesforce_attached_records_on_deleted_at", using: :btree
-  add_index "salesforce_attached_records", ["salesforce_id", "salesforce_class_name", "tutor_gid"], name: "salesforce_attached_record_tutor_gid", unique: true, using: :btree
-  add_index "salesforce_attached_records", ["tutor_gid"], name: "index_salesforce_attached_records_on_tutor_gid", using: :btree
 
   create_table "school_district_districts", force: :cascade do |t|
     t.string   "name",       null: false

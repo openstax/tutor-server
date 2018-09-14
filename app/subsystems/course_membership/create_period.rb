@@ -3,9 +3,12 @@ class CourseMembership::CreatePeriod
 
   protected
 
-  def exec(course:, name: nil, enrollment_code: nil)
+  def exec(course:, name: nil, enrollment_code: nil, uuid: nil)
     name ||= (course.periods.count + 1).ordinalize
-    period = CourseMembership::Models::Period.new(name: name, enrollment_code: enrollment_code)
+    uuid ||= SecureRandom.uuid
+    period = CourseMembership::Models::Period.new(
+      name: name, enrollment_code: enrollment_code, uuid: uuid
+    )
     course.periods << period
     transfer_errors_from(period, {type: :verbatim}, true)
     strategy = CourseMembership::Strategies::Direct::Period.new(period)

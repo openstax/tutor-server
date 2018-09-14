@@ -4,11 +4,6 @@ end
 
 class SwitchToOpenStaxSalesforce < ActiveRecord::Migration
   def up
-    # Move SF attached records to openstax_salesforce namespace
-    Salesforce::Models::AttachedRecord.unscoped.update_all(
-      "salesforce_class_name = 'OpenStax::' || salesforce_class_name"
-    )
-
     # Move SF user from native model to openstax_salesforce model
     old_sf_user = OldSfUser.first
 

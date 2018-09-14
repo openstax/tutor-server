@@ -6,8 +6,8 @@ class CreatePeriod
 
   uses_routine Tasks::AssignCoursewideTaskPlansToNewPeriod, as: :assign_coursewide_task_plans
 
-  def exec(course:, name: nil, enrollment_code: nil)
-    run(:create_period, course: course, name: name, enrollment_code: enrollment_code)
+  def exec(course:, name: nil, enrollment_code: nil, uuid: nil)
+    run(:create_period, course: course, name: name, enrollment_code: enrollment_code, uuid: uuid)
     run(:assign_coursewide_task_plans, period: outputs.period)
   end
 end
