@@ -12,7 +12,7 @@ class Lms::PairLaunchToCourse
 
     launch.context.course = course
     launch.context.save
-    transfer_errors_from(launch.context, {type: :verbatim})
+    transfer_errors_from(launch.context, {type: :verbatim}, true)
 
     course.update_attributes!(is_lms_enabling_allowed: true, is_lms_enabled: true)
     transfer_errors_from(course, {type: :verbatim})
