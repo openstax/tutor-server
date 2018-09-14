@@ -54,7 +54,7 @@ class LmsController < ApplicationController
 
       fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
 
-      context = launch.attempt_context_creation
+      context = launch.context
       if context.course.nil?
         if launch.is_student?
           # Show a "your teacher needs do something before you can open Tutor" message

@@ -30,6 +30,7 @@ class Lms::Launch
   end
 
   def persist!
+    self.context || raise("context failed")
     Lms::Models::TrustedLaunchData.create!(
       request_params: request_parameters,
       request_url: request_url
@@ -122,36 +123,27 @@ class Lms::Launch
     @tool_consumer ||= Lms::Models::ToolConsumer.find_or_create_by!(guid: tool_consumer_instance_guid)
   end
 
-  def context
-    if @context.nil?
-      query = Lms::Models::Context.eager_load(:course)
-                                  .where(lti_id: context_id)
-
-      if @tool_consumer.nil?
-        query = query.joins(:tool_consumer)
-                     .where(tool_consumer: { guid: tool_consumer_instance_guid })
-      else
-        query = query.where(tool_consumer: @tool_consumer)
-      end
-
-      @context = query.first
-    end
-    @context
-  end
-
   def missing_required_fields
     @missing_required_fields ||= REQUIRED_FIELDS.select do |required_field|
       send(required_field).blank?
     end
   end
 
-  def attempt_context_creation
-    context_id = request_parameters[:context_id]
-    if context.nil? && context_id.present?
-      @context = Lms::Models::Context.find_by(id: context_id) ||
-                 create_context!
+  def context
+    @context ||= (find_existing_context || create_context!)
+  end
+
+  def find_existing_context
+    query = Lms::Models::Context.eager_load(:course).where(lti_id: context_id)
+
+    if @tool_consumer.nil?
+      query = query.joins(:tool_consumer)
+                .where(tool_consumer: { guid: tool_consumer_instance_guid })
+    else
+      query = query.where(tool_consumer: @tool_consumer)
     end
-    context
+
+    query.first
   end
 
   def create_context!
@@ -166,7 +158,7 @@ class Lms::Launch
 
     raise CourseKeysAlreadyUsed if Lms::Models::Context.where(course: course).exists?
 
-    @context = Lms::Models::Context.create!(
+    Lms::Models::Context.create!(
       lti_id: context_id,
       tool_consumer: tool_consumer!,
       course: course

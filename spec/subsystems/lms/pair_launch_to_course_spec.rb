@@ -20,7 +20,6 @@ RSpec.describe Lms::PairLaunchToCourse do
     launch = Lms::Launch.from_request(
       FactoryBot.create(:launch_request, app: app)
     )
-    launch.attempt_context_creation
     result = subject.call(launch_id: launch.persist!, course: course)
     expect(result.outputs.success).to be true
     expect(result.errors).to be_empty

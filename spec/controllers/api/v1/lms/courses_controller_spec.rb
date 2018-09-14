@@ -40,7 +40,6 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :controller, api: true, ve
     expect_any_instance_of(
       ::IMS::LTI::Services::MessageAuthenticator
     ).to receive(:valid_signature?).and_return(true)
-    lms_launch.attempt_context_creation
     response = api_get :pair, token, parameters: { id: course.id }, session: { launch_id: lms_launch_id }
     expect(JSON.parse(response.body)['success']).to eq true
     expect(lms_launch.context.reload.course).to eq course
