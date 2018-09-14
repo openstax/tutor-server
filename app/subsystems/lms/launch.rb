@@ -109,7 +109,7 @@ class Lms::Launch
 
   def app
     if @app.nil?
-      key = request_parameters[:oauth_consumer_key]
+      request_parameters[:oauth_consumer_key]
       [Lms::WilloLabs, Lms::Models::App].each do |model|
         @app = model.find_by(key: request_parameters[:oauth_consumer_key])
         return @app if @app
