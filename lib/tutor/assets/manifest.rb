@@ -30,7 +30,7 @@ module Tutor
         def present?
           begin
             assets.present?
-          rescue Faraday::ConnectionFailed
+          rescue Faraday::ConnectionFailed, Addressable::URI::InvalidURIError
             false
           end
         end

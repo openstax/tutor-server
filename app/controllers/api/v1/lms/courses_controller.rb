@@ -29,6 +29,20 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
 
   end
 
+  api :PUT, '/lms/courses/:id/pair', 'Pair an existing course with the LMS launch'
+  description <<-EOS
+    When a teacher launches from an LMS using keys that are configured to for
+    "course-less" pairing, an LMS launch is created with a context that needs a course paired
+    That pairing happens here, using the provided course ID and the launch id that's stored in the user ssession.
+  EOS
+  def pair
+    OSU::AccessPolicy.require_action_allowed!(:lms_course_pair, current_api_user, @course)
+    result = Lms::PairLaunchToCourse.call(
+      launch_id: session[:launch_id], course: @course
+    )
+    render json: { success: result.outputs[:success], errors: result.errors }
+  end
+
   api :PUT, '/lms/courses/:id/push_scores', 'Sends average course scores to the LMS in a background job'
   description <<-EOS
     Returns JSON of the following form with HTTP status 202:

@@ -26,7 +26,7 @@ class LmsController < ApplicationController
 
     begin
       @launch = Lms::Launch.from_request(request)
-    rescue Lms::Launch::Error => ee
+    rescue StandardError => ee
       fail_with_catchall_message(ee) and return
     end
   end
@@ -42,6 +42,7 @@ class LmsController < ApplicationController
 
       log(:debug) { launch.formatted_data(include_everything: true) }
 
+      fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
       # Persist the launch so we can load it after return from Accounts. Since
       # these persisted launches are going to be kept around for a while for
       # debugging, persist before any errors are detected
@@ -49,44 +50,23 @@ class LmsController < ApplicationController
       session[:launch_id] = launch.persist!
 
       # Do some early error checking
-
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
 
-      fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
 
-      # For the time being, all apps are course-owned, meaning we can infer the
-      # course associated to a launch by looking at the app keys inside the launch.
-      # This means if we don't have a context yet, we should be able to autocreate it.
-      # Do that here, and freak out if we can't.  When we add admin-installed apps,
-      # remove the freak-out.
 
       context = launch.context
+      if context.course.nil?
+        if launch.is_student?
+          # Show a "your teacher needs do something before you can open Tutor" message
+          fail_for_unpaired and return
 
-      if context.nil? && launch.can_auto_create_context?
-        context = launch.auto_create_context!
+          # authentication.  The `authenticate` action will either need to redirect
+          # to a `pair` action/flow, or `complete_launch` will need to redirect to
+          # such a flow before it calls its handler.
+        end
       end
 
-      raise "Context was not created for launch #{session[:launch_id]}" if context.nil?
-
-      # FUTURE FUNCTIONALITY SKETCH
-      #
-      # When we let admins install Tutor, we'll need teachers to pair their Tutor course
-      # with their LMS course.  At that point, something like the following logic will
-      # be needed.  context won't be nil now because all apps are owned by courses, so
-      # the auto create above should succeed.
-      #
-      # if context.nil?
-      #   if launch.is_student?
-      #     # Show a "your teacher needs do something before you can open Tutor" message
-      #   else
-      #     # teacher will need to pair their course to the LMS course after
-      #     # authentication.  The `authenticate` action will either need to redirect
-      #     # to a `pair` action/flow, or `complete_launch` will need to redirect to
-      #     # such a flow before it calls its handler.
-      #   end
-      # end
-
-      fail_for_lms_disabled(launch, context) and return if !context.course.is_lms_enabled
+      fail_for_lms_disabled(launch, context) and return if context.course and !context.course.is_lms_enabled
 
     rescue Lms::Launch::LmsDisabled => ee
       fail_for_lms_disabled(launch, context) and return
@@ -141,7 +121,7 @@ class LmsController < ApplicationController
     # their course (or the enrollment screen into it)
 
     begin
-      launch = Lms::Launch.from_id(session.delete(:launch_id))
+      launch = Lms::Launch.from_id(session[:launch_id])
     rescue Lms::Launch::CouldNotLoadLaunch => ee
       fail_for_already_used and return
     end
@@ -154,19 +134,20 @@ class LmsController < ApplicationController
     launch.update_tool_consumer_metadata!
 
     # Add the user as a teacher or student
-
     course = launch.context.course
-
     if launch.is_student?
+      # students were checked to ensure trhe launch had
+      # a course in step 2 (launch_authenticate)
       launch.store_score_callback(current_user)
-
       # Note if the user is not yet a student in the course, so they can be sent through the
       # LMS-optimized enrollment flow.
-
       if !UserIsCourseStudent[course: course, user: current_user, include_dropped_students: true]
         is_unenrolled_student = true
       end
     elsif launch.is_instructor?
+      if course.nil?
+        redirect_to lms_pair_url and return
+      end
       if !UserIsCourseTeacher[user: current_user, course: course]
         AddUserAsCourseTeacher[user: current_user, course: course]
       end
@@ -179,7 +160,17 @@ class LmsController < ApplicationController
     end
   end
 
+  def pair
+    # pair renders a stripped down HTML page that renders a React UI
+    render layout: false
+  end
+
   protected
+
+  def fail_for_unpaired
+    log(:info) { "Attempting to launch (#{session[:launch_id]}) into an not-yet-paired course" }
+    render_minimal_error(:fail_unpaired)
+  end
 
   def fail_for_lms_disabled(launch, context)
     log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \

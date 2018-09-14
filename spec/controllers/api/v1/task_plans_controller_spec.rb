@@ -551,7 +551,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         expect {
           api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
                                 raw_post_data: valid_json_hash.to_json
-        }.not_to change{ @task_plan.reload.tasks }
+        }.not_to change{ @task_plan.reload.tasks.count }
         expect(response).to have_http_status(:ok)
 
         expect(@task_plan.reload.publish_last_requested_at).to(

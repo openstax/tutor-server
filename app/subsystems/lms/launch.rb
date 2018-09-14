@@ -5,7 +5,7 @@ class Lms::Launch
   # A PORO that hides the details of a launch request's internals and
   # launch-related models from other LMS code.
 
-  attr_reader :app, :message
+  attr_reader :message
   attr_reader :request_parameters, :request_url
 
   class HandledError          < StandardError; end
@@ -30,6 +30,7 @@ class Lms::Launch
   end
 
   def persist!
+    self.context || raise("context failed")
     Lms::Models::TrustedLaunchData.create!(
       request_params: request_parameters,
       request_url: request_url
@@ -108,8 +109,11 @@ class Lms::Launch
 
   def app
     if @app.nil?
-      @app = Lms::Models::App.find_by(key: request_parameters[:oauth_consumer_key])
-      raise AppNotFound if @app.nil?
+      [Lms::WilloLabs, Lms::Models::App].each do |model|
+        @app = model.find_by(key: request_parameters[:oauth_consumer_key])
+        return @app if @app
+      end
+      raise AppNotFound
     end
     @app
   end
@@ -118,39 +122,32 @@ class Lms::Launch
     @tool_consumer ||= Lms::Models::ToolConsumer.find_or_create_by!(guid: tool_consumer_instance_guid)
   end
 
-  def context
-    if @context.nil?
-      query = Lms::Models::Context.eager_load(:course)
-                                  .where(lti_id: context_id)
-
-      if @tool_consumer.nil?
-        query = query.joins(:tool_consumer)
-                     .where(tool_consumer: { guid: tool_consumer_instance_guid })
-      else
-        query = query.where(tool_consumer: @tool_consumer)
-      end
-
-      @context = query.first
-    end
-    @context
-  end
-
   def missing_required_fields
     @missing_required_fields ||= REQUIRED_FIELDS.select do |required_field|
       send(required_field).blank?
     end
   end
 
-  def can_auto_create_context?
-    app.owner.is_a? CourseProfile::Models::Course
+  def context
+    @context ||= (find_existing_context || create_context!)
   end
 
-  def auto_create_context!
-    raise "Cannot auto create context" if !can_auto_create_context?
+  def find_existing_context
+    query = Lms::Models::Context.eager_load(:course).where(lti_id: context_id)
 
+    if @tool_consumer.nil?
+      query = query.joins(:tool_consumer)
+                .where(tool_consumer: { guid: tool_consumer_instance_guid })
+    else
+      query = query.where(tool_consumer: @tool_consumer)
+    end
+
+    query.first
+  end
+
+  def create_context!
     course = app.owner
-
-    raise LmsDisabled if !course.is_lms_enabled
+    raise LmsDisabled if course && !course.is_lms_enabled
 
     # In theory, we could allow multiple LTI context IDs to point to the same Tutor course (e.g. if
     # one teacher has 3 sections and uses 3 LMS courses to point to one Tutor course).  For this reason
@@ -160,7 +157,7 @@ class Lms::Launch
 
     raise CourseKeysAlreadyUsed if Lms::Models::Context.where(course: course).exists?
 
-    @context = Lms::Models::Context.create!(
+    Lms::Models::Context.create!(
       lti_id: context_id,
       tool_consumer: tool_consumer!,
       course: course
@@ -210,7 +207,6 @@ class Lms::Launch
     # ims-lti gem gives a lot of "unknown parameter" warnings even for params
     # that Canvas commonly sends; silence those except in dev env
     warning_verbosity = Rails.env.development? ? $VERBOSE : nil
-
     if trusted
       with_warnings(warning_verbosity) do
         @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)

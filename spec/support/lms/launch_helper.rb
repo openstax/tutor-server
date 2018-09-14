@@ -20,6 +20,15 @@ class Lms::LaunchHelper
     end
   end
 
+  def pair_launch_to_course
+    spec.instance_eval do
+      expect(response.status).to eq 302
+
+      get response.body.match(/a href=\"(.*)\"/)[1] # 'click' you are being redirected
+      expect(response.body).to match 'pair'
+    end
+  end
+
   def complete_the_launch_locally(log_in_as: nil)
     # Within Tutor the launch bounces around a bit, off to Accounts and back
     # simulate that here.
