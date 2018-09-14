@@ -43,7 +43,7 @@ class PushSalesforceCourseStats
 
   def applicable_courses
     # Don't update courses that have ended
-    terms = CourseProfile::Models::Course.terms.values_at('spring', 'summer', 'fall')
+    terms = CourseProfile::Models::Course.terms.values_at(:spring, :summer, :fall, :winter)
 
     CourseProfile::Models::Course
       .not_ended

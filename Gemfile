@@ -166,7 +166,7 @@ gem 'babbler', '~> 1.0.1'
 gem 'paranoia'
 
 # Salesforce
-gem 'openstax_salesforce', github: 'openstax/openstax_salesforce', ref: 'c90a9a7'
+gem 'openstax_salesforce', '~> 2.0.0'
 # Fork that supports Ruby >= 2.1 and stubbable stdout
 gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '7caac17'
 
