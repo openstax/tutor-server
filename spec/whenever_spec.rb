@@ -11,6 +11,7 @@ RSpec.describe 'whenever schedule' do
 
       expect_any_instance_of(PushSalesforceCourseStats).to receive(:call)
       expect_any_instance_of(GetSalesforceBookNames).to receive(:call)
+      expect_any_instance_of(CourseProfile::BuildPreviewCourses).to receive(:call)
       expect(Lms::Models::TrustedLaunchData).to receive(:where).and_call_original
 
       # Executes the actual ruby statement to make sure all constants and methods exist:

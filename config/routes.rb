@@ -391,7 +391,19 @@ Rails.application.routes.draw do
   namespace :research do
     root 'console#index'
 
-    resources :studies, only: [:index]
+    get 'help', to: 'console#help'
+
+    resources :studies do
+      member do
+        put :activate
+        put :deactivate
+      end
+
+      resources :study_courses, shallow: true, only: [:create, :destroy]
+      resources :cohorts, shallow: true do
+        put 'reassign_members'
+      end
+    end
 
     resources :survey_plans, except: :destroy do
       member do

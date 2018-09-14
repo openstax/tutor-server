@@ -67,3 +67,5 @@ pilfer.log
 
 # Ignore asset stuff
 public/assets/**
+
+.byebug_history

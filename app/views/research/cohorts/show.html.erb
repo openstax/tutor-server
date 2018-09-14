@@ -1,0 +1,29 @@
+<div style="float: right">
+  <%= link_to 'Edit', edit_research_cohort_path(@cohort),
+                      class: "btn btn-primary",
+                      style: "margin-bottom: 10px; float: right" %>
+  <% if @cohort.cohort_members_count == 0 %>
+    <%= link_to 'Delete', research_cohort_path(@cohort),
+                          class: "btn btn-primary",
+                          method: :delete,
+                          data: { confirm: "Are you sure you want to delete cohort #{@cohort.name}?" },
+                          style: "clear: right; float: right" %>
+  <% end %>
+
+  <% if @cohort.cohort_members_count > 0 %>
+    <%= link_to 'Reassign Members', research_cohort_reassign_members_path(@cohort),
+                          class: "btn btn-primary",
+                          method: :put,
+                          data: { confirm: "Are you sure you want to reassign members to other cohorts?" },
+                          style: "clear: right; float: right" %>
+  <% end %>
+</div>
+
+<h3>Cohort Info</h3>
+
+<ul>
+  <li>Name: <%= @cohort.name %></li>
+  <li>Study: <%= link_to @cohort.study.name, research_study_path(@cohort.study) %></li>
+  <li>Accepting new members: <%= @cohort.is_accepting_members %></li>
+  <li># Members: <%= @cohort.cohort_members_count %></li>
+</ul>

@@ -151,7 +151,7 @@ RSpec.describe 'LMS Launch', type: :request do
 
         it 'errors' do
           simulator.launch(user: "student", drop_these_fields: :context_id)
-          expect_error("may not have been integrated correctly")
+          expect_error("not have been integrated correctly")
         end
       end
     end

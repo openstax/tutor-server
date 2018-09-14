@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180731170823) do
+ActiveRecord::Schema.define(version: 20180912162358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -338,7 +338,7 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                                         null: false
     t.boolean  "is_excluded_from_salesforce",                                          default: false,               null: false
-    t.uuid     "uuid",                                                                 default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                                                                 default: "gen_random_uuid()"
     t.integer  "sequence_number",                                                      default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                                              null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                                              null: false
@@ -349,12 +349,12 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.boolean  "does_cost",                                                            default: false,               null: false
     t.integer  "estimated_student_count"
     t.datetime "preview_claimed_at"
-    t.boolean  "is_preview_ready",                                                     default: false,               null: false
-    t.datetime "deleted_at"
     t.boolean  "is_lms_enabled"
     t.boolean  "is_lms_enabling_allowed",                                              default: false,               null: false
     t.boolean  "is_access_switchable",                                                 default: true,                null: false
+    t.boolean  "is_preview_ready",                                                     default: false,               null: false
     t.string   "last_lms_scores_push_job_id"
+    t.datetime "deleted_at"
     t.string   "creator_campaign_member_id"
     t.string   "latest_adoption_decision"
     t.decimal  "homework_score_weight",                        precision: 3, scale: 2, default: 1.0,                 null: false
@@ -461,7 +461,7 @@ ActiveRecord::Schema.define(version: 20180731170823) do
   create_table "lms_contexts", force: :cascade do |t|
     t.string   "lti_id",                   null: false
     t.integer  "lms_tool_consumer_id",     null: false
-    t.integer  "course_profile_course_id", null: false
+    t.integer  "course_profile_course_id"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
   end
@@ -486,13 +486,12 @@ ActiveRecord::Schema.define(version: 20180731170823) do
   add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
 
   create_table "lms_nonces", force: :cascade do |t|
-    t.string   "value",      limit: 128, null: false
-    t.datetime "created_at",             null: false
-    t.integer  "lms_app_id",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "value",      limit: 128,             null: false
+    t.datetime "created_at",                         null: false
+    t.integer  "lms_app_id"
+    t.datetime "updated_at",                         null: false
+    t.integer  "app_type",               default: 0, null: false
   end
-
-  add_index "lms_nonces", ["lms_app_id", "value"], name: "lms_nonce_app_value", unique: true, using: :btree
 
   create_table "lms_tool_consumers", force: :cascade do |t|
     t.string   "guid",                null: false
@@ -651,12 +650,41 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.datetime "updated_at"
   end
 
-  create_table "research_studies", force: :cascade do |t|
-    t.string   "name",        null: false
-    t.text     "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+  create_table "research_cohort_members", force: :cascade do |t|
+    t.integer  "research_cohort_id",           null: false
+    t.integer  "course_membership_student_id", null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
+
+  add_index "research_cohort_members", ["course_membership_student_id"], name: "index_research_cohort_members_on_course_membership_student_id", using: :btree
+  add_index "research_cohort_members", ["research_cohort_id", "course_membership_student_id"], name: "index_cohort_members_on_cohort_and_student", unique: true, using: :btree
+  add_index "research_cohort_members", ["research_cohort_id"], name: "index_research_cohort_members_on_research_cohort_id", using: :btree
+
+  create_table "research_cohorts", force: :cascade do |t|
+    t.integer  "research_study_id",                   null: false
+    t.string   "name",                                null: false
+    t.integer  "cohort_members_count", default: 0,    null: false
+    t.boolean  "is_accepting_members", default: true, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  add_index "research_cohorts", ["research_study_id"], name: "index_research_cohorts_on_research_study_id", using: :btree
+
+  create_table "research_studies", force: :cascade do |t|
+    t.string   "name",                null: false
+    t.text     "description"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.datetime "activate_at"
+    t.datetime "deactivate_at"
+    t.datetime "last_activated_at"
+    t.datetime "last_deactivated_at"
+  end
+
+  add_index "research_studies", ["last_activated_at"], name: "index_research_studies_on_last_activated_at", using: :btree
+  add_index "research_studies", ["last_deactivated_at"], name: "index_research_studies_on_last_deactivated_at", using: :btree
 
   create_table "research_study_courses", force: :cascade do |t|
     t.integer  "research_study_id",        null: false
@@ -665,8 +693,8 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.datetime "updated_at",               null: false
   end
 
-  add_index "research_study_courses", ["course_profile_course_id", "research_study_id"], name: "research_study_courses_on_course_and_study", unique: true, using: :btree
   add_index "research_study_courses", ["course_profile_course_id"], name: "index_research_study_courses_on_course_profile_course_id", using: :btree
+  add_index "research_study_courses", ["research_study_id", "course_profile_course_id"], name: "research_study_courses_on_study_and_course", unique: true, using: :btree
   add_index "research_study_courses", ["research_study_id"], name: "index_research_study_courses_on_research_study_id", using: :btree
 
   create_table "research_survey_plans", force: :cascade do |t|
@@ -693,12 +721,14 @@ ActiveRecord::Schema.define(version: 20180731170823) do
     t.datetime "hidden_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
+    t.datetime "deleted_at"
   end
 
   add_index "research_surveys", ["completed_at"], name: "index_research_surveys_on_completed_at", using: :btree
-  add_index "research_surveys", ["course_membership_student_id", "research_survey_plan_id"], name: "research_surveys_on_student_and_plan", unique: true, using: :btree
   add_index "research_surveys", ["course_membership_student_id"], name: "research_surveys_on_student", using: :btree
+  add_index "research_surveys", ["deleted_at"], name: "index_research_surveys_on_deleted_at", using: :btree
   add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
+  add_index "research_surveys", ["research_survey_plan_id", "course_membership_student_id"], name: "research_surveys_on_plan_and_student", unique: true, using: :btree
   add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
 
   create_table "role_role_users", force: :cascade do |t|
@@ -1147,6 +1177,9 @@ ActiveRecord::Schema.define(version: 20180731170823) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_survey_plans", "research_studies", on_update: :cascade, on_delete: :cascade

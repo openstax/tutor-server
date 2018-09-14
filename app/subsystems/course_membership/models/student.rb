@@ -14,6 +14,8 @@ class CourseMembership::Models::Student < ApplicationRecord
   has_one :latest_enrollment, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
   has_many :surveys, subsystem: :research, inverse_of: :student
 
+  has_many :cohort_members, subsystem: :research, inverse_of: :student
+
   before_validation :init_first_paid_at
 
   validates :role, presence: true, uniqueness: true

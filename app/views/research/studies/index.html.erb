@@ -1,21 +1,17 @@
 <% @page_header = "Studies" %>
 
-<div class="studies_note">
-  Note that studies and the courses in them must be manually added by developers for the moment.
-</div>
+<%= link_to 'Add Study', new_research_study_path, class: "btn btn-primary", style: "float: right" %>
 
 <% Research::Models::Study.includes(:courses).find_each do |study| %>
   <div class="study_entry">
-    <div class="study_info"><b><%= study.name %></b> (ID: <%= study.id %>)</div>
-    <div class="course_listing">
-      <div class="course_listing_title">Courses:</div>
-      <div class="course_listing_entries">
-        <% study.courses.each do |course| %>
-          <div class="course_entry">
-            <%= course.name %> (ID: <%= course.id %>)
-          </div>
-        <% end %>
-      </div>
+    <div class="study_info">
+      <b><%= link_to study.name, research_study_path(study) %></b>
+      (ID: <%= study.id %>)
+      Created: <%= study.created_at %>
+
+      <% active_word, color = study.active? ? ["Active", "green"] : ["Inactive", "blue"] %>
+      | <span style='color:<%= color %>; font-style:italic'><%= active_word %></span>
+      <%= link_to 'Delete', research_study_path(study), method: :delete, class: "btn btn-primary btn-xs", data: {confirm: "Are you sure you want to delete #{study.name}?"} %>
     </div>
   </div>
 <% end %>

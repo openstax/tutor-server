@@ -1,0 +1,180 @@
+<% bulk_actions ||= nil %>
+<% bulk_actions_path ||= '' %>
+<% extra_fields_procs ||= [] %>
+
+<%= form_tag search_path, id: "search-courses-form", method: :get do %>
+
+  <div class="input-group" style="width:100%">
+    <%= text_field_tag :query, query, class: 'form-control', id: "search-courses", placeholder: 'Search here' %>
+  </div>
+  <div class="input-group" style="margin-bottom: 20px" >
+    <%= text_field_tag :order_by, order_by, class: 'form-control', placeholder: "Ordered by" %>
+    <span class="input-group-btn">
+      <%= submit_tag 'Search', class: "btn btn-primary"  %>
+    </span>
+  </div>
+<% end %>
+
+<%= form_tag bulk_actions_path, method: :post do %>
+
+  <%= hidden_field_tag :query, @query %>
+  <%= hidden_field_tag :order_by, @order_by %>
+
+  <div style="margin-bottom: 10px">
+    Results per page:
+    <% per_page_options = ([25, 50, 100, 200, 400] + [per_page]).uniq.sort %>
+    <%= select_tag "Results per page",
+                   options_for_select(per_page_options + ['all'], per_page),
+                   id: "search-courses-results-pp" %>
+
+    &nbsp; &nbsp; (<%= total_count %> total results)
+  </div>
+
+  <div style="font-size:10px; margin-top: -6px; float:right; margin-bottom: 6px;">
+    <%= link_to "Toggle search help", "#", class: 'search-help' %>
+  </div>
+
+  <div id="search-help" style="display:none; border: 1px solid #ccc; margin: 20px 0; padding: 20px; clear: right">
+    <%= render partial: 'shared/courses/search_help' %>
+  </div>
+
+  <div>Showing <%= total_count %> total</div>
+
+  <% pagination = will_paginate(
+    WillPaginate::Collection.create(page, per_page, total_count) do |pager|
+      pager.replace course_infos
+    end
+  ) %>
+
+  <%= pagination %>
+
+  <div style="margin-bottom: 10px;">
+  <% if bulk_actions %>
+      <%= check_box_tag 'courses_select_all_on_page', nil, checked = true, id: 'courses_select_all_on_page' %>
+       Select All
+      <% if pagination.present? %>
+        (This Page)
+        &nbsp;
+        &nbsp;
+        <%= check_box_tag 'courses_select_all_on_all_pages', nil, checked = false, id: 'courses_select_all_on_all_pages' %>
+         Select All (All Pages)
+        &nbsp;
+        &nbsp;
+        Individual selections are not remembered on other pages
+      <% end %>
+  <% end %>
+  </div>
+
+  <% course_infos.each do |course_info| %>
+    <div class="stats-card">
+      <div class="card-header">
+        <% if bulk_actions %>
+            <% course_selected = params[:course_id].blank? ?
+                                   true : params[:course_id].include?(course_info.id) %>
+            <%= check_box_tag 'course_id[]',
+                              course_info.id,
+                              checked = course_selected,
+                              class: 'course_id_select',
+                              id: "course_id_#{course_info.id}" %>
+          <% end %>
+
+        <span class="course-info-id">
+          <%= "#{course_info.id}" %>
+        </span>
+        <span class="course-info-name"><%= " #{course_info.name}" %></span>
+        <%= " / #{course_info.teachers.without_deleted.map(&:name).to_sentence}" \
+              unless course_info.teachers.blank? %>
+        <span class="course-info-school">
+          <%= " / #{course_info.school_name}" if course_info.school %>
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="card-content-left">
+          <div class="content-top">
+            <% ecosystem = course_info.ecosystems.first %>
+
+            <% unless ecosystem.nil? %>
+              <%= "(ID #{ecosystem.id})" %> <%= ecosystem.title %>
+
+              <span class="ecosystem-created-at" style="white-space: nowrap;">
+                <%= "(#{ecosystem.created_at})" %>
+              </span>
+            <% end %>
+          </div>
+          <div class="content-middle">
+            <%= ecosystem.try(:comments) %>
+          </div>
+          <div class="content-bottom">
+            <div class="course-duration" style="white-space: nowrap;">
+              <%= course_info.term.capitalize %>
+              <%= course_info.year %>
+              (<%= course_info.starts_at.strftime('%b %d, %Y') %>
+              - <%= course_info.ends_at.strftime('%b %d, %Y') %>)
+            </div>
+            <%= "CC /" if course_info.is_concept_coach %>
+            <%= course_info.is_college ? "College /" : "High School /" \
+                  unless course_info.is_college.nil? %>
+            <%=
+              total_periods = 0
+              total_students = 0
+              dropped_students = 0
+              archived_periods = 0
+              archived_students = 0
+
+              course_info.periods.each do |period|
+                students = period.students.to_a
+                num_students = students.size
+
+                total_periods += 1
+                total_students += num_students
+                dropped_students += students.count(&:dropped?)
+                next unless period.archived?
+
+                archived_periods += 1
+                archived_students += num_students
+              end
+
+              "#{total_students} students (#{dropped_students} dropped, #{archived_students
+              } archived) / #{total_periods} periods (#{archived_periods} archived)"
+            %> /
+            <%= course_info.does_cost ? "Does Cost" : "Does NOT Cost" %> /
+            LMS: <%= course_info.is_lms_enabling_allowed ? "enable allowed" : "enable not allowed" %> -
+            <% if course_info.is_lms_enabled.nil? %>
+              no choice made
+            <% elsif course_info.is_lms_enabled %>
+              enabled
+            <% else %>
+              disabled
+            <% end %>
+          </div>
+        </div>
+        <div class="card-content-right">
+          <% [extra_fields_procs].flatten.each do |extra_fields_proc| %>
+            <span>
+              <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= pagination %>
+
+  <% if bulk_actions %>
+    <div id="courses-bulk-actions">
+      <%= capture(&bulk_actions) %>
+    </div>
+  <% end %>
+
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("a.search-help").on("click", function(e) {
+        $('#search-help').toggle();
+      });
+    });
+  </script>
+<% end %>
