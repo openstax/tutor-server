@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     netcat \
   && rm -rf /var/lib/apt/lists/*
 
-RUN curl https://raw.githubusercontent.com/eficode/wait-for/master/wait-for -o /usr/local/bin/wait-for \
+RUN curl https://raw.githubusercontent.com/eficode/wait-for/828386460d138e418c31a1ebf87d9a40f5cedc32/wait-for -o /usr/local/bin/wait-for \
   && chmod a+x /usr/local/bin/wait-for
 
 RUN addgroup --system tutor \

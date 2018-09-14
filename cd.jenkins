@@ -16,20 +16,5 @@ pipeline {
         }
       }
     }
-    stage('Publish Release') {
-      when {
-        expression {
-          return sh(returnStdout: true, script: 'git tag -l --points-at HEAD | head -n 1').trim()
-        }
-      }
-      steps {
-        withDockerRegistry([credentialsId: 'docker-registry', url: '']) {
-          sh "docker tag openstax/tutor-server:dev openstax/tutor-server:${release}"
-          sh "docker tag openstax/tutor-server:dev openstax/tutor-server:latest"
-          sh "docker push openstax/tutor-server:${release}"
-          sh "docker push openstax/tutor-server:latest"
-        }
-      }
-    }
   }
 }
