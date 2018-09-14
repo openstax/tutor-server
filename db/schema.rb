@@ -461,7 +461,7 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   create_table "lms_contexts", force: :cascade do |t|
     t.string   "lti_id",                   null: false
     t.integer  "lms_tool_consumer_id",     null: false
-    t.integer  "course_profile_course_id", null: false
+    t.integer  "course_profile_course_id"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
   end
@@ -486,10 +486,11 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   add_index "lms_course_score_callbacks", ["user_profile_id"], name: "course_score_callbacks_on_user", using: :btree
 
   create_table "lms_nonces", force: :cascade do |t|
-    t.string   "value",      limit: 128, null: false
-    t.datetime "created_at",             null: false
-    t.integer  "lms_app_id",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "value",      limit: 128,             null: false
+    t.datetime "created_at",                         null: false
+    t.integer  "lms_app_id"
+    t.datetime "updated_at",                         null: false
+    t.integer  "app_type",               default: 0, null: false
   end
 
   add_index "lms_nonces", ["lms_app_id"], name: "index_lms_nonces_on_lms_app_id", using: :btree
