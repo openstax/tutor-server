@@ -38,11 +38,11 @@ class LmsController < ApplicationController
     # trapped in an iframe for the rest of the launch.
 
     begin
-
       launch = Lms::Launch.from_request(request)
 
       log(:debug) { launch.formatted_data(include_everything: true) }
 
+      fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
       # Persist the launch so we can load it after return from Accounts. Since
       # these persisted launches are going to be kept around for a while for
       # debugging, persist before any errors are detected
@@ -52,7 +52,7 @@ class LmsController < ApplicationController
       # Do some early error checking
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
 
-      fail_for_missing_required_fields(launch) and return if launch.missing_required_fields.any?
+
 
       context = launch.context
       if context.course.nil?
