@@ -54,11 +54,6 @@ RSpec.describe Research::Models::Study, type: :model do
     it "is in the activate_at_has_passed scope" do
       expect(described_class.activate_at_has_passed).to include(study)
     end
-
-    it "cannot be deactivated" do
-      study.update_attributes(activate_at: nil)
-      expect(study.errors[:activate_at].first).to include 'cannot be cleared'
-    end
   end
 
   context "scheduled for deactivation" do

@@ -6,7 +6,6 @@ class Research::Models::Study < ApplicationRecord
 
   validates :name, presence: true
 
-  before_save :check_active_status
   before_destroy :only_destroy_if_inactive
 
   scope :never_active, -> { where(last_activated_at: nil) }
@@ -46,11 +45,6 @@ class Research::Models::Study < ApplicationRecord
   end
 
   protected
-
-  def check_active_status
-    errors.add(:activate_at, " cannot be cleared after being set") if activate_at_changed? && (active? || activate_at.nil?)
-    errors.none?
-  end
 
   def only_destroy_if_inactive
     errors.add(:base, "Cannot destroy an active study") if active?
