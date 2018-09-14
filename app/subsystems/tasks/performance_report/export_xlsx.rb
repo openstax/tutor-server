@@ -270,7 +270,7 @@ module Tasks
         meta_rows = [
           [["Tutor Student Scores", style: @title]],
           [[@course.name, style: @course_section]],
-          [["Exported #{Date.today.strftime("%m/%d/%Y")}", style: @italic]],
+          [["Exported #{@course.time_zone.to_tz.today.strftime("%m/%d/%Y")}", style: @italic]],
           [""],
           [[report[:period][:name], style: @course_section]],
           [""]

@@ -70,9 +70,9 @@ module Tasks::PerformanceReportRoutine
           type: type,
           id: tt.id,
           due_at: due_at,
-          last_worked_at: tt.last_worked_at,
+          last_worked_at: tt.last_worked_at.try!(:in_time_zone, tz),
           is_late_work_accepted: tt.accepted_late_at.present?,
-          accepted_late_at: tt.accepted_late_at,
+          accepted_late_at: tt.accepted_late_at.try!(:in_time_zone, tz),
           is_included_in_averages: included_in_progress_averages?(
             task: tt, current_time_ntz: current_time_ntz
           )
