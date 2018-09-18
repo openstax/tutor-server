@@ -8,12 +8,13 @@ class Tasks::PopulatePlaceholderSteps
 
   protected
 
-  def exec(task:, force: false, lock_task: true, background: false, skip_unready: false)
+  def exec(task:, force: false, lock_task: true, background: false,
+           skip_unready: false, populate_spes: true)
     task.lock! if lock_task
     outputs.task = task
     outputs.accepted = true
 
-    return if task.pes_are_assigned && task.spes_are_assigned
+    return if task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
 
     # Lock the task_steps to ensure they don't get updated without us noticing
     task.task_steps.lock('FOR NO KEY UPDATE').reload
@@ -39,7 +40,7 @@ class Tasks::PopulatePlaceholderSteps
     taskings = task.taskings
     role = taskings.first.try!(:role)
 
-    unless task.spes_are_assigned
+    if populate_spes && !task.spes_are_assigned
       # To prevent "skim-filling", skip populating spaced practice if not all core problems
       # have been completed AND there is an open assignment with an earlier due date
       same_role_taskings = role.try!(:taskings) || Tasks::Models::Tasking.none

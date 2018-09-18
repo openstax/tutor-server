@@ -41,12 +41,15 @@ module DashboardRoutineMethods
     end if role_type != :teacher
 
     had_pes, need_pes = tasks.partition(&:pes_are_assigned)
-    need_pes.each { |task| Tasks::PopulatePlaceholderSteps.call task: task, skip_unready: true }
+    need_pes.each do |task|
+      Tasks::PopulatePlaceholderSteps.call task: task, skip_unready: true, populate_spes: false
+    end
 
     got_pes, still_need_pes = need_pes.partition(&:pes_are_assigned)
     still_need_pes.each do |task|
-      Tasks::PopulatePlaceholderSteps.set(queue: :low_priority)
-                                     .perform_later task: task, background: true
+      Tasks::PopulatePlaceholderSteps.set(queue: :low_priority).perform_later(
+        task: task, background: true, populate_spes: false
+      )
     end
 
     outputs.tasks = had_pes + got_pes
