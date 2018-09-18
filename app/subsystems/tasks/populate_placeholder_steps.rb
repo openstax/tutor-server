@@ -8,7 +8,7 @@ class Tasks::PopulatePlaceholderSteps
 
   protected
 
-  def exec(task:, force: false, lock_task: true, background: false)
+  def exec(task:, force: false, lock_task: true, background: false, skip_unready: false)
     task.lock! if lock_task
     outputs.task = task
     outputs.accepted = true
@@ -30,7 +30,8 @@ class Tasks::PopulatePlaceholderSteps
         boolean_attribute: :pes_are_assigned,
         biglearn_api_method: :fetch_assignment_pes,
         biglearn_controls_slots: biglearn_controls_pe_slots,
-        background: background
+        background: background,
+        skip_unready: skip_unready
       )
       outputs.accepted = false unless accepted
     end
@@ -66,7 +67,8 @@ class Tasks::PopulatePlaceholderSteps
           boolean_attribute: :spes_are_assigned,
           biglearn_api_method: :fetch_assignment_spes,
           biglearn_controls_slots: biglearn_controls_spe_slots,
-          background: background
+          background: background,
+          skip_unready: skip_unready
         )
         outputs.accepted = false unless accepted
       end
@@ -80,14 +82,13 @@ class Tasks::PopulatePlaceholderSteps
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
-  def populate_placeholder_steps(task:, group_type:, boolean_attribute:,
-                                 biglearn_api_method:, biglearn_controls_slots:, background:)
+  def populate_placeholder_steps(task:, group_type:, boolean_attribute:, biglearn_api_method:,
+                                 biglearn_controls_slots:, background:, skip_unready:)
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
-    max_attempts = background ? 600 : task.practice? ? 30 : 1
-    sleep_interval = background || task.practice? ? 1.second : 0
-    retry_in_background = !background && !task.practice?
+    max_attempts = skip_unready ? 1 : background ? 600 : 30
+    sleep_interval = skip_unready ? 0 : 1.second
 
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs
@@ -95,9 +96,9 @@ class Tasks::PopulatePlaceholderSteps
                                                    task: task,
                                                    inline_max_attempts: max_attempts,
                                                    inline_sleep_interval: sleep_interval,
-                                                   enable_warnings: !retry_in_background
+                                                   enable_warnings: !skip_unready
       # Bail if we are supposed to retry this in the background
-      return [ task, false ] if !result[:accepted] && retry_in_background
+      return [ task, false ] if !result[:accepted] && skip_unready
 
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
@@ -191,10 +192,10 @@ class Tasks::PopulatePlaceholderSteps
         max_num_exercises: placeholder_steps.size,
         inline_max_attempts: max_attempts,
         inline_sleep_interval: sleep_interval,
-        enable_warnings: !retry_in_background
+        enable_warnings: !skip_unready
       )
       # Bail if we are supposed to retry this in the background
-      return [ task, false ] if !result[:accepted] && retry_in_background
+      return [ task, false ] if !result[:accepted] && skip_unready
 
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
