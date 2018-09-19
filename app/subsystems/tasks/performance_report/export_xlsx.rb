@@ -452,8 +452,10 @@ module Tasks
 
             student[:data].each_with_index do |data,dd|
               push_score_columns(data, student_columns, format)
-              (task_total_counts[dd] ||= data[:actual_and_placeholder_exercise_count]) \
-                if data.present?
+              task_total_counts[dd] ||= {
+                steps: data[:steps_count],
+                exercises: data[:actual_and_placeholder_exercise_count]
+              } if data.present?
             end
 
             @helper.add_row(sheet, student_columns)
@@ -546,8 +548,8 @@ module Tasks
 
           task_total_counts.each do |total_count|
             total_possible_columns.push(
-              [total_count, style: @total_L],
-              [total_count, style: @total],
+              [total_count.try!(:[], :exercises), style: @total_L],
+              [total_count.try!(:[], :steps), style: @total],
               ["", style: @total],
               ["", style: @total],
               ["", style: @total_R]
@@ -584,7 +586,8 @@ module Tasks
           @helper.add_row(
             sheet,
             [[
-              "* Course average is calculated by how you set average weights in OpenStax Tutor", style: @italic
+              "* Course average is calculated by how you set average weights in OpenStax Tutor",
+              style: @italic
             ]]
           )
         end
@@ -625,9 +628,12 @@ module Tasks
       end
 
       def push_score_columns(data, columns, format)
-        if data.nil? || ((total_count = data[:actual_and_placeholder_exercise_count]) == 0)
+        if data.nil? || data[:actual_and_placeholder_exercise_count] == 0
           columns.push(["", style: @normal_L],"","","",["", style: @normal_R])
         else
+          steps_count = data[:step_count]
+          exercise_steps_count = data[:actual_and_placeholder_exercise_count]
+
           on_time_correct_count = data[:correct_on_time_exercise_count]
           on_time_completed_count = data[:completed_on_time_exercise_count]
 
@@ -635,18 +641,18 @@ module Tasks
             data[:correct_on_time_exercise_count], data[:correct_accepted_late_exercise_count]
           ].max
           completed_count = [
-            data[:completed_on_time_exercise_count], data[:completed_accepted_late_exercise_count]
+            data[:completed_on_time_step_count], data[:completed_accepted_late_step_count]
           ].max
 
           some_late_work_accepted = data[:completed_accepted_late_exercise_count] != 0
 
           pending_late_correct_count = data[:correct_exercise_count]
-          pending_late_completed_count = data[:completed_exercise_count]
+          pending_late_completed_count = data[:completed_step_count]
 
           has_pending_late_work = pending_late_completed_count != completed_count
 
-          correct_pct = correct_count * 1.0 / total_count
-          completed_pct = completed_count * 1.0 / total_count
+          correct_pct = correct_count * 1.0 / exercise_steps_count
+          completed_pct = completed_count * 1.0 / steps_count
 
           if format == :counts
             columns.push([
@@ -668,21 +674,19 @@ module Tasks
             end
           else
             columns.push([
-              correct_count * 1.0 / total_count,
+              correct_count * 1.0 / exercise_steps_count,
               {
                 style: @pct_L,
                 comment: some_late_work_accepted ? late_accepted_comment(
-                  "#{(on_time_correct_count * 100.0 / total_count).round(0)}%"
+                  "#{(on_time_correct_count * 100.0 / exercise_steps_count).round(0)}%"
                 ) : nil
               }
             ])
-            columns.push([
-              completed_count * 1.0 / total_count, style: @pct
-            ])
+            columns.push([completed_count * 1.0 / steps_count, style: @pct])
 
             if has_pending_late_work
-              columns.push([pending_late_correct_count * 1.0 / total_count, style: @pct])
-              columns.push([pending_late_completed_count * 1.0 / total_count, style: @pct])
+              columns.push([pending_late_correct_count * 1.0 / exercise_steps_count, style: @pct])
+              columns.push([pending_late_completed_count * 1.0 / steps_count, style: @pct])
               columns.push([data[:last_worked_at], style: @last_worked_at])
             else
               columns.push("","",["", style: @last_worked_at])

@@ -49,10 +49,10 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
 
       it 'shows reading\'s late comment and pending late work' do
         expect(cell(12,14,0)).to eq 1/3.0
-        expect(comment(12,14,0)).to match /on due date: 33%/
-        expect(cell(12,15,0)).to eq 2/3.0
+        expect(comment(12,14,0)).to match /on due date: 0%/
+        expect(cell(12,15,0)).to eq 5/7.0
         expect(cell(12,16,0)).to eq 2/3.0
-        expect(cell(12,17,0)).to eq 1.0
+        expect(cell(12,17,0)).to eq 6/7.0
         expect(cell(12,18,0).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
       end
     end
@@ -248,15 +248,15 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                 last_worked_at: Chronic.parse("3/7/2016 1PM"),
                 step_count:                             7,
                 completed_step_count:                   6,
-                completed_on_time_step_count:           5,
-                completed_accepted_late_step_count:     6,
+                completed_on_time_step_count:           4,
+                completed_accepted_late_step_count:     5,
                 actual_and_placeholder_exercise_count:  3,
                 completed_exercise_count:               3,
                 completed_on_time_exercise_count:       1,
                 completed_accepted_late_exercise_count: 2,
                 correct_exercise_count:                 2,
-                correct_on_time_exercise_count:         1,
-                correct_accepted_late_exercise_count:   0,
+                correct_on_time_exercise_count:         0,
+                correct_accepted_late_exercise_count:   1,
               },
               {
                 last_worked_at: Chronic.parse("3/17/2016 1PM"),
