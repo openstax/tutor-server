@@ -453,7 +453,7 @@ module Tasks
             student[:data].each_with_index do |data,dd|
               push_score_columns(data, student_columns, format)
               task_total_counts[dd] ||= {
-                steps: data[:steps_count],
+                steps: data[:step_count],
                 exercises: data[:actual_and_placeholder_exercise_count]
               } if data.present?
             end
