@@ -1,5 +1,6 @@
 class Research::Models::Study < ApplicationRecord
   has_many :survey_plans, inverse_of: :study, dependent: :destroy
+  has_many :brains, inverse_of: :study, dependent: :destroy
   has_many :study_courses, inverse_of: :study, dependent: :destroy
   has_many :courses, through: :study_courses, subsystem: :course_profile, inverse_of: :studies
   has_many :cohorts, inverse_of: :study, dependent: :destroy
