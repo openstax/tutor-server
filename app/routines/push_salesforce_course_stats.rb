@@ -36,8 +36,8 @@ class PushSalesforceCourseStats
     log do
       "Processed #{outputs.num_courses} course(s) and #{outputs.num_periods} period(s); " +
       "wrote stats for #{outputs.num_updates} period(s); " +
-      "skipped #{@skips.size} period(s); " +
-      "#{@errors.size} period(s) ran into an error."
+      "skipped #{@skips.size} course(s) or period(s); " +
+      "ran into #{@errors.size} error(s)."
     end
   end
 
