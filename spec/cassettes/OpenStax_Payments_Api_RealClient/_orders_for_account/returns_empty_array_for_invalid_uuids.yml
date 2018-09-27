@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -38,7 +38,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 - request:
     method: get
@@ -75,6 +75,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"orders": []}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 recorded_with: VCR 2.9.3

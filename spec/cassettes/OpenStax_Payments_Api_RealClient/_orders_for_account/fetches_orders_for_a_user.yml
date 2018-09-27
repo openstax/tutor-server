@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -38,7 +38,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:17:58 GMT
 - request:
     method: post
@@ -76,7 +76,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"success": true, "created": "2017-07-18T02:17:58.404937+00:00", "identifier":
         "q2xhcgiyr2j5"}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:17:59 GMT
 - request:
     method: get
@@ -116,6 +116,6 @@ http_interactions:
         "1650.66", "sales_tax": "126.01", "is_refunded": false, "purchased_at": "2017-07-18T02:17:59.486851+00:00",
         "updated_at": "2017-07-18T02:17:59.486851+00:00", "product": {"uuid": "39ad6922-46ec-4b4f-af29-3bbdb2570996",
         "name": "unit test product", "price": "1524.65"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:18:00 GMT
 recorded_with: VCR 2.9.3

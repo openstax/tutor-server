@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -79,7 +79,7 @@ http_interactions:
   recorded_at: Mon, 17 Jul 2017 21:44:25 GMT
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -194,7 +194,7 @@ http_interactions:
   recorded_at: Mon, 17 Jul 2017 21:44:54 GMT
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -274,7 +274,7 @@ http_interactions:
   recorded_at: Mon, 17 Jul 2017 21:44:55 GMT
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -351,7 +351,7 @@ http_interactions:
   recorded_at: Mon, 17 Jul 2017 21:44:56 GMT
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
@@ -428,7 +428,7 @@ http_interactions:
   recorded_at: Mon, 17 Jul 2017 21:44:56 GMT
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials
