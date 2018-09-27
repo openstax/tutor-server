@@ -110,9 +110,6 @@ gem 'mini_magick'
 # Object cloning
 gem 'deep_cloneable'
 
-# Real time application monitoring
-gem 'newrelic_rpm'
-
 # Date validations
 gem 'validates_timeliness'
 
@@ -166,9 +163,9 @@ gem 'babbler', '~> 1.0.1'
 gem 'paranoia'
 
 # Salesforce
-gem 'openstax_salesforce', '~> 2.0.0'
+gem 'openstax_salesforce', '~> 2.0.1'
 # Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '7caac17'
+gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9efe1ba'
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'

@@ -88,17 +88,6 @@ Delayed::Worker.class_exec do
   end
 
   alias_method_chain :handle_failed_job, :instant_failures
-
-  # Fix NewRelic's broken DJ monkeypatch
-  # Without this fix, a second call to Delayed::Worker.new
-  # will cause the worker to enter an infinite loop
-  def initialize_with_new_relic_fix(*args)
-    Delayed::Job.method_defined?(:invoke_job_without_new_relic) ?
-      initialize_without_new_relic(*args) : initialize_without_new_relic_fix(*args)
-  end
-
-  alias initialize_without_new_relic_fix initialize
-  alias initialize initialize_with_new_relic_fix
 end
 
 # https://github.com/rails/rails/pull/19910
