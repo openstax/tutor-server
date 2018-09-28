@@ -33,7 +33,7 @@ RSpec.describe Research::Models::Cohort, type: :model do
     Research::Models::CohortMember.create(cohort: cohort, student: students[0])
     cohort.destroy
     expect(cohort.errors.full_messages).to include(/destroy a cohort with members/)
-    expect{described_class.find(cohort.id)}.not_to raise_error(ActiveRecord::RecordNotFound)
+    expect{described_class.find(cohort.id)}.not_to raise_error
   end
 
   it "can be destroyed if no members" do
