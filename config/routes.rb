@@ -52,14 +52,6 @@ Rails.application.routes.draw do
     get :toa
   end
 
-  # User information and remote log in/out
-  namespace :auth do
-    match :status, action: :cors_preflight_check, via: [:options]
-    get :status
-    match :popup, via: [:get, :post], as: :authenticate_via_popup
-    get :logout, as: :logout_via_popup
-  end
-
   # Short codes
   get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
 
