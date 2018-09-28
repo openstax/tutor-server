@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://<openstax_payments_client_id>:<openstax_payments_secret>@<openstax_payments_url_without_protocol>/o/token/
+    uri: http://<openstax_payments_url_without_protocol>/o/token/
     body:
       encoding: UTF-8
       string: grant_type=client_credentials

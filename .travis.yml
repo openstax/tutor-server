@@ -15,13 +15,12 @@
 sudo: false
 dist: trusty
 language: ruby
-rvm:
-  - '2.3.6'
+rvm: 2.3.7
 cache: bundler
 bundler_args: --without production --retry=6
 addons:
   chrome: stable
-  postgresql: '9.5'
+  postgresql: 9.6
 env:
   - TAG=speed:fast
   - TAG=~speed:fast
