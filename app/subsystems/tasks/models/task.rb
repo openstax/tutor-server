@@ -50,6 +50,10 @@ class Tasks::Models::Task < ApplicationRecord
   end
   has_many :tasked_exercises, through: :task_steps, source: :tasked,
                                                     source_type: 'Tasks::Models::TaskedExercise'
+  has_one :tasking
+  has_one :role, through: :tasking, subsystem: :entity
+  has_one :student, through: :role, subsystem: :course_membership
+  has_many :research_cohorts, class_name: 'Research::Models::Cohort', through: :student
 
   has_many :taskings, inverse_of: :task
   has_one :concept_coach_task, inverse_of: :task

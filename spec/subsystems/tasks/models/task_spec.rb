@@ -67,6 +67,25 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task.is_shared?).to eq true
   end
 
+  context 'with research cohort' do
+      let!(:tasking) { FactoryBot.create(:tasks_tasking, task: task) }
+      let(:student)  { FactoryBot.create :course_membership_student, role: tasking.role }
+      let(:study)    { FactoryBot.create :research_study }
+      let(:cohort)   { Research::Models::Cohort.create(name: "Main", study: study) }
+
+      before(:each) {
+          Research::Models::CohortMember.create!(student: student, cohort: cohort)
+      }
+
+      it 'has links to related models' do
+          expect(task.tasking).to eq tasking
+          expect(task.role).to eq tasking.role
+          expect(student).to eq tasking.role.student
+          expect(task.student).to eq student
+          expect(task.research_cohorts).to eq [cohort]
+      end
+  end
+
   context 'with task steps' do
     let(:core_step1) do
       FactoryBot.build(:tasks_tasked_reading, skip_task: true).task_step.tap do |step|

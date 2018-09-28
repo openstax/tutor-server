@@ -1,6 +1,7 @@
 class Research::Models::Cohort < ApplicationRecord
   belongs_to :study, inverse_of: :cohorts
   has_many :cohort_members, inverse_of: :cohort, dependent: :destroy
+  has_many :brains, inverse_of: :cohort, dependent: :destroy
 
   before_create :verify_study_inactive
   before_destroy :verify_no_members
@@ -20,4 +21,5 @@ class Research::Models::Cohort < ApplicationRecord
     errors.add(:base, "Cannot destroy a cohort with members") if cohort_members_count > 0
     errors.none?
   end
+
 end

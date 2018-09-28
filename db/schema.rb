@@ -656,13 +656,13 @@ ActiveRecord::Schema.define(version: 20180928165932) do
   end
 
   create_table "research_brains", force: :cascade do |t|
-    t.integer "research_study_id",           null: false
-    t.text    "name",                        null: false
-    t.text    "code",                        null: false
-    t.integer "subject_area",      limit: 2
+    t.integer "research_cohort_id",           null: false
+    t.text    "name",                         null: false
+    t.text    "code",                         null: false
+    t.integer "subject_area",       limit: 2
   end
 
-  add_index "research_brains", ["research_study_id"], name: "index_research_brains_on_research_study_id", using: :btree
+  add_index "research_brains", ["research_cohort_id"], name: "index_research_brains_on_research_cohort_id", using: :btree
 
   create_table "research_cohort_members", force: :cascade do |t|
     t.integer  "research_cohort_id",           null: false
@@ -1181,6 +1181,7 @@ ActiveRecord::Schema.define(version: 20180928165932) do
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "research_brains", "research_studies", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_brains", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade

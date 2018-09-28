@@ -28,6 +28,7 @@ class Api::V1::TasksController < Api::V1::ApiController
   EOS
   def show
     ScoutHelper.ignore!(0.8)
+    Research::ManipulateStudentTask[task: @task, action: 'display']
     standard_read(@task, Api::V1::TaskRepresenter, true)
   end
 
@@ -76,7 +77,10 @@ class Api::V1::TasksController < Api::V1::ApiController
   protected
 
   def get_task
-    @task = Tasks::Models::Task.preload(task_steps: [ :tasked, :page ]).find(params[:id])
+    @task = Tasks::Models::Task.preload(
+      task_steps: [:tasked, :page],
+      research_cohorts: [:brains]
+    ).find(params[:id])
   end
 
   def populate_placeholders
