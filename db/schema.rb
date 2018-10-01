@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180912162358) do
+ActiveRecord::Schema.define(version: 20180928165932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -544,12 +544,13 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   create_table "oauth_access_tokens", force: :cascade do |t|
     t.integer  "resource_owner_id"
     t.integer  "application_id"
-    t.string   "token",             null: false
+    t.string   "token",                               null: false
     t.string   "refresh_token"
     t.integer  "expires_in"
     t.datetime "revoked_at"
-    t.datetime "created_at",        null: false
+    t.datetime "created_at",                          null: false
     t.string   "scopes"
+    t.string   "previous_refresh_token", default: "", null: false
   end
 
   add_index "oauth_access_tokens", ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true, using: :btree
@@ -557,15 +558,19 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   add_index "oauth_access_tokens", ["token"], name: "index_oauth_access_tokens_on_token", unique: true, using: :btree
 
   create_table "oauth_applications", force: :cascade do |t|
-    t.string   "name",                      null: false
-    t.string   "uid",                       null: false
-    t.string   "secret",                    null: false
-    t.text     "redirect_uri",              null: false
-    t.string   "scopes",       default: "", null: false
+    t.string   "name",                        null: false
+    t.string   "uid",                         null: false
+    t.string   "secret",                      null: false
+    t.text     "redirect_uri",                null: false
+    t.string   "scopes",       default: "",   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "owner_id"
+    t.string   "owner_type"
+    t.boolean  "confidential", default: true, null: false
   end
 
+  add_index "oauth_applications", ["owner_id", "owner_type"], name: "index_oauth_applications_on_owner_id_and_owner_type", using: :btree
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
 
   create_table "openstax_accounts_accounts", force: :cascade do |t|
@@ -1166,6 +1171,8 @@ ActiveRecord::Schema.define(version: 20180912162358) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade

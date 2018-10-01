@@ -47,5 +47,3 @@ TUTOR_HELPDESK_URL = "https://openstax.secure.force.com/help"
 
 # Initialize the Rails application.
 Rails.application.initialize!
-
-require 'doorkeeper_session_grant'
