@@ -5,6 +5,10 @@ class OpenStax::Exercises::V1::Exercise
 
   # Context must be externally set before the preview is initialized
   attr_accessor :context
+
+  # provide writers so research hooks can manipulate the content
+  attr_writer :questions_for_students, :answers_for_students, :content_hash_for_students
+
   attr_reader :content
 
   def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)
@@ -152,22 +156,32 @@ class OpenStax::Exercises::V1::Exercise
     @feedback_map
   end
 
-  def question_answers_without_correct_answer
-    @question_answers_without_correct ||= question_answers.map do |qa|
-      qa.map{ |ans| ans.except('correctness', 'feedback_html') }
+  def answers_for_students
+    @answers_for_students ||= question_answers.map do |qa|
+      qa.map do |ans|
+        ans.except('correctness', 'feedback_html')
+      end
     end
   end
 
-  def questions_without_correct_answer
-    @questions_without_correct ||= questions.each_with_index.map do |qq, ii|
-      qq.except('collaborator_solutions', 'community_solutions')
-        .merge('answers' => question_answers_without_correct_answer[ii])
+  def questions_for_students
+    @questions_for_students ||= questions.each_with_index.map do |qq, ii|
+      qq.except(
+        'formats', 'collaborator_solutions', 'community_solutions'
+      ).merge(
+        'answers' => answers_for_students[ii],
+        'formats' => qq['formats'] ? (qq['formats'] - ['free-response']) : []
+      )
     end
   end
 
   def content_hash_for_students
-    @content_hash_for_students ||= content_hash.except('attachments', 'vocab_term_uid').merge(
-      'questions' => questions_without_correct_answer
+    @content_hash_for_students ||= (
+      content_hash
+        .except(%w{attachments vocab_term_uid})
+        .merge(
+          'questions' => questions_for_students
+        )
     )
   end
 

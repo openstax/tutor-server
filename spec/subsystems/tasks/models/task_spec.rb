@@ -72,8 +72,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       let(:student)  { FactoryBot.create :course_membership_student, role: tasking.role }
       let(:study)    { FactoryBot.create :research_study }
       let(:cohort)   { Research::Models::Cohort.create(name: "Main", study: study) }
-
-      before(:each) {
+      let(:brain)    { FactoryBot.create :research_study_brain, cohort: cohort, domain: 'student_task' }
+      before(:each)  {
           Research::Models::CohortMember.create!(student: student, cohort: cohort)
       }
 
@@ -83,6 +83,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
           expect(student).to eq tasking.role.student
           expect(task.student).to eq student
           expect(task.research_cohorts).to eq [cohort]
+          expect(task.research_study_brains).to eq [brain]
       end
   end
 

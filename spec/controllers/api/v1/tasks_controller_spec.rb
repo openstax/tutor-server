@@ -58,6 +58,37 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
       end
     end
 
+    context 'research' do
+      let!(:study)    { FactoryBot.create :research_study }
+      let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
+      let!(:brain)    {
+        FactoryBot.create :research_study_brain, cohort: cohort, domain: :student_task
+      }
+      before(:each) {
+        Research::AddCourseToStudy[course: course, study: study]
+      }
+
+      it "can add free-response format" do
+
+        expect(task_1.task_steps[1].tasked.content_hash_for_students['questions'][0]['formats'])
+          .to eq ["multiple-choice"]
+
+        brain.update_attributes code: <<~EOC
+          task.task_steps.each{ |ts|
+            ts.tasked.questions_for_students.each{|q|
+              q['formats'] = (q['formats'] || []) | ['free-response']
+            } if ts.tasked.exercise?
+          }
+        EOC
+        api_get :show, user_1_token, parameters: {id: task_1.id}
+
+        expect(
+          response.body_as_hash[:steps][1][:content][:questions][0][:formats]
+        ).to eq ["multiple-choice", "free-response"]
+      end
+
+    end
+
     context 'teacher' do
       it 'does not 422 if needs to pay' do
         make_payment_required_and_expect_not_422(course: course, user: user_1) do

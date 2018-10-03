@@ -583,7 +583,7 @@ ActiveRecord::Schema.define(version: 20180928165932) do
     t.datetime "updated_at",                                          null: false
     t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                  default: "gen_random_uuid()"
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
     t.boolean  "is_test"
@@ -659,7 +659,8 @@ ActiveRecord::Schema.define(version: 20180928165932) do
     t.integer "research_cohort_id",           null: false
     t.text    "name",                         null: false
     t.text    "code",                         null: false
-    t.integer "subject_area",       limit: 2
+    t.integer "domain",             limit: 2
+    t.text    "hook"
   end
 
   add_index "research_brains", ["research_cohort_id"], name: "index_research_brains_on_research_cohort_id", using: :btree

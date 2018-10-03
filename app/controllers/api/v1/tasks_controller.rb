@@ -28,7 +28,7 @@ class Api::V1::TasksController < Api::V1::ApiController
   EOS
   def show
     ScoutHelper.ignore!(0.8)
-    Research::ManipulateStudentTask[task: @task, action: 'display']
+    Research::ManipulateStudentTask[task: @task, hook: :display]
     standard_read(@task, Api::V1::TaskRepresenter, true)
   end
 

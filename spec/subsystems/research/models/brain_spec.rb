@@ -10,5 +10,8 @@ RSpec.describe Research::Models::Brain, type: :model do
       expect(brain.evaluate(binding())).to eq '1234'
     end
 
-
+    it 'validates hooks' do
+      brain.update_attributes hook: 'test'
+      expect(brain.errors[:hook].first).to include 'is not valid for domain'
+    end
 end
