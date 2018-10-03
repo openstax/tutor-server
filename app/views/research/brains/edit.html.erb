@@ -1,0 +1,15 @@
+<div class="row">
+  <h2>
+    Edit Study Brain for cohort
+    <%= link_to @brain.cohort.name, research_cohort_path(@brain.cohort) %>
+  </h2>
+  <div class="col-xs-6">
+    <%= link_to 'Delete Brain',
+        research_brain_path(@brain),
+        method: :delete,
+        data: { confirm: 'Are you sure?' },
+        class: "pull-right btn btn-primary" %>
+  </div>
+</div>
+
+<%= render 'form' %>

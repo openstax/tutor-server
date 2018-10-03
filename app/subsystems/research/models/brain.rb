@@ -2,7 +2,8 @@ class Research::Models::Brain < ApplicationRecord
   belongs_to :cohort, inverse_of: :brains
 
   enum domain: { student_task: 1 }
-  validates :domain, presence: true
+
+  validates :name, :domain, presence: true
   validate :ensure_valid_hook_for_domain
 
   VALID_HOOKS = {
@@ -16,7 +17,7 @@ class Research::Models::Brain < ApplicationRecord
   protected
 
   def ensure_valid_hook_for_domain
-    if hook.present? && !VALID_HOOKS[domain.to_sym].include?(hook)
+    if hook.present? && !VALID_HOOKS[domain.to_sym].include?(hook.to_sym)
       errors.add(:hook, "is not valid for domain '#{domain}'")
     end
   end

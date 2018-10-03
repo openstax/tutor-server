@@ -3,6 +3,8 @@
 //= require jquery.datetimepicker
 //= require jquery-ui-1.11.4.custom.min
 //= require bootstrap-sprockets
+//= require codemirror
+//= require codemirror/modes/ruby
 //= require manager
 
 //=============== Date Time Picker ============//
@@ -12,4 +14,14 @@ $(document).ready(function() {
   $('.datepicker').datetimepicker({
     format: datepicker_format
   });
+  $('textarea[data-codemirror]').each((i, textArea) => {
+    CodeMirror.fromTextArea(textArea, {
+      lineNumbers: true,
+      styleActiveLine: true,
+      matchBrackets: true,
+      indentUnit: 2,
+      tabSize: 2,
+      mode: "text/x-ruby",
+    });
+  })
 });

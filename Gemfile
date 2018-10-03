@@ -107,6 +107,9 @@ gem 'carrierwave'
 # Image editing
 gem 'mini_magick'
 
+# code editing
+gem 'codemirror-rails'
+
 # Object cloning
 gem 'deep_cloneable'
 

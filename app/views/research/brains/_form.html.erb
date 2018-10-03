@@ -1,0 +1,45 @@
+<script>
+  function onDomainChange(select) {
+    var hooks = onDomainChange.hooks[select.value];
+    document.getElementById('hooks').innerHTML = hooks.map(
+      h => `<option value="${h}">${h}</option>`
+    ).join('');
+  }
+  onDomainChange.hooks = <%=raw Research::Models::Brain::VALID_HOOKS.to_json %>;
+
+</script>
+<% @brain.errors.full_messages.each do |error| %>
+<div class="alert alert-danger" role="alert"><%= error %></div>
+<% end %>
+
+<%= form_for @brain,
+    url: @brain.new_record? ? research_cohort_brains_path(@brain.cohort) : research_brain_path do |f| %>
+  <input type="hidden" name="cohort_id" value="<%= @brain.cohort.id %>">
+  <div class='form-group'>
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :domain %>
+    <%= f.select :domain,
+        Research::Models::Brain::VALID_HOOKS.keys,
+        {}, { class: 'form-control', onChange: "onDomainChange(this)" } %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :hook %>
+    <%= f.select :hook,
+        Research::Models::Brain::VALID_HOOKS[
+          Research::Models::Brain::VALID_HOOKS.keys.first
+        ],
+        {}, { id: 'hooks', class: 'form-control' } %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :code %>
+    <%= f.text_area :code, class: 'form-control', 'data-codemirror' => true %>
+  </div>
+
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
+<% end %>

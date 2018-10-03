@@ -1,4 +1,6 @@
-@import "bootstrap-sprockets";
+/*
+*= require codemirror
+*/@import "bootstrap-sprockets";
 @import "bootstrap";
 @import "common_colors";
 @import "fonts";
@@ -9,7 +11,7 @@
 @import "common_colors";
 @import "./research/survey-preview";
 
- .underlined-spaced-row {
+.underlined-spaced-row {
    border-bottom: 1px solid gray;
    padding-bottom: 20px;
    margin-bottom: 20px
