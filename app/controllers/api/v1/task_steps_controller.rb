@@ -28,6 +28,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
     ScoutHelper.ignore!(0.8)
+    Research::ManipulateStudentTask[hook: :update, task_step: @task_step, task: @task_step.task]
     standard_update(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
   end
 

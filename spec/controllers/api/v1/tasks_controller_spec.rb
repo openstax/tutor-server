@@ -68,23 +68,21 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
         Research::AddCourseToStudy[course: course, study: study]
       }
 
-      it "can add free-response format" do
-
+      it "can add a new format" do
         expect(task_1.task_steps[1].tasked.content_hash_for_students['questions'][0]['formats'])
-          .to eq ["multiple-choice"]
+          .to eq ["multiple-choice","free-response"]
 
         brain.update_attributes code: <<~EOC
           task.task_steps.each{ |ts|
-            ts.tasked.questions_for_students.each{|q|
-              q['formats'] = (q['formats'] || []) | ['free-response']
-            } if ts.tasked.exercise?
+            ts.tasked.parser.questions_for_students.each{|q|
+              q['formats'] += ['blah']
+            } if ts.exercise?
           }
         EOC
         api_get :show, user_1_token, parameters: {id: task_1.id}
-
         expect(
           response.body_as_hash[:steps][1][:content][:questions][0][:formats]
-        ).to eq ["multiple-choice", "free-response"]
+        ).to eq ["multiple-choice", "free-response", "blah"]
       end
 
     end

@@ -23,9 +23,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
-           :content_hash_for_students, :answers_for_students, :questions_for_students,
-           :content_hash_for_students=, :answers_for_students=, :questions_for_students=,
-           :tags, :los, :aplos, to: :parser
+           :content_hash_for_students, :tags, :los, :aplos, to: :parser
 
   # We depend on the parser because we do not save the parsed content
   def parser
@@ -104,9 +102,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   protected
 
   def free_response_required
-    return false # true unless formats.include?('free-response') && free_response.blank?
-    errors.add(:free_response, 'is required')
-    false
+    if parser.question_formats_for_students.include?('free-response') && free_response.blank?
+      errors.add(:free_response, 'is required')
+    end
   end
 
   def answer_id_required

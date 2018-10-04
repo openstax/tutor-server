@@ -30,8 +30,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     tasked_exercise.free_response = nil
     expect(tasked_exercise).not_to be_valid
+    tasked_exercise.parser.questions_for_students.each{|q| q['formats'] = ['multiple-choice']}
 
-    tasked_exercise.parser.instance_variable_set('@question_formats', ['multiple-choice'])
     expect(tasked_exercise).to be_valid
   end
 

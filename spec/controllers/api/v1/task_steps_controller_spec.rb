@@ -158,6 +158,33 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
+
+    context 'research' do
+      let!(:study)    { FactoryBot.create :research_study }
+      let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
+      let!(:brain)    {
+        FactoryBot.create :research_study_brain,
+                          cohort: cohort, domain: :student_task, hook: :update
+      }
+      before(:each) {
+        Research::AddCourseToStudy[course: @course, study: study]
+      }
+
+      it "can override requiring free-response format" do
+        expect(tasked.formats).to eq ["multiple-choice", "free-response"]
+        brain.update_attributes code: <<~EOC
+          return unless task_step && task_step.exercise?
+          task_step.tasked.parser.questions_for_students.each{|q| q['formats'] -= ['free-response'] }
+        EOC
+
+        api_put :update, @user_1_token,
+                parameters: id_parameters, raw_post_data: { free_response: '' }
+
+        expect(response).to have_http_status(:success)
+      end
+
+    end
+
   end
 
   context "#recovery" do

@@ -7,11 +7,18 @@ class Research::Models::Brain < ApplicationRecord
   validate :ensure_valid_hook_for_domain
 
   VALID_HOOKS = {
-    student_task: %i{display}
+    student_task: %i{display update}
   }
 
   def evaluate(binding)
-    eval(code, binding)
+    begin
+      eval(code, binding)
+      nil
+    rescue Exception => e
+      # "rescue exception is evil" is true but this is using one evil to cancel another
+      # The eval code should never crash the server
+      return e
+    end
   end
 
   protected

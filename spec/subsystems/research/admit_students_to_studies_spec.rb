@@ -21,7 +21,7 @@ RSpec.describe Research::AdmitStudentsToStudies do
     study = FactoryBot.create(:research_study)
 
     described_class.call(students: student, studies: study)
-    expect(student.cohort_members.count).to eq 1
+    expect(student.research_cohort_members.count).to eq 1
   end
 
   it "assigns surveys" do

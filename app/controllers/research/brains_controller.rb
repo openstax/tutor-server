@@ -1,9 +1,5 @@
 class Research::BrainsController < Research::BaseController
 
-  def index
-    render text: 'hi'
-  end
-
   def new
     @cohort = Research::Models::Cohort.find(params[:cohort_id])
     @brain = Research::Models::Brain.new(allowed_params.merge(cohort: @cohort))

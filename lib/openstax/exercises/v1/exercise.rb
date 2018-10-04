@@ -7,7 +7,9 @@ class OpenStax::Exercises::V1::Exercise
   attr_accessor :context
 
   # provide writers so research hooks can manipulate the content
-  attr_writer :questions_for_students, :answers_for_students, :content_hash_for_students
+#  attr_writer :questions_for_students, :answers_for_students, :content_hash_for_students
+#:answers_for_students, :questions_for_students,
+  #           :content_hash_for_students=, :answers_for_students=, :questions_for_students=,
 
   attr_reader :content
 
@@ -156,6 +158,10 @@ class OpenStax::Exercises::V1::Exercise
     @feedback_map
   end
 
+  def question_formats_for_students
+    questions_for_students.flat_map{|q| q['formats']}.uniq
+  end
+
   def answers_for_students
     @answers_for_students ||= question_answers.map do |qa|
       qa.map do |ans|
@@ -166,12 +172,8 @@ class OpenStax::Exercises::V1::Exercise
 
   def questions_for_students
     @questions_for_students ||= questions.each_with_index.map do |qq, ii|
-      qq.except(
-        'formats', 'collaborator_solutions', 'community_solutions'
-      ).merge(
-        'answers' => answers_for_students[ii],
-        'formats' => qq['formats'] ? (qq['formats'] - ['free-response']) : []
-      )
+      qq.except('collaborator_solutions', 'community_solutions')
+        .merge('answers' => answers_for_students[ii])
     end
   end
 
