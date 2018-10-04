@@ -5,7 +5,7 @@
       h => `<option value="${h}">${h}</option>`
     ).join('');
   }
-  onDomainChange.hooks = <%=raw Research::Models::Brain::VALID_HOOKS.to_json %>;
+  onDomainChange.hooks = <%=raw Research::Models::StudyBrain::VALID_HOOKS.to_json %>;
 
 </script>
 <% @brain.errors.full_messages.each do |error| %>
@@ -23,15 +23,15 @@
   <div class='form-group'>
     <%= f.label :domain %>
     <%= f.select :domain,
-        Research::Models::Brain::VALID_HOOKS.keys,
+        Research::Models::StudyBrain::VALID_HOOKS.keys,
         {}, { class: 'form-control', onChange: "onDomainChange(this)" } %>
   </div>
 
   <div class='form-group'>
     <%= f.label :hook %>
     <%= f.select :hook,
-        Research::Models::Brain::VALID_HOOKS[
-          Research::Models::Brain::VALID_HOOKS.keys.first
+        Research::Models::StudyBrain::VALID_HOOKS[
+          Research::Models::StudyBrain::VALID_HOOKS.keys.first
         ],
         {}, { id: 'hooks', class: 'form-control' } %>
   </div>

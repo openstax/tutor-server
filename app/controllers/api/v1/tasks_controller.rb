@@ -79,7 +79,7 @@ class Api::V1::TasksController < Api::V1::ApiController
   def get_task
     @task = Tasks::Models::Task.preload(
       task_steps: [:tasked, :page],
-      research_cohorts: [:brains]
+      research_cohorts: [:study_brains]
     ).find(params[:id])
   end
 

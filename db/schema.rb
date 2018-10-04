@@ -338,7 +338,7 @@ ActiveRecord::Schema.define(version: 20180928165932) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                                         null: false
     t.boolean  "is_excluded_from_salesforce",                                          default: false,               null: false
-    t.uuid     "uuid",                                                                 default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                                                                 default: "gen_random_uuid()"
     t.integer  "sequence_number",                                                      default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                                              null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                                              null: false
@@ -585,7 +585,7 @@ ActiveRecord::Schema.define(version: 20180928165932) do
     t.datetime "updated_at",                                          null: false
     t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
+    t.uuid     "uuid",                  default: "gen_random_uuid()"
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
     t.boolean  "is_test"
@@ -657,16 +657,6 @@ ActiveRecord::Schema.define(version: 20180928165932) do
     t.datetime "updated_at"
   end
 
-  create_table "research_brains", force: :cascade do |t|
-    t.integer "research_cohort_id",           null: false
-    t.text    "name",                         null: false
-    t.text    "code",                         null: false
-    t.integer "domain",             limit: 2
-    t.text    "hook"
-  end
-
-  add_index "research_brains", ["research_cohort_id"], name: "index_research_brains_on_research_cohort_id", using: :btree
-
   create_table "research_cohort_members", force: :cascade do |t|
     t.integer  "research_cohort_id",           null: false
     t.integer  "course_membership_student_id", null: false
@@ -702,6 +692,16 @@ ActiveRecord::Schema.define(version: 20180928165932) do
 
   add_index "research_studies", ["last_activated_at"], name: "index_research_studies_on_last_activated_at", using: :btree
   add_index "research_studies", ["last_deactivated_at"], name: "index_research_studies_on_last_deactivated_at", using: :btree
+
+  create_table "research_study_brains", force: :cascade do |t|
+    t.integer "research_cohort_id",           null: false
+    t.text    "name",                         null: false
+    t.text    "code",                         null: false
+    t.integer "domain",             limit: 2
+    t.text    "hook"
+  end
+
+  add_index "research_study_brains", ["research_cohort_id"], name: "index_research_study_brains_on_research_cohort_id", using: :btree
 
   create_table "research_study_courses", force: :cascade do |t|
     t.integer  "research_study_id",        null: false
@@ -1183,10 +1183,10 @@ ActiveRecord::Schema.define(version: 20180928165932) do
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
-  add_foreign_key "research_brains", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_study_brains", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_survey_plans", "research_studies", on_update: :cascade, on_delete: :cascade

@@ -5,7 +5,7 @@
         class: "pull-right btn btn-primary" %>
   </div>
 </div>
-<% @cohort.brains.each do |brain| %>
+<% @cohort.study_brains.each do |brain| %>
 <div>
   <b><%= link_to brain.name, edit_research_brain_path(brain) %></b>
 </div>

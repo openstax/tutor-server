@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Research::Models::Brain, type: :model do
+RSpec.describe Research::Models::StudyBrain, type: :model do
 
     let(:brain) { FactoryBot.create :research_study_brain }
 

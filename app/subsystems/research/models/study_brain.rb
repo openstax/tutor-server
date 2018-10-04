@@ -1,9 +1,9 @@
-class Research::Models::Brain < ApplicationRecord
-  belongs_to :cohort, inverse_of: :brains
+class Research::Models::StudyBrain < ApplicationRecord
+  belongs_to :cohort, inverse_of: :study_brains
 
   enum domain: { student_task: 1 }
 
-  validates :name, :domain, presence: true
+  validates :name, :domain, :code, presence: true
   validate :ensure_valid_hook_for_domain
 
   VALID_HOOKS = {
