@@ -18,6 +18,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
+    Research::ManipulateStudentTask[hook: :display, task: @task_step.task, task: @task_step.task]
     standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked), true)
   end
 
@@ -50,12 +51,17 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
     consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+
+    Research::ManipulateStudentTask[hook: :update, task_step: @task_step, task: @task_step.task]
     @tasked.save
+
     # Task already locked in around_action
     result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
 
     raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+
+    Research::ManipulateStudentTask[task: @task_step.task, hook: :display]
 
     respond_with(
       @task_step.task,

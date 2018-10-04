@@ -37,12 +37,13 @@ class Research::BrainsController < Research::BaseController
     if brain.errors.none?
       redirect_to research_cohort_path brain.cohort
     else
+      @brain = brain
       render :edit
     end
   end
 
   def allowed_params
-    params[:research_models_brain] ?
-      params.require(:research_models_brain).permit(:name, :domain, :hook, :code) : {}
+    params[:research_models_study_brain] ?
+      params.require(:research_models_study_brain).permit(:name, :domain, :hook, :code) : {}
   end
 end

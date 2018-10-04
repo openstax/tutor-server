@@ -173,10 +173,10 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       it "can override requiring free-response format" do
         expect(tasked.formats).to eq ["multiple-choice", "free-response"]
         brain.update_attributes code: <<~EOC
-          return unless task_step && task_step.exercise?
-          task_step.tasked.parser.questions_for_students.each{|q| q['formats'] -= ['free-response'] }
+          task_step.tasked.parser.questions_for_students.each{|q|
+            q['formats'] -= ['free-response'] }
+          } if task_step && task_step.exercise?
         EOC
-
         api_put :update, @user_1_token,
                 parameters: id_parameters, raw_post_data: { free_response: '' }
 

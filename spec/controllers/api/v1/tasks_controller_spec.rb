@@ -75,7 +75,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
         brain.update_attributes code: <<~EOC
           task.task_steps.each{ |ts|
             ts.tasked.parser.questions_for_students.each{|q|
-              q['formats'] += ['blah']
+              q['formats'] |= ['blah']
             } if ts.exercise?
           }
         EOC
