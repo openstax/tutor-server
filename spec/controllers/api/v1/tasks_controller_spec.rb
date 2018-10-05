@@ -61,28 +61,27 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
     context 'research' do
       let!(:study)    { FactoryBot.create :research_study }
       let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
-      let!(:brain)    {
-        FactoryBot.create :research_study_brain, cohort: cohort, domain: :student_task
-      }
       before(:each) {
+        study.activate!
         Research::AddCourseToStudy[course: course, study: study]
       }
 
-      it "can add a new format" do
+      it "can hide free-response format" do
         expect(task_1.task_steps[1].tasked.content_hash_for_students['questions'][0]['formats'])
           .to eq ["multiple-choice","free-response"]
 
-        brain.update_attributes code: <<~EOC
+        FactoryBot.create :research_display_student_task, cohort: cohort,
+                          code: <<~EOC
           task.task_steps.each{ |ts|
             ts.tasked.parser.questions_for_students.each{|q|
-              q['formats'] |= ['blah']
+              q['formats'] -= ['free-response']
             } if ts.exercise?
           }
         EOC
         api_get :show, user_1_token, parameters: {id: task_1.id}
         expect(
           response.body_as_hash[:steps][1][:content][:questions][0][:formats]
-        ).to eq ["multiple-choice", "free-response", "blah"]
+        ).to eq ["multiple-choice"]
       end
 
     end

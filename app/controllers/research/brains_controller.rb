@@ -1,5 +1,7 @@
 class Research::BrainsController < Research::BaseController
 
+  # Research::BaseController makes sure users are researchers
+
   def index
     @cohort = Research::Models::Cohort.find(params[:cohort_id])
   end

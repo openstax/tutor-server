@@ -163,20 +163,21 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       let!(:study)    { FactoryBot.create :research_study }
       let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
       let!(:brain)    {
-        FactoryBot.create :research_study_brain,
-                          cohort: cohort, domain: :student_task, hook: :update
       }
       before(:each) {
+        study.activate!
         Research::AddCourseToStudy[course: @course, study: study]
       }
 
       it "can override requiring free-response format" do
         expect(tasked.formats).to eq ["multiple-choice", "free-response"]
-        brain.update_attributes code: <<~EOC
-          task_step.tasked.parser.questions_for_students.each{|q|
-            q['formats'] -= ['free-response'] }
-          } if task_step && task_step.exercise?
+        FactoryBot.create :research_update_student_tasked, cohort: cohort,
+                          code: <<~EOC
+          tasked.parser.questions_for_students.each{|q|
+            q['formats'] -= ['free-response']
+          } if tasked.exercise?
         EOC
+
         api_put :update, @user_1_token,
                 parameters: id_parameters, raw_post_data: { free_response: '' }
 

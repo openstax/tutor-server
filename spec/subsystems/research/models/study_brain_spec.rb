@@ -2,26 +2,41 @@ require 'rails_helper'
 
 RSpec.describe Research::Models::StudyBrain, type: :model do
 
-    let(:brain) { FactoryBot.create :research_study_brain }
+  let(:brain) {
+    # We need to find the newly created brain so that the
+    # StudentTask's after_find block will execute and add it's "apply" method
+    Research::Models::StudyBrain.find(
+      FactoryBot.create(
+        :research_display_student_task,
+        code: "task.name='updated!'; return task"
+      ).id
+    )
+  }
 
-    it 'validates hooks' do
-      brain.update_attributes hook: 'test'
-      expect(brain.errors[:hook].first).to include 'is not valid for domain'
-    end
+  it 'has proper type' do
+    expect(brain).to be_an(Research::Models::StudyBrain)
+  end
 
-    it 'evals code' do
-      brain.code = 'task_step.foo = "updated!"'
-      task_step = OpenStruct.new(foo: '1234')
-      expect(brain.evaluate(binding())).to be_nil
-      expect(task_step.foo).to eq 'updated!'
-    end
+  it 'evals code' do
+    task = OpenStruct.new(name: '1234')
+    expect(brain.task_for_display(task: task)).to eq(task)
+    expect(task.name).to eq 'updated!'
+  end
 
-    it 'catches invalid code' do
-      brain.code = 'bang()'
-      task_step = OpenStruct.new(foo: '1234')
-      err = brain.evaluate(binding())
-      expect(err).to be_a(NoMethodError)
-      expect(err.to_s).to include "undefined method `bang'"
-    end
+  it 'raises exception for invalid code' do
+    brain.update_attributes! code: 'bang()'
+    bad_brain = Research::Models::StudyBrain.find(brain.id)
+    task = OpenStruct.new(name: '1234')
+    expect{
+      bad_brain.task_for_display(task: task)
+    }.to raise_error(NoMethodError)
+  end
+
+  it 'finds for active study' do
+    study = brain.cohort.study
+    expect(described_class.active).to be_empty
+    study.activate!
+    expect(described_class.active).to eq [brain]
+  end
 
 end

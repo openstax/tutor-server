@@ -1,31 +1,29 @@
 class Research::Models::StudyBrain < ApplicationRecord
   belongs_to :cohort, inverse_of: :study_brains
 
-  enum domain: { student_task: 1 }
+  validates :name, :type, :code, presence: true
 
-  validates :name, :domain, :code, presence: true
-  validate :ensure_valid_hook_for_domain
-
-  VALID_HOOKS = {
-    student_task: %i{display update}
+  scope :active, -> { joins(:cohort).merge(Research::Models::Cohort.active) }
+  scope :student_task, -> {
+    where(type: [
+            'Research::Models::DisplayStudentTask',
+            'Research::Models::UpdateStudentTasked'
+          ])
   }
-
-  def evaluate(binding)
-    begin
-      eval(code, binding)
-      nil
-    rescue Exception => e
-      # "rescue exception is evil" is true but this is using one evil to cancel another
-      # The eval code should never crash the server
-      return e
-    end
+  def type_identifier
+    @type_identifier ||= self.class.to_s.demodulize.underscore.to_sym
   end
 
-  protected
-
-  def ensure_valid_hook_for_domain
-    if hook.present? && !VALID_HOOKS[domain.to_sym].include?(hook.to_sym)
-      errors.add(:hook, "is not valid for domain '#{domain}'")
-    end
+  def should_execute?(desired_type)
+    cohort.study.active? && type_identifier == desired_type
   end
+
+  # Note!  This only creates the "apply" method after the brain is
+  # retrieved from the database.  It's safe to do so because that's
+  # the only way they're called. If we later decide to create and execute
+  # a brain immediately, we'll need to add a after_initialize block
+  after_find do |brain|
+    brain.add_instance_method
+  end
+
 end

@@ -5,12 +5,6 @@ class OpenStax::Exercises::V1::Exercise
 
   # Context must be externally set before the preview is initialized
   attr_accessor :context
-
-  # provide writers so research hooks can manipulate the content
-#  attr_writer :questions_for_students, :answers_for_students, :content_hash_for_students
-#:answers_for_students, :questions_for_students,
-  #           :content_hash_for_students=, :answers_for_students=, :questions_for_students=,
-
   attr_reader :content
 
   def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)

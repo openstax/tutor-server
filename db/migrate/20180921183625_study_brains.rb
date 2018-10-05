@@ -3,9 +3,7 @@ class StudyBrains < ActiveRecord::Migration
     create_table :research_study_brains do |t|
       t.references :research_cohort, null: false, index: true,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
-      t.text :name, :code, null: false
-      t.integer :domain, limit: 2 # use smallint for enum
-      t.text :hook
+      t.text :name, :type, :code, null: false
     end
   end
 end

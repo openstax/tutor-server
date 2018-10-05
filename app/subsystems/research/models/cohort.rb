@@ -9,6 +9,7 @@ class Research::Models::Cohort < ApplicationRecord
   validates :name, presence: true
 
   scope :accepting_members, -> { where(is_accepting_members: true) }
+  scope :active, -> { joins(:study).merge(Research::Models::Study.active) }
 
   protected
 
