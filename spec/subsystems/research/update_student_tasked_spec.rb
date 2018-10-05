@@ -19,7 +19,7 @@ RSpec.describe Research::UpdateStudentTasked do
 
   let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
   let!(:brain)    {
-    FactoryBot.create :research_update_student_task_step, cohort: cohort,
+    FactoryBot.create :research_update_student_tasked, cohort: cohort,
                       code: 'return { task_step: { new: true }, update: { modified: true } }'
   }
 

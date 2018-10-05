@@ -62,7 +62,6 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
       let!(:study)    { FactoryBot.create :research_study }
       let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
       before(:each) {
-        study.activate!
         Research::AddCourseToStudy[course: course, study: study]
       }
 
@@ -78,6 +77,8 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
             } if ts.exercise?
           }
         EOC
+        study.activate!
+
         api_get :show, user_1_token, parameters: {id: task_1.id}
         expect(
           response.body_as_hash[:steps][1][:content][:questions][0][:formats]

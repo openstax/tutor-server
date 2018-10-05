@@ -21,6 +21,7 @@ $(document).ready(function() {
       matchBrackets: true,
       indentUnit: 2,
       tabSize: 2,
+      readOnly: "true" == textArea.getAttribute('readOnly'),
       mode: "text/x-ruby",
     });
   })

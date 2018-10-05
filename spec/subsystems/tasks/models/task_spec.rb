@@ -73,20 +73,19 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       let(:study)    { FactoryBot.create :research_study }
 
       let(:cohort)   { FactoryBot.create :research_cohort, study: study }
-      let(:brain)    { FactoryBot.create :research_study_brain, cohort: cohort }
+      let!(:brain)   { FactoryBot.create :research_update_student_tasked, cohort: cohort }
       before(:each)  {
-        Research::Models::CohortMember.create!(student: student, cohort: cohort)
         study.activate!
+        Research::Models::CohortMember.create!(student: student, cohort: cohort)
       }
 
       it 'has links to related models' do
-          expect(task.tasking).to eq tasking
-          expect(task.role).to eq tasking.role
-          expect(student).to eq tasking.role.student
-          expect(task.student).to eq student
-          expect(task.research_cohorts).to eq [cohort]
-          expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
-
+        expect(task.tasking).to eq tasking
+        expect(task.role).to eq tasking.role
+        expect(student).to eq tasking.role.student
+        expect(task.student).to eq student
+        expect(task.research_cohorts).to eq [cohort]
+        expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
       end
   end
 

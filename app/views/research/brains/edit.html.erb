@@ -4,7 +4,7 @@
     <%= link_to @brain.cohort.name, research_cohort_path(@brain.cohort) %>
   </h2>
   <div class="col-xs-6">
-<% unless @brain.new_record? %>
+<% unless @brain.new_record? || @brain.cohort.study.active? %>
     <%= link_to 'Delete Brain',
         research_brain_path(@brain),
         method: :delete,

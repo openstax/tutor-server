@@ -162,10 +162,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     context 'research' do
       let!(:study)    { FactoryBot.create :research_study }
       let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
-      let!(:brain)    {
-      }
       before(:each) {
-        study.activate!
         Research::AddCourseToStudy[course: @course, study: study]
       }
 
@@ -177,6 +174,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
             q['formats'] -= ['free-response']
           } if tasked.exercise?
         EOC
+        study.activate!
 
         api_put :update, @user_1_token,
                 parameters: id_parameters, raw_post_data: { free_response: '' }

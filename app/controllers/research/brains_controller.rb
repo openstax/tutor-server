@@ -2,6 +2,10 @@ class Research::BrainsController < Research::BaseController
 
   # Research::BaseController makes sure users are researchers
 
+  # use all the subclasses here so that they'll be loaded and visible
+  Research::Models::DisplayStudentTask
+  Research::Models::UpdateStudentTasked
+
   def index
     @cohort = Research::Models::Cohort.find(params[:cohort_id])
   end
@@ -46,6 +50,6 @@ class Research::BrainsController < Research::BaseController
 
   def allowed_params
     params[:research_models_study_brain] ?
-      params.require(:research_models_study_brain).permit(:name, :domain, :hook, :code) : {}
+      params.require(:research_models_study_brain).permit(:name, :type, :code) : {}
   end
 end

@@ -698,7 +698,6 @@ ActiveRecord::Schema.define(version: 20180928165932) do
     t.text    "name",               null: false
     t.text    "type",               null: false
     t.text    "code",               null: false
-    t.text    "hook"
   end
 
   add_index "research_study_brains", ["research_cohort_id"], name: "index_research_study_brains_on_research_cohort_id", using: :btree

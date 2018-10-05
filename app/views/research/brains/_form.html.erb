@@ -1,18 +1,8 @@
-<script>
-  function onDomainChange(select) {
-    var hooks = onDomainChange.hooks[select.value];
-    document.getElementById('hooks').innerHTML = hooks.map(
-      h => `<option value="${h}">${h}</option>`
-    ).join('');
-  }
-  onDomainChange.hooks = <%=raw Research::Models::StudyBrain::VALID_HOOKS.to_json %>;
-
-</script>
 <% @brain.errors.full_messages.each do |error| %>
 <div class="alert alert-danger" role="alert"><%= error %></div>
 <% end %>
 
-<%= form_for @brain,
+<%= form_for @brain.becomes(Research::Models::StudyBrain),
     url: @brain.new_record? ? research_cohort_brains_path(@brain.cohort) : research_brain_path do |f| %>
   <input type="hidden" name="cohort_id" value="<%= @brain.cohort.id %>">
   <div class='form-group'>
@@ -21,25 +11,26 @@
   </div>
 
   <div class='form-group'>
-    <%= f.label :domain %>
-    <%= f.select :domain,
-        Research::Models::StudyBrain::VALID_HOOKS.keys,
-        {}, { class: 'form-control', onChange: "onDomainChange(this)" } %>
+    <%= f.label :type %>
+    <%= f.select :type,
+        Research::Models::StudyBrain.subclasses.map{|sb| [sb.to_s.demodulize.underscore, sb.to_s] },
+        {}, { readOnly: @brain.cohort.study.active?, class: 'form-control' } %>
   </div>
 
-  <div class='form-group'>
-    <%= f.label :hook %>
-    <%= f.select :hook,
-        Research::Models::StudyBrain::VALID_HOOKS[
-          Research::Models::StudyBrain::VALID_HOOKS.keys.first
-        ],
-        {}, { id: 'hooks', class: 'form-control' } %>
-  </div>
+<% if @brain.cohort.study.active? %>
+<p> study brain code cannot be edited while study is active</p>
+<% end %>
 
   <div class='form-group'>
     <%= f.label :code %>
-    <%= f.text_area :code, class: 'form-control', 'data-codemirror' => true %>
+    <%= f.text_area :code,
+        class: 'form-control',
+        readOnly: @brain.cohort.study.active?,
+        'data-codemirror' => true %>
   </div>
 
+<% unless @brain.cohort.study.active? %>
   <%= f.submit 'Save', class: 'btn btn-primary' %>
+<% end %>
+
 <% end %>
