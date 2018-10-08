@@ -167,7 +167,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       }
 
       it "can override requiring free-response format" do
-        expect(tasked.formats).to eq ["multiple-choice", "free-response"]
+        expect(tasked.parser.question_formats_for_students).to eq ["multiple-choice", "free-response"]
         FactoryBot.create :research_update_student_tasked, cohort: cohort,
                           code: <<~EOC
           tasked.parser.questions_for_students.each{|q|

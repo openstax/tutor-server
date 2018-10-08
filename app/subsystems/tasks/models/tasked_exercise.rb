@@ -75,12 +75,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     self.content = json_hash.to_json
   end
 
-  # The following 4 methods assume only 1 Question; this is OK for TaskedExercise,
+  # The following 3 methods assume only 1 Question; this is OK for TaskedExercise,
   # because each TE contains at most 1 part of a multipart exercise.
-  def formats
-    question_formats[0]
-  end
-
   def answer_ids
     question_answer_ids[0]
   end
