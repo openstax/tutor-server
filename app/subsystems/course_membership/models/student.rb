@@ -14,8 +14,10 @@ class CourseMembership::Models::Student < ApplicationRecord
   has_one :latest_enrollment, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
   has_many :surveys, subsystem: :research, inverse_of: :student
 
-  has_many :research_cohort_members, class_name: '::Research::Models::CohortMember', inverse_of: :student
-  has_many :research_cohorts, class_name: 'Research::Models::Cohort', through: :research_cohort_members, source: :cohort
+  has_many :research_cohort_members, inverse_of: :student,
+           subsystem: :research, class_name: '::Research::Models::CohortMember'
+  has_many :research_cohorts, through: :research_cohort_members, source: :cohort,
+           subsystem: :research, class_name: 'Research::Models::Cohort'
 
   before_validation :init_first_paid_at
 
