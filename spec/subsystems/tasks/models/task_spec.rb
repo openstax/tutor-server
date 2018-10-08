@@ -80,10 +80,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       }
 
       it 'has links to related models' do
-        expect(task.tasking).to eq tasking
-        expect(task.role).to eq tasking.role
+        expect(task.taskings).to eq [tasking]
+        expect(task.roles).to eq [tasking.role]
         expect(student).to eq tasking.role.student
-        expect(task.student).to eq student
+        expect(task.students).to eq [student]
         expect(task.research_cohorts).to eq [cohort]
         expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
       end
