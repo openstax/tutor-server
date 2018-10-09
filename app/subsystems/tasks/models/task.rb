@@ -50,7 +50,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
   has_many :tasked_exercises, through: :task_steps, source: :tasked,
                                                     source_type: 'Tasks::Models::TaskedExercise'
-  has_many :taskings
+  has_many :taskings, inverse_of: :task
   has_many :roles, through: :taskings, subsystem: :entity
   has_many :students, through: :roles, subsystem: :course_membership
   has_many :research_cohorts, through: :students,
@@ -59,7 +59,6 @@ class Tasks::Models::Task < ApplicationRecord
            through: :research_cohorts, source: :study_brains,
            subsystem: :research, class_name: 'Research::Models::StudyBrain'
 
-  has_many :taskings, inverse_of: :task
   has_one :concept_coach_task, inverse_of: :task
 
   validates :title, presence: true
