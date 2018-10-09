@@ -2,10 +2,6 @@ class Research::BrainsController < Research::BaseController
 
   # Research::BaseController makes sure users are researchers
 
-  # use all the subclasses here so that they'll be loaded and visible
-  Research::Models::DisplayStudentTask
-  Research::Models::UpdateStudentTasked
-
   def index
     @cohort = Research::Models::Cohort.find(params[:cohort_id])
   end

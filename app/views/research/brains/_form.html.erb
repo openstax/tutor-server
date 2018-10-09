@@ -12,8 +12,10 @@
 
   <div class='form-group'>
     <%= f.label :type %>
-    <%= f.select :type,
-        Research::Models::StudyBrain.subclasses.map{|sb| [sb.to_s.demodulize.underscore, sb.to_s] },
+    <%= f.select :type, [
+        Research::Models::DisplayStudentTask,
+        Research::Models::UpdateStudentTasked,
+      ].map.{|sb| [sb.to_s.demodulize.underscore, sb.to_s] },
         {}, { readOnly: @brain.cohort.study.active?, class: 'form-control' } %>
   </div>
 
