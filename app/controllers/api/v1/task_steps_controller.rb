@@ -19,7 +19,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
     Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
-    standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked), true)
+    standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
   end
 
   ###############################################################
