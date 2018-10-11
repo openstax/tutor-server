@@ -1,7 +1,7 @@
 class Research::Models::Cohort < ApplicationRecord
   belongs_to :study, inverse_of: :cohorts
+  has_many :study_brains, through: :study
   has_many :cohort_members, inverse_of: :cohort, dependent: :destroy
-  has_many :study_brains, inverse_of: :cohort, dependent: :destroy
 
   before_create :verify_study_inactive
   before_destroy :verify_no_members

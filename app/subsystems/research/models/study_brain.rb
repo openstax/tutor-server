@@ -1,14 +1,14 @@
 class Research::Models::StudyBrain < ApplicationRecord
-  belongs_to :cohort, inverse_of: :study_brains
+  belongs_to :study, inverse_of: :study_brains
 
   validates :name, :type, :code, presence: true
   validate :no_update_when_study_active
 
-  scope :active, -> { joins(:cohort).merge(Research::Models::Cohort.active) }
+  scope :active, -> { joins(:study).merge(Research::Models::Study.active) }
   scope :student_task, -> {
     where(type: [
-            'Research::Models::DisplayStudentTask',
-            'Research::Models::UpdateStudentTasked'
+            'Research::Models::ModifiedTaskForDisplay',
+            'Research::Models::ModifiedTaskedForUpdate'
           ])
   }
   def type_identifier
@@ -16,7 +16,7 @@ class Research::Models::StudyBrain < ApplicationRecord
   end
 
   def should_execute?(desired_type)
-    cohort.study.active? && type_identifier == desired_type
+    study.active? && type_identifier == desired_type
   end
 
   # Note!  This only creates the dynamic methods after the brain is
@@ -30,7 +30,7 @@ class Research::Models::StudyBrain < ApplicationRecord
   protected
 
   def no_update_when_study_active
-    errors.add(:base, "can't be saved when study is active") if cohort.study.active?
+    errors.add(:base, "can't be saved when study is active") if study.active?
   end
 
 end

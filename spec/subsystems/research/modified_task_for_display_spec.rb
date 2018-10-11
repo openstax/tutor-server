@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Research::DisplayStudentTask do
+RSpec.describe Research::ModifiedTaskForDisplay do
 
   let!(:course) { FactoryBot.create :course_profile_course }
   let!(:task) {
@@ -16,7 +16,7 @@ RSpec.describe Research::DisplayStudentTask do
 
   let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
   let!(:brain)    {
-    FactoryBot.create :research_display_student_task, cohort: cohort,
+    FactoryBot.create :research_modified_task_for_display, study: study,
                       code: 'task.title = "yo, i altered you"'
   }
 

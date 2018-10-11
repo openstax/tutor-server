@@ -3,12 +3,12 @@ class Research::BrainsController < Research::BaseController
   # Research::BaseController makes sure users are researchers
 
   def index
-    @cohort = Research::Models::Cohort.find(params[:cohort_id])
+    @study = Research::Models::Study.find(params[:study_id])
   end
 
   def new
-    @cohort = Research::Models::Cohort.find(params[:cohort_id])
-    @brain = Research::Models::StudyBrain.new(allowed_params.merge(cohort: @cohort))
+    @study = Research::Models::Study.find(params[:study_id])
+    @brain = Research::Models::StudyBrain.new(allowed_params.merge(study: @study))
   end
 
   def edit
@@ -18,7 +18,7 @@ class Research::BrainsController < Research::BaseController
   def destroy
     brain = Research::Models::StudyBrain.find(params[:id])
     brain.destroy
-    redirect_to research_cohort_path brain.cohort
+    redirect_to research_study_path brain.study
   end
 
   def update
@@ -29,7 +29,7 @@ class Research::BrainsController < Research::BaseController
 
   def create
     render_updated Research::Models::StudyBrain.create(
-      allowed_params.merge(research_cohort_id: params[:cohort_id])
+      allowed_params.merge(research_study_id: params[:study_id])
     )
   end
 
@@ -37,7 +37,7 @@ class Research::BrainsController < Research::BaseController
 
   def render_updated(brain)
     if brain.errors.none?
-      redirect_to research_cohort_path brain.cohort
+      redirect_to research_study_path brain.study
     else
       @brain = brain
       render :edit

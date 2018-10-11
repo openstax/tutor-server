@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :research_study_brain, class: '::Research::Models::StudyBrain' do
-    association :cohort, factory: :research_cohort
+    association :study, factory: :research_study
     name { Faker::Company.name }
     code { "'BRAINZ!! MUST HAVE BRAINZ!'" }
 
@@ -13,13 +13,13 @@ FactoryBot.define do
     end
   end
 
-    factory :research_update_student_tasked,
+    factory :research_modified_tasked_for_update,
             parent: :research_study_brain,
-            class: 'Research::Models::UpdateStudentTasked' do
+            class: 'Research::Models::ModifiedTaskedForUpdate' do
     end
 
-    factory :research_display_student_task,
+    factory :research_modified_task_for_display,
             parent: :research_study_brain,
-            class: 'Research::Models::DisplayStudentTask' do
+            class: 'Research::Models::ModifiedTaskForDisplay' do
     end
 end

@@ -161,18 +161,18 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
     context 'research' do
       let!(:study)    { FactoryBot.create :research_study }
-      let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
+      let!(:cohort)   { FactoryBot.create :research_cohort, name: 'control', study: study }
       before(:each) {
         Research::AddCourseToStudy[course: @course, study: study]
       }
 
       it "can override requiring free-response format" do
         expect(tasked.parser.question_formats_for_students).to eq ["multiple-choice", "free-response"]
-        FactoryBot.create :research_update_student_tasked, cohort: cohort,
+        FactoryBot.create :research_modified_tasked_for_update, study: study,
                           code: <<~EOC
           tasked.parser.questions_for_students.each{|q|
             q['formats'] -= ['free-response']
-          } if tasked.exercise?
+          } if tasked.exercise? && cohort.name == 'control'
         EOC
         study.activate!
 

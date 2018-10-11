@@ -1,15 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Research::Models::StudyBrain, type: :model do
-
+  let(:cohort) { FactoryBot.create :research_cohort }
   let(:brain) {
-    # We need to find the newly created brain so that the
-    # StudentTask's after_find block will execute and add it's "apply" method
-    Research::Models::StudyBrain.find(
-      FactoryBot.create(
-        :research_display_student_task,
-        code: "task.name='updated!'; return task"
-      ).id
+    FactoryBot.create(
+      :research_modified_task_for_display,
+      study: cohort.study, code: "task.name='updated!'; return task"
     )
   }
 
@@ -19,7 +15,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
 
   it 'evals code' do
     task = OpenStruct.new(name: '1234')
-    expect(brain.task_for_display(task: task)).to eq(task)
+    expect(brain.modified_task_for_display(cohort: cohort, task: task)).to eq(task)
     expect(task.name).to eq 'updated!'
   end
 
@@ -28,12 +24,12 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
     bad_brain = Research::Models::StudyBrain.find(brain.id)
     task = OpenStruct.new(name: '1234')
     expect{
-      bad_brain.task_for_display(task: task)
+      bad_brain.modified_task_for_display(cohort: cohort, task: task)
     }.to raise_error(NoMethodError)
   end
 
   it 'finds for active study' do
-    study = brain.cohort.study
+    study = brain.study
     expect(described_class.active).to be_empty
     study.activate!
     expect(described_class.active).to eq [brain]

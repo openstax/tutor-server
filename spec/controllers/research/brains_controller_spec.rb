@@ -3,20 +3,20 @@ require 'rails_helper'
 RSpec.describe Research::BrainsController, type: :controller do
   render_views
 
-  let(:brain)  { FactoryBot.create :research_display_student_task }
-  let(:cohort) { brain.cohort }
+  let(:brain)  { FactoryBot.create :research_modified_task_for_display }
+  let(:study) { brain.study }
   let(:researcher) { FactoryBot.create :user, :researcher }
 
   before { controller.sign_in(researcher) }
 
   it '#index' do
-    response = get :index, cohort_id: cohort.id
+    response = get :index, study_id: study.id
     expect(response.body).to include brain.name
   end
 
   it '#creates' do
-    post :create, cohort_id: cohort.id, research_models_study_brain: {
-           name: 'new', type: 'Research::Models::UpdateStudentTasked',
+    post :create, study_id: study.id, research_models_study_brain: {
+           name: 'new', type: 'Research::Models::ModifiedTaskedForUpdate',
            code: 'puts "hello world"'
          }
     expect(Research::Models::StudyBrain.find_by(name: 'new')).not_to be_nil

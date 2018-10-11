@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Research::UpdateStudentTasked do
+RSpec.describe Research::ModifiedTaskedForUpdate do
 
   let!(:course) { FactoryBot.create :course_profile_course }
   let!(:task) {
@@ -19,8 +19,8 @@ RSpec.describe Research::UpdateStudentTasked do
 
   let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
   let!(:brain)    {
-    FactoryBot.create :research_update_student_tasked, cohort: cohort,
-                      code: 'return { task_step: { new: true }, update: { modified: true } }'
+    FactoryBot.create :research_modified_tasked_for_update, study: study,
+                      code: 'return { task_step: { is_new: true }, update: { modified: true } }'
   }
 
   before(:each) {
@@ -30,6 +30,6 @@ RSpec.describe Research::UpdateStudentTasked do
 
   it "can modify step and update" do
     result = described_class.call(tasked: task_step.tasked)
-    expect(result.outputs[:task_step].new).to eq true
+    expect(result.outputs[:task_step].is_new).to eq true
   end
 end

@@ -694,13 +694,13 @@ ActiveRecord::Schema.define(version: 20180928165932) do
   add_index "research_studies", ["last_deactivated_at"], name: "index_research_studies_on_last_deactivated_at", using: :btree
 
   create_table "research_study_brains", force: :cascade do |t|
-    t.integer "research_cohort_id", null: false
-    t.text    "name",               null: false
-    t.text    "type",               null: false
-    t.text    "code",               null: false
+    t.integer "research_study_id", null: false
+    t.text    "name",              null: false
+    t.text    "type",              null: false
+    t.text    "code",              null: false
   end
 
-  add_index "research_study_brains", ["research_cohort_id"], name: "index_research_study_brains_on_research_cohort_id", using: :btree
+  add_index "research_study_brains", ["research_study_id"], name: "index_research_study_brains_on_research_study_id", using: :btree
 
   create_table "research_study_courses", force: :cascade do |t|
     t.integer  "research_study_id",        null: false
@@ -1185,7 +1185,7 @@ ActiveRecord::Schema.define(version: 20180928165932) do
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "research_study_brains", "research_cohorts", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_study_brains", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_survey_plans", "research_studies", on_update: :cascade, on_delete: :cascade

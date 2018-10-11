@@ -69,7 +69,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
         expect(task_1.task_steps[1].tasked.content_hash_for_students['questions'][0]['formats'])
           .to eq ["multiple-choice","free-response"]
 
-        FactoryBot.create :research_display_student_task, cohort: cohort,
+        FactoryBot.create :research_modified_task_for_display, study: study,
                           code: <<~EOC
           task.task_steps.each{ |ts|
             ts.tasked.parser.questions_for_students.each{|q|
