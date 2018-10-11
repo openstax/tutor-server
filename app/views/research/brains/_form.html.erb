@@ -1,0 +1,37 @@
+<% @brain.errors.full_messages.each do |error| %>
+<div class="alert alert-danger" role="alert"><%= error %></div>
+<% end %>
+
+<%= form_for @brain.becomes(Research::Models::StudyBrain),
+    url: @brain.new_record? ? research_study_brains_path(@brain.study) : research_brain_path do |f| %>
+  <input type="hidden" name="study_id" value="<%= @brain.study.id %>">
+  <div class='form-group'>
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  </div>
+  <div class='form-group'>
+    <%= f.label :type %>
+    <%= f.select :type, [
+          Research::Models::ModifiedTaskForDisplay,
+          Research::Models::ModifiedTaskedForUpdate,
+        ].map{|sb| [sb.to_s.demodulize.underscore, sb.to_s] },
+        {}, { readOnly: @brain.study.active?, class: 'form-control' } %>
+  </div>
+
+<% if @brain.study.active? %>
+<p> study brain code cannot be edited while study is active</p>
+<% end %>
+
+  <div class='form-group'>
+    <%= f.label :code %>
+    <%= f.text_area :code,
+        class: 'form-control',
+        readOnly: @brain.study.active?,
+        'data-codemirror' => true %>
+  </div>
+
+<% unless @brain.study.active? %>
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
+<% end %>
+
+<% end %>

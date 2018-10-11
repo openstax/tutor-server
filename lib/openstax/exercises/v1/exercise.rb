@@ -152,22 +152,32 @@ class OpenStax::Exercises::V1::Exercise
     @feedback_map
   end
 
-  def question_answers_without_correct_answer
-    @question_answers_without_correct ||= question_answers.map do |qa|
-      qa.map{ |ans| ans.except('correctness', 'feedback_html') }
+  def question_formats_for_students
+    questions_for_students.flat_map{|q| q['formats']}.uniq
+  end
+
+  def answers_for_students
+    @answers_for_students ||= question_answers.map do |qa|
+      qa.map do |ans|
+        ans.except('correctness', 'feedback_html')
+      end
     end
   end
 
-  def questions_without_correct_answer
-    @questions_without_correct ||= questions.each_with_index.map do |qq, ii|
+  def questions_for_students
+    @questions_for_students ||= questions.each_with_index.map do |qq, ii|
       qq.except('collaborator_solutions', 'community_solutions')
-        .merge('answers' => question_answers_without_correct_answer[ii])
+        .merge('answers' => answers_for_students[ii])
     end
   end
 
   def content_hash_for_students
-    @content_hash_for_students ||= content_hash.except('attachments', 'vocab_term_uid').merge(
-      'questions' => questions_without_correct_answer
+    @content_hash_for_students ||= (
+      content_hash
+        .except(%w{attachments vocab_term_uid})
+        .merge(
+          'questions' => questions_for_students
+        )
     )
   end
 

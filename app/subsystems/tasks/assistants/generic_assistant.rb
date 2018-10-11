@@ -65,7 +65,7 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def get_all_page_exercises_with_queries(page:, queries:)
-    queries.flat_map do |field, values|
+    (queries||[]).flat_map do |field, values|
       sorted_values = [values].flatten.uniq.sort
 
       @exercise_cache[page.id][field][sorted_values] ||= case field.to_sym

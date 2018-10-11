@@ -41,4 +41,10 @@ RSpec.describe Research::Models::Cohort, type: :model do
     expect{described_class.find(cohort.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
+  it 'finds for active study' do
+    expect(described_class.active).to be_empty
+    study.activate!
+    expect(described_class.active).to eq [cohort]
+  end
+
 end

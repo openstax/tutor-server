@@ -18,6 +18,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
+    Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
     standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked), true)
   end
 
@@ -28,6 +29,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
     ScoutHelper.ignore!(0.8)
+    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
     standard_update(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
   end
 
@@ -48,16 +50,20 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
+    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
+
     consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
     @tasked.save
+
     # Task already locked in around_action
-    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
+    result = MarkTaskStepCompleted.call(task_step: @tasked.task_step, lock_task: false)
 
     raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
+    task = Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
     respond_with(
-      @task_step.task,
+      task,
       responder: ResponderWithPutPatchDeleteContent,
       represent_with: Api::V1::TaskRepresenter
     )
@@ -89,6 +95,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       # because we want to lock the tables in exactly this order to avoid deadlocks
       @task_step = Tasks::Models::TaskStep
         .joins(:task)
+        .preload(task: [:research_study_brains])
         .lock('FOR NO KEY UPDATE OF "tasks_tasks", "tasks_task_steps"')
         .find_by(id: params[:id])
 

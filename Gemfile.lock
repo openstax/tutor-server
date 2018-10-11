@@ -166,6 +166,8 @@ GEM
       json
       simplecov
       url
+    codemirror-rails (5.16.0)
+      railties (>= 3.0, < 6.0)
     coderay (1.1.0)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
@@ -727,6 +729,7 @@ DEPENDENCIES
   chronic
   codeclimate-test-reporter
   codecov
+  codemirror-rails
   coffee-rails (~> 4.0.0)
   coffee-rails-source-maps
   compass-rails

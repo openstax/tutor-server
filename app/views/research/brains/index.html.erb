@@ -1,0 +1,16 @@
+<div class="row">
+  <h5 class="col-xs-6">Study Brains</h5>
+  <div class="col-xs-6">
+    <% if @study.active? %>
+    <i class="pull-right">De-activate study to add brains</i>
+    <% else %>
+    <%= link_to 'Add Brain', new_research_study_brain_path(study_id: @study.id),
+        class: "pull-right btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
+<% @study.study_brains.each do |brain| %>
+<div>
+  <b><%= link_to brain.name, edit_research_brain_path(brain) %></b>
+</div>
+<% end %>

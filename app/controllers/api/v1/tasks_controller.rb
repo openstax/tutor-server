@@ -28,7 +28,7 @@ class Api::V1::TasksController < Api::V1::ApiController
   EOS
   def show
     ScoutHelper.ignore!(0.8)
-    standard_read(@task, Api::V1::TaskRepresenter, true)
+    standard_read(Research::ModifiedTaskForDisplay[task: @task], Api::V1::TaskRepresenter, true)
   end
 
   api :PUT, '/tasks/:id/accept_late_work', 'Accept late work in the task score'
@@ -76,7 +76,10 @@ class Api::V1::TasksController < Api::V1::ApiController
   protected
 
   def get_task
-    @task = Tasks::Models::Task.preload(task_steps: [ :tasked, :page ]).find(params[:id])
+    @task = Tasks::Models::Task.preload(
+      :research_study_brains,
+      task_steps: [:tasked, :page]
+    ).find(params[:id])
   end
 
   def populate_placeholders

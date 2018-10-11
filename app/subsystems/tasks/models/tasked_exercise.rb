@@ -75,12 +75,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     self.content = json_hash.to_json
   end
 
-  # The following 4 methods assume only 1 Question; this is OK for TaskedExercise,
+  # The following 3 methods assume only 1 Question; this is OK for TaskedExercise,
   # because each TE contains at most 1 part of a multipart exercise.
-  def formats
-    question_formats[0]
-  end
-
   def answer_ids
     question_answer_ids[0]
   end
@@ -102,9 +98,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   protected
 
   def free_response_required
-    return true unless formats.include?('free-response') && free_response.blank?
-    errors.add(:free_response, 'is required')
-    false
+    if parser.question_formats_for_students.include?('free-response') && free_response.blank?
+      errors.add(:free_response, 'is required')
+    end
   end
 
   def answer_id_required
