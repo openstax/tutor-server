@@ -14,7 +14,7 @@ $(document).ready(function() {
   $('.datepicker').datetimepicker({
     format: datepicker_format
   });
-  $('textarea[data-codemirror]').each((i, textArea) => {
+  $('textarea[data-codemirror]').each(function(i, textArea) {
     CodeMirror.fromTextArea(textArea, {
       lineNumbers: true,
       styleActiveLine: true,
