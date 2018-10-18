@@ -1,6 +1,8 @@
 class Research::Models::StudyBrain < ApplicationRecord
   belongs_to :study, inverse_of: :study_brains
 
+  has_many :manipulations, inverse_of: :study_brain
+
   validates :name, :type, :code, presence: true
   validate :no_update_when_study_active
 
@@ -28,6 +30,16 @@ class Research::Models::StudyBrain < ApplicationRecord
   end
 
   protected
+
+  def with_manipulation(cohort:, target:)
+    manipulation = manipulations.build(cohort: cohort, study: cohort.study, target: target)
+    yield manipulation
+  ensure # note: we aren't rescuing anything but we need to ensure manipulation gets saved
+    if manipulation.should_record?
+      manipulation.save!
+    end
+  end
+
 
   def no_update_when_study_active
     errors.add(:base, "can't be saved when study is active") if study.active?

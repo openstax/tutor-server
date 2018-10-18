@@ -4,7 +4,9 @@ class Research::Models::ModifiedTaskForDisplay < Research::Models::StudyBrain
     instance_eval do
       eval(<<-EOS)
       def modified_task_for_display(cohort:, task:)
-        #{code}
+        with_manipulation(cohort: cohort, target: task) do|manipulation|
+          #{code}
+        end
         return { task: task }
       end
       EOS
