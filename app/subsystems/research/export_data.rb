@@ -1,4 +1,3 @@
-require 'pgdb'
 require 'open3'
 
 class Research::ExportData

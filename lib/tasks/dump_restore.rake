@@ -17,7 +17,6 @@
 # To share these, upload dumps to Box (let's all use a consistent directory).
 #
 # Adapted from https://gist.github.com/hopsoft/56ba6f55fe48ad7f8b90
-require_relative '../pgdb'
 
 namespace :db do
 
