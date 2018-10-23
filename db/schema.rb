@@ -338,7 +338,7 @@ ActiveRecord::Schema.define(version: 20181018152101) do
     t.integer  "cloned_from_id"
     t.boolean  "is_preview",                                                                                         null: false
     t.boolean  "is_excluded_from_salesforce",                                          default: false,               null: false
-    t.uuid     "uuid",                                                                 default: "gen_random_uuid()"
+    t.uuid     "uuid",                                                                 default: "gen_random_uuid()", null: false
     t.integer  "sequence_number",                                                      default: 0,                   null: false
     t.string   "biglearn_student_clues_algorithm_name",                                                              null: false
     t.string   "biglearn_teacher_clues_algorithm_name",                                                              null: false
@@ -585,7 +585,7 @@ ActiveRecord::Schema.define(version: 20181018152101) do
     t.datetime "updated_at",                                          null: false
     t.integer  "faculty_status",        default: 0,                   null: false
     t.string   "salesforce_contact_id"
-    t.uuid     "uuid",                  default: "gen_random_uuid()"
+    t.uuid     "uuid",                  default: "gen_random_uuid()", null: false
     t.integer  "role",                  default: 0,                   null: false
     t.citext   "support_identifier"
     t.boolean  "is_test"
