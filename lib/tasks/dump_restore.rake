@@ -37,7 +37,7 @@ namespace :db do
           "--format=c #{Pgdb.name} > #{dump_file}"
 
     puts cmd
-    exec Pgdb.env, "#{cmd} > /dev/null 2>&1"
+    exec Pgdb.env, cmd
   end
 
   desc "Restores the database dump from db/dumps with a name matching " \
