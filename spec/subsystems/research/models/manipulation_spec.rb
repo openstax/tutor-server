@@ -20,4 +20,29 @@ RSpec.describe Research::Models::Manipulation, type: :model do
     expect(manipulation.should_record?).to be true
   end
 
+  context 'raising exception' do
+    let(:manipulation) { Research::Models::Manipulation.new }
+
+    it 'when ignore! or record! are not called' do
+      expect{
+        manipulation.explode_if_unmarked
+      }.to raise_error(described_class::RecordingPreferenceNotSpecified)
+    end
+
+    it 'wnen ignore! is called' do
+      manipulation.ignore!
+      expect{
+        manipulation.explode_if_unmarked
+      }.not_to raise_error
+    end
+
+    it 'when record! is called' do
+      manipulation.record!
+      expect{
+        manipulation.explode_if_unmarked
+      }.not_to raise_error
+    end
+
+  end
+
 end

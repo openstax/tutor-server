@@ -22,7 +22,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
   end
 
   it 'raises exception for invalid code' do
-    brain.update_attributes! code: 'bang()'
+    brain.update_attributes! code: 'manipulation.record!; bang()'
     bad_brain = Research::Models::StudyBrain.find(brain.id)
     expect{
       bad_brain.modified_task_for_display(cohort: cohort, task: task)
@@ -53,9 +53,8 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
       }.to change{ brain.manipulations.count }.by 1
     end
 
-
     context 'without a call to record' do
-      let(:code){ 'tasked' } # no call to record
+      let(:code){ 'manipulation.ignore!; tasked' } # no call to record
       it 'a brain can choose not to record manipulation' do
         expect {
           brain.modified_tasked_for_update(cohort: cohort, tasked: task_step.tasked)

@@ -30,7 +30,7 @@ RSpec.describe 'Task steps without free response field', type: :request, api: tr
     brain = FactoryBot.create :research_modified_task_for_display,
                       study: @study,
                       code: <<~EOC
-return unless cohort.name == 'control'
+manipulation.ignore! and return unless cohort.name == 'control'
 task_step_ids = []
 task.task_steps.each do |ts|
   if ts.exercise?
@@ -41,6 +41,8 @@ end
 if task_step_ids.any?
   manipulation.context[:task_step_ids] = task_step_ids
   manipulation.record!
+else
+  manipulation.ignore!
 end
 EOC
     @study.activate!
@@ -55,7 +57,7 @@ EOC
     FactoryBot.create :research_modified_tasked_for_update,
                       study: @study,
                       code: <<~EOC
-return unless tasked.exercise? && cohort.name == 'control'
+manipulation.ignore! and return unless tasked.exercise? && cohort.name == 'control'
 tasked.parser.questions_for_students.each{|q|
   q['formats'] -= ['free-response']
 }

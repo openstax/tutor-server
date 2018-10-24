@@ -17,7 +17,7 @@ RSpec.describe Research::ModifiedTaskForDisplay do
   let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
   let!(:brain)    {
     FactoryBot.create :research_modified_task_for_display, study: study,
-                      code: 'task.title = "yo, i altered you"'
+                      code: 'manipulation.record!; task.title = "yo, i altered you"'
   }
 
   before(:each) {

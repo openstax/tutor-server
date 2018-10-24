@@ -173,6 +173,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
           tasked.parser.questions_for_students.each{|q|
             q['formats'] -= ['free-response']
           } if tasked.exercise? && cohort.name == 'control'
+          manipulation.record!
         EOC
         study.activate!
 

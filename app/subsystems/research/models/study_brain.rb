@@ -35,9 +35,8 @@ class Research::Models::StudyBrain < ApplicationRecord
     manipulation = manipulations.build(cohort: cohort, study: cohort.study, target: target)
     yield manipulation
   ensure # note: we aren't rescuing anything but we need to ensure manipulation gets saved
-    if manipulation.should_record?
-      manipulation.save!
-    end
+    manipulation.explode_if_unmarked
+    manipulation.save! if manipulation.should_record?
   end
 
 
