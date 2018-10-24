@@ -18,6 +18,7 @@
 #
 # Adapted from https://gist.github.com/hopsoft/56ba6f55fe48ad7f8b90
 
+
 namespace :db do
 
   desc "Dumps the database to db/dumps with a name based on the " \
@@ -25,19 +26,20 @@ namespace :db do
   task :dump, [:name] => :environment do |t, args|
     args ||= {}
 
-    name = args[:name] || Rails.application.class.parent_name.underscore
+    cmd = with_config do |app, host, db, user|
+      name = args[:name] || app
 
-    dump_file = dump_file(name)
+      dump_file = dump_file(name)
 
-    abort("Failed! The file you are dumping to (#{dump_file}) already exists.") if File.exist?(dump_file)
-    dumps_dir.mkdir unless dumps_dir.exist?
+      abort("Failed! The file you are dumping to (#{dump_file}) already exists.") if File.exist?(dump_file)
 
-    cmd = "pg_dump #{Pgdb.cmd_line_flags.join(' ')} " \
-          "--clean --no-owner --no-acl " \
-          "--format=c #{Pgdb.name} > #{dump_file}"
-
+      "mkdir -p #{dumps_dir}; " \
+      "pg_dump --host #{host} --username #{user} " \
+               "--clean --no-owner --no-acl " \
+               "--format=c #{db} > #{dump_file}"
+    end
     puts cmd
-    exec Pgdb.env, cmd
+    exec cmd
   end
 
   desc "Restores the database dump from db/dumps with a name matching " \
@@ -46,18 +48,26 @@ namespace :db do
   task :restore, [:name] => :environment do |t, args|
     args ||= {}
 
-
-    name = args[:name] || app
-    cmd = "pg_restore #{Pgdb.cmd_line_flags.join(' ')} " \
-          "--clean --create --no-owner --no-acl " \
-          "--dbname #{Pgdb.name} #{restore_file(name)}"
+    cmd = with_config do |app, host, db, user|
+      name = args[:name] || app
+      "pg_restore --host #{host} --username #{user} " \
+                 "--clean --create --no-owner --no-acl " \
+                 "--dbname #{db} #{restore_file(name)}"
+    end
 
     puts cmd
-    exec Pgdb.env, "#{cmd} > /dev/null 2>&1"
+    exec "#{cmd} > /dev/null 2>&1"
     Rake::Task["db:migrate"].invoke
   end
 
   private
+
+  def with_config
+    yield Rails.application.class.parent_name.underscore,
+          ActiveRecord::Base.connection_config[:host] || 'localhost',
+          ActiveRecord::Base.connection_config[:database],
+          ActiveRecord::Base.connection_config[:username]
+  end
 
   def latest_migration_timestamp
     migration_timestamp(Dir.entries("#{Rails.root}/db/migrate").sort.last)
@@ -68,11 +78,11 @@ namespace :db do
   end
 
   def dumps_dir
-    Rails.root.join('db', 'dumps')
+    "#{Rails.root}/db/dumps"
   end
 
   def dump_file(name)
-    dumps_dir.join("#{latest_migration_timestamp}_#{sanitize_filename(name)}.dump")
+    "#{dumps_dir}/#{latest_migration_timestamp}_#{sanitize_filename(name)}.dump"
   end
 
   def restore_file(name)

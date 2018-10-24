@@ -4,6 +4,10 @@ FactoryBot.define do
     name { Faker::Company.name }
     code { "'BRAINZ!! MUST HAVE BRAINZ!'" }
 
+    trait :update_student_task_step do
+      type {  }
+    end
+
     after(:create) do |brain, _|
       brain.add_instance_method
     end
