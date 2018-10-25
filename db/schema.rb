@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180928165932) do
+ActiveRecord::Schema.define(version: 20181018152101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -679,6 +679,20 @@ ActiveRecord::Schema.define(version: 20180928165932) do
 
   add_index "research_cohorts", ["research_study_id"], name: "index_research_cohorts_on_research_study_id", using: :btree
 
+  create_table "research_manipulations", force: :cascade do |t|
+    t.integer  "research_study_id",                    null: false
+    t.integer  "research_cohort_id"
+    t.integer  "research_study_brain_id"
+    t.integer  "target_id"
+    t.string   "target_type"
+    t.jsonb    "context",                 default: {}, null: false
+    t.datetime "created_at"
+  end
+
+  add_index "research_manipulations", ["research_cohort_id"], name: "index_research_manipulations_on_research_cohort_id", using: :btree
+  add_index "research_manipulations", ["research_study_brain_id"], name: "index_research_manipulations_on_research_study_brain_id", using: :btree
+  add_index "research_manipulations", ["research_study_id"], name: "index_research_manipulations_on_research_study_id", using: :btree
+
   create_table "research_studies", force: :cascade do |t|
     t.string   "name",                null: false
     t.text     "description"
@@ -1185,6 +1199,9 @@ ActiveRecord::Schema.define(version: 20180928165932) do
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_manipulations", "research_cohorts", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "research_manipulations", "research_studies", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "research_manipulations", "research_study_brains", on_update: :cascade, on_delete: :nullify
   add_foreign_key "research_study_brains", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_study_courses", "research_studies", on_update: :cascade, on_delete: :cascade

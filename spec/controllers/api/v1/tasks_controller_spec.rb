@@ -76,6 +76,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
               q['formats'] -= ['free-response']
             } if ts.exercise?
           }
+          manipulation.record!
         EOC
         study.activate!
 

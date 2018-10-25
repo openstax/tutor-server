@@ -20,7 +20,7 @@ RSpec.describe Research::ModifiedTaskedForUpdate do
   let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
   let!(:brain)    {
     FactoryBot.create :research_modified_tasked_for_update, study: study,
-                      code: 'return { task_step: { is_new: true }, update: { modified: true } }'
+                      code: 'manipulation.record!; return { task_step: { is_new: true }, update: { modified: true } }'
   }
 
   before(:each) {
