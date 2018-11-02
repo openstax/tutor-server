@@ -34,8 +34,9 @@ RSpec.describe 'Task steps without free response field', type: :request, api: tr
     @course.ecosystem.books.last.pages.pluck(:book_location).map{|bl|bl.join('.')}
 
     brain = FactoryBot.create :research_modified_task_for_display,
-                      study: @study,
-                      code: <<~EOC
+                              study: @study,
+                              name: 'chapter 1-3 display no free-response',
+                              code: <<~EOC
 
 unless task.reading? || task.homework?
  manipulation.ignore!
@@ -47,7 +48,7 @@ chapter_sections = Content::Models::Page.where(
 ).pluck(:book_location).map{|cs|cs.join('.')}.uniq
 
 manipulated_sections = %w{
-  1.1 2.1 1.2
+  1.1 1.2 1.3 1.4 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 3.1 3.2 3.3 3.4 3.5
 }.select.with_index{|_, i| 'A' == cohort.name ? i.even? : i.odd? }
 
 task_step_ids = []
@@ -81,6 +82,7 @@ EOC
   it "can override requiring free-response when marking completed" do
     FactoryBot.create :research_modified_tasked_for_update,
                       study: @study,
+                      name: 'chapter 1-3 save without free-response',
                       code: <<~EOC
 
 task = tasked.task_step.task
@@ -94,7 +96,7 @@ chapter_sections = Content::Models::Page.where(
 ).pluck(:book_location).map{|cs|cs.join('.')}.uniq
 
 manipulated_sections = %w{
-  1.1 2.1 1.2
+  1.1 1.2 1.3 1.4 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 3.1 3.2 3.3 3.4 3.5
 }.select.with_index{|_, i| 'A' == cohort.name ? i.even? : i.odd? }
 
 if (manipulated_sections & chapter_sections).any?
