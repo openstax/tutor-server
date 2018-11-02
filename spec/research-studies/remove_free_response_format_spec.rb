@@ -98,7 +98,6 @@ manipulated_sections = %w{
   1.1 2.1 1.2
 }.select.with_index{|_, i| 'A' == cohort.name ? i.even? : i.odd? }
 
-debugger
 if (manipulated_sections & chapter_sections).any?
   tasked.parser.questions_for_students.each{|q|
     q['formats'] -= ['free-response']
