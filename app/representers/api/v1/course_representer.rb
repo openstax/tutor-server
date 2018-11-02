@@ -269,7 +269,7 @@ module Api::V1
                writeable: false,
                if: ->(*) { respond_to?(:roles) }
 
-    property :spy,
+    property :spy_info,
              type: Object,
              readable: true,
              writeable: false

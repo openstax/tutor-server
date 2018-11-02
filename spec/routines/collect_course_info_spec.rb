@@ -57,6 +57,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystems: course_1.ecosystems,
           ecosystem: course_1.ecosystem,
           periods: [],
+          spy_info: {research_studies: []},
           students: [],
           roles: []
         }
@@ -114,6 +115,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystems: course_1.ecosystems,
           ecosystem: course_1.ecosystem,
           periods: [],
+          spy_info: {research_studies: []},
           students: [],
           roles: []
         },
@@ -151,6 +153,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystems: course_2.ecosystems,
           ecosystem: course_2.ecosystem,
           periods: [],
+          spy_info: {research_studies: []},
           students: [],
           roles: []
         }
@@ -204,6 +207,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             ecosystems: course_1.ecosystems,
             ecosystem: course_1.ecosystem,
             periods: a_collection_containing_exactly(period_1, period_2),
+            spy_info: {research_studies: []},
             students: [],
             roles: user_1.to_model.roles
           }
@@ -262,6 +266,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             ecosystems: course_1.ecosystems,
             ecosystem: course_1.ecosystem,
             periods: periods,
+            spy_info: {research_studies: []},
             students: students,
             roles: roles
           }

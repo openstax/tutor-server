@@ -114,6 +114,10 @@ class CourseProfile::Models::Course < ApplicationRecord
     periods.all?(&:archived?) && teachers.all?(&:deleted?) && students.all?(&:dropped?)
   end
 
+  def spy_info
+    { research_studies: studies.pluck(:name) }
+  end
+
   protected
 
   def set_starts_at_and_ends_at

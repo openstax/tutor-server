@@ -74,7 +74,7 @@ class CollectCourseInfo
         periods: periods,
         students: students,
         roles: roles,
-        spy: { research_studies: course.studies.pluck(:name) },
+        spy_info: course.spy_info,
       )
     end
   end

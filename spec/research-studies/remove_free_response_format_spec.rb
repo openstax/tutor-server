@@ -24,7 +24,6 @@ RSpec.describe 'Task steps without free response field', type: :request, api: tr
     @token = FactoryBot.create :doorkeeper_access_token,
                        application: FactoryBot.create(:doorkeeper_application),
                        resource_owner_id: user.id
-    @change_me_ecosystem_id = @task.content_ecosystem_id
   end
 
   before(:each) {
@@ -38,7 +37,7 @@ RSpec.describe 'Task steps without free response field', type: :request, api: tr
                       study: @study,
                       code: <<~EOC
 
-unless task.content_ecosystem_id == #{@change_me_ecosystem_id} && (task.reading? || task.homework?)
+unless task.reading? || task.homework?
  manipulation.ignore!
  return {}
 end
@@ -85,7 +84,7 @@ EOC
                       code: <<~EOC
 
 task = tasked.task_step.task
-unless task.content_ecosystem_id == #{@change_me_ecosystem_id} && (task.reading? || task.homework?)
+unless task.reading? || task.homework?
  manipulation.ignore!
  return {}
 end
