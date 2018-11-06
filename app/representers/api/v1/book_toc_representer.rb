@@ -46,7 +46,7 @@ module Api::V1
                description: "The base of the archive URL, e.g. 'https://archive.cnx.org'"
              }
 
-    property :baked,
+    property :baked_at,
              type: String,
              writeable: false,
              readable: true,

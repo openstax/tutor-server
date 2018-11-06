@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20181105162325) do
     t.string   "short_id"
     t.text     "reading_processing_instructions", default: "[]",                null: false
     t.uuid     "tutor_uuid",                      default: "gen_random_uuid()"
-    t.datetime "baked"
+    t.datetime "baked_at"
   end
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree

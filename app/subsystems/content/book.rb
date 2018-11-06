@@ -27,8 +27,8 @@ module Content
       verify_and_return @strategy.uuid, klass: String, error: StrategyError
     end
 
-    def baked
-      @strategy.baked # no verify_and_return since it can be nil
+    def baked_at
+      @strategy.baked_at # no verify_and_return since it can be nil
     end
 
     def short_id
