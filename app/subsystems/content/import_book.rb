@@ -24,6 +24,7 @@ class Content::ImportBook
         version: cnx_book.version,
         title: cnx_book.title,
         baked_at: cnx_book.baked,
+        is_collated: cnx_book.collated,
         content: cnx_book.root_book_part.contents,
         content_ecosystem_id: ecosystem.id,
         reading_processing_instructions: reading_processing_instructions.map(&:to_h)

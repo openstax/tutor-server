@@ -19,6 +19,10 @@ module OpenStax::Cnx::V1
       @baked ||= hash.fetch('baked', nil)
     end
 
+    def collated
+      @collated ||= hash.fetch('collated', nil)
+    end
+
     def hash
       @hash ||= OpenStax::Cnx::V1.fetch(url)
     end

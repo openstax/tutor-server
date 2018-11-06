@@ -31,6 +31,10 @@ module Content
       @strategy.baked_at # no verify_and_return since it can be nil
     end
 
+    def is_collated
+      @strategy.is_collated
+    end
+
     def short_id
       verify_and_return @strategy.short_id, klass: String, error: StrategyError, allow_nil: true
     end

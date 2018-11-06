@@ -55,6 +55,14 @@ module Api::V1
                description: "The date the book was baked.  Will be null if the book is not baked"
              }
 
+    property :is_collated,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               type: 'boolean',
+               description: "If the book has been collated during processing."
+             }
 
     property :webview_url,
              type: String,
