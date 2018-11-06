@@ -46,6 +46,16 @@ module Api::V1
                description: "The base of the archive URL, e.g. 'https://archive.cnx.org'"
              }
 
+    property :baked,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The date the book was baked.  Will be null if the book is not baked"
+             }
+
+
     property :webview_url,
              type: String,
              writeable: false,

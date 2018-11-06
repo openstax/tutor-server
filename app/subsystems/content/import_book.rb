@@ -23,6 +23,7 @@ class Content::ImportBook
         short_id: cnx_book.short_id,
         version: cnx_book.version,
         title: cnx_book.title,
+        baked: cnx_book.baked,
         content: cnx_book.root_book_part.contents,
         content_ecosystem_id: ecosystem.id,
         reading_processing_instructions: reading_processing_instructions.map(&:to_h)
