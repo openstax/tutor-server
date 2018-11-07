@@ -59,7 +59,7 @@ module Api::V1
              writeable: false,
              readable: true,
              schema_info: {
-               required: false,
+               required: true,
                type: 'boolean',
                description: "If the book has been collated during processing."
              }
