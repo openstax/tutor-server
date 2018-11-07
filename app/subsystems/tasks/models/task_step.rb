@@ -98,7 +98,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
     # Cannot mark as completed after feedback is available
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
-    return if !task.feedback_available? || first_completed_at_was.nil?
+    return if first_completed_at_was.nil? || !task.try!(:feedback_available?)
 
     errors.add(:base, 'cannot be marked as completed after feedback becomes available')
     false
