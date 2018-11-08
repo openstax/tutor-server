@@ -108,7 +108,8 @@ class Tasks::Models::Task < ApplicationRecord
     end
     self.placeholder_steps_count = placeholder_steps.count
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
-    self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:core_group?)
+    self.core_and_personalized_placeholder_exercise_steps_count = \
+      placeholder_exercise_steps.count { |pe| pe.core_group? || pe.personalized_group? }
 
     self
   end

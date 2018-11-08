@@ -7,13 +7,13 @@ module Tasks
     def exec(tasks:, biglearn_api_method: :fetch_assignment_pes,
              inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: false)
       ready_tasks, tasks_needing_pes = tasks.partition do |task|
-        task.pes_are_assigned || task.core_placeholder_exercise_steps_count == 0
+        task.pes_are_assigned || task.core_and_personalized_placeholder_exercise_steps_count == 0
       end
 
       requests = tasks_needing_pes.map do |task|
         {
           task: task,
-          max_num_exercises: task.core_placeholder_exercise_steps_count,
+          max_num_exercises: task.core_and_personalized_placeholder_exercise_steps_count,
           inline_max_attempts: inline_max_attempts,
           inline_sleep_interval: inline_sleep_interval,
           enable_warnings: enable_warnings

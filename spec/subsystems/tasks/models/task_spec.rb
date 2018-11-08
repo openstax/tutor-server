@@ -316,7 +316,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     let(:placeholder_exercise_step_2) do
       FactoryBot.build(:tasks_tasked_placeholder).tap do |tp|
         tp.placeholder_type = :exercise_type
-      end.task_step
+      end.task_step.tap { |ts| ts.group_type = :spaced_practice_group }
     end
 
     context "steps count" do
@@ -449,6 +449,22 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
           task.reload
 
           expect(task.placeholder_exercise_steps_count).to eq(2)
+        end
+      end
+
+      context "core and personalized placeholder exercise steps count" do
+        it "works with no steps" do
+          expect(task.core_and_personalized_placeholder_exercise_steps_count).to eq(0)
+        end
+
+        it "works with multiple placeholder exercise steps" do
+          task.task_steps = [
+            placeholder_exercise_step_1, placeholder_step_1, placeholder_exercise_step_2
+          ]
+          task.save!
+          task.reload
+
+          expect(task.core_and_personalized_placeholder_exercise_steps_count).to eq(1)
         end
       end
 
