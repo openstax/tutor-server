@@ -11,8 +11,7 @@ FactoryBot.define do
     content { Faker::Lorem.paragraph }
 
     after(:build) do |tasked_reading, evaluator|
-      options = { tasked: tasked_reading }
-      options[:task] = nil if evaluator.skip_task
+      options = { tasked: tasked_reading, skip_task: evaluator.skip_task }
 
       tasked_reading.task_step ||= FactoryBot.build(:tasks_task_step, options)
     end

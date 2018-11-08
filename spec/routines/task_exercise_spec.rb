@@ -17,7 +17,10 @@ RSpec.describe TaskExercise, type: :routine do
   let(:task_step) { FactoryBot.build(:tasks_task_step) }
 
   it 'builds a TaskedExercise for the given exercise and task_step (and saves when task saved)' do
+    task_step.save!
+
     TaskExercise[exercise: exercise, task_step: task_step]
+
     expect(task_step.tasked).to be_a(Tasks::Models::TaskedExercise)
     expect(task_step.tasked).to be_persisted
     expect(task_step.tasked.is_in_multipart).to eq false
