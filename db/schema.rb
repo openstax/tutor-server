@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181105162325) do
+ActiveRecord::Schema.define(version: 20181108003418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1074,6 +1074,7 @@ ActiveRecord::Schema.define(version: 20181105162325) do
     t.integer  "content_ecosystem_id",                                                       null: false
     t.boolean  "spes_are_assigned",                            default: false,               null: false
     t.boolean  "pes_are_assigned",                             default: false,               null: false
+    t.integer  "core_placeholder_exercise_steps_count",        default: 0,                   null: false
   end
 
   add_index "tasks_tasks", ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id", using: :btree

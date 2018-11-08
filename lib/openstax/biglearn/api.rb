@@ -685,7 +685,7 @@ module OpenStax::Biglearn::Api
         # Fallback in case Biglearn fails to respond in a timely manner
         # We just assign personalized exercises for the current assignment
         # regardless of what the original slot was
-        return [] if task.nil?
+        return [] if task.nil? || max_num_exercises.nil?
 
         course = task.taskings.first.try!(:role).try!(:student).try!(:course)
         return [] if course.nil?
