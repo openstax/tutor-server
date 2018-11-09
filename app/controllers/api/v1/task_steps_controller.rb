@@ -29,8 +29,21 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
     ScoutHelper.ignore!(0.8)
+
     @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
-    standard_update(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+
+    if @task_step.completed?
+      # Update last_completed_at if the task_step is already completed
+      update_and_complete_task_step
+
+      respond_with(
+        @tasked,
+        responder: ResponderWithPutPatchDeleteContent,
+        represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked)
+      )
+    else
+      standard_update(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    end
   end
 
   ###############################################################
@@ -47,19 +60,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   EOS
   def completed
     ScoutHelper.ignore!(0.8)
-    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
-    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
     @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
 
-    consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
-    @tasked.save
-
-    # Task already locked in around_action
-    result = MarkTaskStepCompleted.call(task_step: @tasked.task_step, lock_task: false)
-
-    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
-    raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+    update_and_complete_task_step
 
     task = Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
     respond_with(
@@ -114,6 +118,20 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock_task: false]
 
     @tasked.reload
+  end
+
+  def update_and_complete_task_step
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
+    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
+
+    consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    @tasked.save
+
+    # Task already locked in around_action
+    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
+
+    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
+    raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
   end
 
 end

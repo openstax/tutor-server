@@ -139,6 +139,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       )
 
       expect(tasked.reload.answer_id).to eq answer_id
+      task_step = tasked.task_step
+      expect(task_step.first_completed_at).to be_nil
+      expect(task_step.last_completed_at).to be_nil
     end
 
     it "does not update the answer if the free response is not set" do
@@ -158,6 +161,34 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
+    it "updates last_completed_at if the step is already completed" do
+      tasked.free_response = 'Ipsum Lorem'
+      tasked.answer_id = tasked.answer_ids.first
+      tasked.save!
+      task_step = tasked.task_step
+      completed_at = Time.current - 1.second
+      task_step.complete! completed_at: completed_at
+      expect(task_step.first_completed_at).to eq completed_at
+      expect(task_step.last_completed_at).to eq completed_at
+      task_step.task.update_attribute :feedback_at, Time.current + 1.hour
+
+      expect do
+        api_put :update, @user_1_token,
+                parameters: id_parameters,
+                raw_post_data: { free_response: 'A sentence explaining all the things!' }
+      end.to  not_change { tasked.reload.answer_id }
+         .and change     { tasked.free_response }
+
+      expect(response).to have_http_status(:success)
+
+      expect(response.body_as_hash).to eq(
+        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_hash.deep_symbolize_keys
+      )
+
+      expect(task_step.reload.last_completed_at).not_to be_nil
+      expect(task_step.last_completed_at).not_to eq completed_at
+      expect(tasked.free_response).to eq 'A sentence explaining all the things!'
+    end
 
     context 'research' do
       let!(:study)    { FactoryBot.create :research_study }
