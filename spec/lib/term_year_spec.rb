@@ -54,14 +54,14 @@ RSpec.describe TermYear, type: :lib do
       context year.to_s do
         let(:year) { year }
 
-        it "Nov 1st, #{year - 1} 00:00:00 AM as the start date" do
-          start_date = DateTime.parse("Nov 1st, #{year - 1} 00:00:00 AM")
+        it "Nov 1st, #{year} 00:00:00 AM as the start date" do
+          start_date = DateTime.parse("Nov 1st, #{year} 00:00:00 AM")
           expect(term_year.starts_at).to eq start_date
         end
 
-        it "Feb 28th, #{year} 11:59:59 PM as the end date" do
-          end_date = DateTime.parse("Feb 28th, #{year} 11:59:59 PM")
-          expect(term_year.ends_at).to eq end_date
+        it "Feb 28th, #{year + 1} 11:59:59 PM as the end date" do
+          expect(term_year.ends_at.year).to eq year + 1
+          expect(term_year.ends_at.month).to eq 2 # can't compare exact because feb/leap year
         end
       end
     end
@@ -138,22 +138,22 @@ RSpec.describe TermYear, type: :lib do
     expect(TermYear.visible_term_years(spring_date_time)).to eq [
       TermYear.new(:spring, current_year), TermYear.new(:summer, current_year    ),
       TermYear.new(:fall,   current_year),
-      TermYear.new(:winter, current_year + 1)
+      TermYear.new(:winter, current_year)
     ]
 
     expect(TermYear.visible_term_years(spring_summer_date_time)).to eq [
-      TermYear.new(:spring, current_year    ), TermYear.new(:summer, current_year    ),
-      TermYear.new(:fall,   current_year    ), TermYear.new(:winter, current_year +1 )
+      TermYear.new(:spring, current_year    ), TermYear.new(:summer, current_year ),
+      TermYear.new(:fall,   current_year    ), TermYear.new(:winter, current_year )
     ]
 
     expect(TermYear.visible_term_years(summer_fall_date_time)).to eq [
-      TermYear.new(:summer, current_year    ), TermYear.new(:fall,   current_year    ),
-      TermYear.new(:spring, current_year + 1), TermYear.new(:winter, current_year + 1)
+      TermYear.new(:summer, current_year ), TermYear.new(:fall,   current_year ),
+      TermYear.new(:winter, current_year ), TermYear.new(:spring, current_year + 1)
     ]
 
     expect(TermYear.visible_term_years(fall_date_time)).to eq [
-      TermYear.new(:fall,   current_year    ), TermYear.new(:spring, current_year + 1),
-      TermYear.new(:summer, current_year + 1), TermYear.new(:winter, current_year + 1)
+      TermYear.new(:fall,   current_year    ), TermYear.new(:winter, current_year ),
+      TermYear.new(:spring, current_year + 1), TermYear.new(:summer, current_year + 1),
     ]
   end
 end
