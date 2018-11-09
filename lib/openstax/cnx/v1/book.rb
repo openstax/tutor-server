@@ -15,6 +15,14 @@ module OpenStax::Cnx::V1
       @url ||= OpenStax::Cnx::V1.archive_url_for(id)
     end
 
+    def baked
+      @baked ||= hash.fetch('baked', nil)
+    end
+
+    def collated
+      @collated ||= hash.fetch('collated', nil)
+    end
+
     def hash
       @hash ||= OpenStax::Cnx::V1.fetch(url)
     end
