@@ -9,7 +9,9 @@ class AddCoreAndPersonalizedPlaceholderExerciseStepsCountToTasks < ActiveRecord:
                        .preload(task_steps: :tasked)
                        .find_in_batches do |tasks|
       tasks.each do |task|
-        task.core_and_personalized_placeholder_exercise_steps_count = task.task_steps.count do |ts|
+        task_steps = task.task_steps.to_a
+
+        task.core_and_personalized_placeholder_exercise_steps_count = task_steps.count do |ts|
           ts.placeholder? && (ts.core_group? || ts.personalized_group?) && ts.tasked.exercise_type?
         end
       end
