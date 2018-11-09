@@ -110,8 +110,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(
-        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked.reload).to_json
+      expect(response.body_as_hash).to(
+        eq Api::V1::TaskRepresenter.new(tasked.reload.task_step.task).to_hash.deep_symbolize_keys
       )
 
       expect(tasked.reload.free_response).to eq "Ipsum lorem"
@@ -134,8 +134,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(
-        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked.reload).to_json
+      expect(response.body_as_hash).to(
+        eq Api::V1::TaskRepresenter.new(tasked.reload.task_step.task).to_hash.deep_symbolize_keys
       )
 
       expect(tasked.reload.answer_id).to eq answer_id
@@ -181,21 +181,21 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body_as_hash).to eq(
-        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_hash.deep_symbolize_keys
+      expect(response.body_as_hash).to(
+        eq Api::V1::TaskRepresenter.new(task_step.reload.task).to_hash.deep_symbolize_keys
       )
 
-      expect(task_step.reload.last_completed_at).not_to be_nil
+      expect(task_step.last_completed_at).not_to be_nil
       expect(task_step.last_completed_at).not_to eq completed_at
       expect(tasked.free_response).to eq 'A sentence explaining all the things!'
     end
 
     context 'research' do
-      let!(:study)    { FactoryBot.create :research_study }
-      let!(:cohort)   { FactoryBot.create :research_cohort, name: 'control', study: study }
-      before(:each) {
+      let!(:study)  { FactoryBot.create :research_study }
+      let!(:cohort) { FactoryBot.create :research_cohort, name: 'control', study: study }
+      before(:each) do
         Research::AddCourseToStudy[course: @course, study: study]
-      }
+      end
 
       it "can override requiring free-response format" do
         expect(tasked.parser.question_formats_for_students).to eq ["multiple-choice", "free-response"]
@@ -224,14 +224,14 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
         api_put :recovery, @user_1_token, parameters: {
           id: @tasked_exercise_with_related.task_step.id
         }
-      end.to change { @tasked_exercise_with_related.task_step.task.reload.task_steps.count }
+      end.to change { @tasked_exercise_with_related.reload.task_step.task.task_steps.count }
       expect(response).to have_http_status(:success)
 
       related_exercise_step = @tasked_exercise_with_related.task_step.next_by_number
       tasked = related_exercise_step.tasked
 
-      expect(response.body).to(
-        eq Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_json
+      expect(response.body_as_hash).to eq(
+        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_hash.deep_symbolize_keys
       )
 
       expect(tasked.los & @tasked_exercise_with_related.parser.los).not_to be_empty
