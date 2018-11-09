@@ -22,6 +22,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
   validates :group_type, presence: true
   validates :fragment_index,
             numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
+  validate  :no_feedback
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
@@ -91,6 +92,16 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   def related_content
     page.nil? ? [] : [ page.related_content ]
+  end
+
+  def no_feedback
+    # Cannot mark as completed after feedback is available
+    # Feedback is available immediately for iReadings, or at the due date for HW,
+    # but waits until the step is marked as completed
+    return if first_completed_at_was.nil? || !task.try!(:feedback_available?)
+
+    errors.add(:base, 'cannot be marked as completed after feedback becomes available')
+    false
   end
 
 end

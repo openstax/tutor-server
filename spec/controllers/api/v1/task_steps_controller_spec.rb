@@ -234,89 +234,149 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
   end
 
   context "#completed" do
-    it "should allow marking completion of reading steps by the owner" do
-      tasked = create_tasked(:tasked_reading, @user_1_role)
-      api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
-
-      expect(response).to have_http_status(:success)
-
-      expect(response.body_as_hash).to(
-        eq Api::V1::TaskRepresenter.new(tasked.reload.task_step.task).to_hash.deep_symbolize_keys
-      )
-
-      expect(tasked.task_step.completed?).to eq true
-    end
-
-    it "422's if needs to pay" do
-      tasked = create_tasked(:tasked_reading, @user_1_role)
-      make_payment_required_and_expect_422(course: @course, user: @user_1) do
+    context "without a free_response and/or answer_id" do
+      it "allows marking completion of reading steps by the owner" do
+        tasked = create_tasked(:tasked_reading, @user_1_role)
         api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
+
+        expect(response).to have_http_status(:success)
+
+        expect(response.body_as_hash).to(
+          eq Api::V1::TaskRepresenter.new(tasked.reload.task_step.task).to_hash.deep_symbolize_keys
+        )
+
+        expect(tasked.task_step.completed?).to eq true
+      end
+
+      it "422's if needs to pay" do
+        tasked = create_tasked(:tasked_reading, @user_1_role)
+        make_payment_required_and_expect_422(course: @course, user: @user_1) do
+          api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
+        end
+      end
+
+      it "should not allow marking completion of reading steps by random user" do
+        tasked = create_tasked(:tasked_reading, @user_1_role)
+        expect do
+          api_put :completed, @user_2_token, parameters: { id: tasked.task_step.id }
+        end.to raise_error SecurityTransgression
+        expect(tasked.reload.task_step.completed?).to eq false
+      end
+
+      it "should allow marking completion of exercise steps with free_response and answer_id" do
+        tasked = create_tasked(:tasked_exercise, @user_1_role)
+        tasked.free_response = 'abc'
+        tasked.answer_id = tasked.correct_answer_id
+        tasked.save!
+
+        expect do
+          api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
+        end.to  not_change { tasked.reload.free_response }
+           .and not_change { tasked.answer_id }
+
+        expect(response).to have_http_status(:success)
+
+        expect(response.body_as_hash).to(
+          eq Api::V1::TaskRepresenter.new(tasked.task_step.task).to_hash.deep_symbolize_keys
+        )
+
+        expect(tasked.task_step.completed?).to eq true
+      end
+
+      it "does not allow marking completion of exercise steps missing free_response or answer_id" do
+        tasked = create_tasked(:tasked_exercise, @user_1_role).reload
+
+        expect do
+          api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
+        end.to  not_change { tasked.reload.free_response }
+           .and not_change { tasked.answer_id }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+
+        errors = response.body_as_hash[:errors]
+        expect(errors.size).to eq 2
+        errors.each { |error| expect(error[:code]).to include 'is required' }
+
+        expect(tasked.task_step.completed?).to eq false
+      end
+
+      it "does not update the task step if it has feedback already available" do
+        tasked = create_tasked(:tasked_reading, @user_1_role)
+        tasked.save!
+
+        task_step = tasked.task_step
+        task_step.complete!
+
+        expect(task_step.completed?).to eq true
+        expect(task_step.feedback_available?).to eq true
+
+        expect do
+          api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
+        end.to  not_change { task_step.first_completed_at }
+           .and not_change { task_step.last_completed_at }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+
+        errors = response.body_as_hash[:errors]
+        expect(errors.size).to eq 1
+        expect(errors.first[:code]).to(
+          eq 'cannot be marked as completed after feedback becomes available'
+        )
       end
     end
 
-    it "should not allow marking completion of reading steps by random user" do
-      tasked = create_tasked(:tasked_reading, @user_1_role)
-      expect do
-        api_put :completed, @user_2_token, parameters: { id: tasked.task_step.id }
-      end.to raise_error SecurityTransgression
-      expect(tasked.reload.task_step.completed?).to eq false
-    end
+    context "with a free_response and/or answer_id" do
+      it "allows the free_response and/or answer_id to be set in the same call" do
+        tasked = create_tasked(:tasked_exercise, @user_1_role).reload
 
-    it "should allow marking completion of exercise steps with free_response and answer_id" do
-      tasked = create_tasked(:tasked_exercise, @user_1_role)
-      tasked.free_response = 'abc'
-      tasked.answer_id = tasked.correct_answer_id
-      tasked.save!
+        expect do
+          api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id },
+                                             raw_post_data: {
+            free_response: 'A sentence explaining all the things!',
+            answer_id: tasked.correct_answer_id.to_s
+          }
+        end.to  change { tasked.reload.free_response }
+           .and change { tasked.answer_id }
 
-      expect do
-        api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
-      end.to  not_change { tasked.reload.free_response }
-         .and not_change { tasked.answer_id }
+        expect(response).to have_http_status(:success)
 
-      expect(response).to have_http_status(:success)
+        expect(response.body_as_hash).to(
+          eq Api::V1::TaskRepresenter.new(tasked.task_step.task).to_hash.deep_symbolize_keys
+        )
 
-      expect(response.body_as_hash).to(
-        eq Api::V1::TaskRepresenter.new(tasked.task_step.task).to_hash.deep_symbolize_keys
-      )
+        expect(tasked.task_step.completed?).to eq true
+      end
 
-      expect(tasked.task_step.completed?).to eq true
-    end
+      it "does not update the task step if it has feedback already available" do
+        tasked = create_tasked(:tasked_exercise, @user_1_role).reload
+        tasked.free_response = 'A sentence explaining nothing'
+        tasked.answer_id = tasked.correct_answer_id.to_s
+        tasked.save!
 
-    it "should not allow marking completion of exercise steps missing free_response or answer_id" do
-      tasked = create_tasked(:tasked_exercise, @user_1_role).reload
+        task_step = tasked.task_step
+        task_step.complete!
 
-      expect do
-        api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }
-      end.to  not_change { tasked.reload.free_response }
-         .and not_change { tasked.answer_id }
+        expect(task_step.completed?).to eq true
+        expect(task_step.feedback_available?).to eq true
 
-      expect(response).to have_http_status(:unprocessable_entity)
+        expect do
+          api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id },
+                                             raw_post_data: {
+            free_response: 'A sentence explaining all the things!', answer_id: tasked.answer_id
+          }
+        end.to  not_change { tasked.reload.free_response }
+           .and not_change { tasked.answer_id }
+           .and not_change { task_step.first_completed_at }
+           .and not_change { task_step.last_completed_at }
 
-      errors = response.body_as_hash[:errors]
-      expect(errors.size).to eq 2
-      errors.each { |error| expect(error[:code]).to include 'is required' }
+        expect(response).to have_http_status(:unprocessable_entity)
 
-      expect(tasked.task_step.completed?).to eq false
-    end
-
-    it "optionally allows the free_response and/or answer_id to be set in the same call" do
-      tasked = create_tasked(:tasked_exercise, @user_1_role).reload
-
-      expect do
-        api_put :completed, @user_1_token, parameters: { id: tasked.task_step.id }, raw_post_data: {
-          free_response: 'A sentence explaining all the things!',
-          answer_id: tasked.correct_answer_id.to_s
-        }
-      end.to  change { tasked.reload.free_response }
-         .and change { tasked.answer_id }
-
-      expect(response).to have_http_status(:success)
-
-      expect(response.body_as_hash).to(
-        eq Api::V1::TaskRepresenter.new(tasked.task_step.task).to_hash.deep_symbolize_keys
-      )
-
-      expect(tasked.task_step.completed?).to eq true
+        errors = response.body_as_hash[:errors]
+        expect(errors.map { |error| error[:code] }).to contain_exactly(
+          'cannot be updated after feedback becomes available',
+          'cannot be marked as completed after feedback becomes available'
+        )
+      end
     end
   end
 

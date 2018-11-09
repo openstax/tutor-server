@@ -121,7 +121,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     # Cannot change the answer after feedback is available
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
-    return unless task_step.try(:feedback_available?)
+    return unless task_step.try!(:feedback_available?)
 
     errors.add(:base, 'cannot be updated after feedback becomes available')
     false
