@@ -9,8 +9,7 @@ FactoryBot.define do
     title { Faker::Lorem.sentence(3) }
 
     after(:build) do |tasked_external_url, evaluator|
-      options = { tasked: tasked_external_url }
-      options[:task] = nil if evaluator.skip_task
+      options = { tasked: tasked_external_url, skip_task: evaluator.skip_task }
 
       tasked_external_url.task_step ||= FactoryBot.build(:tasks_task_step, options)
     end

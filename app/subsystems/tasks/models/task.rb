@@ -90,6 +90,7 @@ class Tasks::Models::Task < ApplicationRecord
     correct_exercise_steps = exercise_steps.select { |step| step.tasked.is_correct? }
 
     placeholder_steps = steps.select(&:placeholder?)
+    placeholder_exercise_steps = placeholder_steps.select { |step| step.tasked.exercise_type? }
 
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
@@ -106,10 +107,9 @@ class Tasks::Models::Task < ApplicationRecord
       step_on_time?(step)
     end
     self.placeholder_steps_count = placeholder_steps.count
-
-    self.placeholder_exercise_steps_count = placeholder_steps.count do |step|
-      step.tasked.exercise_type?
-    end
+    self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
+    self.core_and_personalized_placeholder_exercise_steps_count = \
+      placeholder_exercise_steps.count { |pe| pe.core_group? || pe.personalized_group? }
 
     self
   end

@@ -10,8 +10,7 @@ FactoryBot.define do
     content { Faker::Lorem.paragraph }
 
     after(:build) do |tasked_video, evaluator|
-      options = { tasked: tasked_video }
-      options[:task] = nil if evaluator.skip_task
+      options = { tasked: tasked_video, skip_task: evaluator.skip_task }
 
       tasked_video.task_step ||= FactoryBot.build(:tasks_task_step, options)
     end

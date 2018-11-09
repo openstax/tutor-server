@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181105162325) do
+ActiveRecord::Schema.define(version: 20181108003418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1041,39 +1041,40 @@ ActiveRecord::Schema.define(version: 20181105162325) do
 
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
-    t.integer  "task_type",                                                                  null: false
-    t.string   "title",                                                                      null: false
+    t.integer  "task_type",                                                                            null: false
+    t.string   "title",                                                                                null: false
     t.text     "description"
     t.datetime "opens_at_ntz"
     t.datetime "due_at_ntz"
     t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
-    t.integer  "steps_count",                                  default: 0,                   null: false
-    t.integer  "completed_steps_count",                        default: 0,                   null: false
-    t.integer  "core_steps_count",                             default: 0,                   null: false
-    t.integer  "completed_core_steps_count",                   default: 0,                   null: false
-    t.integer  "exercise_steps_count",                         default: 0,                   null: false
-    t.integer  "completed_exercise_steps_count",               default: 0,                   null: false
-    t.integer  "recovered_exercise_steps_count",               default: 0,                   null: false
-    t.integer  "correct_exercise_steps_count",                 default: 0,                   null: false
-    t.integer  "placeholder_steps_count",                      default: 0,                   null: false
-    t.integer  "placeholder_exercise_steps_count",             default: 0,                   null: false
-    t.datetime "created_at",                                                                 null: false
-    t.datetime "updated_at",                                                                 null: false
-    t.integer  "correct_on_time_exercise_steps_count",         default: 0,                   null: false
-    t.integer  "completed_on_time_exercise_steps_count",       default: 0,                   null: false
-    t.integer  "completed_on_time_steps_count",                default: 0,                   null: false
+    t.integer  "steps_count",                                            default: 0,                   null: false
+    t.integer  "completed_steps_count",                                  default: 0,                   null: false
+    t.integer  "core_steps_count",                                       default: 0,                   null: false
+    t.integer  "completed_core_steps_count",                             default: 0,                   null: false
+    t.integer  "exercise_steps_count",                                   default: 0,                   null: false
+    t.integer  "completed_exercise_steps_count",                         default: 0,                   null: false
+    t.integer  "recovered_exercise_steps_count",                         default: 0,                   null: false
+    t.integer  "correct_exercise_steps_count",                           default: 0,                   null: false
+    t.integer  "placeholder_steps_count",                                default: 0,                   null: false
+    t.integer  "placeholder_exercise_steps_count",                       default: 0,                   null: false
+    t.datetime "created_at",                                                                           null: false
+    t.datetime "updated_at",                                                                           null: false
+    t.integer  "correct_on_time_exercise_steps_count",                   default: 0,                   null: false
+    t.integer  "completed_on_time_exercise_steps_count",                 default: 0,                   null: false
+    t.integer  "completed_on_time_steps_count",                          default: 0,                   null: false
     t.datetime "accepted_late_at"
-    t.integer  "correct_accepted_late_exercise_steps_count",   default: 0,                   null: false
-    t.integer  "completed_accepted_late_exercise_steps_count", default: 0,                   null: false
-    t.integer  "completed_accepted_late_steps_count",          default: 0,                   null: false
+    t.integer  "correct_accepted_late_exercise_steps_count",             default: 0,                   null: false
+    t.integer  "completed_accepted_late_exercise_steps_count",           default: 0,                   null: false
+    t.integer  "completed_accepted_late_steps_count",                    default: 0,                   null: false
     t.integer  "time_zone_id"
     t.datetime "hidden_at"
-    t.text     "spy",                                          default: "{}",                null: false
-    t.uuid     "uuid",                                         default: "gen_random_uuid()"
-    t.integer  "content_ecosystem_id",                                                       null: false
-    t.boolean  "spes_are_assigned",                            default: false,               null: false
-    t.boolean  "pes_are_assigned",                             default: false,               null: false
+    t.text     "spy",                                                    default: "{}",                null: false
+    t.uuid     "uuid",                                                   default: "gen_random_uuid()"
+    t.integer  "content_ecosystem_id",                                                                 null: false
+    t.boolean  "spes_are_assigned",                                      default: false,               null: false
+    t.boolean  "pes_are_assigned",                                       default: false,               null: false
+    t.integer  "core_and_personalized_placeholder_exercise_steps_count", default: 0,                   null: false
   end
 
   add_index "tasks_tasks", ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id", using: :btree
