@@ -34,6 +34,10 @@ class Research::Models::StudyBrain < ApplicationRecord
   def with_manipulation(cohort:, target:)
     manipulation = manipulations.build(cohort: cohort, study: cohort.study, target: target)
     yield manipulation
+  rescue => e
+    manipulation.ignore!
+    Raven.capture_message("Exception #{e}, study brain code: #{code}")
+    raise
   ensure # note: we aren't rescuing anything but we need to ensure manipulation gets saved
     manipulation.explode_if_unmarked
     manipulation.save! if manipulation.should_record?

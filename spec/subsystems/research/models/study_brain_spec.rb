@@ -22,11 +22,14 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
   end
 
   it 'raises exception for invalid code' do
-    brain.update_attributes! code: 'manipulation.record!; bang()'
+    brain.update_attributes! code: 'bang()'
+    expect(Raven).to receive(:capture_message).with /study brain code: bang()/
     bad_brain = Research::Models::StudyBrain.find(brain.id)
-    expect{
-      bad_brain.modified_task_for_display(cohort: cohort, task: task)
-    }.to raise_error(NoMethodError)
+    expect {
+      expect{
+        bad_brain.modified_task_for_display(cohort: cohort, task: task)
+      }.to raise_error(NoMethodError)
+    }.not_to change { brain.manipulations.count }
   end
 
   it 'finds for active study' do
@@ -52,7 +55,6 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
         expect(result).to eq 1234
       }.to change{ brain.manipulations.count }.by 1
     end
-
     context 'without a call to record' do
       let(:code){ 'manipulation.ignore!; tasked' } # no call to record
       it 'a brain can choose not to record manipulation' do

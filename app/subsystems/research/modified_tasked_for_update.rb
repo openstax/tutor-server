@@ -10,7 +10,7 @@ class Research::ModifiedTaskedForUpdate
       next unless brain.should_execute? :modified_tasked_for_update
       task.research_cohorts.each do |cohort|
         outputs.merge!(
-          brain.modified_tasked_for_update(cohort: cohort, tasked: tasked)
+          brain.modified_tasked_for_update(cohort: cohort, tasked: tasked) || {}
         )
       end
     end

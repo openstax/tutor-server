@@ -13,7 +13,7 @@ class CollectCourseInfo
   def get_courses(courses:, user:)
     return [courses].flatten unless courses.nil?
 
-    preloads = [ :time_zone, :offering, periods: :students,
+    preloads = [ :time_zone, :offering, :studies, periods: :students,
                  course_ecosystems: { ecosystem: :books } ]
     return run(:get_user_courses, user: user, preload: preloads).outputs.courses unless user.nil?
 
@@ -73,7 +73,8 @@ class CollectCourseInfo
         ecosystem: course.ecosystem,
         periods: periods,
         students: students,
-        roles: roles
+        roles: roles,
+        spy_info: course.spy_info,
       )
     end
   end
