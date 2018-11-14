@@ -315,7 +315,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         # Queuing the background job 6 times is not ideal at all...
         # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
         expect(configured_job).to receive(:perform_later).exactly(6).times.with(
-          task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          task_ids: task.id, update_step_counts: be_in(true, false), queue: queue.to_s
         )
 
         Tasks::PopulatePlaceholderSteps.call(task: task)

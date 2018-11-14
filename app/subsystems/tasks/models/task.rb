@@ -72,7 +72,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   before_validation :update_step_counts
   after_create :update_caches_now
-  after_touch :update_counts_and_caches_later
+  after_touch :update_caches_later
 
   def is_preview
     task_plan.present? && task_plan.is_preview
@@ -114,14 +114,15 @@ class Tasks::Models::Task < ApplicationRecord
     self
   end
 
-  def update_caches_now
-    Tasks::UpdateTaskCaches.call(task_ids: id)
+  def update_caches_now(update_step_counts: false)
+    Tasks::UpdateTaskCaches.call(task_ids: id, update_step_counts: update_step_counts)
   end
 
-  def update_counts_and_caches_later
+  def update_caches_later(update_step_counts: true)
     queue = is_preview ? :lowest_priority : :low_priority
-    Tasks::UpdateTaskCaches.set(queue: queue)
-                           .perform_later(task_ids: id, update_step_counts: true, queue: queue.to_s)
+    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
+      task_ids: id, update_step_counts: update_step_counts, queue: queue.to_s
+    )
   end
 
   def stepless?
