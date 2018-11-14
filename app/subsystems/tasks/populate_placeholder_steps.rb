@@ -263,45 +263,47 @@ class Tasks::PopulatePlaceholderSteps
     Tasks::Models::TaskedExercise.import(tasked_exercises_to_import, validate: false) \
       unless tasked_exercises_to_import.empty?
 
-    existing_task_steps = task.task_steps.reject { |ts| task_step_ids_to_delete.include? ts.id }
-    non_updated_task_steps = existing_task_steps - task_steps_to_upsert
-    task_steps = non_updated_task_steps + task_steps_to_upsert
-    next_step_number = task_steps.map(&:number).compact.max + 1
-    task_steps_to_upsert.each do |task_step|
-      # Reassign the tasked exercises so the tasked_ids are properly set
-      task_step.tasked = task_step.tasked
+    unless task_steps_to_upsert.empty?
+      existing_task_steps = task.task_steps.reject { |ts| task_step_ids_to_delete.include? ts.id }
+      non_updated_task_steps = existing_task_steps - task_steps_to_upsert
+      task_steps = non_updated_task_steps + task_steps_to_upsert
+      next_step_number = (task_steps.map(&:number).compact.max || 0) + 1
+      task_steps_to_upsert.each do |task_step|
+        # Reassign the tasked exercises so the tasked_ids are properly set
+        task_step.tasked = task_step.tasked
 
-      # Take care of duplicate task_step numbers
-      if task_step.number.nil?
-        task_step.number = next_step_number
-        next_step_number += 1
-      elsif task_steps.any? { |ts| ts.number == task_step.number && ts.id != task_step.id }
-        conflicting_non_updated_task_steps = non_updated_task_steps.select do |ts|
-          ts.number >= task_step.number && ts.id != task_step.id
+        # Take care of duplicate task_step numbers
+        if task_step.number.nil?
+          task_step.number = next_step_number
+          next_step_number += 1
+        elsif task_steps.any? { |ts| ts.number == task_step.number && ts.id != task_step.id }
+          conflicting_non_updated_task_steps = non_updated_task_steps.select do |ts|
+            ts.number >= task_step.number && ts.id != task_step.id
+          end
+          non_updated_task_steps -= conflicting_non_updated_task_steps
+          task_steps_to_upsert.concat conflicting_non_updated_task_steps
+          task_steps_to_upsert.select do |ts|
+            ts.number >= task_step.number && ts.id != task_step.id
+          end.each { |ts| ts.number = ts.number + 1 }
+          next_step_number += 1
         end
-        non_updated_task_steps -= conflicting_non_updated_task_steps
-        task_steps_to_upsert.concat conflicting_non_updated_task_steps
-        task_steps_to_upsert.select do |ts|
-          ts.number >= task_step.number && ts.id != task_step.id
-        end.each { |ts| ts.number = ts.number + 1 }
-        next_step_number += 1
       end
-    end
 
-    Tasks::Models::TaskStep.import(
-        task_steps_to_upsert.sort_by(&:number).reverse, validate: false, on_duplicate_key_update: {
-          conflict_target: [ :id ], columns: [
-            :tasked_type,
-            :tasked_id,
-            :number,
-            :first_completed_at,
-            :last_completed_at,
-            :group_type,
-            :spy,
-            :content_page_id
-          ]
-        }
-    ) unless task_steps_to_upsert.empty?
+      Tasks::Models::TaskStep.import(
+          task_steps_to_upsert.sort_by(&:number).reverse, validate: false, on_duplicate_key_update: {
+            conflict_target: [ :id ], columns: [
+              :tasked_type,
+              :tasked_id,
+              :number,
+              :first_completed_at,
+              :last_completed_at,
+              :group_type,
+              :spy,
+              :content_page_id
+            ]
+          }
+      )
+    end
 
     task.task_steps.reset
 
