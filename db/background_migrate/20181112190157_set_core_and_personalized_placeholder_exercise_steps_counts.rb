@@ -8,10 +8,7 @@ class SetCoreAndPersonalizedPlaceholderExerciseStepsCounts < ActiveRecord::Migra
       tasks = []
       Tasks::Models::Task.transaction do
         tasks = Tasks::Models::Task.where(
-          <<-WHERE_SQL
-            "placeholder_exercise_steps_count" > 0 AND
-            "core_and_personalized_placeholder_exercise_steps_count" = 0
-          WHERE_SQL
+          core_and_personalized_placeholder_exercise_steps_count: nil
         ).order(created_at: :desc).limit(100).preload(task_steps: :tasked).to_a
 
         break if tasks.empty?
@@ -33,6 +30,8 @@ class SetCoreAndPersonalizedPlaceholderExerciseStepsCounts < ActiveRecord::Migra
 
       break if tasks.empty?
     end
+
+    change_column_null :tasks_tasks, :core_and_personalized_placeholder_exercise_steps_count, false
   end
 
   def down
