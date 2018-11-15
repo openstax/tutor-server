@@ -312,10 +312,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
       it 'is called when placeholder steps are populated' do
         task = @task_plan.tasks.first
-        # Queuing the background job 6 times is not ideal at all...
-        # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
-        expect(configured_job).to receive(:perform_later).exactly(6).times.with(
-          task_ids: task.id, update_step_counts: true, queue: queue.to_s
+        expect(configured_job).to receive(:perform_later).once.with(
+          task_ids: task.id, update_step_counts: false, queue: queue.to_s
         )
 
         Tasks::PopulatePlaceholderSteps.call(task: task)
@@ -476,11 +474,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
       it 'is called when placeholder steps are populated' do
         task = @task_plan.tasks.first
-        # Queuing the background job 6 times is not ideal at all...
-        # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
         expect(configured_job).to(
-          receive(:perform_later).exactly(6).times.with(
-            task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          receive(:perform_later).once.with(
+            task_ids: task.id, update_step_counts: false, queue: queue.to_s
           )
         )
 

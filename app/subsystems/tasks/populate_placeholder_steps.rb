@@ -75,6 +75,11 @@ class Tasks::PopulatePlaceholderSteps
       end
     end
 
+    # Save pes_are_assigned/spes_are_assigned and step counts
+    task.update_step_counts.save validate: false
+
+    task.update_caches_later update_step_counts: false
+
     # Can't send the info to Biglearn if there's no course
     course = role.try!(:student).try!(:course)
     return if course.nil?
@@ -90,6 +95,11 @@ class Tasks::PopulatePlaceholderSteps
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
     max_attempts = skip_unready ? 1 : background ? 600 : 30
     sleep_interval = skip_unready ? 0 : 1.second
+
+    task_steps_to_upsert = []
+    tasked_exercises_to_import = []
+    task_step_ids_to_delete = []
+    tasked_placeholder_ids_to_delete = []
 
     if biglearn_controls_slots
       # Biglearn controls how many PEs/SPEs
@@ -128,15 +138,15 @@ class Tasks::PopulatePlaceholderSteps
 
         # Iterate through all the exercises and steps
         # Add/remove steps as needed
-        num_iterations = [exercises.size, placeholder_steps.size].max
-        num_iterations.times do |index|
+        [exercises.size, placeholder_steps.size].max.times do |index|
           exercise = exercises[index]
           task_step = placeholder_steps[index]
 
           if exercise.nil? || exercise.questions_hash.blank?
             # Extra step: Remove it
             # We don't compact the task steps (gaps are ok) so we don't decrement num_added_steps
-            task_step.try!(:destroy!)
+            task_step_ids_to_delete << task_step.id
+            tasked_placeholder_ids_to_delete << task_step.tasked_id
           else
             if task_step.nil?
               # Need a new step for this exercise
@@ -152,7 +162,8 @@ class Tasks::PopulatePlaceholderSteps
               num_added_steps += exercise.number_of_parts
             else
               # Reuse a placeholder step
-              task_step.tasked.destroy!
+              tasked_placeholder_ids_to_delete << task_step.tasked_id
+
               # Adjust the step number to be correct based on how many steps we've added
               # since we are avoiding reloading
               task_step.number += num_added_steps
@@ -170,7 +181,11 @@ class Tasks::PopulatePlaceholderSteps
             task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
 
             # Assign the exercise (handles multipart questions, etc)
-            run(:task_exercise, task_step: task_step, exercise: exercise)
+            out = run(
+              :task_exercise, task_step: task_step, exercise: exercise, allow_save: false
+            ).outputs
+            task_steps_to_upsert.concat out.task_steps
+            tasked_exercises_to_import.concat out.tasked_exercises
           end
         end
       end
@@ -215,11 +230,11 @@ class Tasks::PopulatePlaceholderSteps
         page_placeholder_steps.each_with_index do |task_step, index|
           exercise = exercises[index]
 
-          # If no exercise available, hard-delete the Placeholder TaskStep and TaskedPlaceholder
-          next task_step.destroy! if exercise.nil?
+          # Always delete the TaskedPlaceholder
+          tasked_placeholder_ids_to_delete << task_step.tasked_id
 
-          # Otherwise, hard-delete just the TaskedPlaceholder
-          task_step.tasked.destroy!
+          # If no exercise available, also hard-delete the Placeholder TaskStep
+          next task_step_ids_to_delete << task_step.id if exercise.nil?
 
           # Detect PEs being used as SPEs and set the step type to :personalized_group
           # So they are displayed as personalized exercises
@@ -230,19 +245,70 @@ class Tasks::PopulatePlaceholderSteps
           task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
 
           # Assign the exercise (handles multipart questions, etc)
-          run(:task_exercise, task_step: task_step, exercise: exercise)
+          out = run(
+            :task_exercise, task_step: task_step, exercise: exercise, allow_save: false
+          ).outputs
+          task_steps_to_upsert.concat out.task_steps
+          tasked_exercises_to_import.concat out.tasked_exercises
         end
       end
     end
 
+    Tasks::Models::TaskedPlaceholder.where(id: tasked_placeholder_ids_to_delete).delete_all \
+      unless tasked_placeholder_ids_to_delete.empty?
+
+    Tasks::Models::TaskStep.where(id: task_step_ids_to_delete).delete_all \
+      unless task_step_ids_to_delete.empty?
+
+    Tasks::Models::TaskedExercise.import(tasked_exercises_to_import, validate: false) \
+      unless tasked_exercises_to_import.empty?
+
+    unless task_steps_to_upsert.empty?
+      existing_task_steps = task.task_steps.reject { |ts| task_step_ids_to_delete.include? ts.id }
+      non_updated_task_steps = existing_task_steps - task_steps_to_upsert
+      task_steps = non_updated_task_steps + task_steps_to_upsert
+      next_step_number = (task_steps.map(&:number).compact.max || 0) + 1
+      task_steps_to_upsert.each do |task_step|
+        # Reassign the tasked exercises so the tasked_ids are properly set
+        task_step.tasked = task_step.tasked
+
+        # Take care of duplicate task_step numbers
+        if task_step.number.nil?
+          task_step.number = next_step_number
+          next_step_number += 1
+        elsif task_steps.any? { |ts| ts.number == task_step.number && ts.id != task_step.id }
+          conflicting_non_updated_task_steps = non_updated_task_steps.select do |ts|
+            ts.number >= task_step.number && ts.id != task_step.id
+          end
+          non_updated_task_steps -= conflicting_non_updated_task_steps
+          task_steps_to_upsert.concat conflicting_non_updated_task_steps
+          task_steps_to_upsert.select do |ts|
+            ts.number >= task_step.number && ts.id != task_step.id
+          end.each { |ts| ts.number = ts.number + 1 }
+          next_step_number += 1
+        end
+      end
+
+      Tasks::Models::TaskStep.import(
+          task_steps_to_upsert.sort_by(&:number).reverse, validate: false, on_duplicate_key_update: {
+            conflict_target: [ :id ], columns: [
+              :tasked_type,
+              :tasked_id,
+              :number,
+              :first_completed_at,
+              :last_completed_at,
+              :group_type,
+              :spy,
+              :content_page_id
+            ]
+          }
+      )
+    end
+
+    task.task_steps.reset
+
     task.spy = task.spy.merge(spy_info.except('exercises'))
     task.send "#{boolean_attribute}=", true
-
-    # Save pes_are_assigned/spes_are_assigned
-    task.save validate: false
-
-    # Ensure the task will reload and return the correct steps next time
-    task.task_steps.reset
 
     [ task, !!result[:accepted] ]
   end

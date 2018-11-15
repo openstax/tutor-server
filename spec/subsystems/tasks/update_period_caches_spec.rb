@@ -293,10 +293,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         end
 
         it 'is called when placeholder steps are populated' do
-          # Queuing the background job 6 times is not ideal at all...
-          # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
           expect(configured_job).to(
-            receive(:perform_later).exactly(6).with(period_ids: [ first_period.id ])
+            receive(:perform_later).once.with(period_ids: [ first_period.id ])
           )
 
           Tasks::PopulatePlaceholderSteps.call(task: first_task)
@@ -374,10 +372,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         end
 
         it 'is called when placeholder steps are populated' do
-          # Queuing the background job 6 times is not ideal at all...
-          # Might be fixed by moving to Rails 5 due to https://github.com/rails/rails/pull/19324
           expect(configured_job).to(
-            receive(:perform_later).exactly(6).with(period_ids: [ first_period.id ])
+            receive(:perform_later).once.with(period_ids: [ first_period.id ])
           )
 
           Tasks::PopulatePlaceholderSteps.call(task: first_task)

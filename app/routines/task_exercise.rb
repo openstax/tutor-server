@@ -4,7 +4,7 @@ class TaskExercise
 
   protected
 
-  def exec(exercise:, task: nil, task_step: nil, title: nil)
+  def exec(exercise:, task: nil, task_step: nil, title: nil, allow_save: true)
     # This routine will make one step per exercise part.
     # If provided, the incoming `task_step` will be used as the first step.
 
@@ -28,16 +28,19 @@ class TaskExercise
     spy = current_step.spy
 
     questions = exercise.content_as_independent_questions
-    outputs[:task_steps] = questions.each_with_index.map do |question, ii|
+    outputs.task_steps = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
-      current_step = Tasks::Models::TaskStep.new(
-        task: task,
-        number: current_step.number.nil? ? nil : current_step.number + 1,
-        group_type: group_type,
-        page: page,
-        labels: labels,
-        spy: spy
-      ) if ii > 0
+      if ii > 0
+        current_step = Tasks::Models::TaskStep.new(
+          task: task,
+          number: current_step.number.nil? ? nil : current_step.number + 1,
+          group_type: group_type,
+          page: page,
+          labels: labels,
+          spy: spy
+        )
+        is_new_step = true
+      end
 
       # Mark the step as incomplete just in case it had been marked as complete before
       current_step.first_completed_at = nil
@@ -60,14 +63,18 @@ class TaskExercise
 
       # Add the step to the task's list of steps if it's new
       # Both of these only save the steps if the task or the step are already persisted
-      if ii > 0 || is_new_step
-        task.task_steps << current_step
-      elsif current_step.persisted?
-        current_step.save!
+      if allow_save
+        if is_new_step
+          task.task_steps << current_step
+        elsif current_step.persisted?
+          current_step.save!
+        end
       end
 
       current_step
     end
+
+    outputs.tasked_exercises = outputs.task_steps.map(&:tasked)
 
     # Task was already saved and we added more steps, so need to reload steps from DB
     task.task_steps.reset if task.persisted? && current_step != task_step
