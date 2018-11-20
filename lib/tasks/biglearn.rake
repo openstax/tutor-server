@@ -33,6 +33,8 @@ namespace :biglearn do
 
           OpenStax::Biglearn::Api.create_course course: course, ecosystem: ecosystems.first
 
+          OpenStax::Biglearn::Api.update_course_active_dates course: course
+
           OpenStax::Biglearn::Api.update_globally_excluded_exercises course: course
 
           OpenStax::Biglearn::Api.update_course_excluded_exercises course: course
