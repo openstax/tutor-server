@@ -28,8 +28,22 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
-    # We only update last_completed_at if the task_step is already completed
-    update_task_step(mark_completed: @task_step.completed?)
+    ScoutHelper.ignore!(0.8)
+
+    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
+
+    if @task_step.completed?
+      # Update last_completed_at if the task_step is already completed
+      update_and_complete_task_step
+
+      respond_with(
+        @tasked,
+        responder: ResponderWithPutPatchDeleteContent,
+        represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked)
+      )
+    else
+      standard_update(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    end
   end
 
   ###############################################################
@@ -45,7 +59,18 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
   EOS
   def completed
-    update_task_step(mark_completed: true)
+    ScoutHelper.ignore!(0.8)
+
+    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
+
+    update_and_complete_task_step
+
+    task = Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
+    respond_with(
+      task,
+      responder: ResponderWithPutPatchDeleteContent,
+      represent_with: Api::V1::TaskRepresenter
+    )
   end
 
   ###############################################################
@@ -95,32 +120,18 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     @tasked.reload
   end
 
-  def update_task_step(mark_completed:)
-    ScoutHelper.ignore!(0.8)
-
-    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
-
+  def update_and_complete_task_step
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
-    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked) \
-      if mark_completed
+    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
     consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
     @tasked.save
 
-    if mark_completed
-      # Task already locked in around_action
-      result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
-      raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
-    end
+    # Task already locked in around_action
+    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
 
+    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
-
-    task = Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
-    respond_with(
-      task,
-      responder: ResponderWithPutPatchDeleteContent,
-      represent_with: Api::V1::TaskRepresenter
-    )
   end
 
 end
