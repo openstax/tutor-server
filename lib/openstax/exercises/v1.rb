@@ -24,15 +24,20 @@ module OpenStax::Exercises::V1
       loop do
         exercises_hash = client.exercises query.merge(page: page)
         total_count = exercises_hash['total_count']
-        exercises = exercises_hash['items']
-        num_exercises = exercises.size
-        break if num_exercises == 0
+        break if total_count == 0
 
-        block.call exercises.map do |ex|
-          OpenStax::Exercises::V1::Exercise.new(content: ex.to_json, server_url: client.server_url)
-        end
+        exercise_hashes = exercises_hash['items']
 
-        total_exercises += num_exercises
+        block.call(
+          exercise_hashes.map do |ex|
+            OpenStax::Exercises::V1::Exercise.new(
+              content: ex.to_json,
+              server_url: client.server_url
+            )
+          end
+        )
+
+        total_exercises += exercise_hashes.size
         break if total_exercises >= total_count
         page += 1
       end

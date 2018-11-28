@@ -15,7 +15,9 @@ def filter_secret(path_to_secret)
       # If the secret value is a URL, it may be used without its protocol
       if secret_value.starts_with?("http")
         secret_value_without_protocol = secret_value.sub(/^https?\:\/\//,'')
-        c.filter_sensitive_data("<#{secret_name}_without_protocol>") { secret_value_without_protocol }
+        c.filter_sensitive_data("<#{secret_name}_without_protocol>") do
+          secret_value_without_protocol
+        end
       end
 
 
@@ -78,13 +80,15 @@ end
 def vcr_friendly_uuids(count:, namespace: '')
   uuids = count.times.map{ SecureRandom.uuid }
   VCR.configure do |config|
-    uuids.each_with_index{|uuid,ii| config.define_cassette_placeholder("<UUID_#{namespace}_#{ii}>") { uuid }}
+    uuids.each_with_index do |uuid,ii|
+      config.define_cassette_placeholder("<UUID_#{namespace}_#{ii}>") { uuid }
+    end
   end
   uuids
 end
 
 VCR_OPTS = {
   # This should default to :none
-  record: ENV['VCR_OPTS_RECORD'].try!(:to_sym) || :none,
+  record: ENV.fetch('VCR_OPTS_RECORD', :none).to_sym,
   allow_unused_http_interactions: false
 }

@@ -190,11 +190,11 @@ http_interactions:
     http_version: 
   recorded_at: Tue, 03 May 2016 01:02:57 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3Aad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -1386,11 +1386,11 @@ http_interactions:
     http_version: 
   recorded_at: Tue, 03 May 2016 01:02:58 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3A6a0568d8-23d7-439b-9a01-16e4e73886b3%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -2724,11 +2724,11 @@ http_interactions:
     http_version: 
   recorded_at: Tue, 03 May 2016 01:03:00 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:7636a3bf-eb80-4898-8b2c-e81c1711b99f%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3A7636a3bf-eb80-4898-8b2c-e81c1711b99f%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1

@@ -1,8 +1,12 @@
 class Content::Routines::ImportExercises
   lev_routine
 
-  uses_routine Content::Routines::FindOrCreateTags, as: :find_or_create_tags
-  uses_routine Content::Routines::TagResource, as: :tag
+  uses_routine Content::Routines::FindOrCreateTags,
+               as: :find_or_create_tags,
+               translations: { outputs: { type: :verbatim } }
+  uses_routine Content::Routines::TagResource,
+               as: :tag,
+               translations: { outputs: { type: :verbatim } }
 
   protected
 
@@ -10,8 +14,6 @@ class Content::Routines::ImportExercises
   # that takes an OpenStax::Exercises::V1::Exercise
   # and returns a Content::Models::Page for that exercise
   def exec(ecosystem:, page:, query_hash:, collaborators: [ 'openstax' ])
-    outputs.exercises = []
-
     # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise
     query_hash = query_hash.merge collaborator: collaborators.join(',')
     OpenStax::Exercises::V1.exercises(query_hash) do |wrappers|
@@ -52,10 +54,10 @@ class Content::Routines::ImportExercises
 
       # Pre-build all tags we are going to need in one shot
       wrapper_tag_hashes = wrappers.flat_map(&:tag_hashes).uniq { |hash| hash[:value] }
-      tags = run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes).outputs.tags
-      tag_map = tags.index_by(&:value)
+      run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes)
+      tag_map = outputs.tags.index_by(&:value)
 
-      wrapper_to_exercise_page_map.each do |wrapper, exercise_page|
+      exercises = wrapper_to_exercise_page_map.map do |wrapper, exercise_page|
         exercise = Content::Models::Exercise.new(page: exercise_page,
                                                  url: wrapper.url,
                                                  uuid: wrapper.uuid,
@@ -73,10 +75,13 @@ class Content::Routines::ImportExercises
         relevant_tags = wrapper.tags.map { |tag| tag_map[tag] }.compact
         run(:tag, exercise, relevant_tags, tagging_class: Content::Models::ExerciseTag, save: false)
 
-        outputs.exercises << exercise
+        # Clear the outputs to avoid memory bloat (by not keeping all the tags in memory)
+        @result = Lev::Routine::Result.new(Lev::Outputs.new, errors)
+
+        exercise
       end
 
-      Content::Models::Exercise.import outputs.exercises, recursive: true, validate: false
+      Content::Models::Exercise.import exercises, recursive: true, validate: false
 
       # Reset associations so they get reloaded the next time they are used
       page.exercises.reset if page.is_a?(Content::Models::Page)

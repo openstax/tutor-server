@@ -14,14 +14,14 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
       receive(:call).and_wrap_original do |method, book:, save: true|
         expect(save).to eq true
 
-        method.call book: book#, save: true
+        method.call book: book
       end
     )
     expect_any_instance_of(Content::Routines::UpdatePageContent).to(
       receive(:call).and_wrap_original do |method, book:, pages:, save: true|
         expect(save).to eq true
 
-        method.call book: book, pages: pages#, save: true
+        method.call book: book, pages: pages
       end
     )
     expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem)

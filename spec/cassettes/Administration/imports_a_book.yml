@@ -3962,11 +3962,11 @@ http_interactions:
     http_version: 
   recorded_at: Mon, 26 Oct 2015 22:56:36 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22cnxmod:4e40d43d-cfee-412e-919c-facccdf0535d,cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509,k12phys-ch03-s01-lo01,k12phys-ch03-s01-lo02,cnxmod:3005b86b-d993-4048-aff0-500256001f42,k12phys-ch03-s02-lo01,k12phys-ch03-s02-lo02,cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851,cnxmod:95e61258-2faf-41d4-af92-f62e1414175a,k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02,cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6,k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02,cnxmod:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0,k12phys-ch04-s03-lo01,k12phys-ch04-s03-lo02,cnxmod:dbc79576-8c66-41d2-929a-74bcd036a1df,k12phys-ch04-s04-lo01,k12phys-ch04-s04-lo02%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22cnxmod%3A4e40d43d-cfee-412e-919c-facccdf0535d%2Ccnxmod%3A0e58aa87-2e09-40a7-8bf3-269b2fa16509%2Ck12phys-ch03-s01-lo01%2Ck12phys-ch03-s01-lo02%2Ccnxmod%3A3005b86b-d993-4048-aff0-500256001f42%2Ck12phys-ch03-s02-lo01%2Ck12phys-ch03-s02-lo02%2Ccnxmod%3A1bb611e9-0ded-48d6-a107-fbb9bd900851%2Ccnxmod%3A95e61258-2faf-41d4-af92-f62e1414175a%2Ck12phys-ch04-s01-lo01%2Ck12phys-ch04-s01-lo02%2Ccnxmod%3A640e3e84-09a5-4033-b2a7-b7fe5ec29dc6%2Ck12phys-ch04-s02-lo01%2Ck12phys-ch04-s02-lo02%2Ccnxmod%3A548a8717-71e1-4d65-80f0-7b8c6ed4b4c0%2Ck12phys-ch04-s03-lo01%2Ck12phys-ch04-s03-lo02%2Ccnxmod%3Adbc79576-8c66-41d2-929a-74bcd036a1df%2Ck12phys-ch04-s04-lo01%2Ck12phys-ch04-s04-lo02%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1

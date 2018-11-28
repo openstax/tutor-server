@@ -873,11 +873,11 @@ http_interactions:
     http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:51 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3A6a0568d8-23d7-439b-9a01-16e4e73886b3%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1

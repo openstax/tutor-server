@@ -80,22 +80,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
         end
       end
     end
-
-    it 'does not import exercises whose numbers appear in excluded_exercise_numbers' do
-      tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-      excluded_exercise_numbers = Set[175, 250, 310]
-      expect do
-        described_class.call(
-          ecosystem: ecosystem, page: page, query_hash: {tag: tags},
-          excluded_exercise_numbers: excluded_exercise_numbers
-        )
-      end.to change{ Content::Models::Exercise.count }.by(30)
-
-      exercises = ecosystem.exercises.order(:created_at).to_a
-      exercises[-30..-1].each do |exercise|
-        expect(excluded_exercise_numbers).not_to include exercise.number
-      end
-    end
   end
 
   context 'with custom tags' do
@@ -129,16 +113,22 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
 
       @ecosystem = chapter.book.ecosystem
 
-      cnx_page = OpenStax::Cnx::V1::Page.new(id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509',
-                                             title: 'Acceleration')
+      cnx_page = OpenStax::Cnx::V1::Page.new(
+        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+      )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
-                                      number: 2, book_location: [3, 1]]
+        Content::Routines::ImportPage[
+          cnx_page: cnx_page, chapter: chapter, number: 2, book_location: [3, 1]
+        ]
       end
     end
 
-    before { expect(OpenStax::Exercises::V1).to receive(:exercises).and_return(wrappers).once }
+    before do
+      expect(OpenStax::Exercises::V1).to receive(:exercises).once do |_, &block|
+        block.call(wrappers)
+      end
+    end
 
     it 'assigns context for exercises that require context' do
       tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
