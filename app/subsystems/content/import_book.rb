@@ -1,8 +1,5 @@
 class Content::ImportBook
 
-  # Kind of a hack to limit how many exercises we request at a time and avoid timeouts
-  MAX_EXERCISES_REQUEST_LENGTH = 2020
-
   lev_routine
 
   uses_routine Content::Routines::ImportBookPart, as: :import_book_part,
@@ -46,41 +43,23 @@ class Content::ImportBook
     outputs.exercises = []
     imported_exercise_numbers = Set.new
 
+    # If an exercise could go into multiple pages,
+    # we always break ties by putting it in the page that appears last in the book
     page_block = ->(exercise_wrapper) do
       tags = exercise_wrapper.import_tags
       pages = tags.map { |tag| import_page_map[tag] }.compact.uniq
       pages.max_by(&:book_location)
     end
 
-    if exercise_uids.nil?
-      # Split the tag queries to avoid exceeding the URL limit
-      max_tag_length = import_page_tags.map { |pt| pt.tag.value.size }.max || 1
-      tags_per_query = MAX_EXERCISES_REQUEST_LENGTH/max_tag_length
-      import_page_tags.each_slice(tags_per_query) do |page_tags|
-        query_hash = { tag: page_tags.map { |pt| pt.tag.value } }
-
-        new_exercises = run(
-          :import_exercises, ecosystem: ecosystem, page: page_block,
-          query_hash: query_hash, excluded_exercise_numbers: imported_exercise_numbers
-        ).outputs.exercises
-        outputs.exercises += new_exercises
-        imported_exercise_numbers += new_exercises.map(&:number)
-      end
+    query_hash = if exercise_uids.nil?
+      # Exercises not in manifest
+      { tag: import_page_tags.map { |pt| pt.tag.value } }
     else
-      # Split the uid queries to avoid exceeding the URL limit
-      max_uid_length = exercise_uids.map(&:size).max || 1
-      uids_per_query = MAX_EXERCISES_REQUEST_LENGTH/max_uid_length
-      exercise_uids.each_slice(uids_per_query) do |uids|
-        query_hash = { id: uids }
-
-        new_exercises = run(
-          :import_exercises, ecosystem: ecosystem, page: page_block,
-          query_hash: query_hash, excluded_exercise_numbers: imported_exercise_numbers
-        ).outputs.exercises
-        outputs.exercises += new_exercises
-        imported_exercise_numbers += new_exercises.map(&:number)
-      end
+      # Exercises in manifest
+      { uid: exercise_uids }
     end
+
+    run(:import_exercises, ecosystem: ecosystem, page: page_block, query_hash: query_hash)
 
     outs = run(:populate_exercise_pools, book: book).outputs
 

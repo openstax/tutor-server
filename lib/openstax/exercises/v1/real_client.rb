@@ -31,10 +31,10 @@ class OpenStax::Exercises::V1::RealClient
     query_hash = params.except(*NON_QUERY_PARAMS)
     query = query_hash.map{ |key, vals| "#{key}:#{sanitize(vals)}" }.join(' ')
     uri = Addressable::URI.parse(@server_url)
-    uri.path = "/api/exercises"
-    uri.query = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query
+    uri.path = "/api/exercises/search"
+    body = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query
 
-    JSON.parse(request(:get, uri, with_accept_header(options)).body)
+    JSON.parse(request(:post, uri, with_accept_header(options.merge(body: body))).body)
   end
 
   protected

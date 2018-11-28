@@ -15,13 +15,29 @@ module OpenStax::Exercises::V1
     # API Wrappers
     #
 
-    # GET /api/exercises
-    # options can have :tag, :id, :number, :version keys
-    def exercises(options={})
-      exercises_hash = client.exercises(options)
-      exercises_hash['items'].map do |ex|
-        OpenStax::Exercises::V1::Exercise.new(content: ex.to_json, server_url: client.server_url)
+    # POST /api/exercises/search
+    # options can have :tag, :uid, :number, :version keys
+    def exercises(query = {}, &block)
+      total_exercises = 0
+      page = 1
+
+      loop do
+        exercises_hash = client.exercises query.merge(page: page)
+        total_count = exercises_hash['total_count']
+        exercises = exercises_hash['items']
+        num_exercises = exercises.size
+        break if num_exercises == 0
+
+        block.call exercises.map do |ex|
+          OpenStax::Exercises::V1::Exercise.new(content: ex.to_json, server_url: client.server_url)
+        end
+
+        total_exercises += num_exercises
+        break if total_exercises >= total_count
+        page += 1
       end
+
+      total_exercises
     end
 
     def use_fake_client
