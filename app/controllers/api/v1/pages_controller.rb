@@ -7,7 +7,7 @@ class Api::V1::PagesController < Api::V1::ApiController
     #{json_schema(Api::V1::PageRepresenter, include: :readable)}
   EOS
   def show
-    uuid, version = params[:id].split('@', 2)
+    uuid, version = params[:cnx_id].split('@', 2)
 
     pages = Content::Models::Page.joins(chapter: :book).where(
       uuid: uuid, chapter: { book: { content_ecosystem_id: params[:ecosystem_id] } }

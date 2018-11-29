@@ -180,7 +180,7 @@ Rails.application.routes.draw do
         get :'exercises(/:pool_types)', action: :exercises
       end
 
-      resources :pages, only: [:show]
+      get 'pages/*cnx_id', to: 'pages#show', format: false
     end
 
     resources :enrollment, only: [:create] do
