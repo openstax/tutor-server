@@ -18,6 +18,7 @@ module OpenStax::Exercises::V1
     # POST /api/exercises/search
     # options can have :tag, :uid, :number, :version keys
     def exercises(query = {}, &block)
+      seen_uuids = Set.new
       total_exercises = 0
       page = 1
 
@@ -27,6 +28,11 @@ module OpenStax::Exercises::V1
         break if total_count == 0
 
         exercise_hashes = exercises_hash['items']
+        num_exercises = exercise_hashes.size
+        break if num_exercises == 0
+
+        new_exercise_hashes = exercise_hashes.reject { |hash| seen_uuids.include? hash['uuid'] }
+        seen_uuids += new_exercise_hashes.map { |hash| hash['uuid'] }
 
         block.call(
           exercise_hashes.map do |ex|
@@ -37,7 +43,7 @@ module OpenStax::Exercises::V1
           end
         )
 
-        total_exercises += exercise_hashes.size
+        total_exercises += num_exercises
         break if total_exercises >= total_count
         page += 1
       end
