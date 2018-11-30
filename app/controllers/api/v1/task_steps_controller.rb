@@ -18,7 +18,9 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
-    Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
+    @task = Research::ModifiedTaskForDisplay[task: @task]
+    @task_step = @task.task_steps.to_a.find { |task_step| task_step.id == params[:id].to_i }
+    @tasked = @task_step.tasked
     standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
   end
 
@@ -72,14 +74,15 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     Tasks::Models::TaskStep.transaction do
       # The explicit listing of the tables to lock is required here
       # because we want to lock the tables in exactly this order to avoid deadlocks
-      @task_step = Tasks::Models::TaskStep
-        .joins(:task)
-        .preload(task: [:research_study_brains])
+      @task = Tasks::Models::Task
+        .joins(:task_steps)
         .lock('FOR NO KEY UPDATE OF "tasks_tasks", "tasks_task_steps"')
-        .find_by(id: params[:id])
+        .preload(:research_study_brains, task_steps: :tasked)\
+        .find_by(task_steps: { id: params[:id] })
 
-      return render_api_errors(:no_exercises, :not_found) if @task_step.nil?
+      return render_api_errors(:no_exercises, :not_found) if @task.nil?
 
+      @task_step = @task.task_steps.to_a.find { |task_step| task_step.id == params[:id].to_i }
       @tasked = @task_step.tasked
 
       yield
@@ -90,7 +93,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
 
     # Task already locked in around_action
-    Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock_task: false]
+    Tasks::PopulatePlaceholderSteps[task: @task, lock_task: false]
 
     @tasked.reload
   end
@@ -115,9 +118,9 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
-    task = Research::ModifiedTaskForDisplay[task: @tasked.task_step.task]
+    @task = Research::ModifiedTaskForDisplay[task: @task]
     respond_with(
-      task,
+      @task,
       responder: ResponderWithPutPatchDeleteContent,
       represent_with: Api::V1::TaskRepresenter
     )

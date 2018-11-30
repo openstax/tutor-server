@@ -79,7 +79,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_step_counts(steps: nil)
-    steps ||= persisted? ? task_steps.reload.to_a : task_steps.to_a
+    steps ||= persisted? && !task_steps.loaded? ? task_steps.preload(:tasked).to_a : task_steps.to_a
 
     completed_steps = steps.select(&:completed?)
     core_steps = steps.select(&:core_group?)
