@@ -11,13 +11,11 @@ Rails.application.routes.draw do
     # The routes below would be served by the webview catch-all route,
     # but we define them so we can use them as helpers that point to certain FE pages
     scope action: :index do
-
       # routes that are handled by the FE
       get :dashboard
       get :'course/:id', as: :course_dashboard
       get :'course/:course_id/task/:task_id', as: :student_task
       get :'course/:course_id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
-
     end
 
     scope :enroll do
@@ -176,16 +174,13 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :pages do
-      get :':uuid@:version', action: :get_page
-      get :':uuid', action: :get_page
-    end
-
     resources :ecosystems, only: [:index] do
       member do
         get :readings
         get :'exercises(/:pool_types)', action: :exercises
       end
+
+      get 'pages/*cnx_id', to: 'pages#show', format: false
     end
 
     resources :enrollment, only: [:create] do
