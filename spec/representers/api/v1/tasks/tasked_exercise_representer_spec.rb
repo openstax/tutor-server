@@ -38,6 +38,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
       allow(exercise).to receive(:question_id).and_return("questionID")
       allow(exercise).to receive(:is_in_multipart).and_return(false)
+      allow(exercise).to receive(:cache_key).and_return("tasks/models/tasked_exercises/42-test")
     end
   end
 
@@ -107,14 +108,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
   context "non-completed exercise" do
 
-    before(:each) do
-      allow(tasked_exercise).to receive(:free_response).and_return(nil)
-      allow(tasked_exercise).to receive(:answer_id).and_return(nil)
-
-      allow(task_step).to receive(:completed?).and_return(false)
-      allow(task_step).to receive(:feedback_available?).and_return(false)
-    end
-
     it_behaves_like "a good exercise representation should"
 
     it "'is_completed' == false" do
@@ -137,11 +130,14 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
   context "completed exercise" do
 
-    before(:each) do
+    before do
+      allow(task_step).to receive(:completed?).and_return(true)
+
       allow(tasked_exercise).to receive(:free_response).and_return('Some response')
       allow(tasked_exercise).to receive(:answer_id).and_return('123')
-
-      allow(task_step).to receive(:completed?).and_return(true)
+      allow(tasked_exercise).to(
+        receive(:cache_key).and_return("tasks/models/tasked_exercises/43-test")
+      )
     end
 
     it "'is_completed' == true" do
@@ -150,9 +146,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     context "feedback available" do
 
-      before(:each) do
-        allow(task_step).to receive(:feedback_available?).and_return(true)
-      end
+      before { allow(task_step).to receive(:feedback_available?).and_return(true) }
 
       it_behaves_like "a good exercise representation should"
 
@@ -180,10 +174,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     context "feedback unavailable" do
 
-      before(:each) do
-        allow(task_step).to receive(:feedback_available?).and_return(false)
-      end
-
       it_behaves_like "a good exercise representation should"
 
       it "'feedback_html' is not included" do
@@ -204,10 +194,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
   context "without related content" do
 
-    before(:each) do
-      allow(task_step).to receive(:related_content).and_return([])
-    end
-
     it_behaves_like "a good exercise representation should"
 
     it "has the correct 'related_content'" do
@@ -218,10 +204,14 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
   context "with related content" do
 
-    before(:each) do
-      allow(task_step).to receive(:related_content).and_return([{title: "Some title",
-                                                                 book_location: "4.2",
-                                                                 baked_book_location: "4.2"}])
+    before do
+      allow(task_step).to receive(:related_content).and_return(
+        [ { title: "Some title", book_location: "4.2", baked_book_location: "4.2" } ]
+      )
+
+      allow(tasked_exercise).to(
+        receive(:cache_key).and_return("tasks/models/tasked_exercises/44-test")
+      )
     end
 
     it_behaves_like "a good exercise representation should"

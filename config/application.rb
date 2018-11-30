@@ -13,6 +13,9 @@ PGconn = PG::Connection
 PGresult = PG::Result
 PGError = PG::Error
 
+# For cache entries that should never expire but that we still want to evict if Redis is OOM
+NEVER_EXPIRES = 68.years
+
 module Tutor
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.

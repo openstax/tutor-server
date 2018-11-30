@@ -12,6 +12,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(step).to receive(:related_content).and_return([])
       allow(step).to receive(:labels).and_return([])
       allow(step).to receive(:spy).and_return({})
+      allow(step).to receive(:cache_key).and_return("tasks/models/task_steps/15-test")
     end
   end
 
@@ -27,6 +28,9 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(placeholder).to receive(:placeholder_type).and_return('some_exercise_type')
       allow(placeholder).to receive(:last_completed_at).and_return(Time.current)
       allow(placeholder).to receive(:first_completed_at).and_return(Time.current - 1.week)
+      allow(placeholder).to(
+        receive(:cache_key).and_return("tasks/models/tasked_placeholders/42-test")
+      )
     end
   end
 
