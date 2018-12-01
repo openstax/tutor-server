@@ -17,6 +17,7 @@ require_relative './v1/fragment_splitter'
 require_relative './v1/book'
 require_relative './v1/book_part'
 require_relative './v1/page'
+require_relative './v1/baked'
 
 module OpenStax::Cnx::V1
 

@@ -10,9 +10,11 @@ module OpenStax::Cnx::V1
     attr_reader :hash, :is_root, :book
 
     def title
-      @title ||= hash.fetch('title') { |key|
-        raise "#{self.class.name} id=#{id} is missing #{key}"
-      }
+      @title ||= OpenStax::Cnx::V1.parse_baked_title(
+        hash.fetch('title') { |key|
+          raise "#{self.class.name} id=#{id} is missing #{key}"
+        }
+      )[:title]
     end
 
     def contents
