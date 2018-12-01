@@ -143,7 +143,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
       @hashes_with_pages.each do |hash, page|
         expect(page.id).to eq hash[:id]
         expect(page.url).to include(hash[:id])
-        expect(page.title).to eq page.parsed_title[:title]
+        expect(page.title).to eq page.parsed_title[:text]
         expect(page.full_hash).not_to be_empty
         expect(page.content).not_to be_blank
         expect(page.doc).not_to be_nil
@@ -214,7 +214,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         id: '123',
         hash: { 'title' => 'Hello World!' }
       )
-      expect(page.book_location).to eq false
+      expect(page.book_location).to be_empty
       expect(page.title).to eq 'Hello World!'
     end
 

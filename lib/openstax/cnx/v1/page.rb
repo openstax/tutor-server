@@ -44,8 +44,7 @@ module OpenStax::Cnx::V1
 
     def book_location
       @book_location ||= (
-        parsed_title[:book_location].present? &&
-          parsed_title[:book_location].split('.')
+       (parsed_title[:book_location].present? && parsed_title[:book_location].split('.')) || []
       )
     end
 
@@ -59,7 +58,7 @@ module OpenStax::Cnx::V1
 
     # Use the title in the collection hash
     def title
-      @title ||= parsed_title[:title]
+      @title ||= parsed_title[:text]
     end
 
     def parsed_title

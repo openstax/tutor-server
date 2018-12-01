@@ -19,7 +19,7 @@ class Content::Routines::ImportPage
   # Imports and saves a Cnx::Page as a Content::Models::Page
   # into the given Content::Models::Chapter
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true)
+  def exec(cnx_page:, chapter:, number: nil, book_location: cnx_page.book_location, save: true)
     ecosystem = chapter.book.ecosystem
 
     outputs[:page] = Content::Models::Page.new(url: cnx_page.canonical_url,

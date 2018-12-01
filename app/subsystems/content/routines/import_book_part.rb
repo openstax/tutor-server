@@ -35,12 +35,12 @@ class Content::Routines::ImportBookPart
 
       cnx_book_part.parts.each_with_index do |part, index|
         raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::Page)
-
+        book_location = part.book_location.blank? ? [chapter_tracker.value, index + page_offset] : part.book_location
         outs = run(:import_page,
                    cnx_page: part,
                    chapter: chapter,
                    number: index + 1,
-                   book_location: [chapter_tracker.value, index + page_offset],
+                   book_location: book_location,
                    save: save).outputs
 
         outputs[:pages] << outs.page

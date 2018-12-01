@@ -6,7 +6,7 @@ module OpenStax::Cnx::V1
       { text: text_node.text,
         book_location: part.css('.os-number').text }
     else
-      { title: title }
+      { text: title }
     end
   end
 end

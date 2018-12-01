@@ -14,7 +14,7 @@ module OpenStax::Cnx::V1
         hash.fetch('title') { |key|
           raise "#{self.class.name} id=#{id} is missing #{key}"
         }
-      )[:title]
+      )[:text]
     end
 
     def contents
