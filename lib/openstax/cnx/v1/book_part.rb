@@ -11,7 +11,7 @@ module OpenStax::Cnx::V1
 
     def parsed_title
       @parsed_title ||= OpenStax::Cnx::V1::Baked.parse_title(
-        hash.fetch('title') { |key| raise "#{self.class.name} id=#{id} is missing #{key}" }
+        hash.fetch('title') { |key| raise "#{self.class.name} id=#{@id} is missing #{key}" }
       )
     end
 
@@ -25,7 +25,7 @@ module OpenStax::Cnx::V1
 
     def contents
       @contents ||= hash.fetch('contents') do |key|
-        raise "#{self.class.name} id=#{id} is missing #{key}"
+        raise "#{self.class.name} id=#{@id} is missing #{key}"
       end
     end
 

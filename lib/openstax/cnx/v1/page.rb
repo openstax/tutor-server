@@ -31,12 +31,12 @@ module OpenStax::Cnx::V1
     end
 
     def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil, book: nil)
-      @hash    = hash
-      @id      = id
-      @url     = url
-      @title   = title
-      @content = content
-      @book = book
+      @hash         = hash
+      @id           = id
+      @url          = url
+      @parsed_title = OpenStax::Cnx::V1::Baked.parse_title(title)
+      @content      = content
+      @book         = book
     end
 
     attr_accessor :chapter_section
@@ -52,16 +52,16 @@ module OpenStax::Cnx::V1
 
     def parsed_title
       @parsed_title ||= OpenStax::Cnx::V1::Baked.parse_title(
-        hash.fetch('title') { |key| raise "#{self.class.name} id=#{id} is missing #{key}" }
+        hash.fetch('title') { |key| raise "#{self.class.name} id=#{@id} is missing #{key}" }
       )
     end
 
     def baked_book_location
-      @baked_book_location ||= parsed_title[:book_location]
+      parsed_title[:book_location]
     end
 
     def title
-      @title ||= parsed_title[:text]
+      parsed_title[:text]
     end
 
     def is_intro?
@@ -76,7 +76,7 @@ module OpenStax::Cnx::V1
     end
 
     def uuid
-      @uuid ||= full_hash.fetch('id') { |key| raise "Book id=#{id} is missing #{key}" }
+      @uuid ||= full_hash.fetch('id') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def short_id
@@ -84,7 +84,7 @@ module OpenStax::Cnx::V1
     end
 
     def version
-      @version ||= full_hash.fetch('version') { |key| raise "Book id=#{id} is missing #{key}" }
+      @version ||= full_hash.fetch('version') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def canonical_url
@@ -92,7 +92,7 @@ module OpenStax::Cnx::V1
     end
 
     def content
-      @content ||= full_hash.fetch('content') { |key| raise "Page id=#{id} is missing #{key}" }
+      @content ||= full_hash.fetch('content') { |key| raise "Page id=#{@id} is missing #{key}" }
     end
 
     def doc

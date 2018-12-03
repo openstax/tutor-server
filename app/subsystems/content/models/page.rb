@@ -33,6 +33,7 @@ class Content::Models::Page < IndestructibleRecord
 
   has_many :task_steps, subsystem: :tasks, dependent: :destroy, inverse_of: :page
 
+  #validates :chapter, presence: true
   validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true

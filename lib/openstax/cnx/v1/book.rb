@@ -28,9 +28,7 @@ module OpenStax::Cnx::V1
     end
 
     def uuid
-      @uuid ||= hash.fetch('id') { |key|
-        raise "Book id=#{id} is missing #{key}"
-      }
+      @uuid ||= hash.fetch('id') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def short_id
@@ -38,9 +36,7 @@ module OpenStax::Cnx::V1
     end
 
     def version
-      @version ||= hash.fetch('version') { |key|
-        raise "Book id=#{id} is missing #{key}"
-      }
+      @version ||= hash.fetch('version') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def canonical_url
@@ -48,15 +44,11 @@ module OpenStax::Cnx::V1
     end
 
     def title
-      @title ||= hash.fetch('title') { |key|
-        raise "Book id=#{id} is missing #{key}"
-      }
+      @title ||= hash.fetch('title') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def tree
-      @tree ||= hash.fetch('tree') { |key|
-        raise "Book id=#{id} is missing #{key}"
-      }
+      @tree ||= hash.fetch('tree') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def root_book_part

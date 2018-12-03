@@ -15,6 +15,7 @@ class Content::Models::Book < IndestructibleRecord
   has_many :pages, through: :chapters
   has_many :exercises, through: :pages
 
+  #validates :ecosystem, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
   validates :version, presence: true

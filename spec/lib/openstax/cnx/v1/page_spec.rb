@@ -214,7 +214,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         id: '123',
         hash: { 'title' => 'Hello World!' }
       )
-      expect(page.book_location).to be_empty
+      expect(page.baked_book_location).to be_empty
       expect(page.title).to eq 'Hello World!'
     end
 

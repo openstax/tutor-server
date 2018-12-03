@@ -27,6 +27,7 @@ RSpec.describe Api::V1::BookTocsRepresenter, type: :representer do
          "title" => 'Physics 401',
          "type" => 'part',
          "chapter_section" => [],
+         "baked_chapter_section" => [],
          "children" => [{ "id" => "1",
                           "title" => 'Good chapter',
                           "type" => 'part',

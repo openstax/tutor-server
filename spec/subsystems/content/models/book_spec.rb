@@ -9,6 +9,7 @@ RSpec.describe Content::Models::Book, type: :model do
   it { is_expected.to have_many(:pages) }
   it { is_expected.to have_many(:exercises) }
 
+  #it { is_expected.to validate_presence_of(:ecosystem) }
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:uuid) }
   it { is_expected.to validate_presence_of(:version) }
