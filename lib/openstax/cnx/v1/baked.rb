@@ -1,5 +1,5 @@
-module OpenStax::Cnx::V1
-  def self.parse_baked_title(title)
+module OpenStax::Cnx::V1::Baked
+  def self.parse_title(title)
     part = Nokogiri::HTML.parse(title)
     text_node = part.css('.os-text')
     if text_node.present?

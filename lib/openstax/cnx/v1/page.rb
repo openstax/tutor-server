@@ -26,7 +26,7 @@ module OpenStax::Cnx::V1
       feature_ids = [feature_ids].flatten
       return if feature_ids.empty?
 
-      feature_id_css = feature_ids.map{ |feature_id| "##{feature_id}" }.join(', ')
+      feature_id_css = feature_ids.map { |feature_id| "##{feature_id}" }.join(', ')
       node.at_css(feature_id_css)
     end
 
@@ -62,10 +62,8 @@ module OpenStax::Cnx::V1
     end
 
     def parsed_title
-      @parsed_title ||= OpenStax::Cnx::V1.parse_baked_title(
-        hash.fetch('title') { |key|
-          raise "#{self.class.name} id=#{id} is missing #{key}"
-        }
+      @parsed_title ||= OpenStax::Cnx::V1::Baked.parse_title(
+        hash.fetch('title') { |key| raise "#{self.class.name} id=#{id} is missing #{key}" }
       )
     end
 
