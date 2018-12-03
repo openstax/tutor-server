@@ -1,6 +1,7 @@
 module OpenStax::Cnx::V1::Baked
   def self.parse_title(title)
-    text_node = Nokogiri::HTML.fragment(title).at_css('.os-text')
+    part = Nokogiri::HTML.fragment(title)
+    text_node = part.at_css('.os-text')
     if text_node.present?
       { text: text_node.text, book_location: part.css('.os-number').text.split('.') }
     else
