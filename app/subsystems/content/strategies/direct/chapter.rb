@@ -5,7 +5,8 @@ module Content
 
         wraps ::Content::Models::Chapter
 
-        exposes :book, :pages, :exercises, :all_exercises_pool, :tutor_uuid, :title, :book_location
+        exposes :book, :pages, :exercises, :all_exercises_pool,
+                :tutor_uuid, :title, :book_location, :baked_book_location
 
         alias_method :entity_book, :book
         def book

@@ -11,11 +11,13 @@ RSpec.describe Api::V1::BookTocsRepresenter, type: :representer do
                               title: 'Good chapter',
                               type: 'bar',
                               book_location: [4, 2],
+                              baked_book_location: [4, 2],
                               pages: [{ id: 1,
                                         cnx_id: '321cba',
                                         title: 'Neat page',
                                         type: 'baz',
-                                        book_location: [4, 3] }] }] }
+                                        book_location: [4, 3],
+                                        baked_book_location: [4, 3] }] }] }
 
     representation = described_class.new([Hashie::Mash.new(book_toc)]).to_hash
 
@@ -29,11 +31,13 @@ RSpec.describe Api::V1::BookTocsRepresenter, type: :representer do
                           "title" => 'Good chapter',
                           "type" => 'part',
                           "chapter_section" => [4, 2],
+                          "baked_chapter_section" => [4, 2],
                           "children" => [{ "id" => "1",
                                            "cnx_id" => '321cba',
                                            "title" => 'Neat page',
                                            "type" => 'page',
-                                           "chapter_section" => [4, 3] }] }] }]
+                                           "chapter_section" => [4, 3],
+                                           "baked_chapter_section" => [4, 3] }] }] }]
     )
   end
 end

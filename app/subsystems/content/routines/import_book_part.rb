@@ -23,7 +23,8 @@ class Content::Routines::ImportBookPart
         book: book,
         number: chapter_tracker.value,
         title: cnx_book_part.title,
-        book_location: [chapter_tracker.value]
+        book_location: [chapter_tracker.value],
+        baked_book_location: cnx_book_part.baked_book_location
       )
       chapter.save if save
       transfer_errors_from(chapter, {type: :verbatim}, true)
@@ -35,14 +36,12 @@ class Content::Routines::ImportBookPart
 
       cnx_book_part.parts.each_with_index do |part, index|
         raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::Page)
-        book_location = part.book_location.blank? ? [chapter_tracker.value, index + page_offset] :
-                                                    part.book_location
 
         outs = run(:import_page,
                    cnx_page: part,
                    chapter: chapter,
                    number: index + 1,
-                   book_location: book_location,
+                   book_location: [chapter_tracker.value, index + page_offset],
                    save: save).outputs
 
         outputs[:pages] << outs.page

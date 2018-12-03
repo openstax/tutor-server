@@ -14,6 +14,11 @@ module Api::V1
                readable: true,
                writeable: false
 
+    collection :baked_book_location,
+               as: :baked_chapter_section,
+               readable: true,
+               writeable: false
+
     property :student_count,
              type: Integer,
              readable: true,

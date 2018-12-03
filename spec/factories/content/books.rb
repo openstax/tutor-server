@@ -39,6 +39,7 @@ FactoryBot.define do
         create(:content_chapter,
                title: chapter[:title],
                book_location: chapter[:book_location],
+               baked_book_location: chapter[:baked_book_location] || chapter[:book_location],
                book: book,
                contents: chapter)
       end

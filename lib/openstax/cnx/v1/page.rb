@@ -42,12 +42,6 @@ module OpenStax::Cnx::V1
     attr_accessor :chapter_section
     attr_reader :hash, :book
 
-    def book_location
-      @book_location ||= (
-       (parsed_title[:book_location].present? && parsed_title[:book_location].split('.')) || []
-      )
-    end
-
     def id
       @id ||= hash.fetch('id') { |key| raise "Page is missing #{key}" }
     end
@@ -56,15 +50,18 @@ module OpenStax::Cnx::V1
       @url ||= url_for(id)
     end
 
-    # Use the title in the collection hash
-    def title
-      @title ||= parsed_title[:text]
-    end
-
     def parsed_title
       @parsed_title ||= OpenStax::Cnx::V1::Baked.parse_title(
         hash.fetch('title') { |key| raise "#{self.class.name} id=#{id} is missing #{key}" }
       )
+    end
+
+    def baked_book_location
+      @baked_book_location ||= parsed_title[:book_location]
+    end
+
+    def title
+      @title ||= parsed_title[:text]
     end
 
     def is_intro?

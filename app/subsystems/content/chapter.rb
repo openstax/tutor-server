@@ -35,5 +35,9 @@ module Content
       verify_and_return @strategy.book_location, klass: Integer, error: StrategyError
     end
 
+    def baked_book_location
+      verify_and_return @strategy.baked_book_location, klass: Integer, error: StrategyError
+    end
+
   end
 end

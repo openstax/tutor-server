@@ -123,6 +123,7 @@ class Tasks::UpdateTaskCaches
         :tutor_uuid,
         :title,
         :book_location,
+        :baked_book_location,
         :content_chapter_id,
         :content_all_exercises_pool_id
       ])
@@ -276,6 +277,7 @@ class Tasks::UpdateTaskCaches
             tutor_uuid: mapped_page.tutor_uuid,
             title: mapped_page.title,
             book_location: mapped_page.book_location,
+            baked_book_location: mapped_page.baked_book_location,
             has_exercises: !mapped_page.all_exercises_pool.empty?,
             is_spaced_practice: is_spaced_practice,
             num_assigned_steps: task_steps.size,
@@ -295,6 +297,7 @@ class Tasks::UpdateTaskCaches
           tutor_uuid: mapped_chapter.tutor_uuid,
           title: mapped_chapter.title,
           book_location: mapped_chapter.book_location,
+          baked_book_location: mapped_chapter.baked_book_location,
           has_exercises: pages_array.any? { |pg| pg[:has_exercises] },
           is_spaced_practice: pages_array.all? { |pg| pg[:is_spaced_practice] },
           num_assigned_steps: pages_array.sum { |pg| pg[:num_assigned_steps] },

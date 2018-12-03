@@ -78,6 +78,7 @@ class GetStudentGuide
         {
           title: preferred_pg[:title],
           book_location: book_location,
+          baked_book_location: preferred_pg[:baked_book_location],
           student_count: 1,
           questions_answered_count: questions_answered_count,
           clue: clue,
@@ -94,6 +95,7 @@ class GetStudentGuide
       {
         title: preferred_ch[:title],
         book_location: book_location,
+        baked_book_location: preferred_ch[:baked_book_location],
         student_count: 1,
         questions_answered_count: questions_answered_count,
         clue: clue,

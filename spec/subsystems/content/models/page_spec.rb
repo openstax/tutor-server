@@ -7,7 +7,10 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
   subject(:page) { FactoryBot.create :content_page }
 
   it { is_expected.to belong_to(:chapter) }
+
   it { is_expected.to validate_presence_of(:title) }
+  it { is_expected.to validate_presence_of(:chapter) }
+  it { is_expected.to validate_presence_of(:book_location) }
 
   it { is_expected.to delegate_method(:is_intro?).to(:parser) }
 

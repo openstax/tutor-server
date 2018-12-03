@@ -11,6 +11,7 @@ RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, type: :representer do
       type: "reading",
       title: task_step.tasked.title,
       chapter_section: task_step.tasked.book_location,
+      baked_chapter_section: task_step.tasked.baked_book_location,
       is_completed: false,
       has_recovery: false,
       content_url: task_step.tasked.url,

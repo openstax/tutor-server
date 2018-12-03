@@ -99,6 +99,16 @@ module Api::V1
                description: 'Always [] for books'
              }
 
+    property :baked_chapter_section,
+             type: Array,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { [] },
+             schema_info: {
+               required: true,
+               description: 'Always [] for books'
+             }
+
     collection :chapters,
                as: :children,
                writeable: false,

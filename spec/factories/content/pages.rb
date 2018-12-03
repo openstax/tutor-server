@@ -1,14 +1,15 @@
 FactoryBot.define do
   factory :content_page, class: '::Content::Models::Page' do
     association :chapter, factory: :content_chapter
-    url           { Faker::Internet.url }
-    title         { Faker::Lorem.words(3).join(' ') }
-    content       { Faker::Lorem.paragraphs(2).join("\n") }
-    uuid          { SecureRandom.uuid }
-    version       { Random.rand(1..10) }
-    book_location [1, 1]
-    fragments     []
-    snap_labs     []
+    url                 { Faker::Internet.url }
+    title               { Faker::Lorem.words(3).join(' ') }
+    content             { Faker::Lorem.paragraphs(2).join("\n") }
+    uuid                { SecureRandom.uuid }
+    version             { Random.rand(1..10) }
+    book_location       [1, 1]
+    baked_book_location { [ book_location, [] ].sample }
+    fragments           []
+    snap_labs           []
 
     association :reading_dynamic_pool, factory: :content_pool
     association :reading_context_pool, factory: :content_pool

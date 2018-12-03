@@ -17,6 +17,7 @@
       <th>Book Title</th>
       <th>Book UUID</th>
       <th>Book Locations</th>
+      <th>Baked Book Locations</th>
       <th>CNX Section UUID(s) with Exclusions</th>
     </tr>
   </thead>
@@ -36,6 +37,7 @@
       <td><%= ee.book_hash[:book_title] %></td>
       <td><%= ee.book_hash[:book_uuid] %></td>
       <td><%= ee.page_hashes.map(&:book_location).join(', ') %></td>
+      <td><%= ee.page_hashes.map(&:baked_book_location).join(', ') %></td>
       <td><%= ee.page_hashes.map do |pg|
                 link_to pg.page_uuid, pg.page_url
               end.join(', ').html_safe %></td>

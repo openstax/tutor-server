@@ -156,6 +156,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
             id: @chapter_2.id,
             title: @chapter_2.title,
             book_location: @chapter_2.book_location,
+            baked_book_location: @chapter_2.baked_book_location,
             pages: [
               {
                 id: @page_3.id,
@@ -163,6 +164,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                 uuid: @page_3.uuid,
                 version: @page_3.version,
                 book_location: @page_3.book_location,
+                baked_book_location: @page_3.baked_book_location,
                 last_worked_at: a_kind_of(Time),
                 exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                   {
@@ -186,6 +188,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
             id: @chapter_1.id,
             title: @chapter_1.title,
             book_location: @chapter_1.book_location,
+            baked_book_location: @chapter_1.baked_book_location,
             pages: [
               {
                 id: @page_2.id,
@@ -193,6 +196,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                 uuid: @page_2.uuid,
                 version: @page_2.version,
                 book_location: @page_2.book_location,
+                baked_book_location: @page_2.baked_book_location,
                 last_worked_at: a_kind_of(Time),
                 exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                   {
@@ -208,6 +212,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                 uuid: @page_1.uuid,
                 version: @page_1.version,
                 book_location: @page_1.book_location,
+                baked_book_location: @page_1.baked_book_location,
                 last_worked_at: a_kind_of(Time),
                 exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                   {
@@ -248,6 +253,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                   id: @chapter_2.id,
                   title: @chapter_2.title,
                   book_location: @chapter_2.book_location,
+                  baked_book_location: @chapter_2.baked_book_location,
                   pages: [
                     {
                       id: @page_3.id,
@@ -255,6 +261,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_3.uuid,
                       version: @page_3.version,
                       book_location: @page_3.book_location,
+                      baked_book_location: @page_3.baked_book_location,
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
@@ -267,6 +274,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                   id: @chapter_1.id,
                   title: @chapter_1.title,
                   book_location: @chapter_1.book_location,
+                  baked_book_location: @chapter_1.baked_book_location,
                   pages: [
                     {
                       id: @page_2.id,
@@ -274,6 +282,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_2.uuid,
                       version: @page_2.version,
                       book_location: @page_2.book_location,
+                      baked_book_location: @page_2.baked_book_location,
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
@@ -286,6 +295,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_1.uuid,
                       version: @page_1.version,
                       book_location: @page_1.book_location,
+                      baked_book_location: @page_1.baked_book_location,
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
@@ -304,6 +314,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                   id: @chapter_1.id,
                   title: @chapter_1.title,
                   book_location: @chapter_1.book_location,
+                  baked_book_location: @chapter_1.baked_book_location,
                   pages: [
                     {
                       id: @page_1.id,
@@ -311,6 +322,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_1.uuid,
                       version: @page_1.version,
                       book_location: @page_1.book_location,
+                      baked_book_location: @page_1.baked_book_location,
                       completed: 0,
                       in_progress: 1,
                       not_started: 0,
@@ -361,6 +373,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                   id: @chapter_2.id,
                   title: @chapter_2.title,
                   book_location: @chapter_2.book_location,
+                  baked_book_location: @chapter_2.baked_book_location,
                   pages: [
                     {
                       id: @page_3.id,
@@ -368,6 +381,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_3.uuid,
                       version: @page_3.version,
                       book_location: @page_3.book_location,
+                      baked_book_location: @page_3.baked_book_location,
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
@@ -380,6 +394,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                   id: @chapter_1.id,
                   title: @chapter_1.title,
                   book_location: @chapter_1.book_location,
+                  baked_book_location: @chapter_1.baked_book_location,
                   pages: [
                     {
                       id: @page_2.id,
@@ -387,6 +402,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_2.uuid,
                       version: @page_2.version,
                       book_location: @page_2.book_location,
+                      baked_book_location: @page_2.baked_book_location,
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
@@ -399,6 +415,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_1.uuid,
                       version: @page_1.version,
                       book_location: @page_1.book_location,
+                      baked_book_location: @page_1.baked_book_location,
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
@@ -417,6 +434,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                   id: @chapter_1.id,
                   title: @chapter_1.title,
                   book_location: @chapter_1.book_location,
+                  baked_book_location: @chapter_1.baked_book_location,
                   pages: [
                     {
                       id: @page_1.id,
@@ -424,6 +442,7 @@ RSpec.describe GetCcDashboard, type: :routine, speed: :slow do
                       uuid: @page_1.uuid,
                       version: @page_1.version,
                       book_location: @page_1.book_location,
+                      baked_book_location: @page_1.baked_book_location,
                       completed: 0,
                       in_progress: 1,
                       not_started: 0,

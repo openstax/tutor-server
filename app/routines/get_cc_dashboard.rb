@@ -72,6 +72,7 @@ class GetCcDashboard
             id: chapter.id,
             title: chapter.title,
             book_location: chapter.book_location,
+            baked_book_location: chapter.baked_book_location,
             pages: cc_tasks.group_by do |cc_task|
               map_cc_task_to_page(page_to_page_map, cc_task)
             end.map do |page, cc_tasks|
@@ -88,6 +89,7 @@ class GetCcDashboard
                 uuid: page.uuid,
                 version: page.version,
                 book_location: page.book_location,
+                baked_book_location: page.baked_book_location,
                 completed: completed_role_ids.size,
                 in_progress: in_progress_role_ids.size,
                 not_started: not_started_role_ids.size,
@@ -120,6 +122,7 @@ class GetCcDashboard
         id: chapter.id,
         title: chapter.title,
         book_location: chapter.book_location,
+        baked_book_location: chapter.baked_book_location,
         pages: cc_tasks.group_by{ |cc_task| map_cc_task_to_page(page_to_page_map, cc_task) }
                        .map do |page, cc_tasks|
           tasks = cc_tasks.map(&:task)
@@ -131,6 +134,7 @@ class GetCcDashboard
             uuid: page.uuid,
             version: page.version,
             book_location: page.book_location,
+            baked_book_location: page.baked_book_location,
             last_worked_at: tasks.max_by(&:last_worked_at).last_worked_at,
             exercises: tasked_exercises.sort_by{ |te| te.task_step.number }.map do |te|
               {

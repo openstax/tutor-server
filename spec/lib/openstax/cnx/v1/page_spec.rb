@@ -196,16 +196,16 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         id: '123',
         hash: { 'title' => '<span class="os-number">2.1</span><span class="os-divider"> </span><span class="os-text">Atoms, Isotopes, Ions, and Molecules: The Building Blocks</span>' }
       )
-      expect(page.book_location).to eq ['2', '1']
+      expect(page.baked_book_location).to eq ['2', '1']
       expect(page.title).to eq 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks'
     end
 
-    it 'leaves book_location blank if not present' do
+    it 'leaves baked_book_location blank if not present' do
       page = OpenStax::Cnx::V1::Page.new(
         id: '123',
         hash: { 'title' => '<span class="os-text">Review Questions</span>' }
       )
-      expect(page.book_location).to eq []
+      expect(page.baked_book_location).to eq []
       expect(page.title).to eq 'Review Questions'
     end
 
