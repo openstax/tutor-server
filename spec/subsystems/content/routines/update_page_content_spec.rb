@@ -501,8 +501,11 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
               end
 
               let(:composite_after_hrefs) do
-                [ "/book/#{@book.ecosystem.id}/section/#{@page_2.book_location.reject(&:zero?).join('.')}" ] +
-                composite_before_hrefs[1..-1]
+                [
+                  "/book/#{@book.ecosystem.id}/section/#{
+                    @page_2.book_location.reject(&:zero?).join('.')
+                  }"
+                ] + composite_before_hrefs[1..-1]
               end
 
               before do

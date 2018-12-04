@@ -101,6 +101,7 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_1).to match(
           title: "Acceleration",
           book_location: [3],
+          baked_book_location: [],
           student_count: 1,
           questions_answered_count: 2,
           clue: clue_matcher,
@@ -112,6 +113,7 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_2).to match(
           title: "Force and Newton's Laws of Motion",
           book_location: [4],
+          baked_book_location: [],
           student_count: 1,
           questions_answered_count: 7,
           clue: clue_matcher,
@@ -128,6 +130,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Acceleration",
             book_location: [3, 1],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 2,
             clue: clue_matcher,
@@ -136,6 +139,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Representing Acceleration with Equations and Graphs",
             book_location: [3, 2],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
@@ -148,6 +152,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Force",
             book_location: [4, 1],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 2,
             clue: clue_matcher,
@@ -156,6 +161,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Newton's First Law of Motion: Inertia",
             book_location: [4, 2],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 5,
             clue: clue_matcher,
@@ -164,6 +170,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Newton's Second Law of Motion",
             book_location: [4, 3],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
@@ -172,6 +179,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Newton's Third Law of Motion",
             book_location: [4, 4],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
@@ -230,6 +238,7 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_1).to match(
           title: "Acceleration",
           book_location: [3],
+          baked_book_location: [],
           student_count: 1,
           questions_answered_count: 4,
           clue: clue_matcher,
@@ -241,6 +250,7 @@ RSpec.describe GetStudentGuide, type: :routine do
         expect(chapter_2).to match(
           title: "Force and Newton's Laws of Motion",
           book_location: [4],
+          baked_book_location: [],
           student_count: 1,
           questions_answered_count: 14,
           clue: clue_matcher,
@@ -257,6 +267,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Acceleration",
             book_location: [3, 1],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 4,
             clue: clue_matcher,
@@ -265,6 +276,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Representing Acceleration with Equations and Graphs",
             book_location: [3, 2],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
@@ -277,6 +289,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Force",
             book_location: [4, 1],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 4,
             clue: clue_matcher,
@@ -285,6 +298,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Newton's First Law of Motion: Inertia",
             book_location: [4, 2],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 10,
             clue: clue_matcher,
@@ -293,6 +307,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Newton's Second Law of Motion",
             book_location: [4, 3],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,
@@ -301,6 +316,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           {
             title: "Newton's Third Law of Motion",
             book_location: [4, 4],
+            baked_book_location: [],
             student_count: 1,
             questions_answered_count: 0,
             clue: clue_matcher,

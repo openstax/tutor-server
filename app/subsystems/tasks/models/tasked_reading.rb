@@ -2,6 +2,7 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   acts_as_tasked
 
   json_serialize :book_location, Integer, array: true
+  json_serialize :baked_book_location, Integer, array: true
 
   validates :url, presence: true
   validates :content, presence: true

@@ -220,16 +220,17 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     before(:each) do
       allow(task_step).to receive(:related_content).and_return([{title: "Some title",
-                                                                 book_location: "4.2"}])
+                                                                 book_location: "4.2",
+                                                                 baked_book_location: "4.2"}])
     end
 
     it_behaves_like "a good exercise representation should"
 
     it "has the correct 'related_content'" do
       expect(representation).to include(
-        "related_content" => a_collection_including(
-          a_hash_including({"title" => "Some title", "chapter_section" => "4.2"})
-        )
+        "related_content" => a_collection_including(a_hash_including(
+          {"title" => "Some title", "chapter_section" => "4.2", "baked_chapter_section" => "4.2"}
+        ))
       )
     end
 

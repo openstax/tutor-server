@@ -28,6 +28,7 @@ class Content::Routines::ImportPage
                                                chapter: chapter,
                                                number: number,
                                                book_location: book_location,
+                                               baked_book_location: cnx_page.baked_book_location,
                                                uuid: cnx_page.uuid,
                                                version: cnx_page.version,
                                                short_id: cnx_page.short_id)

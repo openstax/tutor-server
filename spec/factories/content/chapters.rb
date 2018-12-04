@@ -6,16 +6,20 @@ FactoryBot.define do
 
     association :book, factory: :content_book
 
-    title { Faker::Lorem.words(3).join(' ') }
-    book_location [1]
+    title               { Faker::Lorem.words(3).join(' ') }
+    book_location       [1]
+    baked_book_location { [ book_location, [] ].sample }
 
     after(:create) do |chapter, evaluator|
       ecosystem = evaluator.book.ecosystem
       (evaluator.contents[:pages] || {}).each do |page|
-        the_page = FactoryBot.create(:content_page,
-                                      title: page[:title],
-                                      book_location: page[:book_location],
-                                      chapter: chapter)
+        the_page = FactoryBot.create(
+          :content_page,
+          title: page[:title],
+          book_location: page[:book_location],
+          baked_book_location: page[:baked_book_location] || page[:book_location],
+          chapter: chapter
+        )
         lo_hashes = page[:los].map{ |lo| { value: lo, type: :lo } }
         aplo_hashes = page[:aplos].map{ |lo| { value: lo, type: :aplo } }
         tags = Content::Routines::FindOrCreateTags[ecosystem: ecosystem,

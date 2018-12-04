@@ -26,17 +26,17 @@ module OpenStax::Cnx::V1
       feature_ids = [feature_ids].flatten
       return if feature_ids.empty?
 
-      feature_id_css = feature_ids.map{ |feature_id| "##{feature_id}" }.join(', ')
+      feature_id_css = feature_ids.map { |feature_id| "##{feature_id}" }.join(', ')
       node.at_css(feature_id_css)
     end
 
     def initialize(hash: {}, id: nil, url: nil, title: nil, content: nil, book: nil)
-      @hash    = hash
-      @id      = id
-      @url     = url
-      @title   = title
-      @content = content
-      @book = book
+      @hash         = hash
+      @id           = id
+      @url          = url
+      @parsed_title = OpenStax::Cnx::V1::Baked.parse_title(title)
+      @content      = content
+      @book         = book
     end
 
     attr_accessor :chapter_section
@@ -50,9 +50,18 @@ module OpenStax::Cnx::V1
       @url ||= url_for(id)
     end
 
-    # Use the title in the collection hash
+    def parsed_title
+      @parsed_title ||= OpenStax::Cnx::V1::Baked.parse_title(
+        hash.fetch('title') { |key| raise "#{self.class.name} id=#{@id} is missing #{key}" }
+      )
+    end
+
+    def baked_book_location
+      parsed_title[:book_location]
+    end
+
     def title
-      @title ||= hash.fetch('title') { |key| raise "Page id=#{id} is missing #{key}" }
+      parsed_title[:text]
     end
 
     def is_intro?
@@ -67,7 +76,7 @@ module OpenStax::Cnx::V1
     end
 
     def uuid
-      @uuid ||= full_hash.fetch('id') { |key| raise "Book id=#{id} is missing #{key}" }
+      @uuid ||= full_hash.fetch('id') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def short_id
@@ -75,7 +84,7 @@ module OpenStax::Cnx::V1
     end
 
     def version
-      @version ||= full_hash.fetch('version') { |key| raise "Book id=#{id} is missing #{key}" }
+      @version ||= full_hash.fetch('version') { |key| raise "Book id=#{@id} is missing #{key}" }
     end
 
     def canonical_url
@@ -83,7 +92,7 @@ module OpenStax::Cnx::V1
     end
 
     def content
-      @content ||= full_hash.fetch('content') { |key| raise "Page id=#{id} is missing #{key}" }
+      @content ||= full_hash.fetch('content') { |key| raise "Page id=#{@id} is missing #{key}" }
     end
 
     def doc

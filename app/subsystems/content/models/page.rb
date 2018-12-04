@@ -9,6 +9,7 @@ class Content::Models::Page < IndestructibleRecord
   json_serialize :fragments, OpenStax::Cnx::V1::Fragment, array: true
   json_serialize :snap_labs, Hash, array: true
   json_serialize :book_location, Integer, array: true
+  json_serialize :baked_book_location, Integer, array: true
 
   belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :reading_context_pool, class_name: 'Content::Models::Pool', dependent: :destroy
@@ -32,6 +33,7 @@ class Content::Models::Page < IndestructibleRecord
 
   has_many :task_steps, subsystem: :tasks, dependent: :destroy, inverse_of: :page
 
+  #validates :chapter, presence: true
   validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
@@ -47,7 +49,11 @@ class Content::Models::Page < IndestructibleRecord
   end
 
   def related_content
-    { title: tutor_title, book_location: book_location }
+    {
+      title: tutor_title,
+      book_location: book_location,
+      baked_book_location: baked_book_location
+    }
   end
 
   def cnx_id

@@ -23,7 +23,8 @@ class Content::Routines::ImportBookPart
         book: book,
         number: chapter_tracker.value,
         title: cnx_book_part.title,
-        book_location: [chapter_tracker.value]
+        book_location: [chapter_tracker.value],
+        baked_book_location: cnx_book_part.baked_book_location
       )
       chapter.save if save
       transfer_errors_from(chapter, {type: :verbatim}, true)

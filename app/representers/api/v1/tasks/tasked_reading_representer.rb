@@ -30,6 +30,13 @@ module Api::V1::Tasks
                description: 'The chapter and section in the book, e.g. [5, 2]'
              }
 
+    property :baked_book_location,
+             as: :baked_chapter_section,
+             type: Array,
+             writeable: false,
+             readable: true,
+             schema_info: { description: 'The chapter and section in the baked book, e.g. [5, 2]' }
+
     property :content,
              type: String,
              writeable: false,

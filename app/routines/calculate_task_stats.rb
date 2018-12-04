@@ -173,6 +173,7 @@ class CalculateTaskStats
       id: preferred_pg[:id],
       title: preferred_pg[:title],
       chapter_section: preferred_pg[:book_location],
+      baked_chapter_section: preferred_pg[:baked_book_location],
       student_count: student_count,
       correct_count: correct_count,
       incorrect_count: incorrect_count,

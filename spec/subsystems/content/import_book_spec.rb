@@ -57,11 +57,13 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
 
     book.chapters.each_with_index do |chapter, i|
       expect(chapter.book_location).to eq([i + 1])
+      expect(chapter.baked_book_location).to eq []
 
       page_offset = 1
       chapter.pages.each_with_index do |page, pidx|
         page_offset = 0 if page.is_intro?
         expect(page.book_location).to eq([i + 1, pidx + page_offset])
+        expect(page.baked_book_location).to eq []
       end
     end
   end
@@ -117,27 +119,33 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
     part = book.chapters.first
     expect(part.title).to eq "The Study of Life"
     expect(part.book_location).to eq [1]
+    expect(part.baked_book_location).to eq []
 
     page = part.pages.first
     expect(page.title).to eq "Sample module 1"
     expect(page.book_location).to eq [1, 1]
+    expect(page.baked_book_location).to eq []
 
     page = part.pages.second
     expect(page.title).to eq "The Science of Biology"
     expect(page.book_location).to eq [1, 2]
+    expect(page.baked_book_location).to eq []
 
     # Jump to 3rd chapter
 
     part = book.chapters.third
     expect(part.title).to eq "Cell Structure"
     expect(part.book_location).to eq [3]
+    expect(part.baked_book_location).to eq []
 
     page = part.pages.first
     expect(page.title).to eq "Sample module 3"
     expect(page.book_location).to eq [3, 1]
+    expect(page.baked_book_location).to eq []
 
     page = part.pages.second
     expect(page.title).to eq "Studying Cells"
     expect(page.book_location).to eq [3, 2]
+    expect(page.baked_book_location).to eq []
   end
 end

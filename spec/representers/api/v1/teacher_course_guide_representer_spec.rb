@@ -25,6 +25,7 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter, type: :representer do
             {
               title: 'my cool title',
               book_location: [1, 4],
+              baked_book_location: [1, 4],
               student_count: 5,
               questions_answered_count: 25,
               clue: {
@@ -47,6 +48,7 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter, type: :representer do
         {
           title: 'my cool title',
           chapter_section: [1, 4],
+          baked_chapter_section: [1, 4],
           student_count: 5,
           questions_answered_count: 25,
           clue: {

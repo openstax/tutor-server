@@ -5,6 +5,7 @@ class Content::Models::Chapter < IndestructibleRecord
   auto_uuid :tutor_uuid
 
   json_serialize :book_location, Integer, array: true
+  json_serialize :baked_book_location, Integer, array: true
 
   belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
 

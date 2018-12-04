@@ -1,13 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PageTocRepresenter, type: :representer do
-  let(:page) { { id: 1,
-                 cnx_id: '321cba',
-                 short_id: 'shorty',
-                 uuid: 'uuid',
-                 title: 'Neat page',
-                 type: 'baz',
-                 book_location: [4, 3] } }
+  let(:page) do
+    {
+      id: 1,
+      cnx_id: '321cba',
+      short_id: 'shorty',
+      uuid: 'uuid',
+      title: 'Neat page',
+      type: 'baz',
+      book_location: [4, 3],
+      baked_book_location: [4, 3]
+    }
+  end
 
   subject(:represented) { described_class.new(Hashie::Mash.new(page)).to_hash }
 

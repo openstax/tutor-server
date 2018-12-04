@@ -140,6 +140,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           page_uuids = pages.map(&:uuid) + ['null']
           page_urls = pages.map { |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
           book_locations = pages.map { |page| page.book_location.join('.') } + ['null']
+          baked_book_locations = pages.map { |page| page.baked_book_location.join('.') } + ['null']
 
           with_rows_from_csv("by_course") do |rows|
             headers = rows.first
@@ -156,6 +157,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
             expect(data["CNX Book Title"]).to eq @book.title
             expect(data["CNX Book UUID"]).to eq @book.uuid
             expect(data["CNX Book Locations"].split(", ")).to eq book_locations
+            expect(data["CNX Baked Book Locations"].split(", ")).to eq baked_book_locations
             expect(data["CNX Page UUIDs"].split(", ")).to eq page_uuids
             expect(data["CNX Page URLs"].split(", ")).to eq page_urls
           end

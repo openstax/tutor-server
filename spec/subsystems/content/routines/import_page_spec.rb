@@ -25,6 +25,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       expect(result.outputs[:page].uuid).to eq uuid
       expect(result.outputs[:page].version).to eq version
       expect(result.outputs[:page].book_location).to eq book_location
+      expect(result.outputs[:page].baked_book_location).to eq []
     end
 
     it 'converts relative links into absolute links' do
@@ -92,6 +93,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       expect(result.outputs[:page].uuid).to eq uuid
       expect(result.outputs[:page].version).to eq version
       expect(result.outputs[:page].book_location).to eq book_location
+      expect(result.outputs[:page].baked_book_location).to eq []
     end
 
     it 'converts relative links into absolute links' do

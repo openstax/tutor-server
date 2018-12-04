@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181120020412) do
+ActiveRecord::Schema.define(version: 20181203172559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20181120020412) do
     t.integer  "content_all_exercises_pool_id"
     t.text     "book_location",                 default: "[]",                null: false
     t.uuid     "tutor_uuid",                    default: "gen_random_uuid()"
+    t.text     "baked_book_location",           default: "[]",                null: false
   end
 
   add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
@@ -183,6 +184,7 @@ ActiveRecord::Schema.define(version: 20181120020412) do
     t.text     "fragments",                        default: "[]",                null: false
     t.text     "snap_labs",                        default: "[]",                null: false
     t.uuid     "tutor_uuid",                       default: "gen_random_uuid()"
+    t.text     "baked_book_location",              default: "[]",                null: false
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree
@@ -994,12 +996,13 @@ ActiveRecord::Schema.define(version: 20181120020412) do
   end
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
-    t.string   "url",                          null: false
-    t.text     "content",                      null: false
+    t.string   "url",                                null: false
+    t.text     "content",                            null: false
     t.string   "title"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.text     "book_location", default: "[]", null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.text     "book_location",       default: "[]", null: false
+    t.text     "baked_book_location", default: "[]", null: false
   end
 
   create_table "tasks_tasked_videos", force: :cascade do |t|

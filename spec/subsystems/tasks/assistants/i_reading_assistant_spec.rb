@@ -63,7 +63,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         klass: Tasks::Models::TaskedReading,
         title: "Forces and Newton's Laws of Motion",
         related_content: [
-          { 'title' => "Forces and Newton's Laws of Motion", 'book_location' => [8, 1] }
+          {
+            'title' => "Forces and Newton's Laws of Motion",
+            'book_location' => [8, 1],
+            'baked_book_location' => []
+          }
         ],
         fragment_index: 0
       }
@@ -75,7 +79,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         {
           klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [ { 'title' => "Force", 'book_location' => [8, 2] } ],
+          related_content: [
+            { 'title' => "Force", 'book_location' => [8, 2], 'baked_book_location' => [] }
+          ],
           fragment_index: 0
         }
       ]
@@ -164,6 +170,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
           if task_step.tasked_type.demodulize == 'TaskedReading'
             expect(task_step.tasked.book_location).to eq(page.book_location)
+            expect(task_step.tasked.baked_book_location).to eq(page.baked_book_location)
           end
 
           other_task_steps = core_task_steps.reject{|ts| ts == task_step}

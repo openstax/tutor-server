@@ -60,6 +60,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     Tasks::Models::TaskedReading.new(task_step: step,
                                      url: page.url,
                                      book_location: page.book_location,
+                                     baked_book_location: page.baked_book_location,
                                      title: title,
                                      content: reading_fragment.to_html)
   end
