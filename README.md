@@ -29,7 +29,7 @@ cd tutor-server
 Then install the proper version of ruby using rbenv:
 
 ```
-rbenv install 2.3.6
+rbenv install 2.3.7
 ```
 
 Make sure that `which ruby` and `which gem` point to your `.rbenv` folder,
@@ -97,7 +97,8 @@ Open that file with your favorite text editor:
 Change `peer` to `md5` or create a new `md5` entry for `localhost` (127.0.0.1).
 Then restart the PostgreSQL daemons with:
 
-`sudo service postgresql restart`
+* Linux: `sudo service postgresql restart`
+* OS X: `sudo brew services restart postgresql`
 
 Once Tutor is up and running the database superuser role can be safely removed from the user.
 However, it is convenient to leave `ox_tutor` as a superuser so you can easily drop and re-create
