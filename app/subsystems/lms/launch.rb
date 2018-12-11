@@ -25,8 +25,12 @@ class Lms::Launch
     :context_id
   ]
 
-  def self.from_request(request)
-    new(request_parameters: request.request_parameters, request_url: request.url)
+  def self.from_request(request, authenticator: nil)
+    new(
+      request_parameters: request.request_parameters,
+      request_url: request.url,
+      authenticator: authenticator
+    )
   end
 
   def persist!
@@ -155,7 +159,7 @@ class Lms::Launch
     # restrict this here in code by requiring, in the auto create call, that a course only be used
     # in one Context.
 
-    raise CourseKeysAlreadyUsed if Lms::Models::Context.where(course: course).exists?
+    raise CourseKeysAlreadyUsed if course && Lms::Models::Context.where(course: course).exists?
 
     Lms::Models::Context.create!(
       lti_id: context_id,
@@ -200,13 +204,13 @@ class Lms::Launch
 
   protected
 
-  def initialize(request_parameters:, request_url:, trusted: false)
+  def initialize(request_parameters:, request_url:, trusted: false, authenticator: nil)
     @request_parameters = request_parameters
     @request_url = request_url
 
     # ims-lti gem gives a lot of "unknown parameter" warnings even for params
     # that Canvas commonly sends; silence those except in dev env
-    warning_verbosity = Rails.env.development? ? $VERBOSE : nil
+
     if trusted
       with_warnings(warning_verbosity) do
         @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
@@ -220,17 +224,20 @@ class Lms::Launch
       end
 
       with_warnings(warning_verbosity) do
-        authenticator = ::IMS::LTI::Services::MessageAuthenticator.new(
+        authenticator = authenticator || ::IMS::LTI::Services::MessageAuthenticator.new(
           request_url,
           request_parameters,
           app.secret
         )
-
         raise InvalidSignature if !authenticator.valid_signature?
-
         @message = authenticator.message
       end
     end
+  end
+
+
+  def warning_verbosity
+    Rails.env.development? ? $VERBOSE : nil
   end
 
   public
