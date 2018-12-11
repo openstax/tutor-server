@@ -388,6 +388,7 @@ Rails.application.routes.draw do
       resources :brains, shallow: true
       resources :cohorts, shallow: true do
         put 'reassign_members'
+        get 'members'
       end
     end
 

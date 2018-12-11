@@ -1,0 +1,23 @@
+  <div>
+    Study: <%= link_to @cohort.study.name, research_study_path(@cohort.study) %>
+  </div>
+  <div>
+    <h3>Cohort <%= @cohort.name %> Members</h3>
+  </div>
+<hr>
+<table class="table">
+  <thead>
+    <tr>
+      <td>Login</td>
+      <th>Identifier</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @cohort.cohort_members.includes(student: { role: :profile }).each do |cm| %>
+    <tr>
+      <td><%= link_to cm.student.role.username, info_admin_users_path(id: cm.student.role.profile.id) %></td>
+      <td><%= cm.student.student_identifier %></td>
+    </tr>
+    <% end %>
+  </tbody>
+  </table>

@@ -1,7 +1,7 @@
 class Research::CohortsController < Research::BaseController
 
   before_action :get_study, only: [:create]
-  before_action :get_cohort, only: [:show, :edit, :update, :destroy, :reassign_members]
+  before_action :get_cohort, only: [:show, :edit, :update, :members, :destroy, :reassign_members]
 
   def new
     @cohort = Research::Models::Cohort.new
