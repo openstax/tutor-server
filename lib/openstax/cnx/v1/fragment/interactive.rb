@@ -2,7 +2,7 @@ class OpenStax::Cnx::V1::Fragment
   class Interactive < Embedded
 
     # CSS to find interactive containers (anything inside may be replaced with an iframe)
-    CONTAINER_CSS = 'figure.ost-embed-container, figure:has-descendants("a.os-interactive-link")'
+    CONTAINER_CSS = 'figure.ost-embed-container, .os-figure:has-descendants("a.os-interactive-link"), figure:has-descendants("a.os-interactive-link")'
 
     # CSS to find links to be embedded inside containers
     TAGGED_LINK_CSS = 'a.os-embed, a.os-interactive-link'
