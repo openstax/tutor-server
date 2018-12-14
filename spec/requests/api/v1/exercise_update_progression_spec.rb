@@ -4,13 +4,15 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
   let(:application)     { FactoryBot.create :doorkeeper_application }
   let(:user_1)          { FactoryBot.create(:user) }
-  let(:user_1_token)    { FactoryBot.create :doorkeeper_access_token,
-                                              application: application,
-                                              resource_owner_id: user_1.id }
+  let(:user_1_token)    do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: user_1.id
+  end
 
-  let(:tasked) { FactoryBot.create(:tasks_tasked_exercise,
-                                     :with_tasking,
-                                     tasked_to: Role::GetDefaultUserRole[user_1]) }
+  let(:tasked) do
+    FactoryBot.create :tasks_tasked_exercise, :with_tasking,
+                                              tasked_to: Role::GetDefaultUserRole[user_1]
+  end
 
   let(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 
