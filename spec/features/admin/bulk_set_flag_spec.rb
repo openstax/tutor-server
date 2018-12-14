@@ -29,7 +29,7 @@ RSpec.feature 'Bulk set course flag', js: true do
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'Flag values were updated')
-    expect(page).to have_text('LMS: enable allowed')
+    expect(page).to have_text('LMS: no choice made')
   end
 
   scenario 'select all on all pages with no query' do
@@ -47,7 +47,7 @@ RSpec.feature 'Bulk set course flag', js: true do
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'Flag values were updated')
-    expect(page).to have_text('LMS: enable allowed')
+    expect(page).to have_text('LMS: no choice made')
   end
 
   scenario 'select all on all pages with query' do
@@ -65,7 +65,7 @@ RSpec.feature 'Bulk set course flag', js: true do
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'Flag values were updated')
-    expect(page).to have_text('LMS: enable allowed')
+    expect(page).to have_text('LMS: no choice made')
   end
 
 end

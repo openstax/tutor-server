@@ -111,14 +111,25 @@
                 } archived) / #{total_periods} periods (#{archived_periods} archived)"
               %> /
               <%= course_info.does_cost ? "Does Cost" : "Does NOT Cost" %> /
-              LMS: <%= course_info.is_lms_enabling_allowed ? "enable allowed" : "enable not allowed" %> -
-              <% if course_info.is_lms_enabled.nil? %>
+              LMS:
+              <% if !course_info.is_lms_enabling_allowed %>
+                enable not allowed
+              <% elsif course_info.is_lms_enabled.nil? %>
                 no choice made
               <% elsif course_info.is_lms_enabled %>
                 enabled
+                <% if course_info.is_access_switchable? %>
+                  <% if course_info.lms_context.present? %>
+                    &amp; paired (<%= link_to('unpair', unpair_lms_admin_course_path(course_info),
+                                method: :delete, data: { confirm: 'Are you sure?' })%>)
+                  <% end %>
+                <% else %>
+                   LOCKED
+                <% end %>
               <% else %>
                 disabled
               <% end %>
+
             </div>
           </div>
           <div class="card-content-right">
