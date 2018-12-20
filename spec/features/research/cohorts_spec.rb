@@ -19,7 +19,7 @@ RSpec.feature 'Cohorts', js: true do
       fill_in 'Name', with: 'AAA'
       click_button 'Save'
 
-      expect(page).to have_content(/Cohorts:.*AAA \/ ID:/)
+      expect(page).to have_content(/Cohorts:.*AAA \/ 0 Members/)
     end
   end
 

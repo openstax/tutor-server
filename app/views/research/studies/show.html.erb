@@ -42,7 +42,7 @@
     <div class="course_listing_entries">
       <% @study.cohorts.each do |cohort| %>
         <div class="cohort_entry">
-          <%= link_to cohort.name, research_cohort_path(cohort) %> / ID: <%= cohort.id %> / <%= cohort.cohort_members_count %> Members
+          <%= link_to cohort.name, research_cohort_path(cohort) %> / <%= link_to "#{cohort.cohort_members_count} Members", research_cohort_members_path(cohort) %>
         </div>
       <% end %>
       <% if !@study.active? %>
