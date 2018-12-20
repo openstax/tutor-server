@@ -6,6 +6,18 @@ module Lms
 
       belongs_to :tool_consumer
       belongs_to :course, subsystem: :course_profile
+
+      before_destroy :confirm_course_access_is_switchable
+
+      protected
+
+      def confirm_course_access_is_switchable
+        if course && !course.is_access_switchable?
+          errors.add(:course, 'access is not switchable')
+        end
+      end
+
     end
+
   end
 end

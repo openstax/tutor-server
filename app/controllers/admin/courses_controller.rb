@@ -33,6 +33,11 @@ class Admin::CoursesController < Admin::BaseController
     get_new_course
   end
 
+  def unpair_lms
+    Lms::UnpairCourse.call(course: CourseProfile::Models::Course.find(params[:id]))
+    redirect_to admin_courses_path
+  end
+
   def create
     handle_with(Admin::CoursesCreate,
                 success: ->(*) {

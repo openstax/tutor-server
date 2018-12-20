@@ -3,6 +3,12 @@ require 'rails_helper'
 RSpec.describe Lms::PairLaunchToCourse do
 
   let(:course) { FactoryBot.create :course_profile_course }
+  let(:message) {
+    OpenStruct.new(context_id: '1234', tool_consumer_instance_guid: '4242')
+  }
+  let(:authenticator) {
+    OpenStruct.new(:valid_signature? => true, message: message)
+  }
 
   it "sets errors when launch doesn't exist" do
     result = subject.call(launch_id: 123, course: course)
@@ -13,12 +19,9 @@ RSpec.describe Lms::PairLaunchToCourse do
 
   it "pairs launch to a course" do
     app = Lms::WilloLabs.new
-    expect_any_instance_of(
-      ::IMS::LTI::Services::MessageAuthenticator
-    ).to receive(:valid_signature?).and_return(true)
-
     launch = Lms::Launch.from_request(
-      FactoryBot.create(:launch_request, app: app)
+      FactoryBot.create(:launch_request, app: app),
+      authenticator: authenticator
     )
     result = subject.call(launch_id: launch.persist!, course: course)
     expect(result.outputs.success).to be true
