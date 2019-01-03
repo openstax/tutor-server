@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 require 'feature_js_helper'
 
@@ -58,7 +59,7 @@ RSpec.feature 'Administration of queued jobs', :js do
   end
 
   scenario 'Getting more details about a job' do
-    error = Lev::Error.new(code: 'bad', message: 'awful')
+    error = Lev::Error.new(code: 'bad', message: 'awful').as_json
     status.add_error(error)
     status.save(something_spectacular: 'For all the good children')
 
@@ -66,6 +67,7 @@ RSpec.feature 'Administration of queued jobs', :js do
     click_link status.id
 
     expect(current_path).to eq(admin_job_path(status.id))
+    save_and_open_page
     expect(page).to have_css('.job_errors', text: 'bad - awful')
     expect(page).to have_css('.job_something_spectacular',
                              text: 'For all the good children')
