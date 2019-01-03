@@ -1,11 +1,11 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?order_by=number%20DESC,%20version%20ASC&q=content:fOrCe
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&order_by=number%20DESC%2C%20version%20ASC&q=content%3AfOrCe+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1

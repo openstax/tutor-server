@@ -662,11 +662,11 @@ http_interactions:
     http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:53 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:e26d1433-f8e4-41db-a757-0e061d6d2737,apbio-ch04-s02-lo01,apbio-ch04-s02-lo02,apbio-ch04-s02-aplo-1-32,apbio-ch04-s02-aplo-2-6,apbio-ch04-s02-aplo-2-7%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3Ae26d1433-f8e4-41db-a757-0e061d6d2737%2Capbio-ch04-s02-lo01%2Capbio-ch04-s02-lo02%2Capbio-ch04-s02-aplo-1-32%2Capbio-ch04-s02-aplo-2-6%2Capbio-ch04-s02-aplo-2-7%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1

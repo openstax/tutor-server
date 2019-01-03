@@ -1034,11 +1034,11 @@ http_interactions:
     http_version:
   recorded_at: Fri, 20 Oct 2017 19:14:51 GMT
 - request:
-    method: get
-    uri: "<openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:f27eec7f-2937-45fc-bb44-60dab5261a3d,context-cnxmod:c31232cc-cf38-4301-9845-5b801e70fa9a,context-cnxmod:2c214a03-1f38-4937-ad34-b341a6792093,context-cnxmod:3d0b6428-3979-405e-8e81-06010035447c,context-cnxmod:0d37ed81-391d-45a8-ba98-530729b798f9%22"
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3Af27eec7f-2937-45fc-bb44-60dab5261a3d%2Ccontext-cnxmod%3Ac31232cc-cf38-4301-9845-5b801e70fa9a%2Ccontext-cnxmod%3A2c214a03-1f38-4937-ad34-b341a6792093%2Ccontext-cnxmod%3A3d0b6428-3979-405e-8e81-06010035447c%2Ccontext-cnxmod%3A0d37ed81-391d-45a8-ba98-530729b798f9%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.2

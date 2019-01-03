@@ -366,11 +366,11 @@ http_interactions:
     http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:12 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:%22context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a,k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02%22
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3A%22context-cnxmod%3A95e61258-2faf-41d4-af92-f62e1414175a%2Ck12phys-ch04-s01-lo01%2Ck12phys-ch04-s01-lo02%22+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1

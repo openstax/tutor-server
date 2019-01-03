@@ -185,7 +185,7 @@ http_interactions:
         1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:33 GMT
 - request:
     method: get
@@ -329,7 +329,7 @@ http_interactions:
         "version": "1", "revised": "2015-05-29T19:05:07Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:33 GMT
 - request:
     method: get
@@ -865,7 +865,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:33 GMT
 - request:
     method: get
@@ -1762,7 +1762,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-05-29T19:10:15Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
@@ -1881,7 +1881,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
@@ -2203,7 +2203,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
@@ -2647,7 +2647,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:21:00Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
@@ -3236,7 +3236,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
@@ -3959,14 +3959,14 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:27:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=id:1982@1,1983@1,1984@1,1985@1,1986@1,1987@1,1988@1,1989@1,1990@1,1991@1,1992@1,1993@1,1994@1,1995@1,1996@1,1997@1,1998@1,1999@1,2000@1,2001@1,2002@1,2003@1,2004@1,2005@1,2006@1,2007@1,2008@1,2009@1,2010@1,2011@1,2012@1,2013@1,2014@1,2015@1,2016@1,2017@1,2018@1,2019@1,2020@353,2021@1,2022@1,2023@1,2024@1,2025@1,2026@1,2027@1,2028@1,2029@1,2030@1,2031@1,2032@1,2033@1,2034@1,2035@1,2036@1,2037@1,2038@1,2039@1,2040@2,2041@1,2042@1,2043@1,2044@1,2045@1,2046@1,2047@1,2048@1,2049@1,2050@1,2051@1,2052@1,2053@1,2054@1,2055@1,2056@1,2057@1,2058@1,2059@1,2060@1,2061@1,2062@1,2063@1,2064@1,2065@1,2066@1,2067@1,2068@1,2069@1,2070@1,2071@1,2072@1,2073@1,2074@1,2075@1,2076@1,2077@1,2078@1,2079@1,2080@1,2081@1,2082@1,2083@1,2084@1,2085@1,2086@1,2087@1,2088@1,2089@1,2090@1,2091@1,2092@1,2093@1,2094@1,2095@1,2096@1,2097@1,2098@1,2099@1,2100@1,2101@1,2102@1,2103@1,2104@1,2105@1,2106@1,2107@1,2108@1,2109@1,2110@1,2111@1,2112@1,2113@1,2114@1,2115@1,2116@1,2117@1,2118@1,2119@1,2120@530,2121@1,2122@1,2123@1,2124@1,2125@1,2126@1,2127@1,2128@1,2129@1,2130@1,2131@1,2132@1,2133@1,2134@1,2135@1,2136@1,2137@17,2138@126,2139@17,2140@15,2141@1,2142@1,2143@1,2144@1,2145@1,2146@1,2147@1,2148@1,2149@1,2150@1,2151@1,2152@1,2153@1,2154@1,2155@1,2156@1,2157@1,2158@1,2159@1,2160@1,2161@1,2162@1,2163@1,2164@1,2165@1,2166@1,2167@1,2168@1,2169@1,2170@1,2171@1,2172@1,2173@1,2174@1,2175@1,2176@1,2177@1,2178@1,2179@1,2180@1,2181@1,2182@1,2183@1,2184@1,2185@1,2186@1,2187@1,2188@1,2189@1,2190@1,2191@1,2192@1,2193@1,2194@1,2195@1,2196@1
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=uid%3A1982%401%2C1983%401%2C1984%401%2C1985%401%2C1986%401%2C1987%401%2C1988%401%2C1989%401%2C1990%401%2C1991%401%2C1992%401%2C1993%401%2C1994%401%2C1995%401%2C1996%401%2C1997%401%2C1998%401%2C1999%401%2C2000%401%2C2001%401%2C2002%401%2C2003%401%2C2004%401%2C2005%401%2C2006%401%2C2007%401%2C2008%401%2C2009%401%2C2010%401%2C2011%401%2C2012%401%2C2013%401%2C2014%401%2C2015%401%2C2016%401%2C2017%401%2C2018%401%2C2019%401%2C2020%40353%2C2021%401%2C2022%401%2C2023%401%2C2024%401%2C2025%401%2C2026%401%2C2027%401%2C2028%401%2C2029%401%2C2030%401%2C2031%401%2C2032%401%2C2033%401%2C2034%401%2C2035%401%2C2036%401%2C2037%401%2C2038%401%2C2039%401%2C2040%402%2C2041%401%2C2042%401%2C2043%401%2C2044%401%2C2045%401%2C2046%401%2C2047%401%2C2048%401%2C2049%401%2C2050%401%2C2051%401%2C2052%401%2C2053%401%2C2054%401%2C2055%401%2C2056%401%2C2057%401%2C2058%401%2C2059%401%2C2060%401%2C2061%401%2C2062%401%2C2063%401%2C2064%401%2C2065%401%2C2066%401%2C2067%401%2C2068%401%2C2069%401%2C2070%401%2C2071%401%2C2072%401%2C2073%401%2C2074%401%2C2075%401%2C2076%401%2C2077%401%2C2078%401%2C2079%401%2C2080%401%2C2081%401%2C2082%401%2C2083%401%2C2084%401%2C2085%401%2C2086%401%2C2087%401%2C2088%401%2C2089%401%2C2090%401%2C2091%401%2C2092%401%2C2093%401%2C2094%401%2C2095%401%2C2096%401%2C2097%401%2C2098%401%2C2099%401%2C2100%401%2C2101%401%2C2102%401%2C2103%401%2C2104%401%2C2105%401%2C2106%401%2C2107%401%2C2108%401%2C2109%401%2C2110%401%2C2111%401%2C2112%401%2C2113%401%2C2114%401%2C2115%401%2C2116%401%2C2117%401%2C2118%401%2C2119%401%2C2120%40530%2C2121%401%2C2122%401%2C2123%401%2C2124%401%2C2125%401%2C2126%401%2C2127%401%2C2128%401%2C2129%401%2C2130%401%2C2131%401%2C2132%401%2C2133%401%2C2134%401%2C2135%401%2C2136%401%2C2137%4017%2C2138%40126%2C2139%4017%2C2140%4015%2C2141%401%2C2142%401%2C2143%401%2C2144%401%2C2145%401%2C2146%401%2C2147%401%2C2148%401%2C2149%401%2C2150%401%2C2151%401%2C2152%401%2C2153%401%2C2154%401%2C2155%401%2C2156%401%2C2157%401%2C2158%401%2C2159%401%2C2160%401%2C2161%401%2C2162%401%2C2163%401%2C2164%401%2C2165%401%2C2166%401%2C2167%401%2C2168%401%2C2169%401%2C2170%401%2C2171%401%2C2172%401%2C2173%401%2C2174%401%2C2175%401%2C2176%401%2C2177%401%2C2178%401%2C2179%401%2C2180%401%2C2181%401%2C2182%401%2C2183%401%2C2184%401%2C2185%401%2C2186%401%2C2187%401%2C2188%401%2C2189%401%2C2190%401%2C2191%401%2C2192%401%2C2193%401%2C2194%401%2C2195%401%2C2196%401+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -10271,6 +10271,6 @@ http_interactions:
         XCI+NDkwXFwsXFx0ZXh0e059PC9zcGFuPiJ9XSwiaGludHMiOltdLCJmb3Jt
         YXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9pY2UiXSwiY29t
         Ym9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Wed, 30 Mar 2016 02:02:38 GMT
 recorded_with: VCR 2.9.3

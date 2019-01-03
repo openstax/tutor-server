@@ -1,11 +1,11 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: <openstax_exercises_url>/api/exercises?q=tag:k12phys-ch04-s01-lo01
+    method: post
+    uri: "<openstax_exercises_url>/api/exercises/search"
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: 'page=1&q=tag%3Ak12phys-ch04-s01-lo01+collaborator%3Aopenstax'
     headers:
       User-Agent:
       - Faraday v0.9.1
