@@ -1,4 +1,6 @@
 module DashboardRoutineMethods
+  BL_TIMEOUT = 30.minutes
+
   def self.included(base)
     base.lev_routine
 
@@ -40,10 +42,14 @@ module DashboardRoutineMethods
       task.past_open? current_time: current_time
     end if role_type != :teacher
 
+    bl_expired = BL_TIMEOUT.ago
     ready_task_ids = Tasks::IsReady[tasks: tasks]
-    ready_tasks = tasks.select { |task| ready_task_ids.include? task.id }
-
-    outputs.tasks = ready_tasks
+    ready_tasks = tasks.select { |task|
+      ready_task_ids.include?(task.id)
+    }
+    outputs.tasks = tasks.select { |task|
+      task.created_at < bl_expired || ready_task_ids.include?(task.id)
+    }
     outputs.all_tasks_are_ready = ready_tasks == tasks && (
       role_type != :student || Tasks::Models::TaskPlan
                                  .joins(:tasking_plans)
@@ -55,5 +61,10 @@ module DashboardRoutineMethods
                                  .where { first_published_at != nil }
                                  .count <= all_tasks.size
     )
+    if ready_tasks != outputs.tasks
+      err = "TASK READINESS TIMED OUT! student role: #{role.id}"
+      Rails.logger.warn(err)
+      Raven.capture_message(err)
+    end
   end
 end
