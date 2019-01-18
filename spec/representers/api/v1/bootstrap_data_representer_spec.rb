@@ -18,7 +18,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "courses" => [], # not testing this since it's too expensive to generate meaningful course data
       "accounts_api_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'api',
       "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
-      "osweb_base_url" => 'https://oscms.openstax.org',
+      "osweb_base_url" => 'https://cms.openstax.org',
       "tutor_api_url" => 'https://example.com/api',
       "hypothesis" => a_hash_including(
         "host" => Rails.application.secrets['hypothesis']['host'],
