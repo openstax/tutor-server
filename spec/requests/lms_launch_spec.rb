@@ -30,7 +30,6 @@ RSpec.describe 'LMS Launch', type: :request do
     context "not enrolled" do
       it 'redirects the student to enrollment' do
         expect_any_instance_of(Lms::Launch).to receive(:update_tool_consumer_metadata!)
-
         simulator.add_student("bob")
         simulator.launch(user: "bob", assignment: "tutor")
         bob_user = launch_helper.complete_the_launch_locally
@@ -129,8 +128,9 @@ RSpec.describe 'LMS Launch', type: :request do
   end
 
   it 'gives an error for unsupported role' do
-    simulator.add_administrator("admin")
-    simulator.launch(user: "admin", assignment: "tutor")
+    params = simulator.launch(
+      user: "bob", assignment: "tutor",
+    )
     expect_error("Only the course instructor and enrolled")
   end
 
