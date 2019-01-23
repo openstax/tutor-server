@@ -186,11 +186,32 @@ class Lms::Launch
     return if !is_assignment?
 
     Lms::Models::CourseScoreCallback.transaction do
+      # per https://www.imsglobal.org/specs/ltiv1p1p1/implementation-guide
+      # resource_link_id corresponds to a link to the assignment
+      # lis_result_sourcedid is LIS Result Identifier associated with the
+      # launch and identifies a unique row and column within the gradebook.
+      # only the most recent resource_link_id should be retained
       Lms::Models::CourseScoreCallback.where(
         course: context.course,
         profile: user.to_model,
         resource_link_id: resource_link_id
       ).destroy_all
+
+      # remove any duplicated callbacks
+      Lms::Models::CourseScoreCallback.where(
+        result_sourcedid: result_sourcedid,
+        outcome_url: outcome_url
+      ).each do |csc|
+        # if the profile for the duplicate CourseScoreCallback was
+        # abandoned then it's safe to destroy it
+        # But something is broken if the profile has joined a course
+        if UserIsCourseStudent[course: csc.course, user: csc.profile]
+          raise AlreadyUsed
+        else
+          csc.destroy!
+        end
+      end
+#        .destroy_all
 
       Lms::Models::CourseScoreCallback.create!(
         resource_link_id: resource_link_id,
