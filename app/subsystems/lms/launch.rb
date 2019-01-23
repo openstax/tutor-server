@@ -90,10 +90,9 @@ class Lms::Launch
     # Let's start with recognizing only definite instructor and student roles; there
     # are a zillion roles defined in LIS and JP thinks we should be aware of the roles
     # we are handling and which we consider to be instructors.
-
     @role ||= begin
       lms_roles = (request_parameters[:roles] || '').split(',')
-      if lms_roles.any?{|lms_role| lms_role.match(/Instructor/)}
+      if lms_roles.any?{|lms_role| lms_role.match(/Instructor|Creator|Faculty|Mentor|Staff|Support|Admin/)}
         :instructor
       elsif lms_roles.any?{|lms_role| lms_role.match(/Student|Learner/)}
         :student
