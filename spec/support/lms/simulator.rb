@@ -143,6 +143,7 @@ class Lms::Simulator
     # makes it to the right place in our tests.
 
     rspec_dummy_url = "http://www.example.com/"
+
     auth = OAuth::Consumer.new(app[:key], app[:secret], site: rspec_dummy_url)
     token = OAuth::AccessToken.new(auth)
 
@@ -271,14 +272,6 @@ class Lms::Simulator
   #
   #############################################################################
 
-  protected
-
-  attr_reader :spec
-
-  def new_launch
-    Launch.new(self)
-  end
-
   def add_assignment(name)
     @assignments[name] ||= {
       sourcedids: {}
@@ -304,5 +297,14 @@ class Lms::Simulator
   def outcome_url
     "#{simulator_url}outcome"
   end
+
+  protected
+
+  attr_reader :spec
+
+  def new_launch
+    Launch.new(self)
+  end
+
 
 end
