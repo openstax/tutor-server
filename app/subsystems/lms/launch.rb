@@ -87,20 +87,23 @@ class Lms::Launch
   end
 
   def role
-    # Let's start with recognizing only definite instructor and student roles; there
-    # are a zillion roles defined in LIS and JP thinks we should be aware of the roles
-    # we are handling and which we consider to be instructors.
-
-    @role ||= begin
-      lms_roles = (request_parameters[:roles] || '').split(',')
-      if lms_roles.any?{|lms_role| lms_role.match(/Instructor/)}
-        :instructor
-      elsif lms_roles.any?{|lms_role| lms_role.match(/Student|Learner/)}
-        :student
-      else
-        :other
+      # We start with recognizing only the roles that we can logically map to
+      # either an instructor or student
+      # There are a zillion other roles that we don't support
+      # The accounts service does support other types of accounts such as
+      # "Administrator", "Adjunct", and "Librarian", but we only send
+      # "instructor" or "student" because that's what we need returned in order
+      # for Tutor to setup the user with the proper access
+      @role ||= begin
+        lms_roles = (request_parameters[:roles] || '').split(',')
+        if lms_roles.any?{|lms_role| lms_role.match(/Instructor|Creator|Faculty|Mentor|Staff|Support|Admin/)}
+          :instructor
+        elsif lms_roles.any?{|lms_role| lms_role.match(/Student|Learner/)}
+          :student
+        else
+          :other
+        end
       end
-    end
   end
 
   def is_student?
