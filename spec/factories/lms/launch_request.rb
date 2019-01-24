@@ -42,7 +42,8 @@ FactoryBot.define do
           tool_consumer_instance_guid: tool_consumer_instance_guid,
           lti_message_type: "basic-lti-launch-request",
           lti_version: 'LTI-1p0',
-          context_id: context_id
+          context_id: context_id,
+          resource_link_id: Faker::Internet.url,
         }).compact,
         request_url: request_url
       )
