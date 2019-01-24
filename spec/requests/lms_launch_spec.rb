@@ -58,6 +58,21 @@ RSpec.describe 'LMS Launch', type: :request do
         expect_course_score_callback_count(user: bob_user, count: 1)
       end
 
+      it 'errors for course score callback in use' do
+        expect(UserIsCourseStudent).to receive(:[]).and_return(true)
+        simulator.reuse_sourcedids!
+        FactoryBot.create :lms_course_score_callback,
+                               result_sourcedid: simulator.sourcedid!(
+                                 user: "bob", assignment: "tutor"
+                               ),
+                               outcome_url: simulator.outcome_url,
+                               course: course
+        simulator.add_student("bob")
+        simulator.launch(user: "bob", assignment: "tutor")
+        launch_helper.complete_the_launch_locally
+        expect_error("already been used for a registration")
+      end
+
       it 'complains about reused launch nonce' do
         simulator.add_student("bob")
         simulator.launch(user: "bob", assignment: "tutor")
@@ -75,7 +90,7 @@ RSpec.describe 'LMS Launch', type: :request do
         student = AddUserAsPeriodStudent[period: period, user: bob_user].student
         CourseMembership::InactivateStudent[student: student]
         simulator.launch(user: "bob", assignment: "tutor")
-        bob_user = launch_helper.complete_the_launch_locally
+        launch_helper.complete_the_launch_locally
 
         expect(response.body).to match("/course/#{course.id}")
       end
@@ -90,7 +105,7 @@ RSpec.describe 'LMS Launch', type: :request do
         simulator.set_launch_defaults(course: "physics")
         simulator.add_teacher("teacher")
         simulator.launch(user: "teacher", assignment: "tutor")
-        teacher_user = launch_helper.complete_the_launch_locally
+        launch_helper.complete_the_launch_locally
 
         launch_helper.pair_launch_to_course
 

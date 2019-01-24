@@ -70,6 +70,8 @@ class LmsController < ApplicationController
 
     rescue Lms::Launch::LmsDisabled => ee
       fail_for_lms_disabled(launch, context) and return
+    rescue Lms::Launch::CourseScoreInUse => ee
+      fail_for_course_score_in_use(launch) and return
     rescue Lms::Launch::CourseKeysAlreadyUsed => ee
       fail_for_course_keys_already_used(launch) and return
     rescue Lms::Launch::AlreadyUsed => ee
@@ -119,13 +121,17 @@ class LmsController < ApplicationController
   def complete_launch
     # Part 3 of 3 in how Tutor processes the launch - gets the now authenticated user to
     # their course (or the enrollment screen into it)
-
     begin
       launch = Lms::Launch.from_id(session[:launch_id])
+      process_completed_launch(launch)
     rescue Lms::Launch::CouldNotLoadLaunch => ee
-      fail_for_already_used and return
+      fail_for_already_used
+    rescue Lms::Launch::CourseScoreInUse => ee
+      fail_for_course_score_in_use(launch)
     end
+  end
 
+  def process_completed_launch(launch)
     # Later may be nil if we are supposed to handle admin-installed apps with a pairing step here
     raise "Context cannot be nil" if launch.context.nil?
 
@@ -197,6 +203,11 @@ class LmsController < ApplicationController
   def fail_for_already_used
     log(:info) { "Nonce reused in launch #{session[:launch_id]}"}
     render_minimal_error(:fail_already_used)
+  end
+
+  def fail_for_course_score_in_use(launch)
+    log(:error) { "Course Score Callback is already taken #{launch.result_sourcedid} : #{launch.outcome_url}" }
+    render_minimal_error(:fail_for_course_score_in_use)
   end
 
   def fail_for_invalid_key_secret(launch)

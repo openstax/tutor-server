@@ -11,6 +11,28 @@ RSpec.describe Lms::Launch do
     OpenStruct.new(:valid_signature? => true, message: message)
   }
 
+  describe 'duplicated CourseScoreCallback records' do
+    let(:launch) { Lms::Launch.from_request(
+                     FactoryBot.create(:launch_request, :assignment,
+                                       app: app, course: course),
+                     authenticator: authenticator) }
+
+    let(:dupe) { FactoryBot.create :lms_course_score_callback,
+                                   result_sourcedid: launch.result_sourcedid,
+                                   outcome_url: launch.outcome_url,
+                                   course: course }
+    it 'removes unattached ones' do
+      launch.store_score_callback(dupe.profile)
+      expect { dupe.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+
+    it 'fails if dupe is in use' do
+      expect(UserIsCourseStudent).to receive(:[]).and_return(true)
+      expect {
+        launch.store_score_callback(dupe.profile)
+      }.to raise_error Lms::Launch::CourseScoreInUse
+    end
+  end
 
   it 'creates context' do
     launch = Lms::Launch.from_request(
