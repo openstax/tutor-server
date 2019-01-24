@@ -30,7 +30,7 @@ RSpec.describe Lms::Launch do
       expect(UserIsCourseStudent).to receive(:[]).and_return(true)
       expect {
         launch.store_score_callback(dupe.profile)
-      }.to raise_error Lms::Launch::AlreadyUsed
+      }.to raise_error Lms::Launch::CourseScoreInUse
     end
   end
 

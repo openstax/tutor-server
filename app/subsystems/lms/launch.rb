@@ -11,6 +11,7 @@ class Lms::Launch
   class HandledError          < StandardError; end
   class InvalidSignature      < HandledError; end
   class AlreadyUsed           < HandledError; end
+  class CourseScoreInUse      < HandledError; end
   class CourseKeysAlreadyUsed < HandledError; end
   class LmsDisabled           < HandledError; end
 
@@ -206,12 +207,11 @@ class Lms::Launch
         # abandoned then it's safe to destroy it
         # But something is broken if the profile has joined a course
         if UserIsCourseStudent[course: csc.course, user: csc.profile]
-          raise AlreadyUsed
+          raise CourseScoreInUse
         else
           csc.destroy!
         end
       end
-#        .destroy_all
 
       Lms::Models::CourseScoreCallback.create!(
         resource_link_id: resource_link_id,
