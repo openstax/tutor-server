@@ -35,5 +35,7 @@ class Api::V1::CourseEnrollmentsRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true, type: 'boolean' }
 
-  collection :periods, extend: PeriodsRepresenter
+  collection :periods,
+             extend: PeriodsRepresenter,
+             getter: -> (*) { periods.without_deleted }
 end
