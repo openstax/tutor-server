@@ -38,6 +38,18 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to admin_courses_path
   end
 
+  def drop_student
+    student = CourseMembership::Models::Student.find(params[:id])
+    CourseMembership::InactivateStudent[student: student]
+    redirect_to edit_admin_course_path(student.course) + '#roster'
+  end
+
+  def restore_student
+    student = CourseMembership::Models::Student.find(params[:id])
+    CourseMembership::ActivateStudent[student: student]
+    redirect_to edit_admin_course_path(student.course) + '#roster'
+  end
+
   def create
     handle_with(Admin::CoursesCreate,
                 success: ->(*) {

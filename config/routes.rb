@@ -257,6 +257,8 @@ Rails.application.routes.draw do
         post :set_ecosystem
         post :set_catalog_offering
         post :teachers, controller: :teachers
+        delete :drop_student
+        delete :restore_student
         delete :unpair_lms
       end
 
