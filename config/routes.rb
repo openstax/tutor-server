@@ -268,8 +268,12 @@ Rails.application.routes.draw do
           put :change_salesforce
         end
       end
-
-      resources :students, only: [:index]
+      resources :students, only: [:index] do
+        member do
+          delete :drop
+          post :restore
+        end
+      end
       resources :teachers, only: [], shallow: true do
         member do
           delete :delete

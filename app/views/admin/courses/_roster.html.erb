@@ -1,5 +1,3 @@
-<% @page_header = "Students for course #{@course.name}" %>
-
 <table class="table table-striped" id="students">
   <thead>
     <tr style="background-color: white">
@@ -10,7 +8,7 @@
         <th>Payment Due</th>
       <% end %>
       <th>Student Identifier</th>
-      <th width="80px">User</th>
+      <th width="100px; text-align: center;">User</th>
     </tr>
   </thead>
   <tbody>
@@ -62,6 +60,14 @@
       <td>
         <%= link_to '', edit_admin_user_path(user_id), class: "btn btn-xs glyphicon glyphicon-pencil" %>
         <%= link_to '', info_admin_users_path(id: user_id), class: "btn btn-xs glyphicon glyphicon-info-sign" %>
+        <% if student.deleted? %>
+        <%= link_to '', restore_admin_course_student_path(@course, student), title: 'Restore User to course', class: "btn btn-xs glyphicon glyphicon-plus-sign", method: :post %>
+        <% else %>
+        <%= link_to '', drop_admin_course_student_path(@course, student), title: 'Drop user from course', class: "btn btn-xs glyphicon glyphicon-trash", method: :delete, data: {
+            confirm: "Are you sure you want to drop #{student.name} from this course?"
+            } %>
+        <% end %>
+
       </td>
     </tr>
   <% end %>

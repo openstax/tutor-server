@@ -25,6 +25,13 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
       expect(RefundPayment).not_to receive(:perform_later).with(uuid: student.uuid)
       described_class.call(student: student)
     end
+
+    it 'removes LMS score callbacks' do
+      FactoryBot.create :lms_course_score_callback, profile: student.role.profile, course: course
+      expect{
+        described_class.call(student: student)
+      }.to change { Lms::Models::CourseScoreCallback.count }.by(-1)
+    end
   end
 
   context "inactive student" do

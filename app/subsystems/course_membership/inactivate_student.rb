@@ -13,6 +13,11 @@ module CourseMembership
 
       RefundPayment.perform_later(uuid: student.uuid) if student.is_refund_allowed
 
+      Lms::Models::CourseScoreCallback.where(
+        profile: student.role.profile,
+        course: student.course,
+      ).destroy_all
+
       period_id = student.period.id
       queue = student.course.is_preview ? :lowest_priority : :low_priority
       Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(period_ids: period_id, force: true)
