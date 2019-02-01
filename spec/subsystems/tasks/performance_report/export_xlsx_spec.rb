@@ -38,6 +38,8 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     it 'puts dropped students at the bottom' do
       expect(cell(19,1,0)).to eq "DROPPED"
       expect(cell(20,1,0)).to eq "Droppy"
+      # ideally we'd test the formulas for the overall cells are correct
+      # however Roo is currently unable to parse them and always returns nil :(
       expect(cell(20,9,0)).to eq 2/9.0
     end
 

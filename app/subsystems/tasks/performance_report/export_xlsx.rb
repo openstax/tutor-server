@@ -400,12 +400,13 @@ module Tasks
           end
         end
 
-        first_student_row = sheet.rows.count + 1
 
         student_data_writer = ->(students) do
+          row_index = sheet.rows.count
           task_total_counts ||= Array.new(report[:data_headings].length)
 
-          students.each_with_index do |student,ss|
+          students.each_with_index do |student|
+            row_index += 1
             student_columns = [
               [student[:first_name].to_s.gsub('=', ''), style: @normal_L],
               student[:last_name].to_s.gsub('=', ''),
@@ -413,40 +414,40 @@ module Tasks
             ]
             sum_formula = []
             sum_formula << "#{@course.homework_score_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 1, first_student_row + ss - 1)
+              Axlsx::cell_r(num_student_info_columns + 1, row_index - 1)
             }" if @course.homework_score_weight > 0
             sum_formula << "#{@course.homework_progress_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 2, first_student_row + ss - 1)
+              Axlsx::cell_r(num_student_info_columns + 2, row_index - 1)
             }" if @course.homework_progress_weight > 0
             sum_formula << "#{@course.reading_score_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 3, first_student_row + ss - 1)
+              Axlsx::cell_r(num_student_info_columns + 3, row_index - 1)
             }" if @course.reading_score_weight > 0
             sum_formula << "#{@course.reading_progress_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 4, first_student_row + ss - 1)
+              Axlsx::cell_r(num_student_info_columns + 4, row_index - 1)
             }" if @course.reading_progress_weight > 0
             student_columns += [
               [
-                "#{@eq}IFERROR(SUM(#{sum_formula.join(',')}),NA())", style: @pct_L
+                "#{@eq}IFERROR(SUM(#{sum_formula.join(',')}),0)", style: @pct_L
               ],
               [
                 "#{@eq}IFERROR(AVERAGE(#{
-                  disjoint_range(cols: homework_score_columns, rows: first_student_row + ss)
-                }),NA())", style: @pct
+                  disjoint_range(cols: homework_score_columns, rows: row_index)
+                }),0)", style: @pct
               ],
               [
                 "#{@eq}IFERROR(AVERAGE(#{
-                  disjoint_range(cols: homework_progress_columns, rows: first_student_row + ss)
-                }),NA())", style: @pct
+                  disjoint_range(cols: homework_progress_columns, rows: row_index)
+                }),0)", style: @pct
               ],
               [
                 "#{@eq}IFERROR(AVERAGE(#{
-                  disjoint_range(cols: reading_score_columns, rows: first_student_row + ss)
-                }),NA())", style: @pct
+                  disjoint_range(cols: reading_score_columns, rows: row_index)
+                }),0)", style: @pct
               ],
               [
                 "#{@eq}IFERROR(AVERAGE(#{
-                  disjoint_range(cols: reading_progress_columns, rows: first_student_row + ss)
-                }),NA())", style: @pct_R
+                  disjoint_range(cols: reading_progress_columns, rows: row_index)
+                }),0)", style: @pct_R
               ]
             ] if format != :counts
 
@@ -462,11 +463,12 @@ module Tasks
           end
 
           task_total_counts
-        end
+        end  ### END OF student_data_writer lambda
 
         students = report[:students].sort_by { |student| student[:last_name] || '' }
         dropped_students, active_students = students.partition { |student| student[:is_dropped] }
 
+        first_student_row = sheet.rows.count + 1
         task_total_counts = student_data_writer.call(active_students)
 
         last_student_row = sheet.rows.count
@@ -492,23 +494,23 @@ module Tasks
         ]
         average_columns += [
           [
-            "#{@eq}IFERROR(AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\"),NA())",
+            "#{@eq}IFERROR(AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\"),0)",
             style: average_style_L
           ],
           [
-            "#{@eq}IFERROR(AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\"),NA())",
+            "#{@eq}IFERROR(AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\"),0)",
             style: average_style
           ],
           [
-            "#{@eq}IFERROR(AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\"),NA())",
+            "#{@eq}IFERROR(AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\"),0)",
             style: average_style
           ],
           [
-            "#{@eq}IFERROR(AVERAGEIF(G#{first_student_row}:G#{last_student_row},\"<>#N/A\"),NA())",
+            "#{@eq}IFERROR(AVERAGEIF(G#{first_student_row}:G#{last_student_row},\"<>#N/A\"),0)",
             style: average_style
           ],
           [
-            "#{@eq}IFERROR(AVERAGEIF(H#{first_student_row}:H#{last_student_row},\"<>#N/A\"),NA())",
+            "#{@eq}IFERROR(AVERAGEIF(H#{first_student_row}:H#{last_student_row},\"<>#N/A\"),0)",
             style: average_style_R
           ]
         ] if format != :counts
