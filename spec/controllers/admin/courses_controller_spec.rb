@@ -105,27 +105,6 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     end
   end
 
-  context 'student drop/restore' do
-    let(:course)       { FactoryBot.create :course_profile_course }
-    let(:period)       { FactoryBot.create :course_membership_period, course: course }
-    let(:student)      {
-      AddUserAsPeriodStudent.call(user: FactoryBot.create(:user), period: period).outputs.student
-    }
-    it 'drops a student' do
-      expect {
-        delete :drop_student, id: student.id
-        expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
-      }.to change{ student.reload.deleted? }.from(false).to(true)
-    end
-    it 'restores a student' do
-      student.destroy
-      expect {
-        post :restore_student, id: student.id
-        expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
-      }.to change{ student.reload.deleted? }.from(true).to(false)
-    end
-  end
-
   context 'POST #roster' do
     let(:physics)        { FactoryBot.create :course_profile_course }
     let(:physics_period) { FactoryBot.create :course_membership_period, course: physics }
