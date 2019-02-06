@@ -70,6 +70,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           title: 'HW2',
           opens_at: opens_at,
           due_at: due_at,
+          feedback_available?: true,
           last_worked_at: last_worked_at,
           task_type: :homework,
           completed?: false,
@@ -79,6 +80,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           correct_exercise_count: 3,
           completed_on_time_exercise_count: 2,
           completed_accepted_late_exercise_count: 0,
+          completed_steps_count: 4,
+          completed_on_time_steps_count: 2,
           withdrawn?: true
         ),
         OpenStruct.new(
@@ -95,6 +98,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         OpenStruct.new(
           id: 89,
           title: 'HW3',
+          feedback_available?: true,
           opens_at: opens_at,
           due_at: due_at,
           last_worked_at: last_worked_at,
@@ -178,6 +182,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
           "completed_on_time_exercise_count" => 2,
+          "completed_steps_count" => 4,
+          "completed_on_time_steps_count" => 2,
           "completed_accepted_late_exercise_count" => 0,
           "type" => 'homework',
           "complete" => false,
@@ -239,7 +245,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
       }
     )
 
-    expect(representation["tasks"][0]).to_not have_key "correct_exercise_count"
     expect(representation["tasks"][1]).to_not have_key "correct_exercise_count"
     expect(representation["tasks"][2]).to     have_key "correct_exercise_count"
   end

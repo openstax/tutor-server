@@ -75,13 +75,11 @@ module Api::V1::Courses
                type: Integer,
                readable: true,
                writeable: false
-    end
-
-    class ReadingTask < StepTaskBase
-
-    end
-
-    class HomeworkTask < StepTaskBase
+      property :accepted_late_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) }
 
       property :completed_accepted_late_exercise_count,
                type: Integer,
@@ -93,18 +91,43 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :correct_on_time_exercise_count,
+               type: Integer,
+               readable: true,
+               writeable: false,
+               if: ->(*) { feedback_available? }
+
       property :correct_exercise_count,
                type: Integer,
                readable: true,
                writeable: false,
-               if: ->(*) { past_due? && completed? }
+               if: ->(*) { feedback_available? }
 
-      property :accepted_late_at,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) }
+      property :steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
 
+      property :completed_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :completed_on_time_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :completed_accepted_late_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+    end
+
+    class ReadingTask < StepTaskBase
+    end
+
+    class HomeworkTask < StepTaskBase
     end
 
     class Role < Roar::Decorator
