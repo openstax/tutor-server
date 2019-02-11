@@ -11,13 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181203172559) do
+ActiveRecord::Schema.define(version: 20190206210659) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "citext"
   enable_extension "hstore"
   enable_extension "pgcrypto"
-  enable_extension "citext"
 
   create_table "catalog_offerings", force: :cascade do |t|
     t.string   "salesforce_book_name",                 null: false
@@ -531,6 +531,18 @@ ActiveRecord::Schema.define(version: 20181203172559) do
 
   add_index "lms_users", ["lti_user_id"], name: "index_lms_users_on_lti_user_id", using: :btree
   add_index "lms_users", ["openstax_accounts_accounts_id"], name: "index_lms_users_on_openstax_accounts_accounts_id", using: :btree
+
+  create_table "notes_notes", force: :cascade do |t|
+    t.integer  "content_page_id", null: false
+    t.integer  "entity_role_id",  null: false
+    t.text     "anchor",          null: false
+    t.jsonb    "contents",        null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "notes_notes", ["content_page_id"], name: "index_notes_notes_on_content_page_id", using: :btree
+  add_index "notes_notes", ["entity_role_id"], name: "index_notes_notes_on_entity_role_id", using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -1200,6 +1212,8 @@ ActiveRecord::Schema.define(version: 20181203172559) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "notes_notes", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "notes_notes", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade

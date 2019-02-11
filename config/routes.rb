@@ -146,6 +146,12 @@ Rails.application.routes.draw do
       end
       post :dates, on: :collection
 
+      resources :notes, except: [:index, :show] do
+        collection do
+          get :'/:page_id', action: :index
+        end
+      end
+
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
         get :teacher_guide, action: :teacher
