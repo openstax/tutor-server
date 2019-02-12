@@ -8,6 +8,7 @@ class CreateContentNotes < ActiveRecord::Migration
                    null: false, index: true,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.text :anchor, null: false
+      t.text :text
       t.jsonb :contents, null: false
       t.timestamps null: false
     end

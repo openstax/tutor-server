@@ -39,6 +39,11 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
+    property :contents,
+             type: string,
+             writeable: true,
+             readable: true,
+
     property :created_at,
              type: String,
              readable: true,
