@@ -1,6 +1,6 @@
-class CreateNotesNotes < ActiveRecord::Migration
+class CreateContentNotes < ActiveRecord::Migration
   def change
-    create_table :notes_notes do |t|
+    create_table :content_notes do |t|
       t.references :content_page,
                    null: false, index: true,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }

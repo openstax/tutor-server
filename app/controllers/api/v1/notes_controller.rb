@@ -4,9 +4,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   before_filter :get_note, only: [:update, :destroy]
 
   def index
-    respond_with Notes::Models::Note.where(
-                   role: @role, content_page_id: params[:page_id]
-                 ), represent_with: Api::V1::NotesRepresenter
+    respond_with Content::Models::Note.where(role: @role, page: page), represent_with: Api::V1::NotesRepresenter
   end
 
   ###############################################################
@@ -18,10 +16,10 @@ class Api::V1::NotesController < Api::V1::ApiController
   the anchor
   EOS
   def create
-    note = Notes::Models::Note.new(role: @role, content_page_id: params[:page_id])
+    note = Content::Models::Note.new(role: @role, content_page_id: params[:page_id])
     consume!(note, represent_with: Api::V1::NoteRepresenter)
     OSU::AccessPolicy.require_action_allowed!(:create, current_human_user, note)
-
+    note.page = page
     if note.save
       respond_with note, responder: ResponderWithPutPatchDeleteContent,
                    represent_with: Api::V1::NoteRepresenter,
@@ -52,7 +50,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   protected
 
   def get_note
-    @note = Notes::Models::Note.find_by!(
+    @note = Content::Models::Note.find_by!(
       id: params[:id], role: @role
     )
   end
@@ -61,5 +59,10 @@ class Api::V1::NotesController < Api::V1::ApiController
     @course = CourseProfile::Models::Course.find(params[:course_id])
     @role = ChooseCourseRole[user: current_human_user, course: @course]
   end
+
+  def page
+    @page ||= @course.ecosystem.pages.book_location(params[:chapter], params[:section]).first
+  end
+
 
 end
