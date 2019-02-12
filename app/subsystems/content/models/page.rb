@@ -33,13 +33,16 @@ class Content::Models::Page < IndestructibleRecord
 
   has_many :task_steps, subsystem: :tasks, dependent: :destroy, inverse_of: :page
 
-  #validates :chapter, presence: true
   validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
   validates :version, presence: true
 
   before_validation :cache_fragments_and_snap_labs
+
+  scope :book_location, ->(chapter, section) {
+    where("content_pages.book_location = '[?,?]'", chapter.to_i, section.to_i)
+  }
 
   delegate :is_intro?, to: :parser
 

@@ -152,6 +152,18 @@ ActiveRecord::Schema.define(version: 20190206210659) do
   add_index "content_maps", ["content_from_ecosystem_id", "content_to_ecosystem_id"], name: "index_content_maps_on_from_ecosystem_id_and_to_ecosystem_id", unique: true, using: :btree
   add_index "content_maps", ["content_to_ecosystem_id"], name: "index_content_maps_on_content_to_ecosystem_id", using: :btree
 
+  create_table "content_notes", force: :cascade do |t|
+    t.integer  "content_page_id", null: false
+    t.integer  "entity_role_id",  null: false
+    t.text     "anchor",          null: false
+    t.jsonb    "contents",        null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "content_notes", ["content_page_id"], name: "index_content_notes_on_content_page_id", using: :btree
+  add_index "content_notes", ["entity_role_id"], name: "index_content_notes_on_entity_role_id", using: :btree
+
   create_table "content_page_tags", force: :cascade do |t|
     t.integer  "content_page_id", null: false
     t.integer  "content_tag_id",  null: false
@@ -531,18 +543,6 @@ ActiveRecord::Schema.define(version: 20190206210659) do
 
   add_index "lms_users", ["lti_user_id"], name: "index_lms_users_on_lti_user_id", using: :btree
   add_index "lms_users", ["openstax_accounts_accounts_id"], name: "index_lms_users_on_openstax_accounts_accounts_id", using: :btree
-
-  create_table "notes_notes", force: :cascade do |t|
-    t.integer  "content_page_id", null: false
-    t.integer  "entity_role_id",  null: false
-    t.text     "anchor",          null: false
-    t.jsonb    "contents",        null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "notes_notes", ["content_page_id"], name: "index_notes_notes_on_content_page_id", using: :btree
-  add_index "notes_notes", ["entity_role_id"], name: "index_notes_notes_on_entity_role_id", using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -1179,6 +1179,8 @@ ActiveRecord::Schema.define(version: 20190206210659) do
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_maps", "content_ecosystems", column: "content_from_ecosystem_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_maps", "content_ecosystems", column: "content_to_ecosystem_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_notes", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_notes", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
@@ -1212,8 +1214,6 @@ ActiveRecord::Schema.define(version: 20190206210659) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "notes_notes", "content_pages", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "notes_notes", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade

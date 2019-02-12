@@ -146,10 +146,11 @@ Rails.application.routes.draw do
       end
       post :dates, on: :collection
 
-      resources :notes, except: [:index, :show] do
-        collection do
-          get :'/:page_id', action: :index
-        end
+      resources :notes, path: 'notes/:chapter.:section', except: [:show] do
+        # collection do
+        #     , action: :index
+        #     post :'/:chapter.:section', action: :create
+        # end
       end
 
       scope controller: :guides do
