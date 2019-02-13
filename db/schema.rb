@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 20190206210659) do
     t.integer  "content_page_id", null: false
     t.integer  "entity_role_id",  null: false
     t.text     "anchor",          null: false
+    t.text     "annotation"
     t.jsonb    "contents",        null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
