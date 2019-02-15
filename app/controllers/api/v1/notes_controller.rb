@@ -47,6 +47,12 @@ class Api::V1::NotesController < Api::V1::ApiController
     render_api_errors(@note.errors) || head(:ok)
   end
 
+  def highlighted_sections
+    # OSU::AccessPolicy.require_action_allowed!(:index, current_human_user, {})
+
+    render json: [{ id: 1 }]
+  end
+
   protected
 
   def get_note
