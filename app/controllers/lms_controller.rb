@@ -74,8 +74,6 @@ class LmsController < ApplicationController
       fail_for_course_score_in_use(launch) and return
     rescue Lms::Launch::CourseKeysAlreadyUsed => ee
       fail_for_course_keys_already_used(launch) and return
-    rescue Lms::Launch::AlreadyUsed => ee
-      fail_for_already_used and return
     rescue Lms::Launch::AppNotFound, Lms::Launch::InvalidSignature => ee
       fail_for_invalid_key_secret(launch) and return
     rescue Lms::Launch::HandledError => ee
@@ -92,8 +90,6 @@ class LmsController < ApplicationController
 
     begin
       launch = Lms::Launch.from_id(session[:launch_id])
-    rescue Lms::Launch::CouldNotLoadLaunch => ee
-      fail_for_already_used and return
     end
 
     # Always send users to accounts when a launch happens.  We may decide
@@ -198,11 +194,6 @@ class LmsController < ApplicationController
   def fail_for_course_keys_already_used(launch)
     log(:info) { "Launch #{session[:launch_id]} failing because course keys already used for another context"}
     render_minimal_error(:fail_course_keys_already_used, locals: { launch: launch })
-  end
-
-  def fail_for_already_used
-    log(:info) { "Nonce reused in launch #{session[:launch_id]}"}
-    render_minimal_error(:fail_already_used)
   end
 
   def fail_for_course_score_in_use(launch)

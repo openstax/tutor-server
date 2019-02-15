@@ -241,11 +241,7 @@ class Lms::Launch
         @message.launch_url = request_url
       end
     else
-      begin
-        Lms::Models::Nonce.create!({ lms_app_id: app.id, value: request_parameters[:oauth_nonce] })
-      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => ee
-        raise AlreadyUsed
-      end
+      Lms::Models::Nonce.find_or_create_by!({ lms_app_id: app.id, value: request_parameters[:oauth_nonce] })
 
       with_warnings(warning_verbosity) do
         authenticator = authenticator || ::IMS::LTI::Services::MessageAuthenticator.new(

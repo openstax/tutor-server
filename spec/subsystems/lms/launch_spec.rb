@@ -45,23 +45,17 @@ RSpec.describe Lms::Launch do
     expect(launch.context).not_to be_nil
   end
 
-  it 'verifies nonce unused' do
-    request = FactoryBot.create(:launch_request, app: app)
-    Lms::Launch.from_request(request, authenticator: authenticator)
-    expect { Lms::Launch.from_request(request) }.to raise_error(Lms::Launch::AlreadyUsed)
-  end
-
   it 'maps roles' do
-      { instructor: %w{Instructor Creator Faculty Mentor Staff SysAdmin SysSupport AccountAdmin Administrator},
-        student: %w{Student Learner ProspectiveStudent}
-      }.each do |role, mappings|
-          mappings.each do |type|
-              req = FactoryBot.create(:launch_request, app: app)
-              req.request_parameters[:roles] = "IMS::LIS::Roles::Context::URNs::#{type}"
-              launch = Lms::Launch.from_request(req,authenticator: authenticator)
-              expect(launch.role).to eq role
-          end
+    { instructor: %w{Instructor Creator Faculty Mentor Staff SysAdmin SysSupport AccountAdmin Administrator},
+      student: %w{Student Learner ProspectiveStudent}
+    }.each do |role, mappings|
+      mappings.each do |type|
+        req = FactoryBot.create(:launch_request, app: app)
+        req.request_parameters[:roles] = "IMS::LIS::Roles::Context::URNs::#{type}"
+        launch = Lms::Launch.from_request(req,authenticator: authenticator)
+        expect(launch.role).to eq role
       end
+    end
   end
 
   it 'multiple concurrent contexts without course can be launched' do
