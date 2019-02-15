@@ -16,7 +16,6 @@ Settings::Db.store.defaults[:student_grace_period_days] = 14
 Settings::Db.store.defaults[:payments_enabled] = false
 Settings::Db.store.defaults[:ga_tracking_codes] = \
     (secrets.environment_name == "prodtutor") ? 'UA-66552106-1' : ''
-Settings::Db.store.defaults[:is_highlighting_allowed] = false
 Settings::Db.store.defaults[:active_onboarding_salesforce_campaign_id] = ''
 Settings::Db.store.defaults[:active_nomad_onboarding_salesforce_campaign_id] = ''
 Settings::Db.store.defaults[:find_tutor_course_period_report_id] = ''
