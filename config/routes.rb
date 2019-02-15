@@ -146,12 +146,8 @@ Rails.application.routes.draw do
       end
       post :dates, on: :collection
 
-      resources :notes, path: 'notes/:chapter.:section', except: [:show] do
-        # collection do
-        #     , action: :index
-        #     post :'/:chapter.:section', action: :create
-        # end
-      end
+      resources :notes, path: 'notes/:chapter.:section'
+      get :highlighted_sections, controller: :notes
 
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
