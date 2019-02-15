@@ -8,6 +8,11 @@ class Lms::WilloLabs
     config['key'] == key ? self.new : nil
   end
 
+  def self.for_course(_)
+    # unlike Lms::Models::App, this uses the same config for all courses
+    ::Lms::WilloLabs.new
+  end
+
   def id
     nil
   end

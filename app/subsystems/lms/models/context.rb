@@ -9,6 +9,10 @@ module Lms
 
       before_destroy :confirm_course_access_is_switchable
 
+      def app
+        app_type.constantize.for_course(course)
+      end
+
       protected
 
       def confirm_course_access_is_switchable

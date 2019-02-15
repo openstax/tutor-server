@@ -116,13 +116,9 @@ class Lms::Launch
   end
 
   def app
-    if @app.nil?
-      [Lms::WilloLabs, Lms::Models::App].each do |model|
-        @app = model.find_by(key: request_parameters[:oauth_consumer_key])
-        return @app if @app
-      end
-      raise AppNotFound
-    end
+    return @app if @app.present?
+    @app = Lms::Queries.app_for_key(request_parameters[:oauth_consumer_key])
+    raise AppNotFound unless @app.present?
     @app
   end
 
@@ -168,6 +164,7 @@ class Lms::Launch
     Lms::Models::Context.create!(
       lti_id: context_id,
       tool_consumer: tool_consumer!,
+      app_type: app.class,
       course: course
     )
   end
