@@ -77,4 +77,28 @@ RSpec.describe Lms::Launch do
       }.to change { Lms::Models::Context.count }.by 1
     end
   end
+
+  describe 'recording app type on the context' do
+
+    let(:launch) {
+      Lms::Launch.from_request(
+        FactoryBot.create(:launch_request, app: app),
+        authenticator: authenticator
+      )
+    }
+
+    it 'defaults to App' do
+      expect(launch.context.app).to be_a(Lms::Models::App)
+    end
+
+    describe 'willo labs' do
+      let(:app) { Lms::WilloLabs.new }
+
+      it 'sets app type to WilloLabs' do
+        expect(launch.context.app).to be_a(Lms::WilloLabs)
+      end
+    end
+
+  end
+
 end

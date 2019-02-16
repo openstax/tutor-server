@@ -5,6 +5,7 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
   before(:all) do
     period = FactoryBot.create :course_membership_period
     @course = period.course
+    @course.lms_context = FactoryBot.create(:lms_context, course: @course)
     callback = FactoryBot.create :lms_course_score_callback, course: @course
     student = callback.profile
     AddUserAsPeriodStudent[period: period, user: student]
@@ -28,4 +29,12 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     expect(described_class.new.basic_outcome_xml(score: 0.5, sourcedid: 'hi')[0]).not_to match(/\s/)
   end
 
+  it 'uses willo key/secret for courses that are using it' do
+    expect(OAuth::Consumer).to receive(:new).with(
+                                 Lms::WilloLabs.config['key'],
+                                 Lms::WilloLabs.config['secret'])
+
+    @course.lms_context.update_attributes app_type: 'Lms::WilloLabs'
+    described_class.call(course: @course)
+  end
 end

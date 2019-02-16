@@ -11,13 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181203172559) do
+ActiveRecord::Schema.define(version: 20190215150450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "citext"
   enable_extension "hstore"
   enable_extension "pgcrypto"
-  enable_extension "citext"
 
   create_table "catalog_offerings", force: :cascade do |t|
     t.string   "salesforce_book_name",                 null: false
@@ -468,6 +468,7 @@ ActiveRecord::Schema.define(version: 20181203172559) do
     t.integer  "course_profile_course_id"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.text     "app_type",                 null: false
   end
 
   add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", unique: true, using: :btree

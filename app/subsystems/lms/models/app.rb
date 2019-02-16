@@ -11,6 +11,8 @@ class Lms::Models::App < ApplicationRecord
   validates :owner_id, uniqueness: { scope: :owner_type }
   validates :key, presence: true, uniqueness: true
 
+  scope :for_course, -> (course) { find_by(owner: course) }
+
   protected
 
   def initialize_tokens
