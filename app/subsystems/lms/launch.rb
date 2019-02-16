@@ -241,6 +241,7 @@ class Lms::Launch
       begin
         Lms::Models::Nonce.create!({ lms_app_id: app.id, value: request_parameters[:oauth_nonce] })
       rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => ee
+        Raven.capture_message("Attempt to reuse nonce #{request_parameters[:oauth_nonce]} on app id #{app.id}")
         raise AlreadyUsed
       end
 

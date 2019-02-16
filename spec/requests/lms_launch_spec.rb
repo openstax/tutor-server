@@ -74,6 +74,7 @@ RSpec.describe 'LMS Launch', type: :request do
       end
 
       it 'complains about reused launch nonce' do
+        expect(Raven).to receive(:capture_message).with(/Attempt to reuse nonce/)
         simulator.add_student("bob")
         simulator.launch(user: "bob", assignment: "tutor")
         simulator.repeat_last_launch
