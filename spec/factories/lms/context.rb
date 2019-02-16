@@ -4,6 +4,6 @@ FactoryBot.define do
     association :tool_consumer, factory: :lms_tool_consumer
 
     lti_id { SecureRandom.uuid }
-    app_type 'Lms::Models::App'
+    app_type Lms::Models::App.to_s
   end
 end
