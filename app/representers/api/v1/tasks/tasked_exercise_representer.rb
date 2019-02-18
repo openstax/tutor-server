@@ -81,6 +81,15 @@ module Api::V1::Tasks
              },
              if: NOT_FEEDBACK_ONLY
 
+    property :garbage_estimate,
+             type: String,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The estimate of how likely the student's free response is garbage"
+             },
+             if: NOT_FEEDBACK_ONLY
+
     property :solution,
              type: String,
              writeable: false,
