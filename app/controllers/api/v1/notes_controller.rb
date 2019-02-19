@@ -48,9 +48,16 @@ class Api::V1::NotesController < Api::V1::ApiController
   end
 
   def highlighted_sections
-    # OSU::AccessPolicy.require_action_allowed!(:index, current_human_user, {})
+    #pages = Content::Models::Note.where(role: @role).group(:content_page_id).select(:content_page_id)
+    
+    page_ids = Content::Models::Note.where(role: @role).group(:content_page_id).pluck(:content_page_id)
+    pages = Content::Models::Page.where(id: page_ids)
+    #payload = pages.map{|p| [p.page.book_location, p.page.title] }
+    #respond_with json: { locations: payload }
 
-    render json: [{ id: 1 }]
+    #abort HighlightRepresenter.new(pages).inspect
+    respond_with HighlightRepresenter.new(pages)
+  
   end
 
   protected
