@@ -57,13 +57,8 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
     end
 
     it 'fetches highlighted_sections' do
-      #abort parameters.inspect
       api_get :highlighted_sections, user_1_token, parameters: parameters
-      
-      #abort response.inspect
-      
       expect(response).to be_ok
-
     end
 
     #it 'fetches highlighted_sections without token' do
