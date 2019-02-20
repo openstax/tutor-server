@@ -25,6 +25,7 @@ env:
   - TAG=speed:fast
   - TAG=~speed:fast
 script:
+  - bundle exec rake lint:branch
   - bundle exec parallel_rspec -o "-t $TAG" ./spec
 branches:
   only:

@@ -225,6 +225,9 @@ group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
 
+  # lint files
+  gem 'rubocop', '~> 0.65.0'
+
   # Run specs in parallel
   gem 'parallel_tests'
 
