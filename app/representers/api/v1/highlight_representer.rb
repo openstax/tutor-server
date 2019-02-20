@@ -5,7 +5,6 @@ module Api::V1
     include Representable::Coercion         
 
     collection :pages,
-               as: :children,
                writeable: false,
                readable: true,
                extend: PageHighlightRepresenter,
