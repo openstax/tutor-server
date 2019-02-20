@@ -52,11 +52,9 @@ class Api::V1::NotesController < Api::V1::ApiController
     
     page_ids = Content::Models::Note.where(role: @role).group(:content_page_id).pluck(:content_page_id)
     pages = Content::Models::Page.where(id: page_ids)
-    #payload = pages.map{|p| [p.page.book_location, p.page.title] }
-    #respond_with json: { locations: payload }
+    
+    respond_with(OpenStruct.new({ pages: pages }), represent_with: Api::V1::HighlightRepresenter)
 
-    #abort HighlightRepresenter.new(pages).inspect
-    respond_with HighlightRepresenter.new(pages)
   
   end
 
