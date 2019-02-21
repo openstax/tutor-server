@@ -48,14 +48,11 @@ class Api::V1::NotesController < Api::V1::ApiController
   end
 
   def highlighted_sections
-    #pages = Content::Models::Note.where(role: @role).group(:content_page_id).select(:content_page_id)
+    OSU::AccessPolicy.require_action_allowed!(:index, current_human_user, @role)
     
     page_ids = Content::Models::Note.where(role: @role).group(:content_page_id).pluck(:content_page_id)
     pages = Content::Models::Page.where(id: page_ids)
-    
-    respond_with(OpenStruct.new({ pages: pages }), represent_with: Api::V1::HighlightRepresenter)
-
-  
+    respond_with pages, represent_with: Api::V1::HighlightRepresenter  
   end
 
   protected
@@ -68,7 +65,7 @@ class Api::V1::NotesController < Api::V1::ApiController
 
   def get_course_role
     @course = CourseProfile::Models::Course.find(params[:course_id])
-    @role = ChooseCourseRole[user: current_human_user, course: @course]
+    @role = ChooseCourseRole.call(user: current_human_user, course: @course).outputs.role
   end
 
   def page
