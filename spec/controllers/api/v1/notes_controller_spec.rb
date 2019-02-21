@@ -56,17 +56,23 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
       expect{ note.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it 'fetches highlighted_sections' do
+    it 'fetches user highlighted_sections' do
       api_get :highlighted_sections, user_1_token, parameters: parameters
       expect(response).to be_ok
     end
 
-    #it 'fetches highlighted_sections without token' do
-      #abort parameters.inspect
-    #  api_get :highlighted_sections, nil
-    #  expect(response).to be(403)
+    it "should not fetch someone else's highlights" do
+      expect do
+        api_get :highlighted_sections, user_2_token, parameters: parameters
+      end.to raise_error(SecurityTransgression)
+    end
 
-    #end
+    it "should not let a user update someone else's highlights" do
+      expect do
+        api_put :update, user_2_token, parameters: parameters.merge(id: note.id),
+        raw_post_data: { contents: { text: 'hello!' } }
+      end.to raise_error(SecurityTransgression)
+    end
 
   end
 end
