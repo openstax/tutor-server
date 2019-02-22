@@ -9,13 +9,13 @@ class Api::V1::NotesController < Api::V1::ApiController
     description <<-EOS
       Stores text selection (notes) on a course’s content.  Notes are generated 
       by users as they highlight content, and then are fetched and re-stored when 
-      the content is reloaded
+      the content is reloaded.
     EOS
   end
 
-  api :GET, '/api/courses/:course_id/notes/:chapter.:section', 'List all user notes'
+  api :GET, '/api/courses/:course_id/notes/:chapter.:section', 'Lists all user notes for the given course/page/section'
   description <<-EOS
-    list all the notes added by the student to a book's chapter and section
+    list all the notes added by the student to the given course, page and section
     `#{json_schema(Api::V1::NotesRepresenter, include: :readable)}`
   EOS
   def index
@@ -64,7 +64,7 @@ class Api::V1::NotesController < Api::V1::ApiController
 
   api :DELETE, '/api/courses/:course_id/notes/:chapter.:section/:id', 'Deletes the note from the students course'
   description <<-EOS
-    Deletes the note from the student's course referenced by chapter and section
+    Deletes the note from the student's course with the provided :id
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_human_user, @note)
@@ -72,7 +72,7 @@ class Api::V1::NotesController < Api::V1::ApiController
     render_api_errors(@note.errors) || head(:ok)
   end
 
-  api :GET, '/api/courses/:course_id/highlighted_sections', 'Deletes the task from the students book'
+  api :GET, '/api/courses/:course_id/highlighted_sections', 'Lists a notes summary from the students course'
   description <<-EOS
     list all the notes added by the student to a course
     `#{json_schema(Api::V1::HighlightRepresenter, include: :readable)}`
