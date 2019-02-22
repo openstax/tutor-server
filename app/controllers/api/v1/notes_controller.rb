@@ -72,6 +72,7 @@ class Api::V1::NotesController < Api::V1::ApiController
     render_api_errors(@note.errors) || head(:ok)
   end
 
+
   api :GET, '/api/courses/:course_id/highlighted_sections', 'Lists a notes summary from the students course'
   description <<-EOS
     list all the notes added by the student to a course

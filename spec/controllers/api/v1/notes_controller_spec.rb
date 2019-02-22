@@ -56,6 +56,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
       expect{ note.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+
     it 'fetches user highlighted_sections' do
       api_get :highlighted_sections, user_1_token, parameters: parameters
       expect(response).to be_ok
