@@ -78,7 +78,7 @@ RSpec.describe 'LMS Launch', type: :request do
         simulator.add_student("bob")
         simulator.launch(user: "bob", assignment: "tutor")
         simulator.repeat_last_launch
-        expect_error("Please try launching OpenStax Tutor again.")
+        expect_error("Please contact support@openstax.org")
       end
     end
 
