@@ -67,7 +67,6 @@ RSpec.feature 'Administration of queued jobs', :js do
     click_link status.id
 
     expect(current_path).to eq(admin_job_path(status.id))
-    save_and_open_page
     expect(page).to have_css('.job_errors', text: 'bad - awful')
     expect(page).to have_css('.job_something_spectacular',
                              text: 'For all the good children')
