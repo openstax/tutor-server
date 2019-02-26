@@ -9,7 +9,7 @@ module Api::V1
                 writeable: false,
                 readable: true,
                 schema_info: { required: true }
-    
+
       property :chapter_section,
                 type: Array,
                 writeable: false,
@@ -29,8 +29,12 @@ module Api::V1
                 description: 'The title of the page'
               }
 
+      property :notes_count,
+               type: Integer,
+               readable: true,
+               writable: false
     end
-    
+
     include Roar::JSON
     include Representable::Coercion
 
@@ -43,6 +47,6 @@ module Api::V1
                  required: false,
                  description: "The pages of the book"
                }
-  
+
   end
 end

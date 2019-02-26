@@ -22,6 +22,7 @@ class Content::Models::Page < IndestructibleRecord
   sortable_belongs_to :chapter, on: :number, inverse_of: :pages
   has_one :book, through: :chapter
   has_one :ecosystem, through: :book
+  has_many :notes, class_name: 'Content::Models::Note', dependent: :nullify
 
   has_many :exercises, dependent: :destroy, inverse_of: :page
   has_many :cc_stats, class_name: 'Tasks::CcPageStatsView',
