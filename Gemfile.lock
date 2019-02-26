@@ -318,7 +318,8 @@ GEM
       simple_oauth (= 0.2)
     io-like (0.3.0)
     ipaddress (0.8.3)
-    jobba (1.7.0)
+    jobba (1.8.0)
+      oj (~> 3.7.6)
       redis (~> 3.2)
       redis-namespace
     jquery-rails (4.3.1)
@@ -749,7 +750,7 @@ DEPENDENCIES
   hashie
   httparty
   ims-lti (~> 2.2.1)
-  jobba (~> 1.7.0)
+  jobba (~> 1.8.0)
   jquery-rails
   json-schema (~> 2.8.0)
   keyword_search!

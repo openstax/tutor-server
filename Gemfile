@@ -83,7 +83,7 @@ gem 'ims-lti', '~> 2.2.1'
 gem 'roar', '1.0.3'
 
 # Background job status store
-gem 'jobba', '~> 1.7.0'
+gem 'jobba', '~> 1.8.0'
 
 # Lev framework
 gem 'lev', '~> 9.0.1'
