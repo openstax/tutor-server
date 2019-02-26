@@ -24,13 +24,12 @@ class Api::V1::NotesController < Api::V1::ApiController
   EOS
   def index
     page_ids = Content::Models::Page
-              .joins(:notes)
-              .where(notes: { role: @role })
-              .book_location(params[:chapter], params[:section])
-              .pluck(:id)
+               .joins(:notes)
+               .where(notes: { role: @role })
+               .book_location(params[:chapter], params[:section])
+               .pluck(:id)
     notes = Content::Models::Note.where(role: @role, content_page_id: page_ids)
     respond_with notes, represent_with: Api::V1::NotesRepresenter
-
   end
 
   ###############################################################
@@ -96,10 +95,6 @@ class Api::V1::NotesController < Api::V1::ApiController
     #{json_schema(Api::V1::HighlightRepresenter, include: :readable)}
   EOS
   def highlighted_sections
-    raise SecurityTransgression, :invalid_role unless @role.present?
-
-    @course
-
     pages = Content::Models::Page
               .select('content_pages.id, content_pages.title, content_pages.book_location, count(*) as notes_count')
               .group(:id)
@@ -119,6 +114,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   def get_course_role
     @course = CourseProfile::Models::Course.find(params[:course_id])
     @role = ChooseCourseRole.call(user: current_human_user, course: @course).outputs.role
+    raise SecurityTransgression, :invalid_role unless @role.present?
   end
 
 end
