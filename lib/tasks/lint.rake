@@ -1,5 +1,6 @@
 namespace :lint do
   SRC_PATHS = 'app lib spec'.freeze
+  HEAD = ENV['TRAVIS_BRANCH'] || 'head'
 
   def exec_git(cmd)
     sh "git #{cmd} | xargs rubocop" do |ok|
@@ -9,7 +10,7 @@ namespace :lint do
 
   desc 'run robocop on files that differ from master'
   task :branch do
-    exec_git "diff-tree -r --no-commit-id --name-only head origin/master #{SRC_PATHS}"
+    exec_git "diff-tree -r --no-commit-id --porcelain --name-only #{HEAD} origin/master #{SRC_PATHS}"
   end
 
   task :uncommited do
