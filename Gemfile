@@ -9,7 +9,7 @@ git_source(:github) do |repo_name|
 end
 
 # Rails framework
-gem 'rails', '4.2.7.1'
+gem 'rails', '4.2.11'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.3.7'
@@ -19,9 +19,6 @@ gem 'sass-rails', '~> 5.0.0'
 
 # Compass stylesheets
 gem 'compass-rails'
-
-# Automatically add browser-specific CSS prefixes
-gem 'autoprefixer-rails'
 
 # JavaScript asset compressor
 gem 'uglifier', '>= 1.3.0'
@@ -86,10 +83,10 @@ gem 'ims-lti', '~> 2.2.1'
 gem 'roar', '1.0.3'
 
 # Background job status store
-gem 'jobba', '~> 1.7.0'
+gem 'jobba', '~> 1.8.0'
 
 # Lev framework
-gem 'lev', '~> 9.0.0'
+gem 'lev', '~> 9.0.1'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -172,7 +169,7 @@ gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9efe1
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'
-gem 'rails-settings-ui'
+gem 'rails-settings-ui', '~> 0.5.0'
 
 # Nicely-styled static error pages
 gem 'error_page_assets'

@@ -20,13 +20,15 @@ end
 RailsSettingsUi.parent_controller = 'Admin::BaseController' # default: '::ApplicationController'
 #
 # # Render RailsSettingsUi inside a custom layout (set to 'application' to use app layout, default is RailsSettingsUi's own layout)
-# RailsSettingsUi::ApplicationController.layout 'admin'
 
 RailsSettingsUi.settings_class = "Settings::Db::Store"
 
 Rails.application.config.to_prepare do
   # If you use a *custom layout*, make route helpers available to RailsSettingsUi:
   RailsSettingsUi.inline_main_app_routes!
+  RailsSettingsUi::ApplicationController.module_eval do
+    layout 'admin'
+  end
 
   # Automatically create the admin Biglearn exclusion pool when settings are saved
   RailsSettingsUi::ApplicationController.class_exec do

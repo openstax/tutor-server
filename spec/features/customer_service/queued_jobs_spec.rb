@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 require 'feature_js_helper'
 
@@ -59,7 +60,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
 
   scenario 'Getting more details about a job' do
     error = Lev::Error.new(code: 'bad', message: 'awful')
-    status.add_error(error)
+    status.add_error(error.as_json)
     status.save(something_spectacular: 'For all the good children')
 
     visit customer_service_jobs_path

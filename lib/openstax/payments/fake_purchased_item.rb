@@ -4,8 +4,9 @@ class OpenStax::Payments::FakePurchasedItem
   attr_accessor :is_paid
 
   def self.find(uuid)
-    data = JSON.parse(store.get(key(uuid)))
+    data = store.get(key(uuid))
     return nil if data.nil?
+    data = JSON.parse(data)
     new(uuid: data['uuid'], is_paid: data['is_paid'])
   end
 

@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 require 'feature_js_helper'
 
@@ -58,7 +59,7 @@ RSpec.feature 'Administration of queued jobs', :js do
   end
 
   scenario 'Getting more details about a job' do
-    error = Lev::Error.new(code: 'bad', message: 'awful')
+    error = Lev::Error.new(code: 'bad', message: 'awful').as_json
     status.add_error(error)
     status.save(something_spectacular: 'For all the good children')
 
