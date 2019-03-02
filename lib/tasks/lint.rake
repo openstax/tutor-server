@@ -3,6 +3,8 @@ namespace :lint do
   HEAD = ENV['TRAVIS_BRANCH'] || 'head'
 
   def exec_git(cmd)
+    return if HEAD == 'master'
+
     sh "git #{cmd} | xargs rubocop" do |ok|
       abort 'style errors!' unless ok
     end
