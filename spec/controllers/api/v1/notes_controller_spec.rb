@@ -3,29 +3,34 @@ require 'vcr_helper'
 
 RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: :v1, vcr: VCR_OPTS do
 
+  let(:application)  { FactoryBot.create :doorkeeper_application }
   let(:course)       { FactoryBot.create :course_profile_course }
   let(:period)       { FactoryBot.create :course_membership_period, course: course }
-  let(:user_1)       { FactoryBot.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user) }
+  let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student)          { student_role.student }
 
-  let(:user_1_role)  { AddUserAsPeriodStudent[period: period, user: user_1] }
-
-  let(:user_1_token) { FactoryBot.create :doorkeeper_access_token,
-                                         resource_owner_id: user_1_role.student.id }
+  let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: student_user.id }
 
   let(:user_2)       { FactoryBot.create(:user) }
   let(:user_2_token) { FactoryBot.create :doorkeeper_access_token,
                                          resource_owner_id: user_2.id }
 
-  let(:note) {FactoryBot.create :content_note, role: user_1_role }
+  let(:note) {FactoryBot.create :content_note, role: student_role }
 
   let(:parameters) {
     { course_id: course.id, chapter: note.page.book_location.first, section: note.page.book_location.last }
   }
+
   # link page to same ecosystem as course
-  before(:each) { note.page.chapter.book.update_attributes(ecosystem: course.ecosystem) }
+  before(:each) {
+    note.page.chapter.book.update_attributes(ecosystem: course.ecosystem)
+  }
 
   it 'fetches' do
-    api_get :index, user_1_token, parameters: parameters
+    api_get :index, student_token, parameters: parameters
     notes = JSON.parse(response.body)
     expect(notes.count).to eq 1
     expect(notes.first['id']).to eq note.id
@@ -33,7 +38,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
 
   it 'creates' do
     expect{
-      api_post :create, user_1_token, parameters: parameters, raw_post_data: {
+      api_post :create, student_token, parameters: parameters, raw_post_data: {
                  anchor: 'para123', contents: { test: true }
                }
       expect(response).to be_created
@@ -43,21 +48,21 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
   end
 
   it 'updates' do
-    api_put :update, user_1_token, parameters: parameters.merge(id: note.id),
+    api_put :update, student_token, parameters: parameters.merge(id: note.id),
             raw_post_data: { contents: { text: 'hello!' } }
     expect(response).to be_ok
     expect(note.reload.contents).to eq('text' => 'hello!')
   end
 
   it 'deletes' do
-    api_delete :destroy, user_1_token, parameters: parameters.merge(id: note.id)
+    api_delete :destroy, student_token, parameters: parameters.merge(id: note.id)
     expect(response).to be_ok
     expect{ note.reload }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
 
   it 'fetches user highlighted_sections' do
-    api_get :highlighted_sections, user_1_token, parameters: parameters
+    api_get :highlighted_sections, student_token, parameters: parameters
     expect(response).to be_ok
   end
 

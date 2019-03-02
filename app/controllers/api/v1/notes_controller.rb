@@ -43,7 +43,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   def create
     note = Content::Models::Note.new(role: @role, content_page_id: params[:page_id])
     consume!(note, represent_with: Api::V1::NoteRepresenter)
-    OSU::AccessPolicy.require_action_allowed!(:create, current_human_user, note)
+    OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, note)
     note.page = @course.ecosystem.pages.book_location(
       params[:chapter], params[:section],
     ).first!
@@ -65,7 +65,7 @@ class Api::V1::NotesController < Api::V1::ApiController
     #{json_schema(Api::V1::NoteRepresenter, include: :readable)}
   EOS
   def update
-    OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @note)
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @note)
     consume!(@note, represent_with: Api::V1::NoteRepresenter)
     @note.save
     render_api_errors(@note.errors) || respond_with(
@@ -84,7 +84,7 @@ class Api::V1::NotesController < Api::V1::ApiController
     Deletes the note from the student's course with the provided :id
   EOS
   def destroy
-    OSU::AccessPolicy.require_action_allowed!(:destroy, current_human_user, @note)
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @note)
     @note.destroy!
     render_api_errors(@note.errors) || head(:ok)
   end
@@ -113,8 +113,9 @@ class Api::V1::NotesController < Api::V1::ApiController
 
   def get_course_role
     @course = CourseProfile::Models::Course.find(params[:course_id])
-    @role = ChooseCourseRole.call(user: current_human_user, course: @course).outputs.role
-    raise SecurityTransgression, :invalid_role unless @role.present?
+    result = ChooseCourseRole.call(user: current_human_user, course: @course)
+    raise(SecurityTransgression, result.errors.map(&:message).to_sentence) if result.errors.any?
+    @role = result.outputs.role
   end
 
 end
