@@ -20,6 +20,9 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
       "osweb_base_url" => 'https://cms.openstax.org',
       "tutor_api_url" => 'https://example.com/api',
+
+      "response_validation" => { "url" => "http://localhost:5000/validate" },
+
       "payments" => a_hash_including(
         "is_enabled" => Settings::Payments.payments_enabled,
         "js_url" => a_string_starting_with('http'),

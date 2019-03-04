@@ -43,6 +43,12 @@ module Api::V1
              writeable: false,
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
+    property :response_validation,
+             type: Object,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { { url: Rails.application.secrets['response_validation_url'] } }
+
     property :payments, writeable: false, readable: true, getter: ->(*) do
       {
         is_enabled: Settings::Payments.payments_enabled,
