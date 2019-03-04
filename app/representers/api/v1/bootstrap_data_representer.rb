@@ -44,7 +44,7 @@ module Api::V1
              getter: ->(user_options:, **) { user_options[:tutor_api_url] }
 
     property :response_validation,
-             type: String,
+             type: Object,
              readable: true,
              writeable: false,
              getter: ->(*) { { url: Rails.application.secrets['response_validation_url'] } }
