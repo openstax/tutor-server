@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190215150450) do
+ActiveRecord::Schema.define(version: 20190218222054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,19 @@ ActiveRecord::Schema.define(version: 20190215150450) do
 
   add_index "content_maps", ["content_from_ecosystem_id", "content_to_ecosystem_id"], name: "index_content_maps_on_from_ecosystem_id_and_to_ecosystem_id", unique: true, using: :btree
   add_index "content_maps", ["content_to_ecosystem_id"], name: "index_content_maps_on_content_to_ecosystem_id", using: :btree
+
+  create_table "content_notes", force: :cascade do |t|
+    t.integer  "content_page_id", null: false
+    t.integer  "entity_role_id",  null: false
+    t.text     "anchor",          null: false
+    t.text     "annotation"
+    t.jsonb    "contents",        null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "content_notes", ["content_page_id"], name: "index_content_notes_on_content_page_id", using: :btree
+  add_index "content_notes", ["entity_role_id"], name: "index_content_notes_on_entity_role_id", using: :btree
 
   create_table "content_page_tags", force: :cascade do |t|
     t.integer  "content_page_id", null: false
@@ -1168,6 +1181,8 @@ ActiveRecord::Schema.define(version: 20190215150450) do
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_maps", "content_ecosystems", column: "content_from_ecosystem_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_maps", "content_ecosystems", column: "content_to_ecosystem_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_notes", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_notes", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade

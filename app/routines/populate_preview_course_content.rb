@@ -78,7 +78,7 @@ class PopulatePreviewCourseContent
     return if preview_chapters.blank?
 
     # Assign tasks
-    opens_at = [Time.current.monday - 2.weeks, course.starts_at.utc].max
+    opens_at = [course.time_zone.to_tz.now.monday - 2.weeks, course.starts_at.utc].max
     time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
       reading_due_at = [opens_at + index.weeks + 1.day, course.ends_at].min

@@ -11,7 +11,7 @@ RSpec.describe Research::BrainsController, type: :controller do
 
   it '#index' do
     response = get :index, study_id: study.id
-    expect(response.body).to include brain.name
+    expect(response.body).to include edit_research_brain_path(brain)
   end
 
   it '#creates' do
