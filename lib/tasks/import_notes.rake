@@ -4,9 +4,13 @@ task :import_notes, [:path, :run_mode] => :environment do |t, args|
 
   ActiveRecord::Base.transaction do
     CSV.foreach(args[:path]) do |research_id, element_id, module_id, contents, annotation, created_at, updated_at |
-      module_uuid, = module_id.split('@')
+
       role = Entity::Role.find_by(research_identifier: research_id)
-      page = Content::Models::Page.find_by(uuid: module_uuid)
+
+      page = Content::Models::Page.where(
+        uuid: module_uuid.split(':').map{|muuid| muuid.split('@').first }
+      ).order('version::integer desc, created_at desc').first
+
       if role.blank? || page.blank?
         STDERR.puts "#{research_id} #{module_uuid} skipped"
         next
