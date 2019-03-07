@@ -95,6 +95,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     self.correct_answer_id = correct_question_answer_ids[0].first
   end
 
+  def content_preview
+    JSON(content)["questions"].first["stem_html"]
+  end
+
   protected
 
   def free_response_required

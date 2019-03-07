@@ -7,4 +7,8 @@ class Tasks::Models::TaskedVideo < IndestructibleRecord
   def has_content?
     true
   end
+
+  def content_preview
+    title
+  end
 end
