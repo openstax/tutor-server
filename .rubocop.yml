@@ -37,3 +37,7 @@ Style/SymbolArray:
 # this way the comment is explicitly linked to the line it's referring to
 Style/CommentedKeyword:
   Enabled: false
+
+# allow multiline {} if the return value is used, clearer then begin/end
+Style/BlockDelimiters:
+  EnforcedStyle: semantic
