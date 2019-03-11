@@ -32,8 +32,7 @@ module Api::V1
                description: "When the metatask was last worked (nil means not yet worked)"
              }
 
-    collection :metatask_steps,
-               as: :metatask_steps,
+    collection :steps,
                writeable: false,
                readable: true,
                extend: MetataskStepRepresenter,

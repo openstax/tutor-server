@@ -4,6 +4,6 @@ class Tasks::Models::TaskedExternalUrl < IndestructibleRecord
   validates :url, presence: true
 
   def content_preview
-    "#{title}: #{description}"
+    title || "External Url step ##{id}"
   end
 end

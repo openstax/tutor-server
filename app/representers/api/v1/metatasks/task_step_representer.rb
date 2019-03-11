@@ -22,19 +22,7 @@ module Api::V1::Metatasks
              getter: ->(*) { task_step.id },
              schema_info: {
                required: true
-             },
-             if: NOT_FEEDBACK_ONLY
-
-    property :task_id,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: ->(*) { task_step.tasks_task_id },
-             schema_info: {
-                 required: true,
-                 description: "The id of the Task"
-             },
-             if: NOT_FEEDBACK_ONLY
+             }
 
     property :type,
              type: String,
@@ -44,8 +32,7 @@ module Api::V1::Metatasks
              schema_info: {
                required: true,
                description: "The type of this TaskStep (exercise, reading, video, placeholder, etc.)"
-             },
-             if: NOT_FEEDBACK_ONLY
+             }
 
     property :is_completed,
              writeable: false,
@@ -55,7 +42,6 @@ module Api::V1::Metatasks
                required: true,
                type: 'boolean',
                description: "Whether or not this step is complete"
-             },
-             if: NOT_FEEDBACK_ONLY
+             }
   end
 end

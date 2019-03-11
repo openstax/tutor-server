@@ -9,6 +9,6 @@ class Tasks::Models::TaskedVideo < IndestructibleRecord
   end
 
   def content_preview
-    title
+    title || "External Reading step ##{id}"
   end
 end

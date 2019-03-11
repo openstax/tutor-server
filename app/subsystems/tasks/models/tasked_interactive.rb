@@ -9,6 +9,6 @@ class Tasks::Models::TaskedInteractive < IndestructibleRecord
   end
 
   def content_preview
-    title
+    title || "External Interactive step ##{id}"
   end
 end

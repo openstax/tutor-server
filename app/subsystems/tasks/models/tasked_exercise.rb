@@ -96,7 +96,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def content_preview
-    JSON(content)["questions"].first["stem_html"]
+    content_preview_from_json = JSON(content)["questions"].try(:first).try(:[], "stem_html")
+    content_preview_from_json || "Exercise step ##{id}"
   end
 
   protected

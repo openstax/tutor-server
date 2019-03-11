@@ -117,7 +117,7 @@ Rails.application.routes.draw do
     end
 
     resources :metatasks, only: [:show, :destroy] do
-      resources :metasteps, controller: :metatask_steps, shallow: true, only: [:show, :update]
+      # resources :metasteps, controller: :metatask_steps, shallow: true, only: [:show, :update]
     end
 
     resources :research_surveys, only: [:update]
