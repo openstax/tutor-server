@@ -9,16 +9,16 @@ git_source(:github) do |repo_name|
 end
 
 # Rails framework
-gem 'rails', '4.2.11'
+gem 'rails', '~> 5.2.2'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.3.7'
 
 # SCSS stylesheets
-gem 'sass-rails', '~> 5.0.0'
+gem 'sass-rails', '~> 5.0.7'
 
 # Compass stylesheets
-gem 'compass-rails'
+gem 'compass-rails', '~> 3.1.0'
 
 # JavaScript asset compressor
 gem 'uglifier', '>= 1.3.0'
@@ -27,7 +27,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'browser', '~> 2.5'
 
 # CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
+gem 'coffee-rails', '~> 4.2.2'
 
 # JavaScript asset compiler
 gem 'mini_racer'
@@ -39,7 +39,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 
 # PostgreSQL database
-gem 'pg', '~> 0.21.0'
+gem 'pg', '~> 1.1.4'
 
 # Run unicorn when using the `rails server` or `rails s` command
 gem 'unicorn-rails'
@@ -63,13 +63,15 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.13.1'
+#gem 'openstax_accounts', '~> 7.13.1'
+gem 'openstax_accounts', github: 'openstax/accounts_rails', branch: 'sso-cookie'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 8.2.0'
+#gem 'openstax_api', '~> 8.2.0'
+gem 'openstax_api', github: 'openstax/openstax_api', branch: 'rails5'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -80,7 +82,7 @@ gem 'ims-lti', '~> 2.2.1'
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4
 # Also, do not use Roar::Hypermedia links
-gem 'roar', '1.0.3'
+gem 'roar', '~> 1.1.0'
 
 gem 'nokogiri'
 
@@ -91,10 +93,10 @@ gem 'jobba', '~> 1.8.0'
 gem 'lev', '~> 9.0.1'
 
 # Ruby dsl for SQL queries
-gem 'squeel'
+gem 'baby_squeel'
 
 # Contract management
-gem 'fine_print', '~> 3.1.0'
+gem 'fine_print', '~> 4.0.1'
 
 # Keyword search
 gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
@@ -125,7 +127,7 @@ gem 'hashie'
 gem 'httparty'
 
 # Ordered models
-gem 'sortability'
+gem 'sortability', '~> 0.1.0'
 
 # Lorem Ipsum
 gem 'faker'
@@ -134,7 +136,7 @@ gem 'faker'
 gem 'redis-rails'
 
 # Background job queueing
-gem 'delayed_job_active_record'
+gem 'delayed_job_active_record', '~>4.1.4.beta1'
 gem 'daemons'
 
 # Type coercion for Representable
@@ -144,7 +146,7 @@ gem 'virtus'
 gem 'axlsx', github: 'randym/axlsx', ref: 'c8ac844572b25fda358cc01d2104720c4c42f450'
 
 # Pagination library
-gem 'will_paginate', '~> 3.0.6'
+gem 'will_paginate', '~> 3.1.7'
 
 # Time travel
 gem 'timecop'
@@ -162,10 +164,12 @@ gem 'sentry-raven', require: 'raven/base'
 gem 'babbler', '~> 1.0.1'
 
 # Soft-deletion
-gem 'paranoia'
+gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
-gem 'openstax_salesforce', '~> 2.0.1'
+#gem 'openstax_salesforce', '~> 2.0.1'
+gem 'openstax_salesforce', github: 'openstax/openstax_salesforce', branch: 'rails-5'
+
 # Fork that supports Ruby >= 2.1 and stubbable stdout
 gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9efe1ba'
 
@@ -196,10 +200,10 @@ gem 'oj_mimic_json'
 gem 'request_store'
 
 # Use PostgreSQL cursors with ActiveRecord
-gem 'postgresql_cursor'
+gem 'postgresql_cursor', '~> 0.6.2'
 
 # manage PostgresQL view migrations
-gem 'scenic', '~> 1.4'
+gem 'scenic', '~> 1.5'
 
 # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
 gem 'awesome_print'
@@ -225,7 +229,7 @@ gem 'openstax_healthcheck'
 
 group :development, :test do
   # Get env variables from .env file
-  gem 'dotenv-rails'
+  gem 'dotenv-rails', '~> 2.7.1'
 
   # lint files
   gem 'rubocop', '~> 0.65.0'
@@ -247,18 +251,15 @@ group :development, :test do
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
 
-  # Mute asset pipeline log messages
-  gem 'quiet_assets'
-
   # Use RSpec for tests
-  gem 'rspec-rails', '~> 3.8.0'
+  gem 'rspec-rails', '~> 3.8.2'
 
   gem 'rspec-collection_matchers'
 
   gem 'pilfer', '~> 1.0.0'
 
   # Fixture replacement
-  gem 'factory_bot_rails'
+  gem 'factory_bot_rails', '~> 5.0.1'
 
   # Stubs HTTP requests
   gem 'webmock'
@@ -296,7 +297,7 @@ group :development do
   gem 'railroady'
 
   # Access an IRB console on exceptions page and /console in development
-  gem 'web-console'
+  gem 'web-console', '~> 3.7.0'
 end
 
 group :test do
