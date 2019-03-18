@@ -47,7 +47,7 @@ module Api::V1
              type: Object,
              readable: true,
              writeable: false,
-             getter: ->(*) { { url: Rails.application.secrets['response_validation_url'] } }
+             getter: ->(*) { Rails.application.secrets['response_validation'] }
 
     property :payments, writeable: false, readable: true, getter: ->(*) do
       {
