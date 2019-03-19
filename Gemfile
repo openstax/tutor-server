@@ -175,7 +175,7 @@ gem 'paranoia', '~> 2.4.1'
 gem 'openstax_salesforce', github: 'openstax/openstax_salesforce', branch: 'rails-5'
 
 # Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9efe1ba'
+gem 'active_force', github: 'openstax/active_force', ref: '9efe1ba'
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'
@@ -215,7 +215,7 @@ gem 'awesome_print'
 # Advisory Locks
 # This version provides locks that unlock automatically at the end of the transaction,
 # which are required for the correct operation of the Biglearn client
-gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
+gem 'with_advisory_lock', github: 'procore/with_advisory_lock', ref: 'aba1583c'
 
 # In place form editing on admin menu
 gem 'best_in_place'
