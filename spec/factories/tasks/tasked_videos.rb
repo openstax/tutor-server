@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :tasks_tasked_video, class: '::Tasks::Models::TaskedVideo' do
     transient do
-      skip_task false
+      skip_task { false }
     end
 
-    task_step nil
+    task_step { nil }
     url { Faker::Internet.url }
     title { Faker::Lorem.sentence(3) }
     content { Faker::Lorem.paragraph }

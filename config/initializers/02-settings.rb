@@ -28,10 +28,10 @@ Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = :bi
 
 Settings::Db.store.defaults[:default_is_lms_enabling_allowed] = false
 
-redis_secrets = secrets['redis']
+redis_secrets = secrets[:redis]
 Settings::Redis.store = Redis::Store.new(
-  url: redis_secrets['url'],
-  namespace: redis_secrets['namespaces']['settings']
+  url: redis_secrets[:url],
+  namespace: redis_secrets[:namespaces][:settings]
 )
 
 Settings::Db.store.defaults[:prebuilt_preview_course_count] = 10

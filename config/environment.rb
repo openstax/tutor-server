@@ -1,6 +1,6 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
-
+require_relative 'application'
 require 'scout_helper'
 require 'box'
 require 'i_am'

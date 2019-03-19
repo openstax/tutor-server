@@ -6,10 +6,10 @@ FactoryBot.define do
     content             { Faker::Lorem.paragraphs(2).join("\n") }
     uuid                { SecureRandom.uuid }
     version             { Random.rand(1..10) }
-    book_location       [1, 1]
+    book_location       { [1, 1] }
     baked_book_location { [ book_location, [] ].sample }
-    fragments           []
-    snap_labs           []
+    fragments           { [] }
+    snap_labs           { [] }
 
     association :reading_dynamic_pool, factory: :content_pool
     association :reading_context_pool, factory: :content_pool

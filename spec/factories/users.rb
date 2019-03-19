@@ -7,7 +7,7 @@ FactoryBot.define do
       last_name { SecureRandom.hex.to_s }
       skip_terms_agreement { false }
       salesforce_contact_id { nil }
-      is_test nil
+      is_test { nil }
 
       profile do
         create :user_profile,

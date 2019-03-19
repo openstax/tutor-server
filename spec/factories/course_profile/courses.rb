@@ -4,9 +4,9 @@ FactoryBot.define do
 
     name                  { Faker::Lorem.words.join(' ') }
 
-    is_preview            false
+    is_preview            { false }
 
-    is_concept_coach      false
+    is_concept_coach      { false }
     is_college            { [ true, false, nil ].sample }
 
     # Preview term dates are based on DateTime.current, so they lead to flaky tests

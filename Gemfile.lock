@@ -1,4 +1,16 @@
 GIT
+  remote: https://github.com/nathanstitt/fine_print.git
+  revision: 88557ebca22a6e22f9bc3858dfaae54825df3783
+  branch: rails5
+  specs:
+    fine_print (4.0.1)
+      action_interceptor (>= 1.0)
+      baby_squeel
+      jquery-rails
+      rails (>= 4.2)
+      responders
+
+GIT
   remote: https://github.com/openstax/accounts_rails.git
   revision: bba595b78b3ca89fe1d629ff8c9a583de047d528
   branch: sso-cookie
@@ -60,6 +72,23 @@ GIT
       omniauth-salesforce (~> 1.0.5)
       rails (>= 4.2.0)
       restforce (~> 3.1.0)
+
+GIT
+  remote: https://github.com/openstax/rescue_from.git
+  revision: 85943be16ccdc628acfa1a9b82fc810842d4cd51
+  branch: rails5
+  specs:
+    openstax_rescue_from (3.0.0)
+      rails (>= 3.1, < 6.0)
+
+GIT
+  remote: https://github.com/openstax/sortability.git
+  revision: ae6ea1e9365b16c1cef0e243426dd88f067d4de5
+  branch: rails5
+  specs:
+    sortability (0.1.0)
+      baby_squeel
+      rails
 
 GIT
   remote: https://github.com/procore/with_advisory_lock.git
@@ -157,8 +186,10 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     babbler (1.0.1)
-    baby_squeel (0.3.1)
-      activerecord (>= 4.0.0)
+    baby_squeel (1.3.1)
+      activerecord (>= 4.2.0)
+      join_dependency (~> 0.1.2)
+      polyamorous (~> 1.3)
     best_in_place (3.1.1)
       actionpack (>= 3.2)
       railties (>= 3.2)
@@ -166,6 +197,8 @@ GEM
     bindex (0.5.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
+    bootsnap (1.4.1)
+      msgpack (~> 1.0)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
@@ -275,10 +308,37 @@ GEM
     dotenv-rails (2.7.1)
       dotenv (= 2.7.1)
       railties (>= 3.2, < 6.1)
+    dry-configurable (0.8.2)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 0.4, >= 0.4.7)
+    dry-container (0.7.0)
+      concurrent-ruby (~> 1.0)
+      dry-configurable (~> 0.1, >= 0.1.3)
+    dry-core (0.4.7)
+      concurrent-ruby (~> 1.0)
+    dry-equalizer (0.2.2)
+    dry-inflector (0.1.2)
+    dry-logic (0.5.0)
+      dry-container (~> 0.2, >= 0.2.6)
+      dry-core (~> 0.2)
+      dry-equalizer (~> 0.2)
+    dry-types (0.14.0)
+      concurrent-ruby (~> 1.0)
+      dry-container (~> 0.3)
+      dry-core (~> 0.4, >= 0.4.4)
+      dry-equalizer (~> 0.2)
+      dry-inflector (~> 0.1, >= 0.1.2)
+      dry-logic (~> 0.5, >= 0.5)
+    dry-validation (0.13.0)
+      concurrent-ruby (~> 1.0)
+      dry-configurable (~> 0.1, >= 0.1.3)
+      dry-core (~> 0.2, >= 0.2.1)
+      dry-equalizer (~> 0.2)
+      dry-logic (~> 0.5, >= 0.5.0)
+      dry-types (~> 0.14, >= 0.14)
     equalizer (0.0.11)
     error_page_assets (0.4)
     erubi (1.8.0)
-    erubis (2.7.0)
     exception_notification (4.3.0)
       actionmailer (>= 4.0, < 6)
       activesupport (>= 4.0, < 6)
@@ -298,12 +358,6 @@ GEM
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.10.0)
-    fine_print (4.0.1)
-      action_interceptor (>= 1.0)
-      baby_squeel
-      jquery-rails
-      rails (>= 4.2)
-      responders
     fog-aws (3.4.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
@@ -338,22 +392,8 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    haml (5.0.4)
-      temple (>= 0.8.0)
-      tilt
-    haml-rails (2.0.0)
-      actionpack (>= 5.1)
-      activesupport (>= 5.1)
-      haml (>= 4.0.6, < 6.0)
-      html2haml (>= 1.0.1)
-      railties (>= 5.1)
     hashdiff (0.3.8)
     hashie (3.6.0)
-    html2haml (2.2.0)
-      erubis (~> 2.7.0)
-      haml (>= 4.0, < 6)
-      nokogiri (>= 1.6.0)
-      ruby_parser (~> 3.5)
     htmlentities (4.3.4)
     httparty (0.16.4)
       mime-types (~> 3.0)
@@ -376,6 +416,8 @@ GEM
       oj (~> 3.7.6)
       redis (~> 3.2)
       redis-namespace
+    join_dependency (0.1.4)
+      activerecord (>= 4.2.0)
     jquery-rails (4.3.3)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
@@ -430,6 +472,7 @@ GEM
     mini_racer (0.2.4)
       libv8 (>= 6.3)
     minitest (5.11.3)
+    msgpack (1.2.9)
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -461,8 +504,6 @@ GEM
       omniauth-oauth2 (~> 1.0)
     openstax_healthcheck (0.0.3)
       rails (>= 3.0)
-    openstax_rescue_from (3.0.0)
-      rails (>= 3.1, < 6.0)
     openstax_utilities (4.2.3)
       keyword_search
       lev
@@ -480,7 +521,7 @@ GEM
     pg (1.1.4)
     pilfer (1.0.2)
       rblineprof (~> 0.3.2)
-    polyamorous (1.1.0)
+    polyamorous (1.3.3)
       activerecord (>= 3.0)
     postgresql_cursor (0.6.2)
       activerecord (>= 3.1.0)
@@ -529,8 +570,9 @@ GEM
       loofah (~> 2.2, >= 2.2.2)
     rails-settings-cached (0.4.6)
       rails (>= 4.2.0)
-    rails-settings-ui (0.5.0)
-      haml-rails
+    rails-settings-ui (1.3.4)
+      dry-types
+      dry-validation (>= 0.12.0)
       i18n
       rails (>= 3.0)
     railties (5.2.2.1)
@@ -633,8 +675,6 @@ GEM
     ruby-graphviz (1.2.4)
     ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
-    ruby_parser (3.13.0)
-      sexp_processor (~> 4.9)
     rubyzip (1.2.2)
     safe_yaml (1.0.5)
     sass (3.4.25)
@@ -653,7 +693,6 @@ GEM
       rubyzip (~> 1.2, >= 1.2.2)
     sentry-raven (2.9.0)
       faraday (>= 0.7.6, < 1.0)
-    sexp_processor (4.12.0)
     shellany (0.0.1)
     shoulda-matchers (4.0.1)
       activesupport (>= 4.2.0)
@@ -664,9 +703,6 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     slop (3.6.0)
-    sortability (0.1.0)
-      rails
-      squeel
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-commands-rspec (1.0.4)
@@ -678,11 +714,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    squeel (1.2.3)
-      activerecord (>= 3.0)
-      activesupport (>= 3.0)
-      polyamorous (~> 1.1.0)
-    temple (0.8.1)
     test_xml (0.1.8)
       diffy (~> 3.0)
       nokogiri (>= 1.3.2)
@@ -761,6 +792,7 @@ DEPENDENCIES
   babbler (~> 1.0.1)
   baby_squeel
   best_in_place
+  bootsnap (~> 1.4.0)
   bootstrap-sass (~> 3.3.7)
   boxr
   brakeman
@@ -790,7 +822,7 @@ DEPENDENCIES
   factory_bot_rails (~> 5.0.1)
   faker
   fakeredis
-  fine_print (~> 4.0.1)
+  fine_print!
   fog-aws
   guard-rspec
   hashie
@@ -815,7 +847,7 @@ DEPENDENCIES
   openstax_accounts!
   openstax_api!
   openstax_healthcheck
-  openstax_rescue_from (~> 3.0.0)
+  openstax_rescue_from!
   openstax_salesforce!
   openstax_utilities (~> 4.2.0)
   p3p
@@ -834,7 +866,7 @@ DEPENDENCIES
   rails-erd
   rails-html-sanitizer (~> 1.0)
   rails-settings-cached (~> 0.4.0)
-  rails-settings-ui (~> 0.5.0)
+  rails-settings-ui (~> 1.3.4)
   redis-rails
   remotipart
   render_anywhere
@@ -850,7 +882,7 @@ DEPENDENCIES
   scout_apm (~> 3.0.x)
   sentry-raven
   shoulda-matchers
-  sortability (~> 0.1.0)
+  sortability!
   spring
   spring-commands-rspec
   therubyracer

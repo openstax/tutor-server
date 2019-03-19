@@ -6,9 +6,9 @@ FactoryBot.define do
       last_name { SecureRandom.hex.to_s }
       full_name { [first_name, last_name].join(' ') || SecureRandom.hex.to_s }
       skip_terms_agreement { false }
-      title nil
-      salesforce_contact_id nil
-      is_test nil
+      title { nil }
+      salesforce_contact_id { nil }
+      is_test { nil }
     end
 
     after(:build) do |profile, evaluator|

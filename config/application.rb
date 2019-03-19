@@ -24,6 +24,7 @@ module Tutor
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
+    config.load_defaults 5.0
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -40,9 +41,6 @@ module Tutor
     # add concern folders to the autoload path
     config.eager_load_paths << Rails.root.join('app', 'routines', 'concerns')
 
-    # For not swallowing errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
-
     # Temporary fix until we update openstax_api
     # to include this for JSON responses
     ActiveSupport.escape_html_entities_in_json = false
@@ -51,9 +49,10 @@ module Tutor
     # This setting cannot be set from an initializer
     # See https://github.com/rails/rails/issues/10908
     redis_secrets = secrets['redis']
+
     config.cache_store = :redis_store, {
-      url: redis_secrets['url'],
-      namespace: redis_secrets['namespaces']['cache'],
+      url: redis_secrets[:url],
+      namespace: redis_secrets[:namespaces][:cache],
       expires_in: 90.minutes
     }
 

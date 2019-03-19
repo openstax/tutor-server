@@ -7,7 +7,7 @@ FactoryBot.define do
     association :book, factory: :content_book
 
     title               { Faker::Lorem.words(3).join(' ') }
-    book_location       [1]
+    book_location       { [1] }
     baked_book_location { [ book_location, [] ].sample }
 
     after(:create) do |chapter, evaluator|

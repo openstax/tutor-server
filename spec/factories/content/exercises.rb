@@ -3,12 +3,12 @@ FactoryBot.define do
     association :page, factory: :content_page
 
     sequence(:number) { |n| -n }
-    version           1
+    version           { 1 }
 
     transient         do
-      uid             nil
-      tags            nil
-      num_parts       1
+      uid             { nil }
+      tags            { nil }
+      num_parts       { 1 }
       wrapper         { OpenStax::Exercises::V1::Exercise.new(content: content) }
     end
 

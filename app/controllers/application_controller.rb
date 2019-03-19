@@ -7,12 +7,12 @@ class ApplicationController < ActionController::Base
   WEBVIEW_FLASH_TYPES = [:webview_notice]
 
   add_flash_types *WEBVIEW_FLASH_TYPES
-  prepend_before_filter :keep_webview_flash
+  prepend_before_action :keep_webview_flash
 
-  before_filter :block_sign_up, unless: -> { params[:block_sign_up].to_s == "false" }
-  before_filter :straight_to_student_sign_up, if: -> { params[:straight_to_student_sign_up].to_s == "true" }
-  before_filter :straight_to_sign_up, if: -> { params[:straight_to_sign_up].to_s == "true" }
-  before_filter :authenticate_user!
+  before_action :block_sign_up, unless: -> { params[:block_sign_up].to_s == "false" }
+  before_action :straight_to_student_sign_up, if: -> { params[:straight_to_student_sign_up].to_s == "true" }
+  before_action :straight_to_sign_up, if: -> { params[:straight_to_sign_up].to_s == "true" }
+  before_action :authenticate_user!
 
   protected
 

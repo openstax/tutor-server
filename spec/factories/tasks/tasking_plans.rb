@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :tasks_tasking_plan, class: '::Tasks::Models::TaskingPlan' do
     transient do
-      duration 1.week
+      duration { 1.week }
     end
 
     after(:build) do |tasking_plan, evaluator|

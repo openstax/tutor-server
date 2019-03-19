@@ -11,12 +11,12 @@ FactoryBot.define do
   factory :tasks_tasked_exercise, class: '::Tasks::Models::TaskedExercise' do
     transient do
       tasked_to { build(:entity_role) }
-      skip_task false
+      skip_task { false }
     end
 
     association :exercise, factory: :content_exercise
     question_id    { exercise.content_as_independent_questions.first[:id] }
-    question_index 0
+    question_index { 0 }
     content        { exercise.content }
     url            { exercise.url }
     title          { exercise.title }

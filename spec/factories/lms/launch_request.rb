@@ -4,8 +4,8 @@ FactoryBot.define do
   factory :launch_request, class: OpenStruct do
     user_id { SecureRandom.hex(10) }
     full_name { Faker::Name.name }
-    outcome_url nil
-    result_sourcedid nil
+    outcome_url { nil }
+    result_sourcedid { nil }
     signature { 'not-real-sig'}
     nonce { SecureRandom.hex(10)}
     request_url { Faker::Internet.url }
@@ -14,7 +14,7 @@ FactoryBot.define do
     context_id { SecureRandom.uuid }
 
     transient do
-      app nil
+      app { nil }
     end
 
     trait :assignment do

@@ -96,7 +96,8 @@ gem 'lev', '~> 9.0.1'
 gem 'baby_squeel'
 
 # Contract management
-gem 'fine_print', '~> 4.0.1'
+# gem 'fine_print', '~> 4.0.1'
+gem 'fine_print', github: 'nathanstitt/fine_print', branch: 'rails5'
 
 # Keyword search
 gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
@@ -127,7 +128,8 @@ gem 'hashie'
 gem 'httparty'
 
 # Ordered models
-gem 'sortability', '~> 0.1.0'
+#gem 'sortability', '~> 0.1.0'
+gem 'sortability', github: 'openstax/sortability', branch: 'rails5'
 
 # Lorem Ipsum
 gem 'faker'
@@ -155,7 +157,9 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'openstax_rescue_from', '~> 3.0.0'
+# gem 'openstax_rescue_from', '~> 3.0.0'
+gem 'openstax_rescue_from', github: 'openstax/rescue_from', branch: 'rails5'
+
 
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
 gem 'sentry-raven', require: 'raven/base'
@@ -175,7 +179,7 @@ gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9efe1
 
 # Global settings
 gem 'rails-settings-cached', '~> 0.4.0'
-gem 'rails-settings-ui', '~> 0.5.0'
+gem 'rails-settings-ui', '~> 1.3.4'
 
 # Nicely-styled static error pages
 gem 'error_page_assets'
@@ -226,6 +230,9 @@ gem 'scout_apm', '~> 3.0.x'
 
 # Respond to ELB healthchecks in /ping and /ping/
 gem 'openstax_healthcheck'
+
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '~> 1.4.0', require: false
 
 group :development, :test do
   # Get env variables from .env file
