@@ -41,4 +41,5 @@ before_script:
   - export OXT_TEST_DB=travis_ci_test
   - export PARALLEL_TEST_PROCESSORS=2
   - export DEMO_MAX_PROCESSES=0
+  - gem install bundler:2.0.1
   - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
