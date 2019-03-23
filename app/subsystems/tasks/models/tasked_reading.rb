@@ -11,6 +11,10 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
     true
   end
 
+  def has_learning_objectives?
+    content_dom.css('.learning-objectives').present?
+  end
+
   def content_preview
     text = document_title.presence || data_title.presence || class_title.presence
     text || "Reading Step ##{id}"

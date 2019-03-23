@@ -37,6 +37,16 @@ module Api::V1::Tasks
              readable: true,
              schema_info: { description: 'The chapter and section in the baked book, e.g. [5, 2]' }
 
+    property :has_learning_objectives?,
+             as: :has_learning_objectives,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "Does this reading step include learning objectives?"
+             }
+
+
     property :content,
              type: String,
              writeable: false,

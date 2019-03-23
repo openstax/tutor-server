@@ -95,6 +95,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     self.correct_answer_id = correct_question_answer_ids[0].first
   end
 
+  def is_two_step?
+    return parser.question_formats_for_students.include?('free-response')
+  end
+
   def content_preview
     content_preview_from_json = JSON(content)["questions"].try(:first).try(:[], "stem_html")
     content_preview_from_json || "Exercise step ##{id}"

@@ -1,6 +1,7 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
 
-  around_action :with_task_step_and_tasked
+  around_action :with_task_step_and_tasked, except: :show
+  before_action :fetch_step, only: :show
   before_action :error_if_student_and_needs_to_pay
   before_action :populate_placeholders_if_needed, only: :show
 
@@ -15,12 +16,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   ###############################################################
   # show
   ###############################################################
-
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
-    @task = Research::ModifiedTaskForDisplay[task: @task]
-    @task_step = @task.task_steps.to_a.find { |task_step| task_step.id == params[:id].to_i }
-    @tasked = @task_step.tasked
     standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
   end
 
@@ -31,23 +28,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
     # We only update last_completed_at if the task_step is already completed
-    update_task_step(mark_completed: @task_step.completed?)
-  end
-
-  ###############################################################
-  # completed
-  ###############################################################
-
-  api :PUT, '/steps/:step_id/completed',
-            'Marks the specified TaskStep as completed (if applicable)'
-  description <<-EOS
-    Marks a task step as complete, which may create or modify other steps.
-    The entire task is returned so the FE can update as needed.
-
-    #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
-  EOS
-  def completed
-    update_task_step(mark_completed: true)
+    update_task_step
   end
 
   ###############################################################
@@ -69,6 +50,11 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   end
 
   protected
+
+  def fetch_step
+    @task_step = ::Tasks::Models::TaskStep.find(params[:id])
+    @tasked = @task_step.tasked
+  end
 
   def with_task_step_and_tasked
     Tasks::Models::TaskStep.transaction do
@@ -98,32 +84,35 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     @tasked.reload
   end
 
-  def update_task_step(mark_completed:)
+  def update_task_step
     ScoutHelper.ignore!(0.8)
 
     @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
 
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
-    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked) \
-      if mark_completed
+    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
     consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
     @tasked.save
 
-    if mark_completed
-      # Task already locked in around_action
-      result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
-      raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
-    end
+    # Task already locked in around_action
+    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
+    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
 
-    raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
-
-    @task = Research::ModifiedTaskForDisplay[task: @task]
     respond_with(
-      @task,
+      @tasked,
       responder: ResponderWithPutPatchDeleteContent,
-      represent_with: Api::V1::TaskRepresenter
+      represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked)
     )
+
+    # raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+
+    # @task = Research::ModifiedTaskForDisplay[task: @task]
+    # respond_with(
+    #   @task,
+    #   responder: ResponderWithPutPatchDeleteContent,
+    #   represent_with: Api::V1::TaskRepresenter
+    # )
   end
 
 end

@@ -7,14 +7,18 @@ module Api::V1
     property :id,
              type: String,
              writeable: false,
-             readable: true,
-             schema_info: { required: true }
+             readable: true
 
     property :title,
              type: String,
              writeable: false,
-             readable: true,
-             schema_info: { required: true }
+             readable: true
+
+    property :task_type,
+             as: :type,
+             type: String,
+             writeable: false,
+             readable: true
 
     property :due_at,
              type: String,
@@ -23,13 +27,13 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
              schema_info: { description: "When the metatask is due (nil means never due)" }
 
-    property :last_worked_at,
-             type: String,
+    property :feedback_at,
              writeable: false,
              readable: true,
-             getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) },
+             getter: ->(*) { DateTimeUtilities.to_api_s(feedback_at) },
              schema_info: {
-               description: "When the metatask was last worked (nil means not yet worked)"
+               type: 'date',
+               description: "Feedback should be shown for the task after this time"
              }
 
     collection :steps,
@@ -48,11 +52,5 @@ module Api::V1
                  description: "The steps which this Metatask is composed of"
                }
 
-    property :feedback_available?,
-             as: :is_feedback_available,
-             writeable: false,
-             readable: true,
-             schema_info: { type: 'boolean',
-                            description: "If the feedback should be shown for the task" }
   end
 end

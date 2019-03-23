@@ -4,9 +4,6 @@ module Api::V1::Metatasks
     include Roar::JSON
     include Representable::Coercion
 
-    FEEDBACK          = ->(user_options:, **) { !user_options.try! :[], :no_feedback }
-    NOT_FEEDBACK_ONLY = ->(user_options:, **) { !user_options.try! :[], :feedback_only }
-
     # These properties will be included in specific Tasked steps; therefore
     # their getters will be called from that context and so must call up to
     # the "task_step" to access data in the TaskStep "base" class.
@@ -34,6 +31,17 @@ module Api::V1::Metatasks
                description: "The type of this TaskStep (exercise, reading, video, placeholder, etc.)"
              }
 
+    property :group_name,
+             as: :group,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { task_step.group_name },
+             schema_info: {
+                required: true,
+                description: "Which group this TaskStep belongs to (default,core,spaced practice,personalized)"
+             }
+
     property :is_completed,
              writeable: false,
              readable: true,
@@ -43,5 +51,14 @@ module Api::V1::Metatasks
                type: 'boolean',
                description: "Whether or not this step is complete"
              }
+
+    collection :labels,
+               writeable: false,
+               readable: true,
+               getter: ->(*) { task_step.labels },
+               schema_info: {
+                 required: true,
+                 description: "Misc properties related to this step"
+               }
   end
 end

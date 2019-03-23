@@ -10,16 +10,17 @@ module Api::V1::Metatasks
                description: "The source URL for this Reading"
              }
 
-    property :title,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: true,
-               description: "The title of this Reading"
-             }
+    # property :title,
+    #          type: String,
+    #          writeable: false,
+    #          readable: true,
+    #          schema_info: {
+    #            required: true,
+    #            description: "The title of this Reading"
+    #          }
 
     property :content_preview,
+             as: :preview,
              type: String,
              writeable: false,
              readable: true,
