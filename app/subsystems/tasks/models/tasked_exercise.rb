@@ -21,9 +21,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
   end
 
-  delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
-           :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
-           :content_hash_for_students, :tags, :los, :aplos, to: :parser
+  delegate :uid, :questions, :question_formats, :question_answers,
+           :question_answer_ids, :question_formats_for_students,
+           :correct_question_answers, :correct_question_answer_ids,
+           :feedback_map, :solutions, :content_hash_for_students,
+           :tags, :los, :aplos, to: :parser
 
   # We depend on the parser because we do not save the parsed content
   def parser

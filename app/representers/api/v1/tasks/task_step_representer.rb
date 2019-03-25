@@ -4,7 +4,7 @@ module Api::V1::Tasks
     include Roar::JSON
     include Representable::Coercion
 
-    FEEDBACK_AVAILABLE = ->(*) { task_step.feedback_available? }
+    INCLUDE_CONTENT = ->(user_options:, **) { user_options.try!(:[], :include_content) }
 
     # These properties will be included in specific Tasked steps; therefore
     # their getters will be called from that context and so must call up to
@@ -16,21 +16,10 @@ module Api::V1::Tasks
     # values always reach up to it.
 
     property :id,
-             type: String,
              writeable: false,
              getter: ->(*) { task_step.id },
              schema_info: {
                required: true
-             }
-
-    property :task_id,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: ->(*) { task_step.tasks_task_id },
-             schema_info: {
-                 required: true,
-                 description: "The id of the Task"
              }
 
     property :type,
@@ -63,31 +52,6 @@ module Api::V1::Tasks
                type: 'boolean',
                description: "Whether or not this step is complete"
              }
-
-    collection :related_content,
-               writeable: false,
-               readable: true,
-               getter: ->(*) { task_step.related_content.map { |rc| OpenStruct.new(rc) } },
-               extend: ::Api::V1::RelatedContentRepresenter,
-               schema_info: {
-                 required: true,
-                 description: "Misc content related to this step"
-               }
-
-    collection :labels,
-               writeable: false,
-               readable: true,
-               getter: ->(*) { task_step.labels },
-               schema_info: {
-                 required: true,
-                 description: "Misc properties related to this step"
-               }
-
-    property :spy,
-             type: Object,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { task_step.spy }
 
   end
 end

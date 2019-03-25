@@ -18,7 +18,12 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   ###############################################################
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
-    standard_read(@tasked, Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    standard_read(
+      @tasked,
+      Api::V1::TaskedRepresenterMapper.representer_for(@tasked),
+      false,
+      include_content: true
+    )
   end
 
   ###############################################################
@@ -27,26 +32,35 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
-    # We only update last_completed_at if the task_step is already completed
-    update_task_step
-  end
 
-  ###############################################################
-  # recovery
-  ###############################################################
+    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
 
-  api :PUT, '/steps/:step_id/recovery',
-            'Requests a new exercise related to the given step'
-  def recovery
-    OSU::AccessPolicy.require_action_allowed!(:related_exercise, current_api_user, @tasked)
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
+    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
-    result = Tasks::AddRelatedExerciseAfterStep.call(task_step: @task_step)
+    consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    @tasked.save
 
-    render_api_errors(result.errors) || respond_with(
-      result.outputs.related_exercise_step,
+    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
+    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
+
+    respond_with(
+      @tasked,
       responder: ResponderWithPutPatchDeleteContent,
-      represent_with: Api::V1::TaskStepRepresenter
+      represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked),
+      user_options: { include_content: true }
     )
+
+    # raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+
+    # @task = Research::ModifiedTaskForDisplay[task: @task]
+    # respond_with(
+    #   @task,
+    #   responder: ResponderWithPutPatchDeleteContent,
+    #   represent_with: Api::V1::TaskRepresenter
+    # )
+
+
   end
 
   protected
@@ -84,35 +98,5 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     @tasked.reload
   end
 
-  def update_task_step
-    ScoutHelper.ignore!(0.8)
-
-    @tasked = Research::ModifiedTaskedForUpdate[tasked: @tasked]
-
-    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
-    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
-
-    consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
-    @tasked.save
-
-    # Task already locked in around_action
-    result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: false)
-    raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
-
-    respond_with(
-      @tasked,
-      responder: ResponderWithPutPatchDeleteContent,
-      represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked)
-    )
-
-    # raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
-
-    # @task = Research::ModifiedTaskForDisplay[task: @task]
-    # respond_with(
-    #   @task,
-    #   responder: ResponderWithPutPatchDeleteContent,
-    #   represent_with: Api::V1::TaskRepresenter
-    # )
-  end
 
 end

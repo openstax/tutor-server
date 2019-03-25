@@ -76,7 +76,7 @@ class Api::V1::TasksController < Api::V1::ApiController
   protected
 
   def get_task
-    @task = Tasks::Models::Task.preload(
+    @task = ::Tasks::Models::Task.preload(
       :research_study_brains,
       task_steps: [:tasked, :page]
     ).find(params[:id])
