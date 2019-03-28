@@ -16,9 +16,7 @@ class Content::Routines::ImportExercises
   def exec(ecosystem:, page:, query_hash:, collaborators: [ 'openstax' ])
     # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise
     query_hash = query_hash.merge collaborator: collaborators.join(',')
-    Rails.logger.warn query_hash
     OpenStax::Exercises::V1.exercises(query_hash) do |wrappers|
-    debugger
       # Go through the wrappers and build a map of wrappers to pages
       wrapper_to_exercise_page_map = {}
       wrappers.each do |wrapper|
