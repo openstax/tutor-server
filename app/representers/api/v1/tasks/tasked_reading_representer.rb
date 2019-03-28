@@ -1,10 +1,10 @@
 module Api::V1::Tasks
   class TaskedReadingRepresenter < TaskStepRepresenter
     property :url,
+             as: :content_url,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_url,
              schema_info: {
                required: false,
                description: "The source URL for this Reading"
@@ -19,6 +19,16 @@ module Api::V1::Tasks
                description: "The title of this Reading"
              }
 
+    property :book_location,
+             as: :chapter_section,
+             type: Array,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The chapter section that this reading comes from"
+             }
+
     property :content_preview,
              as: :preview,
              type: String,
@@ -28,8 +38,6 @@ module Api::V1::Tasks
                required: false,
                description: "The content preview for reading tasked"
              }
-
-
 
     property :related_content,
              type: String,
@@ -54,6 +62,7 @@ module Api::V1::Tasks
              if: INCLUDE_CONTENT
 
     property :content,
+             as: :html,
              type: String,
              writeable: false,
              readable: true,

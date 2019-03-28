@@ -13,13 +13,13 @@ FactoryBot.define do
     end
   end
 
-    factory :research_modified_tasked_for_update,
+    factory :research_modified_tasked,
             parent: :research_study_brain,
-            class: 'Research::Models::ModifiedTaskedForUpdate' do
+            class: 'Research::Models::ModifiedTasked' do
     end
 
-    factory :research_modified_task_for_display,
+    factory :research_modified_task,
             parent: :research_study_brain,
-            class: 'Research::Models::ModifiedTaskForDisplay' do
+            class: 'Research::Models::ModifiedTask' do
     end
 end

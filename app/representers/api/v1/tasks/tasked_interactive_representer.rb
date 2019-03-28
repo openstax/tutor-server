@@ -29,6 +29,7 @@ module Api::V1::Tasks
              }
 
     property :content,
+             as: :html,
              type: String,
              writeable: false,
              readable: true,
@@ -37,6 +38,5 @@ module Api::V1::Tasks
                description: "The content preview for reading tasked"
              },
              if: INCLUDE_CONTENT
-
   end
 end

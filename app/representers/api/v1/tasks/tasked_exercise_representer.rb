@@ -26,7 +26,7 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: false,
-               description: "The UUID of the exercise"
+               description: "The UUID of the exercise, steps with identical uid will be grouped together into a MPQ"
              }
 
     property :labels,
@@ -47,6 +47,14 @@ module Api::V1::Tasks
                description: "A detailed solution that explains the correct choice"
              }
 
+    property :free_response,
+             type: String,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The UUID of the exercise"
+             }
 
     property :solution,
              type: String,

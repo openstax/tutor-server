@@ -64,12 +64,10 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
       before(:each) {
         Research::AddCourseToStudy[course: course, study: study]
       }
-
       it "can hide free-response format" do
         expect(task_1.task_steps[1].tasked.content_hash_for_students['questions'][0]['formats'])
           .to eq ["multiple-choice","free-response"]
-
-        FactoryBot.create :research_modified_task_for_display, study: study,
+        FactoryBot.create :research_modified_task, study: study,
                           code: <<~EOC
           task.task_steps.each{ |ts|
             ts.tasked.parser.questions_for_students.each{|q|
@@ -79,13 +77,11 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
           manipulation.record!
         EOC
         study.activate!
-
         api_get :show, user_1_token, parameters: {id: task_1.id}
         expect(
-          response.body_as_hash[:steps][1][:content][:questions][0][:formats]
-        ).to eq ["multiple-choice"]
+          response.body_as_hash[:steps][1][:formats]
+        ).to eq %w{multiple-choice}
       end
-
     end
 
     context 'teacher' do

@@ -25,7 +25,7 @@ class Api::V1::MetatasksController < Api::V1::ApiController
   EOS
   def show
     ScoutHelper.ignore!(0.8)
-    standard_read(Research::ModifiedTaskForDisplay[task: @task], Api::V1::MetataskRepresenter)
+    standard_read(Research::ModifiedTask[task: @task], Api::V1::MetataskRepresenter)
   end
 
   api :DELETE, '/tasks/:id', 'Hide the task from the student\'s dashboard'

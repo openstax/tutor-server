@@ -14,6 +14,11 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :description,
+             type: String,
+             writeable: false,
+             readable: true
+
     property :task_type,
              as: :type,
              type: String,
@@ -25,7 +30,7 @@ module Api::V1
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             schema_info: { description: "When the metatask is due (nil means never due)" }
+             schema_info: { description: "When the task is due (nil means never due)" }
 
     property :feedback_at,
              writeable: false,
@@ -36,20 +41,14 @@ module Api::V1
                description: "Feedback should be shown for the task after this time"
              }
 
-    collection :steps,
+    collection :task_steps,
+               as: :steps,
                writeable: false,
                readable: true,
                extend: TaskStepRepresenter,
-               getter: ->(*) do
-                 task_steps.tap do |task_steps|
-                   ActiveRecord::Associations::Preloader.new.preload(
-                     task_steps, [:tasked, page: :chapter]
-                   )
-                 end
-               end,
                schema_info: {
                  required: true,
-                 description: "The steps which this Metatask is composed of"
+                 description: "The steps which this task is composed of"
                }
 
   end

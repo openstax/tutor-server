@@ -35,7 +35,7 @@ RSpec.describe 'Task steps without free response field', type: :request, api: tr
 
   it "can hide free-response formats when displaying a task" do
 
-    brain = FactoryBot.create :research_modified_task_for_display,
+    brain = FactoryBot.create :research_modified_task,
                               study: @study,
                               name: 'chapter 1-3 display no free-response',
                               code: <<~EOC
@@ -89,7 +89,7 @@ EOC
   end
 
   it "can override requiring free-response when marking completed" do
-    FactoryBot.create :research_modified_tasked_for_update,
+    FactoryBot.create :research_modified_tasked,
                       study: @study,
                       name: 'chapter 1-3 save without free-response',
                       code: <<~EOC

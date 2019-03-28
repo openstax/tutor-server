@@ -5,7 +5,7 @@ RSpec.describe Research::Models::Manipulation, type: :model do
   let(:code) { "manipulation.record!" }
   let(:brain) {
     FactoryBot.create(
-      :research_modified_tasked_for_update,
+      :research_modified_tasked,
       study: cohort.study, code: code
     )
   }

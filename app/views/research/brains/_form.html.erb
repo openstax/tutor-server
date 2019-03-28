@@ -12,8 +12,8 @@
   <div class='form-group'>
     <%= f.label :type %>
     <%= f.select :type, [
-          Research::Models::ModifiedTaskForDisplay,
-          Research::Models::ModifiedTaskedForUpdate,
+          Research::Models::ModifiedTask,
+          Research::Models::ModifiedTasked,
         ].map{|sb| [sb.to_s.demodulize.underscore, sb.to_s] },
         {}, { readOnly: @brain.study.active?, class: 'form-control' } %>
   </div>

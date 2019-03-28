@@ -7,7 +7,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
   let(:code) { "task.title='updated!'; manipulation.record!; return task" }
   let(:brain) {
     FactoryBot.create(
-      :research_modified_task_for_display,
+      :research_modified_task,
       study: cohort.study, code: code
     )
   }
@@ -43,7 +43,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
     let(:code) { "manipulation.record!\nreturn 1234" }
     let(:brain) {
       FactoryBot.create(
-        :research_modified_tasked_for_update,
+        :research_modified_tasked,
         study: cohort.study, code: code
       )
     }
