@@ -67,6 +67,12 @@ en:
       payments_enabled:
         name: 'Payments Enabled?'
         help_block: 'If unchecked, payments will not overdue, students will not be prompted to pay; useful if Payments site is down or has an issue'
+      response_validation_enabled:
+        name: 'Response Validation Enabled?'
+        help_block: If unchecked, free responses will not be sent to the validation server; useful if the server is down or has an issue'
+      response_validation_ui_enabled:
+        name: 'Response Validation UI Enabled?'
+        help_block: If unchecked, free responses will SILENTLY be sent to the validation server; no prompts will be displayed to the user
       prebuilt_preview_course_count:
         name: '# Prebuilt Preview Courses'
         help_block: 'The number of prebuilt preview courses to keep at the ready'
