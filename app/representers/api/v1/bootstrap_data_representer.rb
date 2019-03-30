@@ -49,7 +49,7 @@ module Api::V1
              writeable: false,
              getter: ->(*) {
       {
-        url: Rails.application.secrets['response_validation_url'],
+        url: Rails.application.secrets['response_validation']['url'],
         is_enabled: Settings::ResponseValidation.is_enabled,
         is_ui_enabled: Settings::ResponseValidation.is_ui_enabled
       }

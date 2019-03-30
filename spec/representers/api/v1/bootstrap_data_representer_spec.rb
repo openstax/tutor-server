@@ -21,7 +21,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "osweb_base_url" => 'https://cms.openstax.org',
       "tutor_api_url" => 'https://example.com/api',
       "response_validation" => {
-        "url" => "http://localhost:5000/validate",
+        "url" => Rails.application.secrets['response_validation']['url'],
         "is_enabled" => Settings::ResponseValidation.is_enabled,
         "is_ui_enabled" => Settings::ResponseValidation.is_ui_enabled
       },
