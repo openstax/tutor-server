@@ -110,11 +110,10 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       api_put :update, @user_1_token, parameters: id_parameters,
               raw_post_data: { free_response: "Ipsum lorem",
                                answer_id: answer_id.to_s }
-
       expect(response).to have_http_status(:success)
 
       expect(response.body_as_hash).to(
-        include(answer_id: "-7", free_response: "Ipsum lorem")
+        include(answer_id: answer_id.to_s, free_response: "Ipsum lorem")
       )
 
       expect(tasked.reload.free_response).to eq "Ipsum lorem"
@@ -174,15 +173,15 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       expect do
         api_put :update, @user_1_token,
                 parameters: id_parameters,
-                raw_post_data: { free_response: 'A sentence explaining all the things!' }
-      end.to  not_change { tasked.reload.answer_id }
-         .and change     { tasked.free_response }
+                raw_post_data: { answer_id: tasked.answer_ids.last }
+      end.to change { tasked.reload.answer_id }
 
       expect(response).to have_http_status(:success)
       task_step.reload
       expect(task_step.last_completed_at).not_to be_nil
       expect(task_step.last_completed_at).not_to eq completed_at
-      expect(tasked.free_response).to eq 'A sentence explaining all the things!'
+      expect(tasked.answer_id).to eq tasked.answer_ids.last
+      expect(tasked.free_response).to eq 'Ipsum Lorem'
     end
 
     context 'research' do

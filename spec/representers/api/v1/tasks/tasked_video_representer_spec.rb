@@ -6,16 +6,12 @@ RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, type: :representer do
     json = Api::V1::Tasks::TaskedVideoRepresenter.new(task_step.tasked).to_json
 
     expect(JSON.parse(json)).to include({
-      id: task_step.id.to_s,
-      task_id: task_step.tasks_task_id.to_s,
+      id: task_step.id,
       type: 'video',
       title: task_step.tasked.title,
-      is_completed: false,
-      has_recovery: false,
-      content_url: task_step.tasked.url,
-      content_html: task_step.tasked.content,
-      related_content: a_kind_of(Array),
-      spy: {}
+      preview: task_step.tasked.content_preview,
+      url: task_step.tasked.url,
     }.stringify_keys)
   end
+
 end

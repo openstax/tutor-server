@@ -2,6 +2,18 @@ module Api::V1::Tasks
   class TaskedExerciseRepresenter < TaskStepRepresenter
 
     FEEDBACK_AVAILABLE = ->(*) { task_step.feedback_available? }
+    INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) {
+      user_options.try!(:[], :include_content) && task_step.feedback_available?
+    }
+
+    property :title,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The title of the step"
+             }
 
     property :content_preview,
              as: :preview,
@@ -44,7 +56,7 @@ module Api::V1::Tasks
              writeable: false,
              readable: true,
              schema_info: {
-               description: "A detailed solution that explains the correct choice"
+               description: "A list of the formats that the question should be rendered using"
              }
 
     property :free_response,
@@ -53,8 +65,20 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: false,
-               description: "The UUID of the exercise"
-             }
+               description: "The user's free-form response to the exercise"
+             },
+             if: INCLUDE_CONTENT
+
+    property :related_content,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { task_step.related_content },
+             schema_info: {
+               required: false,
+               description: "Content related to this step",
+             },
+             if: INCLUDE_CONTENT
 
     property :solution,
              type: String,
@@ -63,7 +87,17 @@ module Api::V1::Tasks
              schema_info: {
                description: "A detailed solution that explains the correct choice"
              },
-             if: FEEDBACK_AVAILABLE
+             if: INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE
+
+    property :feedback,
+             as: :feedback_html,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "The feedback given to the student"
+             },
+             if: INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE
 
     property :correct_answer_id,
              writeable: false,
@@ -71,7 +105,7 @@ module Api::V1::Tasks
              schema_info: {
                description: "The Exercise's correct answer's id"
              },
-             if: FEEDBACK_AVAILABLE
+             if: INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE
 
     property :content_hash_for_students,
              as: :content,
@@ -92,6 +126,5 @@ module Api::V1::Tasks
                description: "The estimate of how likely the student's free response is garbage"
              },
              if: INCLUDE_CONTENT
-
   end
 end

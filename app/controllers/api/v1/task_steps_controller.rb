@@ -35,7 +35,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
-    consume!(@tasked, represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked))
+    consume!(@tasked,
+             represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked),
+             user_options: {include_content: true} # needed so representer will consume free_response
+            )
     @tasked.save
 
     result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: true)

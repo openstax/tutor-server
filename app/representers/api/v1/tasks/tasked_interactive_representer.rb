@@ -20,6 +20,7 @@ module Api::V1::Tasks
              }
 
     property :content_preview,
+             as: :preview,
              type: String,
              writeable: false,
              readable: true,

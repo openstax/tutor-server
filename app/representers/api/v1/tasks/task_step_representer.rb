@@ -53,5 +53,11 @@ module Api::V1::Tasks
                description: "Whether or not this step is complete"
              }
 
+    property :spy,
+             type: Object,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { task_step.spy },
+             if: INCLUDE_CONTENT
   end
 end

@@ -51,5 +51,18 @@ module Api::V1
                  description: "The steps which this task is composed of"
                }
 
+    property :withdrawn?,
+             as: :is_deleted,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               description: "Whether or not this task has been withdrawn by the teacher"
+             }
+
+    property :spy,
+             type: Object,
+             readable: true,
+             writeable: false
   end
 end

@@ -48,8 +48,8 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
-    # Mark it as complete and then get it again
-    api_put("#{step_route_base}/completed", user_1_token)
+    # save it and then get it again
+    api_put("#{step_route_base}", user_1_token)
 
     expect(response.body_as_hash).not_to have_key(:solution)
     expect(response.body_as_hash).not_to have_key(:feedback_html)
@@ -69,31 +69,21 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     expect(response.body_as_hash).to include(solution: { content_html: "The first one." })
     expect(response.body_as_hash).to include(feedback_html: 'Right!')
+
     expect(response.body_as_hash).to include(correct_answer_id: correct_answer_id)
   end
 
   it "does not allow the answer to be changed after completed and feedback is available" do
-    # Initial free response
-    api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {free_response: 'My first answer'}.to_json)
-    expect(response).to have_http_status(:success)
-
-    tasked.reload
-    expect(tasked.free_response).to eq 'My first answer'
-
-    # Initial multiple choice
+    # Initial submission of multiple choice and free response
     answer_id = tasked.answer_ids.first
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {answer_id: answer_id}.to_json)
+            raw_post_data: {free_response: 'My first answer',
+                            answer_id: answer_id}.to_json)
     expect(response).to have_http_status(:success)
 
     tasked.reload
     expect(tasked.answer_id).to eq answer_id
-
-    # Mark it as complete
-    api_put("#{step_route_base}/completed", user_1_token)
-
-    expect(response).to have_http_status(:success)
+    expect(tasked.free_response).to eq 'My first answer'
 
     # No feedback yet because feedback date has not been reached
     expect(response.body_as_hash).not_to include(:solution)

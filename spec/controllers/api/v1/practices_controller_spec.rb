@@ -49,26 +49,10 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
       expect(hash).to include(
         id: task.id.to_s,
-        is_shared: false,
         title: 'Practice',
         type: 'page_practice',
         steps: have(5).items
       )
-    end
-
-    it 'returns exercise URLs' do
-      api_post :create_specific,
-               user_1_token,
-               parameters: { id: course.id, role_id: role.id },
-               raw_post_data: { page_ids: [page.id.to_s] }.to_json
-
-      hash = response.body_as_hash
-
-      step_urls = Set.new(hash[:steps].map { |s| s[:content_url] })
-      exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
-      exercise_urls = Set.new(exercises.map(&:url))
-
-      expect(step_urls).to eq exercise_urls
     end
 
     it 'must be called by a user who belongs to the course' do
@@ -118,23 +102,10 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
       expect(hash).to include(
         id: task.id.to_s,
-        is_shared: false,
         title: 'Practice',
         type: 'practice_worst_topics',
         steps: have(5).items
       )
-    end
-
-    it 'returns exercise URLs' do
-      api_post :create_worst, user_1_token, parameters: { id: course.id, role_id: role.id }
-
-      hash = response.body_as_hash
-
-      step_urls = Set.new(hash[:steps].map { |s| s[:content_url] })
-      exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
-      exercise_urls = Set.new(exercises.map(&:url))
-
-      expect(step_urls).to eq exercise_urls
     end
 
     it 'must be called by a user who belongs to the course' do
