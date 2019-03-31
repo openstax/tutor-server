@@ -81,7 +81,7 @@ module Api::V1::Tasks
              },
              if: NOT_FEEDBACK_ONLY
 
-    property :garbage_estimate,
+    property :response_validation,
              type: String,
              writeable: true,
              readable: true,

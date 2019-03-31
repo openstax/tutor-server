@@ -106,7 +106,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   def spy
     spy = super
-    exercise? && tasked.garbage_estimate.present? ? spy.merge({ garbage_estimate: tasked.garbage_estimate }) : spy
+    exercise? && tasked.response_validation.present? ? spy.merge({ response_validation: tasked.response_validation }) : spy
   end
 
 end
