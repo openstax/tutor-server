@@ -8,6 +8,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(step).to receive(:completed?).and_return(false)
       allow(step).to receive(:feedback_available?).and_return(false)
       allow(step).to receive(:labels).and_return([])
+      allow(step).to receive(:related_content).and_return('RelatedContent')
       allow(step).to receive(:spy).and_return(garbage_estimate: { valid: false })
     end
   end
@@ -139,7 +140,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       end
 
       it "has the correct 'correct_answer_id'" do
-        expect(complete_representation).to include("correct_answer_id" => '456')
+        expect(representation).to include("correct_answer_id" => '456')
       end
 
     end

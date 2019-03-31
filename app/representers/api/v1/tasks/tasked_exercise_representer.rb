@@ -105,7 +105,7 @@ module Api::V1::Tasks
              schema_info: {
                description: "The Exercise's correct answer's id"
              },
-             if: INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE
+             if: FEEDBACK_AVAILABLE
 
     property :content_hash_for_students,
              as: :content,
