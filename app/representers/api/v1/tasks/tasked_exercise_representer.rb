@@ -118,7 +118,7 @@ module Api::V1::Tasks
              },
              if: INCLUDE_CONTENT
 
-    property :garbage_estimate,
+    property :response_validation,
              type: String,
              writeable: true,
              readable: true,

@@ -6,7 +6,7 @@ class NoteAccessPolicy
     when :index, :read
       true
     when :create, :update, :destroy
-      note.role.profile.account_id == requestor.id
+      note.role.role_user.user_profile_id == requestor.id
     else
       false
     end

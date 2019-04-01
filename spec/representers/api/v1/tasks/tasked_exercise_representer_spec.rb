@@ -10,6 +10,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(step).to receive(:labels).and_return([])
       allow(step).to receive(:related_content).and_return('RelatedContent')
       allow(step).to receive(:spy).and_return(garbage_estimate: { valid: false })
+      allow(step).to receive(:spy).and_return(response_validation: { valid: false })
     end
   end
 
@@ -35,7 +36,9 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(exercise).to receive(:answer_id).and_return(nil)
       allow(exercise).to receive(:last_completed_at).and_return(Time.current)
       allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
-      allow(exercise).to receive(:garbage_estimate).and_return({ valid: false })
+      allow(exercise).to receive(:question_id).and_return("questionID")
+      allow(exercise).to receive(:is_in_multipart).and_return(false)
+      allow(exercise).to receive(:response_validation).and_return({ valid: false })
       allow(exercise).to receive(:cache_key).and_return("tasks/models/tasked_exercises/42-test")
     end
   end
@@ -84,6 +87,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     it "has 'spy'" do
       expect(complete_representation).to include("spy" => { garbage_estimate: { valid: false }})
+      expect(representation).to include("spy" => {"response_validation"=>{"valid"=>false}})
     end
   end
 
