@@ -44,8 +44,8 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
   it 'includes garbage_detection in spy' do
     task_step.tasked = FactoryBot.build :tasks_tasked_exercise,
                                         task_step: task_step,
-                                        garbage_estimate: { valid: false }
-    expect( task_step.spy).to eq(:garbage_estimate=>{"valid"=>false})
+                                        response_validation: { valid: false }
+    expect(task_step.spy).to eq(response_validation: {"valid"=>false})
   end
 
   context "group types" do
