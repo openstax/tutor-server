@@ -7,12 +7,8 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(step).to receive(:tasks_task_id).and_return(42)
       allow(step).to receive(:group_name).and_return('Some group')
       allow(step).to receive(:completed?).and_return(false)
-      allow(step).to receive(:feedback_available?).and_return(false)
-      allow(step).to receive(:can_be_recovered?).and_return(false)
-      allow(step).to receive(:related_content).and_return([])
-      allow(step).to receive(:labels).and_return([])
+
       allow(step).to receive(:spy).and_return({})
-      allow(step).to receive(:cache_key).and_return("tasks/models/task_steps/15-test")
     end
   end
 
@@ -20,7 +16,6 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
     instance_double(Tasks::Models::TaskedPlaceholder).tap do |placeholder|
       ## Avoid rspec double class when figuring out :type
       allow(placeholder).to receive(:class).and_return(Tasks::Models::TaskedPlaceholder)
-
       allow(placeholder).to receive(:task_step).and_return(task_step)
       allow(placeholder).to receive(:can_be_recovered?).and_return(false)
 
@@ -38,6 +33,12 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
     Api::V1::Tasks::TaskedPlaceholderRepresenter.new(tasked_placeholder).as_json
   end
 
+  let(:complete_representation) do ## NOTE: This is lazily-evaluated on purpose!
+    Api::V1::Tasks::TaskedPlaceholderRepresenter.new(tasked_placeholder).to_hash(
+      user_options: { include_content: true }
+    )
+  end
+
   it "'type' == 'placeholder'" do
     expect(representation).to include("type" => "placeholder")
   end
@@ -48,8 +49,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
 
   it "correctly references the TaskStep and Task ids" do
     expect(representation).to include(
-      "id"      => 15.to_s,
-      "task_id" => 42.to_s
+      "id"      => 15,
     )
   end
 
@@ -57,20 +57,12 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
     expect(representation).to include("is_completed" => false)
   end
 
-  it "'has_recovery' == false" do
-    expect(representation).to include("has_recovery" => false)
-  end
-
   it "has the correct 'group'" do
     expect(representation).to include("group" => 'Some group')
   end
 
-  it "has 'related_content'" do
-    expect(representation).to include("related_content")
-  end
-
   it "has 'spy'" do
-    expect(representation).to include("spy" => {})
+    expect(complete_representation).to include("spy" => {})
   end
 
 end

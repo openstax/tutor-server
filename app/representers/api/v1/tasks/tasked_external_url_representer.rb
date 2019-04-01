@@ -1,6 +1,5 @@
 module Api::V1::Tasks
   class TaskedExternalUrlRepresenter < TaskStepRepresenter
-
     property :url,
              as: :external_url,
              type: String,
@@ -19,6 +18,5 @@ module Api::V1::Tasks
                required: false,
                description: 'The title for this external assignment'
              }
-
   end
 end

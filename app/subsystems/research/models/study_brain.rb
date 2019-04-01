@@ -9,8 +9,8 @@ class Research::Models::StudyBrain < ApplicationRecord
   scope :active, -> { joins(:study).merge(Research::Models::Study.active) }
   scope :student_task, -> {
     where(type: [
-            'Research::Models::ModifiedTaskForDisplay',
-            'Research::Models::ModifiedTaskedForUpdate'
+            'Research::Models::ModifiedTask',
+            'Research::Models::ModifiedTasked'
           ])
   }
   def type_identifier

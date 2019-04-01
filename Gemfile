@@ -30,7 +30,7 @@ gem 'browser', '~> 2.5'
 gem 'coffee-rails', '~> 4.0.0'
 
 # JavaScript asset compiler
-gem 'therubyracer', platforms: :ruby
+gem 'mini_racer'
 
 # jQuery library
 gem 'jquery-rails'

@@ -1,11 +1,10 @@
 module Api::V1::Tasks
   class TaskedReadingRepresenter < TaskStepRepresenter
-
     property :url,
+             as: :content_url,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_url,
              schema_info: {
                required: false,
                description: "The source URL for this Reading"
@@ -17,7 +16,7 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: true,
-               description: "The title of this Reading"
+               description: "The title of the step"
              }
 
     property :book_location,
@@ -27,25 +26,61 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: true,
-               description: 'The chapter and section in the book, e.g. [5, 2]'
+               description: "The chapter section that this reading comes from"
              }
 
-    property :baked_book_location,
-             as: :baked_chapter_section,
-             type: Array,
-             writeable: false,
-             readable: true,
-             schema_info: { description: 'The chapter and section in the baked book, e.g. [5, 2]' }
-
-    property :content,
+    property :content_preview,
+             as: :preview,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_html,
              schema_info: {
                required: false,
-               description: "The Reading content as HTML"
+               description: "The content preview for reading tasked"
              }
+
+    property :related_content,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { task_step.related_content },
+             schema_info: {
+               required: false,
+               description: "Content related to this step",
+             },
+             if: INCLUDE_CONTENT
+
+    property :related_content,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { task_step.related_content },
+             schema_info: {
+               required: false,
+               description: "Content related to this step",
+             },
+             if: INCLUDE_CONTENT
+
+    property :has_learning_objectives?,
+             as: :has_learning_objectives,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "Does this reading step include learning objectives?"
+             },
+             if: INCLUDE_CONTENT
+
+    property :content,
+             as: :html,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The content preview for reading tasked"
+             },
+             if: INCLUDE_CONTENT
 
   end
 end

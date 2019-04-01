@@ -1,4 +1,4 @@
-class Research::ModifiedTaskedForUpdate
+class Research::ModifiedTasked
 
   lev_routine express_output: :tasked
 
@@ -7,10 +7,10 @@ class Research::ModifiedTaskedForUpdate
     task = tasked.task_step.task
 
     task.research_study_brains.each do |brain|
-      next unless brain.should_execute? :modified_tasked_for_update
+      next unless brain.should_execute? :modified_tasked
       task.research_cohorts.each do |cohort|
         outputs.merge!(
-          brain.modified_tasked_for_update(cohort: cohort, tasked: tasked) || {}
+          brain.modified_tasked(cohort: cohort, tasked: tasked) || {}
         )
       end
     end
