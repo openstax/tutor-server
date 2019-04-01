@@ -80,4 +80,22 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
   end
+
+  describe '#content_preview' do
+    let(:default_exercise_copy) { "Exercise step ##{tasked_exercise.id}" }
+    let(:content_body) { 'exercise content' }
+    let(:content) do
+      { "questions" => [ {"stem_html" => content_body } ] }.to_json
+    end
+
+    it "parses the content for the content preview" do
+      tasked_exercise.content = content
+      expect(tasked_exercise.content_preview).to eq(content_body)
+    end
+
+    it "provides a default if the content preview is missing" do
+      tasked_exercise.content = { blah: "preview missing" }.to_json
+      expect(tasked_exercise.content_preview).to eq(default_exercise_copy)
+    end
+  end
 end

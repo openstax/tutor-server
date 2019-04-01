@@ -82,6 +82,8 @@ gem 'ims-lti', '~> 2.2.1'
 # Also, do not use Roar::Hypermedia links
 gem 'roar', '1.0.3'
 
+gem 'nokogiri'
+
 # Background job status store
 gem 'jobba', '~> 1.8.0'
 

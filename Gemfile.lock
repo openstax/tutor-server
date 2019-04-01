@@ -778,6 +778,7 @@ DEPENDENCIES
   maruku
   mini_magick
   nifty-generators
+  nokogiri
   oauth (~> 0.5.1)
   oj
   oj_mimic_json

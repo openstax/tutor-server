@@ -6,7 +6,7 @@
 
 # Ignore bundler config
 /.bundle
-.env
+.env*
 
 # Ignore the default SQLite database and yaml_db database files
 /db/*.sqlite3*
@@ -16,6 +16,9 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp/**/*
+
+# Ignore rubymine files
+/.idea
 
 # Ignore files containing keys and passwords
 config/secrets.yml
