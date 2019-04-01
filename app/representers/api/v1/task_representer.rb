@@ -41,16 +41,6 @@ module Api::V1
                description: "Feedback should be shown for the task after this time"
              }
 
-    collection :task_steps,
-               as: :steps,
-               writeable: false,
-               readable: true,
-               extend: TaskStepRepresenter,
-               schema_info: {
-                 required: true,
-                 description: "The steps which this task is composed of"
-               }
-
     property :withdrawn?,
              as: :is_deleted,
              readable: true,
@@ -60,9 +50,29 @@ module Api::V1
                description: "Whether or not this task has been withdrawn by the teacher"
              }
 
+    property :student_names,
+             type: Array,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { students.map(&:name) },
+             schema_info: {
+               required: true,
+               description: "The students who were assigned this task"
+             }
+
     property :spy,
              type: Object,
              readable: true,
              writeable: false
+
+    collection :task_steps,
+               as: :steps,
+               writeable: false,
+               readable: true,
+               extend: TaskStepRepresenter,
+               schema_info: {
+                 required: true,
+                 description: "The steps which this task is composed of"
+               }
   end
 end

@@ -10,6 +10,7 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
                              'title' => task.title,
                              'type' => task.task_type,
                              'due_at' => DateTimeUtilities.to_api_s(task.due_at),
+                             'student_names' => task.students.map(&:name)
                            )
   end
 
