@@ -40,6 +40,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
              user_options: {include_content: true} # needed so representer will consume free_response
             )
     @tasked.save
+    raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
     result = MarkTaskStepCompleted.call(task_step: @task_step, lock_task: true)
     raise(ActiveRecord::Rollback) if render_api_errors(result.errors)
