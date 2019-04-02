@@ -14,4 +14,14 @@ RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, type: :representer do
     }.stringify_keys)
   end
 
+  it "has additional content fields" do
+    task_step = FactoryBot.create(:tasks_tasked_reading).task_step
+    json = Api::V1::Tasks::TaskedVideoRepresenter.new(task_step.tasked).to_json(
+      user_options: { include_content: true }
+    )
+    expect(JSON.parse(json)).to include({
+      html: task_step.tasked.content,
+    }.stringify_keys)
+  end
+
 end
