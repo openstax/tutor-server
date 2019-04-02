@@ -36,7 +36,7 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: false,
-               description: "The content preview for reading tasked"
+               description: "The complete content for interactive tasked"
              },
              if: INCLUDE_CONTENT
   end
