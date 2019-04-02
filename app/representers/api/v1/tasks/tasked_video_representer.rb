@@ -27,5 +27,16 @@ module Api::V1::Tasks
                required: false,
                description: "The content preview for video tasked"
              }
+
+    property :content,
+             as: :html,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The complete content for video tasked"
+             },
+             if: INCLUDE_CONTENT
   end
 end

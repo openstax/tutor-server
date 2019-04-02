@@ -9,7 +9,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(step).to receive(:feedback_available?).and_return(false)
       allow(step).to receive(:labels).and_return([])
       allow(step).to receive(:related_content).and_return('RelatedContent')
-      allow(step).to receive(:spy).and_return(garbage_estimate: { valid: false })
       allow(step).to receive(:spy).and_return(response_validation: { valid: false })
     end
   end
@@ -85,9 +84,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       expect(complete_representation).to include("labels")
     end
 
-    it "has 'spy'" do
-      expect(complete_representation).to include("spy" => { garbage_estimate: { valid: false }})
-      expect(representation).to include("spy" => {"response_validation"=>{"valid"=>false}})
+    it "have 'spy'" do
+      expect(complete_representation).to include("spy" => { response_validation: { valid: false }})
     end
   end
 
