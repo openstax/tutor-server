@@ -111,7 +111,9 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(tasked.free_response).to eq 'Something else!'
 
     # Multiple choice cannot be changed
-    new_answer_id = tasked.answer_ids.first
+    new_answer_id = tasked.answer_ids.last
+    expect(new_answer_id).not_to eq tasked.answer_id
+
     api_put("#{step_route_base}", user_1_token,
             raw_post_data: {answer_id: new_answer_id}.to_json)
     expect(response).to have_http_status(:unprocessable_entity)

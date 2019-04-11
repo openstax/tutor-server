@@ -21,7 +21,9 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it 'does not accept a multiple choice answer before a free response' +
      ' unless the free-response format is not present' do
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    expect(tasked_exercise.answer_id).not_to eq tasked_exercise.answer_ids.first
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+
     expect(tasked_exercise).not_to be_valid
     expect(tasked_exercise.errors).to include :free_response
 
@@ -50,7 +52,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise).to be_valid
   end
 
-  it 'cannot be updated after the step is completed and feedback is available' do
+  it 'cannot have answer or free response updated after feedback is available' do
     tasked_exercise.task_step.task.feedback_at = nil
     tasked_exercise.task_step.task.save!
 
@@ -62,17 +64,18 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     tasked_exercise.complete!
 
-    expect(tasked_exercise.reload).not_to be_valid
+    expect(tasked_exercise.reload).to be_valid
 
     tasked_exercise.task_step.task.feedback_at = Time.current.yesterday
     tasked_exercise.task_step.task.save!
 
-    expect(tasked_exercise.reload).not_to be_valid
-
-    tasked_exercise.task_step.task.feedback_at = Time.current.tomorrow
-    tasked_exercise.task_step.task.save!
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    expect(tasked_exercise).not_to be_valid
 
     expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.free_response = 'some new thing'
+    expect(tasked_exercise).not_to be_valid
   end
 
   it "invalidates task's cache when updated" do

@@ -107,6 +107,16 @@ module Api::V1::Tasks
              },
              if: FEEDBACK_AVAILABLE
 
+    property :context,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The Exercise's context (only present if required by the Exercise)"
+             },
+             if: INCLUDE_CONTENT
+
     property :content_hash_for_students,
              as: :content,
              type: String,
