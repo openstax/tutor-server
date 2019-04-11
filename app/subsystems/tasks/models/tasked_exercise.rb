@@ -21,9 +21,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
   end
 
-  delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
-           :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
-           :content_hash_for_students, :tags, :los, :aplos, to: :parser
+  delegate :uid, :questions, :question_formats, :question_answers,
+           :question_answer_ids, :question_formats_for_students,
+           :correct_question_answers, :correct_question_answer_ids,
+           :feedback_map, :solutions, :content_hash_for_students,
+           :tags, :los, :aplos, to: :parser
 
   # We depend on the parser because we do not save the parsed content
   def parser
@@ -93,6 +95,15 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     return correct_answer_id if correct_answer_id.present?
 
     self.correct_answer_id = correct_question_answer_ids[0].first
+  end
+
+  def is_two_step?
+    return parser.question_formats_for_students.include?('free-response')
+  end
+
+  def content_preview
+    content_preview_from_json = JSON(content)["questions"].try(:first).try(:[], "stem_html")
+    content_preview_from_json || "Exercise step ##{id}"
   end
 
   protected

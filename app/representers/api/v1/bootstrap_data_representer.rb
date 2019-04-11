@@ -47,7 +47,13 @@ module Api::V1
              type: Object,
              readable: true,
              writeable: false,
-             getter: ->(*) { Rails.application.secrets['response_validation'] }
+             getter: ->(*) {
+      {
+        url: Rails.application.secrets['response_validation']['url'],
+        is_enabled: Settings::ResponseValidation.is_enabled,
+        is_ui_enabled: Settings::ResponseValidation.is_ui_enabled
+      }
+    }
 
     property :payments, writeable: false, readable: true, getter: ->(*) do
       {
@@ -60,7 +66,7 @@ module Api::V1
 
     property :feature_flags, writeable: false, readable: true, getter: ->(*) do
       {
-        is_payments_enabled: Settings::Payments.payments_enabled
+        is_payments_enabled: Settings::Payments.payments_enabled,
       }
     end
 

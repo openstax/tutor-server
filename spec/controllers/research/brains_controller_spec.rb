@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Research::BrainsController, type: :controller do
   render_views
 
-  let(:brain)  { FactoryBot.create :research_modified_task_for_display }
+  let(:brain) { FactoryBot.create :research_modified_task }
   let(:study) { brain.study }
   let(:researcher) { FactoryBot.create :user, :researcher }
 
@@ -16,7 +16,7 @@ RSpec.describe Research::BrainsController, type: :controller do
 
   it '#creates' do
     post :create, study_id: study.id, research_models_study_brain: {
-           name: 'new', type: 'Research::Models::ModifiedTaskedForUpdate',
+           name: 'new', type: 'Research::Models::ModifiedTask',
            code: 'puts "hello world"'
          }
     expect(Research::Models::StudyBrain.find_by(name: 'new')).not_to be_nil

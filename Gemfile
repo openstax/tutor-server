@@ -30,7 +30,7 @@ gem 'browser', '~> 2.5'
 gem 'coffee-rails', '~> 4.0.0'
 
 # JavaScript asset compiler
-gem 'therubyracer', platforms: :ruby
+gem 'mini_racer'
 
 # jQuery library
 gem 'jquery-rails'
@@ -81,6 +81,8 @@ gem 'ims-lti', '~> 2.2.1'
 # Do not use Roar 1.0.4
 # Also, do not use Roar::Hypermedia links
 gem 'roar', '1.0.3'
+
+gem 'nokogiri'
 
 # Background job status store
 gem 'jobba', '~> 1.8.0'

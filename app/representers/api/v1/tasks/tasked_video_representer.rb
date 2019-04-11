@@ -1,11 +1,9 @@
 module Api::V1::Tasks
   class TaskedVideoRepresenter < TaskStepRepresenter
-
     property :url,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_url,
              schema_info: {
                required: false,
                description: "The source URL for this Video"
@@ -20,15 +18,25 @@ module Api::V1::Tasks
                description: "The title of this Video"
              }
 
-    property :content,
+    property :content_preview,
+             as: :preview,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_html,
              schema_info: {
                required: false,
-               description: "The content as HTML"
+               description: "The content preview for video tasked"
              }
 
+    property :content,
+             as: :html,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The complete content for video tasked"
+             },
+             if: INCLUDE_CONTENT
   end
 end

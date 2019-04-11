@@ -10,4 +10,32 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   def has_content?
     true
   end
+
+  def has_learning_objectives?
+    content_dom.css('.learning-objectives').present?
+  end
+
+  def content_preview
+    text = document_title.presence || data_title.presence || class_title.presence
+    text || "Reading Step ##{id}"
+  end
+
+  private
+
+  def class_title
+    text = content_dom.xpath("//*[contains(@class, 'os-title')]").first.try(:text).try(:strip)
+    text.try(:split, /\n+/).try(:first)
+  end
+
+  def document_title
+    content_dom.xpath("//*[@data-type='document-title']").first.try(:text).try(:strip)
+  end
+
+  def data_title
+    content_dom.xpath("//*[@data-type='title']").first.try(:text).try(:strip)
+  end
+
+  def content_dom
+    @content_dom ||= Nokogiri::HTML(content)
+  end
 end

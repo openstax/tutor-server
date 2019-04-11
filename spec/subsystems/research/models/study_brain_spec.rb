@@ -7,7 +7,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
   let(:code) { "task.title='updated!'; manipulation.record!; return task" }
   let(:brain) {
     FactoryBot.create(
-      :research_modified_task_for_display,
+      :research_modified_task,
       study: cohort.study, code: code
     )
   }
@@ -17,7 +17,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
   end
 
   it 'evals and returns result' do
-    expect(brain.modified_task_for_display(cohort: cohort, task: task)).to eq(task)
+    expect(brain.modified_task(cohort: cohort, task: task)).to eq(task)
     expect(task.title).to eq 'updated!'
   end
 
@@ -27,7 +27,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
     bad_brain = Research::Models::StudyBrain.find(brain.id)
     expect {
       expect{
-        bad_brain.modified_task_for_display(cohort: cohort, task: task)
+        bad_brain.modified_task(cohort: cohort, task: task)
       }.to raise_error(NoMethodError)
     }.not_to change { brain.manipulations.count }
   end
@@ -43,7 +43,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
     let(:code) { "manipulation.record!\nreturn 1234" }
     let(:brain) {
       FactoryBot.create(
-        :research_modified_tasked_for_update,
+        :research_modified_tasked,
         study: cohort.study, code: code
       )
     }
@@ -51,7 +51,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
 
     it 'can be recorded from a brain and returns original value' do
       expect {
-        result = brain.modified_tasked_for_update(cohort: cohort, tasked: task_step.tasked)
+        result = brain.modified_tasked(cohort: cohort, tasked: task_step.tasked)
         expect(result).to eq 1234
       }.to change{ brain.manipulations.count }.by 1
     end
@@ -59,7 +59,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
       let(:code){ 'manipulation.ignore!; tasked' } # no call to record
       it 'a brain can choose not to record manipulation' do
         expect {
-          brain.modified_tasked_for_update(cohort: cohort, tasked: task_step.tasked)
+          brain.modified_tasked(cohort: cohort, tasked: task_step.tasked)
         }.to change{ brain.manipulations.count }.by 0
       end
     end

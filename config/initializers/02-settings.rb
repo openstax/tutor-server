@@ -13,7 +13,6 @@ Settings::Db.store.defaults[:default_open_time] = '00:01'
 Settings::Db.store.defaults[:default_due_time] = '07:00'
 Settings::Db.store.defaults[:term_years_to_import] = ''
 Settings::Db.store.defaults[:student_grace_period_days] = 14
-Settings::Db.store.defaults[:payments_enabled] = false
 Settings::Db.store.defaults[:ga_tracking_codes] = \
     (secrets.environment_name == "prodtutor") ? 'UA-66552106-1' : ''
 Settings::Db.store.defaults[:active_onboarding_salesforce_campaign_id] = ''
@@ -53,3 +52,8 @@ Settings::Db.store.defaults[:course_appearance_codes] = {
 Settings::Db.store.defaults[:pardot_toa_redirect] = ""
 
 Settings::Db.store.defaults[:raise_if_salesforce_user_missing] = !Rails.env.development?
+
+# feature flag defaults
+Settings::Db.store.defaults[:payments_enabled] = false
+Settings::Db.store.defaults[:response_validation_enabled] = true
+Settings::Db.store.defaults[:response_validation_ui_enabled] = true

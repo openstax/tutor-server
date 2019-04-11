@@ -982,7 +982,7 @@ ActiveRecord::Schema.define(version: 20190411181631) do
     t.text     "context"
     t.uuid     "uuid",                default: "gen_random_uuid()"
     t.integer  "question_index",                                    null: false
-    t.jsonb    "garbage_estimate"
+    t.jsonb    "response_validation"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree

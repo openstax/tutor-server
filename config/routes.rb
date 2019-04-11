@@ -116,6 +116,10 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :metatasks, only: [:show, :destroy] do
+      # resources :metasteps, controller: :metatask_steps, shallow: true, only: [:show, :update]
+    end
+
     resources :research_surveys, only: [:update]
 
     namespace :cc do
