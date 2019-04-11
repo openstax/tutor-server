@@ -1,12 +1,10 @@
 module Lms::Queries
 
-  # At some point this could handle apps installed at the TC level
-  # if it doesn't find anything, find Context from Course,
-  # get TC from Context, find App by TC
+  # all contexts will share the same app, but a course may not
+  # have any contexts if it's never been launched into
+  # we only want to reveal the app if there's at least one context
   def self.app_for_course(course)
-    raise ActiveRecord::RecordNotFound unless course.lms_context
-
-    course.lms_context.app
+    course.lms_contexts.first!.app
   end
 
   def self.app_for_key(key)
