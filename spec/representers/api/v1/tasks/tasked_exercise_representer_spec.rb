@@ -17,12 +17,12 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
       ## Avoid rspec double class when figuring out :type
       allow(exercise).to receive(:class).and_return(Tasks::Models::TaskedExercise)
-
       allow(exercise).to receive(:task_step).and_return(task_step)
 
       ## TaskedExercise-specific properties
 
       allow(exercise).to receive(:title).and_return('Some title')
+      allow(exercise).to receive(:context).and_return('Some Context')
 
       allow(exercise).to receive(:content_hash_for_students).and_return('Some content')
       allow(exercise).to receive(:question_formats_for_students).and_return('Some question formats')
@@ -65,6 +65,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     it "has the correct 'title'" do
       expect(representation).to include("title" => 'Some title')
+    end
+
+    it "has the correct 'context'" do
+      expect(complete_representation).to include("context" => 'Some Context')
     end
 
     it "has the correct 'content_preview'" do
