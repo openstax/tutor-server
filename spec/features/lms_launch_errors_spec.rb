@@ -13,8 +13,6 @@ class LmsErrorPageSpecsController < LmsController
       fail_for_unsupported_role
     when 'lms_disabled'
       fail_for_lms_disabled(launch, nil)
-    when 'course_keys_already_used'
-      fail_for_course_keys_already_used(launch)
     when 'already_used'
       fail_for_already_used
     when 'invalid_key_secret'
