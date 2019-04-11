@@ -11,6 +11,7 @@ module Api::V1::Tasks
              }
 
     property :title,
+             getter: -> (*) { title.present? ? title : task_step.page.title },
              type: String,
              writeable: false,
              readable: true,
