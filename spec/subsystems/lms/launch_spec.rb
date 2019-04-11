@@ -45,12 +45,11 @@ RSpec.describe Lms::Launch do
     expect(launch.context).not_to be_nil
   end
 
-  fit 'can link multiple contexts to a single course' do
-    3.times do
+  it 'can link multiple contexts to a single course' do
+    3.times do |i|
+      message.context_id = "a-not-so-random-id-#{i}"
       launch = Lms::Launch.from_request(
-        FactoryBot.create(
-          :launch_request, app: app
-        ),
+        FactoryBot.create(:launch_request, app: app),
         authenticator: authenticator
       )
       launch.persist!
