@@ -5,12 +5,12 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
   before(:all) do
     period = FactoryBot.create :course_membership_period
     @course = period.course
-    @course.lms_context = FactoryBot.create(:lms_context, course: @course)
+    @course.lms_contexts << FactoryBot.create(:lms_context, course: @course)
     callback = FactoryBot.create :lms_course_score_callback, course: @course
     student = callback.profile
     AddUserAsPeriodStudent[period: period, user: student]
 
-    task_plan = FactoryBot.create :tasked_task_plan, owner: @course
+    FactoryBot.create :tasked_task_plan, owner: @course
 
     teacher = FactoryBot.create :user_profile
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: teacher]
@@ -34,7 +34,7 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
                                  Lms::WilloLabs.config['key'],
                                  Lms::WilloLabs.config['secret'])
 
-    @course.lms_context.update_attributes app_type: 'Lms::WilloLabs'
+    @course.lms_contexts.first.update_attributes! app_type: 'Lms::WilloLabs'
     described_class.call(course: @course)
   end
 end

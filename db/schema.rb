@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190331034130) do
+ActiveRecord::Schema.define(version: 20190411181631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -484,7 +484,7 @@ ActiveRecord::Schema.define(version: 20190331034130) do
     t.text     "app_type",                 null: false
   end
 
-  add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", unique: true, using: :btree
+  add_index "lms_contexts", ["course_profile_course_id"], name: "index_lms_contexts_on_course_profile_course_id", using: :btree
   add_index "lms_contexts", ["lms_tool_consumer_id"], name: "index_lms_contexts_on_lms_tool_consumer_id", using: :btree
   add_index "lms_contexts", ["lti_id", "lms_tool_consumer_id", "course_profile_course_id"], name: "lms_contexts_lti_id_tool_consumer_id_course_id", unique: true, using: :btree
   add_index "lms_contexts", ["lti_id"], name: "index_lms_contexts_on_lti_id", using: :btree

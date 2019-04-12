@@ -72,8 +72,6 @@ class LmsController < ApplicationController
       fail_for_lms_disabled(launch, context) and return
     rescue Lms::Launch::CourseScoreInUse => ee
       fail_for_course_score_in_use(launch) and return
-    rescue Lms::Launch::CourseKeysAlreadyUsed => ee
-      fail_for_course_keys_already_used(launch) and return
     rescue Lms::Launch::AlreadyUsed => ee
       fail_for_already_used and return
     rescue Lms::Launch::AppNotFound, Lms::Launch::InvalidSignature => ee
@@ -193,11 +191,6 @@ class LmsController < ApplicationController
     log(:info) { "Launch #{session[:launch_id]} is missing required fields: " \
                  "#{launch.missing_required_fields}" }
     render_minimal_error(:fail_missing_required_fields, locals: { launch: launch })
-  end
-
-  def fail_for_course_keys_already_used(launch)
-    log(:info) { "Launch #{session[:launch_id]} failing because course keys already used for another context"}
-    render_minimal_error(:fail_course_keys_already_used, locals: { launch: launch })
   end
 
   def fail_for_already_used

@@ -221,32 +221,18 @@ RSpec.describe 'LMS Launch', type: :request do
     end
   end
 
-  context "launch uses app keys already linked to another course" do
-    # The 2nd launch will have a different LTI context_id (launching from a different
-    # course but using the same LMS app, which we are prohibiting until we have
-    # admin-setup of apps)
+  context "launch using app keys already linked to another course" do
 
-    it "gives an instructor-specific error" do
+    it "succeeds without errors" do
       simulator.add_teacher("teacher")
       simulator.launch(user: "teacher", course: "physics")
-      launch_helper.complete_the_launch_locally
 
-      simulator.install_tutor(app: lms_app, course: "biology")
-      simulator.launch(user: "teacher", course: "biology")
-
-      expect_error("with more than one course")
+      teacher_user = launch_helper.complete_the_launch_locally
+      expect(response.body).to match("/course/#{course.id}")
+      expect(UserIsCourseTeacher[course: course, user: teacher_user]).to eq true
+      expect_course_score_callback_count(user: teacher_user, count: 0)
     end
 
-    it "gives a student-specific error" do
-      simulator.add_student("student")
-      simulator.launch(user: "student", course: "physics")
-      launch_helper.complete_the_launch_locally
-
-      simulator.install_tutor(app: lms_app, course: "biology")
-      simulator.launch(user: "student", course: "biology")
-
-      expect_error("may not have been integrated correctly")
-    end
   end
 
   context "LMS changes sourcedid on each launch" do

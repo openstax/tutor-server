@@ -122,7 +122,7 @@ class Lms::Launch
     @app
   end
 
-  def tool_consumer!
+  def find_or_create_tool_consumer!
     @tool_consumer ||= Lms::Models::ToolConsumer.find_or_create_by!(guid: tool_consumer_instance_guid)
   end
 
@@ -153,17 +153,9 @@ class Lms::Launch
     course = app.owner
     raise LmsDisabled if course && !course.is_lms_enabled
 
-    # In theory, we could allow multiple LTI context IDs to point to the same Tutor course (e.g. if
-    # one teacher has 3 sections and uses 3 LMS courses to point to one Tutor course).  For this reason
-    # we don't currently prohibit this with a database constraint.  But for the time being, we do
-    # restrict this here in code by requiring, in the auto create call, that a course only be used
-    # in one Context.
-
-    raise CourseKeysAlreadyUsed if course && Lms::Models::Context.where(course: course).exists?
-
     Lms::Models::Context.create!(
       lti_id: context_id,
-      tool_consumer: tool_consumer!,
+      tool_consumer: find_or_create_tool_consumer!,
       app_type: app.class,
       course: course
     )

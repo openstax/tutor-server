@@ -14,7 +14,8 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   belongs_to :school, subsystem: :school_district
   belongs_to :offering, subsystem: :catalog
-  has_one :lms_context, subsystem: :lms, class_name: 'Lms::Models::Context'
+  has_many :lms_contexts, subsystem: :lms, dependent: :destroy,
+           class_name: 'Lms::Models::Context'
   has_many :periods, subsystem: :course_membership,
                      dependent: :destroy,
                      inverse_of: :course
