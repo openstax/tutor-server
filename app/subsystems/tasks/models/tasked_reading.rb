@@ -16,8 +16,7 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   end
 
   def content_preview
-    text = document_title.presence || data_title.presence || class_title.presence
-    text || "Reading Step ##{id}"
+    document_title.presence || data_title.presence || class_title.presence || task_step.page.title
   end
 
   private

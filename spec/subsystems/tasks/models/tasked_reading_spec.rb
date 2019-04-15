@@ -9,7 +9,6 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
   it { is_expected.to validate_presence_of(:content) }
 
   describe '#content_preview' do
-    let(:default_reading_copy) { "Reading Step ##{tasked_reading.id}" }
 
     before do
       tasked_reading.content = content
@@ -77,8 +76,8 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
         HTML
       end
 
-      it "defaults to an expected copy" do
-        expect(tasked_reading.content_preview).to eq(default_reading_copy)
+      it "defaults to page title" do
+        expect(tasked_reading.content_preview).to eq(tasked_reading.task_step.page.title)
       end
     end
   end
