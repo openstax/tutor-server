@@ -324,6 +324,15 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
   add_index "course_membership_students", ["uuid"], name: "index_course_membership_students_on_uuid", unique: true, using: :btree
 
+  create_table "course_membership_teacher_students", force: :cascade do |t|
+    t.integer  "course_profile_course_id", null: false
+    t.integer  "entity_role_id",           null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "course_membership_teacher_students", ["entity_role_id"], name: "index_course_membership_teacher_students_on_entity_role_id", unique: true, using: :btree
+
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "course_profile_course_id", null: false
     t.integer  "entity_role_id",           null: false
@@ -1206,6 +1215,8 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_foreign_key "course_membership_periods", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_students", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_students", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_membership_teacher_students", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_membership_teacher_students", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_courses", "catalog_offerings", on_update: :cascade, on_delete: :nullify

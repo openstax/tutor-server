@@ -1,9 +1,9 @@
-class Api::V1::EnrollmentController < Api::V1::ApiController
+class Api::V1::TeacherStudentsController < Api::V1::ApiController
 
 
   resource_description do
     api_versions "v1"
-    short_description 'Indicates the intent of a user to enroll in a course or to switch periods'
+    short_description 'Allows teachers to enroll into a course'
     description <<-EOS
       EnrollmentChanges indicate that a user has requested to change their status in a course.
       The changes currently need to be approved by the requesting user to be effective.
@@ -74,7 +74,6 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
       invalid_enrollment_code
       preview_course
       course_ended
-      is_teacher (the user is a teacher)
       enrollment_code_does_not_match_book
       dropped_student (dropped students cannot re-enroll by themselves)
       already_enrolled
