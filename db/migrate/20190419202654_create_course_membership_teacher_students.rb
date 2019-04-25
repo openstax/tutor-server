@@ -4,6 +4,9 @@ class CreateCourseMembershipTeacherStudents < ActiveRecord::Migration
       t.references :course_profile_course,
                    null: false,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
+      t.references :course_membership_period,
+                   null: false,
+                   foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.references :entity_role,
                    null: false,
                    index: { unique: true },
@@ -11,5 +14,29 @@ class CreateCourseMembershipTeacherStudents < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+
+    reversible do |dir|
+      dir.up do
+        Entity::Role.teacher_student.find_each do |role|
+          period = CourseMembership::Models::Period.find_by(entity_teacher_student_role_id: role.id)
+          next if period.nil?
+
+          CourseMembership::TeacherStudent.create! role: role, period: period, course: period.course
+        end
+      end
+
+      dir.down do
+        Entity::Role.teacher_student.find_each do |role|
+          period = role.teacher_student.try!(:period)
+          next if period.nil?
+
+          period.update_attribute :entity_teacher_student_role_id, role.id
+        end
+
+        change_column_null :course_membership_periods, :entity_teacher_student_role_id, false
+      end
+    end
+
+    remove_column :course_membership_periods, :entity_teacher_student_role_id, :integer
   end
 end

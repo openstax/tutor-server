@@ -79,7 +79,7 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
       )
       task_plan = Tasks::Models::TaskPlan.find_by!(owner: course)
       expect(task_plan.type).to eq 'reading'
-      expect(task_plan.tasks.count).to eq 8 # 6 students + 1 preview role for each period
+      expect(task_plan.tasks.count).to eq 6 # 6 students
 
       expect(Demo::Work.call.errors).to be_empty
       # We expect some tasks in each possible state

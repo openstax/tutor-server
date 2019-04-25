@@ -7,9 +7,15 @@ RSpec.describe 'biglearn:initialize', type: :rake do
   before(:all) do
     DatabaseCleaner.clean_with :truncation
 
-    # Each tasked TP has its own ecosystem and course and some number of students
+    # Each tasked TP has its own ecosystem, course and period and some number of students
     task_plan_1 = FactoryBot.create :tasked_task_plan, number_of_students: 10
     task_plan_2 = FactoryBot.create :tasked_task_plan, number_of_students: 5
+
+    period_1 = task_plan_1.tasking_plans.first.target
+
+    teacher_student = FactoryBot.create :course_membership_teacher_student, period: period_1
+
+    ReassignPublishedPeriodTaskPlans[period: period_1]
 
     ecosystem_1 = Content::Ecosystem.new strategy: task_plan_1.ecosystem.wrap
     ecosystem_2 = Content::Ecosystem.new strategy: task_plan_2.ecosystem.wrap
@@ -61,7 +67,7 @@ RSpec.describe 'biglearn:initialize', type: :rake do
     expect(result).to include "Ecosystem and Course sequence numbers reset.\n"
     expect(result).to include "Creating 2 ecosystem(s)..\n"
     expect(result).to include "Creating 6 course(s).\n"
-    expect(result).to include "Creating 17 assignment(s).\n"
+    expect(result).to include "Creating 16 assignment(s).\n"
     expect(result).to include "Creating 20 response(s).\n"
     expect(result).to include "Biglearn data transfer successful! (or background jobs created)\n"
   end

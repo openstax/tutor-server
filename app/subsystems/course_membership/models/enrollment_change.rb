@@ -18,12 +18,6 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
     enrollment.try!(:period)
   end
 
-  def conflicting_period
-    conflicting_enrollment.period unless conflicting_enrollment.nil? ||
-                                         conflicting_enrollment.period.archived? ||
-                                         conflicting_enrollment.student.dropped?
-  end
-
   alias_method :to_period, :period
 
   def student_identifier

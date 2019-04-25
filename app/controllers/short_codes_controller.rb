@@ -3,6 +3,7 @@ class ShortCodesController < ApplicationController
   def redirect
     handle_with(
       ShortCode::ShortCodeRedirect,
+        role: current_role,
         success: ->(*) { redirect_to @handler_result.outputs.uri },
         failure: ->(*) {
           case @handler_result.errors.first.code

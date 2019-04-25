@@ -36,35 +36,73 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
     end
   end
 
-  it 'assigns tasked external urls to students' do
-    tasks = DistributeTasks.call(task_plan: task_plan_1).outputs.tasks
-    expect(tasks.length).to eq num_taskees + 1
+  context "with no teacher_students" do
+    it 'assigns tasked external urls to students' do
+      tasks = DistributeTasks.call(task_plan: task_plan_1).outputs.tasks
+      expect(tasks.length).to eq num_taskees
 
-    tasks.each do |task|
-      expect(task.task_type).to eq 'external'
-      expect(task.task_steps.length).to eq 1
-      expect(task.task_steps.first.tasked.url).to eq url
+      tasks.each do |task|
+        expect(task.task_type).to eq 'external'
+        expect(task.task_steps.length).to eq 1
+        expect(task.task_steps.first.tasked.url).to eq url
+      end
+    end
+
+    it 'assigns tasked external urls with templatized urls to students' do
+      tasks = DistributeTasks.call(task_plan: task_plan_2).outputs.tasks
+      expect(tasks.length).to eq num_taskees
+
+      tasks.each do |task|
+        expect(task.task_type).to eq 'external'
+        expect(task.task_steps.length).to eq 1
+      end
+
+      # check that the research_identifier is in the tasked urls
+      student_research_identifiers = students.map { |student| student.role.research_identifier }
+      research_identifiers = student_research_identifiers.sort
+      tasked_urls = tasks.map { |task| task.task_steps.first.tasked.url }.sort
+
+      tasked_urls.each_with_index do |tasked_url, i|
+        expect(tasked_url).to end_with(research_identifiers[i])
+      end
     end
   end
 
-  it 'assigns tasked external urls with templatized urls to students' do
-    tasks = DistributeTasks.call(task_plan: task_plan_2).outputs.tasks
-    expect(tasks.length).to eq num_taskees + 1
-
-    tasks.each do |task|
-      expect(task.task_type).to eq 'external'
-      expect(task.task_steps.length).to eq 1
+  context "with a teacher_student" do
+    let!(:teacher_student_role) do
+      FactoryBot.create(:course_membership_teacher_student, period: period).role
     end
 
-    # check that the research_identifier is in the tasked urls
-    student_research_identifiers = students.map{ |student| student.role.research_identifier }
-    teacher_student_research_identifier = period.teacher_student_role.research_identifier
-    research_identifiers = (student_research_identifiers +
-                            [teacher_student_research_identifier]).sort
-    tasked_urls = tasks.map{ |task| task.task_steps.first.tasked.url }.sort
+    it 'assigns tasked external urls to students and the teacher_student' do
+      tasks = DistributeTasks.call(task_plan: task_plan_1).outputs.tasks
+      expect(tasks.length).to eq num_taskees + 1
 
-    tasked_urls.each_with_index do |tasked_url, i|
-      expect(tasked_url).to end_with(research_identifiers[i])
+      tasks.each do |task|
+        expect(task.task_type).to eq 'external'
+        expect(task.task_steps.length).to eq 1
+        expect(task.task_steps.first.tasked.url).to eq url
+      end
+    end
+
+    it 'assigns tasked external urls with templatized urls to students and the teacher_student' do
+      tasks = DistributeTasks.call(task_plan: task_plan_2).outputs.tasks
+      expect(tasks.length).to eq num_taskees + 1
+
+      tasks.each do |task|
+        expect(task.task_type).to eq 'external'
+        expect(task.task_steps.length).to eq 1
+      end
+
+      # check that the research_identifier is in the tasked urls
+      student_research_identifiers = students.map { |student| student.role.research_identifier }
+      teacher_student_research_identifier = teacher_student_role.research_identifier
+      research_identifiers = (student_research_identifiers +
+                              [teacher_student_research_identifier]).sort
+      tasked_urls = tasks.map{ |task| task.task_steps.first.tasked.url }.sort
+
+      tasked_urls.each_with_index do |tasked_url, i|
+        expect(tasked_url).to end_with(research_identifiers[i])
+      end
     end
   end
 end

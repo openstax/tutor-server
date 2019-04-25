@@ -26,6 +26,9 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :students, subsystem: :course_membership,
                       dependent: :destroy,
                       inverse_of: :course
+  has_many :teacher_students, subsystem: :course_membership,
+                              dependent: :destroy,
+                              inverse_of: :course
 
   has_many :excluded_exercises, subsystem: :course_content
 

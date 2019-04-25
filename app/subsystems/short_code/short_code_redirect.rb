@@ -11,6 +11,6 @@ class ShortCode::ShortCodeRedirect
 
   def handle
     run(:short_code_get_short_code_url, short_code: params[:short_code],
-        user: caller, role: controller.current_role)
+        user: caller, role: options[:role])
   end
 end

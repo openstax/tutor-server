@@ -64,9 +64,9 @@ class DistributeTasks
 
     outputs.tasks = tasks
 
-    # Abort without updating timestamps if no tasks were created
+    # Abort without updating timestamps if no tasks were created and it's not the first publication
     # Should help prevent ActiveRecord::TransactionIsolationConflicts
-    return if tasks.empty?
+    return if tasks.empty? && (preview || task_plan.is_published?)
 
     if preview
       task_plan.touch if task_plan.persisted?

@@ -22,7 +22,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
   before(:each)       { @task_plan.tasks.each(&:touch).each(&:reload) }
 
   let(:student_tasks) do
-    @task_plan.tasks.joins(taskings: { role: :student }).preload(role: :profile).to_a
+    @task_plan.tasks.joins(taskings: { role: :student }).preload(taskings: { role: :profile }).to_a
   end
 
   context "with an unworked plan" do

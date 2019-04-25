@@ -14,6 +14,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
+  let!(:teacher_student) { FactoryBot.create :course_membership_teacher_student, period: period }
   let!(:task_plan_1) do
     FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period.to_model

@@ -19,7 +19,7 @@ class CourseMembership::GetCourseRoles
                           periods: periods,
                           include_dropped_students: include_dropped_students).outputs.roles : []
     teacher_student_roles = types.include?(:teacher_student) ?
-                              periods.map(&:teacher_student_role) : []
+                              periods.flat_map(&:teacher_student_roles) : []
 
     outputs.roles = teacher_roles + student_roles + teacher_student_roles
   end

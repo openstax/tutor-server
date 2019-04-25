@@ -18,7 +18,7 @@ module Api
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        role = get_course_role(course: @course, allowed_role_type: :student)
+        role = get_course_role(course: @course, allowed_role_types: :student)
         OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.student)
         guide = GetStudentGuide[role: role]
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
@@ -30,7 +30,7 @@ module Api
         #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
-        role = get_course_role(course: @course, allowed_role_type: :teacher)
+        role = get_course_role(course: @course, allowed_role_types: :teacher)
         OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.teacher)
         guide = GetTeacherGuide[role: role]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
@@ -42,10 +42,10 @@ module Api
         @course = CourseProfile::Models::Course.find(params[:course_id])
       end
 
-      def get_course_role(course:, allowed_role_type:)
+      def get_course_role(course:, allowed_role_types:)
         result = ChooseCourseRole.call(
           user: current_human_user, course: course,
-          role: current_role, allowed_role_types: allowed_role_type
+          role: current_role, allowed_role_types: allowed_role_types
         )
         errors = result.errors
         raise(SecurityTransgression, :invalid_role) unless errors.empty?

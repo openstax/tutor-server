@@ -13,12 +13,12 @@ RSpec.describe Research::ModifiedTasked do
   let(:task_step) { FactoryBot.create :tasks_task_step, task: task }
 
   let(:exercise) { FactoryBot.create :tasks_tasked_exercise, task_step: task_step }
-  let!(:tasking)  { FactoryBot.create(:tasks_tasking, task: task) }
-  let!(:student)  { FactoryBot.create :course_membership_student, course: course, role: tasking.role }
-  let!(:study)    { FactoryBot.create :research_study }
+  let!(:tasking) { FactoryBot.create(:tasks_tasking, task: task) }
+  let!(:student) { tasking.role.student.tap { |student| student.update_attribute :course, course } }
+  let!(:study)   { FactoryBot.create :research_study }
 
-  let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
-  let!(:brain)    {
+  let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
+  let!(:brain)   {
     FactoryBot.create :research_modified_tasked, study: study,
                       code: 'manipulation.record!; return { task_step: { is_new: true }, update: { modified: true } }'
   }

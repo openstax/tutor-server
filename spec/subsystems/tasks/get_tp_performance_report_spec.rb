@@ -24,6 +24,9 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
       ecosystem: @ecosystem
     ]
 
+    @teacher_student = FactoryBot.create :course_membership_teacher_student,
+                                         period: @course.periods.first
+
     # External assignment
     external_assistant = @course.course_assistants
                                 .find_by(tasks_task_plan_type: 'external')
@@ -101,6 +104,11 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
 
     # Create the preview task, which might interfere with the scores
     DistributeTasks.call(task_plan: draft_task_plan, preview: true)
+  end
+
+  before do
+    @student_1.to_model.reload
+    @student_2.to_model.reload
   end
 
   # Make homework assignments due so that their scores are included in the averages

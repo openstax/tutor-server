@@ -20,27 +20,27 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
   let!(:tasking) { FactoryBot.create(:tasks_tasking, role: student_role, task: task) }
 
   it 'returns the edit task plan page for teachers' do
-    result = described_class.call(gid: task_plan_gid, user: teacher)
+    result = described_class.call(gid: task_plan_gid, user: teacher, role: nil)
     expect(result.errors).to be_empty
     due_at = task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d')
     expect(result.outputs.uri).to eq("/course/#{course.id}/t/month/#{due_at}/plan/#{task_plan.id}")
   end
 
   it 'returns the task page for students' do
-    result = described_class.call(gid: task_plan_gid, user: student)
+    result = described_class.call(gid: task_plan_gid, user: student, role: nil)
     expect(result.errors).to be_empty
     expect(result.outputs.uri).to eq("/course/#{course.id}/task/#{task.id}")
   end
 
   it 'returns :authentication_required for anonomouse users' do
     expect(
-      described_class.call(gid: task_plan_gid, user: User::User.anonymous)
+      described_class.call(gid: task_plan_gid, user: User::User.anonymous, role: nil)
     ).to have_routine_error(:authentication_required)
   end
 
   it 'returns :user_not_in_course_with_required_role for users not in the course' do
     expect(
-      described_class.call(gid: task_plan_gid, user: user)
+      described_class.call(gid: task_plan_gid, user: user, role: nil)
     ).to have_routine_error(:user_not_in_course_with_required_role)
   end
 

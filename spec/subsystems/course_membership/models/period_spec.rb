@@ -11,10 +11,8 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to have_many(:enrollments) }
 
   it { is_expected.to validate_presence_of(:course) }
-  it { is_expected.to validate_presence_of(:teacher_student_role) }
   it { is_expected.to validate_presence_of(:name) }
 
-  it { is_expected.to validate_uniqueness_of(:teacher_student_role) }
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }
 
   it 'can be deleted and restored even if it has active students' do

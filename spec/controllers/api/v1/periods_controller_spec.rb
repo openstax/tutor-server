@@ -29,8 +29,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
         enrollment_url: a_string_matching(/enroll\/012345/),
         default_open_time: '00:01',
         default_due_time: '07:00',
-        is_archived: false,
-        teacher_student_role_id: last_period.entity_teacher_student_role_id.to_s
+        is_archived: false
       ))
     end
 
@@ -193,8 +192,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'returns a proper error message if there is a name conflict' do
-      conflicting_period = FactoryBot.create :course_membership_period, course: course,
-                                                                         name: period.name
+      FactoryBot.create :course_membership_period, course: course, name: period.name
 
       api_put :restore, teacher_token, parameters: { id: period.id }
 

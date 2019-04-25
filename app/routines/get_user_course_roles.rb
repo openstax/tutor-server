@@ -13,7 +13,12 @@ class GetUserCourseRoles
   protected
 
   def exec(user:, courses:, types: [:student, :teacher], include_dropped_students: false,
-           include_deleted_teachers: false, include_deleted_teacher_students: false, preload: nil)
+           include_deleted_teachers: false, preload: nil)
+    if user.is_anonymous?
+      outputs.roles = user.roles
+      return
+    end
+
     types = [types].flatten.map(&:to_sym)
     if types.include?(:any)
       includes_student = true
@@ -28,7 +33,7 @@ class GetUserCourseRoles
     course_ids = [courses].flatten.map(&:id)
     subqueries = []
     if includes_student
-      student_subquery = Entity::Role
+      student_subquery = user.roles
         .select('entity_roles.*, course_membership_students.course_profile_course_id')
         .joins(:student)
         .joins(CourseMembership::Models::Enrollment.latest_join_sql(:student, :period))
@@ -43,7 +48,7 @@ class GetUserCourseRoles
     end
 
     if includes_teacher
-      teacher_subquery = Entity::Role
+      teacher_subquery = user.roles
         .select('entity_roles.*, course_membership_teachers.course_profile_course_id')
         .joins(:teacher)
         .where(course_membership_teachers: { course_profile_course_id: course_ids })
@@ -56,29 +61,17 @@ class GetUserCourseRoles
     end
 
     if includes_teacher_student
-      teacher_student_subquery = Entity::Role
+      teacher_student_subquery = user.roles
         .select('entity_roles.*, course_membership_teacher_students.course_profile_course_id')
         .joins(:teacher_student)
         .where(course_membership_teacher_students: { course_profile_course_id: course_ids })
 
-      teacher_student_subquery = teacher_student_subquery.where(
-        course_membership_teacher_students: { deleted_at: nil }
-      ) unless include_deleted_teacher_students
-
       subqueries << teacher_student_subquery
     end
 
-    subqueries = subqueries[0..-3] + subqueries[-2].union(subqueries[-1]) until subqueries.size == 1
-    subquery = subqueries.first.arel
+    subquery = "(#{subqueries.map(&:to_sql).join(' UNION ')}) AS entity_roles"
 
-    # http://radar.oreilly.com/2014/05/more-than-enough-arel.html
-    role_table = Entity::Role.arel_table
-    roles = Entity::Role.from(role_table.create_table_alias(subquery, :entity_roles))
-                        .joins(:role_user)
-                        .where(role_user: { user_profile_id: user.id })
-
-    roles = roles.preload(*[preload].flatten) unless preload.nil?
-
-    outputs.roles = roles
+    outputs.roles = Entity::Role.from(subquery)
+    outputs.roles = outputs.roles.preload(*[preload].flatten) unless preload.nil?
   end
 end
