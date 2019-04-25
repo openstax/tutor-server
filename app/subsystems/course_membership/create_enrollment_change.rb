@@ -1,7 +1,7 @@
 class CourseMembership::CreateEnrollmentChange
   lev_routine express_output: :enrollment_change
 
-  uses_routine Role::GetUserRoles, as: :get_user_roles
+  uses_routine GetUserCourseRoles, as: :get_user_course_roles
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   def exec(user:, enrollment_code:, book_uuid: nil, requires_enrollee_approval: true)
@@ -18,7 +18,12 @@ class CourseMembership::CreateEnrollmentChange
                 message: 'The course associated with the given enrollment code has ended') \
       if course.ended?
 
-    roles = run(:get_user_roles, user, ['student', 'teacher']).outputs.roles
+    roles = run(
+      :get_user_course_roles,
+      user: user,
+      courses: course,
+      types: ['student', 'teacher']
+    ).outputs.roles
 
     fatal_error(
       code: :is_teacher,

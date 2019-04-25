@@ -13,6 +13,7 @@ RSpec.describe Role::AddUserRole, type: :routine do
       expect(result.errors).to be_empty
     end
   end
+
   context "when adding an existing user role" do
     it "fails" do
       role = FactoryBot.create :entity_role

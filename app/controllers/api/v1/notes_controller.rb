@@ -113,8 +113,11 @@ class Api::V1::NotesController < Api::V1::ApiController
 
   def get_course_role
     @course = CourseProfile::Models::Course.find(params[:course_id])
-    result = ChooseCourseRole.call(user: current_human_user, course: @course)
-    raise(SecurityTransgression, result.errors.map(&:message).to_sentence) if result.errors.any?
+
+    result = ChooseCourseRole.call(user: current_human_user, course: @course, role: current_role)
+    errors = result.errors
+    raise(SecurityTransgression, :invalid_role) unless errors.empty?
+
     @role = result.outputs.role
   end
 

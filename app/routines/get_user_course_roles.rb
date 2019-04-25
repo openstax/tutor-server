@@ -1,28 +1,29 @@
-# Returns Roles belonging to a User in one or many Courses.
+# Returns all Roles belonging to a User in one or many Courses.
 #
 # Parameters:
 #
 #   courses: a Course or an array of Courses
 #   user: a User
-#   types: can be `:student`, `:teacher`, `:any` or an array including one or more of these symbols
+#   types: can be `:student`, `:teacher`, `:teacher_student`, `:any`
+#   or an array including one or more of these symbols
 #
 class GetUserCourseRoles
   lev_routine express_output: :roles
 
   protected
 
-  def exec(user:, courses:, types: :any, include_dropped_students: false,
-           include_deleted_teachers: false, preload: nil)
-    types = [types].flatten
+  def exec(user:, courses:, types: [:student, :teacher], include_dropped_students: false,
+           include_deleted_teachers: false, include_deleted_teacher_students: false, preload: nil)
+    types = [types].flatten.map(&:to_sym)
     if types.include?(:any)
       includes_student = true
       includes_teacher = true
+      includes_teacher_student = true
     else
       includes_student = types.include?(:student)
       includes_teacher = types.include?(:teacher)
+      includes_teacher_student = types.include?(:teacher_student)
     end
-
-    return outputs.roles = Entity::Role.none unless includes_student || includes_teacher
 
     course_ids = [courses].flatten.map(&:id)
     subqueries = []
@@ -54,7 +55,21 @@ class GetUserCourseRoles
       subqueries << teacher_subquery
     end
 
-    subquery = subqueries.size == 1 ? subqueries.first.arel : subqueries.reduce(:union)
+    if includes_teacher_student
+      teacher_student_subquery = Entity::Role
+        .select('entity_roles.*, course_membership_teacher_students.course_profile_course_id')
+        .joins(:teacher_student)
+        .where(course_membership_teacher_students: { course_profile_course_id: course_ids })
+
+      teacher_student_subquery = teacher_student_subquery.where(
+        course_membership_teacher_students: { deleted_at: nil }
+      ) unless include_deleted_teacher_students
+
+      subqueries << teacher_student_subquery
+    end
+
+    subqueries = subqueries[0..-3] + subqueries[-2].union(subqueries[-1]) until subqueries.size == 1
+    subquery = subqueries.first.arel
 
     # http://radar.oreilly.com/2014/05/more-than-enough-arel.html
     role_table = Entity::Role.arel_table

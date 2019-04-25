@@ -35,8 +35,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     respond_with exports, represent_with: Api::V1::PerformanceReport::ExportsRepresenter
   end
 
-  api :GET, '/courses/:course_id/performance(/role/:role_id)',
-            'Returns performance report for the user'
+  api :GET, '/courses/:course_id/performance', 'Returns performance report for the user'
   description <<-EOS
     #{json_schema(Api::V1::PerformanceReport::Representer, include: :readable)}
   EOS
@@ -56,9 +55,9 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     args = {
       user: current_human_user,
       course: course,
-      role_id: params[:role_id]
+      role: current_role
     }
-    args[:allowed_role_type] = type unless type == :any
+    args[:allowed_role_types] = type unless type == :any
 
     result = ChooseCourseRole.call(args)
     raise(SecurityTransgression, :invalid_role) if result.errors.any?

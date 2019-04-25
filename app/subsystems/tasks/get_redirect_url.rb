@@ -5,7 +5,7 @@ class Tasks::GetRedirectUrl
 
   protected
 
-  def exec(gid:, user:)
+  def exec(gid:, user:, role:)
     task_plan = GlobalID::Locator.locate(gid)
 
     fatal_error(code: :plan_not_found) if task_plan.nil?
@@ -13,7 +13,7 @@ class Tasks::GetRedirectUrl
 
     course = task_plan.owner
 
-    run(:choose_course_role, user: user, course: course)
+    run(:choose_course_role, user: user, course: course, role: role)
 
     case outputs.role.role_type
     when 'teacher'

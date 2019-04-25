@@ -6,12 +6,12 @@ module Api
                                                                :create_worst,
                                                                :show]
 
-      api :POST, '/courses/:course_id/practice(/role/:role_id)',
+      api :POST, '/courses/:course_id/practice',
                  'Starts a new practice widget for a specific set of page_ids or chapter_ids'
       description <<-EOS
         #{json_schema(Api::V1::PracticeRepresenter, include: :writeable)}
       EOS
-      def create_specific
+      def create
         OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
         practice = OpenStruct.new
@@ -28,7 +28,7 @@ module Api
         )
       end
 
-      api :POST, '/courses/:course_id/practice/worst(/role/:role_id)',
+      api :POST, '/courses/:course_id/practice/worst',
                  'Starts a new practice widget for Practice Worst Topics'
       def create_worst
         OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
@@ -42,8 +42,7 @@ module Api
         )
       end
 
-      api :GET, '/courses/:course_id/practice(/role/:role_id)',
-                'Gets the most recent practice widget'
+      api :GET, '/courses/:course_id/practice', 'Gets the most recent practice widget'
       def show
         task = ::Tasks::GetPracticeTask[role: @role]
 
@@ -58,8 +57,8 @@ module Api
         @course = CourseProfile::Models::Course.find(params[:id])
         result = ChooseCourseRole.call(user: current_human_user,
                                        course: @course,
-                                       allowed_role_type: :student,
-                                       role_id: params[:role_id])
+                                       role: current_role,
+                                       allowed_role_types: :student)
         if result.errors.any?
           raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
         else

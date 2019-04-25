@@ -99,7 +99,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     )
   end
 
-  api :GET, '/courses/:course_id/dashboard(/role/:role_id)',
+  api :GET, '/courses/:course_id/dashboard',
             'Gets dashboard information for a given non-CC course, ' +
             'filtered by optional start_at and end_at params. ' +
             'Any time_zone information in the given dates is ignored ' +
@@ -126,8 +126,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     )
   end
 
-  api :GET, '/courses/:course_id/cc/dashboard(/role/:role_id)',
-            'Gets dashboard information for a given CC course.'
+  api :GET, '/courses/:course_id/cc/dashboard', 'Gets dashboard information for a given CC course.'
   description <<-EOS
     Possible error codes:
       - non_cc_course
@@ -246,14 +245,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     CollectCourseInfo[courses: course, user: current_human_user].first
   end
 
-  def get_course_role(course:, types: :any)
-    result = ChooseCourseRole.call(user: current_human_user,
-                                   course: course,
-                                   allowed_role_type: types,
-                                   role_id: params[:role_id])
-
+  def get_course_role(course:)
+    result = ChooseCourseRole.call(user: current_human_user, course: course, role: current_role)
     errors = result.errors
-    raise(SecurityTransgression, errors.map(&:message).to_sentence) unless errors.empty?
+    raise(SecurityTransgression, :invalid_role) unless errors.empty?
     result.outputs.role
   end
 

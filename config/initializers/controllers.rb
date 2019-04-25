@@ -19,6 +19,13 @@ ActionController::Base.class_exec do
     end.marshal_dump.except(*opts.keys)
   end
 
+  def current_role
+    return if session[:role_id].nil?
+
+    user = method_defined?(:current_human_user) ? current_human_user : current_user
+    user.roles.find_by(id: session[:role_id])
+  end
+
   def load_time
     Timecop.load_time if Timecop.enabled?
   end

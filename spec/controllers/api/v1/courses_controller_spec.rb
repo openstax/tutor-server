@@ -782,29 +782,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
       end
 
-      it "works with a student role specified" do
-        api_get :dashboard, @teacher_token, parameters: { id: @course.id, role_id: @student_role }
-
-        expect(response.body_as_hash[:role]).to match({
-          id: @student_role.id.to_s,
-          type: 'student'
-        })
-        expect(response.body_as_hash[:course]).to match({
-          name: 'Physics 101',
-          teachers: [
-            {
-              id: @teacher_role.teacher.id.to_s,
-              role_id: @teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart'
-            }
-          ]
-        })
-        expect(response.body_as_hash[:tasks]).not_to be_empty
-        expect(response.body_as_hash[:all_tasks_are_ready]).to eq true
-        expect(response.body_as_hash[:plans]).to be_nil
-      end
-
       it "allows the start_at and end_at dates to be specified" do
         api_get :dashboard, @teacher_token, parameters: {
           id: @course.id, start_at: @time_zone.now - 2.hours, end_at: @time_zone.now - 1.hour
@@ -1156,26 +1133,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
       end
 
-      it "works with a student role specified" do
-        api_get :cc_dashboard, @teacher_token,
-                parameters: { id: @course.id, role_id: @student_role }
-
-        expect(response.body_as_hash[:role]).to match({
-          id: @student_role.id.to_s,
-          type: 'student'
-        })
-        expect(response.body_as_hash[:course]).to match({
-          name: 'Biology 101',
-          teachers: [
-            { id: @teacher_role.teacher.id.to_s,
-              role_id: @teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart' }
-          ]
-        })
-        expect(response.body_as_hash[:chapters]).not_to be_empty
-        expect(response.body_as_hash[:tasks]).not_to be_empty
-      end
     end
   end
 

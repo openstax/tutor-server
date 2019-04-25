@@ -12,13 +12,13 @@ module Api
         EOS
       end
 
-      api :GET, '/courses/:course_id/guide(/role/:role_id)',
+      api :GET, '/courses/:course_id/guide',
                 'Returns a student course guide for Learning Guide'
       description <<-EOS
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        role = get_role(@course, :student)
+        role = get_course_role(course: @course, allowed_role_type: :student)
         OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.student)
         guide = GetStudentGuide[role: role]
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
@@ -30,7 +30,7 @@ module Api
         #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
-        role = get_role(@course, :teacher)
+        role = get_course_role(course: @course, allowed_role_type: :teacher)
         OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.teacher)
         guide = GetTeacherGuide[role: role]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
@@ -42,16 +42,14 @@ module Api
         @course = CourseProfile::Models::Course.find(params[:course_id])
       end
 
-      def get_role(course, types = :any)
-        result = ChooseCourseRole.call(user: current_human_user,
-                                       course: course,
-                                       allowed_role_type: types,
-                                       role_id: params[:role_id])
-        if result.errors.any?
-          raise(SecurityTransgression, :invalid_role)
-        else
-          result.outputs.role
-        end
+      def get_course_role(course:, allowed_role_type:)
+        result = ChooseCourseRole.call(
+          user: current_human_user, course: course,
+          role: current_role, allowed_role_types: allowed_role_type
+        )
+        errors = result.errors
+        raise(SecurityTransgression, :invalid_role) unless errors.empty?
+        result.outputs.role
       end
     end
   end

@@ -131,7 +131,7 @@ class GetConceptCoach
   end
 
   def get_role_and_book(user:, book_uuid:)
-    roles = Role::GetUserRoles[user, :student]
+    roles = user.roles.student.to_a
 
     cc_roles = roles.select { |role| role.student.try!(:course).try!(:is_concept_coach) }
 

@@ -131,21 +131,21 @@ Rails.application.routes.draw do
 
     resources :courses, only: [:create, :show, :update] do
       member do
-        get :'dashboard(/role/:role_id)', action: :dashboard
-        get :'cc/dashboard(/role/:role_id)', action: :cc_dashboard
+        get :'dashboard', action: :dashboard
+        get :'cc/dashboard', action: :cc_dashboard
         get :roster
         post :clone
 
         scope :performance, controller: :performance_reports do
-          get :'(/role/:role_id)', action: :index
+          get :index
           post :export
           get :exports
         end
 
         scope :practice, controller: :practices do
-          get :'(/role/:role_id)', action: :show
-          post :'(/role/:role_id)', action: :create_specific
-          post :'worst(/role/:role_id)', action: :create_worst
+          get :show
+          post :create
+          post :worst, action: :create_worst
         end
       end
       post :dates, on: :collection
@@ -154,7 +154,7 @@ Rails.application.routes.draw do
       get :highlighted_sections, controller: :notes
 
       scope controller: :guides do
-        get :'guide(/role/:role_id)', action: :student
+        get :guide, action: :student
         get :teacher_guide, action: :teacher
       end
 

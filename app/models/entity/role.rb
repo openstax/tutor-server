@@ -6,6 +6,7 @@ module Entity
 
     has_one :student, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
     has_one :teacher, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
+    has_one :teacher_student, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
 
     has_one :role_user, dependent: :destroy, subsystem: :role, inverse_of: :role
     has_one :profile, through: :role_user, subsystem: :user

@@ -108,7 +108,8 @@ class Api::V1::StudentsController < Api::V1::ApiController
   def get_course_student
     result = ChooseCourseRole.call(user: current_human_user,
                                    course: CourseProfile::Models::Course.find(params[:course_id]),
-                                   allowed_role_type: :student)
+                                   role: current_role,
+                                   allowed_role_types: :student)
     raise(SecurityTransgression, result.errors.map(&:message).to_sentence) if result.errors.any?
     @student = result.outputs.role.student
   end
