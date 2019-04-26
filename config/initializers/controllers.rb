@@ -19,11 +19,11 @@ ActionController::Base.class_exec do
     end.marshal_dump.except(*opts.keys)
   end
 
-  def current_role
-    return if session[:role_id].nil?
+  def current_role(course)
+    return if course.nil? || session[:roles].nil? || session[:roles][course.id].nil?
 
     user = method_defined?(:current_human_user) ? current_human_user : current_user
-    user.roles.find_by(id: session[:role_id])
+    user.roles.find_by(id: session[:roles][course.id])
   end
 
   def load_time

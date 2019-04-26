@@ -177,7 +177,10 @@ Rails.application.routes.draw do
       resources :teachers, shallow: true, only: [:destroy]
 
       resources :periods, shallow: true, only: [:create, :update, :destroy] do
-        put :restore, on: :member
+        member do
+          put :restore
+          put :teacher_student
+        end
       end
     end
 

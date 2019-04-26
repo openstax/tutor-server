@@ -18,12 +18,12 @@ RSpec.describe ShortCode::GetShortCodeUrl, type: :routine do
   let(:user) { FactoryBot.create :user }
 
   it 'returns absolute urls' do
-    result = described_class.call(short_code: absolute_url.code, user: user, role: nil)
+    result = described_class.call(short_code: absolute_url.code, user: user)
     expect(result.outputs.uri).to eq(absolute_url.uri)
   end
 
   it 'returns relative urls' do
-    result = described_class.call(short_code: relative_url.code, user: user, role: nil)
+    result = described_class.call(short_code: relative_url.code, user: user)
     expect(result.outputs.uri).to eq(relative_url.uri)
   end
 
@@ -31,17 +31,17 @@ RSpec.describe ShortCode::GetShortCodeUrl, type: :routine do
     outputs = Lev::Outputs.new(uri: 'task-plan-url')
     result = Lev::Routine::Result.new(outputs, Lev::Errors.new)
     expect_any_instance_of(Tasks::GetRedirectUrl).to receive(:call).and_return(result)
-    result = described_class.call(short_code: task_plan_url.code, user: user, role: nil)
+    result = described_class.call(short_code: task_plan_url.code, user: user)
     expect(result.outputs.uri).to eq('task-plan-url')
   end
 
   it 'returns an error if the uri is a GID but is not a task plan' do
-    result = described_class.call(short_code: tasking_url.code, user: user, role: nil)
+    result = described_class.call(short_code: tasking_url.code, user: user)
     expect(result.errors.first.code).to eq(:no_handler_for_gid)
   end
 
   it 'returns an error if the short code is not found' do
-    result = described_class.call(short_code: 'notfound', user: user, role: nil)
+    result = described_class.call(short_code: 'notfound', user: user)
     expect(result.errors.first.code).to eq(:short_code_not_found)
   end
 end

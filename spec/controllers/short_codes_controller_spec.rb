@@ -3,10 +3,8 @@ require 'rails_helper'
 RSpec.describe ShortCodesController, type: :controller do
   let(:user) { FactoryBot.create(:user) }
 
-  let(:absolute_url) { FactoryBot.create(:short_code_short_code,
-                                          uri: 'https://cnx.org') }
-  let(:relative_url) { FactoryBot.create(:short_code_short_code,
-                                          uri: 'dashboard') }
+  let(:absolute_url) { FactoryBot.create(:short_code_short_code, uri: 'https://cnx.org') }
+  let(:relative_url) { FactoryBot.create(:short_code_short_code, uri: 'dashboard') }
 
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
@@ -25,11 +23,9 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:tasking) { FactoryBot.create(:tasks_tasking, role: student_role, task: task) }
   let(:tasking_gid) { tasking.to_global_id.to_s }
 
-  let(:task_plan_code) { FactoryBot.create(:short_code_short_code,
-                                            uri: task_plan_gid) }
+  let(:task_plan_code) { FactoryBot.create(:short_code_short_code, uri: task_plan_gid) }
 
-  let(:tasking_code) { FactoryBot.create(:short_code_short_code,
-                                          uri: tasking_gid) }
+  let(:tasking_code) { FactoryBot.create(:short_code_short_code, uri: tasking_gid) }
 
   let(:task_plan_due_at) { task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d') }
 

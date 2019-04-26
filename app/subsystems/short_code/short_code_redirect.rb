@@ -10,7 +10,6 @@ class ShortCode::ShortCodeRedirect
   end
 
   def handle
-    run(:short_code_get_short_code_url, short_code: params[:short_code],
-        user: caller, role: options[:role])
+    run(:short_code_get_short_code_url, short_code: params[:short_code], user: caller)
   end
 end

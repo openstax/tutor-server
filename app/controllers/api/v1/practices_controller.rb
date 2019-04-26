@@ -55,7 +55,7 @@ module Api
         @course = CourseProfile::Models::Course.find(params[:id])
         result = ChooseCourseRole.call(user: current_human_user,
                                        course: @course,
-                                       role: current_role,
+                                       role: current_role(@course),
                                        allowed_role_types: :student)
         if result.errors.any?
           raise(SecurityTransgression, result.errors.map(&:message).to_sentence)

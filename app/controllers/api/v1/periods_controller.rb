@@ -89,6 +89,14 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     )
   end
 
+  api :PUT, '/periods/:id/teacher_student',
+            'Enrolls a teacher as a student in a period or resets their assignments'
+  description <<-EOS
+    Enrolls a teacher as a student in a period or resets their assignments
+  EOS
+  def teacher_student
+  end
+
   private
 
   def find_period_and_course
