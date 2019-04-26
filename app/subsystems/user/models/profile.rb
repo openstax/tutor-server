@@ -12,8 +12,7 @@ module User
       has_many :groups_as_member, through: :account, subsystem: 'none'
       has_many :groups_as_owner, through: :account, subsystem: 'none'
 
-      has_many :role_users, subsystem: :role
-      has_many :roles, through: :role_users, subsystem: :entity
+      has_many :roles, subsystem: :entity, dependent: :destroy
 
       has_many :enrollment_changes, subsystem: :course_membership
       has_many :tour_views, inverse_of: :profile

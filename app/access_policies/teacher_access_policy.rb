@@ -4,7 +4,7 @@ class TeacherAccessPolicy
 
     case action
     when :show
-      teacher.role.role_user.user_profile_id == requestor.id && !teacher.deleted?
+      teacher.role.user_profile_id == requestor.id && !teacher.deleted?
     when :destroy
       UserIsCourseTeacher[user: requestor, course: teacher.course]
     else

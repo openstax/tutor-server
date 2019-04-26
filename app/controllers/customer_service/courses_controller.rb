@@ -11,7 +11,7 @@ class CustomerService::CoursesController < CustomerService::BaseController
     @total_courses = courses.total_count
     @course_infos = courses.items.preload(
       [
-        { teachers: { role: [:role_user, :profile] },
+        { teachers: { role: :profile },
           periods: :students,
           course_ecosystems: { ecosystem: :books } },
         :periods

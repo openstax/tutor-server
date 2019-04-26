@@ -128,7 +128,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine do
     let(:first_period)                  { @course.periods.order(:created_at).first }
     let(:second_period)                 { @course.periods.order(:created_at).second }
     let(:first_student_of_first_period) do
-      first_period.students.preload(role: {role_user: :profile}).sort_by do |student|
+      first_period.students.preload(role: :profile).sort_by do |student|
         sort_name = "#{student.role.last_name} #{student.role.first_name}"
         (sort_name.blank? ? student.role.name : sort_name).downcase
       end.first

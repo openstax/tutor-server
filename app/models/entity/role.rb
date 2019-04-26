@@ -8,8 +8,7 @@ module Entity
     has_one :teacher, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
     has_one :teacher_student, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
 
-    has_one :role_user, dependent: :destroy, subsystem: :role, inverse_of: :role
-    has_one :profile, through: :role_user, subsystem: :user
+    belongs_to :profile, subsystem: :user, inverse_of: :roles
 
     delegate :username, :first_name, :last_name, :full_name, :name, to: :profile, allow_nil: true
 

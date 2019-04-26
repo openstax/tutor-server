@@ -26,7 +26,7 @@ RSpec.describe NoteAccessPolicy, type: :access_policy, speed: :medium do
 
     context 'and the requestor matches user' do
       before do
-        allow(requestor).to receive(:id) { student_role.role_user.user_profile_id }
+        allow(requestor).to receive(:id) { student_role.user_profile_id }
       end
       it { should eq true }
     end

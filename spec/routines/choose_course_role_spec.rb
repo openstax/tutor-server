@@ -126,8 +126,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
       let!(:student_role_1) { AddUserAsPeriodStudent[user: teacher, period: period] }
       let!(:student_role_2) do
         # Bypass AddUserAsPeriodStudent's error checking
-        role = FactoryBot.create :entity_role, role_type: :student
-        Role::AddUserRole[user: teacher, role: role]
+        role = FactoryBot.create :entity_role, profile: teacher.to_model, role_type: :student
         CourseMembership::AddStudent[period: period, role: role]
       end
       let(:role_type)     { nil }

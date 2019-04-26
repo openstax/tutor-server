@@ -8,7 +8,7 @@ RSpec.describe Entity::Role, type: :model do
   it { is_expected.to have_one(:student).dependent(:destroy) }
   it { is_expected.to have_one(:teacher).dependent(:destroy) }
 
-  it { is_expected.to have_one(:role_user).dependent(:destroy) }
+  it { is_expected.to belong_to(:profile) }
 
   [:username, :first_name, :last_name, :full_name, :name].each do |delegated_method|
     it { is_expected.to delegate_method(delegated_method).to(:profile) }

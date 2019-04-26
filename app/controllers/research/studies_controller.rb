@@ -28,7 +28,7 @@ class Research::StudiesController < Research::BaseController
       end
 
       @course_infos = result.outputs.items.preload(
-        teachers: { role: [:role_user, :profile] },
+        teachers: { role: :profile },
         periods: :students,
         course_ecosystems: { ecosystem: :books }
       ).try(:paginate, params_for_pagination)

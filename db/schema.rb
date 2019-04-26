@@ -420,10 +420,12 @@ ActiveRecord::Schema.define(version: 20190506190532) do
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
     t.string   "research_identifier",             null: false
+    t.integer  "user_profile_id",                 null: false
   end
 
   add_index "entity_roles", ["research_identifier"], name: "index_entity_roles_on_research_identifier", unique: true, using: :btree
   add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type", using: :btree
+  add_index "entity_roles", ["user_profile_id"], name: "index_entity_roles_on_user_profile_id", using: :btree
 
   create_table "fine_print_contracts", force: :cascade do |t|
     t.string   "name",       null: false
@@ -786,15 +788,6 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_index "research_surveys", ["deleted_at"], name: "index_research_surveys_on_deleted_at", using: :btree
   add_index "research_surveys", ["hidden_at"], name: "index_research_surveys_on_hidden_at", using: :btree
   add_index "research_surveys", ["research_survey_plan_id"], name: "index_research_surveys_on_research_survey_plan_id", using: :btree
-
-  create_table "role_role_users", force: :cascade do |t|
-    t.integer  "user_profile_id", null: false
-    t.integer  "entity_role_id",  null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
   create_table "school_district_districts", force: :cascade do |t|
     t.string   "name",       null: false
@@ -1223,6 +1216,7 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "time_zones", on_update: :cascade
+  add_foreign_key "entity_roles", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_contexts", "lms_tool_consumers", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
@@ -1242,8 +1236,6 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_foreign_key "research_survey_plans", "research_studies", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_surveys", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_surveys", "research_survey_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_concept_coach_tasks", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_concept_coach_tasks", "entity_roles", on_update: :cascade, on_delete: :cascade

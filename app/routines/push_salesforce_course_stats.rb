@@ -49,7 +49,7 @@ class PushSalesforceCourseStats
       .not_ended
       .where(is_test: false, is_preview: false, is_excluded_from_salesforce: false, term: terms)
       .preload(:offering, periods: { students: { role: { taskings: :task } } },
-               teachers: { role: { role_user: { profile: :account } } })
+               teachers: { role: { profile: :account } })
   end
 
   def process_courses(courses)
@@ -168,7 +168,7 @@ class PushSalesforceCourseStats
 
   def best_sf_contact_id_for_course(course)
     course.teachers.sort_by(&:created_at)
-          .map{ |tt| tt.role.role_user.profile.account.salesforce_contact_id }
+          .map{ |tt| tt.role.profile.account.salesforce_contact_id }
           .compact.first.tap do |contact_id|
       error!(message: "No teachers have a SF contact ID", course: course) if contact_id.nil?
     end

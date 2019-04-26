@@ -4,7 +4,7 @@ class RoleAccessPolicy
 
     case action
     when :become
-      role.role_user.user_profile_id == requestor.id
+      role.user_profile_id == requestor.id
     else
       false
     end
