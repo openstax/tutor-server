@@ -123,7 +123,13 @@ RSpec.describe ChooseCourseRole, type: :routine do
     end
 
     context "and the user has a multiple roles" do
-      let!(:student_role) { AddUserAsPeriodStudent[user: teacher, period: period] }
+      let!(:student_role_1) { AddUserAsPeriodStudent[user: teacher, period: period] }
+      let!(:student_role_2) do
+        # Bypass AddUserAsPeriodStudent's error checking
+        role = FactoryBot.create :entity_role, role_type: :student
+        Role::AddUserRole[user: teacher, role: role]
+        CourseMembership::AddStudent[period: period, role: role]
+      end
       let(:role_type)     { nil }
       let(:args)          do
         { user: teacher, course: course, role: nil }.tap do |args|
@@ -132,31 +138,15 @@ RSpec.describe ChooseCourseRole, type: :routine do
       end
       subject(:found)     { ChooseCourseRole.call(args).outputs.role }
 
-      it "returns the only role of the first type found in allowed_role_types" do
-        # Bypass AddUserAsPeriodStudent's error checking
-        role = FactoryBot.create :entity_role, role_type: :student
-        Role::AddUserRole[user: teacher, role: role]
-        CourseMembership::AddStudent[period: period, role: role]
-
+      it "returns the oldest role" do
         expect(found).to eq(teacher_role)
       end
 
       context "and a student role is requested" do
         let(:role_type) { :student }
 
-        it "will only return student roles" do
-          expect(found).to eq student_role
-        end
-
-        it "fails with an error if there are multiple roles of the same type" do
-          # Bypass AddUserAsPeriodStudent's error checking
-          role = FactoryBot.create :entity_role, role_type: :student
-          Role::AddUserRole[user: teacher, role: role]
-          CourseMembership::AddStudent[period: period, role: role]
-
-          errors = ChooseCourseRole.call(args).errors
-          expect(errors).not_to be_empty
-          expect(errors.first.code).to eq(:multiple_roles)
+        it "returns the oldest student role" do
+          expect(found).to eq student_role_1
         end
       end
     end
