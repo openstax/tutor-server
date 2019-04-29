@@ -12,6 +12,8 @@ class CreateCourseMembershipTeacherStudents < ActiveRecord::Migration
                    index: { unique: true },
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
 
+      t.datetime :deleted_at
+
       t.timestamps null: false
     end
 
@@ -38,5 +40,11 @@ class CreateCourseMembershipTeacherStudents < ActiveRecord::Migration
     end
 
     remove_column :course_membership_periods, :entity_teacher_student_role_id, :integer
+
+    add_index :course_membership_students, :course_membership_period_id
+    add_index :course_membership_teacher_students, :course_profile_course_id,
+              name: 'index_teacher_students_on_course_id'
+    add_index :course_membership_teacher_students, :course_membership_period_id,
+              name: 'index_teacher_students_on_period_id'
   end
 end

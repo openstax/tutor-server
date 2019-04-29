@@ -201,4 +201,31 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(period.to_model.reload).to be_deleted
     end
   end
+
+  context '#teacher_student' do
+    let(:period) { FactoryBot.create :course_membership_period, course: course, name: '8th Period' }
+
+    it 'allows teachers to create or reset teacher_students' do
+      period_wrapper = CourseMembership::Period.new strategy: period.wrap
+      expect(CreateOrResetTeacherStudent).to(
+        receive(:call).with(period: period_wrapper, user: teacher_user)
+      ).and_call_original
+      api_put :teacher_student, teacher_token, parameters: { id: period.id }
+
+      expect(response).to have_http_status(:ok)
+
+      role = CourseMembership::Models::TeacherStudent.order(:created_at).last.role
+      expect(response.body).to eq Api::V1::RoleRepresenter.new(role).to_json
+    end
+
+    it 'ensures the person is a teacher of the course' do
+      period.to_model.update_attribute :course, other_course
+
+      expect(CreateOrResetTeacherStudent).not_to receive(:call)
+
+      expect do
+        api_put :teacher_student, teacher_token, parameters: { id: period.id }
+      end.to raise_error(SecurityTransgression)
+    end
+  end
 end

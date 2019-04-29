@@ -22,7 +22,7 @@ ActionController::Base.class_exec do
   def current_role(course)
     return if course.nil? || session[:roles].nil? || session[:roles][course.id].nil?
 
-    user = method_defined?(:current_human_user) ? current_human_user : current_user
+    user = respond_to?(:current_human_user) ? current_human_user : current_user
     user.roles.find_by(id: session[:roles][course.id])
   end
 

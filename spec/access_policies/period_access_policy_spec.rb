@@ -24,7 +24,7 @@ RSpec.describe PeriodAccessPolicy, type: :access_policy, speed: :medium do
   context 'anonymous users' do
     let(:requestor) { anon }
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:read, :create, :update, :destroy, :restore, :teacher_student].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq false }
@@ -35,7 +35,7 @@ RSpec.describe PeriodAccessPolicy, type: :access_policy, speed: :medium do
   context 'regular users' do
     let(:requestor) { user }
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:read, :create, :update, :destroy, :restore, :teacher_student].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq false }
@@ -51,7 +51,7 @@ RSpec.describe PeriodAccessPolicy, type: :access_policy, speed: :medium do
       it { should eq true }
     end
 
-    [:create, :update, :destroy, :restore].each do |test_action|
+    [:create, :update, :destroy, :restore, :teacher_student].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq false }
@@ -62,7 +62,7 @@ RSpec.describe PeriodAccessPolicy, type: :access_policy, speed: :medium do
   context 'teachers' do
     let(:requestor) { teacher }
 
-    [:read, :create, :update, :destroy, :restore].each do |test_action|
+    [:read, :create, :update, :destroy, :restore, :teacher_student].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should eq true }

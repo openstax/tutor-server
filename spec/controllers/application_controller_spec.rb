@@ -1,11 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationController, type: :controller do
-  subject(:controller) {
-    cc = ApplicationController.new
-    cc.response = ActionController::TestResponse.new
-    cc
-  }
+  subject(:controller) do
+    ApplicationController.new.tap { |cc| cc.response = ActionController::TestResponse.new }
+  end
 
   before(:all) do
     @timecop_enable = Rails.application.secrets[:timecop_enable]
@@ -120,6 +118,42 @@ RSpec.describe ApplicationController, type: :controller do
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
       expect(header_time).to be_within(1).of(t)
+    end
+  end
+
+  context '#current_role' do
+    let(:teacher_student)       { FactoryBot.create :course_membership_teacher_student }
+    let(:course)                { teacher_student.course }
+    let!(:teacher_student_role) { teacher_student.role }
+    let(:user)                  { teacher_student_role.profile }
+    let!(:teacher_role)         { AddUserAsCourseTeacher[user: user, course: course] }
+    let!(:another_teacher_role) do
+      FactoryBot.create(:course_membership_teacher, course: course).role
+    end
+
+    before do
+      allow(controller).to receive(:session).and_return({})
+      allow(controller).to receive(:current_user).and_return(user)
+    end
+
+    it "can return the user's current role for a given course" do
+      expect(controller.send :current_role, course).to be_nil
+
+      controller.session[:roles] = { course.id => teacher_role.id }
+      expect(controller.send :current_role, course).to eq teacher_role
+
+      controller.session[:roles] = { course.id => teacher_student_role.id }
+      expect(controller.send :current_role, course).to eq teacher_student_role
+    end
+
+    it 'does not return roles belonging to other users or invalid roles' do
+      expect(controller.send :current_role, course).to be_nil
+
+      controller.session[:roles] = { course.id => another_teacher_role.id }
+      expect(controller.send :current_role, course).to be_nil
+
+      controller.session[:roles] = { course.id => 'abc' }
+      expect(controller.send :current_role, course).to be_nil
     end
   end
 end

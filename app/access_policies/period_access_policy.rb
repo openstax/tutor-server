@@ -8,7 +8,7 @@ class PeriodAccessPolicy
     when :read
       UserIsCourseStudent[user: requestor, course: course] ||
       UserIsCourseTeacher[user: requestor, course: course]
-    when :create, :update, :destroy, :restore
+    when :create, :update, :destroy, :restore, :teacher_student
       UserIsCourseTeacher[user: requestor, course: course]
     else
       false

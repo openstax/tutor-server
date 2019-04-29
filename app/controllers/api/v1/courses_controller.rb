@@ -235,19 +235,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
     render json: course_dates_map
   end
 
-  api :PUT, '/courses/:id/roles/:role_id/become', 'Become the specified role in the course'
-  description <<-EOS
-    Become the specified role in the specified course
-
-    The role must belong to the calling user and must be in the specified course
-  EOS
-  def become
-    OSU::AccessPolicy.require_action_allowed!(:become, current_human_user, @role)
-
-    session[:roles] ||= {}
-    session[:roles][@course.id] = @role.id
-  end
-
   protected
 
   def get_role

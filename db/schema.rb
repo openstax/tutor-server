@@ -317,6 +317,7 @@ ActiveRecord::Schema.define(version: 20190506190532) do
     t.integer  "course_membership_period_id",                               null: false
   end
 
+  add_index "course_membership_students", ["course_membership_period_id"], name: "index_course_membership_students_on_course_membership_period_id", using: :btree
   add_index "course_membership_students", ["course_profile_course_id", "student_identifier"], name: "index_course_membership_students_on_c_p_c_id_and_s_identifier", using: :btree
   add_index "course_membership_students", ["dropped_at"], name: "index_course_membership_students_on_dropped_at", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
@@ -326,10 +327,13 @@ ActiveRecord::Schema.define(version: 20190506190532) do
     t.integer  "course_profile_course_id",    null: false
     t.integer  "course_membership_period_id", null: false
     t.integer  "entity_role_id",              null: false
+    t.datetime "deleted_at"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
   end
 
+  add_index "course_membership_teacher_students", ["course_membership_period_id"], name: "index_teacher_students_on_period_id", using: :btree
+  add_index "course_membership_teacher_students", ["course_profile_course_id"], name: "index_teacher_students_on_course_id", using: :btree
   add_index "course_membership_teacher_students", ["entity_role_id"], name: "index_course_membership_teacher_students_on_entity_role_id", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|

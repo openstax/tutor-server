@@ -66,6 +66,10 @@ class GetUserCourseRoles
         .joins(:teacher_student)
         .where(course_membership_teacher_students: { course_profile_course_id: course_ids })
 
+      teacher_student_subquery = teacher_student_subquery.where(
+        course_membership_teacher_students: { deleted_at: nil }
+      ) unless include_deleted_teachers
+
       subqueries << teacher_student_subquery
     end
 

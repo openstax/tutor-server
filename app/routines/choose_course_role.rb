@@ -17,17 +17,14 @@ class ChooseCourseRole
 
   def exec(user:, course:, role:, allowed_role_types: [:teacher, :student, :teacher_student])
     # Don't include the user's own inactive student/teacher roles
-    if role.nil?
-      roles = run(:get_user_course_roles, courses: course, user: user, types: allowed_role_types)
-                .outputs.roles.sort_by(&:created_at)
-    elsif user.id == role.profile.id
-      roles = [ role ]
-    else
-      roles = []
-    end
+    roles = run(:get_user_course_roles, courses: course, user: user, types: allowed_role_types)
+              .outputs.roles.sort_by(&:created_at)
+    roles = [ role ] if roles.include? role
 
     allowed_role_types = [ allowed_role_types ].flatten.map(&:to_s)
-    outputs.role = roles.find { |role| allowed_role_types.include? role.role_type }
+    roles = roles.select { |role| allowed_role_types.include? role.role_type }
+
+    outputs.role = roles.include?(role) ? role : roles.first
 
     return unless outputs.role.nil?
 

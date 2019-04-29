@@ -148,6 +148,7 @@ Rails.application.routes.draw do
           post :worst, action: :create_worst
         end
       end
+
       post :dates, on: :collection
 
       resources :notes, path: 'notes/:chapter.:section'
@@ -181,6 +182,10 @@ Rails.application.routes.draw do
           put :restore
           put :teacher_student
         end
+      end
+
+      resources :roles, shallow: true, only: [] do
+        put :become, on: :member
       end
     end
 
@@ -278,12 +283,14 @@ Rails.application.routes.draw do
           put :change_salesforce
         end
       end
+
       resources :students, only: [:index] do
         member do
           delete :drop
           post :restore
         end
       end
+
       resources :teachers, only: [], shallow: true do
         member do
           delete :delete
