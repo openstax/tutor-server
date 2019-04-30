@@ -91,7 +91,18 @@ class Tasks::UpdateTaskCaches
       .joins(role: [ :taskings, profile: :account ])
       .where(role: { taskings: { tasks_task_id: task_ids } })
 
-    return if students.empty?
+      teacher_students = CourseMembership::Models::TeacherStudent
+        .select([
+          :id,
+          :course_profile_course_id,
+          :course_membership_period_id,
+          '"tasks_taskings"."tasks_task_id"',
+          '"user_profiles"."account_id"'
+        ])
+        .joins(role: [ :taskings, profile: :account ])
+        .where(role: { taskings: { tasks_task_id: task_ids } })
+
+    return if students.empty? && teacher_students.empty?
 
     account_ids = students.map(&:account_id)
 
@@ -102,6 +113,7 @@ class Tasks::UpdateTaskCaches
       .map { |account| [ account.id, account.name ] }
       .to_h
     student_ids_by_task_id = Hash.new { |hash, key| hash[key] = [] }
+    teacher_student_ids_by_task_id = Hash.new { |hash, key| hash[key] = [] }
     student_names_by_task_id = Hash.new { |hash, key| hash[key] = [] }
     task_ids_by_course_id = Hash.new { |hash, key| hash[key] = [] }
     period_ids = []
@@ -112,6 +124,12 @@ class Tasks::UpdateTaskCaches
       student_names_by_task_id[task_id] << student_name
       task_ids_by_course_id[student.course_profile_course_id] << task_id
       period_ids << student.course_membership_period_id
+    end
+    teacher_students.each do |teacher_student|
+      task_id = teacher_student.tasks_task_id
+      teacher_student_ids_by_task_id[task_id] << teacher_student.id
+      task_ids_by_course_id[teacher_student.course_profile_course_id] << task_id
+      period_ids << teacher_student.course_membership_period_id
     end
 
     # Get all relevant pages
@@ -180,6 +198,7 @@ class Tasks::UpdateTaskCaches
         num_assigned_steps = task_steps.size
         num_completed_steps = task_steps.count(&:completed?)
         student_ids = student_ids_by_task_id[task_id]
+        teacher_student_ids = teacher_student_ids_by_task_id[task_id]
         student_names = student_names_by_task_id[task_id]
 
         [
@@ -192,6 +211,7 @@ class Tasks::UpdateTaskCaches
             ecosystem: course_ecosystem,
             task: task,
             student_ids: student_ids,
+            teacher_student_ids: teacher_student_ids,
             student_names: student_names
           )
         ].tap do |task_caches|
@@ -204,6 +224,7 @@ class Tasks::UpdateTaskCaches
             ecosystem: task.ecosystem,
             task: task,
             student_ids: student_ids,
+            teacher_student_ids: teacher_student_ids,
             student_names: student_names
           ) if task.ecosystem.id != course_ecosystem.id
         end
@@ -218,6 +239,7 @@ class Tasks::UpdateTaskCaches
         :due_at,
         :feedback_at,
         :student_ids,
+        :teacher_student_ids,
         :student_names,
         :as_toc,
         :is_cached_for_period
@@ -237,6 +259,7 @@ class Tasks::UpdateTaskCaches
     ecosystem:,
     task:,
     student_ids:,
+    teacher_student_ids:,
     student_names:
   )
     books_array = pages_by_mapped_book_chapter_and_page
@@ -349,6 +372,7 @@ class Tasks::UpdateTaskCaches
       due_at: task.due_at,
       feedback_at: task.feedback_at,
       student_ids: student_ids,
+      teacher_student_ids: teacher_student_ids,
       student_names: student_names,
       as_toc: toc,
       is_cached_for_period: false

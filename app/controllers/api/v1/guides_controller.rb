@@ -18,9 +18,14 @@ module Api
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        role = get_course_role(course: @course, allowed_role_types: :student)
-        OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.student)
+        role = get_course_role(course: @course, allowed_role_types: [:student, :teacher_student])
+
+        student = role.teacher_student? ? role.teacher_student : role.student
+
+        OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, student)
+
         guide = GetStudentGuide[role: role]
+
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 

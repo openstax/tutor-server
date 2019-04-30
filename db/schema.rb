@@ -324,17 +324,19 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_index "course_membership_students", ["uuid"], name: "index_course_membership_students_on_uuid", unique: true, using: :btree
 
   create_table "course_membership_teacher_students", force: :cascade do |t|
-    t.integer  "course_profile_course_id",    null: false
-    t.integer  "course_membership_period_id", null: false
-    t.integer  "entity_role_id",              null: false
+    t.integer  "course_profile_course_id",                                  null: false
+    t.integer  "course_membership_period_id",                               null: false
+    t.integer  "entity_role_id",                                            null: false
+    t.uuid     "uuid",                        default: "gen_random_uuid()"
     t.datetime "deleted_at"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
   end
 
   add_index "course_membership_teacher_students", ["course_membership_period_id"], name: "index_teacher_students_on_period_id", using: :btree
   add_index "course_membership_teacher_students", ["course_profile_course_id"], name: "index_teacher_students_on_course_id", using: :btree
   add_index "course_membership_teacher_students", ["entity_role_id"], name: "index_course_membership_teacher_students_on_entity_role_id", unique: true, using: :btree
+  add_index "course_membership_teacher_students", ["uuid"], name: "index_course_membership_teacher_students_on_uuid", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "course_profile_course_id", null: false
@@ -912,6 +914,7 @@ ActiveRecord::Schema.define(version: 20190506190532) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.boolean  "is_cached_for_period",                null: false
+    t.integer  "teacher_student_ids",                 null: false, array: true
   end
 
   add_index "tasks_task_caches", ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id", using: :btree
@@ -922,6 +925,7 @@ ActiveRecord::Schema.define(version: 20190506190532) do
   add_index "tasks_task_caches", ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
   add_index "tasks_task_caches", ["task_type"], name: "index_tasks_task_caches_on_task_type", using: :btree
   add_index "tasks_task_caches", ["tasks_task_id", "content_ecosystem_id"], name: "index_task_caches_on_task_id_and_ecosystem_id", unique: true, using: :btree
+  add_index "tasks_task_caches", ["teacher_student_ids"], name: "index_tasks_task_caches_on_teacher_student_ids", using: :gin
 
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id",                        null: false

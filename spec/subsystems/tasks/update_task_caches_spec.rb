@@ -214,6 +214,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
+          expect(task_cache.teacher_student_ids).to eq []
           expect(task_cache.student_names).to match_array(
             task.taskings.map { |tt| tt.role.student.name }
           )
@@ -239,6 +240,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
+          expect(task_cache.teacher_student_ids).to eq []
           expect(task_cache.student_names).to match_array(
             task.taskings.map { |tt| tt.role.student.name }
           )
@@ -272,6 +274,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
+          expect(task_cache.teacher_student_ids).to eq []
 
           expect(task_cache.as_toc.deep_symbolize_keys).to match(
             is_first_task ? expected_worked_toc : expected_unworked_toc
@@ -374,6 +377,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
+          expect(task_cache.teacher_student_ids).to eq []
           expect(task_cache.student_names).to match_array(
             task.taskings.map { |tt| tt.role.student.name }
           )
@@ -399,6 +403,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
+          expect(task_cache.teacher_student_ids).to eq []
           expect(task_cache.student_names).to match_array(
             task.taskings.map { |tt| tt.role.student.name }
           )
@@ -432,6 +437,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
           )
+          expect(task_cache.teacher_student_ids).to eq []
 
           expect(task_cache.as_toc.deep_symbolize_keys).to match(
             is_first_task ? expected_worked_toc : expected_unworked_toc
@@ -585,6 +591,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         expect(task_cache.task_type).to eq (task.task_type)
         expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
+        expect(task_cache.teacher_student_ids).to eq []
         expect(task_cache.student_names).to match_array(
           task.taskings.map { |tt| tt.role.student.name }
         )
@@ -608,6 +615,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         expect(task_cache.task_type).to eq (task.task_type)
         expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
+        expect(task_cache.teacher_student_ids).to eq []
         expect(task_cache.student_names).to match_array(
           task.taskings.map { |tt| tt.role.student.name }
         )
@@ -638,6 +646,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         expect(task_cache.task_type).to eq (task.task_type)
         expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
+        expect(task_cache.teacher_student_ids).to eq []
 
         expect(task_cache.as_toc.deep_symbolize_keys).to match(
           is_first_task ? expected_worked_toc : expected_unworked_toc

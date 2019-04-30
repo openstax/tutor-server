@@ -12,26 +12,19 @@ class CreateCourseMembershipTeacherStudents < ActiveRecord::Migration
                    index: { unique: true },
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
 
+      t.uuid :uuid, null: false, default: 'gen_random_uuid()', index: { unique: true }
+
       t.datetime :deleted_at
 
       t.timestamps null: false
     end
 
     reversible do |dir|
-      dir.up do
-        Entity::Role.teacher_student.find_each do |role|
-          period = CourseMembership::Models::Period.find_by(entity_teacher_student_role_id: role.id)
-          next if period.nil?
-
-          CourseMembership::TeacherStudent.create! role: role, period: period, course: period.course
-        end
-      end
+      dir.up { Entity::Role.teacher_student.delete_all }
 
       dir.down do
-        Entity::Role.teacher_student.find_each do |role|
-          period = role.teacher_student.try!(:period)
-          next if period.nil?
-
+        CourseMembership::Models::Period.find_each do |period|
+          role = Entity::Role.create! role_type: :teacher_student
           period.update_attribute :entity_teacher_student_role_id, role.id
         end
 
