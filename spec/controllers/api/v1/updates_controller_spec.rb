@@ -62,7 +62,7 @@ RSpec.describe Api::V1::UpdatesController, type: :controller, api: true, version
 
     it 'includes the tutor js url' do
       api_get :index, nil
-      expect(response.body_as_hash[:tutor_js_url]).to eq Rails.application.secrets.js_url
+      expect(response.body_as_hash[:tutor_js_url]).to eq Tutor::Assets::Scripts[:tutor]
     end
 
     it 'includes the payment status' do

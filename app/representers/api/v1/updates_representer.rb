@@ -9,7 +9,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(**) { Rails.application.secrets.js_url }
+             getter: ->(**) { Tutor::Assets::Scripts[:tutor] }
 
     property :payments, writeable: false, readable: true, getter: ->(*) {
       {
