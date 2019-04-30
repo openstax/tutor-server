@@ -5,7 +5,7 @@ class CourseMembership::AddTeacherStudent
   protected
 
   def exec(period:, role:, reassign_published_period_task_plans: true, send_to_biglearn: true)
-    teacher_student = CourseMembership::Models::TeacherStudent.find_by(role: role)
+    teacher_student = CourseMembership::Models::TeacherStudent.find_by role: role, deleted_at: nil
     fatal_error(
       code: :already_a_student, message: "The provided role is already a student in #{
         teacher_student.course.name || 'some course'
