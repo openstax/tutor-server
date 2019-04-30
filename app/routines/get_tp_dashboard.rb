@@ -13,15 +13,11 @@ class GetTpDashboard
       return
     end
 
-    role_type = get_role_type(course, role)
-
-    raise SecurityTransgression if role_type.nil?
-
-    load_role(role, role_type)
-    load_course(course, role_type)
-    load_research_surveys(course, role) if :student == role_type
-    load_tasks(role, role_type, start_at_ntz, end_at_ntz)
-    load_plans(course, start_at_ntz, end_at_ntz) if :teacher == role_type
+    load_role(role)
+    load_course(course)
+    load_research_surveys(course, role) if role.student?
+    load_tasks(role, start_at_ntz, end_at_ntz)
+    load_plans(course, start_at_ntz, end_at_ntz) if role.teacher?
   end
 
   def load_research_surveys(course, role)

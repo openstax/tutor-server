@@ -9,18 +9,14 @@ class GetCcDashboard
       return
     end
 
-    role_type = get_role_type(course, role)
-
-    raise SecurityTransgression if role_type.nil?
-
-    load_role(role, role_type)
-    load_course(course, role_type)
-    load_tasks(role, role_type, start_at_ntz, end_at_ntz)
-    load_cc_stats(course, role, role_type)
+    load_role(role)
+    load_course(course)
+    load_tasks(role, start_at_ntz, end_at_ntz)
+    load_cc_stats(course, role)
   end
 
-  def load_cc_stats(course, role, role_type)
-    case role_type
+  def load_cc_stats(course, role)
+    case role.role_type.to_sym
     when :teacher
       load_cc_teacher_stats(course, role)
     when :student
