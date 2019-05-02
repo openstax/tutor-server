@@ -10,11 +10,16 @@ class Tasks::PopulatePlaceholderSteps
 
   def exec(task:, force: false, lock_task: true, background: false,
            skip_unready: false, populate_spes: true)
-    task.lock! if lock_task
     outputs.task = task
     outputs.accepted = true
 
-    return if task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
+    return unless need_to_populate?(task)
+
+    if lock_task
+      task.lock!
+      # check again after locking to make sure it wasn't updated
+      return unless need_to_populate?(task)
+    end
 
     # Lock the task_steps to ensure they don't get updated without us noticing
     task.task_steps.lock('FOR NO KEY UPDATE').reload
@@ -86,6 +91,10 @@ class Tasks::PopulatePlaceholderSteps
 
     # Send the updated assignment to Biglearn
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
+  end
+
+  def need_to_populate?(task)
+    task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
   end
 
   def populate_placeholder_steps(task:, group_type:, boolean_attribute:, biglearn_api_method:,
