@@ -13,12 +13,12 @@ class Tasks::PopulatePlaceholderSteps
     outputs.task = task
     outputs.accepted = true
 
-    return unless need_to_populate?(task)
+    return if already_populated?(task, populate_spes)
 
     if lock_task
       task.lock!
       # check again after locking to make sure it wasn't updated
-      return unless need_to_populate?(task)
+      return if already_populated?(task, populate_spes)
     end
 
     # Lock the task_steps to ensure they don't get updated without us noticing
@@ -93,7 +93,7 @@ class Tasks::PopulatePlaceholderSteps
     OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
-  def need_to_populate?(task)
+  def already_populated?(task, populate_spes)
     task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
   end
 
