@@ -81,8 +81,11 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   def populate_placeholders_if_needed
     return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
+    task = @task_step.task
+    index = task.task_steps.index(@task_step)
     Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock_task: true]
-    @tasked.reload
+    @task_step = task.task_steps[index]
+    @tasked = @task_step.tasked
   end
 
 
