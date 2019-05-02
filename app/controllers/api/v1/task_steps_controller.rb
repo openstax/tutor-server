@@ -83,7 +83,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
 
     # Task already locked in around_action
-    Tasks::PopulatePlaceholderSteps[task: @task, lock_task: false]
+    Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock_task: true]
 
     @tasked.reload
   end
