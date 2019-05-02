@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
                                              version: :v1, speed: :slow do
-
   before(:all) do
     @course = FactoryBot.create :course_profile_course
     period = FactoryBot.create :course_membership_period, course: @course
@@ -99,16 +98,20 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     end
 
     context 'placeholder step' do
-      it 'replaces them and returns the updated step content' do
-        placeholder = FactoryBot.create(:tasks_tasked_placeholder, skip_task: true)
-        placeholder.task_step.task = @task
-        placeholder.save!
-        api_get :show, @user_1_token, parameters: { task_id: @task.id, id: placeholder.task_step.id }
-        expect(response.body_as_hash).to(
-          include(type: 'reading')
-        )
+      let!(:placeholder) do
+        FactoryBot.create(:tasks_tasked_placeholder, skip_task: true).tap do |placeholder|
+          placeholder.task_step.task = @task
+          placeholder.save!
+        end
       end
 
+      it 'does not replace them and does not blow up' do
+        api_get :show, @user_1_token,
+                parameters: { task_id: @task.id, id: placeholder.task_step.id }
+
+        expect(response).to be_ok
+        expect(response.body_as_hash).to include(type: 'placeholder')
+      end
     end
   end
 
@@ -221,9 +224,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
                 }
         expect(response).to have_http_status(:success)
       end
-
     end
-
   end
 
   context "practice task update step" do
@@ -268,5 +269,4 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     tasking = FactoryBot.create(:tasks_tasking, role: owner, task: tasked.task_step.task)
     tasked
   end
-
 end

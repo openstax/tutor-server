@@ -3,7 +3,6 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   around_action :with_task_step_and_tasked, except: :show
   before_action :fetch_step, only: :show
   before_action :error_if_student_and_needs_to_pay
-  before_action :populate_placeholders_if_needed, only: :show
 
   resource_description do
     api_versions "v1"
@@ -72,21 +71,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
       return render_api_errors(:no_exercises, :not_found) if @task.nil?
 
-
       @task_step = @task.task_steps.to_a.find { |task_step| task_step.id == params[:id].to_i }
       @tasked = Research::ModifiedTasked[tasked: @task_step.tasked]
       yield
     end
   end
-
-  def populate_placeholders_if_needed
-    return unless @tasked.is_a? Tasks::Models::TaskedPlaceholder
-    task = @task_step.task
-    index = task.task_steps.index(@task_step)
-    Tasks::PopulatePlaceholderSteps[task: @task_step.task, lock_task: true]
-    @task_step = task.task_steps[index]
-    @tasked = @task_step.tasked
-  end
-
 
 end
