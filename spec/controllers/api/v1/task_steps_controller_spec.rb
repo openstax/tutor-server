@@ -97,6 +97,19 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
         api_get :show, @user_2_token, parameters: { task_id: @task.id, id: @task_step.id }
       end.to raise_error(SecurityTransgression)
     end
+
+    context 'placeholder step' do
+      it 'replaces them and returns the updated step content' do
+        placeholder = FactoryBot.create(:tasks_tasked_placeholder, skip_task: true)
+        placeholder.task_step.task = @task
+        placeholder.save!
+        api_get :show, @user_1_token, parameters: { task_id: @task.id, id: placeholder.task_step.id }
+        expect(response.body_as_hash).to(
+          include(type: 'reading')
+        )
+      end
+
+    end
   end
 
   context "PATCH update" do
