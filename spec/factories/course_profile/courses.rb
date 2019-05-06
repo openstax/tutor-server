@@ -18,12 +18,7 @@ FactoryBot.define do
 
     uuid                  { SecureRandom.uuid }
 
-    sequence_number                              { rand(1000) + 1 }
-    biglearn_student_clues_algorithm_name        { Faker::Hacker.abbreviation }
-    biglearn_teacher_clues_algorithm_name        { Faker::Hacker.abbreviation }
-    biglearn_assignment_spes_algorithm_name      { Faker::Hacker.abbreviation }
-    biglearn_assignment_pes_algorithm_name       { Faker::Hacker.abbreviation }
-    biglearn_practice_worst_areas_algorithm_name { Faker::Hacker.abbreviation }
+    sequence_number       { rand(1000) + 1 }
 
     is_lms_enabling_allowed { is_lms_enabled == true ? true : false }
 
