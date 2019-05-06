@@ -14,19 +14,27 @@ module RailsSettingsUi::MainAppRouteDelegator
   end
 end
 
-#= Application-specific
-#
-# # You can specify a controller for RailsSettingsUi::ApplicationController to inherit from:
-RailsSettingsUi.parent_controller = 'Admin::BaseController' # default: '::ApplicationController'
-#
-# # Render RailsSettingsUi inside a custom layout (set to 'application' to use app layout, default is RailsSettingsUi's own layout)
+RailsSettingsUi.setup do |config|
+  # Specify a controller for RailsSettingsUi::ApplicationController to inherit from:
+  config.parent_controller = 'Admin::BaseController' # default: '::ApplicationController'
 
-RailsSettingsUi.settings_class = "Settings::Db::Store"
+  config.settings_class = "Settings::Db::Store"
+
+  config.settings_displayed_as_select_tag = [
+    :biglearn_student_clues_algorithm_name,
+    :biglearn_teacher_clues_algorithm_name,
+    :biglearn_assignment_spes_algorithm_name,
+    :biglearn_assignment_pes_algorithm_name,
+    :biglearn_practice_worst_areas_algorithm_name
+  ]
+end
 
 Rails.application.config.to_prepare do
   # If you use a *custom layout*, make route helpers available to RailsSettingsUi:
   RailsSettingsUi.inline_main_app_routes!
   RailsSettingsUi::ApplicationController.module_eval do
+    # Render RailsSettingsUi inside a custom layout
+    # (set to 'application' to use app layout, default is RailsSettingsUi's own layout)
     layout 'admin'
   end
 

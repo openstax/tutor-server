@@ -19,12 +19,12 @@ Settings::Db.store.defaults[:active_onboarding_salesforce_campaign_id] = ''
 Settings::Db.store.defaults[:active_nomad_onboarding_salesforce_campaign_id] = ''
 Settings::Db.store.defaults[:find_tutor_course_period_report_id] = ''
 
-Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = 'biglearn_sparfa'
-Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = 'biglearn_sparfa'
+Settings::Db.store.defaults[:biglearn_student_clues_algorithm_name] = :biglearn_sparfa
+Settings::Db.store.defaults[:biglearn_teacher_clues_algorithm_name] = :biglearn_sparfa
 Settings::Db.store.defaults[:biglearn_assignment_spes_algorithm_name] = \
-  'student_driven_biglearn_sparfa'
-Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = 'biglearn_sparfa'
-Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = 'biglearn_sparfa'
+  :student_driven_biglearn_sparfa
+Settings::Db.store.defaults[:biglearn_assignment_pes_algorithm_name] = :biglearn_sparfa
+Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = :biglearn_sparfa
 
 Settings::Db.store.defaults[:default_is_lms_enabling_allowed] = false
 

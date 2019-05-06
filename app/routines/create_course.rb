@@ -75,12 +75,6 @@ class CreateCourse
       default_open_time: default_open_time,
       default_due_time: default_due_time,
       estimated_student_count: estimated_student_count,
-      biglearn_student_clues_algorithm_name: Settings::Biglearn.student_clues_algorithm_name,
-      biglearn_teacher_clues_algorithm_name: Settings::Biglearn.teacher_clues_algorithm_name,
-      biglearn_assignment_spes_algorithm_name: Settings::Biglearn.assignment_spes_algorithm_name,
-      biglearn_assignment_pes_algorithm_name: Settings::Biglearn.assignment_pes_algorithm_name,
-      biglearn_practice_worst_areas_algorithm_name: \
-        Settings::Biglearn.practice_worst_areas_algorithm_name,
       homework_score_weight: homework_score_weight,
       homework_progress_weight: homework_progress_weight,
       reading_score_weight: reading_score_weight,

@@ -46,13 +46,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter, :preview ]
 
   validates :time_zone, presence: true, uniqueness: true
-  validates :name, :term, :year, :starts_at, :ends_at,
-            :biglearn_student_clues_algorithm_name,
-            :biglearn_teacher_clues_algorithm_name,
-            :biglearn_assignment_spes_algorithm_name,
-            :biglearn_assignment_pes_algorithm_name,
-            :biglearn_practice_worst_areas_algorithm_name,
-            presence: true
+  validates :name, :term, :year, :starts_at, :ends_at, presence: true
   validates :homework_score_weight,
             :homework_progress_weight,
             :reading_score_weight,

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190411181631) do
+ActiveRecord::Schema.define(version: 20190506190532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -357,11 +357,11 @@ ActiveRecord::Schema.define(version: 20190411181631) do
     t.boolean  "is_excluded_from_salesforce",                                          default: false,               null: false
     t.uuid     "uuid",                                                                 default: "gen_random_uuid()", null: false
     t.integer  "sequence_number",                                                      default: 0,                   null: false
-    t.string   "biglearn_student_clues_algorithm_name",                                                              null: false
-    t.string   "biglearn_teacher_clues_algorithm_name",                                                              null: false
-    t.string   "biglearn_assignment_spes_algorithm_name",                                                            null: false
-    t.string   "biglearn_assignment_pes_algorithm_name",                                                             null: false
-    t.string   "biglearn_practice_worst_areas_algorithm_name",                                                       null: false
+    t.string   "biglearn_student_clues_algorithm_name"
+    t.string   "biglearn_teacher_clues_algorithm_name"
+    t.string   "biglearn_assignment_spes_algorithm_name"
+    t.string   "biglearn_assignment_pes_algorithm_name"
+    t.string   "biglearn_practice_worst_areas_algorithm_name"
     t.boolean  "is_test",                                                              default: false,               null: false
     t.boolean  "does_cost",                                                            default: false,               null: false
     t.integer  "estimated_student_count"
