@@ -471,11 +471,13 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       task = request.fetch(:task)
       course = task.taskings.first.role.student.course
       max_num_exercises = request[:max_num_exercises]
+      algorithm_name = course.biglearn_assignment_pes_algorithm_name ||
+                       Settings::Biglearn.assignment_pes_algorithm_name.to_s
 
       {
         request_uuid: request.fetch(:request_uuid),
         assignment_uuid: task.uuid,
-        algorithm_name: course.biglearn_assignment_pes_algorithm_name
+        algorithm_name: algorithm_name
       }.tap do |biglearn_request|
         biglearn_request[:max_num_exercises] = max_num_exercises unless max_num_exercises.nil?
       end
@@ -491,11 +493,13 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       task = request.fetch(:task)
       course = task.taskings.first.role.student.course
       max_num_exercises = request[:max_num_exercises]
+      algorithm_name = course.biglearn_assignment_spes_algorithm_name ||
+                       Settings::Biglearn.assignment_spes_algorithm_name.to_s
 
       {
         request_uuid: request.fetch(:request_uuid),
         assignment_uuid: task.uuid,
-        algorithm_name: course.biglearn_assignment_spes_algorithm_name
+        algorithm_name: algorithm_name
       }.tap do |biglearn_request|
         biglearn_request[:max_num_exercises] = max_num_exercises unless max_num_exercises.nil?
       end
@@ -511,11 +515,13 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       student = request.fetch(:student)
       course = student.course
       max_num_exercises = request[:max_num_exercises]
+      algorithm_name = course.biglearn_practice_worst_areas_algorithm_name ||
+                       Settings::Biglearn.practice_worst_areas_algorithm_name.to_s
 
       {
         request_uuid: request.fetch(:request_uuid),
         student_uuid: student.uuid,
-        algorithm_name: course.biglearn_practice_worst_areas_algorithm_name
+        algorithm_name: algorithm_name
       }.tap do |biglearn_request|
         biglearn_request[:max_num_exercises] = max_num_exercises unless max_num_exercises.nil?
       end
@@ -530,12 +536,14 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     biglearn_requests = requests.map do |request|
       student = request.fetch(:student)
       course = student.course
+      algorithm_name = course.biglearn_student_clues_algorithm_name ||
+                       Settings::Biglearn.student_clues_algorithm_name.to_s
 
       {
         request_uuid: request.fetch(:request_uuid),
         student_uuid: student.uuid,
         book_container_uuid: request.fetch(:book_container).tutor_uuid,
-        algorithm_name: course.biglearn_student_clues_algorithm_name
+        algorithm_name: algorithm_name
       }
     end
 
@@ -548,12 +556,14 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     biglearn_requests = requests.map do |request|
       course_container = request.fetch(:course_container)
       course = course_container.course
+      algorithm_name = course.biglearn_teacher_clues_algorithm_name ||
+                       Settings::Biglearn.teacher_clues_algorithm_name.to_s
 
       {
         request_uuid: request.fetch(:request_uuid),
         course_container_uuid: course_container.uuid,
         book_container_uuid: request.fetch(:book_container).tutor_uuid,
-        algorithm_name: course.biglearn_teacher_clues_algorithm_name
+        algorithm_name: algorithm_name
       }
     end
 
@@ -562,10 +572,6 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   end
 
   protected
-
-  def algorithm_name
-    Settings::Biglearn.algorithm_name
-  end
 
   def absolutize_url(url)
     Addressable::URI.join @server_url, url.to_s
