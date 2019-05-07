@@ -15,9 +15,9 @@ ActiveRecord::Schema.define(version: 20190411181631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "citext"
   enable_extension "hstore"
   enable_extension "pgcrypto"
+  enable_extension "citext"
 
   create_table "catalog_offerings", force: :cascade do |t|
     t.string   "salesforce_book_name",                 null: false
