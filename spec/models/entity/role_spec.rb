@@ -7,11 +7,16 @@ RSpec.describe Entity::Role, type: :model do
 
   it { is_expected.to have_one(:student).dependent(:destroy) }
   it { is_expected.to have_one(:teacher).dependent(:destroy) }
+  it { is_expected.to have_one(:teacher_student).dependent(:destroy) }
 
   it { is_expected.to belong_to(:profile) }
 
   [:username, :first_name, :last_name, :full_name, :name].each do |delegated_method|
     it { is_expected.to delegate_method(delegated_method).to(:profile) }
+  end
+
+  [:course, :course_profile_course_id].each do |delegated_method|
+    it { is_expected.to delegate_method(delegated_method).to(:course_member) }
   end
 
   it { is_expected.to validate_uniqueness_of(:research_identifier) }
@@ -37,6 +42,21 @@ RSpec.describe Entity::Role, type: :model do
     it 'contains the latest enrollment date' do
       enrollment = FactoryBot.create(:course_membership_enrollment).reload
       expect(enrollment.student.role.latest_enrollment_at).to eq enrollment.created_at
+    end
+  end
+
+  context 'course_member' do
+    it 'returns the course_member based on the role type' do
+      expect(role.course_member).to be_nil
+
+      student = FactoryBot.create(:course_membership_student)
+      expect(student.role.course_member).to eq student
+
+      teacher = FactoryBot.create(:course_membership_teacher)
+      expect(teacher.role.course_member).to eq teacher
+
+      teacher_student = FactoryBot.create(:course_membership_teacher_student)
+      expect(teacher_student.role.course_member).to eq teacher_student
     end
   end
 end

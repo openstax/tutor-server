@@ -288,6 +288,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       end
 
       it 'is called when a task_plan is published' do
+        @task_plan.tasks.delete_all
+
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
           expect(task_ids).to match_array(@task_plan.tasks.pluck(:id))
           expect(queue).to eq queue.to_s
@@ -451,6 +453,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       end
 
       it 'is called when a task_plan is published' do
+        @task_plan.tasks.delete_all
+
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
           expect(task_ids).to match_array(@task_plan.tasks.pluck(:id))
           expect(queue).to eq queue.to_s

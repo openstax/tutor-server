@@ -376,11 +376,11 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
 
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      ecosystem = task.ecosystem
-      role = task.taskings.first.try!(:role)
-      next if role.nil?
+      student = task.taskings.first.try!(:role).try!(:course_member)
+      next if student.nil?
 
-      student = role.course_member
+      ecosystem = task.ecosystem
+
       task_type = task.practice? ? 'practice' : task.task_type
 
       opens_at = task.opens_at
@@ -450,11 +450,15 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   # Records the given student responses
   def record_responses(requests)
     biglearn_requests = requests.map do |request|
-      course = request.fetch(:course)
       tasked_exercise = request.fetch(:tasked_exercise)
       task = tasked_exercise.task_step.task
-      role = task.taskings.first.role
+      role = task.taskings.first.try!(:role)
+      next if role.nil?
+
       student = role.course_member
+      next if student.nil?
+
+      course = request.fetch(:course)
 
       {
         response_uuid: request.fetch(:response_uuid),
@@ -468,7 +472,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
         is_real_response: !course.is_preview && !course.is_test && !role.teacher_student?,
         responded_at: tasked_exercise.updated_at.utc.iso8601(6)
       }
-    end
+    end.compact
 
     bulk_api_request(
       url: :record_responses,
@@ -484,9 +488,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   def fetch_assignment_pes(requests)
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      role = task.taskings.first.role
-      student = role.course_member
-      course = student.course
+      course = task.taskings.first.try!(:role).try!(:course)
+      next if course.nil?
+
       max_num_exercises = request[:max_num_exercises]
       algorithm_name = course.biglearn_assignment_pes_algorithm_name ||
                        Settings::Biglearn.assignment_pes_algorithm_name.to_s
@@ -508,9 +512,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   def fetch_assignment_spes(requests)
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      role = task.taskings.first.role
-      student = role.course_member
-      course = student.course
+      course = task.taskings.first.try!(:role).try!(:course)
+      next if course.nil?
+
       max_num_exercises = request[:max_num_exercises]
       algorithm_name = course.biglearn_assignment_spes_algorithm_name ||
                        Settings::Biglearn.assignment_spes_algorithm_name.to_s
