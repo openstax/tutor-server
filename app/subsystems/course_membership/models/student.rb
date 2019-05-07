@@ -42,6 +42,12 @@ class CourseMembership::Models::Student < ApplicationRecord
       Settings::Payments.student_grace_period_days.days
   end
 
+  def latest_enrollment_at
+    return if latest_enrollment.nil?
+
+    latest_enrollment.created_at
+  end
+
   protected
 
   def init_first_paid_at

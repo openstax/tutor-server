@@ -11,7 +11,7 @@ class CreateStudentHistory
 
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     raise(ArgumentError, "Role index #{i} not in given course", caller) if roles.any? do |role|
-      (role.teacher_student? ? role.teacher_student.course : role.student.course) != course
+      role.course != course
     end
 
     ecosystem = setup_course_book(course, book_id)

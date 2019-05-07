@@ -20,7 +20,7 @@ module Api
       def student
         role = get_course_role(course: @course, allowed_role_types: [:student, :teacher_student])
 
-        student = role.teacher_student? ? role.teacher_student : role.student
+        student = role.course_member
 
         OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, student)
 

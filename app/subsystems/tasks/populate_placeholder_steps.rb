@@ -88,7 +88,7 @@ class Tasks::PopulatePlaceholderSteps
     # Can't send the info to Biglearn if there's no course
     return if role.nil?
 
-    course = role.teacher_student? ? role.teacher_student.try!(:course) : role.student.try!(:course)
+    course = role.course
     return if course.nil?
 
     # Send the updated assignment to Biglearn

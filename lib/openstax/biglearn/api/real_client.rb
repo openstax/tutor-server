@@ -380,7 +380,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       role = task.taskings.first.try!(:role)
       next if role.nil?
 
-      student = role.teacher_student? ? role.teacher_student : role.student
+      student = role.course_member
       task_type = task.practice? ? 'practice' : task.task_type
 
       opens_at = task.opens_at
@@ -454,7 +454,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       tasked_exercise = request.fetch(:tasked_exercise)
       task = tasked_exercise.task_step.task
       role = task.taskings.first.role
-      student = role.teacher_student? ? role.teacher_student : role.student
+      student = role.course_member
 
       {
         response_uuid: request.fetch(:response_uuid),
@@ -485,7 +485,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
       role = task.taskings.first.role
-      student = role.teacher_student? ? role.teacher_student : role.student
+      student = role.course_member
       course = student.course
       max_num_exercises = request[:max_num_exercises]
       algorithm_name = course.biglearn_assignment_pes_algorithm_name ||
@@ -509,7 +509,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
       role = task.taskings.first.role
-      student = role.teacher_student? ? role.teacher_student : role.student
+      student = role.course_member
       course = student.course
       max_num_exercises = request[:max_num_exercises]
       algorithm_name = course.biglearn_assignment_spes_algorithm_name ||

@@ -38,8 +38,7 @@ module DashboardRoutineMethods
 
     return if role.teacher?
 
-    period_id = role.teacher_student? ? role.teacher_student.course_membership_period_id :
-                                        role.student.course_membership_period_id
+    period_id = role.course_member.course_membership_period_id
     outputs.all_tasks_are_ready = outputs.all_tasks_are_ready && Tasks::Models::TaskPlan
       .joins(:tasking_plans)
       .preload(:tasking_plans)
