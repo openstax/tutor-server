@@ -49,9 +49,8 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :debug
+  # Set to :info to decrease the log volume.
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
@@ -59,15 +58,11 @@ Rails.application.configure do
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
-  # Use a real queuing backend for Active Job (and separate queues per environment)
-  # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "tutor_#{Rails.env}"
-
   config.action_mailer.perform_caching = false
 
   config.action_mailer.delivery_method = :ses
-   config.action_mailer.default_url_options = {
-    :protocol => 'https', :host => Rails.application.secrets.mail_site_url
+  config.action_mailer.default_url_options = {
+    protocol: 'https', host: Rails.application.secrets.mail_site_url
   }
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -86,6 +81,18 @@ Rails.application.configure do
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+  # Lograge configuration (one-line logs in production)
+  config.lograge.enabled = true
+  config.log_tags = [ :remote_ip ]
+  config.lograge.custom_options = lambda do |event|
+    {
+      "params" => event.payload[:params].reject do |k|
+        ['controller', 'action', 'format'].include? k
+      end
+    }
+  end
+  config.lograge.ignore_actions = ["static_pages#status"]
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)

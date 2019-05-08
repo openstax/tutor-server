@@ -20,7 +20,7 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
 
   config.action_mailer.default_url_options = {
-    :protocol => 'http', :host => Rails.application.secrets.mail_site_url
+    protocol: 'http', host: Rails.application.secrets.mail_site_url
   }
 
   # Tell Action Mailer not to deliver emails to the real world.

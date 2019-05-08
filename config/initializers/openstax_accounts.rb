@@ -1,6 +1,6 @@
 require './lib/map_users_accounts'
 
-secrets = Rails.application.secrets[:openstax][:accounts]
+secrets = Rails.application.secrets.openstax[:accounts]
 
 approved_host_regexes = [
   /openstax\.org\z/,

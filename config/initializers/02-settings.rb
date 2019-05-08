@@ -5,8 +5,6 @@ end
 
 Settings::Db.store = Settings::Db::Store
 
-secrets = Rails.application.secrets
-
 Settings::Db.store.defaults[:excluded_ids] = ''
 Settings::Db.store.defaults[:import_real_salesforce_courses] = false
 Settings::Db.store.defaults[:default_open_time] = '00:01'
@@ -28,7 +26,7 @@ Settings::Db.store.defaults[:biglearn_practice_worst_areas_algorithm_name] = :bi
 
 Settings::Db.store.defaults[:default_is_lms_enabling_allowed] = false
 
-redis_secrets = secrets[:redis]
+redis_secrets = Rails.application.secrets.redis
 Settings::Redis.store = Redis::Store.new(
   url: redis_secrets[:url],
   namespace: redis_secrets[:namespaces][:settings]

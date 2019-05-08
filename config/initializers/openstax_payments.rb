@@ -1,4 +1,4 @@
-payments_secrets = Rails.application.secrets[:openstax][:payments] || { 'stub' => true }
+payments_secrets = Rails.application.secrets.openstax[:payments] || { stub: true }
 redis_secrets = Rails.application.secrets[:redis]
 
 OpenStax::Payments::Api.configure do |config|

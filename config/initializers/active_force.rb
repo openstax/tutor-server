@@ -1,10 +1,10 @@
 module ActiveForce
 
   mattr_accessor :cache_store
-  secrets = Rails.application.secrets[:redis]
+  redis_secrets = Rails.application.secrets.redis
   self.cache_store = Redis::Store.new(
-    url: secrets[:url],
-    namespace: secrets[:namespaces][:active_force],
+    url: redis_secrets[:url],
+    namespace: redis_secrets[:namespaces][:active_force],
     expires_in: 1.year
   )
 

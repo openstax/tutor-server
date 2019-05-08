@@ -41,23 +41,19 @@ module Tutor
     # add concern folders to the autoload path
     config.eager_load_paths << Rails.root.join('app', 'routines', 'concerns')
 
-    # Temporary fix until we update openstax_api
-    # to include this for JSON responses
-    ActiveSupport.escape_html_entities_in_json = false
-
-    # Set the default cache store to Redis
+    # Use Redis as the cache store
     # This setting cannot be set from an initializer
     # See https://github.com/rails/rails/issues/10908
-    redis_secrets = secrets['redis']
-
+    redis_secrets = secrets.redis
     config.cache_store = :redis_store, {
       url: redis_secrets[:url],
       namespace: redis_secrets[:namespaces][:cache],
       expires_in: 90.minutes
     }
 
-    # Use delayed_job for background jobs
+    # Use a real queuing backend for Active Job (and separate queues per environment)
     config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_name_prefix = "tutor_#{Rails.env}"
 
     # Skip helper, asset and view spec generation when generating scaffolds
     config.generators do |g|
