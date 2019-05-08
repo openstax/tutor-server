@@ -259,6 +259,16 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
           }.tap do |hash|
             hash[:dropped_at] = student.dropped_at.utc.iso8601(6) if student.dropped?
           end
+        end + period.teacher_students.map do |teacher_student|
+          {
+            student_uuid: teacher_student.uuid,
+            container_uuid: period.uuid,
+            enrolled_at: teacher_student.created_at.utc.iso8601(6),
+            last_course_container_change_at: teacher_student.created_at.utc.iso8601(6)
+          }.tap do |hash|
+            hash[:dropped_at] = teacher_student.deleted_at.utc.iso8601(6) \
+              if teacher_student.deleted?
+          end
         end
       end
 
@@ -366,8 +376,11 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
 
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
+      student = task.taskings.first.try!(:role).try!(:course_member)
+      next if student.nil?
+
       ecosystem = task.ecosystem
-      student = task.taskings.first.try!(:role).try!(:student)
+
       task_type = task.practice? ? 'practice' : task.task_type
 
       opens_at = task.opens_at
@@ -428,7 +441,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
         created_at: task.created_at.utc.iso8601(6),
         updated_at: task.updated_at.utc.iso8601(6)
       }
-    end
+    end.compact
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
                      requests_key: :assignments, responses_key: :updated_assignments
@@ -437,9 +450,15 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   # Records the given student responses
   def record_responses(requests)
     biglearn_requests = requests.map do |request|
-      course = request.fetch(:course)
       tasked_exercise = request.fetch(:tasked_exercise)
       task = tasked_exercise.task_step.task
+      role = task.taskings.first.try!(:role)
+      next if role.nil?
+
+      student = role.course_member
+      next if student.nil?
+
+      course = request.fetch(:course)
 
       {
         response_uuid: request.fetch(:response_uuid),
@@ -447,13 +466,13 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
         sequence_number: request.fetch(:sequence_number),
         ecosystem_uuid: task.ecosystem.tutor_uuid,
         trial_uuid: tasked_exercise.uuid,
-        student_uuid: task.taskings.first.role.student.uuid,
+        student_uuid: student.uuid,
         exercise_uuid: tasked_exercise.exercise.uuid,
         is_correct: tasked_exercise.is_correct?,
-        is_real_response: !course.is_preview && !course.is_test,
+        is_real_response: !course.is_preview && !course.is_test && !role.teacher_student?,
         responded_at: tasked_exercise.updated_at.utc.iso8601(6)
       }
-    end
+    end.compact
 
     bulk_api_request(
       url: :record_responses,
@@ -469,7 +488,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   def fetch_assignment_pes(requests)
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      course = task.taskings.first.role.student.course
+      course = task.taskings.first.try!(:role).try!(:course)
+      next if course.nil?
+
       max_num_exercises = request[:max_num_exercises]
       algorithm_name = course.biglearn_assignment_pes_algorithm_name ||
                        Settings::Biglearn.assignment_pes_algorithm_name.to_s
@@ -491,7 +512,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
   def fetch_assignment_spes(requests)
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      course = task.taskings.first.role.student.course
+      course = task.taskings.first.try!(:role).try!(:course)
+      next if course.nil?
+
       max_num_exercises = request[:max_num_exercises]
       algorithm_name = course.biglearn_assignment_spes_algorithm_name ||
                        Settings::Biglearn.assignment_spes_algorithm_name.to_s

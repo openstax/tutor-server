@@ -10,12 +10,12 @@ RSpec.describe Research::ModifiedTask do
       due_at: Time.current - 1.day
     )
   }
-  let!(:tasking)  { FactoryBot.create(:tasks_tasking, task: task) }
-  let!(:student)  { FactoryBot.create :course_membership_student, course: course, role: tasking.role }
-  let!(:study)    { FactoryBot.create :research_study }
+  let!(:tasking) { FactoryBot.create(:tasks_tasking, task: task) }
+  let!(:student) { tasking.role.student.tap { |student| student.update_attribute :course, course } }
+  let!(:study)   { FactoryBot.create :research_study }
 
-  let!(:cohort)   { FactoryBot.create :research_cohort, study: study }
-  let!(:brain)    {
+  let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
+  let!(:brain)   {
     FactoryBot.create :research_modified_task, study: study,
                       code: 'manipulation.record!; task.title = "yo, i altered you"'
   }

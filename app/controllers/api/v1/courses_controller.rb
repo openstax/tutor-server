@@ -68,7 +68,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
                  location: nil
   end
 
-  api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
+  api :GET, '/courses/:id', 'Returns information about a specific course, including periods'
   description <<-EOS
     Returns information about a specific course, including periods and roles
     #{json_schema(Api::V1::CourseRepresenter, include: :readable)}
@@ -79,7 +79,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with collect_course_info(course: @course), represent_with: Api::V1::CourseRepresenter
   end
 
-  api :PATCH, '/courses/:course_id', 'Update course details'
+  api :PATCH, '/courses/:id', 'Update course details'
   description <<-EOS
     Update course details and return information about the updated course
     Possible error codes:
@@ -99,7 +99,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     )
   end
 
-  api :GET, '/courses/:course_id/dashboard(/role/:role_id)',
+  api :GET, '/courses/:id/dashboard',
             'Gets dashboard information for a given non-CC course, ' +
             'filtered by optional start_at and end_at params. ' +
             'Any time_zone information in the given dates is ignored ' +
@@ -126,8 +126,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     )
   end
 
-  api :GET, '/courses/:course_id/cc/dashboard(/role/:role_id)',
-            'Gets dashboard information for a given CC course.'
+  api :GET, '/courses/:id/cc/dashboard', 'Gets dashboard information for a given CC course.'
   description <<-EOS
     Possible error codes:
       - non_cc_course
@@ -142,7 +141,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     )
   end
 
-  api :GET, '/courses/:course_id/roster', 'Returns the roster for a given course'
+  api :GET, '/courses/:id/roster', 'Returns the roster for a given course'
   description <<-EOS
     Returns the roster for a given course
     #{json_schema(Api::V1::RosterRepresenter, include: :readable)}
@@ -155,7 +154,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with(roster, represent_with: Api::V1::RosterRepresenter)
   end
 
-  api :POST, '/courses/:course_id/clone', 'Clones the course with the given ID'
+  api :POST, '/courses/:id/clone', 'Clones the course with the given ID'
   description <<-EOS
     Creates a copy of the course with the given ID
     All JSON attributes in the schema are optional
@@ -238,6 +237,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   protected
 
+  def get_role
+    @role = Entity::Role.find(params[:id])
+  end
+
+  protected
+
   def get_course
     @course = CourseProfile::Models::Course.find(params[:id])
   end
@@ -246,14 +251,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
     CollectCourseInfo[courses: course, user: current_human_user].first
   end
 
-  def get_course_role(course:, types: :any)
-    result = ChooseCourseRole.call(user: current_human_user,
-                                   course: course,
-                                   allowed_role_type: types,
-                                   role_id: params[:role_id])
-
+  def get_course_role(course:)
+    result = ChooseCourseRole.call(
+      user: current_human_user, course: course, role: current_role(course)
+    )
     errors = result.errors
-    raise(SecurityTransgression, errors.map(&:message).to_sentence) unless errors.empty?
+    raise(SecurityTransgression, :invalid_role) unless errors.empty?
     result.outputs.role
   end
 

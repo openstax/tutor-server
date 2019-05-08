@@ -5,7 +5,14 @@ class GetStudentGuide
   protected
 
   def exec(role:, current_time: Time.current)
-    student = role.student
+    if role.teacher_student?
+      student = role.teacher_student
+      student_ids_column = :teacher_student_ids
+    else
+      student = role.student
+      student_ids_column = :student_ids
+    end
+
     period = student.period
     course = period.course
     ecosystems = course.ecosystems
@@ -26,7 +33,7 @@ class GetStudentGuide
     task_caches = Tasks::Models::TaskCache
       .select([ :tasks_task_id, :content_ecosystem_id, :task_type, :as_toc ])
       .where(content_ecosystem_id: ecosystem_ids)
-      .where("\"tasks_task_caches\".\"student_ids\" @> ARRAY[#{student.id}]")
+      .where("\"tasks_task_caches\".\"#{student_ids_column}\" && ARRAY[#{student.id}]")
       .where(tc[:opens_at].eq(nil).or tc[:opens_at].lteq(current_time))
       .sort_by { |task_cache| index_by_ecosystem_id[task_cache.content_ecosystem_id] }
       .uniq { |task_cache| task_cache.tasks_task_id }

@@ -5,7 +5,7 @@ module Manager::StatsActions
 
   def courses
     @courses = CourseProfile::Models::Course.where(is_preview: false).preload(
-      teachers: { role: { role_user: :profile } }, periods: :students
+      teachers: { role: :profile }, periods: :students
     ).order(:name).to_a
 
     @total_students = @courses.sum { |course| course.periods.to_a.sum(&:num_enrolled_students) }

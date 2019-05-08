@@ -26,7 +26,7 @@ class IndividualizeTaskingPlans
         ).outputs.roles
       when CourseMembership::Models::Period
         CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles +
-        [target.teacher_student_role]
+        target.teacher_student_roles
       else
         raise NotYetImplemented
       end

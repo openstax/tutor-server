@@ -13,7 +13,7 @@ class ReassignPublishedPeriodTaskPlans
       .joins(:tasking_plans)
       .preload(:tasking_plans)
       .where(tasking_plans: { target_id: period.id,
-                              target_type: 'CourseMembership::Models::Period'})
+                              target_type: 'CourseMembership::Models::Period' })
       .where{ first_published_at != nil }
 
     published_task_plans.each_with_index do |tp, ii|

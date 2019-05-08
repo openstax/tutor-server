@@ -31,17 +31,6 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :conflicting_period,
-             as: :conflict,
-             extend: Api::V1::Enrollment::PeriodWithCourseRepresenter,
-             # If the conflicting period is archived,
-             # or ends before the period we are switching to,
-             # we suppress the conflict message
-             if: ->(*) { conflicting_period.try!(:archived?) == false &&
-                         conflicting_period.course.ends_at >= to_period.course.ends_at },
-             readable: true,
-             writeable: false
-
     property :status,
              type: String,
              readable: true,

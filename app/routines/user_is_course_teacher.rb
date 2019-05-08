@@ -1,7 +1,6 @@
 class UserIsCourseTeacher
   lev_routine
 
-  uses_routine Role::GetUserRoles, translations: {outputs: {type: :verbatim}}
   uses_routine CourseMembership::IsCourseTeacher,
                translations: {
                  outputs: {
@@ -14,7 +13,8 @@ class UserIsCourseTeacher
   protected
 
   def exec(user:, course:, include_deleted_teachers: false)
-    run(Role::GetUserRoles, user)
+    outputs.roles = user.roles
+
     run(
       CourseMembership::IsCourseTeacher,
       roles: outputs.roles,

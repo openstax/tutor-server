@@ -28,6 +28,10 @@ module User
         'unknown_role'
       end
 
+      def roles
+        Entity::Role.none
+      end
+
       def id
         # convention that anonymous user has an ID of -1, helps with globalID lookup
         -1

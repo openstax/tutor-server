@@ -18,4 +18,12 @@ RSpec.describe Api::V1::PeriodsController, type: :routing, api: true, version: :
     end
   end
 
+  context 'PUT /api/periods/:id/teacher_student' do
+    it 'routes to #teacher_student' do
+      expect(put '/api/periods/42/teacher_student').to(
+        route_to('api/v1/periods#teacher_student', format: 'json', id: '42')
+      )
+    end
+  end
+
 end

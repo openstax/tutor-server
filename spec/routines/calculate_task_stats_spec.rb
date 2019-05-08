@@ -21,7 +21,9 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
   # after the transaction rollback that happens in-between spec examples
   before(:each)       { @task_plan.tasks.each(&:touch).each(&:reload) }
 
-  let(:student_tasks) { @task_plan.tasks.joins(taskings: { role: :student }).to_a }
+  let(:student_tasks) do
+    @task_plan.tasks.joins(taskings: { role: :student }).preload(taskings: { role: :profile }).to_a
+  end
 
   context "with an unworked plan" do
 
@@ -254,9 +256,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       tasks.each_with_index do |task, ii|
         work_task task: task, is_correct: (ii.even? ? true : false)
 
-        roles = task.taskings.map(&:role)
-        users = Role::GetUsersForRoles[roles]
-        student_names = users.map(&:name).sort.join('; ')
+        student_names = task.taskings.map(&:role).map(&:profile).map(&:name).sort.join('; ')
 
         task.exercise_steps.each do |exercise_step|
           tasked = exercise_step.tasked

@@ -12,7 +12,7 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
 
   api :GET, '/:course_uuid/choices', 'Returns limited information for a given course uuid'
   description <<-EOS
-    Returns course and period information for a course identified by it's UUID.
+    Returns course and period information for a course identified by its UUID.
     Can be called by any logged in user, but only returns the course name and enrollment codes
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS

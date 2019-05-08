@@ -224,9 +224,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
         FactoryBot.create :tasks_task_step, task: old_reading_task,
                                             page: old_reading_task.task_steps.first.page
 
-        role = old_reading_task.taskings.first.role
-
-        FactoryBot.create :course_membership_student, course: @course, role: role
+        student = old_reading_task.taskings.first.role.student
+        student.update_attribute :course, @course
       end
 
       cc_tasks = 2.times.map do
@@ -246,9 +245,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
                                           page: reading_task.task_steps.first.page
 
       (cc_tasks + [reading_task]).each do |task|
-        role = task.taskings.first.role
-
-        FactoryBot.create :course_membership_student, course: @course, role: role
+        student = task.taskings.first.role.student
+        student.update_attribute :course, @course
       end
 
       expect(Tasks::Models::TaskStep.count).to eq 8

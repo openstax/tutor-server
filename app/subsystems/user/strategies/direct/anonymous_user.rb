@@ -53,6 +53,10 @@ module User
           []
         end
 
+        def roles
+          repository.roles
+        end
+
         def to_model
           repository
         end

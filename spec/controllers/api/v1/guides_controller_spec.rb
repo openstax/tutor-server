@@ -39,13 +39,6 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         api_get :student, user_2_token, parameters: { course_id: course.id }
       end
 
-      it 'returns the student guide for a teacher providing a student role ID' do
-        expect(GetStudentGuide).to receive(:[]).with(role: student_3_role).and_return(course_guide)
-
-        api_get :student, user_1_token, parameters: { course_id: course.id,
-                                                      role_id: student_3_role.id }
-      end
-
       it 'raises SecurityTransgression if the student has been dropped' do
         student_role.student.destroy
 
@@ -54,7 +47,7 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         end.to raise_error(SecurityTransgression)
       end
 
-      it 'raises SecurityTransgression if the student has been dropped' do
+      it 'raises SecurityTransgression if the period has been archived' do
         period.destroy
 
         expect do

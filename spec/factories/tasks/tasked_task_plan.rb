@@ -57,13 +57,10 @@ FactoryBot.define do
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner
-      period = course.periods.first ||
-               FactoryBot.create(:course_membership_period, course: course)
+      period = course.periods.first || FactoryBot.create(:course_membership_period, course: course)
 
       evaluator.number_of_students.times do
-        user = create :user
-        role = Role::GetDefaultUserRole[user]
-        CourseMembership::AddStudent.call(period: period, role: role)
+        AddUserAsPeriodStudent.call(user: create(:user), period: period)
       end
 
       task_plan.tasking_plans = [build(:tasks_tasking_plan, task_plan: task_plan, target: period)]

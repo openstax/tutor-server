@@ -10,8 +10,6 @@ class CourseMembership::Models::Period < ApplicationRecord
 
   belongs_to :course, subsystem: :course_profile, inverse_of: :periods
 
-  belongs_to :teacher_student_role, subsystem: :entity, class_name: 'Entity::Role'
-
   has_many :teachers, through: :course
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
@@ -22,20 +20,22 @@ class CourseMembership::Models::Period < ApplicationRecord
 
   has_many :students, inverse_of: :period
 
+  has_many :teacher_students, inverse_of: :period
+  has_many :teacher_student_roles, through: :teacher_students,
+                                   source: :role,
+                                   class_name: 'Entity::Role'
+
   has_many :taskings, subsystem: :tasks, inverse_of: :period
   has_many :tasks, through: :taskings
   has_many :tasking_plans, as: :target, class_name: 'Tasks::Models::TaskingPlan'
   unique_token :enrollment_code, mode: :random_number, length: 6
 
   validates :course, presence: true
-  validates :teacher_student_role, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: { scope: :course_profile_course_id,
                                                  conditions: -> { where(archived_at: nil) } }
   validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
 
   validate :default_times_have_good_values
-
-  before_validation :build_teacher_student_role, on: :create
 
   default_scope { order(:name) }
 
@@ -71,12 +71,6 @@ class CourseMembership::Models::Period < ApplicationRecord
   def num_enrolled_students
     students.loaded? ? students.to_a.count { |student| !student.dropped? } :
                        students.without_deleted.count
-  end
-
-  protected
-
-  def build_teacher_student_role
-    self.teacher_student_role ||= Entity::Role.new(role_type: :teacher_student)
   end
 
 end

@@ -30,15 +30,14 @@ RSpec.describe ImportRoster, type: :routine do
     expect { result }.to  change { User::Models::Profile.count }.by(num_users)
                      .and change { OpenStax::Accounts::Account.count }.by(num_users)
                      .and change { Entity::Role.count }.by(num_users)
-                     .and change { Role::Models::RoleUser.count }.by(num_users)
                      .and change { CourseMembership::Models::Student.count }.by(num_users)
                      .and change { CourseMembership::Models::Enrollment.count }.by(num_users)
 
     new_users = User::Models::Profile.order(:created_at).preload(
-      role_users: { role: { student: :period } }
+      roles: { student: :period }
     ).last(num_users)
     new_users.each do |new_user|
-      expect(new_user.role_users.first.role.student.period).to eq period
+      expect(new_user.roles.first.student.period).to eq period
     end
   end
 
@@ -55,7 +54,6 @@ RSpec.describe ImportRoster, type: :routine do
     expect { result }.to  not_change { User::Models::Profile.count }
                      .and not_change { OpenStax::Accounts::Account.count }
                      .and change { Entity::Role.count }.by(num_users)
-                     .and change { Role::Models::RoleUser.count }.by(num_users)
                      .and change { CourseMembership::Models::Student.count }.by(num_users)
                      .and change { CourseMembership::Models::Enrollment.count }.by(num_users)
 

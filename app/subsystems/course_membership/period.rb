@@ -24,13 +24,8 @@ module CourseMembership
       verify_and_return @strategy.teacher_roles, klass: Entity::Role, error: StrategyError
     end
 
-    def teacher_student_role
-      verify_and_return @strategy.teacher_student_role, klass: Entity::Role, error: StrategyError
-    end
-
-    def entity_teacher_student_role_id
-      verify_and_return @strategy.entity_teacher_student_role_id, klass: Integer,
-                                                                  error: StrategyError
+    def teacher_student_roles
+      verify_and_return @strategy.teacher_student_roles, klass: Entity::Role, error: StrategyError
     end
 
     def enrollment_code

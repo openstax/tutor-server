@@ -274,6 +274,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         let(:queue) { :lowest_priority }
 
         it 'is called when a task_plan is published' do
+          @task_plan.tasks.delete_all
+
           expect(configured_job).to receive(:perform_later) do |period_ids:|
             expect(period_ids).to match_array(@task_plan.tasking_plans.map(&:target_id))
           end
@@ -353,6 +355,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         let(:queue) { :low_priority }
 
         it 'is called when a task_plan is published' do
+          @task_plan.tasks.delete_all
+
           expect(configured_job).to receive(:perform_later) do |period_ids:|
             expect(period_ids).to match_array(@task_plan.tasking_plans.map(&:target_id))
           end

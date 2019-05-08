@@ -10,8 +10,9 @@ class CreateStudentHistory
   private
 
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
-    raise ArgumentError, "Role index #{i} not in given course", caller \
-      if roles.any? { |role| role.student.course != course }
+    raise(ArgumentError, "Role index #{i} not in given course", caller) if roles.any? do |role|
+      role.course != course
+    end
 
     ecosystem = setup_course_book(course, book_id)
 
@@ -64,10 +65,7 @@ class CreateStudentHistory
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
     tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
-    student_tasks = tasks.select do |task|
-      task.ecosystem.present? && task.taskings.first.try!(:role).try!(:student).present?
-    end
-    student_tasks.each { |task| answer_correctly(task, 2) }
+    tasks.each { |task| answer_correctly(task, 2) }
   end
 
   def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)

@@ -16,7 +16,7 @@ class ShortCode::GetShortCodeUrl
         fatal_error(code: :no_handler_for_gid)
       end
     else
-      outputs[:uri] = short_code.uri
+      outputs.uri = short_code.uri
     end
   end
 end

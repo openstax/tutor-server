@@ -278,11 +278,8 @@ module OpenStax::Biglearn::Api
       select_proc = ->(request) do
         task = request.fetch(:task)
 
-        # Skip tasks with no ecosystem or not assigned to any student
-        ecosystem = task.ecosystem
-        student = task.taskings.first.try!(:role).try!(:student)
-
-        ecosystem.present? && student.present?
+        # Skip tasks with no ecosystem or not assigned to anyone
+        task.ecosystem.present? && task.taskings.first.try!(:role).present?
       end
 
       bulk_api_request options.merge(

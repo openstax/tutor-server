@@ -9,7 +9,7 @@ task find_dupes: :environment do
 
     CourseMembership::Models::Enrollment
       .latest
-      .includes{student.role.role_user.profile}
+      .includes{student.role.profile}
       .includes{student.role.taskings.task}.find_each do |ee|
 
       completed_steps_count = ee.student.role.taskings.inject(0) do |sum, tasking|
@@ -19,7 +19,7 @@ task find_dupes: :environment do
         tasking.task.last_worked_at
       end.compact.max
 
-      csv << [ ee.student.role.role_user.profile.account_id,
+      csv << [ ee.student.role.profile.account_id,
                ee.student.course_profile_course_id,
                ee.course_membership_period_id,
                completed_steps_count,
@@ -35,8 +35,8 @@ task find_dupes: :environment do
   CSV.open(TEACHER_DUPES_EXPORT_PATH,'w+') do |csv|
     csv << ["AccountID", "CourseID", "TeacherID", "TeacherCreatedAt"]
 
-    CourseMembership::Models::Teacher.includes{role.role_user.profile}.find_each do |teacher|
-      csv << [ teacher.role.role_user.profile.account_id,
+    CourseMembership::Models::Teacher.includes{role.profile}.find_each do |teacher|
+      csv << [ teacher.role.profile.account_id,
                teacher.course_profile_course_id,
                teacher.id,
                teacher.created_at ]

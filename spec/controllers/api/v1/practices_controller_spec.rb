@@ -37,11 +37,11 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
     OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
   end
 
-  context 'POST #create_specific' do
+  context 'POST #create' do
     it 'returns the practice task data' do
-      api_post :create_specific,
+      api_post :create,
                user_1_token,
-               parameters: { id: course.id, role_id: role.id },
+               parameters: { id: course.id },
                raw_post_data: { page_ids: [page.id.to_s] }.to_json
 
       hash = response.body_as_hash
@@ -57,16 +57,14 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
     it 'must be called by a user who belongs to the course' do
       expect{
-        api_post :create_specific,
+        api_post :create,
                  user_2_token,
-                 parameters: { id: course.id, role_id: role.id },
+                 parameters: { id: course.id },
                  raw_post_data: { page_ids: [page.id.to_s] }.to_json
       }.to raise_error(SecurityTransgression)
     end
 
     it 'returns error when no exercises can be scrounged' do
-      AddUserAsPeriodStudent.call(period: period, user: user_1)
-
       expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
         {
           accepted: true,
@@ -75,9 +73,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
         }
       )
 
-      api_post :create_specific,
+      api_post :create,
                user_1_token,
-               parameters: { id: course.id, role_id: role.id },
+               parameters: { id: course.id },
                raw_post_data: { page_ids: [page.id.to_s] }.to_json
 
       expect(response).to have_http_status(422)
@@ -85,9 +83,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: course, user: user_1) {
-        api_post :create_specific,
+        api_post :create,
                  user_1_token,
-                 parameters: { id: course.id, role_id: role.id },
+                 parameters: { id: course.id },
                  raw_post_data: { page_ids: [page.id.to_s] }.to_json
       }
     end
@@ -95,7 +93,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
   context 'POST #create_worst' do
     it 'returns the practice task data' do
-      api_post :create_worst, user_1_token, parameters: { id: course.id, role_id: role.id }
+      api_post :create_worst, user_1_token, parameters: { id: course.id }
 
       hash = response.body_as_hash
       task = Tasks::Models::Task.last
@@ -110,13 +108,11 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
     it 'must be called by a user who belongs to the course' do
       expect do
-        api_post :create_worst, user_2_token, parameters: { id: course.id, role_id: role.id }
+        api_post :create_worst, user_2_token, parameters: { id: course.id }
       end.to raise_error(SecurityTransgression)
     end
 
     it 'returns error when no exercises can be scrounged' do
-      AddUserAsPeriodStudent.call(period: period, user: user_1)
-
       expect(OpenStax::Biglearn::Api).to receive(:fetch_practice_worst_areas_exercises).and_return(
         {
           accepted: true,
@@ -125,7 +121,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
         }
       )
 
-      api_post :create_worst, user_1_token, parameters: { id: course.id, role_id: role.id }
+      api_post :create_worst, user_1_token, parameters: { id: course.id }
 
       expect(response).to have_http_status(422)
     end
@@ -133,25 +129,19 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: course, user: user_1) {
-        api_post :create_worst,
-                 user_1_token,
-                 parameters: { id: course.id, role_id: role.id }
+        api_post :create_worst, user_1_token, parameters: { id: course.id }
       }
     end
   end
 
   context 'GET #show' do
     it 'returns nothing when practice widget not yet set' do
-      AddUserAsPeriodStudent.call(period: period, user: user_1)
-      api_get :show, user_1_token, parameters: { id: course.id, role_id: Entity::Role.last.id }
+      api_get :show, user_1_token, parameters: { id: course.id }
 
       expect(response).to have_http_status(:not_found)
     end
 
     it 'returns a practice widget' do
-      AddUserAsPeriodStudent.call(period: period, user: user_1)
-      role = Entity::Role.last
-
       CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
       CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
 
@@ -165,21 +155,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
     end
 
     it "422's if needs to pay" do
-      AddUserAsPeriodStudent.call(period: period, user: user_1)
       make_payment_required_and_expect_422(course: course, user: user_1) {
-        api_get :show, user_1_token, parameters: { id: course.id,
-                                                   role_id: Entity::Role.last.id }
+        api_get :show, user_1_token, parameters: { id: course.id }
       }
-    end
-
-    it 'can be called by a teacher using a student role' do
-      AddUserAsCourseTeacher.call(course: course, user: user_1)
-      student_role = AddUserAsPeriodStudent[period: period, user: user_2]
-      CreatePracticeSpecificTopicsTask[course: course, role: student_role, page_ids: [page.id]]
-
-      api_get :show, user_1_token, parameters: { id: course.id, role_id: student_role.id }
-
-      expect(response).to have_http_status(:success)
     end
 
     it 'raises SecurityTransgression if user is anonymous or not in the course as a student' do

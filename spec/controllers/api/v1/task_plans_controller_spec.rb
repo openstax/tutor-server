@@ -40,7 +40,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       opens_at: Time.current.tomorrow
     )
 
-    @teacher_student_role = period.teacher_student_role
+    @teacher_student_role = FactoryBot.create(
+      :course_membership_teacher_student, period: period
+    ).role
 
     teacher_student_task = FactoryBot.create :tasks_task, tasked_to: [@teacher_student_role]
 
@@ -419,7 +421,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
     it 'automatically updates preview tasks' do
       old_preview_task = FactoryBot.create :tasks_task, task_plan: @task_plan,
-                                                         tasked_to: [@teacher_student_role]
+                                                        tasked_to: [@teacher_student_role]
 
       controller.sign_in @teacher
       api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },

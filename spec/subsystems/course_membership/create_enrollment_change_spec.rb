@@ -3,12 +3,10 @@ require 'rails_helper'
 RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: :medium do
   let(:course_1)  { FactoryBot.create :course_profile_course, :without_ecosystem }
   let(:course_2)  { FactoryBot.create :course_profile_course, :without_ecosystem }
-  let(:course_3)  { FactoryBot.create :course_profile_course, :without_ecosystem }
 
   let(:period_1)  { FactoryBot.create :course_membership_period, course: course_1 }
   let(:period_2)  { FactoryBot.create :course_membership_period, course: course_1 }
   let(:period_3)  { FactoryBot.create :course_membership_period, course: course_2 }
-  let(:period_4)  { FactoryBot.create :course_membership_period, course: course_3 }
 
   let(:book)      { FactoryBot.create :content_book }
 
@@ -110,7 +108,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
         AddUserAsPeriodStudent[user: user, period: period_3]
       end
 
-      it 'creates an EnrollmentChange with a nil conflicting_period' do
+      it 'creates an EnrollmentChange' do
         result = nil
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
@@ -118,11 +116,10 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
         expect(result.outputs.enrollment_change.from_period).to be_nil
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
-        expect(result.outputs.enrollment_change.conflicting_period).to be_nil
       end
     end
 
-    context 'in a different CC course with the same book' do
+    context 'in a different CC course' do
       let!(:role) do
         AddUserAsPeriodStudent[user: user, period: period_3]
       end
@@ -132,7 +129,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
         course_2.update_attribute :is_concept_coach, true
       end
 
-      it 'creates an EnrollmentChange with a conflicting_period' do
+      it 'creates an EnrollmentChange' do
         result = nil
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
@@ -140,31 +137,6 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
         expect(result.outputs.enrollment_change.from_period).to be_nil
         expect(result.outputs.enrollment_change.status).to eq :pending
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
-        expect(result.outputs.enrollment_change.conflicting_period).to(
-          eq CourseMembership::Period.new(strategy: role.student.period.wrap)
-        )
-      end
-    end
-
-    context 'in a different CC course with a different book' do
-      let!(:role)       do
-        AddUserAsPeriodStudent[user: user, period: period_4]
-      end
-
-      before      do
-        course_1.update_attribute :is_concept_coach, true
-        course_3.update_attribute :is_concept_coach, true
-      end
-
-      it 'creates an EnrollmentChange with a nil conflicting_period' do
-        result = nil
-        expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
-        expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period).to be_nil
-        expect(result.outputs.enrollment_change.status).to eq :pending
-        expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
-        expect(result.outputs.enrollment_change.conflicting_period).to be_nil
       end
     end
   end

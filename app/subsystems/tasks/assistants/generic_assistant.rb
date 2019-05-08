@@ -15,8 +15,10 @@ class Tasks::Assistants::GenericAssistant
         [:id, CourseMembership::Models::Student.arel_table[:entity_role_id]]
       ).index_by(&:entity_role_id)
     periods_by_teacher_student_role_id = CourseMembership::Models::Period
-      .select([:id, :entity_teacher_student_role_id])
-      .index_by(&:entity_teacher_student_role_id)
+      .joins(:teacher_students)
+      .where(teacher_students: { entity_role_id: role_ids })
+      .select([:id, CourseMembership::Models::TeacherStudent.arel_table[:entity_role_id]])
+      .index_by(&:entity_role_id)
     @periods_by_role_id = periods_by_student_role_id.merge(periods_by_teacher_student_role_id)
 
     @ecosystems_map = {}

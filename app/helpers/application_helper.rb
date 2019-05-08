@@ -13,5 +13,4 @@ module ApplicationHelper
   def is_real_production_site?
     request.host == 'tutor.openstax.org'
   end
-
 end

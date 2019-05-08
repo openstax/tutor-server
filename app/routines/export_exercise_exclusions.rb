@@ -25,7 +25,7 @@ class ExportExerciseExclusions
 
   def excluded_exercises
     @excluded_exercises ||= CourseContent::Models::ExcludedExercise.preload(
-                              course: { teachers: { role: { role_user: :profile } } }
+                              course: { teachers: { role: :profile } }
                             ).sort_by(&:exercise_number)
   end
 

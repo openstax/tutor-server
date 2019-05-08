@@ -47,27 +47,27 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'course_profile_course' do
-    let(:period_1)               { FactoryBot.create :course_membership_period }
-    let(:course)                 { period_1.course }
-    let(:period_2)               { FactoryBot.create :course_membership_period, course: course }
+    let(:period_1)              { FactoryBot.create :course_membership_period }
+    let(:course)                { period_1.course }
+    let(:period_2)              { FactoryBot.create :course_membership_period, course: course }
 
-    let(:teacher_student_role_1) { period_1.teacher_student_role }
-    let(:teacher_student_role_2) { period_2.teacher_student_role }
+    let!(:teacher_student_role) do
+      FactoryBot.create(:course_membership_teacher_student, period: period_1).role
+    end
 
-    let(:user_1)                 { FactoryBot.create :user }
-    let(:user_2)                 { FactoryBot.create :user }
-    let(:user_3)                 { FactoryBot.create :user }
+    let(:user_1)                { FactoryBot.create :user }
+    let(:user_2)                { FactoryBot.create :user }
+    let(:user_3)                { FactoryBot.create :user }
 
-    let!(:student_role_1)        { AddUserAsPeriodStudent[user: user_1, period: period_1] }
-    let!(:student_role_2)        { AddUserAsPeriodStudent[user: user_2, period: period_1] }
-    let!(:student_role_3)        { AddUserAsPeriodStudent[user: user_3, period: period_2] }
+    let!(:student_role_1)       { AddUserAsPeriodStudent[user: user_1, period: period_1] }
+    let!(:student_role_2)       { AddUserAsPeriodStudent[user: user_2, period: period_1] }
+    let!(:student_role_3)       { AddUserAsPeriodStudent[user: user_3, period: period_2] }
 
-    before                       { tasking_plan.update_attribute(:target, course) }
+    before                      { tasking_plan.update_attribute(:target, course) }
 
     it 'returns tasking plans pointing to the course\'s student and teacher_student roles' do
-      expect(result.size).to eq 5
-      acceptable_roles = [student_role_1, student_role_2, student_role_3,
-                          teacher_student_role_1, teacher_student_role_2]
+      expect(result.size).to eq 4
+      acceptable_roles = [student_role_1, student_role_2, student_role_3, teacher_student_role]
 
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
@@ -78,8 +78,8 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     end
 
     it 'limits results to the specified role_type, if given' do
-      expect(ts_result.size).to eq 2
-      acceptable_roles = [teacher_student_role_1, teacher_student_role_2]
+      expect(ts_result.size).to eq 1
+      acceptable_roles = [teacher_student_role]
 
       ts_result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
@@ -94,7 +94,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       task_plan.reload
       tasking_plan.reload
 
-      expect(result.size).to eq 2
+      expect(result.size).to eq 1
 
       new_tasking_plan = result.first
 
@@ -110,7 +110,9 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     let(:course)                 { period_1.course }
     let(:period_2)               { FactoryBot.create :course_membership_period, course: course }
 
-    let(:teacher_student_role_1) { period_1.teacher_student_role }
+    let!(:teacher_student_role) do
+      FactoryBot.create(:course_membership_teacher_student, period: period_1).role
+    end
 
     let(:user_1)                 { FactoryBot.create :user }
     let(:user_2)                 { FactoryBot.create :user }
@@ -124,7 +126,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
     it 'returns tasking plans pointing to the period\'s student and teacher_student roles' do
       expect(result.size).to eq 3
-      acceptable_roles = [student_role_1, student_role_2, teacher_student_role_1]
+      acceptable_roles = [student_role_1, student_role_2, teacher_student_role]
 
       result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan
@@ -136,7 +138,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
 
     it 'limits results to the specified role_type, if given' do
       expect(ts_result.size).to eq 1
-      acceptable_roles = [teacher_student_role_1]
+      acceptable_roles = [teacher_student_role]
 
       ts_result.each do |new_tasking_plan|
         expect(new_tasking_plan.task_plan).to eq task_plan

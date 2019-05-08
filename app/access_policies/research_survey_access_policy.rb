@@ -5,7 +5,7 @@ class ResearchSurveyAccessPolicy
 
     case action
     when :complete
-      survey.student.role.role_user.user_profile_id == requestor.id
+      survey.student.role.user_profile_id == requestor.id
     else
       false
     end

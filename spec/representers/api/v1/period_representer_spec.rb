@@ -40,10 +40,6 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
     expect(represented['is_archived']).to eq false
   end
 
-  it "includes the period\'s teacher_student role id" do
-    expect(represented['teacher_student_role_id']).to eq period.entity_teacher_student_role_id.to_s
-  end
-
   it "includes student count" do
     student = AddUserAsPeriodStudent.call(period: period, user: FactoryBot.create(:user)).outputs.student
     expect(represented['num_enrolled_students']).to eq 1

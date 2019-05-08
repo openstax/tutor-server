@@ -21,8 +21,8 @@ assignments:
       - id: p1
         opens_at: <%= open_last_monday %>
         due_at: <%= due_next_monday + 2.days %>
-        students: { reviewstudent1: 100, reviewstudent2: 80, reviewstudent3: i }
+        students: { reviewstudent1: 100, reviewstudent2: i, reviewstudent3: ns }
       - id: p2
         opens_at: <%= open_last_monday %>
         due_at: <%= due_next_monday + 2.days %>
-        students: { reviewstudent4: 100, reviewstudent5: 80, reviewstudent6: i }
+        students: { reviewstudent4: 100, reviewstudent5: i, reviewstudent6: ns }

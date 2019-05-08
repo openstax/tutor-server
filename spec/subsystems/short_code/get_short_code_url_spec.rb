@@ -4,19 +4,16 @@ RSpec.describe ShortCode::GetShortCodeUrl, type: :routine do
   let(:absolute_url) { FactoryBot.create :short_code_short_code,
                                           uri: 'http://www.openstaxcollege.org/' }
 
-  let(:relative_url) { FactoryBot.create :short_code_short_code,
-                                          uri: '/courses/1/' }
+  let(:relative_url) { FactoryBot.create :short_code_short_code, uri: '/courses/1/' }
 
   let(:task_plan) { FactoryBot.create :tasks_task_plan }
   let(:task_plan_gid) { task_plan.to_global_id.to_s }
 
-  let(:task_plan_url) { FactoryBot.create :short_code_short_code,
-                                           uri: task_plan_gid }
+  let(:task_plan_url) { FactoryBot.create :short_code_short_code, uri: task_plan_gid }
 
   let(:tasking) { FactoryBot.create :tasks_tasking }
   let(:tasking_gid) { tasking.to_global_id.to_s }
-  let(:tasking_url) { FactoryBot.create :short_code_short_code,
-                                         uri: tasking_gid }
+  let(:tasking_url) { FactoryBot.create :short_code_short_code, uri: tasking_gid }
 
   let(:user) { FactoryBot.create :user }
 

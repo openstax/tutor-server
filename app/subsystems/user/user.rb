@@ -89,6 +89,10 @@ module User
       verify_and_return @strategy.role, klass: String, allow_nil: true, error: StrategyError
     end
 
+    def roles
+      verify_and_return @strategy.roles, klass: Entity::Role, error: StrategyError
+    end
+
     def is_human?
       !!@strategy.is_human?
     end
