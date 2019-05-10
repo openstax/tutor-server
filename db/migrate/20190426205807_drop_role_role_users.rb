@@ -7,7 +7,7 @@ class DropRoleRoleUsers < ActiveRecord::Migration
         Entity::Role.reset_column_information
 
         Entity::Role.find_each do |role|
-          user_profile_id = ActiveRecord::Base.connection.execute(
+          row = ActiveRecord::Base.connection.execute(
             <<-SQL.strip_heredoc
               SELECT "role_role_users"."user_profile_id"
               FROM "role_role_users"
@@ -15,7 +15,9 @@ class DropRoleRoleUsers < ActiveRecord::Migration
             SQL
           ).to_a.first
 
-          role.update_attribute(:user_profile_id, user_profile_id) unless user_profile_id.nil?
+          next if row.nil?
+
+          role.update_attribute(:user_profile_id, row['user_profile_id'])
         end
 
         Entity::Role.where(user_profile_id: nil).delete_all
