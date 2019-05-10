@@ -33,11 +33,8 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model, speed: 
   end
 
   it { is_expected.to belong_to(:profile) }
-  it { is_expected.to belong_to(:enrollment) }
+  it { is_expected.to belong_to(:enrollment).optional }
   it { is_expected.to belong_to(:period) }
-
-  it { is_expected.to validate_presence_of(:profile) }
-  it { is_expected.to validate_presence_of(:period) }
 
   it 'knows the target period' do
     expect(enrollment_change.to_period).to eq period_2

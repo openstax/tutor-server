@@ -1,4 +1,4 @@
-class AllowDuplicateStudentIds < ActiveRecord::Migration
+class AllowDuplicateStudentIds < ActiveRecord::Migration[4.2]
   def change
     remove_index :course_membership_students,
                  column: [:course_profile_course_id, :student_identifier],

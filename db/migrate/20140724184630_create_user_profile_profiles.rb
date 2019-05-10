@@ -1,4 +1,4 @@
-class CreateUserProfileProfiles < ActiveRecord::Migration
+class CreateUserProfileProfiles < ActiveRecord::Migration[4.2]
   def change
     create_table :user_profile_profiles do |t|
       t.references :entity_user, null: false, index: { unique: true },

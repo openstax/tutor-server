@@ -17,30 +17,30 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
 
     context 'GET show' do
       it 'returns not found if the version is not found' do
-        api_get :show, nil, parameters: { ecosystem_id: @ecosystem.id, cnx_id: "#{@page_uuid}@100" }
+        api_get :show, nil, params: { ecosystem_id: @ecosystem.id, cnx_id: "#{@page_uuid}@100" }
         expect(response).to have_http_status(404)
       end
 
       it 'returns not found if the uuid is not found' do
-        api_get :show, nil, parameters: {
+        api_get :show, nil, params: {
           ecosystem_id: @ecosystem.id, cnx_id: "b5cd5a64-34a1-434e-b8ba-769000fbec30@1"
         }
         expect(response).to have_http_status(404)
       end
 
       it 'returns not found if the version is not a number' do
-        api_get :show, nil, parameters: { ecosystem_id: @ecosystem.id, cnx_id: "#{@page_uuid}@x" }
+        api_get :show, nil, params: { ecosystem_id: @ecosystem.id, cnx_id: "#{@page_uuid}@x" }
         expect(response).to have_http_status(404)
       end
 
       it 'returns absolutized exercise urls' do
-        api_get :show, nil, parameters: { ecosystem_id: @ecosystem.id, cnx_id: @page_uuid }
+        api_get :show, nil, params: { ecosystem_id: @ecosystem.id, cnx_id: @page_uuid }
 
         expect(response.body_as_hash[:content_html]).not_to include(
           '#ost/api/ex/k12phys-ch04-ex001'
         )
 
-        exercises_url_base = Rails.application.secrets.openstax['exercises']['url']
+        exercises_url_base = Rails.application.secrets.openstax[:exercises][:url]
         expect(response.body_as_hash[:content_html]).to include(
           "#{exercises_url_base}/api/exercises?q=tag%3A%22k12phys-ch04-ex001%22"
         )
@@ -61,7 +61,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         end
 
         it 'returns the page with the correct uuid' do
-          api_get :show, nil, parameters: { ecosystem_id: @old_ecosystem.id, cnx_id: @page_uuid }
+          api_get :show, nil, params: { ecosystem_id: @old_ecosystem.id, cnx_id: @page_uuid }
           expect(response).to have_http_status(200)
           expect(response.body_as_hash).to eq(
             title: @old_page.title,
@@ -73,7 +73,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         end
 
         it 'returns the page with the correct uuid and version' do
-          api_get :show, nil, parameters: {
+          api_get :show, nil, params: {
             ecosystem_id: @old_ecosystem.id, cnx_id: "#{@page_uuid}@2"
           }
           expect(response).to have_http_status(200)

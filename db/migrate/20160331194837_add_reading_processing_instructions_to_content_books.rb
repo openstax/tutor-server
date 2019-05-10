@@ -1,39 +1,5 @@
-class AddReadingProcessingInstructionsToContentBooks < ActiveRecord::Migration
-  HS_BOOK_UUIDS = [
-    '334f8b61-30eb-4475-8e05-5260a4866b4b', # k12phys
-    'd52e93f4-8653-4273-86da-3850001c0786', # apbio
-    '93e2b09d-261c-4007-a987-0b3062fe154b'  # Physics (Demo)
-  ]
-
+class AddReadingProcessingInstructionsToContentBooks < ActiveRecord::Migration[4.2]
   def change
     add_column :content_books, :reading_processing_instructions, :jsonb, null: false, default: '[]'
-
-    reversible do |dir|
-      dir.up do
-        Content::Models::Book.where(uuid: HS_BOOK_UUIDS).each do |book|
-          book.reading_processing_instructions = [
-            { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
-              fragments: [], except: 'snap-lab' },
-            { css: '.ost-feature:has-descendants(".os-exercise",2),
-                    .ost-feature:has-descendants(".ost-exercise-choice"),
-                    .ost-assessed-feature:has-descendants(".os-exercise",2),
-                    .ost-assessed-feature:has-descendants(".ost-exercise-choice")',
-              fragments: ['node', 'optional_exercise'] },
-            { css: '.ost-feature:has-descendants(".os-exercise, .ost-exercise-choice"),
-                    .ost-assessed-feature:has-descendants(".os-exercise, .ost-exercise-choice")',
-              fragments: ['node', 'exercise'] },
-            { css: '.ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice,
-                    .ost-feature .os-exercise, .ost-assessed-feature .os-exercise', fragments: [] },
-            { css: '.ost-exercise-choice', fragments: ['exercise', 'optional_exercise'] },
-            { css: '.os-exercise', fragments: ['exercise'] },
-            { css: '.ost-video', fragments: ['video'] },
-            { css: '.os-interactive, .ost-interactive', fragments: ['interactive'] },
-            { css: '.worked-example', fragments: ['reading'], labels: ['worked-example'] },
-            { css: '.ost-feature, .ost-assessed-feature', fragments: ['reading'] }
-          ]
-          book.save!
-        end
-      end
-    end
   end
 end

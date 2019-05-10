@@ -22,13 +22,21 @@ class Content::Models::Exercise < IndestructibleRecord
   validates :version, presence: true
 
   # http://stackoverflow.com/a/7745635
-  scope :latest, ->(scope = unscoped) {
-    joins do
-      scope.as(:later_version).on do
-        (later_version.number == ~number) & (later_version.version > ~version)
-      end.outer
-    end.where{later_version.id == nil}
-  }
+  scope :latest, ->(scope = unscoped) do
+    ex = arel_table
+    lv = ex.alias(:later_version)
+
+    where.not(
+      scope
+        .select(1)
+        .from(lv)
+        .where(
+          lv[:number].eq(ex[:number]).and(
+            lv[:version].gt(ex[:version])
+          )
+        ).arel.exists
+    )
+  end
 
   def uid
     "#{number}@#{version}"

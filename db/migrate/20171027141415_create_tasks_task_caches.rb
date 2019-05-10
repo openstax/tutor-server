@@ -1,4 +1,4 @@
-class CreateTasksTaskCaches < ActiveRecord::Migration
+class CreateTasksTaskCaches < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_task_caches do |t|
       t.references :tasks_task,        null: false,

@@ -2,12 +2,12 @@ class StaticPagesController < ApplicationController
 
   respond_to :html
 
-  skip_before_filter :authenticate_user!,
+  skip_before_action :authenticate_user!,
                      only: [:about, :contact, :contact_form, :copyright, :developers,
                             :help, :privacy, :share, :status, :terms, :omniauth_failure,
                             :signup, :browser_upgrade]
 
-  before_filter :use_openstax_logo
+  before_action :use_openstax_logo
 
   # GET /status
   # Used by AWS (and others) to make sure the site is still up

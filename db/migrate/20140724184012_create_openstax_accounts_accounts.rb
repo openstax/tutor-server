@@ -1,5 +1,5 @@
 # This migration comes from openstax_accounts (originally 0)
-class CreateOpenStaxAccountsAccounts < ActiveRecord::Migration
+class CreateOpenStaxAccountsAccounts < ActiveRecord::Migration[4.2]
   def change
     create_table :openstax_accounts_accounts do |t|
       t.integer :openstax_uid, :null => false

@@ -40,16 +40,14 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     @exercises = ecosystem.exercises_by_ids(@exercise_ids)
 
-    @core_page_ids = @exercises.map{ |ex| ex.page.id }.uniq
+    @core_page_ids = @exercises.map { |ex| ex.page.id }.uniq
   end
 
   def build_tasks
     roles = individualized_tasking_plans.map(&:target)
-    histories = GetHistory[roles: roles, type: :homework]
 
     individualized_tasking_plans.map do |tasking_plan|
-      build_homework_task(exercises: @exercises, history: histories[tasking_plan.target],
-                          individualized_tasking_plan: tasking_plan)
+      build_homework_task(exercises: @exercises, individualized_tasking_plan: tasking_plan)
     end
   end
 
@@ -61,7 +59,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     num_spaced_practice_exercises
   end
 
-  def build_homework_task(exercises:, history:, individualized_tasking_plan:)
+  def build_homework_task(exercises:, individualized_tasking_plan:)
     task = build_task(type: :homework, default_title: 'Homework',
                       individualized_tasking_plan: individualized_tasking_plan)
 

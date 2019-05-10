@@ -1,4 +1,4 @@
-class RemoveUniqueFromEnrollmentChangesIndexOnEnrollmentId < ActiveRecord::Migration
+class RemoveUniqueFromEnrollmentChangesIndexOnEnrollmentId < ActiveRecord::Migration[4.2]
   def up
     remove_index :course_membership_enrollment_changes,
                  name: 'index_course_membership_enrollments_on_enrollment_id'

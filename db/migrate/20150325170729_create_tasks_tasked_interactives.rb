@@ -1,4 +1,4 @@
-class CreateTasksTaskedInteractives < ActiveRecord::Migration
+class CreateTasksTaskedInteractives < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_tasked_interactives do |t|
       t.string :url, null: false

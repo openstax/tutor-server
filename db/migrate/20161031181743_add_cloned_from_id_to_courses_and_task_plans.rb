@@ -1,4 +1,4 @@
-class AddClonedFromIdToCoursesAndTaskPlans < ActiveRecord::Migration
+class AddClonedFromIdToCoursesAndTaskPlans < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :cloned_from_id, :integer
     add_column :tasks_task_plans, :cloned_from_id, :integer

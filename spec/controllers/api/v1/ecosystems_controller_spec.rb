@@ -53,11 +53,11 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
     context "#readings" do
       it 'raises SecurityTransgression if user is anonymous or not in the course' do
         expect {
-          api_get :readings, nil, parameters: { id: ecosystem.id }
+          api_get :readings, nil, params: { id: ecosystem.id }
         }.to raise_error(SecurityTransgression)
 
         expect {
-          api_get :readings, user_1_token, parameters: { id: ecosystem.id }
+          api_get :readings, user_1_token, params: { id: ecosystem.id }
         }.to raise_error(SecurityTransgression)
       end
 
@@ -65,11 +65,11 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         AddUserAsCourseTeacher.call(course: course, user: user_1)
         AddUserAsPeriodStudent.call(period: period, user: user_2)
 
-        api_get :readings, user_1_token, parameters: { id: ecosystem.id }
+        api_get :readings, user_1_token, params: { id: ecosystem.id }
         expect(response).to have_http_status(:success)
         teacher_response = response.body_as_hash
 
-        api_get :readings, user_2_token, parameters: { id: ecosystem.id }
+        api_get :readings, user_2_token, params: { id: ecosystem.id }
         expect(response).to have_http_status(:success)
         student_response = response.body_as_hash
 
@@ -79,7 +79,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       it "works for teachers in the course" do
         AddUserAsCourseTeacher.call(course: course, user: user_1)
 
-        api_get :readings, user_1_token, parameters: {id: ecosystem.id}
+        api_get :readings, user_1_token, params: {id: ecosystem.id}
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash).to eq([{
           id: ecosystem.books.first.id.to_s,
@@ -164,31 +164,24 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         page_ids = Content::Models::Page.all.map(&:id)
 
         expect {
-          api_get :exercises, nil, parameters: { id: @ecosystem.id, page_ids: page_ids }
+          api_get :exercises, nil, params: { id: @ecosystem.id, page_ids: page_ids }
         }.to raise_error(SecurityTransgression)
 
         expect {
-          api_get :exercises, user_2_token, parameters: { id: @ecosystem.id, page_ids: page_ids }
+          api_get :exercises, user_2_token, params: { id: @ecosystem.id, page_ids: page_ids }
         }.to raise_error(SecurityTransgression)
       end
 
       it "should return all exercises if page_ids is ommitted" do
-        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id }
+        api_get :exercises, user_1_token, params: { id: @ecosystem.id }
 
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash[:total_count]).to eq(@ecosystem.exercises.size)
       end
 
-      it "should return an empty result if page_ids is empty" do
-        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id, page_ids: [] }
-
-        expect(response).to have_http_status(:success)
-        expect(response.body_as_hash).to eq({total_count: 0, items: []})
-      end
-
       it "works for teachers in the course" do
         page_ids = Content::Models::Page.all.map(&:id)
-        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id, page_ids: page_ids}
+        api_get :exercises, user_1_token, params: { id: @ecosystem.id, page_ids: page_ids}
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
@@ -203,7 +196,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
 
       it "returns exercise exclusion information if a course_id is given" do
         page_ids = Content::Models::Page.all.map(&:id)
-        api_get :exercises, user_1_token, parameters: {
+        api_get :exercises, user_1_token, params: {
           id: @ecosystem.id, page_ids: page_ids, course_id: course.id
         }
 
@@ -217,7 +210,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
 
       it "returns only exercises in certain pools if pool_types are given" do
         page_ids = Content::Models::Page.all.map(&:id)
-        api_get :exercises, user_1_token, parameters: {
+        api_get :exercises, user_1_token, params: {
           id: @ecosystem.id, page_ids: page_ids, pool_types: 'homework_core'
         }
 

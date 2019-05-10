@@ -5,11 +5,9 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   belongs_to :task_plan, inverse_of: :tasking_plans, touch: true
   belongs_to :target, polymorphic: true
 
-  validates :target, presence: true
-  validates :task_plan, presence: true, uniqueness: { scope: [ :target_type, :target_id ] }
+  validates :task_plan, uniqueness: { scope: [ :target_type, :target_id ] }
 
   validates :opens_at_ntz, :due_at_ntz, presence: true, timeliness: { type: :date }
-  validates :time_zone, presence: true
 
   validate :due_at_in_the_future, :due_at_on_or_after_opens_at,
            :opens_after_course_starts, :due_before_course_ends,
@@ -28,35 +26,43 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   def due_at_in_the_future
     return if task_plan.try(:is_draft?) ||
               !due_at_ntz_changed? || due_at.nil? || due_at > Time.current
+
     errors.add(:due_at, 'cannot be set into the past')
-    false
+    throw :abort
   end
 
   def due_at_on_or_after_opens_at
     return if due_at.nil? || opens_at.nil? || due_at > opens_at
+
     errors.add(:due_at, 'cannot be before opens_at')
-    false
+    throw :abort
   end
 
   def opens_after_course_starts
     return if task_plan.try!(:owner_type) != 'CourseProfile::Models::Course' ||
-              ( opens_at.nil? || task_plan.owner.starts_at <= opens_at )
+              opens_at.nil? ||
+              task_plan.owner.starts_at <= opens_at
+
     errors.add(:opens_at, 'cannot be before the course starts')
-    false
+    throw :abort
   end
 
   def due_before_course_ends
     return if task_plan.try!(:owner_type) != 'CourseProfile::Models::Course' ||
-              ( due_at.nil? || task_plan.owner.ends_at >= due_at )
+              due_at.nil? ||
+              task_plan.owner.ends_at >= due_at
+
     errors.add(:due_at, 'cannot be after the course ends')
-    false
+    throw :abort
   end
 
   def owner_can_task_target
-    return if task_plan.nil? || target.nil? || \
+    return if task_plan.nil? ||
+              target.nil? ||
               TargetAccessPolicy.action_allowed?(:task, task_plan.owner, target)
+
     errors.add(:target, 'cannot be assigned to')
-    false
+    throw :abort
   end
 
 end

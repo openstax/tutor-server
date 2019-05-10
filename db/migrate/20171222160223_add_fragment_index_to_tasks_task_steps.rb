@@ -1,4 +1,4 @@
-class AddFragmentIndexToTasksTaskSteps < ActiveRecord::Migration
+class AddFragmentIndexToTasksTaskSteps < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_task_steps, :fragment_index, :integer
 
@@ -29,7 +29,7 @@ class AddFragmentIndexToTasksTaskSteps < ActiveRecord::Migration
         # just the steps that come after them and that are from the same page
         requires_context = Content::Models::Tag.tag_types[:requires_context]
         Tasks::Models::TaskedExercise.joins(exercise: :tags)
-                                     .where(content_tags: { tag_type: requires_context })
+                                     .where(exercise: { tags: { tag_type: requires_context } })
                                      .preload(:task_step, exercise: :page)
                                      .find_each do |te|
           exercise = te.exercise

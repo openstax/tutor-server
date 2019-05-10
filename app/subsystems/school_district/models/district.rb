@@ -5,12 +5,15 @@ module SchoolDistrict
 
       validates :name, presence: true, uniqueness: true
 
-      before_destroy :check_no_schools
+      before_destroy :no_schools
 
       protected
 
-      def check_no_schools
-        schools.empty?
+      def no_schools
+        return if schools.empty?
+
+        errors.add :base, 'cannot be deleted because there are schools in it'
+        throw :abort
       end
     end
   end

@@ -1,8 +1,8 @@
 module Api
   module V1
     class PracticesController < ApiController
-      before_filter :get_course_and_practice_role
-      before_filter :error_if_student_and_needs_to_pay, only: [:create, :create_worst, :show]
+      before_action :get_course_and_practice_role
+      before_action :error_if_student_and_needs_to_pay, only: [:create, :create_worst, :show]
 
       api :POST, '/courses/:course_id/practice',
                  'Starts a new practice widget for a specific set of page_ids or chapter_ids'

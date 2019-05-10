@@ -6,10 +6,15 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   context 'default' do
     let(:course) { FactoryBot.build :course_profile_course }
 
-    it 'creates a time zone on save' do
-      expect(course.time_zone).to be_nil
+    it 'creates the default time zone on access or validation' do
+      expect(course.time_zone).not_to be_nil
+
+      course.time_zone = nil
       expect(course.valid?).to eq true
+
+      course.time_zone = nil
       course.save!
+
       expect(course.time_zone).to be_a(::TimeZone)
       expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
     end
@@ -80,7 +85,7 @@ RSpec.describe BelongsToTimeZone, type: :lib do
         'Central Time (US & Canada)', 'Eastern Time (US & Canada)'
       ]
       test_tz_names.each do |tz_name|
-        expect{ task.time_zone.name = tz_name }.to change{ task.feedback_at.zone }
+        expect { task.time_zone.name = tz_name }.to change { task.feedback_at.zone }
 
         # The zone changes but the numbers remain the same
         expect(task.feedback_at.year).to eq task_time.year
@@ -91,13 +96,6 @@ RSpec.describe BelongsToTimeZone, type: :lib do
         expect(task.feedback_at.sec).to eq task_time.sec
       end
     end
-  end
-
-  it 'preserves previous_changes when no time zone set' do
-    tz = ::TimeZone.create(name: 'Central Time (US & Canada)')
-    course = FactoryBot.create :course_profile_course
-    expect(course).to be_persisted
-    expect(course.previous_changes).not_to be_empty
   end
 
 end

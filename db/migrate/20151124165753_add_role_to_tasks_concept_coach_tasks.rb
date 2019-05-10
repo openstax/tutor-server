@@ -1,4 +1,4 @@
-class AddRoleToTasksConceptCoachTasks < ActiveRecord::Migration
+class AddRoleToTasksConceptCoachTasks < ActiveRecord::Migration[4.2]
   def change
     add_reference :tasks_concept_coach_tasks, :entity_role,
                   foreign_key: { on_update: :cascade, on_delete: :cascade }

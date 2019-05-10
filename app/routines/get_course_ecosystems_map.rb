@@ -12,10 +12,11 @@ class GetCourseEcosystemsMap
     to_ecosystem_strategy = ecosystem_strategy_class.new(to_content_ecosystem)
     to_ecosystem = ::Content::Ecosystem.new(strategy: to_ecosystem_strategy)
 
-    course_ecosystems = course.ecosystems
-    tp_ecosystem_ids = Tasks::Models::TaskPlan.where(owner: course).uniq
+    course_ecosystems = course.ecosystems.to_a
+    tp_ecosystem_ids = Tasks::Models::TaskPlan.distinct
+                                              .where(owner: course)
                                               .pluck(:content_ecosystem_id)
-    tp_ecosystems = Content::Models::Ecosystem.where(id: tp_ecosystem_ids)
+    tp_ecosystems = Content::Models::Ecosystem.where(id: tp_ecosystem_ids).to_a
 
     from_ecosystems = (course_ecosystems + tp_ecosystems).uniq.map do |from_content_ecosystem|
       from_ecosystem_strategy = ecosystem_strategy_class.new(from_content_ecosystem)

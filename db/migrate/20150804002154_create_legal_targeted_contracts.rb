@@ -1,4 +1,4 @@
-class CreateLegalTargetedContracts < ActiveRecord::Migration
+class CreateLegalTargetedContracts < ActiveRecord::Migration[4.2]
   def change
     create_table :legal_targeted_contracts do |t|
       t.string :target_gid, null: false

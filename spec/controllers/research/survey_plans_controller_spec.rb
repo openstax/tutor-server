@@ -24,7 +24,7 @@ RSpec.describe Research::SurveyPlansController, type: :controller do
         receive(:perform_later).with(survey_plan: @survey_plan, filename: kind_of(String))
       )
 
-      post :export, id: @survey_plan.id
+      post :export, params: { id: @survey_plan.id }
 
       expect(response).to redirect_to research_survey_plans_path
     end
@@ -32,7 +32,9 @@ RSpec.describe Research::SurveyPlansController, type: :controller do
     it "raises RecordNotFound and does not export when the survey_plan is not found" do
       expect(Research::ExportAndUploadSurveyData).not_to receive(:perform_later)
 
-      expect { post :export, id: @survey_plan.id + 1 }.to raise_error(ActiveRecord::RecordNotFound)
+      expect do
+        post :export, params: { id: @survey_plan.id + 1 }
+      end.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

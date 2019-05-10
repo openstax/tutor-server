@@ -3,6 +3,7 @@ module Tasks
     lev_routine
 
     protected
+
     def exec(period:)
       @existing_period_ids = period.course.periods.flat_map(&:id) - [period.id]
 
@@ -21,12 +22,10 @@ module Tasks
     attr_reader :existing_period_ids
 
     def task_plans_with_matching_tasking_plans_across_periods
-      task_plans_across_periods.select { |task_plan|
-
+      task_plans_across_periods.select do |task_plan|
         assigned_to_all_existing_periods?(task_plan.tasking_plans) &&
           tasking_plans_have_same_dates?(task_plan)
-
-      }
+      end
     end
 
     def assigned_to_all_existing_periods?(tasking_plans)
@@ -39,12 +38,13 @@ module Tasks
     end
 
     def task_plans_across_periods
-      Models::TaskPlan.joins(:tasking_plans)
-                      .preload(:tasking_plans)
-                      .where(tasking_plans: {
-                        target_id: existing_period_ids,
-                        target_type: 'CourseMembership::Models::Period'
-                      })
+      Tasks::Models::TaskPlan.joins(:tasking_plans)
+                             .where(tasking_plans: {
+                               target_id: existing_period_ids,
+                               target_type: 'CourseMembership::Models::Period'
+                             })
+                             .preload(:tasking_plans)
+                             .to_a
     end
   end
 end

@@ -42,8 +42,9 @@ module User
           end
 
           def find_by_username(username)
-            profile = ::User::Models::Profile.joins(:account)
-                                             .where(account: { username: username }).take
+            profile = ::User::Models::Profile.joins(:account).find_by(
+              account: { username: username }
+            )
             return if profile.nil?
 
             strategy = new(profile)

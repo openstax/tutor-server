@@ -1,4 +1,4 @@
-class AddIsDemoToCourses < ActiveRecord::Migration
+class AddIsDemoToCourses < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :is_trial, :boolean
 

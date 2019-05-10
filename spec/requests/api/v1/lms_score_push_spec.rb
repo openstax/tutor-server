@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
+RSpec.describe 'LMS Score Push', type: :request, api: true, version: :v1 do
 
   let(:course) { FactoryBot.create(:course_profile_course, is_lms_enabled: true) }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
@@ -149,7 +149,7 @@ RSpec.describe 'LMS Score Push', type: :request, version: :v1 do
       })
     end
 
-    allow(Tasks::GetTpPerformanceReport).to receive(:[]) { report }
+    allow(Tasks::GetPerformanceReport).to receive(:[]) { report }
   end
 
 end

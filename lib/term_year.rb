@@ -50,11 +50,11 @@ TermYear = Struct.new(:term, :year) do
 
     current_year_visible_term_years = TermYear::VISIBLE_TERMS.map do |term|
       TermYear.new(term, current_year)
-    end.select{ |term_year| term_year.ends_at > current_time }
+    end.select { |term_year| term_year.ends_at > current_time }
 
     next_year_visible_term_years = TermYear::VISIBLE_TERMS.map do |term|
       TermYear.new(term, current_year + 1)
-    end.select{ |term_year| term_year.ends_at <= current_time + 1.year }
+    end.select { |term_year| term_year.ends_at <= current_time + 1.year }
 
     current_year_visible_term_years + next_year_visible_term_years
   end

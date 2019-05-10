@@ -32,10 +32,10 @@ RSpec.describe Lms::UnpairCourse do
 
   it "deletes the lms context" do
     expect(course.lms_contexts).to be_present
-    expect{
+    expect do
       result = subject.call(course: course)
       expect(result.errors).to be_empty
-    }.to change{ Lms::Models::Context.count }.by -1
+    end.to change{ Lms::Models::Context.count }.by -1
     expect(course.reload.lms_contexts).to be_empty
   end
 end

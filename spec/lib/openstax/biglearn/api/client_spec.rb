@@ -8,15 +8,15 @@ RSpec.describe OpenStax::Biglearn::Api::Client, type: :external, vcr: VCR_OPTS d
   let(:course)           { FactoryBot.create(:course_profile_course) }
   let(:ecosystem)        { FactoryBot.create(:content_ecosystem) }
 
-  let(:request)          do
+  let(:req)              do
     { preparation_uuid: preparation_uuid, course: course, ecosystem: ecosystem }
   end
 
   it 'can call prepare_course_ecosystem and update_course_ecosystems sequentially' do
-    expect(client).to receive(:prepare_course_ecosystem).with(request)
+    expect(client).to receive(:prepare_course_ecosystem).with(req)
     expect(OpenStax::Biglearn::Api).to receive(:update_course_ecosystems).with(
-      request.slice(:course, :preparation_uuid)
+      req.slice(:course, :preparation_uuid)
     )
-    client.sequentially_prepare_and_update_course_ecosystem request
+    client.sequentially_prepare_and_update_course_ecosystem req
   end
 end

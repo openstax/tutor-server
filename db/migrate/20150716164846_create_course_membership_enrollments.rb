@@ -1,4 +1,4 @@
-class CreateCourseMembershipEnrollments < ActiveRecord::Migration
+class CreateCourseMembershipEnrollments < ActiveRecord::Migration[4.2]
   def change
     create_table :course_membership_enrollments do |t|
       t.references :course_membership_period,

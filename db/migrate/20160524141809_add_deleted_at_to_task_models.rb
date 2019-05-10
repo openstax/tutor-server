@@ -1,4 +1,4 @@
-class AddDeletedAtToTaskModels < ActiveRecord::Migration
+class AddDeletedAtToTaskModels < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_task_plans, :deleted_at, :datetime
     add_column :tasks_tasking_plans, :deleted_at, :datetime

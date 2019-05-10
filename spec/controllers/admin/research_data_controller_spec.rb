@@ -16,7 +16,7 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
   context 'POST #create' do
     it 'calls ExportAndUploadResearchData and redirects to #index' do
       expect(ExportAndUploadResearchData).to receive(:perform_later)
-      post :create, export_research_data: { task_types: ["tutor"] }
+      post :create, params: { export_research_data: { task_types: ["tutor"] } }
       expect(response).to redirect_to admin_research_data_path
     end
 
@@ -33,7 +33,9 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
             filename: filename, from: Time.at(0).to_s, to: right_now.to_s, task_types: task_types
           )
 
-          post :create, from: "not-even", to: "valid", export_research_data: {task_types: ["tutor"]}
+          post :create, params: {
+            from: "not-even", to: "valid", export_research_data: { task_types: ["tutor"] }
+          }
         end
       end
 
@@ -45,7 +47,9 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
             filename: filename, from: Time.at(0).to_s, to: right_now.to_s, task_types: task_types
           )
 
-          post :create, from: "", to: "", export_research_data: {task_types: ["tutor"]}
+          post :create, params: {
+            from: "", to: "", export_research_data: { task_types: ["tutor"] }
+          }
         end
       end
     end
@@ -60,15 +64,17 @@ RSpec.describe Admin::ResearchDataController, type: :controller do
     it "does not export when export_research_data does not contain task_types" do
       expect(ExportAndUploadResearchData).not_to receive(:perform_later)
 
-      post :create, export_research_data: {}
+      post :create, params: { export_research_data: {} }
       expect(response).to redirect_to admin_research_data_path
     end
 
     it "does not export with invalid task_types parameters" do
       expect(ExportAndUploadResearchData).not_to receive(:perform_later)
 
-      post :create, from: Date.yesterday.to_s, to: Date.today.to_s,
-                    export_research_data: { task_types: ["whatev"] }
+      post :create, params: {
+        from: Date.yesterday.to_s, to: Date.today.to_s,
+        export_research_data: { task_types: ["whatev"] }
+      }
       expect(response).to redirect_to admin_research_data_path
     end
   end

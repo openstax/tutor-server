@@ -1,4 +1,4 @@
-class AddBiglearnAlgorithmNamesToCourseProfileCourses < ActiveRecord::Migration
+class AddBiglearnAlgorithmNamesToCourseProfileCourses < ActiveRecord::Migration[4.2]
   def up
     add_column :course_profile_courses, :biglearn_student_clues_algorithm_name, :string
     add_column :course_profile_courses, :biglearn_teacher_clues_algorithm_name, :string

@@ -7,7 +7,6 @@ class Content::Models::Map < IndestructibleRecord
   belongs_to :from_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :to_maps
   belongs_to :to_ecosystem,   class_name: '::Content::Models::Ecosystem', inverse_of: :from_maps
 
-  validates :from_ecosystem, :to_ecosystem, presence: true
   validates :to_ecosystem, uniqueness: { scope: :content_from_ecosystem_id }
 
   before_save :before_save_callbacks
@@ -36,33 +35,26 @@ class Content::Models::Map < IndestructibleRecord
     to_page_ids = to_ecosystem.pages.map(&:id)
 
     # Map pages by UUID if possible
+    supcp = Arel::Table.new(:same_uuid_pages_content_pages)
     uuid_map = Content::Models::Page
+      .select(:id, supcp[:id].as('"from_page_id"'))
       .joins(:same_uuid_pages)
-      .where(id: to_page_ids, same_uuid_pages: { id: from_page_ids })
-      .select{[Content::Models::Page.arel_table[:id], same_uuid_pages.id.as(:from_page_id)]}
+      .where(id: to_page_ids)
+      .where(supcp[:id].in(from_page_ids))
       .group_by(&:from_page_id)
 
     from_page_ids_mapped_by_uuid = uuid_map.keys
     from_page_ids_not_mapped_by_uuid = from_page_ids - from_page_ids_mapped_by_uuid
 
     # Unmapped pages are mapped by LO
+    pct = Arel::Table.new(:pages_content_tags)
     tag_map = Content::Models::Page
-      .joins(tags: {same_value_tags: :pages})
-      .where(
-        id: to_page_ids,
-        tags: {
-          tag_type: mapping_tag_type,
-          same_value_tags: {
-            tag_type: mapping_tag_type,
-            pages: {
-              id: from_page_ids_not_mapped_by_uuid
-            }
-          }
-        }
-      ).uniq
-      .select{
-        [Content::Models::Page.arel_table[:id], tags.same_value_tags.pages.id.as(:from_page_id)]
-      }.group_by(&:from_page_id)
+      .select(:id, pct[:id].as('"from_page_id"'))
+      .distinct
+      .joins(tags: { same_value_tags: :pages })
+      .where(id: to_page_ids, tags: { tag_type: mapping_tag_type })
+      .where(pct[:id].in(from_page_ids_not_mapped_by_uuid))
+      .group_by(&:from_page_id)
 
     page_id_to_pages_map = tag_map.merge uuid_map
 

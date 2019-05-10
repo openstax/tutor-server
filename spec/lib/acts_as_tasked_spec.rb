@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ActsAsTasked, type: :lib do
+RSpec.describe ActsAsTasked, type: :model do
   context 'tasked_reading' do
     subject(:tasked) { FactoryBot.create :tasks_tasked_reading }
 

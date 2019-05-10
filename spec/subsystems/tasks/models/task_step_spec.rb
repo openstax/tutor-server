@@ -7,8 +7,6 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:tasked) }
 
-  it { is_expected.to validate_presence_of(:task) }
-  it { is_expected.to validate_presence_of(:tasked) }
   it { is_expected.to validate_presence_of(:group_type) }
 
   it do
@@ -38,7 +36,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
 
   it "invalidates task's cache when updated" do
     task_step.tasked = FactoryBot.build :tasks_tasked_exercise, task_step: task_step
-    expect { task_step.save! }.to change{ task_step.task.cache_key }
+    expect { task_step.save! }.to change { task_step.task.cache_key }
   end
 
   it 'includes garbage_detection in spy' do

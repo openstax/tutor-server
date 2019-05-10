@@ -28,7 +28,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       @assignment_exercise_count = teacher_selected_exercise_ids.count +
                                    @tutor_selected_exercise_count
 
-      @task_plan = FactoryBot.build(:tasks_task_plan,
+      @task_plan = FactoryBot.build(
+        :tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
         description: "Hello!",

@@ -1,4 +1,4 @@
-class PrependRToResearchIdentifiers < ActiveRecord::Migration
+class PrependRToResearchIdentifiers < ActiveRecord::Migration[4.2]
   def up
     Entity::Role.where(research_identifier: nil).find_each do |role|
       role.send :generate_unique_token, :research_identifier, mode: :hex, length: 4, prefix: 'r'

@@ -42,12 +42,10 @@ RSpec.describe "Pardot" do
         begin
           original_value = Settings::Pardot.toa_redirect
           Settings::Pardot.toa_redirect = redirect_url
-          Settings::Db.store.object('pardot_toa_redirect').try!(:expire_cache)
 
           example.run
         ensure
           Settings::Pardot.toa_redirect = original_value
-          Settings::Db.store.object('pardot_toa_redirect').try!(:expire_cache)
         end
       }
 

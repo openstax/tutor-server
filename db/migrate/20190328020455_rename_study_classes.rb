@@ -1,4 +1,4 @@
-class RenameStudyClasses < ActiveRecord::Migration
+class RenameStudyClasses < ActiveRecord::Migration[4.2]
   def up
     execute "update research_study_brains set type = 'Research::Models::ModifiedTasked' where type = 'Research::Models::ModifiedTaskedForUpdate'"
     execute "update research_study_brains set type = 'Research::Models::ModifiedTask' where type = 'Research::Models::ModifiedTaskForDisplay'"

@@ -1,4 +1,4 @@
-class PreviewClaimed < ActiveRecord::Migration
+class PreviewClaimed < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :preview_claimed_at, :timestamp
     add_index :course_profile_courses,

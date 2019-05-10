@@ -1,4 +1,4 @@
-class UpdateCourseMembershipPeriodsUniqunessIndex < ActiveRecord::Migration
+class UpdateCourseMembershipPeriodsUniqunessIndex < ActiveRecord::Migration[4.2]
   def change
     reversible do |direction|
       direction.up do

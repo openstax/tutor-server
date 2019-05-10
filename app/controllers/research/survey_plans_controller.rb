@@ -2,7 +2,7 @@ class Research::SurveyPlansController < Research::BaseController
 
   respond_to :html
 
-  before_filter :get_survey_plan, only: [:edit, :update, :preview, :publish, :hide, :export]
+  before_action :get_survey_plan, only: [:edit, :update, :preview, :publish, :hide, :export]
 
   def new
     @survey_plan = Research::Models::SurveyPlan.new

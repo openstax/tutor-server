@@ -1,4 +1,4 @@
-class AddQuestionIndexToExistingTasksTaskedExercises < ActiveRecord::Migration
+class AddQuestionIndexToExistingTasksTaskedExercises < ActiveRecord::Migration[4.2]
   def up
     Tasks::Models::TaskedExercise
       .select([ :id, :question_id, '"content_exercises"."content"' ])

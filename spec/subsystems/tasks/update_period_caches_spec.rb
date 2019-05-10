@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
-  let(:course)                { @task_plan.owner }
-  let(:periods)               { course.periods.to_a }
-  let(:period_ids)            { periods.map(&:id) }
-  let(:first_period)          { periods.first }
-  let(:first_task)            do
+  let(:course)                  { @task_plan.owner }
+  let(:periods)                 { course.periods.to_a }
+  let(:period_ids)              { periods.map(&:id) }
+  let(:first_period)            { periods.first }
+  let(:first_task)              do
     @task_plan.tasks.find do |task|
       task.taskings.any? { |tasking| tasking.role.student.try!(:period) == first_period }
     end
   end
-  let(:num_period_caches)     { periods.size }
-  let(:ecosystem)             { course.ecosystem }
+  let(:num_period_caches)       { periods.size }
+  let(:ecosystem)               { course.ecosystem }
 
   context 'reading' do
     before(:all)                do
@@ -19,7 +19,9 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
 
       @task_plan = FactoryBot.create :tasked_task_plan
     end
+    before                      { @task_plan.reload }
     after(:all)                 { DatabaseCleaner.clean }
+
 
     let(:book)                  { ecosystem.books.first }
     let(:chapter)               { book.chapters.first }
@@ -267,8 +269,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
 
       context 'preview' do
         before do
-          course.reload.update_attribute :is_preview, true
-          @task_plan.reload.update_attribute :is_preview, true
+          course.update_attribute :is_preview, true
+          @task_plan.update_attribute :is_preview, true
         end
 
         let(:queue) { :lowest_priority }
@@ -449,6 +451,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         settings: { external_url: 'https://www.example.com' }
       )
     end
+    before                      { @task_plan.reload }
     after(:all)                 { DatabaseCleaner.clean }
 
     let(:book)                  { ecosystem.books.first }

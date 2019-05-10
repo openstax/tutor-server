@@ -1,4 +1,4 @@
-class CreateContentPools < ActiveRecord::Migration
+class CreateContentPools < ActiveRecord::Migration[4.2]
   def change
     create_table :content_pools do |t|
       t.references :content_ecosystem, null: false, index: true,

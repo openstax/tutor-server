@@ -32,7 +32,7 @@ class ValuesTable
   def sanitize(value)
     return "ARRAY[#{value.map { |val| sanitize val }.join(', ')}]" if value.is_a?(Array)
 
-    sanitized_value = ActiveRecord::Base.sanitize value
+    sanitized_value = ActiveRecord::Base.connection.quote value
 
     UUID_REGEX === value ? "#{sanitized_value}::uuid" : sanitized_value
   end

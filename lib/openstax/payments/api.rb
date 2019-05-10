@@ -37,7 +37,7 @@ module OpenStax::Payments::Api
     def embed_js_url
       # FIXME: figure out how to get host and port from Rails
       configuration.stub ? 'http://localhost:3001/assets/payments/api-stub.js' :
-        Rails.application.secrets['openstax']['payments']['embed_js_url']
+        Rails.application.secrets.openstax[:payments][:embed_js_url]
     end
 
     protected

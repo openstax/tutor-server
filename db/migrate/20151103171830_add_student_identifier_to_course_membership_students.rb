@@ -1,4 +1,4 @@
-class AddStudentIdentifierToCourseMembershipStudents < ActiveRecord::Migration
+class AddStudentIdentifierToCourseMembershipStudents < ActiveRecord::Migration[4.2]
   def change
     add_column :course_membership_students, :student_identifier, :string
     add_index :course_membership_students, [:student_identifier, :entity_course_id],

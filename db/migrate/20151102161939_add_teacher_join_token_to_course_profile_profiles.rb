@@ -1,4 +1,4 @@
-class AddTeacherJoinTokenToCourseProfileProfiles < ActiveRecord::Migration
+class AddTeacherJoinTokenToCourseProfileProfiles < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_profiles, :teacher_join_token, :string
 

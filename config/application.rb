@@ -64,7 +64,7 @@ module Tutor
 
     # rack-attack for throttling
     Rack::Attack.cache.store = ActiveSupport::Cache::RedisStore.new(
-      url: redis_secrets['url'],
+      url: redis_secrets[:url],
       expires_in: 2.days
     )
 

@@ -17,19 +17,23 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
     it 'passes the query param to SearchCourses along with order_by params' do
       expect(SearchCourses).to receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
-      get :index, query: 'test', order_by: 'name'
+      get :index, params: { query: 'test', order_by: 'name' }
     end
 
     context "pagination" do
       context "when the are any results" do
-        it "paginates the results" do
+        before do
           4.times {FactoryBot.create(:course_profile_course, name: "Algebra #{rand(1000)}")}
           expect(CourseProfile::Models::Course.count).to eq(4)
+        end
 
-          get :index, page: 1, per_page: 2
+        it "paginates the results" do
+          get :index, params: { page: 1, per_page: 2 }
           expect(assigns[:course_infos].length).to eq(2)
+        end
 
-          get :index, page: 2, per_page: 2
+        it "can access other pages" do
+          get :index, params: { page: 2, per_page: 2 }
           expect(assigns[:course_infos].length).to eq(2)
         end
       end
@@ -38,7 +42,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
         it "doesn't blow up" do
           expect(CourseProfile::Models::Course.count).to eq(0)
 
-          get :index, page: 1
+          get :index, params: { page: 1 }
           expect(response).to have_http_status :ok
         end
       end
@@ -49,7 +53,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     it 'assigns extra course info' do
       course = FactoryBot.create :course_profile_course, :without_ecosystem, name: 'Hello World'
 
-      get :show, id: course.id
+      get :show, params: { id: course.id }
 
       expect(assigns[:course].id).to eq course.id
       expect(Set.new assigns[:periods]).to eq Set.new course.periods
@@ -60,22 +64,27 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
   end
 
   context 'disallowing baddies' do
-    it 'disallows unauthenticated visitors' do
+    it '#GET disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }
       allow(controller).to receive(:current_user) { nil }
 
       get :index
-      expect(response).not_to be_success
+      expect(response).not_to be_successful
+    end
 
-      get :show, id: 1
-      expect(response).not_to be_success
+    it '#PUT disallows unauthenticated visitors' do
+      allow(controller).to receive(:current_account) { nil }
+      allow(controller).to receive(:current_user) { nil }
+
+      get :show, params: { id: 1 }
+      expect(response).not_to be_successful
     end
 
     it 'disallows non-customer-service authenticated visitors' do
       controller.sign_in(FactoryBot.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
-      expect { get :show, id: 1 }.to raise_error(SecurityTransgression)
+      expect { get :show, params: { id: 1 } }.to raise_error(SecurityTransgression)
     end
   end
 end

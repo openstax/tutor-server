@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ApplicationController, type: :controller do
   subject(:controller) do
-    ApplicationController.new.tap { |cc| cc.response = ActionController::TestResponse.new }
+    ApplicationController.new.tap { |cc| cc.response = ActionDispatch::TestResponse.new }
   end
 
   before(:all) do

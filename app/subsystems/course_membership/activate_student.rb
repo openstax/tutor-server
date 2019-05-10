@@ -7,7 +7,7 @@ module CourseMembership
                   message: 'Student is already active') unless student.dropped?
 
       student.restore
-      student.clear_association_cache
+      student.send :clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
 
       OpenStax::Biglearn::Api.update_rosters(course: student.course)

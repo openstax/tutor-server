@@ -6,8 +6,6 @@ class Legal::ForgetAbout
   def exec(item:)
     gid = Legal::Utils.gid(item)
 
-    Legal::Models::TargetedContractRelationship.destroy_all(child_gid: gid)
-    Legal::Models::TargetedContractRelationship.destroy_all(parent_gid: gid)
-    Legal::Models::TargetedContract.destroy_all(target_gid: gid)
+    Legal::Models::TargetedContract.where(target_gid: gid).destroy_all
   end
 end

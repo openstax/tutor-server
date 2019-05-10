@@ -1,4 +1,4 @@
-class CleanupDeletedAtColumns < ActiveRecord::Migration
+class CleanupDeletedAtColumns < ActiveRecord::Migration[4.2]
   def up
     remove_index :cc_page_stats,
                  column: %w{course_period_id coach_task_content_page_id group_type},

@@ -101,7 +101,7 @@ class Demo::Base
 
   def sign_contract(user:, name:)
     string_name = name.to_s
-    return if FinePrint::Contract.where{name == string_name}.none?
+    return unless FinePrint::Contract.where(name: string_name).exists?
     FinePrint.sign_contract(user.to_model, string_name)
   end
 

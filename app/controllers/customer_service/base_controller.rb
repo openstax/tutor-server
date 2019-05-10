@@ -1,5 +1,5 @@
 class CustomerService::BaseController < ApplicationController
-  before_filter :authenticate_customer_service!
+  before_action :authenticate_customer_service!
 
   layout 'customer_service'
 

@@ -45,7 +45,10 @@ class Research::Models::StudyBrain < ApplicationRecord
 
 
   def no_update_when_study_active
-    errors.add(:base, "can't be saved when study is active") if study.active?
+    return unless study.active?
+
+    errors.add(:base, "can't be saved when study is active")
+    throw :abort
   end
 
 end

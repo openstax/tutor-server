@@ -19,14 +19,14 @@ RSpec.describe Admin::JobsController, type: :controller do
     it "returns http success if the job exists" do
       controller.sign_in(admin)
 
-      get :show, id: job.id
+      get :show, params: { id: job.id }
       expect(response).to have_http_status(:success)
     end
 
     it "raises ActionController::RoutingError if the job does not exist" do
       controller.sign_in(admin)
 
-      expect{ get :show, id: 42 }.to raise_error(ActionController::RoutingError)
+      expect { get :show, params: { id: 42 } }.to raise_error(ActionController::RoutingError)
     end
   end
 

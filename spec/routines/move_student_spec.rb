@@ -12,17 +12,17 @@ RSpec.describe MoveStudent, type: :routine do
       original_payment_due_at = student.payment_due_at
 
       result = nil
-      expect {
+      expect do
         result = MoveStudent.call(period: period_2, student: student)
-      }.to change{ CourseMembership::Models::Enrollment.count }.by(1)
+      end.to change { CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
       expect(student.period.id).to eq period_2.id
 
-      expect {
+      expect do
         result = MoveStudent.call(period: period_1, student: student)
-      }.to change{ CourseMembership::Models::Enrollment.count }.by(1)
+      end.to change { CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course

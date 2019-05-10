@@ -55,7 +55,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
   context "#show" do
     it "should work on the happy path" do
-      api_get :show, @user_1_token, parameters: { task_id: @task.id, id: @task_step.id }
+      api_get :show, @user_1_token, params: { task_id: @task.id, id: @task_step.id }
 
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to include(
@@ -74,7 +74,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     context 'student' do
       it "422's if needs to pay" do
         make_payment_required_and_expect_422(course: @course, user: @user_1) do
-          api_get :show, @user_1_token, parameters: { task_id: @task.id, id: @task_step.id }
+          api_get :show, @user_1_token, params: { task_id: @task.id, id: @task_step.id }
         end
       end
     end
@@ -82,18 +82,18 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     context 'teacher' do
       it 'does not 422 if needs to pay' do
         make_payment_required_and_expect_not_422(course: @course, user: @user_1) do
-          api_get :show, @teacher_user_token, parameters: { task_id: @task.id, id: @task_step.id }
+          api_get :show, @teacher_user_token, params: { task_id: @task.id, id: @task_step.id }
         end
       end
     end
 
     it 'raises SecurityTransgression when user is anonymous or not a teacher' do
       expect do
-        api_get :show, nil, parameters: { task_id: @task.id, id: @task_step.id }
+        api_get :show, nil, params: { task_id: @task.id, id: @task_step.id }
       end.to raise_error(SecurityTransgression)
 
       expect do
-        api_get :show, @user_2_token, parameters: { task_id: @task.id, id: @task_step.id }
+        api_get :show, @user_2_token, params: { task_id: @task.id, id: @task_step.id }
       end.to raise_error(SecurityTransgression)
     end
 
@@ -106,8 +106,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       end
 
       it 'does not replace them and does not blow up' do
-        api_get :show, @user_1_token,
-                parameters: { task_id: @task.id, id: placeholder.task_step.id }
+        api_get :show, @user_1_token, params: { task_id: @task.id, id: placeholder.task_step.id }
 
         expect(response).to be_ok
         expect(response.body_as_hash).to include(type: 'placeholder')
@@ -123,8 +122,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     it "updates the free response of an exercise" do
       answer_id = tasked.answer_ids.first
 
-      api_put :update, @user_1_token, parameters: id_parameters,
-              raw_post_data: { free_response: "Ipsum lorem",
+      api_put :update, @user_1_token, params: id_parameters,
+              body: { free_response: "Ipsum lorem",
                                answer_id: answer_id.to_s }
       expect(response).to have_http_status(:success)
 
@@ -137,8 +136,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: @course, user: @user_1) {
-        api_put :update, @user_1_token, parameters: id_parameters,
-                raw_post_data: { free_response: "Ipsum lorem" }
+        api_put :update, @user_1_token, params: id_parameters,
+                body: { free_response: "Ipsum lorem" }
       }
     end
 
@@ -148,7 +147,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       answer_id = tasked.answer_ids.first
 
       api_put :update, @user_1_token,
-              parameters: id_parameters, raw_post_data: { answer_id: answer_id.to_s }
+              params: id_parameters, body: { answer_id: answer_id.to_s }
 
       expect(response).to have_http_status(:success)
 
@@ -162,7 +161,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       answer_id = tasked.answer_ids.first
 
       api_put :update, @user_1_token,
-              parameters: id_parameters, raw_post_data: { answer_id: answer_id.to_s }
+              params: id_parameters, body: { answer_id: answer_id.to_s }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(tasked.reload.answer_id).to be_nil
@@ -170,7 +169,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
     it 'returns an error when the free response is blank' do
       api_put :update, @user_1_token,
-              parameters: id_parameters, raw_post_data: { free_response: ' ' }
+              params: id_parameters, body: { free_response: ' ' }
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
@@ -188,8 +187,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
       expect do
         api_put :update, @user_1_token,
-                parameters: id_parameters,
-                raw_post_data: { answer_id: tasked.answer_ids.last }
+                params: id_parameters,
+                body: { answer_id: tasked.answer_ids.last }
       end.to change { tasked.reload.answer_id }
 
       expect(response).to have_http_status(:success)
@@ -219,12 +218,15 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
         study.activate!
 
         api_put :update, @user_1_token,
-                parameters: id_parameters, raw_post_data: {
+                params: id_parameters, body: {
                   free_response: '', answer_id: tasked.answer_ids.first
                 }
+
         expect(response).to have_http_status(:success)
       end
+
     end
+
   end
 
   context "practice task update step" do
@@ -246,8 +248,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
     end
 
     it "allows updating of a step" do
-      api_put :update, @user_1_token, parameters: { id: step.id },
-              raw_post_data: { free_response: "Ipsum lorem",
+      api_put :update, @user_1_token, params: { id: step.id },
+              body: { free_response: "Ipsum lorem",
                                answer_id: step.tasked.answer_ids.first }
 
       expect(response).to have_http_status(:success)
@@ -255,8 +257,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: @course, user: @user_1) {
-        api_put :update, @user_1_token, parameters: { id: step.id },
-                raw_post_data: { free_response: "Ipsum lorem" }
+        api_put :update, @user_1_token, params: { id: step.id },
+                body: { free_response: "Ipsum lorem" }
       }
     end
   end

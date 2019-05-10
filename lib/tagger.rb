@@ -15,7 +15,7 @@ module Tagger
     aplo: /\A(?:aplo:[\w-]+:\d+-\d+-\d+|[\w-]+-aplo-[\w-]+)\z/,
     dok: /\Adok:?(\d+)\z/,
     blooms: /\Ablooms[:-](\d+)\z/,
-    length: /\Atime[:-](\w+)\z/,
+    time: /\Atime[:-](\w+)\z/,
     teks: /\A(?:teks:|ost-tag-teks-)[\w-]+-(\w+)\z/,
     requires_context: /\Arequires-context:(?:y(?:es)?|t(?:rue)?)\z/,
     cnxfeature: /\A(?:context-)?cnxfeature:([\w-]+)\z/
@@ -25,11 +25,11 @@ module Tagger
   TAG_NAME_TEMPLATES = HashWithIndifferentAccess.new({
     dok: "DOK: %d",
     blooms: "Blooms: %d",
-    length: "Length: %.1s"
+    time: "Length: %.1s"
   })
 
   def self.get_type(tag_string)
-    TAG_TYPE_REGEXES.each{ |type, regex| return type.to_sym if regex.match(tag_string) }
+    TAG_TYPE_REGEXES.each { |type, regex| return type.to_sym if regex.match(tag_string) }
     :generic
   end
 

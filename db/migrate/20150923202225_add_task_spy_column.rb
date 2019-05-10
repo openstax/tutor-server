@@ -1,8 +1,5 @@
-class AddTaskSpyColumn < ActiveRecord::Migration
+class AddTaskSpyColumn < ActiveRecord::Migration[4.2]
   def change
-    # needed because this is the first use of hstore
-    # will be skipped if the DB already happens to have hstore enabled
-    enable_extension "hstore"
-    add_column :tasks_tasks, :spy, :hstore
+    add_column :tasks_tasks, :spy, :text, default: '{}', null: false
   end
 end

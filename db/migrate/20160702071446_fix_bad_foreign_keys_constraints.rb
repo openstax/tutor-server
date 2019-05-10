@@ -1,4 +1,4 @@
-class FixBadForeignKeysConstraints < ActiveRecord::Migration
+class FixBadForeignKeysConstraints < ActiveRecord::Migration[4.2]
   def up
     remove_foreign_key :catalog_offerings, :content_ecosystems
     remove_foreign_key :course_profile_profiles, :catalog_offerings

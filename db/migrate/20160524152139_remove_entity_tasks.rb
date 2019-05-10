@@ -1,4 +1,4 @@
-class RemoveEntityTasks < ActiveRecord::Migration
+class RemoveEntityTasks < ActiveRecord::Migration[4.2]
   def up
     add_column :tasks_taskings, :tasks_task_id, :integer
     add_column :tasks_concept_coach_tasks, :tasks_task_id, :integer

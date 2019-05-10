@@ -1,4 +1,4 @@
-class ReorganizeLmsTables < ActiveRecord::Migration
+class ReorganizeLmsTables < ActiveRecord::Migration[4.2]
 
   # Make sure this class always exist when this migration is run, in case it
   # goes away one day.

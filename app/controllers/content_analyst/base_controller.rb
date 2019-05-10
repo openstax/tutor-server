@@ -1,5 +1,5 @@
 class ContentAnalyst::BaseController < ApplicationController
-  before_filter :authenticate_content_analyst!
+  before_action :authenticate_content_analyst!
 
   layout 'content_analyst'
 

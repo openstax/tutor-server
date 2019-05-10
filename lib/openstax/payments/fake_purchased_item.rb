@@ -29,10 +29,10 @@ class OpenStax::Payments::FakePurchasedItem
 
   def self.store
     @store ||= begin
-      redis_secrets = Rails.application.secrets['redis']
+      redis_secrets = Rails.application.secrets.redis
       Redis::Store.new(
-        url: redis_secrets['url'],
-        namespace: redis_secrets['namespaces']['fake_payments']
+        url: redis_secrets[:url],
+        namespace: redis_secrets[:namespaces][:fake_payments]
       )
     end
   end

@@ -1,4 +1,4 @@
-class AddPeriodIdToStudents < ActiveRecord::Migration
+class AddPeriodIdToStudents < ActiveRecord::Migration[4.2]
   def change
     add_column :course_membership_students, :course_membership_period_id, :integer
 

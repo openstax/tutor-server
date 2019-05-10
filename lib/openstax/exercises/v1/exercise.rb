@@ -57,23 +57,23 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def tag_hashes
-    @tag_hashes ||= tags.map{ |tag| Tagger.get_hash(tag) }
+    @tag_hashes ||= tags.map { |tag| Tagger.get_hash(tag) }
   end
 
   def lo_hashes
-    @lo_hashes ||= tag_hashes.select{ |hash| hash[:type] == :lo }
+    @lo_hashes ||= tag_hashes.select { |hash| hash[:type] == :lo }
   end
 
   def aplo_hashes
-    @aplo_hashes ||= tag_hashes.select{ |hash| hash[:type] == :aplo }
+    @aplo_hashes ||= tag_hashes.select { |hash| hash[:type] == :aplo }
   end
 
   def cnxmod_hashes
-    @cnxmod_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cnxmod }
+    @cnxmod_hashes ||= tag_hashes.select { |hash| hash[:type] == :cnxmod }
   end
 
   def cnxfeature_hashes
-    @cnxfeature_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cnxfeature }
+    @cnxfeature_hashes ||= tag_hashes.select { |hash| hash[:type] == :cnxfeature }
   end
 
   def import_tag_hashes
@@ -81,28 +81,28 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def los
-    @los ||= lo_hashes.map{ |hash| hash[:value] }
+    @los ||= lo_hashes.map { |hash| hash[:value] }
   end
 
   def aplos
-    @aplos ||= aplo_hashes.map{ |hash| hash[:value] }
+    @aplos ||= aplo_hashes.map { |hash| hash[:value] }
   end
 
   def cnxmods
-    @cnxmods ||= cnxmod_hashes.map{ |hash| hash[:value] }
+    @cnxmods ||= cnxmod_hashes.map { |hash| hash[:value] }
   end
 
   def cnxfeatures
-    @cnxfeatures ||= cnxfeature_hashes.map{ |hash| hash[:value] }
+    @cnxfeatures ||= cnxfeature_hashes.map { |hash| hash[:value] }
   end
 
   def import_tags
-    @import_tags ||= import_tag_hashes.map{ |hash| hash[:value] }
+    @import_tags ||= import_tag_hashes.map { |hash| hash[:value] }
   end
 
   def feature_ids(page_uuid)
     feature_tag_start = 'context-cnxfeature:'
-    feature_tags = cnxfeatures.select{ |tag| tag.start_with? feature_tag_start }
+    feature_tags = cnxfeatures.select { |tag| tag.start_with? feature_tag_start }
     feature_tags.map{ |tag| tag.sub(feature_tag_start, '') }
   end
 
@@ -111,16 +111,16 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_formats
-    @question_formats ||= questions.map{ |qq| qq['formats'] }
+    @question_formats ||= questions.map { |qq| qq['formats'] }
   end
 
   def question_answers
-    @question_answers ||= questions.map{ |qq| qq['answers'] }
+    @question_answers ||= questions.map { |qq| qq['answers'] }
   end
 
   def question_answer_ids
     @question_answer_ids ||= question_answers.map do |qa|
-      qa.map{ |ans| ans['id'] }
+      qa.map { |ans| ans['id'] }
     end
   end
 
@@ -134,12 +134,12 @@ class OpenStax::Exercises::V1::Exercise
 
   def correct_question_answer_ids
     @correct_question_answer_ids ||= correct_question_answers.map do |cqa|
-      cqa.map{ |ans| ans['id'].to_s }
+      cqa.map { |ans| ans['id'].to_s }
     end
   end
 
   def solutions
-    @solutions ||= questions.map{ |qq| qq['solutions'] }
+    @solutions ||= questions.map { |qq| qq['solutions'] }
   end
 
   def feedback_map
@@ -153,7 +153,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_formats_for_students
-    questions_for_students.flat_map{|q| q['formats']}.uniq
+    questions_for_students.flat_map { |q| q['formats'] }.uniq
   end
 
   def answers_for_students
@@ -175,9 +175,7 @@ class OpenStax::Exercises::V1::Exercise
     @content_hash_for_students ||= (
       content_hash
         .except(%w{attachments vocab_term_uid})
-        .merge(
-          'questions' => questions_for_students
-        )
+        .merge('questions' => questions_for_students)
     )
   end
 

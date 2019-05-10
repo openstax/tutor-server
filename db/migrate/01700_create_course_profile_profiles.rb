@@ -1,4 +1,4 @@
-class CreateCourseProfileProfiles < ActiveRecord::Migration
+class CreateCourseProfileProfiles < ActiveRecord::Migration[4.2]
   def change
     create_table :course_profile_profiles do |t|
       t.references :school_district_school, index: true,

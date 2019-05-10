@@ -19,7 +19,7 @@ class GetTaskCorePageIds
 
     task_id_to_core_page_ids_map = {}
     loaded_tasks.each do |task|
-      task_steps = task.task_steps.select do |task_step|
+      task_steps = task.task_steps.to_a.select do |task_step|
         task_step.core_group? || task_step.personalized_group?
       end
 

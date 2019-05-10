@@ -1,4 +1,4 @@
-class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration
+class AddUuidAndGroupUuidToContentExercises < ActiveRecord::Migration[4.2]
   def change
     enable_extension 'pgcrypto'
 

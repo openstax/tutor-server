@@ -11,7 +11,7 @@ RSpec.describe PurchasesController, type: :controller do
   let(:student_2) { AddUserAsPeriodStudent[period: period, user: student_2_user].student }
 
   it 'redirects users to sign in before access' do
-    get :show, id: 'whatever'
+    get :show, params: { id: 'whatever' }
     expect(response).to redirect_to(%r{/accounts/login})
   end
 
@@ -19,19 +19,19 @@ RSpec.describe PurchasesController, type: :controller do
     before(:each) { controller.sign_in(student_1_user) }
 
     it 'gives not found error for bad ID' do
-      expect{
-        get :show, id: 'badnesshere'
-      }.to raise_error(ActiveRecord::RecordNotFound)
+      expect do
+        get :show, params: { id: 'badnesshere' }
+      end.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'gives forbidden error if user does not own that ID' do
-      expect{
-        get :show, id: student_2.uuid
-      }.to raise_error(SecurityTransgression)
+      expect do
+        get :show, params: { id: student_2.uuid }
+      end.to raise_error(SecurityTransgression)
     end
 
     it 'redirects on the happy path' do
-      get :show, id: student_1.uuid
+      get :show, params: { id: student_1.uuid }
       expect(response).to redirect_to(%r{/course/#{student_1.course.id}})
     end
   end

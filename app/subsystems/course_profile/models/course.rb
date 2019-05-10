@@ -10,10 +10,13 @@ class CourseProfile::Models::Course < ApplicationRecord
   belongs_to_time_zone default: 'Central Time (US & Canada)', autosave: true
 
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
-                           class_name: 'CourseProfile::Models::Course'
+                           class_name: 'CourseProfile::Models::Course',
+                           optional: true
 
-  belongs_to :school, subsystem: :school_district
-  belongs_to :offering, subsystem: :catalog
+  belongs_to :school, subsystem: :school_district, optional: true
+
+  belongs_to :offering, subsystem: :catalog, optional: true
+
   has_many :lms_contexts, subsystem: :lms, dependent: :destroy,
            class_name: 'Lms::Models::Context'
   has_many :periods, subsystem: :course_membership,
@@ -48,7 +51,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter, :preview ]
 
-  validates :time_zone, presence: true, uniqueness: true
+  validates :time_zone, uniqueness: true
   validates :name, :term, :year, :starts_at, :ends_at, presence: true
   validates :homework_score_weight,
             :homework_progress_weight,
@@ -64,7 +67,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   before_validation :set_starts_at_and_ends_at, :set_weights
 
-  scope :not_ended, -> { where{ends_at.gt Time.now} }
+  scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
 
   def ecosystems
     # Keep the ecosystems in order
@@ -79,11 +82,11 @@ class CourseProfile::Models::Course < ApplicationRecord
   end
 
   def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
+    read_attribute(:default_due_time) || Settings::Db.default_due_time
   end
 
   def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
+    read_attribute(:default_open_time) || Settings::Db.default_open_time
   end
 
   def term_year
@@ -137,26 +140,31 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   def ends_after_it_starts
     return if starts_at.nil? || ends_at.nil? || ends_at > starts_at
+
     errors.add :base, 'cannot end before it starts'
-    false
+    throw :abort
   end
 
   def valid_year(current_year = Time.current.year)
     return if year.nil?
     valid_year_range = MIN_YEAR..current_year + MAX_FUTURE_YEARS
     return if valid_year_range.include?(year)
+
     errors.add :year, 'is outside the valid range'
-    false
+    throw :abort
   end
 
   def lms_enabling_changeable
+    return unless is_lms_enabled_changed?
+
     errors.add(:is_lms_enabled, "Enabling LMS integration is not allowed for this course") \
-      if is_lms_enabled_changed? && is_lms_enabled && !is_lms_enabling_allowed
+      if is_lms_enabled && !is_lms_enabling_allowed
 
-    errors.add(:is_lms_enabled, "Enabling or disabling LMS integration is not allowed for this course") \
-      if is_lms_enabled_changed? && !is_access_switchable
+    errors.add(
+      :is_lms_enabled, "Enabling or disabling LMS integration is not allowed for this course"
+    ) unless is_access_switchable
 
-    errors.none?
+    throw(:abort) if errors.any?
   end
 
   def weights_add_up
@@ -165,7 +173,7 @@ class CourseProfile::Models::Course < ApplicationRecord
     ].sum == 1
 
     errors.add(:base, 'weights must add up to exactly 1')
-    false
+    throw :abort
   end
 
 end

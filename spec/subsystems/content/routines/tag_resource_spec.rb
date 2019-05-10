@@ -24,13 +24,11 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       resource = FactoryBot.create resource_definition.factory
 
       result = nil
-      expect {
+      expect do
         result = Content::Routines::TagResource.call(
           resource, [tag_1, tag_2]
         )
-      }.to change{
-        resource.send(resource_definition.tagging_relation).count
-      }.by(2)
+      end.to change{ resource.send(resource_definition.tagging_relation).count }.by(2)
 
       expect(result.errors).to be_empty
 
@@ -47,13 +45,11 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       actual_tag_types = actual_tags.map(&:tag_type)
       expect(Set.new actual_tag_types).to eq Set.new expected_tag_types
 
-      expect {
+      expect do
         result = Content::Routines::TagResource.call(
           resource, [lo_tag_1, lo_tag_2]
         )
-      }.to change{
-        resource.send(resource_definition.tagging_relation).count
-      }.by(2)
+      end.to change { resource.send(resource_definition.tagging_relation).count }.by(2)
 
       expect(result.errors).to be_empty
 

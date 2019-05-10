@@ -1,4 +1,4 @@
-class ResearchManipulations < ActiveRecord::Migration
+class ResearchManipulations < ActiveRecord::Migration[4.2]
   def change
     create_table :research_manipulations do |t|
       t.references :research_study, null: false, index: true,
@@ -11,7 +11,7 @@ class ResearchManipulations < ActiveRecord::Migration
                    foreign_key: { on_update: :cascade, on_delete: :nullify }
 
       t.references :target, polymorphic: true
-      t.jsonb :context, null: false, default: '{}'
+      t.jsonb :context, null: false, default: {}
       t.timestamp :created_at
     end
   end

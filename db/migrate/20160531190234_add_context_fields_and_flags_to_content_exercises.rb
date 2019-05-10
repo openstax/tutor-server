@@ -1,4 +1,4 @@
-class AddContextFieldsAndFlagsToContentExercises < ActiveRecord::Migration
+class AddContextFieldsAndFlagsToContentExercises < ActiveRecord::Migration[4.2]
   def change
     add_column :content_exercises, :preview, :text
     add_column :content_exercises, :context, :text

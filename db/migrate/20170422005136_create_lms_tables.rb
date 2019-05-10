@@ -1,4 +1,4 @@
-class CreateLmsTables < ActiveRecord::Migration
+class CreateLmsTables < ActiveRecord::Migration[4.2]
   def change
     create_table :lms_tool_consumers do |t|
       t.string :name, null: false

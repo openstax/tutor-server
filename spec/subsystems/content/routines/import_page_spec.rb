@@ -13,9 +13,9 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
 
     it 'creates a new Page' do
       result = nil
-      expect {
+      expect do
         result = import_page
-      }.to change{ Content::Models::Page.count }.by(1)
+      end.to change { Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(result.outputs[:page]).to be_persisted
@@ -46,7 +46,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
                                       'teks-112-39-c-4c', 'teks-112-39-c-4e']
 
       result = nil
-      expect { result = import_page }.to change{ Content::Models::Tag.lo.count }.by(4)
+      expect { result = import_page }.to change { Content::Models::Tag.lo.count }.by(4)
 
       los_set = Set.new Content::Models::Tag.lo.order(:created_at).last(4).map(&:value)
       expect(los_set).to eq(expected_page_los_set + expected_exercise_los_set)
@@ -67,23 +67,25 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
 
     it 'gets exercises with LO tags from the content' do
       result = nil
-      expect {
+      expect do
         result = import_page
-      }.to change{ Content::Models::Exercise.count }.by(32)
+      end.to change { Content::Models::Exercise.count }.by(32)
     end
   end
 
   context 'cc page' do
-    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(
-      id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
-    ) }
+    let(:cnx_page)  do
+      OpenStax::Cnx::V1::Page.new(
+        id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
+      )
+    end
     let(:book_location) { [1, 1] }
 
     it 'creates a new Page' do
       result = nil
-      expect {
+      expect do
         result = import_page(archive_url: 'https://archive.cnx.org/contents/')
-      }.to change{ Content::Models::Page.count }.by(1)
+      end.to change { Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(result.outputs[:page]).to be_persisted
@@ -110,9 +112,9 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       expected_page_tag = 'context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3'
 
       result = nil
-      expect {
+      expect do
         result = import_page(archive_url: 'https://archive.cnx.org/contents/')
-      }.to change{ Content::Models::Tag.cnxmod.count }.by(1)
+      end.to change { Content::Models::Tag.cnxmod.count }.by(1)
 
       tag = Content::Models::Tag.cnxmod.order(:created_at).last
       expect(tag.value).to eq expected_page_tag
@@ -127,9 +129,9 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
 
     it 'gets exercises with the page\'s cnxmod tag' do
       result = nil
-      expect {
+      expect do
         result = import_page(archive_url: 'https://archive.cnx.org/contents/')
-      }.to change{ Content::Models::Exercise.count }.by(26)
+      end.to change { Content::Models::Exercise.count }.by(26)
 
       exercises = Content::Models::Exercise.order(:created_at).last(26)
       page = Content::Models::Page.order(:created_at).last

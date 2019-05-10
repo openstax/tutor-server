@@ -11,20 +11,20 @@ class Research::Models::Study < ApplicationRecord
 
   scope :never_active, -> { where(last_activated_at: nil) }
 
-  scope :activate_at_has_passed, -> {
+  scope :activate_at_has_passed, -> do
     where.not(activate_at: nil).
     where("activate_at < ?", Time.current)
-  }
+  end
 
-  scope :active, -> {
+  scope :active, -> do
     where.not(last_activated_at: nil).
     where("last_deactivated_at IS NULL OR last_deactivated_at < last_activated_at")
-  }
+  end
 
-  scope :deactivate_at_has_passed, -> {
+  scope :deactivate_at_has_passed, -> do
     where.not(deactivate_at: nil).
     where("deactivate_at < ?", Time.current)
-  }
+  end
 
   def active?
     last_activated_at.present? && (
@@ -48,7 +48,9 @@ class Research::Models::Study < ApplicationRecord
   protected
 
   def only_destroy_if_inactive
-    errors.add(:base, "Cannot destroy an active study") if active?
-    errors.none?
+    return unless active?
+
+    errors.add(:base, "Cannot destroy an active study")
+    throw :abort
   end
 end

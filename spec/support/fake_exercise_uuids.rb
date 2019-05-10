@@ -4,12 +4,13 @@
 # The data used to create them is most likely long gone
 
 module FakeExerciseUuids
-  def initialize(attributes = nil, options = {})
-    attributes ||= {}
+  def initialize(attributes = nil, &block)
+    attributes = {} if attributes.nil?
+
     attributes[:uuid] ||= SecureRandom.uuid
     attributes[:group_uuid] ||= SecureRandom.uuid
 
-    super(attributes, options)
+    super(attributes, &block)
   end
 end
 

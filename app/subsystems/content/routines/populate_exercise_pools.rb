@@ -123,7 +123,7 @@ class Content::Routines::PopulateExercisePools
       end
 
       # Populate chapter pools
-      all_exercise_ids = pages.flat_map{ |page| page.all_exercises_pool.content_exercise_ids }.uniq
+      all_exercise_ids = pages.flat_map { |page| page.all_exercises_pool.content_exercise_ids }.uniq
       chapter.all_exercises_pool = Content::Models::Pool.new(
         ecosystem: ecosystem, pool_type: :all_exercises, content_exercise_ids: all_exercise_ids
       )
@@ -144,11 +144,11 @@ class Content::Routines::PopulateExercisePools
     # Save ids in page/chapter tables and clear associations so pools get reloaded next time
     outputs[:pages].each do |page|
       page.save!
-      page.clear_association_cache
+      page.send :clear_association_cache
     end
     chapters.each do |chapter|
       chapter.save!
-      chapter.clear_association_cache
+      chapter.send :clear_association_cache
     end
   end
 end

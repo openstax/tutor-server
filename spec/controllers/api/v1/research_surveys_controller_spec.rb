@@ -25,8 +25,8 @@ RSpec.describe Api::V1::ResearchSurveysController, type: :controller, api: true,
 
       it 'updates survey' do
         api_put :update, student_token,
-                parameters: { id: survey.id },
-                raw_post_data: { response: { foo: 'bar' } }
+                params: { id: survey.id },
+                body: { response: { foo: 'bar' } }
 
         expect(response).to have_http_status(:no_content)
         expect(survey.reload.survey_js_response).to eq({'foo' => 'bar'})
@@ -39,8 +39,8 @@ RSpec.describe Api::V1::ResearchSurveysController, type: :controller, api: true,
       it "gives 403" do
         expect {
           api_put :update, other_user_token,
-                  parameters: { id: survey.id },
-                  raw_post_data: { response: { are_you_evil: true } }
+                  params: { id: survey.id },
+                  body: { response: { are_you_evil: true } }
         }.to raise_error(SecurityTransgression)
       end
     end
@@ -55,8 +55,8 @@ RSpec.describe Api::V1::ResearchSurveysController, type: :controller, api: true,
 
       it 'will update again' do
         api_put :update, student_token,
-                parameters: { id: survey.id },
-                raw_post_data: { response: { ima_undecided: true } }
+                params: { id: survey.id },
+                body: { response: { ima_undecided: true } }
 
         expect(survey.reload.survey_js_response).to eq('ima_undecided' => true)
         expect(survey.completed_at).to be_between(Time.now - 10.second, Time.now)

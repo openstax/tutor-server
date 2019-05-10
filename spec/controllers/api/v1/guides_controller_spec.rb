@@ -5,12 +5,14 @@ require 'database_cleaner'
 RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                           version: :v1, vcr: VCR_OPTS do
   let(:user_1)              { FactoryBot.create(:user) }
-  let(:user_1_token)        { FactoryBot.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_1.id }
+  let(:user_1_token)        do
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id
+  end
 
   let(:user_2)              { FactoryBot.create(:user) }
-  let(:user_2_token)        { FactoryBot.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_2.id }
+  let(:user_2_token)        do
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id
+  end
 
   let(:course)              { FactoryBot.create :course_profile_course }
   let(:period)              { FactoryBot.create :course_membership_period, course: course }
@@ -23,34 +25,33 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
     let(:course_guide)      { Hashie::Mash.new(title: 'Title', page_ids: [1], children: []) }
 
     context '#student' do
-      let!(:student_role)   {
+      let!(:student_role)   do
         AddUserAsPeriodStudent.call(period: period, user: user_2).outputs[:role]
-      }
+      end
 
       let(:user_3)          { FactoryBot.create(:user) }
 
-      let!(:student_3_role) {
+      let!(:student_3_role) do
         AddUserAsPeriodStudent.call(period: period, user: user_3).outputs[:role]
-      }
+      end
 
       it 'returns the student guide for the logged in user' do
         expect(GetStudentGuide).to receive(:[]).with(role: student_role).and_return(course_guide)
 
-        api_get :student, user_2_token, parameters: { course_id: course.id }
+        api_get :student, user_2_token, params: { course_id: course.id }
       end
 
       it 'returns the student guide for a teacher providing a student role ID' do
         expect(GetStudentGuide).to receive(:[]).with(role: student_3_role).and_return(course_guide)
 
-        api_get :student, user_1_token,
-                parameters: { course_id: course.id, role_id: student_3_role.id }
+        api_get :student, user_1_token, params: { course_id: course.id, role_id: student_3_role.id }
       end
 
       it 'raises SecurityTransgression if the student has been dropped' do
         student_role.student.destroy
 
         expect do
-          api_get :student, user_2_token, parameters: { course_id: course.id }
+          api_get :student, user_2_token, params: { course_id: course.id }
         end.to raise_error(SecurityTransgression)
       end
 
@@ -58,13 +59,13 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         period.destroy
 
         expect do
-          api_get :student, user_2_token, parameters: { course_id: course.id }
+          api_get :student, user_2_token, params: { course_id: course.id }
         end.to raise_error(SecurityTransgression)
       end
 
       it "returns 422 if needs to pay" do
         make_payment_required_and_expect_422(course: course, student: student_role.student) {
-          api_get :student, user_2_token, parameters: { course_id: course.id }
+          api_get :student, user_2_token, params: { course_id: course.id }
         }
       end
     end
@@ -73,14 +74,14 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
       it 'returns the teacher guide' do
         expect(GetTeacherGuide).to receive(:[]).with(role: teacher_role).and_return([course_guide])
 
-        api_get :teacher, user_1_token, parameters: { course_id: course.id }
+        api_get :teacher, user_1_token, params: { course_id: course.id }
       end
 
       it 'raises SecurityTransgression if the teacher was deleted' do
         teacher_role.teacher.destroy
 
         expect do
-          api_get :teacher, user_1_token, parameters: { course_id: course.id }
+          api_get :teacher, user_1_token, params: { course_id: course.id }
         end.to raise_error(SecurityTransgression)
       end
     end

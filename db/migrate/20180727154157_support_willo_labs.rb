@@ -1,4 +1,4 @@
-class SupportWilloLabs < ActiveRecord::Migration
+class SupportWilloLabs < ActiveRecord::Migration[4.2]
   def change
     # change app_id to be nullable and non-unique so it can
     # be re-used by willo labs

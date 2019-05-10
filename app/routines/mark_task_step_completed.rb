@@ -8,7 +8,10 @@ class MarkTaskStepCompleted
 
   def exec(task_step:, completed_at: Time.current, lock_task: true)
     task = task_step.task
-    task.lock! if lock_task
+    if lock_task && task.persisted?
+      task.save!
+      task.lock!
+    end
 
     task_step.complete!(completed_at: completed_at)
     transfer_errors_from(task_step, {type: :verbatim}, true)

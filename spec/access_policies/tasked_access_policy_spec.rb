@@ -12,7 +12,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy, speed: :slow do
     TaskedAccessPolicy.action_allowed?(action, requestor, tasked)
   end
 
-  [:read, :update, :mark_completed, :related_exercise].each do |allowed_action|
+  [ :read, :update ].each do |allowed_action|
     context "when the action is :#{allowed_action}" do
       let(:action) { allowed_action }
 
@@ -77,7 +77,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy, speed: :slow do
       role = Role::CreateUserRole[requestor]
       Tasks::CreateTasking.call(task: tasked.task_step.task, role: role)
 
-      [:read, :update, :mark_completed, :related_exercise].each do |allowed_action|
+      [ :read, :update ].each do |allowed_action|
         expect(TaskedAccessPolicy.action_allowed?(allowed_action, requestor, tasked)).to be_truthy
       end
     end

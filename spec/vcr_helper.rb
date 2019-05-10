@@ -5,7 +5,7 @@ def filter_secret(path_to_secret)
 
   secret_value = Rails.application.secrets
   path_to_secret.each do |key|
-    secret_value = secret_value[key]
+    secret_value = secret_value[key.to_sym]
   end
 
   VCR.configure do |c|
@@ -52,7 +52,7 @@ VCR.configure do |c|
     tutor_specs_refresh_token
     tutor_specs_instance_url
   ).each do |salesforce_secret_name|
-    Rails.application.secrets['salesforce'][salesforce_secret_name].tap do |value|
+    Rails.application.secrets.salesforce[salesforce_secret_name.to_sym].tap do |value|
       c.filter_sensitive_data("<#{salesforce_secret_name}>") { value } if value.present?
 
       # If the secret value is inside a URL, it will be URL encoded which means it

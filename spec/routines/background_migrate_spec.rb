@@ -7,7 +7,7 @@ RSpec.describe BackgroundMigrate, type: :routine do
 
   before(:all)    { BackgroundMigrate.load_rake_tasks_if_needed }
 
-  it 'calls ActiveRecord::Migrator.run with the correct arguments and the db:_dump rake task' do
+  it 'calls ActiveRecord::MigrationContext.run with the correct args and the db:_dump rake task' do
     Rake::Task['db:load_config'].invoke
     expect(Rake::Task['db:load_config']).to receive(:invoke)
 
@@ -15,7 +15,10 @@ RSpec.describe BackgroundMigrate, type: :routine do
       path.sub 'migrate', 'background_migrate'
     end
 
-    expect(ActiveRecord::Migrator).to receive(:run).with(direction.to_sym, paths, version.to_i)
+    expect(ActiveRecord::MigrationContext).to receive(:new).and_call_original
+    expect_any_instance_of(ActiveRecord::MigrationContext).to(
+      receive(:run).with(direction.to_sym, version.to_i)
+    )
 
     expect(Rake::Task['db:_dump']).to receive(:invoke)
 

@@ -1,6 +1,6 @@
 class Api::V1::Lms::CoursesController < Api::V1::ApiController
 
-  before_filter :get_course
+  before_action :get_course
 
   resource_description do
     api_versions "v1"

@@ -13,9 +13,9 @@ RSpec.describe Admin::PeriodsController, type: :controller do
     let!(:student_role) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
     it 'archives the period' do
-      expect {
-        delete :destroy, course_id: course.id, id: period.id
-      }.to change { period.reload.archived? }.from(false).to(true)
+      expect do
+        delete :destroy, params: { course_id: course.id, id: period.id }
+      end.to change { period.reload.archived? }.from(false).to(true)
       expect(flash[:notice]).to eq 'Period "1st" archived.'
     end
   end
@@ -27,9 +27,9 @@ RSpec.describe Admin::PeriodsController, type: :controller do
     it 'restores the period' do
       period.to_model.destroy!
 
-      expect {
-        put :restore, course_id: course.id, id: period.id
-      }.to change { period.reload.archived? }.from(true).to(false)
+      expect do
+        put :restore, params: { course_id: course.id, id: period.id }
+      end.to change { period.reload.archived? }.from(true).to(false)
       expect(flash[:notice]).to eq 'Period "1st" unarchived.'
     end
   end

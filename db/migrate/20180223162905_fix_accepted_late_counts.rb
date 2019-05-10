@@ -1,6 +1,6 @@
 # Not idempotent, cannot run in the background
 # MIN/MAX are used to fix errors that might already have happened (but they are not perfect)
-class FixAcceptedLateCounts < ActiveRecord::Migration
+class FixAcceptedLateCounts < ActiveRecord::Migration[4.2]
   def up
     Tasks::Models::Task.select(:id).where.not(accepted_late_at: nil).find_in_batches do |tasks|
       Tasks::Models::Task.where(id: tasks.map(&:id)).update_all(

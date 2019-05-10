@@ -77,8 +77,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     # Initial submission of multiple choice and free response
     answer_id = tasked.answer_ids.first
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {free_response: 'My first answer',
-                            answer_id: answer_id}.to_json)
+            params: { free_response: 'My first answer', answer_id: answer_id }.to_json)
     expect(response).to have_http_status(:success)
 
     tasked.reload
@@ -95,7 +94,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     # Feedback date has not passed, so the answer can still be updated
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {free_response: 'Something else!'}.to_json)
+            params: { free_response: 'Something else!' }.to_json)
     expect(response).to have_http_status(:success)
 
     # The feedback date arrives
@@ -104,7 +103,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     # Free response cannot be changed
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {free_response: 'I changed my mind!'}.to_json)
+            params: { free_response: 'I changed my mind!' }.to_json)
     expect(response).to have_http_status(:unprocessable_entity)
 
     tasked.reload
@@ -115,7 +114,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(new_answer_id).not_to eq tasked.answer_id
 
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {answer_id: new_answer_id}.to_json)
+            params: { answer_id: new_answer_id }.to_json)
     expect(response).to have_http_status(:unprocessable_entity)
 
     tasked.reload

@@ -1,4 +1,4 @@
-class AddFirstAndLastPublishedAtToTaskPlans < ActiveRecord::Migration
+class AddFirstAndLastPublishedAtToTaskPlans < ActiveRecord::Migration[4.2]
   def change
     rename_column :tasks_task_plans, :published_at, :first_published_at
     add_column :tasks_task_plans, :last_published_at, :datetime

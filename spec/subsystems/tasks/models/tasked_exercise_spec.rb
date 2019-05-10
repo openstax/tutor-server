@@ -81,7 +81,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it "invalidates task's cache when updated" do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
-    expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
+    expect { tasked_exercise.save! }.to change { tasked_exercise.task_step.task.cache_key }
   end
 
   describe '#content_preview' do

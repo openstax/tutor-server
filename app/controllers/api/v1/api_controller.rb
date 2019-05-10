@@ -3,6 +3,14 @@
 #
 class Api::V1::ApiController < OpenStax::Api::V1::ApiController
 
+  # https://github.com/rails/rails/issues/34244#issuecomment-433365579
+  # Remove in Rails 6 (fixed)
+  def process_action(*args)
+    super
+  rescue ActionDispatch::Http::Parameters::ParseError => exception
+    render status: 400, json: { errors: [ { message: exception.message } ] }
+  end
+
   def error_if_student_and_needs_to_pay
     return if current_api_user.human_user.is_anonymous?
 

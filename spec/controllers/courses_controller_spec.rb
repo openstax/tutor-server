@@ -6,15 +6,16 @@ RSpec.describe CoursesController, type: :controller do
 
   context '#teach' do
     let(:teach_token) { course.teach_token }
-    subject(:action)  { get :teach, teach_token: teach_token }
+    subject(:action)  { get :teach, params: { teach_token: teach_token } }
 
     context 'signed in user' do
       before { controller.sign_in(user) }
 
       it 'calls CoursesTeach and redirects to the course dashboard' do
-        expect(CoursesTeach).to receive(:handle).with(
-          a_hash_including(caller: user, params: a_hash_including(teach_token: teach_token))
-        ).and_call_original
+        expect(CoursesTeach).to receive(:handle) do |args|
+          expect(args[:caller]).to eq user
+          expect(args[:teach_token]).to eq teach_token
+        end.and_call_original
 
         action
 

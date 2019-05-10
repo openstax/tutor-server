@@ -1,22 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TaskRepresenter, type: :representer do
-  let(:ecosystem) { FactoryBot.create(:content_ecosystem) }
-  let(:task)      { FactoryBot.create(:tasks_task, ecosystem: ecosystem) }
+  let(:ecosystem)   { FactoryBot.create(:content_ecosystem) }
+  let(:task)        { FactoryBot.create(:tasks_task, ecosystem: ecosystem) }
   let(:represented) { described_class.new(task).to_hash }
 
   it 'includes fields' do
     expect(represented).to include(
-                             'title' => task.title,
-                             'type' => task.task_type,
-                             'due_at' => DateTimeUtilities.to_api_s(task.due_at),
-                             'student_names' => task.students.map(&:name)
-                           )
+      'title' => task.title,
+      'type' => task.task_type,
+      'due_at' => DateTimeUtilities.to_api_s(task.due_at),
+      'student_names' => task.students.map(&:name)
+    )
   end
 
   it 'includes ecosystem information in the spy' do
     expect(represented['spy']).to(
-      eq({ecosystem_id: ecosystem.id, ecosystem_title: ecosystem.title})
+      eq("ecosystem_id" => ecosystem.id, "ecosystem_title" => ecosystem.title)
     )
   end
 

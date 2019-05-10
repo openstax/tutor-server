@@ -56,7 +56,7 @@ class Lms::SendCourseScores
 
   def course_score_data(user_profile_id)
     @scores_by_user_profile_id ||= begin
-      perf_report = Tasks::GetTpPerformanceReport[course: @course, is_teacher: true]
+      perf_report = Tasks::GetPerformanceReport[course: @course, is_teacher: true]
 
       scores = perf_report.flat_map do |period_perf_report|
         period_perf_report[:students]

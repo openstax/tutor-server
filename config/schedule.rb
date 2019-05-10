@@ -14,12 +14,12 @@ every 1.minute do
 end
 
 every 1.day, at: '8:30 AM' do  # ~ 2:30am central
-  runner "OpenStax::RescueFrom.this{ GetSalesforceBookNames.call(true) }"
-  runner "OpenStax::RescueFrom.this{ PushSalesforceCourseStats.call(allow_error_email: true) }"
+  runner "OpenStax::RescueFrom.this { GetSalesforceBookNames.call(true) }"
+  runner "OpenStax::RescueFrom.this { PushSalesforceCourseStats.call(allow_error_email: true) }"
 end
 
 every 1.day, at: '10:30 AM' do
-  runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.where{created_at.lt Time.current - 1.year}.destroy_all }"
+  runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.cleanup }"
 end
 
 every 1.hour do
@@ -31,5 +31,5 @@ every 1.month, at: '9 AM' do  # ~ 3am central
 end
 
 every 1.hour do
-  runner "OpenStax::RescueFrom.this{ Research::UpdateStudyActivations.call } "
+  runner "OpenStax::RescueFrom.this { Research::UpdateStudyActivations.call }"
 end

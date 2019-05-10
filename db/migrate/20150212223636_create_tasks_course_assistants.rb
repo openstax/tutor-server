@@ -1,4 +1,4 @@
-class CreateTasksCourseAssistants < ActiveRecord::Migration
+class CreateTasksCourseAssistants < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_course_assistants do |t|
       t.references :entity_course, null: false,

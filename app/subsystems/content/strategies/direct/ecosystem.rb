@@ -102,7 +102,7 @@ module Content
         def books(preload: false)
           books = repository.books
           books = books.preloaded if preload
-          books.map{ |book| ::Content::Book.new(strategy: book.wrap) }
+          books.map { |book| ::Content::Book.new(strategy: book.wrap) }
         end
 
         alias_method :entity_chapters, :chapters
@@ -124,7 +124,7 @@ module Content
 
           entity_chapters.where(id: ids).map do |entity_chapter|
             ::Content::Chapter.new(strategy: entity_chapter)
-          end.sort_by{ |ch| id_indices[ch.id] }
+          end.sort_by { |ch| id_indices[ch.id] }
         end
 
         alias_method :entity_pages, :pages
@@ -146,7 +146,7 @@ module Content
 
           entity_pages.where(id: ids).map do |entity_page|
             ::Content::Page.new(strategy: entity_page)
-          end.sort_by{ |pg| id_indices[pg.id] }
+          end.sort_by { |pg| id_indices[pg.id] }
         end
 
         alias_method :entity_exercises, :exercises
@@ -168,7 +168,7 @@ module Content
 
           entity_exercises.where(id: ids).map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
-          end.sort_by{ |ex| id_indices[ex.id] }
+          end.sort_by { |ex| id_indices[ex.id] }
         end
 
         def exercises_by_numbers(*numbers)
@@ -186,34 +186,33 @@ module Content
                           .map do |number, entity_exercises|
             latest_exercise = entity_exercises.max_by{ |ex| ex.version }
             ::Content::Exercise.new(strategy: latest_exercise)
-          end.sort_by{ |ex| number_indices[ex.number] }
+          end.sort_by { |ex| number_indices[ex.number] }
         end
 
         def exercises_by_nicknames(*nicks_array, pages: nil)
           exercises = entity_exercises.reorder(nil).where(nickname: nicks_array.flatten)
           exercises = exercises.where(content_page_id: [pages].flatten.map(&:id)) unless pages.nil?
 
-          exercises.map{ |entity_exercise| ::Content::Exercise.new(strategy: entity_exercise) }
+          exercises.map { |entity_exercise| ::Content::Exercise.new(strategy: entity_exercise) }
         end
 
         def exercises_with_tags(*tags_array, pages: nil, match_count: tags_array.size)
           exercises = entity_exercises.reorder(nil)
                                       .preload(:tags)
                                       .joins(:tags)
-                                      .where(tags: {value: tags_array.flatten})
-                                      .group(:id).having do
-            count(distinct(tags.id)).gteq match_count
-          end
+                                      .where(tags: { value: tags_array.flatten })
+                                      .group(:id)
+                                      .having(
+            Content::Models::Tag.arel_table[:id].count(true).gteq(match_count).to_sql
+          )
           exercises = exercises.where(content_page_id: [pages].flatten.map(&:id)) unless pages.nil?
 
-          exercises.map{ |entity_exercise| ::Content::Exercise.new(strategy: entity_exercise) }
+          exercises.map { |entity_exercise| ::Content::Exercise.new(strategy: entity_exercise) }
         end
 
         alias_method :entity_pools, :pools
         def pools
-          entity_pools.map do |entity_pool|
-            ::Content::Pool.new(strategy: entity_pool)
-          end
+          entity_pools.map { |entity_pool| ::Content::Pool.new(strategy: entity_pool) }
         end
 
         def reading_dynamic_pools(pages:)
@@ -260,7 +259,7 @@ module Content
 
           entity_tags.where(value: values).map do |entity_tag|
             ::Content::Tag.new(strategy: entity_tag)
-          end.sort_by{ |tag| value_indices[tag.value.to_s] }
+          end.sort_by { |tag| value_indices[tag.value.to_s] }
         end
 
         alias_method :string_tutor_uuid, :tutor_uuid

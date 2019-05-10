@@ -1,4 +1,4 @@
-class RenameLmsCourseGradeCallbacksToUseScore < ActiveRecord::Migration
+class RenameLmsCourseGradeCallbacksToUseScore < ActiveRecord::Migration[4.2]
   def change
     rename_table :lms_course_grade_callbacks, :lms_course_score_callbacks
 

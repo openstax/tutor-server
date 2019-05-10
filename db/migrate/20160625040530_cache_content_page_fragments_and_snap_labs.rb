@@ -1,4 +1,4 @@
-class CacheContentPageFragmentsAndSnapLabs < ActiveRecord::Migration
+class CacheContentPageFragmentsAndSnapLabs < ActiveRecord::Migration[4.2]
   def up
     # This migration has been split in 2 so that it works with the model changes
     # End result should be the same regardless

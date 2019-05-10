@@ -39,7 +39,7 @@ RSpec.describe Research::ExportAndUploadSurveyData, type: :routine do
 
       responses_by_research_identifier = @survey_plan.surveys
         .joins(student: :role)
-        .pluck('"entity_roles"."research_identifier"', :survey_js_response)
+        .pluck(Entity::Role.arel_table[:research_identifier], :survey_js_response)
         .to_h
 
       rows[1..-1].each do |row|

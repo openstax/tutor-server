@@ -1,4 +1,4 @@
-class AddAllExercisesPoolToPages < ActiveRecord::Migration
+class AddAllExercisesPoolToPages < ActiveRecord::Migration[4.2]
   def change
     add_reference :content_pages, :content_all_exercises_pool
     add_foreign_key :content_pages, :content_pools, column: :content_all_exercises_pool_id,

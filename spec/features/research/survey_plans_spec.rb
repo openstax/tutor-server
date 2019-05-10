@@ -59,7 +59,7 @@ RSpec.feature 'Researcher working with survey plans' do
     click_link 'Publish'
     click_link 'Hide'
     expect(survey_plan.reload).to be_is_hidden
-    expect(survey_plan.surveys(true).all?{|ss| ss.is_hidden?}).to eq true
+    expect(survey_plan.surveys.all?(&:is_hidden?)).to eq true
   end
 
   scenario 'hide a published survey plan' do
@@ -68,7 +68,7 @@ RSpec.feature 'Researcher working with survey plans' do
     click_link 'Publish'
     click_link 'Hide'
     expect(survey_plan.reload).to be_is_hidden
-    expect(survey_plan.surveys(true).all?{|ss| ss.is_hidden?}).to eq true
+    expect(survey_plan.surveys.all?(&:is_hidden?)).to eq true
   end
 
   scenario 'export a published survey plan' do

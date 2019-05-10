@@ -1,4 +1,4 @@
-class RenameCatalogOfferingsIdentifierToSalesforceBookNameAndAddAppearanceCode < ActiveRecord::Migration
+class RenameCatalogOfferingsIdentifierToSalesforceBookNameAndAddAppearanceCode < ActiveRecord::Migration[4.2]
   def change
     rename_column :catalog_offerings, :identifier, :salesforce_book_name
     add_column :catalog_offerings, :appearance_code, :string

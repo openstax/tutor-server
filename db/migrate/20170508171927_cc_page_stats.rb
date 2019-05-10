@@ -1,4 +1,4 @@
-class CcPageStats < ActiveRecord::Migration
+class CcPageStats < ActiveRecord::Migration[4.2]
 
     def change
       create_view :cc_page_stats, materialized: true

@@ -1,4 +1,4 @@
-class AddSalesforceFieldsToCourse < ActiveRecord::Migration
+class AddSalesforceFieldsToCourse < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :creator_campaign_member_id, :string, default: nil, null: true
     add_column :course_profile_courses, :latest_adoption_decision, :string, default: nil, null: true

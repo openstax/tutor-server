@@ -14,9 +14,11 @@ class CourseMembership::GetRoleCourses
     if types.include?(:any)
       includes_student = true
       includes_teacher = true
+      includes_teacher_student = true
     else
       includes_student = types.include?(:student)
       includes_teacher = types.include?(:teacher)
+      includes_teacher_student = types.include?(:teacher_student)
     end
 
     return outputs.courses = CourseProfile::Models::Course.none \
@@ -31,7 +33,7 @@ class CourseMembership::GetRoleCourses
         .where(course_membership_students: { entity_role_id: role_ids })
 
       student_subquery = student_subquery.where(
-        course_membership_periods: { archived_at: nil },
+        periods: { archived_at: nil },
         course_membership_students: { dropped_at: nil }
       ) unless include_dropped_students
 
@@ -41,22 +43,29 @@ class CourseMembership::GetRoleCourses
     if includes_teacher
       teacher_subquery = CourseProfile::Models::Course
         .joins(:teachers)
-        .where(course_membership_teachers: { entity_role_id: role_ids })
+        .where(teachers: { entity_role_id: role_ids })
 
       teacher_subquery = teacher_subquery.where(
-        course_membership_teachers: { deleted_at: nil }
+        teachers: { deleted_at: nil }
       ) unless include_deleted_teachers
 
       subqueries << teacher_subquery
     end
 
-    subquery = subqueries.size == 1 ? subqueries.first.arel : subqueries.reduce(:union)
+    if includes_teacher_student
+      teacher_student_subquery = CourseProfile::Models::Course
+        .joins(:teacher_students)
+        .where(teacher_students: { entity_role_id: role_ids })
 
-    # http://radar.oreilly.com/2014/05/more-than-enough-arel.html
-    course_table = CourseProfile::Models::Course.arel_table
-    courses = CourseProfile::Models::Course.from(
-      course_table.create_table_alias(subquery, :course_profile_courses)
-    )
+      teacher_student_subquery = teacher_student_subquery.where(
+        teacher_students: { deleted_at: nil }
+      ) unless include_deleted_teachers
+
+      subqueries << teacher_student_subquery
+    end
+
+    subquery = "(#{subqueries.map(&:to_sql).join(' UNION ')}) AS \"course_profile_courses\""
+    courses = CourseProfile::Models::Course.from(subquery)
 
     courses = courses.preload(*[preload].flatten) unless preload.nil?
 

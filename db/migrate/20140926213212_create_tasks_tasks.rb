@@ -1,4 +1,4 @@
-class CreateTasksTasks < ActiveRecord::Migration
+class CreateTasksTasks < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_tasks do |t|
       t.references :tasks_task_plan, index: true,

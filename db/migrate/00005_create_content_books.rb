@@ -1,4 +1,4 @@
-class CreateContentBooks < ActiveRecord::Migration
+class CreateContentBooks < ActiveRecord::Migration[4.2]
   def change
     create_table :content_books do |t|
       t.resource

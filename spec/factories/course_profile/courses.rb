@@ -36,10 +36,6 @@ FactoryBot.define do
       after(:create) { |course| Tasks::CreateCourseAssistants[course: course] }
     end
 
-    trait(:process_school_change) do
-      after(:create) { |course| SchoolDistrict::ProcessSchoolChange[course: course] }
-    end
-
     trait(:without_ecosystem) do
       after(:build) { |course| course.course_ecosystems.delete_all :delete_all }
     end

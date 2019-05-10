@@ -4,9 +4,10 @@ RSpec.describe "Terms", type: :request, api: true, version: :v1 do
 
   let(:application)     { FactoryBot.create :doorkeeper_application }
   let!(:user_1)         { FactoryBot.create(:user) }
-  let(:user_1_token)    { FactoryBot.create :doorkeeper_access_token,
-                                              application: application,
-                                              resource_owner_id: user_1.id }
+  let(:user_1_token)    do
+    FactoryBot.create :doorkeeper_access_token,
+                      application: application, resource_owner_id: user_1.id
+  end
 
   let!(:general_terms_of_use) { create_contract!('general_terms_of_use') }
   let!(:privacy_policy) { create_contract!('privacy_policy') }
@@ -67,9 +68,9 @@ RSpec.describe "Terms", type: :request, api: true, version: :v1 do
     it 'does not error if one of terms already signed' do
       expect(FinePrint.signed_contract?(user_1.to_model, privacy_policy)).to be false
       FinePrint.sign_contract(user_1.to_model, 'general_terms_of_use')
-      expect{
+      expect do
         api_put("/api/terms/#{general_terms_of_use.id},#{privacy_policy.id}", user_1_token)
-      }.to change{FinePrint::Signature.count}.by(1)
+      end.to change{FinePrint::Signature.count}.by(1)
       expect(response).to have_http_status(:success)
       expect(FinePrint.signed_contract?(user_1.to_model, privacy_policy)).to be true
     end

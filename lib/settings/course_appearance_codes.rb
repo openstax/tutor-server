@@ -5,7 +5,7 @@ module Settings
       include Enumerable
 
       def each
-        Settings::Db.store.course_appearance_codes.each{|code| yield code }
+        Settings::Db.course_appearance_codes.each { |code| yield code }
       end
 
     end

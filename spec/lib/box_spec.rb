@@ -38,6 +38,6 @@ RSpec.describe Box, type: :lib, vcr: VCR_OPTS do
 
     parent = result['parent']
     expect(parent['type']).to eq 'folder'
-    expect(parent['name']).to eq Rails.application.secrets.box['exports_folder']
+    expect(parent['name']).to eq Rails.application.secrets.box[:exports_folder]
   end
 end

@@ -1,16 +1,12 @@
 require 'rails-settings-ui'
 
-# Prevent deprecation warning:
-# respond_to?(:respond_to_missing?) is old fashion which takes only one parameter
-module RailsSettingsUi::MainAppRouteDelegator
-  def respond_to?(method, include_private_methods = false)
-    super || main_app_route_method?(method, include_private_methods)
-  end
-
-  private
-
-  def main_app_route_method?(method, include_private_methods = false)
-    method.to_s =~ /_(?:path|url)$/ && main_app.respond_to?(method, include_private_methods)
+# Compatibility with newer versions of rails-settings-cached
+module RailsSettingsUi
+  class << self
+    def default_settings
+      settings = RailsSettingsUi.settings_klass.get_all
+      settings.reject { |name, _description| ignored_settings.include?(name.to_sym) }
+    end
   end
 end
 
@@ -18,7 +14,7 @@ RailsSettingsUi.setup do |config|
   # Specify a controller for RailsSettingsUi::ApplicationController to inherit from:
   config.parent_controller = 'Admin::BaseController' # default: '::ApplicationController'
 
-  config.settings_class = "Settings::Db::Store"
+  config.settings_class = 'Settings::Db'
 
   config.settings_displayed_as_select_tag = [
     :biglearn_student_clues_algorithm_name,
@@ -50,7 +46,7 @@ Rails.application.config.to_prepare do
 
         yield
 
-        Settings::Db.store.object('excluded_ids').expire_cache
+        Settings::Db.clear_cache
         new_excluded_ids = Settings::Exercises.excluded_ids
         SendGlobalExerciseExclusionsToBiglearn.perform_later if new_excluded_ids != old_excluded_ids
       end

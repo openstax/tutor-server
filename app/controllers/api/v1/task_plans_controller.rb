@@ -49,13 +49,13 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
       task_plans = case params[:clone_status]
       when 'unused_source'
-        tps.where{id.not_in cloned_task_plan_ids}
+        tps.where.not(id: cloned_task_plan_ids)
       when 'used_source'
-        tps.where{id.in cloned_task_plan_ids}
+        tps.where(id: cloned_task_plan_ids)
       when 'original'
-        tps.where{cloned_from_id == nil}
+        tps.where(cloned_from_id: nil)
       when 'clone'
-        tps.where{cloned_from_id != nil}
+        tps.where.not(cloned_from_id: nil)
       else
         tps
       end

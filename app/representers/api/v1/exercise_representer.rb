@@ -78,6 +78,5 @@ module Api::V1
              getter: ->(*) { respond_to?(:page_uuid) ? page_uuid : page.try(:uuid) },
              schema_info: { required: true }
 
-
   end
 end

@@ -1,4 +1,4 @@
-class AddResearchModels < ActiveRecord::Migration
+class AddResearchModels < ActiveRecord::Migration[4.2]
   def change
     create_table :research_studies do |t|
       t.string :name,                           null: false

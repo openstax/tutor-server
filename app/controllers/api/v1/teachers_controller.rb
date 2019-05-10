@@ -1,5 +1,5 @@
 class Api::V1::TeachersController < Api::V1::ApiController
-  before_filter :get_teacher, only: [:destroy]
+  before_action :get_teacher, only: [:destroy]
 
   resource_description do
     api_versions 'v1'

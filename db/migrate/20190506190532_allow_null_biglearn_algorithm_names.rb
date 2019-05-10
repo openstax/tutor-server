@@ -1,4 +1,4 @@
-class AllowNullBiglearnAlgorithmNames < ActiveRecord::Migration
+class AllowNullBiglearnAlgorithmNames < ActiveRecord::Migration[4.2]
   def change
     change_column_null :course_profile_courses, :biglearn_student_clues_algorithm_name, true
     change_column_null :course_profile_courses, :biglearn_teacher_clues_algorithm_name, true

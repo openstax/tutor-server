@@ -9,9 +9,9 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
       student = FactoryBot.create :course_membership_student, role: role, course: course
 
       result = nil
-      expect {
+      expect do
         result = CourseMembership::AddEnrollment.call(period: period, student: student)
-      }.to change{ CourseMembership::Models::Enrollment.count }.by(1)
+      end.to change { CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
     end
   end
@@ -25,17 +25,17 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
       student  = CourseMembership::AddStudent[period: period_1, role: role]
 
       result = nil
-      expect {
+      expect do
         result = CourseMembership::AddEnrollment.call(period: period_2, student: student)
-      }.to change{ CourseMembership::Models::Enrollment.count }.by(1)
+      end.to change { CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
       expect(student.period.id).to eq period_2.id
 
-      expect {
+      expect do
         result = CourseMembership::AddEnrollment.call(period: period_1, student: student)
-      }.to change{ CourseMembership::Models::Enrollment.count }.by(1)
+      end.to change { CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
@@ -53,9 +53,9 @@ RSpec.describe CourseMembership::AddEnrollment, type: :routine do
       student  = CourseMembership::AddStudent[period: period_1, role: role]
 
       result = nil
-      expect {
+      expect do
         result = CourseMembership::AddEnrollment.call(period: period_2, student: student)
-      }.not_to change{ CourseMembership::Models::Enrollment.count }
+      end.not_to change { CourseMembership::Models::Enrollment.count }
       expect(result.errors).not_to be_empty
 
       expect(student.reload.course).to eq course_1

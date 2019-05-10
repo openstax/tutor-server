@@ -29,7 +29,7 @@ class Research::ExportAndUploadSurveyData
 
   def create_survey_export_file(survey_plan:, filename:)
     surveys = survey_plan.surveys
-      .select([ :id, '"entity_roles"."research_identifier"', :survey_js_response ])
+      .select(:id, Entity::Role.arel_table[:research_identifier], :survey_js_response)
       .joins(student: :role)
 
     field_names = surveys.map(&:survey_js_response).compact.flat_map(&:keys).uniq

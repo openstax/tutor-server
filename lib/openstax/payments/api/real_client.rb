@@ -33,7 +33,7 @@ class OpenStax::Payments::Api::RealClient
       api_request(method: :post, url: "/pay/mock_purchase/", body: {
         product_instance_uuid: product_instance_uuid,
         purchaser_account_uuid: purchaser_account_uuid
-      }.select{|k,v| !v.nil?})
+      }.select { |k,v| !v.nil? })
     end
   end
 

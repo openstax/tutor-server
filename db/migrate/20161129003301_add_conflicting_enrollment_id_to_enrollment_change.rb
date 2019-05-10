@@ -1,4 +1,4 @@
-class AddConflictingEnrollmentIdToEnrollmentChange < ActiveRecord::Migration
+class AddConflictingEnrollmentIdToEnrollmentChange < ActiveRecord::Migration[4.2]
   def change
     add_column :course_membership_enrollment_changes,
                :course_membership_conflicting_enrollment_id,

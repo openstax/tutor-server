@@ -1,4 +1,4 @@
-class AddTitleAndNumberToCatalogOfferings < ActiveRecord::Migration
+class AddTitleAndNumberToCatalogOfferings < ActiveRecord::Migration[4.2]
   def change
     add_column :catalog_offerings, :title, :string
     add_column :catalog_offerings, :number, :integer

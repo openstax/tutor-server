@@ -1,13 +1,5 @@
-class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskSteps < ActiveRecord::Migration
-  CONFLICTING_MIGRATION_VERSION = 20170508171927
-
+class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTasksTaskSteps < ActiveRecord::Migration[4.2]
   def up
-    # Undo the conflicting migration, if already done
-    migration_paths = ActiveRecord::Migrator.migrations_paths
-    conflicting_migrations = ActiveRecord::Migrator.down(migration_paths) do |migration|
-      migration.version == CONFLICTING_MIGRATION_VERSION
-    end
-
     # https://dba.stackexchange.com/a/52531
     query = <<-SQL.strip_heredoc
       SET LOCAL work_mem = '128 MB'; -- just for this transaction
@@ -141,9 +133,6 @@ class AddContentPageIdAndSpyAndCompletedAtIndicesAndRemoveRelatedContentFromTask
     SQL
 
     ActiveRecord::Base.connection.execute query
-
-    # Redo the conflicting migrations, if any
-    conflicting_migrations.each { |migration| migration.migrate :up }
   end
 
   def down

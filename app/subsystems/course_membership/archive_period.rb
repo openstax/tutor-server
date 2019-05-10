@@ -5,9 +5,10 @@ module CourseMembership
     def exec(period:)
       fatal_error(code: :period_is_already_deleted,
                   message: 'Period is already archived') if period.archived?
+
       period_model = period.to_model
       period_model.destroy
-      period_model.clear_association_cache
+      period_model.send :clear_association_cache
       transfer_errors_from(period_model, { type: :verbatim }, true)
       outputs.period = period
 

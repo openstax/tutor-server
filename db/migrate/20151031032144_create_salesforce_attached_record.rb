@@ -1,4 +1,4 @@
-class CreateSalesforceAttachedRecord < ActiveRecord::Migration
+class CreateSalesforceAttachedRecord < ActiveRecord::Migration[4.2]
   def change
     create_table :salesforce_attached_records do |t|
       t.string :tutor_gid, null: false

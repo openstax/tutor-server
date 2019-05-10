@@ -11,23 +11,19 @@ class Legal::GetContractNames
     proxy_signed_contracts, non_proxy_signed_contracts =
       targeted_contracts.partition(&:is_proxy_signed)
 
-    outputs.proxy_signed =
-      proxy_signed_contracts.map(&:contract_name).uniq
+    outputs.proxy_signed = proxy_signed_contracts.map(&:contract_name).uniq
 
 
     # Figure out which remaining contracts need to be signed and then have
     # FinePrint take care of it.
 
-    contract_names_signed_by_everyone =
-      contract_names_signed_by_everyone.map(&:to_s)
+    contract_names_signed_by_everyone = contract_names_signed_by_everyone.map(&:to_s)
 
     contracts_masked_by_targeted_contracts =
-      targeted_contracts.map(&:masked_contract_names)
-                        .flatten.compact.uniq
+      targeted_contracts.map(&:masked_contract_names).flatten.compact.uniq
 
     targeted_contracts_without_proxy_signature =
-      non_proxy_signed_contracts.map(&:contract_name)
-                                .uniq
+      non_proxy_signed_contracts.map(&:contract_name).uniq
 
     outputs.non_proxy_signed =
       ( contract_names_signed_by_everyone -

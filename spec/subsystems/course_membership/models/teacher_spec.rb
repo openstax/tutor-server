@@ -6,9 +6,6 @@ RSpec.describe CourseMembership::Models::Teacher, type: :model do
   it { is_expected.to belong_to(:course) }
   it { is_expected.to belong_to(:role) }
 
-  it { is_expected.to validate_presence_of(:course) }
-  it { is_expected.to validate_presence_of(:role) }
-
   it { is_expected.to validate_uniqueness_of(:role) }
 
   [:username, :first_name, :last_name, :full_name].each do |method|

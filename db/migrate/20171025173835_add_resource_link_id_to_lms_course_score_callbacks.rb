@@ -1,4 +1,4 @@
-class AddResourceLinkIdToLmsCourseScoreCallbacks < ActiveRecord::Migration
+class AddResourceLinkIdToLmsCourseScoreCallbacks < ActiveRecord::Migration[4.2]
   def up
     # Callbacks should have had a resource_link_id on them, and in the new
     # way of things it doesn't make sense to have any without them, so blow

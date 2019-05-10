@@ -1,4 +1,4 @@
-class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
+class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_task_steps, :related_exercise_ids, :integer, array: true,
                                                          null: false, default: []
@@ -17,7 +17,7 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
           related_exercise_ids = related_exercise_ids_map[exercise.id]
 
           if related_exercise_ids.nil?
-            pool_exercises = exercise.page.reading_context_pool.exercises
+            pool_exercises = exercise.page.reading_context_pool.exercises.to_a
 
             los = exercise.los
             aplos = exercise.aplos

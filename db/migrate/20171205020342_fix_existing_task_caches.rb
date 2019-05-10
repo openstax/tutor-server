@@ -1,4 +1,4 @@
-class FixExistingTaskCaches < ActiveRecord::Migration
+class FixExistingTaskCaches < ActiveRecord::Migration[4.2]
   def up
     Tasks::Models::TaskCache.find_in_batches(batch_size: 100) do |task_caches|
       task_caches.each do |task_cache|

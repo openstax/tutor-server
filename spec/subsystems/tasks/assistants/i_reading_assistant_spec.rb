@@ -454,7 +454,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         {
           klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_exercise_ids: page.reload.reading_context_pool.exercises.select do |exercise|
+          related_exercise_ids: page.reload.reading_context_pool.exercises.to_a.select do |exercise|
             exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
           end.map(&:id),
           fragment_index: 3

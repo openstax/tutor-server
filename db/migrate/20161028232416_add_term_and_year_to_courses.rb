@@ -1,4 +1,4 @@
-class AddTermAndYearToCourses < ActiveRecord::Migration
+class AddTermAndYearToCourses < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :term, :integer
     add_column :course_profile_courses, :year, :integer

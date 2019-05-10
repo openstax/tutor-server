@@ -41,12 +41,12 @@ module Wrapper
     def wrap_attributes(model, *attributes)
       attributes.map.each do | attr |
         col = model.columns.find{|column| column.name == attr.to_s }
-        type = case col.cast_type.type
+        type = case col.type
                when :integer then Integer
                when :string  then String
                when :boolean then :boolean
                else
-                 raise "Unable to determine type of attribute #{attr}, sql type was #{col.cast_type.type}"
+                 raise "Unable to determine type of attribute #{attr}, sql type was #{col.type}"
                end
         _define_dynamic_wrapping(attr.to_sym, type)
       end

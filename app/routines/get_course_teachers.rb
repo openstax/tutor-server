@@ -6,17 +6,15 @@ class GetCourseTeachers
   protected
 
   def exec(course)
-    run(CourseMembership::GetTeachers, course)
-    teacher_ids = outputs[:teachers].map(&:id)
-    roles = Entity::Role.where { id.in teacher_ids }
-              .eager_load([:teacher, profile: :account])
+    teachers = run(CourseMembership::GetTeachers, course).outputs.teachers
+    teachers = teachers.preload(role: { profile: :account })
 
-    outputs[:teachers] = roles.map do |role|
-      { id: role.teacher.id.to_s,
-        role_id: role.id.to_s,
-        deleted_at: role.teacher.deleted_at,
-        first_name: role.profile.first_name,
-        last_name: role.profile.last_name }
+    outputs.teachers = teachers.map do |teacher|
+      { id: teacher.id.to_s,
+        role_id: teacher.entity_role_id.to_s,
+        deleted_at: teacher.deleted_at,
+        first_name: teacher.first_name,
+        last_name: teacher.last_name }
     end
   end
 end

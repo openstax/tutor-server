@@ -1,4 +1,4 @@
-class RenameUserProfileSubsystemToUser < ActiveRecord::Migration
+class RenameUserProfileSubsystemToUser < ActiveRecord::Migration[4.2]
   def up
     # Drop foreign key constraints
     remove_foreign_key :user_profile_profiles, :entity_users

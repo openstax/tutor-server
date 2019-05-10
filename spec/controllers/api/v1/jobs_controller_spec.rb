@@ -12,10 +12,10 @@ end
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
   include ActiveJob::TestHelper
 
-  let(:user) { FactoryBot.create(:user) }
+  let(:user)  { FactoryBot.create(:user) }
   let(:admin) { FactoryBot.create(:user, :administrator) }
 
-  let(:user_token) { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: user.id) }
+  let(:user_token)  { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: user.id) }
   let(:admin_token) { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
   before(:all) { Jobba.all.to_a.each(&:delete!) }
@@ -47,32 +47,27 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
     let(:job_id) { TestRoutine.perform_later }
 
     it 'returns the status of queued jobs' do
-      api_get :show, user_token, parameters: { id: job_id }
+      api_get :show, user_token, params: { id: job_id }
       expect(response).to have_http_status :success
       expect(response.body_as_hash).to include({ status: 'queued' })
     end
 
     it 'returns 404 Not Found if the job does not exist' do
-      api_get :show, user_token, parameters: { id: 42 }
+      api_get :show, user_token, params: { id: 42 }
       expect(response).to have_http_status :not_found
-      expect(response.body_as_hash).to include(errors: [{code: 'job_not_found',
-                                                         message: 'Job not found'}], status: 404)
+      expect(response.body_as_hash).to(
+        include(errors: [ { code: 'job_not_found', message: 'Job not found' } ], status: 404)
+      )
     end
 
     context 'with inline jobs' do
-      before(:each) do
-        ActiveJob::Base.queue_adapter = :inline
-      end
-
-      after(:each) do
-        ActiveJob::Base.queue_adapter = :test
-      end
+      around(:all) { |all| perform_enqueued_jobs { all.run } }
 
       it 'returns the status of succeeded jobs' do
-        api_get :show, user_token, parameters: { id: job_id }
+        api_get :show, user_token, params: { id: job_id }
 
         expect(response).to have_http_status :success
-        expect(response.body_as_hash).to include({ status: 'succeeded' })
+        expect(response.body_as_hash).to include(status: 'succeeded')
       end
 
       it 'works end-2-end for ExportPerformanceReport' do
@@ -83,17 +78,18 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
         AddUserAsCourseTeacher[course: course, user: user]
 
         begin
-          job_id = Tasks::ExportPerformanceReport.perform_later(course: course,
-                                                                role: Entity::Role.last)
+          job_id = Tasks::ExportPerformanceReport.perform_later(
+            course: course, role: Entity::Role.last
+          )
 
-          api_get :show, user_token, parameters: { id: job_id }
+          api_get :show, user_token, params: { id: job_id }
 
           url = Tasks::Models::PerformanceReportExport.last.url
 
           expect(response.body_as_hash[:url]).to eq(url)
         ensure
           Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
-            performance_report_export.try(:export).try(:file).try(:delete)
+            performance_report_export.try!(:export).try!(:file).try!(:delete)
           end
         end
       end

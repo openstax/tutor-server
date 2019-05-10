@@ -23,11 +23,9 @@ RSpec.describe GetUserTermsInfos, type: :routine do
     }
 
     it 'signs proxy signed contracts' do
-      expect{
+      expect do
         described_class[user]
-      }.to change{
-        FinePrint.signed_contract?(user.to_model, 'implicit')
-      }.from(false).to(true)
+      end.to change { FinePrint.signed_contract?(user.to_model, 'implicit') }.from(false).to(true)
     end
 
     it 'indicates if terms signed before' do

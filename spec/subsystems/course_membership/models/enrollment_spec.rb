@@ -12,9 +12,6 @@ module CourseMembership
       it { is_expected.to belong_to(:period) }
       it { is_expected.to belong_to(:student) }
 
-      it { is_expected.to validate_presence_of(:period) }
-      it { is_expected.to validate_presence_of(:student) }
-
       it 'requires student and period to belong to the same course' do
         expect(enrollment).to be_valid
 

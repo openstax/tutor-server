@@ -37,7 +37,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
       # The student signs up...
       api_post('/api/enrollment', student_token,
-               raw_post_data: { enrollment_code: period.enrollment_code })
+               params: { enrollment_code: period.enrollment_code }.to_json)
       enrollment_change_id = response.body_as_hash[:id]
       api_put("/api/enrollment/#{enrollment_change_id}/approve", student_token)
 
@@ -49,7 +49,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
     scenario 'undropped student gets assignments published while he was dropped' do
       # The student enrolls...
       api_post('/api/enrollment', student_token,
-               raw_post_data: { enrollment_code: period.enrollment_code })
+               params: { enrollment_code: period.enrollment_code }.to_json)
       enrollment_change_id = response.body_as_hash[:id]
       api_put("/api/enrollment/#{enrollment_change_id}/approve", student_token)
       expect(CourseMembership::GetPeriodStudentRoles[periods: period]).not_to be_empty
@@ -83,7 +83,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
       # The student signs up...
       api_post('/api/enrollment', student_token,
-               raw_post_data: { enrollment_code: period.enrollment_code })
+               params: { enrollment_code: period.enrollment_code }.to_json)
       enrollment_change_id = response.body_as_hash[:id]
       api_put("/api/enrollment/#{enrollment_change_id}/approve", student_token)
 
@@ -95,7 +95,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
     scenario 'undropped student gets assignments published while he was dropped' do
       # The student enrolls...
       api_post('/api/enrollment', student_token,
-               raw_post_data: { enrollment_code: period.enrollment_code })
+               params: { enrollment_code: period.enrollment_code }.to_json)
       enrollment_change_id = response.body_as_hash[:id]
       api_put("/api/enrollment/#{enrollment_change_id}/approve", student_token)
       expect(CourseMembership::GetPeriodStudentRoles[periods: period]).not_to be_empty

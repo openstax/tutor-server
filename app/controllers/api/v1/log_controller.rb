@@ -52,10 +52,15 @@ class Api::V1::LogController < Api::V1::ApiController
 
   api :POST, '/log/onboarding/<event code>', 'Log that a user onboarding event has occured'
   def onboarding_event
-    OSU::AccessPolicy.require_action_allowed!(params[:code], current_human_user, TrackTutorOnboardingEvent)
-    TrackTutorOnboardingEvent.perform_later(event: params[:code],
+    event_params = params.permit(:code, data: {})
+
+    OSU::AccessPolicy.require_action_allowed!(
+      event_params[:code], current_human_user, TrackTutorOnboardingEvent
+    )
+
+    TrackTutorOnboardingEvent.perform_later(event: event_params[:code],
                                             user: current_human_user,
-                                            data: params[:data])
+                                            data: event_params[:data].to_h)
     head :created
   end
 end

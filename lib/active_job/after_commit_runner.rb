@@ -12,6 +12,9 @@ class ActiveJob::AfterCommitRunner
     !@delayed_job.nil?
   end
 
+  def before_committed!(*_)
+  end
+
   def committed!(*_)
     delayed_worker.run(@delayed_job) if has_transactional_callbacks?
   end

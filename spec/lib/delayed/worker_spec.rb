@@ -32,16 +32,28 @@ module Delayed
       context 'ActiveJob::DeserializationError' do
         let(:exception) { ActiveJob::DeserializationError }
 
-        it 'fails the job instantly if it is an ActiveRecord::RecordNotFound' do
-          expect(job).to receive(:perform) { raise exception, ActiveRecord::RecordNotFound.new }
+        it 'fails the job instantly if the base exception is an ActiveRecord::RecordNotFound' do
+          expect(job).to receive(:perform) do
+            begin
+              raise ActiveRecord::RecordNotFound
+            rescue ActiveRecord::RecordNotFound
+              raise exception
+            end
+          end
 
           expect(delayed_job.failed?).to eq false
           delayed_worker.run(delayed_job)
           expect(delayed_job.failed?).to eq true
         end
 
-        it 'does not fail the job instantly if it is some other exception' do
-          expect(job).to receive(:perform) { raise exception, OpenStruct.new }
+        it 'does not fail the job instantly if the base exception is some other exception' do
+          expect(job).to receive(:perform) do
+            begin
+              raise ActiveRecord::RecordInvalid
+            rescue ActiveRecord::RecordInvalid
+              raise exception
+            end
+          end
 
           expect(delayed_job.failed?).to eq false
           delayed_worker.run(delayed_job)

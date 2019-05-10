@@ -11,13 +11,27 @@ class Content::Models::Page < IndestructibleRecord
   json_serialize :book_location, Integer, array: true
   json_serialize :baked_book_location, Integer, array: true
 
-  belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :reading_context_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :homework_core_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :homework_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :practice_widget_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :concept_coach_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
+  belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool',
+                                    dependent: :destroy,
+                                    optional: true
+  belongs_to :reading_context_pool, class_name: 'Content::Models::Pool',
+                                    dependent: :destroy,
+                                    optional: true
+  belongs_to :homework_core_pool, class_name: 'Content::Models::Pool',
+                                  dependent: :destroy,
+                                  optional: true
+  belongs_to :homework_dynamic_pool, class_name: 'Content::Models::Pool',
+                                     dependent: :destroy,
+                                     optional: true
+  belongs_to :practice_widget_pool, class_name: 'Content::Models::Pool',
+                                    dependent: :destroy,
+                                    optional: true
+  belongs_to :concept_coach_pool, class_name: 'Content::Models::Pool',
+                                  dependent: :destroy,
+                                  optional: true
+  belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool',
+                                  dependent: :destroy,
+                                  optional: true
 
   sortable_belongs_to :chapter, on: :number, inverse_of: :pages
   has_one :book, through: :chapter

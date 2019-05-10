@@ -2,10 +2,12 @@ require 'rails_helper'
 
 RSpec.describe WebviewController, type: :controller do
 
-  let!(:contract)       { FinePrint::Contract.create!(name: 'general_terms_of_use',
-                                                      title: 'General Terms of Use',
-                                                      content: Faker::Lorem.paragraphs,
-                                                      version: 10) }
+  let!(:contract)       do
+    FinePrint::Contract.create!(name: 'general_terms_of_use',
+                                title: 'General Terms of Use',
+                                content: Faker::Lorem.paragraphs,
+                                version: 10)
+  end
   let(:new_user)        { FactoryBot.create(:user, skip_terms_agreement: true) }
   let(:registered_user) { FactoryBot.create(:user) }
 
@@ -13,7 +15,7 @@ RSpec.describe WebviewController, type: :controller do
 
   context 'GET home' do
     it 'renders a static page for anonymous' do
-      get :home, headers: chrome_ua
+      get :home
       expect(response).to have_http_status(:success)
     end
 
@@ -25,7 +27,7 @@ RSpec.describe WebviewController, type: :controller do
     end
 
     it 'redirect to CC landing page when param set' do
-      get :home, cc: "1"
+      get :home, params: { cc: "1" }
       expect(response).to redirect_to('http://cc.openstax.org')
     end
 

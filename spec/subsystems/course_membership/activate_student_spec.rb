@@ -11,9 +11,9 @@ RSpec.describe CourseMembership::ActivateStudent, type: :routine do
 
     it "activates the student" do
       result = nil
-      expect {
+      expect do
         result = described_class.call(student: student)
-      }.to change{ student.reload.dropped? }.from(true).to(false)
+      end.to change { student.reload.dropped? }.from(true).to(false)
       expect(result.errors).to be_empty
 
       expect(student.course).to eq course

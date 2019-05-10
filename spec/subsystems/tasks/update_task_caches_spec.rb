@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
-  let(:course)                { @task_plan.owner }
-  let(:tasks)                 { @task_plan.tasks.to_a }
-  let(:task_ids)              { tasks.map(&:id) }
-  let(:student_tasks)         do
+  let(:course)                  { @task_plan.owner }
+  let(:tasks)                   { @task_plan.tasks.to_a }
+  let(:task_ids)                { tasks.map(&:id) }
+  let(:student_tasks)           do
     tasks.select { |task| task.taskings.any? { |tasking| tasking.role.student.present? } }
   end
-  let(:num_task_caches)       { student_tasks.size }
-  let(:ecosystem)             { @task_plan.ecosystem }
+  let(:num_task_caches)         { student_tasks.size }
+  let(:ecosystem)               { @task_plan.ecosystem }
 
   context 'reading' do
     before(:all)                do
@@ -18,14 +18,16 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
     end
     after(:all)                 { DatabaseCleaner.clean }
 
-    let(:configured_job)        { Lev::ActiveJob::ConfiguredJob.new(described_class, queue: queue) }
-
     before do
+      @task_plan.reload
+
       allow(described_class).to receive(:set) do |options|
         expect(options[:queue]).to eq queue
         configured_job
       end
     end
+
+    let(:configured_job)        { Lev::ActiveJob::ConfiguredJob.new(described_class, queue: queue) }
 
     let(:book)                  { ecosystem.books.first }
     let(:chapter)               { book.chapters.first }
@@ -189,8 +191,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
     context 'preview' do
       before do
-        course.reload.update_attribute :is_preview, true
-        @task_plan.reload.update_attribute :is_preview, true
+        course.update_attribute :is_preview, true
+        @task_plan.update_attribute :is_preview, true
       end
 
       let(:queue) { :lowest_priority }
@@ -202,8 +204,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                                                           .and_return(Tasks::UpdatePeriodCaches)
         expect(Tasks::UpdatePeriodCaches).to receive(:perform_later)
 
-        expect { described_class.call(task_ids: task_ids, queue: queue.to_s) }
-          .to change { Tasks::Models::TaskCache.count }.by(num_task_caches)
+        expect do
+          described_class.call(task_ids: task_ids, queue: queue.to_s)
+        end.to change { Tasks::Models::TaskCache.count }.by(num_task_caches)
 
         task_caches = Tasks::Models::TaskCache.where(tasks_task_id: task_ids)
         task_caches.each do |task_cache|
@@ -291,7 +294,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         @task_plan.tasks.delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          expect(task_ids).to match_array(@task_plan.tasks.pluck(:id))
+          expect(task_ids).to match_array(@task_plan.tasks.reset.pluck(:id))
           expect(queue).to eq queue.to_s
         end
 
@@ -333,7 +336,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         course.course_ecosystems.delete_all :delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          student_task_ids = @task_plan.tasks.select do |task|
+          student_task_ids = @task_plan.tasks.to_a.select do |task|
             task.taskings.any? { |tasking| tasking.role.student.present? }
           end.map(&:id)
           expect(task_ids).to match_array(student_task_ids)
@@ -456,7 +459,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         @task_plan.tasks.delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          expect(task_ids).to match_array(@task_plan.tasks.pluck(:id))
+          expect(task_ids).to match_array(@task_plan.tasks.reset.pluck(:id))
           expect(queue).to eq queue.to_s
         end
 
@@ -502,7 +505,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         course.course_ecosystems.delete_all :delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          student_task_ids = @task_plan.tasks.select do |task|
+          student_task_ids = @task_plan.tasks.to_a.select do |task|
             task.taskings.any? { |tasking| tasking.role.student.present? }
           end.map(&:id)
           expect(task_ids).to match_array(student_task_ids)
@@ -543,6 +546,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       )
     end
     after(:all)                 { DatabaseCleaner.clean }
+
+    before                      { @task_plan.reload }
 
     let(:expected_unworked_toc) do
       {

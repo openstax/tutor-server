@@ -1,4 +1,4 @@
-class GetTpDashboard
+class GetDashboard
 
   include DashboardRoutineMethods
 
@@ -45,7 +45,7 @@ class GetTpDashboard
 
     outputs.plans = result.plans.map do |task_plan|
       period_caches = period_caches_by_task_plan_id[task_plan.id] || []
-      total_students = period_caches.flat_map { |pc| pc.student_ids }.uniq.size
+      total_students = period_caches.flat_map(&:student_ids).uniq.size
       pgs = period_caches.flat_map do |period_cache|
         period_cache.as_toc[:books].flat_map do |bk|
           bk[:chapters].flat_map do |ch|

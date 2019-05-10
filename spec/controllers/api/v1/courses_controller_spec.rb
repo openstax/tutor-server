@@ -29,7 +29,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#index' do
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
-        expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
+        expect { api_get :index, nil }.to raise_error(SecurityTransgression)
       end
     end
 
@@ -142,7 +142,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
-        expect{ api_post :create, nil, raw_post_data: valid_body }.to(
+        expect { api_post :create, nil, body: valid_body }.to(
           raise_error(SecurityTransgression)
         )
       end
@@ -150,7 +150,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'normal user' do
       it 'raises SecurityTransgression' do
-        expect{ api_post :create, @user_1_token, raw_post_data: valid_body }.to(
+        expect { api_post :create, @user_1_token, body: valid_body }.to(
           raise_error(SecurityTransgression)
         )
       end
@@ -189,9 +189,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         it 'claims a preview course for the faculty if all required attributes are given' do
           valid_body_hash.delete(:term)
           valid_body_hash.delete(:year)
-          expect { api_post :create, @user_1_token, raw_post_data: valid_body }.not_to(
-            change { CourseProfile::Models::Course.count }
-          )
+          expect do
+            api_post :create, @user_1_token, body: valid_body
+          end.not_to change { CourseProfile::Models::Course.count }
 
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
@@ -202,9 +202,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         it 'ignores the term and year attributes if given' do
           valid_body_hash.merge! year: 2016
-          expect { api_post :create, @user_1_token, raw_post_data: valid_body }.not_to(
-            change { CourseProfile::Models::Course.count }
-          )
+          expect do
+            api_post :create, @user_1_token, body: valid_body
+          end.not_to change { CourseProfile::Models::Course.count }
 
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to(
@@ -216,9 +216,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         end
 
         it 'makes the requesting faculty a teacher in the new preview course' do
-          expect{ api_post :create, @user_1_token, raw_post_data: valid_body }.to(
-            change{ CourseMembership::Models::Teacher.count }.by(1)
-          )
+          expect do
+            api_post :create, @user_1_token, body: valid_body
+          end.to change { CourseMembership::Models::Teacher.count }.by(1)
 
           expect(response).to have_http_status :success
           course = CourseProfile::Models::Course.order(:created_at).last
@@ -228,9 +228,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       context 'is_preview: false' do
         it 'creates a new course for the faculty if all required attributes are given' do
-          expect{ api_post :create, @user_1_token, raw_post_data: valid_body }.to(
-            change{ CourseProfile::Models::Course.count }.by(1)
-          )
+          expect do
+            api_post :create, @user_1_token, body: valid_body
+          end.to change { CourseProfile::Models::Course.count }.by(1)
 
           expect(response).to have_http_status :success
           expect(response.body_as_hash).to match a_hash_including(valid_body_hash)
@@ -238,9 +238,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         end
 
         it 'makes the requesting faculty a teacher in the new course' do
-          expect{ api_post :create, @user_1_token, raw_post_data: valid_body }.to(
-            change{ CourseMembership::Models::Teacher.count }.by(1)
-          )
+          expect do
+            api_post :create, @user_1_token, body: valid_body
+          end.to change { CourseMembership::Models::Teacher.count }.by(1)
 
           expect(response).to have_http_status :success
           course = CourseProfile::Models::Course.order(:created_at).last
@@ -249,9 +249,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         it 'requires the term and year attributes' do
           body_hash = valid_body_hash.except(:term, :year)
-          expect{ api_post :create, @user_1_token, raw_post_data: body_hash.to_json }.not_to(
-            change{ CourseMembership::Models::Teacher.count }
-          )
+          expect do
+            api_post :create, @user_1_token, body: body_hash.to_json
+          end.not_to change { CourseMembership::Models::Teacher.count }
 
           expect(response).to have_http_status :unprocessable_entity
           expect(response.body_as_hash[:errors]).to include(
@@ -265,9 +265,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         it 'does not allow the use of hidden course terms' do
           body_hash = valid_body_hash.merge term: :demo
-          expect{ api_post :create, @user_1_token, raw_post_data: body_hash.to_json }.not_to(
-            change{ CourseProfile::Models::Course.count }
-          )
+          expect do
+            api_post :create, @user_1_token, body: body_hash.to_json
+          end.not_to change { CourseProfile::Models::Course.count }
 
           expect(response).to have_http_status :unprocessable_entity
           expect(response.body_as_hash[:errors]).to include(
@@ -277,9 +277,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'returns errors if required attributes are not specified' do
-        expect{ api_post :create, @user_1_token }.not_to(
-          change{ CourseProfile::Models::Course.count }
-        )
+        expect do
+          api_post :create, @user_1_token
+        end.not_to change { CourseProfile::Models::Course.count }
 
         expect(response).to have_http_status :unprocessable_entity
         expect(response.body_as_hash[:status]).to eq 422
@@ -295,25 +295,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   context '#show' do
     context 'course does not exist' do
       it 'raises RecordNotFound' do
-        expect{ api_get :show, nil, parameters: { id: -1 } }.to(
-          raise_error(ActiveRecord::RecordNotFound)
-        )
+        expect do
+          api_get :show, nil, params: { id: -1 }
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
-        expect{ api_get :show, nil, parameters: { id: @course.id } }.to(
-          raise_error(SecurityTransgression)
-        )
+        expect do
+          api_get :show, nil, params: { id: @course.id }
+        end.to raise_error(SecurityTransgression)
       end
     end
 
     context 'user is not in the course' do
       it 'raises SecurityTransgression' do
-        expect{ api_get :show, @user_1_token, parameters: { id: @course.id } }.to(
-          raise_error(SecurityTransgression)
-        )
+        expect do
+          api_get :show, @user_1_token, params: { id: @course.id }
+        end.to raise_error(SecurityTransgression)
       end
     end
 
@@ -321,7 +321,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let!(:teacher_role) { AddUserAsCourseTeacher[course: @course, user: @user_1] }
 
       it 'returns the teacher roles with the course' do
-        api_get :show, @user_1_token, parameters: { id: @course.id }
+        api_get :show, @user_1_token, params: { id: @course.id }
 
         expect(response.body_as_hash).to match a_hash_including(
           roles: a_collection_containing_exactly(
@@ -338,7 +338,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let!(:student_role) { AddUserAsPeriodStudent[period: @period, user: @user_1] }
 
       it 'returns the student roles with the course' do
-        api_get :show, @user_1_token, parameters: { id: @course.id }
+        api_get :show, @user_1_token, params: { id: @course.id }
 
         expect(response.body_as_hash).to match a_hash_including(
           roles: a_collection_containing_exactly(
@@ -357,7 +357,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let!(:teacher_role) { AddUserAsCourseTeacher[course: @course, user: @user_1] }
 
       it 'returns both roles with the course' do
-        api_get :show, @user_1_token, parameters: { id: @course.id }
+        api_get :show, @user_1_token, params: { id: @course.id }
 
         expect(response.body_as_hash).to match a_hash_including(
           roles: a_collection_containing_exactly(
@@ -384,8 +384,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect do
-          api_patch :update, nil, parameters: { id: @course.id },
-                                  raw_post_data: { name: 'Renamed' }.to_json
+          api_patch :update, nil, params: { id: @course.id },
+                                  body: { name: 'Renamed' }.to_json
         end.to raise_error(SecurityTransgression)
 
         expect(@course.reload.name).to eq 'Physics 101'
@@ -399,8 +399,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'raises SecurityTrangression' do
         expect do
-          api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                            raw_post_data: { name: 'Renamed' }.to_json
+          api_patch :update, @user_1_token, params: { id: @course.id },
+                                            body: { name: 'Renamed' }.to_json
         end.to raise_error(SecurityTransgression)
 
         expect(@course.reload.name).to eq 'Physics 101'
@@ -411,8 +411,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before { AddUserAsCourseTeacher.call(user: @user_1, course: @course) }
 
       it 'renames the course' do
-        api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                          raw_post_data: { name: 'Renamed' }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id },
+                                          body: { name: 'Renamed' }.to_json
 
         expect(response.body_as_hash[:name]).to eq 'Renamed'
         expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
@@ -422,8 +422,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'turns on LMS integration when allowed' do
         @course.update_attribute(:is_lms_enabling_allowed, true)
-        api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                          raw_post_data: { is_lms_enabled: true }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id },
+                                          body: { is_lms_enabled: true }.to_json
 
         expect(response.body_as_hash[:is_lms_enabled]).to eq true
         expect(@course.reload.is_lms_enabled).to eq true
@@ -431,8 +431,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'cannot turn on LMS integration when not allowed' do
         @course.update_attribute(:is_lms_enabling_allowed, false)
-        api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                          raw_post_data: { is_lms_enabled: true }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id },
+                                          body: { is_lms_enabled: true }.to_json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(@course.reload.is_lms_enabled).to eq nil
       end
@@ -457,8 +457,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         # Change course TimeZone to Edinburgh
         course_name = @course.name
-        api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                          raw_post_data: { name: course_name,
+        api_patch :update, @user_1_token, params: { id: @course.id },
+                                          body: { name: course_name,
                                                            time_zone: 'Edinburgh' }.to_json
 
         expect(response.body_as_hash[:name]).to eq course_name
@@ -483,8 +483,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'updates the default open time' do
         course_name = @course.name
-        api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                          raw_post_data: { default_open_time: '01:02' }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id },
+                                          body: { default_open_time: '01:02' }.to_json
 
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
@@ -497,8 +497,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'freaks if the default open time is in a bad format' do
         expect do
           api_patch :update, @user_1_token,
-                    parameters: { id: @course.id },
-                    raw_post_data: { default_open_time: '1pm' }.to_json
+                    params: { id: @course.id },
+                    body: { default_open_time: '1pm' }.to_json
         end.not_to change{ @course.reload.default_open_time }
 
         expect(response).to have_http_status(:unprocessable_entity)
@@ -506,8 +506,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'updates the default due time' do
         course_name = @course.name
-        api_patch :update, @user_1_token, parameters: { id: @course.id },
-                                          raw_post_data: { default_due_time: '02:02' }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id },
+                                          body: { default_due_time: '02:02' }.to_json
 
         expect(@course.reload.name).to eq course_name
         expect(@course.time_zone.name).to eq 'Central Time (US & Canada)'
@@ -520,8 +520,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'freaks if the default due time is in a bad format' do
         expect do
           api_patch :update, @user_1_token,
-                    parameters: { id: @course.id },
-                    raw_post_data: { default_due_time: '1pm' }.to_json
+                    params: { id: @course.id },
+                    body: { default_due_time: '1pm' }.to_json
         end.not_to change{ @course.reload.default_open_time }
 
         expect(response).to have_http_status(:unprocessable_entity)
@@ -530,8 +530,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'updates is_college' do
         expect(@course.is_college).to eq true
         api_patch :update, @user_1_token,
-                  parameters: { id: @course.id },
-                  raw_post_data: { is_college: false }.to_json
+                  params: { id: @course.id },
+                  body: { is_college: false }.to_json
         expect(@course.reload.is_college).to eq false
       end
     end
@@ -603,11 +603,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'anonymous' do
       it 'raises SecurityTransgression if user is anonymous or not in course' do
         expect do
-          api_get :dashboard, nil, parameters: { id: @course.id }
+          api_get :dashboard, nil, params: { id: @course.id }
         end.to raise_error(SecurityTransgression)
 
         expect do
-          api_get :dashboard, @user_1_token, parameters: { id: @course.id }
+          api_get :dashboard, @user_1_token, params: { id: @course.id }
         end.to raise_error(SecurityTransgression)
       end
     end
@@ -615,7 +615,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'not paid' do
       it "422's if needs to pay" do
         make_payment_required_and_expect_422(course: @course, student: @student_role.student) do
-          api_get :dashboard, @student_token, parameters: { id: @course.id }
+          api_get :dashboard, @student_token, params: { id: @course.id }
         end
       end
     end
@@ -623,7 +623,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'student' do
       it 'returns an error if the course is a CC course' do
         @course.reload.update_attribute(:is_concept_coach, true)
-        api_get :dashboard, @student_token, parameters: { id: @course.id }
+        api_get :dashboard, @student_token, params: { id: @course.id }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
@@ -641,7 +641,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[1], is_correct: false]
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[2], is_correct: false]
 
-        api_get :dashboard, @student_token, parameters: { id: @course.id }
+        api_get :dashboard, @student_token, params: { id: @course.id }
 
         expect(response.body_as_hash).to match(
           tasks: a_collection_including(
@@ -707,7 +707,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "allows the start_at and end_at dates to be specified" do
-        api_get :dashboard, @student_token, parameters: {
+        api_get :dashboard, @student_token, params: {
           id: @course.id, start_at: @time_zone.now + 1.day, end_at: @time_zone.now + 1.week
         }
 
@@ -715,7 +715,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "allows the start_at date to be specified alone" do
-        api_get :dashboard, @student_token, parameters: {
+        api_get :dashboard, @student_token, params: {
           id: @course.id, start_at: @time_zone.now + 1.day
         }
 
@@ -723,7 +723,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "allows the end_at date to be specified alone" do
-        api_get :dashboard, @student_token, parameters: {
+        api_get :dashboard, @student_token, params: {
           id: @course.id, end_at: @time_zone.now - 2.weeks
         }
 
@@ -734,13 +734,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'teacher' do
       it 'returns an error if the course is a CC course' do
         @course.reload.update_attribute :is_concept_coach, true
-        api_get :dashboard, @teacher_token, parameters: { id: @course.id }
+        api_get :dashboard, @teacher_token, params: { id: @course.id }
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
       end
 
       it "works without a role specified" do
-        api_get :dashboard, @teacher_token, parameters: { id: @course.id }
+        api_get :dashboard, @teacher_token, params: { id: @course.id }
 
         expect(response.body_as_hash).to match(
           role: {
@@ -783,7 +783,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "allows the start_at and end_at dates to be specified" do
-        api_get :dashboard, @teacher_token, parameters: {
+        api_get :dashboard, @teacher_token, params: {
           id: @course.id, start_at: @time_zone.now - 2.hours, end_at: @time_zone.now - 1.hour
         }
 
@@ -791,7 +791,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "allows the start_at date to be specified alone" do
-        api_get :dashboard, @teacher_token, parameters: {
+        api_get :dashboard, @teacher_token, params: {
           id: @course.id, start_at: @time_zone.now - 2.hours
         }
 
@@ -799,340 +799,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it "allows the end_at date to be specified alone" do
-        api_get :dashboard, @teacher_token, parameters: {
+        api_get :dashboard, @teacher_token, params: {
           id: @course.id, end_at: @time_zone.now - 1.hours
         }
 
         expect(response.body_as_hash[:plans]).to be_empty
       end
-    end
-  end
-
-  context '#cc_dashboard' do
-    before(:all) do
-      DatabaseCleaner.start
-
-      student_user = FactoryBot.create :user
-      @student_role = AddUserAsPeriodStudent[user: student_user, period: @period]
-      @student_token = FactoryBot.create :doorkeeper_access_token,
-                                         resource_owner_id: student_user.id
-
-      student_user_2 = FactoryBot.create :user
-      @student_role_2 = AddUserAsPeriodStudent[user: student_user_2, period: @period]
-
-      teacher_user = FactoryBot.create :user, first_name: 'Bob',
-                                              last_name: 'Newhart',
-                                              full_name: 'Bob Newhart'
-      @teacher_role = AddUserAsCourseTeacher[user: teacher_user, course: @course]
-      @teacher_token = FactoryBot.create :doorkeeper_access_token,
-                                         resource_owner_id: teacher_user.id
-
-      @book = FactoryBot.create :content_book
-      @chapter_1 = FactoryBot.create :content_chapter, book: @book, book_location: [1]
-      @chapter_2 = FactoryBot.create :content_chapter, book: @book, book_location: [2]
-      cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: 'ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c',
-                                               title: 'Sample module 1')
-      cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '6a0568d8-23d7-439b-9a01-16e4e73886b3',
-                                               title: 'The Science of Biology')
-      cnx_page_3 = OpenStax::Cnx::V1::Page.new(id: '7636a3bf-eb80-4898-8b2c-e81c1711b99f',
-                                               title: 'Sample module 2')
-      book_location_1 = [1, 1]
-      book_location_2 = [1, 2]
-      book_location_3 = [2, 1]
-
-      page_model_1, page_model_2, page_model_3 = \
-        VCR.use_cassette('Api_V1_CoursesController/with_pages', VCR_OPTS) do
-          OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
-            [Content::Routines::ImportPage[chapter: @chapter_1,
-                                           cnx_page: cnx_page_1,
-                                           book_location: book_location_1],
-             Content::Routines::ImportPage[chapter: @chapter_1,
-                                           cnx_page: cnx_page_2,
-                                           book_location: book_location_2],
-             Content::Routines::ImportPage[chapter: @chapter_2,
-                                           cnx_page: cnx_page_3,
-                                           book_location: book_location_3]]
-          end
-        end
-
-      Content::Routines::PopulateExercisePools[book: @book]
-
-      @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
-      @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
-      @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
-
-      ecosystem_model = @book.ecosystem
-      @ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
-
-      @course.course_ecosystems.delete_all :delete_all
-
-      AddEcosystemToCourse[ecosystem: @ecosystem, course: @course]
-
-      @course.name = 'Biology 101'
-      @course.is_concept_coach = true
-      @course.save!
-
-      @task_1 = GetConceptCoach[
-        user: student_user, book_uuid: @book.uuid, page_uuid: @page_1.uuid
-      ]
-      @task_1.task_steps.each do |ts|
-        Preview::AnswerExercise[task_step: ts, is_correct: true]
-      end
-      @task_2 = GetConceptCoach[
-        user: student_user, book_uuid: @book.uuid, page_uuid: @page_2.uuid
-      ]
-      @task_2.task_steps.each do |ts|
-        Preview::AnswerExercise[task_step: ts, is_correct: false]
-      end
-      @task_3 = GetConceptCoach[
-        user: student_user, book_uuid: @book.uuid, page_uuid: @page_3.uuid
-      ]
-      @task_3.task_steps.each do |ts|
-        Preview::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
-      end
-      @task_4 = GetConceptCoach[
-        user: student_user_2, book_uuid: @book.uuid, page_uuid: @page_1.uuid
-      ]
-      @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Preview::AnswerExercise[task_step: ts, is_correct: ii == 0]
-      end
-      @task_5 = GetConceptCoach[
-        user: student_user_2, book_uuid: @book.uuid, page_uuid: @page_2.uuid
-      ]
-    end
-    after(:all)  do
-      DatabaseCleaner.clean
-
-      @course.reload
-    end
-
-    context 'anonymous' do
-      it 'raises SecurityTransgression if user is anonymous or not in course' do
-        expect do
-          api_get :cc_dashboard, nil, parameters: { id: @course.id }
-        end.to raise_error(SecurityTransgression)
-
-        expect do
-          api_get :cc_dashboard, @user_1_token, parameters: { id: @course.id }
-        end.to raise_error(SecurityTransgression)
-      end
-    end
-
-    context 'student' do
-      it 'returns an error if the course is a non-CC course' do
-        @course.reload.update_attribute(:is_concept_coach, false)
-        api_get :cc_dashboard, @student_token, parameters: { id: @course.id }
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body_as_hash[:errors].first[:code]).to eq 'non_cc_course'
-      end
-
-      it "works without a role specified" do
-        api_get :cc_dashboard, @student_token, parameters: { id: @course.id }
-
-        expect(response.body_as_hash).to match(
-          tasks: a_collection_including(
-            a_hash_including(
-              id: @task_1.id.to_s,
-              title: @task_1.title,
-              last_worked_at: be_kind_of(String),
-              type: 'concept_coach',
-              complete: true
-            ),
-            a_hash_including(
-              id: @task_2.id.to_s,
-              title: @task_2.title,
-              last_worked_at: be_kind_of(String),
-              type: 'concept_coach',
-              complete: true
-            ),
-            a_hash_including(
-              id: @task_3.id.to_s,
-              title: @task_3.title,
-              last_worked_at: be_kind_of(String),
-              type: 'concept_coach',
-              complete: true
-            )
-          ),
-          role: {
-            id: @student_role.id.to_s,
-            type: 'student'
-          },
-          course: {
-            name: 'Biology 101',
-            teachers: [
-              { id: @teacher_role.teacher.id.to_s,
-                role_id: @teacher_role.id.to_s,
-                first_name: 'Bob',
-                last_name: 'Newhart' }
-            ]
-          },
-          chapters: [
-            {
-              id: @chapter_2.id.to_s,
-              title: @chapter_2.title,
-              chapter_section: [2],
-              pages: [
-                {
-                  id: @page_3.id.to_s,
-                  title: @page_3.title,
-                  uuid: @page_3.uuid,
-                  version: @page_3.version,
-                  chapter_section: [2, 1],
-                  last_worked_at: be_kind_of(String),
-                  exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                    {
-                      id: a_kind_of(String),
-                      is_completed: true,
-                      is_correct: true
-                    }
-                  end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-                          .select{ |k_ago, ex_count| k_ago != :random && k_ago <= 2 }
-                          .sum { |k_ago, ex_count| ex_count }
-                          .times
-                          .map do
-                    {
-                      id: a_kind_of(String),
-                      is_completed: true,
-                      is_correct: false
-                    }
-                  end
-                }
-              ]
-            },
-            {
-              id: @chapter_1.id.to_s,
-              title: @chapter_1.title,
-              chapter_section: [1],
-              pages: [
-                {
-                  id: @page_2.id.to_s,
-                  title: @page_2.title,
-                  uuid: @page_2.uuid,
-                  version: @page_2.version,
-                  chapter_section: [1, 2],
-                  last_worked_at: be_kind_of(String),
-                  exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                    {
-                      id: a_kind_of(String),
-                      is_completed: true,
-                      is_correct: false
-                    }
-                  end
-                },
-                {
-                  id: @page_1.id.to_s,
-                  title: @page_1.title,
-                  uuid: @page_1.uuid,
-                  version: @page_1.version,
-                  chapter_section: [1, 1],
-                  last_worked_at: be_kind_of(String),
-                  exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                    {
-                      id: a_kind_of(String),
-                      is_completed: true,
-                      is_correct: true
-                    }
-                  end
-                }
-              ]
-            }
-          ]
-        )
-      end
-    end
-
-    context 'teacher' do
-      it 'returns an error if the course is a non-CC course' do
-        @course.reload.update_attribute(:is_concept_coach, false)
-        api_get :cc_dashboard, @teacher_token, parameters: { id: @course.id }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body_as_hash[:errors].first[:code]).to eq 'non_cc_course'
-      end
-
-      it "works without a role specified" do
-        Tasks::CcPageStatsView.refresh
-        api_get :cc_dashboard, @teacher_token, parameters: { id: @course.id }
-
-        expect(response.body_as_hash).to match(
-          role: {
-            id: @teacher_role.id.to_s,
-            type: 'teacher'
-          },
-          course: {
-            name: 'Biology 101',
-            teachers: [
-              { id: @teacher_role.teacher.id.to_s,
-                role_id: @teacher_role.id.to_s,
-                first_name: 'Bob',
-                last_name: 'Newhart' }
-            ],
-            periods: [
-              {
-                id: @zeroth_period.id.to_s,
-                name: @zeroth_period.name,
-                chapters: []
-              },
-              {
-                id: @period.id.to_s,
-                name: @period.name,
-                chapters: [
-                  {
-                    id: @chapter_2.id.to_s,
-                    title: @chapter_2.title,
-                    chapter_section: [2],
-                    pages: [
-                      {
-                        id: @page_3.id.to_s,
-                        title: @page_3.title,
-                        uuid: @page_3.uuid,
-                        version: @page_3.version,
-                        chapter_section: [2, 1],
-                        completed: 1,
-                        in_progress: 0,
-                        not_started: 1,
-                        original_performance: 1.0
-                      }
-                    ]
-                  },
-                  {
-                    id: @chapter_1.id.to_s,
-                    title: @chapter_1.title,
-                    chapter_section: [1],
-                    pages: [
-                      {
-                        id: @page_2.id.to_s,
-                        title: @page_2.title,
-                        uuid: @page_2.uuid,
-                        version: @page_2.version,
-                        chapter_section: [1, 2],
-                        completed: 1,
-                        in_progress: 0,
-                        not_started: 1,
-                        original_performance: 0.0
-                      },
-                      {
-                        id: @page_1.id.to_s,
-                        title: @page_1.title,
-                        uuid: @page_1.uuid,
-                        version: @page_1.version,
-                        chapter_section: [1, 1],
-                        completed: 1,
-                        in_progress: 1,
-                        not_started: 0,
-                        original_performance: 0.8,
-                        spaced_practice_performance: 0.0
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          tasks: []
-        )
-      end
-
     end
   end
 
@@ -1181,7 +853,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           @student_2.update_attribute :is_paid, true
           @student_3.update_attribute :is_comped, true
 
-          api_get :roster, @teacher_token, parameters: valid_params
+          api_get :roster, @teacher_token, params: valid_params
           expect(response).to have_http_status(:ok)
           roster = response.body_as_hash
 
@@ -1248,7 +920,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       context 'caller is not a course teacher' do
         it 'raises SecurityTransgression' do
           expect do
-            api_get :roster, @student_token, parameters: valid_params
+            api_get :roster, @student_token, params: valid_params
           end.to raise_error(SecurityTransgression)
         end
       end
@@ -1257,7 +929,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'caller has an application/client credentials authorization token' do
       it 'raises SecurityTransgression' do
         expect do
-          api_get :roster, @userless_token, parameters: valid_params
+          api_get :roster, @userless_token, params: valid_params
         end.to raise_error(SecurityTransgression)
       end
     end
@@ -1265,7 +937,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     context 'caller does not have an authorization token' do
       it 'raises SecurityTransgression' do
         expect do
-          api_get :roster, nil, parameters: valid_params
+          api_get :roster, nil, params: valid_params
         end.to raise_error(SecurityTransgression)
       end
     end
@@ -1288,7 +960,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
-        expect{ api_post :clone, nil, parameters: valid_params }.to(
+        expect { api_post :clone, nil, params: valid_params }.to(
           raise_error(SecurityTransgression)
         )
       end
@@ -1296,7 +968,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'user is not in the course' do
       it 'raises SecurityTransgression' do
-        expect{ api_post :clone, @user_1_token, parameters: valid_params }.to(
+        expect { api_post :clone, @user_1_token, params: valid_params }.to(
           raise_error(SecurityTransgression)
         )
       end
@@ -1306,7 +978,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before { AddUserAsPeriodStudent.call period: @period, user: @user_1 }
 
       it 'raises SecurityTransgression' do
-        expect { api_post :clone, @user_1_token, parameters: valid_params }.to(
+        expect { api_post :clone, @user_1_token, params: valid_params }.to(
           raise_error(SecurityTransgression)
         )
       end
@@ -1337,7 +1009,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before { AddUserAsCourseTeacher.call course: @course, user: @user_1 }
 
       it 'clones the course for the user' do
-        api_post :clone, @user_1_token, parameters: valid_params, raw_post_data: valid_body
+        api_post :clone, @user_1_token, params: valid_params, body: valid_body
 
         expect(response).to have_http_status(:success)
         new_course = response.body_as_hash
@@ -1359,14 +1031,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     after(:all)  { DatabaseCleaner.clean }
 
     it 'displays an error message if the request is not valid JSON' do
-      api_post :dates, nil, raw_post_data: ''
+      api_post :dates, nil, body: ''
 
       expect(response).to be_bad_request
-      expect(response.body_as_hash[:errors].first[:message]).to eq 'Request body is invalid JSON'
+      expect(response.body_as_hash[:errors].first[:message]).to(
+        eq 'An empty string is not a valid JSON string.'
+      )
     end
 
     it 'displays an error message if the request is not a JSON array' do
-      api_post :dates, nil, raw_post_data: { test: true }.to_json
+      api_post :dates, nil, body: { test: true }.to_json
 
       expect(response).to be_bad_request
       expect(response.body_as_hash[:errors].first[:message]).to(
@@ -1375,7 +1049,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it 'displays an error message if the request body JSON array does not contain strings' do
-      api_post :dates, nil, raw_post_data: [ { test: true } ].to_json
+      api_post :dates, nil, body: [ { test: true } ].to_json
 
       expect(response).to be_bad_request
       expect(response.body_as_hash[:errors].first[:message]).to(
@@ -1386,7 +1060,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'returns a mapping from course UUIDs to start/end dates if the request is well-formatted' do
       courses = CourseProfile::Models::Course.last(3)
 
-      api_post :dates, nil, raw_post_data: courses.map(&:uuid).to_json
+      api_post :dates, nil, body: courses.map(&:uuid).to_json
 
       expect(response).to be_ok
       courses.each do |course|

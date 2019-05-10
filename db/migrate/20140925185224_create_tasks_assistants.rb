@@ -1,4 +1,4 @@
-class CreateTasksAssistants < ActiveRecord::Migration
+class CreateTasksAssistants < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_assistants do |t|
       t.string :name, null: false

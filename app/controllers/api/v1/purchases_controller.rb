@@ -2,7 +2,7 @@ require_relative './fake_purchase_actions'
 
 class Api::V1::PurchasesController < Api::V1::ApiController
 
-  before_filter :verify_purchase_exists, only: [:check, :refund]
+  before_action :verify_purchase_exists, only: [:check, :refund]
 
   resource_description do
     api_versions "v1"

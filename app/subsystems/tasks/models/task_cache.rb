@@ -6,8 +6,8 @@ class Tasks::Models::TaskCache < ApplicationRecord
 
   enum task_type: Tasks::Models::Task.task_types.keys
 
-  validates :task, :task_type, presence: true
-  validates :ecosystem,        presence: true, uniqueness: { scope: :tasks_task_id }
+  validates :task_type, presence: true
+  validates :ecosystem, uniqueness: { scope: :tasks_task_id }
 
   validates :opens_at, :due_at, :feedback_at, timeliness: { type: :date }, allow_nil: true
   validates :is_cached_for_period, inclusion: { in: [ true, false ] }

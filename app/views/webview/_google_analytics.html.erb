@@ -1,7 +1,7 @@
 <%# The GA tracking code in the secrets can be a comma-separated list of codes,
     in which case we will create trackers for each code. %>
 
-<% tracking_codes = Settings::Db.store.ga_tracking_codes %>
+<% tracking_codes = Settings::Db.ga_tracking_codes %>
 
 <% unless tracking_codes.blank? %>
   <script>

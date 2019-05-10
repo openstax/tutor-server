@@ -59,7 +59,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
       user.account.update_attributes(role: :student)
       expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
       expect {
-        api_post :onboarding_event, user_token, parameters: { code: 'arrived_my_courses' }
+        api_post :onboarding_event, user_token, params: { code: 'arrived_my_courses' }
       }.to raise_error(SecurityTransgression)
     end
 
@@ -69,7 +69,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
       it 'rejects invalid codes' do
         expect(TrackTutorOnboardingEvent).not_to receive(:perform_later)
         expect {
-          api_post :onboarding_event, user_token, parameters: { code: 'bad&wrong' }
+          api_post :onboarding_event, user_token, params: { code: 'bad&wrong' }
         }.to raise_error(SecurityTransgression)
       end
 
@@ -80,7 +80,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
                                                event: 'made_adoption_decision',
                                                user: anything,
                                              )
-        api_post :onboarding_event, user_token, parameters: {
+        api_post :onboarding_event, user_token, params: {
                    code: 'made_adoption_decision', data: { decision: "I won't be using it" },
                  }
         expect(response).to have_http_status(:success)
@@ -89,7 +89,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
   end
 
   def log(options)
-    api_post :entry, nil, raw_post_data: options.to_json
+    api_post :entry, nil, body: options.to_json
   end
 
 end

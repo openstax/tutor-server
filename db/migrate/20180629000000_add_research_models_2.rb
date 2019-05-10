@@ -1,4 +1,4 @@
-class AddResearchModels2 < ActiveRecord::Migration
+class AddResearchModels2 < ActiveRecord::Migration[4.2]
   def change
     create_table :research_cohorts do |t|
       t.references :research_study,             null: false, index: true,

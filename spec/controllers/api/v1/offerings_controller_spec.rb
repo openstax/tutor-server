@@ -22,7 +22,7 @@ RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, versi
       expect(OfferingAccessPolicy).to(
         receive(:action_allowed?).with(:index, anon, Catalog::Models::Offering).and_return(false)
       )
-      expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
+      expect { api_get :index, nil }.to raise_error(SecurityTransgression)
     end
 
     it 'lists all offerings for verified college faculty, in order' do

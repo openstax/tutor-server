@@ -1,5 +1,5 @@
 # This migration comes from openstax_accounts (originally 10)
-class AssignMissingUuidsForLocalAccounts < ActiveRecord::Migration
+class AssignMissingUuidsForLocalAccounts < ActiveRecord::Migration[4.2]
   def change
     enable_extension 'pgcrypto'
 

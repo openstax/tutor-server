@@ -13,6 +13,8 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
   end
 
   it "generates a JSON representation of data for a user to start work with" do
+    secrets = Rails.application.secrets
+
     expect(JSON.parse representation).to match(
       "user" =>  Api::V1::UserRepresenter.new(user).as_json,
       "courses" => [], # not testing this since it's too expensive to generate meaningful course data
@@ -21,7 +23,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "osweb_base_url" => 'https://cms.openstax.org',
       "tutor_api_url" => 'https://example.com/api',
       "response_validation" => {
-        "url" => Rails.application.secrets['response_validation']['url'],
+        "url" => secrets.response_validation[:url],
         "is_enabled" => Settings::ResponseValidation.is_enabled,
         "is_ui_enabled" => Settings::ResponseValidation.is_ui_enabled
       },
@@ -29,7 +31,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
         "is_enabled" => Settings::Payments.payments_enabled,
         "js_url" => a_string_starting_with('http'),
         "base_url" => a_string_starting_with('http'),
-        "product_uuid" => Rails.application.secrets['openstax']['payments']['product_uuid']
+        "product_uuid" => secrets.openstax[:payments][:product_uuid]
       ),
       "feature_flags" => a_hash_including(
         "is_payments_enabled" => Settings::Payments.payments_enabled

@@ -33,11 +33,11 @@ class Lms::Simulator
     if app.present?
       @apps_by_key[app.key] =
         @apps_by_course[course] =
-          { key: app.key, secret: app.secret, course: course, launch_path: launch_path}
+          { key: app.key, secret: app.secret, course: course, launch_path: launch_path }
     elsif key.present? && secret.present?
       @apps_by_key[key] =
         @apps_by_course[course] =
-          {key: key, secret: secret, course: course, launch_path: launch_path}
+          { key: key, secret: secret, course: course, launch_path: launch_path }
     else
       raise "Must supply app OR (key AND secret)"
     end
@@ -102,11 +102,11 @@ class Lms::Simulator
     }
 
     if is_active_student?(user) && assignment.present?
-      request_params.merge!({
+      request_params.merge!(
         lis_outcome_service_url: outcome_url,
         lis_result_sourcedid: sourcedid!(user: user, assignment: assignment),
         resource_link_id: assignment,
-      })
+      )
     end
 
     roles = []
@@ -114,15 +114,13 @@ class Lms::Simulator
     roles.push(IMS::LIS::Roles::Context::URNs::Instructor) if is_teacher?(user)
     roles.push(IMS::LIS::Roles::Context::URNs::Administrator) if is_administrator?(user)
 
-    request_params.merge!({
-      roles: roles.join(',')
-    })
+    request_params.merge!(roles: roles.join(','))
 
-    [drop_these_fields].flatten.compact.each {|field| request_params.delete(field)}
+    [drop_these_fields].flatten.compact.each { |field| request_params.delete(field) }
 
     sign!(request_params, app)
 
-    spec.post app[:launch_path], request_params
+    spec.post app[:launch_path], params: request_params
 
     @last_launch = {
       launch_path: app[:launch_path],
@@ -132,7 +130,7 @@ class Lms::Simulator
 
   def repeat_last_launch
     raise "There is no 'last launch' to repeat" if @last_launch.nil?
-    spec.post @last_launch[:launch_path], @last_launch[:request_params]
+    spec.post @last_launch[:launch_path], params: @last_launch[:request_params]
   end
 
   def sign!(request_params, app)
@@ -167,7 +165,7 @@ class Lms::Simulator
                   .each_with_object({}) do |ff, hash|
                     key = ff.split("=")[0].gsub("OAuth ", '').strip
                     value = URI.unescape(ff.split("=")[1].gsub(/"/,'').strip)
-                    hash[key] = value
+                    hash[key.to_sym] = value
                   end
     )
   end

@@ -1,4 +1,4 @@
-class CreateCourseMembershipStudents < ActiveRecord::Migration
+class CreateCourseMembershipStudents < ActiveRecord::Migration[4.2]
   def change
     create_table :course_membership_students do |t|
       t.references :entity_course,

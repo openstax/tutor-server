@@ -1,5 +1,5 @@
 # This migration comes from openstax_accounts (originally 2)
-class CreateOpenStaxAccountsGroupMembers < ActiveRecord::Migration
+class CreateOpenStaxAccountsGroupMembers < ActiveRecord::Migration[4.2]
   def change
     create_table :openstax_accounts_group_members do |t|
       t.references :group, null: false

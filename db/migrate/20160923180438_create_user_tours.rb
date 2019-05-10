@@ -1,4 +1,4 @@
-class CreateUserTours < ActiveRecord::Migration
+class CreateUserTours < ActiveRecord::Migration[4.2]
 
   def change
     create_table :user_tours do |t|

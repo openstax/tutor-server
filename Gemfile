@@ -4,7 +4,7 @@
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
 end
 
@@ -64,14 +64,15 @@ gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
 #gem 'openstax_accounts', '~> 7.13.1'
-gem 'openstax_accounts', github: 'openstax/accounts_rails', branch: 'sso-cookie'
+gem 'openstax_accounts', path: '../accounts-rails'
+gem 'action_interceptor', path: '../action_interceptor'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
 #gem 'openstax_api', '~> 8.2.0'
-gem 'openstax_api', github: 'openstax/openstax_api', branch: 'rails5'
+gem 'openstax_api', path: '../openstax_api'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -92,12 +93,9 @@ gem 'jobba', '~> 1.8.0'
 # Lev framework
 gem 'lev', '~> 9.0.1'
 
-# Ruby dsl for SQL queries
-gem 'baby_squeel'
-
 # Contract management
 # gem 'fine_print', '~> 4.0.1'
-gem 'fine_print', github: 'nathanstitt/fine_print', branch: 'rails5'
+gem 'fine_print', path: '../fine_print'
 
 # Keyword search
 gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
@@ -129,7 +127,7 @@ gem 'httparty'
 
 # Ordered models
 #gem 'sortability', '~> 0.1.0'
-gem 'sortability', github: 'openstax/sortability', branch: 'rails5'
+gem 'sortability', path: '../sortability'
 
 # Lorem Ipsum
 gem 'faker'
@@ -158,7 +156,7 @@ gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
 # gem 'openstax_rescue_from', '~> 3.0.0'
-gem 'openstax_rescue_from', github: 'openstax/rescue_from', branch: 'rails5'
+gem 'openstax_rescue_from', path: '../rescue_from'
 
 
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
@@ -172,14 +170,14 @@ gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
 #gem 'openstax_salesforce', '~> 2.0.1'
-gem 'openstax_salesforce', github: 'openstax/openstax_salesforce', branch: 'rails-5'
+gem 'openstax_salesforce', path: '../openstax_salesforce'
 
 # Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', github: 'openstax/active_force', ref: '9efe1ba'
+gem 'active_force', path: '../active_force'
 
 # Global settings
-gem 'rails-settings-cached', '~> 0.4.0'
-gem 'rails-settings-ui', '~> 1.3.4'
+gem 'rails-settings-cached'
+gem 'rails-settings-ui'
 
 # Nicely-styled static error pages
 gem 'error_page_assets'
@@ -190,9 +188,6 @@ gem 'p3p'
 
 # API throttling
 gem 'rack-attack'
-
-# Minimize DB access due to touch: true associations
-gem 'activerecord-delay_touching'
 
 # Fast JSON parsing
 gem 'oj'
@@ -208,14 +203,6 @@ gem 'postgresql_cursor', '~> 0.6.2'
 
 # manage PostgresQL view migrations
 gem 'scenic', '~> 1.5'
-
-# Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
-gem 'awesome_print'
-
-# Advisory Locks
-# This version provides locks that unlock automatically at the end of the transaction,
-# which are required for the correct operation of the Biglearn client
-gem 'with_advisory_lock', github: 'procore/with_advisory_lock', ref: 'aba1583c'
 
 # In place form editing on admin menu
 gem 'best_in_place'
@@ -235,6 +222,9 @@ gem 'openstax_healthcheck'
 gem 'bootsnap', '~> 1.4.0', require: false
 
 group :development, :test do
+  # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
+  gem 'awesome_print'
+
   # Get env variables from .env file
   gem 'dotenv-rails', '~> 2.7.1'
 
@@ -308,13 +298,15 @@ group :development do
 end
 
 group :test do
-  # Fake in-memory Redis for testing
-  gem 'fakeredis'
+  gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 
-  gem 'shoulda-matchers', require: false
   gem 'launchy'
   gem 'database_cleaner'
   gem 'db-query-matchers'
+
+  # Fake in-memory Redis for testing
+  gem 'fakeredis'
 
   gem 'whenever-test'
 
@@ -323,9 +315,6 @@ group :test do
   gem 'capybara', '< 3.0'
   gem 'capybara-selenium'
   gem 'capybara-screenshot', require: false
-
-  # Code Climate integration
-  gem "codeclimate-test-reporter", require: false
 
   # Codecov integration
   gem 'codecov', require: false

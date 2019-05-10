@@ -1,4 +1,4 @@
-class AllowNilIsCollege < ActiveRecord::Migration
+class AllowNilIsCollege < ActiveRecord::Migration[4.2]
   def change
     change_column_null :course_profile_courses, :is_college, true
     change_column_default :course_profile_courses, :is_college, nil

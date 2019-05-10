@@ -34,7 +34,7 @@ class Content::ImportBook
     # Reset chapters association so it gets reloaded the next time it is used
     book.chapters.reset
 
-    import_page_tags = outputs.page_taggings.select { |pt| pt.tag.import? }
+    import_page_tags = outputs.page_taggings.to_a.select { |pt| pt.tag.import? }
     import_page_tags.each(&:reload)
 
     import_page_map = {}

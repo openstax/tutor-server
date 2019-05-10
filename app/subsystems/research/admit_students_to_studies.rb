@@ -26,12 +26,12 @@ class Research::AdmitStudentsToStudies
   end
 
   def admit!(student, study)
-    add_student_to_a_cohort(student, study) rescue Research::CohortMembershipManager::StudentAlreadyInStudy
+    add_student_to_a_cohort(student, study) \
+      rescue Research::CohortMembershipManager::StudentAlreadyInStudy
     run(:assign_missing_surveys, student: student)
   end
 
   def add_student_to_a_cohort(student, study)
-
     cohort_member = membership_manager(study).add_student_to_a_cohort(student)
     transfer_errors_from(cohort_member, {type: :verbatim}, true)
   end

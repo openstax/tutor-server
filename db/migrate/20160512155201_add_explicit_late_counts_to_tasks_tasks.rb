@@ -1,4 +1,4 @@
-class AddExplicitLateCountsToTasksTasks < ActiveRecord::Migration
+class AddExplicitLateCountsToTasksTasks < ActiveRecord::Migration[4.2]
   def change
     remove_column :tasks_tasks, :is_late_work_accepted
     add_column :tasks_tasks, :accepted_late_at, :datetime

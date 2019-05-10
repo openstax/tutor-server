@@ -8,17 +8,17 @@ module Tasks::Models
     belongs_to :role, subsystem: :entity
     belongs_to :task, inverse_of: :concept_coach_task
 
-    validates :page, presence: true
-    validates :role, presence: true, uniqueness: { scope: :content_page_id }
-    validates :task, presence: true, uniqueness: true
+    validates :role, uniqueness: { scope: :content_page_id }
+    validates :task, uniqueness: true
     validate :same_role
 
     protected
 
     def same_role
       return if task.nil? || task.taskings.map(&:role).include?(role)
+
       errors.add(:role, 'must match the role the task is assigned to')
-      false
+      throw :abort
     end
   end
 end

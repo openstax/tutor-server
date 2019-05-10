@@ -18,8 +18,8 @@ RSpec.describe User::RecordTourView, type: :routine do
   end
 
   context 'an existing tour' do
-    let(:tour){ FactoryBot.create :user_tour }
-    let(:view){ described_class[user: user, tour_identifier: tour.identifier] }
+    let(:tour) { FactoryBot.create :user_tour }
+    let(:view) { described_class[user: user, tour_identifier: tour.identifier] }
 
     it 'marks the user as having viewed it' do
       expect(view.view_count).to eq(1)
@@ -35,10 +35,10 @@ RSpec.describe User::RecordTourView, type: :routine do
   end
 
   context 'an invalid tour id' do
-    let(:error_code){
+    let(:error_code) do
       errors = described_class.call(user: user, tour_identifier: @identifier).errors
       errors.any? ? errors.first.code : nil
-    }
+    end
 
     it 'disallows spaces' do
       @identifier = 'whirlwind bob'

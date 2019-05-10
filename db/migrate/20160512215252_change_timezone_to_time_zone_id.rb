@@ -1,4 +1,4 @@
-class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
+class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_profiles, :time_zone_id, :integer
     add_column :tasks_tasking_plans, :time_zone_id, :integer

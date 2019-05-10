@@ -63,7 +63,7 @@ Delayed::Worker.class_exec do
     'NotYetImplemented' => ALWAYS_FAIL,
     # http://stackoverflow.com/a/31928089
     'ActiveJob::DeserializationError' => ->(exception) do
-      exception.original_exception.is_a? ActiveRecord::RecordNotFound
+      exception.message.include? ActiveRecord::RecordNotFound.to_s
     end,
     'OAuth2::Error'       => ->(exception) do
       status = exception.response.status

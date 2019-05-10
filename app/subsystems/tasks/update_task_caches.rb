@@ -16,9 +16,7 @@ class Tasks::UpdateTaskCaches
     tasks = Tasks::Models::Task
       .where(id: task_ids)
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
-      .preload(
-        :ecosystem, :time_zone, taskings: { role: { student: :period } }
-      )
+      .preload(:ecosystem, :time_zone, taskings: { role: { student: :period } })
       .to_a
     tasks_by_id = tasks.index_by(&:id)
     locked_task_ids = tasks_by_id.keys
@@ -90,6 +88,7 @@ class Tasks::UpdateTaskCaches
       ])
       .joins(role: [ :taskings, profile: :account ])
       .where(role: { taskings: { tasks_task_id: task_ids } })
+      .to_a
 
       teacher_students = CourseMembership::Models::TeacherStudent
         .select([
@@ -101,6 +100,7 @@ class Tasks::UpdateTaskCaches
         ])
         .joins(role: [ :taskings, profile: :account ])
         .where(role: { taskings: { tasks_task_id: task_ids } })
+        .to_a
 
     return if students.empty? && teacher_students.empty?
 

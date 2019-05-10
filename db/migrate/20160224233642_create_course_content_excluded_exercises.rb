@@ -1,4 +1,4 @@
-class CreateCourseContentExcludedExercises < ActiveRecord::Migration
+class CreateCourseContentExcludedExercises < ActiveRecord::Migration[4.2]
   def change
     create_table :course_content_excluded_exercises do |t|
       t.references :entity_course, null: false, index: true

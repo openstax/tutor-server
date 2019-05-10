@@ -16,7 +16,7 @@ class Content::Models::Tag < IndestructibleRecord
   has_many :same_value_tags, class_name: 'Tag', primary_key: 'value', foreign_key: 'value'
 
   # List the different types of tags
-  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length,
+  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :time,
                    :cnxmod, :id, :requires_context, :cnxfeature ]
 
   validates :value, presence: true
@@ -26,7 +26,7 @@ class Content::Models::Tag < IndestructibleRecord
 
   IMPORT_TAG_TYPES  = Set[ :lo, :aplo, :cnxmod ]
   MAPPING_TAG_TYPE = :lo
-  VISIBLE_TAG_TYPES = Set[ :lo, :aplo, :teks, :dok, :blooms, :length ]
+  VISIBLE_TAG_TYPES = Set[ :lo, :aplo, :teks, :dok, :blooms, :time ]
 
   def book_location
     Tagger.get_book_location(value)
@@ -50,9 +50,6 @@ class Content::Models::Tag < IndestructibleRecord
     self.tag_type = Tagger.get_type(value) if tag_type.nil? || generic?
     self.data = Tagger.get_data(tag_type, value) if data.nil?
     self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
-    # need to return true here because if self.visible evaluates to false, the
-    # record does not get saved
-    true
   end
 
 end

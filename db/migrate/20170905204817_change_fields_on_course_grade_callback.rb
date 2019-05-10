@@ -1,4 +1,4 @@
-class ChangeFieldsOnCourseGradeCallback < ActiveRecord::Migration
+class ChangeFieldsOnCourseGradeCallback < ActiveRecord::Migration[4.2]
   def change
     remove_index :lms_course_grade_callbacks, name: :course_grade_callbacks_on_student
     remove_reference :lms_course_grade_callbacks, :course_membership_student

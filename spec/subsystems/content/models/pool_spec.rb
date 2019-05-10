@@ -5,7 +5,6 @@ RSpec.describe Content::Models::Pool, type: :model do
 
   it { is_expected.to belong_to(:ecosystem) }
 
-  it { is_expected.to validate_presence_of(:ecosystem) }
   it { is_expected.to validate_presence_of(:pool_type) }
   it { is_expected.to validate_presence_of(:uuid) }
 

@@ -1,4 +1,4 @@
-class DropFakeStores < ActiveRecord::Migration
+class DropFakeStores < ActiveRecord::Migration[4.2]
   def up
     drop_table :fake_stores
   end

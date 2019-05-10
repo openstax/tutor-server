@@ -92,8 +92,9 @@ namespace :db do
     available_files = Dir.entries(dumps_dir).sort.reverse
 
     match = [name, /\d+_#{name}(.dump)?/, /.*#{name}.*/].map do |arg|
-      available_files.select{|entry| entry.match(arg)}.tap do |matches|
-        abort("Failed! Multiple matching dump files found, please be more specific") if matches.length > 1
+      available_files.select { |entry| entry.match(arg) }.tap do |matches|
+        abort("Failed! Multiple matching dump files found, please be more specific") \
+          if matches.length > 1
       end.first
     end.compact.first
 

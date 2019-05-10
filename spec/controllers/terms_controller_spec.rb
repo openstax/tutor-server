@@ -15,7 +15,7 @@ RSpec.describe TermsController, type: :controller do
 
       it 'can agree to terms' do
         controller.sign_in new_user
-        post :agree, i_agree: '1', contract_id: contract.id
+        post :agree, params: { i_agree: '1', contract_id: contract.id }
         expect(response).to have_http_status(:redirect)
         expect(
           FinePrint.signed_contract?(new_user.to_model, contract)

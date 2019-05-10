@@ -62,8 +62,9 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
       )
       course = CourseProfile::Models::Course.order(created_at: :desc)
                                             .find_by!(name: 'AP US History Review')
-      review_teacher = User::Models::Profile.joins(:account)
-                                            .find_by!(account: { username: 'reviewteacher' })
+      review_teacher = User::Models::Profile.joins(:account).find_by!(
+        account: { username: 'reviewteacher' }
+      )
       expect(review_teacher.roles.first.teacher.course).to eq course
       expect(review_teacher.account).to be_confirmed_faculty
       (1..6).each do |student_number|

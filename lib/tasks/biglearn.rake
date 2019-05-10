@@ -79,11 +79,12 @@ namespace :biglearn do
       tk = Tasks::Models::Tasking.arel_table
       answered_exercise_steps = Tasks::Models::TaskStep
                                   .where(tasked_type: 'Tasks::Models::TaskedExercise')
-                                  .where{first_completed_at != nil}
-                                  .select([:id, :tasked_id, :tasks_task_id])
+                                  .where.not(first_completed_at: nil)
 
-      print_each("Creating #{answered_exercise_steps.count} response(s)",
-                 answered_exercise_steps.find_in_batches) do |answered_exercise_steps|
+      print_each(
+        "Creating #{answered_exercise_steps.count} response(s)",
+        answered_exercise_steps.select(:id, :tasked_id, :tasks_task_id).find_in_batches
+      ) do |answered_exercise_steps|
         task_ids = answered_exercise_steps.map(&:tasks_task_id)
         courses_by_task_id = CourseProfile::Models::Course
           .select([ co[:id], tk[:tasks_task_id] ])

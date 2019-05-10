@@ -1,5 +1,5 @@
 class Admin::TimecopController < Admin::BaseController
-  before_filter :timecop_enabled
+  before_action :timecop_enabled
 
   def timecop
   end

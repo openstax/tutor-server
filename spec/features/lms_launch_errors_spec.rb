@@ -5,7 +5,7 @@ require 'feature_js_helper'
 # in general
 
 class LmsErrorPageSpecsController < LmsController
-  skip_before_filter :authenticate_user!
+  skip_before_action :authenticate_user!
 
   def page
     case params[:page]

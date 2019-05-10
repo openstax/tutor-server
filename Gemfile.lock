@@ -1,103 +1,9 @@
 GIT
-  remote: https://github.com/nathanstitt/fine_print.git
-  revision: 88557ebca22a6e22f9bc3858dfaae54825df3783
-  branch: rails5
-  specs:
-    fine_print (4.0.1)
-      action_interceptor (>= 1.0)
-      baby_squeel
-      jquery-rails
-      rails (>= 4.2)
-      responders
-
-GIT
-  remote: https://github.com/openstax/accounts_rails.git
-  revision: bba595b78b3ca89fe1d629ff8c9a583de047d528
-  branch: sso-cookie
-  specs:
-    openstax_accounts (7.13.1)
-      action_interceptor (>= 1.0)
-      keyword_search (>= 1.0.0)
-      lev (>= 2.2.1)
-      oauth2 (>= 0.5.0)
-      omniauth (>= 1.1)
-      omniauth-oauth2 (>= 1.1)
-      openstax_api (>= 3.1.0)
-      openstax_utilities (>= 4.1.0)
-      pg (~> 1.1)
-      rails (>= 5.0)
-      representable (>= 2.0)
-      roar (>= 1.1.0)
-
-GIT
-  remote: https://github.com/openstax/active_force
-  revision: 9efe1ba2589c8a375775e19b98bc0b3ed9b6d524
-  ref: 9efe1ba
-  specs:
-    active_force (0.7.1)
-      active_attr (>= 0.8)
-      restforce (>= 2.1.0)
-
-GIT
   remote: https://github.com/openstax/keyword_search.git
   revision: 21785cb0f644f16c30886a3fa83213887d0f4cde
   ref: 21785cb0f644
   specs:
     keyword_search (1.5.0)
-
-GIT
-  remote: https://github.com/openstax/openstax_api.git
-  revision: d3c0824a8de19d7d8bbcaa6732927b3d26376a17
-  branch: rails5
-  specs:
-    openstax_api (8.2.1)
-      doorkeeper (>= 2.0)
-      exception_notification (>= 4.0)
-      lev (>= 1.0.0)
-      openstax_utilities (>= 4.2.0)
-      rails (>= 5.1)
-      representable (>= 2.4, < 4.0)
-      responders
-      roar (>= 1.0)
-      roar-rails (>= 1.0)
-      uber (< 0.1.0)
-
-GIT
-  remote: https://github.com/openstax/openstax_salesforce.git
-  revision: 737aea29933cbe8f7194e32443b32a86f8c24649
-  branch: rails-5
-  specs:
-    openstax_salesforce (1.3.0)
-      active_force
-      omniauth-salesforce (~> 1.0.5)
-      rails (>= 4.2.0)
-      restforce (~> 3.1.0)
-
-GIT
-  remote: https://github.com/openstax/rescue_from.git
-  revision: 85943be16ccdc628acfa1a9b82fc810842d4cd51
-  branch: rails5
-  specs:
-    openstax_rescue_from (3.0.0)
-      rails (>= 3.1, < 6.0)
-
-GIT
-  remote: https://github.com/openstax/sortability.git
-  revision: ae6ea1e9365b16c1cef0e243426dd88f067d4de5
-  branch: rails5
-  specs:
-    sortability (0.1.0)
-      baby_squeel
-      rails
-
-GIT
-  remote: https://github.com/procore/with_advisory_lock.git
-  revision: aba1583ce8127370ed7098b03ab5e1952020c295
-  ref: aba1583c
-  specs:
-    with_advisory_lock (3.0.2)
-      activerecord (>= 3.2)
-      thread_safe
 
 GIT
   remote: https://github.com/randym/axlsx.git
@@ -110,56 +16,129 @@ GIT
       nokogiri (>= 1.6.6)
       rubyzip (>= 1.2.1)
 
+PATH
+  remote: ../accounts-rails
+  specs:
+    openstax_accounts (7.13.1)
+      action_interceptor (>= 1.0)
+      keyword_search (>= 1.0.0)
+      lev (>= 2.2.1)
+      oauth2 (>= 0.5.0)
+      omniauth (>= 1.1)
+      omniauth-oauth2 (>= 1.1)
+      openstax_api (>= 3.1.0)
+      openstax_utilities (>= 4.1.0)
+      pg (>= 1.1)
+      rails (>= 4.1)
+      representable (>= 2.0)
+      roar (>= 1.1.0)
+
+PATH
+  remote: ../action_interceptor
+  specs:
+    action_interceptor (1.1.1)
+      rails (>= 3.1)
+
+PATH
+  remote: ../active_force
+  specs:
+    active_force (0.7.1)
+      active_attr (>= 0.8)
+      restforce (>= 2.1.0)
+
+PATH
+  remote: ../fine_print
+  specs:
+    fine_print (4.0.1)
+      action_interceptor (>= 1.0)
+      jquery-rails
+      rails (>= 4.2)
+      responders
+
+PATH
+  remote: ../openstax_api
+  specs:
+    openstax_api (8.3.2)
+      doorkeeper (>= 2.0)
+      exception_notification (>= 4.0)
+      lev (>= 1.0.0)
+      openstax_utilities (>= 4.2.0)
+      rails (>= 3.1)
+      representable (>= 2.4, < 4.0)
+      responders
+      roar (>= 1.0)
+      roar-rails (>= 1.0)
+      uber (< 0.1.0)
+
+PATH
+  remote: ../openstax_salesforce
+  specs:
+    openstax_salesforce (2.1.0)
+      active_force
+      omniauth-salesforce (>= 1.0.5)
+      rails (>= 4.2.0)
+      restforce (>= 2.1.3)
+
+PATH
+  remote: ../rescue_from
+  specs:
+    openstax_rescue_from (3.0.0)
+      rails (>= 3.1, < 6.0)
+
+PATH
+  remote: ../sortability
+  specs:
+    sortability (0.1.0)
+      rails
+
 GEM
   remote: https://rubygems.org/
   specs:
-    action_interceptor (1.1.0)
-      rails (>= 3.1)
-    actioncable (5.2.2.1)
-      actionpack (= 5.2.2.1)
+    actioncable (5.2.3)
+      actionpack (= 5.2.3)
       nio4r (~> 2.0)
       websocket-driver (>= 0.6.1)
-    actionmailer (5.2.2.1)
-      actionpack (= 5.2.2.1)
-      actionview (= 5.2.2.1)
-      activejob (= 5.2.2.1)
+    actionmailer (5.2.3)
+      actionpack (= 5.2.3)
+      actionview (= 5.2.3)
+      activejob (= 5.2.3)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 2.0)
-    actionpack (5.2.2.1)
-      actionview (= 5.2.2.1)
-      activesupport (= 5.2.2.1)
+    actionpack (5.2.3)
+      actionview (= 5.2.3)
+      activesupport (= 5.2.3)
       rack (~> 2.0)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionview (5.2.2.1)
-      activesupport (= 5.2.2.1)
+    actionview (5.2.3)
+      activesupport (= 5.2.3)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_attr (0.12.0)
-      activemodel (>= 3.0.2, < 6.0)
-      activesupport (>= 3.0.2, < 6.0)
+    active_attr (0.13.1)
+      activemodel (>= 3.0.2, < 6.1)
+      activesupport (>= 3.0.2, < 6.1)
     active_record_query_trace (1.6.2)
-    activejob (5.2.2.1)
-      activesupport (= 5.2.2.1)
+    activejob (5.2.3)
+      activesupport (= 5.2.3)
       globalid (>= 0.3.6)
-    activemodel (5.2.2.1)
-      activesupport (= 5.2.2.1)
-    activerecord (5.2.2.1)
-      activemodel (= 5.2.2.1)
-      activesupport (= 5.2.2.1)
+    activemodel (5.2.3)
+      activesupport (= 5.2.3)
+    activerecord (5.2.3)
+      activemodel (= 5.2.3)
+      activesupport (= 5.2.3)
       arel (>= 9.0)
     activerecord-delay_touching (1.0.1)
       activerecord (>= 4.2)
     activerecord-import (1.0.1)
       activerecord (>= 3.2)
-    activestorage (5.2.2.1)
-      actionpack (= 5.2.2.1)
-      activerecord (= 5.2.2.1)
+    activestorage (5.2.3)
+      actionpack (= 5.2.3)
+      activerecord (= 5.2.3)
       marcel (~> 0.3.1)
-    activesupport (5.2.2.1)
+    activesupport (5.2.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -186,10 +165,6 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     babbler (1.0.1)
-    baby_squeel (1.3.1)
-      activerecord (>= 4.2.0)
-      join_dependency (~> 0.1.2)
-      polyamorous (~> 1.3)
     best_in_place (3.1.1)
       actionpack (>= 3.2)
       railties (>= 3.2)
@@ -241,8 +216,6 @@ GEM
       nokogiri (~> 1.8)
     chronic (0.10.2)
     chunky_png (1.3.11)
-    codeclimate-test-reporter (1.0.9)
-      simplecov (<= 0.13)
     codecov (0.1.14)
       json
       simplecov
@@ -302,8 +275,8 @@ GEM
     diff-lcs (1.3)
     diffy (3.3.0)
     docile (1.1.5)
-    doorkeeper (5.0.2)
-      railties (>= 4.2)
+    doorkeeper (5.1.0)
+      railties (>= 5)
     dotenv (2.7.1)
     dotenv-rails (2.7.1)
       dotenv (= 2.7.1)
@@ -318,24 +291,24 @@ GEM
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.2.2)
     dry-inflector (0.1.2)
-    dry-logic (0.5.0)
-      dry-container (~> 0.2, >= 0.2.6)
+    dry-logic (0.6.1)
+      concurrent-ruby (~> 1.0)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
-    dry-types (0.14.0)
+    dry-types (0.14.1)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.3)
       dry-core (~> 0.4, >= 0.4.4)
       dry-equalizer (~> 0.2)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 0.5, >= 0.5)
-    dry-validation (0.13.0)
+    dry-validation (0.13.2)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1, >= 0.1.3)
       dry-core (~> 0.2, >= 0.2.1)
       dry-equalizer (~> 0.2)
       dry-logic (~> 0.5, >= 0.5.0)
-      dry-types (~> 0.14, >= 0.14)
+      dry-types (~> 0.14.0)
     equalizer (0.0.11)
     error_page_assets (0.4)
     erubi (1.8.0)
@@ -416,8 +389,6 @@ GEM
       oj (~> 3.7.6)
       redis (~> 3.2)
       redis-namespace
-    join_dependency (0.1.4)
-      activerecord (>= 4.2.0)
     jquery-rails (4.3.3)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
@@ -442,7 +413,7 @@ GEM
       hashie
       transaction_isolation
       transaction_retry
-    libv8 (3.16.14.19)
+    libv8 (7.3.492.27.1)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -469,8 +440,8 @@ GEM
     mini_magick (4.9.3)
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
-    mini_racer (0.2.4)
-      libv8 (>= 6.3)
+    mini_racer (0.2.6)
+      libv8 (>= 6.9.411)
     minitest (5.11.3)
     msgpack (1.2.9)
     multi_json (1.13.1)
@@ -479,7 +450,7 @@ GEM
     nenv (0.3.0)
     nifty-generators (0.4.6)
     nio4r (2.3.1)
-    nokogiri (1.10.1)
+    nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
@@ -521,8 +492,6 @@ GEM
     pg (1.1.4)
     pilfer (1.0.2)
       rblineprof (~> 0.3.2)
-    polyamorous (1.3.3)
-      activerecord (>= 3.0)
     postgresql_cursor (0.6.2)
       activerecord (>= 3.1.0)
     powerpack (0.1.2)
@@ -539,25 +508,29 @@ GEM
       pry (>= 0.9.11)
     psych (3.1.0)
     public_suffix (3.0.3)
-    rack (2.0.6)
+    rack (2.0.7)
     rack-attack (5.4.2)
       rack (>= 1.0, < 3)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     railroady (1.5.3)
-    rails (5.2.2.1)
-      actioncable (= 5.2.2.1)
-      actionmailer (= 5.2.2.1)
-      actionpack (= 5.2.2.1)
-      actionview (= 5.2.2.1)
-      activejob (= 5.2.2.1)
-      activemodel (= 5.2.2.1)
-      activerecord (= 5.2.2.1)
-      activestorage (= 5.2.2.1)
-      activesupport (= 5.2.2.1)
+    rails (5.2.3)
+      actioncable (= 5.2.3)
+      actionmailer (= 5.2.3)
+      actionpack (= 5.2.3)
+      actionview (= 5.2.3)
+      activejob (= 5.2.3)
+      activemodel (= 5.2.3)
+      activerecord (= 5.2.3)
+      activestorage (= 5.2.3)
+      activesupport (= 5.2.3)
       bundler (>= 1.3.0)
-      railties (= 5.2.2.1)
+      railties (= 5.2.3)
       sprockets-rails (>= 2.0.0)
+    rails-controller-testing (1.0.4)
+      actionpack (>= 5.0.1.x)
+      actionview (>= 5.0.1.x)
+      activesupport (>= 5.0.1.x)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -568,16 +541,17 @@ GEM
       ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
-    rails-settings-cached (0.4.6)
+    rails-settings-cached (2.0.3)
       rails (>= 4.2.0)
+      request_store
     rails-settings-ui (1.3.4)
       dry-types
       dry-validation (>= 0.12.0)
       i18n
       rails (>= 3.0)
-    railties (5.2.2.1)
-      actionpack (= 5.2.2.1)
-      activesupport (= 5.2.2.1)
+    railties (5.2.3)
+      actionpack (= 5.2.3)
+      activesupport (= 5.2.3)
       method_source
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
@@ -608,7 +582,6 @@ GEM
       redis-store (>= 1.2, < 2)
     redis-store (1.6.0)
       redis (>= 2.2, < 5)
-    ref (2.0.0)
     remotipart (1.4.2)
     render_anywhere (0.0.12)
       rails (>= 3.0.7)
@@ -646,7 +619,7 @@ GEM
       rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
-    rspec-expectations (3.8.2)
+    rspec-expectations (3.8.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-instafail (1.0.0)
@@ -780,6 +753,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  action_interceptor!
   active_force!
   active_record_query_trace
   activerecord-delay_touching
@@ -790,7 +764,6 @@ DEPENDENCIES
   aws-ses (~> 0.6.0)
   axlsx!
   babbler (~> 1.0.1)
-  baby_squeel
   best_in_place
   bootsnap (~> 1.4.0)
   bootstrap-sass (~> 3.3.7)
@@ -806,7 +779,6 @@ DEPENDENCIES
   cheat
   chromedriver-helper
   chronic
-  codeclimate-test-reporter
   codecov
   codemirror-rails
   coffee-rails (~> 4.2.2)
@@ -863,10 +835,11 @@ DEPENDENCIES
   rack-attack
   railroady
   rails (~> 5.2.2)
+  rails-controller-testing
   rails-erd
   rails-html-sanitizer (~> 1.0)
-  rails-settings-cached (~> 0.4.0)
-  rails-settings-ui (~> 1.3.4)
+  rails-settings-cached
+  rails-settings-ui
   redis-rails
   remotipart
   render_anywhere
@@ -885,7 +858,6 @@ DEPENDENCIES
   sortability!
   spring
   spring-commands-rspec
-  therubyracer
   timecop
   turbolinks
   uglifier (>= 1.3.0)
@@ -899,7 +871,6 @@ DEPENDENCIES
   whenever
   whenever-test
   will_paginate (~> 3.1.7)
-  with_advisory_lock!
 
 BUNDLED WITH
    2.0.1
