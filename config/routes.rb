@@ -155,7 +155,7 @@ Rails.application.routes.draw do
       get :highlighted_sections, controller: :notes
 
       scope controller: :guides do
-        get :guide, action: :student
+        get :'guide(/role/:role_id)', action: :student
         get :teacher_guide, action: :teacher
       end
 

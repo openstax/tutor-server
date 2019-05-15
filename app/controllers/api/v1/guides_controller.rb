@@ -12,13 +12,19 @@ module Api
         EOS
       end
 
-      api :GET, '/courses/:course_id/guide',
+      api :GET, '/courses/:course_id/guide(/role/:role_id)',
                 'Returns a student course guide for Learning Guide'
       description <<-EOS
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
-        role = get_course_role(course: @course, allowed_role_types: [:student, :teacher_student])
+        role = if params[:role_id].blank?
+          get_course_role(course: @course, allowed_role_types: [:student, :teacher_student])
+        else
+          Entity::Role.where(
+            role_type: Entity::Role.role_types.values_at(:student, :teacher_student)
+          ).find(params[:role_id])
+        end
 
         student = role.course_member
 
