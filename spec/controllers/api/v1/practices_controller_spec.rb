@@ -55,6 +55,26 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
       )
     end
 
+    it 'works for teacher_students' do
+      AddUserAsCourseTeacher[user: user_2, course: course]
+      CreateOrResetTeacherStudent[user: user_2, period: period]
+
+      api_post :create,
+               user_2_token,
+               parameters: { id: course.id },
+               raw_post_data: { page_ids: [page.id.to_s] }.to_json
+
+      hash = response.body_as_hash
+      task = Tasks::Models::Task.last
+
+      expect(hash).to include(
+        id: task.id.to_s,
+        title: 'Practice',
+        type: 'page_practice',
+        steps: have(5).items
+      )
+    end
+
     it 'must be called by a user who belongs to the course' do
       expect{
         api_post :create,
@@ -94,6 +114,23 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1, speed: :sl
   context 'POST #create_worst' do
     it 'returns the practice task data' do
       api_post :create_worst, user_1_token, parameters: { id: course.id }
+
+      hash = response.body_as_hash
+      task = Tasks::Models::Task.last
+
+      expect(hash).to include(
+        id: task.id.to_s,
+        title: 'Practice',
+        type: 'practice_worst_topics',
+        steps: have(5).items
+      )
+    end
+
+    it 'works for teacher_students' do
+      AddUserAsCourseTeacher[user: user_2, course: course]
+      CreateOrResetTeacherStudent[user: user_2, period: period]
+
+      api_post :create_worst, user_2_token, parameters: { id: course.id }
 
       hash = response.body_as_hash
       task = Tasks::Models::Task.last
