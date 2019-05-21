@@ -139,20 +139,20 @@ RSpec.describe ApplicationController, type: :controller do
     it "can return the user's current role for a given course" do
       expect(controller.send :current_role, course).to be_nil
 
-      controller.session[:roles] = { course.id => teacher_role.id }
+      controller.session[:roles] = { course.id.to_s => teacher_role.id }
       expect(controller.send :current_role, course).to eq teacher_role
 
-      controller.session[:roles] = { course.id => teacher_student_role.id }
+      controller.session[:roles] = { course.id.to_s => teacher_student_role.id }
       expect(controller.send :current_role, course).to eq teacher_student_role
     end
 
     it 'does not return roles belonging to other users or invalid roles' do
       expect(controller.send :current_role, course).to be_nil
 
-      controller.session[:roles] = { course.id => another_teacher_role.id }
+      controller.session[:roles] = { course.id.to_s => another_teacher_role.id }
       expect(controller.send :current_role, course).to be_nil
 
-      controller.session[:roles] = { course.id => 'abc' }
+      controller.session[:roles] = { course.id.to_s => 'abc' }
       expect(controller.send :current_role, course).to be_nil
     end
   end
