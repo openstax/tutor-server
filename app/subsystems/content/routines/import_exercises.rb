@@ -13,9 +13,11 @@ class Content::Routines::ImportExercises
   # page can be a Content::Models::Page or a block
   # that takes an OpenStax::Exercises::V1::Exercise
   # and returns a Content::Models::Page for that exercise
-  def exec(ecosystem:, page:, query_hash:, collaborators: [ 'openstax' ])
+  def exec(ecosystem:, page:, query_hash:, collaborators: [])
     # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise
-    query_hash = query_hash.merge collaborator: collaborators.join(',')
+    if collaborators.any?
+      query_hash = query_hash.merge collaborator: collaborators.join(',')
+    end
 
     OpenStax::Exercises::V1.exercises(query_hash) do |wrappers|
       # Go through the wrappers and build a map of wrappers to pages
