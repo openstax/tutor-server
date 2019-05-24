@@ -64,15 +64,15 @@ gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
 #gem 'openstax_accounts', '~> 7.13.1'
-gem 'openstax_accounts', path: '../accounts-rails'
-gem 'action_interceptor', path: '../action_interceptor'
+gem 'openstax_accounts'
+gem 'action_interceptor'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
 #gem 'openstax_api', '~> 8.2.0'
-gem 'openstax_api', path: '../openstax_api'
+gem 'openstax_api'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -95,10 +95,10 @@ gem 'lev', '~> 9.0.1'
 
 # Contract management
 # gem 'fine_print', '~> 4.0.1'
-gem 'fine_print', path: '../fine_print'
+gem 'fine_print'
 
 # Keyword search
-gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
+gem "keyword_search", github: 'openstax/keyword_search'
 
 # File uploads
 gem 'remotipart'
@@ -127,7 +127,7 @@ gem 'httparty'
 
 # Ordered models
 #gem 'sortability', '~> 0.1.0'
-gem 'sortability', path: '../sortability'
+gem 'sortability'
 
 # Lorem Ipsum
 gem 'faker'
@@ -136,7 +136,7 @@ gem 'faker'
 gem 'redis-rails'
 
 # Background job queueing
-gem 'delayed_job_active_record', '~>4.1.4.beta1'
+gem 'delayed_job_active_record', '~> 4.1.4.beta1'
 gem 'daemons'
 
 # Type coercion for Representable
@@ -156,7 +156,7 @@ gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
 # gem 'openstax_rescue_from', '~> 3.0.0'
-gem 'openstax_rescue_from', path: '../rescue_from'
+gem 'openstax_rescue_from'
 
 
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
@@ -170,10 +170,10 @@ gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
 #gem 'openstax_salesforce', '~> 2.0.1'
-gem 'openstax_salesforce', path: '../openstax_salesforce'
+gem 'openstax_salesforce'
 
 # Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', path: '../active_force'
+gem 'active_force', github: 'openstax/active_force'
 
 # Global settings
 gem 'rails-settings-cached'

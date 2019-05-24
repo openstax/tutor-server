@@ -1,9 +1,16 @@
 GIT
-  remote: https://github.com/openstax/keyword_search.git
-  revision: 21785cb0f644f16c30886a3fa83213887d0f4cde
-  ref: 21785cb0f644
+  remote: https://github.com/openstax/active_force.git
+  revision: 3ba34211b6f2387b5e05512b9561076894c5fa2d
   specs:
-    keyword_search (1.5.0)
+    active_force (1.0.0)
+      active_attr
+      restforce
+
+GIT
+  remote: https://github.com/openstax/keyword_search.git
+  revision: 0ce23c42575129b74c14add9e5d069ef9fedebac
+  specs:
+    keyword_search (1.6.0)
 
 GIT
   remote: https://github.com/randym/axlsx.git
@@ -16,84 +23,11 @@ GIT
       nokogiri (>= 1.6.6)
       rubyzip (>= 1.2.1)
 
-PATH
-  remote: ../accounts-rails
-  specs:
-    openstax_accounts (7.13.1)
-      action_interceptor (>= 1.0)
-      keyword_search (>= 1.0.0)
-      lev (>= 2.2.1)
-      oauth2 (>= 0.5.0)
-      omniauth (>= 1.1)
-      omniauth-oauth2 (>= 1.1)
-      openstax_api (>= 3.1.0)
-      openstax_utilities (>= 4.1.0)
-      pg (>= 1.1)
-      rails (>= 4.1)
-      representable (>= 2.0)
-      roar (>= 1.1.0)
-
-PATH
-  remote: ../action_interceptor
-  specs:
-    action_interceptor (1.1.1)
-      rails (>= 3.1)
-
-PATH
-  remote: ../active_force
-  specs:
-    active_force (0.7.1)
-      active_attr (>= 0.8)
-      restforce (>= 2.1.0)
-
-PATH
-  remote: ../fine_print
-  specs:
-    fine_print (4.0.1)
-      action_interceptor (>= 1.0)
-      jquery-rails
-      rails (>= 4.2)
-      responders
-
-PATH
-  remote: ../openstax_api
-  specs:
-    openstax_api (8.3.2)
-      doorkeeper (>= 2.0)
-      exception_notification (>= 4.0)
-      lev (>= 1.0.0)
-      openstax_utilities (>= 4.2.0)
-      rails (>= 3.1)
-      representable (>= 2.4, < 4.0)
-      responders
-      roar (>= 1.0)
-      roar-rails (>= 1.0)
-      uber (< 0.1.0)
-
-PATH
-  remote: ../openstax_salesforce
-  specs:
-    openstax_salesforce (2.1.0)
-      active_force
-      omniauth-salesforce (>= 1.0.5)
-      rails (>= 4.2.0)
-      restforce (>= 2.1.3)
-
-PATH
-  remote: ../rescue_from
-  specs:
-    openstax_rescue_from (3.0.0)
-      rails (>= 3.1, < 6.0)
-
-PATH
-  remote: ../sortability
-  specs:
-    sortability (0.1.0)
-      rails
-
 GEM
   remote: https://rubygems.org/
   specs:
+    action_interceptor (1.1.2)
+      rails (>= 3.1)
     actioncable (5.2.3)
       actionpack (= 5.2.3)
       nio4r (~> 2.0)
@@ -130,8 +64,6 @@ GEM
       activemodel (= 5.2.3)
       activesupport (= 5.2.3)
       arel (>= 9.0)
-    activerecord-delay_touching (1.0.1)
-      activerecord (>= 4.2)
     activerecord-import (1.0.1)
       activerecord (>= 3.2)
     activestorage (5.2.3)
@@ -331,6 +263,11 @@ GEM
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.10.0)
+    fine_print (5.0.0)
+      action_interceptor
+      jquery-rails
+      rails
+      responders
     fog-aws (3.4.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
@@ -473,8 +410,39 @@ GEM
     omniauth-salesforce (1.0.5)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
+    openstax_accounts (8.0.0)
+      action_interceptor
+      keyword_search
+      lev
+      oauth2
+      omniauth
+      omniauth-oauth2
+      openstax_api
+      openstax_utilities
+      pg
+      rails
+      representable
+      roar
+    openstax_api (9.0.0)
+      doorkeeper (>= 2.0)
+      exception_notification (>= 4.0)
+      lev (>= 1.0.0)
+      openstax_utilities (>= 4.2.0)
+      rails (>= 3.1)
+      representable (>= 2.4, < 4.0)
+      responders
+      roar (>= 1.0)
+      roar-rails (>= 1.0)
+      uber (< 0.1.0)
     openstax_healthcheck (0.0.3)
       rails (>= 3.0)
+    openstax_rescue_from (4.0.0)
+      rails (>= 3.1, < 6.0)
+    openstax_salesforce (3.0.0)
+      active_force
+      omniauth-salesforce
+      rails
+      restforce
     openstax_utilities (4.2.3)
       keyword_search
       lev
@@ -676,6 +644,8 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     slop (3.6.0)
+    sortability (1.0.0)
+      rails
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-commands-rspec (1.0.4)
@@ -753,10 +723,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  action_interceptor!
+  action_interceptor
   active_force!
   active_record_query_trace
-  activerecord-delay_touching
   activerecord-import
   addressable
   apipie-rails
@@ -794,7 +763,7 @@ DEPENDENCIES
   factory_bot_rails (~> 5.0.1)
   faker
   fakeredis
-  fine_print!
+  fine_print
   fog-aws
   guard-rspec
   hashie
@@ -816,11 +785,11 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts!
-  openstax_api!
+  openstax_accounts
+  openstax_api
   openstax_healthcheck
-  openstax_rescue_from!
-  openstax_salesforce!
+  openstax_rescue_from
+  openstax_salesforce
   openstax_utilities (~> 4.2.0)
   p3p
   parallel_tests
@@ -855,7 +824,7 @@ DEPENDENCIES
   scout_apm (~> 3.0.x)
   sentry-raven
   shoulda-matchers
-  sortability!
+  sortability
   spring
   spring-commands-rspec
   timecop
