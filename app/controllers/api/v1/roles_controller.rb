@@ -35,7 +35,7 @@ class Api::V1::RolesController < Api::V1::ApiController
     end
 
     session[:roles] ||= {}
-    session[:roles][course.id] = @role.id
+    session[:roles][course.id.to_s] = @role.id
 
     respond_with(
       @role,

@@ -19,7 +19,7 @@ RSpec.describe Api::V1::RolesController, type: :controller, api: true, version: 
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to eq Api::V1::RoleRepresenter.new(role).to_json
-      expect(session[:roles][course.id]).to eq role.id
+      expect(session[:roles][course.id.to_s]).to eq role.id
     end
 
     it 'ensures the role belongs to the calling user' do
