@@ -1,19 +1,7 @@
-# Copyright 2011-2015 Rice University. Licensed under the Affero General Public
+# Copyright 2011-2019 Rice University. Licensed under the Affero General Public
 # License version 3 or later.  See the COPYRIGHT file for details.
 
-# language: ruby
-# rvm:
-#   - "1.8.7"
-#   - "1.9.2"
-#   - "1.9.3"
-#   - jruby-18mode # JRuby in 1.8 mode
-#   - jruby-19mode # JRuby in 1.9 mode
-#   - rbx-18mode
-#   - rbx-19mode
-# uncomment this line if your project needs to run something other than `rake`:
-# script: bundle exec rspec spec
 sudo: false
-dist: trusty
 language: ruby
 rvm: 2.6.1
 cache: bundler
@@ -22,8 +10,15 @@ addons:
   chrome: stable
   postgresql: 9.6
 env:
-  - TAG=speed:fast
-  - TAG=~speed:fast
+  global:
+    - OXT_DB_USER=postgres
+    - OXT_DB_PASS=
+    - OXT_TEST_DB=travis_ci_test
+    - PARALLEL_TEST_PROCESSORS=2
+    - DEMO_MAX_PROCESSES=0
+  matrix:
+    - TAG=speed:fast
+    - TAG=~speed:fast
 script:
   - bundle exec rake lint:branch
   - bundle exec parallel_rspec -o "-t $TAG" ./spec
@@ -35,11 +30,7 @@ branches:
     - lms
     - /^int-.*$/
     - /^release-.*$/
-before_script:
-  - export OXT_DB_USER=postgres
-  - export OXT_DB_PASS=
-  - export OXT_TEST_DB=travis_ci_test
-  - export PARALLEL_TEST_PROCESSORS=2
-  - export DEMO_MAX_PROCESSES=0
+before_install:
   - gem install bundler:2.0.1
+before_script:
   - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
