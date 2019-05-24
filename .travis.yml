@@ -1,11 +1,16 @@
 # Copyright 2011-2019 Rice University. Licensed under the Affero General Public
 # License version 3 or later.  See the COPYRIGHT file for details.
 
+branches:
+  only:
+    - master
+    - alpha
+    - beta
+    - lms
+    - /^int-.*$/
+    - /^release-.*$/
 sudo: false
 language: ruby
-rvm: 2.6.1
-cache: bundler
-bundler_args: --without production --retry=6
 addons:
   chrome: stable
   postgresql: 9.6
@@ -19,18 +24,13 @@ env:
   matrix:
     - TAG=speed:fast
     - TAG=~speed:fast
+rvm: 2.6.1
+cache: bundler
+before_install:
+  - gem install bundler:2.0.1
+bundler_args: --without production --retry=6
+before_script:
+  - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
 script:
   - bundle exec rake lint:branch
   - bundle exec parallel_rspec -o "-t $TAG" ./spec
-branches:
-  only:
-    - master
-    - alpha
-    - beta
-    - lms
-    - /^int-.*$/
-    - /^release-.*$/
-before_install:
-  - gem install bundler:2.0.1
-before_script:
-  - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
