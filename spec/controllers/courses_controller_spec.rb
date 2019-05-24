@@ -12,10 +12,13 @@ RSpec.describe CoursesController, type: :controller do
       before { controller.sign_in(user) }
 
       it 'calls CoursesTeach and redirects to the course dashboard' do
+        handle = CoursesTeach.method :handle
+
         expect(CoursesTeach).to receive(:handle) do |args|
           expect(args[:caller]).to eq user
-          expect(args[:teach_token]).to eq teach_token
-        end.and_call_original
+          expect(args[:params][:teach_token]).to eq teach_token
+          handle.call args
+        end
 
         action
 

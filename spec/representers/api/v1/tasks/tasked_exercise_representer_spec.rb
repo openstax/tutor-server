@@ -38,7 +38,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(exercise).to receive(:question_id).and_return("questionID")
       allow(exercise).to receive(:is_in_multipart).and_return(false)
       allow(exercise).to receive(:response_validation).and_return({ valid: false })
-      allow(exercise).to receive(:cache_key).and_return("tasks/models/tasked_exercises/42-test")
+      allow(exercise).to receive(:cache_key).and_return('tasks/models/tasked_exercises/42')
+      allow(exercise).to receive(:cache_version).and_return('test')
     end
   end
 
@@ -122,9 +123,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
       allow(tasked_exercise).to receive(:free_response).and_return('Some response')
       allow(tasked_exercise).to receive(:answer_id).and_return('123')
-      allow(tasked_exercise).to(
-        receive(:cache_key).and_return("tasks/models/tasked_exercises/43-test")
-      )
+      allow(tasked_exercise).to receive(:cache_key).and_return('tasks/models/tasked_exercises/43')
+      allow(tasked_exercise).to receive(:cache_version).and_return('test')
     end
 
     it "'is_completed' == true" do

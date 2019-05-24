@@ -36,7 +36,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
 
   it "invalidates task's cache when updated" do
     task_step.tasked = FactoryBot.build :tasks_tasked_exercise, task_step: task_step
-    expect { task_step.save! }.to change { task_step.task.cache_key }
+    expect { task_step.save! }.to change { task_step.task.cache_version }
   end
 
   it 'includes garbage_detection in spy' do

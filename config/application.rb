@@ -1,6 +1,3 @@
-# Silence ruby deprecation warnings
-$VERBOSE = nil
-
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
@@ -8,13 +5,6 @@ require 'rails/all'
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-
-# Prevent pg deprecation warning:
-# The PGconn, PGresult, and PGError constants are deprecated, and will be removed as of version 1.0.
-# You should use PG::Connection, PG::Result, and PG::Error instead, respectively.
-PGconn = PG::Connection
-PGresult = PG::Result
-PGError = PG::Error
 
 # For cache entries that should never expire but that we still want to evict if Redis is OOM
 NEVER_EXPIRES = 68.years
@@ -24,7 +14,7 @@ module Tutor
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-    config.load_defaults 5.0
+    config.load_defaults 5.2
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -34,7 +24,7 @@ module Tutor
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    # add app/assets/fonts to the asset path
+    # add app/assets/fonts and app/assets/html to the asset path
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
     config.assets.paths << Rails.root.join("app", "assets", "html")
 

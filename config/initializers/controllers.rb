@@ -1,6 +1,4 @@
 ActionController::Base.class_exec do
-  protect_from_forgery with: :exception
-
   helper ApplicationHelper
 
   before_action :load_time

@@ -34,8 +34,9 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
 
+    model = ecosystem.to_model
     render(
-      json: Rails.cache.fetch(ecosystem.to_model.cache_key) do
+      json: Rails.cache.fetch(model.cache_key, version: model.cache_version) do
         # For the moment, we're assuming just one book per ecosystem
         books = ecosystem.books(preload: true)
         raise NotYetImplemented if books.count > 1
