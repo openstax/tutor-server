@@ -98,7 +98,8 @@ gem 'lev', '~> 9.0.1'
 gem 'fine_print'
 
 # Keyword search
-gem "keyword_search", github: 'openstax/keyword_search'
+gem 'keyword_search', github: 'openstax/keyword_search',
+                      ref: '0ce23c42575129b74c14add9e5d069ef9fedebac'
 
 # File uploads
 gem 'remotipart'
@@ -173,7 +174,7 @@ gem 'paranoia', '~> 2.4.1'
 gem 'openstax_salesforce'
 
 # Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', github: 'openstax/active_force'
+gem 'active_force', github: 'openstax/active_force', ref: '3ba34211b6f2387b5e05512b9561076894c5fa2d'
 
 # Global settings
 gem 'rails-settings-cached'
@@ -226,10 +227,10 @@ group :development, :test do
   gem 'awesome_print'
 
   # Get env variables from .env file
-  gem 'dotenv-rails', '~> 2.7.1'
+  gem 'dotenv-rails'
 
   # lint files
-  gem 'rubocop', '~> 0.65.0'
+  gem 'rubocop'
 
   # Run specs in parallel
   gem 'parallel_tests'
@@ -249,14 +250,14 @@ group :development, :test do
   gem 'bullet'
 
   # Use RSpec for tests
-  gem 'rspec-rails', '~> 3.8.2'
+  gem 'rspec-rails'
 
   gem 'rspec-collection_matchers'
 
-  gem 'pilfer', '~> 1.0.0'
+  gem 'pilfer'
 
   # Fixture replacement
-  gem 'factory_bot_rails', '~> 5.0.1'
+  gem 'factory_bot_rails'
 
   # Stubs HTTP requests
   gem 'webmock'
@@ -294,7 +295,7 @@ group :development do
   gem 'railroady'
 
   # Access an IRB console on exceptions page and /console in development
-  gem 'web-console', '~> 3.7.0'
+  gem 'web-console'
 end
 
 group :test do
@@ -312,7 +313,7 @@ group :test do
 
   gem 'chromedriver-helper'
 
-  gem 'capybara', '< 3.0'
+  gem 'capybara'
   gem 'capybara-selenium'
   gem 'capybara-screenshot', require: false
 
