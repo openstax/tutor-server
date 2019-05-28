@@ -62,8 +62,8 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
       api_post :create,
                user_2_token,
-               parameters: { id: course.id },
-               raw_post_data: { page_ids: [page.id.to_s] }.to_json
+               params: { id: course.id },
+               body: { page_ids: [page.id.to_s] }.to_json
 
       hash = response.body_as_hash
       task = Tasks::Models::Task.last
@@ -129,7 +129,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
       AddUserAsCourseTeacher[user: user_2, course: course]
       CreateOrResetTeacherStudent[user: user_2, period: period]
 
-      api_post :create_worst, user_2_token, parameters: { id: course.id }
+      api_post :create_worst, user_2_token, params: { id: course.id }
 
       hash = response.body_as_hash
       task = Tasks::Models::Task.last
