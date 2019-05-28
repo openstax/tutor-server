@@ -9,7 +9,7 @@ branches:
     - lms
     - /^int-.*$/
     - /^release-.*$/
-sudo: false
+dist: xenial
 language: ruby
 addons:
   chrome: stable
@@ -30,7 +30,7 @@ before_install:
   - gem install bundler:2.0.1
 bundler_args: --without production --retry=6
 before_script:
-  - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
+  - bundle exec rake parallel:create parallel:load_schema parallel:seed --trace
 script:
   - bundle exec rake lint:branch
-  - bundle exec parallel_rspec -o "-t $TAG" ./spec
+  - bundle exec parallel_rspec ./spec --test-options "--tag $TAG"

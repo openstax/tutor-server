@@ -17,7 +17,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
     [ @course.time_zone.to_tz.now.monday - 2.weeks, @course.starts_at ].max
   end
 
-  before { expect(WorkPreviewCourseTasks).to receive(:perform_later).with(course: @course).once }
+  before do
+    expect(WorkPreviewCourseTasks).to receive(:perform_later).with(course: @course).once
+
+    @course.reload
+  end
 
   context 'when the course has no periods' do
     it 'creates a new period and populates the expected preview course content' do
@@ -67,11 +71,12 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
 
     it 'does not create any new periods and populates the expected preview course content' do
       # 4 tasks for each of the 6 students + 1 preview role
-      expect { result = described_class.call(course: @course) }
-        .to change { @course.students.reload.size }.by(6)
-        .and not_change { @course.periods.reload.size }
-        .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
-        .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(24)
+      expect do
+        result = described_class.call(course: @course)
+      end.to not_change { @course.periods.count }
+         .and change { @course.students.count }.by(6)
+         .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
+         .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(24)
 
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)

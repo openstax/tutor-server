@@ -63,7 +63,6 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-#gem 'openstax_accounts', '~> 7.13.1'
 gem 'openstax_accounts'
 gem 'action_interceptor'
 

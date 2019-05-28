@@ -2,21 +2,21 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe GetDashboard, type: :routine, speed: :slow do
-  let(:course)         { FactoryBot.create :course_profile_course, name: 'Physics 101' }
-  let(:period)         { FactoryBot.create :course_membership_period, course: course }
+  let(:course)        { FactoryBot.create :course_profile_course, name: 'Physics 101' }
+  let(:period)        { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)   { FactoryBot.create(:user) }
-  let(:student_role)   do
+  let(:student_user)  { FactoryBot.create(:user) }
+  let(:student_role)  do
     AddUserAsPeriodStudent.call(user: student_user, period: period).outputs.role
   end
 
-  let(:teacher_user)   do
+  let(:teacher_user)  do
     FactoryBot.create(:user, first_name: 'Bob', last_name: 'Newhart', full_name: 'Bob Newhart')
   end
-  let!(:teacher_role)  do
+  let!(:teacher_role) do
     AddUserAsCourseTeacher.call(user: teacher_user, course: course).outputs.role
   end
-  let!(:teacher_student_role)  do
+  let!(:teacher_student_role) do
     CreateOrResetTeacherStudent.call(user: teacher_user, period: period).outputs.role
   end
 
@@ -77,11 +77,13 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
               id: course.id,
               name: 'Physics 101',
               teachers: [
-                { id: teacher_role.teacher.id.to_s,
+                {
+                  id: teacher_role.teacher.id.to_s,
                   role_id: teacher_role.id.to_s,
                   first_name: 'Bob',
                   last_name: 'Newhart',
-                  deleted_at: nil }
+                  deleted_at: nil
+                }
               ]
             },
             role: {
@@ -162,11 +164,13 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
               id: course.id,
               name: 'Physics 101',
               teachers: [
-                { id: teacher_role.teacher.id.to_s,
+                {
+                  id: teacher_role.teacher.id.to_s,
                   role_id: teacher_role.id.to_s,
                   first_name: 'Bob',
                   last_name: 'Newhart',
-                  deleted_at: nil }
+                  deleted_at: nil
+                }
               ]
             },
             role: {

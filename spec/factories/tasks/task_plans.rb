@@ -23,7 +23,7 @@ FactoryBot.define do
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }
-      task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) || \
+      task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) ||
                               build(:tasks_assistant, code_class_name_hash)
 
       task_plan.content_ecosystem_id ||= task_plan.owner.ecosystem

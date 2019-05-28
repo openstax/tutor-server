@@ -24,8 +24,7 @@ class Research::CohortMembershipManager
       raise StudentAlreadyInStudy
     end
 
-    Research::Models::CohortMember.create(cohort: next_cohort_to_admit_to,
-                                          student: student)
+    Research::Models::CohortMember.create(cohort: next_cohort_to_admit_to, student: student)
   end
 
   def remove_students_from_cohorts(students)

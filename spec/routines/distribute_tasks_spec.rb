@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'fork_with_connection'
 
 RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium do
 
@@ -102,7 +101,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
         expect do
           pids = 5.times.map do
-            fork_with_connection do
+            fork do
               # Should no longer trigger ActiveRecord::TransactionIsolationConflicts
               # because after the first retry it detects that the plan
               # has already been distributed and does nothing
