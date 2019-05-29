@@ -38,29 +38,29 @@ en:
         name: 'Biglearn algorithm for calculating Student CLUes'
         labels:
           SPARFA: biglearn_sparfa
-          Local Query: biglearn_local_query
+          Local Query: local_query
       biglearn_teacher_clues_algorithm_name:
         name: 'Biglearn algorithm for calculating Teacher CLUes'
         labels:
           SPARFA: biglearn_sparfa
-          Local Query: biglearn_local_query
+          Local Query: local_query
       biglearn_assignment_spes_algorithm_name:
         name: 'Biglearn algorithm for choosing Spaced Practice exercises'
         labels:
           Student-Driven SPARFA: student_driven_biglearn_sparfa
           Instructor-Driven SPARFA: instructor_driven_biglearn_sparfa
-          Student-Driven Local Query: student_driven_biglearn_local_query
-          Instructor-Driven Local Query: instructor_driven_biglearn_local_query
+          Student-Driven Local Query: student_driven_local_query
+          Instructor-Driven Local Query: instructor_driven_local_query
       biglearn_assignment_pes_algorithm_name:
         name: 'Biglearn algorithm for choosing Personalized exercises'
         labels:
           SPARFA: biglearn_sparfa
-          Local Query: biglearn_local_query
+          Local Query: local_query
       biglearn_practice_worst_areas_algorithm_name:
         name: 'Biglearn algorithm for choosing exercises for Practice Worst Topics'
         labels:
           SPARFA: biglearn_sparfa
-          Local Query: biglearn_local_query
+          Local Query: local_query
       default_due_time:
         name: 'Default task due time'
         help_block: 'In the format HH:MM'
