@@ -70,7 +70,6 @@ gem 'action_interceptor'
 gem 'chronic'
 
 # API versioning and documentation
-#gem 'openstax_api', '~> 8.2.0'
 gem 'openstax_api'
 
 gem 'apipie-rails'
@@ -93,7 +92,6 @@ gem 'jobba', '~> 1.8.0'
 gem 'lev', '~> 9.0.1'
 
 # Contract management
-# gem 'fine_print', '~> 4.0.1'
 gem 'fine_print'
 
 # Keyword search
@@ -126,7 +124,6 @@ gem 'hashie'
 gem 'httparty'
 
 # Ordered models
-#gem 'sortability', '~> 0.1.0'
 gem 'sortability'
 
 # Lorem Ipsum
@@ -155,7 +152,6 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-# gem 'openstax_rescue_from', '~> 3.0.0'
 gem 'openstax_rescue_from'
 
 
@@ -169,7 +165,6 @@ gem 'babbler', '~> 1.0.1'
 gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
-#gem 'openstax_salesforce', '~> 2.0.1'
 gem 'openstax_salesforce'
 
 # Fork that supports Ruby >= 2.1 and stubbable stdout
