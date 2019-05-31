@@ -57,11 +57,9 @@ RSpec.feature 'DistrictTermsWork' do
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
     school_d = SchoolDistrict::CreateSchool[name: 'SchoolD', district: district_b]
 
-    course_e = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseE',
-                                                                          school: school_c
+    course_e = FactoryBot.create :course_profile_course, name: 'CourseE', school: school_c
 
-    course_f = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseF',
-                                                                          school: school_d
+    course_f = FactoryBot.create :course_profile_course, name: 'CourseF', school: school_d
 
     FinePrint::Contract.create(
       name: 'district_a_terms',
@@ -91,10 +89,10 @@ RSpec.feature 'DistrictTermsWork' do
     ).to eq ['district_b_terms']
 
     # Move a course
-    CourseProfile::UpdateCourse[course_e.id, {school_district_school_id: school_d.id }]
+    CourseProfile::UpdateCourse[course_e.id, { school_district_school_id: school_d.id }]
 
     expect(
-      Legal::GetTargetedContracts[applicable_to: course_e].map(&:contract_name)
+      Legal::GetTargetedContracts[applicable_to: course_e.reload].map(&:contract_name)
     ).to eq ['district_b_terms']
 
     # Move a school
@@ -108,9 +106,8 @@ RSpec.feature 'DistrictTermsWork' do
   scenario 'blah' do
     district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
     school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
-    course_e = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseE',
-                                                                          school: school_c
-    course_f = FactoryBot.create :course_profile_course, :process_school_change, name: 'CourseF'
+    course_e = FactoryBot.create :course_profile_course, name: 'CourseE', school: school_c
+    course_f = FactoryBot.create :course_profile_course, name: 'CourseF'
 
     FinePrint::Contract.create(name: 'district_a_terms', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish
@@ -139,20 +136,16 @@ RSpec.feature 'DistrictTermsWork' do
     # Simulate the FE getting the terms listing for a user, should add an implicit signature
     # for user1 / district_a_terms
 
-    expect{
-      visit api_terms_path
-    }.to change { FinePrint::Signature.count }.by(1)
+    expect { visit api_terms_path }.to change { FinePrint::Signature.count }.by(1)
 
     expect(FinePrint.signed_contract?(user_1.to_model, 'district_a_terms')).to be_truthy
-    expect(FinePrint::Signature.all.max_by{ |sig| sig.created_at }.is_implicit?).to be_truthy
+    expect(FinePrint::Signature.all.max_by(&:created_at).is_implicit?).to be_truthy
 
     # user 2 is not in district A, so should just see normal terms
     stub_current_user(user_2)
 
     # Simulate the FE getting the terms listing for a user, should NOT add an implicit signature
-    expect{
-      visit api_terms_path
-    }.not_to change { FinePrint::Signature.count }
+    expect { visit api_terms_path }.not_to change { FinePrint::Signature.count }
   end
 
   def create_targeted_terms(contract_name:, target_name:, is_proxy_signed: true, masked_contracts: [])

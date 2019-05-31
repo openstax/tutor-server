@@ -1,4 +1,4 @@
-class CreateContentEcosystems < ActiveRecord::Migration
+class CreateContentEcosystems < ActiveRecord::Migration[4.2]
   def change
     create_table :content_ecosystems do |t|
       t.string :title, null: false

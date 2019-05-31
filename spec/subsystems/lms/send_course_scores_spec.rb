@@ -16,8 +16,8 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: teacher]
   end
 
-  it 'calls Tasks::GetTpPerformanceReport to get the report information' do
-    expect(Tasks::GetTpPerformanceReport).to(
+  it 'calls Tasks::GetPerformanceReport to get the report information' do
+    expect(Tasks::GetPerformanceReport).to(
       receive(:[]).with(course: @course, is_teacher: true).once.and_call_original
     )
 
@@ -31,8 +31,8 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
 
   it 'uses willo key/secret for courses that are using it' do
     expect(OAuth::Consumer).to receive(:new).with(
-                                 Lms::WilloLabs.config['key'],
-                                 Lms::WilloLabs.config['secret'])
+                                 Lms::WilloLabs.config[:key],
+                                 Lms::WilloLabs.config[:secret])
 
     @course.lms_contexts.first.update_attributes! app_type: 'Lms::WilloLabs'
     described_class.call(course: @course)

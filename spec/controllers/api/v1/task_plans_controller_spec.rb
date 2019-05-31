@@ -110,7 +110,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: orig_course.id) }
 
         it 'returns no results' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to eq []
         end
@@ -120,7 +120,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: cloned_course.id) }
 
         it 'returns task_plans from the original course that have been cloned' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to match_array(
             [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json(opts).deep_symbolize_keys ]
@@ -136,7 +136,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: orig_course.id) }
 
         it 'returns no results' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to eq []
         end
@@ -146,7 +146,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: cloned_course.id) }
 
         it 'returns task_plans from the original course that have not been cloned' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to match_array(
             [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json(opts).deep_symbolize_keys ]
@@ -162,7 +162,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: orig_course.id) }
 
         it 'returns task_plans from the given course that are not clones' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to match_array(
             [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json(opts).deep_symbolize_keys,
@@ -175,7 +175,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: cloned_course.id) }
 
         it 'returns task_plans from the given course that are not clones' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to match_array(
             [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_3).as_json(opts).deep_symbolize_keys ]
@@ -191,7 +191,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: orig_course.id) }
 
         it 'returns task_plans from the given course that are clones' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to eq []
         end
@@ -201,7 +201,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         let(:params) { params_base.merge(course_id: cloned_course.id) }
 
         it 'returns task_plans from the given course that are clones' do
-          api_get :index, nil, parameters: params
+          api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to match_array(
             [ Api::V1::TaskPlanRepresenter.new(cloned_task_plan).as_json(opts).deep_symbolize_keys ]
@@ -215,20 +215,20 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
-        api_get :show, nil, parameters: {id: @task_plan.id}
+        api_get :show, nil, params: {id: @task_plan.id}
       }.to raise_error(SecurityTransgression)
     end
 
     it "can be requested by the course's teacher" do
       controller.sign_in @teacher
       expect {
-        api_get :show, nil, parameters: {id: @task_plan.id}
+        api_get :show, nil, params: {id: @task_plan.id}
       }.to_not raise_error
     end
 
     it "allows a teacher to view their course's task_plan" do
       controller.sign_in @teacher
-      api_get :show, nil, parameters: { course_id: @course.id, id: @task_plan.id }
+      api_get :show, nil, params: { course_id: @course.id, id: @task_plan.id }
       expect(response).to have_http_status(:success)
 
       # Ignore the stats for this test
@@ -239,19 +239,19 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
     it 'does not allow an unauthorized user to view the task_plan' do
       controller.sign_in @user
-      expect { api_get :show, nil, parameters: {course_id: @course.id, id: @task_plan.id} }
+      expect { api_get :show, nil, params: {course_id: @course.id, id: @task_plan.id} }
         .to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to view the task_plan' do
       expect {
-        api_get :show, nil, parameters: {course_id: @course.id, id: @task_plan.id}
+        api_get :show, nil, params: {course_id: @course.id, id: @task_plan.id}
       }.to raise_error(SecurityTransgression)
     end
 
     it 'does not include stats' do
       controller.sign_in @teacher
-      api_get :show, nil, parameters: {id: @task_plan.id}
+      api_get :show, nil, params: {id: @task_plan.id}
       expect(response.body_as_hash[:stats]).to be_nil
     end
   end
@@ -261,8 +261,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       controller.sign_in @teacher
       expect { api_post :create,
                         nil,
-                        parameters: { course_id: @course.id },
-                        raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+                        params: { course_id: @course.id },
+                        body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
         .to change{ Tasks::Models::TaskPlan.count }.by(1)
       expect(response).to have_http_status(:success)
 
@@ -275,8 +275,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       controller.sign_in @teacher
       expect { api_post :create,
                         nil,
-                        parameters: { course_id: @course.id },
-                        raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+                        params: { course_id: @course.id },
+                        body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
         .to change{ @teacher_student_role.taskings.count }.by(1)
       expect(response).to have_http_status(:success)
 
@@ -288,8 +288,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       expect {
         api_post :create,
                  nil,
-                 parameters: { course_id: @course.id },
-                 raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+                 params: { course_id: @course.id },
+                 body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
       }.to raise_error(SecurityTransgression)
     end
 
@@ -297,8 +297,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       expect {
         api_post :create,
                  nil,
-                 parameters: { course_id: @course.id },
-                 raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+                 params: { course_id: @course.id },
+                 body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
       }.to raise_error(SecurityTransgression)
     end
 
@@ -311,8 +311,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       expect {
         result = api_post :create,
                           nil,
-                          parameters: { course_id: @course.id },
-                          raw_post_data: Api::V1::TaskPlanRepresenter
+                          params: { course_id: @course.id },
+                          body: Api::V1::TaskPlanRepresenter
                                            .new(@task_plan).to_hash
                                            .except('type').to_json
       }.to raise_error(IllegalState).and change{ Tasks::Models::TaskPlan.count }.by 0
@@ -328,8 +328,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         start_time = Time.current
         expect { api_post :create,
                           nil,
-                          parameters: { course_id: @course.id },
-                          raw_post_data: valid_json_hash.to_json }
+                          params: { course_id: @course.id },
+                          body: valid_json_hash.to_json }
           .to change{ Tasks::Models::TaskPlan.count }.by(1)
         end_time = Time.current
         expect(response).to have_http_status(:success)
@@ -356,8 +356,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         controller.sign_in @teacher
         expect { api_post :create,
                           nil,
-                          parameters: { course_id: @course.id },
-                          raw_post_data: invalid_json_hash.to_json }
+                          params: { course_id: @course.id },
+                          body: invalid_json_hash.to_json }
           .not_to change{ Tasks::Models::TaskPlan.count }
         expect(response).to have_http_status(:unprocessable_entity)
         error = response.body_as_hash[:errors].first
@@ -376,8 +376,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         controller.sign_in @teacher
         expect(UpdateTaskPlanEcosystem).to receive(:call).and_call_original
         expect do
-          api_post :create, nil, parameters: { course_id: @course.id },
-                                 raw_post_data: valid_json
+          api_post :create, nil, params: { course_id: @course.id },
+                                 body: valid_json
         end.to change{ Tasks::Models::TaskPlan.count }.by(1)
         expect(response).to have_http_status(:success)
 
@@ -396,8 +396,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         controller.sign_in @teacher
         expect(UpdateTaskPlanEcosystem).not_to receive(:call)
         expect do
-          api_post :create, nil, parameters: { course_id: @course.id },
-                                 raw_post_data: valid_json
+          api_post :create, nil, params: { course_id: @course.id },
+                                 body: valid_json
         end.to change{ Tasks::Models::TaskPlan.count }.by(1)
         expect(response).to have_http_status(:success)
 
@@ -411,8 +411,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   context '#update' do
     it 'allows a teacher to update a task_plan for their course' do
       controller.sign_in @teacher
-      api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-              raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+      api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+              body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(@task_plan.reload).to_json)
@@ -424,8 +424,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
                                                         tasked_to: [@teacher_student_role]
 
       controller.sign_in @teacher
-      api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-              raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+      api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+              body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
       expect(response).to have_http_status(:success)
 
       expect(Tasks::Models::Task.find_by(id: old_preview_task)).to be_nil
@@ -439,14 +439,14 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
     it 'does not allow an unauthorized user to update a task_plan' do
       controller.sign_in @user
-      expect { api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-               raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+      expect { api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+               body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
         .to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to update a task_plan' do
-      expect { api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-               raw_post_data: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+      expect { api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+               body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
         .to raise_error(SecurityTransgression)
     end
 
@@ -458,8 +458,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       it 'allows a teacher to publish a task_plan for their course' do
         controller.sign_in @teacher
         start_time = Time.current
-        api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-                              raw_post_data: valid_json_hash.to_json
+        api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                              body: valid_json_hash.to_json
         end_time = Time.current
         expect(response).to have_http_status(:accepted)
         # Need to reload the task_plan since publishing it will set the
@@ -498,8 +498,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         new_opens_at = time_zone.now.yesterday
         valid_json_hash['tasking_plans'].first['opens_at'] = new_opens_at
 
-        api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-                              raw_post_data: valid_json_hash.to_json
+        api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                              body: valid_json_hash.to_json
 
         expect(response).to have_http_status(:accepted)
         # Need to reload the task_plan since publishing it will set
@@ -551,8 +551,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         # Since the task_plan opens_at is now in the past,
         # further publish requests should be ignored
         expect {
-          api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-                                raw_post_data: valid_json_hash.to_json
+          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                                body: valid_json_hash.to_json
         }.not_to change{ @task_plan.reload.tasks.count }
         expect(response).to have_http_status(:ok)
 
@@ -581,8 +581,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         invalid_json_hash['settings']['exercises_count_dynamic'] = 3
 
         controller.sign_in @teacher
-        api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-                              raw_post_data: invalid_json_hash.to_json
+        api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                              body: invalid_json_hash.to_json
         expect(response).to have_http_status(:unprocessable_entity)
         error = response.body_as_hash[:errors].first
         expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
@@ -593,8 +593,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         invalid_json_hash['tasking_plans'] = [{ target_id: nil, target_type: 'not valid' }]
 
         controller.sign_in @teacher
-        api_put :update, nil, parameters: { course_id: @course.id, id: @task_plan.id },
-                              raw_post_data: invalid_json_hash.to_json
+        api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                              body: invalid_json_hash.to_json
         expect(response).to have_http_status(:unprocessable_entity)
         error = response.body_as_hash[:errors].first
         expect(error[:message]).to include "Tasking plans is invalid"
@@ -605,7 +605,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   context '#destroy' do
     it 'allows a teacher to destroy a task_plan for their course' do
       controller.sign_in @teacher
-      expect{ api_delete :destroy, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_delete :destroy, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .to change{ @task_plan.reload.withdrawn? }.from(false).to(true)
       expect(response).to have_http_status(:success)
       expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
@@ -614,7 +614,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
     it 'does not allow a teacher to destroy a task_plan that is already destroyed' do
       @task_plan.destroy!
       controller.sign_in @teacher
-      expect{ api_delete :destroy, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_delete :destroy, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .not_to change{ Tasks::Models::TaskPlan.count }
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_already_deleted')
@@ -622,12 +622,12 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
     it 'does not allow an unauthorized user to destroy a task_plan' do
       controller.sign_in @user
-      expect { api_delete :destroy, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_delete :destroy, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to destroy a task_plan' do
-      expect { api_delete :destroy, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_delete :destroy, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
   end
@@ -637,7 +637,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
     it 'allows a teacher to restore a destroyed task_plan for their course' do
       controller.sign_in @teacher
-      expect{ api_put :restore, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_put :restore, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .to change{ @task_plan.reload.withdrawn? }.from(true).to(false)
       expect(response).to have_http_status(:success)
       expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan.reload).to_json
@@ -646,7 +646,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
     it 'does not allow a teacher to restore a task_plan that is not destroyed' do
       @task_plan.restore!(recursive: true)
       controller.sign_in @teacher
-      expect{ api_put :restore, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_put :restore, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .not_to change{ Tasks::Models::TaskPlan.count }
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_not_deleted')
@@ -654,12 +654,12 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
     it 'does not allow an unauthorized user to restore a task_plan' do
       controller.sign_in @user
-      expect { api_put :restore, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_put :restore, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to restore a task_plan' do
-      expect { api_put :restore, nil, parameters: { course_id: @course.id, id: @task_plan.id } }
+      expect { api_put :restore, nil, params: { course_id: @course.id, id: @task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
   end
@@ -669,20 +669,20 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
-        api_get :stats, nil, parameters: { id: @published_task_plan.id }
+        api_get :stats, nil, params: { id: @published_task_plan.id }
       }.to raise_error(SecurityTransgression)
     end
 
     it "can be requested by the course's teacher" do
       controller.sign_in @teacher
       expect {
-        api_get :stats, nil, parameters: { id: @published_task_plan.id }
+        api_get :stats, nil, params: { id: @published_task_plan.id }
       }.to_not raise_error
     end
 
     it 'includes stats' do
       controller.sign_in @teacher
-      api_get :stats, nil, parameters: { id: @published_task_plan.id }
+      api_get :stats, nil, params: { id: @published_task_plan.id }
       # The representer spec does validate the json so we'll rely on it and just check presense
       expect(response.body_as_hash[:stats]).to be_a(Array)
     end
@@ -694,20 +694,20 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
-        api_get :review, nil, parameters: { id: @published_task_plan.id }
+        api_get :review, nil, params: { id: @published_task_plan.id }
       }.to raise_error(SecurityTransgression)
     end
 
     it "can be requested by the course's teacher" do
       controller.sign_in @teacher
       expect {
-        api_get :review, nil, parameters: { id: @published_task_plan.id }
+        api_get :review, nil, params: { id: @published_task_plan.id }
       }.to_not raise_error
     end
 
     it 'includes stats' do
       controller.sign_in @teacher
-      api_get :review, nil, parameters: { id: @published_task_plan.id }
+      api_get :review, nil, params: { id: @published_task_plan.id }
       # The representer spec does validate the json so we'll rely on it and just check presense
       expect(response.body_as_hash[:stats]).to be_a(Array)
     end
@@ -715,7 +715,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   end
 
   def get_assistant(course:, task_plan_type:)
-    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
+    course.course_assistants.find_by(tasks_task_plan_type: task_plan_type).assistant
   end
 
 end

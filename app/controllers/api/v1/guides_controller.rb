@@ -1,8 +1,8 @@
 module Api
   module V1
     class GuidesController < ApiController
-      before_filter :get_course
-      before_filter :error_if_student_and_needs_to_pay, only: [:student]
+      before_action :get_course
+      before_action :error_if_student_and_needs_to_pay, only: [:student]
 
       resource_description do
         api_versions "v1"

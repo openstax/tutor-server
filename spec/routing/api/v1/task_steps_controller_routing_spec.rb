@@ -9,9 +9,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :routing, api: true, version:
   end
 
   context "PUT /api/tasks/:task_id/steps/:id" do
-    it "routes to #completed" do
-      expect(put '/api/steps/23/completed').to(
-        route_to('api/v1/task_steps#completed', format: 'json', id: "23")
+    it "routes to #update" do
+      expect(put '/api/steps/23').to(
+        route_to('api/v1/task_steps#update', format: 'json', id: "23")
       )
     end
   end

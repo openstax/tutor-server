@@ -10,7 +10,7 @@ class Demo::Config::Book < Demo::Config::Content
   end
 
   def archive_url_base
-    @configuration.archive_url_base || Rails.application.secrets.openstax['cnx']['archive_url']
+    @configuration.archive_url_base || Rails.application.secrets.openstax[:cnx][:archive_url]
   end
 
   def webview_url_base

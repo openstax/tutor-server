@@ -16,13 +16,13 @@ RSpec.describe Admin::TagsController, type: :controller do
     end
 
     it 'returns a list of tags that matches tag value' do
-      get :index, query: 'k12phys'
+      get :index, params: { query: 'k12phys' }
 
       expect(assigns[:tags].order(:id)).to eq [tag_1, tag_2]
     end
 
     it 'returns nothing if there are no matches' do
-      get :index, query: 'time-short'
+      get :index, params: { query: 'time-short' }
 
       expect(assigns[:tags]).to eq []
     end
@@ -30,11 +30,14 @@ RSpec.describe Admin::TagsController, type: :controller do
 
   context 'PUT #update' do
     it 'updates the name, description and visible flag of the tag' do
-      put :update, id: tag_1.id, tag: {
-        name: 'k12 physics chapter 4 exercise 3',
-        description: 'Student should be able to do this exercise',
-        value: 'immutable',
-        visible: '0'
+      put :update, params: {
+        id: tag_1.id,
+        tag: {
+          name: 'k12 physics chapter 4 exercise 3',
+          description: 'Student should be able to do this exercise',
+          value: 'immutable',
+          visible: '0'
+        }
       }
 
       tag_1.reload
@@ -46,22 +49,27 @@ RSpec.describe Admin::TagsController, type: :controller do
   end
 
   context 'disallowing baddies' do
-    it 'disallows unauthenticated visitors' do
+    it '#GET disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }
       allow(controller).to receive(:current_user) { nil }
 
       get :index
-      expect(response).not_to be_success
+      expect(response).not_to be_successful
+    end
 
-      put :update, id: tag_1.id
-      expect(response).not_to be_success
+    it '#PUT disallows unauthenticated visitors' do
+      allow(controller).to receive(:current_account) { nil }
+      allow(controller).to receive(:current_user) { nil }
+
+      put :update, params: { id: tag_1.id }
+      expect(response).not_to be_successful
     end
 
     it 'disallows non-admin authenticated visitors' do
       controller.sign_in(FactoryBot.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
-      expect { put :update, id: tag_1.id }.to raise_error(SecurityTransgression)
+      expect { put :update, params: { id: tag_1.id } }.to raise_error(SecurityTransgression)
     end
   end
 end

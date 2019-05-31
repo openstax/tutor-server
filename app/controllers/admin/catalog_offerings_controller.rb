@@ -1,8 +1,8 @@
 module Admin
   class CatalogOfferingsController < BaseController
 
-    before_filter :get_offerings_and_ecosystems
-    before_filter :get_salesforce_book_names, only: [:new, :edit]
+    before_action :get_offerings_and_ecosystems
+    before_action :get_salesforce_book_names, only: [:new, :edit]
 
     def index
     end
@@ -13,39 +13,41 @@ module Admin
     end
 
     def update
-      handle_with(Admin::CatalogOfferingUpdate,
-                  success: -> {
-                    updated_courses = @handler_result.outputs.num_updated_courses
-                    active_courses = @handler_result.outputs.num_active_courses
-                    notice = "#{@offering.title} has been updated."
-                    notice += " #{updated_courses} out of #{active_courses} courses updated."
+      handle_with(
+        Admin::CatalogOfferingUpdate,
+        success: -> {
+          updated_courses = @handler_result.outputs.num_updated_courses
+          active_courses = @handler_result.outputs.num_active_courses
+          notice = "#{@offering.title} has been updated."
+          notice += " #{updated_courses} out of #{active_courses} courses updated."
 
-                    redirect_to admin_catalog_offerings_path, notice: notice
-                  },
-                  failure: -> {
-                    flash.now[:error] = @handler_result.errors.map(&:translate).to_sentence
-                    @offering = @handler_result.outputs.offering \
-                      if @handler_result.outputs.offering.present?
-                    render :edit
-                  }
-                 )
+          redirect_to admin_catalog_offerings_path, notice: notice
+        },
+        failure: -> {
+          flash.now[:error] = @handler_result.errors.map(&:translate).to_sentence
+          @offering = @handler_result.outputs.offering \
+            if @handler_result.outputs.offering.present?
+          render :edit
+        }
+      )
     end
 
     def create
-      handle_with(Admin::CatalogOfferingCreate,
-                  success: -> {
-                    title = @handler_result.outputs.offering.title
+      handle_with(
+        Admin::CatalogOfferingCreate,
+        success: -> {
+          title = @handler_result.outputs.offering.title
 
-                    redirect_to admin_catalog_offerings_path,
-                                notice: "#{title} has been created."
-                  },
-                  failure: -> {
-                    flash.now[:error] = @handler_result.errors.map(&:translate).to_sentence
-                    @offering = @handler_result.outputs.offering \
-                      if @handler_result.outputs.offering.present?
-                    new
-                  }
-                 )
+          redirect_to admin_catalog_offerings_path,
+                      notice: "#{title} has been created."
+        },
+        failure: -> {
+          flash.now[:error] = @handler_result.errors.map(&:translate).to_sentence
+          @offering = @handler_result.outputs.offering \
+            if @handler_result.outputs.offering.present?
+          new
+        }
+      )
     end
 
     def destroy

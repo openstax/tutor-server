@@ -1,4 +1,4 @@
-class CreateTasksTaskings < ActiveRecord::Migration
+class CreateTasksTaskings < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_taskings do |t|
       t.references :entity_role, null: false, foreign_key: { on_update: :cascade,

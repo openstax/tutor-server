@@ -1,4 +1,4 @@
-class AddCorrectAnswerIdToTasksTaskedExercises < ActiveRecord::Migration
+class AddCorrectAnswerIdToTasksTaskedExercises < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_tasked_exercises, :correct_answer_id, :string
 

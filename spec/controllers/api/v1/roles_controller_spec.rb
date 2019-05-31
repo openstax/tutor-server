@@ -15,7 +15,7 @@ RSpec.describe Api::V1::RolesController, type: :controller, api: true, version: 
 
   context '#become' do
     it 'allows users to become one of their roles' do
-      api_put :become, user_token, parameters: { id: role.id }
+      api_put :become, user_token, params: { id: role.id }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to eq Api::V1::RoleRepresenter.new(role).to_json
@@ -24,14 +24,14 @@ RSpec.describe Api::V1::RolesController, type: :controller, api: true, version: 
 
     it 'ensures the role belongs to the calling user' do
       expect do
-        api_put :become, other_user_token, parameters: { id: role.id }
+        api_put :become, other_user_token, params: { id: role.id }
       end.to raise_error(SecurityTransgression)
          .and not_change { session[:roles] }
     end
 
     it 'does not let the user become the default role' do
       expect do
-        api_put :become, user_token, parameters: { id: default_role.id }
+        api_put :become, user_token, params: { id: default_role.id }
       end.to not_change { session[:roles] }
 
       expect(response).to have_http_status(:unprocessable_entity)

@@ -69,8 +69,8 @@ class PopulatePreviewCourseContent
     return if book.nil?
 
     # Use only chapters that have some homework exercises
-    candidate_chapters = book.chapters.select do |chapter|
-      chapter.pages.any?{ |page| page.homework_core_pool.content_exercise_ids.any? }
+    candidate_chapters = book.chapters.to_a.select do |chapter|
+      chapter.pages.any? { |page| page.homework_core_pool.content_exercise_ids.any? }
     end
     num_chapters =
       [MAX_NUM_ASSIGNED_CHAPTERS, ((course.ends_at - course.starts_at)/1.week).floor].min

@@ -2,7 +2,7 @@ class OldSfUser < ActiveRecord::Base
   self.table_name = :salesforce_users
 end
 
-class SwitchToOpenStaxSalesforce < ActiveRecord::Migration
+class SwitchToOpenStaxSalesforce < ActiveRecord::Migration[4.2]
   def up
     # Move SF user from native model to openstax_salesforce model
     old_sf_user = OldSfUser.first

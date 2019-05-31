@@ -1,4 +1,4 @@
-class AddSequenceNumberToEnrollments < ActiveRecord::Migration
+class AddSequenceNumberToEnrollments < ActiveRecord::Migration[4.2]
   def change
     add_column :course_membership_enrollments, :sequence_number, :integer
 

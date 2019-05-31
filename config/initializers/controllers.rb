@@ -1,13 +1,11 @@
 ActionController::Base.class_exec do
-  protect_from_forgery with: :exception
-
   helper ApplicationHelper
 
   before_action :load_time
 
   after_action :set_app_date_header
-
-  skip_after_action :set_date_header
+  # skip setting date and don't raise exception if it hasn't been set
+  skip_after_action :set_date_header, raise: false
 
   protected
 

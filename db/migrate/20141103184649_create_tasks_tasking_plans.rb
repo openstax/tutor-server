@@ -1,4 +1,4 @@
-class CreateTasksTaskingPlans < ActiveRecord::Migration
+class CreateTasksTaskingPlans < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_tasking_plans do |t|
       t.references :target, polymorphic: true, null: false

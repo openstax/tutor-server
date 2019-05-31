@@ -20,21 +20,18 @@ class Research::AssignMissingSurveys
 
     # Can find multiple surveys missing for this one student
 
+    sp = Research::Models::SurveyPlan.arel_table
+    sy = Research::Models::Survey.arel_table
     survey_plan_ids_not_assigned =
       Research::Models::SurveyPlan
         .published
         .not_hidden
-        .joins{study.courses.students}
-        .where{study.courses.students.id == my{student.id}}
-        .where(
-          <<-WHERE_SQL.strip_heredoc
-            NOT EXISTS (
-              SELECT *
-              FROM "research_surveys"
-              WHERE "research_surveys"."course_membership_student_id" = #{student.id}
-              AND "research_surveys"."research_survey_plan_id" = "research_survey_plans"."id"
-            )
-          WHERE_SQL
+        .joins(study: { courses: :students })
+        .where(study: { courses: { students: { id: student.id } } })
+        .where.not(
+          Research::Models::Survey.where(course_membership_student_id: student.id)
+                                  .where(sy[:research_survey_plan_id].eq(sp[:id]))
+                                  .arel.exists
         )
         .pluck(:id)
 
@@ -72,8 +69,8 @@ class Research::AssignMissingSurveys
       Research::Models::SurveyPlan
         .published
         .not_hidden
-        .joins{study.courses}
-        .where{study.courses.id == my{course.id}}
+        .joins(study: :courses)
+        .where(study: { courses: { id: course.id } })
 
     survey_plans.flat_map do |survey_plan|
       student_ids_needing_survey = student_ids_needing_survey_for_plan(survey_plan)
@@ -88,18 +85,17 @@ class Research::AssignMissingSurveys
   end
 
   def student_ids_needing_survey_for_plan(survey_plan)
+    sy = Research::Models::Survey.arel_table
+    st = CourseMembership::Models::Student.arel_table
+
     CourseMembership::Models::Student
-      .joins{course.studies}
-      .where{course.studies.id == my{survey_plan.research_study_id}}
-      .where(
-        <<-WHERE_SQL.strip_heredoc
-          NOT EXISTS (
-            SELECT *
-            FROM "research_surveys"
-            WHERE "research_surveys"."course_membership_student_id" = "course_membership_students"."id"
-            AND "research_surveys"."research_survey_plan_id" = #{survey_plan.id}
-          )
-        WHERE_SQL
-    ).pluck(:id)
+      .joins(course: :studies)
+      .where(course: { studies: { id: survey_plan.research_study_id } })
+      .where.not(
+        Research::Models::Survey.where(research_survey_plan_id: survey_plan.id)
+                                .where(sy[:course_membership_student_id].eq(st[:id]))
+                                .arel.exists
+      )
+      .pluck(:id)
   end
 end

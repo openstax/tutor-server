@@ -1,4 +1,4 @@
-class CreateUserCustomerServices < ActiveRecord::Migration
+class CreateUserCustomerServices < ActiveRecord::Migration[4.2]
   def change
     create_table :user_customer_services do |t|
       t.references :user_profile, null: false,

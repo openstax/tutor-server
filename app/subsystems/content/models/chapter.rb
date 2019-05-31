@@ -7,7 +7,9 @@ class Content::Models::Chapter < IndestructibleRecord
   json_serialize :book_location, Integer, array: true
   json_serialize :baked_book_location, Integer, array: true
 
-  belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
+  belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool',
+                                  dependent: :destroy,
+                                  optional: true
 
   sortable_belongs_to :book, on: :number, inverse_of: :chapters
   has_one :ecosystem, through: :book
@@ -15,7 +17,6 @@ class Content::Models::Chapter < IndestructibleRecord
   sortable_has_many :pages, on: :number, dependent: :destroy, inverse_of: :chapter
   has_many :exercises, through: :pages
 
-  validates :book, presence: true
   validates :title, presence: true
   validates :book_location, presence: true
 

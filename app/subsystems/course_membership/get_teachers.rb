@@ -1,10 +1,11 @@
 class CourseMembership::GetTeachers
-  lev_routine express_output: :teachers
+  lev_routine express_output: :teacher_roles
 
   protected
 
   def exec(course)
-    ss_maps = CourseMembership::Models::Teacher.where{course_profile_course_id == course.id}
-    outputs[:teachers] = ss_maps.map(&:role)
+    outputs.teachers = CourseMembership::Models::Teacher.where(course_profile_course_id: course.id)
+                                                        .preload(:role)
+    outputs.teacher_roles = outputs.teachers.map(&:role)
   end
 end

@@ -44,7 +44,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:performance, current_api_user, course)
 
-    preport = GetPerformanceReport[course: course, role: get_course_role(course: course)]
+    preport = Tasks::GetPerformanceReport[course: course, role: get_course_role(course: course)]
 
     respond_with(preport, represent_with: Api::V1::PerformanceReport::Representer)
   end

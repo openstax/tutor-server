@@ -1,4 +1,4 @@
-class AddStartAtAndEndAtToCourses < ActiveRecord::Migration
+class AddStartAtAndEndAtToCourses < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :starts_at, :datetime
     add_column :course_profile_courses, :ends_at,   :datetime

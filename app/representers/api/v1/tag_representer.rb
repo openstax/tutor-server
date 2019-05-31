@@ -38,7 +38,7 @@ module Api::V1
 
     property :is_visible,
              type: 'boolean',
-             getter: ->(*){ visible? },
+             getter: ->(*) { visible? },
              readable: true,
              writeable: false
 

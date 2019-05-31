@@ -486,7 +486,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
   end
 
   def get_assistant(course:, task_plan_type:)
-    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
+    course.course_assistants.find_by(tasks_task_plan_type: task_plan_type).assistant
   end
 
   def answer_ids(exercise_content, question_index)

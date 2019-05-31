@@ -69,19 +69,19 @@ RSpec.describe Content::Models::Tag, type: :model do
   it 'creates a Length tag' do
     tag = FactoryBot.create :content_tag, name: nil, value: 'time-short'
     expect(tag.name).to eq('Length: S')
-    expect(tag.tag_type).to eq 'length'
+    expect(tag.tag_type).to eq 'time'
     expect(tag.data).to eq 'short'
     expect(tag.visible).to be true
 
     tag = FactoryBot.create :content_tag, name: nil, value: 'time-medium'
     expect(tag.name).to eq('Length: M')
-    expect(tag.tag_type).to eq 'length'
+    expect(tag.tag_type).to eq 'time'
     expect(tag.data).to eq 'medium'
     expect(tag.visible).to be true
 
     tag = FactoryBot.create :content_tag, name: nil, value: 'time-long'
     expect(tag.name).to eq('Length: L')
-    expect(tag.tag_type).to eq 'length'
+    expect(tag.tag_type).to eq 'time'
     expect(tag.data).to eq 'long'
     expect(tag.visible).to be true
   end

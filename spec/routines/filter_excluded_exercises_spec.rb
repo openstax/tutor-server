@@ -2,30 +2,32 @@ require 'rails_helper'
 
 RSpec.describe FilterExcludedExercises, type: :routine, speed: :medium do
 
-  let(:exercises) { 5.times.map{ FactoryBot.create :content_exercise } }
+  let(:exercises) { 5.times.map { FactoryBot.create :content_exercise } }
 
   before do
     Settings::Exercises.excluded_ids = excluded_ids
-    Settings::Db.store.object('excluded_ids').expire_cache
   end
 
-  after do
+  after(:all) do
     Settings::Exercises.excluded_ids = ''
-    Settings::Db.store.object('excluded_ids').expire_cache
   end
 
-  let(:args) { { exercises: exercises, course: course,
-                 additional_excluded_numbers: additional_excluded_numbers } }
+  let(:args) do
+    {
+      exercises: exercises, course: course,
+      additional_excluded_numbers: additional_excluded_numbers
+    }
+  end
 
   context 'with admin exclusions' do
     let(:excluded_ids) { [exercises.first.uid, exercises.second.number].join(', ') }
 
     context 'with a course with excluded exercises' do
       let(:course)             { FactoryBot.create :course_profile_course }
-      let!(:excluded_exercise) {
+      let!(:excluded_exercise) do
         FactoryBot.create :course_content_excluded_exercise,
                            course: course, exercise_number: exercises.third.number
-      }
+      end
 
       context 'with additional_excluded_numbers' do
         let(:additional_excluded_numbers) { [exercises.fourth.number] }
@@ -41,7 +43,7 @@ RSpec.describe FilterExcludedExercises, type: :routine, speed: :medium do
 
         it 'returns exercises not excluded by admin or course' do
           result = described_class[**args]
-        expect(result).to eq exercises.last(2)
+          expect(result).to eq exercises.last(2)
         end
       end
     end
@@ -74,10 +76,10 @@ RSpec.describe FilterExcludedExercises, type: :routine, speed: :medium do
 
     context 'with a course with excluded exercises' do
       let(:course)             { FactoryBot.create :course_profile_course }
-      let!(:excluded_exercise) {
+      let!(:excluded_exercise) do
         FactoryBot.create :course_content_excluded_exercise,
                            course: course, exercise_number: exercises.third.number
-      }
+      end
 
       context 'with additional_excluded_numbers' do
         let(:additional_excluded_numbers) { [exercises.fourth.number] }

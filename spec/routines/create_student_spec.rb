@@ -6,10 +6,10 @@ RSpec.describe CreateStudent, type: :routine do
 
   it 'creates a new student in the given period with a username and a password' do
     result = nil
-    expect {
+    expect do
       result = CreateStudent.call(period: period, username: 'dummyuser', password: 'pass',
                                   first_name: 'Dummy', last_name: 'User', full_name: 'Dummy User')
-    }.to change{ User::Models::Profile.count }.by(1)
+    end.to change { User::Models::Profile.count }.by(1)
     expect(result.errors).to be_empty
 
     student = result.outputs.student
@@ -22,10 +22,10 @@ RSpec.describe CreateStudent, type: :routine do
 
   it 'creates a new student in the given period with an email address' do
     result = nil
-    expect {
+    expect do
       result = CreateStudent.call(period: period, email: 'dummy@example.com',
                                   first_name: 'Dummy', last_name: 'User', full_name: 'Dummy User')
-    }.to change{ User::Models::Profile.count }.by(1)
+    end.to change { User::Models::Profile.count }.by(1)
     expect(result.errors).to be_empty
 
     student = result.outputs.student

@@ -35,7 +35,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { Rails.application.secrets.openstax['osweb']['base_url'] }
+             getter: ->(*) { Rails.application.secrets.openstax[:osweb][:base_url] }
 
     property :tutor_api_url,
              type: String,
@@ -49,18 +49,20 @@ module Api::V1
              writeable: false,
              getter: ->(*) {
       {
-        url: Rails.application.secrets['response_validation']['url'],
+        url: Rails.application.secrets.response_validation[:url],
         is_enabled: Settings::ResponseValidation.is_enabled,
         is_ui_enabled: Settings::ResponseValidation.is_ui_enabled
       }
     }
 
     property :payments, writeable: false, readable: true, getter: ->(*) do
+      payments_secrets = Rails.application.secrets.openstax[:payments]
+
       {
         is_enabled: Settings::Payments.payments_enabled,
         js_url: OpenStax::Payments::Api.embed_js_url,
-        base_url: Rails.application.secrets['openstax']['payments']['url'],
-        product_uuid: Rails.application.secrets['openstax']['payments']['product_uuid']
+        base_url: payments_secrets[:url],
+        product_uuid: payments_secrets[:product_uuid]
       }
     end
 

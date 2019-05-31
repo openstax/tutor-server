@@ -12,7 +12,7 @@ class CourseProfile::BuildPreviewCourses
     Rails.logger.tagged(self.class.name) { |logger| logger.public_send(level, &block) }
   end
 
-  def exec(desired_count: Settings::Db.store.prebuilt_preview_course_count)
+  def exec(desired_count: Settings::Db.prebuilt_preview_course_count)
     start_time = Time.current
     log(:debug) { "Started at #{start_time}" }
 
@@ -55,7 +55,7 @@ class CourseProfile::BuildPreviewCourses
           offering_title = offering.title
           created_course_counts_by_offering_title[offering_title] += 1
           lowest_preview_counts_by_offering_title[offering_title] = [
-            lowest_preview_counts_by_offering_title[offering_title], offering.course_preview_count
+            lowest_preview_counts_by_offering_title[offering_title], offering.preview_course_count
           ].min
         end
       end
@@ -68,28 +68,34 @@ class CourseProfile::BuildPreviewCourses
   def offering_that_needs_previews(desired_count)
     # is_preview_ready: false prevents the course from being claimed
     # but it still counts for the total here
-    # The first where uses literal strings because Rails fails to provide the proper bind parameters
-    # in the Catalog::Models::Offering query below if we use hashes here
-    courses = CourseProfile::Models::Course
-                .where("is_preview = 't'")
-                .where(preview_claimed_at: nil)
-                .group(:catalog_offering_id)
-                .select([:catalog_offering_id, 'count(*) as course_preview_count'])
+    course_counts_sql = CourseProfile::Models::Course
+      .select([:catalog_offering_id, 'COUNT(*) as "preview_course_count"'])
+      .where(is_preview: true, preview_claimed_at: nil)
+      .group(:catalog_offering_id)
+      .to_sql
+
+    of = Catalog::Models::Offering.arel_table
+    cc = Arel::Table.new(:course_counts)
+    preview_course_count = Arel::Nodes::NamedFunction.new(
+      'COALESCE', [cc[:preview_course_count], 0]
+    )
 
     # We only lock one offering here, so other calls to this routine
     # could potentially work on different offerings simultaneously
     Catalog::Models::Offering
-      .joins do
-        courses.as('course_preview_counts')
-               .on { id == course_preview_counts.catalog_offering_id }
-               .outer
-      end
+      .select(of[Arel.star], preview_course_count.dup.as('"preview_course_count"'))
+      .joins(
+        <<-JOIN_SQL.strip_heredoc
+          LEFT OUTER JOIN (#{course_counts_sql})
+            AS "course_counts"
+            ON #{cc[:catalog_offering_id].eq(of[:id]).to_sql}
+        JOIN_SQL
+      )
       .where(is_tutor: true, is_available: true)
-      .where(['coalesce(course_preview_count, 0) < ?', desired_count])
-      .select('coalesce(course_preview_count, 0) as course_preview_count, catalog_offerings.*')
-      .reorder(1, :number) # Work on offerings with lower course_preview_count first
+      .where(preview_course_count.lt(desired_count))
+      .reorder(preview_course_count, :number)                  # Work on lower counts first
       .lock('FOR NO KEY UPDATE OF "catalog_offerings" SKIP LOCKED') # Skip offerings being worked on
-      .first # Only lock 1 offering at a time
+      .first                                                        # Lock 1 offering at a time
   end
 
 end

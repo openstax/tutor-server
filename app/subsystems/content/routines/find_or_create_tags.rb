@@ -16,14 +16,14 @@ class Content::Routines::FindOrCreateTags
   #
   def exec(ecosystem:, input:)
     tag_objects, hashes = partition_content_tags(input)
-    tag_objects.each{ |tag| tag.save! unless tag.persisted? }
+    tag_objects.each { |tag| tag.save! unless tag.persisted? }
     outputs[:tags] = tag_objects + find_or_create_ecosystem_tags_from_hash_array(ecosystem, hashes)
   end
 
   private
 
   def partition_content_tags(input)
-    [input].flatten.partition{ |obj| obj.is_a?(Content::Models::Tag) }
+    [input].flatten.partition { |obj| obj.is_a?(Content::Models::Tag) }
   end
 
   def find_or_create_ecosystem_tags_from_hash_array(ecosystem, hash_array)
@@ -38,22 +38,22 @@ class Content::Routines::FindOrCreateTags
     existing_tag_values = existing_tags.map(&:value)
 
     # Exclude existing tags
-    new_hash_array = hash_array.select{ |hash| !existing_tag_values.include?(hash[:value]) }
+    new_hash_array = hash_array.select { |hash| !existing_tag_values.include?(hash[:value]) }
 
     # Create new TEKS tags first
-    new_hash_teks = new_hash_array.map{ |hash| hash[:teks] }.compact.uniq
-    existing_teks_tags = existing_tags.select{ |tag| new_hash_teks.include?(tag.value) }
+    new_hash_teks = new_hash_array.map { |hash| hash[:teks] }.compact.uniq
+    existing_teks_tags = existing_tags.select { |tag| new_hash_teks.include?(tag.value) }
     existing_teks_values = existing_teks_tags.map(&:value)
 
     # Search tag hashes for the TEKS definitions
     new_teks_values = new_hash_teks - existing_teks_values
-    new_teks_hashes = new_hash_array.select{ |hash| new_teks_values.include?(hash[:value]) }
+    new_teks_hashes = new_hash_array.select { |hash| new_teks_values.include?(hash[:value]) }
 
     # Some TEKS was found that did not previously exist and is not defined in the content
     hashless_teks = new_teks_values - new_teks_hashes.map{ |hash| hash[:value] }
     Rails.logger.warn "TEKS with no definition found: #{hashless_teks.join(', ')}" \
       unless hashless_teks.empty?
-    missing_teks_hashes = hashless_teks.map{ |teks| { value: teks } }
+    missing_teks_hashes = hashless_teks.map { |teks| { value: teks } }
 
     # Create new tags for TEKS
     new_teks_tags = (new_teks_hashes + missing_teks_hashes).map do |hash|

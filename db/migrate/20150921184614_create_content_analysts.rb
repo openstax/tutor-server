@@ -1,4 +1,4 @@
-class CreateContentAnalysts < ActiveRecord::Migration
+class CreateContentAnalysts < ActiveRecord::Migration[4.2]
   def change
     create_table :user_profile_content_analysts do |t|
       t.references :user_profile_profile, null: false,

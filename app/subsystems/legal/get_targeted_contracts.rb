@@ -4,24 +4,33 @@ class Legal::GetTargetedContracts
   protected
 
   def exec(ids: :all, applicable_to: nil)
-    models =
-      if applicable_to.present?
-        gids = [ applicable_to ].flatten.map { |item| Legal::Utils.gid(item) }
-        targeted_contract_models_for_gids(gids)
-      elsif :all == ids
-        Legal::Models::TargetedContract.all
-      else
-        ids = [ids].flatten.compact
-        Legal::Models::TargetedContract.find(ids)
+    contracts = Legal::Models::TargetedContract.all
+
+    unless applicable_to.nil?
+      applicable_models = [ applicable_to ].flatten.flat_map do |model|
+        case model
+        when CourseProfile::Models::Course
+          [ model, model.school, model.school.try!(:district) ].compact
+        when SchoolDistrict::Models::School
+          [ model, model.district ].compact
+        when SchoolDistrict::Models::District
+          [ model ]
+        else
+          []
+        end
       end
 
-    outputs.contracts = models.map(&:as_poro)
-  end
+      contracts = contracts.where(
+        target_gid: applicable_models.map { |item| Legal::Utils.gid(item) }
+      )
+    end
 
-  def targeted_contract_models_for_gids(gids)
-    parent_gids = Legal::Models::TargetedContractRelationship.all_parent_gids_of(gids)
-    potential_target_gids = gids + parent_gids
+    contracts = Legal::Models::TargetedContract.all
+    contracts = contracts.where(id: [ids].flatten.compact) if ids != :all
+    contracts = contracts.where(
+      target_gid: applicable_models.map { |item| Legal::Utils.gid(item) }
+    ) unless applicable_models.nil?
 
-    Legal::Models::TargetedContract.where(target_gid: potential_target_gids).all
+    outputs.contracts = contracts.map(&:as_poro)
   end
 end

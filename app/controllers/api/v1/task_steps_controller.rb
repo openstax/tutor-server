@@ -32,7 +32,6 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
-    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, @tasked)
 
     consume!(@tasked,
              represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked),

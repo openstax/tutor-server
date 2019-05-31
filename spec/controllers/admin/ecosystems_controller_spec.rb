@@ -31,9 +31,9 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
       let(:manifest_file) { fixture_file_upload(fixture_path) }
 
       it 'imports the manifest into an ecosystem' do
-        expect {
-          post :create, ecosystem: { manifest: manifest_file }
-        }.to change{ Content::Models::Ecosystem.count }.by(1)
+        expect do
+          post :create, params: { ecosystem: { manifest: manifest_file } }
+        end.to change{ Content::Models::Ecosystem.count }.by(1)
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
 
@@ -43,7 +43,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 
-        post :create, ecosystem: { manifest: manifest_file, books: 'update' }
+        post :create, params: { ecosystem: { manifest: manifest_file, books: 'update' } }
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
 
@@ -56,7 +56,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 
-        post :create, ecosystem: { manifest: manifest_file, exercises: 'update' }
+        post :create, params: { ecosystem: { manifest: manifest_file, exercises: 'update' } }
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
 
@@ -66,7 +66,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 
-        post :create, ecosystem: { manifest: manifest_file, exercises: 'discard' }
+        post :create, params: { ecosystem: { manifest: manifest_file, exercises: 'discard' } }
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
     end
@@ -76,9 +76,9 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
       let(:manifest_file) { fixture_file_upload(fixture_path) }
 
       it 'imports the manifest into an ecosystem' do
-        expect {
-          post :create, ecosystem: { manifest: manifest_file }
-        }.to change{ Content::Models::Ecosystem.count }.by(1)
+        expect do
+          post :create, params: { ecosystem: { manifest: manifest_file } }
+        end.to change{ Content::Models::Ecosystem.count }.by(1)
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
 
@@ -88,7 +88,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 
-        post :create, ecosystem: { manifest: manifest_file, books: 'update' }
+        post :create, params: { ecosystem: { manifest: manifest_file, books: 'update' } }
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
 
@@ -101,7 +101,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 
-        post :create, ecosystem: { manifest: manifest_file, exercises: 'update' }
+        post :create, params: { ecosystem: { manifest: manifest_file, exercises: 'update' } }
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
 
@@ -111,7 +111,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 
-        post :create, ecosystem: { manifest: manifest_file, exercises: 'discard' }
+        post :create, params: { ecosystem: { manifest: manifest_file, exercises: 'discard' } }
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
     end
@@ -119,18 +119,18 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
 
   context '#destroy' do
     it 'deletes an ecosystem' do
-      expect {
-        delete :destroy, id: ecosystem_1.id
-      }.to change { ecosystem_1.to_model.reload.deleted? }.from(false).to(true)
+      expect do
+        delete :destroy, params: { id: ecosystem_1.id }
+      end.to change { ecosystem_1.to_model.reload.deleted? }.from(false).to(true)
       expect(flash[:notice]).to eq('Ecosystem deleted.')
       expect(flash[:error]).to be_nil
     end
 
     it 'returns an error if the ecosystem is linked to a course' do
       AddEcosystemToCourse[course: course, ecosystem: ecosystem_2]
-      expect {
-        delete :destroy, id: ecosystem_2.id
-      }.to_not change { Content::Models::Ecosystem.count }
+      expect do
+        delete :destroy, params: { id: ecosystem_2.id }
+      end.to_not change { Content::Models::Ecosystem.count }
       expect(flash[:notice]).to be_nil
       expect(flash[:error]).to eq(
         'The ecosystem cannot be deleted because it is linked to a course')
@@ -139,7 +139,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
 
   context 'GET #manifest' do
     it 'allows the ecosystem\'s manifest to be downloaded' do
-      get :manifest, id: ecosystem_1.id
+      get :manifest, params: { id: ecosystem_1.id }
 
       expected_content_disposition = \
         "attachment; filename=\"#{FilenameSanitizer.sanitize(ecosystem_1.title)}.yml\""

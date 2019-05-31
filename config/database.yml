@@ -5,7 +5,6 @@ default: &default
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
   port: <%= ENV['OXT_DB_PORT'] || 5432 %>
 
-
 development:
   <<: *default
   database: <%= ENV['OXT_DEV_DB'] || 'ox_tutor_dev' %>
@@ -17,5 +16,6 @@ test:
   <<: *default
   database: '<%= ENV['OXT_TEST_DB'] || 'ox_tutor_test' %><%= \
                  "_#{ENV['TEST_ENV_NUMBER']}" if !ENV['TEST_ENV_NUMBER'].blank? %>'
+  reaping_frequency: 0 # 0 = disabled - incompatible with our DatabaseCleaner config
 
 # Production database is intentionally left unconfigured

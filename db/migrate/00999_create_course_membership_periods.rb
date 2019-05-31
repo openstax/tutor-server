@@ -1,4 +1,4 @@
-class CreateCourseMembershipPeriods < ActiveRecord::Migration
+class CreateCourseMembershipPeriods < ActiveRecord::Migration[4.2]
   def change
     create_table :course_membership_periods do |t|
       t.references :entity_course, null: false, foreign_key: { on_update: :cascade,

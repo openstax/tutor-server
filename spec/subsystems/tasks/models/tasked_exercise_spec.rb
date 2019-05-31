@@ -81,15 +81,13 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it "invalidates task's cache when updated" do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
-    expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
+    expect { tasked_exercise.save! }.to change { tasked_exercise.task_step.task.cache_version }
   end
 
-  describe '#content_preview' do
+  context '#content_preview' do
     let(:default_exercise_copy) { "Exercise step ##{tasked_exercise.id}" }
     let(:content_body) { 'exercise content' }
-    let(:content) do
-      { "questions" => [ {"stem_html" => content_body } ] }.to_json
-    end
+    let(:content) { { "questions" => [ {"stem_html" => content_body } ] }.to_json }
 
     it "parses the content for the content preview" do
       tasked_exercise.content = content

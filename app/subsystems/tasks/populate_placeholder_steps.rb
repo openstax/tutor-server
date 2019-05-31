@@ -202,7 +202,7 @@ class Tasks::PopulatePlaceholderSteps
       end
     else
       # Tutor controls how many PEs/SPEs
-      placeholder_steps = task.task_steps.select do |task_step|
+      placeholder_steps = task.task_steps.to_a.select do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
       if placeholder_steps.empty?
@@ -292,6 +292,7 @@ class Tasks::PopulatePlaceholderSteps
             ts.number >= task_step.number && ts.id != task_step.id
           end
           non_updated_task_steps -= conflicting_non_updated_task_steps
+          # FIXME: This is modifying the task_steps_to_upsert array during iteration
           task_steps_to_upsert.concat conflicting_non_updated_task_steps
           task_steps_to_upsert.select do |ts|
             ts.number >= task_step.number && ts.id != task_step.id

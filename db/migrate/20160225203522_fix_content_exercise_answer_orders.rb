@@ -1,4 +1,4 @@
-class FixContentExerciseAnswerOrders < ActiveRecord::Migration
+class FixContentExerciseAnswerOrders < ActiveRecord::Migration[4.2]
   def up
     Content::Models::Exercise.find_each do |exercise|
       answers = exercise.questions_hash.first['answers']

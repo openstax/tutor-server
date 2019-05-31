@@ -4,7 +4,7 @@ require_relative '../../support/fake_exercise_uuids'
 FactoryBot.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
 
-    type 'reading'
+    type { 'reading' }
 
     assistant do
       Tasks::Models::Assistant.find_by(
@@ -14,7 +14,9 @@ FactoryBot.define do
       )
     end
 
-    transient { number_of_students 10 }
+    transient do
+      number_of_students { 10 }
+    end
 
     owner     { FactoryBot.build :course_profile_course, offering: nil }
 

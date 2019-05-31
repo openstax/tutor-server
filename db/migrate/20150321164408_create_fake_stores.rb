@@ -1,4 +1,4 @@
-class CreateFakeStores < ActiveRecord::Migration
+class CreateFakeStores < ActiveRecord::Migration[4.2]
   def change
     create_table :fake_stores do |t|
       t.text :data

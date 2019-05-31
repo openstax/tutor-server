@@ -4,11 +4,11 @@ module Settings
     class << self
 
       def excluded_ids
-        Settings::Db.store.excluded_ids
+        Settings::Db.excluded_ids
       end
 
       def excluded_ids=(ids)
-        Settings::Db.store.excluded_ids = ids
+        Settings::Db.excluded_ids = ids
       end
 
       def excluded_at
@@ -17,8 +17,6 @@ module Settings
             SELECT "updated_at"
             FROM "settings"
             WHERE "var" = 'excluded_ids'
-              AND "thing_type" IS NULL
-              AND "thing_id" IS NULL
             ORDER BY "settings"."id"
             LIMIT 1;
           SQL

@@ -21,8 +21,7 @@ class CourseMembership::Models::Student < ApplicationRecord
 
   before_validation :init_first_paid_at
 
-  validates :role, presence: true, uniqueness: true
-  validates :course, :period, presence: true
+  validates :role, uniqueness: true
 
   before_save :init_payment_due_at
 

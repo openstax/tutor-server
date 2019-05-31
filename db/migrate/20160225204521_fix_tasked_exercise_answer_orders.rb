@@ -1,4 +1,4 @@
-class FixTaskedExerciseAnswerOrders < ActiveRecord::Migration
+class FixTaskedExerciseAnswerOrders < ActiveRecord::Migration[4.2]
   def up
     Tasks::Models::TaskedExercise.unscoped.update_all(
       'content = content_exercises.content

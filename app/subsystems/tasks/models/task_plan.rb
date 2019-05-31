@@ -13,7 +13,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   # Allow use of 'type' column without STI
   self.inheritance_column = nil
 
-  belongs_to :cloned_from, foreign_key: 'cloned_from_id', class_name: 'Tasks::Models::TaskPlan'
+  belongs_to :cloned_from, foreign_key: 'cloned_from_id',
+                           class_name: 'Tasks::Models::TaskPlan',
+                           optional: true
 
   belongs_to :assistant
   belongs_to :owner, polymorphic: true
@@ -27,9 +29,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   before_validation :trim_text
 
   validates :title, presence: true
-  validates :assistant, presence: true
-  validates :ecosystem, presence: true
-  validates :owner, presence: true
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
@@ -98,26 +97,22 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
     json_errors = JSON::Validator.fully_validate(schema, settings, insert_defaults: true)
     return if json_errors.empty?
-    json_errors.each{ |json_error| errors.add(:settings, "- #{json_error}") }
-    false
+
+    json_errors.each { |json_error| errors.add(:settings, "- #{json_error}") }
+    throw :abort
   end
 
   def same_ecosystem
     return if ecosystem.nil?
 
-    return_value = nil
     # Special checks for the page_ids and exercise_ids settings
-    if settings['exercise_ids'].present? && ecosystem != get_ecosystem_from_exercise_ids
-      errors.add(:settings, '- Invalid exercises selected')
-      return_value = false
-    end
+    errors.add(:settings, '- Invalid exercises selected') \
+      if settings['exercise_ids'].present? && ecosystem != get_ecosystem_from_exercise_ids
 
-    if settings['page_ids'].present? && ecosystem != get_ecosystem_from_page_ids
-      errors.add(:settings, '- Invalid pages selected')
-      return_value = false
-    end
+    errors.add(:settings, '- Invalid pages selected') \
+      if settings['page_ids'].present? && ecosystem != get_ecosystem_from_page_ids
 
-    return_value
+    throw(:abort) if errors.any?
   end
 
   def changes_allowed
@@ -129,13 +124,14 @@ class Tasks::Models::TaskPlan < ApplicationRecord
       errors.add(key.to_sym, "cannot be updated after the open date")
     end
 
-    false
+    throw :abort
   end
 
   def not_past_due_when_publishing
     return if !is_publish_requested || tasking_plans.none?(&:past_due?)
+
     errors.add(:due_at, 'cannot be in the past when publishing')
-    false
+    throw :abort
   end
 
   def trim_text

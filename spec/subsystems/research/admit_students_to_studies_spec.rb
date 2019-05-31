@@ -42,10 +42,10 @@ RSpec.describe Research::AdmitStudentsToStudies do
 
     described_class.call(students: student, studies: study)
 
-    expect{
+    expect do
       result = described_class.call(students: student, studies: study)
       expect(result.errors).to be_empty
-    }.not_to make_database_queries(manipulative: true)
+    end.not_to make_database_queries(manipulative: true)
   end
 
 

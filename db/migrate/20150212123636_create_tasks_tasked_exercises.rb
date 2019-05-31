@@ -1,4 +1,4 @@
-class CreateTasksTaskedExercises < ActiveRecord::Migration
+class CreateTasksTaskedExercises < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_tasked_exercises do |t|
       t.references :content_exercise, null: false,

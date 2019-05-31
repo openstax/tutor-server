@@ -1,6 +1,6 @@
 class Admin::TargetedContractsController < Admin::BaseController
 
-  before_filter :load_district_targets, only: [:new]
+  before_action :load_district_targets, only: [:new]
 
   def index
     @contracts = Legal::GetTargetedContracts[]

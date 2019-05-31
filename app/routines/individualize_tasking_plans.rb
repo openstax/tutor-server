@@ -31,9 +31,11 @@ class IndividualizeTaskingPlans
         raise NotYetImplemented
       end
 
-      roles = roles.select{ |role| role.role_type == role_type.to_s } unless role_type.nil?
+      roles = [roles].flatten
 
-      [roles].flatten.map do |role|
+      roles = roles.select { |role| role.role_type == role_type.to_s } unless role_type.nil?
+
+      roles.map do |role|
         Tasks::Models::TaskingPlan.new(task_plan: task_plan,
                                        target: role,
                                        opens_at: tasking_plan.opens_at,

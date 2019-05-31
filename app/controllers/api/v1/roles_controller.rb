@@ -1,6 +1,6 @@
 class Api::V1::RolesController < Api::V1::ApiController
 
-  before_filter :get_role
+  before_action :get_role
 
   resource_description do
     api_versions "v1"

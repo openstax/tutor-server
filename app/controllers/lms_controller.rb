@@ -8,10 +8,10 @@ class LmsController < ApplicationController
   #   * running the "content item" launch that helps teachers get the "Tutor"
   #     assignment link in to their LMS course.
 
-  skip_before_filter :verify_authenticity_token, only: [:launch, :ci_launch]
-  skip_before_filter :authenticate_user!, only: [:configuration, :launch, :launch_authenticate, :ci_launch]
+  skip_before_action :verify_authenticity_token, only: [:launch, :ci_launch]
+  skip_before_action :authenticate_user!, only: [:configuration, :launch, :launch_authenticate, :ci_launch]
 
-  before_filter :allow_iframe_access, only: [:launch, :ci_launch]
+  before_action :allow_iframe_access, only: [:launch, :ci_launch]
 
   layout false
 
@@ -51,8 +51,6 @@ class LmsController < ApplicationController
 
       # Do some early error checking
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
-
-
 
       context = launch.context
       if context.course.nil?

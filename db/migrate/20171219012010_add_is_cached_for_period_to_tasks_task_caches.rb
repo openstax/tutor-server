@@ -1,4 +1,4 @@
-class AddIsCachedForPeriodToTasksTaskCaches < ActiveRecord::Migration
+class AddIsCachedForPeriodToTasksTaskCaches < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_task_caches, :is_cached_for_period, :boolean
 

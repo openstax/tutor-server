@@ -6,10 +6,7 @@ RSpec.describe Tasks::Models::Tasking, type: :model do
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:role) }
 
-  it { is_expected.to belong_to(:period) }
-
-  it { is_expected.to validate_presence_of(:task) }
-  it { is_expected.to validate_presence_of(:role) }
+  it { is_expected.to belong_to(:period).optional }
 
   it { is_expected.to validate_uniqueness_of(:role).scoped_to(:tasks_task_id) }
 

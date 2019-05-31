@@ -6,8 +6,6 @@ RSpec.describe Tasks::Models::TaskCache, type: :model do
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:ecosystem) }
 
-  it { is_expected.to validate_presence_of(:task)      }
-  it { is_expected.to validate_presence_of(:ecosystem) }
   it { is_expected.to validate_presence_of(:task_type) }
 
   it { is_expected.to validate_uniqueness_of(:ecosystem).scoped_to(:tasks_task_id) }

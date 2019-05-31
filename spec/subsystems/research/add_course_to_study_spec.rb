@@ -19,15 +19,15 @@ RSpec.describe Research::AddCourseToStudy do
 
   it "adds the course to the study" do
     described_class[study: @study, course: @course]
-    expect(@study.courses(true)).to include(@course)
-    expect(@course.studies(true)).to include(@study)
+    expect(@study.courses).to include(@course)
+    expect(@course.studies.reload).to include(@study)
   end
 
   it 'adds users to cohorts' do
     cohort = Research::Models::Cohort.create(name: "study", study: @study)
-    expect{
+    expect do
       described_class[study: @study, course: @course]
-    }.to change { cohort.reload.cohort_members_count }.by(@course.students.count)
+    end.to change { cohort.reload.cohort_members_count }.by(@course.students.count)
   end
 
   it "freaks out if course already in study" do
@@ -67,9 +67,9 @@ RSpec.describe Research::AddCourseToStudy do
     student_3 = AddUserAsPeriodStudent[period: another_period, user: student_3_user].student
 
     # It should not mess with students 1 and 2, but should add survey to student 3
-    expect{
+    expect do
       described_class[study: @study, course: another_course]
-    }.to change{ Research::Models::Survey.count }.by(1)
+    end.to change { Research::Models::Survey.count }.by(1)
 
     [@student_1, @student_2, student_3].each do |student|
       expect(student.surveys.map(&:research_survey_plan_id)).to eq [survey_plan.id]

@@ -1,4 +1,4 @@
-class StudyBrains < ActiveRecord::Migration
+class StudyBrains < ActiveRecord::Migration[4.2]
   def change
     create_table :research_study_brains do |t|
       t.references :research_study, null: false, index: true,

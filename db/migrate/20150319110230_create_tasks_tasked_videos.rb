@@ -1,4 +1,4 @@
-class CreateTasksTaskedVideos < ActiveRecord::Migration
+class CreateTasksTaskedVideos < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_tasked_videos do |t|
       t.string :url, null: false

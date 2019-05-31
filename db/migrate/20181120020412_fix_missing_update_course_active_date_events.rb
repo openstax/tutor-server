@@ -1,4 +1,4 @@
-class FixMissingUpdateCourseActiveDateEvents < ActiveRecord::Migration
+class FixMissingUpdateCourseActiveDateEvents < ActiveRecord::Migration[4.2]
   def up
     CourseProfile::Models::Course
       .where("\"created_at\" < '#{DateTime.new(2018).to_s(:db)}'")

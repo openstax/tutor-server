@@ -1,4 +1,4 @@
-class CreateCourseContentCourseEcosystems < ActiveRecord::Migration
+class CreateCourseContentCourseEcosystems < ActiveRecord::Migration[4.2]
   def change
     create_table :course_content_course_ecosystems do |t|
       t.references :entity_course, null: false,

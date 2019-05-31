@@ -3,17 +3,17 @@ module Tutor::SubSystems
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def belongs_to(name, scope = nil, options = {})
+      def belongs_to(name, scope = nil, **options)
         set_subsystem_options(name, scope, options, true)
         super
       end
 
-      def has_one(name, scope = nil, options = {})
+      def has_one(name, scope = nil, **options)
         set_subsystem_options(name, scope, options)
         super
       end
 
-      def has_many(name, scope = nil, options = {}, &extension)
+      def has_many(name, scope = nil, **options, &extension)
         set_subsystem_options(name, scope, options)
         super
       end

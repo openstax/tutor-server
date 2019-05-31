@@ -36,7 +36,7 @@ RSpec.describe CustomerService::StudentsController, type: :controller do
     }
 
     it 'returns all the students in a course' do
-      get :index, course_id: course.id
+      get :index, params: { course_id: course.id }
       expect(assigns[:course].name).to eq 'Physics'
       expect(assigns[:students]).to match a_collection_containing_exactly(
         a_hash_including(
@@ -78,7 +78,7 @@ RSpec.describe CustomerService::StudentsController, type: :controller do
     it 'works even if a student has a nil username' do
       user_2.account.update_attribute :username, nil
 
-      get :index, course_id: course.id
+      get :index, params: { course_id: course.id }
       expect(assigns[:course].name).to eq 'Physics'
       expect(assigns[:students]).to match a_collection_containing_exactly(
         a_hash_including(

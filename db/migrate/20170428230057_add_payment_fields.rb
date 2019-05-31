@@ -1,4 +1,4 @@
-class AddPaymentFields < ActiveRecord::Migration
+class AddPaymentFields < ActiveRecord::Migration[4.2]
   def change
     add_column :catalog_offerings, :does_cost, :boolean, default: false, null: false
     add_column :course_profile_courses, :does_cost, :boolean, default: false, null: false

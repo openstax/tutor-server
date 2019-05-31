@@ -74,7 +74,7 @@ RSpec.describe Admin::StatsController, type: :controller do
         end
 
         it "doesn't raise error" do
-          expect{get :excluded_exercises}.to_not raise_error
+          expect { get :excluded_exercises }.to_not raise_error
         end
       end
     end
@@ -95,24 +95,24 @@ RSpec.describe Admin::StatsController, type: :controller do
         end
 
         it "does a redirect" do
-          post :excluded_exercises_to_csv, export: { by: ["course", "exercise"] }
+          post :excluded_exercises_to_csv, params: { export: { by: ["course", "exercise"] } }
           expect(response).to redirect_to admin_stats_excluded_exercises_path
         end
 
         it "renders a flash success" do
-          post :excluded_exercises_to_csv, export: { by: ["course", "exercise"] }
+          post :excluded_exercises_to_csv, params: { export: { by: ["course", "exercise"] } }
           expect(flash[:success]).to be_present
         end
       end
 
       context "without by_course or by_exercise params" do
         it "does a redirect" do
-          post :excluded_exercises_to_csv, export: { by: [""] }
+          post :excluded_exercises_to_csv, params: { export: { by: [""] } }
           expect(response).to redirect_to admin_stats_excluded_exercises_path
         end
 
         it "renders a flash alert" do
-          post :excluded_exercises_to_csv, export: { by: [""] }
+          post :excluded_exercises_to_csv, params: { export: { by: [""] } }
           expect(flash[:alert]).to be_present
         end
       end

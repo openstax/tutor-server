@@ -1,4 +1,4 @@
-class ConvertSerializedFieldsToJson < ActiveRecord::Migration
+class ConvertSerializedFieldsToJson < ActiveRecord::Migration[4.2]
   FIELDS_TO_MIGRATE = {
     'Content::Models::Book'           => { reading_processing_instructions: [] },
     'Content::Models::Chapter'        => { book_location: [] },
@@ -12,7 +12,6 @@ class ConvertSerializedFieldsToJson < ActiveRecord::Migration
     'Content::Models::Pool'           => { content_exercise_ids: [] },
     'Legal::Models::TargetedContract' => { masked_contract_names: [] },
     'Tasks::Models::CourseAssistant'  => { settings: {}, data: {} },
-    'Tasks::Models::Task'             => { spy: {} },
     'Tasks::Models::TaskedReading'    => { book_location: [] },
     'Tasks::Models::TaskStep'         => {
       related_content: [],
@@ -52,7 +51,7 @@ class ConvertSerializedFieldsToJson < ActiveRecord::Migration
         model.update_columns attributes
       end
 
-      fields.each{ |field_name, default| remove_column table_name, "#{field_name}_old" }
+      fields.each { |field_name, default| remove_column table_name, "#{field_name}_old" }
     end
   end
 

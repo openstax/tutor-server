@@ -9,22 +9,22 @@ RSpec.describe JsonSerialize, type: :lib do
         expect(instance.spy).to eq({})
 
         instance.spy[:testing] = [1, 2, 3]
-        expect(instance.spy).to eq({ testing: [1, 2, 3] })
+        expect(instance.spy).to eq(testing: [1, 2, 3])
 
         instance.save!
-        expect(instance.spy).to eq({ testing: [1, 2, 3] })
+        expect(instance.spy).to eq('testing' => [1, 2, 3])
 
         instance.reload
-        expect(instance.spy).to eq({ 'testing' => [1, 2, 3] })
+        expect(instance.spy).to eq('testing' => [1, 2, 3])
 
         instance.spy[:test] = ['a', 'b', 'c']
-        expect(instance.spy).to eq({ 'testing' => [1, 2, 3], test: ['a', 'b', 'c'] })
+        expect(instance.spy).to eq('testing' => [1, 2, 3], test: ['a', 'b', 'c'])
 
         instance.save!
-        expect(instance.spy).to eq({ 'testing' => [1, 2, 3], test: ['a', 'b', 'c'] })
+        expect(instance.spy).to eq('testing' => [1, 2, 3], 'test' => ['a', 'b', 'c'])
 
         instance.reload
-        expect(instance.spy).to eq({ 'testing' => [1, 2, 3], 'test' => ['a', 'b', 'c'] })
+        expect(instance.spy).to eq('testing' => [1, 2, 3], 'test' => ['a', 'b', 'c'])
 
         instance.spy = {}
         expect(instance.spy).to eq({})
@@ -130,7 +130,7 @@ RSpec.describe JsonSerialize, type: :lib do
 
         instance.save!
         expect(instance.reading_processing_instructions).to eq [{ 'testing' => [1, 2, 3] },
-                                                                { test: ['a', 'b', 'c'] }]
+                                                                { 'test' => ['a', 'b', 'c'] }]
 
         instance.reload
         expect(instance.reading_processing_instructions).to eq [{ 'testing' => [1, 2, 3] },

@@ -1,4 +1,4 @@
-class AddMissingLmsTimestamps < ActiveRecord::Migration
+class AddMissingLmsTimestamps < ActiveRecord::Migration[4.2]
   def change
     change_column_null :lms_apps, :created_at, false
     change_column_null :lms_apps, :updated_at, false

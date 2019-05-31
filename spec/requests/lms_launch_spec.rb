@@ -2,18 +2,18 @@ require "rails_helper"
 
 RSpec.describe 'LMS Launch', type: :request do
 
-  let(:course) { FactoryBot.create(:course_profile_course, is_lms_enabled: true) }
-  let(:period) { FactoryBot.create :course_membership_period, course: course }
+  let(:course)  { FactoryBot.create(:course_profile_course, is_lms_enabled: true) }
+  let(:period)  { FactoryBot.create :course_membership_period, course: course }
   let(:lms_app) { FactoryBot.create(:lms_app, owner: course) }
-  let(:user) { FactoryBot.create(:user) }
+  let(:user)    { FactoryBot.create(:user) }
 
-  let(:simulator) { Lms::Simulator.new(self) }
+  let(:simulator)     { Lms::Simulator.new(self) }
   let(:launch_helper) { Lms::LaunchHelper.new(self) }
 
-  before(:each) {
+  before(:each) do
     simulator.install_tutor(app: lms_app, course: "physics")
     simulator.set_launch_defaults(course: "physics")
-  }
+  end
 
   context "student launches" do
 

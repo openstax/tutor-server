@@ -1,4 +1,4 @@
-class AddFragmentsAndSnapLabsToContentPages < ActiveRecord::Migration
+class AddFragmentsAndSnapLabsToContentPages < ActiveRecord::Migration[4.2]
   def change
     # This migration has been split in 2 so that it works with the model changes
     # End result should be the same regardless

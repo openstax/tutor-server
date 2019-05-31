@@ -3,27 +3,27 @@ require_relative '../../mocks/assistants/dummy_assistant'
 FactoryBot.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
-      duration                  1.week
+      duration                  { 1.week }
       time_zone                 { owner.try(:time_zone).try!(:to_tz) || Time.zone }
       opens_at                  { time_zone.now }
       due_at                    { opens_at + duration }
-      num_tasking_plans         1
-      assistant_code_class_name 'DummyAssistant'
-      published_at              nil
+      num_tasking_plans         { 1 }
+      assistant_code_class_name { 'DummyAssistant' }
+      published_at              { nil }
     end
 
     association :owner, factory: :course_profile_course
 
-    title                 'A task'
+    title                 { 'A task' }
     settings              { {} }
-    type                  'reading'
+    type                  { 'reading' }
     is_feedback_immediate { type != 'homework' }
     first_published_at    { published_at }
     last_published_at     { published_at }
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }
-      task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) || \
+      task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) ||
                               build(:tasks_assistant, code_class_name_hash)
 
       task_plan.content_ecosystem_id ||= task_plan.owner.ecosystem

@@ -21,25 +21,27 @@ RSpec.describe Admin::UsersController, type: :controller do
         query: query, order_by: order_by, page: page.to_s, per_page: per_page.to_s
       ).and_return(OpenStruct.new(outputs: OpenStruct.new(items: users)))
 
-      get :index, query: query, order_by: order_by, page: page, per_page: per_page
+      get :index, params: { query: query, order_by: order_by, page: page, per_page: per_page }
 
       expect(assigns[:user_search].items).to eq users
     end
   end
 
   it 'creates a new user' do
-    post :create, user: {
-      username: 'new',
-      password: 'password',
-      first_name: 'New',
-      last_name: 'User',
-      full_name: 'Overriden!',
-      customer_service: true,
-      content_analyst: true,
-      researcher: true
+    post :create, params: {
+      user: {
+        username: 'new',
+        password: 'password',
+        first_name: 'New',
+        last_name: 'User',
+        full_name: 'Overriden!',
+        customer_service: true,
+        content_analyst: true,
+        researcher: true
+      }
     }
 
-    get :index, query: 'new'
+    get :index, params: { query: 'new' }
     expect(assigns[:user_search].items.length).to eq 1
     user = assigns[:user_search].items.first
     expect(user.username).to eq 'new'
@@ -53,12 +55,15 @@ RSpec.describe Admin::UsersController, type: :controller do
   end
 
   it 'updates a user' do
-    put :update, id: user.id, user: {
-      username: 'updated',
-      full_name: 'Updated Name',
-      customer_service: true,
-      content_analyst: true,
-      researcher: true
+    put :update, params: {
+      id: user.id,
+      user: {
+        username: 'updated',
+        full_name: 'Updated Name',
+        customer_service: true,
+        content_analyst: true,
+        researcher: true
+      }
     }
 
     user.to_model.reload

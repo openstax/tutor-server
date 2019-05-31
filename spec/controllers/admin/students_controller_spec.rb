@@ -36,7 +36,7 @@ RSpec.describe Admin::StudentsController, type: :controller do
     }
 
     it 'returns all the students in a course' do
-      get :index, course_id: course.id
+      get :index, params: { course_id: course.id }
       expect(assigns[:course].name).to eq 'Physics'
       expect(assigns[:students]).to match a_collection_containing_exactly(
         a_hash_including(
@@ -78,7 +78,7 @@ RSpec.describe Admin::StudentsController, type: :controller do
     it 'works even if a student has a nil username' do
       user_2.account.update_attribute :username, nil
 
-      get :index, course_id: course.id
+      get :index, params: { course_id: course.id }
       expect(assigns[:course].name).to eq 'Physics'
       expect(assigns[:students]).to match a_collection_containing_exactly(
         a_hash_including(
@@ -120,21 +120,23 @@ RSpec.describe Admin::StudentsController, type: :controller do
     context 'student drop/restore' do
       let(:course)       { FactoryBot.create :course_profile_course }
       let(:period)       { FactoryBot.create :course_membership_period, course: course }
-      let(:student)      {
+      let(:student)      do
         AddUserAsPeriodStudent.call(user: FactoryBot.create(:user), period: period).outputs.student
-      }
-      it 'drops a student' do
-        expect {
-          delete :drop, { course_id: course.id, id: student.id }
-          expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
-        }.to change{ student.reload.deleted? }.from(false).to(true)
       end
+
+      it 'drops a student' do
+        expect do
+          delete :drop, params: { course_id: course.id, id: student.id }
+          expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
+        end.to change { student.reload.deleted? }.from(false).to(true)
+      end
+
       it 'restores a student' do
         student.destroy
-        expect {
-          post :restore, { course_id: course.id, id: student.id }
+        expect do
+          post :restore, params: { course_id: course.id, id: student.id }
           expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
-        }.to change{ student.reload.deleted? }.from(true).to(false)
+        end.to change { student.reload.deleted? }.from(true).to(false)
       end
     end
 

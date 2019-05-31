@@ -12,13 +12,22 @@ class Tasks::GetTasks
                                .joins(:taskings)
                                .where(taskings: { entity_role_id: role_ids })
 
-    query = query.where do
-      (opens_at_ntz > start_at_ntz) | (due_at_ntz > start_at_ntz) | (due_at_ntz == nil)
-    end unless start_at_ntz.nil?
+    tt = Tasks::Models::Task.arel_table
+    query = query.where(
+      tt[:opens_at_ntz].gt(start_at_ntz).or(
+        tt[:due_at_ntz].gt(start_at_ntz)
+      ).or(
+        tt[:due_at_ntz].eq(nil)
+      )
+    ) unless start_at_ntz.nil?
 
-    query = query.where do
-      (opens_at_ntz < end_at_ntz) | (due_at_ntz < end_at_ntz) | (opens_at_ntz == nil)
-    end unless end_at_ntz.nil?
+    query = query.where(
+      tt[:opens_at_ntz].lt(end_at_ntz).or(
+        tt[:due_at_ntz].lt(end_at_ntz)
+      ).or(
+        tt[:opens_at_ntz].eq(nil)
+      )
+    ) unless end_at_ntz.nil?
 
     outputs.tasks = query
   end

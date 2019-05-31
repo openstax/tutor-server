@@ -1,4 +1,4 @@
-class CreateContentPageTags < ActiveRecord::Migration
+class CreateContentPageTags < ActiveRecord::Migration[4.2]
   def change
     create_table :content_page_tags do |t|
       t.references :content_page, null: false,

@@ -7,8 +7,6 @@ class CourseMembership::Models::Enrollment < IndestructibleRecord
 
   before_validation :assign_sequence_number
 
-  validates :period, presence: true
-  validates :student, presence: true
   validates :sequence_number, presence: true,
                               uniqueness: { scope: :course_membership_student_id },
                               numericality: { only_integer: true, greater_than_or_equal_to: 0 }
@@ -29,7 +27,7 @@ class CourseMembership::Models::Enrollment < IndestructibleRecord
                 "course_membership_enrollments"."sequence_number"
           SQL
         )
-        .exists
+        .arel.exists
     )
   end
 
@@ -64,8 +62,9 @@ class CourseMembership::Models::Enrollment < IndestructibleRecord
 
   def same_course
     return if student.nil? || period.nil? || student.course == period.course
+
     errors.add(:base, 'must have a student and a period that belong to the same course')
-    false
+    throw :abort
   end
 
 end

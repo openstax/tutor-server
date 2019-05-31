@@ -41,7 +41,7 @@ RSpec.describe Research::UnhideSurveyPlan do
     expect(survey_plan.surveys.map(&:is_hidden?).uniq).to eq [false]
 
     # Student 3 should get the survey when it is unhidden since it is published
-    expect(student_3.surveys(true).count).to eq 1
+    expect(student_3.surveys.count).to eq 1
   end
 
 end

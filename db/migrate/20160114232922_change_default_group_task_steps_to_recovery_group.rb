@@ -1,4 +1,4 @@
-class ChangeDefaultGroupTaskStepsToRecoveryGroup < ActiveRecord::Migration
+class ChangeDefaultGroupTaskStepsToRecoveryGroup < ActiveRecord::Migration[4.2]
   def up
     Tasks::Models::TaskStep
       .unscoped

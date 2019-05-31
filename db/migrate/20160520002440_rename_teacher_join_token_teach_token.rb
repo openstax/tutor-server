@@ -1,4 +1,4 @@
-class RenameTeacherJoinTokenTeachToken < ActiveRecord::Migration
+class RenameTeacherJoinTokenTeachToken < ActiveRecord::Migration[4.2]
   def change
     remove_index :course_profile_profiles, :teacher_join_token
     rename_column :course_profile_profiles, :teacher_join_token, :teach_token

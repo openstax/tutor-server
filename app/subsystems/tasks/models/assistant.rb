@@ -22,10 +22,9 @@ class Tasks::Models::Assistant < IndestructibleRecord
   def code_class_existence
     begin
       code_class
-      true
     rescue NameError => e
       errors.add("#{code_class_name} does not exist")
-      false
+      throw :abort
     end
   end
 

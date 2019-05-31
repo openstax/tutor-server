@@ -1,4 +1,4 @@
-class AddNewBiglearnFields < ActiveRecord::Migration
+class AddNewBiglearnFields < ActiveRecord::Migration[4.2]
   def change
     add_column :content_ecosystems, :tutor_uuid, :uuid, null: false, default: 'gen_random_uuid()'
     add_column :content_books, :tutor_uuid, :uuid, null: false, default: 'gen_random_uuid()'

@@ -24,7 +24,7 @@ class CourseMembership::CreateEnrollmentChange
       courses: course,
       types: ['student', 'teacher'],
       include_dropped_students: true
-    ).outputs.roles
+    ).outputs.roles.to_a
 
     fatal_error(
       code: :is_teacher,

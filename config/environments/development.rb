@@ -9,25 +9,34 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
-  # Show full error reports and disable caching.
-  config.consider_all_requests_local = EnvUtilities.load_boolean(name: 'USE_DEV_ERROR_RESPONSES',
-                                                                 default: true)
-  config.action_controller.perform_caching = false
+  # Show full error reports.
+  config.consider_all_requests_local = EnvUtilities.load_boolean(
+    name: 'USE_DEV_ERROR_RESPONSES', default: true
+  )
 
-  config.serve_static_files  = true
+  # Enable/disable caching. By default caching is disabled.
+  # Run rails dev:cache to toggle caching.
+  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
+
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    }
+  else
+    config.action_controller.perform_caching = false
+  end
+
+  # Store uploaded files on the local file system (see config/storage.yml for options)
+  config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
-  config.action_mailer.default_url_options = {
-    :protocol => 'http', :host => Rails.application.secrets.mail_site_url
-  }
+  config.action_mailer.perform_caching = false
 
-  # Tell Action Mailer not to deliver emails to the real world.
-  # The :test delivery method accumulates sent emails in the
-  # ActionMailer::Base.deliveries array.  If SMTP used instead
-  # but without good credentials, results in 30 second pauses.
-  config.action_mailer.delivery_method = :test
+  config.action_mailer.default_url_options = {
+    protocol: 'http', host: Rails.application.secrets.mail_site_url
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -35,31 +44,30 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
+  # Highlight code that triggered database queries in logs.
+  config.active_record.verbose_query_logs = true
+
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
   config.assets.debug = true
 
-  # Asset digests allow you to set far-future HTTP expiration dates on all assets,
-  # yet still be able to expire them through the digest params.
-  config.assets.digest = true
-
-  # Adds additional error checking when serving assets at runtime.
-  # Checks for improperly declared sprockets dependencies.
-  # Raises helpful error messages.
-  config.assets.raise_runtime_errors = true
+  # Suppress logger output for asset requests.
+  config.assets.quiet = true
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
+  # Use an evented file watcher to asynchronously detect changes in source code,
+  # routes, locales, etc. This feature depends on the listen gem.
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
 
-  # Only enable Bullet on request since it does add overhead
-  if EnvUtilities.load_boolean(name: 'ENABLE_BULLET', default: false)
-    config.after_initialize do
-      Bullet.enable = true
-      Bullet.bullet_logger = true # tail -f log/bullet.log
-    end
-  end
+  # Only enable Bullet on demand since it does add overhead
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true # tail -f log/bullet.log
+  end if EnvUtilities.load_boolean(name: 'ENABLE_BULLET', default: false)
 end

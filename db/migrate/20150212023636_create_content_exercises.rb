@@ -1,4 +1,4 @@
-class CreateContentExercises < ActiveRecord::Migration
+class CreateContentExercises < ActiveRecord::Migration[4.2]
   def change
     create_table :content_exercises do |t|
       t.resource

@@ -9,13 +9,11 @@ class ImportEcosystemManifest
 
   class << self
     # Since we can't write the Content::Manifest directly to the database, we serialize it as YAML
-    def perform_later_with_yaml(manifest:, comments: nil)
+    def perform_later(manifest:, comments: nil)
       manifest = manifest.to_yaml unless manifest.is_a?(String)
 
-      perform_later_without_yaml(manifest: manifest, comments: comments)
+      super(manifest: manifest, comments: comments)
     end
-
-    alias_method_chain :perform_later, :yaml
   end
 
   protected

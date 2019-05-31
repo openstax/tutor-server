@@ -1,5 +1,5 @@
 class Research::BaseController < ApplicationController
-  before_filter :authenticate_researcher!
+  before_action :authenticate_researcher!
 
   layout 'research'
 

@@ -1,4 +1,4 @@
-class AddIsConceptCoachToCourseProfileProfiles < ActiveRecord::Migration
+class AddIsConceptCoachToCourseProfileProfiles < ActiveRecord::Migration[4.2]
   def change
     # Add is_concept_coach column, but set it to false for all existing courses
     add_column :course_profile_profiles, :is_concept_coach, :boolean, null: false, default: false

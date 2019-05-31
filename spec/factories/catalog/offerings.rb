@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :catalog_offering, class: '::Catalog::Models::Offering' do
 
-    ecosystem { build(:content_book).ecosystem }
+    ecosystem            { build(:content_book).ecosystem }
 
     salesforce_book_name { "#{Faker::Lorem.word.capitalize} #{SecureRandom.uuid}" }
     appearance_code      { Faker::Lorem.word                                      }
@@ -10,9 +10,9 @@ FactoryBot.define do
     webview_url          { Faker::Internet.url                                    }
     pdf_url              { Faker::Internet.url                                    }
     default_course_name  { Faker::Lorem.words(2).join(' ').capitalize             }
-    is_concept_coach     false
-    is_tutor             false
-    is_available         true
+    is_concept_coach     { false }
+    is_tutor             { false }
+    is_available         { true }
 
   end
 end

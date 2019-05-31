@@ -1,4 +1,4 @@
-class CreateTasksPerformanceReportExports < ActiveRecord::Migration
+class CreateTasksPerformanceReportExports < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_performance_report_exports do |t|
       t.references :entity_course, null: false, index: true,

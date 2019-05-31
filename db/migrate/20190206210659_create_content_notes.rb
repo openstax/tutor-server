@@ -1,4 +1,4 @@
-class CreateContentNotes < ActiveRecord::Migration
+class CreateContentNotes < ActiveRecord::Migration[4.2]
   def change
     create_table :content_notes do |t|
       t.references :content_page,

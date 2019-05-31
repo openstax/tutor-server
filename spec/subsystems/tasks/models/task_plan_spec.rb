@@ -8,20 +8,18 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }
 
-  it { is_expected.to belong_to(:cloned_from) }
+  it { is_expected.to belong_to(:cloned_from).optional }
 
   it { is_expected.to have_many(:tasking_plans) }
   it { is_expected.to have_many(:tasks) }
 
   it { is_expected.to validate_presence_of(:title) }
-  it { is_expected.to validate_presence_of(:assistant) }
-  it { is_expected.to validate_presence_of(:owner) }
 
-  it do
-    # shoulda-matchers fails to properly remove the associated records
-    subject.tasking_plans.delete_all :delete_all
+  it "requires at least one tasking_plan" do
+    expect(task_plan).to be_valid
 
-    is_expected.to validate_presence_of(:tasking_plans)
+    task_plan.tasking_plans.destroy_all
+    expect(task_plan).not_to be_valid
   end
 
   it "validates settings against the assistant's schema" do

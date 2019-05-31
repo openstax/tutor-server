@@ -1,4 +1,4 @@
-class RenameStudentDeidentifierToRoleResearchIdentifier < ActiveRecord::Migration
+class RenameStudentDeidentifierToRoleResearchIdentifier < ActiveRecord::Migration[4.2]
   def up
     add_column :entity_roles, :research_identifier, :string
 

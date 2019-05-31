@@ -1,6 +1,6 @@
 class PardotController < ApplicationController
 
-  skip_before_filter :authenticate_user!
+  skip_before_action :authenticate_user!
 
   def toa
     # Fire off tracking background job and redirect user to the configurable

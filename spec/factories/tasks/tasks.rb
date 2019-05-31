@@ -1,14 +1,14 @@
 FactoryBot.define do
   factory :tasks_task, class: '::Tasks::Models::Task' do
     transient do
-      duration 1.week
-      step_types []
-      tasked_to []
-      num_random_taskings 0
+      duration { 1.week }
+      step_types { [] }
+      tasked_to { [] }
+      num_random_taskings { 0 }
       current_time { time_zone.try!(:to_tz).try!(:now) || Time.current }
     end
 
-    task_type :reading
+    task_type { :reading }
 
     ecosystem   { FactoryBot.create(:content_ecosystem) }
     task_plan   { build :tasks_task_plan, ecosystem: ecosystem }

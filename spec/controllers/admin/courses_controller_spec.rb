@@ -19,50 +19,48 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
       expect(SearchCourses).to(
         receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
       )
-      get :index, query: 'test', order_by: 'name'
+      get :index, params: { query: 'test', order_by: 'name' }
     end
 
-    context "pagination" do
-      it "paginates the results" do
+    context 'pagination' do
+      it 'paginates the results' do
         3.times { FactoryBot.create(:course_profile_course) }
 
-        get :index, page: 1, per_page: 2
+        get :index, params: { page: 1, per_page: 2 }
         expect(assigns[:course_infos].length).to eq(2)
 
-        get :index, page: 2, per_page: 2
+        get :index, params: { page: 2, per_page: 2 }
         expect(assigns[:course_infos].length).to eq(1)
       end
 
-      context "with more than 25 courses" do
-        before(:each) do
-          26.times { FactoryBot.create(:course_profile_course) }
+      context 'with more than 25 courses' do
+        before(:each) { 26.times { FactoryBot.create(:course_profile_course) } }
+
+        context 'with per_page param equal to "all"' do
+          it 'assigns all courses to the first page' do
+            get :index, params: { page: 1, per_page: "all" }
+            expect(assigns[:course_infos].length).to eq(26)
+          end
         end
 
-        context "with per_page param" do
-          context "equal to \"all\"" do
-            it "assigns all courses" do
-              get :index, page: 1, per_page: "all"
-              expect(assigns[:course_infos].length).to eq(26)
-            end
+        context 'with no per_page param' do
+          it 'assigns 25 courses per page' do
+            get :index, params: { page: 1 }
+            expect(assigns[:course_infos].length).to eq(25)
           end
 
-          context "equal to nil" do
-            it "assigns 25 courses per page" do
-              get :index, page: 1, per_page: nil
-              expect(assigns[:course_infos].length).to eq(25)
-
-              get :index, page: 2, per_page: nil
-              expect(assigns[:course_infos].length).to eq(1)
-            end
+          it 'can show other pages' do
+            get :index, params: { page: 2 }
+            expect(assigns[:course_infos].length).to eq(1)
           end
         end
       end
 
-      context "when there are no results" do
-        it "returns http status OK" do
+      context 'when there are no results' do
+        it 'returns http status OK' do
           expect(CourseProfile::Models::Course.count).to eq(0)
 
-          get :index, page: 1
+          get :index, params: { page: 1 }
           expect(response).to have_http_status :ok
         end
       end
@@ -72,35 +70,37 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
   context 'POST #create' do
     let(:num_sections) { 2 }
 
-    let(:request) do
-      post :create, course: {
-        name: 'Hello World',
-        term: CourseProfile::Models::Course.terms.keys.sample,
-        year: Time.current.year,
-        is_test: false,
-        is_preview: false,
-        is_concept_coach: false,
-        is_college: true,
-        num_sections: num_sections,
-        catalog_offering_id: FactoryBot.create(:catalog_offering).id
+    let(:req) do
+      post :create, params: {
+        course: {
+          name: 'Hello World',
+          term: CourseProfile::Models::Course.terms.keys.sample,
+          year: Time.current.year,
+          is_test: false,
+          is_preview: false,
+          is_concept_coach: false,
+          is_college: true,
+          num_sections: num_sections,
+          catalog_offering_id: FactoryBot.create(:catalog_offering).id
+        }
       }
     end
 
     it 'creates a course' do
-      expect{request}.to change{CourseProfile::Models::Course.count}.by(1)
+      expect { req }.to change {CourseProfile::Models::Course.count}.by(1)
     end
 
     it 'creates the specified number of sections' do
-      expect{request}.to change{CourseMembership::Models::Period.count}.by(num_sections)
+      expect { req }.to change {CourseMembership::Models::Period.count}.by(num_sections)
     end
 
     it 'sets a flash notice' do
-      request
+      req
       expect(flash[:notice]).to eq('The course has been created.')
     end
 
     it 'redirects to /admin/courses' do
-      request
+      req
       expect(response).to redirect_to(admin_courses_path)
     end
   end
@@ -130,9 +130,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     it 'adds students to a course period' do
       expect do
-        post :roster, id: physics.id,
-                      period: physics_period.id,
-                      roster: file_1
+        post :roster, params: { id: physics.id, period: physics_period.id, roster: file_1 }
       end.to change { OpenStax::Accounts::Account.count }.by(3)
       expect(flash[:notice]).to eq('Student roster import has been queued.')
 
@@ -145,15 +143,11 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     it 'reuses existing users for existing usernames' do
       expect do
-        post :roster, id: physics.id,
-                      period: physics_period.id,
-                      roster: file_1
+        post :roster, params: { id: physics.id, period: physics_period.id, roster: file_1 }
       end.to change { OpenStax::Accounts::Account.count }.by(3)
 
       expect do
-        post :roster, id: biology.id,
-                      period: biology_period.id,
-                      roster: file_2
+        post :roster, params: { id: biology.id, period: biology_period.id, roster: file_2 }
       end.to change { OpenStax::Accounts::Account.count }.by(1) # 2 in file but 1 reused
 
       # Carol B should be in both courses
@@ -164,9 +158,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     it 'does not add any students if username or password is missing' do
       expect do
-        post :roster, id: physics.id,
-                      period: physics_period.id,
-                      roster: incomplete_file
+        post :roster, params: { id: physics.id, period: physics_period.id, roster: incomplete_file }
       end.to change { OpenStax::Accounts::Account.count }.by(0)
       expect(flash[:error]).to eq([
         'Invalid Roster: On line 2, password is missing.',
@@ -178,9 +170,11 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     it 'gives a nice error and no exception if has funky characters' do
       expect do
-        post :roster, id: physics.id,
-                      period: physics_period.id,
-                      roster: file_blank_lines
+        post :roster, params: {
+          id: physics.id,
+          period: physics_period.id,
+          roster: file_blank_lines
+        }
       end.not_to raise_error
       # TODO reactivate test for:
       # Unquoted fields do not allow \r or \n (line 2).'
@@ -190,21 +184,23 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     end
 
     it 'gives a nice error if the period is blank' do
-      expect { post :roster, id: physics.id, roster: file_1 }.not_to raise_error
+      expect { post :roster, params: { id: physics.id, roster: file_1 } }.not_to raise_error
 
       expect(flash[:error]).to include 'You must select a period to upload to.'
     end
 
     it 'gives a nice error if an invalid period is selected' do
       expect do
-        post :roster, id: physics.id, period: biology_period.id, roster: file_1
+        post :roster, params: { id: physics.id, period: biology_period.id, roster: file_1 }
       end.not_to raise_error
 
       expect(flash[:error]).to include 'The selected period could not be found.'
     end
 
     it 'gives a nice error if the file is blank' do
-      expect { post :roster, id: physics.id, period: physics_period.id }.not_to raise_error
+      expect do
+        post :roster, params: { id: physics.id, period: physics_period.id }
+      end.not_to raise_error
 
       expect(flash[:error]).to include 'You must attach a file to upload.'
     end
@@ -235,13 +231,13 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     let(:version_2)         { book_2.version }
     let!(:course_ecosystem) do
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
-      CourseContent::Models::CourseEcosystem.where { course_profile_course_id == my { course.id } }
-                                            .where { content_ecosystem_id == my { eco_1.id } }
+      CourseContent::Models::CourseEcosystem.where(course_profile_course_id: course.id)
+                                            .where(content_ecosystem_id: eco_1.id)
                                             .first
     end
 
     it 'assigns extra course info' do
-      get :edit, id: course.id
+      get :edit, params: { id: course.id }
 
       expect(assigns[:course].id).to eq course.id
       expect(Set.new assigns[:periods]).to eq Set.new course.periods
@@ -251,7 +247,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     end
 
     it 'selects the correct ecosystem' do
-      get :edit, id: course.id
+      get :edit, params: { id: course.id }
       expect(assigns[:course_ecosystem]).to eq eco_1
       expect(assigns[:ecosystems]).to eq [eco_2, eco_1]
     end
@@ -263,7 +259,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
       expect_any_instance_of(Lms::UnpairCourse).to(
         receive(:call).with(course: course)
       )
-      delete :unpair_lms, id: course.id
+      delete :unpair_lms, params: { id: course.id }
     end
   end
 
@@ -274,7 +270,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
       it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
         expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
 
-        delete :destroy, id: course.id
+        delete :destroy, params: { id: course.id }
 
         expect(flash[:notice]).to include('The course has been deleted.')
       end
@@ -286,7 +282,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
       it 'delegates to the Admin::CoursesDestroy handler and displays a failure message' do
         expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
 
-        delete :destroy, id: course.id
+        delete :destroy, params: { id: course.id }
 
         expect(flash[:alert]).to(
           include('The course could not be deleted because it is not empty.')
@@ -316,7 +312,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     context 'when the ecosystem is already being used' do
       it 'does not recreate the association' do
-        post :set_ecosystem, id: course.id, ecosystem_id: eco_1.id
+        post :set_ecosystem, params: { id: course.id, ecosystem_id: eco_1.id }
         ce = course.course_ecosystems.first
         expect(ce).to eq course_ecosystem
         expect(flash[:notice]).to(
@@ -327,7 +323,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     context 'when a new ecosystem is selected' do
       it 'adds the selected ecosystem as the first ecosystem' do
-        post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
+        post :set_ecosystem, params: { id: course.id, ecosystem_id: eco_2.id }
         ecosystems = course.reload.ecosystems.map do |ecosystem_model|
           strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
           ::Content::Ecosystem.new(strategy: strategy)
@@ -344,36 +340,22 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
         allow_any_instance_of(Content::Strategies::Generated::Map).to(
           receive(:is_valid).and_return(false)
         )
-        expect{
-          post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
-        }.to raise_error(Content::MapInvalidError)
+        expect do
+          post :set_ecosystem, params: { id: course.id, ecosystem_id: eco_2.id }
+        end.to raise_error(Content::MapInvalidError)
         expect(course.reload.ecosystems.count).to eq 1
         expect(flash[:error]).to be_blank
       end
     end
   end
 
-  # Dante: Note that I think these might not actually work
-  # calling multiple controller actions seems to break specs
   context 'disallowing baddies' do
     it 'disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }
       allow(controller).to receive(:current_user)    { nil }
 
       get :index
-      expect(response).not_to be_success
-
-      get :new
-      expect(response).not_to be_success
-
-      post :create
-      expect(response).not_to be_success
-
-      put :update, id: 1
-      expect(response).not_to be_success
-
-      delete :destroy, id: 1
-      expect(response).not_to be_success
+      expect(response).not_to be_successful
     end
 
     it 'disallows non-admin authenticated visitors' do
@@ -382,8 +364,8 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { get :new }.to raise_error(SecurityTransgression)
       expect { post :create }.to raise_error(SecurityTransgression)
-      expect { put :update, id: 1 }.to raise_error(SecurityTransgression)
-      expect { delete :destroy, id: 1 }.to raise_error(SecurityTransgression)
+      expect { put :update, params: { id: 1 } }.to raise_error(SecurityTransgression)
+      expect { delete :destroy, params: { id: 1 } }.to raise_error(SecurityTransgression)
     end
   end
 end

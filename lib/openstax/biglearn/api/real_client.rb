@@ -298,10 +298,14 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     group_uuids = Content::Models::Exercise.where(number: group_numbers).distinct.pluck(:group_uuid)
     group_exclusions = group_uuids.map { |group_uuid| { exercise_group_uuid: group_uuid } }
 
-    uuids = uids.empty? ? [] : Content::Models::Exercise.where do
-      uids.map { |nn, vv| number.eq(nn) & version.eq(vv) }.reduce(:|)
-    end.distinct.pluck(:uuid)
-    version_exclusions = uuids.map { |uuid| { exercise_uuid: uuid } }
+    version_exclusions = if uids.empty?
+      []
+    else
+      ex = Content::Models::Exercise.arel_table
+      Content::Models::Exercise.distinct.where(
+        uids.map { |nn, vv| ex[:number].eq(nn).and(ex[:version].eq(vv)) }.reduce(:or)
+      ).pluck(:uuid).map { |uuid| { exercise_uuid: uuid } }
+    end
 
     exclusions = group_exclusions + version_exclusions
 
@@ -410,14 +414,14 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       # Calculate desired number of SPEs and PEs
       goal_num_tutor_assigned_spes = request[:goal_num_tutor_assigned_spes]
       if goal_num_tutor_assigned_spes.nil?
-        sp_steps = task.task_steps.spaced_practice_group
+        sp_steps = task.task_steps.spaced_practice_group.to_a
         spe_steps = sp_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_spes = spe_steps.size
       end
 
       goal_num_tutor_assigned_pes = request[:goal_num_tutor_assigned_pes]
       if goal_num_tutor_assigned_pes.nil?
-        p_steps = task.task_steps.personalized_group
+        p_steps = task.task_steps.personalized_group.to_a
         pe_steps = p_steps.select { |step| step.exercise? || step.placeholder? }
         goal_num_tutor_assigned_pes = pe_steps.size
       end

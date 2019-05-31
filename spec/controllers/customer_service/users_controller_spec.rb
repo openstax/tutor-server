@@ -21,7 +21,7 @@ RSpec.describe CustomerService::UsersController, type: :controller do
         query: query, order_by: order_by, page: page.to_s, per_page: per_page.to_s
       ).and_return(OpenStruct.new(outputs: OpenStruct.new(items: users)))
 
-      get :index, query: query, order_by: order_by, page: page, per_page: per_page
+      get :index, params: { query: query, order_by: order_by, page: page, per_page: per_page }
 
       expect(assigns[:user_search].items).to eq users
     end

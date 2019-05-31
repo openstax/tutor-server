@@ -32,7 +32,9 @@ class CourseProfile::ClaimPreviewCourse
     )
 
     interval = "interval '#{(current_time - course.created_at).seconds.to_i} seconds'"
-    update = ->(fields) { fields.map { |field| "#{field} = #{field} + #{interval}" }.join(', ') }
+    update = ->(fields) do
+      fields.map { |field| "\"#{field}\" = \"#{field}\" + #{interval}" }.join(', ')
+    end
 
     tasking_plans = Tasks::Models::TaskingPlan.joins(:task_plan).where(task_plan: { owner: course })
     tasking_plans.update_all( update[%w{opens_at_ntz due_at_ntz}] )

@@ -1,6 +1,6 @@
 require './lib/map_users_accounts'
 
-secrets = Rails.application.secrets['openstax']['accounts']
+secrets = Rails.application.secrets.openstax[:accounts]
 
 approved_host_regexes = [
   /openstax\.org\z/,
@@ -10,10 +10,10 @@ approved_host_regexes = [
 approved_host_regexes.push(/localhost\z/) if !Rails.env.production?
 
 OpenStax::Accounts.configure do |config|
-  config.openstax_application_id = secrets['client_id']
-  config.openstax_application_secret = secrets['secret']
-  config.openstax_accounts_url = secrets['url']
-  config.enable_stubbing = ActiveAttr::Typecasting::BooleanTypecaster.new.call(secrets['stub'])
+  config.openstax_application_id = secrets[:client_id]
+  config.openstax_application_secret = secrets[:secret]
+  config.openstax_accounts_url = secrets[:url]
+  config.enable_stubbing = ActiveAttr::Typecasting::BooleanTypecaster.new.call(secrets[:stub])
   config.logout_via = :delete
   config.account_user_mapper = MapUsersAccounts
   config.logout_redirect_url = ->(request) do

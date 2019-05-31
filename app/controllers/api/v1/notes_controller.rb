@@ -1,8 +1,8 @@
 # coding: utf-8
 class Api::V1::NotesController < Api::V1::ApiController
 
-  before_filter :get_course_role
-  before_filter :get_note, only: [:update, :destroy]
+  before_action :get_course_role
+  before_action :get_note, only: [:update, :destroy]
 
   resource_description do
     api_versions "v1"

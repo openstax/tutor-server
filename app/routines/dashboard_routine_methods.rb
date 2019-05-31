@@ -45,7 +45,7 @@ module DashboardRoutineMethods
       .where(
         tasking_plans: { target_id: period_id, target_type: 'CourseMembership::Models::Period' }
       )
-      .where { first_published_at != nil }
+      .where.not(first_published_at: nil)
       .count <= all_tasks.size
   end
 end

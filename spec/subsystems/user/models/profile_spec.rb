@@ -5,11 +5,10 @@ RSpec.describe User::Models::Profile, type: :model do
   subject(:profile) { FactoryBot.create(:user_profile) }
 
   it { is_expected.to belong_to(:account) }
+
   it { is_expected.to have_many(:groups_as_member) }
   it { is_expected.to have_many(:groups_as_owner) }
   it { is_expected.to have_one(:administrator).dependent(:destroy) }
-
-  it { is_expected.to validate_presence_of(:account) }
 
   it 'must enforce that one account is only used by one user' do
     profile_2 = FactoryBot.build(:user_profile)

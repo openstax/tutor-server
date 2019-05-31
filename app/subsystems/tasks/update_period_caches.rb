@@ -23,10 +23,12 @@ class Tasks::UpdatePeriodCaches
       # Get relevant TaskPlans
       task_plan_query = task_cache_query.dup
       task_plan_query = task_plan_query.where(is_cached_for_period: false) unless force
-      task_plan_ids = task_plan_query.distinct.pluck('"tasks_tasks"."tasks_task_plan_id"')
+      tt = Tasks::Models::Task.arel_table
+      task_plan_ids = task_plan_query.distinct.pluck(tt[:tasks_task_plan_id])
       task_plans = Tasks::Models::TaskPlan.select(:id)
                                           .where(id: task_plan_ids)
                                           .preload(:tasking_plans)
+                                          .to_a
       task_plans << nil if task_plan_ids.any?(&:nil?)
 
       task_plans.each do |task_plan|

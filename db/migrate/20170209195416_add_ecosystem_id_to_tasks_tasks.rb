@@ -1,4 +1,4 @@
-class AddEcosystemIdToTasksTasks < ActiveRecord::Migration
+class AddEcosystemIdToTasksTasks < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_tasks, :content_ecosystem_id, :integer
 
@@ -26,7 +26,7 @@ class AddEcosystemIdToTasksTasks < ActiveRecord::Migration
       Tasks::Models::TaskedExercise
         .unscoped
         .joins(:task_step, :exercise)
-        .where(task_step: {tasks_task_id: tasks.map(&:id)})
+        .where(task_step: { tasks_task_id: tasks.map(&:id) })
         .pluck('tasks_task_steps.tasks_task_id', 'content_exercises.content_page_id')
         .each do |task_id, content_page_id|
         task_id_to_core_page_ids_map[task_id] << content_page_id

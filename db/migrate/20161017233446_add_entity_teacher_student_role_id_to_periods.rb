@@ -1,4 +1,4 @@
-class AddEntityTeacherStudentRoleIdToPeriods < ActiveRecord::Migration
+class AddEntityTeacherStudentRoleIdToPeriods < ActiveRecord::Migration[4.2]
   def change
     add_column :course_membership_periods, :entity_teacher_student_role_id, :integer
 

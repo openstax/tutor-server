@@ -9,12 +9,11 @@ class ShortCode::Models::ShortCode < ApplicationRecord
   protected
 
   def generate_code
-    if self.code.nil?
+    return unless self.code.nil?
+
+    self.code = (0..5).map { ALPHANUMERICS.sample }.join
+    while ShortCode::Models::ShortCode.find_by_code(self.code)
       self.code = (0..5).map { ALPHANUMERICS.sample }.join
-      while ShortCode::Models::ShortCode.find_by_code(self.code)
-        self.code = (0..5).map { ALPHANUMERICS.sample }.join
-      end
     end
-    true
   end
 end

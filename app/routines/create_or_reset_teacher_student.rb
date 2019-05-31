@@ -9,8 +9,7 @@ class CreateOrResetTeacherStudent
   def exec(user:, period:, reassign_published_period_task_plans: true, send_to_biglearn: true)
     teacher_student = CourseMembership::Models::TeacherStudent
       .joins(:role)
-      .find_by(course_membership_period_id: period.id,
-               role: { user_profile_id: user.id })
+      .find_by(course_membership_period_id: period.id, role: { user_profile_id: user.id })
 
     teacher_student.destroy unless teacher_student.nil?
 

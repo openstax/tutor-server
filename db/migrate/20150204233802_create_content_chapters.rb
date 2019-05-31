@@ -1,4 +1,4 @@
-class CreateContentChapters < ActiveRecord::Migration
+class CreateContentChapters < ActiveRecord::Migration[4.2]
   def change
     create_table :content_chapters do |t|
       t.references :content_book, null: false,

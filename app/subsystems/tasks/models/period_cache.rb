@@ -3,9 +3,8 @@ class Tasks::Models::PeriodCache < ApplicationRecord
 
   belongs_to :period,    subsystem: :course_membership
   belongs_to :ecosystem, subsystem: :content
-  belongs_to :task_plan
+  belongs_to :task_plan, optional: true
 
-  validates :period, :ecosystem, presence: true
   validates :task_plan, uniqueness: {
     scope: [ :course_membership_period_id, :content_ecosystem_id ]
   }

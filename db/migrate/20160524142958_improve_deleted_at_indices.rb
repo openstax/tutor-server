@@ -1,4 +1,4 @@
-class ImproveDeletedAtIndices < ActiveRecord::Migration
+class ImproveDeletedAtIndices < ActiveRecord::Migration[4.2]
   def change
     add_index :course_membership_enrollment_changes, :deleted_at
 

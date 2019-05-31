@@ -2,7 +2,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, polymorphic: true, dependent: :destroy, inverse_of: :task_step, touch: true
-  belongs_to :page, subsystem: :content, inverse_of: :task_steps
+  belongs_to :page, subsystem: :content, inverse_of: :task_steps, optional: true
 
   enum group_type: [
     :unknown_group,
@@ -16,8 +16,6 @@ class Tasks::Models::TaskStep < ApplicationRecord
   json_serialize :labels, String, array: true
   json_serialize :spy, Hash
 
-  validates :task, presence: true
-  validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
   validates :fragment_index,
@@ -66,7 +64,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
   def complete!(completed_at: Time.current)
     valid?
     tasked.valid?
-    tasked.before_completion
+    catch(:abort) { tasked.before_completion }
     tasked.errors.full_messages.each { |message| errors.add :tasked, message }
     return if errors.any?
 

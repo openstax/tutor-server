@@ -53,7 +53,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
             "type"=>"lo",
             "name"=>"Learning Objective 2",
             "chapter_section"=>[4, 2],
-            "is_visible"=>false
+            "is_visible" => false
           },
           {
             'id' => 'ost-tag-teks-112-39-c-4d',

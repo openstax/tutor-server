@@ -14,7 +14,7 @@ RSpec.describe Research::CohortMembershipManager do
         instance.add_student_to_a_cohort(student)
       end
 
-      expect(study.cohorts(true).map(&:cohort_members_count)).to match a_collection_including(2,3,3)
+      expect(study.cohorts.map(&:cohort_members_count)).to match a_collection_including(2,3,3)
     end
 
     it "does not add to cohorts not accepting members" do
@@ -27,7 +27,7 @@ RSpec.describe Research::CohortMembershipManager do
         instance.add_student_to_a_cohort(student)
       end
 
-      expect(study.cohorts(true).map(&:cohort_members_count)).to match a_collection_including(4,4,0)
+      expect(study.cohorts.map(&:cohort_members_count)).to match a_collection_including(4,4,0)
     end
   end
 
@@ -52,7 +52,7 @@ RSpec.describe Research::CohortMembershipManager do
       instance = described_class.new(study)
       instance.reassign_cohort_members(cohort_to_reassign_from)
 
-      expect(study.cohorts(true).map(&:cohort_members_count)).to match a_collection_including(0,3,2)
+      expect(study.cohorts.map(&:cohort_members_count)).to match a_collection_including(0,3,2)
     end
 
     it "does not reassign to cohorts not accepting members" do

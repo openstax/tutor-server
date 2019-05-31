@@ -1,4 +1,4 @@
-class CreateTasksConceptCoachTasks < ActiveRecord::Migration
+class CreateTasksConceptCoachTasks < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_concept_coach_tasks do |t|
       t.references :entity_task, null: false, index: { unique: true },

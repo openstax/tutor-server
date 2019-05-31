@@ -6,8 +6,7 @@ class Tasks::Models::CourseAssistant < IndestructibleRecord
   json_serialize :settings, Hash
   json_serialize :data, Hash
 
-  validates :course, presence: true
-  validates :assistant, presence: true, uniqueness: { scope: :course_profile_course_id }
+  validates :assistant, uniqueness: { scope: :course_profile_course_id }
   validates :tasks_task_plan_type, presence: true, uniqueness: { scope: :course_profile_course_id }
 
 end

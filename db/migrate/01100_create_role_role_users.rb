@@ -1,4 +1,4 @@
-class CreateRoleRoleUsers < ActiveRecord::Migration
+class CreateRoleRoleUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :role_role_users do |t|
       t.references :entity_user, null: false, foreign_key: { on_update: :cascade,

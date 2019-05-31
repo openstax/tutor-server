@@ -15,20 +15,20 @@ OpenStax::Salesforce.configure do |config|
     raise SecurityTransgression unless controller.current_user.is_admin?
   }
 
-  secrets = Rails.application.secrets['salesforce']
+  salesforce_secrets = Rails.application.secrets.salesforce
 
   # Consumer key and secret for connecting to the Salesforce app
-  config.salesforce_client_key = secrets['consumer_key']
-  config.salesforce_client_secret = secrets['consumer_secret']
+  config.salesforce_client_key = salesforce_secrets[:consumer_key]
+  config.salesforce_client_secret = salesforce_secrets[:consumer_secret]
 
   # Uncomment this to override the login site for sandbox instances
-  config.salesforce_login_site = secrets['login_site']
+  config.salesforce_login_site = salesforce_secrets[:login_site]
 
   # The following sandbox tokens are used for specs to connect to a sandbox Salesforce
   # instance.
   if Rails.env.test?
-    config.sandbox_oauth_token = secrets['tutor_specs_oauth_token']
-    config.sandbox_instance_url = secrets['tutor_specs_instance_url']
+    config.sandbox_oauth_token = salesforce_secrets[:tutor_specs_oauth_token]
+    config.sandbox_instance_url = salesforce_secrets[:tutor_specs_instance_url]
 
     # DO NOT set the refresh token, because if the oauth token has expired the
     # specs will use the refresh token to get a new oauth token, but then recorded
@@ -36,10 +36,8 @@ OpenStax::Salesforce.configure do |config|
     # having the "unused interactions" messages because they don't expect the refresh
     # token interactions.
     #
-    #config.sandbox_refresh_token = secrets['tutor_specs_refresh_token']
+    #config.sandbox_refresh_token = secrets[:tutor_specs_refresh_token]
   end
 
   config.page_heading_proc = ->(view, text) { view.content_for(:page_header, text) }
 end
-
-

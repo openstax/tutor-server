@@ -24,7 +24,7 @@ module OpenStax::Cnx::V1
       @title ||= begin
         title_nodes = node.css(TITLE_CSS)
         title_nodes.empty? ? node.attr(LABEL_ATTRIBUTE) :
-                             title_nodes.map{ |node| node.content.strip }.uniq.join('; ')
+                             title_nodes.map { |node| node.content.strip }.uniq.join('; ')
       end
 
       url_node = node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last

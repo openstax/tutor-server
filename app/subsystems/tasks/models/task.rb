@@ -21,17 +21,19 @@ class Tasks::Models::Task < ApplicationRecord
 
   auto_uuid
 
-  enum task_type: [:homework, :reading, :chapter_practice,
-                   :page_practice, :mixed_practice, :external,
-                   :event, :extra, :concept_coach, :practice_worst_topics]
+  enum task_type: [
+    :homework, :reading, :chapter_practice,
+    :page_practice, :mixed_practice, :external,
+    :event, :extra, :concept_coach, :practice_worst_topics
+  ]
 
-  STEPLESS_TASK_TYPES = [:external, :event]
+  STEPLESS_TASK_TYPES = [ :external, :event ]
 
   json_serialize :spy, Hash
 
-  belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
+  belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz, optional: true
 
-  belongs_to :task_plan, inverse_of: :tasks
+  belongs_to :task_plan, inverse_of: :tasks, optional: true
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
@@ -79,7 +81,8 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_step_counts(steps: nil)
-    steps ||= persisted? && !task_steps.loaded? ? task_steps.preload(:tasked).to_a : task_steps.to_a
+    steps ||= persisted? && !task_steps.loaded? ? task_steps.preload(:tasked) : task_steps
+    steps = steps.to_a
 
     completed_steps = steps.select(&:completed?)
     core_steps = steps.select(&:core_group?)
@@ -309,8 +312,9 @@ class Tasks::Models::Task < ApplicationRecord
 
   def due_at_on_or_after_opens_at
     return if due_at.nil? || opens_at.nil? || due_at >= opens_at
+
     errors.add(:due_at, 'must be on or after opens_at')
-    false
+    throw :abort
   end
 
   def step_on_time?(step)

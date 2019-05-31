@@ -7,8 +7,6 @@ module Content
       has_one :chapter, through: :page
       has_one :book, through: :chapter
       has_one :ecosystem, through: :book
-
-      validates :page, :role, presence: true
     end
   end
 end

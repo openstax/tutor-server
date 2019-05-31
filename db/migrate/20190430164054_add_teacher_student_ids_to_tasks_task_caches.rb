@@ -1,4 +1,4 @@
-class AddTeacherStudentIdsToTasksTaskCaches < ActiveRecord::Migration
+class AddTeacherStudentIdsToTasksTaskCaches < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_task_caches, :teacher_student_ids, :integer, array: true
 

@@ -14,6 +14,7 @@ RSpec.describe CourseMembership::GetTeachers, type: :routine do
       result = CourseMembership::GetTeachers.call(target_course)
       expect(result.errors).to be_empty
       expect(result.outputs.teachers).to be_empty
+      expect(result.outputs.teacher_roles).to be_empty
     end
   end
 
@@ -32,7 +33,9 @@ RSpec.describe CourseMembership::GetTeachers, type: :routine do
       result = CourseMembership::GetTeachers.call(target_course)
       expect(result.errors).to be_empty
       expect(result.outputs.teachers.size).to eq(1)
-      expect(result.outputs.teachers).to include(target_role)
+      expect(result.outputs.teachers).to include(target_role.teacher)
+      expect(result.outputs.teacher_roles.size).to eq(1)
+      expect(result.outputs.teacher_roles).to include(target_role)
     end
 
     it "also works when called expressly" do
@@ -57,8 +60,11 @@ RSpec.describe CourseMembership::GetTeachers, type: :routine do
       result = CourseMembership::GetTeachers.call(target_course)
       expect(result.errors).to be_empty
       expect(result.outputs.teachers.size).to eq(2)
-      expect(result.outputs.teachers).to include(target_role1)
-      expect(result.outputs.teachers).to include(target_role2)
+      expect(result.outputs.teachers).to include(target_role1.teacher)
+      expect(result.outputs.teachers).to include(target_role2.teacher)
+      expect(result.outputs.teacher_roles.size).to eq(2)
+      expect(result.outputs.teacher_roles).to include(target_role1)
+      expect(result.outputs.teacher_roles).to include(target_role2)
     end
   end
 end

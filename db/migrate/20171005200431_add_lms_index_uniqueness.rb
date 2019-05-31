@@ -1,4 +1,4 @@
-class AddLmsIndexUniqueness < ActiveRecord::Migration
+class AddLmsIndexUniqueness < ActiveRecord::Migration[4.2]
   def change
     remove_index :lms_apps, name: "index_lms_apps_on_key"
     add_index :lms_apps, :key, unique: true

@@ -2,7 +2,9 @@
 
 <%
   profile = if params[:openstax_uid]
-    profile = User::Models::Profile.joins{account}.where{account.openstax_uid.eq my{params[:openstax_uid]}}.first
+    profile = User::Models::Profile.joins(:account).find_by(
+      account: { openstax_uid: params[:openstax_uid] }
+    )
   elsif params[:id]
     profile = User::Models::Profile.find(params[:id])
   else
@@ -16,7 +18,7 @@
 
 <div style="float:right">
 <%= link_to "Profile on Accounts",
-             "#{Rails.application.secrets.openstax['accounts']['url']}/admin/users/#{
+             "#{Rails.application.secrets.openstax[:accounts][:url]}/admin/users/#{
              profile.account.openstax_uid}/edit", class: "btn btn-xs btn-primary" %>
 
 <% if is_admin %>

@@ -54,9 +54,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
   #   context 'caller has an authorization token' do
   #     context 'caller is a course teacher' do
   #       it 'creates a new student' do
-  #         expect {
-  #           api_post :create, teacher_token, parameters: valid_params, raw_post_data: valid_body
-  #         }.to change{ User::Models::Profile.count }.by(1)
+  #         expect do
+  #           api_post :create, teacher_token, params: valid_params, body: valid_body
+  #         end.to change { User::Models::Profile.count }.by(1)
   #         expect(response).to have_http_status(:created)
   #         new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
   #         expect(response.body_as_hash).to eq({
@@ -75,7 +75,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
   #     context 'caller is not a course teacher' do
   #       it 'raises SecurityTransgression' do
   #         expect {
-  #           api_post :create, student_token, parameters: valid_params, raw_post_data: valid_body
+  #           api_post :create, student_token, params: valid_params, body: valid_body
   #         }.to raise_error(SecurityTransgression)
   #       end
   #     end
@@ -84,7 +84,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
   #   context 'caller has an application/client credentials authorization token' do
   #     it 'raises SecurityTransgression' do
   #       expect {
-  #         api_post :create, userless_token, parameters: valid_params, raw_post_data: valid_body
+  #         api_post :create, userless_token, params: valid_params, body: valid_body
   #       }.to raise_error(SecurityTransgression)
   #     end
   #   end
@@ -92,7 +92,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
   #   context 'caller does not have an authorization token' do
   #     it 'raises SecurityTransgression' do
   #       expect {
-  #         api_post :create, nil, parameters: valid_params, raw_post_data: valid_body
+  #         api_post :create, nil, params: valid_params, body: valid_body
   #       }.to raise_error(SecurityTransgression)
   #     end
   #   end
@@ -109,8 +109,8 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
           it 'always succeeds' do
             FactoryBot.create :course_membership_student, course: course,
                                                            student_identifier: new_id
-            api_patch :update_self, student_token, parameters: valid_params,
-                                                   raw_post_data: valid_body
+            api_patch :update_self, student_token, params: valid_params,
+                                                   body: valid_body
             expect(response).to have_http_status(:ok)
             expect(response.body_as_hash[:student_identifier]).to eq new_id
             expect(student.reload.student_identifier).to eq new_id
@@ -118,8 +118,8 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
           it "422's if needs to pay" do
             make_payment_required_and_expect_422(course: course, student: student) {
-              api_patch :update_self, student_token, parameters: valid_params,
-                                                     raw_post_data: valid_body
+              api_patch :update_self, student_token, params: valid_params,
+                                                     body: valid_body
             }
           end
         end
@@ -127,28 +127,28 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
       context 'caller is not a course student' do
         it 'raises SecurityTransgression' do
-          expect{
-            api_patch :update_self, teacher_token, parameters: valid_params,
-                                                   raw_post_data: valid_body
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_patch :update_self, teacher_token, params: valid_params,
+                                                   body: valid_body
+          end.to raise_error(SecurityTransgression)
         end
       end
     end
 
     context 'caller has an application/client credentials authorization token' do
       it 'raises SecurityTransgression' do
-        expect{
-          api_patch :update_self, userless_token, parameters: valid_params,
-                                                  raw_post_data: valid_body
-        }.to raise_error(SecurityTransgression)
+        expect do
+          api_patch :update_self, userless_token, params: valid_params,
+                                                  body: valid_body
+        end.to raise_error(SecurityTransgression)
       end
     end
 
     context 'caller does not have an authorization token' do
       it 'raises SecurityTransgression' do
-        expect{
-          api_patch :update_self, nil, parameters: valid_params, raw_post_data: valid_body
-        }.to raise_error(SecurityTransgression)
+        expect do
+          api_patch :update_self, nil, params: valid_params, body: valid_body
+        end.to raise_error(SecurityTransgression)
       end
     end
   end
@@ -161,7 +161,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       context 'caller is a course teacher' do
         context 'moving the student to another period' do
           it 'succeeds' do
-            api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
+            api_patch :update, teacher_token, params: valid_params, body: valid_body
             expect(response).to have_http_status(:ok)
             new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
             expect(response.body_as_hash).to include({
@@ -178,7 +178,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
           it "does not 422 if needs to pay" do
             make_payment_required_and_expect_not_422(course: course, student: student) {
-              api_patch :update, teacher_token, parameters: valid_params, raw_post_data: valid_body
+              api_patch :update, teacher_token, params: valid_params, body: valid_body
             }
           end
 
@@ -188,8 +188,8 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
             it 'always succeeds' do
               FactoryBot.create :course_membership_student, course: course,
                                                              student_identifier: new_id
-              api_patch :update, teacher_token, parameters: valid_params,
-                                 raw_post_data: valid_body.merge({ student_identifier: new_id })
+              api_patch :update, teacher_token, params: valid_params,
+                                 body: valid_body.merge({ student_identifier: new_id })
               expect(response).to have_http_status(:ok)
               expect(response.body_as_hash[:student_identifier]).to eq(new_id)
               expect(student.reload.student_identifier).to eq(new_id)
@@ -201,9 +201,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
       context 'caller is not a course teacher' do
         it 'raises SecurityTransgression' do
-          expect{
-            api_patch :update, student_token, parameters: valid_params, raw_post_data: valid_body
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_patch :update, student_token, params: valid_params, body: valid_body
+          end.to raise_error(SecurityTransgression)
           expect(student.reload.period).to eq period.to_model
         end
       end
@@ -211,18 +211,18 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
     context 'caller has an application/client credentials authorization token' do
       it 'raises SecurityTransgression' do
-        expect{
-          api_patch :update, userless_token, parameters: valid_params, raw_post_data: valid_body
-        }.to raise_error(SecurityTransgression)
+        expect do
+          api_patch :update, userless_token, params: valid_params, body: valid_body
+        end.to raise_error(SecurityTransgression)
         expect(student.reload.period).to eq period.to_model
       end
     end
 
     context 'caller does not have an authorization token' do
       it 'raises SecurityTransgression' do
-        expect{
-          api_patch :update, nil, parameters: valid_params, raw_post_data: valid_body
-        }.to raise_error(SecurityTransgression)
+        expect do
+          api_patch :update, nil, params: valid_params, body: valid_body
+        end.to raise_error(SecurityTransgression)
         expect(student.reload.period).to eq period.to_model
       end
     end
@@ -235,7 +235,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       context 'caller has an authorization token' do
         context 'caller is a course teacher' do
           it 'removes the student from the course' do
-            api_delete :destroy, teacher_token, parameters: valid_params
+            api_delete :destroy, teacher_token, params: valid_params
             expect(response).to have_http_status(:ok)
             expect(response.body_as_hash[:is_active]).to eq false
 
@@ -247,9 +247,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
         context 'caller is not a course teacher' do
           it 'raises SecurityTransgression' do
-            expect{
-              api_delete :destroy, student_token, parameters: valid_params
-            }.to raise_error(SecurityTransgression)
+            expect do
+              api_delete :destroy, student_token, params: valid_params
+            end.to raise_error(SecurityTransgression)
             expect(student.reload.dropped?).to eq false
           end
         end
@@ -257,18 +257,18 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
       context 'caller has an application/client credentials authorization token' do
         it 'raises SecurityTransgression' do
-          expect{
-            api_delete :destroy, userless_token, parameters: valid_params
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_delete :destroy, userless_token, params: valid_params
+          end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq false
         end
       end
 
       context 'caller does not have an authorization token' do
         it 'raises SecurityTransgression' do
-          expect{
-            api_delete :destroy, nil, parameters: valid_params
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_delete :destroy, nil, params: valid_params
+          end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq false
         end
       end
@@ -278,7 +278,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       before { CourseMembership::InactivateStudent[student: student] }
 
       it 'returns an error' do
-        api_delete :destroy, teacher_token, parameters: valid_params
+        api_delete :destroy, teacher_token, params: valid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'already_inactive'
         expect(response.body_as_hash[:errors].first[:message]).to eq 'Student is already inactive'
@@ -300,7 +300,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
         context 'caller is a course teacher' do
           context 'undropping the student from the course' do
             it 'succeeds if the student identifier is available' do
-              api_put :undrop, teacher_token, parameters: valid_params
+              api_put :undrop, teacher_token, params: valid_params
               expect(response).to have_http_status(:ok)
               expect(response.body_as_hash[:is_active]).to eq true
 
@@ -316,7 +316,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
               FactoryBot.create :course_membership_student, course: course,
                                                              student_identifier: student_id
 
-              api_put :undrop, teacher_token, parameters: valid_params
+              api_put :undrop, teacher_token, params: valid_params
               expect(response).to have_http_status(:ok)
               student.reload
               expect(student.persisted?).to eq true
@@ -327,9 +327,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
         context 'caller is not a course teacher' do
           it 'raises SecurityTransgression' do
-            expect{
-              api_put :undrop, student_token, parameters: valid_params
-            }.to raise_error(SecurityTransgression)
+            expect do
+              api_put :undrop, student_token, params: valid_params
+            end.to raise_error(SecurityTransgression)
             expect(student.reload.dropped?).to eq true
           end
         end
@@ -337,18 +337,18 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
       context 'caller has an application/client credentials authorization token' do
         it 'raises SecurityTransgression' do
-          expect{
-            api_put :undrop, userless_token, parameters: valid_params
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_put :undrop, userless_token, params: valid_params
+          end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq true
         end
       end
 
       context 'caller does not have an authorization token' do
         it 'raises SecurityTransgression' do
-          expect{
-            api_put :undrop, nil, parameters: valid_params
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_put :undrop, nil, params: valid_params
+          end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq true
         end
       end
@@ -356,7 +356,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
     context 'student is active' do
       it 'returns an error' do
-        api_put :undrop, teacher_token, parameters: valid_params
+        api_put :undrop, teacher_token, params: valid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'already_active'
         expect(response.body_as_hash[:errors].first[:message]).to eq 'Student is already active'

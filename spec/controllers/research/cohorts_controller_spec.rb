@@ -14,7 +14,7 @@ RSpec.describe Research::CohortsController, type: :controller do
       student = FactoryBot.create :course_membership_student
       student.role.update_attributes profile: FactoryBot.create(:user_profile)
       Research::CohortMembershipManager.new(cohort.study).add_student_to_a_cohort(student)
-      get :members, cohort_id: cohort.id
+      get :members, params: { cohort_id: cohort.id }
       expect(response.body).to include student.role.profile.username
     end
   end

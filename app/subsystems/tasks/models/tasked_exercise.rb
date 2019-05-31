@@ -115,9 +115,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def answer_id_required
-    return true unless answer_id.blank?
+    return unless answer_id.blank?
+
     errors.add(:answer_id, 'is required')
-    false
+    throw :abort
   end
 
   def valid_answer
@@ -125,21 +126,22 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     return if answer_id.blank? || answer_ids.include?(answer_id.to_s)
 
     errors.add(:answer_id, 'is not a valid answer id for this problem')
-    false
+    throw :abort
   end
 
   def no_feedback
     # Cannot change the answer after feedback is available
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
-    if task_step.try!(:feedback_available?)
-      [:answer_id, :free_response].each do |attr|
-        errors.add(
-          attr,
-          'cannot be updated after feedback becomes available'
-        ) if changes[attr].present?
-      end
+    return unless task_step.try!(:feedback_available?)
+
+    [:answer_id, :free_response].each do |attr|
+      errors.add(
+        attr, 'cannot be updated after feedback becomes available'
+      ) if changes[attr].present?
     end
+
+    throw(:abort) if errors.any?
   end
 
 end

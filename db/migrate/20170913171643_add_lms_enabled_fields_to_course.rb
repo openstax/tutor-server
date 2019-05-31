@@ -1,4 +1,4 @@
-class AddLmsEnabledFieldsToCourse < ActiveRecord::Migration
+class AddLmsEnabledFieldsToCourse < ActiveRecord::Migration[4.2]
   def change
     add_column :course_profile_courses, :is_lms_enabled, :boolean, default: nil, null: true
     add_column :course_profile_courses, :is_lms_enabling_allowed, :boolean, default: false, null: false

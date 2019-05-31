@@ -104,8 +104,9 @@ class Admin::CoursesController < Admin::BaseController
       course_ids = params[:course_id]
       ecosystem = Content::Models::Ecosystem.find(params[:ecosystem_id])
       courses = CourseProfile::Models::Course
-        .where { id.in course_ids }
+        .where(id: course_ids)
         .preload(course_ecosystems: :ecosystem)
+        .to_a
         .select { |course| course.ecosystem.try!(:id) != ecosystem.id }
       courses.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(

@@ -1,4 +1,4 @@
-class AddBakedBookLocationColumns < ActiveRecord::Migration
+class AddBakedBookLocationColumns < ActiveRecord::Migration[4.2]
   def change
     add_column :content_chapters, :baked_book_location, :text, null: false, default: '[]'
     add_column :content_pages, :baked_book_location, :text, null: false, default: '[]'

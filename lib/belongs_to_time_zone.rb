@@ -15,11 +15,11 @@ module BelongsToTimeZone
             belongs_to :time_zone, association_options.merge(subsystem: :none)
 
             if options[:default].present?
-              # Use `before_save` and `create` instead of `before_validations` and `new`
-              # because the former causes a duplicate `save` call on the record with the
-              # belongs_to call, which erases dirty info. Don't check presence validation
-              # if we know we are making a default time zone.
-              before_validation { self.time_zone ||= ::TimeZone.create(name: options[:default]) }
+              define_method :time_zone do |*args|
+                super(*args) || self.time_zone = ::TimeZone.new(name: options[:default])
+              end
+
+              before_validation :time_zone
             end
 
             define_time_zone_methods(args, options)

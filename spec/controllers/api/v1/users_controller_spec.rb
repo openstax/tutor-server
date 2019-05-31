@@ -49,7 +49,7 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
 
   context "#ui-settings" do
     it "saves to profile" do
-      api_put :ui_settings, user_1_token, raw_post_data: {
+      api_put :ui_settings, user_1_token, body: {
                 previous_ui_settings: {},
                 ui_settings: {is_open: false, answer: 42}
               }.to_json
@@ -62,7 +62,7 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
   context '#tour' do
     it 'records a tour as viewed' do
       expect do
-        api_patch :record_tour_view, user_1_token, parameters: {tour_id: 'the-grand-tour'}
+        api_patch :record_tour_view, user_1_token, params: {tour_id: 'the-grand-tour'}
         expect(response).to have_http_status(:success)
       end.to change { User::Models::TourView.count }.by(1)
     end

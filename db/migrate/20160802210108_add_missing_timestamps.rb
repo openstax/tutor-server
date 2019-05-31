@@ -1,4 +1,4 @@
-class AddMissingTimestamps < ActiveRecord::Migration
+class AddMissingTimestamps < ActiveRecord::Migration[4.2]
   MODELS_MISSING_TIMESTAMPS = [
     SchoolDistrict::Models::District,
     ShortCode::Models::ShortCode,

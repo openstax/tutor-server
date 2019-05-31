@@ -42,12 +42,10 @@ RSpec.shared_examples 'a biglearn api client' do
     @excluded_exercises = 3.times.map { FactoryBot.create :content_exercise }
     @previous_globally_excluded_exercises = Settings::Exercises.excluded_ids
     Settings::Exercises.excluded_ids = @excluded_exercises.map(&:uid).join(', ')
-    Settings::Db.store.object('excluded_ids').try!(:expire_cache)
   end
 
   after(:all) do
     Settings::Exercises.excluded_ids = @previous_globally_excluded_exercises
-    Settings::Db.store.object('excluded_ids').try!(:expire_cache)
   end
 
   when_tagged_with_vcr = { vcr: ->(v) { !!v } }

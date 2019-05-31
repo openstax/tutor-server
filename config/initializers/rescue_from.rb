@@ -4,7 +4,7 @@ OpenStax::RescueFrom.configure do |config|
   config.raise_exceptions = Rails.application.config.consider_all_requests_local
 
   config.app_name = 'Tutor'
-  config.contact_name = secrets.exception['contact_name']
+  config.contact_name = secrets.exception[:contact_name]
 
   # Notify devs using sentry-raven
   config.notify_proc = ->(proxy, controller) do
@@ -76,7 +76,7 @@ OpenStax::RescueFrom.register_exception(
 OpenStax::RescueFrom.register_exception(
   'OpenStax::Salesforce::UserMissing',
   # only notify when real data involved (only time it really needs admin attention)
-  notify: secrets['salesforce']['allow_use_of_real_data']
+  notify: secrets[:salesforce][:allow_use_of_real_data]
 )
 
 OpenStax::RescueFrom.register_exception(

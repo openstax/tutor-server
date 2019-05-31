@@ -24,7 +24,7 @@ RSpec.describe Api::V1::TeachersController, type: :controller, api: true, versio
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect {
-          api_delete :destroy, nil, parameters: { id: teacher.id }
+          api_delete :destroy, nil, params: { id: teacher.id }
         }.to raise_error(SecurityTransgression)
         expect(UserIsCourseTeacher[course: course, user: teacher_user]).to be true
       end
@@ -33,7 +33,7 @@ RSpec.describe Api::V1::TeachersController, type: :controller, api: true, versio
     context 'user is a student' do
       it 'raises SecurityTransgression' do
         expect {
-          api_delete :destroy, student_token, parameters: { id: teacher.id }
+          api_delete :destroy, student_token, params: { id: teacher.id }
         }.to raise_error(SecurityTransgression)
         expect(UserIsCourseTeacher[course: course, user: teacher_user]).to be true
       end
@@ -41,7 +41,7 @@ RSpec.describe Api::V1::TeachersController, type: :controller, api: true, versio
 
     context 'user is a teacher' do
       it 'removes the teacher' do
-        api_delete :destroy, teacher_token, parameters: { id: teacher.id }
+        api_delete :destroy, teacher_token, params: { id: teacher.id }
         expect(UserIsCourseTeacher[course: course, user: teacher_user]).to be false
       end
     end

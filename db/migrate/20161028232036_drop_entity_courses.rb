@@ -1,4 +1,4 @@
-class DropEntityCourses < ActiveRecord::Migration
+class DropEntityCourses < ActiveRecord::Migration[4.2]
   def up
     # Prevent our records from potentially being deleted when Entity::Courses are gone
     remove_foreign_key :course_content_course_ecosystems, :entity_courses
@@ -44,16 +44,6 @@ class DropEntityCourses < ActiveRecord::Migration
     Tasks::Models::TaskingPlan.unscoped
                               .where(target_type: 'Entity::Course')
                               .update_all(target_type: 'CourseProfile::Models::Course')
-    Legal::Models::TargetedContractRelationship.unscoped.where do
-      parent_gid.like '%Entity::Course%'
-    end.update_all(
-      "parent_gid = replace(parent_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
-    )
-    Legal::Models::TargetedContractRelationship.unscoped.where do
-      child_gid.like '%Entity::Course%'
-    end.update_all(
-      "child_gid = replace(child_gid, 'Entity::Course', 'CourseProfile::Models::Course')"
-    )
 
     remove_index :course_profile_courses, :entity_course_id
     remove_column :course_profile_courses, :entity_course_id

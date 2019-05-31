@@ -17,14 +17,13 @@ class Catalog::Models::Offering < ApplicationRecord
   validates :webview_url, presence: true
   validates :title, presence: true
   validates :description, presence: true
-  validates :ecosystem, presence: true
 
   before_destroy :no_courses
 
   wrapped_by ::Catalog::Strategies::Direct::Offering
 
   scope :preload_deletable, -> do
-    select([ arel_table[Arel.star], DELETABLE_SQL ] )
+    select(arel_table[Arel.star], DELETABLE_SQL)
   end
 
   def deletable?
@@ -37,7 +36,7 @@ class Catalog::Models::Offering < ApplicationRecord
     return if courses.empty?
 
     errors.add :base, 'cannot be deleted because there are courses that use it'
-    false
+    throw :abort
   end
 
 end

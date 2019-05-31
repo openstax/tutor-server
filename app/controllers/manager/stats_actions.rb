@@ -42,20 +42,20 @@ module Manager::StatsActions
 
   def concept_coach
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins(role: {student: :course})
-      .where(role: {student: {course: {is_preview: false}}})
-      .preload([{page: {chapter: {book: {chapters: :pages}}}}, {role: :profile}])
+      .joins(role: { student: :course })
+      .where(role: { student: { course: { is_preview: false } } })
+      .preload([{ page: { chapter: { book: { chapters: :pages } } } }, { role: :profile }])
       .to_a
 
     @cc_stats = {
-      books: cc_tasks.group_by{ |cc| cc.page.chapter.book.title }
+      books: cc_tasks.group_by { |cc| cc.page.chapter.book.title }
                      .map do |book_title, book_cc_tasks|
-        candidate_books = book_cc_tasks.map{ |cc| cc.page.chapter.book }.uniq
+        candidate_books = book_cc_tasks.map { |cc| cc.page.chapter.book }.uniq
         latest_book = candidate_books.max_by(&:version)
 
         {
           title: book_title,
-          chapters: book_cc_tasks.group_by{ |cc| cc.page.chapter.title }
+          chapters: book_cc_tasks.group_by { |cc| cc.page.chapter.title }
                                  .map do |chapter_title, chapter_cc_tasks|
             latest_chapter = latest_book.chapters.find{ |ch| ch.title == chapter_title }
             chapter_number = latest_chapter.try(:number)
@@ -63,7 +63,7 @@ module Manager::StatsActions
             {
               title: chapter_title,
               number: chapter_number,
-              pages: chapter_cc_tasks.group_by{ |cc| cc.page.title }
+              pages: chapter_cc_tasks.group_by { |cc| cc.page.title }
                                      .map do |page_title, page_cc_tasks|
                 latest_page = latest_chapter.pages.find{ |pg| pg.title == page_title }
                 page_number = latest_page.try(:number)
@@ -85,7 +85,7 @@ module Manager::StatsActions
   protected
 
   def get_cc_task_stats(cc_tasks)
-    students = cc_tasks.map{ |cc_task| cc_task.role.profile }.uniq.length
+    students = cc_tasks.map { |cc_task| cc_task.role.profile }.uniq.length
     tasks = cc_tasks.map(&:task)
     total = tasks.length
     in_progress = tasks.select(&:in_progress?).length

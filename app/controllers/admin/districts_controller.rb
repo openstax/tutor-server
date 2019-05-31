@@ -1,7 +1,7 @@
 module Admin
   class DistrictsController < BaseController
 
-    before_filter :get_district, only: [:edit, :update, :destroy]
+    before_action :get_district, only: [:edit, :update, :destroy]
 
     def index
       @districts = SchoolDistrict::ListDistricts[]

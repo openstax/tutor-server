@@ -115,7 +115,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     @related_exercise_ids ||= {}
 
     unless @related_exercise_ids.has_key?(exercise_fragment)
-      pool_exercises = page.reading_context_pool.exercises(preload: :tags)
+      pool_exercises = page.reading_context_pool.exercises(preload: :tags).to_a
       tasked = previous_step.tasked
 
       related_exercises = \
@@ -127,8 +127,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         aplo_ids = exercise.aplos.map(&:id)
 
         pool_exercises.select do |ex|
-          ex.los.any?{ |lo| lo_ids.include?(lo.id) } ||
-          ex.aplos.any?{ |aplo| aplo_ids.include?(aplo.id) }
+          ex.los.any?   { |lo| lo_ids.include?(lo.id) } ||
+          ex.aplos.any? { |aplo| aplo_ids.include?(aplo.id) }
         end
       else # Try One (Exemplar)
         # Retrieve an exercise tagged with the context-cnxfeature tag
@@ -136,7 +136,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         return if node_id.blank?
 
         feature_tag_value = "context-cnxfeature:#{node_id}"
-        pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag.value == feature_tag_value } }
+        pool_exercises.select { |ex| ex.tags.any?{ |tag| tag.value == feature_tag_value } }
       end
 
       @related_exercise_ids[exercise_fragment] = related_exercises.map(&:id) || []

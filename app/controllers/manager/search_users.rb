@@ -2,7 +2,7 @@ module Manager::SearchUsers
   def index
     params[:per_page] ||= 30
     @user_search = User::SearchUsers.call(
-      params.slice(:query, :order_by, :page, :per_page).symbolize_keys
+      params.permit(:query, :order_by, :page, :per_page).to_h.symbolize_keys
     ).outputs
 
     respond_to do |format|

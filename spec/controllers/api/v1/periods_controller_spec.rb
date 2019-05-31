@@ -15,8 +15,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'allows teachers to create periods' do
       allow(SecureRandom).to receive(:random_number) { 12345 }
 
-      api_post :create, teacher_token, parameters: { course_id: course.id },
-                                       raw_post_data: { name: '7th Period' }.to_json
+      api_post :create, teacher_token, params: { course_id: course.id },
+                                       body: { name: '7th Period' }.to_json
 
       expect(response).to have_http_status(:created)
 
@@ -35,8 +35,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
     it 'ensures the person is a teacher of the course' do
       rescuing_exceptions do
-        api_post :create, teacher_token, parameters: { course_id: other_course.id },
-                                         raw_post_data: { name: '7th Period' }.to_json
+        api_post :create, teacher_token, params: { course_id: other_course.id },
+                                         body: { name: '7th Period' }.to_json
       end
 
       expect(response).to have_http_status(:forbidden)
@@ -46,8 +46,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       period = FactoryBot.create :course_membership_period, course: course, name: '8th Period'
       period.to_model.destroy
 
-      api_post :create, teacher_token, parameters: { course_id: course.id },
-                                       raw_post_data: { name: '8th Period' }.to_json
+      api_post :create, teacher_token, params: { course_id: course.id },
+                                       body: { name: '8th Period' }.to_json
 
       expect(response).to have_http_status(:created)
       expect(response.body_as_hash[:name]).to eq('8th Period')
@@ -58,8 +58,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     let(:period) { FactoryBot.create :course_membership_period, course: course, name: '8th Period' }
 
     it 'allows teachers to rename periods' do
-      api_patch :update, teacher_token, parameters: { id: period.id },
-                                        raw_post_data: { name: 'Skip class!!!' }.to_json
+      api_patch :update, teacher_token, params: { id: period.id },
+                                        body: { name: 'Skip class!!!' }.to_json
 
       expect(response).to have_http_status(:ok)
       expect(response.body_as_hash[:name]).to eq('Skip class!!!')
@@ -67,8 +67,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
     it 'allows teachers to change the enrollment code' do
       api_patch :update, teacher_token,
-        parameters: { id: period.id },
-        raw_post_data: { enrollment_code: 'handsome programmer' }.to_json
+        params: { id: period.id },
+        body: { enrollment_code: 'handsome programmer' }.to_json
 
       expect(response).to have_http_status(:ok)
       expect(response.body_as_hash[:enrollment_code]).to eq('handsome programmer')
@@ -78,8 +78,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       other_period = FactoryBot.create :course_membership_period, course: other_course
 
       rescuing_exceptions do
-        api_put :update, teacher_token, parameters: { id: other_period.id },
-                                        raw_post_data: { name: '7th Period' }
+        api_put :update, teacher_token, params: { id: other_period.id },
+                                        body: { name: '7th Period' }
       end
 
       expect(response).to have_http_status(:forbidden)
@@ -87,8 +87,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
     it 'allows teachers to change the default open time' do
       api_patch :update, teacher_token,
-        parameters: { id: period.id },
-        raw_post_data: { default_open_time: '18:32' }.to_json
+        params: { id: period.id },
+        body: { default_open_time: '18:32' }.to_json
 
       expect(response).to have_http_status(:ok)
       expect(response.body_as_hash[:default_open_time]).to eq('18:32')
@@ -97,8 +97,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'freaks if the default open time is in a bad format' do
       expect {
         api_patch :update, teacher_token,
-          parameters: { id: period.id },
-          raw_post_data: { default_open_time: '1:00' }.to_json
+          params: { id: period.id },
+          body: { default_open_time: '1:00' }.to_json
       }.not_to change{ period.to_model.reload.default_open_time }
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -106,8 +106,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
     it 'allows teachers to change the default due time' do
       api_patch :update, teacher_token,
-        parameters: { id: period.id },
-        raw_post_data: { default_due_time: '18:33' }.to_json
+        params: { id: period.id },
+        body: { default_due_time: '18:33' }.to_json
 
       expect(response).to have_http_status(:ok)
       expect(response.body_as_hash[:default_due_time]).to eq('18:33')
@@ -116,8 +116,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'freaks if the default due time is in a bad format' do
       expect {
         api_patch :update, teacher_token,
-          parameters: { id: period.id },
-          raw_post_data: { default_due_time: '25:00' }.to_json
+          params: { id: period.id },
+          body: { default_due_time: '25:00' }.to_json
       }.not_to change{ period.to_model.reload.default_open_time }
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -128,7 +128,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     let(:period) { FactoryBot.create :course_membership_period, course: course, name: '8th Period' }
 
     it 'allows teachers to delete periods' do
-      api_delete :destroy, teacher_token, parameters: { id: period.id }
+      api_delete :destroy, teacher_token, params: { id: period.id }
 
       expect(response).to have_http_status(:ok)
       period.to_model.reload
@@ -139,9 +139,9 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'ensures the person is a teacher of the course' do
       period.to_model.update_attribute :course, other_course
 
-      expect{
-        api_delete :destroy, teacher_token, parameters: { id: period.id }
-      }.to raise_error(SecurityTransgression)
+      expect do
+        api_delete :destroy, teacher_token, params: { id: period.id }
+      end.to raise_error(SecurityTransgression)
 
       expect(period.to_model.reload).not_to be_deleted
     end
@@ -149,7 +149,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'does not delete periods already deleted' do
       period.to_model.destroy
 
-      api_delete :destroy, teacher_token, parameters: { id: period.id }
+      api_delete :destroy, teacher_token, params: { id: period.id }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq 'period_is_already_deleted'
@@ -163,7 +163,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     before { period.to_model.destroy! }
 
     it 'allows teachers to restore periods' do
-      api_put :restore, teacher_token, parameters: { id: period.id }
+      api_put :restore, teacher_token, params: { id: period.id }
 
       expect(response).to have_http_status(:ok)
       period.to_model.reload
@@ -174,9 +174,9 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'ensures the person is a teacher of the course' do
       period.to_model.update_attribute :course, other_course
 
-      expect{
-        api_put :restore, teacher_token, parameters: { id: period.id }
-      }.to raise_error(SecurityTransgression)
+      expect do
+        api_put :restore, teacher_token, params: { id: period.id }
+      end.to raise_error(SecurityTransgression)
 
       expect(period.to_model.reload).to be_deleted
     end
@@ -184,7 +184,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'does not restore periods that are not deleted' do
       period.to_model.restore!
 
-      api_put :restore, teacher_token, parameters: { id: period.id }
+      api_put :restore, teacher_token, params: { id: period.id }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq 'period_is_not_deleted'
@@ -194,7 +194,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     it 'returns a proper error message if there is a name conflict' do
       FactoryBot.create :course_membership_period, course: course, name: period.name
 
-      api_put :restore, teacher_token, parameters: { id: period.id }
+      api_put :restore, teacher_token, params: { id: period.id }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq 'name_has_already_been_taken'
@@ -210,7 +210,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(CreateOrResetTeacherStudent).to(
         receive(:call).with(period: period_wrapper, user: teacher_user)
       ).and_call_original
-      api_put :teacher_student, teacher_token, parameters: { id: period.id }
+      api_put :teacher_student, teacher_token, params: { id: period.id }
 
       expect(response).to have_http_status(:ok)
 
@@ -224,7 +224,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(CreateOrResetTeacherStudent).not_to receive(:call)
 
       expect do
-        api_put :teacher_student, teacher_token, parameters: { id: period.id }
+        api_put :teacher_student, teacher_token, params: { id: period.id }
       end.to raise_error(SecurityTransgression)
     end
   end

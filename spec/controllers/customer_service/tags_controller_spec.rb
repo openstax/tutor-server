@@ -15,13 +15,13 @@ RSpec.describe CustomerService::TagsController, type: :controller do
     end
 
     it 'returns a list of tags that matches tag value' do
-      get :index, query: 'k12phys'
+      get :index, params: { query: 'k12phys' }
 
       expect(assigns[:tags].order(:id)).to eq [tag_1, tag_2]
     end
 
     it 'returns nothing if there are no matches' do
-      get :index, query: 'time-short'
+      get :index, params: { query: 'time-short' }
 
       expect(assigns[:tags]).to eq []
     end
@@ -33,7 +33,7 @@ RSpec.describe CustomerService::TagsController, type: :controller do
       allow(controller).to receive(:current_user) { nil }
 
       get :index
-      expect(response).not_to be_success
+      expect(response).not_to be_successful
     end
 
     it 'disallows non-customer-service authenticated visitors' do

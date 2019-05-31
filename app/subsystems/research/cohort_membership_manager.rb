@@ -24,8 +24,7 @@ class Research::CohortMembershipManager
       raise StudentAlreadyInStudy
     end
 
-    Research::Models::CohortMember.create(cohort: next_cohort_to_admit_to,
-                                          student: student)
+    Research::Models::CohortMember.create(cohort: next_cohort_to_admit_to, student: student)
   end
 
   def remove_students_from_cohorts(students)
@@ -57,12 +56,9 @@ class Research::CohortMembershipManager
   def open_cohorts_with_default
     # Return the study's open cohorts, making sure there is at least one default cohort.
 
-    cohorts = @study.cohorts.accepting_members
+    cohorts = @study.cohorts.accepting_members.to_a
 
-    if cohorts.none?
-      default_cohort = Research::Models::Cohort.create!(name: "Default", study: @study)
-      cohorts.push(default_cohort)
-    end
+    cohorts << Research::Models::Cohort.create!(name: "Default", study: @study) if cohorts.empty?
 
     cohorts
   end

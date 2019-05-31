@@ -1,11 +1,8 @@
 require 'hashie/mash'
-require 'fork_with_connection'
 require_relative 'config/content'
 
 class Demo::Base
   CONFIG_BASE_DIR = "#{Rails.root}/config/demo"
-
-  include ForkWithConnection
 
   protected
 
@@ -63,7 +60,7 @@ class Demo::Base
     end
 
     child_processes = 0.upto(num_processes - 1).map do |process_index|
-      fork_with_connection do
+      fork do
         if transaction
           ActiveRecord::Base.transaction do
             yield *process_args[process_index]
@@ -101,7 +98,7 @@ class Demo::Base
 
   def sign_contract(user:, name:)
     string_name = name.to_s
-    return if FinePrint::Contract.where{name == string_name}.none?
+    return unless FinePrint::Contract.where(name: string_name).exists?
     FinePrint.sign_contract(user.to_model, string_name)
   end
 

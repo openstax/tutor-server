@@ -1,4 +1,4 @@
-class AddCoreAndPersonalizedPlaceholderExerciseStepsCountToTasks < ActiveRecord::Migration
+class AddCoreAndPersonalizedPlaceholderExerciseStepsCountToTasks < ActiveRecord::Migration[4.2]
   def change
     add_column :tasks_tasks, :core_and_personalized_placeholder_exercise_steps_count, :integer
 

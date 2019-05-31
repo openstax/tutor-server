@@ -94,16 +94,16 @@ class ExportAndUploadResearchData
           .select([
             Tasks::Models::TaskStep.arel_table[ Arel.star ],
             tk[:course_membership_period_id],
-            te[:content_exercise_id].as('exercise_id'),
-            te[:url].as('exercise_url'),
+            te[:content_exercise_id].as('"exercise_id"'),
+            te[:url].as('"exercise_url"'),
             te[:question_index],
             te[:correct_answer_id],
             te[:answer_id],
             te[:free_response],
-            pg[:id].as('page_id'),
-            pg[:url].as('page_url'),
+            pg[:id].as('"page_id"'),
+            pg[:url].as('"page_url"'),
             er[:research_identifier],
-            st[:course_profile_course_id].as('course_id'),
+            st[:course_profile_course_id].as('"course_id"'),
             <<-TAGS_SQL.strip_heredoc
               (
                 SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
@@ -397,7 +397,7 @@ class ExportAndUploadResearchData
 
   def each_batch(relation, batch_size = BATCH_SIZE)
     klass = relation.klass
-    cursor = relation.each_instance
+    cursor = relation.each_row
     done = false
 
     loop do

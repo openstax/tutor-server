@@ -8,6 +8,7 @@ class CourseContent::AddEcosystemToCourse
   def exec(course:, ecosystem:,
            ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
            map_strategy_class: ::Content::Strategies::Generated::Map)
+    course.save! unless course.persisted?
     fatal_error(code: :ecosystem_already_set,
                 message: 'The given ecosystem is already active for the given course') \
       if course.lock!.ecosystem.try!(:id) == ecosystem.id

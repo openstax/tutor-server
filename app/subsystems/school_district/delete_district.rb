@@ -5,12 +5,9 @@ module SchoolDistrict
     protected
 
     def exec(district:)
-      if district.destroy
-        Legal::ForgetAbout[item: district]
-      else
-        fatal_error code: :district_has_schools,
-                    message: 'Cannot delete a district that has schools.'
-      end
+      fatal_error(
+        code: :district_has_schools, message: 'Cannot delete a district that has schools.'
+      ) unless district.destroy
     end
   end
 end

@@ -6,9 +6,6 @@ class CreateCourse
 
   uses_routine CourseMembership::CreatePeriod, as: :create_period
 
-
-  uses_routine SchoolDistrict::ProcessSchoolChange, as: :process_school_change
-
   uses_routine Tasks::CreateCourseAssistants, as: :create_course_assistants
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
@@ -90,8 +87,6 @@ class CreateCourse
     num_sections.times{ run(:create_period, course: outputs.course) }
 
     run(:create_course_assistants, course: outputs.course)
-
-    run(:process_school_change, course: outputs.course)
   end
 
 end

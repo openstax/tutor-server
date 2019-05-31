@@ -42,7 +42,12 @@ Rails.application.load_tasks unless defined?(Rake::Task) && Rake::Task.task_defi
 require 'openstax/salesforce/spec_helpers'
 include OpenStax::Salesforce::SpecHelpers
 
-require 'shoulda/matchers'
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
 
 Capybara.server = :webrick
 
@@ -191,7 +196,7 @@ RSpec::Matchers.define :have_routine_error do |error_code|
   include RSpec::Matchers::Composable
 
   match do |actual|
-    actual.errors.any?{|error| error.code == error_code}
+    actual.errors.any? { |error| error.code == error_code }
   end
 
   failure_message do |actual|

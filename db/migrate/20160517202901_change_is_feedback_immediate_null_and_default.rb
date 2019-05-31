@@ -1,4 +1,4 @@
-class ChangeIsFeedbackImmediateNullAndDefault < ActiveRecord::Migration
+class ChangeIsFeedbackImmediateNullAndDefault < ActiveRecord::Migration[4.2]
   def up
     Tasks::Models::TaskPlan.unscoped
                            .where(type: 'homework', is_feedback_immediate: nil)

@@ -37,6 +37,18 @@ Delayed::Worker.delay_jobs = Rails.env.production? || (
                                )
                              )
 
+
+module HandleFailedJobInstantly
+  # Based on https://github.com/smartinez87/exception_notification/issues/195#issuecomment-31257207
+  def handle_failed_job(job, exception)
+    fail_proc = INSTANT_FAILURE_PROCS[exception.class.name]
+    job.fail! if fail_proc.present? && fail_proc.call(exception) ||
+                 exception.try(:instantly_fail_if_in_background_job?)
+
+    super(job, exception)
+  end
+end
+
 Delayed::Worker.class_exec do
   ALWAYS_FAIL = ->(exception) { true }
 
@@ -51,7 +63,7 @@ Delayed::Worker.class_exec do
     'NotYetImplemented' => ALWAYS_FAIL,
     # http://stackoverflow.com/a/31928089
     'ActiveJob::DeserializationError' => ->(exception) do
-      exception.original_exception.is_a? ActiveRecord::RecordNotFound
+      exception.message.include? ActiveRecord::RecordNotFound.to_s
     end,
     'OAuth2::Error'       => ->(exception) do
       status = exception.response.status
@@ -67,15 +79,6 @@ Delayed::Worker.class_exec do
     end
   }
 
-  # Based on https://github.com/smartinez87/exception_notification/issues/195#issuecomment-31257207
-  def handle_failed_job_with_instant_failures(job, exception)
-    fail_proc = INSTANT_FAILURE_PROCS[exception.class.name]
-    job.fail! if fail_proc.present? && fail_proc.call(exception) ||
-                 exception.try(:instantly_fail_if_in_background_job?)
-
-    handle_failed_job_without_instant_failures(job, exception)
-  end
-
   # Not ThreadSafe(TM)
   def self.with_delay_jobs(value, &block)
     begin
@@ -87,7 +90,7 @@ Delayed::Worker.class_exec do
     end
   end
 
-  alias_method_chain :handle_failed_job, :instant_failures
+  prepend HandleFailedJobInstantly
 end
 
 # https://github.com/rails/rails/pull/19910

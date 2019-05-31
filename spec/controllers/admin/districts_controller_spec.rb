@@ -30,7 +30,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
   context 'POST #create' do
     context 'unused name' do
       it 'creates the district and redirects to #index' do
-        expect { post :create, district: { name: 'Hello World' } }.to(
+        expect { post :create, params: { district: { name: 'Hello World' } } }.to(
           change { SchoolDistrict::Models::District.count }.by(1)
         )
 
@@ -45,7 +45,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
       before { district.save! }
 
       it 'displays an error message and assigns @district and @page_header' do
-        expect { post :create, district: { name: 'Hello World' } }.not_to(
+        expect { post :create, params: { district: { name: 'Hello World' } } }.not_to(
           change { SchoolDistrict::Models::District.count }
         )
 
@@ -61,7 +61,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
     before { district.save! }
 
     it 'assigns @district and @page_header' do
-      get :edit, id: district.id
+      get :edit, params: { id: district.id }
 
       expect(assigns[:district]).to be_present
       expect(assigns[:page_header]).to eq("Edit district")
@@ -73,7 +73,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
 
     context 'unused name' do
       it 'updates the district and redirects to #index' do
-        patch :update, id: district.id, district: { name: 'Hello Again' }
+        patch :update, params: { id: district.id, district: { name: 'Hello Again' } }
 
         expect(response).to redirect_to(admin_districts_path)
         expect(district.reload.name).to eq 'Hello Again'
@@ -84,7 +84,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
       before { FactoryBot.create :school_district_district, name: 'Hello Again' }
 
       it 'displays an error message and assigns @district and @page_header' do
-        patch :update, id: district.id, district: { name: 'Hello Again' }
+        patch :update, params: { id: district.id, district: { name: 'Hello Again' } }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(flash[:error]).to include('Name has already been taken')
@@ -100,7 +100,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
 
     context 'without schools' do
       it 'deletes the district and redirects to #index' do
-        expect { delete :destroy, id: district.id }.to(
+        expect { delete :destroy, params: { id: district.id } }.to(
           change { SchoolDistrict::Models::District.count }.by(-1)
         )
 
@@ -112,7 +112,7 @@ RSpec.describe Admin::DistrictsController, type: :controller do
       before { FactoryBot.create :school_district_school, district: district }
 
       it 'redirects to #index and displays an error message' do
-        expect { delete :destroy, id: district.id }.not_to(
+        expect { delete :destroy, params: { id: district.id } }.not_to(
           change { SchoolDistrict::Models::District.count }
         )
 

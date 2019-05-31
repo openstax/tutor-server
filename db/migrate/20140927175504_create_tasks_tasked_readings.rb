@@ -1,4 +1,4 @@
-class CreateTasksTaskedReadings < ActiveRecord::Migration
+class CreateTasksTaskedReadings < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_tasked_readings do |t|
       t.string :url, null: false

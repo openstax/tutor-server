@@ -5,11 +5,11 @@ module Hypothesis
       user_id = "acct:" + (account.openstax_uid || account.uuid).abs.to_s + "@openstax.org"
 
       payload = {
-        aud: Rails.application.secrets[:hypothesis]['host'],
-        iss: Rails.application.secrets[:hypothesis]['client_id'] || '',
+        aud: Rails.application.secrets.hypothesis[:host],
+        iss: Rails.application.secrets.hypothesis[:client_id] || '',
         sub: user_id
       }
-      JWT.encode payload, Rails.application.secrets[:hypothesis]['client_secret'] || '', 'HS256'
+      JWT.encode payload, Rails.application.secrets.hypothesis[:client_secret] || '', 'HS256'
   end
 
 end

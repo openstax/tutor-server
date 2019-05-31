@@ -1,4 +1,4 @@
-class DropRoleRoleUsers < ActiveRecord::Migration
+class DropRoleRoleUsers < ActiveRecord::Migration[4.2]
   def change
     add_column :entity_roles, :user_profile_id, :integer
 

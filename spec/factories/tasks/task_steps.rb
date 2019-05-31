@@ -1,13 +1,13 @@
 FactoryBot.define do
   factory :tasks_task_step, class: '::Tasks::Models::TaskStep' do
     association :page, factory: :content_page
-    tasked_type :tasks_tasked_reading
+    tasked_type { :tasks_tasked_reading }
 
     transient do
-      url nil
-      content nil
-      title nil
-      skip_task false
+      url { nil }
+      content { nil }
+      title { nil }
+      skip_task { false }
     end
 
     after(:build) do |task_step, evaluator|

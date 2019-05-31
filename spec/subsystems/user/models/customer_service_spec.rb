@@ -6,8 +6,6 @@ RSpec.describe User::Models::CustomerService, type: :model do
 
   it { is_expected.to belong_to(:profile) }
 
-  it { is_expected.to validate_presence_of(:profile) }
-
   it { is_expected.to validate_uniqueness_of(:profile) }
 
   let(:anon) { User::Models::AnonymousProfile.instance }

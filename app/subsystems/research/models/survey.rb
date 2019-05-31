@@ -4,9 +4,7 @@ class Research::Models::Survey < ApplicationRecord
   belongs_to :survey_plan, subsystem: :research, inverse_of: :surveys
   belongs_to :student, subsystem: :course_membership, inverse_of: :surveys
 
-  validates :survey_plan, presence: true
-  validates :student, uniqueness: { scope: :research_survey_plan_id },
-                      presence: true
+  validates :student, uniqueness: { scope: :research_survey_plan_id }
   validate :ensure_no_response_while_hidden
 
   def is_hidden?
@@ -16,9 +14,9 @@ class Research::Models::Survey < ApplicationRecord
   protected
 
   def ensure_no_response_while_hidden
-    errors.add(:survey_js_response, 'cannot be updated when survey is hidden') \
-      if is_hidden? && survey_js_response_changed?
-    errors.none?
-  end
+    return unless is_hidden? && survey_js_response_changed?
 
+    errors.add(:survey_js_response, 'cannot be updated when survey is hidden')
+    throw :abort
+  end
 end

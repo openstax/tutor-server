@@ -32,15 +32,19 @@ class GetUserCourseRoles
 
     course_ids = [courses].flatten.map(&:id)
     subqueries = []
+    er = Entity::Role.arel_table
     if includes_student
       student_subquery = user.roles
-        .select('entity_roles.*, course_membership_students.course_profile_course_id')
+        .select(
+          er[Arel.star],
+          CourseMembership::Models::Student.arel_table[:course_profile_course_id]
+        )
         .joins(:student)
         .joins(CourseMembership::Models::Enrollment.latest_join_sql(:student, :period))
         .where(course_membership_periods: { course_profile_course_id: course_ids })
 
       student_subquery = student_subquery.where(
-        course_membership_students: { dropped_at: nil },
+        student: { dropped_at: nil },
         course_membership_periods: { archived_at: nil }
       ) unless include_dropped_students
 
@@ -49,12 +53,15 @@ class GetUserCourseRoles
 
     if includes_teacher
       teacher_subquery = user.roles
-        .select('entity_roles.*, course_membership_teachers.course_profile_course_id')
+        .select(
+          er[Arel.star],
+          CourseMembership::Models::Teacher.arel_table[:course_profile_course_id]
+        )
         .joins(:teacher)
-        .where(course_membership_teachers: { course_profile_course_id: course_ids })
+        .where(teacher: { course_profile_course_id: course_ids })
 
       teacher_subquery = teacher_subquery.where(
-        course_membership_teachers: { deleted_at: nil }
+        teacher: { deleted_at: nil }
       ) unless include_deleted_teachers
 
       subqueries << teacher_subquery
@@ -62,20 +69,23 @@ class GetUserCourseRoles
 
     if includes_teacher_student
       teacher_student_subquery = user.roles
-        .select('entity_roles.*, course_membership_teacher_students.course_profile_course_id')
+        .select(
+          er[Arel.star],
+          CourseMembership::Models::TeacherStudent.arel_table[:course_profile_course_id]
+        )
         .joins(:teacher_student)
-        .where(course_membership_teacher_students: { course_profile_course_id: course_ids })
+        .where(teacher_student: { course_profile_course_id: course_ids })
 
       teacher_student_subquery = teacher_student_subquery.where(
-        course_membership_teacher_students: { deleted_at: nil }
+        teacher_student: { deleted_at: nil }
       ) unless include_deleted_teachers
 
       subqueries << teacher_student_subquery
     end
 
-    subquery = "(#{subqueries.map(&:to_sql).join(' UNION ')}) AS entity_roles"
-
+    subquery = "(#{subqueries.map(&:to_sql).join(' UNION ')}) AS \"#{Entity::Role.table_name}\""
     outputs.roles = Entity::Role.from(subquery)
+
     outputs.roles = outputs.roles.preload(*[preload].flatten) unless preload.nil?
   end
 end

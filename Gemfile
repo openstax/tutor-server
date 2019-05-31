@@ -4,21 +4,21 @@
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
 end
 
 # Rails framework
-gem 'rails', '4.2.11'
+gem 'rails', '~> 5.2.2'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.3.7'
 
 # SCSS stylesheets
-gem 'sass-rails', '~> 5.0.0'
+gem 'sass-rails', '~> 5.0.7'
 
 # Compass stylesheets
-gem 'compass-rails'
+gem 'compass-rails', '~> 3.1.0'
 
 # JavaScript asset compressor
 gem 'uglifier', '>= 1.3.0'
@@ -27,7 +27,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'browser', '~> 2.5'
 
 # CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
+gem 'coffee-rails', '~> 4.2.2'
 
 # JavaScript asset compiler
 gem 'mini_racer'
@@ -39,7 +39,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 
 # PostgreSQL database
-gem 'pg', '~> 0.21.0'
+gem 'pg', '~> 1.1.4'
 
 # Run unicorn when using the `rails server` or `rails s` command
 gem 'unicorn-rails'
@@ -63,13 +63,14 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 7.13.1'
+gem 'openstax_accounts'
+gem 'action_interceptor'
 
 # Datetime parsing
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 8.2.0'
+gem 'openstax_api'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -80,7 +81,7 @@ gem 'ims-lti', '~> 2.2.1'
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4
 # Also, do not use Roar::Hypermedia links
-gem 'roar', '1.0.3'
+gem 'roar', '~> 1.1.0'
 
 gem 'nokogiri'
 
@@ -90,14 +91,12 @@ gem 'jobba', '~> 1.8.0'
 # Lev framework
 gem 'lev', '~> 9.0.1'
 
-# Ruby dsl for SQL queries
-gem 'squeel'
-
 # Contract management
-gem 'fine_print', '~> 3.1.0'
+gem 'fine_print'
 
 # Keyword search
-gem "keyword_search", github: 'openstax/keyword_search', ref: '21785cb0f644'
+gem 'keyword_search', github: 'openstax/keyword_search',
+                      ref: '0ce23c42575129b74c14add9e5d069ef9fedebac'
 
 # File uploads
 gem 'remotipart'
@@ -134,7 +133,7 @@ gem 'faker'
 gem 'redis-rails'
 
 # Background job queueing
-gem 'delayed_job_active_record'
+gem 'delayed_job_active_record', '~> 4.1.4.beta1'
 gem 'daemons'
 
 # Type coercion for Representable
@@ -144,7 +143,7 @@ gem 'virtus'
 gem 'axlsx', github: 'randym/axlsx', ref: 'c8ac844572b25fda358cc01d2104720c4c42f450'
 
 # Pagination library
-gem 'will_paginate', '~> 3.0.6'
+gem 'will_paginate', '~> 3.1.7'
 
 # Time travel
 gem 'timecop'
@@ -153,7 +152,8 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'openstax_rescue_from', '~> 3.0.0'
+gem 'openstax_rescue_from'
+
 
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
 gem 'sentry-raven', require: 'raven/base'
@@ -162,16 +162,17 @@ gem 'sentry-raven', require: 'raven/base'
 gem 'babbler', '~> 1.0.1'
 
 # Soft-deletion
-gem 'paranoia'
+gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
-gem 'openstax_salesforce', '~> 2.0.1'
+gem 'openstax_salesforce'
+
 # Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', git: 'https://github.com/openstax/active_force', ref: '9efe1ba'
+gem 'active_force', github: 'openstax/active_force', ref: '3ba34211b6f2387b5e05512b9561076894c5fa2d'
 
 # Global settings
-gem 'rails-settings-cached', '~> 0.4.0'
-gem 'rails-settings-ui', '~> 0.5.0'
+gem 'rails-settings-cached'
+gem 'rails-settings-ui'
 
 # Nicely-styled static error pages
 gem 'error_page_assets'
@@ -183,9 +184,6 @@ gem 'p3p'
 # API throttling
 gem 'rack-attack'
 
-# Minimize DB access due to touch: true associations
-gem 'activerecord-delay_touching'
-
 # Fast JSON parsing
 gem 'oj'
 
@@ -196,18 +194,10 @@ gem 'oj_mimic_json'
 gem 'request_store'
 
 # Use PostgreSQL cursors with ActiveRecord
-gem 'postgresql_cursor'
+gem 'postgresql_cursor', '~> 0.6.2'
 
 # manage PostgresQL view migrations
-gem 'scenic', '~> 1.4'
-
-# Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
-gem 'awesome_print'
-
-# Advisory Locks
-# This version provides locks that unlock automatically at the end of the transaction,
-# which are required for the correct operation of the Biglearn client
-gem 'with_advisory_lock', git: 'https://github.com/procore/with_advisory_lock.git', ref: 'aba1583c'
+gem 'scenic', '~> 1.5'
 
 # In place form editing on admin menu
 gem 'best_in_place'
@@ -223,12 +213,18 @@ gem 'scout_apm', '~> 3.0.x'
 # Respond to ELB healthchecks in /ping and /ping/
 gem 'openstax_healthcheck'
 
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '~> 1.4.0', require: false
+
 group :development, :test do
+  # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
+  gem 'awesome_print'
+
   # Get env variables from .env file
   gem 'dotenv-rails'
 
   # lint files
-  gem 'rubocop', '~> 0.65.0'
+  gem 'rubocop'
 
   # Run specs in parallel
   gem 'parallel_tests'
@@ -247,15 +243,12 @@ group :development, :test do
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
 
-  # Mute asset pipeline log messages
-  gem 'quiet_assets'
-
   # Use RSpec for tests
-  gem 'rspec-rails', '~> 3.8.0'
+  gem 'rspec-rails'
 
   gem 'rspec-collection_matchers'
 
-  gem 'pilfer', '~> 1.0.0'
+  gem 'pilfer'
 
   # Fixture replacement
   gem 'factory_bot_rails'
@@ -300,24 +293,23 @@ group :development do
 end
 
 group :test do
-  # Fake in-memory Redis for testing
-  gem 'fakeredis'
+  gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 
-  gem 'shoulda-matchers', require: false
   gem 'launchy'
   gem 'database_cleaner'
   gem 'db-query-matchers'
+
+  # Fake in-memory Redis for testing
+  gem 'fakeredis'
 
   gem 'whenever-test'
 
   gem 'chromedriver-helper'
 
-  gem 'capybara', '< 3.0'
+  gem 'capybara'
   gem 'capybara-selenium'
   gem 'capybara-screenshot', require: false
-
-  # Code Climate integration
-  gem "codeclimate-test-reporter", require: false
 
   # Codecov integration
   gem 'codecov', require: false

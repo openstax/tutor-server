@@ -1,6 +1,6 @@
-# Try to list more often used routes first, although catch-all routes have to be at the end
 Rails.application.routes.draw do
-
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # Try to list more often used routes first, although catch-all routes have to be at the end
   mount OpenStax::Salesforce::Engine, at: '/admin/salesforce'
   OpenStax::Salesforce.set_top_level_routes(self)
 
@@ -107,13 +107,7 @@ Rails.application.routes.draw do
         put :reject_late_work
       end
 
-      resources :steps, controller: :task_steps, shallow: true, only: [:show, :update] do
-        member do
-          put :completed
-          put :recovery
-          put :refresh
-        end
-      end
+      resources :steps, controller: :task_steps, shallow: true, only: [:show, :update]
     end
 
     resources :metatasks, only: [:show, :destroy] do
@@ -122,17 +116,9 @@ Rails.application.routes.draw do
 
     resources :research_surveys, only: [:update]
 
-    namespace :cc do
-      namespace :tasks do
-        get :':cnx_book_id/:cnx_page_id', action: :show
-        get :':course_id/:cnx_page_id/stats', action: :stats
-      end
-    end
-
     resources :courses, only: [:create, :show, :update] do
       member do
         get :'dashboard', action: :dashboard
-        get :'cc/dashboard', action: :cc_dashboard
         get :roster
         post :clone
 
@@ -225,10 +211,7 @@ Rails.application.routes.draw do
   end # end of API scope
 
   # Teacher enrollment
-  scope to: 'courses#teach' do
-    get :'teach/:teach_token(/:ignore)', as: :teach_course
-    get :'courses/join/:teach_token', as: :deprecated_teach_course
-  end
+  get :'teach/:teach_token(/:ignore)', to: 'courses#teach', as: :teach_course
 
   # All admin routes
   namespace :admin do

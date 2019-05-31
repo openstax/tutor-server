@@ -31,7 +31,7 @@ class LogoutRedirectChooser
   end
 
   def to_bool(boolean_thing)
-    ActiveRecord::Type::Boolean.new.type_cast_from_user(boolean_thing)
+    ActiveRecord::Type::Boolean.new.cast(boolean_thing)
   end
 
 end

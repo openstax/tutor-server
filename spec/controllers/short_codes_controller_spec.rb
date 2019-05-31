@@ -30,25 +30,25 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:task_plan_due_at) { task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d') }
 
   it 'redirects users to sign in before access' do
-    get :redirect, short_code: absolute_url.code
+    get :redirect, params: { short_code: absolute_url.code }
     expect(response).to redirect_to(%r{/accounts/login})
   end
 
   it 'redirects users to absolute urls' do
     controller.sign_in(teacher)
-    get :redirect, short_code: absolute_url.code
+    get :redirect, params: { short_code: absolute_url.code }
     expect(response).to redirect_to('https://cnx.org')
   end
 
   it 'redirects users to relative urls' do
     controller.sign_in(student)
-    get :redirect, short_code: relative_url.code
+    get :redirect, params: { short_code: relative_url.code }
     expect(response).to redirect_to('dashboard')
   end
 
   it 'redirects teachers to edit task plan page' do
     controller.sign_in(teacher)
-    get :redirect, short_code: task_plan_code.code
+    get :redirect, params: { short_code: task_plan_code.code }
 
     expect(response).to redirect_to("/course/#{course.id}/t/month/#{task_plan_due_at}/plan/#{task_plan.id}")
   end
@@ -57,28 +57,28 @@ RSpec.describe ShortCodesController, type: :controller do
     controller.sign_in(student)
     expected_url = "/course/#{course.id}/task/#{tasking.task.id}"
 
-    get :redirect, short_code: task_plan_code.code
+    get :redirect, params: { short_code: task_plan_code.code }
     expect(response).to redirect_to(expected_url)
   end
 
   it 'raises ShortCodeNotFound for short code not found' do
     controller.sign_in(user)
-    expect {
-      get :redirect, short_code: 'somethingrandom'
-    }.to raise_error(ShortCodeNotFound)
+    expect do
+      get :redirect, params: { short_code: 'somethingrandom' }
+    end.to raise_error(ShortCodeNotFound)
   end
 
   it 'gives a 403 for users who cannot see the task plan' do
     controller.sign_in(user)
-    get :redirect, short_code: task_plan_code.code
+    get :redirect, params: { short_code: task_plan_code.code }
     expect(response).to have_http_status(:forbidden)
   end
 
   it 'returns 404 for short code with a non task plan GID' do
     controller.sign_in(student)
 
-    expect {
-      get :redirect, short_code: tasking_code.code
-    }.to raise_error(StandardError)
+    expect do
+      get :redirect, params: { short_code: tasking_code.code }
+    end.to raise_error(StandardError)
   end
 end

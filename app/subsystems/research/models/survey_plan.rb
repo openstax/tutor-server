@@ -2,7 +2,6 @@ class Research::Models::SurveyPlan < ApplicationRecord
   belongs_to :study, inverse_of: :survey_plans
   has_many :surveys, inverse_of: :survey_plan
 
-  validates :study, presence: true
   validates :title_for_researchers, presence: true
   validates :title_for_students, presence: true
   validate :changes_allowed
@@ -23,9 +22,9 @@ class Research::Models::SurveyPlan < ApplicationRecord
   end
 
   def changes_allowed
-    errors.add(:survey_js_model, "cannot be changed after publication") \
-      if survey_js_model_changed? && is_published?
+    return unless is_published? && survey_js_model_changed?
 
-    errors.any?
+    errors.add(:survey_js_model, "cannot be changed after publication")
+    throw :abort
   end
 end

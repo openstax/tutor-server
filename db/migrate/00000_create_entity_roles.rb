@@ -1,4 +1,4 @@
-class CreateEntityRoles < ActiveRecord::Migration
+class CreateEntityRoles < ActiveRecord::Migration[4.2]
   def change
     create_table :entity_roles do |t|
       t.integer :role_type, null: false, default: 0

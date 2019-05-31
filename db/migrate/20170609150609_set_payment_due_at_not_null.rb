@@ -1,4 +1,4 @@
-class SetPaymentDueAtNotNull < ActiveRecord::Migration
+class SetPaymentDueAtNotNull < ActiveRecord::Migration[4.2]
   def change
     CourseMembership::Models::Student.unscoped
                                      .where(payment_due_at: nil)

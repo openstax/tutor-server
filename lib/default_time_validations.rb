@@ -19,7 +19,8 @@ module DefaultTimeValidations
         errors.add(time_field.to_sym, "has the right syntax but invalid time value")
       end
     end
-    errors.none?
+
+    throw(:abort) if errors.any?
   end
 
 end

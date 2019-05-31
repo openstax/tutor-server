@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Lms::Models::Context, type: :model do
   let(:context) { FactoryBot.create :lms_context }
 
-  it { is_expected.to belong_to(:course) }
+  it { is_expected.to belong_to(:course).optional }
   it { is_expected.to belong_to(:tool_consumer) }
 
   it 'finds app when it is a Lms::Models::App' do

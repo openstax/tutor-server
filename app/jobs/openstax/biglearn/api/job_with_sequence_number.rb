@@ -87,7 +87,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
         # and mark the attribute as persisted
         model.sequence_number = next_sequence_number
         model.previous_changes[:sequence_number] = model.changes[:sequence_number]
-        model.send :clear_attribute_changes, :sequence_number
+        model.send :clear_attribute_changes, [ :sequence_number ]
 
         # Call the given block with the previous sequence_number
         request.merge(sequence_number: sequence_number)

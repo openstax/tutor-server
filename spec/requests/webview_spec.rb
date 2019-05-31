@@ -10,17 +10,17 @@ RSpec.describe "Webview", type: :request do
   context 'GET /courses/enroll/blah' do
 
     it 'renders welcome screen' do
-      get '/enroll/whatever', {}, chrome_ua
+      get '/enroll/whatever', headers: chrome_ua
       expect(response).to render_template(:enroll)
     end
 
     it 'start does not direct accounts to use the alternate signup' do
-      get '/enroll/start/whatever', {}, chrome_ua
+      get '/enroll/start/whatever', headers: chrome_ua
       expect(redirect_query_hash).not_to have_key(:signup_at)
     end
 
     it 'directs accounts to go straight to signup for student' do
-      get '/enroll/start/whatever', {}, chrome_ua
+      get '/enroll/start/whatever', headers: chrome_ua
       expect(redirect_query_hash[:go]).to eq 'student_signup'
     end
   end
@@ -40,7 +40,7 @@ RSpec.describe "Webview", type: :request do
     ].each do |name, ua|
       it "#{name} is not supported" do
         stub_current_user(user)
-        get dashboard_url, {}, { 'HTTP_USER_AGENT' => ua }
+        get dashboard_url, headers: { 'HTTP_USER_AGENT' => ua }
         expect(response).to redirect_to(browser_upgrade_path(go: dashboard_url))
       end
     end
@@ -56,7 +56,7 @@ RSpec.describe "Webview", type: :request do
     ].each do |name, ua|
       it "#{name} is supported" do
         stub_current_user(user)
-        get '/', {}, { 'HTTP_USER_AGENT' => ua }
+        get '/', headers: { 'HTTP_USER_AGENT' => ua }
         expect(response).to redirect_to(dashboard_path)
       end
     end

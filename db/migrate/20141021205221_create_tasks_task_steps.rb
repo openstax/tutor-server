@@ -1,4 +1,4 @@
-class CreateTasksTaskSteps < ActiveRecord::Migration
+class CreateTasksTaskSteps < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_task_steps do |t|
       t.references :tasks_task, null: false,

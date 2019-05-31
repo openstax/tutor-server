@@ -49,7 +49,7 @@ class Demo::Tasks < Demo::Base
     book_locations = (book_locations.first.is_a?(Array) ? \
                       book_locations : [book_locations]).compact
 
-    book.pages.select { |page| book_locations.include?(page.book_location) }
+    book.pages.to_a.select { |page| book_locations.include?(page.book_location) }
   end
 
   def assign_ireading(course:, book_locations:, title:)

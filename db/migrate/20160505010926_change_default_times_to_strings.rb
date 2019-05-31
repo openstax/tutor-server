@@ -1,4 +1,4 @@
-class ChangeDefaultTimesToStrings < ActiveRecord::Migration
+class ChangeDefaultTimesToStrings < ActiveRecord::Migration[4.2]
   def change
     remove_column :course_membership_periods, :default_open_time, :time
     remove_column :course_membership_periods, :default_due_time, :time

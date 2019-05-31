@@ -55,18 +55,18 @@ class SetupPerformanceReportData
   end
 
   def get_assistant(course:, task_plan_type:)
-    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
+    course.course_assistants.find_by(tasks_task_plan_type: task_plan_type).assistant
   end
 
   def get_student_tasks(role)
     task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :concept_coach)
 
     Tasks::Models::Task
-      .joins { taskings }
-      .where { taskings.entity_role_id == my { role.id } }
-      .where { task_type.in task_types }
-      .order { due_at_ntz }
-      .preload { task_steps.tasked }
+      .joins(:taskings)
+      .where(taskings: { entity_role_id: role.id })
+      .where(task_type: task_types)
+      .order(:due_at_ntz)
+      .preload(task_steps: :tasked)
       .to_a.select(&:past_open?)
   end
 

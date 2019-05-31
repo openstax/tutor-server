@@ -9,7 +9,6 @@ class Content::Models::Pool < IndestructibleRecord
 
   json_serialize :content_exercise_ids, Integer, array: true
 
-  validates :ecosystem, presence: true
   validates :pool_type, presence: true
   validates :uuid, presence: true, uniqueness: true
 

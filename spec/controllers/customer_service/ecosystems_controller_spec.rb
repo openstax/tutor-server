@@ -25,7 +25,7 @@ RSpec.describe CustomerService::EcosystemsController, type: :controller do
 
   context 'GET #manifest' do
     it 'allows the ecosystem\'s manifest to be downloaded' do
-      get :manifest, id: ecosystem_1.id
+      get :manifest, params: { id: ecosystem_1.id }
 
       expected_content_disposition = \
         "attachment; filename=\"#{FilenameSanitizer.sanitize(ecosystem_1.title)}.yml\""

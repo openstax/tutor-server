@@ -5,12 +5,14 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
                                                    version: :v1, vcr: VCR_OPTS, speed: :slow do
 
   let(:user_1)         { FactoryBot.create(:user) }
-  let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,
-                                             resource_owner_id: user_1.id }
+  let(:user_1_token)   do
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id
+  end
 
   let(:user_2)         { FactoryBot.create(:user) }
-  let(:user_2_token)   { FactoryBot.create :doorkeeper_access_token,
-                                             resource_owner_id: user_2.id }
+  let(:user_2_token)   do
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id
+  end
 
   let(:userless_token) { FactoryBot.create :doorkeeper_access_token }
 
@@ -35,30 +37,30 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
       context 'for anonymous' do
         it 'raises SecurityTransgression' do
-          expect {
-            api_patch :update, nil, parameters: { course_id: course.id },
-                                    raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
-          }.to raise_error(SecurityTransgression)
+          expect do
+            api_patch :update, nil, params: { course_id: course.id },
+                                    body: [{ id: exercise.id, is_excluded: true }]
+          end.to raise_error(SecurityTransgression)
         end
       end
 
       context 'for a user that is not a teacher' do
         it 'raises SecurityTransgression' do
-          expect {
+          expect do
             api_patch :update, user_2_token,
-                      parameters: { course_id: course.id },
-                      raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
-          }.to raise_error(SecurityTransgression)
+                      params: { course_id: course.id },
+                      body: [{ id: exercise.id, is_excluded: true }]
+          end.to raise_error(SecurityTransgression)
         end
       end
 
       context 'for a teacher in the course' do
         it 'can exclude an exercise' do
-          expect{
+          expect do
             api_patch :update, user_1_token,
-                      parameters: { course_id: course.id },
-                      raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
-          }.to change{ CourseContent::Models::ExcludedExercise.count }.by(1)
+                      params: { course_id: course.id },
+                      body: [{ id: exercise.id, is_excluded: true }]
+          end.to change { CourseContent::Models::ExcludedExercise.count }.by(1)
 
           expect(response).to have_http_status(:success)
           exclusions = response.body_as_hash
@@ -71,11 +73,11 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           FactoryBot.create :course_content_excluded_exercise,
                              course: course, exercise_number: exercise.number
 
-          expect{
+          expect do
             api_patch :update, user_1_token,
-                      parameters: { course_id: course.id },
-                      raw_post_data: [{ id: exercise.id, is_excluded: false }].to_json
-          }.to change{ CourseContent::Models::ExcludedExercise.count }.by(-1)
+                      params: { course_id: course.id },
+                      body: [{ id: exercise.id, is_excluded: false }]
+          end.to change { CourseContent::Models::ExcludedExercise.count }.by(-1)
 
           expect(response).to have_http_status(:success)
           exclusions = response.body_as_hash

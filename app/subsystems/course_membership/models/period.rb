@@ -30,7 +30,6 @@ class CourseMembership::Models::Period < ApplicationRecord
   has_many :tasking_plans, as: :target, class_name: 'Tasks::Models::TaskingPlan'
   unique_token :enrollment_code, mode: :random_number, length: 6
 
-  validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :course_profile_course_id,
                                                  conditions: -> { where(archived_at: nil) } }
   validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
@@ -50,11 +49,11 @@ class CourseMembership::Models::Period < ApplicationRecord
   end
 
   def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
+    read_attribute(:default_open_time) || Settings::Db.default_open_time
   end
 
   def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
+    read_attribute(:default_due_time) || Settings::Db.default_due_time
   end
 
   def enrollment_code_for_url
@@ -64,7 +63,7 @@ class CourseMembership::Models::Period < ApplicationRecord
   def assignments_count
     tasking_plans
       .joins(:task_plan)
-      .where { task_plan.first_published_at != nil }
+      .where.not(task_plan: { first_published_at: nil })
       .count
   end
 

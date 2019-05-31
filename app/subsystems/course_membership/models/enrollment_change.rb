@@ -3,14 +3,13 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
   wrapped_by CourseMembership::Strategies::Direct::EnrollmentChange
 
   belongs_to :profile, subsystem: :user
-  belongs_to :enrollment, inverse_of: :enrollment_change # from
-  belongs_to :period                                     # to
-  belongs_to :conflicting_enrollment, class_name: 'CourseMembership::Models::Enrollment'
+  belongs_to :period, inverse_of: :enrollment_changes                    # to
+  belongs_to :enrollment, inverse_of: :enrollment_change, optional: true # from
+  belongs_to :conflicting_enrollment, class_name: 'CourseMembership::Models::Enrollment',
+                                      optional: true
 
   enum status: [ :pending, :approved, :rejected, :processed ]
 
-  validates :profile, presence: true
-  validates :period, presence: true
   validate :same_profile, :same_course, :course_not_ended,
            :different_period_unless_conflict, :valid_conflict
 
@@ -41,26 +40,26 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
   def same_profile
     return if enrollment.nil? || profile.nil? || enrollment.student.role.profile == profile
     errors.add(:base, 'the given user does not match the given enrollment')
-    false
+    throw :abort
   end
 
   def same_course
     return if enrollment.nil? || period.nil? || period.course == enrollment.period.course
     errors.add(:base, 'the given periods must belong to the same course')
-    false
+    throw :abort
   end
 
   def course_not_ended
     return if period.nil? || !period.course.ended?
     errors.add(:period, 'belongs to a course that has already ended')
-    false
+    throw :abort
   end
 
   def different_period_unless_conflict
     return if enrollment.nil? || period.nil? || enrollment.period != period ||
               conflicting_enrollment.present?
     errors.add(:base, 'the given user is already enrolled in the given period')
-    false
+    throw :abort
   end
 
   def valid_conflict
@@ -71,7 +70,7 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
                   ( period.course != conflicting_enrollment.period.course &&
                     period.course.is_concept_coach ) ) )
     errors.add(:conflicting_enrollment, 'is invalid')
-    false
+    throw :abort
   end
 
 end

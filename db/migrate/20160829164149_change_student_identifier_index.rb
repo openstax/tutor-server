@@ -1,4 +1,4 @@
-class ChangeStudentIdentifierIndex < ActiveRecord::Migration
+class ChangeStudentIdentifierIndex < ActiveRecord::Migration[4.2]
   def change
     remove_index "course_membership_students",
                  column: ["entity_course_id", "student_identifier"],

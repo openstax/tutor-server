@@ -1,4 +1,4 @@
-class CreateTasksPeriodCaches < ActiveRecord::Migration
+class CreateTasksPeriodCaches < ActiveRecord::Migration[4.2]
   def change
     create_table :tasks_period_caches do |t|
       t.references :course_membership_period, null: false, index: true,

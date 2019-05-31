@@ -1,4 +1,4 @@
-class AddIsPreviewReadyToCourseProfileCourses < ActiveRecord::Migration
+class AddIsPreviewReadyToCourseProfileCourses < ActiveRecord::Migration[4.2]
   def change
     remove_index :course_profile_courses,
                  column: [:catalog_offering_id, :is_preview, :preview_claimed_at],

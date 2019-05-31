@@ -5,7 +5,7 @@ module Lms
       # we know which course it is for.
 
       belongs_to :tool_consumer
-      belongs_to :course, subsystem: :course_profile
+      belongs_to :course, subsystem: :course_profile, optional: true
 
       before_destroy :confirm_course_access_is_switchable
 
@@ -16,9 +16,10 @@ module Lms
       protected
 
       def confirm_course_access_is_switchable
-        if course && !course.is_access_switchable?
-          errors.add(:course, 'access is not switchable')
-        end
+        return if !course || course.is_access_switchable?
+
+        errors.add(:course, 'access is not switchable')
+        throw :abort
       end
 
     end

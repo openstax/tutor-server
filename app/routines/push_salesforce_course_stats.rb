@@ -220,7 +220,7 @@ class PushSalesforceCourseStats
     DevMailer.inspect_object(
       object: @errors,
       subject: "#{self.class.name} errors",
-      to: Rails.application.secrets.salesforce['mail_recipients']
+      to: Rails.application.secrets.salesforce[:mail_recipients]
     ).deliver_later if allow_error_email && is_real_production?
   end
 

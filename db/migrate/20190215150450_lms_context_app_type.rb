@@ -1,4 +1,4 @@
-class LmsContextAppType < ActiveRecord::Migration
+class LmsContextAppType < ActiveRecord::Migration[4.2]
   def up
     add_column :lms_contexts, :app_type, :text
     execute "update lms_contexts set app_type = '#{Lms::Models::App.to_s}'"

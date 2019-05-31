@@ -11,7 +11,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
   let(:cnx_page_id)        { '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3' }
   let(:cnx_page)           { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
-  let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
+  let(:exercise_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
   let(:expected_queries)   do
     [ [ :tag, 'k12phys-ch04-ex038' ], [ :tag, 'k12phys-ch04-ex039' ] ]

@@ -8,7 +8,7 @@ RSpec.describe Tagger, type: :lib do
         { value: 'apbio-ch04-s05-aplo-06', name: nil, type: :aplo },
         { value: 'dok7', name: 'DOK: 7', type: :dok },
         { value: 'blooms-8', name: 'Blooms: 8', type: :blooms },
-        { value: 'time-short', name: 'Length: S', type: :length },
+        { value: 'time-short', name: 'Length: S', type: :time },
         { value: 'ost-tag-teks-dont-care-9a', name: nil, type: :teks },
         { value: 'k12phys-ch10-s11', name: nil, type: :generic }
       ]
@@ -57,7 +57,7 @@ RSpec.describe Tagger, type: :lib do
         { value: 'aplo:stax-bio:4-5-6', name: nil, type: :aplo },
         { value: 'dok:7', name: 'DOK: 7', type: :dok },
         { value: 'blooms:8', name: 'Blooms: 8', type: :blooms },
-        { value: 'time:short', name: 'Length: S', type: :length },
+        { value: 'time:short', name: 'Length: S', type: :time },
         { value: 'teks:dont-care-9a', name: nil, type: :teks },
         { value: 'context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3', name: nil, type: :cnxmod },
         { value: 'id:stax-econ:101', name: nil, type: :id },

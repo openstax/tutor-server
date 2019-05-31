@@ -56,11 +56,7 @@ class Entitee
     def wraps(*klasses)
       _unwrapped_classes[name] += klasses
 
-      exposes(
-        *klasses.map do |klass|
-          klass.respond_to?(:primary_key) ? klass.primary_key.to_sym : :id
-        end.uniq
-      )
+      exposes :id
     end
 
     # Returns the classes being wrapped by this Entitee class
@@ -82,7 +78,7 @@ class Entitee
         # Handle Enumerables
         return obj unless obj.is_a?(Enumerable)
 
-        wrapped_obj = obj.map{ |element| _wrap(element) }
+        wrapped_obj = obj.map { |element| _wrap(element) }
         obj.is_a?(Hash) ? wrapped_obj.to_h : wrapped_obj
       end
     end
@@ -97,7 +93,7 @@ class Entitee
         # Handle Enumerables
         return obj unless obj.is_a?(Enumerable)
 
-        unwrapped_obj = obj.map{ |element| _unwrap(element) }
+        unwrapped_obj = obj.map { |element| _unwrap(element) }
         obj.is_a?(Hash) ? unwrapped_obj.to_h : unwrapped_obj
       end
     end
