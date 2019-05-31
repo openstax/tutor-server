@@ -55,22 +55,20 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
-
   config.action_mailer.perform_caching = false
 
   config.action_mailer.delivery_method = :ses
   config.action_mailer.default_url_options = {
     protocol: 'https', host: Rails.application.secrets.mail_site_url
   }
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
-  config.i18n.fallbacks = [I18n.default_locale]
+  config.i18n.fallbacks = true
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
@@ -82,18 +80,6 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
-  # Lograge configuration (one-line logs in production)
-  config.lograge.enabled = true
-  config.log_tags = [ :remote_ip ]
-  config.lograge.custom_options = lambda do |event|
-    {
-      "params" => event.payload[:params].reject do |k|
-        ['controller', 'action', 'format'].include? k
-      end
-    }
-  end
-  config.lograge.ignore_actions = ["static_pages#status"]
-
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
@@ -102,4 +88,16 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Lograge configuration (one-line logs in production)
+  config.lograge.enabled = true
+  config.log_tags = [ :remote_ip ]
+  config.lograge.custom_options = ->(event) do
+    {
+      "params" => event.payload[:params].reject do |k|
+        ['controller', 'action', 'format'].include? k
+      end
+    }
+  end
+  config.lograge.ignore_actions = ["static_pages#status"]
 end

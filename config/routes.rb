@@ -1,6 +1,6 @@
-# Try to list more often used routes first, although catch-all routes have to be at the end
 Rails.application.routes.draw do
-
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # Try to list more often used routes first, although catch-all routes have to be at the end
   mount OpenStax::Salesforce::Engine, at: '/admin/salesforce'
   OpenStax::Salesforce.set_top_level_routes(self)
 
