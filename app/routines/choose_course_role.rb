@@ -1,13 +1,11 @@
-# If role provided:
-#   make sure it belongs to user; fatal :user_not_in_course_with_required_role if not
+# If role provided and has an allowed type:
+#   Make sure it belongs to user
+#   Fatal error :user_not_in_course_with_required_role otherwise
 #
-# If role is not specified (nil):
+# If role is not specified (nil) or does not have an allowed type:
 #   Get the user's set of roles for the given course, restricted to allowed_role_types
-#
 #   If there are no roles, fail with :user_not_in_course_with_required_role
-#
-#   Otherwise return the oldest role
-#
+#   Otherwise return the oldest role of the allowed types
 class ChooseCourseRole
   lev_routine express_output: :role
 

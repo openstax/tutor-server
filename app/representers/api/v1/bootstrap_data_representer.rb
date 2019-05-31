@@ -92,6 +92,10 @@ module Api::V1
                extend: Api::V1::CourseRepresenter,
                readable: true,
                writeable: false,
-               getter: ->(*) { CollectCourseInfo[user: self] }
+               getter: ->(user_options:, **) do
+                 CollectCourseInfo[
+                   user: self, current_roles_hash: user_options[:current_roles_hash]
+                 ]
+               end
   end
 end

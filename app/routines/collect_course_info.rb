@@ -6,8 +6,10 @@ class CollectCourseInfo
 
   protected
 
-  def exec(courses: nil, user: nil)
-    outputs.courses = get_course_infos(courses: courses, user: user)
+  def exec(courses: nil, user: nil, current_roles_hash: {})
+    outputs.courses = get_course_infos(
+      courses: courses, user: user, current_roles_hash: current_roles_hash
+    )
   end
 
   def get_courses(courses:, user:)
@@ -20,13 +22,16 @@ class CollectCourseInfo
     CourseProfile::Models::Course.preload(*preloads)
   end
 
-  def get_course_infos(courses:, user:)
+  def get_course_infos(courses:, user:, current_roles_hash:)
     courses = get_courses(courses: courses, user: user)
     roles_by_course_id = get_roles_by_course_id(courses: courses, user: user)
 
     courses.map do |course|
       offering = course.offering
-      roles = roles_by_course_id.fetch(course.id, [])
+      roles = roles_by_course_id.fetch(course.id, []).sort_by(&:created_at)
+      role_ids = roles.map(&:id)
+      current_role_id = current_roles_hash[course.id.to_s]
+      current_role_id = role_ids.first unless role_ids.include?(current_role_id)
       students = roles.map(&:student).compact
 
       # If the user is an active teacher, return all course periods
@@ -74,6 +79,7 @@ class CollectCourseInfo
         periods: periods,
         students: students,
         roles: roles,
+        current_role_id: current_role_id,
         spy_info: course.spy_info,
       )
     end

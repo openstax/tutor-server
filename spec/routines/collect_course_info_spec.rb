@@ -57,9 +57,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystems: course_1.ecosystems,
           ecosystem: course_1.ecosystem,
           periods: [],
-          spy_info: {research_studies: []},
+          spy_info: { research_studies: [] },
           students: [],
-          roles: []
+          roles: [],
+          current_role_id: nil
         }
       ]
     end
@@ -115,9 +116,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystems: course_1.ecosystems,
           ecosystem: course_1.ecosystem,
           periods: [],
-          spy_info: {research_studies: []},
+          spy_info: { research_studies: [] },
           students: [],
-          roles: []
+          roles: [],
+          current_role_id: nil
         },
         {
           id: course_2.id,
@@ -153,9 +155,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystems: course_2.ecosystems,
           ecosystem: course_2.ecosystem,
           periods: [],
-          spy_info: {research_studies: []},
+          spy_info: { research_studies: [] },
           students: [],
-          roles: []
+          roles: [],
+          current_role_id: nil
         }
       ]
     end
@@ -172,6 +175,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
       end
 
       it "returns information about the user's active courses" do
+        roles = user_1.to_model.roles
         expect(result.map(&:to_h)).to match [
           {
             id: course_1.id,
@@ -207,9 +211,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
             ecosystems: course_1.ecosystems,
             ecosystem: course_1.ecosystem,
             periods: a_collection_containing_exactly(period_1, period_2),
-            spy_info: {research_studies: []},
+            spy_info: { research_studies: [] },
             students: [],
-            roles: user_1.to_model.roles
+            roles: roles,
+            current_role_id: roles.min_by(&:created_at).id
           }
         ]
       end
@@ -266,9 +271,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
             ecosystems: course_1.ecosystems,
             ecosystem: course_1.ecosystem,
             periods: periods,
-            spy_info: {research_studies: []},
+            spy_info: { research_studies: [] },
             students: students,
-            roles: roles
+            roles: roles,
+            current_role_id: roles.min_by(&:created_at).id
           }
         ]
       end

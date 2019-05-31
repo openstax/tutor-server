@@ -1,6 +1,8 @@
 ActionController::Base.class_exec do
   helper ApplicationHelper
 
+  helper_method :current_roles_hash
+
   before_action :load_time
 
   after_action :set_app_date_header
@@ -17,11 +19,17 @@ ActionController::Base.class_exec do
     end.marshal_dump.except(*opts.keys)
   end
 
+  def current_roles_hash
+    session.fetch(:roles, {})
+  end
+
+  # The output of this method must be passed to ChooseCourseRole
+  # to enforce a specific role type and to fail if no matching role
   def current_role(course)
-    return if course.nil? || session[:roles].nil? || session[:roles][course.id.to_s].nil?
+    return if course.nil? || !current_roles_hash.has_key?(course.id.to_s)
 
     user = respond_to?(:current_human_user) ? current_human_user : current_user
-    user.roles.find_by(id: session[:roles][course.id.to_s])
+    user.roles.find_by(id: current_roles_hash[course.id.to_s])
   end
 
   def load_time
