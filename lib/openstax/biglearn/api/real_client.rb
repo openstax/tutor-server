@@ -67,7 +67,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
     all_pools.each do |pool|
       exercise_uuids_by_pool[pool] = pool.content_exercise_ids.map do |exercise_id|
         exercise_uuids_by_id[exercise_id]
-      end
+      end.compact
     end
 
     contents = [
