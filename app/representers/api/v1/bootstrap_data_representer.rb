@@ -69,6 +69,7 @@ module Api::V1
     property :feature_flags, writeable: false, readable: true, getter: ->(*) do
       {
         is_payments_enabled: Settings::Payments.payments_enabled,
+        teacher_student_enabled: Settings::Db[:teacher_student_enabled]
       }
     end
 

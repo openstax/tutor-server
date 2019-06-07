@@ -76,5 +76,6 @@ module Settings
     field :payments_enabled, type: :boolean, default: false
     field :response_validation_enabled, type: :boolean, default: true
     field :response_validation_ui_enabled, type: :boolean, default: true
+    field :teacher_student_enabled, type: :boolean, default: false
   end
 end
