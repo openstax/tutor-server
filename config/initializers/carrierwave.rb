@@ -16,7 +16,7 @@ CarrierWave.configure do |config|
 
     config.fog_provider = 'fog/aws'
 
-    fog_credentials = secrets[:access_key_id].blank? ? \
+    fog_credentials = s3_secrets[:access_key_id].blank? ? \
                         { use_iam_profile: true } : \
                         { aws_access_key_id:     s3_secrets[:access_key_id],
                           aws_secret_access_key: s3_secrets[:secret_access_key] }
