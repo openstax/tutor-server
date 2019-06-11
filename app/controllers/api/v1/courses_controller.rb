@@ -244,7 +244,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   def get_course_role(course:)
     result = ChooseCourseRole.call(
-      user: current_human_user, course: course, role: current_role(course)
+      user: current_human_user, course: course, current_roles_hash: current_roles_hash
     )
     errors = result.errors
     raise(SecurityTransgression, :invalid_role) unless errors.empty?

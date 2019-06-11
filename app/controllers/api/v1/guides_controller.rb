@@ -56,7 +56,7 @@ module Api
       def get_course_role(course:, allowed_role_types:)
         result = ChooseCourseRole.call(
           user: current_human_user, course: course,
-          role: current_role(course), allowed_role_types: allowed_role_types
+          current_roles_hash: current_roles_hash, allowed_role_types: allowed_role_types
         )
         errors = result.errors
         raise(SecurityTransgression, :invalid_role) unless errors.empty?

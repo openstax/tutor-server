@@ -23,15 +23,6 @@ ActionController::Base.class_exec do
     session.fetch(:roles, {})
   end
 
-  # The output of this method must be passed to ChooseCourseRole
-  # to enforce a specific role type and to fail if no matching role
-  def current_role(course)
-    return if course.nil? || !current_roles_hash.has_key?(course.id.to_s)
-
-    user = respond_to?(:current_human_user) ? current_human_user : current_user
-    user.roles.find_by(id: current_roles_hash[course.id.to_s])
-  end
-
   def load_time
     Timecop.load_time if Timecop.enabled?
   end
