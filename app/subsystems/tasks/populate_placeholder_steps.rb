@@ -45,39 +45,20 @@ class Tasks::PopulatePlaceholderSteps
     taskings = task.taskings
     role = taskings.first.try!(:role)
 
-    if populate_spes && !task.spes_are_assigned
-      # To prevent "skim-filling", skip populating spaced practice if not all core problems
-      # have been completed AND there is an open assignment with an earlier due date
-      same_role_taskings = role.try!(:taskings) || Tasks::Models::Tasking.none
-      task_type = Tasks::Models::Task.task_types[task.task_type]
-      due_at = task.due_at
-      current_time = Time.current
-      if force ||
-         task.core_task_steps_completed? ||
-         due_at.nil? ||
-         same_role_taskings.joins(:task)
-                           .where(task: { task_type: task_type })
-                           .preload(task: :time_zone)
-                           .map(&:task)
-                           .none? do |task|
-           task.due_at.present? &&
-           task.due_at < due_at &&
-           task.past_open?(current_time: current_time) &&
-           !task.past_due?(current_time: current_time)
-         end
-
-        # Populate SPEs
-        task, accepted = populate_placeholder_steps(
-          task: task,
-          group_type: :spaced_practice_group,
-          boolean_attribute: :spes_are_assigned,
-          biglearn_api_method: :fetch_assignment_spes,
-          biglearn_controls_slots: biglearn_controls_spe_slots,
-          background: background,
-          skip_unready: skip_unready
-        )
-        outputs.accepted = false unless accepted
-      end
+    # To prevent "skim-filling", skip populating
+    # spaced practice if not all core problems have been completed
+    if populate_spes && !task.spes_are_assigned && (force || task.core_task_steps_completed?)
+      # Populate SPEs
+      task, accepted = populate_placeholder_steps(
+        task: task,
+        group_type: :spaced_practice_group,
+        boolean_attribute: :spes_are_assigned,
+        biglearn_api_method: :fetch_assignment_spes,
+        biglearn_controls_slots: biglearn_controls_spe_slots,
+        background: background,
+        skip_unready: skip_unready
+      )
+      outputs.accepted = false unless accepted
     end
 
     # Save pes_are_assigned/spes_are_assigned and step counts
