@@ -165,77 +165,115 @@ RSpec.describe CollectCourseInfo, type: :routine do
   end
 
   context "when no course is given" do
-    let(:args) { { user: user_1 } }
+    let(:current_roles_hash) { {} }
+    let(:args)               { { user: user_1, current_roles_hash: current_roles_hash } }
 
     context "when the user is a teacher" do
-      before do
-        AddUserAsCourseTeacher[user: user_1, course: course_1]
+      let!(:teacher_role)         { AddUserAsCourseTeacher[user: user_1, course: course_1] }
+      let!(:teacher_student_role) { CreateOrResetTeacherStudent[user: user_1, period: period_1] }
 
-        period_2.destroy!
+      before { period_2.destroy! }
+
+      context "when no current role is selected" do
+        it "returns information about the user's active courses, all periods and default role" do
+          expect(result.map(&:to_h)).to match [
+            {
+              id: course_1.id,
+              uuid: course_1.uuid,
+              name: course_1.name,
+              term: course_1.term,
+              year: course_1.year,
+              num_sections: course_1.num_sections,
+              starts_at: be_within(1e-6).of(course_1.starts_at),
+              ends_at: be_within(1e-6).of(course_1.ends_at),
+              active?: course_1.active?,
+              time_zone: course_1.time_zone.name,
+              default_open_time: course_1.default_open_time,
+              default_due_time: course_1.default_due_time,
+              offering: course_1.offering,
+              catalog_offering_id: course_1.offering.id,
+              is_concept_coach: false,
+              is_college: course_1.is_college,
+              is_preview: course_1.is_preview,
+              is_access_switchable: course_1.is_access_switchable,
+              does_cost: course_1.does_cost,
+              is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
+              is_lms_enabled: course_1.is_lms_enabled,
+              last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
+              school_name: course_1.school_name,
+              salesforce_book_name: course_1.offering.salesforce_book_name,
+              appearance_code: course_1.offering.appearance_code,
+              cloned_from_id: course_1.cloned_from_id,
+              homework_score_weight: course_1.homework_score_weight,
+              homework_progress_weight: course_1.homework_progress_weight,
+              reading_score_weight: course_1.reading_score_weight,
+              reading_progress_weight: course_1.reading_progress_weight,
+              ecosystems: course_1.ecosystems,
+              ecosystem: course_1.ecosystem,
+              periods: a_collection_containing_exactly(period_1, period_2),
+              spy_info: { research_studies: [] },
+              students: [],
+              roles: a_collection_containing_exactly(teacher_role, teacher_student_role),
+              current_role_id: teacher_role.id
+            }
+          ]
+        end
       end
 
-      it "returns information about the user's active courses" do
-        roles = user_1.to_model.roles
-        expect(result.map(&:to_h)).to match [
-          {
-            id: course_1.id,
-            uuid: course_1.uuid,
-            name: course_1.name,
-            term: course_1.term,
-            year: course_1.year,
-            num_sections: course_1.num_sections,
-            starts_at: be_within(1e-6).of(course_1.starts_at),
-            ends_at: be_within(1e-6).of(course_1.ends_at),
-            active?: course_1.active?,
-            time_zone: course_1.time_zone.name,
-            default_open_time: course_1.default_open_time,
-            default_due_time: course_1.default_due_time,
-            offering: course_1.offering,
-            catalog_offering_id: course_1.offering.id,
-            is_concept_coach: false,
-            is_college: course_1.is_college,
-            is_preview: course_1.is_preview,
-            is_access_switchable: course_1.is_access_switchable,
-            does_cost: course_1.does_cost,
-            is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
-            is_lms_enabled: course_1.is_lms_enabled,
-            last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
-            school_name: course_1.school_name,
-            salesforce_book_name: course_1.offering.salesforce_book_name,
-            appearance_code: course_1.offering.appearance_code,
-            cloned_from_id: course_1.cloned_from_id,
-            homework_score_weight: course_1.homework_score_weight,
-            homework_progress_weight: course_1.homework_progress_weight,
-            reading_score_weight: course_1.reading_score_weight,
-            reading_progress_weight: course_1.reading_progress_weight,
-            ecosystems: course_1.ecosystems,
-            ecosystem: course_1.ecosystem,
-            periods: a_collection_containing_exactly(period_1, period_2),
-            spy_info: { research_studies: [] },
-            students: [],
-            roles: roles,
-            current_role_id: roles.min_by(&:created_at).id
-          }
-        ]
-      end
+      context "when a current role is selected" do
+        let(:current_roles_hash) { { course_1.id.to_s => teacher_student_role.id } }
 
-      it "returns all of the course's periods, even archived ones" do
-        expect(result.first.periods.to_a).to(
-          match a_collection_containing_exactly(period_1, period_2)
-        )
+        it "returns information about the user's active courses, all periods and current role" do
+          expect(result.map(&:to_h)).to match [
+            {
+              id: course_1.id,
+              uuid: course_1.uuid,
+              name: course_1.name,
+              term: course_1.term,
+              year: course_1.year,
+              num_sections: course_1.num_sections,
+              starts_at: be_within(1e-6).of(course_1.starts_at),
+              ends_at: be_within(1e-6).of(course_1.ends_at),
+              active?: course_1.active?,
+              time_zone: course_1.time_zone.name,
+              default_open_time: course_1.default_open_time,
+              default_due_time: course_1.default_due_time,
+              offering: course_1.offering,
+              catalog_offering_id: course_1.offering.id,
+              is_concept_coach: false,
+              is_college: course_1.is_college,
+              is_preview: course_1.is_preview,
+              is_access_switchable: course_1.is_access_switchable,
+              does_cost: course_1.does_cost,
+              is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
+              is_lms_enabled: course_1.is_lms_enabled,
+              last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
+              school_name: course_1.school_name,
+              salesforce_book_name: course_1.offering.salesforce_book_name,
+              appearance_code: course_1.offering.appearance_code,
+              cloned_from_id: course_1.cloned_from_id,
+              homework_score_weight: course_1.homework_score_weight,
+              homework_progress_weight: course_1.homework_progress_weight,
+              reading_score_weight: course_1.reading_score_weight,
+              reading_progress_weight: course_1.reading_progress_weight,
+              ecosystems: course_1.ecosystems,
+              ecosystem: course_1.ecosystem,
+              periods: a_collection_containing_exactly(period_1, period_2),
+              spy_info: { research_studies: [] },
+              students: [],
+              roles: a_collection_containing_exactly(teacher_role, teacher_student_role),
+              current_role_id: teacher_student_role.id
+            }
+          ]
+        end
       end
     end
 
     context "when the user is a student" do
-      before do
-        @student = AddUserAsPeriodStudent[user: user_1, period: period_1].student
-      end
+      let(:student_role) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
+      let!(:student)     { student_role.student }
 
       it "returns information about the user's active courses" do
-        roles = user_1.to_model.roles
-        students = roles.map(&:student).compact
-        periods = students.map(&:period)
-
         expect(result.map(&:to_h)).to match [
           {
             id: course_1.id,
@@ -270,11 +308,11 @@ RSpec.describe CollectCourseInfo, type: :routine do
             reading_progress_weight: course_1.reading_progress_weight,
             ecosystems: course_1.ecosystems,
             ecosystem: course_1.ecosystem,
-            periods: periods,
+            periods: [ student.period ],
             spy_info: { research_studies: [] },
-            students: students,
-            roles: roles,
-            current_role_id: roles.min_by(&:created_at).id
+            students: [ student ],
+            roles: [ student_role ],
+            current_role_id: student_role.id
           }
         ]
       end
@@ -285,7 +323,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
 
       it "returns student info for the user" do
         expect(result.length).to eq 1
-        expect(result.first.students.map(&:id)).to eq [@student.id]
+        expect(result.first.students.map(&:id)).to eq [student.id]
       end
     end
 
