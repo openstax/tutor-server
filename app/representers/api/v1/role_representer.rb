@@ -10,6 +10,13 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :period_id,
+             getter: ->(*) { teacher? ? nil : course_member.course_membership_period_id },
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
     property :role_type,
              as: :type,
              type: String,
@@ -35,6 +42,7 @@ module Api::V1
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(latest_enrollment_at) },
              schema_info: { required: true }
+
 
   end
 end
