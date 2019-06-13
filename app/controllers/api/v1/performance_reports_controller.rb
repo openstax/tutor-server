@@ -55,7 +55,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     args = {
       user: current_human_user,
       course: course,
-      role: current_role(course)
+      current_roles_hash: current_roles_hash
     }
     args[:allowed_role_types] = type unless type == :any
 

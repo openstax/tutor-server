@@ -1000,6 +1000,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           periods: [a_kind_of(Hash)] * @course.num_sections,
           students: [],
           roles: [a_kind_of(Hash)],
+          current_role_id: a_kind_of(String),
           ecosystem_id: @course.offering.content_ecosystem_id.to_s,
           cloned_from_id: @course.id.to_s,
           does_cost: @course.offering.does_cost

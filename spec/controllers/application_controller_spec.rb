@@ -121,39 +121,22 @@ RSpec.describe ApplicationController, type: :controller do
     end
   end
 
-  context '#current_role' do
-    let(:teacher_student)       { FactoryBot.create :course_membership_teacher_student }
-    let(:course)                { teacher_student.course }
-    let!(:teacher_student_role) { teacher_student.role }
-    let(:user)                  { teacher_student_role.profile }
-    let!(:teacher_role)         { AddUserAsCourseTeacher[user: user, course: course] }
-    let!(:another_teacher_role) do
-      FactoryBot.create(:course_membership_teacher, course: course).role
-    end
+  context '#current_roles_hash' do
+    let(:user)                 { FactoryBot.create :user }
+    let(:course)               { FactoryBot.create :course_profile_course }
+    let(:teacher_role)         { AddUserAsCourseTeacher[user: user, course: course] }
 
     before do
       allow(controller).to receive(:session).and_return({})
       allow(controller).to receive(:current_user).and_return(user)
     end
 
-    it "can return the user's current role for a given course" do
-      expect(controller.send :current_role, course).to be_nil
+    it "can return the user's hash of current roles for each course" do
+      expect(controller.send(:current_roles_hash)).to eq({})
 
-      controller.session[:roles] = { course.id.to_s => teacher_role.id }
-      expect(controller.send :current_role, course).to eq teacher_role
-
-      controller.session[:roles] = { course.id.to_s => teacher_student_role.id }
-      expect(controller.send :current_role, course).to eq teacher_student_role
-    end
-
-    it 'does not return roles belonging to other users or invalid roles' do
-      expect(controller.send :current_role, course).to be_nil
-
-      controller.session[:roles] = { course.id.to_s => another_teacher_role.id }
-      expect(controller.send :current_role, course).to be_nil
-
-      controller.session[:roles] = { course.id.to_s => 'abc' }
-      expect(controller.send :current_role, course).to be_nil
+      roles_hash = { course.id.to_s => teacher_role.id }
+      controller.session[:roles] = roles_hash
+      expect(controller.send(:current_roles_hash)).to eq roles_hash
     end
   end
 end

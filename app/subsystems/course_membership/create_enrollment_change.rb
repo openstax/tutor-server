@@ -22,7 +22,7 @@ class CourseMembership::CreateEnrollmentChange
       :get_user_course_roles,
       user: user,
       courses: course,
-      types: ['student', 'teacher'],
+      types: [:student, :teacher],
       include_dropped_students: true
     ).outputs.roles.to_a
 

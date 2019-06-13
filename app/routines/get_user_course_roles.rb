@@ -12,8 +12,8 @@ class GetUserCourseRoles
 
   protected
 
-  def exec(user:, courses:, types: [:student, :teacher], include_dropped_students: false,
-           include_deleted_teachers: false, preload: nil)
+  def exec(user:, courses:, types: [:teacher, :student, :teacher_student],
+           include_dropped_students: false, include_deleted_teachers: false, preload: nil)
     if user.is_anonymous?
       outputs.roles = user.roles
       return

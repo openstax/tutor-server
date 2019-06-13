@@ -4,9 +4,9 @@ module WebviewHelper
     Api::V1::BootstrapDataRepresenter.new(current_user).to_json(
       user_options: {
         tutor_api_url: api_root_url,
-        flash: flash.to_hash
+        flash: flash.to_hash,
+        current_roles_hash: current_roles_hash
       }
     )
   end
-
 end

@@ -25,7 +25,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
           ChooseCourseRole.call(
             user:    user,
             course:  course,
-            role: nil
+            current_roles_hash: {}
           )
         end
 
@@ -39,7 +39,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
           ChooseCourseRole.call(
             user:    user,
             course:  course,
-            role: nil,
+            current_roles_hash: {},
             allowed_role_types: :teacher
           )
         end
@@ -54,7 +54,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
           ChooseCourseRole.call(
             user:    user,
             course:  course,
-            role: nil,
+            current_roles_hash: {},
             allowed_role_types: :student
           )
         end
@@ -66,9 +66,17 @@ RSpec.describe ChooseCourseRole, type: :routine do
     end
   end
 
-  context "when a role is provided" do
+  context "when a current role is provided" do
+    let(:allowed_role_types) { [ :teacher, :student, :teacher_student ] }
+    subject(:result) do
+      ChooseCourseRole.call(
+        user: student, course: course,
+        current_roles_hash: current_roles_hash, allowed_role_types: allowed_role_types
+      )
+    end
+
     context "and the user has it" do
-      subject { ChooseCourseRole.call(user: student, course: course, role: student_role) }
+      let(:current_roles_hash) { { course.id.to_s => student_role.id } }
 
       it "returns the user's role" do
         expect(subject.outputs.role).to eq(student_role)
@@ -76,7 +84,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
     end
 
     context "and the user lacks it but has a different role of the chosen type" do
-      subject { ChooseCourseRole.call(user: student, course: course, role: teacher_role) }
+      let(:current_roles_hash) { { course.id.to_s => teacher_role.id } }
 
       it "ignores the role provided and returns one of the user's valid roles" do
         expect(subject.outputs.role).to eq(student_role)
@@ -84,11 +92,8 @@ RSpec.describe ChooseCourseRole, type: :routine do
     end
 
     context "and the user lacks it and has no other roles of the chosen type" do
-      subject(:result) do
-        ChooseCourseRole.call(
-          user: student, course: course, role: teacher_role, allowed_role_types: :teacher
-        )
-      end
+      let(:current_roles_hash) { { course.id.to_s => teacher_role.id } }
+      let(:allowed_role_types) { [ :teacher ] }
 
       context "errors" do
         subject { result.errors }
@@ -107,8 +112,14 @@ RSpec.describe ChooseCourseRole, type: :routine do
   end
 
   context "when a role is not given" do
+    let(:allowed_role_types) { [ :teacher, :student, :teacher_student ] }
+    subject(:result) do
+      ChooseCourseRole.call(user: user, course: course,
+                            current_roles_hash: {}, allowed_role_types: allowed_role_types)
+    end
+
     context "and the user does not have any roles on the course" do
-      subject(:result) { ChooseCourseRole.call(user: interloper, course: course, role: nil) }
+      let(:user) { interloper }
 
       context "errors" do
         subject { result.errors }
@@ -126,7 +137,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
     end
 
     context "and the user has a single role" do
-      subject(:result) { ChooseCourseRole.call(user: teacher, course: course, role: nil) }
+      let(:user) { teacher }
 
       context "errors" do
         subject { result.errors }
@@ -147,23 +158,17 @@ RSpec.describe ChooseCourseRole, type: :routine do
         role = FactoryBot.create :entity_role, profile: teacher.to_model, role_type: :student
         CourseMembership::AddStudent[period: period, role: role]
       end
-      let(:role_type) { nil }
-      let(:args)      do
-        { user: teacher, course: course, role: nil }.tap do |args|
-          args[:allowed_role_types] = role_type unless role_type.nil?
-        end
-      end
-      subject(:found) { ChooseCourseRole.call(args).outputs.role }
+      let(:user) { teacher }
 
       it "returns the oldest role" do
-        expect(found).to eq(teacher_role)
+        expect(result.outputs.role).to eq(teacher_role)
       end
 
       context "and a student role is requested" do
-        let(:role_type) { :student }
+        let(:allowed_role_types) { :student }
 
         it "returns the oldest student role" do
-          expect(found).to eq student_role_1
+          expect(result.outputs.role).to eq student_role_1
         end
       end
     end

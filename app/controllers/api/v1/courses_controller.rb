@@ -25,7 +25,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
       :index, current_api_user, CourseProfile::Models::Course
     )
 
-    course_infos = CollectCourseInfo[user: current_human_user]
+    course_infos = CollectCourseInfo[
+      user: current_human_user, current_roles_hash: current_roles_hash
+    ]
 
     respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
   end
@@ -235,12 +237,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   def collect_course_info(course:)
-    CollectCourseInfo[courses: course, user: current_human_user].first
+    CollectCourseInfo[
+      courses: course, user: current_human_user, current_roles_hash: current_roles_hash
+    ].first
   end
 
   def get_course_role(course:)
     result = ChooseCourseRole.call(
-      user: current_human_user, course: course, role: current_role(course)
+      user: current_human_user, course: course, current_roles_hash: current_roles_hash
     )
     errors = result.errors
     raise(SecurityTransgression, :invalid_role) unless errors.empty?
