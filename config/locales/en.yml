@@ -103,3 +103,5 @@ en:
       find_tutor_course_period_report_id:
         name: 'Find Tutor Course Period Report ID'
         help_block: 'The Salesforce ID for the "Find Tutor Course Period" Report'
+      teacher_student_enabled:
+        name: 'Can teachers become a student in their course?'
