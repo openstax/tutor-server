@@ -83,6 +83,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             id: student_role.id.to_s,
             research_identifier: student_role.research_identifier,
             type: 'student',
+            period_id: @period.id.to_s,
             joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
             latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
           ),
@@ -102,6 +103,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             {
               id: student_role.id.to_s,
               type: 'student',
+              period_id: @period.id.to_s,
               research_identifier: student_role.research_identifier,
               joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
               latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
@@ -344,6 +346,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           roles: a_collection_containing_exactly(
             id: student_role.id.to_s,
             type: 'student',
+            period_id: @period.id.to_s,
             research_identifier: student_role.research_identifier,
             joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
             latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)
@@ -364,6 +367,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             {
               id: student_role.id.to_s,
               type: 'student',
+              period_id: @period.id.to_s,
               research_identifier: student_role.research_identifier,
               joined_at: DateTimeUtilities.to_api_s(student_role.created_at),
               latest_enrollment_at: DateTimeUtilities.to_api_s(student_role.latest_enrollment_at)

@@ -41,7 +41,10 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
           base_url: a_string_starting_with('http'),
           product_uuid: secrets.openstax[:payments][:product_uuid]
         },
-        feature_flags: { is_payments_enabled: Settings::Payments.payments_enabled },
+        feature_flags: {
+          is_payments_enabled: Settings::Payments.payments_enabled,
+          teacher_student_enabled: Settings::Db[:teacher_student_enabled]
+        },
         ui_settings: {},
         flash: { alert: 'Nothing!' }
       }.deep_stringify_keys
