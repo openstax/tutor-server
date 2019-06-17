@@ -15,14 +15,14 @@ class Admin::TeachersController < Admin::BaseController
     redirect_to edit_admin_course_path(course, anchor: 'teachers')
   end
 
-  def delete
+  def destroy
     teacher = CourseMembership::Models::Teacher.find(params[:id])
     teacher.destroy
     flash[:notice] = "Teacher \"#{teacher.role.name}\" removed from course."
     redirect_to edit_admin_course_path(teacher.course, anchor: 'teachers')
   end
 
-  def undelete
+  def restore
     teacher = CourseMembership::Models::Teacher.find(params[:id])
     teacher.restore
     flash[:notice] = "Teacher \"#{teacher.role.name}\" readded to course."

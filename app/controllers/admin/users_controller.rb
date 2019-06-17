@@ -1,7 +1,7 @@
 class Admin::UsersController < Admin::BaseController
   include Manager::SearchUsers
 
-  before_action :get_user, only: [:edit, :update, :become]
+  before_action :get_user, only: [ :edit, :update, :become ]
 
   def create
     handle_with(

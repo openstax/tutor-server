@@ -290,7 +290,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
     end
   end
 
-  context '#undrop' do
+  context '#restore' do
     let(:valid_params) { { id: student.id } }
 
     context 'student is inactive' do
@@ -298,9 +298,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
       context 'caller has an authorization token' do
         context 'caller is a course teacher' do
-          context 'undropping the student from the course' do
+          context 'restoring a student to the course' do
             it 'succeeds if the student identifier is available' do
-              api_put :undrop, teacher_token, params: valid_params
+              api_put :restore, teacher_token, params: valid_params
               expect(response).to have_http_status(:ok)
               expect(response.body_as_hash[:is_active]).to eq true
 
@@ -314,9 +314,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
               student_id = '123456789'
               student.update_attribute :student_identifier, student_id
               FactoryBot.create :course_membership_student, course: course,
-                                                             student_identifier: student_id
+                                                            student_identifier: student_id
 
-              api_put :undrop, teacher_token, params: valid_params
+              api_put :restore, teacher_token, params: valid_params
               expect(response).to have_http_status(:ok)
               student.reload
               expect(student.persisted?).to eq true
@@ -328,7 +328,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
         context 'caller is not a course teacher' do
           it 'raises SecurityTransgression' do
             expect do
-              api_put :undrop, student_token, params: valid_params
+              api_put :restore, student_token, params: valid_params
             end.to raise_error(SecurityTransgression)
             expect(student.reload.dropped?).to eq true
           end
@@ -338,7 +338,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       context 'caller has an application/client credentials authorization token' do
         it 'raises SecurityTransgression' do
           expect do
-            api_put :undrop, userless_token, params: valid_params
+            api_put :restore, userless_token, params: valid_params
           end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq true
         end
@@ -347,7 +347,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       context 'caller does not have an authorization token' do
         it 'raises SecurityTransgression' do
           expect do
-            api_put :undrop, nil, params: valid_params
+            api_put :restore, nil, params: valid_params
           end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq true
         end
@@ -356,7 +356,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
     context 'student is active' do
       it 'returns an error' do
-        api_put :undrop, teacher_token, params: valid_params
+        api_put :restore, teacher_token, params: valid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'already_active'
         expect(response.body_as_hash[:errors].first[:message]).to eq 'Student is already active'

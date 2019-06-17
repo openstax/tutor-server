@@ -126,7 +126,7 @@ RSpec.describe Admin::StudentsController, type: :controller do
 
       it 'drops a student' do
         expect do
-          delete :drop, params: { course_id: course.id, id: student.id }
+          delete :destroy, params: { course_id: course.id, id: student.id }
           expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
         end.to change { student.reload.deleted? }.from(false).to(true)
       end

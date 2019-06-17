@@ -23,9 +23,16 @@ RSpec.describe Api::V1::StudentsController, type: :routing, api: true, version: 
     end
   end
 
+  context 'PUT /api/students/:student_id/restore' do
+    it 'routes to #restore' do
+      expect(put '/api/students/42/restore').to route_to('api/v1/students#restore',
+                                                         format: 'json', id: '42')
+    end
+  end
+
   context 'PUT /api/students/:student_id/undrop' do
-    it 'routes to #undrop' do
-      expect(put '/api/students/42/undrop').to route_to('api/v1/students#undrop',
+    it 'routes to #restore' do
+      expect(put '/api/students/42/undrop').to route_to('api/v1/students#restore',
                                                         format: 'json', id: '42')
     end
   end
