@@ -101,26 +101,25 @@ Rails.application.routes.draw do
         get :'dashboard(/role/:role_id)', action: :dashboard
         get :roster
         post :clone
-
-        scope :performance, controller: :performance_reports do
-          get :'(/role/:role_id)', action: :index
-          post :'export(/role/:role_id)', action: :export
-          get :'exports(/role/:role_id)', action: :exports
-        end
-
-        scope :practice do
-          resource :practices, path: :'(/role/:role_id)', only: [ :show, :create ]
-          post :'worst(/role/:role_id)', controller: :practices, action: :create_worst
-        end
       end
+
+      scope controller: :performance_reports do
+        get :'performance(/role/:role_id)', action: :index
+        post :'performance/export(/role/:role_id)', action: :export
+        get :'performance/exports(/role/:role_id)', action: :exports
+      end
+
+      resource :practices, path: :'practice/(/role/:role_id)', only: [ :show, :create ]
+      post :'practice/worst(/role/:role_id)', controller: :practices, action: :create_worst
 
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
         get :'teacher_guide(/role/:role_id)', action: :teacher
       end
 
-      resources :notes, path: :'notes/:chapter.:section(/role/:role_id)',
-                        except: [ :show, :new, :edit ]
+      resources :notes, path: :'notes/:chapter.:section(/role/:role_id)', only: [ :index, :create ]
+      resource :notes, path: :'notes/:chapter.:section/:id(/role/:role_id)',
+                       only: [ :update, :destroy ]
       get :'highlighted_sections(/role/:role_id)', controller: :notes, action: :highlighted_sections
 
       post :dates, on: :collection

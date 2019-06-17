@@ -42,7 +42,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
     it 'returns the practice task data' do
       api_post :create,
                user_1_token,
-               params: { id: course.id },
+               params: { course_id: course.id },
                body: { page_ids: [page.id.to_s] }.to_json
 
       hash = response.body_as_hash
@@ -62,7 +62,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
       api_post :create,
                user_2_token,
-               params: { id: course.id },
+               params: { course_id: course.id },
                body: { page_ids: [page.id.to_s] }.to_json
 
       hash = response.body_as_hash
@@ -80,7 +80,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
       expect do
         api_post :create,
                  user_2_token,
-                 params: { id: course.id },
+                 params: { course_id: course.id },
                  body: { page_ids: [page.id.to_s] }.to_json
       end.to raise_error(SecurityTransgression)
     end
@@ -94,7 +94,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
       api_post :create,
                user_1_token,
-               params: { id: course.id },
+               params: { course_id: course.id },
                body: { page_ids: [page.id.to_s] }.to_json
 
       expect(response).to have_http_status(422)
@@ -104,7 +104,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
       make_payment_required_and_expect_422(course: course, user: user_1) {
         api_post :create,
                  user_1_token,
-                 params: { id: course.id },
+                 params: { course_id: course.id },
                  body: { page_ids: [page.id.to_s] }.to_json
       }
     end
@@ -112,7 +112,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
   context 'POST #create_worst' do
     it 'returns the practice task data' do
-      api_post :create_worst, user_1_token, params: { id: course.id }
+      api_post :create_worst, user_1_token, params: { course_id: course.id }
 
       hash = response.body_as_hash
       task = Tasks::Models::Task.last
@@ -129,7 +129,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
       AddUserAsCourseTeacher[user: user_2, course: course]
       CreateOrResetTeacherStudent[user: user_2, period: period]
 
-      api_post :create_worst, user_2_token, params: { id: course.id }
+      api_post :create_worst, user_2_token, params: { course_id: course.id }
 
       hash = response.body_as_hash
       task = Tasks::Models::Task.last
@@ -144,7 +144,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
     it 'must be called by a user who belongs to the course' do
       expect do
-        api_post :create_worst, user_2_token, params: { id: course.id }
+        api_post :create_worst, user_2_token, params: { course_id: course.id }
       end.to raise_error(SecurityTransgression)
     end
 
@@ -155,7 +155,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
         spy_info: {}
       )
 
-      api_post :create_worst, user_1_token, params: { id: course.id }
+      api_post :create_worst, user_1_token, params: { course_id: course.id }
 
       expect(response).to have_http_status(422)
     end
@@ -163,14 +163,14 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: course, user: user_1) do
-        api_post :create_worst, user_1_token, params: { id: course.id }
+        api_post :create_worst, user_1_token, params: { course_id: course.id }
       end
     end
   end
 
   context 'GET #show' do
     it 'returns nothing when practice widget not yet set' do
-      api_get :show, user_1_token, params: { id: course.id }
+      api_get :show, user_1_token, params: { course_id: course.id }
 
       expect(response).to have_http_status(:not_found)
     end
@@ -179,7 +179,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
       CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
       CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
 
-      api_get :show, user_1_token, params: { id: course.id, role_id: role.id }
+      api_get :show, user_1_token, params: { course_id: course.id, role_id: role.id }
 
       expect(response).to have_http_status(:success)
 
@@ -190,23 +190,23 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: course, user: user_1) do
-        api_get :show, user_1_token, params: { id: course.id }
+        api_get :show, user_1_token, params: { course_id: course.id }
       end
     end
 
     it 'raises SecurityTransgression if user is anonymous or not in the course as a student' do
       expect do
-        api_get :show, nil, params: { id: course.id }
+        api_get :show, nil, params: { course_id: course.id }
       end.to raise_error(SecurityTransgression)
 
       expect do
-        api_get :show, user_1_token, params: { id: course.id }
+        api_get :show, user_1_token, params: { course_id: course.id }
       end.to raise_error(SecurityTransgression)
 
       AddUserAsCourseTeacher.call(course: course, user: user_1)
 
       expect do
-        api_get :show, user_1_token, params: { id: course.id }
+        api_get :show, user_1_token, params: { course_id: course.id }
       end.to raise_error(SecurityTransgression)
     end
   end

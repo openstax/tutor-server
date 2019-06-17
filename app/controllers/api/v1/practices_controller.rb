@@ -52,7 +52,7 @@ module Api
       protected
 
       def get_course_and_practice_role
-        @course = CourseProfile::Models::Course.find(params[:id])
+        @course = CourseProfile::Models::Course.find(params[:course_id])
         result = ChooseCourseRole.call(user: current_human_user,
                                        course: @course,
                                        role_id: params[:role_id],

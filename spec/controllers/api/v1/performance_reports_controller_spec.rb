@@ -76,7 +76,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
           end
         )
 
-        api_get :index, @teacher_token, params: { id: @course.id }
+        api_get :index, @teacher_token, params: { course_id: @course.id }
 
         expect(response).to have_http_status :success
       end
@@ -95,7 +95,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
           end
         )
 
-        api_get :index, @student_1_token, params: { id: @course.id }
+        api_get :index, @student_1_token, params: { course_id: @course.id }
 
         expect(response).to have_http_status :success
       end
@@ -105,7 +105,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do
-          api_get :index, unknown_token, params: { id: @course.id }
+          api_get :index, unknown_token, params: { course_id: @course.id }
         end.to raise_error(SecurityTransgression)
       end
     end
@@ -120,25 +120,25 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 202 for authorized teachers' do
-        api_post :export, @teacher_token, params: { id: @course.id }
+        api_post :export, @teacher_token, params: { course_id: @course.id }
         expect(response.status).to eq(202)
         expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
       end
 
       it 'returns the job path for the performance book export for authorized teachers' do
-        api_post :export, @teacher_token, params: { id: @course.id }
+        api_post :export, @teacher_token, params: { course_id: @course.id }
         expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
       end
 
       it 'does not blow up when the period name is more than 31 characters' do
         @period.update_attributes(name: 'a' * 50)
-        api_post :export, @teacher_token, params: { id: @course.id }
+        api_post :export, @teacher_token, params: { course_id: @course.id }
         expect(response.status).to eq(202)
       end
 
       it 'does not blow up when the period name has invalid worksheet characters' do
         @period.update_attributes(name: '[p: 1 \/ 2? *]')
-        api_post :export, @teacher_token, params: { id: @course.id }
+        api_post :export, @teacher_token, params: { course_id: @course.id }
         expect(response.status).to eq(202)
       end
 
@@ -146,7 +146,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         @period.update_attributes(name: 'Super duper long period name number 1')
         FactoryBot.create :course_membership_period, course: @course,
                                                      name: 'Super duper long period name number 2'
-        api_post :export, @teacher_token, params: { id: @course.id }
+        api_post :export, @teacher_token, params: { course_id: @course.id }
         expect(response.status).to eq(202)
       end
     end
@@ -158,7 +158,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         AddUserAsPeriodStudent[period: @period, user: student]
 
         expect do
-          api_post :export, student_token, params: { id: @course.id }
+          api_post :export, student_token, params: { course_id: @course.id }
         end.to raise_error(SecurityTransgression)
       end
 
@@ -167,13 +167,13 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do
-          api_post :export, unknown_token, params: { id: @course.id }
+          api_post :export, unknown_token, params: { course_id: @course.id }
         end.to raise_error(SecurityTransgression)
       end
 
       it 'returns 404 for non-existent courses' do
         expect do
-          api_post :export, @teacher_token, params: { id: 'nope' }
+          api_post :export, @teacher_token, params: { course_id: 'nope' }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -196,7 +196,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns the filename, url, timestamp of all exports for the course' do
-        api_get :exports, @teacher_token, params: { id: @course.id }
+        api_get :exports, @teacher_token, params: { course_id: @course.id }
 
         expect(response.status).to eq(200)
         expect(response.body_as_hash.last[:filename]).not_to include('test_export')
@@ -213,7 +213,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         AddUserAsPeriodStudent[period: @period, user: student]
 
         expect do
-          api_get :export, student_token, params: { id: @course.id }
+          api_get :export, student_token, params: { course_id: @course.id }
         end.to raise_error(SecurityTransgression)
       end
 
@@ -222,13 +222,13 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do
-          api_get :exports, unknown_token, params: { id: @course.id }
+          api_get :exports, unknown_token, params: { course_id: @course.id }
         end.to raise_error(SecurityTransgression)
       end
 
       it 'returns 404 for non-existent courses' do
         expect do
-          api_get :exports, @teacher_token, params: { id: 'nope' }
+          api_get :exports, @teacher_token, params: { course_id: 'nope' }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

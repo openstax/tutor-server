@@ -1,26 +1,39 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::CourseExercisesController, type: :routing, api: true, version: :v1 do
-
-  context "GET /api/courses/:course_id/exercises(/:pool_types)" do
-    it "routes to #show when the pool_types are not given" do
-      expect(get '/api/courses/42/exercises').to route_to('api/v1/course_exercises#show',
-                                                          format: 'json', course_id: "42")
+  context 'GET /api/courses/:course_id/exercises(/:pool_types)' do
+    context 'no pool_types' do
+      it 'routes to #show' do
+        expect(get '/api/courses/42/exercises').to route_to(
+          'api/v1/course_exercises#show', format: 'json', course_id: '42'
+        )
+      end
     end
 
-    it "routes to #show when the pool_types are given" do
-      expect(get '/api/courses/42/exercises/homework_core').to(
-        route_to('api/v1/course_exercises#show', format: 'json', course_id: '42',
-                                                 pool_types: 'homework_core')
+    context 'pool_types in path' do
+      it 'routes to #show' do
+        expect(get '/api/courses/42/exercises/homework_core').to route_to(
+          'api/v1/course_exercises#show',
+          format: 'json', course_id: '42', pool_types: 'homework_core'
+        )
+      end
+    end
+
+    context 'pool_types in query params' do
+      it 'routes to #show' do
+        expect(get '/api/courses/42/exercises?pool_types=homework_core').to route_to(
+          'api/v1/course_exercises#show',
+          format: 'json', course_id: '42', pool_types: 'homework_core'
+        )
+      end
+    end
+  end
+
+  context 'PATCH /api/courses/:course_id/exercises' do
+    it 'routes to #update' do
+      expect(patch '/api/courses/42/exercises').to route_to(
+        'api/v1/course_exercises#update', format: 'json', course_id: '42'
       )
     end
   end
-
-  context "PATCH /api/courses/:course_id/exercises" do
-    it "routes to #update" do
-      expect(patch '/api/courses/42/exercises').to route_to('api/v1/course_exercises#update',
-                                                            format: 'json', course_id: '42')
-    end
-  end
-
 end
