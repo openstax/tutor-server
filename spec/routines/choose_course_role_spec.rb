@@ -25,7 +25,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
           ChooseCourseRole.call(
             user:    user,
             course:  course,
-            current_roles_hash: {}
+            role_id: nil
           )
         end
 
@@ -39,7 +39,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
           ChooseCourseRole.call(
             user:    user,
             course:  course,
-            current_roles_hash: {},
+            role_id: nil,
             allowed_role_types: :teacher
           )
         end
@@ -54,7 +54,7 @@ RSpec.describe ChooseCourseRole, type: :routine do
           ChooseCourseRole.call(
             user:    user,
             course:  course,
-            current_roles_hash: {},
+            role_id: nil,
             allowed_role_types: :student
           )
         end
@@ -70,43 +70,23 @@ RSpec.describe ChooseCourseRole, type: :routine do
     let(:allowed_role_types) { [ :teacher, :student, :teacher_student ] }
     subject(:result) do
       ChooseCourseRole.call(
-        user: student, course: course,
-        current_roles_hash: current_roles_hash, allowed_role_types: allowed_role_types
+        user: student, course: course, role_id: role_id, allowed_role_types: allowed_role_types
       )
     end
 
     context "and the user has it" do
-      let(:current_roles_hash) { { course.id.to_s => student_role.id } }
+      let(:role_id) { student_role.id }
 
       it "returns the user's role" do
         expect(subject.outputs.role).to eq(student_role)
       end
     end
 
-    context "and the user lacks it but has a different role of the chosen type" do
-      let(:current_roles_hash) { { course.id.to_s => teacher_role.id } }
+    context "and the user lacks it" do
+      let(:role_id) { teacher_role.id }
 
-      it "ignores the role provided and returns one of the user's valid roles" do
-        expect(subject.outputs.role).to eq(student_role)
-      end
-    end
-
-    context "and the user lacks it and has no other roles of the chosen type" do
-      let(:current_roles_hash) { { course.id.to_s => teacher_role.id } }
-      let(:allowed_role_types) { [ :teacher ] }
-
-      context "errors" do
-        subject { result.errors }
-
-        it { should_not be_empty }
-
-        it { expect(subject.first.code).to eq(:user_not_in_course_with_required_role) }
-      end
-
-      context "output" do
-        subject { result.outputs.role }
-
-        it { should be_nil }
+      it "raises ActiveRecord::RecordNotFound" do
+        expect { subject }.to raise_error ActiveRecord::RecordNotFound
       end
     end
   end
@@ -114,8 +94,9 @@ RSpec.describe ChooseCourseRole, type: :routine do
   context "when a role is not given" do
     let(:allowed_role_types) { [ :teacher, :student, :teacher_student ] }
     subject(:result) do
-      ChooseCourseRole.call(user: user, course: course,
-                            current_roles_hash: {}, allowed_role_types: allowed_role_types)
+      ChooseCourseRole.call(
+        user: user, course: course, role_id: nil, allowed_role_types: allowed_role_types
+      )
     end
 
     context "and the user does not have any roles on the course" do

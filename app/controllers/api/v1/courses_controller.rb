@@ -3,8 +3,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     :name, :is_preview, :num_sections, :catalog_offering_id
   ]
 
-  before_action :get_course, only: [:show, :update, :dashboard, :cc_dashboard, :roster, :clone]
-  before_action :error_if_student_and_needs_to_pay, only: [:dashboard]
+  before_action :get_course, only: [ :show, :update, :dashboard, :cc_dashboard, :roster, :clone ]
+  before_action :error_if_student_and_needs_to_pay, only: :dashboard
 
   resource_description do
     api_versions "v1"
@@ -16,8 +16,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   api :GET, '/courses', 'Returns courses'
   description <<-EOS
-    Returns courses in the system, and the user who requested them is shown
-    their own roles related to their courses
+    Returns courses in the system,
+    and the user who requested them is shown their own roles in each course
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
@@ -25,11 +25,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
       :index, current_api_user, CourseProfile::Models::Course
     )
 
-    course_infos = CollectCourseInfo[
-      user: current_human_user, current_roles_hash: current_roles_hash
-    ]
-
-    respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
+    respond_with collect_course_info, represent_with: Api::V1::CoursesRepresenter
   end
 
   api :POST, '/courses', 'Creates a new course'
@@ -236,15 +232,20 @@ class Api::V1::CoursesController < Api::V1::ApiController
     @course = CourseProfile::Models::Course.find(params[:id])
   end
 
-  def collect_course_info(course:)
-    CollectCourseInfo[
-      courses: course, user: current_human_user, current_roles_hash: current_roles_hash
-    ].first
+  def collect_course_info(course: nil)
+    args = { user: current_human_user }
+
+    if course.nil?
+      CollectCourseInfo[args]
+    else
+      args[:courses] = course
+      CollectCourseInfo[args].first
+    end
   end
 
   def get_course_role(course:)
     result = ChooseCourseRole.call(
-      user: current_human_user, course: course, current_roles_hash: current_roles_hash
+      user: current_human_user, course: course, role_id: params[:role_id]
     )
     errors = result.errors
     raise(SecurityTransgression, :invalid_role) unless errors.empty?

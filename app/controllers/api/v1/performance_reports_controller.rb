@@ -52,11 +52,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
   protected
 
   def get_course_role(course:, type: :any)
-    args = {
-      user: current_human_user,
-      course: course,
-      current_roles_hash: current_roles_hash
-    }
+    args = { user: current_human_user, course: course, role_id: params[:role_id] }
     args[:allowed_role_types] = type unless type == :any
 
     result = ChooseCourseRole.call(args)

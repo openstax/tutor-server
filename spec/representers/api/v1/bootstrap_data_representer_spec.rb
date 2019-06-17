@@ -6,14 +6,9 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
   let(:period)             { FactoryBot.create :course_membership_period }
   let(:course)             { period.course }
   let!(:student_role)      { AddUserAsPeriodStudent[user: user, period: period] }
-  let(:current_roles_hash) { { course.id.to_s => student_role.id } }
   let(:representation)     do
     described_class.new(user).to_json(
-      user_options: {
-        tutor_api_url: 'https://example.com/api',
-        flash: { alert: 'Nothing!'},
-        current_roles_hash: current_roles_hash
-      }
+      user_options: { tutor_api_url: 'https://example.com/api', flash: { alert: 'Nothing!'} }
     )
   end
 
@@ -23,9 +18,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
     expect(JSON.parse(representation)).to match(
       {
         user:  Api::V1::UserRepresenter.new(user).as_json,
-        courses: Api::V1::CoursesRepresenter.new(
-          CollectCourseInfo[user: user, current_roles_hash: current_roles_hash]
-        ).as_json,
+        courses: Api::V1::CoursesRepresenter.new(CollectCourseInfo[user: user]).as_json,
         accounts_api_url: OpenStax::Accounts.configuration.openstax_accounts_url + 'api',
         accounts_profile_url: OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
         osweb_base_url: 'https://cms.openstax.org',

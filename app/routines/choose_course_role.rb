@@ -13,16 +13,14 @@ class ChooseCourseRole
 
   protected
 
-  def exec(user:, course:, current_roles_hash:,
-           allowed_role_types: [ :teacher, :student, :teacher_student ])
-    selected_role_id = current_roles_hash[course.id.to_s]
-    selected_role = user.roles.find_by(id: selected_role_id) unless selected_role_id.nil?
+  def exec(user:, course:, role_id:, allowed_role_types: [ :teacher, :student, :teacher_student ])
+    current_role = user.roles.find(role_id) unless role_id.blank?
 
     # Don't include the user's own inactive student/teacher roles
     roles = run(
       :get_user_course_roles, courses: course, user: user, types: allowed_role_types
     ).outputs.roles.sort_by(&:created_at)
-    outputs.role = roles.include?(selected_role) ? selected_role : roles.first
+    outputs.role = roles.include?(current_role) ? current_role : roles.first
 
     return unless outputs.role.nil?
 

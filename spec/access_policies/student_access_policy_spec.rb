@@ -95,7 +95,7 @@ RSpec.describe StudentAccessPolicy, type: :access_policy, speed: :medium do
     end
   end
 
-  context "when the action is :made_up" do
+  context "when the action is made_up" do
     let(:action) { :made_up }
 
     it { should eq false }

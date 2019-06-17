@@ -19,20 +19,12 @@ RSpec.describe TeacherStudentAccessPolicy, type: :access_policy, speed: :medium 
         context 'and the requestor is a course teacher' do
           let(:requestor) { user }
 
-          context 'and the teacher_student is not deleted' do
-            context 'and the period is not archived' do
-              it { should eq true }
-            end
-
-            context 'and the period is archived' do
-              before { allow(period).to receive(:archived?) { true } }
-
-              it { should eq false }
-            end
+          context 'and the period is not archived' do
+            it { should eq true }
           end
 
-          context 'and the teacher_student is deleted' do
-            before { allow(teacher_student).to receive(:deleted?) { true } }
+          context 'and the period is archived' do
+            before { allow(period).to receive(:archived?) { true } }
 
             it { should eq false }
           end
@@ -59,7 +51,7 @@ RSpec.describe TeacherStudentAccessPolicy, type: :access_policy, speed: :medium 
     end
   end
 
-  context "when the action is :made_up" do
+  context "when the action is made_up" do
     let(:action)    { :made_up }
     let(:requestor) { user }
 

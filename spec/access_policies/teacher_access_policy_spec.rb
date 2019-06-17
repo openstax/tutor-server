@@ -62,7 +62,7 @@ RSpec.describe TeacherAccessPolicy, type: :access_policy do
     end
   end
 
-  context "when the action is :made_up" do
+  context "when the action is made_up" do
     let(:action) { :made_up }
 
     it { should eq false }

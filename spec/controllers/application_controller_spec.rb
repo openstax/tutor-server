@@ -120,23 +120,4 @@ RSpec.describe ApplicationController, type: :controller do
       expect(header_time).to be_within(1).of(t)
     end
   end
-
-  context '#current_roles_hash' do
-    let(:user)                 { FactoryBot.create :user }
-    let(:course)               { FactoryBot.create :course_profile_course }
-    let(:teacher_role)         { AddUserAsCourseTeacher[user: user, course: course] }
-
-    before do
-      allow(controller).to receive(:session).and_return({})
-      allow(controller).to receive(:current_user).and_return(user)
-    end
-
-    it "can return the user's hash of current roles for each course" do
-      expect(controller.send(:current_roles_hash)).to eq({})
-
-      roles_hash = { course.id.to_s => teacher_role.id }
-      controller.session[:roles] = roles_hash
-      expect(controller.send(:current_roles_hash)).to eq roles_hash
-    end
-  end
 end
