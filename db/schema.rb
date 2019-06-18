@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_21_225422) do
+ActiveRecord::Schema.define(version: 2019_06_18_201206) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -186,10 +186,12 @@ ActiveRecord::Schema.define(version: 2019_05_21_225422) do
     t.text "snap_labs", default: "[]", null: false
     t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
     t.text "baked_book_location", default: "[]", null: false
+    t.index ["book_location"], name: "index_content_pages_on_book_location"
     t.index ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true
     t.index ["title"], name: "index_content_pages_on_title"
     t.index ["tutor_uuid"], name: "index_content_pages_on_tutor_uuid", unique: true
     t.index ["url"], name: "index_content_pages_on_url"
+    t.index ["uuid"], name: "index_content_pages_on_uuid"
   end
 
   create_table "content_pools", id: :serial, force: :cascade do |t|

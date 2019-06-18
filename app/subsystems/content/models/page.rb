@@ -36,7 +36,6 @@ class Content::Models::Page < IndestructibleRecord
   sortable_belongs_to :chapter, on: :number, inverse_of: :pages
   has_one :book, through: :chapter
   has_one :ecosystem, through: :book
-  has_many :notes, class_name: 'Content::Models::Note', dependent: :nullify
 
   has_many :exercises, dependent: :destroy, inverse_of: :page
   has_many :cc_stats, class_name: 'Tasks::CcPageStatsView',
@@ -48,6 +47,8 @@ class Content::Models::Page < IndestructibleRecord
 
   has_many :task_steps, subsystem: :tasks, dependent: :destroy, inverse_of: :page
 
+  has_many :notes, subsystem: :content, dependent: :destroy, inverse_of: :page
+
   validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
@@ -55,9 +56,9 @@ class Content::Models::Page < IndestructibleRecord
 
   before_validation :cache_fragments_and_snap_labs
 
-  scope :book_location, ->(chapter, section) {
+  scope :book_location, ->(chapter, section) do
     where("content_pages.book_location = '[?,?]'", chapter.to_i, section.to_i)
-  }
+  end
 
   delegate :is_intro?, to: :parser
 
