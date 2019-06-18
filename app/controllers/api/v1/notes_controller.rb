@@ -33,7 +33,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   ####################################################################
   ## create                                                         ##
   ####################################################################
-  api :POST, '/api/courses/:course_id/notes/:chapter.:section', 'Creates a note'
+  api :POST, '/api/courses/:course_id/notes/:chapter.:section(/role/:role_id)', 'Creates a note'
   description <<-EOS
     Creates a new note for the given course, chapter and section
 

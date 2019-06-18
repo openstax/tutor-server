@@ -117,10 +117,10 @@ Rails.application.routes.draw do
         get :'teacher_guide(/role/:role_id)', action: :teacher
       end
 
-      resources :notes, path: :'notes/:chapter.:section(/role/:role_id)', only: [ :index, :create ]
-      resource :notes, path: :'notes/:chapter.:section/:id(/role/:role_id)',
-                       only: [ :update, :destroy ]
-      get :'highlighted_sections(/role/:role_id)', controller: :notes, action: :highlighted_sections
+      resources :notes, path: :'notes/:chapter.:section', only: [ :index, :update, :destroy ] do
+        post :'(/role/:role_id)', on: :collection, action: :create
+      end
+      get :'highlighted_sections', controller: :notes, action: :highlighted_sections
 
       post :dates, on: :collection
 
