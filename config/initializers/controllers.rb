@@ -1,8 +1,6 @@
 ActionController::Base.class_exec do
   helper ApplicationHelper
 
-  helper_method :current_roles_hash
-
   before_action :load_time
 
   after_action :set_app_date_header
@@ -17,10 +15,6 @@ ActionController::Base.class_exec do
     OpenStruct.new(opts).tap do |hash|
       consume!(hash, represent_with: representer)
     end.marshal_dump.except(*opts.keys)
-  end
-
-  def current_roles_hash
-    session.fetch(:roles, {})
   end
 
   def load_time

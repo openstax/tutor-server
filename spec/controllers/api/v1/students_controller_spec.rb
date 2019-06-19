@@ -13,15 +13,17 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
   let!(:student_original_payment_due_at) { student.payment_due_at }
-  let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
-                                               application: application,
-                                               resource_owner_id: student_user.id }
+  let(:student_token)     do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: student_user.id
+  end
 
   let(:teacher_user)      { FactoryBot.create(:user) }
   let!(:teacher)          { AddUserAsCourseTeacher[user: teacher_user, course: course] }
-  let(:teacher_token)     { FactoryBot.create :doorkeeper_access_token,
-                                               application: application,
-                                               resource_owner_id: teacher_user.id }
+  let(:teacher_token)     do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: teacher_user.id
+  end
 
   let(:student_user_2)    { FactoryBot.create(:user) }
   let(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
@@ -31,72 +33,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
   let(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
   let!(:student_3)        { student_role_3.student }
 
-  let(:userless_token)    { FactoryBot.create :doorkeeper_access_token,
-                                               application: application,
-                                               resource_owner_id: nil }
-
-  # TEMPORARILY SKIPPED UNTIL WE RESURRECT THE ABILITY FOR A TEACHER TO ADD A STUDENT
-  # SEE STUDENTS CONTROLLER COMMENT
-  #
-  # describe '#create' do
-  #   let(:valid_params) { { course_id: course.id } }
-  #   let(:valid_body)   {
-  #     {
-  #       period_id: period.id.to_s,
-  #       username: 'dummyuser',
-  #       password: 'pass',
-  #       first_name: 'Dummy',
-  #       last_name: 'User',
-  #       full_name: 'Dummy User'
-  #     }
-  #   }
-
-  #   context 'caller has an authorization token' do
-  #     context 'caller is a course teacher' do
-  #       it 'creates a new student' do
-  #         expect do
-  #           api_post :create, teacher_token, params: valid_params, body: valid_body
-  #         end.to change { User::Models::Profile.count }.by(1)
-  #         expect(response).to have_http_status(:created)
-  #         new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
-  #         expect(response.body_as_hash).to eq({
-  #           id: new_student.id.to_s,
-  #           username: 'dummyuser',
-  #           first_name: 'Dummy',
-  #           last_name: 'User',
-  #           full_name: 'Dummy User',
-  #           period_id: period.id.to_s,
-  #           role_id: new_student.entity_role_id.to_s,
-  #           is_active: true
-  #         })
-  #       end
-  #     end
-
-  #     context 'caller is not a course teacher' do
-  #       it 'raises SecurityTransgression' do
-  #         expect {
-  #           api_post :create, student_token, params: valid_params, body: valid_body
-  #         }.to raise_error(SecurityTransgression)
-  #       end
-  #     end
-  #   end
-
-  #   context 'caller has an application/client credentials authorization token' do
-  #     it 'raises SecurityTransgression' do
-  #       expect {
-  #         api_post :create, userless_token, params: valid_params, body: valid_body
-  #       }.to raise_error(SecurityTransgression)
-  #     end
-  #   end
-
-  #   context 'caller does not have an authorization token' do
-  #     it 'raises SecurityTransgression' do
-  #       expect {
-  #         api_post :create, nil, params: valid_params, body: valid_body
-  #       }.to raise_error(SecurityTransgression)
-  #     end
-  #   end
-  # end
+  let(:userless_token)    do
+    FactoryBot.create :doorkeeper_access_token, application: application, resource_owner_id: nil
+  end
 
   context '#update_self' do
     let(:valid_params) { { course_id: course.id } }
@@ -290,7 +229,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
     end
   end
 
-  context '#undrop' do
+  context '#restore' do
     let(:valid_params) { { id: student.id } }
 
     context 'student is inactive' do
@@ -298,9 +237,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
       context 'caller has an authorization token' do
         context 'caller is a course teacher' do
-          context 'undropping the student from the course' do
+          context 'restoring a student to the course' do
             it 'succeeds if the student identifier is available' do
-              api_put :undrop, teacher_token, params: valid_params
+              api_put :restore, teacher_token, params: valid_params
               expect(response).to have_http_status(:ok)
               expect(response.body_as_hash[:is_active]).to eq true
 
@@ -314,9 +253,9 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
               student_id = '123456789'
               student.update_attribute :student_identifier, student_id
               FactoryBot.create :course_membership_student, course: course,
-                                                             student_identifier: student_id
+                                                            student_identifier: student_id
 
-              api_put :undrop, teacher_token, params: valid_params
+              api_put :restore, teacher_token, params: valid_params
               expect(response).to have_http_status(:ok)
               student.reload
               expect(student.persisted?).to eq true
@@ -328,7 +267,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
         context 'caller is not a course teacher' do
           it 'raises SecurityTransgression' do
             expect do
-              api_put :undrop, student_token, params: valid_params
+              api_put :restore, student_token, params: valid_params
             end.to raise_error(SecurityTransgression)
             expect(student.reload.dropped?).to eq true
           end
@@ -338,7 +277,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       context 'caller has an application/client credentials authorization token' do
         it 'raises SecurityTransgression' do
           expect do
-            api_put :undrop, userless_token, params: valid_params
+            api_put :restore, userless_token, params: valid_params
           end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq true
         end
@@ -347,7 +286,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       context 'caller does not have an authorization token' do
         it 'raises SecurityTransgression' do
           expect do
-            api_put :undrop, nil, params: valid_params
+            api_put :restore, nil, params: valid_params
           end.to raise_error(SecurityTransgression)
           expect(student.reload.dropped?).to eq true
         end
@@ -356,7 +295,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
 
     context 'student is active' do
       it 'returns an error' do
-        api_put :undrop, teacher_token, params: valid_params
+        api_put :restore, teacher_token, params: valid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body_as_hash[:errors].first[:code]).to eq 'already_active'
         expect(response.body_as_hash[:errors].first[:message]).to eq 'Student is already active'

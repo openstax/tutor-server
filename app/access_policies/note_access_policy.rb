@@ -3,7 +3,7 @@ class NoteAccessPolicy
     return false unless note.present? && requestor.is_human?
 
     case action.to_sym
-    when :index, :read
+    when :index
       true
     when :create, :update, :destroy
       note.role.user_profile_id == requestor.id

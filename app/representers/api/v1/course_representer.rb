@@ -269,12 +269,6 @@ module Api::V1
                writeable: false,
                if: ->(*) { respond_to?(:roles) }
 
-    property :current_role_id,
-             type: String,
-             readable: true,
-             writeable: false,
-             if: ->(*) { respond_to?(:current_role_id) }
-
     property :spy_info,
              type: Object,
              readable: true,

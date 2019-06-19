@@ -46,7 +46,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
       expect(student_user.to_model.roles.first.taskings.count).to eq 1
     end
 
-    scenario 'undropped student gets assignments published while he was dropped' do
+    scenario 'restored student gets assignments published while dropped' do
       # The student enrolls...
       api_post('/api/enrollment', student_token,
                params: { enrollment_code: period.enrollment_code }.to_json)
@@ -63,8 +63,8 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
       DistributeTasks.call(task_plan: task_plan_1)
       expect(Tasks::Models::Tasking.count).to eq 0
 
-      # The teacher undrops the student...
-      api_put("/api/students/#{student.id}/undrop", teacher_token)
+      # The teacher restores the student...
+      api_put("/api/students/#{student.id}/restore", teacher_token)
 
       # ... and the student has the missing task
       expect(Tasks::Models::Tasking.count).to eq 1
@@ -92,7 +92,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
       expect(student_user.to_model.roles.first.taskings.count).to eq 1
     end
 
-    scenario 'undropped student gets assignments published while he was dropped' do
+    scenario 'restored student gets assignments published while dropped' do
       # The student enrolls...
       api_post('/api/enrollment', student_token,
                params: { enrollment_code: period.enrollment_code }.to_json)
@@ -110,8 +110,8 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
       # TeacherStudent role still gets it
       expect(Tasks::Models::Tasking.count).to eq 1
 
-      # The teacher undrops the student...
-      api_put("/api/students/#{student.id}/undrop", teacher_token)
+      # The teacher restores the student...
+      api_put("/api/students/#{student.id}/restore", teacher_token)
 
       # ... and the student has the missing task
       expect(Tasks::Models::Tasking.count).to eq 2

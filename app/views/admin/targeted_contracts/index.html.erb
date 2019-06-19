@@ -22,8 +22,7 @@
         <td><%= tf_to_yn(contract.is_proxy_signed) %></td>
         <td><%= tf_to_yn(contract.is_end_user_visible) %></td>
         <td>
-          <%= link_to 'edit', '#',
-                              class: 'btn btn-xs btn-primary edit' %>
+          <%= link_to 'edit', '#', class: 'btn btn-xs btn-primary edit' %>
           <%= link_to 'delete', admin_targeted_contract_path(contract.id),
                                 method: :delete,
                                 data: {

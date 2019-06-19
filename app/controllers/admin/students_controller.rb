@@ -21,16 +21,16 @@ class Admin::StudentsController < Admin::BaseController
     end
   end
 
+  def destroy
+    student = CourseMembership::Models::Student.find(params[:id])
+    CourseMembership::InactivateStudent[student: student]
+    redirect_to edit_admin_course_path(student.course) + '#roster'
+  end
+
   def refund
     student = CourseMembership::Models::Student.find(params[:id])
     RefundPayment[uuid: student.uuid]
     redirect_to edit_admin_course_path(student.course, anchor: "roster")
-  end
-
-  def drop
-    student = CourseMembership::Models::Student.find(params[:id])
-    CourseMembership::InactivateStudent[student: student]
-    redirect_to edit_admin_course_path(student.course) + '#roster'
   end
 
   def restore

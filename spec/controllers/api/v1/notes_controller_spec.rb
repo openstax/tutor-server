@@ -1,81 +1,116 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: :v1, vcr: VCR_OPTS do
+RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: :v1 do
 
-  let(:application)  { FactoryBot.create :doorkeeper_application }
-  let(:course)       { FactoryBot.create :course_profile_course }
-  let(:period)       { FactoryBot.create :course_membership_period, course: course }
-  let(:student_user)      { FactoryBot.create(:user) }
-  let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
-  let!(:student)          { student_role.student }
+  let(:application)   { FactoryBot.create :doorkeeper_application }
+  let(:course)        { FactoryBot.create :course_profile_course }
+  let(:period)        { FactoryBot.create :course_membership_period, course: course }
+  let(:student_user)  { FactoryBot.create(:user) }
+  let(:student_role)  { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student)      { student_role.student }
 
-  let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
-                                               application: application,
-                                               resource_owner_id: student_user.id }
+  let(:student_token) do
+    FactoryBot.create :doorkeeper_access_token, application: application,
+                                                resource_owner_id: student_user.id
+  end
 
-  let(:user_2)       { FactoryBot.create(:user) }
-  let(:user_2_token) { FactoryBot.create :doorkeeper_access_token,
-                                         resource_owner_id: user_2.id }
+  let(:user_2)        { FactoryBot.create(:user) }
+  let(:user_2_token)  { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id }
 
-  let(:note) {FactoryBot.create :content_note, role: student_role }
+  let(:note)          { FactoryBot.create :content_note, role: student_role }
 
-  let(:parameters) {
-    { course_id: course.id, chapter: note.page.book_location.first, section: note.page.book_location.last }
-  }
+  let(:parameters)    do
+    {
+      course_id: course.id,
+      chapter: note.page.book_location.first,
+      section: note.page.book_location.last
+    }
+  end
 
   # link page to same ecosystem as course
-  before(:each) {
-    note.page.chapter.book.update_attributes(ecosystem: course.ecosystem)
-  }
+  before(:each) { note.page.chapter.book.update_attributes(ecosystem: course.ecosystem) }
 
-  it 'fetches' do
-    api_get :index, student_token, params: parameters
-    notes = JSON.parse(response.body)
-    expect(notes.count).to eq 1
-    expect(notes.first['id']).to eq note.id
+  context 'GET #index' do
+    it "fetches the user's notes" do
+      api_get :index, student_token, params: parameters
+
+      expect(response).to be_ok
+      notes = JSON.parse(response.body)
+      expect(notes.count).to eq 1
+      expect(notes.first['id']).to eq note.id
+    end
+
+    it "does not fetch someone else's notes" do
+      api_get :index, user_2_token, params: parameters
+
+      expect(response).to be_ok
+      notes = JSON.parse(response.body)
+      expect(notes.count).to eq 0
+    end
   end
 
-  it 'creates' do
-    expect do
-      api_post :create, student_token, params: parameters, body: {
-                 anchor: 'para123', contents: { test: true }
-               }
+  context 'POST #create' do
+    it 'creates a note' do
+      expect do
+        api_post :create, student_token, params: parameters, body: {
+                   anchor: 'para123', contents: { test: true }
+                 }
+      end.to change { Content::Models::Note.count }
+
       expect(response).to be_created
-    end.to change { Content::Models::Note.count }
-    note = Content::Models::Note.find JSON.parse(response.body)['id']
-    expect(note.anchor).to eq 'para123'
+      note = Content::Models::Note.find JSON.parse(response.body)['id']
+      expect(note.anchor).to eq 'para123'
+      expect(note.role).to eq student_role
+    end
   end
 
-  it 'updates' do
-    api_put :update, student_token, params: parameters.merge(id: note.id),
-            body: { contents: { text: 'hello!' } }
-    expect(response).to be_ok
-    expect(note.reload.contents).to eq('text' => 'hello!')
+  context 'PUT #update' do
+    it 'updates a note' do
+      api_put :update, student_token, params: parameters.merge(id: note.id),
+                                      body: { contents: { text: 'hello!' } }
+
+      expect(response).to be_ok
+      expect(note.reload.contents).to eq('text' => 'hello!')
+    end
+
+    it "does not let a user update someone else's notes" do
+      expect do
+        api_put :update, user_2_token, params: parameters.merge(id: note.id),
+                                       body: { contents: { text: 'hello!' } }
+      end.to raise_error(SecurityTransgression)
+    end
   end
 
-  it 'deletes' do
-    api_delete :destroy, student_token, params: parameters.merge(id: note.id)
-    expect(response).to be_ok
-    expect { note.reload }.to raise_error(ActiveRecord::RecordNotFound)
+  context 'DELETE #destroy' do
+    it 'deletes a note' do
+      api_delete :destroy, student_token, params: parameters.merge(id: note.id)
+
+      expect(response).to be_ok
+      expect { note.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "does not let a user delete someone else's notes" do
+      expect do
+        api_delete :destroy, user_2_token, params: parameters.merge(id: note.id)
+      end.to raise_error(SecurityTransgression)
+    end
   end
 
+  context 'GET #highlighted_sections' do
+    it 'fetches user highlighted_sections' do
+      api_get :highlighted_sections, student_token, params: parameters
 
-  it 'fetches user highlighted_sections' do
-    api_get :highlighted_sections, student_token, params: parameters
-    expect(response).to be_ok
-  end
+      expect(response).to be_ok
+      expect(response.body_as_hash[:pages]).not_to be_empty
+    end
 
-  it "should not fetch someone else's highlights" do
-    expect do
+    it "does not fetch someone else's highlights" do
       api_get :highlighted_sections, user_2_token, params: parameters
-    end.to raise_error(SecurityTransgression)
+
+      expect(response).to be_ok
+      expect(response.body_as_hash[:pages]).to be_empty
+    end
   end
 
-  it "should not let a user update someone else's highlights" do
-    expect do
-      api_put :update, user_2_token, params: parameters.merge(id: note.id),
-              body: { contents: { text: 'hello!' } }
-    end.to raise_error(SecurityTransgression)
-  end
 end

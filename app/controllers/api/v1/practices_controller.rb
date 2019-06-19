@@ -52,10 +52,10 @@ module Api
       protected
 
       def get_course_and_practice_role
-        @course = CourseProfile::Models::Course.find(params[:id])
+        @course = CourseProfile::Models::Course.find(params[:course_id])
         result = ChooseCourseRole.call(user: current_human_user,
                                        course: @course,
-                                       current_roles_hash: current_roles_hash,
+                                       role_id: params[:role_id],
                                        allowed_role_types: [ :student, :teacher_student ])
         if result.errors.any?
           raise(SecurityTransgression, result.errors.map(&:message).to_sentence)

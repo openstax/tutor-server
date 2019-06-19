@@ -7,7 +7,7 @@
       <td>
         <% if teacher.deleted? %>
         <%= link_to 'Readd to course',
-                    undelete_admin_teacher_path(teacher),
+                    restore_admin_teacher_path(teacher),
                     method: :put,
                     class: 'btn btn-xs btn-primary',
                     data: {
@@ -16,7 +16,7 @@
                     } %>
         <% else %>
         <%= link_to 'Remove from course',
-                    delete_admin_teacher_path(teacher),
+                    admin_teacher_path(teacher),
                     method: :delete,
                     class: 'btn btn-xs btn-primary',
                     data: {

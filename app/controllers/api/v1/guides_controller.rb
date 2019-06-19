@@ -18,20 +18,21 @@ module Api
         #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
+        # We don't use the get_course_role method when a role_id is given
+        # because we allow teachers to look at any student's performance forecast
+        # not just their own roles'
+        # We trust the AccessPolicy for access control in this case
         role = if params[:role_id].blank?
-          get_course_role(course: @course, allowed_role_types: [:student, :teacher_student])
+          get_course_role(course: @course, allowed_role_types: [ :student, :teacher_student ])
         else
           Entity::Role.where(
             role_type: Entity::Role.role_types.values_at(:student, :teacher_student)
           ).find(params[:role_id])
         end
 
-        student = role.course_member
-
-        OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, student)
+        OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.course_member)
 
         guide = GetStudentGuide[role: role]
-
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 
@@ -42,7 +43,9 @@ module Api
       EOS
       def teacher
         role = get_course_role(course: @course, allowed_role_types: :teacher)
+
         OSU::AccessPolicy.require_action_allowed!(:show, current_api_user, role.teacher)
+
         guide = GetTeacherGuide[role: role]
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end
@@ -56,10 +59,9 @@ module Api
       def get_course_role(course:, allowed_role_types:)
         result = ChooseCourseRole.call(
           user: current_human_user, course: course,
-          current_roles_hash: current_roles_hash, allowed_role_types: allowed_role_types
+          role_id: params[:role_id], allowed_role_types: allowed_role_types
         )
-        errors = result.errors
-        raise(SecurityTransgression, :invalid_role) unless errors.empty?
+        raise(SecurityTransgression, :invalid_role) unless result.errors.empty?
         result.outputs.role
       end
     end

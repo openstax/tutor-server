@@ -10,11 +10,13 @@ class GetCourseTeachers
     teachers = teachers.preload(role: { profile: :account })
 
     outputs.teachers = teachers.map do |teacher|
-      { id: teacher.id.to_s,
+      {
+        id: teacher.id.to_s,
         role_id: teacher.entity_role_id.to_s,
         deleted_at: teacher.deleted_at,
         first_name: teacher.first_name,
-        last_name: teacher.last_name }
+        last_name: teacher.last_name
+      }
     end
   end
 end

@@ -4,7 +4,7 @@
 
 <p>Use the button below to trigger an update of Salesforce statistics from the latest data in Tutor.  This will only update SF records for which Tutor records have been created (either via a manual or scheduled call to the import functionality above).</p>
 
-<%= form_tag(update_salesforce_admin_salesforce_path, method: :put, style: 'margin: 30px 0') do %>
+<%= form_tag(admin_salesforce_path, method: :put, style: 'margin: 30px 0') do %>
   <%= submit_tag 'Update Salesforce', class: 'btn btn-primary' %>
 <% end %>
 

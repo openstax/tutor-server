@@ -1,9 +1,9 @@
 module Admin
   class SalesforceController < BaseController
-    def actions
+    def show
     end
 
-    def update_salesforce
+    def update
       outputs = PushSalesforceCourseStats.call(allow_error_email: true)
 
       flash[:notice] = "Ran on #{outputs[:num_courses]} course(s); " +
@@ -11,7 +11,7 @@ module Admin
                        "#{outputs[:num_errors]} error(s) occurred; " +
                        "#{outputs[:num_skips]} skip(s)"
 
-      redirect_to actions_admin_salesforce_path
+      redirect_to admin_salesforce_path
     end
   end
 end

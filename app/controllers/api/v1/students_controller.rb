@@ -1,8 +1,8 @@
 class Api::V1::StudentsController < Api::V1::ApiController
 
-  before_action :get_student, only: [:update, :destroy, :undrop]
-  before_action :get_course_student, only: [:update_self]
-  before_action :error_if_student_and_needs_to_pay, only: [:update_self, :update]
+  before_action :get_student, only: [ :update, :destroy, :restore ]
+  before_action :get_course_student, only: :update_self
+  before_action :error_if_student_and_needs_to_pay, only: [ :update_self, :update ]
 
   resource_description do
     api_versions "v1"
@@ -82,13 +82,13 @@ class Api::V1::StudentsController < Api::V1::ApiController
     )
   end
 
-  api :PUT, '/students/:student_id/undrop', 'Undrops a student from their course'
+  api :PUT, '/students/:student_id/restore', 'Restores a student to their course'
   description <<-EOS
-    Undrops a student from their course.
+    Restores a student to their course.
 
     Possible error code: already_active
   EOS
-  def undrop
+  def restore
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
     result = CourseMembership::ActivateStudent.call(student: @student)
 
@@ -109,7 +109,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
     @course = CourseProfile::Models::Course.find(params[:course_id])
     result = ChooseCourseRole.call(user: current_human_user,
                                    course: @course,
-                                   current_roles_hash: current_roles_hash,
+                                   role_id: params[:role_id],
                                    allowed_role_types: :student)
     raise(SecurityTransgression, result.errors.map(&:message).to_sentence) if result.errors.any?
     @student = result.outputs.role.student

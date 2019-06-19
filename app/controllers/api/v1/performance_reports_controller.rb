@@ -7,7 +7,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
       -- The export background job will be started
   EOS
   def export
-    course = CourseProfile::Models::Course.find(params[:id])
+    course = CourseProfile::Models::Course.find(params[:course_id])
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
@@ -24,7 +24,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     #{json_schema(Api::V1::PerformanceReport::ExportsRepresenter, include: :readable)}
   EOS
   def exports
-    course = CourseProfile::Models::Course.find(params[:id])
+    course = CourseProfile::Models::Course.find(params[:course_id])
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
@@ -40,7 +40,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
     #{json_schema(Api::V1::PerformanceReport::Representer, include: :readable)}
   EOS
   def index
-    course = CourseProfile::Models::Course.find(params[:id])
+    course = CourseProfile::Models::Course.find(params[:course_id])
 
     OSU::AccessPolicy.require_action_allowed!(:performance, current_api_user, course)
 
@@ -52,11 +52,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
   protected
 
   def get_course_role(course:, type: :any)
-    args = {
-      user: current_human_user,
-      course: course,
-      current_roles_hash: current_roles_hash
-    }
+    args = { user: current_human_user, course: course, role_id: params[:role_id] }
     args[:allowed_role_types] = type unless type == :any
 
     result = ChooseCourseRole.call(args)

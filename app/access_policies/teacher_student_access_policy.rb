@@ -4,9 +4,7 @@ class TeacherStudentAccessPolicy
 
     case action
     when :show
-      teacher_student.role.user_profile_id == requestor.id &&
-        UserIsCourseTeacher[user: requestor, course: teacher_student.course] &&
-        !teacher_student.deleted? &&
+      UserIsCourseTeacher[user: requestor, course: teacher_student.course] &&
         !teacher_student.period.nil? &&
         !teacher_student.period.archived?
     else

@@ -1,12 +1,20 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   # Try to list more often used routes first, although catch-all routes have to be at the end
-  mount OpenStax::Salesforce::Engine, at: '/admin/salesforce'
-  OpenStax::Salesforce.set_top_level_routes(self)
 
   # Home page, course picker, course dashboard and student enrollment
   scope controller: :webview do
     root action: :home
+
+    scope :enroll do
+      # this is handled by the FE
+      get :'start/:enroll_token', action: :index,
+                                  as: :start_enrollment,
+                                  block_sign_up: false,
+                                  straight_to_student_sign_up: true
+      # we render this to display a splash screen before login/signup
+      get :':enroll_token(/*ignored)', as: :token_enroll, action: :enroll
+    end
 
     # The routes below would be served by the webview catch-all route,
     # but we define them so we can use them as helpers that point to certain FE pages
@@ -16,13 +24,6 @@ Rails.application.routes.draw do
       get :'course/:id', as: :course_dashboard
       get :'course/:course_id/task/:task_id', as: :student_task
       get :'course/:course_id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
-    end
-
-    scope :enroll do
-      # this is handled by the FE
-      get :'start/:enroll_token', action: :index, as: :start_enrollment, block_sign_up: false, straight_to_student_sign_up: true
-      # we render this to display a splash screen before login/signup
-      get :':enroll_token(/*ignored)', as: :token_enroll, action: :enroll
     end
   end
 
@@ -43,113 +44,91 @@ Rails.application.routes.draw do
     get :browser_upgrade
   end
 
-  get :non_student_signup,
-      to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
-
-  resource :pardot, controller: :pardot, only: [] do
-    get :toa
+  scope :lms, controller: :lms, as: :lms do
+    get :configuration
+    post :launch
+    get :launch_authenticate
+    get :complete_launch
+    get :pair
+    post :ci_launch
   end
 
-  # Short codes
-  get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
-
-  # Terms of use/Privacy policy
-  resources :terms, only: [:index] do
-    collection do
-      get :pose
-      post :agree, as: :agree_to
-    end
-  end
-
-  resources :purchases, only: [:show]
-
-  mount OpenStax::Accounts::Engine => :accounts
-  mount FinePrint::Engine => :fine_print
-
-  # API docs
-  apipie
+  get(:'specs/lms_error_page/:page(/:case)', controller: :lms_error_page_specs, action: :page) \
+    if Rails.env.test?
 
   # All API routes
   api :v1, default: true do
-    resources :users, only: [:index]
-    resource :user, only: [:show] do
+    resources :users, only: :index
+    resource :user, only: :show do
       get :tasks
       put :ui_settings
-      patch 'tours/:tour_id', action: :record_tour_view
-      resources :courses, only: [:index] do
-        patch :student, to: 'students#update_self'
+      patch :'tours/:tour_id', action: :record_tour_view
+
+      resources :courses, only: :index do
+        patch :'student(/role/:role_id)', controller: :students, action: :update_self
       end
     end
 
-    resources :updates, only: [:index]
+    resources :updates, only: :index
 
     namespace :log do
       post :entry
-      post 'event/onboarding/:code', action: :onboarding_event
+      post :'event/onboarding/:code', action: :onboarding_event
     end
 
-    resources :purchases, only: [:index] do
+    resources :purchases, only: :index do
       member do
         put :check
         put :refund
       end
 
-      if !IAm.real_production?
-        collection do
-          post 'fake', action: 'create_fake'
-        end
-      end
+      post(:fake, action: :create_fake, on: :collection) unless IAm.real_production?
     end
 
-    resources :tasks, only: [:show, :destroy] do
+    resources :tasks, only: [ :show, :destroy ] do
       member do
         put :accept_late_work
         put :reject_late_work
       end
 
-      resources :steps, controller: :task_steps, shallow: true, only: [:show, :update]
+      resources :steps, controller: :task_steps, shallow: true, only: [ :show, :update ]
     end
 
-    resources :metatasks, only: [:show, :destroy] do
-      # resources :metasteps, controller: :metatask_steps, shallow: true, only: [:show, :update]
-    end
+    resources :research_surveys, only: :update
 
-    resources :research_surveys, only: [:update]
-
-    resources :courses, only: [:create, :show, :update] do
+    resources :courses, only: [ :create, :show, :update ] do
       member do
-        get :'dashboard', action: :dashboard
+        get :'dashboard(/role/:role_id)', action: :dashboard
         get :roster
         post :clone
-
-        scope :performance, controller: :performance_reports do
-          get :index
-          post :export
-          get :exports
-        end
-
-        scope :practice, controller: :practices do
-          get :show
-          post :create
-          post :worst, action: :create_worst
-        end
       end
 
-      post :dates, on: :collection
+      scope controller: :performance_reports do
+        get :'performance(/role/:role_id)', action: :index
+        post :'performance/export(/role/:role_id)', action: :export
+        get :'performance/exports(/role/:role_id)', action: :exports
+      end
 
-      resources :notes, path: 'notes/:chapter.:section'
-      get :highlighted_sections, controller: :notes
+      resource :practices, path: :'practice/(/role/:role_id)', only: [ :show, :create ]
+      post :'practice/worst(/role/:role_id)', controller: :practices, action: :create_worst
 
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
-        get :teacher_guide, action: :teacher
+        get :'teacher_guide(/role/:role_id)', action: :teacher
       end
 
-      resource :exercises, controller: :course_exercises, only: [:update] do
+      resources :notes, path: :'notes/:chapter.:section', only: [ :index, :update, :destroy ] do
+        post :'(/role/:role_id)', on: :collection, action: :create
+      end
+      get :'highlighted_sections', controller: :notes, action: :highlighted_sections
+
+      post :dates, on: :collection
+
+      resource :exercises, controller: :course_exercises, only: :update do
         get :'(/:pool_types)', action: :show
       end
 
-      resources :task_plans, path: :plans, shallow: true, except: [:new, :edit] do
+      resources :task_plans, path: :plans, shallow: true, except: [ :new, :edit ] do
         member do
           get :stats
           get :review
@@ -157,48 +136,50 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :students, shallow: true, except: [:index, :create] do
-        put :undrop, on: :member
+      resources :students, shallow: true, except: [ :index, :create ] do
+        put :restore, on: :member
+        # For backwards-compatibility: remove when the FE stops using it
+        put :undrop, on: :member, action: :restore
       end
 
-      resources :teachers, shallow: true, only: [:destroy]
+      resources :teachers, shallow: true, only: :destroy
 
-      resources :periods, shallow: true, only: [:create, :update, :destroy] do
+      resources :periods, shallow: true, only: [ :create, :update, :destroy ] do
         member do
           put :restore
           put :teacher_student
         end
       end
-
-      resources :roles, shallow: true, only: [] do
-        put :become, on: :member
-      end
     end
 
-    resources :ecosystems, only: [:index] do
+    resources :ecosystems, only: :index do
       member do
         get :readings
         get :'exercises(/:pool_types)', action: :exercises
       end
 
-      get 'pages/*cnx_id', to: 'pages#show', format: false
+      get :'pages/*cnx_id', controller: :pages, action: :show, format: false
     end
 
-    resources :enrollment, only: [:create] do
-      put :approve, on: :member
+    resources :enrollment, only: :create do
       post :prevalidate, on: :collection
-      get :choices, on: :member
+
+      member do
+        put :approve
+        get :choices
+      end
     end
 
-    resources :offerings, only: [:index]
+    resources :offerings, only: :index
 
-    resources :jobs, only: [:index, :show]
+    resources :jobs, only: [ :index, :show ]
 
-    get 'terms', to: 'terms#index'
-    put 'terms/:ids', to: 'terms#sign'
+    resources :terms, only: :index do
+      put :':ids', on: :collection, action: :sign
+    end
 
     namespace :lms do
-      resources :courses, only: [:show] do
+      resources :courses, only: :show do
         member do
           put :push_scores
           post :pair
@@ -206,12 +187,11 @@ Rails.application.routes.draw do
       end
     end
 
-    match :'*all', to: 'api#options', via: [:options]
-
+    match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
 
   # Teacher enrollment
-  get :'teach/:teach_token(/:ignore)', to: 'courses#teach', as: :teach_course
+  get :'teach/:teach_token(/:ignore)', controller: :courses, action: :teach, as: :teach_course
 
   # All admin routes
   namespace :admin do
@@ -220,6 +200,10 @@ Rails.application.routes.draw do
 
       get :'raise(/:type)', action: :test_raise, as: :raise
     end
+
+    mount RailsSettingsUi::Engine => :settings
+
+    mount OpenStax::Salesforce::Engine => :openstax_salesforce
 
     resource :test do
       collection do
@@ -231,23 +215,18 @@ Rails.application.routes.draw do
     end
 
     resources :users, except: :destroy do
-      member do
-        post :become
-        patch :delete
-        patch :undelete
-      end
-      collection do
-        get :info
-      end
+      post :become, on: :member
+
+      get :info, on: :collection
     end
 
-    resources :administrators, only: [:index, :create, :destroy]
+    resources :administrators, only: [ :index, :create, :destroy ]
 
-    resources :ecosystems, except: [:edit] do
+    resources :ecosystems, except: :edit do
       get :manifest, on: :member
     end
 
-    resources :catalog_offerings, except: [:show]
+    resources :catalog_offerings, except: :show
 
     resources :courses, except: :show do
       member do
@@ -267,49 +246,35 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :students, only: [:index] do
+      resources :students, only: [ :index, :update, :destroy ], shallow: true do
         member do
-          delete :drop
-          post :restore
+          put :refund
+          put :restore
         end
       end
 
-      resources :teachers, only: [], shallow: true do
-        member do
-          delete :delete
-          put :undelete
-        end
+      resources :teachers, only: :destroy, shallow: true do
+        put :restore, on: :member
       end
     end
 
-    resources :students, only: :update do
-      member do
-        put :refund
-      end
-    end
+    resources :schools, except: :show
 
-    resources :schools, except: [:show]
+    resources :districts, except: :show
 
-    resources :districts, except: [:show]
+    resources :notifications, only: [ :index, :create, :destroy ]
 
-    resources :notifications,  only: [:index, :create, :destroy]
+    resources :targeted_contracts, except: [ :show, :edit, :update ]
 
-    resources :targeted_contracts, except: [:show, :edit]
+    resources :research_data, only: [ :index, :create ]
 
-    resources :research_data, only: [:index, :create]
+    resource :salesforce, only: [ :show, :update ]
 
-    resource :salesforce, only: [], controller: :salesforce do
-      get :actions
-      put :update_salesforce
-    end
+    resource :cron, only: :update
 
-    mount RailsSettingsUi::Engine => :settings
+    resources :exceptions, only: :show
 
-    resource :cron, only: [:update]
-
-    resources :exceptions, only: [:show]
-
-    resources :jobs, only: [:index, :show]
+    resources :jobs, only: [ :index, :show ]
 
     namespace :stats do
       get :courses
@@ -318,7 +283,7 @@ Rails.application.routes.draw do
       get :concept_coach
     end
 
-    resources :tags, only: [:index, :edit, :update, :show]
+    resources :tags, only: [ :index, :edit, :update, :show ]
 
     scope controller: :timecop do
       get :timecop
@@ -327,7 +292,7 @@ Rails.application.routes.draw do
       post :time_travel
     end
 
-    resources :payments, only: [:index] do
+    resources :payments, only: :index do
       collection do
         put :extend_payment_due_at
       end
@@ -336,26 +301,26 @@ Rails.application.routes.draw do
 
   # All CS routes
   namespace :customer_service do
-    root 'console#index'
+    root controller: :console, action: :index
 
-    resources :users, only: [:index] do
+    resources :users, only: :index do
       collection do
         get :info
       end
     end
 
-    resources :ecosystems, only: [:index] do
+    resources :ecosystems, only: :index do
       get :manifest, on: :member
     end
 
-    resources :courses, only: [:index, :show] do
-      resources :periods, only: [:index]
-      resources :students, only: [:index]
+    resources :courses, only: [ :index, :show ] do
+      resources :periods, only: :index
+      resources :students, only: :index
     end
 
-    resources :targeted_contracts, only: [:index]
+    resources :targeted_contracts, only: :index
 
-    resources :jobs, only: [:index, :show]
+    resources :jobs, only: [ :index, :show ]
 
     namespace :stats do
       get :courses
@@ -363,25 +328,27 @@ Rails.application.routes.draw do
       get :concept_coach
     end
 
-    resources :tags, only: [:index, :show]
+    resources :tags, only: [ :index, :show ]
   end
 
   # All CM routes
   namespace :content_analyst do
-    root 'console#index'
+    root controller: :console, action: :index
 
-    resources :ecosystems, only: [:index] do
+    resources :ecosystems, only: :index do
       get :manifest, on: :member
     end
 
-    resources :jobs, only: [:show]
+    resources :jobs, only: :show
   end
 
   # All research routes
   namespace :research do
-    root 'console#index'
+    scope controller: :console do
+      root action: :index
 
-    get 'help', to: 'console#help'
+      get :help
+    end
 
     resources :studies do
       member do
@@ -389,11 +356,11 @@ Rails.application.routes.draw do
         put :deactivate
       end
 
-      resources :study_courses, shallow: true, only: [:create, :destroy]
+      resources :study_courses, shallow: true, only: [ :create, :destroy ]
       resources :brains, shallow: true
       resources :cohorts, shallow: true do
-        put 'reassign_members'
-        get 'members'
+        put :reassign_members
+        get :members
       end
     end
 
@@ -407,29 +374,42 @@ Rails.application.routes.draw do
     end
   end
 
+  mount OpenStax::Accounts::Engine => :accounts
+
+  get :non_student_signup, to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
+
+  get :'pardot/toa', controller: :pardot, action: :toa
+
+  # Short codes
+  get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
+
+  resources :purchases, only: :show
+
+  # Terms of use/Privacy policy
+  resources :terms, only: :index do
+    collection do
+      get :pose
+      post :agree, as: :agree_to
+    end
+  end
+
+  mount FinePrint::Engine => :fine_print
+
+  OpenStax::Salesforce.set_top_level_routes(self)
+
+  # API docs
+  apipie
+
   # Manage apps that use Tutor as an OAuth provider
   use_doorkeeper
 
   # Dev-only admin routes
   namespace :dev do
-    resources :users, only: [:create] do
+    resources :users, only: :create do
       post :generate, on: :collection
     end
   end
 
-  scope '/lms', controller: :lms, as: :lms do
-    get :configuration
-    post :launch
-    get :launch_authenticate
-    get :complete_launch
-    get :pair
-    post :ci_launch
-  end
-
-  scope :specs do
-    get 'lms_error_page/:page(/:case)' => 'lms_error_page_specs#page'
-  end if Rails.env.test?
-
   # Catch-all frontend route
-  match :'*other', to: 'webview#index', via: [:get, :post, :put, :patch, :delete]
+  get :'*other', controller: :webview, action: :index
 end
