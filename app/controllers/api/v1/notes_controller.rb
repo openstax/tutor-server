@@ -2,7 +2,7 @@
 class Api::V1::NotesController < Api::V1::ApiController
 
   before_action :get_course, except: [ :update, :destroy ]
-  before_action :choose_course_role, only: :create
+  before_action :choose_course_role, only: [:create, :highlighted_sections]
   before_action :get_note, only: [ :update, :destroy ]
 
   resource_description do
@@ -103,10 +103,9 @@ class Api::V1::NotesController < Api::V1::ApiController
   EOS
 
   def highlighted_sections
-    roles = current_human_user.roles
     pages = Content::Models::Page.select(:id, :title, :book_location, 'count(*) as notes_count')
                                  .joins(:notes)
-                                 .where(notes: { role: roles })
+                                 .where(notes: { role: @role })
                                  .group(:id)
     respond_with pages, represent_with: Api::V1::HighlightRepresenter
   end
