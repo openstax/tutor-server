@@ -2,7 +2,8 @@
 class Api::V1::NotesController < Api::V1::ApiController
 
   before_action :get_course, except: [ :update, :destroy ]
-  before_action :choose_course_role, only: [:create, :highlighted_sections]
+  before_action :choose_course_role, only: :create
+  before_action :get_user_course_role, only: [:index, :highlighted_sections]
   before_action :get_note, only: [ :update, :destroy ]
 
   resource_description do
@@ -25,12 +26,11 @@ class Api::V1::NotesController < Api::V1::ApiController
     #{json_schema(Api::V1::NotesRepresenter, include: :readable)}
   EOS
   def index
-    roles = current_human_user.roles
     page_uuid = @course.ecosystem.pages.book_location(params[:chapter], params[:section])
       .pluck(:uuid)
       .first || raise(ActiveRecord::RecordNotFound)
 
-    notes = Content::Models::Note.joins(:page).where(role: roles, page: { uuid: page_uuid })
+    notes = Content::Models::Note.joins(:page).where(role: @roles, page: { uuid: page_uuid })
     respond_with notes, represent_with: Api::V1::NotesRepresenter
   end
 
@@ -105,7 +105,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   def highlighted_sections
     pages = Content::Models::Page.select(:id, :title, :book_location, 'count(*) as notes_count')
                                  .joins(:notes)
-                                 .where(notes: { role: @role })
+                                 .where(notes: { role: @roles })
                                  .group(:id)
     respond_with pages, represent_with: Api::V1::HighlightRepresenter
   end
@@ -114,6 +114,10 @@ class Api::V1::NotesController < Api::V1::ApiController
 
   def get_course
     @course = CourseProfile::Models::Course.find(params[:course_id])
+  end
+
+  def get_user_course_role
+    @roles = GetUserCourseRoles[courses: @course, user: current_human_user]
   end
 
   def choose_course_role
