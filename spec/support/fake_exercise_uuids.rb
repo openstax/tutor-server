@@ -14,6 +14,7 @@ module FakeExerciseUuids
   end
 end
 
+include_fake_exercise_uuids = -> { Content::Models::Exercise.send :include, FakeExerciseUuids }
 # We need both of these because this file runs after the initial run of to_prepare blocks
-ActiveSupport::Reloader.to_prepare { Content::Models::Exercise.send :include, FakeExerciseUuids }
-Content::Models::Exercise.send :include, FakeExerciseUuids
+ActiveSupport::Reloader.to_prepare &include_fake_exercise_uuids
+include_fake_exercise_uuids.call

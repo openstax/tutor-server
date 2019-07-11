@@ -1,6 +1,6 @@
 guard :rspec, cmd: 'bin/spring rspec' do
-  # If a spec helper changed, run all specs
-  watch(%r{^spec/.+_helper\.rb$}) { 'spec' }
+  # If a spec helper, support or mock changed, run all specs
+  watch(%r{^spec/(?:.+_helper|support/.+|mocks/.+)\.rb$}) { 'spec' }
 
   # If a spec changed, run that spec
   watch(%r{^spec/.+_spec\.rb$})
@@ -20,8 +20,8 @@ guard :rspec, cmd: 'bin/spring rspec' do
   end
 
   # If a controller changed, run the corresponding controller and request specs
-  watch(%r{^app/controllers/(.+)_controller\.rb$}) do |m|
-    [ "spec/controllers/#{m[1]}_controller_spec.rb", "spec/requests/#{m[1]}_controller_spec.rb" ]
+  watch(%r{^app/controllers/(.+_controller)\.rb$}) do |m|
+    [ "spec/controllers/#{m[1]}_spec.rb", "spec/requests/#{m[1]}_spec.rb" ]
   end
 
   # If the ApplicationRecord changed, run all model, controller and request specs
@@ -39,8 +39,8 @@ guard :rspec, cmd: 'bin/spring rspec' do
   end
 
   # If a view changed, run that view's specs and associated request specs
-  watch(%r{^app/views/(.*)/([^/]*)\.(erb|haml|slim)$}) do |m|
-    [ "spec/views/#{m[1]}#{m[2]}.#{m[3]}_spec.rb", "spec/requests/#{m[1]}_controller_spec.rb" ]
+  watch(%r{^app/views/(.*)(/[^/]*\.erb|haml|slim)$}) do |m|
+    [ "spec/views/#{m[1]}#{m[2]}_spec.rb", "spec/requests/#{m[1]}_controller_spec.rb" ]
   end
 
   # If the ApplicationJob changed, run all job specs
