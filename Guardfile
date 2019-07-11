@@ -1,6 +1,11 @@
+guard :bundler do
+  # If the Gemfile changed, rerun bundle install
+  watch('Gemfile')
+end
+
 guard :rspec, cmd: 'bin/spring rspec' do
-  # If a spec helper, support or mock changed, run all specs
-  watch(%r{^spec/(?:.+_helper|support/.+|mocks/.+)\.rb$}) { 'spec' }
+  # If a spec helper, fixture, support or mock changed, run all specs
+  watch(%r{^spec/(?:(?:.+_helper|support/.+|mocks/.+)\.rb|fixtures/.+)$}) { 'spec' }
 
   # If a spec changed, run that spec
   watch(%r{^spec/.+_spec\.rb$})
@@ -20,8 +25,9 @@ guard :rspec, cmd: 'bin/spring rspec' do
   end
 
   # If a controller changed, run the corresponding controller and request specs
-  watch(%r{^app/controllers/(.+_controller)\.rb$}) do |m|
-    [ "spec/controllers/#{m[1]}_spec.rb", "spec/requests/#{m[1]}_spec.rb" ]
+  watch(%r{^app/controllers/(.+)_controller\.rb$}) do |m|
+    [ "spec/controllers/#{m[1]}_controller_spec.rb" ] +
+    Dir["spec/requests/#{m[1].chomp('s')}*_spec.rb"]
   end
 
   # If the ApplicationRecord changed, run all model, controller and request specs
@@ -31,16 +37,13 @@ guard :rspec, cmd: 'bin/spring rspec' do
 
   # If a model changed, run that model's specs and associated controller and request specs
   watch(%r{^app/models/(.+)\.rb$}) do |m|
-    [
-      "spec/models/#{m[1]}_spec.rb",
-      "spec/controllers/#{m[1]}s_controller_spec.rb",
-      "spec/requests/#{m[1]}s_controller_spec.rb"
-    ]
+    [ "spec/models/#{m[1]}_spec.rb", "spec/controllers/#{m[1]}s_controller_spec.rb" ] +
+    Dir["spec/requests/#{m[1]}*_spec.rb"]
   end
 
   # If a view changed, run that view's specs and associated request specs
   watch(%r{^app/views/(.*)(/[^/]*\.erb|haml|slim)$}) do |m|
-    [ "spec/views/#{m[1]}#{m[2]}_spec.rb", "spec/requests/#{m[1]}_controller_spec.rb" ]
+    [ "spec/views/#{m[1]}#{m[2]}_spec.rb" ] + Dir["spec/requests/#{m[1].chomp('s')}*_spec.rb"]
   end
 
   # If the ApplicationJob changed, run all job specs

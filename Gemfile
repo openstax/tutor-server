@@ -259,9 +259,12 @@ group :development, :test do
   # Testing excel files
   gem 'roo'
 
-  # Speedup and run specs when files change
+  # Speedup rails commands and rspec
   gem 'spring'
   gem 'spring-commands-rspec'
+
+  # Run bundle install and specs when files change
+  gem 'guard-bundler'
   gem 'guard-rspec'
 
   # Trace AR queries
