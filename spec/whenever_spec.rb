@@ -23,5 +23,4 @@ RSpec.describe 'whenever schedule' do
   def eval_runner_tasks(regex)
     schedule.jobs[:runner].each { |job| eval job[:task] if job[:task].match(regex)}
   end
-
 end

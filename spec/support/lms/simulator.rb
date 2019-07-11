@@ -255,14 +255,14 @@ class Lms::Simulator
 
   def expect_to_receive_score(user:, assignment:, score:)
     this = self
-    spec.instance_eval do
+    spec.instance_exec do
       expect(this).to receive(:received_score).with(user: user, assignment: assignment, score: score)
     end
   end
 
   def expect_not_to_receive_score(user:, assignment:)
     this = self
-    spec.instance_eval do
+    spec.instance_exec do
       expect(this).not_to receive(:received_score).with(user: user, assignment: assignment, score: anything())
     end
   end

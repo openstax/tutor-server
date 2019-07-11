@@ -1,4 +1,4 @@
-guard :rspec, cmd: 'bin/rspec' do
+guard :rspec, cmd: 'bin/spring rspec' do
   # If a spec helper changed, run all specs
   watch(%r{^spec/.+_helper\.rb$}) { 'spec' }
 
