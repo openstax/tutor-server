@@ -15,19 +15,6 @@ nav.navbar.production {
   border-bottom: 2px solid red;
 }
 
-.concept-coach-stats thead {
-  background-color: white;
-}
-
-.concept-coach-stats #overall, .concept-coach-stats .book {
-  color: white;
-  background-color: black;
-}
-
-.concept-coach-stats .chapter {
-  background-color: #f9f9f9;
-}
-
 [data-toggle="popover"] {
   cursor: pointer;
 }
@@ -98,8 +85,4 @@ nav.navbar.production {
     display: block;
     overflow: hidden;
   }
-}
-
-.excluded-exercises-export-form{
-  margin-bottom: 50px;
 }
