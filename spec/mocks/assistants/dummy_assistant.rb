@@ -1,7 +1,7 @@
 class DummyAssistant < Tasks::Assistants::GenericAssistant
 
   def self.schema
-    "{}"
+    '{}'
   end
 
   def build_tasks

@@ -14,6 +14,11 @@ guard :rspec, cmd: 'bin/spring rspec' do
   # If the ApplicationController changed, run all controller and request specs
   watch('app/controllers/application_controller.rb') { [ 'spec/controllers', 'spec/requests' ] }
 
+  # If the ApiController changed, run all controller and request specs for that API version
+  watch(%r{^app/controllers/api/(.+?)/api_controller\.rb$}) do |m|
+    [ "spec/controllers/api/#{m[1]}", "spec/requests/api/#{m[1]} "]
+  end
+
   # If a controller changed, run the corresponding controller and request specs
   watch(%r{^app/controllers/(.+)_controller\.rb$}) do |m|
     [ "spec/controllers/#{m[1]}_controller_spec.rb", "spec/requests/#{m[1]}_controller_spec.rb" ]
