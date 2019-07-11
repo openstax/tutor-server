@@ -38,8 +38,6 @@ class Content::Models::Page < IndestructibleRecord
   has_one :ecosystem, through: :book
 
   has_many :exercises, dependent: :destroy, inverse_of: :page
-  has_many :cc_stats, class_name: 'Tasks::CcPageStatsView',
-                      foreign_key: 'coach_task_content_page_id'
   has_many :page_tags, dependent: :destroy, inverse_of: :page
   has_many :tags, through: :page_tags
 

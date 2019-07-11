@@ -196,9 +196,6 @@ gem 'request_store'
 # Use PostgreSQL cursors with ActiveRecord
 gem 'postgresql_cursor', '~> 0.6.2'
 
-# manage PostgresQL view migrations
-gem 'scenic', '~> 1.5'
-
 # In place form editing on admin menu
 gem 'best_in_place'
 
