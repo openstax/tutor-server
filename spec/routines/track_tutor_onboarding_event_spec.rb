@@ -59,7 +59,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   def expect_call_to_set_timestamp(timestamp_field)
     cm = nil
-    time = Chronic.parse("July 23, 2017 5:04pm")
+    time = Time.parse("July 23, 2017 5:04pm")
     Timecop.freeze(time) do
       cm = call
       expect(cm).to be_persisted

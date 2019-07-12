@@ -28,8 +28,6 @@ class Demo::Tasks < Demo::Base
     end
 
     wait_for_parallel_completion
-
-    Timecop.return_all
   end
 
 

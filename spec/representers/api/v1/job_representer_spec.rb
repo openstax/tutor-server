@@ -95,7 +95,7 @@ RSpec.describe Api::V1::JobRepresenter, type: :representer do
      :kill_requested_at].each do |timestamp|
       it "can be read (#{timestamp})" do
         allow(job).to receive(timestamp).and_return(time)
-        expect(Chronic.parse(representation[timestamp.to_s])).to be_within(1).of(time)
+        expect(Time.parse(representation[timestamp.to_s])).to be_within(1).of(time)
       end
     end
   end

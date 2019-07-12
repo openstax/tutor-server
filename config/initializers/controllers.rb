@@ -1,10 +1,9 @@
 ActionController::Base.class_exec do
   helper ApplicationHelper
 
-  before_action :load_time
+  around_action :set_app_date_time
 
-  after_action :set_app_date_header
-  # skip setting date and don't raise exception if it hasn't been set
+  # skip setting regular date header and don't raise exception if the callback hasn't been set
   skip_after_action :set_date_header, raise: false
 
   protected
@@ -17,11 +16,28 @@ ActionController::Base.class_exec do
     end.marshal_dump.except(*opts.keys)
   end
 
-  def load_time
-    Timecop.load_time if Timecop.enabled?
+  def set_app_date_time
+    time_header = request.headers['X-App-Date']
+    if IAm.real_production? || time_header.blank?
+      yield
+      set_app_date_header
+      return
+    end
+
+    begin
+      time = Time.parse time_header
+    rescue ArgumentError
+      render plain: 'Invalid X-App-Date header', status: :bad_request
+      set_app_date_header
+    else
+      Timecop.travel(time) do
+        yield
+        set_app_date_header
+      end
+    end
   end
 
   def set_app_date_header
-    response.header['X-App-Date'] = Time.current.httpdate
+    response.headers['X-App-Date'] ||= Time.current.httpdate
   end
 end

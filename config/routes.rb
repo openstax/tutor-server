@@ -278,13 +278,6 @@ Rails.application.routes.draw do
 
     resources :tags, only: [ :index, :edit, :update, :show ]
 
-    scope controller: :timecop do
-      get :timecop
-      put :reset_time
-      post :freeze_time
-      post :time_travel
-    end
-
     resources :payments, only: :index do
       collection do
         put :extend_payment_due_at

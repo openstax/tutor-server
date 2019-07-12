@@ -2,122 +2,130 @@ require 'rails_helper'
 
 RSpec.describe ApplicationController, type: :controller do
   subject(:controller) do
-    ApplicationController.new.tap { |cc| cc.response = ActionDispatch::TestResponse.new }
-  end
-
-  before(:all) do
-    @timecop_enable = Rails.application.secrets[:timecop_enable]
-  end
-
-  after(:all) do
-    Rails.application.secrets[:timecop_enable] = @timecop_enable
-  end
-
-  context 'with timecop enabled' do
-    before(:all) do
-      Rails.application.secrets[:timecop_enable] = true
-    end
-
-    it 'travels time' do
-      t = Time.current
-
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t)
-
-      Settings::Timecop.offset = 1.hour
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t + 1.hour)
-
-      Settings::Timecop.offset = -1.hour
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t - 1.hour)
-
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t)
-    end
-
-    it 'sets the X-App-Date header to the timecop time' do
-      t = Time.current
-
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t)
-
-      Settings::Timecop.offset = 1.hour
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t + 1.hour)
-
-      Settings::Timecop.offset = -1.hour
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t - 1.hour)
-
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t)
+    Class.new(described_class) do
+      skip_before_action :authenticate_user!
+    end.new.tap do |controller|
+      controller.request = request
+      controller.response = response
     end
   end
 
-  context 'with timecop disabled' do
-    before(:all) do
-      Rails.application.secrets[:timecop_enable] = false
+  context 'callbacks' do
+    subject do |&block|
+      controller.run_callbacks(:process_action, &block)
+      @response = controller.response
+    end
+    let(:current_time)   { Time.current }
+
+    context 'with no X-App-Date header in the request' do
+      context 'not in real production' do
+        before { expect(IAm.real_production?).to eq false }
+
+        it "does not modify the server's time" do
+          expect(Time.current).to be_within(1).of current_time
+          subject { expect(Time.current).to be_within(1).of current_time }
+          expect(Time.current).to be_within(1).of current_time
+        end
+
+        it "sets the response's X-App-Date header to the actual time" do
+          subject
+
+          expect(Time.parse(response.headers['X-App-Date'])).to be_within(1).of current_time
+        end
+      end
+
+      context 'in real production' do
+        before { expect(IAm).to receive(:real_production?).and_return(true) }
+
+        it "does not modify the server's time" do
+          expect(Time.current).to be_within(1).of current_time
+          subject { expect(Time.current).to be_within(1).of current_time }
+          expect(Time.current).to be_within(1).of current_time
+        end
+
+        it "sets the response's X-App-Date header to the actual time" do
+          subject
+
+          expect(Time.parse(response.headers['X-App-Date'])).to be_within(1).of current_time
+        end
+      end
     end
 
-    it 'does not travel time' do
-      t = Time.current
+    context 'with a valid X-App-Date header in the request' do
+      let(:max_time_delta) { 100000000 }
+      let(:time)           { current_time + rand(max_time_delta) - max_time_delta/2 }
+      before               { request.headers['X-App-Date'] = time.httpdate }
 
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t)
+      context 'not in real production' do
+        before { expect(IAm.real_production?).to eq false }
 
-      Settings::Timecop.offset = 1.hour
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t)
+        it "sets the server's time to the request's X-App-Date header" do
+          expect(Time.current).to be_within(1).of current_time
+          subject { expect(Time.current).to be_within(1).of time }
+          expect(Time.current).to be_within(1).of current_time
+        end
 
-      Settings::Timecop.offset = -1.hour
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t)
+        it "sets the response's X-App-Date header based on the request header" do
+          subject
 
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      expect(Time.current).to be_within(1).of(t)
+          expect(response).to have_http_status :ok
+          expect(Time.parse(response.headers['X-App-Date'])).to be_within(1).of time
+        end
+      end
+
+      context 'in real production' do
+        before { expect(IAm).to receive(:real_production?).and_return(true) }
+
+        it "does not modify the server's time" do
+          expect(Time.current).to be_within(1).of current_time
+          subject { expect(Time.current).to be_within(1).of current_time }
+          expect(Time.current).to be_within(1).of current_time
+        end
+
+        it "sets the response's X-App-Date header to the actual time" do
+          subject
+
+          expect(Time.parse(response.headers['X-App-Date'])).to be_within(1).of current_time
+        end
+      end
     end
 
-    it 'sets the X-App-Date header to the actual time' do
-      t = Time.current
+    context 'with an invalid X-App-Date header in the request' do
+      before { request.headers['X-App-Date'] = 'Yesterday' }
 
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t)
+      context 'not in real production' do
+        before { expect(IAm.real_production?).to eq false }
 
-      Settings::Timecop.offset = 1.hour
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t)
+        it "does not modify the server's time" do
+          expect(Time.current).to be_within(1).of current_time
+          subject { expect(Time.current).to be_within(1).of current_time }
+          expect(Time.current).to be_within(1).of current_time
+        end
 
-      Settings::Timecop.offset = -1.hour
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t)
+        it "returns 400 Bad Request and sets the response's X-App-Date header to the actual time" do
+          subject
 
-      Settings::Timecop.offset = nil
-      controller.send :load_time
-      controller.send :set_app_date_header
-      header_time = Time.parse(controller.response.headers['X-App-Date'])
-      expect(header_time).to be_within(1).of(t)
+          expect(response).to have_http_status :bad_request
+          expect(response.body).to include('Invalid X-App-Date header')
+          expect(Time.parse(response.headers['X-App-Date'])).to be_within(1).of current_time
+        end
+      end
+
+      context 'in real production' do
+        before { expect(IAm).to receive(:real_production?).and_return(true) }
+
+        it "does not modify the server's time" do
+          expect(Time.current).to be_within(1).of current_time
+          subject { expect(Time.current).to be_within(1).of current_time }
+          expect(Time.current).to be_within(1).of current_time
+        end
+
+        it "sets the response's X-App-Date header to the actual time" do
+          subject
+
+          expect(Time.parse(response.headers['X-App-Date'])).to be_within(1).of current_time
+        end
+      end
     end
   end
 end
