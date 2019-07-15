@@ -3,7 +3,6 @@
 
 $(document).ready(function() {
   $('[data-toggle="popover"]').popover();
-  $('table.concept-coach-stats').stickyTableHeaders();
 
   //========== Search bar show only on List of Courses tab =============//
   $(".admin ul li a").click(function(e){

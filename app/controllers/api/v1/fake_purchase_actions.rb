@@ -1,7 +1,6 @@
 module Api::V1::FakePurchaseActions
-
   def self.included(base)
-    base.class_eval do
+    base.class_exec do
       api :POST, '/fake', 'Adds fake purchased items to Tutor'
       description <<-EOS
         Adds fake purchased items to Tutor for testing.  In the posted data, include
@@ -22,5 +21,4 @@ module Api::V1::FakePurchaseActions
       end
     end
   end
-
 end

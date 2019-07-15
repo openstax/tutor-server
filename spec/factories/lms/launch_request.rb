@@ -22,12 +22,17 @@ FactoryBot.define do
       result_sourcedid { SecureRandom.hex(10) }
     end
 
-    initialize_with {
+    initialize_with do
       raise "`app` must be defined" if app.nil?
 
-      roles = ([self.roles].flatten.compact).uniq.map(&:to_sym).map{|rr| ROLES[rr]}
+      roles_map = {
+        student: IMS::LIS::Roles::Context::URNs::Learner,
+        instructor: IMS::LIS::Roles::Context::URNs::Instructor,
+        administrator: IMS::LIS::Roles::Context::URNs::Administrator
+      }
+      roles = ([self.roles].flatten.compact).uniq.map(&:to_sym).map{|rr| roles_map[rr]}
 
-      raise "Encountered an unknown role" if roles.any?{|rr| rr.nil?}
+      raise "Encountered an unknown role" if roles.any?(&:nil?)
 
       new(
         request_parameters: HashWithIndifferentAccess.new({
@@ -47,12 +52,6 @@ FactoryBot.define do
         }).compact,
         request_url: request_url
       )
-    }
-
-    ROLES = {
-      student: IMS::LIS::Roles::Context::URNs::Learner,
-      instructor: IMS::LIS::Roles::Context::URNs::Instructor,
-      administrator: IMS::LIS::Roles::Context::URNs::Administrator
-    }
+    end
   end
 end

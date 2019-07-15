@@ -276,13 +276,6 @@ Rails.application.routes.draw do
 
     resources :jobs, only: [ :index, :show ]
 
-    namespace :stats do
-      get :courses
-      get :excluded_exercises
-      post :excluded_exercises_to_csv
-      get :concept_coach
-    end
-
     resources :tags, only: [ :index, :edit, :update, :show ]
 
     scope controller: :timecop do

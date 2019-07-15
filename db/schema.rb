@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_18_201206) do
+ActiveRecord::Schema.define(version: 2019_07_11_001122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -1191,26 +1191,4 @@ ActiveRecord::Schema.define(version: 2019_06_18_201206) do
   add_foreign_key "user_researchers", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_tour_views", "user_profiles"
   add_foreign_key "user_tour_views", "user_tours"
-
-  create_view "cc_page_stats", materialized: true, sql_definition: <<-SQL
-      SELECT content_exercises.content_page_id AS coach_task_content_page_id,
-      course_membership_periods.course_profile_course_id AS course_id,
-      course_membership_periods.id AS course_period_id,
-      tasks_task_steps.group_type,
-      count(tasks_task_steps.*) AS steps_count,
-      max(tasks_task_steps.last_completed_at) AS task_steps_last_completed_at,
-      count(tasks_task_steps.first_completed_at) AS completed_count,
-      count(tasks_task_steps.first_completed_at) FILTER (WHERE ((tasks_tasked_exercises.answer_id)::text = (tasks_tasked_exercises.correct_answer_id)::text)) AS correct_count,
-      array_agg(DISTINCT tasks_taskings.entity_role_id) AS role_ids,
-      array_agg(DISTINCT tasks_tasks.id) AS task_ids
-     FROM (((((content_exercises
-       JOIN tasks_tasked_exercises ON ((tasks_tasked_exercises.content_exercise_id = content_exercises.id)))
-       JOIN tasks_task_steps ON (((tasks_task_steps.tasked_id = tasks_tasked_exercises.id) AND ((tasks_task_steps.tasked_type)::text = 'Tasks::Models::TaskedExercise'::text))))
-       JOIN tasks_tasks ON (((tasks_tasks.id = tasks_task_steps.tasks_task_id) AND (tasks_tasks.hidden_at IS NULL) AND (tasks_tasks.completed_exercise_steps_count > 0))))
-       JOIN tasks_taskings ON ((tasks_taskings.tasks_task_id = tasks_tasks.id)))
-       JOIN course_membership_periods ON (((course_membership_periods.id = tasks_taskings.course_membership_period_id) AND (course_membership_periods.archived_at IS NULL))))
-    GROUP BY course_membership_periods.course_profile_course_id, course_membership_periods.id, content_exercises.content_page_id, tasks_task_steps.group_type;
-  SQL
-  add_index "cc_page_stats", ["course_period_id", "coach_task_content_page_id", "group_type"], name: "cc_page_stats_uniq", unique: true
-
 end

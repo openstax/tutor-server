@@ -21,7 +21,7 @@ class Lms::LaunchHelper
   end
 
   def pair_launch_to_course
-    spec.instance_eval do
+    spec.instance_exec do
       expect(response.status).to eq 302
 
       get response.body.match(/a href=\"(.*)\"/)[1] # 'click' you are being redirected
@@ -39,7 +39,7 @@ class Lms::LaunchHelper
 
     this = self
 
-    spec.instance_eval do
+    spec.instance_exec do
       expect(response.status).to eq 200
 
       get response.body.match(/a target=\"_blank\" .* href=\"(.*)\"/)[1] # 'click' open in new tab

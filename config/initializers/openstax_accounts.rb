@@ -29,11 +29,11 @@ OpenStax::Accounts.configure do |config|
   end
 end
 
-OpenStax::Accounts::ApplicationController.class_exec do
-  helper ApplicationHelper, OpenStax::Utilities::OsuHelper
-end
+ActiveSupport::Reloader.to_prepare do
+  OpenStax::Accounts::ApplicationController.class_exec do
+    helper ApplicationHelper, OpenStax::Utilities::OsuHelper
+  end
 
-Rails.application.config.to_prepare do
   OpenStax::Accounts::Account.class_exec do
     has_one :profile, primary_key: :id,
             foreign_key: :account_id,

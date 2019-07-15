@@ -28,6 +28,4 @@ module UniqueTokenable
   end
 end
 
-ActiveRecord::Base.class_eval do
-  include UniqueTokenable
-end
+ActiveRecord::Base.send :include, UniqueTokenable
