@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
-
-  let(:instance) { described_class.new }
+  subject(:instance) { described_class.new }
 
   context "#best_sf_contact_id_for_course" do
     let(:course)        { FactoryBot.create :course_profile_course }
@@ -115,39 +114,32 @@ RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
 
   context "#notify_errors" do
     it 'does nothing if no errors' do
-      expect(Rails.logger).not_to receive(:warn)
+      expect(Rails.logger).not_to receive(:error)
+      expect(Raven).not_to receive(:capture_exception)
+      expect(Raven).not_to receive(:capture_message)
       run_notify_errors
     end
 
-    context "when error email allowed" do
-      it 'logs but does not email if not real production' do
-        real_production!(false)
-        expect(Rails.logger).to receive(:warn)
-        expect(DevMailer).not_to receive(:inspect_object)
-        catch(:go_to_next_record) { instance.error!(message: 'yo') }
-        run_notify_errors
-      end
+    { exception: RuntimeError.new, message: 'yo' }.each do |key, value|
+      context key.to_s do
+        let(:raven_method) { "capture_#{key}".to_sym }
 
-      it 'logs and emails if real production' do
-        real_production!(true)
-        expect(Rails.logger).to receive(:warn)
-        catch(:go_to_next_record) { instance.error!(message: 'yo') }
-        expect{ run_notify_errors }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        it 'logs the error to the console and to Sentry' do
+          expect(Rails.logger).to receive(:error)
+          expect(Raven).to receive(raven_method) { |first_arg, *| expect(first_arg).to eq value }
+          catch(:go_to_next_record) { instance.error!(key => value) }
+          expect { run_notify_errors }.not_to change { ActionMailer::Base.deliveries.count }
+        end
       end
+    end
 
-      it 'throws go_to_next_record' do
-        expect{ run_notify_errors('yo') }.to throw_symbol(:go_to_next_record)
-      end
+    it 'throws go_to_next_record' do
+      expect { run_notify_errors('yo') }.to throw_symbol(:go_to_next_record)
     end
 
     def run_notify_errors(message = nil)
       instance.error!(message: message) if message.present?
-      instance.notify_errors(true)
+      instance.notify_errors
     end
   end
-
-  def real_production!(true_or_false)
-    allow_any_instance_of(described_class).to receive(:is_real_production?) { true_or_false }
-  end
-
 end

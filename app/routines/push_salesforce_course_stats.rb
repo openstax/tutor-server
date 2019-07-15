@@ -1,5 +1,4 @@
 class PushSalesforceCourseStats
-
   COURSE_BATCH_SIZE = 10
 
   lev_routine transaction: :no_transaction
@@ -23,14 +22,14 @@ class PushSalesforceCourseStats
   # the problem for logging and email notification, then stops the processing of
   # the current period via `throw`/`catch` calls (to avoid always remembering to
   # `return` after `error!` and to avoid using exceptions which we catch all of)
-  def exec(allow_error_email:)
+  def exec
     log { "Starting..." }
 
     applicable_courses.respond_to?(:find_in_batches) ?
       applicable_courses.find_in_batches(batch_size: COURSE_BATCH_SIZE, &method(:process_courses)) :
       applicable_courses.each_slice(COURSE_BATCH_SIZE, &method(:process_courses))
 
-    notify_errors(allow_error_email)
+    notify_errors
     notify_skips
 
     log do
@@ -182,12 +181,8 @@ class PushSalesforceCourseStats
     begin
       outputs.num_errors += 1
 
-      error = { message: message || exception.try(:message) }
-      error[:exception] = {
-        class: exception.class.name,
-        message: exception.message,
-        first_backtrace_line: exception.backtrace.try(:first)
-      } if exception.present?
+      error = { message: message || exception&.message || 'No message or exception given' }
+      error[:exception] = exception
       error[:course] = course.id if course.present?
       error[:period] = period.id if period.present?
 
@@ -212,24 +207,35 @@ class PushSalesforceCourseStats
     end
   end
 
-  def notify_errors(allow_error_email)
+  def notify_errors
     return if @errors.empty?
 
-    log(:warn) { "[#{self.class.name}] Errors: " + @errors.inspect }
+    log_errors = @errors.map do |error|
+      exception = error[:exception]
+      next error unless exception.present?
 
-    DevMailer.inspect_object(
-      object: @errors,
-      subject: "#{self.class.name} errors",
-      to: Rails.application.secrets.salesforce[:mail_recipients]
-    ).deliver_later if allow_error_email && is_real_production?
+      error.merge(
+        exception: {
+          class: exception.class.name,
+          message: exception.message,
+          first_backtrace_line: exception.backtrace&.first
+        }
+      )
+    end
+    log(:error) { "[#{self.class.name}] Errors: " + log_errors.inspect }
+
+    @errors.each do |error|
+      exception = error[:exception]
+
+      if exception.nil?
+        Raven.capture_message error[:message], error.except(:message)
+      else
+        Raven.capture_exception exception, error.except(:exception)
+      end
+    end
   end
 
   def notify_skips
     log { "Skips: " + @skips.inspect } unless @skips.empty?
   end
-
-  def is_real_production?
-    Rails.application.secrets.environment_name == "prodtutor"
-  end
-
 end

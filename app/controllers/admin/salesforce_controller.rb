@@ -4,7 +4,7 @@ module Admin
     end
 
     def update
-      outputs = PushSalesforceCourseStats.call(allow_error_email: true)
+      outputs = PushSalesforceCourseStats.call
 
       flash[:notice] = "Ran on #{outputs[:num_courses]} course(s); " +
                        "updated #{outputs[:num_updates]} course(s); " +

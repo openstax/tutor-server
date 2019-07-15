@@ -230,12 +230,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   #### HELPERS ####
 
   def call
-    PushSalesforceCourseStats.call(allow_error_email: true)
+    PushSalesforceCourseStats.call
   end
 
   def call_expecting_no_errors
     expect(instance).not_to receive(:error!)
-    instance.call(allow_error_email: true)
+    instance.call
   end
 
   def call_expecting_errors(hash_or_message)
@@ -244,7 +244,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                                         .with(hash_including(hash))
                                         .and_call_original
 
-    instance.call(allow_error_email: true)
+    instance.call
   end
 
   def call_expecting_skips(hash_or_message)
@@ -253,7 +253,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                                        .with(hash_including(hash))
                                        .and_call_original
 
-    instance.call(allow_error_email: true)
+    instance.call
   end
 
   def expect_tcp_stats(period, extras = {})
