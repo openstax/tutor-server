@@ -13,13 +13,16 @@ module Tasks
       is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]] \
         if is_teacher.nil?
 
-      periods = if is_teacher
-        course.periods.reject(&:archived?)
+      periods = []
+      if is_teacher
+        periods = course.periods.reject(&:archived?)
       else
-        raise(SecurityTransgression) \
-          if role.student.nil? || role.student.course_profile_course_id != course.id
+        member = role.course_member
 
-        [ role.student.period ]
+        raise(SecurityTransgression) \
+          if member.nil? || member.course_profile_course_id != course.id
+
+        periods = [ member.period ]
       end
 
       tz = course.time_zone.try!(:to_tz) || Time.zone
@@ -154,7 +157,9 @@ module Tasks
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
-      st = CourseMembership::Models::Student.arel_table
+      st = CourseMembership::Models.const_get(
+        role.teacher_student? ? 'TeacherStudent' : 'Student'
+      ).arel_table
       up = User::Models::Profile.arel_table
       ac = OpenStax::Accounts::Account.arel_table
       rel = Tasks::Models::Task
@@ -162,9 +167,11 @@ module Tasks
           [
             tt[ Arel.star ],
             er[:id].as('"role_id"'),
-            st[:student_identifier],
+            role.teacher_student? ?
+              Arel::Nodes::SqlLiteral.new("'' as student_identifier") : st[:student_identifier],
             st[:course_membership_period_id],
-            st[:dropped_at],
+            role.teacher_student? ?
+              Arel::Nodes::SqlLiteral.new('null as dropped_at') :  st[:dropped_at],
             up[:id].as('"user_id"'),
             ac[:username],
             ac[:first_name],
@@ -173,18 +180,32 @@ module Tasks
         )
         .joins(
           task_plan: :tasking_plans,
-          taskings: { role: [ :student, profile: :account ] }
         )
         .where(
           task_type: task_types,
           task_plan: { withdrawn_at: nil },
-          taskings: { role: { student: { course_profile_course_id: course.id } } }
         )
         .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
         .preload(task_plan: :tasking_plans)
         .reorder(nil).distinct
 
-      rel = rel.joins(:taskings).where(taskings: { entity_role_id: role.id }) unless is_teacher
+      if role.teacher?
+        rel = rel.joins(
+          taskings: { role: [ :student, profile: :account ] }
+        )
+      elsif role.teacher_student?
+        rel = rel.joins(
+          taskings: { role: [ :teacher_student, profile: :account ] }
+          ).where(
+            taskings: { role: role }
+          )
+      elsif role.student?
+        rel = rel.joins(
+          taskings: { role: [ :student, profile: :account ] }
+        ).where(
+          taskings: { role: role }
+        )
+      end
 
       rel.to_a
     end
