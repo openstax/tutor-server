@@ -154,11 +154,12 @@ module Tasks
     # reorder(nil) is required for distinct to work
     # distinct is required for preloading to work
     def get_course_tasks(course, role, is_teacher, current_time_ntz)
+      is_teacher_student = !is_teacher && role.present? && role.teacher_student?
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
       st = CourseMembership::Models.const_get(
-        role.teacher_student? ? 'TeacherStudent' : 'Student'
+        is_teacher_student ? 'TeacherStudent' : 'Student'
       ).arel_table
       up = User::Models::Profile.arel_table
       ac = OpenStax::Accounts::Account.arel_table
@@ -167,11 +168,11 @@ module Tasks
           [
             tt[ Arel.star ],
             er[:id].as('"role_id"'),
-            role.teacher_student? ?
+            is_teacher_student ?
               Arel::Nodes::SqlLiteral.new("'' as student_identifier") : st[:student_identifier],
             st[:course_membership_period_id],
-            role.teacher_student? ?
-              Arel::Nodes::SqlLiteral.new('null as dropped_at') :  st[:dropped_at],
+            is_teacher_student ?
+              Arel::Nodes::SqlLiteral.new('null as dropped_at') : st[:dropped_at],
             up[:id].as('"user_id"'),
             ac[:username],
             ac[:first_name],
@@ -189,11 +190,11 @@ module Tasks
         .preload(task_plan: :tasking_plans)
         .reorder(nil).distinct
 
-      if role.teacher?
+      if is_teacher
         rel = rel.joins(
           taskings: { role: [ :student, profile: :account ] }
         )
-      elsif role.teacher_student?
+      elsif is_teacher_student
         rel = rel.joins(
           taskings: { role: [ :teacher_student, profile: :account ] }
           ).where(
