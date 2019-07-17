@@ -1,5 +1,3 @@
-require 'demo'
-
 desc <<-DESC.strip_heredoc
   Initializes data for the deployment demo (run all demo:* tasks)
   Book can be either all, bio, phys or soc.

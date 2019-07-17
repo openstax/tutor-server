@@ -1,7 +1,3 @@
-require 'yaml'
-require 'erb'
-require_relative 'content_helper'
-
 class Demo::Config::YamlFileParser
   def initialize(file_path)
     @content = File.read(file_path)

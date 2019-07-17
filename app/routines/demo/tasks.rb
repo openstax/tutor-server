@@ -1,6 +1,3 @@
-require_relative 'base'
-require_relative 'config/course'
-
 # Adds students to the course periods, assigns Sets up the periods and students for a course
 # and then generates activity for them
 class Demo::Tasks < Demo::Base

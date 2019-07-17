@@ -1,6 +1,3 @@
-require 'hashie/mash'
-require_relative 'yaml_file_parser'
-
 # Reads in a YAML file containg configuration
 class Demo::Config::Content
   extend Forwardable

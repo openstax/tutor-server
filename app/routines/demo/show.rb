@@ -1,6 +1,3 @@
-require_relative 'base'
-require_relative 'config/course'
-
 # Loops through the courses and periods that are to be created and worked.
 # Logs the student's assignments for review
 class Demo::Show < Demo::Base

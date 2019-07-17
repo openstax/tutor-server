@@ -1,5 +1,3 @@
-require_relative 'base'
-
 # Creates the admin, content, support and zz users
 class Demo::Staff < Demo::Base
 

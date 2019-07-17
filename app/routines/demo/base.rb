@@ -1,6 +1,3 @@
-require 'hashie/mash'
-require_relative 'config/content'
-
 class Demo::Base
   CONFIG_BASE_DIR = "#{Rails.root}/config/demo"
 

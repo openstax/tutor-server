@@ -1,5 +1,3 @@
-require_relative 'content'
-
 # Reads in a YAML file containg configuration for a CNX book
 class Demo::Config::Book < Demo::Config::Content
   def_delegators :@configuration, :salesforce_book_name, :appearance_code, :default_course_name,

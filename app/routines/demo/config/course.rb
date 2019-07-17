@@ -1,5 +1,3 @@
-require_relative 'content'
-
 # Reads in a YAML file containg configuration for a course and its students
 class Demo::Config::Course < Demo::Config::Content
   def_delegators :@configuration,

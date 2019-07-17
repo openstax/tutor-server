@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'vcr_helper'
-require 'demo'
 
 RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
   context 'with demo fixtures' do
@@ -15,6 +14,8 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
       # The demo rake task runs demo:content, demo:tasks and demo:work
       # For testing a lightweight import is performed so it completes faster
       # The customized import files for the specs are located in the fixtures directory
+      Demo::Base
+
       stub_const(
         'Demo::Base::CONFIG_BASE_DIR', File.join(File.dirname(__FILE__), '../fixtures/demo')
       )

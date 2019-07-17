@@ -1,6 +1,3 @@
-require_relative 'base'
-require_relative 'config/book'
-
 # Imports a book from CNX and creates a course with periods from it's data
 class Demo::Books < Demo::Base
   lev_routine
