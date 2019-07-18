@@ -20,7 +20,6 @@ env:
     - OXT_DB_PASS=
     - OXT_TEST_DB=travis_ci_test
     - PARALLEL_TEST_PROCESSORS=2
-    - DEMO_MAX_PROCESSES=0
   matrix:
     - TAG=speed:fast
     - TAG=~speed:fast

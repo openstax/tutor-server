@@ -1,6 +1,5 @@
 # Creates the admin, content, support and zz users
 class Demo::Staff < Demo::Base
-
   lev_routine
 
   uses_routine User::SetAdministratorState, as: :set_administrator

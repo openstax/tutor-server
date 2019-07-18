@@ -17,6 +17,4 @@ module Api
 end
 
 module Demo
-  module Config
-  end
 end

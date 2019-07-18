@@ -3,28 +3,22 @@
 class Demo::Tasks < Demo::Base
   lev_routine
 
-  disable_automatic_lev_transactions
-
   uses_routine DistributeTasks
 
   protected
 
-  def exec(config: :all, random_seed: nil)
+  def exec(config:, random_seed: nil)
     set_random_seed(random_seed)
 
-    in_parallel(Demo::Config::Course[config], transaction: true) do |course_configs, initial_index|
-      course_configs.each do |course_config|
-        course = find_demo_course_by_name!(course_config.course_name)
+    course_config = config.is_a?(Demo::Config::Course) ? config : Demo::Config::Course.new(config)
 
-        # Clear any leftover data in the course
-        Tasks::Models::TaskPlan.where(owner: course).delete_all
+    course = find_demo_course_by_name!(course_config.course_name)
 
-        assignments = course_config.assignments + get_auto_assignments(course_config).flatten
-        assignments.each { |assignment| create_assignment(course_config, assignment, course) }
-      end
-    end
+    # Clear any leftover data in the course
+    Tasks::Models::TaskPlan.where(owner: course).delete_all
 
-    wait_for_parallel_completion
+    assignments = course_config.assignments + get_auto_assignments(course_config).flatten
+    assignments.each { |assignment| create_assignment(course_config, assignment, course) }
   end
 
 

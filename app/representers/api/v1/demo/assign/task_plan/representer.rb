@@ -1,4 +1,4 @@
-class Api::V1::Demo::Tasks::TaskRepresenter < Roar::Decorator
+class Api::V1::Demo::Assign::TaskPlan::Representer < Roar::Decorator
   include Roar::JSON
 
   property :title,
@@ -19,13 +19,13 @@ class Api::V1::Demo::Tasks::TaskRepresenter < Roar::Decorator
            writeable: true
 
   collection :book_locations,
-             extend: Api::V1::Demo::Tasks::BookLocationRepresenter,
+             extend: Api::V1::Demo::Assign::TaskPlan::BookLocationRepresenter,
              readable: true,
              writeable: true,
              schema_info: { required: true }
 
   collection :assigned_to,
-             extend: Api::V1::Demo::Tasks::AssignedTo::Representer,
+             extend: Api::V1::Demo::Assign::TaskPlan::AssignedTo::Representer,
              readable: true,
              writeable: true,
              schema_info: { required: true }

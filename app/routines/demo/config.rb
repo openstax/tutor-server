@@ -1,5 +1,5 @@
 # Reads in a YAML file containg configuration
-class Demo::Config::Content
+class Demo::Config
   extend Forwardable
 
   def initialize(config_file)
@@ -11,13 +11,16 @@ class Demo::Config::Content
     raise NotImplementedError
   end
 
-  def self.[](config)
+  def self.dir(config)
     config_string = config.to_s
     config_string = '' if config_string == 'all'
 
     all_filenames = Dir[File.join(config_dir, '**/*.yml')]
-    filenames = all_filenames.select { |path| path.sub(config_dir, '').include?(config_string) }
-    filenames.map { |file| new(file) }
+    all_filenames.select { |path| path.sub(config_dir, '').include?(config_string) }
+  end
+
+  def self.[](config)
+    dir(config).map { |file| new(file) }
   end
 
   protected

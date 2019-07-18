@@ -1,4 +1,4 @@
-class Api::V1::Demo::Course::Representer < Roar::Decorator
+class Api::V1::Demo::Roster::Representer < Roar::Decorator
   include Roar::JSON
 
   property :course_id,
@@ -8,13 +8,13 @@ class Api::V1::Demo::Course::Representer < Roar::Decorator
            schema_info: { required: true }
 
   collection :teachers,
-             extend: Api::V1::Demo::Course::UserRepresenter,
+             extend: Api::V1::Demo::Roster::UserRepresenter,
              readable: true,
              writeable: true,
              schema_info: { required: true }
 
   collection :periods,
-             extend: Api::V1::Demo::Course::Period::Representer,
+             extend: Api::V1::Demo::Roster::Period::Representer,
              readable: true,
              writeable: true,
              schema_info: { required: true }

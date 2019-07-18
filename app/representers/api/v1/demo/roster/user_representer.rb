@@ -1,4 +1,4 @@
-class Api::V1::Demo::Course::UserRepresenter < Roar::Decorator
+class Api::V1::Demo::Roster::UserRepresenter < Roar::Decorator
   include Roar::JSON
 
   property :username,

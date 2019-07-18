@@ -1,9 +1,6 @@
 # Imports a book from CNX and creates a course with periods from it's data
 class Demo::Courses < Demo::Base
-
   lev_routine
-
-  disable_automatic_lev_transactions
 
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period
@@ -19,35 +16,30 @@ class Demo::Courses < Demo::Base
 
   protected
 
-  def exec(config: :all, random_seed: nil)
+  def exec(config:, random_seed: nil)
     # Choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
-    # Parallel step
-    in_parallel(Demo::Config::Course[config], transaction: true) do |course_configs, idx_start|
-      course_configs.each do |course_config|
-        offering = find_catalog_offering_by_salesforce_book_name course_config.salesforce_book_name
-        course = create_course(name: course_config.course_name,
-                               term: CourseProfile::Models::Course.terms[:demo],
-                               year: Time.current.year,
-                               catalog_offering: offering,
-                               is_college: course_config.is_college)
+    course_config = config.is_a?(Demo::Config::Course) ? config : Demo::Config::Course.new(config)
 
-        log { "Course: #{course.name} (id: #{course.id})" }
+    offering = find_catalog_offering_by_salesforce_book_name course_config.salesforce_book_name
+    course = create_course(name: course_config.course_name,
+                           term: CourseProfile::Models::Course.terms[:demo],
+                           year: Time.current.year,
+                           catalog_offering: offering,
+                           is_college: course_config.is_college)
 
-        course_config.teachers.each do |username|
-          configure_course_teacher(course, username)
-        end
+    log { "Course: #{course.name} (id: #{course.id})" }
 
-        course_config.periods.each_with_index do |period_config, index|
-          configure_course_period(course, period_config, index)
-        end
+    course_config.teachers.each do |username|
+      configure_course_teacher(course, username)
+    end
 
-        course_config.id = course.id
-      end # course_config
-    end # process
+    course_config.periods.each_with_index do |period_config, index|
+      configure_course_period(course, period_config, index)
+    end
 
-    wait_for_parallel_completion
+    course_config.id = course.id
   end
 
   def create_course(name:, term:, year:, catalog_offering:, is_college:,

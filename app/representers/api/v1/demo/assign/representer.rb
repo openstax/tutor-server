@@ -1,14 +1,14 @@
-class Api::V1::Demo::Course::Period::Representer < Roar::Decorator
+class Api::V1::Demo::Assign::Representer < Roar::Decorator
   include Roar::JSON
 
-  property :name,
+  property :course_id,
            type: String,
            readable: true,
            writeable: true,
            schema_info: { required: true }
 
-  collection :students,
-             extend: Api::V1::Demo::Course::UserRepresenter,
+  collection :task_plans,
+             extend: Api::V1::Demo::Assign::TaskPlan::Representer,
              readable: true,
              writeable: true,
              schema_info: { required: true }

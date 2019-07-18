@@ -1,5 +1,5 @@
 # Reads in a YAML file containg configuration for a course and its students
-class Demo::Config::Course < Demo::Config::Content
+class Demo::Config::Course < Demo::Config
   def_delegators :@configuration,
                  :id, :id=, :course_name, :salesforce_book_name, :is_college, :teachers
 

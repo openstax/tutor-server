@@ -3,13 +3,6 @@ require 'vcr_helper'
 
 RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
   context 'with demo fixtures' do
-    before(:all) do
-      @old_max_processes = ENV['DEMO_MAX_PROCESSES']
-      ENV['DEMO_MAX_PROCESSES'] = '0'
-    end
-
-    after(:all)  { ENV['DEMO_MAX_PROCESSES'] = @old_max_processes }
-
     before do
       # The demo rake task runs demo:content, demo:tasks and demo:work
       # For testing a lightweight import is performed so it completes faster
@@ -20,6 +13,9 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
         'Demo::Base::CONFIG_BASE_DIR', File.join(File.dirname(__FILE__), '../fixtures/demo')
       )
     end
+
+    let(:book_config)   { Demo::Config::Book.dir(:all).first }
+    let(:course_config) { Demo::Config::Course.dir(:all).first }
 
     it "doesn't catch on fire" do
       expect { expect(Demo::Staff.call.errors).to be_empty }.to(
@@ -48,7 +44,7 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
       expect(support.content_analyst).not_to be_present
       expect(support.customer_service).to be_present
 
-      expect { expect(Demo::Books.call.errors).to be_empty }.to(
+      expect { expect(Demo::Books.call(config: book_config).errors).to be_empty }.to(
         change do
           Content::Models::Ecosystem.where(
             title: 'APUSH (dc10e469-5816-411d-8ea3-39a9b0706a48@2.16)'
@@ -58,7 +54,7 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
         )
       )
 
-      expect { expect(Demo::Courses.call.errors).to be_empty }.to(
+      expect { expect(Demo::Courses.call(config: course_config).errors).to be_empty }.to(
         change { CourseProfile::Models::Course.where(name: 'AP US History Review').count }.by(1)
       )
       course = CourseProfile::Models::Course.order(created_at: :desc)
@@ -76,14 +72,14 @@ RSpec.describe Demo, type: :routine, vcr: VCR_OPTS do
         expect(review_student.account).not_to be_confirmed_faculty
       end
 
-      expect { expect(Demo::Tasks.call.errors).to be_empty }.to(
+      expect { expect(Demo::Tasks.call(config: course_config).errors).to be_empty }.to(
         change { Tasks::Models::TaskPlan.where(owner: course).count }.by(1)
       )
       task_plan = Tasks::Models::TaskPlan.find_by!(owner: course)
       expect(task_plan.type).to eq 'reading'
       expect(task_plan.tasks.count).to eq 6 # 6 students
 
-      expect(Demo::Work.call.errors).to be_empty
+      expect(Demo::Work.call(config: course_config).errors).to be_empty
       # We expect some tasks in each possible state
       tasks = task_plan.tasks.preload(:task_steps).reload
       expect(tasks.any? { |task| task.status == 'not_started' }).to eq true

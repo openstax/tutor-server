@@ -1,4 +1,4 @@
-class Api::V1::Demo::Tasks::BookLocationRepresenter < Roar::Decorator
+class Api::V1::Demo::Assign::TaskPlan::BookLocationRepresenter < Roar::Decorator
   include Roar::JSON
 
   property :chapter,

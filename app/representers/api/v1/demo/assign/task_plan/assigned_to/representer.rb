@@ -1,4 +1,4 @@
-class Api::V1::Demo::Tasks::AssignedTo::Representer < Roar::Decorator
+class Api::V1::Demo::Assign::TaskPlan::AssignedTo::Representer < Roar::Decorator
   include Roar::JSON
 
   property :period,

@@ -3,23 +3,17 @@
 class Demo::Work < Demo::Base
   lev_routine
 
-  disable_automatic_lev_transactions
-
   protected
 
-  def exec(config: :all, random_seed: nil)
+  def exec(config:, random_seed: nil)
     set_random_seed(random_seed)
 
-    in_parallel(Demo::Config::Course[config], transaction: true) do |course_configs, initial_index|
-      course_configs.each do |course_config|
-        assignments = course_config.assignments.reject(&:draft) +
-                      get_auto_assignments(course_config).flatten
+    course_config = config.is_a?(Demo::Config::Course) ? config : Demo::Config::Course.new(config)
 
-        assignments.each { |assignment| work_tp_assignment(course_config, assignment) }
-      end
-    end
+    assignments = course_config.assignments.reject(&:draft) +
+                  get_auto_assignments(course_config).flatten
 
-    wait_for_parallel_completion
+    assignments.each { |assignment| work_tp_assignment(course_config, assignment) }
   end
 
   def build_tasks_profile(assignment_type:, students:)

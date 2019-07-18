@@ -3,19 +3,6 @@ desc <<-DESC.strip_heredoc
   Book can be either all, bio, phys or soc.
 DESC
 task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |tt, args|
-  Rails.logger.info do
-    max_processes = Demo::Base.max_processes
-
-    case max_processes
-    when 0
-      'Using inline processing (DEMO_MAX_PROCESSES = 0)'
-    when 1
-      "Using 1 child process (DEMO_MAX_PROCESSES = 1)"
-    else
-      "Using up to #{max_processes} child processes (DEMO_MAX_PROCESSES = #{max_processes})"
-    end
-  end
-
   Rake::Task[:'demo:staff'].invoke unless ENV['SKIP_STAFF']
   Rake::Task[:'demo:books'].invoke(args[:config], args[:version]) unless ENV['SKIP_BOOKS']
 
@@ -29,11 +16,24 @@ task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |tt, args|
     end
   end
 
-  Rails.logger.info { 'All demo tasks successful!' }
+  log_background_job_info configs.size
+  log_worker_mem_info
 end
 
 namespace :demo do
-  desc 'Creates staff user accounts for the deployment demo'
+  def log_background_job_info(num_jobs)
+    Rails.logger.info do
+      "#{num_jobs} background job(s) queued\n" +
+      "Manage background workers: bin/delayed_job -n #{num_jobs} status/start/stop\n" +
+      'Check job status: bin/rake jobs:status'
+    end
+  end
+
+  def log_worker_mem_info
+    Rails.logger.info { 'Make sure you have ~4G free memory per background worker' }
+  end
+
+  desc 'Creates demo staff user accounts'
   task staff: :log_to_stdout do |tt, args|
     result = Demo::Staff.call
 
@@ -48,68 +48,64 @@ namespace :demo do
     end
   end
 
-  desc 'Imports book content for the deployment demo'
+  desc 'Imports demo book content'
   task :books, [ :config, :version ] => :log_to_stdout do |tt, args|
-    result = Demo::Books.call(args.to_h)
+    configuration = OpenStax::Exercises::V1.configuration
 
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error importing books: #{Lev::ErrorTranslator.translate(error)}" }
-      end
+    raise(
+      'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET env vars' +
+      ' and then restart any background job workers to use bin/rake demo:books'
+    ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
 
-      fail 'Failed to import books'
+    options = args.to_h
+    configs = Demo::Config::Book.dir(options[:config] || :all)
+    Delayed::Worker.with_delay_jobs(true) do
+      configs.each { |config| Demo::Books.perform_later options.merge(config: config) }
     end
+    log_background_job_info configs.size
+    log_worker_mem_info
   end
 
-  desc <<-DESC.strip_heredoc
-    Creates courses for the deployment demo
+  desc <<~DESC
+    Creates demo courses
     Calling this rake task directly will make it attempt to find and reuse the last demo books
   DESC
   task :courses, [ :config ] => :log_to_stdout do |tt, args|
-    result = Demo::Courses.call(args.to_h)
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error creating courses: #{Lev::ErrorTranslator.translate(error)}" }
-      end
-
-      fail 'Failed to create courses'
+    options = args.to_h
+    configs = Demo::Config::Course.dir(options[:config] || :all)
+    Delayed::Worker.with_delay_jobs(true) do
+      configs.each { |config| Demo::Courses.perform_later options.merge(config: config) }
     end
+    log_background_job_info configs.size
   end
 
-  desc <<-DESC.strip_heredoc
-    Creates assignments for students
+  desc <<~DESC
+    Creates demo assignments for the demo courses
     Calling this rake task directly will make it attempt to find and reuse the last demo courses
   DESC
   task :tasks, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
-    result = Demo::Tasks.call(args.to_h)
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error creating tasks: #{Lev::ErrorTranslator.translate(error)}" }
-      end
-
-      fail 'Failed to create tasks'
+    options = args.to_h
+    configs = Demo::Config::Course.dir(options[:config] || :all)
+    Delayed::Worker.with_delay_jobs(true) do
+      configs.each { |config| Demo::Tasks.perform_later options.merge(config: config) }
     end
+    log_background_job_info configs.size
   end
 
-  desc <<-DESC.strip_heredoc
-    Works student assignments
+  desc <<~DESC
+    Works demo student assignments
     Calling this rake task directly will make it attempt to find and reuse the last demo assignments
   DESC
   task :work, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
-    result = Demo::Work.call(args.to_h)
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error working assignments: #{Lev::ErrorTranslator.translate(error)}" }
-      end
-
-      fail 'Failed to work tasks'
+    options = args.to_h
+    configs = Demo::Config::Course.dir(options[:config] || :all)
+    Delayed::Worker.with_delay_jobs(true) do
+      configs.each { |config| Demo::Work.perform_later options.merge(config: config) }
     end
+    log_background_job_info configs.size
   end
 
-  desc 'Shows student assignments that would be created by the demo script'
+  desc 'Shows demo student assignments that would be created by the demo script'
   task :show, [ :config ] => :log_to_stdout do |tt, args|
     Demo::Show.call(args.to_h)
   end

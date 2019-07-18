@@ -1,5 +1,5 @@
 # Reads in a YAML file containg configuration for a CNX book
-class Demo::Config::Book < Demo::Config::Content
+class Demo::Config::Book < Demo::Config
   def_delegators :@configuration, :salesforce_book_name, :appearance_code, :default_course_name,
                                   :is_tutor, :is_concept_coach, :reading_processing_instructions
 
