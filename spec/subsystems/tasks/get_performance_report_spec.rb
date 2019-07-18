@@ -17,15 +17,16 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     @student_2 = FactoryBot.create(:user)
     @student_3 = FactoryBot.create(:user)
     @student_4 = FactoryBot.create(:user)
+
+    @teacher_student = FactoryBot.create(:user)
+
     SetupPerformanceReportData[
       course: @course,
       teacher: @teacher,
       students: [@student_1, @student_2, @student_3, @student_4],
+      teacher_students: [@teacher_student],
       ecosystem: @ecosystem
     ]
-
-    @teacher_student = FactoryBot.create :course_membership_teacher_student,
-                                         period: @course.periods.first
 
     # External assignment
     external_assistant = @course.course_assistants
@@ -574,6 +575,30 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.is_included_in_averages).to be_in [true, false]
       end
     end
+  end
+
+  context 'teacher student' do
+    let(:role) { @teacher_student.to_model.roles.first }
+    let(:expected_task_types)           { ['homework', 'reading', 'homework', 'external'] }
+    let(:expected_tasks)                { expected_task_types.size }
+    let(:report)  { reports.first }
+    let(:student) { report.students.first }
+
+    it 'has the proper structure' do
+      expect(reports.size).to eq 1
+      expect(report.data_headings.size).to eq expected_tasks
+      data_heading_types = report.data_headings.map(&:type)
+      expect(data_heading_types).to eq expected_task_types
+
+      expect(report.students.size).to eq 1
+
+      expect(report.students.map(&:student_identifier)).to eq ['']
+
+      expect(student.data.size).to eq expected_tasks
+      data_types = student.data.map(&:type)
+      expect(data_types).to eq expected_task_types
+    end
+
   end
 
   context 'random role' do

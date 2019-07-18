@@ -4,7 +4,7 @@ class SetupPerformanceReportData
 
   protected
 
-  def exec(course:, teacher:, students: [], ecosystem:)
+  def exec(course:, teacher:, students: [], teacher_students: [], ecosystem:)
     students = [students].flatten
 
     # There should be at least 4 students
@@ -32,27 +32,16 @@ class SetupPerformanceReportData
       ch.pages.reject { |page| page.title == "Introduction" }
     end
 
-    student_tasks = course.is_concept_coach ? setup_cc_tasks(roles, pages) :
-                                              setup_tp_tasks(course, ecosystem, roles, pages)
-
-    course.is_concept_coach ? answer_cc_tasks(student_tasks) : answer_tp_tasks(student_tasks)
-  end
-
-  def setup_cc_tasks(roles, pages)
-    exercises_arrays = [pages.first.exercises.first(6), pages.last.exercises.last(3)]
-
-    roles.map do |role|
-      exercises_arrays.map do |exercises|
-        page = exercises.first.page
-
-        group_types = (exercises.size - 2).times.map { :core_group } + [:spaced_practice_group] * 2
-
-        Tasks::CreateConceptCoachTask[
-          role: role, page: page, exercises: exercises, group_types: group_types
-        ]
-      end
+    teacher_students.each do |teacher_student|
+      roles << CreateOrResetTeacherStudent[user: teacher_student, period: period_1]
     end
+
+    student_tasks = course.is_concept_coach ? setup_cc_tasks(roles, pages) :
+                                              setup_tasks(course, ecosystem, roles, pages)
+
+    answer_tasks(student_tasks)
   end
+
 
   def get_assistant(course:, task_plan_type:)
     course.course_assistants.find_by(tasks_task_plan_type: task_plan_type).assistant
@@ -70,7 +59,7 @@ class SetupPerformanceReportData
       .to_a.select(&:past_open?)
   end
 
-  def setup_tp_tasks(course, ecosystem, roles, pages)
+  def setup_tasks(course, ecosystem, roles, pages)
     reading_assistant = get_assistant(course: course, task_plan_type: 'reading')
     homework_assistant = get_assistant(course: course, task_plan_type: 'homework')
 
@@ -169,31 +158,7 @@ class SetupPerformanceReportData
     roles.map{ |role| get_student_tasks(role) }
   end
 
-  def answer_cc_tasks(student_tasks)
-    # User 1 answered everything in first CC correctly
-    student_1_tasks = student_tasks[0]
-    Preview::WorkTask[task: student_1_tasks[0], is_correct: true]
-
-    # User 1 answered 3 correct, 1 incorrect in 2nd CC
-    is_completed = ->(task, task_step, index) { index < 3 || index == task.task_steps.size - 1 }
-    is_correct = ->(task, task_step, index)   { index < 3 }
-    Preview::WorkTask[task: student_1_tasks[1], is_completed: is_completed, is_correct: is_correct]
-
-    # User 2 answered 2 questions correctly and 2 incorrectly in first CC
-    student_2_tasks = student_tasks[1]
-    is_completed = ->(task, task_step, index) { index < 2 || index >= task.task_steps.size - 2 }
-    is_correct = ->(task, task_step, index)   { index < 2 }
-    Preview::WorkTask[task: student_2_tasks[0], is_completed: is_completed, is_correct: is_correct]
-
-    # User 2 answered 1 correct in 2nd CC
-    Preview::AnswerExercise[task_step: student_2_tasks[1].task_steps.first, is_correct: true]
-
-    # User 3 answered everything in first CC correctly
-    student_3_tasks = student_tasks[2]
-    Preview::WorkTask[task: student_3_tasks[0], is_correct: true]
-  end
-
-  def answer_tp_tasks(student_tasks)
+  def answer_tasks(student_tasks)
     # User 1 answered everything in homework correctly
     student_1_tasks = student_tasks[0]
     Preview::WorkTask[task: student_1_tasks[0], is_correct: true]
