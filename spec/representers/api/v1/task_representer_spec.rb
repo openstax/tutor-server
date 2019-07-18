@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
       'title' => task.title,
       'type' => task.task_type,
       'due_at' => DateTimeUtilities.to_api_s(task.due_at),
-      'student_names' => task.students.map(&:name)
+      'students' => [],
     )
   end
 
@@ -34,6 +34,15 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash).to include('is_deleted' => true)
     task.task_plan.withdrawn_at = Time.current.tomorrow
     expect(described_class.new(task).to_hash).to include('is_deleted' => true)
+  end
+
+  it 'includes student roles' do
+    task = FactoryBot.create(:tasks_task, ecosystem: ecosystem, num_random_taskings: 1)
+    expect(described_class.new(task).to_hash['students']).to have(1).items
+    expect(described_class.new(task).to_hash).to include('students' => task.roles.map{ |r|
+        { role_id: r.id, name: r.course_member.name }
+      }
+    )
   end
 
 end

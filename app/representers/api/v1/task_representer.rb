@@ -50,11 +50,15 @@ module Api::V1
                description: "Whether or not this task has been withdrawn by the teacher"
              }
 
-    property :student_names,
+    property :students,
              type: Array,
              writeable: false,
              readable: true,
-             getter: ->(*) { students.map(&:name) },
+             getter: ->(*) {
+               roles.map{ |r|
+                   { role_id: r.id, name: r.course_member.name }
+                 }
+             },
              schema_info: {
                required: true,
                description: "The students who were assigned this task"
