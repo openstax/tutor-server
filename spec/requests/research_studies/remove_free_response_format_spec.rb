@@ -12,7 +12,7 @@ RSpec.describe 'Task steps without free response field', type: :request,
     user = FactoryBot.create(:user)
     user_role = AddUserAsPeriodStudent[user: user, period: period]
     @study = FactoryBot.create :research_study
-    FactoryBot.create :research_cohort, name: 'A', study: @study
+    FactoryBot.create :research_cohort, name: 'B', study: @study
 
     Research::AddCourseToStudy[course: @course, study: @study]
 
@@ -35,34 +35,25 @@ RSpec.describe 'Task steps without free response field', type: :request,
 
     brain = FactoryBot.create :research_modified_task,
                               study: @study,
-                              name: 'chapter 1-3 display no free-response',
+                              name: 'no free-response for alternating sections',
                               code: <<~EOC
       unless task.reading? || task.homework?
        manipulation.ignore!
        return {}
       end
 
-      chosen_sections = %w{
-        1,1 1,2 1,3 1,4 2,1 2,2 2,3 2,4 2,5 2,6 2,7 2,8 3,1 3,2 3,3 3,4 3,5
-      }
-      .select.with_index { |_, i| 'A' == cohort.name ? i.even? : i.odd? }
-      .map { |cs| Arel.sql("'[" + cs + "]'") }
-
-      manipulated_sections = Set.new(
-        Content::Models::Page.where(id: task.task_plan.settings['page_ids']).where(
-          Content::Models::Page.arel_table[:book_location].in(chosen_sections)
-        ).pluck(:id)
-      )
-
+      choose_even = 'A' == cohort.name
       manipulated_task_step_ids = []
 
-      if manipulated_sections.any?
-        task.task_steps.each do |ts|
-          if ts.exercise? && manipulated_sections.include?(ts.content_page_id)
-            manipulated_task_step_ids << ts.id
-            ts.tasked.parser.questions_for_students.each do |q|
-              q['formats'] -= ['free-response']
-            end
+      task.task_steps.each do |ts|
+        next unless ts.exercise?
+
+        if choose_even && ts.page.book_location.last.even? ||
+           !choose_even && ts.page.book_location.last.odd?
+
+          manipulated_task_step_ids << ts.id
+          ts.tasked.parser.questions_for_students.each do |q|
+            q['formats'] -= ['free-response']
           end
         end
       end
@@ -90,22 +81,18 @@ RSpec.describe 'Task steps without free response field', type: :request,
   it "can override requiring free-response when marking completed" do
     FactoryBot.create :research_modified_tasked,
                       study: @study,
-                      name: 'chapter 1-3 save without free-response',
+                      name: 'no free-response for alternating sections',
                       code: <<~EOC
       unless tasked.task_step.exercise?
         manipulation.ignore!
         return
       end
 
-      chosen_sections = %w{
-        1,1 1,2 1,3 1,4 2,1 2,2 2,3 2,4 2,5 2,6 2,7 2,8 3,1 3,2 3,3 3,4 3,5
-      }
-      .select.with_index { |_, i| 'A' == cohort.name ? i.even? : i.odd? }
-      .map { |cs| Arel.sql("'[" + cs + "]'") }
+      choose_even = 'A' == cohort.name
 
-      if Content::Models::Page.where(id: tasked.task_step.content_page_id).where(
-        Content::Models::Page.arel_table[:book_location].in(chosen_sections)
-      ).exists?
+      if choose_even && tasked.task_step.page.book_location.last.even? ||
+        !choose_even && tasked.task_step.page.book_location.last.odd?
+
         tasked.parser.questions_for_students.each do |q|
           q['formats'] -= ['free-response']
         end
