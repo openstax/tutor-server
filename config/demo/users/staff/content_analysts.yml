@@ -1,0 +1,5 @@
+content_analysts:
+  - username: content
+    full_name: Content Analyst
+  - username: admin
+    full_name: Administrator User

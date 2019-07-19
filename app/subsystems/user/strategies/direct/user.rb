@@ -8,7 +8,10 @@ module User
 
         exposes :account, :username, :title, :first_name, :last_name,
                 :full_name, :name, :casual_name, :faculty_status, :ui_settings,
-                :salesforce_contact_id, :uuid, :role, :school_type, :is_test
+                :salesforce_contact_id, :uuid, :role, :school_type, :is_test,
+                :is_human?, :is_application?, :is_anonymous?, :is_admin?,
+                :is_customer_support?, :is_content_analyst?, :is_researcher?,
+                :viewed_tour_stats
 
         class << self
           alias_method :entity_all, :all
@@ -54,40 +57,6 @@ module User
           alias_method :entity_anonymous, :anonymous
           def anonymous
             ::User::User.new(strategy: entity_anonymous)
-          end
-        end
-
-        def is_human?
-          true
-        end
-
-        def is_application?
-          false
-        end
-
-        def is_anonymous?
-          false
-        end
-
-        def is_admin?
-          !repository.administrator.nil?
-        end
-
-        def is_customer_service?
-          !repository.customer_service.nil?
-        end
-
-        def is_content_analyst?
-          !repository.content_analyst.nil?
-        end
-
-        def is_researcher?
-          !repository.researcher.nil?
-        end
-
-        def viewed_tour_stats
-          repository.tour_views.preload(:tour).map do |tv|
-            { id: tv.tour.identifier, view_count: tv.view_count }
           end
         end
 

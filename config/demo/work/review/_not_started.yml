@@ -1,0 +1,19 @@
+    tasks:
+      - student:
+          username: reviewstudent1
+        progress: 0
+      - student:
+          username: reviewstudent2
+        progress: 0
+      - student:
+          username: reviewstudent3
+        progress: 0
+      - student:
+          username: reviewstudent4
+        progress: 0
+      - student:
+          username: reviewstudent5
+        progress: 0
+      - student:
+          username: reviewstudent6
+        progress: 0

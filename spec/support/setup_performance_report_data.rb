@@ -168,14 +168,14 @@ class SetupPerformanceReportData
 
     # User 1 answered 2 correct core, 1 correct spaced practice
     # and 1 incorrect personalized exercise (in an SPE slot) in 2nd homework
-    is_completed = ->(task, task_step, index) { true }
-    is_correct   = ->(task, task_step, index) { index < task.task_steps.size }
+    is_completed = ->(task_step, index) { true }
+    is_correct   = ->(task_step, index) { index < task_step.task.task_steps.size }
     Preview::WorkTask[task: student_1_tasks[2], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in homework
     student_2_tasks = student_tasks[1]
-    is_completed = ->(task, task_step, index) { index < 2 || index >= task.task_steps.size - 2 }
-    is_correct   = ->(task, task_step, index) { index < 2 }
+    is_completed = ->(task_step, index) { index < 2 || index >= task_step.task.task_steps.size - 2 }
+    is_correct   = ->(task_step, index) { index < 2 }
     Preview::WorkTask[task: student_2_tasks[0], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 started the reading

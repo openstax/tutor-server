@@ -1,0 +1,4 @@
+<%=
+  filename = File.join(__dir__, '../phys.yml.erb')
+  ERB.new(File.read(filename)).tap { |erb| erb.filename = filename }.result
+%>

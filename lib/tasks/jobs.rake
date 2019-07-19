@@ -41,7 +41,7 @@ namespace :jobs do
     Rails.logger.info { "Unfailed #{failed} job(s)" }
   end
 
-  desc 'Causes all jobs waiting to retry to retry immediately'
+  desc 'Make all waiting to retry jobs retry immediately'
   task :retry_now, [] => :log_to_stdout do
     dj = Delayed::Job.arel_table
     current_time = Time.current
@@ -114,10 +114,5 @@ namespace :jobs do
         Last error that caused a failure: #{last_failure_error}
       STATUS
     end
-  end
-
-  desc 'Prints the full backtrace for the last errors'
-  task :last_errors, [] => :log_to_stdout do
-    Rails.logger.info { "Last error: #{last_retry_error}" }
   end
 end

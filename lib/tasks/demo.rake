@@ -1,112 +1,123 @@
-desc <<-DESC.strip_heredoc
-  Initializes data for the deployment demo (run all demo:* tasks)
-  Book can be either all, bio, phys or soc.
-DESC
-task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |tt, args|
-  Rake::Task[:'demo:staff'].invoke unless ENV['SKIP_STAFF']
-  Rake::Task[:'demo:books'].invoke(args[:config], args[:version]) unless ENV['SKIP_BOOKS']
+DEFAULT_DEMO_CONFIG = 'review'
+DEMO_CONFIG_BASE_DIR = File.join Rails.root, 'config', 'demo'
 
-  unless ENV['SKIP_COURSES']
-    Rake::Task[:'demo:courses'].invoke(args[:config])
+def abort_if_exercises_unconfigured(task_name)
+  configuration = OpenStax::Exercises::V1.configuration
 
-    unless ENV['SKIP_TASKS']
-      Rake::Task[:'demo:tasks'].invoke(args[:config], args[:random_seed])
+  raise(
+    'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET env vars' +
+    " and then restart any background job workers to use bin/rake #{task_name}"
+  ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
+end
 
-      Rake::Task[:'demo:work'].invoke(args[:config], args[:random_seed]) unless ENV['SKIP_WORK']
+def demo_routine(routine_class, method_name, types, args)
+  method_name = method_name.to_sym
+  options = args.to_h.deep_symbolize_keys
+  filter = (options.delete(:config) || DEFAULT_DEMO_CONFIG).to_s
+
+  routine_args = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
+    [ types ].flatten.each do |type|
+      type_string = type.to_s
+      base_dir = File.join(DEMO_CONFIG_BASE_DIR, type_string, filter)
+      representer_class = Api::V1::Demo.const_get(type_string.capitalize)::Representer
+
+      Dir[File.join(base_dir, '**', '[^_]*.yml{,.erb}')].each do |path|
+        string = File.read(path)
+        if File.extname(path) == '.erb'
+          erb = ERB.new(string)
+          erb.filename = path
+          string = erb.result
+        end
+        representer_hash = representer_class.new(YAML.load(string)).to_hash.deep_symbolize_keys
+        options_by_basename[path.sub(base_dir, '')][type.to_sym] = representer_hash
+      end
+    end
+  end.values
+  num_routines = routine_args.size
+
+  errors = []
+  Delayed::Worker.with_delay_jobs(true) do
+    routine_args.each do |routine_arg|
+      result = routine_class.public_send method_name, routine_arg
+      next if method_name == :perform_later
+
+      errors.concat result.errors
     end
   end
 
-  log_background_job_info configs.size
+  if method_name == :perform_later
+    Rails.logger.info do
+      "#{num_routines} background job(s) queued\n" +
+      "Manage background workers: bin/delayed_job -n #{num_routines} status/start/stop\n" +
+      'Check job status: bin/rake jobs:status'
+    end
+  elsif errors.empty?
+    Rails.logger.info { "#{routine_class.name} successfully ran #{num_routines} time(s)" }
+  else
+    Rails.logger.fatal do
+      "Error(s) running #{routine_class.name}:\n  #{
+        errors.map { |error| Lev::ErrorTranslator.translate(error) }.join("\n  ")
+      }"
+    end
+
+    fail "#{routine_class.name} failed with error(s)"
+  end
+end
+
+def log_worker_mem_info
+  Rails.logger.info { 'Make sure to have ~4G free memory per background worker' }
+end
+
+desc 'Initializes all demo data. Config can be either be "all" or a specific config dirname.'
+task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |task, args|
+  abort_if_exercises_unconfigured 'demo'
+
+  demo_routine Demo::All, :perform_later, [ 'users', 'import', 'course', 'assign', 'work' ], args
+
   log_worker_mem_info
 end
 
 namespace :demo do
-  def log_background_job_info(num_jobs)
-    Rails.logger.info do
-      "#{num_jobs} background job(s) queued\n" +
-      "Manage background workers: bin/delayed_job -n #{num_jobs} status/start/stop\n" +
-      'Check job status: bin/rake jobs:status'
-    end
-  end
-
-  def log_worker_mem_info
-    Rails.logger.info { 'Make sure you have ~4G free memory per background worker' }
-  end
-
-  desc 'Creates demo staff user accounts'
-  task staff: :log_to_stdout do |tt, args|
-    result = Demo::Staff.call
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal do
-          "Error creating staff accounts: #{Lev::ErrorTranslator.translate(error)}"
-        end
-      end
-
-      fail 'Failed to create staff accounts'
-    end
+  desc 'Creates demo user accounts'
+  task users: :log_to_stdout do |task, args|
+    demo_routine Demo::Users, :call, 'users', args.to_h.merge(config: '')
   end
 
   desc 'Imports demo book content'
-  task :books, [ :config, :version ] => :log_to_stdout do |tt, args|
-    configuration = OpenStax::Exercises::V1.configuration
+  task :import, [ :config, :version ] => :log_to_stdout do |task, args|
+    abort_if_exercises_unconfigured 'demo:import'
 
-    raise(
-      'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET env vars' +
-      ' and then restart any background job workers to use bin/rake demo:books'
-    ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
+    demo_routine Demo::Import, :perform_later, 'import', args
 
-    options = args.to_h
-    configs = Demo::Config::Book.dir(options[:config] || :all)
-    Delayed::Worker.with_delay_jobs(true) do
-      configs.each { |config| Demo::Books.perform_later options.merge(config: config) }
-    end
-    log_background_job_info configs.size
     log_worker_mem_info
   end
 
   desc <<~DESC
     Creates demo courses
-    Calling this rake task directly will make it attempt to find and reuse the last demo books
+    Calling this rake task directly will make it attempt to reuse the last catalog offerings created
   DESC
-  task :courses, [ :config ] => :log_to_stdout do |tt, args|
-    options = args.to_h
-    configs = Demo::Config::Course.dir(options[:config] || :all)
-    Delayed::Worker.with_delay_jobs(true) do
-      configs.each { |config| Demo::Courses.perform_later options.merge(config: config) }
-    end
-    log_background_job_info configs.size
+  task :courses, [ :config ] => :log_to_stdout do |task, args|
+    demo_routine Demo::Course, :perform_later, 'course', args
   end
 
   desc <<~DESC
     Creates demo assignments for the demo courses
     Calling this rake task directly will make it attempt to find and reuse the last demo courses
   DESC
-  task :tasks, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
-    options = args.to_h
-    configs = Demo::Config::Course.dir(options[:config] || :all)
-    Delayed::Worker.with_delay_jobs(true) do
-      configs.each { |config| Demo::Tasks.perform_later options.merge(config: config) }
-    end
-    log_background_job_info configs.size
+  task :assign, [ :config, :random_seed ] => :log_to_stdout do |task, args|
+    demo_routine Demo::Assign, :perform_later, 'assign', args
   end
 
   desc <<~DESC
     Works demo student assignments
     Calling this rake task directly will make it attempt to find and reuse the last demo assignments
   DESC
-  task :work, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
-    options = args.to_h
-    configs = Demo::Config::Course.dir(options[:config] || :all)
-    Delayed::Worker.with_delay_jobs(true) do
-      configs.each { |config| Demo::Work.perform_later options.merge(config: config) }
-    end
-    log_background_job_info configs.size
+  task :work, [ :config, :random_seed ] => :log_to_stdout do |task, args|
+    demo_routine Demo::Work, :perform_later, 'work', args
   end
 
   desc 'Shows demo student assignments that would be created by the demo script'
-  task :show, [ :config ] => :log_to_stdout do |tt, args|
-    Demo::Show.call(args.to_h)
+  task :show, [ :config ] => :log_to_stdout do |task, args|
+    demo_routine Demo::Show, :call, [ 'assign', 'work' ], args
   end
 end

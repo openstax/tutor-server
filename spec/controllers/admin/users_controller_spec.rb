@@ -49,7 +49,7 @@ RSpec.describe Admin::UsersController, type: :controller do
     expect(user.last_name).to eq 'User'
     expect(user.name).to eq 'Overriden!'
     expect(user.is_admin?).to eq false
-    expect(user.is_customer_service?).to eq true
+    expect(user.is_customer_support?).to eq true
     expect(user.is_content_analyst?).to eq true
     expect(user.is_researcher?).to eq true
   end
@@ -71,7 +71,7 @@ RSpec.describe Admin::UsersController, type: :controller do
     expect(user.username).to eq 'updated'
     expect(user.name).to eq 'Updated Name'
     expect(user.is_admin?).to eq false
-    expect(user.is_customer_service?).to eq true
+    expect(user.is_customer_support?).to eq true
     expect(user.is_content_analyst?).to eq true
     expect(user.is_researcher?).to eq true
   end

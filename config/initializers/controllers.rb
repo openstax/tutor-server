@@ -25,14 +25,16 @@ ActionController::Base.class_exec do
     end
 
     begin
-      time = Time.parse time_header
+      time = DateTime.parse time_header
     rescue ArgumentError
       render plain: 'Invalid X-App-Date header', status: :bad_request
       set_app_date_header
     else
-      Timecop.travel(time) do
-        yield
-        set_app_date_header
+      Time.use_zone(time.utc_offset) do
+        Timecop.travel(time) do
+          yield
+          set_app_date_header
+        end
       end
     end
   end

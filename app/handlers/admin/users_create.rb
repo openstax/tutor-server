@@ -6,7 +6,7 @@ class Admin::UsersCreate
 
   uses_routine User::CreateUser, translations: { outputs: { type: :verbatim } }, as: :create_user
   uses_routine User::SetAdministratorState, as: :set_administrator
-  uses_routine User::SetCustomerServiceState, as: :set_customer_service
+  uses_routine User::SetCustomerSupportState, as: :set_customer_support
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
   uses_routine User::SetResearcherState, as: :set_researcher
 
@@ -41,7 +41,7 @@ class Admin::UsersCreate
 
     user = outputs[:user]
     run(:set_administrator, user: user, administrator: user_params.administrator)
-    run(:set_customer_service, user: user, customer_service: user_params.customer_service)
+    run(:set_customer_support, user: user, customer_support: user_params.customer_service)
     run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
     run(:set_researcher, user: user, researcher: user_params.researcher)
   end

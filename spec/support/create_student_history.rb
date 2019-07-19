@@ -75,7 +75,7 @@ class CreateStudentHistory
   end
 
   def answer_correctly(task, num)
-    is_completed = ->(task, task_step, index) { index < num }
+    is_completed = ->(task_step, index) { index < num }
     Preview::WorkTask[task: task, is_completed: is_completed, is_correct: true]
   end
 

@@ -28,7 +28,7 @@ RSpec.describe UserIsCourseTeacher, type: :routine do
       ## Perform test
       result = UserIsCourseTeacher.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_teacher).to be_falsey
+      expect(result.outputs.is_course_teacher).to be_falsey
     end
   end
 
@@ -43,7 +43,7 @@ RSpec.describe UserIsCourseTeacher, type: :routine do
       ## Perform test
       result = UserIsCourseTeacher.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_teacher).to be_truthy
+      expect(result.outputs.is_course_teacher).to be_truthy
     end
   end
 end

@@ -1,0 +1,97 @@
+course:
+  name: AP US History Review
+
+task_plans:
+  - title: Read Chapter 1 Intro and Sections 1 and 2
+    tasks:
+      - student:
+          username: reviewstudent1
+        progress: 1
+        score: 1
+      - student:
+          username: reviewstudent2
+        progress: .8
+        score: .8
+      - student:
+          username: reviewstudent3
+        progress: .6
+        score: .5
+      - student:
+          username: reviewstudent4
+        progress: .4
+        score: .3
+      - student:
+          username: reviewstudent5
+        progress: .2
+        score: 0
+      - student:
+          username: reviewstudent6
+        progress: 0
+
+  - title: Read Chapter 1 Sections 3 and 4
+    tasks:
+      - student:
+          username: reviewstudent1
+        progress: 0
+      - student:
+          username: reviewstudent2
+        progress: 0
+      - student:
+          username: reviewstudent3
+        progress: 0
+      - student:
+          username: reviewstudent4
+        progress: 0
+      - student:
+          username: reviewstudent5
+        progress: 0
+      - student:
+          username: reviewstudent6
+        progress: 0
+
+  - title: HW Chapter 1 Intro and Sections 1 and 2
+    tasks:
+      - student:
+          username: reviewstudent1
+        progress: 1
+        score: 1
+      - student:
+          username: reviewstudent2
+        progress: .8
+        score: .8
+      - student:
+          username: reviewstudent3
+        progress: .6
+        score: .5
+      - student:
+          username: reviewstudent4
+        progress: .4
+        score: .3
+      - student:
+          username: reviewstudent5
+        progress: .2
+        score: 0
+      - student:
+          username: reviewstudent6
+        progress: 0
+
+  - title: HW Chapter 1 Sections 3 and 4
+    tasks:
+      - student:
+          username: reviewstudent1
+        progress: 0
+      - student:
+          username: reviewstudent2
+        progress: 0
+      - student:
+          username: reviewstudent3
+        progress: 0
+      - student:
+          username: reviewstudent4
+        progress: 0
+      - student:
+          username: reviewstudent5
+        progress: 0
+      - student:
+          username: reviewstudent6
+        progress: 0

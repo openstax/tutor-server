@@ -1,0 +1,17 @@
+teachers:
+  - username: teacher01
+    full_name: Charles Morris
+  - username: teacher02
+    full_name: Redmond Blake
+  - username: teacher03
+    full_name: C. E. Tripp
+  - username: teacher04
+    full_name: J. D. Ballard
+  - username: teacher05
+    full_name: Trent Deckow
+  - username: teacher06
+    full_name: Adah Kuhn
+  - username: teacher07
+    full_name: Yoshiko Roob
+  - username: teacher08
+    full_name: Okey Gottlieb

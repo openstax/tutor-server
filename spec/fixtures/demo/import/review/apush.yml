@@ -1,0 +1,22 @@
+archive_url_base: https://archive-staging-tutor.cnx.org/contents/
+
+salesforce_book_name: AP US History
+appearance_code: ap_us_history
+cnx_book_id: dc10e469-5816-411d-8ea3-39a9b0706a48
+
+reading_processing_instructions:
+- css: .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],
+    [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
+    [data-type="glossary"]
+  fragments: []
+- css: .phet-explorations-embedded
+  fragments:
+  - interactive
+  - exercise
+- css: .watch-physics
+  fragments:
+  - video
+  - exercise
+- css: .example-video, [data-type="example"]
+  fragments:
+  - reading

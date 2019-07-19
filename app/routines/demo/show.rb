@@ -1,13 +1,12 @@
-# Loops through the courses and periods that are to be created and worked.
-# Logs the student's assignments for review
+# Logs the demo courses, periods and assignments that are to be created and worked for review
 class Demo::Show < Demo::Base
   lev_routine
 
   protected
 
-  def exec(config: :all)
+  def exec(course:, assign:, work:)
     students_hash = {}
-    Demo::Config::Course[config].each do |course_config|
+    assign.each do |course_config|
       course_config.periods.each do |period|
         (period.students || []).each do |username|
           student = students_hash[username] ||= OpenStruct.new(
@@ -44,5 +43,7 @@ class Demo::Show < Demo::Base
         end
       end
     end
+
+    log_status
   end
 end

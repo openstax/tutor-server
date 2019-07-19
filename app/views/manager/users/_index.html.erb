@@ -53,7 +53,7 @@
           <td><%= user.username %></td>
           <td><%= user.name %></td>
           <td><%= tf_to_yn user.is_admin? %></td>
-          <td><%= tf_to_yn user.is_customer_service? %></td>
+          <td><%= tf_to_yn user.is_customer_support? %></td>
           <td><%= tf_to_yn user.is_content_analyst? %></td>
           <td><%= tf_to_yn user.is_researcher? %></td>
           <%= capture(user, &extra_fields_proc) unless extra_fields_proc.nil? %>

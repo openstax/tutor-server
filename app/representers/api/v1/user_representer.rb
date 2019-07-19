@@ -12,7 +12,7 @@ module Api::V1
     property :is_admin?,
              as: :is_admin
 
-    property :is_customer_service?,
+    property :is_customer_support?,
              as: :is_customer_service
 
     property :is_content_analyst?,
