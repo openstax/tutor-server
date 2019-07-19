@@ -44,7 +44,7 @@ class Lms::SendCourseScores
       status.set_progress(ii, @num_callbacks)
     end
 
-    send_errors_to_devs
+    notify_errors
   end
 
   def save_status_data
@@ -91,44 +91,51 @@ class Lms::SendCourseScores
 
       outcome_response = Lms::OutcomeResponse.new(response)
 
-      if "failure" == outcome_response.code_major
-        error!({
+      if 'failure' == outcome_response.code_major
+        error!(
+          message: outcome_response.description,
+          course: @course.id,
           score: score_data[:course_average],
           student_name: score_data[:name],
-          student_identifier: score_data[:student_identifier],
-          lms_description: outcome_response.description
-        })
+          student_identifier: score_data[:student_identifier]
+        )
       end
     rescue StandardError => ee
-      error!({
+      error!(
+        exception: ee,
+        message: ee.message,
+        course: @course.id,
         score: score_data[:course_average],
         student_name: score_data[:name],
         student_identifier: score_data[:student_identifier],
-        unhandled_error: ee.message
-      })
+      )
     end
   end
 
-  def error!(message)
-    @errors.push(message)
-    status.add_error(message)
-    log_error("send_one_score failure: #{message.inspect}")
+  def error!(error)
+    @errors.push(error)
+    status.add_error(error)
+    log_error("send_one_score failure: #{error.except(:exception).inspect}")
   end
 
   def log_error(message)
-    Rails.logger.error { "[#{self.class.name}] #{'(' + status.id + ')' if status.present?} #{message}"}
+    Rails.logger.error do
+      "[#{self.class.name}] #{'(' + status.id + ')' if status.present?} #{message}"
+    end
   end
 
-  def send_errors_to_devs
+  def notify_errors
     return if @errors.empty?
 
-    DevMailer.inspect_object(
-      object: {
-        course: @course.id,
-        errors: @errors,
-      },
-      subject: "#{self.class.name} errors"
-    ).deliver_later
+    @errors.each do |error|
+      exception = error[:exception]
+
+      if exception.nil?
+        Raven.capture_message error[:message], error.except(:message)
+      else
+        Raven.capture_exception exception, error.except(:exception)
+      end
+    end
   end
 
   def basic_outcome_xml(score:, sourcedid:, message_identifier: nil)
@@ -162,7 +169,7 @@ class Lms::SendCourseScores
       }
     end
 
-    builder.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+    builder.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
 end

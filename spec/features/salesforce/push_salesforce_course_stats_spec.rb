@@ -196,17 +196,13 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
     context "when there is an error (no teacher with SF contact)" do
       before(:each) { AddUserAsCourseTeacher[course: course, user: user_no_sf] }
 
-      it 'does not send error email in non-production' do
+      it 'logs the error to Sentry and does not send error emails' do
+        expect(Raven).to receive(:capture_message) do |message, *|
+          expect(message).to eq 'No teachers have a SF contact ID'
+        end
         expect do
           call_expecting_errors(/No teachers have a SF contact ID/)
-        end.to change { ActionMailer::Base.deliveries.count }.by(0)
-      end
-
-      it 'does send error email in production' do
-        allow(Rails.application.secrets).to receive(:environment_name) { 'prodtutor' }
-        expect do
-          call_expecting_errors(/No teachers have a SF contact ID/)
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end.not_to change { ActionMailer::Base.deliveries.count }
       end
     end
 
@@ -230,12 +226,12 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   #### HELPERS ####
 
   def call
-    PushSalesforceCourseStats.call(allow_error_email: true)
+    PushSalesforceCourseStats.call
   end
 
   def call_expecting_no_errors
     expect(instance).not_to receive(:error!)
-    instance.call(allow_error_email: true)
+    instance.call
   end
 
   def call_expecting_errors(hash_or_message)
@@ -244,7 +240,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                                         .with(hash_including(hash))
                                         .and_call_original
 
-    instance.call(allow_error_email: true)
+    instance.call
   end
 
   def call_expecting_skips(hash_or_message)
@@ -253,7 +249,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                                        .with(hash_including(hash))
                                        .and_call_original
 
-    instance.call(allow_error_email: true)
+    instance.call
   end
 
   def expect_tcp_stats(period, extras = {})
