@@ -34,6 +34,7 @@ gem 'mini_racer'
 
 # jQuery library
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 
 # Automatically ajaxify links
 gem 'turbolinks'
