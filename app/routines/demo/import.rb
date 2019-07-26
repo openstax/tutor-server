@@ -1,5 +1,7 @@
 # Imports a demo book from CNX
 class Demo::Import < Demo::Base
+  MAX_RETRIES = 5
+
   lev_routine
 
   uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
@@ -54,6 +56,7 @@ class Demo::Import < Demo::Base
       content_ecosystem_id: ecosystem.id
     )
 
+    # Retries could be replaced with UPSERTing the catalog offering
     @retries = 0
     outputs.catalog_offering = begin
       Catalog::Models::Offering.transaction(requires_new: true) do
@@ -88,8 +91,11 @@ class Demo::Import < Demo::Base
         end
       end
     rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+      raise if @retries >= MAX_RETRIES
+
       @retries += 1
-      retry if @retries < 3
+
+      retry
     end
 
     log_status outputs.catalog_offering.title

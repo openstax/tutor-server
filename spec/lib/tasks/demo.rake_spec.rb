@@ -91,7 +91,7 @@ RSpec.describe 'demo', type: :rake do
     end
   end
 
-  it 'calls Demo::Users and Demo::All with all the review configs' do
+  it 'calls Demo::All with all the review configs' do
     expect(Demo::All).to receive(:perform_later).exactly(3).times do |args|
       # Users
       expect(args[:users][:teachers]).to eq [username: 'reviewteacher', full_name: 'Review Teacher']
@@ -123,7 +123,7 @@ RSpec.describe 'demo', type: :rake do
 
   context 'demo:users' do
     it 'calls Demo::Users with all configs from config/demo/users' do
-      expect(Demo::Users).to receive(:call).exactly(9).times do |users:|
+      expect(Demo::Users).to receive(:perform_later).exactly(9).times do |users:|
         expect(users[:administrators]).to(
           eq [username: 'admin', full_name: 'Administrator User']
         ) if users.has_key? :administrators

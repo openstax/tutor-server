@@ -31,7 +31,7 @@ class Api::V1::Demo::Assign::TaskPlan::Representer < Roar::Decorator
            writeable: true
 
   collection :book_locations,
-             extend: Api::V1::Demo::Assign::TaskPlan::BookLocationRepresenter,
+             type: Array,
              readable: true,
              writeable: true,
              schema_info: { required: true }

@@ -3,6 +3,7 @@ class Api::V1::Demo::Course::Representer < Roar::Decorator
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 
+  # Provide id if the course exists, name otherwise
   property :course,
            decorator: Api::V1::Demo::CourseRepresenter,
            readable: true,

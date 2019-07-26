@@ -187,6 +187,14 @@ Rails.application.routes.draw do
       end
     end
 
+    namespace :demo do
+      post :users
+      post :import
+      post :course
+      post :assign
+      post :work
+    end
+
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
 
