@@ -1,23 +1,25 @@
 class Api::V1::Demo::Course::Representer < Roar::Decorator
-  include Representable::JSON::Hash
+  include Roar::JSON
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 
   # Provide id if the course exists, name otherwise
   property :course,
-           decorator: Api::V1::Demo::CourseRepresenter,
+           extend: Api::V1::Demo::CourseRepresenter,
+           class: Hashie::Mash,
            readable: true,
            writeable: true,
            schema_info: { required: true }
 
   # If the course does not yet exist, then the catalog_offering is required
   property :catalog_offering,
-           decorator: Api::V1::Demo::CatalogOfferingRepresenter,
+           extend: Api::V1::Demo::CatalogOfferingRepresenter,
+           class: Hashie::Mash,
            readable: true,
            writeable: true
 
   property :is_college,
-           type: :boolean,
+           type: Virtus::Attribute::Boolean,
            readable: true,
            writeable: true
 
@@ -43,12 +45,14 @@ class Api::V1::Demo::Course::Representer < Roar::Decorator
 
   collection :teachers,
              extend: Api::V1::Demo::UserRepresenter,
+             class: Hashie::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }
 
   collection :periods,
              extend: Api::V1::Demo::Course::Period::Representer,
+             class: Hashie::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }

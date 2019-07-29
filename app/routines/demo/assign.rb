@@ -1,6 +1,6 @@
 # Creates demo assignments for demo students in a demo course
 class Demo::Assign < Demo::Base
-  lev_routine
+  lev_routine use_jobba: true
 
   uses_routine DistributeTasks, as: :distribute_tasks,
                                 translations: { outputs: { type: :verbatim } }

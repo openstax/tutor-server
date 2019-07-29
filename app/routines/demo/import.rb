@@ -2,7 +2,7 @@
 class Demo::Import < Demo::Base
   MAX_RETRIES = 5
 
-  lev_routine
+  lev_routine use_jobba: true
 
   uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
   uses_routine AddEcosystemToCourse, as: :add_ecosystem_to_course

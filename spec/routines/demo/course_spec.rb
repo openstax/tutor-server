@@ -4,16 +4,18 @@ RSpec.describe Demo::Course, type: :routine do
   let!(:catalog_offering) { FactoryBot.create :catalog_offering, title: 'AP US History' }
   let(:config_base_dir)   { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:user_config)       do
-    {}.tap do |config|
-      hash = YAML.load_file File.join(config_base_dir, 'users', 'review', 'apush.yml')
-      config[:users] = Api::V1::Demo::Users::Representer.new(hash).to_hash.deep_symbolize_keys
-    end
+    {
+      users: Api::V1::Demo::Users::Representer.new(Hashie::Mash.new).from_hash(
+        YAML.load_file File.join(config_base_dir, 'users', 'review', 'apush.yml')
+      ).deep_symbolize_keys
+    }
   end
   let(:course_config)     do
-    {}.tap do |config|
-      hash = YAML.load_file File.join(config_base_dir, 'course', 'review', 'apush.yml')
-      config[:course] = Api::V1::Demo::Course::Representer.new(hash).to_hash.deep_symbolize_keys
-    end
+    {
+      course: Api::V1::Demo::Course::Representer.new(Hashie::Mash.new).from_hash(
+        YAML.load_file File.join(config_base_dir, 'course', 'review', 'apush.yml')
+      ).deep_symbolize_keys
+    }
   end
   let(:result)            { described_class.call course_config }
 

@@ -4,28 +4,32 @@ require 'vcr_helper'
 RSpec.describe Demo::Assign, type: :routine do
   let(:config_base_dir)   { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:user_config)       do
-    {}.tap do |config|
-      hash = YAML.load_file File.join(config_base_dir, 'users', 'review', 'apush.yml')
-      config[:users] = Api::V1::Demo::Users::Representer.new(hash).to_hash.deep_symbolize_keys
-    end
+    {
+      users: Api::V1::Demo::Users::Representer.new(Hashie::Mash.new).from_hash(
+        YAML.load_file File.join(config_base_dir, 'users', 'review', 'apush.yml')
+      ).deep_symbolize_keys
+    }
   end
   let(:import_config)     do
-    {}.tap do |config|
-      hash = YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush.yml')
-      config[:import] = Api::V1::Demo::Import::Representer.new(hash).to_hash.deep_symbolize_keys
-    end
+    {
+      import: Api::V1::Demo::Import::Representer.new(Hashie::Mash.new).from_hash(
+        YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush.yml')
+      ).deep_symbolize_keys
+    }
   end
   let(:course_config)     do
-    {}.tap do |config|
-      hash = YAML.load_file File.join(config_base_dir, 'course', 'review', 'apush.yml')
-      config[:course] = Api::V1::Demo::Course::Representer.new(hash).to_hash.deep_symbolize_keys
-    end
+    {
+      course: Api::V1::Demo::Course::Representer.new(Hashie::Mash.new).from_hash(
+        YAML.load_file File.join(config_base_dir, 'course', 'review', 'apush.yml')
+      ).deep_symbolize_keys
+    }
   end
   let(:assign_config)     do
-    {}.tap do |config|
-      hash = YAML.load_file File.join(config_base_dir, 'assign', 'review', 'apush.yml')
-      config[:assign] = Api::V1::Demo::Assign::Representer.new(hash).to_hash.deep_symbolize_keys
-    end
+    {
+      assign: Api::V1::Demo::Assign::Representer.new(Hashie::Mash.new).from_hash(
+        YAML.load_file File.join(config_base_dir, 'assign', 'review', 'apush.yml')
+      ).deep_symbolize_keys
+    }
   end
   let(:result)            { described_class.call assign_config }
 

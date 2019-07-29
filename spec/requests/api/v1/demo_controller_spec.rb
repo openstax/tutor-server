@@ -10,64 +10,125 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
 
   let(:course)           { FactoryBot.create :course_profile_course, offering: catalog_offering }
 
-  context '#users' do
-    let(:users_params) do
+  let(:task_plans)       { 2.times.map { FactoryBot.create :tasks_task_plan, owner: course } }
+
+  let(:current_time)  { Time.current }
+
+  let(:users_params) do
+    {
+      teachers: teachers.map do |teacher|
+        { username: teacher.username, full_name: teacher.full_name }
+      end,
+      students: students.map do |student|
+        { username: student.username, full_name: student.full_name }
+      end
+    }
+  end
+  let(:import_params) do
+    {
+      cnx_book_id: book.uuid,
+      appearance_code: book.title.downcase.gsub(' ', '_'),
+      reading_processing_instructions: []
+    }
+  end
+  let(:course_params) do
+    {
+      course: { name: course.name },
+      catalog_offering: { title: catalog_offering.title },
+      teachers: teachers.map { |teacher| { username: teacher.username } },
+      periods: [
+        { name: '1st', students: students.map { |student| { username: student.username } } }
+      ]
+    }
+  end
+  let(:assign_params) do
+    {
+      course: { name: course.name },
+      task_plans: task_plans.map do |task_plan|
+        {
+          title: task_plan.title,
+          type: task_plan.type,
+          book_locations: [[1, 0], [1, 1], [1, 2]],
+          assigned_to: [
+            {
+              period: { name: '1st' },
+              opens_at: (current_time - 1.day).iso8601,
+              due_at: (current_time + 1.day).iso8601
+            }
+          ]
+        }
+      end
+    }
+  end
+  let(:work_params) do
+    {
+      course: { name: course.name },
+      task_plans: task_plans.map do |task_plan|
+        {
+          title: task_plan.title,
+          tasks: students.map do |student|
+            {
+              student: { username: student.username },
+              progress: rand,
+              score: rand
+            }
+          end
+        }
+      end
+    }
+  end
+
+  context '#all' do
+    let(:all_params) do
       {
-        teachers: teachers.map do |teacher|
-          { username: teacher.username, full_name: teacher.full_name }
-        end,
-        students: students.map do |student|
-          { username: student.username, full_name: student.full_name }
-        end
+        users: users_params,
+        import: import_params,
+        course: course_params,
+        assign: assign_params,
+        work: work_params
       }
     end
 
+    it 'calls Demo::All with the given parameters' do
+      expect(Demo::All).to receive(:perform_later).with(all_params)
+
+      api_post 'demo/all', nil, params: all_params.to_json
+
+      expect(response).to have_http_status(:accepted)
+      expect(response.body_as_hash).to have_key :jobba_status_id
+    end
+  end
+
+  context '#users' do
     it 'calls Demo::Users with the given parameters' do
       expect(Demo::Users).to receive(:call).with(users: users_params).and_return(
-        Lev::Routine::Result.new Lev::Outputs.new, Lev::Errors.new
+        Lev::Routine::Result.new Lev::Outputs.new(users: teachers + students), Lev::Errors.new
       )
 
       api_post 'demo/users', nil, params: users_params.to_json
 
-      expect(response).to have_http_status(:no_content)
+      expect(response).to have_http_status(:ok)
+      users = response.body_as_hash[:users]
+      expect(users.size).to eq teachers.size + students.size
+      users_attributes = (teachers + students).map do |user|
+        Api::V1::Demo::UserRepresenter.new(user).to_hash.deep_symbolize_keys
+      end
+      users.each { |user_hash| expect(user_hash).to be_in users_attributes }
     end
   end
 
   context '#import' do
-    let(:import_params) do
-      {
-        cnx_book_id: book.uuid,
-        appearance_code: book.title.downcase.gsub(' ', '_'),
-        reading_processing_instructions: []
-      }
-    end
-
     it 'calls Demo::Import with the given parameters' do
-      expect(Demo::Import).to receive(:call).with(import: import_params).and_return(
-        Lev::Routine::Result.new Lev::Outputs.new(catalog_offering: catalog_offering),
-        Lev::Errors.new
-      )
+      expect(Demo::Import).to receive(:perform_later).with(import: import_params)
 
       api_post 'demo/import', nil, params: import_params.to_json
 
-      expect(response).to have_http_status(:success)
-      catalog_offering_hash = response.body_as_hash[:catalog_offering]
-      expect(catalog_offering_hash[:title]).to eq catalog_offering.title
+      expect(response).to have_http_status(:accepted)
+      expect(response.body_as_hash).to have_key :jobba_status_id
     end
   end
 
   context '#course' do
-    let(:course_params) do
-      {
-        course: { name: course.name },
-        catalog_offering: { title: catalog_offering.title },
-        teachers: teachers.map { |teacher| { username: teacher.username } },
-        periods: [
-          { name: '1st', students: students.map { |student| { username: student.username } } }
-        ]
-      }
-    end
-
     it 'calls Demo::Course with the given parameters' do
       expect(Demo::Course).to receive(:call).with(course: course_params).and_return(
         Lev::Routine::Result.new Lev::Outputs.new(course: course), Lev::Errors.new
@@ -75,64 +136,33 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
 
       api_post 'demo/course', nil, params: course_params.to_json
 
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:ok)
       course_hash = response.body_as_hash[:course]
       expect(course_hash[:name]).to eq course.name
     end
   end
 
   context '#assign' do
-    let(:current_time)  { Time.current }
-    let(:assign_params) do
-      {
-        course: { name: course.name },
-        task_plans: [
-          {
-            title: 'Read Chapter 1 Intro and Sections 1 and 2',
-            type: 'reading',
-            book_locations: [[1, 0], [1, 1], [1, 2]],
-            assigned_to: [
-              {
-                period: { name: '1st' },
-                opens_at: (current_time - 1.day).iso8601,
-                due_at: (current_time + 1.day).iso8601
-              }
-            ]
-          }
-        ]
-      }
-    end
-
     it 'calls Demo::Assign with the given parameters' do
       expect(Demo::Assign).to receive(:call).with(assign: assign_params).and_return(
-        Lev::Routine::Result.new Lev::Outputs.new(task_plans: []), Lev::Errors.new
+        Lev::Routine::Result.new Lev::Outputs.new(task_plans: task_plans), Lev::Errors.new
       )
 
       api_post 'demo/assign', nil, params: assign_params.to_json
 
-      expect(response).to have_http_status(:no_content)
+      expect(response).to have_http_status(:ok)
+      task_plans_array = response.body_as_hash[:task_plans]
+      expect(task_plans_array.size).to eq task_plans.size
+      task_plans_attributes = task_plans.map do |task_plan|
+        Api::V1::Demo::Assign::TaskPlan::Representer.new(task_plan).to_hash.deep_symbolize_keys
+      end
+      task_plans_array.each do |task_plan_hash|
+        expect(task_plan_hash).to be_in task_plans_attributes
+      end
     end
   end
 
   context '#work' do
-    let(:work_params) do
-      {
-        course: { name: course.name },
-        task_plans: [
-          {
-            title: 'Read Chapter 1 Intro and Sections 1 and 2',
-            tasks: students.map do |student|
-              {
-                student: { username: student.username },
-                progress: rand,
-                score: rand
-              }
-            end
-          }
-        ]
-      }
-    end
-
     it 'calls Demo::Work with the given parameters' do
       expect(Demo::Work).to receive(:call).with(work: work_params).and_return(
         Lev::Routine::Result.new Lev::Outputs.new, Lev::Errors.new

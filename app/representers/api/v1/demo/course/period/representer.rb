@@ -1,5 +1,5 @@
 class Api::V1::Demo::Course::Period::Representer < Roar::Decorator
-  include Representable::JSON::Hash
+  include Roar::JSON
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 
@@ -16,6 +16,7 @@ class Api::V1::Demo::Course::Period::Representer < Roar::Decorator
 
   collection :students,
              extend: Api::V1::Demo::UserRepresenter,
+             class: Hashie::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }

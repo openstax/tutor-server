@@ -188,6 +188,7 @@ Rails.application.routes.draw do
     end
 
     namespace :demo do
+      post :all
       post :users
       post :import
       post :course

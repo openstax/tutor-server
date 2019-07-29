@@ -9,6 +9,18 @@ class Api::V1::DemoController < Api::V1::ApiController
     EOS
   end
 
+  api :GET, '/demo/all', 'Runs all demo routines in succession'
+  description <<-EOS
+    Runs all demo routines in succession
+
+    #{json_schema(Api::V1::Demo::AllRepresenter)}
+  EOS
+  def all
+    jobba_status_id = Demo::All.perform_later consume_hash(Api::V1::Demo::AllRepresenter)
+
+    render json: { jobba_status_id: jobba_status_id }, status: :accepted
+  end
+
   api :GET, '/demo/users', 'Creates demo users'
   description <<-EOS
     Creates demo users
@@ -16,11 +28,11 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Users::Representer)}
   EOS
   def users
-    Demo::Users.call(
-      users: consume!({}, represent_with: Api::V1::Demo::Users::Representer).deep_symbolize_keys
-    )
+    users = Demo::Users.call(users: consume_hash(Api::V1::Demo::Users::Representer)).outputs.users
 
-    head :no_content
+    render json: {
+      users: users.map { |user| Api::V1::Demo::UserRepresenter.new(user).to_hash }
+    }, location: nil, status: :ok
   end
 
   api :GET, '/demo/import', 'Imports a demo book'
@@ -30,14 +42,11 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Import::Representer)}
   EOS
   def import
-    catalog_offering = Demo::Import.call(
-      import: consume!({}, represent_with: Api::V1::Demo::Import::Representer).deep_symbolize_keys
-    ).outputs.catalog_offering
-
-    respond_with(
-      { catalog_offering: catalog_offering.attributes.slice('id', 'title') },
-      represent_with: Api::V1::Demo::CatalogOfferingRepresenter, location: nil
+    jobba_status_id = Demo::Import.perform_later(
+      import: consume_hash(Api::V1::Demo::Import::Representer)
     )
+
+    render json: { jobba_status_id: jobba_status_id }, status: :accepted
   end
 
   api :GET, '/demo/course', 'Creates a demo course and enrolls demo teachers and students'
@@ -48,13 +57,12 @@ class Api::V1::DemoController < Api::V1::ApiController
   EOS
   def course
     course = Demo::Course.call(
-      course: consume!({}, represent_with: Api::V1::Demo::Course::Representer).deep_symbolize_keys
+      course: consume_hash(Api::V1::Demo::Course::Representer)
     ).outputs.course
 
-    respond_with(
-      { course: course.attributes.slice('id', 'name') },
-      represent_with: Api::V1::Demo::CourseRepresenter, location: nil
-    )
+    render json: {
+      course: Api::V1::Demo::CourseRepresenter.new(course).to_hash
+    }, location: nil, status: :ok
   end
 
   api :GET, '/demo/assign', 'Creates demo task_plans and tasks'
@@ -64,11 +72,15 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Assign::Representer)}
   EOS
   def assign
-    Demo::Assign.call(
-      assign: consume!({}, represent_with: Api::V1::Demo::Assign::Representer).deep_symbolize_keys
-    )
+    task_plans = Demo::Assign.call(
+      assign: consume_hash(Api::V1::Demo::Assign::Representer)
+    ).outputs.task_plans
 
-    head :no_content
+    render json: {
+      task_plans: task_plans.map do |task_plan|
+        Api::V1::Demo::Assign::TaskPlan::Representer.new(task_plan).to_hash
+      end
+    }, location: nil, status: :ok
   end
 
   api :GET, '/demo/work', 'Works demo tasks'
@@ -78,9 +90,7 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Work::Representer)}
   EOS
   def work
-    Demo::Work.call(
-      work: consume!({}, represent_with: Api::V1::Demo::Work::Representer).deep_symbolize_keys
-    )
+    Demo::Work.call work: consume_hash(Api::V1::Demo::Work::Representer)
 
     head :no_content
   end
@@ -89,5 +99,9 @@ class Api::V1::DemoController < Api::V1::ApiController
 
   def not_real_production
     raise(SecurityTransgression, :real_production) if IAm.real_production?
+  end
+
+  def consume_hash(representer_class)
+    consume!(Hashie::Mash.new, represent_with: representer_class).deep_symbolize_keys
   end
 end

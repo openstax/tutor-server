@@ -1,6 +1,6 @@
 # Works demo assignments
 class Demo::Work < Demo::Base
-  lev_routine
+  lev_routine use_jobba: true
 
   uses_routine Tasks::PopulatePlaceholderSteps, as: :populate_placeholders
   uses_routine Preview::WorkTask, as: :work_task

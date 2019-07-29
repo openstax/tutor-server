@@ -29,12 +29,12 @@ RSpec.describe 'demo', type: :rake do
 
   def expect_review_course(course)
     expect(course[:course][:name]).to be_in [
-      'Biology with Courseware Review',
+      'Biology 2e Review',
       'Physics with Courseware Review',
       'Sociology with Courseware Review'
     ]
     expect(course[:catalog_offering][:title]).to be_in [
-      'Biology with Courseware', 'Physics with Courseware', 'Sociology with Courseware'
+      'Biology 2e', 'Physics with Courseware', 'Sociology with Courseware'
     ]
     expect(course[:is_college]).to eq true
     expect(course[:teachers]).to eq [username: 'reviewteacher']
@@ -50,7 +50,7 @@ RSpec.describe 'demo', type: :rake do
 
   def expect_review_assign(assign)
     expect(assign[:course][:name]).to be_in [
-      'Biology with Courseware Review',
+      'Biology 2e Review',
       'Physics with Courseware Review',
       'Sociology with Courseware Review'
     ]
@@ -73,7 +73,7 @@ RSpec.describe 'demo', type: :rake do
 
   def expect_review_work(work)
     expect(work[:course][:name]).to be_in [
-      'Biology with Courseware Review',
+      'Biology 2e Review',
       'Physics with Courseware Review',
       'Sociology with Courseware Review'
     ]

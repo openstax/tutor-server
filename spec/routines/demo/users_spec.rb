@@ -13,10 +13,11 @@ RSpec.describe Demo::Users, type: :routine do
   end
   let(:user_configs)    do
     config_files.map do |file|
-      {}.tap do |config|
-        hash = YAML.load_file File.join(config_base_dir, 'users', "#{file}.yml")
-        config[:users] = Api::V1::Demo::Users::Representer.new(hash).to_hash.deep_symbolize_keys
-      end
+      {
+        users: Api::V1::Demo::Users::Representer.new(Hashie::Mash.new).from_hash(
+          YAML.load_file File.join(config_base_dir, 'users', "#{file}.yml")
+        ).deep_symbolize_keys
+      }
     end
   end
 

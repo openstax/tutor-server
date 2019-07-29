@@ -1,4 +1,23 @@
 GIT
+  remote: https://github.com/openstax/accounts-rails.git
+  revision: 5c4fda619a738e04b26c44db5b412c772c389fbf
+  ref: 5c4fda619a738e04b26c44db5b412c772c389fbf
+  specs:
+    openstax_accounts (8.1.0)
+      action_interceptor
+      keyword_search
+      lev
+      oauth2
+      omniauth
+      omniauth-oauth2
+      openstax_api
+      openstax_utilities
+      pg
+      rails
+      representable
+      roar
+
+GIT
   remote: https://github.com/openstax/active_force.git
   revision: 3ba34211b6f2387b5e05512b9561076894c5fa2d
   ref: 3ba34211b6f2387b5e05512b9561076894c5fa2d
@@ -24,23 +43,6 @@ GIT
       mimemagic (~> 0.3)
       nokogiri (>= 1.6.6)
       rubyzip (>= 1.2.1)
-
-PATH
-  remote: ../accounts-rails
-  specs:
-    openstax_accounts (8.1.0)
-      action_interceptor
-      keyword_search
-      lev
-      oauth2
-      omniauth
-      omniauth-oauth2
-      openstax_api
-      openstax_utilities
-      pg
-      rails
-      representable
-      roar
 
 GEM
   remote: https://rubygems.org/

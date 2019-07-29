@@ -4,14 +4,12 @@ RSpec.describe Demo::All, type: :routine do
   let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:config_types)    { [ 'users', 'import', 'course', 'assign', 'work' ] }
   let(:config)          do
-    {}.tap do |config|
-      [config_types].flatten.each do |type|
-        type_string = type.to_s
-        hash = YAML.load_file File.join(config_base_dir, type_string, 'review', 'apush.yml')
-        representer_class = Api::V1::Demo.const_get(type_string.capitalize)::Representer
-        config[type.to_sym] = representer_class.new(hash).to_hash.deep_symbolize_keys
-      end
+    config_hash = {}
+    config_types.each do |type|
+      config_hash[type] = YAML.load_file File.join(config_base_dir, type, 'review', 'apush.yml')
     end
+
+    Api::V1::Demo::AllRepresenter.new(Hashie::Mash.new).from_hash(config_hash).deep_symbolize_keys
   end
   let(:result)          { described_class.call config }
 

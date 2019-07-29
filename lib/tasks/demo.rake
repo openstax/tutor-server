@@ -10,15 +10,15 @@ def abort_if_exercises_unconfigured(task_name)
   ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
 end
 
-def demo_routine_perform_later(routine_class, types, args)
+def demo_routine_perform_later(routine_class, type_string, args)
+  type_string = type_string.to_s
   options = args.to_h.deep_symbolize_keys
+  types = type_string == 'all' ? [ 'users', 'import', 'course', 'assign', 'work' ] : [ type_string ]
   filter = (options.delete(:config) || DEFAULT_DEMO_CONFIG).to_s
 
-  routine_args = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
-    [ types ].flatten.each do |type|
-      type_string = type.to_s
-      base_dir = File.join DEMO_CONFIG_BASE_DIR, type_string, filter
-      representer_class = Api::V1::Demo.const_get(type_string.capitalize)::Representer
+  configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
+    types.each do |type|
+      base_dir = File.join DEMO_CONFIG_BASE_DIR, type, filter
 
       Dir[File.join(base_dir, '**', '[^_]*.yml{,.erb}')].each do |path|
         string = File.read(path)
@@ -27,14 +27,24 @@ def demo_routine_perform_later(routine_class, types, args)
           erb.filename = path
           string = erb.result
         end
-        representer_hash = representer_class.new(YAML.load(string)).to_hash.deep_symbolize_keys
-        options_by_basename[path.sub(base_dir, '')][type.to_sym] = representer_hash
+        options_by_basename[path.sub(base_dir, '')][type] = YAML.load(string)
       end
     end
   end.values
+  routine_args = configs.map do |config|
+    next Api::V1::Demo::AllRepresenter.new(Hashie::Mash.new).from_hash(config).deep_symbolize_keys \
+      if type_string == 'all'
+
+    {}.tap do |routine_arg|
+      config.each do |key, value|
+        routine_arg[key.to_sym] = Api::V1::Demo.const_get(key.capitalize)::Representer.new(
+          Hashie::Mash.new
+        ).from_hash(value).deep_symbolize_keys
+      end
+    end
+  end
   num_routines = routine_args.size
 
-  errors = []
   Delayed::Worker.with_delay_jobs(true) do
     routine_args.each { |routine_arg| routine_class.perform_later routine_arg }
   end
@@ -54,7 +64,7 @@ desc 'Initializes all demo data. Config can be either be "all" or a specific con
 task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |task, args|
   abort_if_exercises_unconfigured 'demo'
 
-  demo_routine_perform_later Demo::All, [ 'users', 'import', 'course', 'assign', 'work' ], args
+  demo_routine_perform_later Demo::All, 'all', args
 
   log_worker_mem_info
 end

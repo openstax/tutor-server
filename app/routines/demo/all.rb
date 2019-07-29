@@ -1,6 +1,6 @@
 # Performs all demo routines (except Users and Show) in succession
 class Demo::All < Demo::Base
-  lev_routine
+  lev_routine use_jobba: true
 
   # The input translations are really error translations
   uses_routine Demo::Users,  as: :users,  translations: { inputs: { type: :verbatim } }

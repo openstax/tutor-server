@@ -1,5 +1,5 @@
 class Api::V1::Demo::Assign::TaskPlan::AssignedTo::PeriodRepresenter < Roar::Decorator
-  include Representable::JSON::Hash
+  include Roar::JSON
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 

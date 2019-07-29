@@ -1,10 +1,11 @@
 class Api::V1::Demo::Work::TaskRepresenter < Roar::Decorator
-  include Representable::JSON::Hash
+  include Roar::JSON
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 
   property :student,
-           decorator: Api::V1::Demo::UserRepresenter,
+           extend: Api::V1::Demo::UserRepresenter,
+           class: Hashie::Mash,
            readable: true,
            writeable: true,
            schema_info: { required: true }

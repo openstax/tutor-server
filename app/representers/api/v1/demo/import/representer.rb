@@ -1,5 +1,5 @@
 class Api::V1::Demo::Import::Representer < Roar::Decorator
-  include Representable::JSON::Hash
+  include Roar::JSON
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 
@@ -57,6 +57,7 @@ class Api::V1::Demo::Import::Representer < Roar::Decorator
 
   collection :reading_processing_instructions,
              extend: Api::V1::Demo::Import::ReadingProcessingInstructionRepresenter,
+             class: Hashie::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }

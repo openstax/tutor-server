@@ -64,7 +64,7 @@ module Api::V1
 
     property :is_test,
              getter: ->(*) { account.is_test },
-             type: :boolean,
+             type: Virtus::Attribute::Boolean,
              writeable: false,
              readable: true
 

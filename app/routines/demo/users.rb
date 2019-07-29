@@ -1,6 +1,6 @@
 # Creates the admin, content, support, researchers, teachers, students and zz demo users
 class Demo::Users < Demo::Base
-  lev_routine
+  lev_routine use_jobba: true
 
   uses_routine User::SetAdministratorState, as: :set_administrator
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
@@ -27,7 +27,8 @@ class Demo::Users < Demo::Base
       .index_by(&:username)
     attributes = { is_test: true }.merge attributes
 
-    outputs.users = users.map do |user|
+    outputs.users ||= []
+    outputs.users += users.map do |user|
       model = existing_users_by_username[user[:username]]
       attrs = attributes.merge(user)
 
@@ -82,9 +83,9 @@ class Demo::Users < Demo::Base
       log { "Researcher: #{user.username}" }
     end
 
-    create_or_update_users(users[:students], role: :student, school_type: :college).each do |user|
-      log { "Student: #{user.username}" }
-    end
+    create_or_update_users(
+      users[:students], role: :student, school_type: :college
+    ).each { |user| log { "Student: #{user.username}" } }
 
     create_or_update_users(
       users[:teachers], faculty_status: :confirmed_faculty, role: :instructor, school_type: :college

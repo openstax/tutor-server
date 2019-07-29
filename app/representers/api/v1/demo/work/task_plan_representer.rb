@@ -1,5 +1,5 @@
 class Api::V1::Demo::Work::TaskPlanRepresenter < Roar::Decorator
-  include Representable::JSON::Hash
+  include Roar::JSON
   include Representable::Hash::AllowSymbols
   include Representable::Coercion
 
@@ -16,6 +16,7 @@ class Api::V1::Demo::Work::TaskPlanRepresenter < Roar::Decorator
 
   collection :tasks,
              extend: Api::V1::Demo::Work::TaskRepresenter,
+             class: Hashie::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }
