@@ -194,7 +194,7 @@ Rails.application.routes.draw do
       post :course
       post :assign
       post :work
-    end
+    end unless IAm.real_production?
 
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
