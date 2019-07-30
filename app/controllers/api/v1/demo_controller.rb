@@ -1,5 +1,7 @@
 class Api::V1::DemoController < Api::V1::ApiController
-  before_action :not_real_production
+  respond_to :html
+  skip_before_action :force_json_content_type
+  before_action :not_real_production, :verify_requested_format!
 
   resource_description do
     api_versions "v1"
@@ -16,9 +18,12 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::AllRepresenter)}
   EOS
   def all
-    jobba_status_id = Demo::All.perform_later consume_hash(Api::V1::Demo::AllRepresenter)
+    # This demo routine takes too long and consumes too much memory to ever run inline
+    jobba_status_id = Delayed::Worker.with_delay_jobs(true) do
+      Demo::All.perform_later consume_hash(Api::V1::Demo::AllRepresenter)
+    end
 
-    render json: { jobba_status_id: jobba_status_id }, status: :accepted
+    render_jobba_status_id jobba_status_id
   end
 
   api :GET, '/demo/users', 'Creates demo users'
@@ -28,11 +33,9 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Users::Representer)}
   EOS
   def users
-    users = Demo::Users.call(users: consume_hash(Api::V1::Demo::Users::Representer)).outputs.users
+    out = Demo::Users.call(users: consume_hash(Api::V1::Demo::Users::Representer)).outputs
 
-    render json: {
-      users: users.map { |user| Api::V1::Demo::UserRepresenter.new(user).to_hash }
-    }, location: nil, status: :ok
+    render json: Api::V1::Demo::Users::Representer.new(out).to_hash, location: nil, status: :ok
   end
 
   api :GET, '/demo/import', 'Imports a demo book'
@@ -42,11 +45,12 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Import::Representer)}
   EOS
   def import
-    jobba_status_id = Demo::Import.perform_later(
-      import: consume_hash(Api::V1::Demo::Import::Representer)
-    )
+    # This demo routine takes too long and consumes too much memory to ever run inline
+    jobba_status_id = Delayed::Worker.with_delay_jobs(true) do
+      Demo::Import.perform_later import: consume_hash(Api::V1::Demo::Import::Representer)
+    end
 
-    render json: { jobba_status_id: jobba_status_id }, status: :accepted
+    render_jobba_status_id jobba_status_id
   end
 
   api :GET, '/demo/course', 'Creates a demo course and enrolls demo teachers and students'
@@ -90,9 +94,15 @@ class Api::V1::DemoController < Api::V1::ApiController
     #{json_schema(Api::V1::Demo::Work::Representer)}
   EOS
   def work
-    Demo::Work.call work: consume_hash(Api::V1::Demo::Work::Representer)
+    task_plans = Demo::Work.call(
+      work: consume_hash(Api::V1::Demo::Work::Representer)
+    ).outputs.task_plans
 
-    head :no_content
+    render json: {
+      task_plans: task_plans.map do |task_plan|
+        Api::V1::Demo::Work::TaskPlanRepresenter.new(task_plan).to_hash
+      end
+    }, location: nil, status: :ok
   end
 
   protected
@@ -101,7 +111,30 @@ class Api::V1::DemoController < Api::V1::ApiController
     raise(SecurityTransgression, :real_production) if IAm.real_production?
   end
 
+  # Remove blank strings coming from unfilled form inputs (so we replace them with default values)
+  def remove_blank_strings(obj)
+    case obj
+    when Hash
+      obj.delete_if { |key, value| remove_blank_strings(value) == '' }
+    when Array
+      obj.delete_if { |value| remove_blank_strings(value) == '' }
+    else
+      obj
+    end
+  end
+
   def consume_hash(representer_class)
-    consume!(Hashie::Mash.new, represent_with: representer_class).deep_symbolize_keys
+    if request.content_type.include?('json')
+      consume!(Demo::Mash.new, represent_with: representer_class).deep_symbolize_keys
+    else # attempt to parse the params hash
+      representer_class.new(Demo::Mash.new).from_hash(
+        remove_blank_strings(params.permit!.to_h)
+      ).deep_symbolize_keys
+    end
+  end
+
+  def render_jobba_status_id(jobba_status_id)
+    render json: { job: { id: jobba_status_id, url: api_job_url(jobba_status_id) } },
+           status: :accepted
   end
 end

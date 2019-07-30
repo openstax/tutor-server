@@ -5,7 +5,7 @@ class Api::V1::Demo::Assign::TaskPlan::AssignedTo::Representer < Roar::Decorator
 
   property :period,
            extend: Api::V1::Demo::Assign::TaskPlan::AssignedTo::PeriodRepresenter,
-           class: Hashie::Mash,
+           class: Demo::Mash,
            readable: true,
            writeable: true
 

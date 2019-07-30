@@ -1,0 +1,31 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # fields
+  # Additionally, they may override the following variable:
+  options ||= {}
+%>
+
+<div class="form-group">
+  <%= fields.label :css %>
+  <%=
+    fields.text_field :css, options.merge(
+      class: 'form-control',
+      required: true,
+      placeholder: 'Required (unless Reading processing instruction is removed)'
+    )
+  %>
+</div>
+
+<%=
+  render partial: 'form_collection', locals: { form: fields, scope: :fragments, partial: 'string' }
+%>
+
+<%=
+  render partial: 'form_collection', locals: { form: fields, scope: :labels, partial: 'string' }
+%>
+
+<%= render partial: 'form_collection', locals: { form: fields, scope: :only, partial: 'string' } %>
+
+<%=
+  render partial: 'form_collection', locals: { form: fields, scope: :except, partial: 'string' }
+%>

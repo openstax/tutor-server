@@ -1,23 +1,4 @@
 GIT
-  remote: https://github.com/openstax/accounts-rails.git
-  revision: 5c4fda619a738e04b26c44db5b412c772c389fbf
-  ref: 5c4fda619a738e04b26c44db5b412c772c389fbf
-  specs:
-    openstax_accounts (8.1.0)
-      action_interceptor
-      keyword_search
-      lev
-      oauth2
-      omniauth
-      omniauth-oauth2
-      openstax_api
-      openstax_utilities
-      pg
-      rails
-      representable
-      roar
-
-GIT
   remote: https://github.com/openstax/active_force.git
   revision: 3ba34211b6f2387b5e05512b9561076894c5fa2d
   ref: 3ba34211b6f2387b5e05512b9561076894c5fa2d
@@ -438,6 +419,19 @@ GEM
     omniauth-salesforce (1.0.5)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
+    openstax_accounts (8.1.0)
+      action_interceptor
+      keyword_search
+      lev
+      oauth2
+      omniauth
+      omniauth-oauth2
+      openstax_api
+      openstax_utilities
+      pg
+      rails
+      representable
+      roar
     openstax_api (9.0.1)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
@@ -799,7 +793,7 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts!
+  openstax_accounts
   openstax_api
   openstax_healthcheck
   openstax_rescue_from

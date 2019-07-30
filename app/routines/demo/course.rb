@@ -15,7 +15,7 @@ class Demo::Course < Demo::Base
 
   protected
 
-  # Either course_id or (course_name and (catalog_offering_id or catalog_offering_title))
+  # Either course id or (course name and (catalog_offering id or catalog_offering title))
   # must be provided
   def exec(course:)
     catalog_offering = course[:catalog_offering]
@@ -26,14 +26,11 @@ class Demo::Course < Demo::Base
         Catalog::Models::Offering.order(created_at: :desc).find_by! title: catalog_offering[:title]
       end
     end
-    model = CourseProfile::Models::Course.find(course[:course][:id]) \
-      if course[:course][:id].present?
 
-    attrs = course.slice(:term, :year, :is_college).merge(
-      catalog_offering: offering_model,
-      is_preview: false,
-      is_concept_coach: false,
-      is_test: true
+    model = find_course course[:course]
+
+    attrs = course.slice(:term, :year, :is_college, :is_test).merge(
+      catalog_offering: offering_model, is_preview: false, is_concept_coach: false
     )
     attrs = attrs.merge(name: course[:course][:name]) unless course[:course][:name].blank?
     attrs[:starts_at] = DateTime.parse(course[:starts_at]) rescue nil \
@@ -46,8 +43,9 @@ class Demo::Course < Demo::Base
       ) if offering_model.nil?
 
       attrs[:term] ||= :demo
-      attrs[:year] ||= Time.current.year
+      attrs[:year] ||= Time.zone.now.year
       attrs[:is_college] = true if attrs[:is_college].blank?
+      attrs[:is_test] = true if attrs[:is_test].blank?
 
       model = run(:create_course, attrs).outputs.course
 
@@ -68,6 +66,7 @@ class Demo::Course < Demo::Base
                           .index_by(&:username)
     missing_usernames = usernames - users_by_username.keys
     raise(
+      ActiveRecord::RecordNotFound,
       "Could not find users for the following username(s): #{missing_usernames.join(', ')}"
     ) unless missing_usernames.empty?
 

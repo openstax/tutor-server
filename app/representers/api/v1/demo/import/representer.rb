@@ -57,7 +57,7 @@ class Api::V1::Demo::Import::Representer < Roar::Decorator
 
   collection :reading_processing_instructions,
              extend: Api::V1::Demo::Import::ReadingProcessingInstructionRepresenter,
-             class: Hashie::Mash,
+             class: Demo::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }

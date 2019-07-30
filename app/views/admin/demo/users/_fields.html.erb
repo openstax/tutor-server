@@ -1,0 +1,12 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+%>
+
+<%
+  [
+    :administrators, :content_analysts, :customer_support, :researchers, :teachers, :students
+  ].each do |scope|
+%>
+  <%= render partial: 'form_collection', locals: { form: form, scope: scope, partial: 'user' } %>
+<% end %>

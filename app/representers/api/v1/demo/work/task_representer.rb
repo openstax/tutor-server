@@ -5,7 +5,7 @@ class Api::V1::Demo::Work::TaskRepresenter < Roar::Decorator
 
   property :student,
            extend: Api::V1::Demo::UserRepresenter,
-           class: Hashie::Mash,
+           class: Demo::Mash,
            readable: true,
            writeable: true,
            schema_info: { required: true }

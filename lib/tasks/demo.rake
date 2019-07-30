@@ -1,6 +1,3 @@
-DEFAULT_DEMO_CONFIG = 'review'
-DEMO_CONFIG_BASE_DIR = File.join Rails.root, 'config', 'demo'
-
 def abort_if_exercises_unconfigured(task_name)
   configuration = OpenStax::Exercises::V1.configuration
 
@@ -14,11 +11,11 @@ def demo_routine_perform_later(routine_class, type_string, args)
   type_string = type_string.to_s
   options = args.to_h.deep_symbolize_keys
   types = type_string == 'all' ? [ 'users', 'import', 'course', 'assign', 'work' ] : [ type_string ]
-  filter = (options.delete(:config) || DEFAULT_DEMO_CONFIG).to_s
+  filter = (options.delete(:config) || Demo::DEFAULT_CONFIG).to_s
 
   configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
     types.each do |type|
-      base_dir = File.join DEMO_CONFIG_BASE_DIR, type, filter
+      base_dir = File.join Demo::CONFIG_BASE_DIR, type, filter
 
       Dir[File.join(base_dir, '**', '[^_]*.yml{,.erb}')].each do |path|
         string = File.read(path)
@@ -50,9 +47,12 @@ def demo_routine_perform_later(routine_class, type_string, args)
   end
 
   Rails.logger.info do
-    "#{num_routines} background job(s) queued\n" +
-    "Manage background workers: bin/delayed_job -n #{num_routines} status/start/stop\n" +
-    'Check job status: bin/rake jobs:status'
+    <<~INFO
+      #{num_routines} background job(s) queued
+      Check job status: bin/rake jobs:status
+      Manage background workers: bin/delayed_job -n #{num_routines} status/start/stop
+      Or run the jobs inline (single process): bin/rake jobs:workoff
+    INFO
   end
 end
 

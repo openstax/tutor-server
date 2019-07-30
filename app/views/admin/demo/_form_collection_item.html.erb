@@ -1,0 +1,17 @@
+<%
+  # Clients of this partial must provide the following variables:
+  # form
+  # partial
+  # name
+  # Additionally, they may override the following variables:
+  item ||= Demo::Mash.new
+  options ||= {}
+%>
+
+<li class="item">
+  <%= form.fields '', model: item do |fields| %>
+    <%= render partial: partial, locals: { fields: fields, options: options, name: name } %>
+
+    <%= link_to "Remove #{name}", '#', remote: true, class: 'remove' %>
+  <% end %>
+</li>

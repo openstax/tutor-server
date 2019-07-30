@@ -1,0 +1,95 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+%>
+
+<h3>Import</h3>
+
+<div class="form-group">
+  <%= form.label :archive_url_base %>
+  <%=
+    form.text_field :archive_url_base,
+                    class: 'form-control',
+                    placeholder: Rails.application.secrets.openstax[:cnx][:archive_url]
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :cnx_book_id %>
+  <%=
+    form.text_field :cnx_book_id, class: 'form-control', required: true, placeholder: 'Required'
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :cnx_book_version %>
+  <%=
+    form.text_field :cnx_book_version, class: 'form-control',
+                                       placeholder: 'Derived from CNX Book or latest'
+  %>
+</div>
+
+<%=
+  render partial: 'form_collection', locals: {
+    form: form, scope: :reading_processing_instructions, partial: File.join(
+      'admin', 'demo', 'import', 'reading_processing_instruction'
+    )
+  }
+%>
+
+<h3>Catalog Offering</h3>
+
+<div class="form-group">
+  <%= form.label :id %>
+  <%= form.text_field :id, class: 'form-control', placeholder: 'Find by title or create new' %>
+</div>
+
+<div class="form-group">
+  <%= form.label :appearance_code %>
+  <%=
+    form.text_field :appearance_code, class: 'form-control', required: true, placeholder: 'Required'
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :salesforce_book_name %>
+  <%= form.text_field :salesforce_book_name, class: 'form-control', placeholder: 'Same as Title' %>
+</div>
+
+<div class="form-group">
+  <%= form.label :title %>
+  <%=
+    form.text_field(
+      :title, class: 'form-control',
+              placeholder: 'Same as Salesforce book name or derived from Appearance code'
+    )
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :default_course_name %>
+  <%= form.text_field :default_course_name, class: 'form-control', placeholder: 'Same as Title' %>
+</div>
+
+<div class="form-group">
+  <%= form.label :description %>
+  <%=
+    form.text_field :description, class: 'form-control', placeholder: 'Same as Default course name'
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :webview_url_base %>
+  <%=
+    form.text_field :webview_url_base, class: 'form-control',
+                                       placeholder: 'Derived from Archive url base'
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :pdf_url_base %>
+  <%=
+    form.text_field :pdf_url_base, class: 'form-control',
+                                   placeholder: 'Derived from Archive url base'
+  %>
+</div>

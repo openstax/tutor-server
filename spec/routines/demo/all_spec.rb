@@ -9,7 +9,7 @@ RSpec.describe Demo::All, type: :routine do
       config_hash[type] = YAML.load_file File.join(config_base_dir, type, 'review', 'apush.yml')
     end
 
-    Api::V1::Demo::AllRepresenter.new(Hashie::Mash.new).from_hash(config_hash).deep_symbolize_keys
+    Api::V1::Demo::AllRepresenter.new(Demo::Mash.new).from_hash(config_hash).deep_symbolize_keys
   end
   let(:result)          { described_class.call config }
 

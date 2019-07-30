@@ -10,40 +10,13 @@ class Demo::Work < Demo::Base
   def exec(work:, random_seed: nil)
     srand random_seed
 
-    course = find_course work[:course]
+    course = find_course! work[:course]
 
-    all_task_plan_ids = work[:task_plans].map { |task_plan| task_plan[:id] }.compact
-    task_plans_by_id = Tasks::Models::TaskPlan.where(owner: course, id: all_task_plan_ids)
-                                              .index_by(&:id)
-    missing_task_plan_ids = all_task_plan_ids - task_plans_by_id.keys
-    raise(
-      "Could not find a task plan in #{course.name} with the following id(s): #{
-        missing_task_plan_ids.join(', ')
-      }"
-    ) unless missing_task_plan_ids.empty?
-
-    all_task_plan_titles = work[:task_plans].map { |task_plan| task_plan[:title] }.compact
-    task_plans_by_title = {}
-    Tasks::Models::TaskPlan.where(owner: course, title: all_task_plan_titles)
-                           .group_by(&:title)
-                           .each do |title, task_plans|
-      task_plans_by_title[title] = task_plans.max_by(&:created_at)
-    end
-    missing_task_plan_titles = all_task_plan_titles - task_plans_by_title.keys
-    raise(
-      "Could not find a task plan in #{course.name} with the following title(s): #{
-        missing_task_plan_titles.join(', ')
-      }"
-    ) unless missing_task_plan_titles.empty?
+    task_plans_by_hash = find_course_task_plans! course, work[:task_plans]
+    outputs.task_plans = task_plans_by_hash.values
 
     work[:task_plans].each do |task_plan|
-      task_plan_model = if task_plan[:id].blank?
-        raise(ArgumentError, 'You must provide a task plan id or title') if task_plan[:title].blank?
-
-        task_plans_by_title[task_plan[:title]]
-      else
-        task_plans_by_id[task_plan[:id]]
-      end
+      task_plan_model = task_plans_by_hash[task_plan]
 
       usernames = task_plan[:tasks].map { |task| task[:student][:username] }.uniq
 
@@ -57,6 +30,7 @@ class Demo::Work < Demo::Base
         .index_by { |task| task.taskings.first.role.username }
       missing_usernames = usernames - tasks_by_username.keys
       raise(
+        ActiveRecord::RecordNotFound,
         "Could not find tasks for the following username(s): #{missing_usernames.join(', ')}"
       ) unless missing_usernames.empty?
 

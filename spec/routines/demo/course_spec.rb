@@ -5,14 +5,14 @@ RSpec.describe Demo::Course, type: :routine do
   let(:config_base_dir)   { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:user_config)       do
     {
-      users: Api::V1::Demo::Users::Representer.new(Hashie::Mash.new).from_hash(
+      users: Api::V1::Demo::Users::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'users', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }
   end
   let(:course_config)     do
     {
-      course: Api::V1::Demo::Course::Representer.new(Hashie::Mash.new).from_hash(
+      course: Api::V1::Demo::Course::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'course', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }

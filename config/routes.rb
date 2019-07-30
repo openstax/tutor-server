@@ -292,6 +292,15 @@ Rails.application.routes.draw do
         put :extend_payment_due_at
       end
     end
+
+    namespace :demo do
+      get :users
+      get :import
+      get :course
+      get :assign
+      get :work
+      get :all
+    end unless IAm.real_production?
   end
 
   # All CS routes

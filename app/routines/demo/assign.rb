@@ -7,25 +7,35 @@ class Demo::Assign < Demo::Base
 
   protected
 
-  def normalize_book_locations(book_locations)
-    book_locations.first.is_a?(Array) ? book_locations : [ book_locations ]
+  def convert_book_locations(book_locations)
+    case book_locations.first
+    when Hash
+      book_locations.map { |book_location| [ book_location[:chapter], book_location[:section] ] }
+    when Array
+      book_locations
+    else
+      [ book_locations ]
+    end
   end
 
   def exec(assign:, random_seed: nil)
     srand random_seed
 
-    course = find_course assign[:course]
-    ecosystem = course.ecosystems.first
+    course = find_course! assign[:course]
+    ecosystem = course.course_ecosystems.first!.ecosystem
+
+    task_plans_by_hash = find_course_task_plans course, assign[:task_plans]
 
     all_book_locations = assign[:task_plans].flat_map do |task_plan|
-      normalize_book_locations task_plan[:book_locations]
+      convert_book_locations task_plan[:book_locations]
     end.uniq
     pages_by_book_location = ecosystem.pages.where(
       Content::Models::Page.arel_table[:book_location].in all_book_locations
     ).preload(:homework_core_pool).index_by(&:book_location)
     missing_book_locations = all_book_locations - pages_by_book_location.keys
     raise(
-      "Could not find a page in #{ecosystem.title} with the following book location(s): #{
+      ActiveRecord::RecordNotFound,
+      "Could not find a Page in #{ecosystem.title} with the following book location(s): #{
         missing_book_locations.map(&:inspect).join(', ')
       }"
     ) unless missing_book_locations.empty?
@@ -37,7 +47,8 @@ class Demo::Assign < Demo::Base
     end
     missing_task_plan_types = types - assistants_by_task_plan_type.keys
     raise(
-      "Could not find a course assistant for task plans of the following type(s): #{
+      ActiveRecord::RecordNotFound,
+      "Could not find a Course assistant for Task plans of the following type(s): #{
         missing_task_plan_types.join(', ')
       }"
     ) unless missing_task_plan_types.empty?
@@ -48,7 +59,7 @@ class Demo::Assign < Demo::Base
         } for course #{course.name} (id: #{course.id})"
       end
 
-      book_locations = normalize_book_locations task_plan[:book_locations]
+      book_locations = convert_book_locations task_plan[:book_locations]
       pages = book_locations.map { |book_location| pages_by_book_location[book_location] }
 
       attrs = {
@@ -62,67 +73,79 @@ class Demo::Assign < Demo::Base
       }
 
       if task_plan[:type] == 'homework'
-        task_plan[:num_core_exercises] ||= 3
+        task_plan[:exercises_count_core] ||= 3
         task_plan[:exercises_count_dynamic] ||= 3
 
         exercise_ids = pages.map(&:homework_core_pool).flat_map(&:content_exercise_ids).uniq
-        raise "Not enough exercises to assign (using #{OpenStax::Exercises::V1.server_url})" \
-          if exercise_ids.size < task_plan[:num_core_exercises]
+        raise(
+          ActiveRecord::RecordNotFound,
+          "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
+        ) if exercise_ids.size < task_plan[:exercises_count_core]
 
         attrs[:settings].merge!(
           exercise_ids: exercise_ids.shuffle
-                                    .take(task_plan[:num_core_exercises])
+                                    .take(task_plan[:exercises_count_core])
                                     .map(&:to_s),
           exercises_count_dynamic: task_plan[:exercises_count_dynamic]
         )
       end
 
-      Tasks::Models::TaskPlan.new(attrs).tap do |task_plan_model|
-        task_plan[:assigned_to].each do |assigned_to|
-          period = course.periods.find_by! name: assigned_to[:period][:name]
+      task_plan[:is_published] = true if task_plan[:is_published].blank?
 
-          task_plan_model.tasking_plans << Tasks::Models::TaskingPlan.new(
-            target: period,
-            opens_at: assigned_to[:opens_at],
-            due_at: assigned_to[:due_at],
-            time_zone: course.time_zone
-          )
+      task_plan_model = task_plans_by_hash[task_plan]
 
-          log { "  Added tasking plan for period #{period.name}" }
-        end
-
-        task_plan_model.save!
-
-        ShortCode::Create[task_plan_model.to_global_id.to_s]
-
-        # Draft plans do not undergo distribution
-        if task_plan[:is_draft]
-          log { "  Is a draft, skipping distributing" }
-        else
-          log { "  Distributing tasks" }
-
-          tasks = run(:distribute_tasks, task_plan: task_plan_model).outputs.tasks
-          log { "Assigned #{task_plan_model.type} #{tasks.count} times" }
-
-          log do
-            task = tasks.first
-            steps = task.task_steps.map do |step|
-              "  #{step.number}. #{
-                (
-                  step.group_type.split('_')[0..-2] +
-                  step.tasked_type.demodulize.tableize.split('_')[1..-1]
-                ).map(&:first).map(&:upcase).join
-              }"
-            end
-
-            "One task looks like: Task #{task.id}: #{task.task_type}\n#{steps.join("\n")}"
-          end if tasks.any?
-
-          # Clear outputs from DistributeTasks so they can be GC'd
-          outputs.tasks = nil
-          outputs.tasking_plans = nil
-        end
+      if task_plan_model.nil?
+        task_plan_model = Tasks::Models::TaskPlan.new attrs
+      else
+        task_plan_model.update_attributes attrs
       end
+
+      task_plan_model.tasking_plans = task_plan[:assigned_to].map do |assigned_to|
+        period = course.periods.find_by! name: assigned_to[:period][:name]
+
+        log { "  Added tasking plan for period #{period.name}" }
+
+        Tasks::Models::TaskingPlan.new(
+          target: period,
+          opens_at: assigned_to[:opens_at],
+          due_at: assigned_to[:due_at],
+          time_zone: course.time_zone
+        )
+      end
+
+      task_plan_model.save!
+
+      ShortCode::Create[task_plan_model.to_global_id.to_s]
+
+      # Draft plans do not undergo distribution
+      if task_plan[:is_published]
+        log { "  Distributing tasks" }
+
+        tasks = run(:distribute_tasks, task_plan: task_plan_model).outputs.tasks
+        log { "Assigned #{task_plan_model.type} #{tasks.count} times" }
+
+        log do
+          task = tasks.first
+          steps = task.task_steps.map do |step|
+            "  #{step.number}. #{
+              (
+                step.group_type.split('_')[0..-2] +
+                step.tasked_type.demodulize.tableize.split('_')[1..-1]
+              ).map(&:first).map(&:upcase).join
+            }"
+          end
+
+          "One task looks like: Task #{task.id}: #{task.task_type}\n#{steps.join("\n")}"
+        end if tasks.any?
+
+        # Clear outputs from DistributeTasks so they can be GC'd
+        outputs.tasks = nil
+        outputs.tasking_plans = nil
+      else
+        log { "  Is a draft, skipping distributing" }
+      end
+
+      task_plan_model
     end
 
     log_status course.name

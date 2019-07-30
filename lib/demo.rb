@@ -1,4 +1,3 @@
-# This file defines namespace-only modules that are not defined elsewhere
 module Api
   module V1
     module Demo
@@ -17,4 +16,6 @@ module Api
 end
 
 module Demo
+  DEFAULT_CONFIG = 'review'
+  CONFIG_BASE_DIR = File.join Rails.root, 'config', 'demo'
 end

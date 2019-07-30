@@ -23,4 +23,9 @@ class Api::V1::Demo::UserRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: true
+
+  property :is_test,
+           type: Virtus::Attribute::Boolean,
+           readable: true,
+           writeable: true
 end

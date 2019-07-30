@@ -102,18 +102,29 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
   context '#users' do
     it 'calls Demo::Users with the given parameters' do
       expect(Demo::Users).to receive(:call).with(users: users_params).and_return(
-        Lev::Routine::Result.new Lev::Outputs.new(users: teachers + students), Lev::Errors.new
+        Lev::Routine::Result.new(
+          Lev::Outputs.new(users: teachers + students, teachers: teachers, students: students),
+          Lev::Errors.new
+        )
       )
 
       api_post 'demo/users', nil, params: users_params.to_json
 
       expect(response).to have_http_status(:ok)
-      users = response.body_as_hash[:users]
-      expect(users.size).to eq teachers.size + students.size
-      users_attributes = (teachers + students).map do |user|
-        Api::V1::Demo::UserRepresenter.new(user).to_hash.deep_symbolize_keys
+
+      teachers_array = response.body_as_hash[:teachers]
+      expect(teachers_array.size).to eq teachers.size
+      teachers_attributes = teachers.map do |teacher|
+        Api::V1::Demo::UserRepresenter.new(teacher).to_hash.deep_symbolize_keys
       end
-      users.each { |user_hash| expect(user_hash).to be_in users_attributes }
+      teachers_array.each { |teacher_hash| expect(teacher_hash).to be_in teachers_attributes }
+
+      students_array = response.body_as_hash[:students]
+      expect(students_array.size).to eq students.size
+      students_attributes = students.map do |student|
+        Api::V1::Demo::UserRepresenter.new(student).to_hash.deep_symbolize_keys
+      end
+      students_array.each { |student_hash| expect(student_hash).to be_in students_attributes }
     end
   end
 

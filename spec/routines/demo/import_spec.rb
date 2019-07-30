@@ -5,7 +5,7 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
   let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:import_config)     do
     {
-      import: Api::V1::Demo::Import::Representer.new(Hashie::Mash.new).from_hash(
+      import: Api::V1::Demo::Import::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }

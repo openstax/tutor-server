@@ -33,11 +33,11 @@ class CourseProfile::Models::Course < ApplicationRecord
                               dependent: :destroy,
                               inverse_of: :course
 
-  has_many :excluded_exercises, subsystem: :course_content
+  has_many :excluded_exercises, subsystem: :course_content, dependent: :destroy
 
-  has_many :course_ecosystems, subsystem: :course_content
+  has_many :course_ecosystems, subsystem: :course_content, dependent: :destroy
 
-  has_many :course_assistants, subsystem: :tasks
+  has_many :course_assistants, subsystem: :tasks, dependent: :destroy
 
   has_many :taskings, through: :periods, subsystem: :tasks
 

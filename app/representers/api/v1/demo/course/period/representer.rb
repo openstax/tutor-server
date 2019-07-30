@@ -16,7 +16,7 @@ class Api::V1::Demo::Course::Period::Representer < Roar::Decorator
 
   collection :students,
              extend: Api::V1::Demo::UserRepresenter,
-             class: Hashie::Mash,
+             class: Demo::Mash,
              readable: true,
              writeable: true,
              schema_info: { required: true }

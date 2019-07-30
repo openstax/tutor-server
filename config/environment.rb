@@ -1,6 +1,6 @@
 # Load the Rails application.
 require_relative 'application'
-require 'namespaces'
+require 'demo'
 require 'scout_helper'
 require 'box'
 require 'i_am'

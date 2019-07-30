@@ -16,34 +16,36 @@ class Demo::Users < Demo::Base
     FinePrint.sign_contract(user.to_model, string_name)
   end
 
-  def create_or_update_users(users, attributes = {})
-    return [] if users.nil?
+  def create_or_update_users(users, type, attributes = {})
+    outputs.users ||= []
 
-    usernames = users.map { |user| user[:username] }
+    users_of_type = users[type]
+    return outputs.public_send("#{type}=", []) if users_of_type.blank?
+
+    usernames = users_of_type.map { |user| user[:username] }
     existing_users_by_username = User::Models::Profile
       .joins(:account)
       .where(account: { username: usernames })
       .preload(:account)
       .index_by(&:username)
-    attributes = { is_test: true }.merge attributes
 
-    outputs.users ||= []
-    outputs.users += users.map do |user|
+    user_models = users_of_type.map do |user|
       model = existing_users_by_username[user[:username]]
       attrs = attributes.merge(user)
 
       if model.nil?
-        attrs[:password] = Rails.application.secrets.demo_user_password if attrs[:password].blank?
+        attrs[:password] ||= Rails.application.secrets.demo_user_password
 
-        if attrs[:first_name].blank? || attrs[:last_name].blank?
-          attrs[:full_name] = attrs[:username].split('_').map(&:capitalize).join(' ') \
-            if attrs[:full_name].blank?
+        if attrs[:first_name].blank? && attrs[:last_name].blank?
+          attrs[:full_name] ||= attrs[:username].split('_').map(&:capitalize).join(' ')
 
           attrs[:first_name], attrs[:last_name] = attrs[:full_name].split(' ', 2)
-          raise "#{attrs[:full_name]} is not a full name" if attrs[:last_name].blank?
-        elsif attrs[:full_name].blank?
-          attrs[:full_name] = "#{attrs[:first_name]} #{attrs[:last_name]}"
+        else
+          separator = attrs[:first_name].blank? || attrs[:last_name].blank? ? '' : ' '
+          attrs[:full_name] ||= "#{attrs[:first_name]}#{separator}#{attrs[:last_name]}"
         end
+
+        attrs[:is_test] = true if attrs[:is_test].blank?
 
         sign_contracts = attrs.has_key?(:sign_contracts) ? attrs[:sign_contracts] : true
 
@@ -60,35 +62,38 @@ class Demo::Users < Demo::Base
 
       model
     end
+
+    outputs.users += user_models
+    outputs.public_send "#{type}=", user_models
   end
 
   def exec(users:)
-    create_or_update_users(users[:administrators], role: :other).each do |user|
+    create_or_update_users(users, :administrators, role: :other).each do |user|
       run(:set_administrator, user: user, administrator: true)
       log { "Admin: #{user.username}" }
     end
 
-    create_or_update_users(users[:content_analysts], role: :other).each do |user|
+    create_or_update_users(users, :content_analysts, role: :other).each do |user|
       run(:set_content_analyst, user: user, content_analyst: true)
       log { "Content Analyst: #{user.username}" }
     end
 
-    create_or_update_users(users[:customer_support], role: :other).each do |user|
+    create_or_update_users(users, :customer_support, role: :other).each do |user|
       run(:set_customer_support, user: user, customer_support: true)
       log { "Customer Support: #{user.username}" }
     end
 
-    create_or_update_users(users[:researchers], role: :other).each do |user|
+    create_or_update_users(users, :researchers, role: :other).each do |user|
       run(:set_researcher, user: user, researcher: true)
       log { "Researcher: #{user.username}" }
     end
 
     create_or_update_users(
-      users[:students], role: :student, school_type: :college
+      users, :students, role: :student, school_type: :college
     ).each { |user| log { "Student: #{user.username}" } }
 
     create_or_update_users(
-      users[:teachers], faculty_status: :confirmed_faculty, role: :instructor, school_type: :college
+      users, :teachers, faculty_status: :confirmed_faculty, role: :instructor, school_type: :college
     ).each { |user| log { "Teacher: #{user.username}" } }
 
     log_status
