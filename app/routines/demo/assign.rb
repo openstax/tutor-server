@@ -21,12 +21,14 @@ class Demo::Assign < Demo::Base
   def exec(assign:, random_seed: nil)
     srand random_seed
 
-    course = find_course! assign[:course]
-    ecosystem = course.course_ecosystems.first!.ecosystem
+    course = assign[:course]
+    course_model = find_course! course
+    ecosystem = course_model.course_ecosystems.first!.ecosystem
 
-    task_plans_by_hash = find_course_task_plans course, assign[:task_plans]
+    task_plans = course[:task_plans]
+    task_plans_by_hash = find_course_task_plans course_model, task_plans
 
-    all_book_locations = assign[:task_plans].flat_map do |task_plan|
+    all_book_locations = task_plans.flat_map do |task_plan|
       convert_book_locations task_plan[:book_locations]
     end.uniq
     pages_by_book_location = ecosystem.pages.where(
@@ -40,9 +42,11 @@ class Demo::Assign < Demo::Base
       }"
     ) unless missing_book_locations.empty?
 
-    types = assign[:task_plans].map { |task_plan| task_plan[:type] }.uniq
+    types = task_plans.map { |task_plan| task_plan[:type] }.uniq
     assistants_by_task_plan_type = {}
-    course.course_assistants.where(tasks_task_plan_type: types).preload(:assistant).each do |ca|
+    course_model.course_assistants.where(tasks_task_plan_type: types)
+                                  .preload(:assistant)
+                                  .each do |ca|
       assistants_by_task_plan_type[ca.tasks_task_plan_type] = ca.assistant
     end
     missing_task_plan_types = types - assistants_by_task_plan_type.keys
@@ -53,10 +57,10 @@ class Demo::Assign < Demo::Base
       }"
     ) unless missing_task_plan_types.empty?
 
-    outputs.task_plans = assign[:task_plans].map do |task_plan|
+    outputs.task_plans = task_plans.map do |task_plan|
       log do
         "Creating #{task_plan[:type]} #{task_plan[:title]
-        } for course #{course.name} (id: #{course.id})"
+        } for course #{course_model.name} (id: #{course_model.id})"
       end
 
       book_locations = convert_book_locations task_plan[:book_locations]
@@ -65,7 +69,7 @@ class Demo::Assign < Demo::Base
       attrs = {
         title: task_plan[:title],
         type: task_plan[:type],
-        owner: course,
+        owner: course_model,
         content_ecosystem_id: ecosystem.id,
         assistant: assistants_by_task_plan_type[task_plan[:type]],
         settings: { page_ids: pages.map(&:id).map(&:to_s) },
@@ -98,10 +102,14 @@ class Demo::Assign < Demo::Base
         task_plan_model = Tasks::Models::TaskPlan.new attrs
       else
         task_plan_model.update_attributes attrs
+
+        task_plan_model.tasking_plans.delete_all :delete_all
       end
 
       task_plan_model.tasking_plans = task_plan[:assigned_to].map do |assigned_to|
-        period = course.periods.find_by! name: assigned_to[:period][:name]
+        period = course_model.periods.to_a.find do |period|
+          period.name == assigned_to[:period][:name]
+        end
 
         log { "  Added tasking plan for period #{period.name}" }
 
@@ -109,7 +117,7 @@ class Demo::Assign < Demo::Base
           target: period,
           opens_at: assigned_to[:opens_at],
           due_at: assigned_to[:due_at],
-          time_zone: course.time_zone
+          time_zone: course_model.time_zone
         )
       end
 
@@ -148,6 +156,6 @@ class Demo::Assign < Demo::Base
       task_plan_model
     end
 
-    log_status course.name
+    log_status course_model.name
   end
 end

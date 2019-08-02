@@ -1,10 +1,6 @@
-class Api::V1::Demo::Assign::TaskPlan::AssignedTo::Representer < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter < Api::V1::Demo::BaseRepresenter
   property :period,
-           extend: Api::V1::Demo::Assign::TaskPlan::AssignedTo::PeriodRepresenter,
+           extend: Api::V1::Demo::PeriodRepresenter,
            class: Demo::Mash,
            readable: true,
            writeable: true

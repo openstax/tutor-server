@@ -3,14 +3,14 @@
   form
 %>
 
-<%= render partial: File.join('admin', 'demo', 'course'), locals: { form: form } %>
+<%= form.fields 'course', model: form.object.course do |fields| %>
+  <%= render partial: File.join('admin', 'demo', 'course'), locals: { form: fields } %>
 
-<h3>Work</h3>
-
-<%=
-  render partial: 'form_collection', locals: {
-    form: form,
-    scope: :task_plans,
-    partial: File.join('admin', 'demo', 'work', 'task_plan', 'fields')
-  }
-%>
+  <%=
+    render partial: 'form_collection', locals: {
+      form: fields,
+      scope: :task_plans,
+      partial: File.join('admin', 'demo', 'work', 'task_plan', 'fields')
+    }
+  %>
+<% end %>

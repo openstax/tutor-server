@@ -1,24 +1,18 @@
 <%
   # Clients of this partial must provide the following variable:
-  # fields
+  # form
   # Additionally, they may override the following variables:
-  name ||= 'Task plan'
   options ||= {}
 %>
 
-<div class="form-group">
-  <%= fields.label :title %>
-  <%=
-    fields.text_field :title, options.merge(
-      class: 'form-control', required: true, placeholder: "Required (unless #{name} is removed)"
-    )
-  %>
-</div>
+<%=
+  render partial: File.join('admin', 'demo', 'task_plan'), locals: { form: form, options: options }
+%>
 
 <div class="form-group">
-  <%= fields.label :type %>
+  <%= form.label :type %>
   <%=
-    fields.select(
+    form.select(
       :type,
       [ [ '(Required)', '' ], [ 'Reading', 'reading' ], [ 'Homework', 'homework' ] ],
       {},
@@ -28,27 +22,27 @@
 </div>
 
 <div class="form-group">
-  <%= fields.label :exercises_count_core, 'Number of core exercises (for homework only)' %>
+  <%= form.label :exercises_count_core, 'Number of core exercises (for homework only)' %>
   <%=
-    fields.number_field :exercises_count_core, options.merge(
+    form.number_field :exercises_count_core, options.merge(
       class: 'form-control', min: 0
     )
   %>
 </div>
 
 <div class="form-group">
-  <%= fields.label :exercises_count_dynamic, 'Number of dynamic exercises' %>
+  <%= form.label :exercises_count_dynamic, 'Number of dynamic exercises' %>
   <%=
-    fields.number_field :exercises_count_dynamic, options.merge(
+    form.number_field :exercises_count_dynamic, options.merge(
       class: 'form-control', min: 0
     )
   %>
 </div>
 
 <div class="form-group">
-  <%= fields.label :is_published, 'Publish?' %>
+  <%= form.label :is_published, 'Publish?' %>
   <%=
-    fields.select(
+    form.select(
       :is_published,
       [
         [ 'If and only if the Task plan is new or already published', '' ],
@@ -63,7 +57,7 @@
 
 <%=
   render partial: 'form_collection', locals: {
-    form: fields,
+    form: form,
     scope: :book_locations,
     partial: File.join('admin', 'demo', 'assign', 'task_plan', 'book_location')
   }
@@ -71,7 +65,7 @@
 
 <%=
   render partial: 'form_collection', locals: {
-    form: fields,
+    form: form,
     scope: :assigned_to,
     partial: File.join('admin', 'demo', 'assign', 'task_plan', 'assigned_to')
   }

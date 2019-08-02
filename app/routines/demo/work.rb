@@ -10,12 +10,14 @@ class Demo::Work < Demo::Base
   def exec(work:, random_seed: nil)
     srand random_seed
 
-    course = find_course! work[:course]
+    course = work[:course]
+    course_model = find_course! course
 
-    task_plans_by_hash = find_course_task_plans! course, work[:task_plans]
+    task_plans = course[:task_plans]
+    task_plans_by_hash = find_course_task_plans! course_model, task_plans
     outputs.task_plans = task_plans_by_hash.values
 
-    work[:task_plans].each do |task_plan|
+    task_plans.each do |task_plan|
       task_plan_model = task_plans_by_hash[task_plan]
 
       usernames = task_plan[:tasks].map { |task| task[:student][:username] }.uniq
@@ -36,7 +38,7 @@ class Demo::Work < Demo::Base
 
       log do
         "Working #{task_plan_model.type} #{task_plan_model.title
-        } for course #{course.name} (id: #{course.id})"
+        } for course #{course_model.name} (id: #{course_model.id})"
       end
 
       task_plan[:tasks].each do |task|
@@ -79,6 +81,6 @@ class Demo::Work < Demo::Base
       end
     end
 
-    log_status work[:course][:name]
+    log_status course[:name]
   end
 end

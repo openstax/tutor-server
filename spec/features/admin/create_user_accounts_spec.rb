@@ -30,7 +30,7 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
     stub_current_user(admin)
 
     visit admin_root_path
-    click_link 'Users'
+    click_link 'Users', match: :first
     click_link 'Create user'
   end
 

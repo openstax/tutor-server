@@ -4,7 +4,7 @@ class Demo::Import < Demo::Base
 
   lev_routine use_jobba: true
 
-  uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
+  uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_ecosystem
   uses_routine AddEcosystemToCourse, as: :add_ecosystem_to_course
 
   protected
@@ -17,31 +17,34 @@ class Demo::Import < Demo::Base
       ' env vars and then restart any background job workers to use Demo::Books'
     ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
 
-    import[:archive_url_base] ||= Rails.application.secrets.openstax[:cnx][:archive_url]
+    book = import[:book]
+    catalog_offering = import[:catalog_offering]
 
-    import[:cnx_book_id], import[:cnx_book_version] = import[:cnx_book_id].split('@', 2) \
-      if import[:cnx_book_version].blank?
+    book[:archive_url_base] ||= Rails.application.secrets.openstax[:cnx][:archive_url]
 
-    if import[:cnx_book_version] == 'latest'
-      import[:cnx_book_id] = import[:cnx_book_id].split('@', 2).first
-      import.delete :cnx_book_version
+    book[:uuid], book[:version] = book[:uuid].split('@', 2) if book[:version].blank?
+
+    if book[:version] == 'latest'
+      book[:uuid] = book[:uuid].split('@', 2).first
+      book.delete :version
     end
 
-    book_cnx_id = import[:cnx_book_version].blank? ?
-      import[:cnx_book_id] : "#{import[:cnx_book_id]}@#{import[:cnx_book_version]}"
+    book_cnx_id = book[:version].blank? ? book[:uuid] : "#{book[:uuid]}@#{book[:version]}"
 
-    log { "Importing #{import[:title]} from #{import[:archive_url_base]}#{book_cnx_id}" }
+    log do
+      "Importing #{catalog_offering[:title]} from #{book[:archive_url_base]}#{book_cnx_id}"
+    end
 
-    ecosystem = OpenStax::Exercises::V1.use_real_client do
+    ecosystem_model = OpenStax::Exercises::V1.use_real_client do
       run(
-        :import_book,
+        :import_ecosystem,
         book_cnx_id: book_cnx_id,
-        archive_url: import[:archive_url_base],
-        reading_processing_instructions: import[:reading_processing_instructions]
-      ).outputs.ecosystem
+        archive_url: book[:archive_url_base],
+        reading_processing_instructions: book[:reading_processing_instructions]
+      ).outputs.ecosystem.to_model
     end
 
-    attrs = import.slice(
+    attrs = catalog_offering.slice(
       :title,
       :description,
       :appearance_code,
@@ -53,7 +56,7 @@ class Demo::Import < Demo::Base
       is_tutor: true,
       is_concept_coach: false,
       is_available: true,
-      content_ecosystem_id: ecosystem.id
+      ecosystem: ecosystem_model
     )
 
     # Retries could be replaced with UPSERTing the catalog offering
@@ -68,9 +71,9 @@ class Demo::Import < Demo::Base
           attrs[:salesforce_book_name] ||= attrs[:title]
           attrs[:default_course_name] ||= attrs[:title]
           attrs[:description] ||= attrs[:default_course_name]
-          attrs[:webview_url_base] ||= import[:archive_url_base].sub('archive.', '')
+          attrs[:webview_url_base] ||= book[:archive_url_base].sub('archive.', '')
           attrs[:webview_url] = "#{attrs.delete(:webview_url_base)}#{book_cnx_id}"
-          attrs[:pdf_url_base] ||= import[:archive_url_base].sub('/contents/', '/exports/')
+          attrs[:pdf_url_base] ||= book[:archive_url_base].sub('/contents/', '/exports/')
           attrs[:pdf_url] = "#{attrs.delete(:pdf_url_base)}#{book_cnx_id}"
 
           # Create the catalog offering
@@ -84,7 +87,7 @@ class Demo::Import < Demo::Base
           # Update the catalog offering and existing courses
           offering.update_attributes attrs
           offering.courses.each do |course|
-            run(:add_ecosystem_to_course, course: course, ecosystem: ecosystem)
+            run(:add_ecosystem_to_course, course: course, ecosystem: ecosystem_model)
           end
 
           offering

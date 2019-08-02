@@ -1,8 +1,4 @@
-class Api::V1::Demo::CatalogOfferingRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::CatalogOfferingRepresenter < Api::V1::Demo::BaseRepresenter
   # One of either id or title is required
   property :id,
            type: String,

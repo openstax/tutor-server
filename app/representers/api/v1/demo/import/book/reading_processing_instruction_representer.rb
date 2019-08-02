@@ -1,8 +1,4 @@
-class Api::V1::Demo::Import::ReadingProcessingInstructionRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::Import::Book::ReadingProcessingInstructionRepresenter < Api::V1::Demo::BaseRepresenter
   property :css,
            type: String,
            readable: true,

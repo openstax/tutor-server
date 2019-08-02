@@ -24,7 +24,7 @@ def demo_routine_perform_later(routine_class, type_string, args)
           erb.filename = path
           string = erb.result
         end
-        options_by_basename[path.sub(base_dir, '')][type] = YAML.load(string)
+        options_by_basename[path.sub(base_dir, '').chomp('.erb')][type] = YAML.load(string)
       end
     end
   end.values

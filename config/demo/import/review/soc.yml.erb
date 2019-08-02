@@ -1,4 +1,0 @@
-<%=
-  filename = File.join(__dir__, '../soc.yml.erb')
-  ERB.new(File.read(filename)).tap { |erb| erb.filename = filename }.result
-%>

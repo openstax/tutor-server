@@ -1,19 +1,8 @@
-class Api::V1::Demo::Work::Representer < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::Work::Representer < Api::V1::Demo::BaseRepresenter
   property :course,
-           extend: Api::V1::Demo::CourseRepresenter,
+           extend: Api::V1::Demo::Work::Course::Representer,
            class: Demo::Mash,
            readable: true,
            writeable: true,
            schema_info: { required: true }
-
-  collection :task_plans,
-             extend: Api::V1::Demo::Work::TaskPlanRepresenter,
-             class: Demo::Mash,
-             readable: true,
-             writeable: true,
-             schema_info: { required: true }
 end

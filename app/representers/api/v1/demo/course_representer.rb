@@ -1,8 +1,4 @@
-class Api::V1::Demo::CourseRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::CourseRepresenter < Api::V1::Demo::BaseRepresenter
   # One of either id or name is required
   property :id,
            type: String,

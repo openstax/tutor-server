@@ -3,7 +3,7 @@
   form
 %>
 
-<h3>Catalog Offering</h3>
+<h4>Catalog Offering</h4>
 
 <%= form.fields 'catalog_offering', model: form.object.catalog_offering do |fields| %>
   <div class="form-group">
@@ -29,55 +29,65 @@
   </div>
 <% end %>
 
-<%= render partial: File.join('admin', 'demo', 'course'), locals: { form: form } %>
+<%= form.fields 'course', model: form.object.course do |fields| %>
+  <%= render partial: File.join('admin', 'demo', 'course'), locals: { form: fields } %>
 
-<div class="form-group">
-  <%= form.label :is_college %>
+  <div class="form-group">
+    <%= fields.label :is_college %>
+    <%=
+      fields.select(
+        :is_college,
+        [ [ 'Unchanged/Yes', '' ], [ 'Yes', '1' ], [ 'No', '0' ] ],
+        {},
+        class: 'form-control'
+      )
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :term %>
+    <%=
+      fields.select(
+        :term,
+        [ [ 'Unchanged/Demo', '' ] ] + CourseProfile::Models::Course.terms.keys.map do |key|
+          [ key.humanize, key ]
+        end,
+        {},
+        class: 'form-control'
+      )
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :year %>
+    <%=
+      fields.number_field :year, class: 'form-control',
+                                 placeholder: Time.zone.now.year.to_s,
+                                 min: 2000
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :starts_at %>
+    <%=
+      fields.text_field :starts_at, class: 'form-control', placeholder: 'Derived from Term and Year'
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :ends_at %>
+    <%=
+      fields.text_field :ends_at, class: 'form-control', placeholder: 'Derived from Term and Year'
+    %>
+  </div>
+
   <%=
-    form.select :is_college,
-                [ [ 'Unchanged/Yes', '' ], [ 'Yes', '1' ], [ 'No', '0' ] ],
-                {},
-                class: 'form-control'
+    render partial: 'form_collection', locals: { form: fields, scope: :teachers, partial: 'user' }
   %>
-</div>
 
-<div class="form-group">
-  <%= form.label :term %>
   <%=
-    form.select(
-      :term,
-      [ [ 'Unchanged/Demo', '' ] ] + CourseProfile::Models::Course.terms.keys.map do |key|
-        [key.humanize, key]
-      end,
-      {},
-      class: 'form-control'
-    )
+    render partial: 'form_collection', locals: {
+      form: fields, scope: :periods, partial: File.join('admin', 'demo', 'course', 'period')
+    }
   %>
-</div>
-
-<div class="form-group">
-  <%= form.label :year %>
-  <%=
-    form.number_field :year, class: 'form-control', placeholder: Time.zone.now.year.to_s, min: 2000
-  %>
-</div>
-
-<div class="form-group">
-  <%= form.label :starts_at %>
-  <%=
-    form.text_field :starts_at, class: 'form-control', placeholder: 'Derived from Term and Year'
-  %>
-</div>
-
-<div class="form-group">
-  <%= form.label :ends_at %>
-  <%= form.text_field :ends_at, class: 'form-control', placeholder: 'Derived from Term and Year' %>
-</div>
-
-<%= render partial: 'form_collection', locals: { form: form, scope: :teachers, partial: 'user' } %>
-
-<%=
-  render partial: 'form_collection', locals: {
-    form: form, scope: :periods, partial: File.join('admin', 'demo', 'course', 'period')
-  }
-%>
+<% end %>

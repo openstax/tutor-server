@@ -1,30 +1,29 @@
 <%
   # Clients of this partial must provide the following variable:
-  # fields
+  # form
   # Additionally, they may override the following variables:
-  name ||= 'Book location'
   options ||= {}
 %>
 
 <div class="form-group">
-  <%= fields.label :chapter %>
+  <%= form.label :chapter %>
   <%=
-    fields.number_field :chapter, options.merge(
+    form.number_field :chapter, options.merge(
       class: 'form-control',
       required: true,
-      placeholder: "Required (unless #{name} is removed)",
+      placeholder: "Required (unless Book location is removed)",
       min: 1
     )
   %>
 </div>
 
 <div class="form-group">
-  <%= fields.label :section %>
+  <%= form.label :section %>
   <%=
-    fields.number_field :section, options.merge(
+    form.number_field :section, options.merge(
       class: 'form-control',
       required: true,
-      placeholder: "Required (unless #{name} is removed)",
+      placeholder: "Required (unless Book location is removed)",
       min: 0
     )
   %>

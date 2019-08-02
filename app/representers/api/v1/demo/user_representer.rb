@@ -1,8 +1,4 @@
-class Api::V1::Demo::UserRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::UserRepresenter < Api::V1::Demo::BaseRepresenter
   property :username,
            type: String,
            readable: true,

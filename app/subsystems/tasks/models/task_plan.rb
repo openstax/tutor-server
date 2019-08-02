@@ -21,8 +21,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   belongs_to :owner, polymorphic: true
   belongs_to :ecosystem, subsystem: :content
 
-  has_many :tasking_plans, dependent: :destroy, inverse_of: :task_plan
-  has_many :tasks, dependent: :destroy, inverse_of: :task_plan
+  # These associations to not have dependent: :destroy because the task_plan is soft-deleted
+  has_many :tasking_plans, inverse_of: :task_plan
+  has_many :tasks, inverse_of: :task_plan
 
   json_serialize :settings, Hash
 

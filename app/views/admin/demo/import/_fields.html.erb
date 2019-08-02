@@ -3,93 +3,103 @@
   # form
 %>
 
-<h3>Import</h3>
+<%= form.fields 'book', model: form.object.book do |fields| %>
+  <h4>Book</h4>
 
-<div class="form-group">
-  <%= form.label :archive_url_base %>
+  <div class="form-group">
+    <%= fields.label :archive_url_base %>
+    <%=
+      fields.text_field :archive_url_base,
+                        class: 'form-control',
+                        placeholder: Rails.application.secrets.openstax[:cnx][:archive_url]
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :uuid %>
+    <%=
+      fields.text_field :uuid, class: 'form-control', required: true, placeholder: 'Required'
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :version %>
+    <%=
+      fields.text_field :version, class: 'form-control', placeholder: 'Derived from Uuid or latest'
+    %>
+  </div>
+
   <%=
-    form.text_field :archive_url_base,
-                    class: 'form-control',
-                    placeholder: Rails.application.secrets.openstax[:cnx][:archive_url]
+    render partial: 'form_collection', locals: {
+      form: fields, scope: :reading_processing_instructions, partial: File.join(
+        'admin', 'demo', 'import', 'reading_processing_instruction'
+      )
+    }
   %>
-</div>
+<% end %>
 
-<div class="form-group">
-  <%= form.label :cnx_book_id %>
-  <%=
-    form.text_field :cnx_book_id, class: 'form-control', required: true, placeholder: 'Required'
-  %>
-</div>
+<%= form.fields 'catalog_offering', model: form.object.catalog_offering do |fields| %>
+  <h4>Catalog Offering</h4>
 
-<div class="form-group">
-  <%= form.label :cnx_book_version %>
-  <%=
-    form.text_field :cnx_book_version, class: 'form-control',
-                                       placeholder: 'Derived from CNX Book or latest'
-  %>
-</div>
+  <div class="form-group">
+    <%= fields.label :id %>
+    <%= fields.text_field :id, class: 'form-control', placeholder: 'Find by title or create new' %>
+  </div>
 
-<%=
-  render partial: 'form_collection', locals: {
-    form: form, scope: :reading_processing_instructions, partial: File.join(
-      'admin', 'demo', 'import', 'reading_processing_instruction'
-    )
-  }
-%>
+  <div class="form-group">
+    <%= fields.label :appearance_code %>
+    <%=
+      fields.text_field :appearance_code, class: 'form-control',
+                                          required: true,
+                                          placeholder: 'Required'
+    %>
+  </div>
 
-<h3>Catalog Offering</h3>
+  <div class="form-group">
+    <%= fields.label :salesforce_book_name %>
+    <%=
+      fields.text_field :salesforce_book_name, class: 'form-control', placeholder: 'Same as Title'
+    %>
+  </div>
 
-<div class="form-group">
-  <%= form.label :id %>
-  <%= form.text_field :id, class: 'form-control', placeholder: 'Find by title or create new' %>
-</div>
+  <div class="form-group">
+    <%= fields.label :title %>
+    <%=
+      fields.text_field(
+        :title, class: 'form-control',
+                placeholder: 'Same as Salesforce book name or derived from Appearance code'
+      )
+    %>
+  </div>
 
-<div class="form-group">
-  <%= form.label :appearance_code %>
-  <%=
-    form.text_field :appearance_code, class: 'form-control', required: true, placeholder: 'Required'
-  %>
-</div>
+  <div class="form-group">
+    <%= fields.label :default_course_name %>
+    <%=
+      fields.text_field :default_course_name, class: 'form-control', placeholder: 'Same as Title'
+    %>
+  </div>
 
-<div class="form-group">
-  <%= form.label :salesforce_book_name %>
-  <%= form.text_field :salesforce_book_name, class: 'form-control', placeholder: 'Same as Title' %>
-</div>
+  <div class="form-group">
+    <%= fields.label :description %>
+    <%=
+      fields.text_field :description, class: 'form-control',
+                                      placeholder: 'Same as Default course name'
+    %>
+  </div>
 
-<div class="form-group">
-  <%= form.label :title %>
-  <%=
-    form.text_field(
-      :title, class: 'form-control',
-              placeholder: 'Same as Salesforce book name or derived from Appearance code'
-    )
-  %>
-</div>
+  <div class="form-group">
+    <%= fields.label :webview_url_base %>
+    <%=
+      fields.text_field :webview_url_base, class: 'form-control',
+                                           placeholder: 'Derived from Archive url base'
+    %>
+  </div>
 
-<div class="form-group">
-  <%= form.label :default_course_name %>
-  <%= form.text_field :default_course_name, class: 'form-control', placeholder: 'Same as Title' %>
-</div>
-
-<div class="form-group">
-  <%= form.label :description %>
-  <%=
-    form.text_field :description, class: 'form-control', placeholder: 'Same as Default course name'
-  %>
-</div>
-
-<div class="form-group">
-  <%= form.label :webview_url_base %>
-  <%=
-    form.text_field :webview_url_base, class: 'form-control',
+  <div class="form-group">
+    <%= fields.label :pdf_url_base %>
+    <%=
+      fields.text_field :pdf_url_base, class: 'form-control',
                                        placeholder: 'Derived from Archive url base'
-  %>
-</div>
-
-<div class="form-group">
-  <%= form.label :pdf_url_base %>
-  <%=
-    form.text_field :pdf_url_base, class: 'form-control',
-                                   placeholder: 'Derived from Archive url base'
-  %>
-</div>
+    %>
+  </div>
+<% end %>

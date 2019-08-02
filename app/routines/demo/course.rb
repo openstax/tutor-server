@@ -27,17 +27,19 @@ class Demo::Course < Demo::Base
       end
     end
 
-    model = find_course course[:course]
+    course_hash = course[:course]
+    course_model = find_course course_hash
 
-    attrs = course.slice(:term, :year, :is_college, :is_test).merge(
+    attrs = course_hash.slice(:term, :year, :is_college, :is_test).merge(
       catalog_offering: offering_model, is_preview: false, is_concept_coach: false
     )
-    attrs = attrs.merge(name: course[:course][:name]) unless course[:course][:name].blank?
-    attrs[:starts_at] = DateTime.parse(course[:starts_at]) rescue nil \
-      unless course[:starts_at].blank?
-    attrs[:ends_at] = DateTime.parse(course[:ends_at]) rescue nil unless course[:ends_at].blank?
+    attrs = attrs.merge(name: course_hash[:name]) unless course_hash[:name].blank?
+    attrs[:starts_at] = DateTime.parse(course_hash[:starts_at]) rescue nil \
+      unless course_hash[:starts_at].blank?
+    attrs[:ends_at] = DateTime.parse(course_hash[:ends_at]) rescue nil \
+      unless course_hash[:ends_at].blank?
 
-    if model.nil?
+    if course_model.nil?
       raise(
         ArgumentError, 'You must provide a catalog offering when creating a new course'
       ) if offering_model.nil?
@@ -47,18 +49,20 @@ class Demo::Course < Demo::Base
       attrs[:is_college] = true if attrs[:is_college].blank?
       attrs[:is_test] = true if attrs[:is_test].blank?
 
-      model = run(:create_course, attrs).outputs.course
+      course_model = run(:create_course, attrs).outputs.course
 
-      log { "Course Created: #{model.name} (id: #{model.id})" }
+      log { "Course Created: #{course_model.name} (id: #{course_model.id})" }
     else
-      model.update_attributes(attrs)
+      course_model.update_attributes(attrs)
 
-      log { "Course Found: #{model.name} (id: #{model.id})" }
+      log { "Course Found: #{course_model.name} (id: #{course_model.id})" }
     end
 
     usernames = (
-      course[:teachers].map { |teacher| teacher[:username] } +
-      course[:periods].flat_map { |period| period[:students].map { |student| student[:username] } }
+      course_hash[:teachers].map { |teacher| teacher[:username] } +
+      course_hash[:periods].flat_map do |period|
+        period[:students].map { |student| student[:username] }
+      end
     ).uniq
     users_by_username = User::Models::Profile.joins(:account)
                           .where(account: { username: usernames })
@@ -70,18 +74,19 @@ class Demo::Course < Demo::Base
       "Could not find users for the following username(s): #{missing_usernames.join(', ')}"
     ) unless missing_usernames.empty?
 
-    course[:teachers].each do |teacher|
+    course_hash[:teachers].each do |teacher|
       user = users_by_username[teacher[:username]]
 
-      run(:add_teacher, course: model, user: user) \
-        unless run(:is_teacher, user: user, course: model).outputs.is_course_teacher
+      run(:add_teacher, course: course_model, user: user) \
+        unless run(:is_teacher, user: user, course: course_model).outputs.is_course_teacher
 
       log { "Teacher: #{user.username} (#{user.name})" }
     end
 
-    course[:periods].each_with_index do |period, index|
-      period_model = CourseMembership::Models::Period.find_by(course: model, name: period[:name]) ||
-                     run(:create_period, course: model, name: period[:name]).outputs.period.to_model
+    course_hash[:periods].each_with_index do |period, index|
+      period_model = CourseMembership::Models::Period.find_by(
+        course: course_model, name: period[:name]
+      ) || run(:create_period, course: course_model, name: period[:name]).outputs.period.to_model
 
       run(:update_period, period: period_model, enrollment_code: period[:enrollment_code]) \
         unless period[:enrollment_code].blank?
@@ -93,7 +98,9 @@ class Demo::Course < Demo::Base
 
         log { "    Student: #{user.username} (#{user.name})" }
 
-        out = run(:is_student, user: user, course: model, include_dropped_students: true).outputs
+        out = run(
+          :is_student, user: user, course: course_model, include_dropped_students: true
+        ).outputs
         if out.is_course_student
           next if out.student.period == period_model
 
@@ -109,7 +116,7 @@ class Demo::Course < Demo::Base
       end
     end
 
-    outputs.course = model
+    outputs.course = course_model
 
     log_status outputs.course.name
   end

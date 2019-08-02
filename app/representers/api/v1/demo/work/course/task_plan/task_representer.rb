@@ -1,8 +1,4 @@
-class Api::V1::Demo::Work::TaskRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::Work::Course::TaskPlan::TaskRepresenter < Api::V1::Demo::BaseRepresenter
   property :student,
            extend: Api::V1::Demo::UserRepresenter,
            class: Demo::Mash,

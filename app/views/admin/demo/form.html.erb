@@ -1,5 +1,7 @@
+<% partials = [ :users, :import, :course, :assign, :work ] %>
+
 <ul class="nav nav-tabs" role="tablist">
-  <% [ :users, :import, :course, :assign, :work, :all ].each do |type| %>
+  <% (partials + [ :all ]).each do |type| %>
     <li role="presentation" class="<%= 'active' if type == @type %>">
       <%=
         link_to type.capitalize,
@@ -36,14 +38,16 @@
 
   <p>Blank fields do not affect existing records.</p>
 
+  <p><%= link_to 'Scroll to Bottom', '#submit' %></p>
+
   <br>
 
-  <%= link_to 'Scroll to Bottom', '#submit' %>
-
   <% if @type.to_sym == :all %>
-    <% [ :users, :import, :course, :assign, :work ].each do |partial| %>
+    <% partials.each do |partial| %>
       <%= fields partial, model: @model[partial] do |fields| %>
         <div>
+          <h3><%= partial.capitalize %></h3>
+
           <%=
             render partial: File.join('admin', 'demo', partial.to_s, 'fields'),
                    locals: { form: fields }
@@ -66,4 +70,4 @@
 
 <br>
 
-<%= link_to 'Scroll to Top', '#navbar' %>
+<p><%= link_to 'Scroll to Top', '#navbar' %></p>

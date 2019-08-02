@@ -4,66 +4,79 @@ RSpec.describe 'demo', type: :rake do
   include_context 'rake'
 
   def expect_review_import(import)
-    expect(import[:archive_url_base]).to eq 'https://archive.cnx.org/contents/'
-    expect(import[:salesforce_book_name]).to be_in [
-      'Biology 2e', 'Physics w Courseware', 'Sociology w Courseware'
-    ]
-    expect(import[:title]).to(eq('Physics with Courseware')) \
-      if import[:salesforce_book_name] == 'Physics w Courseware'
-        expect(import[:title]).to(eq('Sociology with Courseware')) \
-          if import[:salesforce_book_name] == 'Sociology w Courseware'
-    expect(import[:appearance_code]).to be_in [
-      'biology_2e', 'college_physics', 'intro_sociology'
-    ]
-    expect(import[:cnx_book_id]).to be_in [
+    book = import[:book]
+    expect(book[:archive_url_base]).to eq 'https://archive.cnx.org/contents/'
+    expect(book[:uuid]).to be_in [
       '8d50a0af-948b-4204-a71d-4826cba765b8',
       '405335a3-7cff-4df2-a9ad-29062a4af261',
       '02040312-72c8-441e-a685-20e9333f3e1d'
     ]
-    expect(import[:reading_processing_instructions].size).to be_in [1, 2, 4]
-    import[:reading_processing_instructions].each do |reading_processing_instruction|
+    reading_processing_instructions = book[:reading_processing_instructions]
+    expect(reading_processing_instructions.size).to be_in [1, 2, 4]
+    reading_processing_instructions.each do |reading_processing_instruction|
       expect(reading_processing_instruction[:css]).not_to be_blank
       expect(reading_processing_instruction[:fragments]).to be_a Array
     end
+
+    catalog_offering = import[:catalog_offering]
+    expect(catalog_offering[:title]).to be_in [
+      'Biology 2e', 'Physics with Courseware', 'Sociology with Courseware'
+    ]
+    expect(catalog_offering[:salesforce_book_name]).to(
+      eq catalog_offering[:title].sub('with', 'w')
+    ) if catalog_offering[:title].include? 'with'
+    expect(catalog_offering[:appearance_code]).to be_in [
+      'biology_2e', 'college_physics', 'intro_sociology'
+    ]
   end
 
   def expect_review_course(course)
-    expect(course[:course][:name]).to be_in [
+    catalog_offering = course[:catalog_offering]
+    expect(catalog_offering[:title]).to be_in [
+      'Biology 2e', 'Physics with Courseware', 'Sociology with Courseware'
+    ]
+
+    course_hash = course[:course]
+    expect(course_hash[:name]).to be_in [
       'Biology 2e Review',
       'Physics with Courseware Review',
       'Sociology with Courseware Review'
     ]
-    expect(course[:catalog_offering][:title]).to be_in [
-      'Biology 2e', 'Physics with Courseware', 'Sociology with Courseware'
-    ]
-    expect(course[:is_college]).to eq true
-    expect(course[:teachers]).to eq [username: 'reviewteacher']
-    expect(course[:periods].size).to eq 2
-    course[:periods].each do |period|
+    expect(course_hash[:teachers]).to eq [username: 'reviewteacher']
+    periods = course_hash[:periods]
+    expect(periods.size).to eq 2
+    periods.each do |period|
       expect(period[:name]).to be_in ['1st', '2nd']
-      expect(period[:students].size).to eq 3
-      period[:students].each do |student|
-        expect(student[:username]).to match /reviewstudent\d/
-      end
+
+      students = period[:students]
+      expect(students.size).to eq 3
+      students.each { |student| expect(student[:username]).to match /reviewstudent\d/ }
     end
   end
 
   def expect_review_assign(assign)
-    expect(assign[:course][:name]).to be_in [
+    course = assign[:course]
+    expect(course[:name]).to be_in [
       'Biology 2e Review',
       'Physics with Courseware Review',
       'Sociology with Courseware Review'
     ]
-    expect(assign[:task_plans].size).to eq 8
-    assign[:task_plans].each do |task_plan|
+
+    task_plans = course[:task_plans]
+    expect(task_plans.size).to eq 8
+    task_plans.each do |task_plan|
       match = /(Read|HW) Chapter (\d)/.match task_plan[:title]
       type = match[1] == 'Read' ? 'reading' : 'homework'
       chapter = match[2].to_i
       expect(match).not_to be_nil
       expect(task_plan[:type]).to eq type
-      expect(task_plan[:book_locations]).to eq [[chapter, 0], [chapter, 1], [chapter, 2]]
-      expect(task_plan[:assigned_to].size).to eq 2
-      task_plan[:assigned_to].each do |assigned_to|
+      expect(task_plan[:book_locations]).to eq(
+        [ 0, 1, 2 ].map { |section| { chapter: chapter, section: section } }
+      )
+
+      assigned_to = task_plan[:assigned_to]
+      expect(assigned_to.size).to eq 2
+      assigned_to.each do |assigned_to|
         expect(assigned_to[:period][:name]).to be_in ['1st', '2nd']
         expect(Time.parse(assigned_to[:opens_at].to_s)).to be_within(3.weeks).of(Time.now)
         expect(Time.parse(assigned_to[:due_at].to_s)).to be_within(3.weeks).of(Time.now)
@@ -72,19 +85,26 @@ RSpec.describe 'demo', type: :rake do
   end
 
   def expect_review_work(work)
-    expect(work[:course][:name]).to be_in [
+    course = work[:course]
+    expect(course[:name]).to be_in [
       'Biology 2e Review',
       'Physics with Courseware Review',
       'Sociology with Courseware Review'
     ]
-    expect(work[:task_plans].size).to eq 8
-    work[:task_plans].each do |task_plan|
+
+    task_plans = course[:task_plans]
+    expect(task_plans.size).to eq 8
+    task_plans.each do |task_plan|
       expect(task_plan[:title]).to match /(?:Read|HW) Chapter \d/
-      expect(task_plan[:tasks].size).to eq 6
-      task_plan[:tasks].each do |task|
+
+      tasks = task_plan[:tasks]
+      expect(tasks.size).to eq 6
+      tasks.each do |task|
         expect(task[:student][:username]).to match /reviewstudent\d/
-        expect(task[:progress]).to be_within(0.5).of(0.5)
-        next if task[:progress] == 0
+
+        progress = task[:progress]
+        expect(progress).to be_within(0.5).of(0.5)
+        next if progress == 0
 
         expect(task[:score]).to be_within(0.5).of(0.5)
       end
@@ -94,9 +114,10 @@ RSpec.describe 'demo', type: :rake do
   it 'calls Demo::All with all the review configs' do
     expect(Demo::All).to receive(:perform_later).exactly(3).times do |args|
       # Users
-      expect(args[:users][:teachers]).to eq [username: 'reviewteacher', full_name: 'Review Teacher']
-      expect(args[:users][:students].size).to eq 6
-      args[:users][:students].each do |student|
+      users = args[:users]
+      expect(users[:teachers]).to eq [ username: 'reviewteacher', full_name: 'Review Teacher' ]
+      expect(users[:students].size).to eq 6
+      users[:students].each do |student|
         expect(student[:username]).to match /reviewstudent\d/
         expect(student[:full_name]).to match /Review Student\d/
       end
@@ -124,8 +145,19 @@ RSpec.describe 'demo', type: :rake do
   context 'demo:users' do
     it 'calls Demo::Users with all configs from config/demo/users' do
       expect(Demo::Users).to receive(:perform_later).exactly(9).times do |users:|
+        expect(
+          users.keys & [
+            :administrators,
+            :content_analysts,
+            :customer_support,
+            :researchers,
+            :teachers,
+            :students
+          ]
+        ).not_to be_empty
+
         expect(users[:administrators]).to(
-          eq [username: 'admin', full_name: 'Administrator User']
+          eq [ username: 'admin', full_name: 'Administrator User' ]
         ) if users.has_key? :administrators
         expect(users[:content_analysts].size).to(eq(2)) if users.has_key? :content_analysts
         expect(users[:customer_support].size).to(eq(2)) if users.has_key? :customer_support

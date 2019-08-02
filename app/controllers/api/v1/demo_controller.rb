@@ -23,7 +23,7 @@ class Api::V1::DemoController < Api::V1::ApiController
       Demo::All.perform_later consume_hash(Api::V1::Demo::AllRepresenter)
     end
 
-    render_jobba_status_id jobba_status_id
+    render_job_info jobba_status_id
   end
 
   api :GET, '/demo/users', 'Creates demo users'
@@ -50,7 +50,7 @@ class Api::V1::DemoController < Api::V1::ApiController
       Demo::Import.perform_later import: consume_hash(Api::V1::Demo::Import::Representer)
     end
 
-    render_jobba_status_id jobba_status_id
+    render_job_info jobba_status_id
   end
 
   api :GET, '/demo/course', 'Creates a demo course and enrolls demo teachers and students'
@@ -65,7 +65,7 @@ class Api::V1::DemoController < Api::V1::ApiController
     ).outputs.course
 
     render json: {
-      course: Api::V1::Demo::CourseRepresenter.new(course).to_hash
+      course: Api::V1::Demo::Course::CourseRepresenter.new(course).to_hash
     }, location: nil, status: :ok
   end
 
@@ -82,7 +82,7 @@ class Api::V1::DemoController < Api::V1::ApiController
 
     render json: {
       task_plans: task_plans.map do |task_plan|
-        Api::V1::Demo::Assign::TaskPlan::Representer.new(task_plan).to_hash
+        Api::V1::Demo::Assign::Course::TaskPlan::Representer.new(task_plan).to_hash
       end
     }, location: nil, status: :ok
   end
@@ -100,7 +100,7 @@ class Api::V1::DemoController < Api::V1::ApiController
 
     render json: {
       task_plans: task_plans.map do |task_plan|
-        Api::V1::Demo::Work::TaskPlanRepresenter.new(task_plan).to_hash
+        Api::V1::Demo::TaskPlanRepresenter.new(task_plan).to_hash
       end
     }, location: nil, status: :ok
   end
@@ -133,8 +133,12 @@ class Api::V1::DemoController < Api::V1::ApiController
     end
   end
 
-  def render_jobba_status_id(jobba_status_id)
-    render json: { job: { id: jobba_status_id, url: api_job_url(jobba_status_id) } },
-           status: :accepted
+  def render_job_info(jobba_status_id)
+    if jobba_status_id.nil?
+      head :no_content
+    else
+      render json: { job: { id: jobba_status_id, url: api_job_url(jobba_status_id) } },
+             status: :accepted
+    end
   end
 end

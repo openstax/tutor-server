@@ -1,0 +1,15 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+  # Additionally, they may override the following variables:
+  options ||= {}
+%>
+
+<div class="form-group">
+  <%= form.label :name %>
+  <%=
+    form.text_field :name, options.merge(
+      class: 'form-control', required: true, placeholder: 'Required (unless Period is removed)'
+    )
+  %>
+</div>

@@ -8,5 +8,9 @@
     :administrators, :content_analysts, :customer_support, :researchers, :teachers, :students
   ].each do |scope|
 %>
-  <%= render partial: 'form_collection', locals: { form: form, scope: scope, partial: 'user' } %>
+  <%=
+    render partial: 'form_collection', locals: {
+      form: form, scope: scope, partial: File.join('admin', 'demo', 'users', 'user')
+    }
+  %>
 <% end %>

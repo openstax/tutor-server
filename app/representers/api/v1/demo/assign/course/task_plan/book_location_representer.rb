@@ -1,8 +1,4 @@
-class Api::V1::Demo::Assign::TaskPlan::BookLocationRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter < Api::V1::Demo::BaseRepresenter
   property :chapter,
            type: Integer,
            readable: true,

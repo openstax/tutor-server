@@ -1,26 +1,21 @@
 <%
   # Clients of this partial must provide the following variable:
-  # fields
+  # form
   # Additionally, they may override the following variable:
   options ||= {}
 %>
 
-<div class="form-group">
-  <%= fields.label :name %>
-  <%=
-    fields.text_field :name, options.merge(
-      class: 'form-control', required: true, placeholder: 'Required (unless User is removed)'
-    )
-  %>
-</div>
+<%=
+  render partial: File.join('admin', 'demo', 'period'), locals: { form: form, options: options }
+%>
 
 <div class="form-group">
-  <%= fields.label :enrollment_code %>
-  <%= fields.text_field :enrollment_code, options.merge(class: 'form-control') %>
+  <%= form.label :enrollment_code %>
+  <%= form.text_field :enrollment_code, options.merge(class: 'form-control') %>
 </div>
 
 <%=
   render partial: 'form_collection', locals: {
-    form: fields, scope: :students, partial: 'user', options: options
+    form: form, scope: :students, partial: 'user', options: options
   }
 %>

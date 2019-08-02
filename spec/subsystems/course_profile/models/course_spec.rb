@@ -10,9 +10,9 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
   it { is_expected.to belong_to(:cloned_from).optional }
 
-  it { is_expected.to have_many(:periods).dependent(:destroy) }
-  it { is_expected.to have_many(:teachers).dependent(:destroy) }
-  it { is_expected.to have_many(:students).dependent(:destroy) }
+  it { is_expected.to have_many(:periods) }
+  it { is_expected.to have_many(:teachers) }
+  it { is_expected.to have_many(:students) }
 
   it { is_expected.to have_many(:course_ecosystems) }
 

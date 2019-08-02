@@ -5,8 +5,8 @@
   # partial
   # Additionally, they may override the following variables:
   collection ||= form.object[scope] if form.respond_to?(:object)
-  name ||= scope.to_s.singularize.humanize
   options ||= {}
+  name ||= scope.to_s.singularize.humanize
 %>
 
 <div class="collection form-group">
@@ -16,7 +16,7 @@
     <ul class="template">
       <%=
         render partial: 'form_collection_item', locals: {
-          form: fields, partial: partial, name: name, options: options.merge(disabled: true)
+          form: fields, partial: partial, options: options.merge(disabled: true), name: name
         }
       %>
     </ul>

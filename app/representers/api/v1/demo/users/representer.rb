@@ -1,8 +1,4 @@
-class Api::V1::Demo::Users::Representer < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
+class Api::V1::Demo::Users::Representer < Api::V1::Demo::BaseRepresenter
   collection :administrators,
              extend: Api::V1::Demo::UserRepresenter,
              class: Demo::Mash,

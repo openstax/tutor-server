@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 do
-  let(:teachers)     { [ FactoryBot.create(:user_profile) ] }
-  let(:students)     { 6.times.map { FactoryBot.create :user_profile } }
+  let(:job_id)           { SecureRandom.uuid }
+  let(:teachers)         { [ FactoryBot.create(:user_profile) ] }
+  let(:students)         { 6.times.map { FactoryBot.create :user_profile } }
 
   let(:book)             { FactoryBot.create :content_book }
   let(:ecosystem)        { FactoryBot.create :content_ecosystem, books: [ book ] }
@@ -12,7 +13,7 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
 
   let(:task_plans)       { 2.times.map { FactoryBot.create :tasks_task_plan, owner: course } }
 
-  let(:current_time)  { Time.current }
+  let(:current_time)     { Time.current }
 
   let(:users_params) do
     {
@@ -26,55 +27,60 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
   end
   let(:import_params) do
     {
-      cnx_book_id: book.uuid,
-      appearance_code: book.title.downcase.gsub(' ', '_'),
-      reading_processing_instructions: []
+      book: { uuid: book.uuid, reading_processing_instructions: [] },
+      catalog_offering: { appearance_code: book.title.downcase.gsub(' ', '_') }
     }
   end
   let(:course_params) do
     {
-      course: { name: course.name },
       catalog_offering: { title: catalog_offering.title },
-      teachers: teachers.map { |teacher| { username: teacher.username } },
-      periods: [
-        { name: '1st', students: students.map { |student| { username: student.username } } }
-      ]
+      course: {
+        name: course.name,
+        teachers: teachers.map { |teacher| { username: teacher.username } },
+        periods: [
+          { name: '1st', students: students.map { |student| { username: student.username } } }
+        ]
+      }
     }
   end
   let(:assign_params) do
     {
-      course: { name: course.name },
-      task_plans: task_plans.map do |task_plan|
-        {
-          title: task_plan.title,
-          type: task_plan.type,
-          book_locations: [[1, 0], [1, 1], [1, 2]],
-          assigned_to: [
-            {
-              period: { name: '1st' },
-              opens_at: (current_time - 1.day).iso8601,
-              due_at: (current_time + 1.day).iso8601
-            }
-          ]
-        }
-      end
+      course: {
+        name: course.name,
+        task_plans: task_plans.map do |task_plan|
+          {
+            title: task_plan.title,
+            type: task_plan.type,
+            book_locations: [ 0, 1, 2 ].map { |section| { chapter: 1, section: section } },
+            assigned_to: [
+              {
+                period: { name: '1st' },
+                opens_at: (current_time - 1.day).iso8601,
+                due_at: (current_time + 1.day).iso8601
+              }
+            ]
+          }
+        end
+      }
     }
   end
   let(:work_params) do
     {
-      course: { name: course.name },
-      task_plans: task_plans.map do |task_plan|
-        {
-          title: task_plan.title,
-          tasks: students.map do |student|
-            {
-              student: { username: student.username },
-              progress: rand,
-              score: rand
-            }
-          end
-        }
-      end
+      course: {
+        name: course.name,
+        task_plans: task_plans.map do |task_plan|
+          {
+            title: task_plan.title,
+            tasks: students.map do |student|
+              {
+                student: { username: student.username },
+                progress: rand,
+                score: rand
+              }
+            end
+          }
+        end
+      }
     }
   end
 
@@ -90,12 +96,12 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
     end
 
     it 'calls Demo::All with the given parameters' do
-      expect(Demo::All).to receive(:perform_later).with(all_params)
+      expect(Demo::All).to receive(:perform_later).with(all_params).and_return(job_id)
 
       api_post 'demo/all', nil, params: all_params.to_json
 
       expect(response).to have_http_status(:accepted)
-      expect(response.body_as_hash).to have_key :jobba_status_id
+      expect(response.body_as_hash).to eq({ job: { id: job_id, url: api_job_url(job_id) } })
     end
   end
 
@@ -130,12 +136,12 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
 
   context '#import' do
     it 'calls Demo::Import with the given parameters' do
-      expect(Demo::Import).to receive(:perform_later).with(import: import_params)
+      expect(Demo::Import).to receive(:perform_later).with(import: import_params).and_return(job_id)
 
       api_post 'demo/import', nil, params: import_params.to_json
 
       expect(response).to have_http_status(:accepted)
-      expect(response.body_as_hash).to have_key :jobba_status_id
+      expect(response.body_as_hash).to eq({ job: { id: job_id, url: api_job_url(job_id) } })
     end
   end
 
@@ -165,7 +171,9 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
       task_plans_array = response.body_as_hash[:task_plans]
       expect(task_plans_array.size).to eq task_plans.size
       task_plans_attributes = task_plans.map do |task_plan|
-        Api::V1::Demo::Assign::TaskPlan::Representer.new(task_plan).to_hash.deep_symbolize_keys
+        Api::V1::Demo::Assign::Course::TaskPlan::Representer.new(
+          task_plan
+        ).to_hash.deep_symbolize_keys
       end
       task_plans_array.each do |task_plan_hash|
         expect(task_plan_hash).to be_in task_plans_attributes
@@ -176,12 +184,20 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
   context '#work' do
     it 'calls Demo::Work with the given parameters' do
       expect(Demo::Work).to receive(:call).with(work: work_params).and_return(
-        Lev::Routine::Result.new Lev::Outputs.new, Lev::Errors.new
+        Lev::Routine::Result.new Lev::Outputs.new(task_plans: task_plans), Lev::Errors.new
       )
 
       api_post 'demo/work', nil, params: work_params.to_json
 
-      expect(response).to have_http_status(:no_content)
+      expect(response).to have_http_status(:ok)
+      task_plans_array = response.body_as_hash[:task_plans]
+      expect(task_plans_array.size).to eq task_plans.size
+      task_plans_attributes = task_plans.map do |task_plan|
+        Api::V1::Demo::TaskPlanRepresenter.new(task_plan).to_hash.deep_symbolize_keys
+      end
+      task_plans_array.each do |task_plan_hash|
+        expect(task_plan_hash).to be_in task_plans_attributes
+      end
     end
   end
 end

@@ -1,19 +1,4 @@
-class Api::V1::Demo::Assign::TaskPlan::Representer < Roar::Decorator
-  include Roar::JSON
-  include Representable::Hash::AllowSymbols
-  include Representable::Coercion
-
-  # One of either id or title is required
-  property :id,
-           type: String,
-           readable: true,
-           writeable: true
-
-  property :title,
-           type: String,
-           readable: true,
-           writeable: true
-
+class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::TaskPlanRepresenter
   property :type,
            type: String,
            readable: true,
@@ -37,14 +22,14 @@ class Api::V1::Demo::Assign::TaskPlan::Representer < Roar::Decorator
            getter: ->(*) { respond_to?(:is_published) ? is_published : is_published? }
 
   collection :book_locations,
-             extend: Api::V1::Demo::Assign::TaskPlan::BookLocationRepresenter,
+             extend: Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter,
              class: Demo::Mash,
              readable: false,
              writeable: true,
              schema_info: { required: true }
 
   collection :assigned_to,
-             extend: Api::V1::Demo::Assign::TaskPlan::AssignedTo::Representer,
+             extend: Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter,
              class: Demo::Mash,
              readable: false,
              writeable: true,

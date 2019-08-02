@@ -10,7 +10,7 @@
 
 <li class="item">
   <%= form.fields '', model: item do |fields| %>
-    <%= render partial: partial, locals: { fields: fields, options: options, name: name } %>
+    <%= render partial: partial, locals: { form: fields, options: options, name: name } %>
 
     <%= link_to "Remove #{name}", '#', remote: true, class: 'remove' %>
   <% end %>

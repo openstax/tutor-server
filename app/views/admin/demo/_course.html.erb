@@ -3,28 +3,26 @@
   form
 %>
 
-<h3>Course</h3>
+<h4>Course</h4>
 
-<%= form.fields 'course', model: form.object.course do |fields| %>
-  <div class="form-group">
-    <%= fields.label :id %>
-    <%=
-      fields.text_field(
-        :id,
-        class: 'form-control',
-        placeholder: 'One of either id or name is required (unless Course is removed)'
-      )
-    %>
-  </div>
+<div class="form-group">
+  <%= form.label :id %>
+  <%=
+    form.text_field(
+      :id,
+      class: 'form-control',
+      placeholder: 'One of either id or name is required'
+    )
+  %>
+</div>
 
-  <div class="form-group">
-    <%= fields.label :name %>
-    <%=
-      fields.text_field(
-        :name,
-        class: 'form-control',
-        placeholder: 'One of either id or name is required (unless Course is removed)'
-      )
-    %>
-  </div>
-<% end %>
+<div class="form-group">
+  <%= form.label :name %>
+  <%=
+    form.text_field(
+      :name,
+      class: 'form-control',
+      placeholder: 'One of either id or name is required'
+    )
+  %>
+</div>
