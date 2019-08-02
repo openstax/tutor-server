@@ -210,7 +210,7 @@ class ExportAndUploadResearchData
               raise ex if !Rails.env.production? || ex.is_a?(Timeout::Error)
 
               Rails.logger.error do
-                "Skipped step #{step.id} due to #{ex.inspect} @ #{ex.backtrace.first}"
+                "Skipped step #{step.id} due to #{ex.inspect} @ #{ex.backtrace&.first}"
               end
             end
           end
@@ -304,7 +304,7 @@ class ExportAndUploadResearchData
 
                 Rails.logger.error do
                   "Skipped page #{page.id} fragment #{fragment_index + 1
-                  } due to #{ex.inspect} @ #{ex.backtrace.first}"
+                  } due to #{ex.inspect} @ #{ex.backtrace&.first}"
                 end
               end
             end
@@ -385,7 +385,7 @@ class ExportAndUploadResearchData
 
                 Rails.logger.error do
                   "Skipped exercise #{exercise.id} question #{question.try(:[], :id)
-                  } due to #{ex.inspect} @ #{ex.backtrace.first}"
+                  } due to #{ex.inspect} @ #{ex.backtrace&.first}"
                 end
               end
             end

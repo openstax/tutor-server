@@ -62,7 +62,7 @@ class Research::ExportAndUploadSurveyData
             raise ex if !Rails.env.production? || ex.is_a?(Timeout::Error)
 
             Rails.logger.error do
-              "Skipped survey #{survey.id} due to #{ex.inspect} @ #{ex.backtrace.first}"
+              "Skipped survey #{survey.id} due to #{ex.inspect} @ #{ex.backtrace&.first}"
             end
           end
         end
