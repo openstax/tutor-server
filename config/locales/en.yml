@@ -105,3 +105,5 @@ en:
         help_block: 'The Salesforce ID for the "Find Tutor Course Period" Report'
       teacher_student_enabled:
         name: 'Can teachers become a student in their course?'
+      pulse_insights:
+        name: 'Should the PulseInsights analytics be activated'
