@@ -37,6 +37,7 @@ module Settings
     field :default_open_time, type: :string, default: '00:01'
     field :default_due_time, type: :string, default: '07:00'
     field :term_years_to_import, type: :string, default: ''
+    field :pulse_insights, type: :boolean, default: false
     field :student_grace_period_days, type: :integer, default: 14
     field :ga_tracking_codes, type: :string, default: \
         (Rails.application.secrets.environment_name == "prodtutor") ? 'UA-66552106-1' : ''
