@@ -2,6 +2,8 @@
 class Demo::Work < Demo::Base
   lev_routine use_jobba: true
 
+  include ActionView::Helpers::SanitizeHelper
+
   uses_routine Tasks::PopulatePlaceholderSteps, as: :populate_placeholders
   uses_routine Preview::WorkTask, as: :work_task
 
@@ -67,7 +69,7 @@ class Demo::Work < Demo::Base
             parser = task_step.tasked.parser
             cqa = parser.correct_question_answers.first
             chosen_answer = (is_correct ? cqa : parser.question_answers.first - cqa).sample
-            chosen_answer.nil? ? nil : chosen_answer['content_html']
+            chosen_answer.nil? ? nil : strip_tags(chosen_answer['content_html'])
           end
 
           run(
