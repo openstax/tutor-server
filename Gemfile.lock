@@ -350,7 +350,7 @@ GEM
     kgio (2.11.2)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (9.0.1)
+    lev (9.0.2)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -445,7 +445,7 @@ GEM
       uber (< 0.1.0)
     openstax_healthcheck (0.0.3)
       rails (>= 3.0)
-    openstax_rescue_from (4.0.1)
+    openstax_rescue_from (4.0.2)
       rails (>= 3.1, < 6.0)
     openstax_salesforce (3.0.0)
       active_force
