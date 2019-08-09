@@ -45,7 +45,7 @@ class Demo::Users < Demo::Base
           attrs[:full_name] ||= "#{attrs[:first_name]}#{separator}#{attrs[:last_name]}"
         end
 
-        attrs[:is_test] = true if attrs[:is_test].blank?
+        attrs[:is_test] = true if attrs[:is_test].nil?
 
         sign_contracts = attrs.has_key?(:sign_contracts) ? attrs[:sign_contracts] : true
 

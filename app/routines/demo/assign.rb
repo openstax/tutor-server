@@ -94,7 +94,7 @@ class Demo::Assign < Demo::Base
         )
       end
 
-      task_plan[:is_published] = true if task_plan[:is_published].blank?
+      task_plan[:is_published] = true if task_plan[:is_published].nil?
 
       task_plan_model = task_plans_by_hash[task_plan]
 

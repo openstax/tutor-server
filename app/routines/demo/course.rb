@@ -46,8 +46,8 @@ class Demo::Course < Demo::Base
 
       attrs[:term] ||= :demo
       attrs[:year] ||= Time.zone.now.year
-      attrs[:is_college] = true if attrs[:is_college].blank?
-      attrs[:is_test] = true if attrs[:is_test].blank?
+      attrs[:is_college] = true if attrs[:is_college].nil?
+      attrs[:is_test] = true if attrs[:is_test].nil?
 
       course_model = run(:create_course, attrs).outputs.course
 
