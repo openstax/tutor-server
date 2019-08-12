@@ -1,8 +1,7 @@
 class UserIsCourseStudent
-  lev_routine
+  lev_routine express_output: :is_course_student
 
-  uses_routine CourseMembership::IsCourseStudent,
-               translations: { outputs: { map: { is_course_student: :user_is_course_student } } }
+  uses_routine CourseMembership::IsCourseStudent, translations: { outputs: { type: :verbatim } }
 
   protected
 

@@ -33,7 +33,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
                        name: "A Fun Course",
                        term: :spring,
                        year: 2017,
-                       starts_at: Chronic.parse("January 1, 2017"),
+                       starts_at: Time.parse("January 1, 2017"),
                        offering: chemistry_offering,
                        is_concept_coach: false,
                        estimated_student_count: 42,
@@ -140,7 +140,7 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
         FactoryBot.create :course_profile_course,
                            term: :spring,
                            year: 2017,
-                           starts_at: Chronic.parse("January 1, 2017"),
+                           starts_at: Time.parse("January 1, 2017"),
                            offering: chemistry_offering,
                            is_concept_coach: false,
                            uuid: @other_course_uuid

@@ -419,7 +419,7 @@ GEM
     omniauth-salesforce (1.0.5)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
-    openstax_accounts (8.0.1)
+    openstax_accounts (8.1.0)
       action_interceptor
       keyword_search
       lev

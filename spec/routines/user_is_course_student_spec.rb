@@ -29,7 +29,7 @@ RSpec.describe UserIsCourseStudent, type: :routine do
       ## Perform test
       result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_teacher).to be_falsey
+      expect(result.outputs.is_course_teacher).to be_falsey
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe UserIsCourseStudent, type: :routine do
     it "returns true" do
       result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_student).to be_truthy
+      expect(result.outputs.is_course_student).to be_truthy
     end
 
     context "and period is archived" do
@@ -54,7 +54,7 @@ RSpec.describe UserIsCourseStudent, type: :routine do
       it "returns false" do
         result = UserIsCourseStudent.call(user: target_user, course: target_course)
         expect(result.errors).to be_empty
-        expect(result.outputs.user_is_course_student).to be_falsey
+        expect(result.outputs.is_course_student).to be_falsey
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe UserIsCourseStudent, type: :routine do
       it "returns true" do
         result = UserIsCourseStudent.call(user: target_user, course: target_course)
         expect(result.errors).to be_empty
-        expect(result.outputs.user_is_course_student).to be_truthy
+        expect(result.outputs.is_course_student).to be_truthy
       end
     end
 

@@ -1,0 +1,14 @@
+  teachers:
+    - username: reviewteacher
+
+  periods:
+    - name: 1st
+      students:
+        - username: reviewstudent1
+        - username: reviewstudent2
+        - username: reviewstudent3
+    - name: 2nd
+      students:
+        - username: reviewstudent4
+        - username: reviewstudent5
+        - username: reviewstudent6

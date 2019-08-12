@@ -51,8 +51,8 @@
   </div>
 
   <div class='form-group'>
-    <%= f.label :customer_service, class: 'col-sm-2 control-label' %>
-    <%= check_box_tag 'user[customer_service]', "1", @user.try(:is_customer_service?) %>
+    <%= f.label :customer_support, class: 'col-sm-2 control-label' %>
+    <%= check_box_tag 'user[customer_support]', "1", @user.try(:is_customer_support?) %>
   </div>
 
   <div class='form-group'>

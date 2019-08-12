@@ -13,7 +13,7 @@ RSpec.describe "domain: course roles", type: :integration do
 
         result = UserIsCourseTeacher.call(user: target_user, course: target_course)
         expect(result.errors).to be_empty
-        expect(result.outputs.user_is_course_teacher).to be_truthy
+        expect(result.outputs.is_course_teacher).to be_truthy
       end
     end
     context "when the user is a teacher of a course" do
@@ -27,7 +27,7 @@ RSpec.describe "domain: course roles", type: :integration do
 
         result = UserIsCourseTeacher.call(user: target_user, course: target_course)
         expect(result.errors).to be_empty
-        expect(result.outputs.user_is_course_teacher).to be_truthy
+        expect(result.outputs.is_course_teacher).to be_truthy
       end
     end
     context "courses with multiple teachers" do
@@ -44,11 +44,11 @@ RSpec.describe "domain: course roles", type: :integration do
 
         result = UserIsCourseTeacher.call(user: target_user1, course: target_course)
         expect(result.errors).to be_empty
-        expect(result.outputs.user_is_course_teacher).to be_truthy
+        expect(result.outputs.is_course_teacher).to be_truthy
 
         result = UserIsCourseTeacher.call(user: target_user2, course: target_course)
         expect(result.errors).to be_empty
-        expect(result.outputs.user_is_course_teacher).to be_truthy
+        expect(result.outputs.is_course_teacher).to be_truthy
       end
     end
   end
@@ -66,7 +66,7 @@ RSpec.describe "domain: course roles", type: :integration do
 
           result = UserIsCourseStudent.call(user: target_user, course: target_course)
           expect(result.errors).to be_empty
-          expect(result.outputs.user_is_course_student).to be_truthy
+          expect(result.outputs.is_course_student).to be_truthy
         end
       end
       context "and the user is already a student in the course" do
@@ -80,7 +80,7 @@ RSpec.describe "domain: course roles", type: :integration do
 
           result = UserIsCourseStudent.call(user: target_user, course: target_course)
           expect(result.errors).to be_empty
-          expect(result.outputs.user_is_course_student).to be_truthy
+          expect(result.outputs.is_course_student).to be_truthy
         end
       end
     end
@@ -96,7 +96,7 @@ RSpec.describe "domain: course roles", type: :integration do
 
           result = UserIsCourseStudent.call(user: target_user, course: target_course)
           expect(result.errors).to be_empty
-          expect(result.outputs.user_is_course_student).to be_truthy
+          expect(result.outputs.is_course_student).to be_truthy
         end
       end
       context "and the user is already a student in the course" do
@@ -116,7 +116,7 @@ RSpec.describe "domain: course roles", type: :integration do
 
           result = UserIsCourseStudent.call(user: target_user, course: target_course)
           expect(result.errors).to be_empty
-          expect(result.outputs.user_is_course_student).to be_truthy
+          expect(result.outputs.is_course_student).to be_truthy
         end
       end
     end

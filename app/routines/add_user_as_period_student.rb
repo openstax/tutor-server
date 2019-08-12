@@ -15,11 +15,11 @@ class AddUserAsPeriodStudent
     course = period.course
     result = run(UserIsCourseTeacher, user: user, course: course)
 
-    unless result.outputs.user_is_course_teacher
+    unless result.outputs.is_course_teacher
       result = run(UserIsCourseStudent, user: user, course: course, include_dropped_students: true)
 
       fatal_error(code: :user_is_already_a_course_student, offending_inputs: [user, course]) \
-        if result.outputs.user_is_course_student
+        if result.outputs.is_course_student
 
       fatal_error(code: :period_is_archived, offending_inputs: [user, course]) \
         if period.archived?

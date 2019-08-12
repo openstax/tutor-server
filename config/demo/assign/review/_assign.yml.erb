@@ -1,0 +1,191 @@
+<%
+  # Respects timezone set via Time.use_zone; Uses UTC if not set
+  def now
+    @now ||= Time.zone.now
+  end
+
+  def last_monday
+    now.monday
+  end
+
+  def next_monday
+    last_monday + 1.week
+  end
+
+  def standard_opens_at(time)
+    time.midnight + 1.minute
+  end
+
+  def standard_due_at(time)
+    time.midnight + 7.hours
+  end
+
+  def open_last_monday
+    standard_opens_at last_monday
+  end
+
+  def open_next_monday
+    standard_opens_at next_monday
+  end
+
+  def due_last_monday
+    standard_due_at last_monday
+  end
+
+  def due_next_monday
+    standard_due_at next_monday
+  end
+%>
+
+  task_plans:
+    - title: Read Chapter 1
+      type: reading
+      book_locations:
+        - chapter: 1
+          section: 0
+        - chapter: 1
+          section: 1
+        - chapter: 1
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 5.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 5.days %>
+
+    - title: Read Chapter 2
+      type: reading
+      book_locations:
+        - chapter: 2
+          section: 0
+        - chapter: 2
+          section: 1
+        - chapter: 2
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 2.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 2.days %>
+
+    - title: Read Chapter 3
+      type: reading
+      book_locations:
+        - chapter: 3
+          section: 0
+        - chapter: 3
+          section: 1
+        - chapter: 3
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 2.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 2.days %>
+
+    - title: Read Chapter 4
+      type: reading
+      book_locations:
+        - chapter: 4
+          section: 0
+        - chapter: 4
+          section: 1
+        - chapter: 4
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 9.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 9.days %>
+
+    - title: HW Chapter 1
+      type: homework
+      book_locations:
+        - chapter: 1
+          section: 0
+        - chapter: 1
+          section: 1
+        - chapter: 1
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 3.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 3.days %>
+
+    - title: HW Chapter 2
+      type: homework
+      book_locations:
+        - chapter: 2
+          section: 0
+        - chapter: 2
+          section: 1
+        - chapter: 2
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 4.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 4.days %>
+
+    - title: HW Chapter 3
+      type: homework
+      book_locations:
+        - chapter: 3
+          section: 0
+        - chapter: 3
+          section: 1
+        - chapter: 3
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 4.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 4.days %>
+
+    - title: HW Chapter 4
+      type: homework
+      book_locations:
+        - chapter: 4
+          section: 0
+        - chapter: 4
+          section: 1
+        - chapter: 4
+          section: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 11.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 11.days %>

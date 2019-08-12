@@ -1,0 +1,5 @@
+researchers:
+  - username: researcher
+    full_name: Robbie Researcher
+  - username: admin
+    full_name: Administrator User

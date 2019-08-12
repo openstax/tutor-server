@@ -1,0 +1,5 @@
+<ul>
+  <% [ 'users', 'import', 'course', 'assign', 'work', 'all' ].each do |method| %>
+    <li><%= link_to method.capitalize, send("admin_demo_#{method}_url") %></li>
+  <% end %>
+</ul>

@@ -6,8 +6,11 @@ module User
 
         exposes :instance, :anonymous, from_class: ::User::Models::AnonymousProfile
         exposes :account, :username, :title, :first_name, :last_name,
-                :full_name, :name, :casual_name,
-                :salesforce_contact_id, :uuid, :role
+                :full_name, :name, :casual_name, :faculty_status, :ui_settings,
+                :salesforce_contact_id, :uuid, :role, :school_type, :is_test,
+                :is_human?, :is_application?, :is_anonymous?, :is_admin?,
+                :is_customer_support?, :is_content_analyst?, :is_researcher?,
+                :viewed_tour_stats
 
         class << self
           alias_method :entity_instance, :instance
@@ -19,38 +22,6 @@ module User
           def anonymous
             ::User::User.new(strategy: entity_anonymous)
           end
-        end
-
-        def is_human?
-          true
-        end
-
-        def is_application?
-          false
-        end
-
-        def is_anonymous?
-          true
-        end
-
-        def is_admin?
-          false
-        end
-
-        def is_content_analyst?
-          false
-        end
-
-        def is_researcher?
-          false
-        end
-
-        def is_test
-          false
-        end
-
-        def viewed_tour_ids
-          []
         end
 
         def roles

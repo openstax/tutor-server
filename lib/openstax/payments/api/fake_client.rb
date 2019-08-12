@@ -62,7 +62,7 @@ class OpenStax::Payments::Api::FakeClient
     }
   end
 
-  if !IAm.real_production?
+  unless IAm.real_production?
     def fake_pay(product_instance_uuid:)
       fp = OpenStax::Payments::FakePurchasedItem.find!(product_instance_uuid)
       fp.is_paid = true

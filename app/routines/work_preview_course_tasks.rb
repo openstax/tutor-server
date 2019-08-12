@@ -116,8 +116,8 @@ class WorkPreviewCourseTasks
 
       next if task.opens_at > current_time
 
-      is_correct = ->(task, task_step, index)   { SecureRandom.random_number < correct_probability }
-      is_completed = ->(task, task_step, index) { !incomplete || index < task.task_steps.size/2    }
+      is_correct   = ->(task_step, index) { SecureRandom.random_number < correct_probability }
+      is_completed = ->(task_step, index) { !incomplete || index < task.task_steps.size/2    }
       completed_at = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
       run(:work_task, task: task,
                       free_response: FREE_RESPONSE,

@@ -187,6 +187,15 @@ Rails.application.routes.draw do
       end
     end
 
+    namespace :demo do
+      post :all
+      post :users
+      post :import
+      post :course
+      post :assign
+      post :work
+    end unless IAm.real_production?
+
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
 
@@ -278,18 +287,20 @@ Rails.application.routes.draw do
 
     resources :tags, only: [ :index, :edit, :update, :show ]
 
-    scope controller: :timecop do
-      get :timecop
-      put :reset_time
-      post :freeze_time
-      post :time_travel
-    end
-
     resources :payments, only: :index do
       collection do
         put :extend_payment_due_at
       end
     end
+
+    namespace :demo do
+      get :users
+      get :import
+      get :course
+      get :assign
+      get :work
+      get :all
+    end unless IAm.real_production?
   end
 
   # All CS routes

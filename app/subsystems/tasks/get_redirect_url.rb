@@ -16,7 +16,7 @@ class Tasks::GetRedirectUrl
 
     run(:user_is_course_teacher, user: user, course: course)
 
-    if outputs.user_is_course_teacher
+    if outputs.is_course_teacher
       outputs.uri = UrlGenerator.teacher_task_plan_review(
         course_id: course.id,
         due_at: task_plan.tasking_plans.first.due_at_ntz,
@@ -26,7 +26,7 @@ class Tasks::GetRedirectUrl
       run(:user_is_course_student, user: user, course: course)
 
       fatal_error(code: :user_not_in_course_with_required_role) \
-        unless outputs.user_is_course_student
+        unless outputs.is_course_student
 
       task = task_plan.tasks.joins(:taskings).find_by(taskings: { role: outputs.student.role })
 

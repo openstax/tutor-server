@@ -17,21 +17,13 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   belongs_to :offering, subsystem: :catalog, optional: true
 
-  has_many :lms_contexts, subsystem: :lms, dependent: :destroy,
-           class_name: 'Lms::Models::Context'
-  has_many :periods, subsystem: :course_membership,
-                     dependent: :destroy,
-                     inverse_of: :course
+  # These associations do not have dependent: :destroy because the course is soft-deleted
+  has_many :lms_contexts, subsystem: :lms, class_name: 'Lms::Models::Context'
+  has_many :periods, subsystem: :course_membership, inverse_of: :course
 
-  has_many :teachers, subsystem: :course_membership,
-                      dependent: :destroy,
-                      inverse_of: :course
-  has_many :students, subsystem: :course_membership,
-                      dependent: :destroy,
-                      inverse_of: :course
-  has_many :teacher_students, subsystem: :course_membership,
-                              dependent: :destroy,
-                              inverse_of: :course
+  has_many :teachers, subsystem: :course_membership, inverse_of: :course
+  has_many :students, subsystem: :course_membership, inverse_of: :course
+  has_many :teacher_students, subsystem: :course_membership, inverse_of: :course
 
   has_many :excluded_exercises, subsystem: :course_content
 
@@ -44,7 +36,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :cloned_courses, foreign_key: 'cloned_from_id',
                             class_name: 'CourseProfile::Models::Course'
 
-  has_many :study_courses, subsystem: :research, inverse_of: :course, dependent: :destroy
+  has_many :study_courses, subsystem: :research, inverse_of: :course
   has_many :studies, through: :study_courses, subsystem: :research, inverse_of: :courses
 
   unique_token :teach_token

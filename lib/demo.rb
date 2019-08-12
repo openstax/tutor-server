@@ -1,12 +1,21 @@
-module Demo
-  module Config
-  end
+module Api
+  module V1
+    module Demo
+      module Course
+        module Period
+        end
+      end
 
-  autoload :Base,    'demo/base'
-  autoload :Staff,   'demo/staff'
-  autoload :Books,   'demo/books'
-  autoload :Courses, 'demo/courses'
-  autoload :Tasks,   'demo/tasks'
-  autoload :Work,    'demo/work'
-  autoload :Show,    'demo/show'
+      module Task
+      end
+
+      module Work
+      end
+    end
+  end
+end
+
+module Demo
+  DEFAULT_CONFIG = 'review'
+  CONFIG_BASE_DIR = File.join Rails.root, 'config', 'demo'
 end

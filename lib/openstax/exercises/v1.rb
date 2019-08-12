@@ -51,12 +51,26 @@ module OpenStax::Exercises::V1
       total_exercises
     end
 
-    def use_fake_client
-      self.client = new_fake_client
+    def use_fake_client(&block)
+      previous_client = client
+
+      begin
+        self.client = new_fake_client
+        block.call
+      ensure
+        self.client = previous_client
+      end
     end
 
-    def use_real_client
-      self.client = new_real_client
+    def use_real_client(&block)
+      previous_client = client
+
+      begin
+        self.client = new_real_client
+        block.call
+      ensure
+        self.client = previous_client
+      end
     end
 
     def server_url

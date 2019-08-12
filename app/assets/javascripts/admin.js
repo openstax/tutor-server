@@ -111,4 +111,41 @@ $(document).ready(function() {
   }
   $('#course_term').change(clearCourseDates);
   $('#course_year').change(clearCourseDates);
+
+  //========== Demo forms ==========//
+  function replaceSearch(key, value) {
+    const regex = new RegExp('[$?]' + key + '=[^&?]+');
+    const search = window.location.search.replace(regex, '');
+    const separator = search ? '&' : '?';
+    window.location.search = search + separator + key + '=' + value;
+  }
+
+  // Reload config file if the text field or select are changed
+  $('#config, #book').change(function() {
+    const elt = $(this);
+    replaceSearch(elt[0].id, elt.val());
+  });
+
+  // Add/remove collection fields
+  function removeItem() {
+    const item = $(this).parent('.item');
+    $('html, body').animate({ scrollTop: item.offset().top - window.innerHeight/2 }, 'fast');
+    item.fadeOut('slow', function() {
+      item.remove();
+    });
+    return false;
+  }
+  $('.collection .add').click(function() {
+    const elt = $(this);
+    const newItem = elt.siblings('.template').children('.item').last().clone();
+    newItem.appendTo(elt.siblings('.list'));
+    newItem.hide();
+    newItem.find('input').prop("disabled", false);
+    newItem.children('.remove').click(removeItem);
+    newItem.fadeIn('slow');
+    $('html, body').animate({ scrollTop: newItem.offset().top - window.innerHeight/2 }, 'fast');
+    return false;
+  });
+
+  $('.collection .remove').click(removeItem);
 });

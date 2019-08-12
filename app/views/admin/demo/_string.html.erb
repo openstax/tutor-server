@@ -1,0 +1,15 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+  string = form.object.is_a?(String) ? form.object : ''
+  form.object_name = form.object_name.sub("[#{string}]", '[]')
+  # Additionally, they may override the following variables:
+  options ||= {}
+  name ||= string.blank? ? 'this' : string
+%>
+
+<%=
+  text_field_tag form.object_name, string, options.merge(
+    class: 'form-control', required: true, placeholder: "Required (unless #{name} is removed)"
+  )
+%>

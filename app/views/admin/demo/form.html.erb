@@ -1,0 +1,73 @@
+<% partials = [ :users, :import, :course, :assign, :work ] %>
+
+<ul class="nav nav-tabs" role="tablist">
+  <% (partials + [ :all ]).each do |type| %>
+    <li role="presentation" class="<%= 'active' if type == @type %>">
+      <%=
+        link_to type.capitalize,
+                send("admin_demo_#{type}_url", config: @config, book: @book),
+                'aria-controls': 'main', role: 'tab'
+      %>
+    </li>
+  <% end %>
+</ul>
+
+<div>
+  <h3>Load config</h3>
+
+  <div class="form-group">
+    <%= label_tag :config %>
+    <%= text_field_tag :config, @config, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :book %>
+    <%=
+      select_tag :book, options_for_select(
+        [ [ 'Biology 2e', 'bio' ], [ 'Physics', 'phys' ], [ 'Sociology', 'soc' ] ], @book
+      ), class: 'form-control'
+    %>
+  </div>
+
+  <p>Changing config or book will cause the page to reload.</p>
+  <p>Any changes to all fields below will be lost.</p>
+</div>
+
+<%= form_with model: @model, url: send("api_demo_#{@type}_url"), local: true do |form| %>
+  <h3><%= @type.capitalize %></h3>
+
+  <p>Blank fields do not affect existing records.</p>
+
+  <p><%= link_to 'Scroll to Bottom', '#submit' %></p>
+
+  <br>
+
+  <% if @type.to_sym == :all %>
+    <% partials.each do |partial| %>
+      <%= fields partial, model: @model[partial] do |fields| %>
+        <div>
+          <h3><%= partial.capitalize %></h3>
+
+          <%=
+            render partial: File.join('admin', 'demo', partial.to_s, 'fields'),
+                   locals: { form: fields }
+          %>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div>
+      <%=
+        render partial: File.join('admin', 'demo', @type.to_s, 'fields'), locals: { form: form }
+      %>
+    </div>
+  <% end %>
+
+  <br>
+
+  <div><%= form.submit id: 'submit', class: 'btn btn-primary' %></div>
+<% end %>
+
+<br>
+
+<p><%= link_to 'Scroll to Top', '#navbar' %></p>

@@ -1,0 +1,72 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+  # Additionally, they may override the following variables:
+  options ||= {}
+%>
+
+<%=
+  render partial: File.join('admin', 'demo', 'task_plan'), locals: { form: form, options: options }
+%>
+
+<div class="form-group">
+  <%= form.label :type %>
+  <%=
+    form.select(
+      :type,
+      [ [ '(Required)', '' ], [ 'Reading', 'reading' ], [ 'Homework', 'homework' ] ],
+      {},
+      options.merge(class: 'form-control', required: true)
+    )
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :exercises_count_core, 'Number of core exercises (for homework only)' %>
+  <%=
+    form.number_field :exercises_count_core, options.merge(
+      class: 'form-control', min: 0
+    )
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :exercises_count_dynamic, 'Number of dynamic exercises' %>
+  <%=
+    form.number_field :exercises_count_dynamic, options.merge(
+      class: 'form-control', min: 0
+    )
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :is_published, 'Publish?' %>
+  <%=
+    form.select(
+      :is_published,
+      [
+        [ 'If and only if the Task plan is new or already published', '' ],
+        [ 'Yes', true ],
+        [ 'No', false ]
+      ],
+      {},
+      options.merge(class: 'form-control')
+    )
+  %>
+</div>
+
+<%=
+  render partial: 'form_collection', locals: {
+    form: form,
+    scope: :book_locations,
+    partial: File.join('admin', 'demo', 'assign', 'task_plan', 'book_location')
+  }
+%>
+
+<%=
+  render partial: 'form_collection', locals: {
+    form: form,
+    scope: :assigned_to,
+    partial: File.join('admin', 'demo', 'assign', 'task_plan', 'assigned_to')
+  }
+%>

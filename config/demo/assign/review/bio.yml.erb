@@ -1,0 +1,7 @@
+course:
+  name: Biology 2e Review
+
+<%=
+  filename = File.join(__dir__, '_assign.yml.erb')
+  ERB.new(File.read(filename)).tap { |erb| erb.filename = filename }.result
+%>

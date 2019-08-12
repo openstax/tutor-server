@@ -1,0 +1,5 @@
+customer_support:
+  - username: support
+    full_name: Customer Support
+  - username: admin
+    full_name: Administrator User

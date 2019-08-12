@@ -18,7 +18,7 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
 
     it 'sets the payment_due_at to midnight of appropriate day' do
       # Freeze at a time where the due date will cross into daylight savings time
-      Timecop.freeze(Chronic.parse("March 9, 2017 5:04pm")) do
+      Timecop.freeze(Time.parse("March 9, 2017 5:04pm")) do
         result = described_class.call(period: period_1, role: role)
         student = result.outputs.student
         grace_days = Settings::Payments.student_grace_period_days

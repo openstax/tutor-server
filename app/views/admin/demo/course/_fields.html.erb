@@ -1,0 +1,93 @@
+<%#
+  Clients of this partial must provide the following variable:
+  form
+%>
+
+<h4>Catalog Offering</h4>
+
+<%= form.fields 'catalog_offering', model: form.object.catalog_offering do |fields| %>
+  <div class="form-group">
+    <%= fields.label :id %>
+    <%=
+      fields.text_field(
+        :id,
+        class: 'form-control',
+        placeholder: 'One of either id or title is required (unless Catalog offering is removed)'
+      )
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :title %>
+    <%=
+      fields.text_field(
+        :title,
+        class: 'form-control',
+        placeholder: 'One of either id or title is required (unless Catalog offering is removed)'
+      )
+    %>
+  </div>
+<% end %>
+
+<%= form.fields 'course', model: form.object.course do |fields| %>
+  <%= render partial: File.join('admin', 'demo', 'course'), locals: { form: fields } %>
+
+  <div class="form-group">
+    <%= fields.label :is_college %>
+    <%=
+      fields.select(
+        :is_college,
+        [ [ 'Unchanged/Yes', '' ], [ 'Yes', '1' ], [ 'No', '0' ] ],
+        {},
+        class: 'form-control'
+      )
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :term %>
+    <%=
+      fields.select(
+        :term,
+        [ [ 'Unchanged/Demo', '' ] ] + CourseProfile::Models::Course.terms.keys.map do |key|
+          [ key.humanize, key ]
+        end,
+        {},
+        class: 'form-control'
+      )
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :year %>
+    <%=
+      fields.number_field :year, class: 'form-control',
+                                 placeholder: Time.zone.now.year.to_s,
+                                 min: 2000
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :starts_at %>
+    <%=
+      fields.text_field :starts_at, class: 'form-control', placeholder: 'Derived from Term and Year'
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= fields.label :ends_at %>
+    <%=
+      fields.text_field :ends_at, class: 'form-control', placeholder: 'Derived from Term and Year'
+    %>
+  </div>
+
+  <%=
+    render partial: 'form_collection', locals: { form: fields, scope: :teachers, partial: 'user' }
+  %>
+
+  <%=
+    render partial: 'form_collection', locals: {
+      form: fields, scope: :periods, partial: File.join('admin', 'demo', 'course', 'period')
+    }
+  %>
+<% end %>

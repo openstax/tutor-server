@@ -1,0 +1,7 @@
+course:
+  name: Sociology with Courseware Review
+
+<%=
+  filename = File.join(__dir__, '_review_work.yml.erb')
+  ERB.new(File.read(filename)).tap { |erb| erb.filename = filename }.result
+%>

@@ -1,0 +1,17 @@
+book:
+  archive_url_base: https://archive.cnx.org/contents/
+
+  uuid: 8d50a0af-948b-4204-a71d-4826cba765b8
+
+  reading_processing_instructions:
+    - css: .multiple-choice, .free-response, .art-exercise, .interactive-embedded-homework,
+        .scientific, [data-type="glossary"]
+      fragments: []
+    - css: .interactive-embedded-reading
+      fragments:
+      - node
+      - exercise
+
+catalog_offering:
+  title: Biology 2e
+  appearance_code: biology_2e

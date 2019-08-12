@@ -1,0 +1,26 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+  # Additionally, they may override the following variables:
+  options ||= {}
+%>
+
+<div class="form-group">
+  <%= form.label :id %>
+  <%=
+    form.text_field :id, options.merge(
+      class: 'form-control',
+      placeholder: 'One of either id or title is required (unless Task plan is removed)'
+    )
+  %>
+</div>
+
+<div class="form-group">
+  <%= form.label :title %>
+  <%=
+    form.text_field :title, options.merge(
+      class: 'form-control',
+      placeholder: 'One of either id or title is required (unless Task plan is removed)'
+    )
+  %>
+</div>

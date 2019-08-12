@@ -481,7 +481,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
   protected
 
   def work_task(task:, is_correct:, num_steps: nil)
-    is_completed = num_steps.nil? ? true : ->(task, task_step, index) { index < num_steps }
+    is_completed = num_steps.nil? ? true : ->(task_step, index) { index < num_steps }
     Preview::WorkTask[task: task, is_completed: is_completed, is_correct: is_correct]
   end
 

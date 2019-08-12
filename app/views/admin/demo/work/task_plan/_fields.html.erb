@@ -1,0 +1,16 @@
+<%
+  # Clients of this partial must provide the following variable:
+  # form
+  # Additionally, they may override the following variables:
+  options ||= {}
+%>
+
+<%=
+  render partial: File.join('admin', 'demo', 'task_plan'), locals: { form: form, options: options }
+%>
+
+<%=
+  render partial: 'form_collection', locals: {
+    form: form, scope: :tasks, partial: File.join('admin', 'demo', 'work', 'task_plan', 'task')
+  }
+%>

@@ -1,118 +1,110 @@
-require 'demo'
+def abort_if_exercises_unconfigured(task_name)
+  configuration = OpenStax::Exercises::V1.configuration
 
-desc <<-DESC.strip_heredoc
-  Initializes data for the deployment demo (run all demo:* tasks)
-  Book can be either all, bio, phys or soc.
-DESC
-task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |tt, args|
+  raise(
+    'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET env vars' +
+    " and then restart any background job workers to use bin/rake #{task_name}"
+  ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
+end
+
+def demo_routine_perform_later(routine_class, type_string, args)
+  type_string = type_string.to_s
+  options = args.to_h.deep_symbolize_keys
+  types = type_string == 'all' ? [ 'users', 'import', 'course', 'assign', 'work' ] : [ type_string ]
+  filter = (options.delete(:config) || Demo::DEFAULT_CONFIG).to_s
+
+  configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
+    types.each do |type|
+      base_dir = File.join Demo::CONFIG_BASE_DIR, type, filter
+
+      Dir[File.join(base_dir, '**', '[^_]*.yml{,.erb}')].each do |path|
+        string = File.read(path)
+        if File.extname(path) == '.erb'
+          erb = ERB.new(string)
+          erb.filename = path
+          string = erb.result
+        end
+        options_by_basename[path.sub(base_dir, '').chomp('.erb')][type] = YAML.load(string)
+      end
+    end
+  end.values
+  routine_args = configs.map do |config|
+    next Api::V1::Demo::AllRepresenter.new(Hashie::Mash.new).from_hash(config).deep_symbolize_keys \
+      if type_string == 'all'
+
+    {}.tap do |routine_arg|
+      config.each do |key, value|
+        routine_arg[key.to_sym] = Api::V1::Demo.const_get(key.capitalize)::Representer.new(
+          Hashie::Mash.new
+        ).from_hash(value).deep_symbolize_keys
+      end
+    end
+  end
+  num_routines = routine_args.size
+
+  Delayed::Worker.with_delay_jobs(true) do
+    routine_args.each { |routine_arg| routine_class.perform_later routine_arg }
+  end
+
   Rails.logger.info do
-    max_processes = Demo::Base.max_processes
-
-    case max_processes
-    when 0
-      'Using inline processing (DEMO_MAX_PROCESSES = 0)'
-    when 1
-      "Using 1 child process (DEMO_MAX_PROCESSES = 1)"
-    else
-      "Using up to #{max_processes} child processes (DEMO_MAX_PROCESSES = #{max_processes})"
-    end
+    <<~INFO
+      #{num_routines} background job(s) queued
+      Check job status: bin/rake jobs:status
+      Manage background workers: bin/delayed_job -n #{num_routines} status/start/stop
+      Or run the jobs inline (single process): bin/rake jobs:workoff
+    INFO
   end
+end
 
-  Rake::Task[:'demo:staff'].invoke unless ENV['SKIP_STAFF']
-  Rake::Task[:'demo:books'].invoke(args[:config], args[:version]) unless ENV['SKIP_BOOKS']
+def log_worker_mem_info
+  Rails.logger.info { 'Make sure to have ~4G free memory per background worker' }
+end
 
-  unless ENV['SKIP_COURSES']
-    Rake::Task[:'demo:courses'].invoke(args[:config])
+desc 'Initializes all demo data. Config can be either be "all" or a specific config dirname.'
+task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |task, args|
+  abort_if_exercises_unconfigured 'demo'
 
-    unless ENV['SKIP_TASKS']
-      Rake::Task[:'demo:tasks'].invoke(args[:config], args[:random_seed])
+  demo_routine_perform_later Demo::All, 'all', args
 
-      Rake::Task[:'demo:work'].invoke(args[:config], args[:random_seed]) unless ENV['SKIP_WORK']
-    end
-  end
-
-  Rails.logger.info { 'All demo tasks successful!' }
+  log_worker_mem_info
 end
 
 namespace :demo do
-  desc 'Creates staff user accounts for the deployment demo'
-  task staff: :log_to_stdout do |tt, args|
-    result = Demo::Staff.call
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal do
-          "Error creating staff accounts: #{Lev::ErrorTranslator.translate(error)}"
-        end
-      end
-
-      fail 'Failed to create staff accounts'
-    end
+  desc 'Creates demo user accounts'
+  task users: :log_to_stdout do |task, args|
+    demo_routine_perform_later Demo::Users, 'users', args.to_h.merge(config: '')
   end
 
-  desc 'Imports book content for the deployment demo'
-  task :books, [ :config, :version ] => :log_to_stdout do |tt, args|
-    result = Demo::Books.call(args.to_h)
+  desc 'Imports demo book content'
+  task :import, [ :config, :version ] => :log_to_stdout do |task, args|
+    abort_if_exercises_unconfigured 'demo:import'
 
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error importing books: #{Lev::ErrorTranslator.translate(error)}" }
-      end
+    demo_routine_perform_later Demo::Import, 'import', args
 
-      fail 'Failed to import books'
-    end
+    log_worker_mem_info
   end
 
-  desc <<-DESC.strip_heredoc
-    Creates courses for the deployment demo
-    Calling this rake task directly will make it attempt to find and reuse the last demo books
+  desc <<~DESC
+    Creates demo courses
+    Calling this rake task directly will make it attempt to reuse the last catalog offerings created
   DESC
-  task :courses, [ :config ] => :log_to_stdout do |tt, args|
-    result = Demo::Courses.call(args.to_h)
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error creating courses: #{Lev::ErrorTranslator.translate(error)}" }
-      end
-
-      fail 'Failed to create courses'
-    end
+  task :courses, [ :config ] => :log_to_stdout do |task, args|
+    demo_routine_perform_later Demo::Course, 'course', args
   end
 
-  desc <<-DESC.strip_heredoc
-    Creates assignments for students
+  desc <<~DESC
+    Creates demo assignments for the demo courses
     Calling this rake task directly will make it attempt to find and reuse the last demo courses
   DESC
-  task :tasks, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
-    result = Demo::Tasks.call(args.to_h)
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error creating tasks: #{Lev::ErrorTranslator.translate(error)}" }
-      end
-
-      fail 'Failed to create tasks'
-    end
+  task :assign, [ :config, :random_seed ] => :log_to_stdout do |task, args|
+    demo_routine_perform_later Demo::Assign, 'assign', args
   end
 
-  desc <<-DESC.strip_heredoc
-    Works student assignments
+  desc <<~DESC
+    Works demo student assignments
     Calling this rake task directly will make it attempt to find and reuse the last demo assignments
   DESC
-  task :work, [ :config, :random_seed ] => :log_to_stdout do |tt, args|
-    result = Demo::Work.call(args.to_h)
-
-    unless result.errors.empty?
-      result.errors.each do |error|
-        Rails.logger.fatal { "Error working assignments: #{Lev::ErrorTranslator.translate(error)}" }
-      end
-
-      fail 'Failed to work tasks'
-    end
-  end
-
-  desc 'Shows student assignments that would be created by the demo script'
-  task :show, [ :config ] => :log_to_stdout do |tt, args|
-    Demo::Show.call(args.to_h)
+  task :work, [ :config, :random_seed ] => :log_to_stdout do |task, args|
+    demo_routine_perform_later Demo::Work, 'work', args
   end
 end

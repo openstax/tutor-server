@@ -1,14 +1,7 @@
 class UserIsCourseTeacher
-  lev_routine
+  lev_routine express_output: :is_course_teacher
 
-  uses_routine CourseMembership::IsCourseTeacher,
-               translations: {
-                 outputs: {
-                   map: {
-                     is_course_teacher: :user_is_course_teacher
-                   }
-                 }
-               }
+  uses_routine CourseMembership::IsCourseTeacher, translations: { outputs: { type: :verbatim } }
 
   protected
 

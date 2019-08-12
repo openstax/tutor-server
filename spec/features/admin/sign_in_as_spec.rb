@@ -15,7 +15,7 @@ RSpec.feature 'Administrator' do
     stub_current_user(admin)
 
     visit admin_root_path
-    click_link 'Users'
+    click_link 'Users', match: :first
     fill_in 'query', with: 'a_user'
     click_button 'Search'
     click_link 'Sign in as', match: :first

@@ -30,7 +30,7 @@ FactoryBot.define do
 
     trait :customer_service do
       after(:build) do |profile|
-        profile.customer_service = FactoryBot.build(:user_customer_service, profile: profile)
+        profile.customer_support = FactoryBot.build(:user_customer_service, profile: profile)
       end
     end
 

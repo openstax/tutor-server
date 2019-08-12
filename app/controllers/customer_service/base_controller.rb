@@ -6,6 +6,6 @@ class CustomerService::BaseController < ApplicationController
   protected
 
   def authenticate_customer_service!
-    raise SecurityTransgression unless current_user.is_customer_service? || current_user.is_admin?
+    raise SecurityTransgression unless current_user.is_customer_support? || current_user.is_admin?
   end
 end
