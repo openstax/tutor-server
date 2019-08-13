@@ -21,6 +21,8 @@ env:
     - OXT_TEST_DB=travis_ci_test
     - PARALLEL_TEST_PROCESSORS=2
   matrix:
+    - LINT=true
+    - ASSETS=true
     - TAG=speed:fast
     - TAG=~speed:fast
 rvm: 2.6.1
@@ -31,5 +33,8 @@ bundler_args: --without production --retry=6
 before_script:
   - bundle exec rake parallel:create parallel:load_schema parallel:seed --trace
 script:
-  - bundle exec rake lint:branch
-  - bundle exec parallel_rspec ./spec --test-options "--tag $TAG"
+  - "[[ -n $LINT ]] && bundle exec rake lint:branch || [[ -z $LINT ]] && true"
+  - "[[ -n $ASSETS ]] && bundle exec rake assets:precompile || [[ -z $ASSETS ]] && true"
+  - >-
+      [[ -n $TAG ]] && bundle exec parallel_rspec ./spec --test-options "--tag $TAG" ||
+      [[ -z $TAG ]] && true
