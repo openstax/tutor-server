@@ -25,12 +25,12 @@ class ActiveJob::AfterCommitRunner
   def set_transaction_state(state)
   end
 
+  def add_to_transaction
+    ActiveRecord::Base.connection.current_transaction.add_record self
+  end
+
   def run_after_commit
-    if ActiveRecord::Base.connection.transaction_open?
-      ActiveRecord::Base.connection.current_transaction.add_record self
-    else
-      committed!
-    end
+    ActiveRecord::Base.connection.transaction_open? ? add_to_transaction : committed!
   end
 
   protected
