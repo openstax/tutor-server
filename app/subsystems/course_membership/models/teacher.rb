@@ -7,6 +7,6 @@ class CourseMembership::Models::Teacher < ApplicationRecord
 
   validates :role,   uniqueness: true
 
-  delegate :username, :first_name, :last_name, :full_name, :name, to: :role
+  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, to: :role
 
 end

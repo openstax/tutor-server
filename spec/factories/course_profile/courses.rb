@@ -1,6 +1,10 @@
 FactoryBot.define do
   factory :course_profile_course, class: '::CourseProfile::Models::Course' do
-    transient             { consistent_times { false } }
+    transient             do
+      consistent_times { false }
+      num_teachers     { 0 }
+      num_students     { 0 }
+    end
 
     name                  { Faker::Lorem.words.join(' ') }
 
@@ -24,12 +28,19 @@ FactoryBot.define do
 
     association :offering, factory: :catalog_offering
 
-    after(:build) do |course|
+    after(:build) do |course, evaluator|
       course.course_ecosystems << build(
         :course_content_course_ecosystem,
         course: course,
         ecosystem: course.offering.ecosystem
       ) if course.offering.present?
+
+      course.teachers = evaluator.num_teachers.times.map do
+        FactoryBot.build :course_membership_teacher, course: course
+      end
+      course.students = evaluator.num_students.times.map do
+        FactoryBot.build :course_membership_student, course: course
+      end
     end
 
     trait(:with_assistants) do

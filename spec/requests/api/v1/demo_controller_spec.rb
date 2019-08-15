@@ -9,7 +9,9 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
   let(:ecosystem)        { FactoryBot.create :content_ecosystem, books: [ book ] }
   let(:catalog_offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
 
-  let(:course)           { FactoryBot.create :course_profile_course, offering: catalog_offering }
+  let(:course)           do
+    FactoryBot.create :course_profile_course, num_teachers: 1, num_students: 2
+  end
 
   let(:task_plans)       { 2.times.map { FactoryBot.create :tasks_task_plan, owner: course } }
 

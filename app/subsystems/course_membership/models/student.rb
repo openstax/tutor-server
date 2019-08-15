@@ -25,7 +25,7 @@ class CourseMembership::Models::Student < ApplicationRecord
 
   before_save :init_payment_due_at
 
-  delegate :username, :first_name, :last_name, :full_name, :name, to: :role
+  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, to: :role
 
   def dropped?
     deleted?
