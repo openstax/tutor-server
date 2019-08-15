@@ -27,15 +27,13 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   json_serialize :settings, Hash
 
-  before_validation :trim_text
+  before_validation :trim_text, :set_ecosystem
 
   validates :title, presence: true
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
   validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
-
-  before_validation :set_ecosystem
 
   scope :preload_tasking_plans, -> { preload(tasking_plans: :time_zone) }
 
