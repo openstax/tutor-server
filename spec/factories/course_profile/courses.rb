@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :course_profile_course, class: '::CourseProfile::Models::Course' do
     transient             do
       consistent_times { false }
-      num_teachers     { 0 }
-      num_students     { 0 }
+      num_teachers     { nil }
+      num_students     { nil }
     end
 
     name                  { Faker::Lorem.words.join(' ') }
@@ -37,10 +37,10 @@ FactoryBot.define do
 
       course.teachers = evaluator.num_teachers.times.map do
         FactoryBot.build :course_membership_teacher, course: course
-      end
+      end unless evaluator.num_teachers.nil?
       course.students = evaluator.num_students.times.map do
         FactoryBot.build :course_membership_student, course: course
-      end
+      end unless evaluator.num_students.nil?
     end
 
     trait(:with_assistants) do
