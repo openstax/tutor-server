@@ -228,9 +228,9 @@ class PushSalesforceCourseStats
       exception = error[:exception]
 
       if exception.nil?
-        Raven.capture_message error[:message], error.except(:message)
+        Raven.capture_message error[:message], extra: error.except(:message)
       else
-        Raven.capture_exception exception, error.except(:exception)
+        Raven.capture_exception exception, extra: error.except(:exception)
       end
     end
   end
