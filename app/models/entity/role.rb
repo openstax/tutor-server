@@ -12,7 +12,8 @@ module Entity
 
     belongs_to :profile, subsystem: :user, inverse_of: :roles
 
-    delegate :username, :first_name, :last_name, :full_name, :name, to: :profile, allow_nil: true
+    delegate :username, :first_name, :last_name, :full_name, :name, :is_test,
+             to: :profile, allow_nil: true
     delegate :course, :period, :course_profile_course_id, to: :course_member, allow_nil: true
 
     unique_token :research_identifier, mode: :hex, length: 4, prefix: 'r'

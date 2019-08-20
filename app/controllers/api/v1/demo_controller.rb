@@ -1,7 +1,10 @@
 class Api::V1::DemoController < Api::V1::ApiController
   respond_to :html
   skip_before_action :force_json_content_type
+
   before_action :not_real_production, :verify_requested_format!
+
+  rescue_from ActiveRecord::RecordInvalid, with: :render_api_errors
 
   resource_description do
     api_versions "v1"

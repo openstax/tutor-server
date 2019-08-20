@@ -57,6 +57,25 @@ RSpec.describe ActiveJob::AfterCommitRunner, type: :lib, truncation: true do
       end
     end
 
+    context 'in a joinable nested transaction' do
+      it 'runs the given job when the outer transaction commits' do
+        expect do
+          Delayed::Job.transaction do
+            expect do
+              Delayed::Job.transaction(requires_new: true) do
+                expect(Delayed::Job.connection.open_transactions).to eq(2)
+                expect { runner.run_after_commit }.to  change     { delayed_job.reload.locked_at }
+                                                  .and change     { delayed_job.locked_by        }
+                                                  .and not_change { TestJob.performed_count      }
+              end
+            end.not_to change { TestJob.performed_count }
+          end
+        end.to change { TestJob.performed_count }.by(increment)
+
+        expect{ delayed_job.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
     context 'not in a transaction' do
       before { expect(Delayed::Job.connection.open_transactions).to eq(0) }
 

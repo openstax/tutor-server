@@ -9,7 +9,9 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
   let(:ecosystem)        { FactoryBot.create :content_ecosystem, books: [ book ] }
   let(:catalog_offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
 
-  let(:course)           { FactoryBot.create :course_profile_course, offering: catalog_offering }
+  let(:course)           do
+    FactoryBot.create :course_profile_course, num_teachers: 1, num_students: 2
+  end
 
   let(:task_plans)       { 2.times.map { FactoryBot.create :tasks_task_plan, owner: course } }
 
@@ -178,6 +180,32 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
       task_plans_array.each do |task_plan_hash|
         expect(task_plan_hash).to be_in task_plans_attributes
       end
+    end
+
+    it 'renders 422 Unprocessable Entity if a record is invalid' do
+      task_plan = task_plans.first
+      time = Time.current
+      task_plan.tasking_plans += [
+        FactoryBot.build(
+          :tasks_tasking_plan, task_plan: task_plan, opens_at: time, due_at: time - 1.day
+        )
+      ]
+      expect(task_plan).not_to be_valid
+
+      expect(Demo::Assign).to receive(:call) do |assign:|
+        expect(assign).to eq assign_params
+        task_plan.save! # raises ActiveRecord::RecordInvalid
+      end
+
+      api_post 'demo/assign', nil, params: assign_params.to_json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash).to eq(
+        errors: [
+          code: 'validation failed: tasking plans is invalid',
+          message: 'Validation failed: tasking plans is invalid'
+        ], status: 422
+      )
     end
   end
 

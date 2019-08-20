@@ -19,13 +19,17 @@ class Demo::Base
     random_seed.nil? ? Random.srand : Random.srand(random_seed)
   end
 
+  def find_course_by_id(id)
+    CourseProfile::Models::Course.find_by id: id
+  end
+
   def find_course(course)
     if course[:id].blank?
       raise(ArgumentError, "Can't find a Course without a name or id") if course[:name].blank?
 
       CourseProfile::Models::Course.order(created_at: :desc).find_by name: course[:name]
     else
-      CourseProfile::Models::Course.find_by id: course[:id]
+      find_course_by_id course[:id]
     end
   end
 

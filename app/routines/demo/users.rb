@@ -1,5 +1,7 @@
 # Creates the admin, content, support, researchers, teachers, students and zz demo users
 class Demo::Users < Demo::Base
+  MAX_RETRIES = 5
+
   lev_routine use_jobba: true
 
   uses_routine User::SetAdministratorState, as: :set_administrator
@@ -23,44 +25,57 @@ class Demo::Users < Demo::Base
     return outputs.public_send("#{type}=", []) if users_of_type.blank?
 
     usernames = users_of_type.map { |user| user[:username] }
-    existing_users_by_username = User::Models::Profile
-      .joins(:account)
-      .where(account: { username: usernames })
-      .preload(:account)
-      .index_by(&:username)
 
-    user_models = users_of_type.map do |user|
-      model = existing_users_by_username[user[:username]]
-      attrs = attributes.merge(user)
+    # Retries could be replaced with UPSERTing the users
+    @retries = 0
+    user_models = begin
+      User::Models::Profile.transaction(requires_new: true) do
+        existing_users_by_username = User::Models::Profile
+          .joins(:account)
+          .where(account: { username: usernames })
+          .preload(:account)
+          .index_by(&:username)
 
-      if model.nil?
-        attrs[:password] ||= Rails.application.secrets.demo_user_password
+        users_of_type.map do |user|
+          model = existing_users_by_username[user[:username]]
+          attrs = attributes.merge(user)
 
-        if attrs[:first_name].blank? && attrs[:last_name].blank?
-          attrs[:full_name] ||= attrs[:username].split('_').map(&:capitalize).join(' ')
+          if model.nil?
+            attrs[:password] ||= Rails.application.secrets.demo_user_password
 
-          attrs[:first_name], attrs[:last_name] = attrs[:full_name].split(' ', 2)
-        else
-          separator = attrs[:first_name].blank? || attrs[:last_name].blank? ? '' : ' '
-          attrs[:full_name] ||= "#{attrs[:first_name]}#{separator}#{attrs[:last_name]}"
+            if attrs[:first_name].blank? && attrs[:last_name].blank?
+              attrs[:full_name] ||= attrs[:username].split('_').map(&:capitalize).join(' ')
+
+              attrs[:first_name], attrs[:last_name] = attrs[:full_name].split(' ', 2)
+            else
+              separator = attrs[:first_name].blank? || attrs[:last_name].blank? ? '' : ' '
+              attrs[:full_name] ||= "#{attrs[:first_name]}#{separator}#{attrs[:last_name]}"
+            end
+
+            attrs[:is_test] = true if attrs[:is_test].nil?
+
+            sign_contracts = attrs.has_key?(:sign_contracts) ? attrs[:sign_contracts] : true
+
+            # The password will be set if stubbing is disabled
+            model = run(User::CreateUser, attrs.except(:sign_contracts)).outputs.user.tap do |user|
+              next unless sign_contracts
+
+              sign_contract(user: user, name: :general_terms_of_use)
+              sign_contract(user: user, name: :privacy_policy)
+            end
+          else
+            model.account.update_attributes(attrs.except(:sign_contracts))
+          end
+
+          model
         end
-
-        attrs[:is_test] = true if attrs[:is_test].nil?
-
-        sign_contracts = attrs.has_key?(:sign_contracts) ? attrs[:sign_contracts] : true
-
-        # The password will be set if stubbing is disabled
-        model = run(User::CreateUser, attrs.except(:sign_contracts)).outputs.user.tap do |user|
-          next unless sign_contracts
-
-          sign_contract(user: user, name: :general_terms_of_use)
-          sign_contract(user: user, name: :privacy_policy)
-        end
-      else
-        model.account.update_attributes(attrs.except(:sign_contracts))
       end
+    rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+      raise if @retries >= MAX_RETRIES
 
-      model
+      @retries += 1
+
+      retry
     end
 
     outputs.users += user_models

@@ -28,10 +28,10 @@ class Demo::Course < Demo::Base
     end
 
     course_hash = course[:course]
-    course_model = find_course course_hash
+    course_model = find_course_by_id course_hash[:id]
 
     attrs = course_hash.slice(:term, :year, :is_college, :is_test).merge(
-      catalog_offering: offering_model, is_preview: false, is_concept_coach: false
+      is_preview: false, is_concept_coach: false
     )
     attrs = attrs.merge(name: course_hash[:name]) unless course_hash[:name].blank?
     attrs[:starts_at] = DateTime.parse(course_hash[:starts_at]) rescue nil \
@@ -44,6 +44,8 @@ class Demo::Course < Demo::Base
         ArgumentError, 'You must provide a catalog offering when creating a new course'
       ) if offering_model.nil?
 
+      attrs[:catalog_offering] = offering_model
+
       attrs[:term] ||= :demo
       attrs[:year] ||= Time.zone.now.year
       attrs[:is_college] = true if attrs[:is_college].nil?
@@ -53,7 +55,13 @@ class Demo::Course < Demo::Base
 
       log { "Course Created: #{course_model.name} (id: #{course_model.id})" }
     else
-      course_model.update_attributes(attrs)
+      attrs[:name] = course[:course][:name]
+      attrs[:offering] = offering_model unless offering_model.nil?
+
+      course_model.update_attributes attrs
+
+      run(:add_ecosystem, course: course_model, ecosystem: offering_model.ecosystem) \
+        unless offering_model.nil?
 
       log { "Course Found: #{course_model.name} (id: #{course_model.id})" }
     end
