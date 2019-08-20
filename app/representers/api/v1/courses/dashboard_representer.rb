@@ -61,6 +61,13 @@ module Api::V1::Courses
                  type: 'boolean',
                  description: "Whether or not this task has been withdrawn by the teacher"
                }
+
+      property :tasks_task_plan_id,
+               as: :task_plan_id,
+               type: String,
+               readable: true,
+               writeable: false
+
     end
 
     class StepTaskBase < TaskBase
