@@ -28,7 +28,7 @@ module DashboardRoutineMethods
 
     tasks = tasks.select do |task|
       task.past_open? current_time: current_time
-    end unless role.teacher?
+    end if role.student?
 
     ready_task_ids = Tasks::IsReady[tasks: tasks]
     ready_tasks = tasks.select { |task| ready_task_ids.include? task.id }
