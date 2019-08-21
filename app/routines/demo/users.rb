@@ -1,8 +1,8 @@
 # Creates the admin, content, support, researchers, teachers, students and zz demo users
 class Demo::Users < Demo::Base
-  MAX_RETRIES = 5
+  MAX_RETRIES = 3
 
-  lev_routine use_jobba: true
+  lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine User::SetAdministratorState, as: :set_administrator
   uses_routine User::SetContentAnalystState, as: :set_content_analyst

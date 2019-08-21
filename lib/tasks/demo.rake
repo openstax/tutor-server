@@ -15,9 +15,10 @@ def demo_routine_perform_later(routine_class, type_string, args)
 
   configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
     types.each do |type|
-      base_dir = File.join Demo::CONFIG_BASE_DIR, type, filter
+      base_dir = File.join Demo::CONFIG_BASE_DIR, type
 
-      Dir[File.join(base_dir, '**', '[^_]*.yml{,.erb}')].each do |path|
+      Dir[File.join(base_dir, '**', '[^_]*.yml{.erb,}')].select { |path| path.include? filter }
+                                                        .each do |path|
         string = File.read(path)
         if File.extname(path) == '.erb'
           erb = ERB.new(string)
@@ -71,8 +72,8 @@ end
 
 namespace :demo do
   desc 'Creates demo user accounts'
-  task users: :log_to_stdout do |task, args|
-    demo_routine_perform_later Demo::Users, 'users', args.to_h.merge(config: '')
+  task :users, [ :config ] => :log_to_stdout do |task, args|
+    demo_routine_perform_later Demo::Users, 'users', { config: '' }.merge(args.to_h)
   end
 
   desc 'Imports demo book content'
