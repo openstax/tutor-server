@@ -1,7 +1,7 @@
 # Creates a demo course or sets the course's name, catalog offering and ecosystem
 # Sets the course's periods and enrolls demo teachers and demo students into them
 class Demo::Course < Demo::Base
-  lev_routine use_jobba: true
+  lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period

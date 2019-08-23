@@ -1,6 +1,6 @@
 # Works demo assignments
 class Demo::Work < Demo::Base
-  lev_routine use_jobba: true
+  lev_routine transaction: :read_committed, use_jobba: true
 
   include ActionView::Helpers::SanitizeHelper
 

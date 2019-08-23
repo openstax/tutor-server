@@ -1,8 +1,8 @@
 # Imports a demo book from CNX
 class Demo::Import < Demo::Base
-  MAX_RETRIES = 5
+  MAX_RETRIES = 3
 
-  lev_routine use_jobba: true
+  lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_ecosystem
   uses_routine AddEcosystemToCourse, as: :add_ecosystem_to_course
