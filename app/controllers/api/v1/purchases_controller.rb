@@ -49,7 +49,7 @@ class Api::V1::PurchasesController < Api::V1::ApiController
       return render_api_errors(:refund_period_elapsed) if !purchased_item.is_refund_allowed
     end
 
-    RefundPayment.perform_later(uuid: params[:id], survey: params[:survey])
+    RefundPayment.perform_later(uuid: refund_params[:id], survey: refund_params[:survey])
     head :accepted
   end
 
@@ -62,7 +62,7 @@ class Api::V1::PurchasesController < Api::V1::ApiController
     render json: response, status: :ok
   end
 
-  include Api::V1::FakePurchaseActions if !IAm.real_production?
+  include Api::V1::FakePurchaseActions unless IAm.real_production?
 
   protected
 
@@ -72,6 +72,10 @@ class Api::V1::PurchasesController < Api::V1::ApiController
 
   def verify_purchase_exists
     head(:not_found) if purchased_item.nil?
+  end
+
+  def refund_params
+    params.permit(:id, survey: {})
   end
 
 end
