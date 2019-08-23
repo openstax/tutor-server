@@ -221,6 +221,28 @@ RSpec.describe 'LMS Launch', type: :request do
     end
   end
 
+  context "course ended" do
+    # test context existing or not because can hit this error on two different paths
+    before(:each) { simulator.add_teacher("user") }
+
+    it "errors if context already exists" do
+      # launch once to build context
+      simulator.launch(user: "user")
+      launch_helper.complete_the_launch_locally
+
+      course.update_attribute(:ends_at, Time.current)
+      simulator.launch(user: "user")
+      expect_error("course that has already ended")
+    end
+
+    it "errors if context doesn't exist yet" do
+      course.update_attribute(:ends_at, Time.current)
+
+      simulator.launch(user: "user")
+      expect_error("course that has already ended")
+    end
+  end
+
   context "launch using app keys already linked to another course" do
 
     it "succeeds without errors" do

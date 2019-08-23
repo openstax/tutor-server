@@ -68,6 +68,8 @@ class LmsController < ApplicationController
 
     rescue Lms::Launch::LmsDisabled => ee
       fail_for_lms_disabled(launch, context) and return
+    rescue Lms::Launch::CourseEnded => ee
+      fail_for_course_ended(launch, context) and return
     rescue Lms::Launch::CourseScoreInUse => ee
       fail_for_course_score_in_use(launch) and return
     rescue Lms::Launch::AlreadyUsed => ee
@@ -178,6 +180,12 @@ class LmsController < ApplicationController
     log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \
                  "LMS-disabled course (#{context.nil? ? 'not set' : context.course.id})" }
     render_minimal_error(:fail_lms_disabled, locals: { launch: launch })
+  end
+
+  def fail_for_course_ended(launch, context)
+    log(:info) { "Attempting to launch (#{session[:launch_id]}) into a " \
+                 "course that has already ended (#{context.nil? ? 'not set' : context.course.id})" }
+    render_minimal_error(:fail_course_ended, locals: { launch: launch })
   end
 
   def fail_for_unsupported_role

@@ -14,6 +14,7 @@ class Lms::Launch
   class CourseScoreInUse      < HandledError; end
   class CourseKeysAlreadyUsed < HandledError; end
   class LmsDisabled           < HandledError; end
+  class CourseEnded           < HandledError; end
 
   class UnhandledError        < StandardError; end
   class AppNotFound           < UnhandledError; end
@@ -151,7 +152,8 @@ class Lms::Launch
 
   def create_context!
     course = app.owner
-    raise LmsDisabled if course && !course.is_lms_enabled
+    raise LmsDisabled if course.nil? || !course.is_lms_enabled
+    raise CourseEnded if course.ended?
 
     Lms::Models::Context.create!(
       lti_id: context_id,
