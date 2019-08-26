@@ -152,8 +152,11 @@ class Lms::Launch
 
   def create_context!
     course = app.owner
-    raise LmsDisabled if course.nil? || !course.is_lms_enabled
-    raise CourseEnded if course.ended?
+    # nil course means WilloLabs so we allow it
+    unless course.nil?
+      raise CourseEnded if course.ended?
+      raise LmsDisabled unless course.is_lms_enabled
+    end
 
     Lms::Models::Context.create!(
       lti_id: context_id,
