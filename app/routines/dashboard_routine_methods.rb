@@ -30,22 +30,25 @@ module DashboardRoutineMethods
       task.past_open? current_time: current_time
     end if role.student?
 
-    ready_task_ids = Tasks::IsReady[tasks: tasks]
-    ready_tasks = tasks.select { |task| ready_task_ids.include? task.id }
-
-    outputs.tasks = ready_tasks
-    outputs.all_tasks_are_ready = ready_tasks == tasks
+    outputs.tasks = Tasks::IsReady[tasks: tasks]
+    outputs.all_tasks_are_ready = outputs.tasks == tasks
 
     return if role.teacher?
 
     period_id = role.course_member.course_membership_period_id
-    outputs.all_tasks_are_ready = outputs.all_tasks_are_ready && Tasks::Models::TaskPlan
+    all_task_plan_ids = Tasks::Models::TaskPlan
       .joins(:tasking_plans)
-      .preload(:tasking_plans)
       .where(
         tasking_plans: { target_id: period_id, target_type: 'CourseMembership::Models::Period' }
       )
       .where.not(first_published_at: nil)
-      .count <= all_tasks.size
+      .where(withdrawn_at: nil)
+      .pluck(:id)
+    ready_task_plan_ids = outputs.tasks.map(&:tasks_task_plan_id)
+
+    # Also require that all task_plans have been distributed for students
+    outputs.all_tasks_are_ready = outputs.all_tasks_are_ready && (
+      all_task_plan_ids - ready_task_plan_ids
+    ).empty?
   end
 end

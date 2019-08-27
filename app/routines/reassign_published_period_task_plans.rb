@@ -14,6 +14,7 @@ class ReassignPublishedPeriodTaskPlans
       .where(tasking_plans: { target_id: period.id,
                               target_type: 'CourseMembership::Models::Period' })
       .where.not(first_published_at: nil )
+      .where(withdrawn_at: nil)
       .preload(:tasking_plans)
 
     published_task_plans.each_with_index do |tp, ii|
