@@ -8,8 +8,8 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :controller, api: true, ve
 
   let(:app) { Lms::WilloLabs.new }
   let(:launch_request) { FactoryBot.create(:launch_request, app: app) }
-  let(:lms_launch_id) { Lms::Launch.from_request(launch_request).persist! }
-  let(:lms_launch) { Lms::Launch.from_id(lms_launch_id) }
+  let(:lms_launch_id) { Lms::Launch.from_request(launch_request).validate!.persist! }
+  let(:lms_launch) { Lms::Launch.from_id(lms_launch_id).validate! }
 
   it 'allows teachers to retrieve secrets' do
     AddUserAsCourseTeacher[course: course, user: user]

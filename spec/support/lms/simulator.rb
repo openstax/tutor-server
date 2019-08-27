@@ -80,15 +80,13 @@ class Lms::Simulator
     @reuse_sourcedids = false
   end
 
-  def launch(user: nil, course: nil, assignment: nil, drop_these_fields: [])
+  def launch_params(user: nil, course: nil, assignment: nil, drop_these_fields: [])
     user ||= @launch_defaults[:user]
     course ||= @launch_defaults[:course]
     assignment ||= @launch_defaults[:assignment]
 
     raise "Course must be set or have a default in a launch" if course.blank?
     raise "User must be set or have a default in a launch" if user.blank?
-
-    app = @apps_by_course[course]
 
     # This request_params setting we might want to eventually specialize by
     # LMS company.
@@ -118,9 +116,21 @@ class Lms::Simulator
 
     [drop_these_fields].flatten.compact.each { |field| request_params.delete(field) }
 
-    sign!(request_params, app)
+    sign!(request_params, @apps_by_course[course])
+  end
 
-    spec.post app[:launch_path], params: request_params
+  def launch(user: nil, course: nil, assignment: nil, drop_these_fields: [], method: :post)
+    user ||= @launch_defaults[:user]
+    course ||= @launch_defaults[:course]
+    assignment ||= @launch_defaults[:assignment]
+
+    request_params = launch_params(
+      user: user, course: course, assignment: assignment, drop_these_fields: drop_these_fields
+    )
+
+    app = @apps_by_course[course]
+
+    spec.public_send method, app[:launch_path], params: request_params
 
     @last_launch = {
       launch_path: app[:launch_path],
@@ -301,8 +311,7 @@ class Lms::Simulator
   attr_reader :spec
 
   def new_launch
-    Launch.new(self)
+    Launch.new(self).tap(&:validate!)
   end
-
 
 end

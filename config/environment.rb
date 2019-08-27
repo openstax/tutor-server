@@ -44,6 +44,7 @@ SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"
 
 TUTOR_HELPDESK_URL = "https://openstax.secure.force.com/help"
+TUTOR_CONTACT_SUPPORT_URL = "#{TUTOR_HELPDESK_URL}/articles/FAQ/OpenStax-Tutor-Beta-customer-support-information"
 
 # Initialize the Rails application.
 Rails.application.initialize!

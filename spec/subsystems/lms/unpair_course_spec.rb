@@ -12,7 +12,7 @@ RSpec.describe Lms::UnpairCourse do
     Lms::Launch.from_request(
       FactoryBot.create(:launch_request, app: Lms::WilloLabs.new),
       authenticator: authenticator
-    )
+    ).validate!
   }
   let(:course) { FactoryBot.create :course_profile_course }
 

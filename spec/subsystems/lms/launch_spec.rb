@@ -12,7 +12,7 @@ RSpec.describe Lms::Launch, type: :model do
       Lms::Launch.from_request(
         FactoryBot.create(:launch_request, :assignment, app: app, course: course),
         authenticator: authenticator
-      )
+      ).validate!
     end
 
     let(:dupe) do
@@ -39,7 +39,7 @@ RSpec.describe Lms::Launch, type: :model do
     launch = Lms::Launch.from_request(
       FactoryBot.create(:launch_request, app: app),
       authenticator: authenticator
-    )
+    ).validate!
     expect { launch.persist! }.to change { Lms::Models::Context.count }.by 1
     expect(launch.context).not_to be_nil
   end
@@ -50,16 +50,47 @@ RSpec.describe Lms::Launch, type: :model do
       launch = Lms::Launch.from_request(
         FactoryBot.create(:launch_request, app: app),
         authenticator: authenticator
-      )
+      ).validate!
       launch.persist!
     end
     expect(course.lms_contexts.count).to eq 3
   end
 
+  it 'verifies signature valid' do
+    request = FactoryBot.create(:launch_request, app: app)
+    expect do
+      Lms::Launch.from_request(request).validate!
+    end.to raise_error(Lms::Launch::InvalidSignature)
+  end
+
+  it 'verifies oauth_timestamp not expired' do
+    request = FactoryBot.create(
+      :launch_request,
+      app: app,
+      current_time: Time.current - (Lms::Launch::MAX_REQUEST_AGE + 1.second)
+    )
+    expect do
+      Lms::Launch.from_request(request, authenticator: authenticator).validate!
+    end.to raise_error(Lms::Launch::ExpiredTimestamp)
+  end
+
+  it 'verifies oauth_timestamp not too far into the future' do
+    request = FactoryBot.create(
+      :launch_request,
+      app: app,
+      current_time: Time.current + Lms::Launch::MAX_REQUEST_AGE + 1.second
+    )
+    expect do
+      Lms::Launch.from_request(request, authenticator: authenticator).validate!
+    end.to raise_error(Lms::Launch::InvalidTimestamp)
+  end
+
   it 'verifies nonce unused' do
     request = FactoryBot.create(:launch_request, app: app)
-    Lms::Launch.from_request(request, authenticator: authenticator)
-    expect { Lms::Launch.from_request(request) }.to raise_error(Lms::Launch::AlreadyUsed)
+    Lms::Launch.from_request(request, authenticator: authenticator).validate!
+    expect do
+      Lms::Launch.from_request(request).validate!
+    end.to raise_error(Lms::Launch::NonceAlreadyUsed)
   end
 
   it 'maps roles' do
@@ -70,7 +101,7 @@ RSpec.describe Lms::Launch, type: :model do
       mappings.each do |type|
           req = FactoryBot.create(:launch_request, app: app)
           req.request_parameters[:roles] = "IMS::LIS::Roles::Context::URNs::#{type}"
-          launch = Lms::Launch.from_request(req,authenticator: authenticator)
+          launch = Lms::Launch.from_request(req,authenticator: authenticator).validate!
           expect(launch.role).to eq role
       end
     end
@@ -84,7 +115,7 @@ RSpec.describe Lms::Launch, type: :model do
         launch = Lms::Launch.from_request(
           FactoryBot.create(:launch_request, app: app),
           authenticator: authenticator
-        )
+        ).validate!
         launch.persist!
       end.to change { Lms::Models::Context.count }.by 1
     end
@@ -96,7 +127,7 @@ RSpec.describe Lms::Launch, type: :model do
       Lms::Launch.from_request(
         FactoryBot.create(:launch_request, app: app),
         authenticator: authenticator
-      )
+      ).validate!
     end
 
     it 'defaults to App' do

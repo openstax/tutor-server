@@ -1,0 +1,11 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  <% if launch.nil? || launch.is_student? %>
+    This request has expired. Try going back and reloading the previous page. If that does not resolve the issue, please notify the course instructor.
+  <% else %>
+    Your LMS sent us an expired request. Try going back and reloading the previous page. If that does not resolve the issue, contact your LMS administrator and ask them to check the system clock on the LMS server.
+  <% end %>
+<% end %>

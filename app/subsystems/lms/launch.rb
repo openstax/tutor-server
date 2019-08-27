@@ -5,16 +5,16 @@ class Lms::Launch
   # A PORO that hides the details of a launch request's internals and
   # launch-related models from other LMS code.
 
-  attr_reader :message
-  attr_reader :request_parameters, :request_url
+  attr_reader :authenticator, :request_parameters, :request_url, :trusted
 
   class HandledError          < StandardError; end
-  class InvalidSignature      < HandledError; end
-  class AlreadyUsed           < HandledError; end
-  class CourseScoreInUse      < HandledError; end
-  class CourseKeysAlreadyUsed < HandledError; end
   class LmsDisabled           < HandledError; end
   class CourseEnded           < HandledError; end
+  class InvalidSignature      < HandledError; end
+  class ExpiredTimestamp      < HandledError; end
+  class InvalidTimestamp      < HandledError; end
+  class NonceAlreadyUsed      < HandledError; end
+  class CourseScoreInUse      < HandledError; end
 
   class UnhandledError        < StandardError; end
   class AppNotFound           < UnhandledError; end
@@ -22,11 +22,22 @@ class Lms::Launch
 
   delegate :tool_consumer_instance_guid, :context_id, to: :message
 
+  MAX_REQUEST_AGE = 5.minutes
   REQUIRED_FIELDS = [
     :tool_consumer_instance_guid,
     :context_id
   ]
 
+  redis_secrets = Rails.application.secrets.redis
+  # STORE needs to be an ActiveSupport::Cache::RedisStore to support TTL
+  STORE = ActiveSupport::Cache::RedisStore.new(
+    url: redis_secrets[:url],
+    namespace: redis_secrets[:namespaces][:lms],
+    expires_in: 2 * MAX_REQUEST_AGE # 2x Just in case their clocks are far in the future
+  )
+
+  # You MUST call validate! immediately after this method
+  # This is not done automatically in order to enable better error handling
   def self.from_request(request, authenticator: nil)
     new(
       request_parameters: request.request_parameters,
@@ -35,14 +46,65 @@ class Lms::Launch
     )
   end
 
+  def validate!
+    # ims-lti gem gives a lot of "unknown parameter" warnings even for params
+    # that Canvas commonly sends; silence those except in dev env
+    if trusted
+      with_warnings(warning_verbosity) do
+        @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
+        @message.launch_url = request_url
+      end
+    else
+      # OAuth 1.0a checks
+      with_warnings(warning_verbosity) do
+        @authenticator ||= ::IMS::LTI::Services::MessageAuthenticator.new(
+          request_url,
+          request_parameters,
+          app.secret
+        )
+
+        # Check that the request has a valid signature
+        raise InvalidSignature unless authenticator.valid_signature?
+
+        # Check that the request is not too old
+        current_time = Time.current
+        timestamp = Time.at(request_parameters[:oauth_timestamp].to_i)
+        raise ExpiredTimestamp if current_time - timestamp > MAX_REQUEST_AGE
+
+        # Check that the LMS's clock is not too far into the future
+        raise InvalidTimestamp if timestamp - current_time > MAX_REQUEST_AGE
+
+        key = "#{app.id}/#{timestamp}/#{request_parameters[:oauth_nonce]}"
+
+        # Check that we haven't seen the same app/timestamp/nonce combo recently
+        raise NonceAlreadyUsed if STORE.exist?(key)
+
+        # Store the nonce in Redis (TTL is set in the store definition above)
+        STORE.write key, 't'
+
+        @message = authenticator.message
+      end
+    end
+
+    self
+  end
+
+  def message
+    validate! if @message.nil?
+    @message
+  end
+
   def persist!
-    self.context || raise("context failed")
+    message
+    context
     Lms::Models::TrustedLaunchData.create!(
       request_params: request_parameters,
       request_url: request_url
     ).id
   end
 
+  # You MUST call validate! immediately after this method
+  # This is not done automatically in order to enable better error handling
   def self.from_id(id)
     launch_data = Lms::Models::TrustedLaunchData.find_by(id: id)
     raise CouldNotLoadLaunch if launch_data.nil?
@@ -124,7 +186,9 @@ class Lms::Launch
   end
 
   def find_or_create_tool_consumer!
-    @tool_consumer ||= Lms::Models::ToolConsumer.find_or_create_by!(guid: tool_consumer_instance_guid)
+    @tool_consumer ||= Lms::Models::ToolConsumer.find_or_create_by!(
+      guid: tool_consumer_instance_guid
+    )
   end
 
   def missing_required_fields
@@ -134,7 +198,7 @@ class Lms::Launch
   end
 
   def context
-    @context ||= (find_existing_context || create_context!)
+    @context ||= find_existing_context || create_context!
   end
 
   def find_existing_context
@@ -152,7 +216,7 @@ class Lms::Launch
 
   def create_context!
     course = app.owner
-    # nil course means WilloLabs so we allow it
+    # nil course means unpaired WilloLabs course so we allow it
     unless course.nil?
       raise CourseEnded if course.ended?
       raise LmsDisabled unless course.is_lms_enabled
@@ -172,11 +236,11 @@ class Lms::Launch
   end
 
   def store_score_callback(user)
-    # For assignment launches, store the score passback info.  We are currently
+    # For assignment launches, store the score passback info. We are currently
     # only doing course-level score sync, so store the score callback info on the Student
     # record. Since we may not actually have a Student record yet (if enrollment hasn't completed),
     # we really attach it to the combination of course and user (which is essentially what
-    # a Student later records).  It is possible that a teacher could add the Tutor assignment
+    # a Student later records). It is possible that a teacher could add the Tutor assignment
     # more than once, so we could have multiple callback infos for ever course/user combination.
     # Also, per the LTI implementation guide, we should only keep one sourcedid for every
     # resource_link_id and user combination, so clear old ones before saving the new one.
@@ -225,35 +289,8 @@ class Lms::Launch
   def initialize(request_parameters:, request_url:, trusted: false, authenticator: nil)
     @request_parameters = request_parameters
     @request_url = request_url
-
-    # ims-lti gem gives a lot of "unknown parameter" warnings even for params
-    # that Canvas commonly sends; silence those except in dev env
-
-    if trusted
-      with_warnings(warning_verbosity) do
-        @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
-        @message.launch_url = request_url
-      end
-    else
-      begin
-        Lms::Models::Nonce.create!(lms_app_id: app.id, value: request_parameters[:oauth_nonce])
-      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => ee
-        Raven.capture_message(
-          "Attempt to reuse nonce #{request_parameters[:oauth_nonce]} on app id #{app.id}"
-        )
-        raise AlreadyUsed
-      end
-
-      with_warnings(warning_verbosity) do
-        authenticator = authenticator || ::IMS::LTI::Services::MessageAuthenticator.new(
-          request_url,
-          request_parameters,
-          app.secret
-        )
-        raise InvalidSignature unless authenticator.valid_signature?
-        @message = authenticator.message
-      end
-    end
+    @trusted = trusted
+    @authenticator = authenticator
   end
 
 
