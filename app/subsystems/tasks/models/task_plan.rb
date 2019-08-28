@@ -35,6 +35,15 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
 
+  scope :tasked_to_period_id, ->(period_id) do
+    joins(:tasking_plans).where(
+      tasking_plans: { target_id: period_id, target_type: 'CourseMembership::Models::Period' }
+    )
+  end
+
+  scope :published,     -> { where.not first_published_at: nil }
+  scope :non_withdrawn, -> { where withdrawn_at: nil }
+
   scope :preload_tasking_plans, -> { preload(tasking_plans: :time_zone) }
 
   scope :preload_tasks, -> { preload(tasks: :time_zone) }
