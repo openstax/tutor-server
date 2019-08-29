@@ -56,6 +56,18 @@ if screenshots_enabled?
       end
     end
 
+    context 'course ended' do
+      scenario 'students' do
+        visit 'specs/lms_error_page/course_ended/student'
+        screenshot!
+      end
+
+      scenario 'teachers' do
+        visit 'specs/lms_error_page/course_ended/teacher'
+        screenshot!
+      end
+    end
+
     context 'course keys already used' do
       scenario 'students' do
         visit 'specs/lms_error_page/course_keys_already_used/student'

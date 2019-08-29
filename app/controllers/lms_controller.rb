@@ -26,6 +26,7 @@ class LmsController < ApplicationController
 
     begin
       @launch = Lms::Launch.from_request(request)
+      @launch.validate!
     rescue StandardError => ee
       fail_with_catchall_message(ee) and return
     end
@@ -39,6 +40,7 @@ class LmsController < ApplicationController
 
     begin
       launch = Lms::Launch.from_request(request)
+      launch.validate!
 
       log(:debug) { launch.formatted_data(include_everything: true) }
 
@@ -68,12 +70,20 @@ class LmsController < ApplicationController
 
     rescue Lms::Launch::LmsDisabled => ee
       fail_for_lms_disabled(launch, context) and return
+    rescue Lms::Launch::CourseEnded => ee
+      fail_for_course_ended(launch) and return
     rescue Lms::Launch::CourseScoreInUse => ee
       fail_for_course_score_in_use(launch) and return
-    rescue Lms::Launch::AlreadyUsed => ee
-      fail_for_already_used and return
-    rescue Lms::Launch::AppNotFound, Lms::Launch::InvalidSignature => ee
-      fail_for_invalid_key_secret(launch) and return
+    rescue Lms::Launch::AppNotFound
+      fail_for_app_not_found(launch) and return
+    rescue Lms::Launch::InvalidSignature => ee
+      fail_for_invalid_signature(launch) and return
+    rescue Lms::Launch::ExpiredTimestamp => ee
+      fail_for_expired_timestamp(launch) and return
+    rescue Lms::Launch::InvalidTimestamp => ee
+      fail_for_invalid_timestamp(launch) and return
+    rescue Lms::Launch::NonceAlreadyUsed => ee
+      fail_for_nonce_already_used(launch) and return
     rescue Lms::Launch::HandledError => ee
       fail_with_catchall_message(ee) and return
     end
@@ -88,8 +98,9 @@ class LmsController < ApplicationController
 
     begin
       launch = Lms::Launch.from_id(session[:launch_id])
+      launch.validate!
     rescue Lms::Launch::CouldNotLoadLaunch => ee
-      fail_for_already_used and return
+      fail_for_could_not_load_launch and return
     end
 
     # Always send users to accounts when a launch happens.  We may decide
@@ -117,14 +128,13 @@ class LmsController < ApplicationController
   def complete_launch
     # Part 3 of 3 in how Tutor processes the launch - gets the now authenticated user to
     # their course (or the enrollment screen into it)
-    begin
-      launch = Lms::Launch.from_id(session[:launch_id])
-      process_completed_launch(launch)
-    rescue Lms::Launch::CouldNotLoadLaunch => ee
-      fail_for_already_used
-    rescue Lms::Launch::CourseScoreInUse => ee
-      fail_for_course_score_in_use(launch)
-    end
+    launch = Lms::Launch.from_id(session[:launch_id])
+    launch.validate!
+    process_completed_launch(launch)
+  rescue Lms::Launch::CouldNotLoadLaunch => ee
+    fail_for_could_not_load_launch
+  rescue Lms::Launch::CourseScoreInUse => ee
+    fail_for_course_score_in_use(launch)
   end
 
   def process_completed_launch(launch)
@@ -138,7 +148,7 @@ class LmsController < ApplicationController
     # Add the user as a teacher or student
     course = launch.context.course
     if launch.is_student?
-      # students were checked to ensure trhe launch had
+      # students were checked to ensure the launch had
       # a course in step 2 (launch_authenticate)
       launch.store_score_callback(current_user)
       # Note if the user is not yet a student in the course, so they can be sent through the
@@ -174,15 +184,25 @@ class LmsController < ApplicationController
     render_minimal_error(:fail_unpaired)
   end
 
+  def fail_for_unsupported_role
+    log(:info) { "Unsupported role launched in launch #{session[:launch_id]}"}
+    render_minimal_error(:fail_unsupported_role)
+  end
+
+  def fail_for_could_not_load_launch
+    log(:info) { "Could not load launch #{session[:launch_id]}"}
+    render_minimal_error(:fail_could_not_load_launch)
+  end
+
   def fail_for_lms_disabled(launch, context)
     log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \
                  "LMS-disabled course (#{context.nil? ? 'not set' : context.course.id})" }
     render_minimal_error(:fail_lms_disabled, locals: { launch: launch })
   end
 
-  def fail_for_unsupported_role
-    log(:info) { "Unsupported role launched in launch #{session[:launch_id]}"}
-    render_minimal_error(:fail_unsupported_role)
+  def fail_for_course_ended(launch)
+    log(:info) { "Attempting to launch (#{session[:launch_id]}) into a course that has ended" }
+    render_minimal_error(:fail_course_ended, locals: { launch: launch })
   end
 
   def fail_for_missing_required_fields(launch)
@@ -191,19 +211,34 @@ class LmsController < ApplicationController
     render_minimal_error(:fail_missing_required_fields, locals: { launch: launch })
   end
 
-  def fail_for_already_used
-    log(:info) { "Nonce reused in launch #{session[:launch_id]}"}
-    render_minimal_error(:fail_already_used)
-  end
-
   def fail_for_course_score_in_use(launch)
     log(:error) { "Course Score Callback is already taken #{launch.result_sourcedid} : #{launch.outcome_url}" }
-    render_minimal_error(:fail_for_course_score_in_use)
+    render_minimal_error(:fail_course_score_in_use)
   end
 
-  def fail_for_invalid_key_secret(launch)
-    log(:info) { "Invalid key and/or secret #{session[:launch_id]}"}
-    render_minimal_error(:fail_invalid_key_secret, locals: { launch: launch })
+  def fail_for_app_not_found(launch)
+    log(:info) { "App not found #{session[:launch_id]}" }
+    render_minimal_error(:fail_app_not_found, locals: { launch: launch })
+  end
+
+  def fail_for_invalid_signature(launch)
+    log(:info) { "Invalid signature #{session[:launch_id]}" }
+    render_minimal_error(:fail_invalid_signature, locals: { launch: launch })
+  end
+
+  def fail_for_expired_timestamp(launch)
+    log(:info) { "Expired timestamp #{session[:launch_id]}" }
+    render_minimal_error(:fail_expired_timestamp, locals: { launch: launch })
+  end
+
+  def fail_for_invalid_timestamp(launch)
+    log(:info) { "Invalid timestamp #{session[:launch_id]}" }
+    render_minimal_error(:fail_invalid_timestamp, locals: { launch: launch })
+  end
+
+  def fail_for_nonce_already_used(launch)
+    log(:info) { "Nonce already used #{session[:launch_id]}" }
+    render_minimal_error(:fail_nonce_already_used, locals: { launch: launch })
   end
 
   def fail_with_catchall_message(exception)

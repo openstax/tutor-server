@@ -6,6 +6,7 @@ class Lms::PairLaunchToCourse
     outputs.success = false
     begin
       launch = Lms::Launch.from_id(launch_id)
+      launch.validate!
     rescue Lms::Launch::CouldNotLoadLaunch => ee
       fatal_error(code: :lms_launch_doesnt_exist, message: "LMS Launch was not found")
     end

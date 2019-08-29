@@ -1,0 +1,11 @@
+<% content_for :title do %>
+  Sorry, you can’t access this course
+<% end %>
+
+<% content_for :body do %>
+  <% if launch.nil? || launch.is_student? %>
+    This course may not have been integrated correctly. Please notify the course instructor.
+  <% else %>
+    The key you entered is valid. However, the secret may not match that OpenStax Tutor course. Verify that you have the correct key and secret and try again. For help, please visit our <%= link_to "knowledge base", TUTOR_INTEGRATE_LMS_URL %>.
+  <% end %>
+<% end %>

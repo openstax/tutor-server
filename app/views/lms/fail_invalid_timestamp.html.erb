@@ -1,0 +1,11 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  <% if launch.nil? || launch.is_student? %>
+    This request is too far into the future. Please notify the course instructor.
+  <% else %>
+    The LMS sent us a request that is too far into the future. If this problem persists, contact your LMS administrator and ask them to check the system clock on the LMS server.
+  <% end %>
+<% end %>

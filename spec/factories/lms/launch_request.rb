@@ -8,13 +8,14 @@ FactoryBot.define do
     result_sourcedid { nil }
     signature { 'not-real-sig'}
     nonce { SecureRandom.hex(10)}
-    request_url { Faker::Internet.url }
+    url { Faker::Internet.url }
     roles {[:student]}
     tool_consumer_instance_guid { SecureRandom.uuid }
     context_id { SecureRandom.uuid }
 
     transient do
-      app { nil }
+      app          { nil }
+      current_time { Time.current }
     end
 
     trait :assignment do
@@ -35,7 +36,7 @@ FactoryBot.define do
       raise "Encountered an unknown role" if roles.any?(&:nil?)
 
       new(
-        request_parameters: HashWithIndifferentAccess.new({
+        request_parameters: HashWithIndifferentAccess.new(
           user_id: user_id,
           lis_person_name_full: full_name,
           lis_outcome_service_url: outcome_url,
@@ -43,14 +44,15 @@ FactoryBot.define do
           oauth_signature: signature,
           oauth_nonce: nonce,
           oauth_consumer_key: app.key,
+          oauth_timestamp: current_time.to_i.to_s,
           roles: roles.join(','),
           tool_consumer_instance_guid: tool_consumer_instance_guid,
           lti_message_type: "basic-lti-launch-request",
           lti_version: 'LTI-1p0',
           context_id: context_id,
           resource_link_id: Faker::Internet.url,
-        }).compact,
-        request_url: request_url
+        ).compact,
+        url: url
       )
     end
   end

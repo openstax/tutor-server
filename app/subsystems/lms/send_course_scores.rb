@@ -35,7 +35,7 @@ class Lms::SendCourseScores
     callbacks.each_with_index do |callback, ii|
       score_data = course_score_data(callback.user_profile_id)
 
-      if score_data.present?
+      if score_data.present? && score_data[:course_average].present?
         send_one_score(callback, score_data)
       else
         @num_missing_scores += 1
@@ -48,10 +48,7 @@ class Lms::SendCourseScores
   end
 
   def save_status_data
-    status.save({
-      num_callbacks: @num_callbacks,
-      num_missing_scores: @num_missing_scores,
-    })
+    status.save num_callbacks: @num_callbacks, num_missing_scores: @num_missing_scores
   end
 
   def course_score_data(user_profile_id)

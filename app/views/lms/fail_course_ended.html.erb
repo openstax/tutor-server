@@ -1,0 +1,11 @@
+<% content_for :title do %>
+  Sorry, you can’t access this course
+<% end %>
+
+<% content_for :body do %>
+  <% if launch.is_student? %>
+    This course has already ended. Please notify the course instructor.
+  <% else %>
+    This course has already ended. Please create a new course in OpenStax Tutor for the current term.
+  <% end %>
+<% end %>
