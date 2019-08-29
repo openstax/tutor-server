@@ -51,7 +51,7 @@ RSpec.describe Tasks::IsReady, type: :routine do
     )
   end
 
-  it 'returns a set with the ids of all the tasks that are ready' do
-    expect(described_class[tasks: @tasks]).to eq Set.new(@ready_tasks.map(&:id))
+  it 'returns all the tasks that are ready' do
+    expect(described_class[tasks: @tasks]).to eq @ready_tasks
   end
 end

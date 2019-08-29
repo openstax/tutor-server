@@ -10,11 +10,10 @@ class ReassignPublishedPeriodTaskPlans
     status.set_job_args(period: period.to_global_id.to_s)
 
     published_task_plans = Tasks::Models::TaskPlan
-      .joins(:tasking_plans)
-      .where(tasking_plans: { target_id: period.id,
-                              target_type: 'CourseMembership::Models::Period' })
-      .where.not(first_published_at: nil )
-      .preload(:tasking_plans)
+      .tasked_to_period_id(period.id)
+      .published
+      .non_withdrawn
+      .preload_tasking_plans
 
     published_task_plans.each_with_index do |tp, ii|
       status.set_progress(ii, published_task_plans.size)

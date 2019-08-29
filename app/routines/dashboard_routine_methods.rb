@@ -24,28 +24,30 @@ module DashboardRoutineMethods
     all_tasks = run(:get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz)
                   .outputs.tasks.preload(:time_zone, :task_plan, :task_steps).to_a
 
-    tasks = all_tasks.reject(&:hidden?)
-
-    tasks = tasks.select do |task|
+    visible_tasks = all_tasks.reject(&:hidden?)
+    visible_tasks = visible_tasks.select do |task|
       task.past_open? current_time: current_time
     end if role.student?
 
-    ready_task_ids = Tasks::IsReady[tasks: tasks]
-    ready_tasks = tasks.select { |task| ready_task_ids.include? task.id }
+    outputs.tasks = Tasks::IsReady[tasks: visible_tasks]
 
-    outputs.tasks = ready_tasks
-    outputs.all_tasks_are_ready = ready_tasks == tasks
+    all_task_plans_are_ready = if role.teacher?
+      # Teachers don't get tasks for course task_plans
+      true
+    else
+      # Also require that all task_plans have been distributed for non-teachers (including ghosts)
+      all_task_plan_ids = Tasks::Models::TaskPlan
+        .tasked_to_period_id(role.course_member.course_membership_period_id)
+        .published
+        .non_withdrawn
+        .pluck(:id)
 
-    return if role.teacher?
+      ready_task_plan_ids = outputs.tasks.map(&:tasks_task_plan_id)
 
-    period_id = role.course_member.course_membership_period_id
-    outputs.all_tasks_are_ready = outputs.all_tasks_are_ready && Tasks::Models::TaskPlan
-      .joins(:tasking_plans)
-      .preload(:tasking_plans)
-      .where(
-        tasking_plans: { target_id: period_id, target_type: 'CourseMembership::Models::Period' }
-      )
-      .where.not(first_published_at: nil)
-      .count <= all_tasks.size
+      (all_task_plan_ids - ready_task_plan_ids).empty?
+    end
+
+    # All task plans are ready and all visible tasks are ready
+    outputs.all_tasks_are_ready = all_task_plans_are_ready && (visible_tasks - outputs.tasks).empty?
   end
 end
