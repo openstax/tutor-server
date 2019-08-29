@@ -8,7 +8,7 @@ FactoryBot.define do
     result_sourcedid { nil }
     signature { 'not-real-sig'}
     nonce { SecureRandom.hex(10)}
-    request_url { Faker::Internet.url }
+    url { Faker::Internet.url }
     roles {[:student]}
     tool_consumer_instance_guid { SecureRandom.uuid }
     context_id { SecureRandom.uuid }
@@ -52,7 +52,7 @@ FactoryBot.define do
           context_id: context_id,
           resource_link_id: Faker::Internet.url,
         ).compact,
-        request_url: request_url
+        url: url
       )
     end
   end

@@ -5,7 +5,7 @@ class Lms::Launch
   # A PORO that hides the details of a launch request's internals and
   # launch-related models from other LMS code.
 
-  attr_reader :authenticator, :request_parameters, :request_url, :trusted
+  attr_reader :authenticator, :message, :request_parameters, :request_url, :trusted
 
   class HandledError          < StandardError; end
   class LmsDisabled           < HandledError; end
@@ -46,56 +46,7 @@ class Lms::Launch
     )
   end
 
-  def validate!
-    # ims-lti gem gives a lot of "unknown parameter" warnings even for params
-    # that Canvas commonly sends; silence those except in dev env
-    if trusted
-      with_warnings(warning_verbosity) do
-        @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
-        @message.launch_url = request_url
-      end
-    else
-      # OAuth 1.0a checks
-      with_warnings(warning_verbosity) do
-        @authenticator ||= ::IMS::LTI::Services::MessageAuthenticator.new(
-          request_url,
-          request_parameters,
-          app.secret
-        )
-
-        # Check that the request has a valid signature
-        raise InvalidSignature unless authenticator.valid_signature?
-
-        # Check that the request is not too old
-        current_time = Time.current
-        timestamp = Time.at(request_parameters[:oauth_timestamp].to_i)
-        raise ExpiredTimestamp if current_time - timestamp > MAX_REQUEST_AGE
-
-        # Check that the LMS's clock is not too far into the future
-        raise InvalidTimestamp if timestamp - current_time > MAX_REQUEST_AGE
-
-        key = "#{app.id}/#{timestamp}/#{request_parameters[:oauth_nonce]}"
-
-        # Check that we haven't seen the same app/timestamp/nonce combo recently
-        raise NonceAlreadyUsed if STORE.exist?(key)
-
-        # Store the nonce in Redis (TTL is set in the store definition above)
-        STORE.write key, 't'
-
-        @message = authenticator.message
-      end
-    end
-
-    self
-  end
-
-  def message
-    validate! if @message.nil?
-    @message
-  end
-
   def persist!
-    message
     context
     Lms::Models::TrustedLaunchData.create!(
       request_params: request_parameters,
@@ -284,6 +235,49 @@ class Lms::Launch
     end
   end
 
+  def validate!
+    # ims-lti gem gives a lot of "unknown parameter" warnings even for params
+    # that Canvas commonly sends; silence those except in dev env
+    if trusted
+      with_warnings(warning_verbosity) do
+        @message = IMS::LTI::Models::Messages::Message.generate(request_parameters)
+        @message.launch_url = request_url
+      end
+    else
+      # OAuth 1.0a checks
+      with_warnings(warning_verbosity) do
+        @authenticator ||= ::IMS::LTI::Services::MessageAuthenticator.new(
+          request_url,
+          request_parameters,
+          app.secret
+        )
+
+        # Check that the request has a valid signature
+        raise InvalidSignature unless authenticator.valid_signature?
+
+        # Check that the request is not too old
+        current_time = Time.current
+        timestamp = Time.at(request_parameters[:oauth_timestamp].to_i)
+        raise ExpiredTimestamp if current_time - timestamp > MAX_REQUEST_AGE
+
+        # Check that the LMS's clock is not too far into the future
+        raise InvalidTimestamp if timestamp - current_time > MAX_REQUEST_AGE
+
+        key = "#{app.id}/#{timestamp}/#{request_parameters[:oauth_nonce]}"
+
+        # Check that we haven't seen the same app/timestamp/nonce combo recently
+        raise NonceAlreadyUsed if STORE.exist?(key)
+
+        # Store the nonce in Redis (TTL is set in the store definition above)
+        STORE.write key, 't'
+
+        @message = authenticator.message
+      end
+    end
+
+    self
+  end
+
   protected
 
   def initialize(request_parameters:, request_url:, trusted: false, authenticator: nil)
@@ -292,7 +286,6 @@ class Lms::Launch
     @trusted = trusted
     @authenticator = authenticator
   end
-
 
   def warning_verbosity
     Rails.env.development? ? $VERBOSE : nil
