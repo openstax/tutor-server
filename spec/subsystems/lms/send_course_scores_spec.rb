@@ -30,13 +30,54 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     expect(instance.basic_outcome_xml(score: 0.5, sourcedid: 'hi')[0]).not_to match(/\s/)
   end
 
-  it 'uses willo key/secret for courses that are using it' do
-    expect(OAuth::Consumer).to receive(:new).with(
-                                 Lms::WilloLabs.config[:key],
-                                 Lms::WilloLabs.config[:secret])
+  context 'numeric score for a known user' do
+    before do
+      expect_any_instance_of(described_class).to(
+        receive(:course_score_data).and_return(course_average: 0.84)
+      )
+    end
 
-    @course.lms_contexts.first.update_attributes! app_type: 'Lms::WilloLabs'
-    described_class.call(course: @course)
+    it 'sends the score' do
+      expect_any_instance_of(described_class).to receive :send_one_score
+      expect_any_instance_of(described_class).to receive :save_status_data
+
+      described_class.call course: @course
+    end
+
+    it 'uses WilloLabs key/secret for courses that are using them' do
+      expect(OAuth::Consumer).to(
+        receive(:new).with(Lms::WilloLabs.config[:key], Lms::WilloLabs.config[:secret])
+      )
+
+      @course.lms_contexts.first.update_attributes! app_type: 'Lms::WilloLabs'
+      described_class.call course: @course
+    end
+  end
+
+  context 'unknown user' do
+    before { expect_any_instance_of(described_class).to receive :course_score_data }
+
+    it 'does not send a score' do
+      expect_any_instance_of(described_class).not_to receive :send_one_score
+      expect_any_instance_of(described_class).to receive(:save_status_data).twice
+
+      described_class.call course: @course
+    end
+  end
+
+  context 'known user with no course_average' do
+    before do
+      expect_any_instance_of(described_class).to(
+        receive(:course_score_data).and_return(course_average: nil)
+      )
+    end
+
+    it 'does not send the null score' do
+      expect_any_instance_of(described_class).not_to receive :send_one_score
+      expect_any_instance_of(described_class).to receive(:save_status_data).twice
+
+      described_class.call course: @course
+    end
   end
 
   context "#notify_errors" do
