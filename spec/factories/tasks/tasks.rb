@@ -5,7 +5,7 @@ FactoryBot.define do
       step_types { [] }
       tasked_to { [] }
       num_random_taskings { 0 }
-      current_time { time_zone.try!(:to_tz).try!(:now) || Time.current }
+      current_time { time_zone&.to_tz&.now || Time.current }
     end
 
     task_type { :reading }
