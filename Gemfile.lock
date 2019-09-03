@@ -350,7 +350,7 @@ GEM
     kgio (2.11.2)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (9.0.2)
+    lev (9.0.3)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -516,7 +516,7 @@ GEM
       activesupport (>= 3.2)
       choice (~> 0.2.0)
       ruby-graphviz (~> 1.2)
-    rails-html-sanitizer (1.0.4)
+    rails-html-sanitizer (1.2.0)
       loofah (~> 2.2, >= 2.2.2)
     rails-settings-cached (2.0.3)
       rails (>= 4.2.0)
@@ -782,7 +782,7 @@ DEPENDENCIES
   json-schema (~> 2.8.0)
   keyword_search!
   launchy
-  lev (~> 9.0.1)
+  lev (~> 9.0.3)
   lograge
   maruku
   mini_magick
