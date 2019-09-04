@@ -34,6 +34,10 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let(:new_opens_at)    { time_zone.now + 10.seconds }
   let(:new_due_at)      { time_zone.now + 1.week + 10.seconds }
 
+  let!(:teacher_student_role) do
+    FactoryBot.create(:course_membership_teacher_student, period: period).role
+  end
+
   context 'unpublished task_plan' do
     before(:each) do
       task_plan.title = 'New title'

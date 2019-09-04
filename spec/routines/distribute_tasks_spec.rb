@@ -15,10 +15,14 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
     end
   end
   let(:task_plan) do
-    task_plan = FactoryBot.build(:tasks_task_plan, owner: course)
-    task_plan.tasking_plans.first.target = period.to_model
-    task_plan.save!
-    task_plan
+    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
+      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.save!
+    end
+  end
+  let(:tasking_plan) { task_plan.tasking_plans.first }
+  let(:teacher_student_role) do
+    FactoryBot.create(:course_membership_teacher_student, period: period).role
   end
 
   context 'a homework' do
@@ -39,7 +43,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       task_plan
     end
     let(:core_pools)   { @ecosystem.homework_core_pools(pages: @pages) }
-    let(:exercise_ids) { core_pools.flat_map(&:exercises).map{|e| e.id.to_s} }
+    let(:exercise_ids) { core_pools.flat_map(&:exercises).map{ |ex| ex.id.to_s } }
 
     before do
       allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
@@ -69,9 +73,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
     end
 
     context 'with a teacher_student role' do
-      let!(:teacher_student) do
-        FactoryBot.create :course_membership_teacher_student, period: period
-      end
+      before { teacher_student_role }
 
       it 'creates a preview and distributes the steps' do
         expected_step_types = ['core_group'] * 6 + ['spaced_practice_group'] * 3
@@ -95,185 +97,200 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
       end
 
-      xit 'produces correct results when distributed concurrently' do
-        # 2 students and 1 preview task
-        expected_num_tasks = 3
+      context 'unpublished task_plan' do
+        before { expect(task_plan).not_to be_out_to_students }
 
-        expect do
-          pids = 5.times.map do
-            fork do
-              # Should no longer trigger ActiveRecord::TransactionIsolationConflicts
-              # because after the first retry it detects that the plan
-              # has already been distributed and does nothing
-              DistributeTasks.call(task_plan: homework_plan)
+        context 'before the open date' do
+          before do
+            opens_at = Time.current.tomorrow
+            task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+            task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
+          end
+
+          context 'preview' do
+            before { teacher_student_role }
+
+            it 'can create or update a preview task' do
+              expect(task_plan.tasks).to be_empty
+              result = DistributeTasks.call(task_plan: task_plan, preview: true)
+
+              expect(result.errors).to be_empty
+              expect(task_plan.reload.tasks.size).to eq 1
+              expect(task_plan).not_to be_out_to_students
+              task = task_plan.tasks.first
+              expect(task.taskings.first.role).to eq teacher_student_role
+              expect(task.opens_at).to eq tasking_plan.opens_at
+
+              tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
+              result = DistributeTasks.call(task_plan: task_plan, preview: true)
+
+              expect(result.errors).to be_empty
+              expect(task_plan.reload.tasks.size).to eq 1
+              expect(task_plan).not_to be_out_to_students
+              task = task_plan.tasks.first
+              expect(task.taskings.first.role).to eq teacher_student_role
+              expect(task.opens_at).to eq tasking_plan.opens_at
+            end
+
+            it 'does not save plan if it is new' do
+              new_plan = task_plan.dup
+              result = DistributeTasks.call(task_plan: new_plan, preview: true)
+              expect(result.errors).to be_empty
+              expect(new_plan).to be_new_record
             end
           end
 
-          pids.each { |pid| Process.wait(pid) }
-        end.to change { homework_plan.tasks.count }.by(expected_num_tasks)
-      end
-    end
-
-    context 'unpublished task_plan' do
-      context 'before the open date' do
-        before(:each) do
-          opens_at = Time.current.tomorrow
-          task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
-        end
-
-        context 'creating a preview task' do
-          let!(:teacher_student_role) do
-            FactoryBot.create(:course_membership_teacher_student, period: period).role
-          end
-
-          it 'can create a preview' do
-            expect(task_plan.tasks).to be_empty
-            result = DistributeTasks.call(task_plan: task_plan, preview: true)
+          it 'can create or update normal and preview tasks' do
+            tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
+            result = DistributeTasks.call(task_plan: task_plan)
 
             expect(result.errors).to be_empty
-            expect(task_plan.reload.tasks.size).to eq 1
-            expect(task_plan.tasks.first.taskings.first.role).to eq teacher_student_role
+            expect(task_plan.reload.tasks.size).to eq 3
             expect(task_plan).not_to be_out_to_students
+            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
           end
 
-          it 'does not save plan if it is new' do
-            new_plan = task_plan.dup
-            result = DistributeTasks.call(task_plan: new_plan, preview: true)
+          it 'sets the published_at fields' do
+            publish_time = Time.current
+            result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
             expect(result.errors).to be_empty
-            expect(new_plan).to be_new_record
+            task_plan.reload
+            expect(task_plan.first_published_at).to be_within(1).of(publish_time)
+            expect(task_plan.last_published_at).to be_within(1).of(publish_time)
+          end
+
+          it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
+            original_build_tasks = DummyAssistant.instance_method(:build_tasks)
+            allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
+              tasks = original_build_tasks.bind(receiver).call
+              tasks.each{ |task| task.task_type = :reading }
+            end
+
+            expect(task_plan.tasks).to be_empty
+            result = DistributeTasks.call(task_plan: task_plan)
+            expect(result.errors.first.code).to eq :empty_tasks
+            expect(task_plan.tasks).to be_empty
           end
         end
 
-        it 'creates tasks for the task_plan' do
-          expect(task_plan.tasks).to be_empty
-          result = DistributeTasks.call(task_plan: task_plan)
-          expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 2
-        end
-
-        it 'sets the published_at fields' do
-          publish_time = Time.current
-          result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
-          expect(result.errors).to be_empty
-          task_plan.reload
-          expect(task_plan.first_published_at).to be_within(1).of(publish_time)
-          expect(task_plan.last_published_at).to be_within(1).of(publish_time)
-        end
-
-        it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
-          original_build_tasks = DummyAssistant.instance_method(:build_tasks)
-          allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
-            tasks = original_build_tasks.bind(receiver).call
-            tasks.each{ |task| task.task_type = :reading }
+        context 'after the open date' do
+          before do
+            opens_at = Time.current.yesterday
+            task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+            task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
           end
 
-          expect(task_plan.tasks).to be_empty
-          result = DistributeTasks.call(task_plan: task_plan)
-          expect(result.errors.first.code).to eq :empty_tasks
-          expect(task_plan.tasks).to be_empty
-        end
-      end
+          it 'can create or update normal and preview tasks' do
+            tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now - 1.hour
+            result = DistributeTasks.call(task_plan: task_plan)
 
-      context 'after the open date' do
-        before(:each) do
-          opens_at = Time.current.yesterday
-          task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
-        end
-
-        it 'creates tasks for the task_plan' do
-          expect(task_plan.tasks).to be_empty
-          result = DistributeTasks.call(task_plan: task_plan)
-          expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 2
-        end
-
-        it 'sets the published_at fields' do
-          publish_time = Time.current
-          result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
-          expect(result.errors).to be_empty
-          task_plan.reload
-          expect(task_plan.first_published_at).to be_within(1).of(publish_time)
-          expect(task_plan.last_published_at).to be_within(1).of(publish_time)
-        end
-
-        it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
-          original_build_tasks = DummyAssistant.instance_method(:build_tasks)
-          allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
-            tasks = original_build_tasks.bind(receiver).call
-            tasks.each{ |task| task.task_type = :reading }
+            expect(result.errors).to be_empty
+            expect(task_plan.reload.tasks.size).to eq 3
+            expect(task_plan).to be_out_to_students
+            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
           end
 
-          expect(task_plan.tasks).to be_empty
-          result = DistributeTasks.call(task_plan: task_plan)
-          expect(result.errors.first.code).to eq :empty_tasks
-          expect(task_plan.tasks).to be_empty
-        end
-      end
-    end
+          it 'sets the published_at fields' do
+            publish_time = Time.current
+            result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
+            expect(result.errors).to be_empty
+            task_plan.reload
+            expect(task_plan.first_published_at).to be_within(1).of(publish_time)
+            expect(task_plan.last_published_at).to be_within(1).of(publish_time)
+          end
 
-    context 'published task_plan' do
-      before(:each) do
-        DistributeTasks.call(task_plan: task_plan)
-        new_user.to_model.roles.each do |role|
-          role.taskings.each{ |tasking| tasking.task.really_destroy! }
-        end
-        task_plan.reload
-      end
+          it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
+            original_build_tasks = DummyAssistant.instance_method(:build_tasks)
+            allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
+              tasks = original_build_tasks.bind(receiver).call
+              tasks.each{ |task| task.task_type = :reading }
+            end
 
-      context 'before the open date' do
-        before(:each) do
-          opens_at = Time.current.tomorrow
-          task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
-        end
-
-        it 'rebuilds the tasks for the task_plan' do
-          expect(task_plan.tasks.size).to eq 1
-          old_task = task_plan.tasks.first
-
-          result = DistributeTasks.call(task_plan: task_plan)
-          expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 2
-          expect(task_plan.tasks).not_to include old_task
-        end
-
-        it 'does not set the first_published_at field' do
-          old_published_at = task_plan.first_published_at
-          publish_time = Time.current
-          result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
-          expect(result.errors).to be_empty
-          task_plan.reload
-          expect(task_plan.first_published_at).to eq old_published_at
-          expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
+            expect(task_plan.tasks).to be_empty
+            result = DistributeTasks.call(task_plan: task_plan)
+            expect(result.errors.first.code).to eq :empty_tasks
+            expect(task_plan.tasks).to be_empty
+          end
         end
       end
 
-      context 'after the open date' do
-        before(:each) do
-          opens_at = Time.current.yesterday
-          task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
+      context 'published task_plan' do
+        before do
+          DistributeTasks.call(task_plan: task_plan)
+          new_user.to_model.roles.each do |role|
+            role.taskings.each { |tasking| tasking.task.really_destroy! }
+          end
+          expect(task_plan.reload).to be_out_to_students
         end
 
-        it 'does not rebuild existing tasks for the task_plan' do
-          expect(task_plan.tasks.size).to eq 1
-          old_task = task_plan.tasks.first
+        context 'before the open date' do
+          before do
+            opens_at = Time.current.tomorrow
+            task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+            task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
+          end
 
-          result = DistributeTasks.call(task_plan: task_plan)
-          expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 2
-          expect(task_plan.tasks).to include old_task
+          it 'can create or update normal and preview tasks' do
+            tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
+            result = DistributeTasks.call(task_plan: task_plan)
+
+            expect(result.errors).to be_empty
+            expect(task_plan.reload.tasks.size).to eq 3
+            expect(task_plan).not_to be_out_to_students
+            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
+          end
+
+          it 'does not set the first_published_at field' do
+            old_published_at = task_plan.first_published_at
+            publish_time = Time.current
+            result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
+            expect(result.errors).to be_empty
+            task_plan.reload
+            expect(task_plan.first_published_at).to eq old_published_at
+            expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
+          end
         end
 
-        it 'does not set the first_published_at field' do
-          old_published_at = task_plan.first_published_at
-          publish_time = Time.current
-          result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
-          expect(result.errors).to be_empty
-          expect(task_plan.reload.first_published_at).to eq old_published_at
-          expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
+        context 'after the open date' do
+          before do
+            opens_at = Time.current.yesterday
+            task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+            task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
+          end
+
+          it 'can create but not update tasks (PropagateTaskPlanUpdates is used instead)' do
+            previous_due_at = tasking_plan.due_at
+            tasking_plan.update_attribute :due_at, tasking_plan.time_zone.to_tz.now + 1.day
+            result = DistributeTasks.call(task_plan: task_plan)
+
+            expect(result.errors).to be_empty
+            expect(task_plan.reload.tasks.size).to eq 3
+            expect(task_plan).to be_out_to_students
+            new_task = task_plan.tasks.max_by(&:created_at)
+            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
+            task_plan.tasks.each do |task|
+              expect(task.due_at).to eq task == new_task ? tasking_plan.due_at : previous_due_at
+            end
+          end
+
+          it 'does not rebuild existing tasks for the task_plan' do
+            expect(task_plan.tasks.size).to eq 2
+            old_tasks = task_plan.tasks.to_a
+
+            result = DistributeTasks.call(task_plan: task_plan)
+            expect(result.errors).to be_empty
+            expect(task_plan.reload.tasks.size).to eq 3
+            old_tasks.each { |old_task| expect(task_plan.tasks).to include old_task }
+          end
+
+          it 'does not set the first_published_at field' do
+            old_published_at = task_plan.first_published_at
+            publish_time = Time.current
+            result = DistributeTasks.call(task_plan: task_plan, publish_time: publish_time)
+            expect(result.errors).to be_empty
+            expect(task_plan.reload.first_published_at).to eq old_published_at
+            expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
+          end
         end
       end
     end
