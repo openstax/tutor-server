@@ -119,7 +119,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task_plan).not_to be_out_to_students
               task = task_plan.tasks.first
               expect(task.taskings.first.role).to eq teacher_student_role
-              expect(task.opens_at).to eq tasking_plan.opens_at
+              expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
 
               tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
               result = DistributeTasks.call(task_plan: task_plan, preview: true)
@@ -129,7 +129,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task_plan).not_to be_out_to_students
               task = task_plan.tasks.first
               expect(task.taskings.first.role).to eq teacher_student_role
-              expect(task.opens_at).to eq tasking_plan.opens_at
+              expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
             end
 
             it 'does not save plan if it is new' do
@@ -147,7 +147,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.reload.tasks.size).to eq 3
             expect(task_plan).not_to be_out_to_students
-            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
+            task_plan.tasks.each do |task|
+              expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+            end
           end
 
           it 'sets the published_at fields' do
@@ -187,7 +189,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.reload.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
-            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
+            task_plan.tasks.each do |task|
+              expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+            end
           end
 
           it 'sets the published_at fields' do
@@ -237,7 +241,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.reload.tasks.size).to eq 3
             expect(task_plan).not_to be_out_to_students
-            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
+            task_plan.tasks.each do |task|
+              expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+            end
           end
 
           it 'does not set the first_published_at field' do
@@ -267,9 +273,13 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(task_plan.reload.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
             new_task = task_plan.tasks.max_by(&:created_at)
-            task_plan.tasks.each { |task| expect(task.opens_at).to eq tasking_plan.opens_at }
             task_plan.tasks.each do |task|
-              expect(task.due_at).to eq task == new_task ? tasking_plan.due_at : previous_due_at
+              expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+            end
+            task_plan.tasks.each do |task|
+              expect(task.due_at).to be_within(1e-6).of(
+                task == new_task ? tasking_plan.due_at : previous_due_at
+              )
             end
           end
 
