@@ -93,30 +93,6 @@ Delayed::Worker.class_exec do
   prepend HandleFailedJobInstantly
 end
 
-# https://github.com/rails/rails/pull/19910
-ActiveJob::QueueAdapters::DelayedJobAdapter.class_exec do
-  class << self
-    def enqueue(job) #:nodoc:
-      delayed_job = Delayed::Job.enqueue(
-        ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper.new(job.serialize),
-        queue: job.queue_name
-      )
-      job.provider_job_id = delayed_job.id
-      delayed_job
-    end
-
-    def enqueue_at(job, timestamp) #:nodoc:
-      delayed_job = Delayed::Job.enqueue(
-        ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper.new(job.serialize),
-        queue: job.queue_name,
-        run_at: Time.at(timestamp)
-      )
-      job.provider_job_id = delayed_job.id
-      delayed_job
-    end
-  end
-end
-
 # The following are custom ActiveJob patches
 # to allow access to the provider_job_id during job execution
 ActiveJob::Base.class_exec do

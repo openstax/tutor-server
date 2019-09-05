@@ -32,8 +32,8 @@ class CreateCourse
       ) if term.blank? || year.blank?
     end
 
-    is_concept_coach = catalog_offering.try!(:is_concept_coach) if is_concept_coach.nil?
-    does_cost = (catalog_offering.try!(:does_cost) || false) if does_cost.nil?
+    is_concept_coach = catalog_offering&.is_concept_coach if is_concept_coach.nil?
+    does_cost = (catalog_offering&.does_cost || false) if does_cost.nil?
 
     fatal_error(
       code: :is_concept_coach_blank,
@@ -46,7 +46,7 @@ class CreateCourse
     #   make a copy to avoid linking the 2 courses' time_zones to the same record
     if time_zone.present?
       if time_zone.is_a?(TimeZone)
-        time_zone = time_zone.dup if time_zone.course.try!(:persisted?)
+        time_zone = time_zone.dup if time_zone.course&.persisted?
       else
         time_zone = TimeZone.new(name: time_zone)
       end
@@ -84,7 +84,7 @@ class CreateCourse
       run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
     end
 
-    num_sections.times{ run(:create_period, course: outputs.course) }
+    num_sections.times { run(:create_period, course: outputs.course) }
 
     run(:create_course_assistants, course: outputs.course)
   end
