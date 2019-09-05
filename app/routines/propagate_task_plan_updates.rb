@@ -7,11 +7,15 @@ class PropagateTaskPlanUpdates
   def updated_attributes_for(tasking_plan:)
     task_plan = tasking_plan.task_plan
 
-    # This routine is only called after tasks are open and
-    # we do not allow changing the open date after open
+    # This routine is only called after tasks are open and we do not allow changing the open date
+    # after tasks are open. However, it is possible the task_plan is assigned to multiple periods
+    # and it is not yet open for all periods, so we must propagate opens_at in that case.
+    # TaskPlansController#update already enforces that we don't change open dates for periods
+    # whose assignments are already out to students.
     {
       title: task_plan.title,
       description: task_plan.description,
+      opens_at_ntz: tasking_plan.opens_at_ntz,
       due_at_ntz: tasking_plan.due_at_ntz,
       feedback_at_ntz: task_plan.is_feedback_immediate ? nil : tasking_plan.due_at_ntz
     }

@@ -214,7 +214,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def preview?
-    taskings.none?{ |tasking| tasking.role.try!(:student?) }
+    taskings.none? { |tasking| tasking.role&.student? }
   end
 
   def core_task_steps(preload_tasked: false)

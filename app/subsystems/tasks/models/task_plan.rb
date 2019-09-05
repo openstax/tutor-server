@@ -4,7 +4,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
-  UPDATABLE_ATTRIBUTES_AFTER_OPEN = [
+  UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
     'title', 'description', 'first_published_at', 'last_published_at', 'is_feedback_immediate'
   ]
 
@@ -53,9 +53,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def out_to_students?(current_time: Time.current)
-    tasks.any? do |task|
-      task.past_open?(current_time: current_time) && !task.preview?
-    end
+    tasks.reject(&:preview?).any? { |task| task.past_open?(current_time: current_time) }
   end
 
   def is_draft?
@@ -124,13 +122,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def changes_allowed
-    forbidden_attributes = changes.except(*UPDATABLE_ATTRIBUTES_AFTER_OPEN)
-    return if forbidden_attributes.empty?
     return unless out_to_students?
 
-    forbidden_attributes.each do |key, value|
-      errors.add(key.to_sym, "cannot be updated after the open date")
-    end
+    forbidden_attributes = changes.except(*UPDATEABLE_ATTRIBUTES_AFTER_OPEN)
+    return if forbidden_attributes.empty?
+
+    forbidden_attributes.each { |key, value| errors.add key.to_sym, 'cannot be updated after open' }
 
     throw :abort
   end
@@ -138,13 +135,13 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def not_past_due_when_publishing
     return if !is_publish_requested || tasking_plans.none?(&:past_due?)
 
-    errors.add(:due_at, 'cannot be in the past when publishing')
+    errors.add :due_at, 'cannot be in the past when publishing'
     throw :abort
   end
 
   def trim_text
-    self.title.try(:strip!)
-    self.description.try(:strip!)
+    self.title&.strip!
+    self.description&.strip!
   end
 
 end

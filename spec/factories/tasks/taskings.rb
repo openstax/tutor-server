@@ -4,7 +4,7 @@ FactoryBot.define do
 
     after(:build) do |tasking|
       tasking.role ||= build(:course_membership_student).role
-      tasking.period ||= tasking.role.student.try!(:period)
+      tasking.period ||= tasking.role.student&.period
     end
   end
 end

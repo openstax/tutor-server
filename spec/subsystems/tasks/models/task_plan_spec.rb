@@ -108,14 +108,6 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
-  it 'allows name, description and is_feedback_immediate to be updated after a task is open' do
-    task_plan.tasks << new_task
-    task_plan.title = 'New Title'
-    task_plan.description = 'New description!'
-    task_plan.is_feedback_immediate = false
-    expect(task_plan).to be_valid
-  end
-
   it 'requires all tasking_plan due_ats to be in the future when publishing' do
     task_plan.is_publish_requested = true
     expect(task_plan).to be_valid
@@ -179,10 +171,22 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       student_task
       expect(task_plan.reload.out_to_students?).to eq true
 
-      future_time = Time.now.utc + 1.week
+      future_time = Time.current + 1.week
       student_task.update_attribute :opens_at_ntz, future_time
       expect(task_plan.reload.out_to_students?).to eq false
       expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
+    end
+
+    it 'allows name, description and is_feedback_immediate and due_at' +
+       ' to be updated after a task is open' do
+      student_task
+
+      task_plan.title = 'New Title'
+      task_plan.description = 'New description!'
+      task_plan.is_feedback_immediate = false
+      task_plan.tasking_plans.first.due_at = Time.current + 1.week
+      expect(task_plan).to be_valid
+      expect(task_plan.save).to eq true
     end
 
     it 'can still be deleted and restored after tasks are available to students' do
@@ -199,12 +203,12 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     end
 
     it 'will not allow other fields to be updated after tasks are available to students' do
-      task_plan.reload.settings = { due_at: Time.current.tomorrow }
+      task_plan.reload.settings = { exercise_ids: [] }
       expect(task_plan).to be_valid
 
       student_task
 
-      task_plan.reload.settings = { due_at: Time.current.tomorrow }
+      task_plan.reload.settings = { exercise_ids: [] }
       expect(task_plan).not_to be_valid
     end
   end
