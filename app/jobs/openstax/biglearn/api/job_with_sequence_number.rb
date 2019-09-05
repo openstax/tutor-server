@@ -103,7 +103,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       return [] if modified_requests.empty?
 
       # Create a background job to guarantee the sequence_number request will reach Biglearn
-      OpenStax::Biglearn::Api::Job.set(queue: queue).perform_later(
+      OpenStax::Biglearn::Api::Job.set(queue: queue.to_sym).perform_later(
         method: method.to_s,
         requests: modified_requests,
         response_status_key: response_status_key.try!(:to_s),
