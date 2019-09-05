@@ -158,7 +158,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       course = task_plan.owner
 
       if task_plan.out_to_students?
-        # Store current open dates for each TaskingPlan that is already open in the TaskPlan
+        # Store current open dates for all TaskingPlans that are already open
         opens_at_ntzs = Hash.new { |hash, key| hash[key] = {} }
         open_tasking_plans = task_plan.tasking_plans.select(&:past_open?)
         open_tasking_plans.each do |tp|

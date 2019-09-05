@@ -71,7 +71,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
     end
 
     context 'homework' do
-      it 'propagates task_plan changes (except opens_at) to all of its tasks' do
+      it 'propagates task_plan changes (including opens_at) to all of its tasks' do
         task_plan.type = 'homework'
         task_plan.is_feedback_immediate = false
         task_plan.save!(validate: false)
@@ -95,7 +95,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq new_title
           expect(task.description).to eq new_description
-          expect(task.opens_at).to    be_within(1e-6).of(old_opens_at)
+          expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
           expect(task.due_at).to      be_within(1e-6).of(new_due_at)
           expect(task.feedback_at).to eq task.due_at
         end
@@ -115,7 +115,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
     end
 
     context 'reading' do
-      it 'propagates task_plan changes (except opens_at) to all of its tasks' do
+      it 'propagates task_plan changes (including opens_at) to all of its tasks' do
         task_plan.update_attribute(:type, 'reading')
         expect(task_plan.tasks).not_to be_empty
         task_plan.tasks.each do |task|
@@ -133,7 +133,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq new_title
           expect(task.description).to eq new_description
-          expect(task.opens_at).to    be_within(1e-6).of(old_opens_at)
+          expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
           expect(task.due_at).to      be_within(1e-6).of(new_due_at)
           expect(task.feedback_available?).to be_truthy
         end
