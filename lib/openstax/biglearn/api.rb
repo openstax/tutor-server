@@ -524,7 +524,7 @@ module OpenStax::Biglearn::Api
 
       job_class = if include_sequence_number
         is_preview = request[sequence_number_model_key.to_sym].try(:is_preview)
-        args[:queue] = is_preview ? 'lowest_priority' : 'high_priority'
+        args[:queue] = is_preview ? 'low_priority' : 'high_priority'
 
         OpenStax::Biglearn::Api::JobWithSequenceNumber
       else
@@ -605,7 +605,7 @@ module OpenStax::Biglearn::Api
         is_preview = requests.is_a?(Array) ? requests.all? do |request|
           request[sequence_number_model_key.to_sym].try(:is_preview)
         end : requests[sequence_number_model_key.to_sym].try(:is_preview)
-        args[:queue] = is_preview ? 'lowest_priority' : 'high_priority'
+        args[:queue] = is_preview ? 'low_priority' : 'high_priority'
 
         OpenStax::Biglearn::Api::JobWithSequenceNumber
       else
