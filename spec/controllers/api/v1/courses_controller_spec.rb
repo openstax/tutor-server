@@ -799,7 +799,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: @course.id, start_at: @time_zone.now - 2.hours
         }
 
-        expect(response.body_as_hash[:plans].size).to eq 1
+        expect(response.body_as_hash[:plans].size).to eq 5
       end
 
       it "allows the end_at date to be specified alone" do
