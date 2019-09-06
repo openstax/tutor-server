@@ -32,7 +32,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       type: 'reading',
       num_tasking_plans: 0
     )
-
     FactoryBot.create(
       :tasks_tasking_plan,
       task_plan: @task_plan,
@@ -44,7 +43,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       :course_membership_teacher_student, period: period
     ).role
 
-    teacher_student_task = FactoryBot.create :tasks_task, tasked_to: [@teacher_student_role]
+    FactoryBot.create :tasks_task, task_plan: @task_plan, tasked_to: [ @teacher_student_role ]
 
     @course.time_zone.update_attribute(:name, 'Pacific Time (US & Canada)')
 
@@ -53,7 +52,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   end
 
   # Workaround for PostgreSQL rollback bug
-  before{ @task_plan.reload.touch }
+  before { @task_plan.reload.touch }
 
   context '#index' do
     before do
@@ -165,8 +164,10 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
           api_get :index, nil, params: params
 
           expect(response.body_as_hash[:items]).to match_array(
-            [ Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json(opts).deep_symbolize_keys,
-              Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json(opts).deep_symbolize_keys ]
+            [
+              Api::V1::TaskPlanRepresenter.new(orig_task_plan_1).as_json(opts).deep_symbolize_keys,
+              Api::V1::TaskPlanRepresenter.new(orig_task_plan_2).as_json(opts).deep_symbolize_keys
+            ]
           )
         end
       end
