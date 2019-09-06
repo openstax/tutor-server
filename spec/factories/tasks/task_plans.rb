@@ -10,9 +10,8 @@ FactoryBot.define do
       num_tasking_plans         { 1 }
       assistant_code_class_name { 'DummyAssistant' }
       published_at              { nil }
+      target                    { nil }
     end
-
-    association :owner, factory: :course_profile_course
 
     title                 { 'A task' }
     settings              { {} }
@@ -29,12 +28,18 @@ FactoryBot.define do
       task_plan.content_ecosystem_id ||= task_plan.owner.ecosystem
       task_plan.ecosystem ||= build(:content_ecosystem)
 
-      task_plan.tasking_plans = evaluator.num_tasking_plans.times.map do
-        build(:tasks_tasking_plan,
-              task_plan: task_plan,
-              opens_at: evaluator.opens_at,
-              due_at: evaluator.due_at,
-              time_zone: task_plan.owner.try(:time_zone))
+      task_plan.owner ||= evaluator.target.try(:course) || build(:course_profile_course)
+
+      task_plan.tasking_plans += evaluator.num_tasking_plans.times.map do
+        args = {
+          task_plan: task_plan,
+          opens_at: evaluator.opens_at,
+          due_at: evaluator.due_at,
+          time_zone: task_plan.owner.try(:time_zone)
+        }
+        args[:target] = evaluator.target unless evaluator.target.nil?
+
+        build :tasks_tasking_plan, args
       end
     end
   end
