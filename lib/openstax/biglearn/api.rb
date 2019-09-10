@@ -48,7 +48,6 @@ module OpenStax::Biglearn::Api
         request: { ecosystem: request[:ecosystem].to_model },
         keys: :ecosystem,
         create: true,
-        perform_later: true,
         sequence_number_model_key: :ecosystem,
         sequence_number_model_class: Content::Models::Ecosystem
       )
@@ -103,7 +102,6 @@ module OpenStax::Biglearn::Api
         request: request,
         keys: [:course, :ecosystem],
         create: true,
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -121,7 +119,6 @@ module OpenStax::Biglearn::Api
         method: :prepare_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
         keys: [:preparation_uuid, :course, :from_ecosystem, :to_ecosystem],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -158,7 +155,6 @@ module OpenStax::Biglearn::Api
         method: :sequentially_prepare_and_update_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
         keys: [:preparation_uuid, :course, :from_ecosystem, :to_ecosystem],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -228,7 +224,6 @@ module OpenStax::Biglearn::Api
         method: :update_globally_excluded_exercises,
         request: request,
         keys: [:course],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -243,7 +238,6 @@ module OpenStax::Biglearn::Api
         method: :update_course_excluded_exercises,
         request: request,
         keys: [:course],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -263,7 +257,6 @@ module OpenStax::Biglearn::Api
         method: :update_course_active_dates,
         request: request,
         keys: [:course],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -502,7 +495,7 @@ module OpenStax::Biglearn::Api
     def single_api_request(method:, request:, keys:, optional_keys: [],
                            result_class: Hash, uuid_key: :request_uuid,
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
-                           create: false, perform_later: false,
+                           create: false, perform_later: true,
                            response_status_key: nil, accepted_response_status: [],
                            inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
       include_sequence_number = sequence_number_model_key.present? &&
@@ -528,7 +521,10 @@ module OpenStax::Biglearn::Api
 
         OpenStax::Biglearn::Api::JobWithSequenceNumber
       else
+        # :nocov:
+        # No API call currently uses this branch of the code
         OpenStax::Biglearn::Api::Job
+        # :nocov:
       end
 
       if perform_later
@@ -540,6 +536,8 @@ module OpenStax::Biglearn::Api
 
         job_class.perform_later args
       else
+        # :nocov:
+        # No API call currently uses this branch of the code
         args.merge! method: method,
                     sequence_number_model_key: sequence_number_model_key,
                     sequence_number_model_class: sequence_number_model_class
@@ -565,6 +563,7 @@ module OpenStax::Biglearn::Api
           result: block_given? ? yield(request, response, accepted) : response,
           result_class: result_class
         )
+        # :nocov:
       end
     end
 
