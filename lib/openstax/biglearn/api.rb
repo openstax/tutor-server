@@ -48,7 +48,6 @@ module OpenStax::Biglearn::Api
         request: { ecosystem: request[:ecosystem].to_model },
         keys: :ecosystem,
         create: true,
-        perform_later: true,
         sequence_number_model_key: :ecosystem,
         sequence_number_model_class: Content::Models::Ecosystem
       )
@@ -103,7 +102,6 @@ module OpenStax::Biglearn::Api
         request: request,
         keys: [:course, :ecosystem],
         create: true,
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -121,7 +119,6 @@ module OpenStax::Biglearn::Api
         method: :prepare_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
         keys: [:preparation_uuid, :course, :from_ecosystem, :to_ecosystem],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -158,7 +155,6 @@ module OpenStax::Biglearn::Api
         method: :sequentially_prepare_and_update_course_ecosystem,
         request: request.merge(preparation_uuid: preparation_uuid),
         keys: [:preparation_uuid, :course, :from_ecosystem, :to_ecosystem],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -228,7 +224,6 @@ module OpenStax::Biglearn::Api
         method: :update_globally_excluded_exercises,
         request: request,
         keys: [:course],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -243,7 +238,6 @@ module OpenStax::Biglearn::Api
         method: :update_course_excluded_exercises,
         request: request,
         keys: [:course],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -263,7 +257,6 @@ module OpenStax::Biglearn::Api
         method: :update_course_active_dates,
         request: request,
         keys: [:course],
-        perform_later: true,
         sequence_number_model_key: :course,
         sequence_number_model_class: CourseProfile::Models::Course
       )
@@ -279,7 +272,7 @@ module OpenStax::Biglearn::Api
         task = request.fetch(:task)
 
         # Skip tasks with no ecosystem or not assigned to anyone
-        task.ecosystem.present? && task.taskings.first.try!(:role).present?
+        task.ecosystem.present? && task.taskings.first&.role.present?
       end
 
       bulk_api_request options.merge(
@@ -502,14 +495,11 @@ module OpenStax::Biglearn::Api
     def single_api_request(method:, request:, keys:, optional_keys: [],
                            result_class: Hash, uuid_key: :request_uuid,
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
-                           create: false, perform_later: false,
+                           create: false, perform_later: true,
                            response_status_key: nil, accepted_response_status: [],
                            inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
       include_sequence_number = sequence_number_model_key.present? &&
                                 sequence_number_model_class.present?
-
-      job_class = include_sequence_number ? OpenStax::Biglearn::Api::JobWithSequenceNumber :
-                                            OpenStax::Biglearn::Api::Job
 
       verified_request = verify_and_slice_request method: method,
                                                   request: request,
@@ -520,22 +510,41 @@ module OpenStax::Biglearn::Api
                             verified_request :
                             verified_request.merge(uuid_key => SecureRandom.uuid)
 
-      if perform_later
-        job_class.perform_later method: method.to_s,
-                                requests: request_with_uuid,
-                                create: create,
-                                sequence_number_model_key: sequence_number_model_key.to_s,
-                                sequence_number_model_class: sequence_number_model_class.name,
-                                response_status_key: response_status_key.try!(:to_s),
-                                accepted_response_status: accepted_response_status
+      args = {
+        requests: request_with_uuid,
+        create: create
+      }
+
+      job_class = if include_sequence_number
+        is_preview = request[sequence_number_model_key.to_sym].try(:is_preview)
+        args[:queue] = is_preview ? 'low_priority' : 'high_priority'
+
+        OpenStax::Biglearn::Api::JobWithSequenceNumber
       else
+        # :nocov:
+        # No API call currently uses this branch of the code
+        OpenStax::Biglearn::Api::Job
+        # :nocov:
+      end
+
+      if perform_later
+        args.merge! method: method.to_s,
+                    sequence_number_model_key: sequence_number_model_key.to_s,
+                    sequence_number_model_class: sequence_number_model_class.name,
+                    response_status_key: response_status_key&.to_s,
+                    accepted_response_status: accepted_response_status
+
+        job_class.perform_later args
+      else
+        # :nocov:
+        # No API call currently uses this branch of the code
+        args.merge! method: method,
+                    sequence_number_model_key: sequence_number_model_key,
+                    sequence_number_model_class: sequence_number_model_class
+
         accepted = false
         inline_max_attempts.times do
-          response = job_class.perform method: method,
-                                       requests: request_with_uuid,
-                                       create: create,
-                                       sequence_number_model_key: sequence_number_model_key,
-                                       sequence_number_model_class: sequence_number_model_class
+          response = job_class.perform args
 
           accepted = response_status_key.nil? ||
                      [accepted_response_status].flatten.include?(response[response_status_key])
@@ -554,6 +563,7 @@ module OpenStax::Biglearn::Api
           result: block_given? ? yield(request, response, accepted) : response,
           result_class: result_class
         )
+        # :nocov:
       end
     end
 
@@ -565,9 +575,6 @@ module OpenStax::Biglearn::Api
                          inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
       include_sequence_numbers = sequence_number_model_key.present? &&
                                  sequence_number_model_class.present?
-
-      job_class = include_sequence_numbers ? OpenStax::Biglearn::Api::JobWithSequenceNumber :
-                                             OpenStax::Biglearn::Api::Job
 
       req = [requests].flatten
       req = req.select(&select_proc) unless select_proc.nil?
@@ -588,24 +595,40 @@ module OpenStax::Biglearn::Api
       end
       request_uuids = requests_map.keys.sort
 
-      if perform_later
-        job_class.perform_later method: method.to_s,
-                                requests: requests_array,
-                                create: create,
-                                sequence_number_model_key: sequence_number_model_key.to_s,
-                                sequence_number_model_class: sequence_number_model_class.name,
-                                response_status_key: response_status_key.try!(:to_s),
-                                accepted_response_status: accepted_response_status
+      args = {
+        requests: requests_array,
+        create: create
+      }
+
+      job_class = if include_sequence_numbers
+        is_preview = requests.is_a?(Array) ? requests.all? do |request|
+          request[sequence_number_model_key.to_sym].try(:is_preview)
+        end : requests[sequence_number_model_key.to_sym].try(:is_preview)
+        args[:queue] = is_preview ? 'low_priority' : 'high_priority'
+
+        OpenStax::Biglearn::Api::JobWithSequenceNumber
       else
+        OpenStax::Biglearn::Api::Job
+      end
+
+      if perform_later
+        args.merge! method: method.to_s,
+                    sequence_number_model_key: sequence_number_model_key.to_s,
+                    sequence_number_model_class: sequence_number_model_class.name,
+                    response_status_key: response_status_key&.to_s,
+                    accepted_response_status: accepted_response_status
+
+        job_class.perform_later args
+      else
+        args.merge! method: method,
+                    sequence_number_model_key: sequence_number_model_key,
+                    sequence_number_model_class: sequence_number_model_class
+
         responses = []
         accepted_responses_uuids = []
         all_accepted = false
         inline_max_attempts.times do
-          responses = job_class.perform method: method,
-                                        requests: requests_array,
-                                        create: create,
-                                        sequence_number_model_key: sequence_number_model_key,
-                                        sequence_number_model_class: sequence_number_model_class
+          responses = job_class.perform args
 
           accepted_response_status = [accepted_response_status].flatten \
             unless response_status_key.nil?
@@ -684,7 +707,7 @@ module OpenStax::Biglearn::Api
         # regardless of what the original slot was
         return [] if task.nil? || max_num_exercises.nil?
 
-        course = task.taskings.first.try!(:role).try!(:student).try!(:course)
+        course = task.taskings.first&.role&.student&.course
         return [] if course.nil?
 
         core_page_ids = GetTaskCorePageIds[tasks: task][task.id]

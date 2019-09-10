@@ -15,7 +15,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
   end
 
   def perform(
-    method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:,
+    method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:, queue:,
     response_status_key: nil, accepted_response_status: []
   )
     ScoutHelper.ignore!(0.8)
@@ -103,7 +103,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       return [] if modified_requests.empty?
 
       # Create a background job to guarantee the sequence_number request will reach Biglearn
-      OpenStax::Biglearn::Api::Job.perform_later(
+      OpenStax::Biglearn::Api::Job.set(queue: queue.to_sym).perform_later(
         method: method.to_s,
         requests: modified_requests,
         response_status_key: response_status_key.try!(:to_s),
