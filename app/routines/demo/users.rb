@@ -64,13 +64,21 @@ class Demo::Users < Demo::Base
               sign_contract(user: user, name: :privacy_policy)
             end
           else
-            model.account.update_attributes(attrs.except(:sign_contracts))
+            account_attrs = attrs.except :sign_contracts
+
+            begin
+              model.account.update_attributes account_attrs
+            rescue OAuth2::Error
+              # Don't care if we can't send the updates to Accounts
+              model.account.update_columns account_attrs
+            end
           end
 
           model
         end
       end
     rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+      # Retry race conditions due to multiple jobs trying to create the same user
       raise if @retries >= MAX_RETRIES
 
       @retries += 1
