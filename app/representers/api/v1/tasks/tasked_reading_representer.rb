@@ -30,6 +30,11 @@ module Api::V1::Tasks
                description: "The chapter section that this reading comes from"
              }
 
+    property :baked_book_location,
+               as: :baked_chapter_section,
+               readable: true,
+               writeable: false
+
     property :content_preview,
              as: :preview,
              type: String,
