@@ -32,6 +32,10 @@ module Api::V1
                  readable: true
 
         property :chapter_section,
+                 getter: ->(*) {
+                   baked_chapter_section.blank? ?
+                    chapter_section : baked_chapter_section
+                 },
                  type: Array,
                  writeable: false,
                  readable: true,
