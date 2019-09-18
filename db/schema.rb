@@ -899,6 +899,7 @@ ActiveRecord::Schema.define(version: 2019_09_23_160455) do
     t.text "spy", default: "{}", null: false
     t.integer "content_page_id"
     t.integer "fragment_index"
+    t.boolean "is_core", null: false
     t.index ["first_completed_at"], name: "index_tasks_task_steps_on_first_completed_at"
     t.index ["last_completed_at"], name: "index_tasks_task_steps_on_last_completed_at"
     t.index ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true
@@ -1027,7 +1028,7 @@ ActiveRecord::Schema.define(version: 2019_09_23_160455) do
     t.integer "content_ecosystem_id", null: false
     t.boolean "spes_are_assigned", default: false, null: false
     t.boolean "pes_are_assigned", default: false, null: false
-    t.integer "core_and_personalized_placeholder_exercise_steps_count", default: 0, null: false
+    t.integer "core_placeholder_exercise_steps_count", default: 0, null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"

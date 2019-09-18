@@ -38,8 +38,18 @@ module Api::V1::Tasks
              readable: true,
              getter: ->(*) { task_step.group_name },
              schema_info: {
-                required: true,
-                description: 'Which group this TaskStep belongs to (default,core,spaced practice,personalized)'
+               required: true,
+               description: "Which group this TaskStep belongs to" +
+                            " (fixed, personalized, spaced_practice)"
+             }
+
+    property :is_core,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { task_step.is_core },
+             schema_info: {
+               required: true,
+               description: "Whether this is a core step or a dynamic step"
              }
 
     property :is_completed,

@@ -6,7 +6,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   def build_task_step(task, page, fragment, fragment_index)
     Tasks::Models::TaskStep.new(
       task: task,
-      group_type: :core_group,
+      group_type: :fixed_group,
+      is_core: true,
       page: page.to_model,
       labels: fragment.labels,
       fragment_index: fragment_index
@@ -106,8 +107,13 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
     # Assign the exercise
     add_exercise_step!(
-      task: task, exercise: exercise, title: title, group_type: :core_group,
-      labels: exercise_fragment.labels, fragment_index: fragment_index
+      task: task,
+      exercise: exercise,
+      title: title,
+      group_type: :fixed_group,
+      is_core: true,
+      labels: exercise_fragment.labels,
+      fragment_index: fragment_index
     )
   end
 

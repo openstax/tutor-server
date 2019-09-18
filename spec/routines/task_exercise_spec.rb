@@ -42,13 +42,13 @@ RSpec.describe TaskExercise, type: :routine do
 
     expect(task.task_steps.length).to eq 2
 
-    task.task_steps.each do |task_step|
-      expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
-      expect(task_step.tasked.is_in_multipart).to eq true
-      expect(task_step.tasked.context).to eq 'Some context'
-      expect(task_step.group_type).to eq 'unknown_group'
-      expect(task_step.page).to eq multipart_exercise.page.to_model
-      expect(task_step.labels).to eq []
+    task.task_steps.each do |ts|
+      expect(ts.tasked).to be_a Tasks::Models::TaskedExercise
+      expect(ts.tasked.is_in_multipart).to eq true
+      expect(ts.tasked.context).to eq 'Some context'
+      expect(ts.group_type).to eq task_step.group_type
+      expect(ts.page).to eq multipart_exercise.page.to_model
+      expect(ts.labels).to eq []
     end
     expect(task.task_steps[0].tasked.question_index).to eq 0
     expect(task.task_steps[0].tasked.question_id).to eq question_ids[0]

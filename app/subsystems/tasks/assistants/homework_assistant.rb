@@ -69,13 +69,14 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     add_placeholder_steps! task: task,
                            group_type: :spaced_practice_group,
+                           is_core: false,
                            count: num_spaced_practice_exercises,
                            labels: [ 'review' ]
   end
 
   def add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
-      add_exercise_step!(task: task, exercise: exercise, group_type: :core_group)
+      add_exercise_step!(task: task, exercise: exercise, group_type: :fixed_group, is_core: true)
     end
 
     task

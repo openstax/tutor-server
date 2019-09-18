@@ -1,9 +1,5 @@
 class GetTaskCorePageIds
 
-  # Steps with these group_types determine a task's core pages
-  CORE_STEP_GROUP_TYPES = Tasks::Models::TaskStep.group_types
-                                                 .values_at(:core_group, :personalized_group)
-
   lev_routine transaction: :read_committed, express_output: :task_id_to_core_page_ids_map
 
   protected
@@ -12,16 +8,13 @@ class GetTaskCorePageIds
   def exec(tasks:)
     loaded_tasks, unloaded_tasks = [ tasks ].flatten.partition { |task| task.task_steps.loaded? }
 
-    unloaded_task_steps = Tasks::Models::TaskStep.where(tasks_task_id: unloaded_tasks.map(&:id),
-                                                        group_type: CORE_STEP_GROUP_TYPES)
-                                                 .pluck(:tasks_task_id, :content_page_id)
-                                                 .group_by(&:first)
+    unloaded_task_steps = Tasks::Models::TaskStep.where(
+      tasks_task_id: unloaded_tasks.map(&:id), is_core: true
+    ).pluck(:tasks_task_id, :content_page_id).group_by(&:first)
 
     task_id_to_core_page_ids_map = {}
     loaded_tasks.each do |task|
-      task_steps = task.task_steps.to_a.select do |task_step|
-        task_step.core_group? || task_step.personalized_group?
-      end
+      task_steps = task.task_steps.to_a.select(&:is_core?)
 
       task_id_to_core_page_ids_map[task.id] = task_steps.map(&:content_page_id).compact.uniq
     end

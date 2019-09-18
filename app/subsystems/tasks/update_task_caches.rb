@@ -40,6 +40,7 @@ class Tasks::UpdateTaskCaches
         :last_completed_at,
         :content_page_id,
         :group_type,
+        :is_core,
         :tasked_type,
         :tasked_id
       )

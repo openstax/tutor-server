@@ -24,6 +24,7 @@ class TaskExercise
     current_step.page = page
 
     group_type = current_step.group_type
+    is_core = current_step.is_core
     labels = current_step.labels
     spy = current_step.spy
 
@@ -35,6 +36,7 @@ class TaskExercise
           task: task,
           number: current_step.number.nil? ? nil : current_step.number + 1,
           group_type: group_type,
+          is_core: is_core,
           page: page,
           labels: labels,
           spy: spy

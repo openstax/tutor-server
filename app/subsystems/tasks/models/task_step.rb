@@ -6,7 +6,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   enum group_type: [
     :unknown_group,
-    :core_group,
+    :fixed_group,
     :spaced_practice_group,
     :personalized_group,
     :recovery_group
@@ -23,16 +23,27 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
-  scope :complete,   -> { where.not(first_completed_at: nil) }
-  scope :incomplete, -> { where(first_completed_at: nil) }
+  scope :complete,   -> { where.not first_completed_at: nil }
+  scope :incomplete, -> { where     first_completed_at: nil }
 
-  scope :exercises,  -> { where(tasked_type: Tasks::Models::TaskedExercise.name) }
+  scope :core,       -> { where is_core: true  }
+  scope :dynamic,    -> { where is_core: false }
+
+  scope :exercises,  -> { where tasked_type: Tasks::Models::TaskedExercise.name }
 
   # Lock the task instead, but don't explode if task is nil
   def lock!(*args)
-    task.try! :lock!, *args
+    task&.lock! *args
 
     super
+  end
+
+  def is_core?
+    is_core
+  end
+
+  def is_dynamic?
+    !is_core
   end
 
   def exercise?
