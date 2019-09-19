@@ -32,9 +32,12 @@ class GetStudentGuide
     tc = Tasks::Models::TaskCache.arel_table
     task_caches = Tasks::Models::TaskCache
       .select([ :tasks_task_id, :content_ecosystem_id, :task_type, :as_toc ])
+      .joins(:task)
+      .left_joins(task: :task_plan)
       .where(content_ecosystem_id: ecosystem_ids)
       .where("\"tasks_task_caches\".\"#{student_ids_column}\" && ARRAY[#{student.id}]")
       .where(tc[:opens_at].eq(nil).or tc[:opens_at].lteq(current_time))
+      .where(task: { task_plan: { withdrawn_at: nil } })
       .sort_by { |task_cache| index_by_ecosystem_id[task_cache.content_ecosystem_id] }
       .uniq { |task_cache| task_cache.tasks_task_id }
 

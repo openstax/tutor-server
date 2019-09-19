@@ -3,7 +3,6 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe GetStudentGuide, type: :routine do
-
   before(:all) do
     @course = FactoryBot.create :course_profile_course
 
@@ -31,7 +30,6 @@ RSpec.describe GetStudentGuide, type: :routine do
   ].each do |role_type, routine_class|
 
     context "#{role_type} role" do
-
       before(:all) do
         DatabaseCleaner.start
 
@@ -42,7 +40,6 @@ RSpec.describe GetStudentGuide, type: :routine do
       after(:all)  { DatabaseCleaner.clean }
 
       context 'without work' do
-
         before(:all) do
           DatabaseCleaner.start
 
@@ -69,11 +66,9 @@ RSpec.describe GetStudentGuide, type: :routine do
             }
           )
         end
-
       end
 
       context 'with work' do
-
         before(:all) do
           DatabaseCleaner.start
 
@@ -206,11 +201,7 @@ RSpec.describe GetStudentGuide, type: :routine do
             }
           ]
         end
-
       end
-
     end
-
   end
-
 end

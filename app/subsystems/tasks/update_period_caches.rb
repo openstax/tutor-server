@@ -18,6 +18,8 @@ class Tasks::UpdatePeriodCaches
 
       task_cache_query = Tasks::Models::TaskCache
         .joins(:task)
+        .left_joins(task: :task_plan)
+        .where(task: { task_plan: { withdrawn_at: nil } })
         .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
 
       # Get relevant TaskPlans

@@ -7,7 +7,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
   let(:first_period)            { periods.first }
   let(:first_task)              do
     @task_plan.tasks.find do |task|
-      task.taskings.any? { |tasking| tasking.role.student.try!(:period) == first_period }
+      task.taskings.any? { |tasking| tasking.role.student&.period == first_period }
     end
   end
   let(:num_period_caches)       { periods.size }
@@ -18,6 +18,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
       DatabaseCleaner.start
 
       @task_plan = FactoryBot.create :tasked_task_plan
+      withdrawn = FactoryBot.create :tasked_task_plan
+      withdrawn.destroy!
     end
     before                      { @task_plan.reload }
     after(:all)                 { DatabaseCleaner.clean }
@@ -440,16 +442,26 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
     before(:all)                do
       DatabaseCleaner.start
 
+      assistant = Tasks::Models::Assistant.find_by(
+        code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
+      ) || FactoryBot.create(
+        :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
+      )
+
       @task_plan = FactoryBot.create(
         :tasked_task_plan,
         type: 'external',
-        assistant: Tasks::Models::Assistant.find_by(
-          code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
-        ) || FactoryBot.create(
-          :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
-        ),
+        assistant: assistant,
         settings: { external_url: 'https://www.example.com' }
       )
+
+      withdrawn = FactoryBot.create(
+        :tasked_task_plan,
+        type: 'external',
+        assistant: assistant,
+        settings: { external_url: 'https://not.here' }
+      )
+      withdrawn.destroy!
     end
     before                      { @task_plan.reload }
     after(:all)                 { DatabaseCleaner.clean }
