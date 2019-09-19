@@ -26,8 +26,9 @@ class Tasks::Models::TaskStep < ApplicationRecord
   scope :complete,   -> { where.not first_completed_at: nil }
   scope :incomplete, -> { where     first_completed_at: nil }
 
-  scope :core,       -> { where is_core: true  }
-  scope :dynamic,    -> { where is_core: false }
+  # Enable these scopes once the is_core background migration is complete
+  # scope :core,       -> { where is_core: true  }
+  # scope :dynamic,    -> { where is_core: false }
 
   scope :exercises,  -> { where tasked_type: Tasks::Models::TaskedExercise.name }
 
@@ -36,6 +37,16 @@ class Tasks::Models::TaskStep < ApplicationRecord
     task&.lock! *args
 
     super
+  end
+
+  # Remove this method once the background migration for is_core has finished
+  # (and is_core becomes NOT NULL)
+  def is_core?
+    return is_core unless is_core.nil?
+
+    fixed_group? || tasked_type == Tasks::Models::TaskedExternalUrl.name || (
+      personalized_group? && task.reading? && !task.task_steps.last(3).include?(self)
+    )
   end
 
   def is_dynamic?
