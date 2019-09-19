@@ -43,19 +43,19 @@ class Content::Models::Exercise < IndestructibleRecord
   end
 
   def los
-    tags.to_a.select(&:lo?)
+    tags.filter(&:lo?)
   end
 
   def aplos
-    tags.to_a.select(&:aplo?)
+    tags.filter(&:aplo?)
   end
 
   def cnxmods
-    tags.to_a.select(&:cnxmod?)
+    tags.filter(&:cnxmod?)
   end
 
   def cnxfeatures
-    tags.to_a.select(&:cnxfeature?)
+    tags.filter(&:cnxfeature?)
   end
 
   def requires_context?

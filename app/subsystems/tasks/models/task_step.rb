@@ -38,12 +38,8 @@ class Tasks::Models::TaskStep < ApplicationRecord
     super
   end
 
-  def is_core?
-    is_core
-  end
-
   def is_dynamic?
-    !is_core
+    !is_core?
   end
 
   def exercise?

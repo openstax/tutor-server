@@ -14,7 +14,7 @@ class GetTaskCorePageIds
 
     task_id_to_core_page_ids_map = {}
     loaded_tasks.each do |task|
-      task_steps = task.task_steps.to_a.select(&:is_core?)
+      task_steps = task.task_steps.filter(&:is_core?)
 
       task_id_to_core_page_ids_map[task.id] = task_steps.map(&:content_page_id).compact.uniq
     end

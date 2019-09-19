@@ -217,7 +217,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   def core_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:is_core?)
+    task_steps.filter(&:is_core?)
   end
 
   def dynamic_task_steps(preload_tasked: false)
@@ -227,17 +227,17 @@ class Tasks::Models::Task < ApplicationRecord
 
   def fixed_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:fixed_group?)
+    task_steps.filter(&:fixed_group?)
   end
 
   def personalized_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:personalized_group?)
+    task_steps.filter(&:personalized_group?)
   end
 
   def spaced_practice_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:spaced_practice_group?)
+    task_steps.filter(&:spaced_practice_group?)
   end
 
   def handle_task_step_completion!(completed_at: Time.current)

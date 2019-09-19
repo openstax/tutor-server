@@ -184,7 +184,7 @@ class Tasks::PopulatePlaceholderSteps
       end
     else
       # Tutor controls how many PEs/SPEs
-      placeholder_steps = task.task_steps.to_a.select do |task_step|
+      placeholder_steps = task.task_steps.filter do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
       if placeholder_steps.empty?

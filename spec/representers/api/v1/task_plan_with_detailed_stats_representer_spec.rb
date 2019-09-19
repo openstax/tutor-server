@@ -14,7 +14,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
   it "represents a task plan's stats" do
     # Answer an exercise correctly and mark it as completed
     student_tasks = task_plan.tasks.joins(taskings: { role: :student })
-    task_step = student_tasks.first.task_steps.to_a.select { |ts| ts.tasked.exercise? }.first
+    task_step = student_tasks.first.task_steps.filter { |ts| ts.tasked.exercise? }.first
     answer_ids = task_step.tasked.answer_ids
     correct_answer_id = task_step.tasked.correct_answer_id
     incorrect_answer_ids = (answer_ids - [correct_answer_id])
@@ -24,7 +24,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     MarkTaskStepCompleted.call(task_step: task_step)
 
     # Answer an exercise incorrectly and mark it as completed
-    task_step = student_tasks.last.task_steps.to_a.select { |ts| ts.tasked.exercise? }.first
+    task_step = student_tasks.last.task_steps.filter { |ts| ts.tasked.exercise? }.first
     task_step.tasked.free_response = 'a sentence not explaining anything'
     task_step.tasked.answer_id = incorrect_answer_ids.first
     task_step.tasked.save!

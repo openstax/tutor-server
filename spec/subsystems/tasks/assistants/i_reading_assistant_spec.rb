@@ -480,7 +480,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           group_type: 'fixed_group',
           is_core: true,
           title: nil,
-          related_exercise_ids: page.reload.reading_context_pool.exercises.to_a.select do |exercise|
+          related_exercise_ids: page.reload.reading_context_pool.exercises.filter do |exercise|
             exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
           end.map(&:id),
           fragment_index: 3

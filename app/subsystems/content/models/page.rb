@@ -78,15 +78,15 @@ class Content::Models::Page < IndestructibleRecord
   end
 
   def los
-    tags.to_a.select(&:lo?)
+    tags.filter(&:lo?)
   end
 
   def aplos
-    tags.to_a.select(&:aplo?)
+    tags.filter(&:aplo?)
   end
 
   def cnxmods
-    tags.to_a.select(&:cnxmod?)
+    tags.filter(&:cnxmod?)
   end
 
   def fragments
