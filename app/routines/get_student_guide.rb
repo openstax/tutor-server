@@ -57,7 +57,7 @@ class GetStudentGuide
     # Get mapped page and chapter UUIDs
     page_ids = chs.flat_map { |ch| ch[:pages].map { |pg| pg[:id] } }
     pages = Content::Models::Page
-      .select([:tutor_uuid, :content_chapter_id])
+      .select(:tutor_uuid, :content_chapter_id)
       .where(id: page_ids)
       .preload(chapter: { book: :ecosystem })
     chapters = pages.map(&:chapter).uniq
@@ -90,7 +90,9 @@ class GetStudentGuide
           student_count: 1,
           questions_answered_count: questions_answered_count,
           clue: clue,
-          page_ids: [ preferred_pg[:id] ]
+          page_ids: [ preferred_pg[:id] ],
+          first_worked_at: pgs.map { |pg| pg[:first_worked_at] }.compact.min,
+          last_worked_at: pgs.map { |pg| pg[:last_worked_at] }.compact.max,
         }
       end
 
@@ -108,6 +110,8 @@ class GetStudentGuide
         questions_answered_count: questions_answered_count,
         clue: clue,
         page_ids: page_ids,
+        first_worked_at: chs.map { |ch| ch[:first_worked_at] }.compact.min,
+        last_worked_at: chs.map { |ch| ch[:last_worked_at] }.compact.max,
         children: page_guides
       }
     end
