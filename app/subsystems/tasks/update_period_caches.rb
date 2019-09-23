@@ -17,16 +17,14 @@ class Tasks::UpdatePeriodCaches
       next if student_ids.empty?
 
       task_cache_query = Tasks::Models::TaskCache
-        .joins(:task)
-        .left_joins(task: :task_plan)
-        .where(task: { task_plan: { withdrawn_at: nil } })
+        .where(withdrawn_at: nil)
         .where("\"tasks_task_caches\".\"student_ids\" && ARRAY[#{student_ids.join(', ')}]")
 
       # Get relevant TaskPlans
       task_plan_query = task_cache_query.dup
       task_plan_query = task_plan_query.where(is_cached_for_period: false) unless force
       tt = Tasks::Models::Task.arel_table
-      task_plan_ids = task_plan_query.distinct.pluck(tt[:tasks_task_plan_id])
+      task_plan_ids = task_plan_query.distinct.pluck(:tasks_task_plan_id)
       task_plans = Tasks::Models::TaskPlan.select(:id)
                                           .where(id: task_plan_ids)
                                           .preload(:tasking_plans)
@@ -45,7 +43,7 @@ class Tasks::UpdatePeriodCaches
             :is_cached_for_period
           ]
         )
-        .where(task: { tasks_task_plan_id: task_plan.try!(:id) })
+        .where(tasks_task_plan_id: task_plan&.id)
         .lock('FOR NO KEY UPDATE OF "tasks_task_caches"')
         .to_a
         # Recheck if all task_caches have already been added to the PeriodCache
@@ -212,8 +210,8 @@ class Tasks::UpdatePeriodCaches
       course_membership_period_id: period_id,
       ecosystem: ecosystem,
       task_plan: task_plan,
-      opens_at: tasking_plan.try!(:opens_at),
-      due_at: tasking_plan.try!(:due_at),
+      opens_at: tasking_plan&.opens_at,
+      due_at: tasking_plan&.due_at,
       student_ids: period_toc[:student_ids],
       as_toc: period_toc
     )

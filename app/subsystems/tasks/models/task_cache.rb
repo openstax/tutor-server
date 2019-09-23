@@ -2,6 +2,7 @@ class Tasks::Models::TaskCache < ApplicationRecord
   json_serialize :as_toc, Hash
 
   belongs_to :task
+  belongs_to :task_plan, optional: true
   belongs_to :ecosystem, subsystem: :content
 
   enum task_type: Tasks::Models::Task.task_types.keys
@@ -9,7 +10,8 @@ class Tasks::Models::TaskCache < ApplicationRecord
   validates :task_type, presence: true
   validates :ecosystem, uniqueness: { scope: :tasks_task_id }
 
-  validates :opens_at, :due_at, :feedback_at, timeliness: { type: :date }, allow_nil: true
+  validates :opens_at, :due_at, :feedback_at, :withdrawn_at,
+            timeliness: { type: :date }, allow_nil: true
   validates :is_cached_for_period, inclusion: { in: [ true, false ] }
 
   def practice?

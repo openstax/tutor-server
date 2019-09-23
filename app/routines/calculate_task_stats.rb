@@ -33,7 +33,7 @@ class CalculateTaskStats
 
     # Get unmapped cached Task stats (for the Task's original ecosystem)
     task_caches = Tasks::Models::TaskCache
-      .select([ :tasks_task_id, :student_ids, :student_names, :due_at, :as_toc ])
+      .select(:tasks_task_id, :student_ids, :student_names, :due_at, :as_toc)
       .joins(:task)
       .where(tasks_task_id: task_ids)
       .where('"tasks_task_caches"."content_ecosystem_id" = "tasks_tasks"."content_ecosystem_id"')

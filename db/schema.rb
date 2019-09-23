@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_11_001122) do
+ActiveRecord::Schema.define(version: 2019_09_23_160455) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -844,6 +844,8 @@ ActiveRecord::Schema.define(version: 2019_07_11_001122) do
     t.datetime "updated_at", null: false
     t.boolean "is_cached_for_period", null: false
     t.integer "teacher_student_ids", null: false, array: true
+    t.bigint "tasks_task_plan_id"
+    t.datetime "withdrawn_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
     t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"
     t.index ["feedback_at"], name: "index_tasks_task_caches_on_feedback_at"
@@ -852,6 +854,7 @@ ActiveRecord::Schema.define(version: 2019_07_11_001122) do
     t.index ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
     t.index ["task_type"], name: "index_tasks_task_caches_on_task_type"
     t.index ["tasks_task_id", "content_ecosystem_id"], name: "index_task_caches_on_task_id_and_ecosystem_id", unique: true
+    t.index ["tasks_task_plan_id"], name: "index_tasks_task_caches_on_tasks_task_plan_id"
     t.index ["teacher_student_ids"], name: "index_tasks_task_caches_on_teacher_student_ids", using: :gin
   end
 
@@ -1170,6 +1173,7 @@ ActiveRecord::Schema.define(version: 2019_07_11_001122) do
   add_foreign_key "tasks_period_caches", "course_membership_periods", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_period_caches", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_caches", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
