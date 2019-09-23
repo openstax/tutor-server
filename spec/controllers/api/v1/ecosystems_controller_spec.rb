@@ -91,14 +91,12 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
           title: 'book title',
           type: 'part',
           chapter_section: [],
-          baked_chapter_section: [],
           children: [
             {
               id: ecosystem.books.first.chapters.first.id.to_s,
               title: 'chapter 1',
               type: 'part',
               chapter_section: [1],
-              baked_chapter_section: [1],
               children: [
                 {
                   id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
@@ -106,7 +104,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                   cnx_id: ecosystem.books.first.chapters.first.pages.first.cnx_id,
                   title: 'first page',
                   chapter_section: [1, 1],
-                  baked_chapter_section: [1, 1],
                   type: 'page'
                 },
                 {
@@ -115,7 +112,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                   cnx_id: ecosystem.books.first.chapters.first.pages.second.cnx_id,
                   title: 'second page',
                   chapter_section: [1, 2],
-                  baked_chapter_section: [1, 2],
                   type: 'page'
                 }
               ]
@@ -125,7 +121,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
               title: 'chapter 2',
               type: 'part',
               chapter_section: [2],
-              baked_chapter_section: [2],
               children: [
                 {
                   id: ecosystem.books.first.chapters.second.pages.first.id.to_s,
@@ -133,7 +128,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                   cnx_id: ecosystem.books.first.chapters.second.pages.first.cnx_id,
                   title: 'third page',
                   chapter_section: [2, 1],
-                  baked_chapter_section: [2, 1],
                   type: 'page'
                 }
               ]

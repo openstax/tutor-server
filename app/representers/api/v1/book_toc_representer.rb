@@ -90,16 +90,10 @@ module Api::V1
              }
 
     property :chapter_section,
-             type: Array,
-             writeable: false,
-             readable: true,
-             getter: ->(*) { [] },
-             schema_info: {
-               required: true,
-               description: 'Always [] for books'
-             }
-
-    property :baked_chapter_section,
+             getter: ->(*) {
+               baked_chapter_section.blank? ?
+                 chapter_section : baked_chapter_section
+             },
              type: Array,
              writeable: false,
              readable: true,

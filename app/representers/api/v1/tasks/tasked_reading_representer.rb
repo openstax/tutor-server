@@ -22,6 +22,10 @@ module Api::V1::Tasks
 
     property :book_location,
              as: :chapter_section,
+             getter: ->(*) {
+               baked_book_location.blank? ?
+                 book_location : baked_book_location
+             },
              type: Array,
              writeable: false,
              readable: true,
@@ -29,11 +33,6 @@ module Api::V1::Tasks
                required: true,
                description: "The chapter section that this reading comes from"
              }
-
-    property :baked_book_location,
-               as: :baked_chapter_section,
-               readable: true,
-               writeable: false
 
     property :content_preview,
              as: :preview,

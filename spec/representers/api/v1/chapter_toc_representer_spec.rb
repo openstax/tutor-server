@@ -6,8 +6,7 @@ RSpec.describe Api::V1::ChapterTocRepresenter, type: :representer do
       id: 1,
       title: 'Good chapter',
       type: 'foo',
-      book_location: [4, 1],
-      baked_book_location: [4, 1]
+      book_location: [4, 1]
     }
   end
 
@@ -21,7 +20,4 @@ RSpec.describe Api::V1::ChapterTocRepresenter, type: :representer do
     expect(represented['chapter_section']).to eq([4, 1])
   end
 
-  it 'renames baked_book_location to baked_chapter_section' do
-    expect(represented['baked_chapter_section']).to eq([4, 1])
-  end
 end
