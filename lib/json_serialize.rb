@@ -21,14 +21,14 @@ module JsonSerialize
       define_method(options[:typecast_method]) do
         return unless has_attribute?(attribute)
 
-        value = send attribute
+        value = read_attribute attribute
         if options[:array]
           if value.is_a?(type) && !value.is_a?(Array)
             value = [value]
             send options[:setter_method], value
           end
 
-          return if value.to_a.all?{ |val| val.is_a? type }
+          return if value.to_a.all? { |val| val.is_a? type }
         else
           return if value.is_a?(type)
         end
