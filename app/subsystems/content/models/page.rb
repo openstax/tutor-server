@@ -94,7 +94,7 @@ class Content::Models::Page < IndestructibleRecord
     return [] unless cache_fragments_and_snap_labs
 
     frags = super
-    @fragments = frags.nil? ? nil : frags.map{ |yaml| YAML.load(yaml) }
+    @fragments = frags.nil? ? nil : frags.map { |yaml| YAML.load(yaml) }
   end
 
   def snap_labs
@@ -104,7 +104,7 @@ class Content::Models::Page < IndestructibleRecord
     sls = super
     @snap_labs = sls.nil? ? nil : sls.map do |snap_lab|
       sl = snap_lab.symbolize_keys
-      sl.merge(fragments: sl[:fragments].map{ |yaml| YAML.load(yaml) })
+      sl.merge fragments: sl[:fragments].map { |yaml| YAML.load(yaml) }
     end
   end
 

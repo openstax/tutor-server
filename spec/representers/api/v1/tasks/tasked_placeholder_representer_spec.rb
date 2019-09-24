@@ -8,7 +8,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(step).to receive(:group_name).and_return('Some group')
       allow(step).to receive(:completed?).and_return(false)
 
-      allow(step).to receive(:spy).and_return({})
+      allow(step).to receive(:spy_with_response_validation).and_return({})
     end
   end
 
