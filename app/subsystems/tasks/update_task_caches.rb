@@ -297,7 +297,7 @@ class Tasks::UpdateTaskCaches
               last_completed_at: task_step.last_completed_at
             }
           end
-          completed_exercises_array = exercises_array.select { |exercise| exercise[:completed] }
+          completed_ex_array = exercises_array.select { |exercise| exercise[:completed] }
 
           is_spaced_practice = num_tasked_placeholders == 0 && exercises_array.all? do |ex|
             ex[:group_type] == 'spaced_practice_group'
@@ -313,13 +313,11 @@ class Tasks::UpdateTaskCaches
             num_assigned_steps: task_steps.size,
             num_completed_steps: task_steps.count(&:completed?),
             num_assigned_exercises: exercises_array.size,
-            num_completed_exercises: completed_exercises_array.size,
-            num_correct_exercises: completed_exercises_array.count do |exercise|
-              exercise[:correct]
-            end,
+            num_completed_exercises: completed_ex_array.size,
+            num_correct_exercises: completed_ex_array.count { |ex| ex[:correct] },
             num_assigned_placeholders: num_tasked_placeholders,
-            first_worked_at: task_steps.map(&:first_completed_at).compact.min,
-            last_worked_at: task_steps.map(&:last_completed_at).compact.max,
+            first_worked_at: completed_ex_array.map { |ex| ex[:first_completed_at] }.compact.min,
+            last_worked_at: completed_ex_array.map { |ex| ex[:last_completed_at] }.compact.max,
             exercises: exercises_array
           }
         end.sort_by { |page| page[:book_location] }
