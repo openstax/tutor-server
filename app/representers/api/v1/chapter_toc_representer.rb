@@ -27,6 +27,10 @@ module Api::V1
              }
 
     property :book_location,
+             getter: ->(*) {
+               baked_book_location.blank? ?
+                 book_location : baked_book_location
+             },
              as: :chapter_section,
              type: Array,
              writeable: false,
@@ -35,13 +39,6 @@ module Api::V1
                required: true,
                description: 'The chapter number in the book, e.g. [5]'
              }
-
-    property :baked_book_location,
-             as: :baked_chapter_section,
-             type: Array,
-             writeable: false,
-             readable: true,
-             schema_info: { description: 'The chapter number in the baked book, e.g. [5]' }
 
     collection :pages,
                as: :children,

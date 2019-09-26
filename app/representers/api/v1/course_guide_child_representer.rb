@@ -11,11 +11,10 @@ module Api::V1
 
     collection :book_location,
                as: :chapter_section,
-               readable: true,
-               writeable: false
-
-    collection :baked_book_location,
-               as: :baked_chapter_section,
+               getter: ->(*) {
+                 baked_book_location.blank? ?
+                   book_location : baked_book_location
+               },
                readable: true,
                writeable: false
 

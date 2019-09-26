@@ -66,7 +66,6 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
           expect(response.body_as_hash).to eq(
             title: @old_page.title,
             chapter_section: @old_page.book_location,
-            baked_chapter_section: @old_page.baked_book_location,
             content_html: @old_page.content,
             spy: { ecosystem_title: @old_ecosystem.title }
           )
@@ -80,7 +79,6 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
           expect(response.body_as_hash).to eq(
             title: @old_page.title,
             chapter_section: @old_page.book_location,
-            baked_chapter_section: @old_page.baked_book_location,
             content_html: @old_page.content,
             spy: { ecosystem_title: @old_ecosystem.title }
           )
