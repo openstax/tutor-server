@@ -1,5 +1,4 @@
 class GetDashboard
-
   include DashboardRoutineMethods
 
   uses_routine Tasks::GetTaskPlans, as: :get_plans
@@ -22,8 +21,8 @@ class GetDashboard
 
   def load_research_surveys(course, role)
     surveys = role.student.surveys
-                .preload(:survey_plan)
-                .where(completed_at: nil, hidden_at: nil, deleted_at: nil)
+                          .preload(:survey_plan)
+                          .where(completed_at: nil, hidden_at: nil, deleted_at: nil)
     outputs.research_surveys = surveys if surveys.any?
   end
 
@@ -33,7 +32,7 @@ class GetDashboard
                              end_at_ntz: end_at_ntz).outputs
     task_plan_ids = result.plans.map(&:id)
     period_caches_by_task_plan_id = Tasks::Models::PeriodCache
-      .select([ :tasks_task_plan_id, :due_at, :student_ids, :as_toc ])
+      .select(:tasks_task_plan_id, :due_at, :student_ids, :as_toc)
       .joins(:task_plan)
       .where(task_plan: { id: task_plan_ids })
       .where(
@@ -84,5 +83,4 @@ class GetDashboard
       num_correct < 0.5 * num_completed
     end
   end
-
 end

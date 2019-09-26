@@ -28,7 +28,7 @@ module JsonSerialize
             send options[:setter_method], value
           end
 
-          return if value.to_a.all?{ |val| val.is_a? type }
+          return if value.to_a.all? { |val| val.is_a? type }
         else
           return if value.is_a?(type)
         end

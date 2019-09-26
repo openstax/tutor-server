@@ -9,7 +9,9 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       allow(step).to receive(:feedback_available?).and_return(false)
       allow(step).to receive(:labels).and_return([])
       allow(step).to receive(:related_content).and_return('RelatedContent')
-      allow(step).to receive(:spy).and_return(response_validation: { valid: false })
+      allow(step).to receive(:spy_with_response_validation).and_return(
+        response_validation: { valid: false }
+      )
     end
   end
 

@@ -91,9 +91,10 @@ class Tasks::Models::TaskStep < ApplicationRecord
     page.nil? ? [] : [ page.related_content ]
   end
 
-  def spy
-    spy = super
-    exercise? && tasked.response_validation.present? ? spy.merge({ response_validation: tasked.response_validation }) : spy
+  def spy_with_response_validation
+    return spy unless exercise? && tasked.response_validation.present?
+
+    spy.merge response_validation: tasked.response_validation
   end
 
 end
