@@ -58,6 +58,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
             num_completed_exercises: 0,
             num_correct_exercises: 0,
             num_assigned_placeholders: 3,
+            first_worked_at: nil,
+            last_worked_at: nil,
             chapters: [
               {
                 id: chapter.id,
@@ -73,6 +75,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                 num_completed_exercises: 0,
                 num_correct_exercises: 0,
                 num_assigned_placeholders: 3,
+                first_worked_at: nil,
+                last_worked_at: nil,
                 pages: [
                   {
                     id: page.id,
@@ -88,6 +92,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                     num_completed_exercises: 0,
                     num_correct_exercises: 0,
                     num_assigned_placeholders: 3,
+                    first_worked_at: nil,
+                    last_worked_at: nil,
                     exercises: [3, 5].map do |number|
                       {
                         id: kind_of(Integer),
@@ -99,7 +105,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                         free_response: nil,
                         selected_answer_id: nil,
                         completed: false,
-                        correct: false
+                        correct: false,
+                        first_completed_at: nil,
+                        last_completed_at: nil
                       }
                     end
                   }
@@ -136,6 +144,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
             num_completed_exercises: 8,
             num_correct_exercises: 8,
             num_assigned_placeholders: 0,
+            first_worked_at: kind_of(String),
+            last_worked_at: kind_of(String),
             chapters: [
               {
                 id: chapter.id,
@@ -151,6 +161,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                 num_completed_exercises: 8,
                 num_correct_exercises: 8,
                 num_assigned_placeholders: 0,
+                first_worked_at: kind_of(String),
+                last_worked_at: kind_of(String),
                 pages: [
                   {
                     id: page.id,
@@ -166,6 +178,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                     num_completed_exercises: 8,
                     num_correct_exercises: 8,
                     num_assigned_placeholders: 0,
+                    first_worked_at: kind_of(String),
+                    last_worked_at: kind_of(String),
                     exercises: [3, 5, 6, 7, 8, 9, 10, 11].map do |number|
                       {
                         id: kind_of(Integer),
@@ -177,7 +191,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                         free_response: "A sentence explaining all the things!",
                         selected_answer_id: kind_of(String),
                         completed: true,
-                        correct: true
+                        correct: true,
+                        first_completed_at: kind_of(String),
+                        last_completed_at: kind_of(String)
                       }
                     end
                   }
@@ -212,7 +228,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task_caches.each do |task_cache|
           task = task_cache.task
           expect(task).to be_in tasks
-          expect(task_cache.task_type).to eq (task.task_type)
+          expect(task_cache.task_type).to eq task.task_type
+          expect(task_cache.task_plan).to eq task.task_plan
           expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
@@ -227,6 +244,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
           expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
       end
@@ -238,7 +256,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task_caches.each do |task_cache|
           task = task_cache.task
           expect(task).to be_in tasks
-          expect(task_cache.task_type).to eq (task.task_type)
+          expect(task_cache.task_type).to eq task.task_type
+          expect(task_cache.task_plan).to eq task.task_plan
           expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
@@ -253,6 +272,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
           expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq true
         end
 
@@ -272,7 +292,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           is_first_task = task == first_task
 
           expect(task).to be_in tasks
-          expect(task_cache.task_type).to eq (task.task_type)
+          expect(task_cache.task_type).to eq task.task_type
+          expect(task_cache.task_plan).to eq task.task_plan
           expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
@@ -286,6 +307,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
           expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
       end
@@ -377,7 +399,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task_caches.each do |task_cache|
           task = task_cache.task
           expect(task).to be_in tasks
-          expect(task_cache.task_type).to eq (task.task_type)
+          expect(task_cache.task_type).to eq task.task_type
+          expect(task_cache.task_plan).to eq task.task_plan
           expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
@@ -392,6 +415,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
           expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
       end
@@ -403,7 +427,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task_caches.each do |task_cache|
           task = task_cache.task
           expect(task).to be_in tasks
-          expect(task_cache.task_type).to eq (task.task_type)
+          expect(task_cache.task_type).to eq task.task_type
+          expect(task_cache.task_plan).to eq task.task_plan
           expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
@@ -418,6 +443,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
           expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq true
         end
 
@@ -437,7 +463,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           is_first_task = task == first_task
 
           expect(task).to be_in tasks
-          expect(task_cache.task_type).to eq (task.task_type)
+          expect(task_cache.task_type).to eq task.task_type
+          expect(task_cache.task_plan).to eq task.task_plan
           expect(task_cache.ecosystem).to eq course.ecosystem
           expect(task_cache.student_ids).to(
             match_array task.taskings.map { |tt| tt.role.student.id }
@@ -451,6 +478,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
           expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
       end
@@ -597,7 +625,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       task_caches.each do |task_cache|
         task = task_cache.task
         expect(task).to be_in tasks
-        expect(task_cache.task_type).to eq (task.task_type)
+        expect(task_cache.task_type).to eq task.task_type
+        expect(task_cache.task_plan).to eq task.task_plan
         expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
         expect(task_cache.teacher_student_ids).to eq []
@@ -610,6 +639,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
         expect(task_cache.due_at).to be_within(1).of(task.due_at)
         expect(task_cache.feedback_at).to be_nil
+        expect(task_cache.withdrawn_at).to be_nil
         expect(task_cache.is_cached_for_period).to eq false
       end
     end
@@ -621,7 +651,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       task_caches.each do |task_cache|
         task = task_cache.task
         expect(task).to be_in tasks
-        expect(task_cache.task_type).to eq (task.task_type)
+        expect(task_cache.task_type).to eq task.task_type
+        expect(task_cache.task_plan).to eq task.task_plan
         expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
         expect(task_cache.teacher_student_ids).to eq []
@@ -634,6 +665,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
         expect(task_cache.due_at).to be_within(1).of(task.due_at)
         expect(task_cache.feedback_at).to be_nil
+        expect(task_cache.withdrawn_at).to be_nil
         expect(task_cache.is_cached_for_period).to eq true
       end
 
@@ -652,7 +684,8 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         is_first_task = task == first_task
 
         expect(task).to be_in tasks
-        expect(task_cache.task_type).to eq (task.task_type)
+        expect(task_cache.task_type).to eq task.task_type
+        expect(task_cache.task_plan).to eq task.task_plan
         expect(task_cache.ecosystem).to eq course.ecosystem
         expect(task_cache.student_ids).to match_array task.taskings.map { |tt| tt.role.student.id }
         expect(task_cache.teacher_student_ids).to eq []
@@ -664,6 +697,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
         expect(task_cache.due_at).to be_within(1).of(task.due_at)
         expect(task_cache.feedback_at).to be_nil
+        expect(task_cache.withdrawn_at).to be_nil
         expect(task_cache.is_cached_for_period).to eq false
       end
     end

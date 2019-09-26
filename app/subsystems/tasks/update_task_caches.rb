@@ -16,7 +16,7 @@ class Tasks::UpdateTaskCaches
     tasks = Tasks::Models::Task
       .where(id: task_ids)
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
-      .preload(:ecosystem, :time_zone, taskings: { role: { student: :period } })
+      .preload(:task_plan, :ecosystem, :time_zone, taskings: { role: { student: :period } })
       .to_a
     tasks_by_id = tasks.index_by(&:id)
     locked_task_ids = tasks_by_id.keys
@@ -33,7 +33,7 @@ class Tasks::UpdateTaskCaches
 
     # Get TaskSteps for each given task
     task_steps = Tasks::Models::TaskStep
-      .select([
+      .select(
         :tasks_task_id,
         :number,
         :first_completed_at,
@@ -42,7 +42,7 @@ class Tasks::UpdateTaskCaches
         :group_type,
         :tasked_type,
         :tasked_id
-      ])
+      )
       .where(tasks_task_id: task_ids)
       .order(:number)
       .to_a
@@ -79,25 +79,25 @@ class Tasks::UpdateTaskCaches
 
     # Get student and course IDs
     students = CourseMembership::Models::Student
-      .select([
+      .select(
         :id,
         :course_profile_course_id,
         :course_membership_period_id,
         '"tasks_taskings"."tasks_task_id"',
         '"user_profiles"."account_id"'
-      ])
+      )
       .joins(role: [ :taskings, profile: :account ])
       .where(role: { taskings: { tasks_task_id: task_ids } })
       .to_a
 
       teacher_students = CourseMembership::Models::TeacherStudent
-        .select([
+        .select(
           :id,
           :course_profile_course_id,
           :course_membership_period_id,
           '"tasks_taskings"."tasks_task_id"',
           '"user_profiles"."account_id"'
-        ])
+        )
         .joins(role: [ :taskings, profile: :account ])
         .where(role: { taskings: { tasks_task_id: task_ids } })
         .to_a
@@ -108,7 +108,7 @@ class Tasks::UpdateTaskCaches
 
     # Get student names (throws an error if faculty_status is not loaded for some reason)
     student_name_by_account_id = OpenStax::Accounts::Account
-      .select([ :id, :username, :first_name, :last_name, :full_name, :faculty_status ])
+      .select(:id, :username, :first_name, :last_name, :full_name, :faculty_status)
       .where(id: account_ids)
       .map { |account| [ account.id, account.name ] }
       .to_h
@@ -135,7 +135,7 @@ class Tasks::UpdateTaskCaches
     # Get all relevant pages
     page_ids = task_steps_by_task_id_and_page_id.values.flat_map(&:keys).compact.uniq
     pages_by_id = Content::Models::Page
-      .select([
+      .select(
         :id,
         :uuid,
         :tutor_uuid,
@@ -144,7 +144,7 @@ class Tasks::UpdateTaskCaches
         :baked_book_location,
         :content_chapter_id,
         :content_all_exercises_pool_id
-      ])
+      )
       .where(id: page_ids)
       .map { |page| Content::Page.new strategy: page.wrap }
       .index_by(&:id)
@@ -155,7 +155,8 @@ class Tasks::UpdateTaskCaches
 
     # Get all relevant courses
     course_ids = task_ids_by_course_id.keys
-    courses = CourseProfile::Models::Course.select(:id).where(id: course_ids)
+    courses = CourseProfile::Models::Course.select(:id)
+                                           .where(id: course_ids)
                                            .preload(course_ecosystems: :ecosystem)
 
     # Cache results per task for Quick Look and Student Performance Forecast
@@ -235,9 +236,11 @@ class Tasks::UpdateTaskCaches
     Tasks::Models::TaskCache.import task_caches, validate: false, on_duplicate_key_update: {
       conflict_target: [ :tasks_task_id, :content_ecosystem_id ],
       columns: [
+        :tasks_task_plan_id,
         :opens_at,
         :due_at,
         :feedback_at,
+        :withdrawn_at,
         :student_ids,
         :teacher_student_ids,
         :student_names,
@@ -262,6 +265,8 @@ class Tasks::UpdateTaskCaches
     teacher_student_ids:,
     student_names:
   )
+    task_plan = task.task_plan
+
     books_array = pages_by_mapped_book_chapter_and_page
       .map do |mapped_book, pages_by_mapped_chapter_and_page|
       chapters_array = pages_by_mapped_chapter_and_page
@@ -287,10 +292,12 @@ class Tasks::UpdateTaskCaches
               free_response: tasked_exercise.free_response,
               selected_answer_id: tasked_exercise.answer_id,
               completed: task_step.completed?,
-              correct: tasked_exercise.is_correct?
+              correct: tasked_exercise.is_correct?,
+              first_completed_at: task_step.first_completed_at,
+              last_completed_at: task_step.last_completed_at
             }
           end
-          completed_exercises_array = exercises_array.select { |exercise| exercise[:completed] }
+          completed_ex_array = exercises_array.select { |exercise| exercise[:completed] }
 
           is_spaced_practice = num_tasked_placeholders == 0 && exercises_array.all? do |ex|
             ex[:group_type] == 'spaced_practice_group'
@@ -306,11 +313,11 @@ class Tasks::UpdateTaskCaches
             num_assigned_steps: task_steps.size,
             num_completed_steps: task_steps.count(&:completed?),
             num_assigned_exercises: exercises_array.size,
-            num_completed_exercises: completed_exercises_array.size,
-            num_correct_exercises: completed_exercises_array.count do |exercise|
-              exercise[:correct]
-            end,
+            num_completed_exercises: completed_ex_array.size,
+            num_correct_exercises: completed_ex_array.count { |ex| ex[:correct] },
             num_assigned_placeholders: num_tasked_placeholders,
+            first_worked_at: completed_ex_array.map { |ex| ex[:first_completed_at] }.compact.min,
+            last_worked_at: completed_ex_array.map { |ex| ex[:last_completed_at] }.compact.max,
             exercises: exercises_array
           }
         end.sort_by { |page| page[:book_location] }
@@ -329,6 +336,8 @@ class Tasks::UpdateTaskCaches
           num_completed_exercises: pages_array.sum { |pg| pg[:num_completed_exercises] },
           num_correct_exercises: pages_array.sum { |pg| pg[:num_correct_exercises] },
           num_assigned_placeholders: pages_array.sum { |pg| pg[:num_assigned_placeholders] },
+          first_worked_at: pages_array.map { |pg| pg[:first_worked_at] }.compact.min,
+          last_worked_at: pages_array.map { |pg| pg[:last_worked_at] }.compact.max,
           pages: pages_array
         }
       end.sort_by { |chapter| chapter[:book_location] }
@@ -344,6 +353,8 @@ class Tasks::UpdateTaskCaches
         num_completed_exercises: chapters_array.sum { |ch| ch[:num_completed_exercises] },
         num_correct_exercises: chapters_array.sum { |ch| ch[:num_correct_exercises] },
         num_assigned_placeholders: chapters_array.sum { |ch| ch[:num_assigned_placeholders] },
+        first_worked_at: chapters_array.map { |ch| ch[:first_worked_at] }.compact.min,
+        last_worked_at: chapters_array.map { |ch| ch[:last_worked_at] }.compact.max,
         chapters: chapters_array
       }
     end.sort_by { |book| book[:title] }
@@ -366,6 +377,7 @@ class Tasks::UpdateTaskCaches
 
     Tasks::Models::TaskCache.new(
       task: task,
+      task_plan: task_plan,
       ecosystem: ecosystem.to_model,
       task_type: task.task_type,
       opens_at: task.opens_at,
@@ -374,6 +386,7 @@ class Tasks::UpdateTaskCaches
       student_ids: student_ids,
       teacher_student_ids: teacher_student_ids,
       student_names: student_names,
+      withdrawn_at: task_plan&.withdrawn_at,
       as_toc: toc,
       is_cached_for_period: false
     )

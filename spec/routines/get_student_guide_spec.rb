@@ -3,7 +3,6 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe GetStudentGuide, type: :routine do
-
   before(:all) do
     @course = FactoryBot.create :course_profile_course
 
@@ -31,7 +30,6 @@ RSpec.describe GetStudentGuide, type: :routine do
   ].each do |role_type, routine_class|
 
     context "#{role_type} role" do
-
       before(:all) do
         DatabaseCleaner.start
 
@@ -42,7 +40,6 @@ RSpec.describe GetStudentGuide, type: :routine do
       after(:all)  { DatabaseCleaner.clean }
 
       context 'without work' do
-
         before(:all) do
           DatabaseCleaner.start
 
@@ -69,11 +66,9 @@ RSpec.describe GetStudentGuide, type: :routine do
             }
           )
         end
-
       end
 
       context 'with work' do
-
         before(:all) do
           DatabaseCleaner.start
 
@@ -125,6 +120,8 @@ RSpec.describe GetStudentGuide, type: :routine do
             questions_answered_count: 2,
             clue: clue_matcher,
             page_ids: [kind_of(Integer)]*2,
+            first_worked_at: kind_of(String),
+            last_worked_at: kind_of(String),
             children: [kind_of(Hash)]*2
           )
 
@@ -137,6 +134,8 @@ RSpec.describe GetStudentGuide, type: :routine do
             questions_answered_count: 7,
             clue: clue_matcher,
             page_ids: [kind_of(Integer)]*4,
+            first_worked_at: kind_of(String),
+            last_worked_at: kind_of(String),
             children: [kind_of(Hash)]*4
           )
         end
@@ -153,7 +152,9 @@ RSpec.describe GetStudentGuide, type: :routine do
               student_count: 1,
               questions_answered_count: 2,
               clue: clue_matcher,
-              page_ids: [kind_of(Integer)]
+              page_ids: [kind_of(Integer)],
+              first_worked_at: kind_of(String),
+              last_worked_at: kind_of(String)
             },
             {
               title: "Representing Acceleration with Equations and Graphs",
@@ -162,7 +163,9 @@ RSpec.describe GetStudentGuide, type: :routine do
               student_count: 1,
               questions_answered_count: 0,
               clue: clue_matcher,
-              page_ids: [kind_of(Integer)]
+              page_ids: [kind_of(Integer)],
+              first_worked_at: nil,
+              last_worked_at: nil
             }
           ]
 
@@ -175,7 +178,9 @@ RSpec.describe GetStudentGuide, type: :routine do
               student_count: 1,
               questions_answered_count: 2,
               clue: clue_matcher,
-              page_ids: [kind_of(Integer)]
+              page_ids: [kind_of(Integer)],
+              first_worked_at: kind_of(String),
+              last_worked_at: kind_of(String)
             },
             {
               title: "Newton's First Law of Motion: Inertia",
@@ -184,7 +189,9 @@ RSpec.describe GetStudentGuide, type: :routine do
               student_count: 1,
               questions_answered_count: 5,
               clue: clue_matcher,
-              page_ids: [kind_of(Integer)]
+              page_ids: [kind_of(Integer)],
+              first_worked_at: kind_of(String),
+              last_worked_at: kind_of(String)
             },
             {
               title: "Newton's Second Law of Motion",
@@ -193,7 +200,9 @@ RSpec.describe GetStudentGuide, type: :routine do
               student_count: 1,
               questions_answered_count: 0,
               clue: clue_matcher,
-              page_ids: [kind_of(Integer)]
+              page_ids: [kind_of(Integer)],
+              first_worked_at: nil,
+              last_worked_at: nil
             },
             {
               title: "Newton's Third Law of Motion",
@@ -202,15 +211,13 @@ RSpec.describe GetStudentGuide, type: :routine do
               student_count: 1,
               questions_answered_count: 0,
               clue: clue_matcher,
-              page_ids: [kind_of(Integer)]
+              page_ids: [kind_of(Integer)],
+              first_worked_at: nil,
+              last_worked_at: nil
             }
           ]
         end
-
       end
-
     end
-
   end
-
 end

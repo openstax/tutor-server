@@ -63,8 +63,12 @@ class CreateStudentHistory
     periods = [periods].flatten.compact
     run(:distribute_tasks, task_plan: create_ireading_task_plan(ecosystem, course, periods))
 
-    task_plan = create_homework_task_plan(ecosystem, course, periods)
-    tasks = run(:distribute_tasks, task_plan: task_plan).outputs.tasks
+    withdrawn = create_homework_task_plan(ecosystem, course, periods, 3, 2, 0)
+    run(:distribute_tasks, task_plan: withdrawn)
+    withdrawn.destroy!
+
+    homework = create_homework_task_plan(ecosystem, course, periods, 2, 1, 0)
+    tasks = run(:distribute_tasks, task_plan: homework).outputs.tasks
     tasks.each { |task| answer_correctly(task, 2) }
   end
 
@@ -123,8 +127,8 @@ class CreateStudentHistory
     end
   end
 
-  def create_homework_task_plan(ecosystem, course, periods)
-    exercise_ids = [ecosystem.chapters[2].pages[1].exercises[0].id.to_s]
+  def create_homework_task_plan(ecosystem, course, periods, chapter, page, exercise)
+    exercise_ids = [ecosystem.chapters[chapter].pages[page].exercises[exercise].id.to_s]
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,
