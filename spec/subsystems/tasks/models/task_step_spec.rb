@@ -47,13 +47,9 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
   end
 
   context "group types" do
-    it "is created with 'unknown_group' group type" do
-      expect(task_step.unknown_group?).to be_truthy
-    end
-
-    it "supports the 'core_group' group type" do
-      task_step.core_group!
-      expect(task_step.core_group?).to be_truthy
+    it "supports the 'fixed_group' group type" do
+      task_step.fixed_group!
+      expect(task_step.fixed_group?).to be_truthy
     end
 
     it "supports the 'spaced_practice_group' group type" do
@@ -70,7 +66,7 @@ RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
   it "converts its group type to a name" do
     name_by_type = {
       "unknown_group"         => "unknown",
-      "core_group"            => "core",
+      "fixed_group"           => "fixed",
       "spaced_practice_group" => "spaced practice",
       "personalized_group"    => "personalized",
       "recovery_group"        => "recovery"

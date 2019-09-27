@@ -1,4 +1,4 @@
-# Copyright 2011-2014 Rice University. Licensed under the Affero General Public
+# Copyright 2011-2019 Rice University. Licensed under the Affero General Public
 # License version 3 or later.  See the COPYRIGHT file for details.
 
 source 'https://rubygems.org'
@@ -306,7 +306,7 @@ group :test do
 
   gem 'whenever-test'
 
-  gem 'chromedriver-helper'
+  gem 'webdrivers'
 
   gem 'capybara'
   gem 'capybara-selenium'

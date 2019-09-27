@@ -73,6 +73,10 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium d
 
   context 'with all core steps completed' do
     before do
+      # Ensure we don't suddenly get more incomplete core exercises
+      # once the personalized placeholders are populated
+      @task.personalized_task_steps.each { |task_step| task_step.update_attribute :is_core, false }
+
       # We explicitly avoid using MarkTaskStepCompleted here
       # so the placeholder steps are not immediately populated
       @task.core_task_steps.each do |task_step|

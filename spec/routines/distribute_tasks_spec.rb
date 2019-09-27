@@ -54,7 +54,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
     context 'with no teacher_student roles' do
       it 'distributes the steps' do
-        expected_step_types = ['core_group'] * 6 + ['spaced_practice_group'] * 3
+        expected_step_types = ['fixed_group'] * 6 + ['spaced_practice_group'] * 3
 
         results = DistributeTasks.call(task_plan: homework_plan, preview: true)
         expect(results.errors).to be_empty
@@ -76,7 +76,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       before { teacher_student_role }
 
       it 'creates a preview and distributes the steps' do
-        expected_step_types = ['core_group'] * 6 + ['spaced_practice_group'] * 3
+        expected_step_types = ['fixed_group'] * 6 + ['spaced_practice_group'] * 3
 
         results = DistributeTasks.call(task_plan: homework_plan, preview: true)
         expect(results.errors).to be_empty
@@ -165,7 +165,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             original_build_tasks = DummyAssistant.instance_method(:build_tasks)
             allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
               tasks = original_build_tasks.bind(receiver).call
-              tasks.each{ |task| task.task_type = :reading }
+              tasks.each { |task| task.task_type = :reading }
             end
 
             expect(task_plan.tasks).to be_empty
@@ -207,7 +207,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             original_build_tasks = DummyAssistant.instance_method(:build_tasks)
             allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
               tasks = original_build_tasks.bind(receiver).call
-              tasks.each{ |task| task.task_type = :reading }
+              tasks.each { |task| task.task_type = :reading }
             end
 
             expect(task_plan.tasks).to be_empty

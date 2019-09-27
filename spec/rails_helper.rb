@@ -73,6 +73,25 @@ Capybara.javascript_driver = :selenium_chrome_headless
 
 Capybara.asset_host = 'http://localhost:3001'
 
+# Download and cache the webdriver now so it doesn't interfere with VCR later
+# Use a lockfile so we don't get errors due to downloading it multiple times concurrently
+File.open('.webdrivers_update', File::RDWR|File::CREAT, 0640) do |file|
+  file.flock File::LOCK_EX
+  update_time = Time.parse(file.read) rescue nil
+  current_time = Time.current
+
+  if update_time.nil? || current_time - update_time > 1.day
+    Webdrivers::Chromedriver.update
+
+    file.rewind
+    file.write current_time.iso8601
+    file.flush
+    file.truncate file.pos
+  end
+ensure
+  file.flock File::LOCK_UN
+end
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end

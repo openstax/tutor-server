@@ -11,6 +11,8 @@ RSpec.describe Api::V1::Tasks::TaskedExternalUrlRepresenter, type: :representer 
     expect(JSON.parse(json)).to include({
       id: task_step.id,
       type: 'external_url',
+      group: task_step.group_name,
+      is_core: task_step.is_core,
       title: task_step.tasked.title,
       external_url: task_step.tasked.url,
     }.stringify_keys)

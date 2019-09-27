@@ -8,7 +8,8 @@ RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, type: :representer do
     expect(JSON.parse(json)).to include({
       id: task_step.id,
       type: "reading",
-      group: 'unknown',
+      group: task_step.group_name,
+      is_core: task_step.is_core,
       title: task_step.tasked.title,
       chapter_section: task_step.tasked.book_location,
       is_completed: false,
@@ -27,5 +28,4 @@ RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, type: :representer do
       has_learning_objectives: task_step.tasked.has_learning_objectives?,
     }.stringify_keys)
   end
-
 end

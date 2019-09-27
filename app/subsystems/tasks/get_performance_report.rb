@@ -214,7 +214,7 @@ module Tasks
 
     def filter_and_sort_tasking_plans(tasks, course, period)
       tasks.map(&:task_plan).select(&:is_published?).flat_map do |task_plan|
-        task_plan.tasking_plans.to_a.select do |tp|
+        task_plan.tasking_plans.filter do |tp|
           case tp.target_type
           when CourseProfile::Models::Course.name
             tp.target_id == course.id

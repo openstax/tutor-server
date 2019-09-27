@@ -1,5 +1,4 @@
 class DistributeTasks
-
   lev_routine use_jobba: true
 
   uses_routine IndividualizeTaskingPlans, as: :individualize_tasking_plans
@@ -124,5 +123,4 @@ class DistributeTasks
 
     OpenStax::Biglearn::Api.create_update_assignments(requests)
   end
-
 end

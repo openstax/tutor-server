@@ -6,7 +6,7 @@ RSpec.describe Tasks::IsReady, type: :routine do
     @ready_task_1 = FactoryBot.create(
       :tasks_tasked_placeholder, placeholder_type: :exercise_type
     ).task_step.tap do |ts|
-      ts.update_attribute :group_type, :core_group
+      ts.update_attribute :is_core, true
     end.task.tap do |task|
       task.update_attribute :pes_are_assigned, true
     end
@@ -23,7 +23,7 @@ RSpec.describe Tasks::IsReady, type: :routine do
     @biglearn_task_2 = FactoryBot.create(
       :tasks_tasked_placeholder, placeholder_type: :exercise_type
     ).task_step.tap do |ts|
-      ts.update_attribute :group_type, :core_group
+      ts.update_attribute :is_core, true
     end.task
 
     @requests = [@biglearn_task_1, @biglearn_task_2].map do |task|

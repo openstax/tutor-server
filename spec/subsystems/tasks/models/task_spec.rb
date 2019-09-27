@@ -92,43 +92,50 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     let(:core_step1) do
       FactoryBot.build(:tasks_tasked_reading, skip_task: true).task_step.tap do |step|
         step.task = task
-        step.group_type = :core_group
+        step.group_type = :fixed_group
+        step.is_core = true
       end
     end
     let(:core_step2) do
       FactoryBot.build(:tasks_tasked_reading, skip_task: true).task_step.tap do |step|
         step.task = task
-        step.group_type = :core_group
+        step.group_type = :fixed_group
+        step.is_core = true
       end
     end
     let(:core_step3) do
       FactoryBot.build(:tasks_tasked_reading, skip_task: true).task_step.tap do |step|
         step.task = task
-        step.group_type = :core_group
+        step.group_type = :fixed_group
+        step.is_core = true
       end
     end
     let(:personalized_step1) do
       FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step.tap do |step|
         step.task = task
         step.group_type = :personalized_group
+        step.is_core = true
       end
     end
     let(:personalized_step2) do
       FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step.tap do |step|
         step.task = task
         step.group_type = :personalized_group
+        step.is_core = true
       end
     end
     let(:spaced_practice_step1) do
       FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step.tap do |step|
         step.task = task
         step.group_type = :spaced_practice_group
+        step.is_core = false
       end
     end
     let(:spaced_practice_step2) do
       FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step.tap do |step|
         step.task = task
         step.group_type = :spaced_practice_group
+        step.is_core = false
       end
     end
 
@@ -141,12 +148,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       task.save!
     end
 
-    it 'returns core task steps' do
-      core_steps = task.core_task_steps
+    it 'returns fixed task steps' do
+      fixed_steps = task.fixed_task_steps
 
-      expect(core_steps.size).to eq(3)
+      expect(fixed_steps.size).to eq(3)
       [core_step1, core_step2, core_step3].each do |step|
-        expect(core_steps).to include(step)
+        expect(fixed_steps).to include(step)
       end
     end
 
@@ -165,6 +172,24 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(spaced_practice_steps.size).to eq(2)
       [spaced_practice_step1, spaced_practice_step2].each do |step|
         expect(spaced_practice_steps).to include(step)
+      end
+    end
+
+    it 'returns core task steps' do
+      core_steps = task.core_task_steps
+
+      expect(core_steps.size).to eq(5)
+      [core_step1, core_step2, core_step3, personalized_step1, personalized_step2].each do |step|
+        expect(core_steps).to include(step)
+      end
+    end
+
+    it 'returns dynamic task steps' do
+      dynamic_steps = task.dynamic_task_steps
+
+      expect(dynamic_steps.size).to eq(2)
+      [spaced_practice_step1, spaced_practice_step2].each do |step|
+        expect(dynamic_steps).to include(step)
       end
     end
 
@@ -210,43 +235,45 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   end
 
   context "update step counts" do
-    let(:step_1) do
-      FactoryBot.build(:tasks_tasked_reading).task_step
-    end
-    let(:step_2) do
-      FactoryBot.build(:tasks_tasked_reading).task_step
-    end
-
-    let(:completed_step_1) do
-      FactoryBot.build(:tasks_tasked_reading).task_step.tap do |step|
-        step.first_completed_at = Time.current
-        step.last_completed_at = Time.current
-      end
-    end
-    let(:completed_step_2) do
-      FactoryBot.build(:tasks_tasked_reading).task_step.tap do |step|
-        step.first_completed_at = Time.current
-        step.last_completed_at = Time.current
-      end
-    end
-
     let(:core_step_1) do
-      FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.group_type = :core_group }
+      FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.is_core = true }
     end
     let(:core_step_2) do
-      FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.group_type = :core_group }
+      FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.is_core = true }
     end
 
     let(:completed_core_step_1) do
       FactoryBot.build(:tasks_tasked_reading).task_step.tap do |step|
-        step.group_type = :core_group
+        step.is_core = true
         step.first_completed_at = Time.current
         step.last_completed_at = Time.current
       end
     end
     let(:completed_core_step_2) do
       FactoryBot.build(:tasks_tasked_reading).task_step.tap do |step|
-        step.group_type = :core_group
+        step.is_core = true
+        step.first_completed_at = Time.current
+        step.last_completed_at = Time.current
+      end
+    end
+
+    let(:dynamic_step_1) do
+      FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.is_core = false }
+    end
+    let(:dynamic_step_2) do
+      FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.is_core = false }
+    end
+
+    let(:completed_dynamic_step_1) do
+      FactoryBot.build(:tasks_tasked_reading).task_step.tap do |step|
+        step.is_core = false
+        step.first_completed_at = Time.current
+        step.last_completed_at = Time.current
+      end
+    end
+    let(:completed_dynamic_step_2) do
+      FactoryBot.build(:tasks_tasked_reading).task_step.tap do |step|
+        step.is_core = false
         step.first_completed_at = Time.current
         step.last_completed_at = Time.current
       end
@@ -297,26 +324,26 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       end
     end
 
-    let(:placeholder_step_1) do
+    let(:core_placeholder_step) do
       FactoryBot.build(:tasks_tasked_placeholder).tap do |tp|
         tp.placeholder_type = :unknown_type
-      end.task_step
+      end.task_step.tap { |step| step.is_core = true }
     end
-    let(:placeholder_step_2) do
+    let(:core_placeholder_exercise_step) do
       FactoryBot.build(:tasks_tasked_placeholder).tap do |tp|
-        tp.placeholder_type = :unknown_type
-      end.task_step
+        tp.placeholder_type = :exercise_type
+      end.task_step.tap { |step| step.is_core = true }
     end
 
-    let(:placeholder_exercise_step_1) do
+    let(:dynamic_placeholder_step) do
       FactoryBot.build(:tasks_tasked_placeholder).tap do |tp|
-        tp.placeholder_type = :exercise_type
-      end.task_step
+        tp.placeholder_type = :unknown_type
+      end.task_step.tap { |step| step.is_core = false }
     end
-    let(:placeholder_exercise_step_2) do
+    let(:dynamic_placeholder_exercise_step) do
       FactoryBot.build(:tasks_tasked_placeholder).tap do |tp|
         tp.placeholder_type = :exercise_type
-      end.task_step.tap { |ts| ts.group_type = :spaced_practice_group }
+      end.task_step.tap { |step| step.is_core = false }
     end
 
     context "steps count" do
@@ -326,7 +353,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
 
         it "works with multiple steps" do
-          task.task_steps = [step_1, step_2]
+          task.task_steps = [core_step_1, dynamic_step_1]
           task.save!
           task.reload
 
@@ -340,7 +367,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
 
         it "works with multiple completed steps" do
-          task.task_steps = [completed_step_1, step_1, completed_step_2]
+          task.task_steps = [completed_core_step_1, core_step_1, completed_dynamic_step_1]
           task.save!
           task.reload
 
@@ -354,7 +381,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
 
         it "works with multiple core steps" do
-          task.task_steps = [core_step_1, step_1, core_step_2]
+          task.task_steps = [core_step_1, dynamic_step_1, core_step_2]
           task.save!
           task.reload
 
@@ -368,7 +395,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
 
         it "works with multiple completed core steps" do
-          task.task_steps = [completed_core_step_1, step_1, core_step_1, completed_core_step_2]
+          task.task_steps = [
+            completed_core_step_1,
+            dynamic_step_1,
+            core_step_1,
+            completed_core_step_2
+          ]
           task.save!
           task.reload
 
@@ -382,7 +414,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
 
         it "works with multiple exercise steps" do
-          task.task_steps = [exercise_step_1, step_1, exercise_step_2]
+          task.task_steps = [exercise_step_1, core_step_1, exercise_step_2]
           task.save!
           task.reload
 
@@ -397,7 +429,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
         it "works with multiple completed exercise steps" do
           task.task_steps = [
-            completed_exercise_step_1, exercise_step_1, step_1, completed_exercise_step_2
+            completed_exercise_step_1, exercise_step_1, dynamic_step_1, completed_exercise_step_2
           ]
           task.save!
           task.reload
@@ -428,7 +460,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
 
         it "works with multiple placeholder steps" do
-          task.task_steps = [placeholder_step_1, step_1, placeholder_step_2]
+          task.task_steps = [core_placeholder_step, core_step_1, dynamic_placeholder_exercise_step]
           task.save!
           task.reload
 
@@ -443,7 +475,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
         it "works with multiple placeholder exercise steps" do
           task.task_steps = [
-            placeholder_exercise_step_1, placeholder_step_1, placeholder_exercise_step_2
+            core_placeholder_exercise_step, core_placeholder_step, dynamic_placeholder_exercise_step
           ]
           task.save!
           task.reload
@@ -452,19 +484,21 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "core and personalized placeholder exercise steps count" do
+      context "core placeholder exercise steps count" do
         it "works with no steps" do
-          expect(task.core_and_personalized_placeholder_exercise_steps_count).to eq(0)
+          expect(task.core_placeholder_exercise_steps_count).to eq(0)
         end
 
         it "works with multiple placeholder exercise steps" do
           task.task_steps = [
-            placeholder_exercise_step_1, placeholder_step_1, placeholder_exercise_step_2
+            dynamic_placeholder_step,
+            core_placeholder_exercise_step,
+            dynamic_placeholder_exercise_step
           ]
           task.save!
           task.reload
 
-          expect(task.core_and_personalized_placeholder_exercise_steps_count).to eq(1)
+          expect(task.core_placeholder_exercise_steps_count).to eq(1)
         end
       end
 
@@ -493,12 +527,16 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       it "updates counts after any change to the task" do
         tasked_to = [ FactoryBot.create(:entity_role) ]
         task = FactoryBot.create :tasks_task, tasked_to: tasked_to, step_types: [
-          :tasks_tasked_exercise, :tasks_tasked_exercise,
-          :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_placeholder
+          :tasks_tasked_exercise,
+          :tasks_tasked_exercise,
+          :tasks_tasked_exercise,
+          :tasks_tasked_exercise,
+          :tasks_tasked_placeholder
         ]
         exercise_ids = [task.tasked_exercises.first.content_exercise_id]
         task.task_plan.update_attribute :settings, { 'exercise_ids' => exercise_ids }
-        task.task_steps.first(4).each { |ts| ts.update_attribute :group_type, :core_group }
+        task.task_steps.first(4).each { |ts| ts.update_attribute :is_core, true }
+        task.task_steps.last.update_attribute :is_core, false
 
         expect(task.completed_steps_count).to eq 0
         expect(task.completed_exercise_steps_count).to eq 0

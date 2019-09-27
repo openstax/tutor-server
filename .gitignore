@@ -71,4 +71,5 @@ pilfer.log
 # Ignore asset stuff
 public/assets/**
 
-.byebug_history
+# Ignore webdrivers lock file
+.webdrivers_update

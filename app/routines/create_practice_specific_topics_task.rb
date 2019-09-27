@@ -32,6 +32,7 @@ class CreatePracticeSpecificTopicsTask
       task_step = Tasks::Models::TaskStep.new(
         tasked: Tasks::Models::TaskedPlaceholder.exercise_type.new,
         group_type: :personalized_group,
+        is_core: true,
         page: page.to_model
       )
 

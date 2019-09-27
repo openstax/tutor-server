@@ -5,6 +5,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     instance_double(Tasks::Models::TaskStep).tap do |step|
       allow(step).to receive(:id).and_return(15)
       allow(step).to receive(:group_name).and_return('Some group')
+      allow(step).to receive(:is_core).and_return(true)
       allow(step).to receive(:completed?).and_return(false)
       allow(step).to receive(:feedback_available?).and_return(false)
       allow(step).to receive(:labels).and_return([])
@@ -84,6 +85,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     it "has the correct 'group'" do
       expect(representation).to include("group" => 'Some group')
+    end
+
+    it "has the correct 'is_core'" do
+      expect(representation).to include("is_core" => true)
     end
 
     it "has 'labels'" do

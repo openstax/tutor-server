@@ -30,8 +30,11 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
 
   def build_tasks
     individualized_tasking_plans.map do |tasking_plan|
-      build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id,
-                       individualized_tasking_plan: tasking_plan)
+      build_extra_task(
+        pages: @pages,
+        page_id_to_snap_lab_id: @page_id_to_snap_lab_id,
+        individualized_tasking_plan: tasking_plan
+      )
     end
   end
 
@@ -49,15 +52,15 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
 
     page_ids = page_to_snap_lab.keys
 
-    {
-      pages: ecosystem.pages_by_ids(page_ids),
-      page_id_to_snap_lab_id: page_to_snap_lab
-    }
+    { pages: ecosystem.pages_by_ids(page_ids), page_id_to_snap_lab_id: page_to_snap_lab }
   end
 
   def build_extra_task(pages:, page_id_to_snap_lab_id:, individualized_tasking_plan:)
-    task = build_task(type: :extra, default_title: 'Extra Assignment',
-                      individualized_tasking_plan: individualized_tasking_plan)
+    task = build_task(
+      type: :extra,
+      default_title: 'Extra Assignment',
+      individualized_tasking_plan: individualized_tasking_plan
+    )
 
     reset_used_exercises
 
@@ -68,8 +71,12 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
         # the snap lab id is "fs-id1164355841632"
         snap_lab_id = snap_lab[:id]
         if page_id_to_snap_lab_id[page.id.to_s].include?(snap_lab_id)
-          task_fragments(task: task, fragments: snap_lab[:fragments],
-                         page_title: snap_lab[:title], page: page)
+          task_fragments(
+            task: task,
+            fragments: snap_lab[:fragments],
+            page_title: snap_lab[:title],
+            page: page
+          )
         end
       end
     end

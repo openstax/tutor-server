@@ -33,6 +33,7 @@ class CreatePracticeWorstTopicsTask
     exercises.each do |exercise|
       run(:task_exercise, exercise: exercise, task: @task) do |step|
         step.group_type = :personalized_group
+        step.is_core = true
         step.spy = exercise_spy_info.fetch(exercise.uuid, {})
       end
     end.tap do

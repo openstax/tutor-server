@@ -1,5 +1,4 @@
 class Tasks::PopulatePlaceholderSteps
-
   lev_routine transaction: :read_committed, express_output: :task
 
   uses_routine GetTaskCorePageIds, as: :get_task_core_page_ids
@@ -43,7 +42,7 @@ class Tasks::PopulatePlaceholderSteps
     end
 
     taskings = task.taskings
-    role = taskings.first.try!(:role)
+    role = taskings.first&.role
 
     # To prevent "skim-filling", skip populating
     # spaced practice if not all core problems have been completed
@@ -125,8 +124,9 @@ class Tasks::PopulatePlaceholderSteps
         ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
         last_step = page_task_steps.last
-        max_page_step_number = last_step.try!(:number) || 0
-        labels = last_step.try!(:labels)
+        max_page_step_number = last_step&.number || 0
+        labels = last_step&.labels
+        is_core = last_step&.is_core || false
 
         # Iterate through all the exercises and steps
         # Add/remove steps as needed
@@ -147,6 +147,7 @@ class Tasks::PopulatePlaceholderSteps
                 task: task,
                 number: next_step_number,
                 group_type: group_type,
+                is_core: is_core,
                 content_page_id: exercise.content_page_id,
                 labels: labels
               )
@@ -183,7 +184,7 @@ class Tasks::PopulatePlaceholderSteps
       end
     else
       # Tutor controls how many PEs/SPEs
-      placeholder_steps = task.task_steps.to_a.select do |task_step|
+      placeholder_steps = task.task_steps.filter do |task_step|
         task_step.placeholder? && task_step.group_type == group_type.to_s
       end
       if placeholder_steps.empty?
@@ -283,7 +284,8 @@ class Tasks::PopulatePlaceholderSteps
       end
 
       Tasks::Models::TaskStep.import(
-          task_steps_to_upsert.sort_by(&:number).reverse, validate: false, on_duplicate_key_update: {
+          task_steps_to_upsert.sort_by(&:number).reverse, validate: false,
+                                                          on_duplicate_key_update: {
             conflict_target: [ :id ], columns: [
               :tasked_type,
               :tasked_id,
@@ -291,6 +293,7 @@ class Tasks::PopulatePlaceholderSteps
               :first_completed_at,
               :last_completed_at,
               :group_type,
+              :is_core,
               :spy,
               :content_page_id
             ]
@@ -305,5 +308,4 @@ class Tasks::PopulatePlaceholderSteps
 
     [ task, !!result[:accepted] ]
   end
-
 end

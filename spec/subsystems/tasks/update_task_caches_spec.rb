@@ -358,7 +358,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         course.course_ecosystems.delete_all :delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          student_task_ids = @task_plan.tasks.to_a.select do |task|
+          student_task_ids = @task_plan.tasks.filter do |task|
             task.taskings.any? { |tasking| tasking.role.student.present? }
           end.map(&:id)
           expect(task_ids).to match_array(student_task_ids)
@@ -533,7 +533,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         course.course_ecosystems.delete_all :delete_all
 
         expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          student_task_ids = @task_plan.tasks.to_a.select do |task|
+          student_task_ids = @task_plan.tasks.filter do |task|
             task.taskings.any? { |tasking| tasking.role.student.present? }
           end.map(&:id)
           expect(task_ids).to match_array(student_task_ids)

@@ -85,7 +85,7 @@ class Tasks::Models::Task < ApplicationRecord
     steps = steps.to_a
 
     completed_steps = steps.select(&:completed?)
-    core_steps = steps.select(&:core_group?)
+    core_steps = steps.select(&:is_core?)
     completed_core_steps = completed_steps & core_steps
     exercise_steps = steps.select(&:exercise?)
     completed_exercise_steps = completed_steps & exercise_steps
@@ -111,8 +111,7 @@ class Tasks::Models::Task < ApplicationRecord
     end
     self.placeholder_steps_count = placeholder_steps.count
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
-    self.core_and_personalized_placeholder_exercise_steps_count = \
-      placeholder_exercise_steps.count { |pe| pe.core_group? || pe.personalized_group? }
+    self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
 
     self
   end
@@ -187,8 +186,9 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def core_task_steps_completed?
-    task_steps.loaded? ? task_steps.select(&:core_group?).all?(&:completed?) :
-                         !task_steps.core_group.incomplete.exists?
+    core_task_steps.all?(&:completed?)
+    # Revert to the following line once the is_core background migration is complete:
+    # task_steps.loaded? ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
   end
 
   def hide(current_time: Time.current)
@@ -219,22 +219,27 @@ class Tasks::Models::Task < ApplicationRecord
 
   def core_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:core_group?)
+    task_steps.filter(&:is_core?)
   end
 
-  def non_core_task_steps(preload_tasked: false)
+  def dynamic_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a - self.core_task_steps
+    task_steps.to_a.reject(&:is_core?)
   end
 
-  def spaced_practice_task_steps(preload_tasked: false)
+  def fixed_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:spaced_practice_group?)
+    task_steps.filter(&:fixed_group?)
   end
 
   def personalized_task_steps(preload_tasked: false)
     task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
-    task_steps.to_a.select(&:personalized_group?)
+    task_steps.filter(&:personalized_group?)
+  end
+
+  def spaced_practice_task_steps(preload_tasked: false)
+    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+    task_steps.filter(&:spaced_practice_group?)
   end
 
   def handle_task_step_completion!(completed_at: Time.current)

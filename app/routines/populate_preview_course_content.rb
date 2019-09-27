@@ -69,7 +69,7 @@ class PopulatePreviewCourseContent
     return if book.nil?
 
     # Use only chapters that have some homework exercises
-    candidate_chapters = book.chapters.to_a.select do |chapter|
+    candidate_chapters = book.chapters.filter do |chapter|
       chapter.pages.any? { |page| page.homework_core_pool.content_exercise_ids.any? }
     end
     num_chapters =

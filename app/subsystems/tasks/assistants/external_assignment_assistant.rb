@@ -27,7 +27,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
     task = build_task(type: :external,
                       default_title: 'External Assignment',
                       individualized_tasking_plan: individualized_tasking_plan)
-    step = Tasks::Models::TaskStep.new(task: task)
+    step = Tasks::Models::TaskStep.new(task: task, group_type: :fixed_group, is_core: true)
     step.tasked = tasked_external_url(
       task_step: step, role: role, url: task_plan.settings['external_url']
     )

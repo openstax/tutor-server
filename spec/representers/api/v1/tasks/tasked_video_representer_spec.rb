@@ -8,6 +8,8 @@ RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, type: :representer do
     expect(JSON.parse(json)).to include({
       id: task_step.id,
       type: 'video',
+      group: task_step.group_name,
+      is_core: task_step.is_core,
       title: task_step.tasked.title,
       preview: task_step.tasked.content_preview,
       url: task_step.tasked.url,

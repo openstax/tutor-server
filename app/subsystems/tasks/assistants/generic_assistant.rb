@@ -54,13 +54,14 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def add_exercise_step!(
-    task:, exercise:, group_type:, title: nil, labels: nil, fragment_index: nil
+    task:, exercise:, group_type:, is_core:, title: nil, labels: nil, fragment_index: nil
   )
     labels ||= []
     @used_exercise_numbers << exercise.number
 
     TaskExercise.call(task: task, exercise: exercise, title: title) do |step|
       step.group_type = group_type
+      step.is_core = is_core
       step.labels = labels
       step.fragment_index = fragment_index
     end.outputs.task_step
@@ -189,7 +190,7 @@ class Tasks::Assistants::GenericAssistant
     ChooseExercises[exercises: filtered_exercises, count: count, history: history]
   end
 
-  def add_placeholder_steps!(task:, group_type:, count:, labels: [], page: nil)
+  def add_placeholder_steps!(task:, group_type:, is_core:, count:, labels: [], page: nil)
     count.times do
       task_step = Tasks::Models::TaskStep.new(
         task: task, labels: labels, page: page.try!(:to_model)
@@ -198,6 +199,7 @@ class Tasks::Assistants::GenericAssistant
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
       task_step.group_type = group_type
+      task_step.is_core = is_core
       task.task_steps << task_step
     end
 

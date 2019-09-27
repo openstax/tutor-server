@@ -4,7 +4,6 @@ require 'vcr_helper'
 RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
                                                      vcr: VCR_OPTS,
                                                      speed: :medium do
-
   before(:all) do
     @assistant = \
       FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
@@ -19,6 +18,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       {
         labels: [ 'review' ],
         group_type: 'spaced_practice_group',
+        is_core: false,
         klass: Tasks::Models::TaskedPlaceholder
       }
     ] * 3
@@ -59,8 +59,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let(:intro_step_gold_data) do
       {
-        group_type: 'core_group',
         klass: Tasks::Models::TaskedReading,
+        group_type: 'fixed_group',
+        is_core: true,
         title: "Forces and Newton's Laws of Motion",
         related_content: [
           {
@@ -78,6 +79,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         intro_step_gold_data,
         {
           klass: Tasks::Models::TaskedReading,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Force",
           related_content: [
             { 'title' => "Force", 'book_location' => [8, 2], 'baked_book_location' => [] }
@@ -145,7 +148,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task_steps.count).to eq(task_step_gold_data.count)
         task_steps.each_with_index do |task_step, ii|
-          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type])
+          expect(task_step.is_core).to eq(task_step_gold_data[ii][:is_core])
           expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
           expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
@@ -212,14 +216,15 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.personalized_task_steps.count).to eq 0
 
         task_step = task_steps.first
-        expect(task_step.group_type).to eq(intro_step_gold_data[:group_type] || 'core_group')
+        expect(task_step.group_type).to eq(intro_step_gold_data[:group_type])
+        expect(task_step.is_core).to eq(task_step_gold_data[ii][:is_core])
         expect(task_step.tasked.class).to eq(intro_step_gold_data[:klass])
 
         expect(task_step.tasked.title).to eq(intro_step_gold_data[:title])
         expect(task_step.related_content).to eq(intro_step_gold_data[:related_content])
         expect(task_step.related_exercise_ids).to eq []
 
-        expect(task_step.core_group?).to eq true
+        expect(task_step.is_core?).to eq true
       end
 
       expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
@@ -239,26 +244,36 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       [
         {
           klass: Tasks::Models::TaskedReading,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Newton's First Law of Motion: Inertia",
           fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedVideo,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Newton’s First Law of Motion",
           fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedExercise,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
           fragment_index: 1
         },
         {
           klass: Tasks::Models::TaskedInteractive,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Virtual Physics: Forces and Motion: Basics",
           fragment_index: 2
         },
         {
           klass: Tasks::Models::TaskedExercise,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
           fragment_index: 3
         }
@@ -340,7 +355,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
-          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type])
+          expect(task_step.is_core).to eq(task_step_gold_data[ii][:is_core])
           expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
           expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
@@ -429,32 +445,42 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       [
         {
           klass: Tasks::Models::TaskedReading,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Newton's Second Law of Motion",
           related_exercise_ids: [],
           fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedVideo,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Newton’s Second Law of Motion",
           related_exercise_ids: [],
           fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedExercise,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
           related_exercise_ids: [],
           fragment_index: 1
         },
         {
           klass: Tasks::Models::TaskedReading,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
           related_exercise_ids: [],
           fragment_index: 2
         },
         {
           klass: Tasks::Models::TaskedExercise,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
-          related_exercise_ids: page.reload.reading_context_pool.exercises.to_a.select do |exercise|
+          related_exercise_ids: page.reload.reading_context_pool.exercises.filter do |exercise|
             exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
           end.map(&:id),
           fragment_index: 3
@@ -475,7 +501,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
-          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+          expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type])
+          expect(task_step.is_core).to eq(task_step_gold_data[ii][:is_core])
           expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
           expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
@@ -554,7 +581,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
     end
 
-    let(:task_plan) {
+    let(:task_plan) do
       FactoryBot.build(
         :tasks_task_plan,
         assistant: @assistant,
@@ -562,7 +589,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         settings: { 'page_ids' => [page.id.to_s] },
         num_tasking_plans: 0
       )
-    }
+    end
 
     let(:course) do
       task_plan.owner.tap{ |course| AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
@@ -573,9 +600,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let(:taskee_user) do
       FactoryBot.create(:user_profile).tap do |profile|
         strategy = User::Strategies::Direct::User.new(profile)
-        user = User::User.new(strategy: strategy)
-        AddUserAsPeriodStudent.call(user: user, period: period)
-        user
+        User::User.new(strategy: strategy).tap do |user|
+          AddUserAsPeriodStudent.call(user: user, period: period)
+        end
       end
     end
 
@@ -595,35 +622,44 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       [
         {
           klass: Tasks::Models::TaskedReading,
+          group_type: 'fixed_group',
+          is_core: true,
           title: "Newton's Flaming Laser Sword",
           fragment_index: 0
         },
         {
           klass: Tasks::Models::TaskedExercise,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
           fragment_index: 2
         },
         {
           klass: Tasks::Models::TaskedExercise,
+          group_type: 'fixed_group',
+          is_core: true,
           title: nil,
           fragment_index: 4
         },
         {
           klass: Tasks::Models::TaskedPlaceholder,
-          title: nil,
           group_type: 'spaced_practice_group',
+          is_core: false,
+          title: nil,
           labels: [ 'review' ]
         },
         {
           klass: Tasks::Models::TaskedPlaceholder,
-          title: nil,
           group_type: 'spaced_practice_group',
+          is_core: false,
+          title: nil,
           labels: [ 'review' ]
         },
         {
           klass: Tasks::Models::TaskedPlaceholder,
-          title: nil,
           group_type: 'spaced_practice_group',
+          is_core: false,
+          title: nil,
           labels: [ 'review' ]
         }
       ]
@@ -667,7 +703,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       expect(task_steps.count).to eq task_step_gold_data.count
       task_steps.each_with_index do |task_step, ii|
-        expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type] || 'core_group')
+        expect(task_step.group_type).to eq(task_step_gold_data[ii][:group_type])
+        expect(task_step.is_core).to eq(task_step_gold_data[ii][:is_core])
         expect(task_step.labels).to eq(task_step_gold_data[ii][:labels] || [])
         expect(task_step.fragment_index).to eq(task_step_gold_data[ii][:fragment_index])
         expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
@@ -676,7 +713,5 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
       end
     end
-
   end
-
 end

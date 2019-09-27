@@ -56,7 +56,7 @@ class SetupPerformanceReportData
       .where(task_type: task_types)
       .order(:due_at_ntz)
       .preload(task_steps: :tasked)
-      .to_a.select(&:past_open?)
+      .filter(&:past_open?)
   end
 
   def setup_tasks(course, ecosystem, roles, pages)

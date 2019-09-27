@@ -6,6 +6,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(step).to receive(:id).and_return(15)
       allow(step).to receive(:tasks_task_id).and_return(42)
       allow(step).to receive(:group_name).and_return('Some group')
+      allow(step).to receive(:is_core).and_return(false)
       allow(step).to receive(:completed?).and_return(false)
 
       allow(step).to receive(:spy_with_response_validation).and_return({})
@@ -58,6 +59,10 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
 
   it "has the correct 'group'" do
     expect(representation).to include("group" => 'Some group')
+  end
+
+  it "has the correct 'is_core'" do
+    expect(representation).to include("is_core" => false)
   end
 
   it "has 'spy'" do

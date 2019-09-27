@@ -6,7 +6,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   enum group_type: [
     :unknown_group,
-    :core_group,
+    :fixed_group,
     :spaced_practice_group,
     :personalized_group,
     :recovery_group
@@ -23,16 +23,34 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
-  scope :complete,   -> { where.not(first_completed_at: nil) }
-  scope :incomplete, -> { where(first_completed_at: nil) }
+  scope :complete,   -> { where.not first_completed_at: nil }
+  scope :incomplete, -> { where     first_completed_at: nil }
 
-  scope :exercises,  -> { where(tasked_type: Tasks::Models::TaskedExercise.name) }
+  # Enable these scopes once the is_core background migration is complete
+  # scope :core,       -> { where is_core: true  }
+  # scope :dynamic,    -> { where is_core: false }
+
+  scope :exercises,  -> { where tasked_type: Tasks::Models::TaskedExercise.name }
 
   # Lock the task instead, but don't explode if task is nil
   def lock!(*args)
-    task.try! :lock!, *args
+    task&.lock! *args
 
     super
+  end
+
+  # Remove this method once the background migration for is_core has finished
+  # (and is_core becomes NOT NULL)
+  def is_core?
+    return is_core unless is_core.nil?
+
+    fixed_group? || tasked_type == Tasks::Models::TaskedExternalUrl.name || (
+      personalized_group? && task.reading? && !task.task_steps.last(3).include?(self)
+    )
+  end
+
+  def is_dynamic?
+    !is_core?
   end
 
   def exercise?
