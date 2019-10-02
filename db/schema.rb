@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_23_160455) do
+ActiveRecord::Schema.define(version: 2019_10_02_212525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -1029,6 +1029,8 @@ ActiveRecord::Schema.define(version: 2019_09_23_160455) do
     t.boolean "spes_are_assigned", default: false, null: false
     t.boolean "pes_are_assigned", default: false, null: false
     t.integer "core_placeholder_exercise_steps_count", default: 0, null: false
+    t.uuid "pe_calculation_uuid"
+    t.uuid "spe_calculation_uuid"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"

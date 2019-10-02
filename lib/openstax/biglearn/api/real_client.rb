@@ -396,6 +396,13 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       exclusion_info[:due_at] = due_at.utc.iso8601(6) if due_at.present?
       exclusion_info[:feedback_at] = feedback_at.utc.iso8601(6) if feedback_at.present?
 
+      pe_calculation_uuid = task.pe_calculation_uuid
+      spe_calculation_uuid = task.spe_calculation_uuid
+
+      calculations = {}
+      calculations[:pe_calculation_uuid] = pe_calculation_uuid if pe_calculation_uuid.present?
+      calculations[:spe_calculation_uuid] = spe_calculation_uuid if spe_calculation_uuid.present?
+
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
