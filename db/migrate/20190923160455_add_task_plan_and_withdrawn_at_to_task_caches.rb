@@ -5,7 +5,8 @@ class AddTaskPlanAndWithdrawnAtToTaskCaches < ActiveRecord::Migration[5.2]
     add_column :tasks_task_caches, :withdrawn_at, :datetime
 
     Tasks::Models::Task.select(:id).find_in_batches(batch_size: 100) do |tasks|
-      Tasks::UpdateTaskCaches.set(queue: :lowest_priority).perform_later task_ids: tasks.map(&:id)
+      Tasks::UpdateTaskCaches.set(queue: :maintenance).perform_later task_ids: tasks.map(&:id),
+                                                                     queue: 'maintenance'
     end
   end
 end

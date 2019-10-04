@@ -275,7 +275,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           @task_plan.update_attribute :is_preview, true
         end
 
-        let(:queue) { :lowest_priority }
+        let(:queue) { :preview }
 
         it 'is called when a task_plan is published' do
           @task_plan.tasks.delete_all
@@ -356,7 +356,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
       end
 
       context 'not preview' do
-        let(:queue) { :low_priority }
+        let(:queue) { :dashboard }
 
         it 'is called when a task_plan is published' do
           @task_plan.tasks.delete_all

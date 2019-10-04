@@ -211,7 +211,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         @task_plan.update_attribute :is_preview, true
       end
 
-      let(:queue) { :lowest_priority }
+      let(:queue) { :preview }
 
       it 'creates a Tasks::TaskCache for the given tasks' do
         Tasks::Models::TaskCache.where(tasks_task_id: task_ids).delete_all
@@ -383,7 +383,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
     end
 
     context 'not preview' do
-      let(:queue) { :low_priority }
+      let(:queue) { :dashboard }
 
       it 'creates a Tasks::TaskCache for the given tasks' do
         Tasks::Models::TaskCache.where(tasks_task_id: task_ids).delete_all

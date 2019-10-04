@@ -1,5 +1,5 @@
 class OpenStax::Biglearn::Api::Job < ApplicationJob
-  queue_as :high_priority
+  queue_as :biglearn
 
   def perform(method:, requests:, response_status_key: nil, accepted_response_status: [], **ignored)
     OpenStax::Biglearn::Api.client.public_send(method, requests).tap do |response|

@@ -1,13 +1,13 @@
 # Updates the TaskCaches, used by the Quick Look and Student Performance Forecast
 # Tasks not assigned to a student (preview tasks) are ignored
 class Tasks::UpdateTaskCaches
-  lev_routine active_job_enqueue_options: { queue: :low_priority }, transaction: :read_committed
+  lev_routine active_job_enqueue_options: { queue: :dashboard }, transaction: :read_committed
 
   uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
 
   protected
 
-  def exec(task_ids:, update_step_counts: false, queue: 'low_priority')
+  def exec(task_ids:, update_step_counts: false, queue: 'dashboard')
     ScoutHelper.ignore!(0.995)
 
     task_ids = [task_ids].flatten

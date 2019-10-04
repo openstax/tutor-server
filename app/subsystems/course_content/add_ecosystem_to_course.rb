@@ -43,7 +43,7 @@ class CourseContent::AddEcosystemToCourse
         .where(taskings: { role: { student: { course_profile_course_id: course.id } } })
         .pluck(:id)
 
-      queue = course.is_preview ? :lowest_priority : :low_priority
+      queue = course.is_preview ? :preview : :dashboard
       all_task_ids.each_slice(100) do |task_ids|
         Tasks::UpdateTaskCaches.set(queue: queue)
                                .perform_later(task_ids: task_ids, queue: queue.to_s)

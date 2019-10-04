@@ -5,7 +5,7 @@ class ExportAndUploadResearchData
 
   BATCH_SIZE = 1000
 
-  lev_routine active_job_enqueue_options: { queue: :lowest_priority },
+  lev_routine active_job_enqueue_options: { queue: :maintenance },
               express_output: :filename,
               transaction: :no_transaction
 

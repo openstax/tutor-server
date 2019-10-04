@@ -21,7 +21,7 @@ RSpec.describe 'exercises:remove', type: :rake do
   let(:uid)       { @tasks.first.tasked_exercises.first.exercise.uid }
   let(:num_tasks) { @tasks.size }
 
-  let(:queue)          { :low_priority }
+  let(:queue)          { :dashboard }
   let(:configured_job) { Lev::ActiveJob::ConfiguredJob.new(Tasks::UpdateTaskCaches, queue: queue) }
 
   before do

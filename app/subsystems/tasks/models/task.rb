@@ -121,7 +121,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_caches_later(update_step_counts: true)
-    queue = is_preview ? :lowest_priority : :low_priority
+    queue = is_preview ? :preview : :dashboard
     Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
       task_ids: id, update_step_counts: update_step_counts, queue: queue.to_s
     )
