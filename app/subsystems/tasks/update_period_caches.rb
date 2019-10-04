@@ -1,6 +1,6 @@
 # Updates the PeriodCaches, used by the Teacher dashboard Trouble Flag and Performance Forecast
 class Tasks::UpdatePeriodCaches
-  lev_routine active_job_enqueue_options: { queue: :low_priority }, transaction: :read_committed
+  lev_routine active_job_enqueue_options: { queue: :dashboard }, transaction: :read_committed
 
   protected
 

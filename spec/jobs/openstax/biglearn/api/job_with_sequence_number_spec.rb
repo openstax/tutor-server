@@ -15,7 +15,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
       create: create,
       sequence_number_model_key: sequence_number_model_key.to_s,
       sequence_number_model_class: sequence_number_model_class.to_s,
-      queue: 'low_priority'
+      queue: 'preview'
     }
   end
   let(:perform_args)                   do
@@ -25,7 +25,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
       create: create,
       sequence_number_model_key: sequence_number_model_key,
       sequence_number_model_class: sequence_number_model_class,
-      queue: 'high_priority'
+      queue: 'biglearn'
     }
   end
   let(:job_args)                      do
@@ -78,7 +78,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
         context '#perform' do
           it 'creates a new OpenStax::Biglearn::Api::Job with same args plus sequence_numbers' do
             expect(OpenStax::Biglearn::Api::Job).to(
-              receive(:set).with(queue: :high_priority).and_return(OpenStax::Biglearn::Api::Job)
+              receive(:set).with(queue: :biglearn).and_return(OpenStax::Biglearn::Api::Job)
             )
             expect(OpenStax::Biglearn::Api::Job).to(
               receive(:perform_later).with(job_args).and_call_original
@@ -150,7 +150,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
         context '#perform' do
           it 'creates a new OpenStax::Biglearn::Api::Job with same args plus sequence_numbers' do
             expect(OpenStax::Biglearn::Api::Job).to(
-              receive(:set).with(queue: :high_priority).and_return(OpenStax::Biglearn::Api::Job)
+              receive(:set).with(queue: :biglearn).and_return(OpenStax::Biglearn::Api::Job)
             )
             expect(OpenStax::Biglearn::Api::Job).to(
               receive(:perform_later).with(job_args).and_call_original

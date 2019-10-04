@@ -20,7 +20,7 @@ module CourseMembership
       ).destroy_all
 
       period_id = student.period.id
-      queue = student.course.is_preview ? :lowest_priority : :low_priority
+      queue = student.course.is_preview ? :preview : :dashboard
       Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(period_ids: period_id, force: true)
 
       outputs.student = student

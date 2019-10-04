@@ -15,7 +15,7 @@ module CourseMembership
       period = student.period
       ReassignPublishedPeriodTaskPlans[period: student.period]
 
-      queue = student.course.is_preview ? :lowest_priority : :low_priority
+      queue = student.course.is_preview ? :preview : :dashboard
       Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(period_ids: period.id, force: true)
 
       outputs.student = student

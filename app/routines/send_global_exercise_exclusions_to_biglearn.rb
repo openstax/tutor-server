@@ -1,5 +1,5 @@
 class SendGlobalExerciseExclusionsToBiglearn
-  lev_routine active_job_enqueue_options: { queue: :high_priority }
+  lev_routine active_job_enqueue_options: { queue: :biglearn }
 
   protected
 
