@@ -32,9 +32,7 @@ class Tasks::PopulatePlaceholderSteps
       task, accepted = populate_placeholder_steps(
         task: task,
         group_type: :personalized_group,
-        boolean_attribute: :pes_are_assigned,
-        calculation_uuid_attribute: :pe_calculation_uuid,
-        biglearn_api_method: :fetch_assignment_pes,
+        exercise_type: :pe,
         biglearn_controls_slots: biglearn_controls_pe_slots,
         background: background,
         skip_unready: skip_unready
@@ -52,9 +50,7 @@ class Tasks::PopulatePlaceholderSteps
       task, accepted = populate_placeholder_steps(
         task: task,
         group_type: :spaced_practice_group,
-        boolean_attribute: :spes_are_assigned,
-        calculation_uuid_attribute: :spe_calculation_uuid,
-        biglearn_api_method: :fetch_assignment_spes,
+        exercise_type: :spe,
         biglearn_controls_slots: biglearn_controls_spe_slots,
         background: background,
         skip_unready: skip_unready
@@ -82,14 +78,15 @@ class Tasks::PopulatePlaceholderSteps
   end
 
   def populate_placeholder_steps(
-    task:, group_type:, boolean_attribute:, calculation_uuid_attribute:,
-    biglearn_api_method:, biglearn_controls_slots:, background:, skip_unready:
+    task:, group_type:, exercise_type:, biglearn_controls_slots:, background:, skip_unready:
   )
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
+    biglearn_api_method = "fetch_assignment_#{exercise_type}s".to_sym
     max_attempts = skip_unready ? 1 : background ? 600 : 30
     sleep_interval = skip_unready ? 0 : 1.second
+    boolean_attribute = "#{exercise_type}s_are_assigned"
 
     task_steps_to_upsert = []
     tasked_exercises_to_import = []
@@ -108,7 +105,6 @@ class Tasks::PopulatePlaceholderSteps
       return [ task, false ] if !result[:accepted] && skip_unready
 
       chosen_exercises = result[:exercises].map(&:to_model)
-      calculation_uuid = result[:calculation_uuid]
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
 
@@ -213,7 +209,6 @@ class Tasks::PopulatePlaceholderSteps
       return [ task, false ] if !result[:accepted] && skip_unready
 
       chosen_exercises = result[:exercises].map(&:to_model)
-      calculation_uuid = result[:calculation_uuid]
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
 
@@ -312,7 +307,8 @@ class Tasks::PopulatePlaceholderSteps
 
     task.spy = task.spy.merge(spy_info.except('exercises'))
     task.send "#{boolean_attribute}=", true
-    task.send "#{calculation_uuid_attribute}=", calculation_uuid
+    task.send "#{exercise_type}_calculation_uuid=", result[:calculation_uuid]
+    task.send "#{exercise_type}_ecosystem_matrix_uuid=", result[:ecosystem_matrix_uuid]
 
     [ task, !!result[:accepted] ]
   end

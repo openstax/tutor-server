@@ -1030,7 +1030,9 @@ ActiveRecord::Schema.define(version: 2019_10_02_212525) do
     t.boolean "pes_are_assigned", default: false, null: false
     t.integer "core_placeholder_exercise_steps_count", default: 0, null: false
     t.uuid "pe_calculation_uuid"
+    t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
+    t.uuid "spe_ecosystem_matrix_uuid"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"
