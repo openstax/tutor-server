@@ -35,7 +35,7 @@ RSpec.describe Admin::UsersController, type: :controller do
         first_name: 'New',
         last_name: 'User',
         full_name: 'Overriden!',
-        customer_service: true,
+        customer_support: '1',
         content_analyst: true,
         researcher: true
       }
@@ -60,7 +60,7 @@ RSpec.describe Admin::UsersController, type: :controller do
       user: {
         username: 'updated',
         full_name: 'Updated Name',
-        customer_service: true,
+        customer_support: '1',
         content_analyst: true,
         researcher: true
       }

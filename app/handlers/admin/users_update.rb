@@ -15,7 +15,7 @@ class Admin::UsersUpdate
     attribute :full_name, type: String
     attribute :title, type: String
     attribute :administrator, type: boolean
-    attribute :customer_service, type: boolean
+    attribute :customer_support, type: boolean
     attribute :content_analyst, type: boolean
     attribute :researcher, type: boolean
   end
@@ -41,7 +41,7 @@ class Admin::UsersUpdate
     account.update_columns(user_params.attributes.slice(*ALLOWED_ATTRIBUTES))
 
     run(:set_administrator, user: user, administrator: user_params.administrator)
-    run(:set_customer_support, user: user, customer_support: user_params.customer_service)
+    run(:set_customer_support, user: user, customer_support: user_params.customer_support)
     run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
     run(:set_researcher, user: user, researcher: user_params.researcher)
   end
