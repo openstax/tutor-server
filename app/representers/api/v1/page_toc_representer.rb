@@ -53,11 +53,9 @@ module Api::V1
                description: 'The type of the TOC entry, in this case "page"'
              }
 
-    property :book_location,
-             as: :chapter_section,
-             getter: ->(*) {
-               baked_book_location.blank? ?
-                 book_location : baked_book_location
+    property :chapter_section,
+             getter: ->(user_options:, **) {
+               user_options[:is_collated] ? baked_book_location : book_location
              },
              type: Array,
              writeable: false,

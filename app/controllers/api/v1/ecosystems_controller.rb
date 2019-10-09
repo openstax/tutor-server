@@ -41,7 +41,9 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
         books = ecosystem.books(preload: true)
         raise NotYetImplemented if books.count > 1
 
-        Api::V1::BookTocsRepresenter.new(books).to_json
+        Api::V1::BookTocsRepresenter.new(books).to_json(
+          user_options: { is_collated: books.first.is_collated }
+        )
       end
     ) if stale?(ecosystem.to_model, template: false)
   end

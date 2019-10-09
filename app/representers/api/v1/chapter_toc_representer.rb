@@ -26,12 +26,10 @@ module Api::V1
                description: 'The type of the TOC entry, in this case "part"'
              }
 
-    property :book_location,
-             getter: ->(*) {
-               baked_book_location.blank? ?
-                 book_location : baked_book_location
+    property :chapter_section,
+             getter: ->(user_options:, **) {
+               user_options[:is_collated] ? baked_book_location : book_location
              },
-             as: :chapter_section,
              type: Array,
              writeable: false,
              readable: true,
