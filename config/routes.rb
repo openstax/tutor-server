@@ -196,6 +196,15 @@ Rails.application.routes.draw do
       post :work
     end unless IAm.real_production?
 
+    namespace :research do
+      post :/, action: :research
+
+      namespace :sparfa do
+        post :students
+        post :task_plans
+      end
+    end
+
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
 
@@ -346,7 +355,7 @@ Rails.application.routes.draw do
     resources :jobs, only: :show
   end
 
-  # All research routes
+  # All non-API research routes
   namespace :research do
     scope controller: :console do
       root action: :index
