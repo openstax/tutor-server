@@ -54,8 +54,8 @@ module Api::V1
              }
 
     property :chapter_section,
-             getter: ->(user_options:, **) {
-               user_options[:is_collated] ? baked_book_location : book_location
+             getter: ->(*) {
+               chapter.book.is_collated ? baked_book_location : book_location
              },
              type: Array,
              writeable: false,

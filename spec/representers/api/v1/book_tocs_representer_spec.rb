@@ -10,12 +10,16 @@ RSpec.describe Api::V1::BookTocsRepresenter, type: :representer do
                  chapters: [{ id: 1,
                               title: 'Good chapter',
                               type: 'bar',
-                              book_location: [4, 2],
+                              baked_book_location: [4, 2],
+                              book: Hashie::Mash[is_collated: true],
                               pages: [{ id: 1,
                                         cnx_id: '321cba',
                                         title: 'Neat page',
                                         type: 'baz',
-                                        book_location: [4, 3] }] }] }
+                                        chapter: Hashie::Mash[book: {
+                                          is_collated: true
+                                        }],
+                                        baked_book_location: [4, 3] }] }] }
 
     representation = described_class.new([Hashie::Mash.new(book_toc)]).to_hash
 
