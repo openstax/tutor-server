@@ -81,6 +81,26 @@ RSpec.describe SearchCourses, type: :routine, speed: :medium do
 
     courses = described_class[query: 'physics'].to_a
     expect(courses).to eq [course_3, course_1]
+
+    courses = described_class[query: course_1.id.to_s].to_a
+    expect(courses).to include course_1
+
+    courses = described_class[query: course_2.id.to_s].to_a
+    expect(courses).to include course_2
+
+    courses = described_class[query: course_3.id.to_s].to_a
+    expect(courses).to include course_3
+  end
+
+  it 'returns courses whose id matches the given query' do
+    courses = described_class[query: "id:#{course_1.id}"].to_a
+    expect(courses).to eq [ course_1 ]
+
+    courses = described_class[query: "id:#{course_2.id}"].to_a
+    expect(courses).to eq [ course_2 ]
+
+    courses = described_class[query: "id:#{course_3.id}"].to_a
+    expect(courses).to eq [ course_3 ]
   end
 
   it 'returns courses whose name matches the given query, in alphabetical order' do

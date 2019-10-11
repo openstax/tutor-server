@@ -40,11 +40,12 @@ class SearchCourses
 
       with.keyword :any do |queries|
         queries.each do |query|
+          sanitized_ids = to_number_array(query)
           sanitized_queries = to_string_array(query, append_wildcard: true, prepend_wildcard: true)
-          next @items = @items.none if sanitized_queries.empty?
+          next @items = @items.none if sanitized_ids.empty? && sanitized_queries.empty?
 
           @items = @items.where(
-            co[:id].in(sanitized_queries).or(
+            co[:id].in(sanitized_ids).or(
               co[:name].matches_any(sanitized_queries)
             ).or(
               sc[:name].matches_any(sanitized_queries)
@@ -75,7 +76,7 @@ class SearchCourses
 
       with.keyword :id do |ids|
         ids.each do |id|
-          sanitized_ids = to_string_array(id, append_wildcard: false, prepend_wildcard: false)
+          sanitized_ids = to_number_array(id)
           next @items = @items.none if sanitized_ids.empty?
           @items = @items.where(id: sanitized_ids)
         end
