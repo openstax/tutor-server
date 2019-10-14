@@ -6,9 +6,16 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
   let(:application)   { FactoryBot.create :doorkeeper_application }
   let(:course)        { FactoryBot.create :course_profile_course }
   let(:period)        { FactoryBot.create :course_membership_period, course: course }
-  let(:student_user)  { FactoryBot.create(:user) }
+  let(:student_user)  { FactoryBot.create :user }
   let(:student_role)  { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)      { student_role.student }
+
+  let!(:unassigned_role) do
+    FactoryBot.create :entity_role, profile: student_user.to_model, role_type: :unassigned
+  end
+  let!(:default_role)    do
+    FactoryBot.create :entity_role, profile: student_user.to_model, role_type: :default
+  end
 
   let(:student_token) do
     FactoryBot.create :doorkeeper_access_token, application: application,

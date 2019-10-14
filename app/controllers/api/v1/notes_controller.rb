@@ -98,9 +98,11 @@ class Api::V1::NotesController < Api::V1::ApiController
 
   def get_roles
     @roles = current_human_user.roles.preload(:teacher, :teacher_student, student: :period)
-                                     .filter do |role|
+                                     .reject do |role|
       role.student? ?
-        !role.student.dropped? && !role.student.period.archived? : !role.course_member.deleted?
+        role.student.nil? || role.student.dropped? ||
+          role.student.period.nil? || role.student.period.archived? :
+        role.course_member.nil? || role.course_member.deleted?
     end
   end
 
