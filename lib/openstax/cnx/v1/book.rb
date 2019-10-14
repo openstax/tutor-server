@@ -20,7 +20,7 @@ module OpenStax::Cnx::V1
     end
 
     def collated
-      @collated ||= hash.fetch('collated', nil)
+      @collated ||= hash.fetch('collated', false)
     end
 
     def hash

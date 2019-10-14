@@ -1,6 +1,8 @@
 module Content
   module Models
     class Note < ApplicationRecord
+      attr_accessor :course_id
+
       belongs_to :page, subsystem: :content
       belongs_to :role, subsystem: :entity
 

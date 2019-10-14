@@ -90,10 +90,6 @@ module Api::V1
              }
 
     property :chapter_section,
-             getter: ->(*) {
-               baked_chapter_section.blank? ?
-                 chapter_section : baked_chapter_section
-             },
              type: Array,
              writeable: false,
              readable: true,

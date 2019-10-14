@@ -10,6 +10,12 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
+    property :course_id,
+             type: String,
+             writeable: true,
+             readable: false,
+             schema_info: { required: true }
+
     property :anchor,
              type: String,
              writeable: true,

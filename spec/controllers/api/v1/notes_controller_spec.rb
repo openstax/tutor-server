@@ -20,20 +20,16 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
 
   let(:note)          { FactoryBot.create :content_note, role: student_role }
 
-  let(:parameters)    do
-    {
-      course_id: course.id,
-      chapter: note.page.book_location.first,
-      section: note.page.book_location.last
-    }
-  end
+  let(:index_create_params)         { { page_id: note.page.uuid } }
+  let(:update_delete_params)        { { id: note.id } }
+  let(:highlighted_sections_params) { { book_uuid: note.page.book.uuid } }
 
   # link page to same ecosystem as course
   before(:each) { note.page.chapter.book.update_attributes(ecosystem: course.ecosystem) }
 
   context 'GET #index' do
     it "fetches the user's notes" do
-      api_get :index, student_token, params: parameters
+      api_get :index, student_token, params: index_create_params
 
       expect(response).to be_ok
       notes = JSON.parse(response.body)
@@ -42,7 +38,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
     end
 
     it "does not fetch someone else's notes" do
-      api_get :index, user_2_token, params: parameters
+      api_get :index, user_2_token, params: index_create_params
 
       expect(response).to be_ok
       notes = JSON.parse(response.body)
@@ -53,8 +49,8 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
   context 'POST #create' do
     it 'creates a note' do
       expect do
-        api_post :create, student_token, params: parameters, body: {
-                   anchor: 'para123', contents: { test: true }
+        api_post :create, student_token, params: index_create_params, body: {
+                   course_id: course.id, anchor: 'para123', contents: { test: true }
                  }
       end.to change { Content::Models::Note.count }
 
@@ -67,7 +63,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
 
   context 'PUT #update' do
     it 'updates a note' do
-      api_put :update, student_token, params: parameters.merge(id: note.id),
+      api_put :update, student_token, params: update_delete_params,
                                       body: { contents: { text: 'hello!' } }
 
       expect(response).to be_ok
@@ -76,7 +72,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
 
     it "does not let a user update someone else's notes" do
       expect do
-        api_put :update, user_2_token, params: parameters.merge(id: note.id),
+        api_put :update, user_2_token, params: update_delete_params,
                                        body: { contents: { text: 'hello!' } }
       end.to raise_error(SecurityTransgression)
     end
@@ -84,7 +80,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
 
   context 'DELETE #destroy' do
     it 'deletes a note' do
-      api_delete :destroy, student_token, params: parameters.merge(id: note.id)
+      api_delete :destroy, student_token, params: update_delete_params
 
       expect(response).to be_ok
       expect { note.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -92,21 +88,21 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
 
     it "does not let a user delete someone else's notes" do
       expect do
-        api_delete :destroy, user_2_token, params: parameters.merge(id: note.id)
+        api_delete :destroy, user_2_token, params: update_delete_params
       end.to raise_error(SecurityTransgression)
     end
   end
 
   context 'GET #highlighted_sections' do
     it 'fetches user highlighted_sections' do
-      api_get :highlighted_sections, student_token, params: parameters
+      api_get :highlighted_sections, student_token, params: highlighted_sections_params
 
       expect(response).to be_ok
       expect(response.body_as_hash[:pages]).not_to be_empty
     end
 
     it "does not fetch someone else's highlights" do
-      api_get :highlighted_sections, user_2_token, params: parameters
+      api_get :highlighted_sections, user_2_token, params: highlighted_sections_params
 
       expect(response).to be_ok
       expect(response.body_as_hash[:pages]).to be_empty

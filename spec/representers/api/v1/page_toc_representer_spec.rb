@@ -9,7 +9,8 @@ RSpec.describe Api::V1::PageTocRepresenter, type: :representer do
       uuid: 'uuid',
       title: 'Neat page',
       type: 'baz',
-      book_location: [4, 3]
+      baked_book_location: [4, 3],
+      chapter: Hashie::Mash[book: { is_collated: true }]
     }
   end
 

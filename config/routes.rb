@@ -117,11 +117,6 @@ Rails.application.routes.draw do
         get :'teacher_guide(/role/:role_id)', action: :teacher
       end
 
-      resources :notes, path: :'notes/:chapter.:section', only: [ :index, :update, :destroy ] do
-        post :'(/role/:role_id)', on: :collection, action: :create
-      end
-      get :'highlighted_sections', controller: :notes, action: :highlighted_sections
-
       post :dates, on: :collection
 
       resource :exercises, controller: :course_exercises, only: :update do
@@ -151,6 +146,11 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    resources :pages, only: [] do
+      resources :notes, shallow: true, only: [ :index, :create, :update, :destroy ]
+    end
+    get :'books/:book_uuid/highlighted_sections', controller: :notes, action: :highlighted_sections
 
     resources :ecosystems, only: :index do
       member do

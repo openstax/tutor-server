@@ -6,7 +6,8 @@ RSpec.describe Api::V1::ChapterTocRepresenter, type: :representer do
       id: 1,
       title: 'Good chapter',
       type: 'foo',
-      book_location: [4, 1]
+      baked_book_location: [4, 1],
+      book: OpenStruct.new(is_collated: true)
     }
   end
 
