@@ -67,6 +67,8 @@ class Content::Models::Page < IndestructibleRecord
 
   def related_content
     {
+      uuid: uuid,
+      page_id: id,
       title: tutor_title,
       book_location: book_location,
       baked_book_location: baked_book_location
