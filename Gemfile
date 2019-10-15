@@ -314,6 +314,8 @@ group :test do
 
   # Codecov integration
   gem 'codecov', require: false
+
+  gem 'rspec-retry'
 end
 
 group :production do
