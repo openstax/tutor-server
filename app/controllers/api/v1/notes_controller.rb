@@ -87,7 +87,7 @@ class Api::V1::NotesController < Api::V1::ApiController
   EOS
 
   def highlighted_sections
-    pages = Content::Models::Page.select(:id, :title, :book_location, 'COUNT(*) as "notes_count"')
+    pages = Content::Models::Page.select(:id, :title, :uuid, :book_location, 'COUNT(*) as "notes_count"')
                                  .joins(:book, :notes)
                                  .where(book: { uuid: params[:book_uuid] }, notes: { role: @roles })
                                  .group(:id)
