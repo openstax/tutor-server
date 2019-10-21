@@ -1,12 +1,10 @@
 require_relative './api/configuration'
-require_relative './api/malformed_request'
-require_relative './api/result_type_error'
-require_relative './api/exercises_error'
 require_relative './api/client'
 require_relative './api/fake_client'
 require_relative './api/real_client'
 
 module OpenStax::Biglearn::Api
+  include OpenStax::Biglearn::Interface
 
   MAX_CONTAINERS_PER_COURSE = 100
   MAX_STUDENTS_PER_COURSE = 1000
@@ -19,16 +17,7 @@ module OpenStax::Biglearn::Api
     :enable_warnings
   ]
 
-  extend Configurable
-  extend Configurable::ClientMethods
-  extend MonitorMixin
-
   class << self
-
-    #
-    # API Wrappers
-    #
-
     # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
     # course is a CourseProfile::Models::Course
     # task is a Tasks::Models::Task
@@ -39,7 +28,7 @@ module OpenStax::Biglearn::Api
     # max_num_exercises is an integer
 
     # Adds the given ecosystem to Biglearn
-    # Requests is a hash containing the following key: :ecosystem
+    # Request is a hash containing the following key: :ecosystem
     def create_ecosystem(*request)
       request, options = extract_options request
 
@@ -450,43 +439,14 @@ module OpenStax::Biglearn::Api
     end
 
     def new_client
-      client_class = configuration.stub ? FakeClient : RealClient
+      client_class = configuration.stub ? OpenStax::Biglearn::Api::FakeClient :
+                                          OpenStax::Biglearn::Api::RealClient
 
       begin
         client_class.new(configuration)
       rescue StandardError => e
-        raise "Biglearn client initialization error: #{e.message}"
+        raise "Biglearn API client initialization error: #{e.message}"
       end
-    end
-
-    def verify_and_slice_request(method:, request:, keys:, optional_keys: [])
-      required_keys = [keys].flatten
-      missing_keys = required_keys.reject { |key| request.has_key? key }
-
-      raise(
-        OpenStax::Biglearn::Api::MalformedRequest,
-        "Invalid request: #{method} request #{request.inspect
-        } is missing these required key(s): #{missing_keys.inspect}"
-      ) if missing_keys.any?
-
-      optional_keys = [optional_keys].flatten
-      request_keys = required_keys + optional_keys
-
-      request.slice(*request_keys)
-    end
-
-    def verify_result(result:, result_class: Hash)
-      results_array = [result].flatten
-
-      results_array.each do |result|
-        raise(
-          OpenStax::Biglearn::Api::ResultTypeError,
-          "Invalid result: #{result} has type #{result.class.name
-          } but expected type was #{result_class.name}"
-        ) if result.class != result_class
-      end
-
-      result
     end
 
     # Inline (perform_later: false) sequence_number requests are not recommended
@@ -678,7 +638,7 @@ module OpenStax::Biglearn::Api
         ordered_exercises = exercise_uuids.map do |uuid|
           exercises_by_uuid[uuid].tap do |exercise|
             raise(
-              OpenStax::Biglearn::Api::ExercisesError,
+              OpenStax::Biglearn::ExercisesError,
               "Biglearn returned exercises not present locally"
             ) if exercise.nil?
           end
@@ -688,7 +648,7 @@ module OpenStax::Biglearn::Api
           number_returned = exercise_uuids.length
 
           raise(
-            OpenStax::Biglearn::Api::ExercisesError,
+            OpenStax::Biglearn::ExercisesError,
             "Biglearn returned more exercises than requested"
           ) if number_returned > max_num_exercises
 
@@ -764,7 +724,5 @@ module OpenStax::Biglearn::Api
 
       [requests, options.slice(*OPTION_KEYS)]
     end
-
   end
-
 end

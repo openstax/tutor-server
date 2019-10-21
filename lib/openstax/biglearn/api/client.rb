@@ -1,4 +1,4 @@
-class OpenStax::Biglearn::Api::Client
+module OpenStax::Biglearn::Api::Client
   # Must be implemented by all clients so that sequentially_prepare_and_update_course_ecosystem
   # can be successfully called
   def prepare_course_ecosystem(request)
