@@ -23,6 +23,7 @@ class OpenStax::Biglearn::Scheduler::FakeClient < OpenStax::Biglearn::FakeClient
           {
             student_uuid: student.uuid,
             calculation_uuid: calculation_uuid,
+            calculated_at: Time.current.iso8601,
             ecosystem_matrix_uuid: SecureRandom.uuid,
             algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
             exercise_uuids: ecosystem.exercises.map(&:uuid).shuffle

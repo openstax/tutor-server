@@ -9,7 +9,7 @@ RSpec.shared_examples 'a biglearn scheduler client' do
     @task = task_plan_1.tasks.first
     @student = @task.taskings.first.role.student
     # When re-recording the cassettes, set the task and student uuids
-    # to values that exist in biglearn-scheduler
+    # to values that exist in biglearn-scheduler (and save)
   end
 
   when_tagged_with_vcr = { vcr: ->(v) { !!v } }
@@ -51,6 +51,7 @@ RSpec.shared_examples 'a biglearn scheduler client' do
           calculations: [
             student_uuid: @student.uuid,
             calculation_uuid: kind_of(String),
+            calculated_at: kind_of(String),
             ecosystem_matrix_uuid: kind_of(String),
             algorithm_name: be_in([ 'local_query', 'biglearn_sparfa' ]),
             exercise_uuids: kind_of(Array)
