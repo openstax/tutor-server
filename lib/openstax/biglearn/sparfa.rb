@@ -3,7 +3,7 @@ require_relative './sparfa/fake_client'
 require_relative './sparfa/real_client'
 
 module OpenStax::Biglearn::Sparfa
-  include OpenStax::Biglearn::Interface
+  extend OpenStax::Biglearn::Interface
 
   class << self
     # ecosystem_matrix_uuid is the UUID of an ecosystem matrix obtained from Biglearn Scheduler

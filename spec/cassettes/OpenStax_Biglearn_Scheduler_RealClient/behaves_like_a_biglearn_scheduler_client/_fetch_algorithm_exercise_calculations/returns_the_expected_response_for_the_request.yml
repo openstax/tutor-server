@@ -1,0 +1,62 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:3000/fetch_algorithm_exercise_calculations
+    body:
+      encoding: UTF-8
+      string: '{"algorithm_exercise_calculations":[{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>"},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 2 UUID>","student_uuid":"<STUDENT UUID>"},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 3 UUID>","student_uuid":"<STUDENT UUID>"}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Biglearn-Scheduler-Token:
+      - c88e21d6d158d5200ce4ace9592c3acea06e066ec1b92bc623f7e76cd02b7f8736143afaa1551802f6787bcd0135e0157beace5bb33ed026dbedb53848b75ded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 22 Oct 2019 22:43:55 GMT
+      Connection:
+      - close
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"374172fef5a8115747d9614654ae3d21"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - c2576de7-5d64-4a94-a13e-a0d21d8143cc
+      X-Runtime:
+      - '0.263126'
+    body:
+      encoding: UTF-8
+      string: '{"algorithm_exercise_calculations":[{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 1 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"local_query","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 2 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"local_query","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 3 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"local_query","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]}]}'
+    http_version: 
+  recorded_at: Tue, 22 Oct 2019 22:43:55 GMT
+recorded_with: VCR 4.0.0

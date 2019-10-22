@@ -5,27 +5,6 @@
 class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   include OpenStax::Biglearn::Api::Client
 
-  HEADER_OPTIONS = { 'Content-Type' => 'application/json' }.freeze
-
-  def initialize(api_configuration)
-    @server_url   = api_configuration.server_url
-    @token        = api_configuration.token
-    @client_id    = api_configuration.client_id
-    @secret       = api_configuration.secret
-
-    @oauth_client = OAuth2::Client.new @client_id, @secret, site: @server_url
-
-    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
-  end
-
-  def name
-    :real
-  end
-
-  #
-  # API methods
-  #
-
   # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
   # course is a CourseProfile::Models::Course
   # task is a Tasks::Models::Task

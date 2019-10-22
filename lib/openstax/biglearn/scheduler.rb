@@ -3,7 +3,7 @@ require_relative './scheduler/fake_client'
 require_relative './scheduler/real_client'
 
 module OpenStax::Biglearn::Scheduler
-  include OpenStax::Biglearn::Interface
+  extend OpenStax::Biglearn::Interface
 
   class << self
     # student is a CourseMembership::Models::Student
@@ -14,6 +14,9 @@ module OpenStax::Biglearn::Scheduler
     # Requests is an array of hashes containing one or both of the following keys:
     # :student and :task
     def fetch_algorithm_exercise_calculations(*requests)
+      requests, options = extract_options requests
+
+      ecosystem_by_request = {}
       scheduler_requests = requests.map do |request|
         student = request[:student]&.to_model
         task = request[:task]&.to_model
@@ -21,15 +24,27 @@ module OpenStax::Biglearn::Scheduler
 
         {}.tap do |scheduler_request|
           scheduler_request[:student] = student unless student.nil?
-          scheduler_request[:task] = task unless task.nil?
+
+          if task.nil?
+            ecosystem_by_request[request] = student.course.ecosystems.first
+          else
+            ecosystem_by_request[request] = task.ecosystem
+            scheduler_request[:task] = task
+          end
         end
       end
 
       bulk_api_request(
         method: :fetch_algorithm_exercise_calculations,
-        requests: scheduler_request,
-        keys: [ :student, :task ]
-      )
+        requests: scheduler_requests,
+        optional_keys: [ :student, :task ]
+      ) do |request, response|
+        response.except(:exercise_uuids).merge(
+          exercises: get_ecosystem_exercises_by_uuids(
+            ecosystem: ecosystem_by_request[request], exercise_uuids: response[:exercise_uuids]
+          )
+        )
+      end
     end
 
     protected
@@ -49,7 +64,8 @@ module OpenStax::Biglearn::Scheduler
       end
     end
 
-    def bulk_api_request(method:, requests:, keys:, result_class: Hash, uuid_key: :request_uuid)
+    def bulk_api_request(method:, requests:, optional_keys:,
+                         result_class: Hash, uuid_key: :request_uuid)
       req = [requests].flatten
 
       return requests.is_a?(Array) ? [] : {} if req.empty?
@@ -58,7 +74,9 @@ module OpenStax::Biglearn::Scheduler
       req.each do |request|
         uuid = request.fetch uuid_key, SecureRandom.uuid
 
-        requests_map[uuid] = verify_and_slice_request method: method, request: request, keys: keys
+        requests_map[uuid] = verify_and_slice_request(
+          method: method, request: request, optional_keys: optional_keys
+        )
       end
 
       requests_array = requests_map.map do |uuid, request|
@@ -66,15 +84,11 @@ module OpenStax::Biglearn::Scheduler
       end
       request_uuids = requests_map.keys.sort
 
-      responses = OpenStax::Biglearn::Scheduler.client.public_send(
-        method, requests: requests_array
-      )
+      responses = OpenStax::Biglearn::Scheduler.client.public_send method, requests_array
 
       responses_map = {}
       responses.each do |response|
-        uuid = response[uuid_key]
-        original_request = requests_map[uuid]
-        accepted = accepted_responses_uuids.include? uuid
+        original_request = requests_map[response[uuid_key]]
 
         responses_map[original_request] = verify_result(
           result: block_given? ? yield(original_request, response) : response,

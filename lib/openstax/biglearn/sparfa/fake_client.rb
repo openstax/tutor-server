@@ -39,8 +39,8 @@ class OpenStax::Biglearn::Sparfa::FakeClient < OpenStax::Biglearn::FakeClient
         U_col: (0..nl-1).to_a * QUESTIONS_PER_LEARNER,
         algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
         exercise_uuids: rand(10000).times.map { SecureRandom.uuid },
-        superseded_at: Time.current - 1.week unless request[:responded_before].nil?
-      }
+        superseded_at: request[:responded_before].nil? ? nil : Time.current - 1.week
+      )
     end
   end
 end

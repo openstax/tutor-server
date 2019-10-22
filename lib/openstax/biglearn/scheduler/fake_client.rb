@@ -8,18 +8,26 @@ class OpenStax::Biglearn::Scheduler::FakeClient < OpenStax::Biglearn::FakeClient
   # :student and :task
   def fetch_algorithm_exercise_calculations(requests)
     requests.map do |request|
-      student = request[:student]
       task = request[:task]
+      student = request[:student] || task.taskings.first.role.student
 
-      next if !student.nil? && !task.nil? && task.taskings.none? do |tasking|
-        tasking.role.student == student
-      end
+      next if !task.nil? && task.taskings.none? { |tasking| tasking.role.student == student }
+
+      calculation_uuids = [ task&.pe_calculation_uuid, task&.spe_calculation_uuid ].compact
+      calculation_uuids = [ SecureRandom.uuid ] if calculation_uuids.empty?
+
+      ecosystem = task.nil? ? student.course.ecosystems.first : task.ecosystem
 
       request.slice(:request_uuid).merge(
-        calculation_uuid: SecureRandom.uuid,
-        ecosystem_matrix_uuid: SecureRandom.uuid,
-        algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
-        exercise_uuids: rand(10000).times.map { SecureRandom.uuid }
+        calculations: calculation_uuids.map do |calculation_uuid|
+          {
+            student_uuid: student.uuid,
+            calculation_uuid: calculation_uuid,
+            ecosystem_matrix_uuid: SecureRandom.uuid,
+            algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
+            exercise_uuids: ecosystem.exercises.map(&:uuid).shuffle
+          }
+        end
       )
     end.compact
   end
