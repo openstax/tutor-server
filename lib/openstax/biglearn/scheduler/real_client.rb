@@ -13,10 +13,16 @@ class OpenStax::Biglearn::Scheduler::RealClient < OpenStax::Biglearn::RealClient
 
       calculation_uuids = [task&.pe_calculation_uuid, task&.spe_calculation_uuid].compact
       if calculation_uuids.empty?
-        [ { student_uuid: student.present? ? student.uuid: task.taskings.first.role.student.uuid } ]
+        [
+          request.slice(:request_uuid).merge(
+            student_uuid: student.present? ? student.uuid: task.taskings.first.role.student.uuid
+          )
+        ]
       else
         calculation_uuids.map do |calculation_uuid|
-          { calculation_uuid: calculation_uuid }.tap do |scheduler_request|
+          request.slice(:request_uuid).merge(
+            calculation_uuid: calculation_uuid
+          ).tap do |scheduler_request|
             scheduler_request[:student_uuid] = student.uuid unless student.nil?
           end
         end

@@ -15,13 +15,12 @@ class OpenStax::Biglearn::Scheduler::FakeClient < OpenStax::Biglearn::FakeClient
         tasking.role.student == student
       end
 
-      {
-        request_uuid: request[:request_uuid],
+      request.slice(:request_uuid).merge(
         calculation_uuid: SecureRandom.uuid,
         ecosystem_matrix_uuid: SecureRandom.uuid,
         algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
         exercise_uuids: rand(10000).times.map { SecureRandom.uuid }
-      }
+      )
     end.compact
   end
 end

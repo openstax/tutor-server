@@ -1,51 +1,48 @@
-require_relative './scheduler/configuration'
-require_relative './scheduler/fake_client'
-require_relative './scheduler/real_client'
+require_relative './sparfa/configuration'
+require_relative './sparfa/fake_client'
+require_relative './sparfa/real_client'
 
-module OpenStax::Biglearn::Scheduler
+module OpenStax::Biglearn::Sparfa
   include OpenStax::Biglearn::Interface
 
   class << self
-    # student is a CourseMembership::Models::Student
-    # task is a Tasks::Models::Task
+    # ecosystem_matrix_uuid is the UUID of an ecosystem matrix obtained from Biglearn Scheduler
+    # students is an array of CourseMembership::Models::Student
 
-    # Retrieves the scheduler calculation that would be used next
-    # for the given student or that has been used for the given task
-    # Requests is an array of hashes containing one or both of the following keys:
-    # :student and :task
-    def fetch_algorithm_exercise_calculations(*requests)
-      scheduler_requests = requests.map do |request|
-        student = request[:student]&.to_model
-        task = request[:task]&.to_model
-        raise OpenStax::Biglearn::MalformedRequest if student.nil? && task.nil?
+    # Retrieves the SPARFA ecosystem matrix with the given ecosystem_matrix_uuid
+    # optionally filtered to the given students
+    # Requests is an array of hashes containing :ecosystem_matrix_uuid
+    # and optionally :students and/or :responded_before
+    def fetch_ecosystem_matrices(*requests)
+      sparfa_requests = requests.map do |request|
+        students = request[:students]
 
-        {}.tap do |scheduler_request|
-          scheduler_request[:student] = student unless student.nil?
-          scheduler_request[:task] = task unless task.nil?
+        request.slice(:ecosystem_matrix_uuid, :responded_before).tap do |sparfa_request|
+          sparfa_request[:students] = students.map(&:to_model) unless students.nil?
         end
       end
 
       bulk_api_request(
-        method: :fetch_algorithm_exercise_calculations,
-        requests: scheduler_request,
-        keys: [ :student, :task ]
+        method: :fetch_ecosystem_matrices,
+        requests: sparfa_request,
+        keys: [ :ecosystem_matrix_uuid, :students ]
       )
     end
 
     protected
 
     def new_configuration
-      OpenStax::Biglearn::Scheduler::Configuration.new
+      OpenStax::Biglearn::Sparfa::Configuration.new
     end
 
     def new_client
-      client_class = configuration.stub ? OpenStax::Biglearn::Scheduler::FakeClient :
-                                          OpenStax::Biglearn::Scheduler::RealClient
+      client_class = configuration.stub ? OpenStax::Biglearn::Sparfa::FakeClient :
+                                          OpenStax::Biglearn::Sparfa::RealClient
 
       begin
         client_class.new(configuration)
       rescue StandardError => e
-        raise "Biglearn Scheduler client initialization error: #{e.message}"
+        raise "Biglearn Sparfa client initialization error: #{e.message}"
       end
     end
 
@@ -66,7 +63,7 @@ module OpenStax::Biglearn::Scheduler
       end
       request_uuids = requests_map.keys.sort
 
-      responses = OpenStax::Biglearn::Scheduler.client.public_send(
+      responses = OpenStax::Biglearn::Sparfa.client.public_send(
         method, requests: requests_array
       )
 
