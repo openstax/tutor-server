@@ -10,13 +10,16 @@ class OpenStax::Biglearn::Sparfa::FakeClient < OpenStax::Biglearn::FakeClient
   # and optionally :students and/or :responded_before
   def fetch_ecosystem_matrices(requests)
     requests.map do |request|
-      student_uuids = request.fetch(:students, []).map(&:uuid)
+      student_uuids = request.fetch(
+        :students, CourseMembership::Models::Student.select(:uuid)
+      ).map(&:uuid)
       nl = student_uuids.size
       nq = rand 10000
       nc = rand 500
       g_row = (QUESTIONS_PER_LEARNER*nl).times.map { rand nq }
 
-      request.slice(:request_uuid, :ecosystem_matrix_uuid, :responded_before).merge(
+      request.slice(:request_uuid, :ecosystem_matrix_uuid).merge(
+        responded_before: request[:responded_before],
         ecosystem_uuid: SecureRandom.uuid,
         L_ids: student_uuids,
         Q_ids: nq.times.map { SecureRandom.uuid },
@@ -37,9 +40,7 @@ class OpenStax::Biglearn::Sparfa::FakeClient < OpenStax::Biglearn::FakeClient
         U_data: nq.times.map { rand },
         U_row: (QUESTIONS_PER_LEARNER*nl).times.map { rand nc },
         U_col: (0..nl-1).to_a * QUESTIONS_PER_LEARNER,
-        algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
-        exercise_uuids: rand(10000).times.map { SecureRandom.uuid },
-        superseded_at: request[:responded_before].nil? ? nil : Time.current - 1.week
+        superseded_at: request[:responded_before].nil? ? nil : (Time.current - 1.week).iso8601
       )
     end
   end

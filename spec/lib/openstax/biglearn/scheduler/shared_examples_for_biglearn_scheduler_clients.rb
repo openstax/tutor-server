@@ -9,7 +9,7 @@ RSpec.shared_examples 'a biglearn scheduler client' do
     @task = task_plan_1.tasks.first
     @student = @task.taskings.first.role.student
     # When re-recording the cassettes, set the task and student uuids
-    # to values that exist in biglearn-scheduler (and save)
+    # to values that exist in biglearn-scheduler (and save the records)
   end
 
   when_tagged_with_vcr = { vcr: ->(v) { !!v } }
@@ -17,8 +17,8 @@ RSpec.shared_examples 'a biglearn scheduler client' do
   before(:all, when_tagged_with_vcr) do
     VCR.configure do |config|
       config.ignore_localhost = false
-      config.define_cassette_placeholder('<STUDENT UUID>'    ) { @student.uuid }
-      config.define_cassette_placeholder('<TASK UUID>'       ) { @task.uuid    }
+      config.define_cassette_placeholder('<STUDENT UUID>') { @student.uuid }
+      config.define_cassette_placeholder('<TASK UUID>'   ) { @task.uuid    }
     end
   end
 

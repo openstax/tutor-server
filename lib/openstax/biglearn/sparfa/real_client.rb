@@ -13,7 +13,10 @@ class OpenStax::Biglearn::Sparfa::RealClient < OpenStax::Biglearn::RealClient
       end
     end
 
-    bulk_api_request url: :fetch_ecosystem_matrices, requests: sparfa_requests
+    bulk_api_request url: :fetch_ecosystem_matrices,
+                     requests: sparfa_requests,
+                     requests_key: :ecosystem_matrix_requests,
+                     responses_key: :ecosystem_matrices
   end
 
   protected
