@@ -22,7 +22,7 @@ class OpenStax::Biglearn::Scheduler::RealClient < OpenStax::Biglearn::RealClient
 
     bulk_api_request url: :fetch_algorithm_exercise_calculations,
                      requests: scheduler_requests,
-                     requests_key: :algorithm_exercise_calculations,
+                     requests_key: :algorithm_exercise_calculation_requests,
                      responses_key: :algorithm_exercise_calculations
   end
 
