@@ -14,6 +14,8 @@ module OpenStax::Biglearn::Sparfa
     # Requests is an array of hashes containing :ecosystem_matrix_uuid
     # and optionally :students and/or :responded_before
     def fetch_ecosystem_matrices(*requests)
+      requests, options = extract_options requests
+
       sparfa_requests = requests.map do |request|
         students = request[:students]
 
@@ -24,8 +26,9 @@ module OpenStax::Biglearn::Sparfa
 
       bulk_api_request(
         method: :fetch_ecosystem_matrices,
-        requests: sparfa_request,
-        keys: [ :ecosystem_matrix_uuid, :students ]
+        requests: sparfa_requests,
+        keys: [ :ecosystem_matrix_uuid ],
+        optional_keys: [ :students, :responded_before ]
       )
     end
 
@@ -46,7 +49,8 @@ module OpenStax::Biglearn::Sparfa
       end
     end
 
-    def bulk_api_request(method:, requests:, keys:, result_class: Hash, uuid_key: :request_uuid)
+    def bulk_api_request(method:, requests:, keys: [], optional_keys: [],
+                         result_class: Hash, uuid_key: :request_uuid)
       req = [requests].flatten
 
       return requests.is_a?(Array) ? [] : {} if req.empty?
@@ -55,7 +59,9 @@ module OpenStax::Biglearn::Sparfa
       req.each do |request|
         uuid = request.fetch uuid_key, SecureRandom.uuid
 
-        requests_map[uuid] = verify_and_slice_request method: method, request: request, keys: keys
+        requests_map[uuid] = verify_and_slice_request(
+          method: method, request: request, keys: keys, optional_keys: optional_keys
+        )
       end
 
       requests_array = requests_map.map do |uuid, request|
@@ -63,15 +69,12 @@ module OpenStax::Biglearn::Sparfa
       end
       request_uuids = requests_map.keys.sort
 
-      responses = OpenStax::Biglearn::Sparfa.client.public_send(
-        method, requests: requests_array
-      )
+      responses = OpenStax::Biglearn::Sparfa.client.public_send method, requests_array
 
       responses_map = {}
       responses.each do |response|
         uuid = response[uuid_key]
         original_request = requests_map[uuid]
-        accepted = accepted_responses_uuids.include? uuid
 
         responses_map[original_request] = verify_result(
           result: block_given? ? yield(original_request, response) : response,
