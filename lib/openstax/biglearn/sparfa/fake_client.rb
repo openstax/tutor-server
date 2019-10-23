@@ -17,6 +17,9 @@ class OpenStax::Biglearn::Sparfa::FakeClient < OpenStax::Biglearn::FakeClient
       nq = rand 10000
       nc = rand 500
       g_row = (QUESTIONS_PER_LEARNER*nl).times.map { rand nq }
+      created_at = Time.current - 2.weeks
+      created_at_string = created_at.iso8601
+      updated_at_string = (created_at + 1.week).iso8601
 
       request.slice(:request_uuid, :ecosystem_matrix_uuid).merge(
         responded_before: request[:responded_before],
@@ -40,7 +43,9 @@ class OpenStax::Biglearn::Sparfa::FakeClient < OpenStax::Biglearn::FakeClient
         U_data: nq.times.map { rand },
         U_row: (QUESTIONS_PER_LEARNER*nl).times.map { rand nc },
         U_col: (0..nl-1).to_a * QUESTIONS_PER_LEARNER,
-        superseded_at: request[:responded_before].nil? ? nil : (Time.current - 1.week).iso8601
+        superseded_at: request[:responded_before].nil? ? nil : updated_at_string,
+        created_at: created_at_string,
+        updated_at: updated_at_string
       )
     end
   end

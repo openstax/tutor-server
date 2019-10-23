@@ -75,7 +75,9 @@ RSpec.shared_examples 'a biglearn sparfa client' do
           G_mask_col: kind_of(Array),
           U_data: kind_of(Array),
           U_row: kind_of(Array),
-          U_col: kind_of(Array)
+          U_col: kind_of(Array),
+          created_at: kind_of(String),
+          updated_at: kind_of(String)
         )
       end
 

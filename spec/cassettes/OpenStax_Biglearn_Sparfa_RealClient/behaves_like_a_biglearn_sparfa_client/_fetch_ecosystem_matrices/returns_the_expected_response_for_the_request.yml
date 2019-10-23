@@ -7,8 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"ecosystem_matrix_requests":[{"request_uuid":"<fetch_ecosystem_matrices
         REQUEST 1 UUID>","ecosystem_matrix_uuid":"<ECOSYSTEM MATRIX UUID>"},{"request_uuid":"<fetch_ecosystem_matrices
-        REQUEST 2 UUID>","ecosystem_matrix_uuid":"<ECOSYSTEM MATRIX UUID>","responded_before":"<RESPONDED BEFORE>","student_uuids":["<STUDENT
-        UUID>"]}]}'
+        REQUEST 2 UUID>","ecosystem_matrix_uuid":"<ECOSYSTEM MATRIX UUID>","responded_before":"<RESPONDED
+        BEFORE>","student_uuids":["<STUDENT UUID>"]}]}'
     headers:
       User-Agent:
       - Faraday v0.15.4
@@ -28,24 +28,24 @@ http_interactions:
       Server:
       - gunicorn/19.9.0
       Date:
-      - Wed, 23 Oct 2019 17:56:11 GMT
+      - Wed, 23 Oct 2019 20:22:31 GMT
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Content-Length:
-      - '1289'
+      - '1461'
     body:
       encoding: UTF-8
       string: '{"ecosystem_matrices":[{"C_ids":["b708b266-f2e3-492e-ac16-5a56568222f9"],"G_col":[0],"G_data":[true],"G_mask_col":[0],"G_mask_data":[true],"G_mask_row":[0],"G_row":[0],"H_mask_col":[0],"H_mask_data":[true],"H_mask_row":[0],"L_ids":["<STUDENT
-        UUID>"],"Q_ids":["3f677740-e17e-496c-bae1-d18f16a7e8a3"],"U_col":[0],"U_data":[5.63862879101352],"U_row":[0],"W_col":[0],"W_data":[1.0],"W_row":[0],"d_data":[1.0],"ecosystem_matrix_uuid":"<ECOSYSTEM
+        UUID>"],"Q_ids":["3f677740-e17e-496c-bae1-d18f16a7e8a3"],"U_col":[0],"U_data":[5.63862879101352],"U_row":[0],"W_col":[0],"W_data":[1.0],"W_row":[0],"created_at":"2019-10-23T11:25:53.777325Z","d_data":[1.0],"ecosystem_matrix_uuid":"<ECOSYSTEM
         MATRIX UUID>","ecosystem_uuid":"805437a7-7e9d-4c9a-a5ec-d9886ee6d1bb","request_uuid":"<fetch_ecosystem_matrices
-        REQUEST 1 UUID>","responded_before":null,"superseded_at":null},{"C_ids":["b708b266-f2e3-492e-ac16-5a56568222f9"],"G_col":[0],"G_data":[true],"G_mask_col":[0],"G_mask_data":[true],"G_mask_row":[0],"G_row":[0],"H_mask_col":[0],"H_mask_data":[true],"H_mask_row":[0],"L_ids":["<STUDENT
-        UUID>"],"Q_ids":["3f677740-e17e-496c-bae1-d18f16a7e8a3"],"U_col":[0],"U_data":[5.63862879101352],"U_row":[0],"W_col":[0],"W_data":[1.0],"W_row":[0],"d_data":[1.0],"ecosystem_matrix_uuid":"<ECOSYSTEM
+        REQUEST 1 UUID>","responded_before":null,"superseded_at":null,"updated_at":"2019-10-23T11:25:53.777341Z"},{"C_ids":["b708b266-f2e3-492e-ac16-5a56568222f9"],"G_col":[0],"G_data":[true],"G_mask_col":[0],"G_mask_data":[true],"G_mask_row":[0],"G_row":[0],"H_mask_col":[0],"H_mask_data":[true],"H_mask_row":[0],"L_ids":["<STUDENT
+        UUID>"],"Q_ids":["3f677740-e17e-496c-bae1-d18f16a7e8a3"],"U_col":[0],"U_data":[5.63862879101352],"U_row":[0],"W_col":[0],"W_data":[1.0],"W_row":[0],"created_at":"2019-10-23T11:25:53.777325Z","d_data":[1.0],"ecosystem_matrix_uuid":"<ECOSYSTEM
         MATRIX UUID>","ecosystem_uuid":"805437a7-7e9d-4c9a-a5ec-d9886ee6d1bb","request_uuid":"<fetch_ecosystem_matrices
-        REQUEST 2 UUID>","responded_before":"<RESPONDED BEFORE>","superseded_at":null}]}
+        REQUEST 2 UUID>","responded_before":"<RESPONDED BEFORE>","superseded_at":null,"updated_at":"2019-10-23T11:25:53.777341Z"}]}
 
 '
-    http_version:
-  recorded_at: Wed, 23 Oct 2019 17:56:11 GMT
+    http_version: 
+  recorded_at: Wed, 23 Oct 2019 20:22:31 GMT
 recorded_with: VCR 4.0.0
