@@ -41,7 +41,7 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
     end
 
     responses = students.map do |student|
-      Hashie::Map.new student.attributes.merge (
+      Hashie::Map.new student.attributes.merge(
         ordered_exercise_numbers: ordered_exercise_numbers_by_student_uuid[student.uuid],
         ecosystem_matrix: ecosystem_matrix_by_student_uuid[student.uuid]
       )
@@ -111,11 +111,12 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
               ordered_exercise_numbers: ordered_ex_nums_by_calc_uuid[task.pe_calculation_uuid],
               ecosystem_matrix: ecosystem_matrix_by_calculation_uuid[task.pe_calculation_uuid]
             } unless task.pe_calculation_uuid.nil?
-            spes: {
+
+            attrs[:spes] = {
               ordered_exercise_numbers: ordered_ex_nums_by_calc_uuid[task.spe_calculation_uuid],
               ecosystem_matrix: ecosystem_matrix_by_calculation_uuid[task.spe_calculation_uuid]
-            }
-          }
+            } unless task.spe_calculation_uuid.nil?
+          end
         end
       )
     end
