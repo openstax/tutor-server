@@ -197,7 +197,7 @@ Rails.application.routes.draw do
     end unless IAm.real_production?
 
     namespace :research do
-      post :/, action: :research
+      post :/, action: :research, controller: :root
 
       namespace :sparfa do
         post :students

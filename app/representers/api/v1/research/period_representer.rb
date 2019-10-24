@@ -59,7 +59,7 @@ class Api::V1::Research::PeriodRepresenter < Roar::Decorator
              extend: Api::V1::Research::StudentRepresenter,
              getter: ->(user_options:, **) do
                user_options[:research_identifiers].nil? ? students : students.joins(:role).where(
-                 role: { research_identifier: research_identifiers }
+                 role: { research_identifier: user_options[:research_identifiers] }
                )
              end,
              readable: true,

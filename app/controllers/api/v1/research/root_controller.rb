@@ -1,10 +1,10 @@
-class Api::V1::Research::Controller < Api::V1::Research::BaseController
+class Api::V1::Research::RootController < Api::V1::Research::BaseController
   api :POST, '/research', <<~EOS
-    Retrieve course, period, student and assignment information
+    Retrieve course, period, student and task information
     for the given course_ids or research_identifiers.
   EOS
   description <<~EOS
-    Retrieve couse, period, student and assignment information for courses
+    Retrieve couse, period, student and task information for courses
     with the given course_ids or students with the given research_identifiers.
   EOS
   def research
@@ -12,7 +12,7 @@ class Api::V1::Research::Controller < Api::V1::Research::BaseController
     consume! request, represent_with: Api::V1::Research::RequestRepresenter
     course_ids = request.course_ids
     research_identifiers = request.research_identifiers
-    render_api_errors('Either course_ids or research_identifiers must be provided') \
+    return render_api_errors('Either course_ids or research_identifiers must be provided') \
       if course_ids.nil? && research_identifiers.nil?
 
     courses = CourseProfile::Models::Course.preload(:periods)
@@ -22,6 +22,8 @@ class Api::V1::Research::Controller < Api::V1::Research::BaseController
     ).distinct unless research_identifiers.nil?
 
     respond_with courses, represent_with: Api::V1::Research::CoursesRepresenter,
+                          location: nil,
+                          status: :ok,
                           user_options: { research_identifiers: research_identifiers }
   end
 end

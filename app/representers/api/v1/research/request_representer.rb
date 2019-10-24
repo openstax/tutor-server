@@ -9,6 +9,6 @@ class Api::V1::Research::RequestRepresenter < Roar::Decorator
 
   collection :research_identifiers,
              type: String,
-             readable: true,
-             writeable: false
+             readable: false,
+             writeable: true
 end
