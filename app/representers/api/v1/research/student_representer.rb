@@ -25,7 +25,6 @@ class Api::V1::Research::StudentRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false,
-           getter: ->(*) { role.research_identifier },
            schema_info: { required: true }
 
   property :is_active,

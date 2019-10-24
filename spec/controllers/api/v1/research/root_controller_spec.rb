@@ -32,7 +32,7 @@ RSpec.describe Api::V1::Research::RootController, type: :controller, api: true, 
       let(:research_identifiers) { [ student_role.research_identifier ] }
       let(:params)               { { research_identifiers: research_identifiers } }
 
-      it 'retrieves course, period and task info for students with the given research_identifier' do
+      it 'retrieves course, period and tasks for students with the given research_identifiers' do
         api_post :research, research_token, body: params.to_json
 
         expect(response).to be_ok

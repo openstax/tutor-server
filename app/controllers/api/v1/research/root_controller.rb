@@ -8,10 +8,10 @@ class Api::V1::Research::RootController < Api::V1::Research::BaseController
     with the given course_ids or students with the given research_identifiers.
   EOS
   def research
-    request = Hashie::Mash.new
-    consume! request, represent_with: Api::V1::Research::RequestRepresenter
-    course_ids = request.course_ids
-    research_identifiers = request.research_identifiers
+    req = Hashie::Mash.new
+    consume! req, represent_with: Api::V1::Research::RequestRepresenter
+    course_ids = req.course_ids
+    research_identifiers = req.research_identifiers
     return render_api_errors('Either course_ids or research_identifiers must be provided') \
       if course_ids.nil? && research_identifiers.nil?
 

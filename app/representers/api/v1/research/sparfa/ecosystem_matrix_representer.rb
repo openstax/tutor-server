@@ -3,23 +3,54 @@ class Api::V1::Research::Sparfa::EcosystemMatrixRepresenter < Roar::Decorator
   include Representable::Coercion
 
   property :responded_before,
-           type: DateTime,
+           type: String,
            readable: true,
-           writeable: false
+           writeable: false,
+           schema_info: { required: true }
 
   collection :research_identifiers,
              type: String,
              readable: true,
              writeable: false,
+             getter: ->(*) do
+               st = CourseMembership::Models::Student.arel_table
+               research_identifier_by_uuid = Entity::Role.joins(:student).where(
+                 student: { uuid: self.L_ids }
+               ).pluck(st[:uuid], :research_identifier).to_h
+
+               self.L_ids.map { |uuid| research_identifier_by_uuid[uuid] }
+             end,
              schema_info: { required: true }
 
-  collection :exercise_numbers,
+  collection :exercise_uids,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) do
+               exercise_uid_by_uuid = {}
+               Content::Models::Exercise.select(
+                 :id, :number, :version, :uuid
+               ).where(uuid: self.Q_ids).find_each do |exercise|
+                 exercise_uid_by_uuid[exercise.uuid] = exercise.uid
+               end
+
+               self.Q_ids.map { |uuid| exercise_uid_by_uuid[uuid] }
+             end,
+             schema_info: { required: true }
+
+  collection :L_ids,
              type: String,
              readable: true,
              writeable: false,
              schema_info: { required: true }
 
-  collection :page_uuids,
+  collection :Q_ids,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: true }
+
+  collection :C_ids,
              type: String,
              readable: true,
              writeable: false,
@@ -122,7 +153,8 @@ class Api::V1::Research::Sparfa::EcosystemMatrixRepresenter < Roar::Decorator
              schema_info: { required: true }
 
   property :superseded_at,
-           type: DateTime,
+           type: String,
            readable: true,
-           writeable: false
+           writeable: false,
+           schema_info: { required: true }
 end

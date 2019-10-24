@@ -1,5 +1,4 @@
 class CourseMembership::Models::Teacher < ApplicationRecord
-
   acts_as_paranoid without_default_scope: true
 
   belongs_to :role, subsystem: :entity, inverse_of: :teacher
@@ -7,6 +6,6 @@ class CourseMembership::Models::Teacher < ApplicationRecord
 
   validates :role,   uniqueness: true
 
-  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, to: :role
-
+  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, :research_identifier,
+           to: :role
 end
