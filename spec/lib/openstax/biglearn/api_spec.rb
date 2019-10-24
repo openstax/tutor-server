@@ -7,12 +7,10 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
   context 'configuration' do
     it 'can be configured' do
-      configuration = OpenStax::Biglearn::Api.configuration
-      expect(configuration).to be_a(OpenStax::Biglearn::Api::Configuration)
+      configuration = described_class.configuration
+      expect(configuration).to be_a described_class::Configuration
 
-      OpenStax::Biglearn::Api.configure do |config|
-        expect(config).to eq configuration
-      end
+      described_class.configure { |config| expect(config).to eq configuration }
     end
   end
 
@@ -48,7 +46,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :create_ecosystem,
           -> { { ecosystem: @ecosystem_1.tap { |eco| eco.update_attribute :sequence_number, 0 } } },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @ecosystem_1 },
           1
         ],
@@ -57,7 +55,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           -> { { course: @course.tap { |course| course.update_attribute :sequence_number, 0 },
                  ecosystem: @ecosystem_1 } },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -73,7 +71,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :update_course_ecosystems,
           -> { [ { course: @course, preparation_uuid: SecureRandom.uuid } ] },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -89,7 +87,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :update_rosters,
           -> { [ { course: @course }, { enable_warnings: false } ] },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -97,7 +95,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :update_globally_excluded_exercises,
           -> { { course: @course, enable_warnings: false } },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -105,7 +103,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :update_course_excluded_exercises,
           -> { { course: @course } },
           -> { { enable_warnings: false } },
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -113,7 +111,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :update_course_active_dates,
           -> { { course: @course } },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -121,7 +119,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :create_update_assignments,
           -> { [ { course: @course, task: @reading_task } ] },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -129,7 +127,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           :record_responses,
           -> { [ { course: @course, tasked_exercise: @tasked_exercise } ] },
           nil,
-          OpenStax::Biglearn::Api::JobWithSequenceNumber,
+          described_class::JobWithSequenceNumber,
           -> { @course },
           1
         ],
@@ -183,10 +181,10 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           sequence_number = sequence_number_record.sequence_number \
             if sequence_number_record.present?
 
-          expect(OpenStax::Biglearn::Api.client).to receive(method).and_call_original
+          expect(described_class.client).to receive(method).and_call_original
 
-          results = options.nil? ? OpenStax::Biglearn::Api.send(method, requests) :
-                                   OpenStax::Biglearn::Api.send(method, requests, options)
+          results = options.nil? ? described_class.send(method, requests) :
+                                   described_class.send(method, requests, options)
 
           results = results.values if requests.is_a?(Array) && results.is_a?(Hash)
 
@@ -201,20 +199,19 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     it 'errors when given too many arguments' do
       expect do
-        OpenStax::Biglearn::Api.update_course_ecosystems(
-          [], { what: true }, { enable_warnings: false }
-        )
+        described_class.update_course_ecosystems([], { what: true }, { enable_warnings: false })
       end.to raise_error(ArgumentError)
     end
 
     it 'converts returned exercise uuids to exercise objects, preserving their order' do
+      expect(@exercises).not_to be_empty
       exercises = @exercises.first(max_num_exercises).map do |exercise|
         Content::Exercise.new strategy: exercise.wrap
       end
       expect(Rails.logger).not_to receive(:warn)
 
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
-        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+        expect(described_class.client).to receive(api_method) do |requests|
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
@@ -226,7 +223,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
         result = nil
         expect do
-          result = OpenStax::Biglearn::Api.public_send(
+          result = described_class.public_send(
             api_method, task: @reading_task, max_num_exercises: max_num_exercises
           )
         end.not_to raise_error
@@ -243,7 +240,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
         [ @reading_task, homework_task, practice_task ].each do |task|
-          expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+          expect(described_class.client).to receive(api_method) do |requests|
             requests.map do |request|
               {
                 request_uuid: request[:request_uuid],
@@ -262,7 +259,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
           result = nil
           expect do
-            result = OpenStax::Biglearn::Api.public_send(
+            result = described_class.public_send(
               api_method,
               task: task,
               max_num_exercises: max_num_exercises,
@@ -282,7 +279,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     it 'errors when client returns more exercises than expected' do
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
-        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+        expect(described_class.client).to receive(api_method) do |requests|
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
@@ -294,10 +291,10 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         expect(Rails.logger).not_to receive(:warn)
 
         expect do
-          OpenStax::Biglearn::Api.public_send(
+          described_class.public_send(
             api_method, task: @reading_task, max_num_exercises: max_num_exercises
           )
-        end.to raise_error{ OpenStax::Biglearn::Api::ExercisesError }
+        end.to raise_error { OpenStax::Biglearn::ExercisesError }
       end
     end
 
@@ -307,7 +304,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       end
 
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
-        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+        expect(described_class.client).to receive(api_method) do |requests|
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
@@ -320,7 +317,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
         result = nil
         expect do
-          result = OpenStax::Biglearn::Api.public_send(
+          result = described_class.public_send(
             api_method, task: @reading_task, max_num_exercises: max_num_exercises
           )
         end.not_to raise_error
@@ -330,7 +327,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     it 'errors when client returns exercises not present locally' do
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
-        expect(OpenStax::Biglearn::Api.client).to receive(api_method) do |requests|
+        expect(described_class.client).to receive(api_method) do |requests|
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
@@ -342,10 +339,10 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         expect(Rails.logger).not_to receive(:warn)
 
         expect do
-          OpenStax::Biglearn::Api.public_send(
+          described_class.public_send(
             api_method, task: @reading_task, max_num_exercises: max_num_exercises
           )
-        end.to raise_error { OpenStax::Biglearn::Api::ExercisesError }
+        end.to raise_error { OpenStax::Biglearn::ExercisesError }
       end
     end
   end

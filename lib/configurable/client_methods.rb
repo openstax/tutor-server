@@ -11,7 +11,7 @@ module Configurable
       end
 
       def extended(base)
-        Rails.application.config.after_initialize{ base.save_static_client! }
+        Rails.application.config.after_initialize { base.save_static_client! }
       end
     end
 
@@ -37,7 +37,7 @@ module Configurable
     # Make sure to wrap the check AND the call to #save_static_client!
     # in a Mutex or Monitor to prevent concurrent access
     def save_static_client!
-      @static_client = client.freeze.tap{ self.client = nil }
+      @static_client = client.freeze.tap { self.client = nil }
     end
 
     protected

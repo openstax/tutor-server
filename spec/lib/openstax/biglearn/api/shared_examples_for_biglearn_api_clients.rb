@@ -136,10 +136,10 @@ RSpec.shared_examples 'a biglearn api client' do
 
         before(:all, when_tagged_with_vcr) do
           VCR.configure do |config|
-            requests_array.each_with_index do |request, request_index|
+            request_uuids.each_with_index do |request_uuid, request_index|
               config.define_cassette_placeholder(
                 "<#{method.to_s.upcase} EXAMPLE #{index + 1} REQUEST #{request_index + 1} UUID>"
-              ) { request_uuids[index] }
+              ) { request_uuid }
             end
           end
         end

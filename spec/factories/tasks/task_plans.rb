@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
       duration                  { 1.week }
-      time_zone                 { owner.try(:time_zone).try!(:to_tz) || Time.zone }
+      time_zone                 { owner.try(:time_zone)&.to_tz || Time.zone }
       opens_at                  { time_zone.now }
       due_at                    { opens_at + duration }
       num_tasking_plans         { 1 }
