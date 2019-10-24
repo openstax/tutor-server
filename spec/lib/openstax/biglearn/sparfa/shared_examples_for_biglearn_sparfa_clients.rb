@@ -28,32 +28,28 @@ RSpec.shared_examples 'a biglearn sparfa client' do
   context '#fetch_ecosystem_matrices' do
     before(:all) do
       @requests = [
-        { ecosystem_matrix_uuid: @ecosystem_matrix_uuid },
+        { request_uuid: SecureRandom.uuid, ecosystem_matrix_uuid: @ecosystem_matrix_uuid },
         {
+          request_uuid: SecureRandom.uuid,
           ecosystem_matrix_uuid: @ecosystem_matrix_uuid,
           students: [ @student ],
           responded_before: @responded_before
         }
       ]
-      @request_uuids = @requests.map { SecureRandom.uuid }
     end
 
     before(:all, when_tagged_with_vcr) do
       VCR.configure do |config|
-        @request_uuids.each_with_index do |request_uuid, request_index|
+        @requests.each_with_index do |request, request_index|
           config.define_cassette_placeholder(
             "<fetch_ecosystem_matrices REQUEST #{request_index + 1} UUID>"
-          ) { request_uuid }
+          ) { request[:request_uuid] }
         end
       end
     end
 
     it 'returns the expected response for the request' do
-      requests = @requests.each_with_index.map do |request, index|
-        request.merge(request_uuid: @request_uuids[index])
-      end
-
-      expected_responses = requests.map do |request|
+      expected_responses = @requests.map do |request|
         request.slice(:request_uuid, :ecosystem_matrix_uuid).merge(
           responded_before: request[:responded_before],
           ecosystem_uuid: kind_of(String),
@@ -81,7 +77,7 @@ RSpec.shared_examples 'a biglearn sparfa client' do
         )
       end
 
-      actual_responses = client.fetch_ecosystem_matrices requests
+      actual_responses = client.fetch_ecosystem_matrices @requests
       responses_without_superseded = actual_responses.map do |response|
         response.except :superseded_at
       end

@@ -1,6 +1,6 @@
 class Api::V1::Research::Sparfa::TaskPlanRepresenter < Api::V1::Research::TaskPlanRepresenter
   collection :students,
-             extend: Api::V1::Research::Sparfa::StudentRepresenter,
+             extend: Api::V1::Research::Sparfa::StudentTaskRepresenter,
              getter: ->(user_options:, **) do
                students = CourseMembership::Models::Student.where(
                  id: tasks.preload(taskings: :role).flat_map do |task|
@@ -15,9 +15,4 @@ class Api::V1::Research::Sparfa::TaskPlanRepresenter < Api::V1::Research::TaskPl
              readable: true,
              writeable: false,
              schema_info: { required: true }
-
-  property :ecosystem_matrix,
-           extend: Api::V1::Research::Sparfa::EcosystemMatrixRepresenter,
-           readable: true,
-           writeable: false
 end

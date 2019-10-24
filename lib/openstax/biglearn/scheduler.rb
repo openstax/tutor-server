@@ -22,7 +22,7 @@ module OpenStax::Biglearn::Scheduler
         task = request[:task]&.to_model
         raise OpenStax::Biglearn::MalformedRequest if student.nil? && task.nil?
 
-        {}.tap do |scheduler_request|
+        request.slice(:algorithm_name).tap do |scheduler_request|
           scheduler_request[:student] = student unless student.nil?
 
           if task.nil?
@@ -37,13 +37,16 @@ module OpenStax::Biglearn::Scheduler
       bulk_api_request(
         method: :fetch_algorithm_exercise_calculations,
         requests: scheduler_requests,
+        keys: [ :algorithm_name ],
         optional_keys: [ :student, :task ]
       ) do |request, response|
-        response.except(:exercise_uuids).merge(
-          exercises: get_ecosystem_exercises_by_uuids(
-            ecosystem: ecosystem_by_request[request], exercise_uuids: response[:exercise_uuids]
+        response[:calculations].map do |calculation|
+          calculation.except(:exercise_uuids).merge(
+            exercises: get_ecosystem_exercises_by_uuids(
+              ecosystem: ecosystem_by_request[request], exercise_uuids: calculation[:exercise_uuids]
+            )
           )
-        )
+        end
       end
     end
 
@@ -64,7 +67,7 @@ module OpenStax::Biglearn::Scheduler
       end
     end
 
-    def bulk_api_request(method:, requests:, optional_keys:,
+    def bulk_api_request(method:, requests:, keys: [], optional_keys: [],
                          result_class: Hash, uuid_key: :request_uuid)
       req = [requests].flatten
 
@@ -75,7 +78,7 @@ module OpenStax::Biglearn::Scheduler
         uuid = request.fetch uuid_key, SecureRandom.uuid
 
         requests_map[uuid] = verify_and_slice_request(
-          method: method, request: request, optional_keys: optional_keys
+          method: method, request: request, keys: keys, optional_keys: optional_keys
         )
       end
 

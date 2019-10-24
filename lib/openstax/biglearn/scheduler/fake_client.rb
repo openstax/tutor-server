@@ -8,6 +8,7 @@ class OpenStax::Biglearn::Scheduler::FakeClient < OpenStax::Biglearn::FakeClient
   # :student and :task
   def fetch_algorithm_exercise_calculations(requests)
     requests.map do |request|
+      algorithm_name = request[:algorithm_name] || ['local_query', 'biglearn_sparfa'].sample
       task = request[:task]
       student = request[:student] || task.taskings.first.role.student
 
@@ -25,7 +26,7 @@ class OpenStax::Biglearn::Scheduler::FakeClient < OpenStax::Biglearn::FakeClient
             calculation_uuid: calculation_uuid,
             calculated_at: Time.current.iso8601,
             ecosystem_matrix_uuid: SecureRandom.uuid,
-            algorithm_name: ['local_query', 'biglearn_sparfa'].sample,
+            algorithm_name: algorithm_name,
             exercise_uuids: ecosystem.exercises.map(&:uuid).shuffle
           }
         end

@@ -21,13 +21,19 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
       reading_task_plan = FactoryBot.create :tasked_task_plan, number_of_students: 1
       @task = reading_task_plan.tasks.first
       @student = @task.taskings.first.role.student
+      #@student.course.ecosystems << @task.ecosystem
+      @algorithm_name = 'biglearn_sparfa'
       @exercises = @task.ecosystem.pages.first.exercises
     end
 
     after(:all) { DatabaseCleaner.clean }
 
     it "delegates fetch_algorithm_exercise_calculations to the client and returns a response" do
-      requests = [ { student: @student }, { task: @task }, { student: @student, task: @task } ]
+      requests = [
+        { algorithm_name: @algorithm_name, student: @student },
+        { algorithm_name: @algorithm_name, task: @task },
+        { algorithm_name: @algorithm_name, student: @student, task: @task }
+      ]
 
       expect(described_class.client).to receive(
         :fetch_algorithm_exercise_calculations
@@ -52,18 +58,28 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
-              student_uuid: SecureRandom.uuid,
-              calculation_uuid: SecureRandom.uuid,
-              ecosystem_matrix_uuid: SecureRandom.uuid,
-              algorithm_name: [ 'local_query', 'biglearn_sparfa' ].sample,
-              exercise_uuids: exercises.map(&:uuid)
+              calculations: [
+                {
+                  student_uuid: SecureRandom.uuid,
+                  calculation_uuid: SecureRandom.uuid,
+                  ecosystem_matrix_uuid: SecureRandom.uuid,
+                  algorithm_name: request[:algorithm_name],
+                  exercise_uuids: exercises.map(&:uuid)
+                }
+              ]
             }
           end
         end.once
       )
 
-      results = described_class.fetch_algorithm_exercise_calculations [ { task: @task } ]
-      results.values.each { |result| expect(result[:exercises]).to eq exercises }
+      results = described_class.fetch_algorithm_exercise_calculations [
+        { algorithm_name: @algorithm_name, task: @task }
+      ]
+      results.values.each do |calculations|
+        calculations.each do |calculation|
+          expect(calculation[:exercises]).to eq exercises
+        end
+      end
     end
 
     it 'errors when client returns exercises not present locally' do
@@ -72,8 +88,15 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
           requests.map do |request|
             {
               request_uuid: request[:request_uuid],
-              exercise_uuids: max_num_exercises.times.map { SecureRandom.uuid },
-              assignment_status: 'assignment_ready'
+              calculations: [
+                {
+                  student_uuid: SecureRandom.uuid,
+                  calculation_uuid: SecureRandom.uuid,
+                  ecosystem_matrix_uuid: SecureRandom.uuid,
+                  algorithm_name: request[:algorithm_name],
+                  exercise_uuids: max_num_exercises.times.map { SecureRandom.uuid }
+                }
+              ]
             }
           end
         end
@@ -81,7 +104,9 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
       expect(Rails.logger).not_to receive(:warn)
 
       expect do
-        described_class.fetch_algorithm_exercise_calculations [ { task: @task } ]
+        described_class.fetch_algorithm_exercise_calculations [
+          { algorithm_name: @algorithm_name, task: @task }
+        ]
       end.to raise_error { OpenStax::Biglearn::ExercisesError }
     end
   end

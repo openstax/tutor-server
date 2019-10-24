@@ -6,9 +6,9 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"algorithm_exercise_calculation_requests":[{"request_uuid":"<fetch_algorithm_exercise_calculations
-        REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>"},{"request_uuid":"<fetch_algorithm_exercise_calculations
-        REQUEST 2 UUID>","student_uuid":"<STUDENT UUID>"},{"request_uuid":"<fetch_algorithm_exercise_calculations
-        REQUEST 3 UUID>","student_uuid":"<STUDENT UUID>"}]}'
+        REQUEST 1 UUID>","student_uuid":"<STUDENT UUID>","algorithm_name":"<ALGORITHM NAME>"},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 2 UUID>","student_uuid":"<STUDENT UUID>","algorithm_name":"<ALGORITHM NAME>"},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 3 UUID>","student_uuid":"<STUDENT UUID>","algorithm_name":"<ALGORITHM NAME>"}]}'
     headers:
       User-Agent:
       - Faraday v0.15.4
@@ -54,9 +54,9 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"algorithm_exercise_calculations":[{"request_uuid":"<fetch_algorithm_exercise_calculations
-        REQUEST 1 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","calculated_at":"2019-10-22T21:11:20Z","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"local_query","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]},{"request_uuid":"<fetch_algorithm_exercise_calculations
-        REQUEST 2 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","calculated_at":"2019-10-22T21:11:20Z","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"local_query","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]},{"request_uuid":"<fetch_algorithm_exercise_calculations
-        REQUEST 3 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","calculated_at":"2019-10-22T21:11:20Z","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"local_query","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]}]}'
+        REQUEST 1 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","calculated_at":"2019-10-22T21:11:20Z","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"<ALGORITHM NAME>","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 2 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","calculated_at":"2019-10-22T21:11:20Z","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"<ALGORITHM NAME>","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]},{"request_uuid":"<fetch_algorithm_exercise_calculations
+        REQUEST 3 UUID>","calculations":[{"student_uuid":"<STUDENT UUID>","calculation_uuid":"550e1bf7-5d73-48b2-a26e-0d43d4281ac4","calculated_at":"2019-10-22T21:11:20Z","ecosystem_matrix_uuid":"b86dd3d5-4bb0-44a1-b017-25bc55761d2c","algorithm_name":"<ALGORITHM NAME>","exercise_uuids":["010c55bc-b0bb-450c-b433-91259e8be800","731d58f2-9244-4274-8c11-9283f012d133","503a1606-d166-439a-b555-9839846b0059","2e33680f-f4de-4b24-8a77-7707ad5d1501","3327a379-c9f7-4563-8425-6a00cbd5920a"]}]}]}'
     http_version:
   recorded_at: Tue, 22 Oct 2019 23:31:13 GMT
 recorded_with: VCR 4.0.0
