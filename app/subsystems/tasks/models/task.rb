@@ -186,9 +186,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def core_task_steps_completed?
-    core_task_steps.all?(&:completed?)
-    # Revert to the following line once the is_core background migration is complete:
-    # task_steps.loaded? ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
+    task_steps.loaded? ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
   end
 
   def hide(current_time: Time.current)
