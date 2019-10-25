@@ -8,11 +8,6 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  property :uuid,
-           type: String,
-           readable: true,
-           writeable: false
-
   property :is_trouble,
            readable: true,
            writeable: false,
