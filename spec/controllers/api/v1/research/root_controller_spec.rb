@@ -2,12 +2,11 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::Research::RootController, type: :controller, api: true, version: :v1 do
-  let(:course_1)      { FactoryBot.create :course_profile_course }
-  let(:period)        { FactoryBot.create :course_membership_period, course: course_1 }
-  let(:student_user)  { FactoryBot.create :user }
-  let(:student_role)  { AddUserAsPeriodStudent[user: student_user, period: period] }
-  let!(:student_1)    { student_role.student }
-  let!(:student_2)    { FactoryBot.create :course_membership_student, period: period }
+  let(:task_plan)     { FactoryBot.create :tasked_task_plan, number_of_students: 2 }
+  let(:course_1)      { task_plan.owner }
+  let(:period)        { task_plan.tasking_plans.first.target }
+  let(:student_1)     { period.students.to_a.first }
+  let(:student_2)     { period.students.to_a.last }
 
   let!(:course_2)     { FactoryBot.create :course_profile_course }
 
@@ -29,7 +28,7 @@ RSpec.describe Api::V1::Research::RootController, type: :controller, api: true, 
     end
 
     context 'research_identifiers' do
-      let(:research_identifiers) { [ student_role.research_identifier ] }
+      let(:research_identifiers) { [ student_1.research_identifier ] }
       let(:params)               { { research_identifiers: research_identifiers } }
 
       it 'retrieves course, period and tasks for students with the given research_identifiers' do

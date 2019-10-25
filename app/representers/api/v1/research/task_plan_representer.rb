@@ -8,12 +8,6 @@ class Api::V1::Research::TaskPlanRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true }
 
-  property :uuid,
-           type: String,
-           readable: true,
-           writeable: false,
-           schema_info: { required: true }
-
   property :content_ecosystem_id,
            as: :ecosystem_id,
            type: String,
