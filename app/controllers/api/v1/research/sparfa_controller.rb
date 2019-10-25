@@ -87,7 +87,7 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
       scheduler_requests.each do |scheduler_request|
         task = scheduler_request[:task]
 
-        calcs[scheduler_request].each do |calc|
+        (calcs[scheduler_request] || []).each do |calc|
           calculation_uuid = calc[:calculation_uuid]
           active_calculation_uuid_by_task_id[task.id] = calculation_uuid \
             if task.pe_calculation_uuid.nil? && task.spe_calculation_uuid.nil?

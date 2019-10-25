@@ -13,11 +13,9 @@ class OpenStax::Biglearn::Scheduler::RealClient < OpenStax::Biglearn::RealClient
       task = request[:task]
 
       calculation_uuids = [ task&.pe_calculation_uuid, task&.spe_calculation_uuid ].compact
-      if calculation_uuids.empty?
-        tasking = task.taskings.first
-        next if tasking.nil?
-
-        student ||= tasking.role.student
+      if calculation_uuids.empty? && student.nil?
+        student = task&.taskings&.first&.role&.student
+        next if student.nil?
       end
 
       request.slice(:request_uuid, :algorithm_name).tap do |scheduler_request|
