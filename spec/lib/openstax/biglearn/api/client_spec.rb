@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Biglearn::Api::Client, type: :external, vcr: VCR_OPTS do
-  subject(:client)       { OpenStax::Biglearn::Api::Client.new }
+  subject(:client)       { OpenStax::Biglearn::Api.client }
 
   let(:preparation_uuid) { SecureRandom.uuid }
   let(:course)           { FactoryBot.create(:course_profile_course) }
