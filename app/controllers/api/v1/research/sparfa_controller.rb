@@ -68,17 +68,20 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
     return render_api_errors('Either task_plan_ids or research_identifiers must be provided') \
       if task_plan_ids.nil? && research_identifiers.nil?
 
-    tasks = Tasks::Models::Task.joins(:task_plan).preload(:task_plan, taskings: { role: :student })
-    tasks = tasks.where(task_plan: { id: task_plan_ids }) unless task_plan_ids.nil?
-    tasks = tasks.joins(taskings: :role).where(
+    all_tasks = Tasks::Models::Task.joins(:task_plan).preload(
+      :task_plan, taskings: { role: :student }
+    )
+    all_tasks = all_tasks.where(task_plan: { id: task_plan_ids }) unless task_plan_ids.nil?
+    all_tasks = all_tasks.joins(taskings: :role).where(
       taskings: { role: { research_identifier: research_identifiers } }
     ) unless research_identifiers.nil?
+    all_tasks = all_tasks.reject { |task| task.taskings.empty? }
 
     ordered_ex_nums_by_calc_uuid = {}
     active_calculation_uuid_by_task_id = {}
     calculation_uuids_by_ecosystem_matrix_uuid = Hash.new { |hash, key| hash[key] = [] }
     ecosystem_matrix_by_calculation_uuid = {}
-    tasks.find_in_batches(batch_size: 10) do |tasks|
+    all_tasks.each_slice(10) do |tasks|
       scheduler_requests = tasks.map { |task| { algorithm_name: ALGORITHM_NAME, task: task } }
       calcs = OpenStax::Biglearn::Scheduler.fetch_algorithm_exercise_calculations(
         scheduler_requests
@@ -97,7 +100,9 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
         end
       end
 
-      student_by_uuid = tasks.map { |task| task.taskings.first.role.student }.index_by(&:uuid)
+      student_by_uuid = tasks.flat_map(&:taskings).map do |tasking|
+        tasking.role.student
+      end.index_by(&:uuid)
 
       sparfa_requests = calcs.values.flatten.map do |calc|
         calc.slice(:ecosystem_matrix_uuid).merge(
@@ -115,7 +120,7 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
       end
     end
 
-    responses = tasks.group_by(&:task_plan).map do |task_plan, tasks|
+    responses = all_tasks.group_by(&:task_plan).map do |task_plan, tasks|
       Hashie::Mash.new task_plan.attributes.merge(
         students: tasks.map do |task|
           role = task.taskings.first.role
