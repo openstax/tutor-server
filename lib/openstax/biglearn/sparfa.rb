@@ -53,7 +53,7 @@ module OpenStax::Biglearn::Sparfa
                          result_class: Hash, uuid_key: :request_uuid)
       req = [requests].flatten
 
-      return requests.is_a?(Array) ? [] : {} if req.empty?
+      return requests.is_a?(Hash) ? nil : {} if req.empty?
 
       requests_map = {}
       req.each do |request|

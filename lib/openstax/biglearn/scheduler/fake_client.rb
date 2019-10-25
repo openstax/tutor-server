@@ -10,8 +10,9 @@ class OpenStax::Biglearn::Scheduler::FakeClient < OpenStax::Biglearn::FakeClient
     requests.map do |request|
       algorithm_name = request[:algorithm_name] || ['local_query', 'biglearn_sparfa'].sample
       task = request[:task]
-      student = request[:student] || task.taskings.first.role.student
+      next if !task.nil? && task.taskings.empty?
 
+      student = request[:student] || task.taskings.first.role.student
       next if !task.nil? && task.taskings.none? { |tasking| tasking.role.student == student }
 
       calculation_uuids = [ task&.pe_calculation_uuid, task&.spe_calculation_uuid ].compact

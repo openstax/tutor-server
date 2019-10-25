@@ -539,7 +539,7 @@ module OpenStax::Biglearn::Api
       req = [requests].flatten
       req = req.select(&select_proc) unless select_proc.nil?
 
-      return requests.is_a?(Array) ? [] : {} if req.empty?
+      return requests.is_a?(Hash) ? nil : {} if req.empty?
 
       requests_map = {}
       req.each do |request|
