@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"request_uuid":"<UPDATE_COURSE_EXCLUDED_EXERCISES EXAMPLE 1 REQUEST
-        1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":385,"exclusions":[],"updated_at":"2017-06-27T23:26:45.704487Z"}'
+        1 UUID>","course_uuid":"<API COURSE UUID>","sequence_number":385,"exclusions":[],"updated_at":"2017-06-27T23:26:45.704487Z"}'
     headers:
       User-Agent:
       - Faraday v0.9.2

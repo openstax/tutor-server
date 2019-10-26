@@ -5,7 +5,7 @@ RSpec.shared_examples 'a biglearn sparfa client' do
   subject(:client)    { described_class.new(configuration) }
 
   before(:all) do
-    @ecosystem_matrix_uuid = SecureRandom.uuid
+    @eco_matrix_uuid = SecureRandom.uuid
     @student = FactoryBot.create :course_membership_student
     @responded_before = Time.current.iso8601
     # When re-recording the cassettes, set the ecosystem matrix and student
@@ -17,9 +17,9 @@ RSpec.shared_examples 'a biglearn sparfa client' do
   before(:all, when_tagged_with_vcr) do
     VCR.configure do |config|
       config.ignore_localhost = false
-      config.define_cassette_placeholder('<ECOSYSTEM MATRIX UUID>') { @ecosystem_matrix_uuid }
-      config.define_cassette_placeholder('<STUDENT UUID>'         ) { @student.uuid          }
-      config.define_cassette_placeholder('<RESPONDED BEFORE>'     ) { @responded_before      }
+      config.define_cassette_placeholder('<SPARFA ECOSYSTEM MATRIX UUID>') { @eco_matrix_uuid  }
+      config.define_cassette_placeholder('<SPARFA STUDENT UUID>'         ) { @student.uuid     }
+      config.define_cassette_placeholder('<SPARFA RESPONDED BEFORE>'     ) { @responded_before }
     end
   end
 
@@ -28,10 +28,10 @@ RSpec.shared_examples 'a biglearn sparfa client' do
   context '#fetch_ecosystem_matrices' do
     before(:all) do
       @requests = [
-        { request_uuid: SecureRandom.uuid, ecosystem_matrix_uuid: @ecosystem_matrix_uuid },
+        { request_uuid: SecureRandom.uuid, ecosystem_matrix_uuid: @eco_matrix_uuid },
         {
           request_uuid: SecureRandom.uuid,
-          ecosystem_matrix_uuid: @ecosystem_matrix_uuid,
+          ecosystem_matrix_uuid: @eco_matrix_uuid,
           students: [ @student ],
           responded_before: @responded_before
         }

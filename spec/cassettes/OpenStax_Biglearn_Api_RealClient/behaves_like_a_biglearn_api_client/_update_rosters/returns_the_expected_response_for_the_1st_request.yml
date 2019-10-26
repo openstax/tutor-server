@@ -5,9 +5,9 @@ http_interactions:
     uri: http://localhost:3000/update_rosters
     body:
       encoding: UTF-8
-      string: '{"rosters":[{"request_uuid":"<UPDATE_ROSTERS EXAMPLE 1 REQUEST 1 UUID>","course_uuid":"<COURSE
-        UUID>","sequence_number":385,"course_containers":[{"container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","parent_container_uuid":"<COURSE
-        UUID>","created_at":"2017-06-27T23:26:45.927417Z"}],"students":[{"student_uuid":"<STUDENT
+      string: '{"rosters":[{"request_uuid":"<UPDATE_ROSTERS EXAMPLE 1 REQUEST 1 UUID>","course_uuid":"<API COURSE
+        UUID>","sequence_number":385,"course_containers":[{"container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","parent_container_uuid":"<API COURSE
+        UUID>","created_at":"2017-06-27T23:26:45.927417Z"}],"students":[{"student_uuid":"<API STUDENT
         UUID>","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.047659Z","last_course_container_change_at":"2017-06-27T23:26:46.077294Z"},{"student_uuid":"0ba86ff3-edf7-4b34-ba11-b284a192c880","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.260331Z","last_course_container_change_at":"2017-06-27T23:26:46.278905Z"},{"student_uuid":"23a1fdc6-8c6a-4de9-b2c8-b7b0d1697334","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.392961Z","last_course_container_change_at":"2017-06-27T23:26:46.411480Z"},{"student_uuid":"8b4fec13-9a7f-466c-acfb-1d9f1d95b51f","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.522779Z","last_course_container_change_at":"2017-06-27T23:26:46.540427Z"},{"student_uuid":"53677214-3a24-49bb-8891-8e44eb609f64","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.666419Z","last_course_container_change_at":"2017-06-27T23:26:46.683827Z"},{"student_uuid":"b99a0f12-98df-4082-a23e-3c69485d0d89","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.826876Z","last_course_container_change_at":"2017-06-27T23:26:46.845157Z"},{"student_uuid":"45882cf3-20d0-4416-85c3-0eab615ff762","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:46.978265Z","last_course_container_change_at":"2017-06-27T23:26:47.000149Z"},{"student_uuid":"124dbc91-74f5-4991-8da0-845c96ead085","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:47.128046Z","last_course_container_change_at":"2017-06-27T23:26:47.150041Z"},{"student_uuid":"54c16e1b-8e3c-4bd2-aa6f-796ef122e327","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:47.296788Z","last_course_container_change_at":"2017-06-27T23:26:47.319619Z"},{"student_uuid":"5bf54309-4a79-442c-80ac-827c2ecfeb4e","container_uuid":"4dd79ccd-62ec-489c-a7a0-3dd958f7926d","enrolled_at":"2017-06-27T23:26:47.434669Z","last_course_container_change_at":"2017-06-27T23:26:47.451343Z"}]}]}'
     headers:
       User-Agent:
@@ -48,7 +48,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"updated_rosters":[{"request_uuid":"<UPDATE_ROSTERS EXAMPLE 1 REQUEST
-        1 UUID>","updated_course_uuid":"<COURSE UUID>"}]}'
+        1 UUID>","updated_course_uuid":"<API COURSE UUID>"}]}'
     http_version: 
   recorded_at: Tue, 27 Jun 2017 23:26:56 GMT
 recorded_with: VCR 2.9.3
