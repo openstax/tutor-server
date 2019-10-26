@@ -6,8 +6,8 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"responses":[{"response_uuid":"<RECORD_RESPONSES EXAMPLE 1 REQUEST
-        1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":385,"ecosystem_uuid":"<ECOSYSTEM
-        1 UUID>","trial_uuid":"a848b203-15c4-4623-85e0-c39b23314bce","student_uuid":"<STUDENT
+        1 UUID>","course_uuid":"<API COURSE UUID>","sequence_number":385,"ecosystem_uuid":"<API ECOSYSTEM
+        1 UUID>","trial_uuid":"a848b203-15c4-4623-85e0-c39b23314bce","student_uuid":"<API STUDENT
         UUID>","exercise_uuid":"b4f2c32e-450b-4c36-b18e-d4c0f5cf2d29","is_correct":false,"is_real_response":true,"responded_at":"2017-06-27T23:26:48.986100Z"}]}'
     headers:
       User-Agent:

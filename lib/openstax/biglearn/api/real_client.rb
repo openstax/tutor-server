@@ -1,29 +1,9 @@
-# Requests that get this far biglearn-api
+# Requests that get this far MUST reach biglearn-api
 # or else they will introduce gaps in the sequence_number
 # If aborting a request in here is required in the future,
-# we will need to introduce a NO-OP CourseEvent in biglearn-api
-class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
-
-  HEADER_OPTIONS = { 'Content-Type' => 'application/json' }.freeze
-
-  def initialize(biglearn_configuration)
-    @server_url   = biglearn_configuration.server_url
-    @token        = biglearn_configuration.token
-    @client_id    = biglearn_configuration.client_id
-    @secret       = biglearn_configuration.secret
-
-    @oauth_client = OAuth2::Client.new @client_id, @secret, site: @server_url
-
-    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
-  end
-
-  def name
-    :real
-  end
-
-  #
-  # API methods
-  #
+# instead send a no-op event to biglearn-api
+class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
+  include OpenStax::Biglearn::Api::Client
 
   # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
   # course is a CourseProfile::Models::Course
@@ -396,6 +376,19 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
       exclusion_info[:due_at] = due_at.utc.iso8601(6) if due_at.present?
       exclusion_info[:feedback_at] = feedback_at.utc.iso8601(6) if feedback_at.present?
 
+      pe_calculation_uuid = task.pe_calculation_uuid
+      pe_ecosystem_matrix_uuid = task.pe_ecosystem_matrix_uuid
+      spe_calculation_uuid = task.spe_calculation_uuid
+      spe_ecosystem_matrix_uuid = task.spe_ecosystem_matrix_uuid
+
+      pes = {}
+      pes[:calculation_uuid] = pe_calculation_uuid if pe_calculation_uuid.present?
+      pes[:ecosystem_matrix_uuid] = pe_ecosystem_matrix_uuid if pe_ecosystem_matrix_uuid.present?
+
+      spes = {}
+      spes[:calculation_uuid] = spe_calculation_uuid if spe_calculation_uuid.present?
+      spes[:ecosystem_matrix_uuid] = spe_ecosystem_matrix_uuid if spe_ecosystem_matrix_uuid.present?
+
       core_page_ids = task_id_to_core_page_ids_map[task.id]
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
@@ -436,6 +429,8 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
         student_uuid: student.uuid,
         assignment_type: task_type,
         exclusion_info: exclusion_info,
+        pes: pes,
+        spes: spes,
         assigned_book_container_uuids: assigned_book_container_uuids,
         goal_num_tutor_assigned_spes: goal_num_tutor_assigned_spes,
         spes_are_assigned: task.spes_are_assigned,
@@ -600,43 +595,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::Api::Client
 
   protected
 
-  def absolutize_url(url)
-    Addressable::URI.join @server_url, url.to_s
+  def token_header
+    'Biglearn-Api-Token'
   end
-
-  def api_request(method:, url:, body:)
-    absolute_uri = absolutize_url(url)
-
-    header_options = { headers: @token.nil? ? HEADER_OPTIONS : HEADER_OPTIONS.merge(
-        'Biglearn-Api-Token' => @token
-      )
-    }
-    request_options = body.nil? ? header_options : header_options.merge(body: body.to_json)
-
-    response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
-
-    JSON.parse(response.body).deep_symbolize_keys
-  end
-
-  def single_api_request(method: :post, url:, request:)
-    response_hash = api_request method: method, url: url, body: request
-
-    block_given? ? yield(response_hash) : response_hash
-  end
-
-  def bulk_api_request(method: :post, url:, requests:,
-                       requests_key:, responses_key:, max_requests: 1000)
-    max_requests ||= requests.size
-
-    requests.each_slice(max_requests).flat_map do |requests|
-      body = { requests_key => requests }
-
-      response_hash = api_request method: method, url: url, body: body
-
-      responses_array = response_hash[responses_key] || []
-
-      responses_array.map { |response| block_given? ? yield(response) : response }
-    end
-  end
-
 end

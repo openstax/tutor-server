@@ -1,22 +1,15 @@
-class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::Api::Client
+class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
+  include OpenStax::Biglearn::Api::Client
 
   attr_reader :store
 
-  def initialize(biglearn_configuration)
-    @store = biglearn_configuration.fake_store
+  def initialize(api_configuration)
+    @store = api_configuration.fake_store
   end
 
   def reset!
     store.clear
   end
-
-  def name
-    :fake
-  end
-
-  #
-  # API methods
-  #
 
   # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
   # course is a CourseProfile::Models::Course
@@ -276,5 +269,4 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::Api::Client
 
     options.slice(:minimum, :most_likely, :maximum, :is_real, :ecosystem_uuid)
   end
-
 end

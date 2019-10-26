@@ -1,5 +1,4 @@
 class CourseMembership::Models::TeacherStudent < ApplicationRecord
-
   acts_as_paranoid without_default_scope: true
 
   auto_uuid
@@ -10,6 +9,6 @@ class CourseMembership::Models::TeacherStudent < ApplicationRecord
 
   validates :role,   uniqueness: true
 
-  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, to: :role
-
+  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, :research_identifier,
+           to: :role
 end

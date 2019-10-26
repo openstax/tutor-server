@@ -12,7 +12,7 @@ module Configurable
     end
 
     def extended(base)
-      Rails.application.config.after_initialize{ base.save_static_configuration! }
+      Rails.application.config.after_initialize { base.save_static_configuration! }
     end
   end
 
@@ -39,7 +39,7 @@ module Configurable
   # Make sure to wrap the check AND the call to #save_static_configuration!
   # in a Mutex or Monitor to prevent concurrent access
   def save_static_configuration!
-    @static_configuration = configuration.freeze.tap{ self.configuration = nil }
+    @static_configuration = configuration.freeze.tap { self.configuration = nil }
   end
 
   protected

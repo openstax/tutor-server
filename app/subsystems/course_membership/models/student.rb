@@ -1,5 +1,4 @@
 class CourseMembership::Models::Student < ApplicationRecord
-
   acts_as_paranoid column: :dropped_at, without_default_scope: true
 
   REFUND_PERIOD = 14.days # TODO make this configurable
@@ -25,7 +24,8 @@ class CourseMembership::Models::Student < ApplicationRecord
 
   before_save :init_payment_due_at
 
-  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, to: :role
+  delegate :username, :first_name, :last_name, :full_name, :name, :is_test, :research_identifier,
+           to: :role
 
   def dropped?
     deleted?
@@ -58,5 +58,4 @@ class CourseMembership::Models::Student < ApplicationRecord
   def init_payment_due_at
     self.payment_due_at ||= new_payment_due_at
   end
-
 end

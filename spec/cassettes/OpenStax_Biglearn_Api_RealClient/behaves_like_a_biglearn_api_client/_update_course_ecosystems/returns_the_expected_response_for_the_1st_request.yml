@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"update_requests":[{"request_uuid":"<UPDATE_COURSE_ECOSYSTEMS EXAMPLE
-        1 REQUEST 1 UUID>","course_uuid":"<COURSE UUID>","sequence_number":385,"preparation_uuid":"2f5ac6b5-accf-4bcc-90dd-c4e510ddc20e","updated_at":"2017-06-27T23:26:45.713780Z"}]}'
+        1 REQUEST 1 UUID>","course_uuid":"<API COURSE UUID>","sequence_number":385,"preparation_uuid":"2f5ac6b5-accf-4bcc-90dd-c4e510ddc20e","updated_at":"2017-06-27T23:26:45.713780Z"}]}'
     headers:
       User-Agent:
       - Faraday v0.9.2

@@ -46,7 +46,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"teacher_clue_responses":[{"request_uuid":"<FETCH_TEACHER_CLUES EXAMPLE
-        1 REQUEST 1 UUID>","clue_data":{"minimum":0,"most_likely":0.5,"maximum":1,"is_real":false,"ecosystem_uuid":"<ECOSYSTEM
+        1 REQUEST 1 UUID>","clue_data":{"minimum":0,"most_likely":0.5,"maximum":1,"is_real":false,"ecosystem_uuid":"<API ECOSYSTEM
         1 UUID>"},"clue_status":"clue_unready"}]}'
     http_version: 
   recorded_at: Tue, 27 Jun 2017 23:26:56 GMT

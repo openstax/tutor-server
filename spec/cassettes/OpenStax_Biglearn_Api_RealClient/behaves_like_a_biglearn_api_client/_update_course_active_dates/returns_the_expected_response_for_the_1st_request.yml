@@ -5,7 +5,7 @@ http_interactions:
     uri: http://localhost:3000/update_course_active_dates
     body:
       encoding: UTF-8
-      string: '{"request_uuid":"<UPDATE_COURSE_ACTIVE_DATES EXAMPLE 1 REQUEST 1 UUID>","course_uuid":"<COURSE
+      string: '{"request_uuid":"<UPDATE_COURSE_ACTIVE_DATES EXAMPLE 1 REQUEST 1 UUID>","course_uuid":"<API COURSE
         UUID>","sequence_number":385,"starts_at":"2017-03-27T23:26:43.502Z","ends_at":"2017-09-27T23:26:43.502Z","updated_at":"2017-06-27T23:26:45.704487Z"}'
     headers:
       User-Agent:
@@ -45,7 +45,7 @@ http_interactions:
       - '0.036924'
     body:
       encoding: UTF-8
-      string: '{"updated_course_uuid":"<COURSE UUID>"}'
+      string: '{"updated_course_uuid":"<API COURSE UUID>"}'
     http_version: 
   recorded_at: Tue, 27 Jun 2017 23:26:56 GMT
 recorded_with: VCR 2.9.3
