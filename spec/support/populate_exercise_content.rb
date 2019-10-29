@@ -1,9 +1,7 @@
 require 'vcr_helper'
 
 module PopulateExerciseContent
-
   def generate_homework_test_exercise_content
-
     cnx_page_hashes = [
       { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
       { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }

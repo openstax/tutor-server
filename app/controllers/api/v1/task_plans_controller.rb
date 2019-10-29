@@ -1,5 +1,4 @@
 class Api::V1::TaskPlansController < Api::V1::ApiController
-
   resource_description do
     api_versions "v1"
     short_description 'Represents a plan for a Task'
@@ -130,7 +129,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         task_plan: task_plan, ecosystem: course.ecosystem, save: false
       ] if task_plan.cloned_from_id.present?
 
-      uuid = distribute_or_update_tasks(task_plan)
+      uuid = distribute_tasks task_plan
 
       render_api_errors(task_plan.errors) && return
 
@@ -179,7 +178,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       end
 
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
-      uuid = distribute_or_update_tasks(task_plan)
+      uuid = distribute_tasks task_plan
 
       render_api_errors(task_plan.errors) || respond_with(
         task_plan,
@@ -401,11 +400,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any, or nil if the request was completed inline
-  def distribute_or_update_tasks(task_plan)
+  def distribute_tasks(task_plan)
     preview_only = !task_plan.is_publish_requested && !task_plan.is_published?
-    update_only = task_plan.out_to_students?
 
-    task_plan.publish_last_requested_at = Time.current unless preview_only || update_only
+    task_plan.publish_last_requested_at = Time.current \
+      unless preview_only || task_plan.out_to_students?
     task_plan.save
     return if task_plan.errors.any?
 
@@ -413,16 +412,10 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       # Task not published and publication not requested: preview only
       DistributeTasks.call(task_plan: task_plan, preview: true)
       nil
-    elsif update_only
-      # Tasks already open: propagate updates
-      PropagateTaskPlanUpdates.call(task_plan: task_plan)
-      nil
     else
-      # Tasks not open: trigger publication
-      uuid = DistributeTasks.perform_later(task_plan: task_plan)
-      task_plan.update_attribute(:publish_job_uuid, uuid)
-      uuid
+      DistributeTasks.perform_later(task_plan: task_plan).tap do |job_uuid|
+        task_plan.update_attribute(:publish_job_uuid, job_uuid)
+      end
     end
   end
-
 end

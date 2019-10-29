@@ -522,23 +522,17 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         expect(response.body_as_hash[:publish_job_url]).to include('/api/jobs/')
       end
 
-      it 'does not republish the task_plan or allow the open date
-          to be changed after the assignment is open' do
+      it 'does not allow the open date to be changed after the assignment is open' do
         controller.sign_in @teacher
 
         time_zone = @task_plan.tasking_plans.first.time_zone.to_tz
 
         opens_at = time_zone.now
 
-        publish_last_requested_at = Time.current
-
-        @task_plan.update_attribute :publish_last_requested_at, publish_last_requested_at
+        @task_plan.update_attribute :publish_last_requested_at, Time.current
         @task_plan.tasking_plans.first.update_attribute :opens_at, opens_at
 
         DistributeTasks[task_plan: @task_plan]
-
-        published_at = @task_plan.reload.last_published_at
-        publish_job_uuid = @task_plan.publish_job_uuid
 
         valid_json_hash['title'] = 'Canceled'
         valid_json_hash['description'] = 'Canceled Assignment'
@@ -549,21 +543,18 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         valid_json_hash['tasking_plans'].first['opens_at'] = new_opens_at
         valid_json_hash['tasking_plans'].first['due_at'] = new_due_at
 
-        # Since the task_plan opens_at is now in the past,
-        # further publish requests should be ignored
-        expect {
+        # Since the task_plan opens_at is now in the past, it can no longer be changed
+        expect do
           api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
                                 body: valid_json_hash.to_json
-        }.not_to change{ @task_plan.reload.tasks.count }
-        expect(response).to have_http_status(:ok)
+        end.to  not_change { @task_plan.reload.tasks.count }
+           .and not_change { @task_plan.publish_last_requested_at }
+           .and change { @task_plan.last_published_at }
+           .and change { @task_plan.publish_job_uuid }
+           .and change { @task_plan.title }.to('Canceled')
+           .and change { @task_plan.description }.to('Canceled Assignment')
+        expect(response).to have_http_status(:accepted)
 
-        expect(@task_plan.reload.publish_last_requested_at).to(
-          be_within(1e-6).of(publish_last_requested_at)
-        )
-        expect(@task_plan.last_published_at).to be_within(1).of(published_at)
-        expect(@task_plan.publish_job_uuid).to eq publish_job_uuid
-        expect(@task_plan.title).to eq 'Canceled'
-        expect(@task_plan.description).to eq 'Canceled Assignment'
         @task_plan.tasking_plans.each do |tp|
           expect(tp.opens_at).to be_within(1e-6).of(opens_at)
           expect(tp.due_at).to be_within(1e-6).of(new_due_at)
@@ -573,7 +564,14 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
           expect(task.due_at).to be_within(1e-6).of(new_due_at)
         end
 
-        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+        # last_published_at in this response is stale
+        # we could reload in the controller in dev/test but in the real server
+        # the publish won't have happened yet due to background jobs, so no point in doing so
+        expect(response.body_as_hash.except(:last_published_at)).to eq(
+          Api::V1::TaskPlanRepresenter.new(
+            @task_plan
+          ).to_hash.deep_symbolize_keys.except(:last_published_at)
+        )
       end
 
       it 'returns an error message if the task_plan settings are invalid' do
@@ -666,7 +664,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   end
 
   context 'stats' do
-
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
@@ -687,11 +684,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       # The representer spec does validate the json so we'll rely on it and just check presense
       expect(response.body_as_hash[:stats]).to be_a(Array)
     end
-
   end
 
   context 'review' do
-
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
@@ -712,7 +707,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       # The representer spec does validate the json so we'll rely on it and just check presense
       expect(response.body_as_hash[:stats]).to be_a(Array)
     end
-
   end
 
   def get_assistant(course:, task_plan_type:)
