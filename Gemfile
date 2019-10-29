@@ -71,7 +71,7 @@ gem 'action_interceptor'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api'
+gem 'openstax_api', github: 'openstax/openstax_api', ref: 'ee2f081141211352460c6a8a71d8040cd3f78766'
 
 gem 'apipie-rails'
 gem 'maruku'
