@@ -24,4 +24,5 @@ Tutor::SubSystems.valid_namespaces = %w(
   salesforce
   lms
   research
+  stats
 )
