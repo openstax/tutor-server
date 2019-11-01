@@ -1,11 +1,9 @@
 class Content::Routines::UpdatePageContent
-
   # Extract the uuid and version from paths like:
   #   /contents/127f63f7-d67f-4710-8625-2b1d4128ef6b
   #   /contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@3
   #   /contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@3#figure-1
   #   /contents/031da8d3-b525-429c-80cf-6c8ed997733a@9.98:127f63f7-d67f-4710-8625-2b1d4128ef6b@3
-
   CNX_ID_REGEX_STRING = <<-LINK_REGEX.strip_heredoc.gsub(/[\s\t]*/, '')
     /contents/
     (?:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:@([\\d\\.]+))?:)?
@@ -37,6 +35,7 @@ class Content::Routines::UpdatePageContent
     outputs.pages = pages
   end
 
+  # Transforms absolute CNX urls to absolute reference view URLs
   # If the link goes to a page in the book, change the link to just the page's book_location
   def change_page_link(href_attr, book, pages_by_uuid)
     url = Addressable::URI.parse(href_attr.value) rescue return
@@ -68,13 +67,13 @@ class Content::Routines::UpdatePageContent
 
       # The link actually points to the book itself
       # Remove the path from the link
-      "/book/#{book.ecosystem.id}"
+      book.reference_view_url
     else
       # Check if the page's version is correct
       return if page_version.present? && page.version != page_version
 
       # Change the link's path to the page's book_location
-      "/book/#{book.ecosystem.id}/section/#{page.book_location.reject(&:zero?).join('.')}"
+      page.reference_view_url book
     end
 
     href_attr.value = url.to_s

@@ -1,6 +1,5 @@
 module OpenStax::Cnx::V1
   class Fragment::Embedded < Fragment
-
     # Used to get the title
     TITLE_CSS = '[data-type="title"]'
 
@@ -48,6 +47,5 @@ module OpenStax::Cnx::V1
     def blank?
       url.blank?
     end
-
   end
 end

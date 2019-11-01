@@ -2,11 +2,14 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
-  let(:reading_processing_instructions) {
+  let(:reading_processing_instructions) do
     FactoryBot.build(:content_book).reading_processing_instructions
-  }
+  end
+  let(:reference_view_url) { Faker::Internet.url }
 
-  let(:fragment_splitter)  { described_class.new(reading_processing_instructions) }
+  let(:fragment_splitter)  do
+    described_class.new reading_processing_instructions, reference_view_url
+  end
 
   context 'with page' do
     before(:all) do
@@ -61,7 +64,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
 
     it "splits the given pages into the expected fragments for HS" do
       hs_processing_instructions = FactoryBot.build(:content_book).reading_processing_instructions
-      fragment_splitter = described_class.new(hs_processing_instructions)
+      fragment_splitter = described_class.new hs_processing_instructions, reference_view_url
 
       @cnx_page_fragment_infos.each do |hash|
         fragments = fragment_splitter.split_into_fragments(hash[:page].converted_root)
@@ -76,7 +79,9 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
           fragments: [], except: 'snap-lab' },
         { css: '.worked-example', fragments: ['node', 'optional_exercise'] }
       ]
-      fragment_splitter = described_class.new(worked_example_processing_instructions)
+      fragment_splitter = described_class.new(
+        worked_example_processing_instructions, reference_view_url
+      )
 
       hash = @cnx_page_fragment_infos.first
       fragments = fragment_splitter.split_into_fragments(hash[:page].converted_root)

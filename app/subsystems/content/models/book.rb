@@ -1,5 +1,4 @@
 class Content::Models::Book < IndestructibleRecord
-
   wrapped_by ::Content::Strategies::Direct::Book
 
   acts_as_resource
@@ -50,4 +49,7 @@ class Content::Models::Book < IndestructibleRecord
     ecosystem.update_attribute(:title, ecosystem.set_title)
   end
 
+  def reference_view_url
+    "/book/#{ecosystem.id}"
+  end
 end

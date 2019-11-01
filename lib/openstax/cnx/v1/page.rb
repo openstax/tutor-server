@@ -1,6 +1,5 @@
 module OpenStax::Cnx::V1
   class Page
-
     # Start parsing here
     ROOT_CSS = 'html > body'
 
@@ -227,6 +226,8 @@ module OpenStax::Cnx::V1
       node
     end
 
+    # Transforms relative URLs that point to other CNX pages to absolute URLs
+    # Transforms absolute http URLs to https
     def absolutize_and_secure_urls(node)
       # Absolutize exercise urls
       node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(node.dup)
@@ -277,6 +278,5 @@ module OpenStax::Cnx::V1
 
       node
     end
-
   end
 end

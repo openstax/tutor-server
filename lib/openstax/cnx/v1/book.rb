@@ -1,6 +1,5 @@
 module OpenStax::Cnx::V1
   class Book
-
     def initialize(id: nil, hash: nil, title: nil, tree: nil, root_book_part: nil)
       @id             = id
       @hash           = hash
@@ -54,6 +53,5 @@ module OpenStax::Cnx::V1
     def root_book_part
       @root_book_part ||= BookPart.new(hash: tree, is_root: true, book: self)
     end
-
   end
 end
