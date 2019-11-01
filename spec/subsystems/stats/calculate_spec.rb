@@ -1,18 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe Stats::Calculate, type: :routine do
-  let!(:course) { FactoryBot.create( :course_profile_course,
-      is_test: false,
-      starts_at: Time.now - 1.day,
-      ends_at: Time.now + 1.day,
-      )
+  let!(:courses) { 3.times.map do
+      FactoryBot.create(:course_profile_course,
+                        is_test: false,
+                        starts_at: Time.now - 1.day,
+                        ends_at: Time.now + 1.day)
+    end
   }
 
-  it 'runs' do
+  let(:period) { FactoryBot.create :course_membership_period, course: courses.first }
+
+  before(:each) {
+    CourseMembership::AddStudent[period: period, role: FactoryBot.create(:entity_role)]
+  }
+
+  it 'counts things' do
     stats = Stats::Calculate.call(date_range: (Time.now - 1.week ... Time.now)).outputs
-    expect(stats.active_courses).to include course
-    expect(stats.num_active_courses).to eq 1
-
+    expect(stats.active_courses).to include courses.first
+    expect(stats.num_active_courses).to eq 3
+    expect(stats.num_new_enrollments).to eq 1
+    expect(stats.num_active_students).to eq 1
   end
-
 end

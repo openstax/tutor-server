@@ -3,6 +3,7 @@ class Stats::Calculate
 
   CALCULATIONS = %w[
     ActiveCourses
+    ActiveStudents
   ].map do |name|
     klass = Stats::Calculations.const_get(name)
     key = name.tableize.to_sym
@@ -16,7 +17,7 @@ class Stats::Calculate
 
   def exec(date_range:)
     CALCULATIONS.each do |calculation|
-      run(calculation, date_range: date_range)
+      run(calculation, courses: outputs.active_courses.dup, date_range: date_range)
     end
   end
 end
