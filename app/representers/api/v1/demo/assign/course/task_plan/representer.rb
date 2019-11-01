@@ -22,16 +22,24 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
            getter: ->(*) { respond_to?(:is_published) ? is_published : is_published? }
 
   collection :book_locations,
-             extend: Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter,
+             extend:
+             Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter,
              class: Demo::Mash,
-             readable: false,
+             getter: ->(*) do
+               Content::Models::Page.where(id: settings['page_ids'])
+                                    .map(&:book_location).sort.map do |book_location|
+                 Demo::Mash.new(chapter: book_location.first, section: book_location.last)
+               end
+             end,
+             readable: true,
              writeable: true,
              schema_info: { required: true }
 
   collection :assigned_to,
              extend: Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter,
              class: Demo::Mash,
-             readable: false,
+             getter: ->(*) { tasking_plans },
+             readable: true,
              writeable: true,
              schema_info: { required: true }
 end
