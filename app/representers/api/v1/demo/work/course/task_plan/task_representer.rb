@@ -2,6 +2,7 @@ class Api::V1::Demo::Work::Course::TaskPlan::TaskRepresenter < Api::V1::Demo::Ba
   property :student,
            extend: Api::V1::Demo::UserRepresenter,
            class: Demo::Mash,
+           getter: ->(*) { taskings.first.role.student },
            readable: true,
            writeable: true,
            schema_info: { required: true }
@@ -27,6 +28,7 @@ class Api::V1::Demo::Work::Course::TaskPlan::TaskRepresenter < Api::V1::Demo::Ba
   # Otherwise, Timecop.travel is used
   property :lateness,
            type: Integer,
+           getter: ->(*) { worked_on? && due_at.present? ? last_worked_at - due_at : -300 },
            readable: true,
            writeable: true
 end
