@@ -1,21 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe Stats::Calculate, type: :routine do
-  let!(:courses) { 3.times.map do
-      FactoryBot.create(:course_profile_course,
-                        is_test: false,
-                        starts_at: Time.now - 1.day,
-                        ends_at: Time.now + 1.day)
-    end
+  let!(:task_plan) { FactoryBot.create :tasks_task_plan }
+  let!(:past_task_plan) { FactoryBot.create :tasks_task_plan, created_at: 3.month.ago }
+  let!(:highlight) { FactoryBot.create :content_note, annotation: 'test' }
+  let!(:reading_step) { FactoryBot.create :tasks_task_step,
+      first_completed_at: 1.day.ago,
+      tasked_type: :tasks_tasked_reading }
+
+  let!(:homework_step) { FactoryBot.create :tasks_task_step,
+      first_completed_at: 1.day.ago,
+      tasked_type: :tasks_tasked_exercise
   }
+
+  let(:course) { task_plan.owner }
 
   let(:past_course) {
       FactoryBot.create(:course_profile_course, is_test: false,
-                        starts_at: Time.now - 3.month,
-                        ends_at: Time.now - 1.month)
+                        starts_at: 3.month.ago,
+                        ends_at: 1.month.ago)
   }
 
-  let(:period) { FactoryBot.create :course_membership_period, course: courses.first }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
 
   before(:each) {
     3.times do
@@ -23,14 +29,22 @@ RSpec.describe Stats::Calculate, type: :routine do
     end
   }
 
-  it 'counts things' do
-    stats = Stats::Calculate.call(date_range: (Time.now - 1.week ... Time.now)).outputs
-    expect(stats.active_courses).to include courses.first
-    expect(stats.active_courses).not_to include past_course
-    expect(stats.num_active_courses).to eq 3
-    expect(stats.num_new_enrollments).to eq 3
-    expect(stats.num_active_students).to eq 3
-    expect(stats.num_active_populated_courses).to eq 1
-    expect(stats.num_task_plans).to eq 0
+  it 'counts all the things' do
+    interval = Stats::Calculate.call(
+      date_range: (Time.now - 1.week ... Time.now)
+    ).outputs.interval
+    expect(interval.courses.active).to include course
+    expect(interval.courses.active).not_to include past_course
+    expect(interval.stats).to eq({
+      active_courses: 4,
+      new_enrollments: 3,
+      active_students: 3,
+      active_populated_courses: 1,
+      task_plans: 1,
+      highlights: 1,
+      notes: 1,
+      exercise_steps: 1,
+      reading_steps: 1,
+    }.stringify_keys)
   end
 end

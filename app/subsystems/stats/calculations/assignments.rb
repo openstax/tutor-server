@@ -3,17 +3,12 @@ class Stats::Calculations::Assignments
 
   protected
 
-  def exec(stats:, date_range:)
-    ts = Tasks::Models::TaskPlan.arel_table
-
-    q = stats.active_populated_courses.dup
-      .unscope(:select)
-      .joins(:task_plans)
-      .select(ts[:id].count.as('counts'))
-
-    outputs.num_task_plans = Tasks::Models::TaskPlan
-      .from("(#{q.to_sql}) as task_plans")
-      .sum("task_plans.counts").to_i
+  def exec(interval:)
+    interval.stats['task_plans'] = Tasks::Models::TaskPlan
+      .where(:created_at => interval.range,
+             owner_type: CourseProfile::Models::Course.to_s,
+             owner_id: interval.courses.populated.map(&:id))
+      .count
   end
 
 end

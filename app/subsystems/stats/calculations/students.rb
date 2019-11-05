@@ -3,15 +3,15 @@ class Stats::Calculations::Students
 
   protected
 
-  def exec(stats:, date_range:)
-    outputs.num_new_enrollments = CourseMembership::Models::Student
-      .where(:created_at => date_range)
+  def exec(interval:)
+    interval.stats['new_enrollments'] = CourseMembership::Models::Student
+      .where(:created_at => interval.range)
       .count
 
-    t = CourseMembership::Models::Student.table_name
-    outputs.num_active_students = CourseMembership::Models::Student
-      .where("#{t}.created_at <= :ends_at", { ends_at: date_range.last })
-      .where(course_profile_course_id: stats.active_courses.map(&:id))
+    st = CourseMembership::Models::Student.arel_table
+    interval.stats['active_students'] = CourseMembership::Models::Student
+      .where(st[:created_at].lteq(interval.ends_at))
+      .where(course_profile_course_id: interval.courses.active.map(&:id))
       .count
   end
 

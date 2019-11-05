@@ -3,12 +3,12 @@ class Stats::Calculations::Exercises
 
   protected
 
-  def exec(stats:, date_range:)
-    # TODO don't count ghost students
-    %w[reading homework].each do |task_type|
-      steps = Tasks::Models::TaskStep.joins(:task)
-        .where(:first_completed_at => date_range, task: { task_type: task_type })
-      outputs["num_#{task_type}_steps"] = steps.count
+  def exec(interval:)
+    %w[reading exercise].each do |task_type|
+      interval.stats["#{task_type}_steps"] = Tasks::Models::TaskStep
+        .where(:first_completed_at => interval.range,
+               tasked_type: "Tasks::Models::Tasked#{task_type.classify}")
+        .count
     end
   end
 

@@ -3,25 +3,26 @@ class Stats::Calculations::Courses
 
   protected
 
-  def exec(stats:, date_range:)
+  def exec(interval:)
     co = CourseProfile::Models::Course.arel_table
 
-    outputs.active_courses = CourseProfile::Models::Course
+    interval.courses.active = CourseProfile::Models::Course
       .where(is_test: false, is_preview: false)
       .where(
-        co[:starts_at].lteq(date_range.end),
-        co[:ends_at].gteq(date_range.first),
+        co[:starts_at].lteq(interval.starts_at),
+        co[:ends_at].gteq(interval.ends_at),
       )
-    outputs.num_active_courses = outputs.active_courses.dup.count
+
+    interval.stats['active_courses'] = interval.courses.active.dup.count
 
     st = CourseMembership::Models::Student.arel_table
-    outputs.active_populated_courses = CourseProfile::Models::Course
+    interval.courses.populated = CourseProfile::Models::Course
       .select(co[Arel.star], st[:id].count)
       .joins(:students)
       .group(co[:id])
       .having(st[:id].count.gteq(3))
 
-    outputs.num_active_populated_courses = outputs.active_populated_courses.dup.length
+    interval.stats['active_populated_courses'] = interval.courses.populated.dup.length
   end
 
 end
