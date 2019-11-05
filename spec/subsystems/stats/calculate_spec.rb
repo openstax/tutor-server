@@ -31,7 +31,7 @@ RSpec.describe Stats::Calculate, type: :routine do
 
   it 'counts all the things' do
     interval = Stats::Calculate.call(
-      date_range: (Time.now - 1.week ... Time.now)
+      date_range: ((Time.now - 1.week)...Time.now)
     ).outputs.interval
     expect(interval.courses.active).to include course
     expect(interval.courses.active).not_to include past_course
@@ -41,8 +41,10 @@ RSpec.describe Stats::Calculate, type: :routine do
       active_students: 3,
       active_populated_courses: 1,
       task_plans: 1,
-      highlights: 1,
       notes: 1,
+      highlights: 1,
+      new_notes: 1,
+      new_highlights: 1,
       exercise_steps: 1,
       reading_steps: 1,
     }.stringify_keys)

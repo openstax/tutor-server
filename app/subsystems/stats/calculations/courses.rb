@@ -16,7 +16,7 @@ class Stats::Calculations::Courses
     interval.stats['active_courses'] = interval.courses.active.dup.count
 
     st = CourseMembership::Models::Student.arel_table
-    interval.courses.populated = CourseProfile::Models::Course
+    interval.courses.populated = interval.courses.active
       .select(co[Arel.star], st[:id].count)
       .joins(:students)
       .group(co[:id])
