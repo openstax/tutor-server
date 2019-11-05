@@ -18,7 +18,9 @@ RSpec.describe Stats::Calculate, type: :routine do
   let(:period) { FactoryBot.create :course_membership_period, course: courses.first }
 
   before(:each) {
-    CourseMembership::AddStudent[period: period, role: FactoryBot.create(:entity_role)]
+    3.times do
+      CourseMembership::AddStudent[period: period, role: FactoryBot.create(:entity_role)]
+    end
   }
 
   it 'counts things' do
@@ -26,7 +28,9 @@ RSpec.describe Stats::Calculate, type: :routine do
     expect(stats.active_courses).to include courses.first
     expect(stats.active_courses).not_to include past_course
     expect(stats.num_active_courses).to eq 3
-    expect(stats.num_new_enrollments).to eq 1
-    expect(stats.num_active_students).to eq 1
+    expect(stats.num_new_enrollments).to eq 3
+    expect(stats.num_active_students).to eq 3
+    expect(stats.num_active_populated_courses).to eq 1
+    expect(stats.num_task_plans).to eq 0
   end
 end
