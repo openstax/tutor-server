@@ -310,7 +310,10 @@ Rails.application.routes.draw do
       get :work
       get :all
     end unless IAm.real_production?
-  end
+
+    get :stats, controller: :stats
+
+  end # end of admin namespace
 
   # All CS routes
   namespace :customer_service do
