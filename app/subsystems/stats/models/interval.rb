@@ -11,10 +11,10 @@ module Stats
       def range
         @range ||= (starts_at ... ends_at)
       end
-      #   super(interval:)
-      #   @interval = interval
-      #   @stats = OpenStruct.new
-      # end
+
+      def empty?
+        stats.values.all? {|v| v.to_i == 0 }
+      end
 
     end
   end

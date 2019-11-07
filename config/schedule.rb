@@ -35,5 +35,5 @@ every 1.hour do
 end
 
 every 1.week do
-  runner "Stats::Regenerate.call(start_at: 1.week.ago.beginning_of_week)"
+  runner "Stats::Generate.call(start_at: 1.week.ago.beginning_of_week)"
 end

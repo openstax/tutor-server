@@ -5,5 +5,7 @@ class CreateStats < ActiveRecord::Migration[5.2]
       t.datetime :starts_at, null: false
       t.datetime :ends_at,   null: false
     end
+
+    dir.up { Stats::Generate.call }
   end
 end

@@ -1,11 +1,11 @@
 module Stats
 
   class Calculate
-    lev_routine
+    lev_routine express_output: :interval
 
     CALCULATIONS = %w[
       Courses
-      Students
+      Users
       Highlights
       Assignments
       Exercises
@@ -25,8 +25,6 @@ module Stats
       CALCULATIONS.each do |calculation|
         run(calculation, interval: outputs.interval)
       end
-      outputs.interval.save
-      transfer_errors_from(outputs.interval, { type: :verbatim }, true)
     end
   end
 end

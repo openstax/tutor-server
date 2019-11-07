@@ -205,6 +205,8 @@ Rails.application.routes.draw do
       end
     end
 
+    get :stats, controller: :stats
+
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
 
@@ -310,8 +312,6 @@ Rails.application.routes.draw do
       get :work
       get :all
     end unless IAm.real_production?
-
-    get :stats, controller: :stats
 
   end # end of admin namespace
 
