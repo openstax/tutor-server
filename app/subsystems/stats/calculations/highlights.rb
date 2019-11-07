@@ -4,8 +4,7 @@ class Stats::Calculations::Highlights
   protected
 
   def exec(interval:)
-    nt = Content::Models::Note.arel_table
-    highlights = Content::Models::Note.where(nt[:created_at].lteq(interval.ends_at))
+    highlights = Content::Models::Note.where(:created_at => interval.range)
     interval.stats['highlights'] = highlights.dup.count
     interval.stats['notes'] = highlights.where("annotation != ''").count
 
