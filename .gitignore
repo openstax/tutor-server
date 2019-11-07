@@ -13,6 +13,9 @@
 /db/data.yml*
 /db/dumps*
 
+# ignore config for auto-running utility https://github.com/cortesi/modd
+modd.conf
+
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp/**/*
