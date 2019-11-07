@@ -26,7 +26,7 @@ class CreatePracticeWorstTopicsTask
       message: "No exercises were returned from Biglearn to build the Practice Widget." +
                " [Course: #{@course.id} - Role: #{@role.id}" +
                " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
-    ) #if exercises.empty?
+    ) if exercises.empty?
 
     # Add the exercises as task steps
     exercise_spy_info = spy_info.fetch('exercises', {})

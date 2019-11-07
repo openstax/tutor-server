@@ -39,6 +39,7 @@ RSpec.describe Stats::Calculate, type: :routine do
       active_courses: 4,
       new_enrollments: 3,
       active_students: 3,
+      active_instructors: 0,
       active_populated_courses: 1,
       task_plans: 1,
       notes: 1,
