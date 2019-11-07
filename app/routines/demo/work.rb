@@ -46,7 +46,8 @@ class Demo::Work < Demo::Base
       task_plan[:tasks].each do |task|
         task_model = tasks_by_username[task[:student][:username]]
         task[:lateness] ||= -300
-        current_time = task_model.due_at + task[:lateness]
+        task_current_time = task_model.due_at + task[:lateness]
+        current_time = task_current_time > Time.now ? Time.now : task_current_time
         timecop_method = task[:lateness] == 0 ? :freeze : :travel
 
         Timecop.public_send(timecop_method, current_time) do
