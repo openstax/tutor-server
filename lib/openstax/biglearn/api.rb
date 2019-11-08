@@ -63,6 +63,10 @@ module OpenStax::Biglearn::Api
           # Apply global exercise exclusions to the new course
           update_globally_excluded_exercises(options.merge course: course)
 
+          # Apply course exercise exclusions to the new course if it has any (e.g. cloned courses)
+          update_course_excluded_exercises(options.merge course: course) \
+            if course.excluded_exercises.any?
+
           # These calls exist in case we held off on them previously due to having no ecosystems
           update_rosters(options.merge course: course)
           update_course_active_dates(options.merge course: course)

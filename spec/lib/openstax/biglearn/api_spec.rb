@@ -29,6 +29,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       tasking = @reading_task.taskings.first
       @period = tasking.period
       @student = tasking.role.student
+      FactoryBot.create :course_content_excluded_exercise, course: @course
     end
 
     after(:all) { DatabaseCleaner.clean }
@@ -193,6 +194,33 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           expect(sequence_number_record.reload.sequence_number).to(
             eq(sequence_number + increment)
           ) if sequence_number_record.present?
+        end
+      end
+    end
+
+    context '#prepare_and_update_course_ecosystem' do
+      context 'new course' do
+        before { @course.update_attribute :sequence_number, 0 }
+
+        it 'makes the expected method calls' do
+          expect(described_class.client).to receive(:create_course).and_call_original
+
+          expect(described_class.client).to receive(:update_globally_excluded_exercises)
+          expect(described_class.client).to receive(:update_course_excluded_exercises)
+          expect(described_class.client).to receive(:update_rosters)
+          expect(described_class.client).to receive(:update_course_active_dates)
+
+          described_class.prepare_and_update_course_ecosystem course: @course
+        end
+      end
+
+      context 'existing course' do
+        it 'makes the expected method call' do
+          expect(described_class.client).to(
+            receive(:sequentially_prepare_and_update_course_ecosystem)
+          )
+
+          described_class.prepare_and_update_course_ecosystem course: @course
         end
       end
     end
