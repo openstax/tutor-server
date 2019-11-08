@@ -25,7 +25,9 @@ SimpleCov.at_exit do
 end
 
 # Start calculating code coverage
-SimpleCov.start('rails') { merge_timeout 3600 }
+unless ENV['NO_COVERAGE']
+  SimpleCov.start('rails') { merge_timeout 3600 }
+end
 
 ENV['RAILS_ENV'] ||= 'test'
 

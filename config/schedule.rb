@@ -33,3 +33,7 @@ end
 every 1.hour do
   runner "OpenStax::RescueFrom.this { Research::UpdateStudyActivations.call }"
 end
+
+every 1.week do
+  runner "Stats::Generate.call(start_at: 1.week.ago.beginning_of_week)"
+end
