@@ -4,20 +4,21 @@ class Stats::Calculations::Users
   protected
 
   def exec(interval:)
+
     interval.stats['new_enrollments'] = CourseMembership::Models::Student
-      .where(:created_at => interval.range)
+      .where(dropped_at: nil, :created_at => interval.range)
       .count
 
     s = CourseMembership::Models::Student
     interval.stats['active_students'] = s
       .where(s.arel_table[:created_at].lteq(interval.ends_at))
-      .where(course_profile_course_id: interval.courses.active.map(&:id))
+      .where(dropped_at: nil, course_profile_course_id: interval.courses.active.map(&:id))
       .count
 
     t = CourseMembership::Models::Teacher
     interval.stats['active_instructors'] = t
       .where(t.arel_table[:created_at].lteq(interval.ends_at))
-      .where(course_profile_course_id: interval.courses.active.map(&:id))
+      .where(deleted_at: nil, course_profile_course_id: interval.courses.active.map(&:id))
       .count
 
   end
