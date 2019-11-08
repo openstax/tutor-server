@@ -84,9 +84,6 @@ protected
       raise
     rescue MissingArgument => ee
       raise(MissingArgument, "Missing the `#{ee.message}` argument for event #{event}")
-    rescue OpenStax::Salesforce::UserMissing => ee
-      log(:error) { "Cannot track onboarding event because Salesforce user not set" }
-      raise if Settings::Db.raise_if_salesforce_user_missing
     end
   end
 

@@ -411,8 +411,6 @@ Rails.application.routes.draw do
 
   mount FinePrint::Engine => :fine_print
 
-  OpenStax::Salesforce.set_top_level_routes(self)
-
   # API docs
   apipie
 

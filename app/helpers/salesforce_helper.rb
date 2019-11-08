@@ -1,6 +1,6 @@
 module SalesforceHelper
   def salesforce_url
-    Thread.current[:salesforce_url] ||= OpenStax::Salesforce::User.first.try!(:instance_url)
+    Rails.application.secrets.salesforce[:instance_url]
   end
 
   def find_tutor_course_period_report_id
@@ -9,7 +9,7 @@ module SalesforceHelper
 
   def salesforce_find_tutor_course_period_link(param, value)
     if salesforce_url.blank?
-      content_tag :i, 'SF User not set'
+      content_tag :i, 'SF instance_url not set'
     elsif find_tutor_course_period_report_id.blank?
       content_tag :i, 'SF Find Tutor Course Report ID not set'
     else

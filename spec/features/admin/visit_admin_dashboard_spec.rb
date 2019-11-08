@@ -28,17 +28,6 @@ RSpec.feature 'Admnistration' do
       click_button 'Save'
     end
 
-    scenario 'Salesforce' do
-      admin = FactoryBot.create(:user, :administrator)
-      stub_current_user(admin)
-      stub_current_user(admin, OpenStax::Salesforce::SettingsController)
-      visit admin_root_path
-
-      click_link 'Salesforce'
-      click_link 'Setup'
-      expect(page).to have_content "Salesforce Setup"
-    end
-
     scenario 'Payments' do
       admin = FactoryBot.create(:user, :administrator)
       stub_current_user(admin)

@@ -1,30 +1,51 @@
 require 'rails_helper'
 
 RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
-
+  # To use placeholders for the user UUIDs, we have to set them up in a before(:all)
+  # call, because `define_cassette_placeholder` doesn't work well from a before(:each)
   before(:all) do
     VCR.use_cassette('TrackTutorOnboardingEvent/sf_setup', VCR_OPTS) do
-      @proxy = SalesforceProxy.new
-      load_salesforce_user
-      @proxy.ensure_schools_exist(["JP University"])
-      @sf_contact_a = @proxy.new_contact
+      VCR.configure do |config|
+        config.define_cassette_placeholder('<salesforce_instance_url>') do
+          'https://example.salesforce.com'
+        end
+        config.define_cassette_placeholder('<salesforce_instance_url_lower>') do
+          'https://example.salesforce.com'
+        end
+        authentication = ActiveForce.sfdc_client.authenticate!
+        config.define_cassette_placeholder('<salesforce_instance_url>') do
+          authentication.instance_url
+        end
+        config.define_cassette_placeholder('<salesforce_instance_url_lower>') do
+          authentication.instance_url.downcase
+        end
+        config.define_cassette_placeholder('<salesforce_id>' ) do
+          authentication.id
+        end
+        config.define_cassette_placeholder('<salesforce_access_token>') do
+          authentication.access_token
+        end
+        config.define_cassette_placeholder('<salesforce_signature>' ) do
+          authentication.signature
+        end
 
-      # Note: In order to create campaigns, the SF user being used for this test must have
-      # the 'Marketing User' permission, which system admins do not have by default.
+        @proxy = SalesforceProxy.new
+        @proxy.ensure_schools_exist(['JP University'])
+        @sf_contact_a = @proxy.new_contact
 
-      @campaign = @proxy.new_campaign
-      @nomad_campaign = @proxy.new_campaign
-    end
+        # Note: In order to create campaigns, the SF user being used for this test must have
+        # the 'Marketing User' permission, which system admins do not have by default.
+        @campaign = @proxy.new_campaign
+        @nomad_campaign = @proxy.new_campaign
 
-    # To use placeholders for the user UUIDs, we have to set them up in a before(:all)
-    # call, because `define_cassette_placeholder` doesn't work well from a before(:each)
+        @user_no_sf = FactoryBot.create(:user, is_test: false)
+        @user_sf_a = FactoryBot.create(
+          :user, is_test: false, salesforce_contact_id: @sf_contact_a.id
+        )
 
-    @user_no_sf = FactoryBot.create(:user, is_test: false)
-    @user_sf_a = FactoryBot.create(:user, is_test: false, salesforce_contact_id: @sf_contact_a.id)
-
-    VCR.configure do |config|
-      config.define_cassette_placeholder("<USER_NO_SF_UUID>") { @user_no_sf.uuid }
-      config.define_cassette_placeholder("<USER_SF_A_UUID>")  { @user_sf_a.uuid  }
+        config.define_cassette_placeholder('<USER_NO_SF_UUID>') { @user_no_sf.uuid }
+        config.define_cassette_placeholder('<USER_SF_A_UUID>' ) { @user_sf_a.uuid  }
+      end
     end
   end
 
@@ -37,13 +58,11 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     @delete_me = []
 
     allow_any_instance_of(OpenStax::Salesforce::Remote::CampaignMember).to receive(:create!).and_wrap_original do |m, *args|
-      m.call(*args).tap{|object| @delete_me.push(object)}
+      m.call(*args).tap { |object| @delete_me.push(object) }
     end
   end
 
-  after(:each) do
-    @delete_me.each{|obj| obj.destroy}
-  end
+  after(:each) { @delete_me.each(&:destroy) }
 
   let(:anonymous_user) do
     profile = User::Models::AnonymousProfile.instance
@@ -105,21 +124,8 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
     it "does not error for any reason" do
       stub_active_campaign_id(" ")
       stub_active_nomad_campaign_id(" ")
-      clear_salesforce_user
       ActiveForce.clear_sfdc_client!
       expect{ call }.not_to raise_error
-    end
-  end
-
-  context "when there is no SF user" do
-    let(:event) { :like_preview_yes }
-    let(:user) { @user_sf_a }
-
-    it "freaks out in production" do
-      stub_active_campaign_id
-      clear_salesforce_user
-      ActiveForce.clear_sfdc_client!
-      expect{call}.to raise_error(OpenStax::Salesforce::UserMissing)
     end
   end
 
@@ -133,7 +139,6 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
   end
 
   context 'when user has no SF contact ID' do
-
     let(:user) { @user_no_sf }
 
     context 'arrived my courses' do
@@ -151,7 +156,6 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
         expect{call}.to raise_error(TrackTutorOnboardingEvent::CannotTrackOnboardingUser)
       end
     end
-
   end
 
   context 'when user has an SF contact ID' do
@@ -384,8 +388,5 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
         expect(Delayed::Job.first.failed_at).to be_nil
       end
     end
-
   end
-
-
 end
