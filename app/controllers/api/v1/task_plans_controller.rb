@@ -422,8 +422,6 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       end
     end
   end
-<<<<<<< HEAD
-=======
 
   def send_to_biglearn(task_plan)
     return if task_plan.tasks.empty?
@@ -432,5 +430,4 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     OpenStax::Biglearn::Api.create_update_assignments requests
   end
->>>>>>> Tell Biglearn when task_plans have been withdrawn or restored
 end
