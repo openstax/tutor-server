@@ -241,11 +241,6 @@ module OpenStax::Biglearn::Api
     def update_course_active_dates(*request)
       request, options = extract_options request, OPTION_KEYS
 
-      select_proc = ->(request) do
-        # The create_course event is not sent until the course has an ecosystem
-        !request.fetch(:course).ecosystems.empty?
-      end
-
       single_api_request options.merge(
         method: :update_course_active_dates,
         request: request,
@@ -265,7 +260,7 @@ module OpenStax::Biglearn::Api
         task = request.fetch(:task)
 
         # Skip tasks with no ecosystem or not assigned to anyone
-        task.ecosystem.present? && task.taskings.first&.role.present?
+        task.ecosystem.present? && task.taskings.first&.role&.course_member.present?
       end
 
       bulk_api_request options.merge(

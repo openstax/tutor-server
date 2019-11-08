@@ -95,7 +95,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         :tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
-        settings: { 'page_ids' => @content_pages.map{ |page| page.id.to_s } },
+        settings: { 'page_ids' => @content_pages.map { |page| page.id.to_s } },
         num_tasking_plans: 0
       )
     end

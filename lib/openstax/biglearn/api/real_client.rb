@@ -360,8 +360,8 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
 
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      student = task.taskings.first.try!(:role).try!(:course_member)
-      next if student.nil?
+      # OpenStax::Biglearn::Api already checked that the course_member exists
+      student = task.taskings.first.role.course_member
 
       ecosystem = task.ecosystem
 
@@ -393,14 +393,12 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
       assigned_book_container_uuids = core_page_ids.map do |page_id|
         page_id_to_page_uuid_map[page_id]
       end
-      assigned_exercises = task.tasked_exercises
-                               .preload(:task_step, :exercise)
-                               .map do |tasked_exercise|
+      assigned_exercises = task.tasked_exercises.preload(:task_step, :exercise).map do |te|
         {
-          trial_uuid: tasked_exercise.uuid,
-          exercise_uuid: tasked_exercise.exercise.uuid,
-          is_spe: tasked_exercise.task_step.spaced_practice_group?,
-          is_pe: tasked_exercise.task_step.personalized_group?
+          trial_uuid: te.uuid,
+          exercise_uuid: te.exercise.uuid,
+          is_spe: te.task_step.spaced_practice_group?,
+          is_pe: te.task_step.personalized_group?
         }
       end
 
@@ -440,7 +438,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
         created_at: task.created_at.utc.iso8601(6),
         updated_at: task.updated_at.utc.iso8601(6)
       }
-    end.compact
+    end
 
     bulk_api_request url: :create_update_assignments, requests: biglearn_requests,
                      requests_key: :assignments, responses_key: :updated_assignments

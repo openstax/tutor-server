@@ -21,7 +21,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       dynamic_exercises = dynamic_pools.flat_map(&:exercises).sort_by(&:uid)
 
       @teacher_selected_exercises = core_exercises[1..5]
-      teacher_selected_exercise_ids = @teacher_selected_exercises.map{|e| e.id.to_s}
+      teacher_selected_exercise_ids = @teacher_selected_exercises.map { |e| e.id.to_s }
 
       @tutor_selected_exercise_count = 4
 
