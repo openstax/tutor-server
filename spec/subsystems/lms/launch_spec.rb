@@ -25,7 +25,7 @@ RSpec.describe Lms::Launch, type: :model do
       request = FactoryBot.create(
         :launch_request,
         app: app,
-        current_time: Time.current - (Lms::Launch::MAX_REQUEST_AGE + 1.second)
+        current_time: Time.current - (Lms::Launch::MAX_REQUEST_AGE + 1.minute)
       )
       expect do
         Lms::Launch.from_request(request, authenticator: authenticator).validate!
@@ -36,7 +36,7 @@ RSpec.describe Lms::Launch, type: :model do
       request = FactoryBot.create(
         :launch_request,
         app: app,
-        current_time: Time.current + Lms::Launch::MAX_REQUEST_AGE + 1.second
+        current_time: Time.current + Lms::Launch::MAX_REQUEST_AGE + 1.minute
       )
       expect do
         Lms::Launch.from_request(request, authenticator: authenticator).validate!
