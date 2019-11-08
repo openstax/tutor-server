@@ -3,7 +3,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
-
   context 'with parts of k12phys' do
     before(:all) do
       cnx_page_infos = [
@@ -246,5 +245,4 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
   def page_for(hash)
     OpenStax::Cnx::V1::Page.new(hash: HashWithIndifferentAccess.new(hash).except(:expected))
   end
-
 end

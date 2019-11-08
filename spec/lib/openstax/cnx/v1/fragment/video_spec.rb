@@ -6,8 +6,9 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Video, type: :external, vcr: VCR_OPT
   let(:reading_processing_instructions) do
     FactoryBot.build(:content_book).reading_processing_instructions
   end
+  let(:reference_view_url) { Faker::Internet.url }
   let(:fragment_splitter) do
-    OpenStax::Cnx::V1::FragmentSplitter.new(reading_processing_instructions)
+    OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
   let(:cnx_page_id)       { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
   let(:cnx_page)          { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }

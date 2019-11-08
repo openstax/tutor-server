@@ -1,6 +1,5 @@
 module OpenStax::Cnx::V1
   class Fragment::Exercise < Fragment
-
     # CSS to find the embed code attributes
     EXERCISE_EMBED_URL_CSS = 'a[href^="#"]'
 
@@ -55,6 +54,5 @@ module OpenStax::Cnx::V1
     def blank?
       embed_queries.empty? && node_id.blank?
     end
-
   end
 end

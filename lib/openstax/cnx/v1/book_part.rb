@@ -1,6 +1,5 @@
 module OpenStax::Cnx::V1
   class BookPart
-
     def initialize(hash: {}, is_root: false, book: nil)
       @hash = hash
       @is_root = is_root
@@ -43,6 +42,5 @@ module OpenStax::Cnx::V1
       # A BookPart is a chapter if none of its children are BookParts
       @is_chapter ||= parts.none? { |part| part.is_a?(self.class) }
     end
-
   end
 end

@@ -1,11 +1,10 @@
 module OpenStax::Cnx::V1
   class FragmentSplitter
-
     include HtmlTreeOperations
 
-    attr_reader :processing_instructions
+    attr_reader :processing_instructions, :reference_view_url
 
-    def initialize(processing_instructions)
+    def initialize(processing_instructions, reference_view_url)
       @processing_instructions = processing_instructions.map do |processing_instruction|
         OpenStruct.new(processing_instruction.to_h).tap do |pi_struct|
           pi_struct.fragments = [pi_struct.fragments].flatten.map(&:to_s).map(&:classify) \
@@ -14,6 +13,8 @@ module OpenStax::Cnx::V1
           pi_struct.except = [pi_struct.except].flatten.map(&:to_s) unless pi_struct.except.nil?
         end
       end
+
+      @reference_view_url = reference_view_url
     end
 
     # Splits the given root node into fragments according to the processing instructions
@@ -33,7 +34,13 @@ module OpenStax::Cnx::V1
         result = process_array(result, processing_instruction)
       end
 
-      cleanup_array(result)
+      # Flatten, remove empty nodes and transform remaining nodes into reading fragments
+      result.flatten.map do |obj|
+        next obj unless obj.is_a?(Nokogiri::XML::Node)
+        next if obj.content.blank?
+
+        OpenStax::Cnx::V1::Fragment::Reading.new node: obj, reference_view_url: reference_view_url
+      end.compact
     end
 
     protected
@@ -45,7 +52,10 @@ module OpenStax::Cnx::V1
     # Returns an instance of the given fragment class
     def get_fragment_instance(fragment_name, node, labels)
       fragment_class = "OpenStax::Cnx::V1::Fragment::#{fragment_name}".constantize
-      fragment = fragment_class.new(node: node, labels: labels)
+      args = { node: node, labels: labels }
+      args[:reference_view_url] = reference_view_url \
+        if fragment_class.is_a? OpenStax::Cnx::V1::Fragment::Reading
+      fragment = fragment_class.new args
       fragment unless fragment.blank?
     end
 
@@ -127,16 +137,5 @@ module OpenStax::Cnx::V1
         end
       end
     end
-
-    # Flatten, remove empty nodes and transform remaining nodes into reading fragments
-    def cleanup_array(array)
-      array.flatten.map do |obj|
-        next obj unless obj.is_a?(Nokogiri::XML::Node)
-        next if obj.content.blank?
-
-        OpenStax::Cnx::V1::Fragment::Reading.new(node: obj)
-      end.compact
-    end
-
   end
 end

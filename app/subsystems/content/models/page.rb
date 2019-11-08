@@ -1,5 +1,4 @@
 class Content::Models::Page < IndestructibleRecord
-
   wrapped_by ::Content::Strategies::Direct::Page
 
   acts_as_resource
@@ -131,6 +130,10 @@ class Content::Models::Page < IndestructibleRecord
     @context_for_feature_ids[feature_ids] = feature_node.try(:to_html)
   end
 
+  def reference_view_url(book = chapter.book)
+    "#{book.reference_view_url}/page/#{id}"
+  end
+
   protected
 
   def parser_class
@@ -142,10 +145,10 @@ class Content::Models::Page < IndestructibleRecord
   end
 
   def fragment_splitter
-    return if chapter.try(:book).nil?
+    return if chapter&.book.nil?
 
     @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
-      chapter.book.reading_processing_instructions
+      chapter.book.reading_processing_instructions, reference_view_url
     )
   end
 
@@ -164,5 +167,4 @@ class Content::Models::Page < IndestructibleRecord
 
     true
   end
-
 end

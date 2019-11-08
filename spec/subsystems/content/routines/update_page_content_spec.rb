@@ -85,8 +85,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
             context 'simple' do
               let(:after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + before_hrefs[1..-1]
               end
 
@@ -119,8 +118,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
 
               let(:composite_after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + composite_before_hrefs[1..-1]
               end
 
@@ -214,8 +212,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
             context 'simple' do
               let(:after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + before_hrefs[1..-1]
               end
 
@@ -248,8 +245,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
 
               let(:composite_after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + composite_before_hrefs[1..-1]
               end
 
@@ -339,8 +335,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
             context 'simple' do
               let(:after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + before_hrefs[1..-1]
               end
 
@@ -373,8 +368,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
 
               let(:composite_after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + composite_before_hrefs[1..-1]
               end
 
@@ -468,8 +462,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
             context 'simple' do
               let(:after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                  @page_2.book_location.reject(&:zero?).join('.')}"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + before_hrefs[1..-1]
               end
 
@@ -502,9 +495,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
 
               let(:composite_after_hrefs) do
                 [
-                  "/book/#{@book.ecosystem.id}/section/#{
-                    @page_2.book_location.reject(&:zero?).join('.')
-                  }"
+                  "/book/#{@book.ecosystem.id}/page/#{@page_2.id}"
                 ] + composite_before_hrefs[1..-1]
               end
 
