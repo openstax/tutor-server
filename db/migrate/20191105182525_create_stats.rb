@@ -6,6 +6,8 @@ class CreateStats < ActiveRecord::Migration[5.2]
       t.datetime :ends_at,   null: false
     end
 
-    dir.up { Stats::Generate.call }
+    reversible do |dir|
+      dir.up { Stats::Generate.call }
+    end
   end
 end
