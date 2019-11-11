@@ -41,13 +41,17 @@ RSpec.describe Stats::Calculate, type: :routine do
       active_students: 3,
       active_instructors: 0,
       active_populated_courses: 1,
-      task_plans: 1,
+      reading_task_plans: 1,
+      homework_task_plans: 0,
       notes: 1,
       highlights: 1,
       new_notes: 1,
       new_highlights: 1,
       exercise_steps: 1,
       reading_steps: 1,
+      nudge_calculated: 0,
+      nudge_retry_correct: 0,
+      nudge_initially_invalid: 0,
     }.stringify_keys)
   end
 end
