@@ -1,3 +1,8 @@
+---
+name: Epic
+about: Epic template
+
+---
 ### Description
 As a \<role\> I want \<function\> so that \<business result\>.
 
