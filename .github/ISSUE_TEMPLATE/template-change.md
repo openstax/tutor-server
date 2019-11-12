@@ -5,17 +5,28 @@ about: Change issue template
 ---
 
 ### Description 
-Explain user story or desired outcome.
+As a \<role\> I want \<function\> so that \<business result\>.
 
 
-----------------
+### Acceptance Criteria
+Give criteria for acceptance.
 
-### Acceptance Tests
-Additional acceptance tests that are required by this bug fix.
+
+### Acceptance Tests for testrail
+- **title**: 
+- **categories**:
+
+> GIVEN something  
+> AND something else  
+> WHEN something  
+> AND something else  
+> THEN something  
+> AND something else  
+
 
 
 ### Tests that will be added or changed 
-Written explanations of the tests that will have to be added or modified to test this bug. 
+Written explanations of the tests that will have to be added or modified to test this change. 
 
 
 
