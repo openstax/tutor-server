@@ -11,9 +11,8 @@ class Stats::Calculations::Exercises
         .count
     end
 
-
     nudge_stats = Tasks::Models::TaskedExercise
-      .where("response_validation is not null and response_validation != '{}'")
+      .where("coalesce(jsonb_array_length(response_validation->'attempts'), 0) > 0")
       .where(:updated_at => interval.range)
       .select(
       "coalesce(sum((case when jsonb_array_length(response_validation->'attempts') > 0 then 1 else 0 end)), 0) as nudge_calculated,

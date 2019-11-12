@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_05_182525) do
+ActiveRecord::Schema.define(version: 2019_12_05_182525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -928,8 +928,10 @@ ActiveRecord::Schema.define(version: 2019_11_05_182525) do
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "question_index", null: false
     t.jsonb "response_validation"
+    t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
+    t.index ["updated_at"], name: "index_tasks_tasked_exercises_on_updated_at"
     t.index ["uuid"], name: "index_tasks_tasked_exercises_on_uuid", unique: true
   end
 
