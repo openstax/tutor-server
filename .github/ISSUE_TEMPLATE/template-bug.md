@@ -9,7 +9,8 @@ Briefly describe the issue and user impact.
 
 
 ----------------
-**Expected behavior**
+
+**Expected behavior:** 
 
 
 
@@ -17,8 +18,21 @@ Briefly describe the issue and user impact.
 
 
 ----------------
-### Acceptance Tests
-Additional acceptance tests that are required by this bug fix.
+### Acceptance Criteria
+Give criteria for acceptance.
+
+
+### Acceptance Tests for testrail
+- **title**: 
+- **categories**:
+
+> GIVEN something  
+> AND something else  
+> WHEN something  
+> AND something else  
+> THEN something  
+> AND something else  
+
 
 
 ### Tests that will be added or changed 
