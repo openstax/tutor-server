@@ -10,6 +10,17 @@ class Stats::Calculations::Exercises
                tasked_type: "Tasks::Models::Tasked#{task_type.classify}")
         .count
     end
-  end
 
+
+    nudge_stats = Tasks::Models::TaskedExercise
+      .where("response_validation is not null and response_validation != '{}'")
+      .where(:updated_at => interval.range)
+      .select(
+      "coalesce(sum((case when jsonb_array_length(response_validation->'attempts') > 0 then 1 else 0 end)), 0) as nudge_calculated,
+      coalesce(sum((case when (response_validation->'attempts'->0->'valid') = 'true' then 0 else 1 end)), 0) as nudge_initially_invalid,
+      coalesce(sum((case when (response_validation->'attempts'->1->'valid') = 'true' then 1 else 0 end)), 0) as nudge_retry_correct"
+    ).all[0].as_json(except: :id)
+
+    interval.stats.merge!(nudge_stats)
+  end
 end
