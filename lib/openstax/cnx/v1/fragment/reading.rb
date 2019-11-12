@@ -12,19 +12,15 @@ module OpenStax::Cnx::V1
         # Modify only fragment-only links
         next if uri.nil? || uri.absolute? || !uri.path.blank?
 
-        # Abort if the link target is still present in this fragment
+        # Abort if there is not a target or it's still present in this fragment
         target = uri.fragment
-        next if node.at_css("##{target}, [name=\"#{target}\"]")
+        next if target.blank? || node.at_css("##{target}, [name=\"#{target}\"]")
 
         # Change the link to point to the reference view
         href.value = "#{reference_view_url}##{target}"
       end unless reference_view_url.nil?
 
       @to_html = node.to_html
-    end
-
-    def to_html
-      @to_html ||= node.to_html
     end
 
     def blank?
