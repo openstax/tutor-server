@@ -32,6 +32,8 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Reading, type: :external, vcr: VCR_O
             <input name="query" type="text"/>
 
             <a href="#test">Test</a>
+
+            <a href="#">Test random bad link</a>
           </div>
         </body>
       </html>
@@ -42,6 +44,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Reading, type: :external, vcr: VCR_O
 
     doc = Nokogiri::HTML(reading_fragment.to_html)
     body = doc.at_css('body')
+    expect(body.at_css('[href="#"]')).not_to be_nil
     expect(body.at_css('[href="#content"]')).not_to be_nil
     expect(body.at_css('[href="#query"]')).not_to be_nil
     expect(body.at_css('[href="#test"]')).to be_nil
