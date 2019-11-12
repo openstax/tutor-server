@@ -422,7 +422,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
         course_uuid: request.fetch(:course).uuid,
         sequence_number: request.fetch(:sequence_number),
         assignment_uuid: task.uuid,
-        is_deleted: task.task_plan.try!(:withdrawn?),
+        is_deleted: task.withdrawn?,
         ecosystem_uuid: ecosystem.tutor_uuid,
         student_uuid: student.uuid,
         assignment_type: task_type,
