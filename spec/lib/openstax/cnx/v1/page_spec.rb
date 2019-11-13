@@ -199,6 +199,14 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
       expect(page.title).to eq 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks'
     end
 
+    it 'retains HTML tags inside title' do
+      page = OpenStax::Cnx::V1::Page.new(
+        id: '123', hash: { 'title' => '<span class="os-text"><i>The Florentine Codex</i>, c. 1585</span>' }
+      )
+      expect(page.baked_book_location).to eq []
+      expect(page.title).to eq '<i>The Florentine Codex</i>, c. 1585'
+    end
+
     it 'leaves baked_book_location blank if not present' do
       page = OpenStax::Cnx::V1::Page.new(
         id: '123',
