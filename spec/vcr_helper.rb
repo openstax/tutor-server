@@ -48,8 +48,8 @@ VCR.configure do |c|
     username
     password
     security_token
-    client_key
-    client_secret
+    consumer_key
+    consumer_secret
   ).each { |salesforce_secret_name| c.filter_secret(['salesforce', salesforce_secret_name]) }
 
   [ 'client_id', 'secret', 'url' ].each do |field_name|
