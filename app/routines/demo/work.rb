@@ -45,12 +45,15 @@ class Demo::Work < Demo::Base
 
       task_plan[:tasks].each do |task|
         task_model = tasks_by_username[task[:student][:username]]
-        task[:lateness] ||= -300
-        task_current_time = task_model.due_at + task[:lateness]
-        current_time = task_current_time > Time.now ? Time.now : task_current_time
-        timecop_method = task[:lateness] == 0 ? :freeze : :travel
+        current_time = Time.current
+        # Skip unopened tasks
+        next if task_model.opens_at > current_time
 
-        Timecop.public_send(timecop_method, current_time) do
+        task[:lateness] ||= -300
+        work_time = [task_model.due_at + task[:lateness], current_time].min
+        timecop_method = work_time == task_model.due_at ? :freeze : :travel
+
+        Timecop.public_send(timecop_method, work_time) do
           # Populate placeholders steps ahead of time (with force: true) so we can
           # correctly calculate the number of complete and incomplete steps
           # Set background to true so we wait longer for Biglearn to be ready

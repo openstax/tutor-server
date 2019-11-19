@@ -1,19 +1,20 @@
 # config/unicorn.rb
 
-APP_DIR = File.expand_path("../../", __FILE__)
+APP_DIR = File.expand_path('../', __dir__)
 
-worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
-timeout 300
-preload_app true
+worker_processes ENV.fetch('UNICORN_WORKER_PROCESSES', 3)
+timeout ENV.fetch('UNICORN_TIMEOUT', 300)
+preload_app ENV.fetch('UNICORN_PRELOAD_APP', false)
 working_directory APP_DIR
 
-listen 3000
+listen ENV.fetch('UNICORN_PORT', 3001)
 
 # unicorn file locations
-pid "#{APP_DIR}/tmp/pids/unicorn.pid"
-stderr_path "#{APP_DIR}/log/unicorn.stderr.log"
-stdout_path "#{APP_DIR}/log/unicorn.stdout.log"
-
+pid ENV.fetch('UNICORN_PID_PATH', "#{APP_DIR}/tmp/pids/unicorn.pid")
+unless ENV.fetch('UNICORN_LOG_TO_STDOUT', true)
+  stderr_path "#{APP_DIR}/log/unicorn.stderr.log"
+  stdout_path "#{APP_DIR}/log/unicorn.stdout.log"
+end
 
 before_fork do |server, worker|
   # disconnect the unicorn master from the db before forking
