@@ -49,4 +49,12 @@ module DateTimeUtilities
 
     DateTime.parse(datetime.to_s)
   end
+
+  def self.relativize(time, original_reference, new_reference)
+    return time.iso8601 if new_reference.nil?
+
+    time_delta = (time - original_reference) + (new_reference - Time.current)
+
+    "<%= Time.current #{time_delta >= 0 ? '+' : '-'} #{time_delta.abs/1.day}.days %>"
+  end
 end
