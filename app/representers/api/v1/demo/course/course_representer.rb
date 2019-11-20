@@ -23,19 +23,15 @@ class Api::V1::Demo::Course::CourseRepresenter < Api::V1::Demo::CourseRepresente
 
   property :starts_at,
            type: String,
+           getter: ->(*) { DateTimeUtilities.to_api_s starts_at },
            readable: true,
-           writeable: true,
-           getter: ->(user_options:, decorator:, **) do
-             user_options.fetch(:starts_at, starts_at).iso8601
-           end
+           writeable: true
 
   property :ends_at,
            type: String,
+           getter: ->(*) { DateTimeUtilities.to_api_s ends_at },
            readable: true,
-           writeable: true,
-           getter: ->(user_options:, decorator:, **) do
-             DateTimeUtilities.relativize(ends_at, starts_at, user_options[:starts_at])
-           end
+           writeable: true
 
   collection :teachers,
              extend: Api::V1::Demo::UserRepresenter,

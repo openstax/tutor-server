@@ -8,22 +8,14 @@ class Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter < Api::V1::
 
   property :opens_at,
            type: String,
+           getter: ->(*) { DateTimeUtilities.to_api_s opens_at },
            readable: true,
-           getter: ->(user_options:, decorator:, **) do
-             DateTimeUtilities.relativize(
-               opens_at, task_plan.owner.starts_at, user_options[:starts_at]
-             )
-           end,
            writeable: true,
            schema_info: { required: true }
 
   property :due_at,
            type: String,
-           getter: ->(user_options:, decorator:, **) do
-             DateTimeUtilities.relativize(
-               due_at, task_plan.owner.starts_at, user_options[:starts_at]
-             )
-           end,
+           getter: ->(*) { DateTimeUtilities.to_api_s due_at },
            readable: true,
            writeable: true,
            schema_info: { required: true }

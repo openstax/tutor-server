@@ -28,7 +28,7 @@ class Api::V1::Demo::Work::Course::TaskPlan::TaskRepresenter < Api::V1::Demo::Ba
   # Otherwise, Timecop.travel is used
   property :lateness,
            type: Integer,
-           getter: ->(*) { worked_on? && due_at.present? ? last_worked_at - due_at : -300 },
+           getter: ->(*) { (last_worked_at - due_at) if worked_on? && due_at.present? },
            readable: true,
            writeable: true
 end

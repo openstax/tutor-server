@@ -52,7 +52,7 @@ module Tutor::SubSystems
 
         if is_belongs_to
           options[:foreign_key] ||= "#{subsystem_name}_#{association_name.to_s.underscore}_id"
-        else
+        elsif options[:as].blank?
           klass_name = self.name.demodulize.underscore
           options[:foreign_key] ||= "#{my_subsystem_name}_#{klass_name}_id"
         end
