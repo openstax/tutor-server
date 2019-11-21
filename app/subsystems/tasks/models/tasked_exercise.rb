@@ -5,7 +5,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   auto_uuid
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
-
+  has_one :task_step, as: :tasked
   before_validation :set_correct_answer_id, on: :create
 
   validates :url, :question_id, :question_index, :content, :correct_answer_id, presence: true
