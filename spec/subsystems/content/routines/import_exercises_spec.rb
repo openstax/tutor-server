@@ -110,8 +110,9 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
 
     before(:all) do
       chapter = FactoryBot.create :content_chapter
+      book = chapter.book
 
-      @ecosystem = chapter.book.ecosystem
+      @ecosystem = book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
         id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
@@ -122,6 +123,8 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
           cnx_page: cnx_page, chapter: chapter, number: 2, book_location: [3, 1]
         ]
       end
+
+      Content::Routines::TransformAndCachePageContent.call book: book, pages: [ @page ]
     end
 
     before do
@@ -134,7 +137,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
       expect do
         described_class.call ecosystem: @ecosystem, page: @page, query_hash: {tag: tags}
-      end.to change{ Content::Models::Exercise.count }.by(4)
+      end.to change { Content::Models::Exercise.count }.by(4)
 
       imported_exercises = @ecosystem.exercises.order(:number).to_a
       imported_exercises.each_with_index do |exercise, index|

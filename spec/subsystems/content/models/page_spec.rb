@@ -3,7 +3,6 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
-
   subject(:page) { FactoryBot.create :content_page }
 
   it { is_expected.to belong_to(:chapter) }
@@ -16,13 +15,15 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
   context 'with snap lab page' do
 
     before(:all) do
-      snap_lab_page_content = VCR.use_cassette('Content_Models_Page/with_snap_lab_page',
-                                               VCR_OPTS) do
+      snap_lab_page_content = VCR.use_cassette(
+        'Content_Models_Page/with_snap_lab_page', VCR_OPTS
+      ) do
         OpenStax::Cnx::V1::Page.new(id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8').content
       end
 
-      @snap_lab_page = FactoryBot.create :content_page, content: snap_lab_page_content,
-                                                         fragments: nil, snap_labs: nil
+      @snap_lab_page = FactoryBot.create :content_page, content: snap_lab_page_content
+      @snap_lab_page.cache_fragments_and_snap_labs
+      @snap_lab_page.save!
     end
 
     it 'caches fragments' do
@@ -60,7 +61,5 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
           fragments: fragments }
       ])
     end
-
   end
-
 end

@@ -221,8 +221,9 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
       Timecop.freeze(Date.today - 30) do
         old_reading_task = FactoryBot.create :tasks_task, step_types: [:tasks_tasked_reading],
                                                           num_random_taskings: 1
-        FactoryBot.create :tasks_task_step, task: old_reading_task,
-                                            page: old_reading_task.task_steps.first.page
+        page = old_reading_task.task_steps.first.page
+        Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
+        FactoryBot.create :tasks_task_step, task: old_reading_task, page: page
 
         student = old_reading_task.taskings.first.role.student
         student.update_attribute :course, @course
@@ -232,8 +233,10 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
         FactoryBot.create(:tasks_task, task_type: :concept_coach,
                                        step_types: [:tasks_tasked_exercise],
                                        num_random_taskings: 1).tap do |cc_task|
+          page = cc_task.task_steps.first.page
+          Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
           FactoryBot.create :tasks_task_step, task: cc_task,
-                                              page: cc_task.task_steps.first.page,
+                                              page: page,
                                               tasked_type: :tasks_tasked_exercise
         end
       end
@@ -241,6 +244,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
       reading_task = FactoryBot.create :tasks_task, task_type: :reading,
                                                     step_types: [:tasks_tasked_reading],
                                                     num_random_taskings: 1
+      page = reading_task.task_steps.first.page
+      Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
       FactoryBot.create :tasks_task_step, task: reading_task,
                                           page: reading_task.task_steps.first.page
 

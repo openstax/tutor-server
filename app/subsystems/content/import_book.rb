@@ -5,7 +5,7 @@ class Content::ImportBook
   uses_routine Content::Routines::ImportBookPart, as: :import_book_part,
                                                   translations: { outputs: { type: :verbatim } }
   uses_routine Content::Routines::ImportExercises, as: :import_exercises
-  uses_routine Content::Routines::UpdatePageContent, as: :update_page_content
+  uses_routine Content::Routines::TransformAndCachePageContent, as: :transform_and_cache_content
   uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
 
   protected
@@ -31,13 +31,10 @@ class Content::ImportBook
 
     Content::Models::Book.import [book], recursive: true, validate: false
 
-    # Reset chapters association so it gets reloaded the next time it is used
-    book.chapters.reset
-
-    import_page_tags = outputs.page_taggings.filter { |pt| pt.tag.import? }
-    import_page_tags.each(&:reload)
+    run(:transform_and_cache_content, book: book, pages: book.chapters.reload.flat_map(&:pages))
 
     import_page_map = {}
+    import_page_tags = outputs.page_taggings.filter { |pt| pt.tag.import? }.map(&:reload)
     import_page_tags.each { |page_tag| import_page_map[page_tag.tag.value] = page_tag.page }
 
     outputs.exercises = []
@@ -65,7 +62,7 @@ class Content::ImportBook
 
     outputs.book = book
     outputs.chapters = outs.chapters
-    outputs.pages = run(:update_page_content, book: book, pages: outs.pages).outputs.pages
+    outputs.pages = outs.pages
 
     # Send ecosystem information to Biglearn
     OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
