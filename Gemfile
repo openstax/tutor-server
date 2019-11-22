@@ -166,7 +166,7 @@ gem 'babbler', '~> 1.0.1'
 gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
-gem 'openstax_salesforce', path: '../openstax_salesforce'
+gem 'openstax_salesforce'
 
 # Global settings
 gem 'rails-settings-cached'
