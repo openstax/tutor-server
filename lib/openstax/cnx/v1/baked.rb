@@ -5,7 +5,7 @@ module OpenStax::Cnx::V1::Baked
     part = Nokogiri::HTML.fragment(title)
     text_node = part.css('.os-text')
     if text_node.present?
-      { text: text_node.text, book_location: part.css('.os-number').text.split('.') }
+      { text: text_node.inner_html, book_location: part.css('.os-number').text.split('.') }
     else
       { text: title, book_location: [] }
     end
