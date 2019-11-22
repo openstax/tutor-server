@@ -17,10 +17,15 @@ class Stats::Calculations::Exercises
     end
 
     interval.stats["practice_steps"] = Tasks::Models::TaskStep
-      .joins(:task)
+      .joins(task: { taskings: { role: :student } })
       .where(
         :first_completed_at => interval.range,
-        task: { task_type: %w[practice_worst_topics page_practice] }
+        task: {
+          task_type: %w[practice_worst_topics page_practice],
+          taskings: { role: { student: {
+            course_profile_course_id: interval.courses.populated.map(&:id) } }
+          },
+        }
       )
       .count
 
