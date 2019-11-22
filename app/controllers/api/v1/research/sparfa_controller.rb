@@ -102,7 +102,7 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
 
       student_by_uuid = tasks.flat_map(&:taskings).map do |tasking|
         tasking.role.student
-      end.index_by(&:uuid)
+      end.compact.index_by(&:uuid)
 
       sparfa_requests = calcs.values.flatten.map do |calc|
         calc.slice(:ecosystem_matrix_uuid).merge(
