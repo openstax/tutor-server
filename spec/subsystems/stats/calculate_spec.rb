@@ -13,35 +13,37 @@ RSpec.describe Stats::Calculate, type: :routine do
       tasked_type: :tasks_tasked_exercise
   }
 
-  let(:course) { task_plan.owner }
-
   let(:past_course) {
       FactoryBot.create(:course_profile_course, is_test: false,
                         starts_at: 3.month.ago,
                         ends_at: 1.month.ago)
   }
 
-  let(:period) { FactoryBot.create :course_membership_period, course: course }
-
   before(:each) {
-    3.times do
-      CourseMembership::AddStudent[period: period, role: FactoryBot.create(:entity_role)]
-    end
+    add_students = -> (course) {
+      period = FactoryBot.create :course_membership_period, course: course
+      3.times do
+        CourseMembership::AddStudent[period: period, role: FactoryBot.create(:entity_role)]
+      end
+    }
+    add_students[task_plan.owner]
+    add_students[homework_step.task.task_plan.owner]
+    add_students[reading_step.task.task_plan.owner]
   }
 
   it 'counts all the things' do
     interval = Stats::Calculate.call(
       date_range: ((Time.now - 1.week)...Time.now)
     ).outputs.interval
-    expect(interval.courses.active).to include course
+    expect(interval.courses.active).to include task_plan.owner
     expect(interval.courses.active).not_to include past_course
     expect(interval.stats).to eq({
       active_courses: 4,
-      new_enrollments: 3,
-      active_students: 3,
+      new_enrollments: 9,
+      active_students: 9,
       active_instructors: 0,
-      active_populated_courses: 1,
-      reading_task_plans: 1,
+      active_populated_courses: 3,
+      reading_task_plans: 3,
       homework_task_plans: 0,
       notes: 1,
       highlights: 1,
@@ -49,6 +51,7 @@ RSpec.describe Stats::Calculate, type: :routine do
       new_highlights: 1,
       exercise_steps: 1,
       reading_steps: 1,
+      practice_steps: 0,
       nudge_calculated: 0,
       nudge_retry_correct: 0,
       nudge_initially_invalid: 0,
