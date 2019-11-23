@@ -1,8 +1,6 @@
 module Settings
   module Salesforce
-
     class << self
-
       def active_onboarding_salesforce_campaign_id
         Settings::Db.active_onboarding_salesforce_campaign_id
       end
@@ -14,8 +12,6 @@ module Settings
       def find_tutor_course_period_report_id
         Settings::Db.find_tutor_course_period_report_id
       end
-
     end
-
   end
 end

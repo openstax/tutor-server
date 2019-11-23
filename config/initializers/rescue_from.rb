@@ -74,12 +74,6 @@ OpenStax::RescueFrom.register_exception(
 )
 
 OpenStax::RescueFrom.register_exception(
-  'OpenStax::Salesforce::UserMissing',
-  # only notify when real data involved (only time it really needs admin attention)
-  notify: secrets[:salesforce][:allow_use_of_real_data]
-)
-
-OpenStax::RescueFrom.register_exception(
   'OpenStax::Biglearn::Api::JobFailed',
   notify: true # Change this to false once we are confident that Biglearn jobs work properly
 )

@@ -1,13 +1,4 @@
 GIT
-  remote: https://github.com/openstax/active_force.git
-  revision: 3ba34211b6f2387b5e05512b9561076894c5fa2d
-  ref: 3ba34211b6f2387b5e05512b9561076894c5fa2d
-  specs:
-    active_force (1.0.0)
-      active_attr
-      restforce
-
-GIT
   remote: https://github.com/openstax/keyword_search.git
   revision: 0ce23c42575129b74c14add9e5d069ef9fedebac
   ref: 0ce23c42575129b74c14add9e5d069ef9fedebac
@@ -256,7 +247,7 @@ GEM
       i18n (>= 0.7)
     fakeredis (0.7.0)
       redis (>= 3.2, < 5.0)
-    faraday (0.15.4)
+    faraday (0.17.0)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
@@ -384,7 +375,7 @@ GEM
       libv8 (>= 6.9.411)
     minitest (5.13.0)
     msgpack (1.2.9)
-    multi_json (1.13.1)
+    multi_json (1.14.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     nenv (0.3.0)
@@ -396,8 +387,8 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     oauth (0.5.4)
-    oauth2 (1.4.1)
-      faraday (>= 0.8, < 0.16.0)
+    oauth2 (1.4.2)
+      faraday (>= 0.8, < 2.0)
       jwt (>= 1.0, < 3.0)
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
@@ -410,9 +401,6 @@ GEM
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    omniauth-salesforce (1.0.5)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.0)
     openstax_accounts (8.1.0)
       action_interceptor
       keyword_search
@@ -426,6 +414,10 @@ GEM
       rails
       representable
       roar
+    openstax_active_force (1.0.0)
+      active_attr
+      rails (< 6.0)
+      restforce
     openstax_api (9.1.0)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
@@ -441,10 +433,9 @@ GEM
       rails (>= 3.0)
     openstax_rescue_from (4.0.2)
       rails (>= 3.1, < 6.0)
-    openstax_salesforce (3.0.0)
-      active_force
-      omniauth-salesforce
-      rails
+    openstax_salesforce (4.0.0)
+      openstax_active_force
+      rails (~> 5.0)
       restforce
     openstax_utilities (4.2.3)
       keyword_search
@@ -528,7 +519,7 @@ GEM
       thor (>= 0.19.0, < 2.0)
     rainbow (3.0.0)
     raindrops (0.19.0)
-    rake (13.0.0)
+    rake (13.0.1)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
@@ -565,11 +556,12 @@ GEM
     responders (3.0.0)
       actionpack (>= 5.0)
       railties (>= 5.0)
-    restforce (3.1.0)
+    restforce (4.2.0)
       faraday (>= 0.9.0, <= 1.0)
       faraday_middleware (>= 0.8.8, <= 1.0)
       hashie (>= 1.2.0, < 4.0)
       json (>= 1.7.5)
+      jwt (>= 1.5.6)
     roar (1.1.0)
       representable (~> 3.0.0)
     roar-rails (1.1.0)
@@ -730,7 +722,6 @@ PLATFORMS
 
 DEPENDENCIES
   action_interceptor
-  active_force!
   active_record_query_trace
   activerecord-import
   addressable

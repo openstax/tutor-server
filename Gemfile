@@ -168,9 +168,6 @@ gem 'paranoia', '~> 2.4.1'
 # Salesforce
 gem 'openstax_salesforce'
 
-# Fork that supports Ruby >= 2.1 and stubbable stdout
-gem 'active_force', github: 'openstax/active_force', ref: '3ba34211b6f2387b5e05512b9561076894c5fa2d'
-
 # Global settings
 gem 'rails-settings-cached'
 gem 'rails-settings-ui'

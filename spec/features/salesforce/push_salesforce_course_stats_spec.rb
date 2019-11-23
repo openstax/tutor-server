@@ -1,21 +1,42 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
-
+RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
   before(:all) do
     VCR.use_cassette('PushSalesforceCourseStats/sf_setup', VCR_OPTS) do
-      @proxy = SalesforceProxy.new
-      load_salesforce_user
-      @proxy.ensure_books_exist(%w(Chemistry Physics))
-      @proxy.ensure_schools_exist(["JP University"])
-    end
+      VCR.configure do |config|
+        config.define_cassette_placeholder('<salesforce_instance_url>') do
+          'https://example.salesforce.com'
+        end
+        config.define_cassette_placeholder('<salesforce_instance_url_lower>') do
+          'https://example.salesforce.com'
+        end
+        authentication = ActiveForce.sfdc_client.authenticate!
+        config.define_cassette_placeholder('<salesforce_instance_url>') do
+          authentication.instance_url
+        end
+        config.define_cassette_placeholder('<salesforce_instance_url_lower>') do
+          authentication.instance_url.downcase
+        end
+        config.define_cassette_placeholder('<salesforce_id>' ) do
+          authentication.id
+        end
+        config.define_cassette_placeholder('<salesforce_access_token>') do
+          authentication.access_token
+        end
+        config.define_cassette_placeholder('<salesforce_signature>' ) do
+          authentication.signature
+        end
 
-    VCR.configure do |config|
-      [ :course, :period1, :period2, :period3, :other_course, :other_period].each do |uuid_name|
-        uuid = SecureRandom.uuid
-        instance_variable_set "@#{uuid_name}_uuid".to_sym, uuid
-        config.define_cassette_placeholder("<#{uuid_name.upcase}_UUID>") { uuid }
+        @proxy = SalesforceProxy.new
+        @proxy.ensure_books_exist(%w(Chemistry Physics))
+        @proxy.ensure_schools_exist(["JP University"])
+
+        [ :course, :period1, :period2, :period3, :other_course, :other_period].each do |uuid_name|
+          uuid = SecureRandom.uuid
+          instance_variable_set "@#{uuid_name}_uuid".to_sym, uuid
+          config.define_cassette_placeholder("<#{uuid_name.upcase}_UUID>") { uuid }
+        end
       end
     end
   end
@@ -44,8 +65,6 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
   let!(:period_uuids) { [ @period1_uuid, @period2_uuid, @period3_uuid ] }
 
   before do
-    load_salesforce_user
-
     @period1 = CreatePeriod[course: course, uuid: period_uuids.first]
     p1students = 4.times.map do
       AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period1]
@@ -278,5 +297,4 @@ RSpec.describe "PushSalesforceCourseStats", vcr: VCR_OPTS do
 
     expect(tcp.attributes).to match hash_including(extras.stringify_keys)
   end
-
 end
