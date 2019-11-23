@@ -171,7 +171,7 @@ http_interactions:
       - thin 1.5.1 codename Straight Razor
     body:
       encoding: UTF-8
-      string: '{"id":2,"uuid":"0a366e16-972f-4045-8e42-c7443799e004","support_identifier":"cs_2c64bcdd"}'
+      string: '{"id":2,"uuid":"bc3d18ed-cf45-4882-bbd4-20a3ea3bcc23","support_identifier":"cs_2c64bcdd"}'
     http_version:
   recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 recorded_with: VCR 2.9.3

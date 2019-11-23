@@ -9,12 +9,11 @@ class Admin::UsersController < Admin::BaseController
       success: ->(*) {
         flash[:notice] = 'The user has been added.'
         redirect_to admin_users_path(
-          search_term: @handler_result.outputs[:user].username
+          search_term: @handler_result.outputs.user.username
         )
       },
       failure: ->(*) {
-        flash[:error] = 'Invalid user information. ' +
-                          @handler_result.errors.first.message
+        flash[:error] = 'Invalid user information: ' + @handler_result.errors.first.message
         redirect_to new_admin_user_path
       }
     )
@@ -30,7 +29,7 @@ class Admin::UsersController < Admin::BaseController
       success: ->(*) {
         flash[:notice] = 'The user has been updated.'
         redirect_to admin_users_path(
-          search_term: @handler_result.outputs[:user].username
+          search_term: @handler_result.outputs.user.username
         )
       },
       failure: ->(*) {

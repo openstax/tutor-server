@@ -1,5 +1,5 @@
 # This migration comes from openstax_accounts (originally 14)
-class DropOpenStaxUidUniqueness < ActiveRecord::Migration[5.2]
+class DropOpenStaxUidAndUsernameUniqueness < ActiveRecord::Migration[5.2]
   def change
     remove_index :openstax_accounts_accounts, column: [ :openstax_uid ], unique: true
     remove_index :openstax_accounts_accounts, column: [ :username ], unique: true

@@ -47,13 +47,13 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
   end
 
   scenario 'create a user with an existing account' do
-    user = User::CreateUser[username: 'superwoman',
-                            password: 'goldenlasso25',
-                            first_name: 'Super',
-                            last_name: 'Woman',
-                            full_name: 'Super Woman',
-                            title: 'Justice Prevailer',
-                            email: 'match@me.com']
+    user = User::FindOrCreateUser[username: 'superwoman',
+                                  password: 'goldenlasso25',
+                                  first_name: 'Super',
+                                  last_name: 'Woman',
+                                  full_name: 'Super Woman',
+                                  title: 'Justice Prevailer',
+                                  email: 'match@me.com']
 
     visit new_admin_user_path
 
@@ -68,7 +68,7 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
 
     expect(current_path).to eq(new_admin_user_path)
     expect(page).to(
-      have_css('.flash_error', text: 'Invalid user information. has already been taken')
+      have_css('.flash_error', text: 'Invalid user information: A user with username')
     )
   end
 end

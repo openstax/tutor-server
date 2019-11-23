@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe User::CreateUser, type: :routine do
+RSpec.describe User::FindOrCreateUser, type: :routine do
   it 'requires a username' do
     expect { described_class[] }.to raise_error(ArgumentError)
 

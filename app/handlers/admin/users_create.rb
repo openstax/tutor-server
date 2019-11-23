@@ -1,10 +1,12 @@
 class Admin::UsersCreate
-  ALLOWED_ATTRIBUTES = ['username', 'password', 'first_name', 'last_name',
-                        'full_name', 'title', 'email', 'role']
+  ACCOUNT_PARAMS = [
+    :username, :password, :first_name, :last_name, :full_name, :title, :email, :role
+  ]
 
   lev_handler
 
-  uses_routine User::CreateUser, translations: { outputs: { type: :verbatim } }, as: :create_user
+  uses_routine User::FindOrCreateUser, translations: { outputs: { type: :verbatim } },
+                                       as: :find_or_create_user
   uses_routine User::SetAdministratorState, as: :set_administrator
   uses_routine User::SetCustomerSupportState, as: :set_customer_support
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
@@ -37,12 +39,20 @@ class Admin::UsersCreate
   end
 
   def handle
-    run(:create_user, **user_params.attributes.slice(*ALLOWED_ATTRIBUTES).symbolize_keys)
+    account_params = user_params.attributes.symbolize_keys.slice(*ACCOUNT_PARAMS)
+    account = OpenStax::Accounts::FindOrCreateAccount.call(account_params).outputs.account
 
-    user = outputs[:user]
-    run(:set_administrator, user: user, administrator: user_params.administrator)
-    run(:set_customer_support, user: user, customer_support: user_params.customer_support)
-    run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
-    run(:set_researcher, user: user, researcher: user_params.researcher)
+    fatal_error(
+      code: :username_already_exists,
+      message: "A user with username \"#{user_params.username}\" already exists."
+    ) if ::User::Models::Profile.where(account_id: account.id).exists?
+
+    profile = ::User::Models::Profile.create(account_id: account.id)
+    outputs.user = ::User::User.new strategy: profile.wrap
+
+    run(:set_administrator, user: outputs.user, administrator: user_params.administrator)
+    run(:set_customer_support, user: outputs.user, customer_support: user_params.customer_support)
+    run(:set_content_analyst, user: outputs.user, content_analyst: user_params.content_analyst)
+    run(:set_researcher, user: outputs.user, researcher: user_params.researcher)
   end
 end

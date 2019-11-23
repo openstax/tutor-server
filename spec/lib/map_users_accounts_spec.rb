@@ -32,8 +32,8 @@ RSpec.describe MapUsersAccounts, type: :lib do
 
       it 'raises errors during find_or_create_user' do
         error = OpenStruct.new(message: 'hi') # error.message works
-        allow(User::CreateUser).to receive(:call).and_return(OpenStruct.new(errors: [error]))
-        expect{ MapUsersAccounts.send(:find_or_create_user, account) }.to raise_error('hi')
+        allow(User::FindOrCreateUser).to receive(:call).and_return(OpenStruct.new(errors: [error]))
+        expect { MapUsersAccounts.send(:find_or_create_user, account) }.to raise_error('hi')
       end
 
       it 'returns the created user for the account' do

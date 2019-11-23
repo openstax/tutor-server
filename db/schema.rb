@@ -587,7 +587,7 @@ ActiveRecord::Schema.define(version: 2019_12_05_182525) do
     t.index ["salesforce_contact_id"], name: "index_openstax_accounts_accounts_on_salesforce_contact_id"
     t.index ["school_type"], name: "index_openstax_accounts_accounts_on_school_type"
     t.index ["support_identifier"], name: "index_openstax_accounts_accounts_on_support_identifier", unique: true
-    t.index ["username"], name: "index_openstax_accounts_accounts_on_username", unique: true
+    t.index ["username"], name: "index_openstax_accounts_accounts_on_username"
     t.index ["uuid"], name: "index_openstax_accounts_accounts_on_uuid", unique: true
   end
 

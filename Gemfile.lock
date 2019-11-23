@@ -16,6 +16,23 @@ GIT
       nokogiri (>= 1.6.6)
       rubyzip (>= 1.2.1)
 
+PATH
+  remote: ../accounts-rails
+  specs:
+    openstax_accounts (9.0.1)
+      action_interceptor
+      keyword_search
+      lev
+      oauth2
+      omniauth
+      omniauth-oauth2
+      openstax_api
+      openstax_utilities
+      pg
+      rails (< 6.0)
+      representable
+      roar
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -336,7 +353,7 @@ GEM
     kgio (2.11.2)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (9.0.3)
+    lev (9.0.4)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -402,19 +419,6 @@ GEM
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (9.0.0)
-      action_interceptor
-      keyword_search
-      lev
-      oauth2
-      omniauth
-      omniauth-oauth2
-      openstax_api
-      openstax_utilities
-      pg
-      rails (< 6.0)
-      representable
-      roar
     openstax_active_force (1.0.0)
       active_attr
       rails (< 6.0)
@@ -773,7 +777,7 @@ DEPENDENCIES
   json-schema (~> 2.8.0)
   keyword_search!
   launchy
-  lev (~> 9.0.3)
+  lev (~> 9.0.4)
   lograge
   maruku
   mini_magick
@@ -784,7 +788,7 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts
+  openstax_accounts!
   openstax_api
   openstax_healthcheck
   openstax_rescue_from
