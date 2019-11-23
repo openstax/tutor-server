@@ -51,8 +51,6 @@ class Content::Models::Page < IndestructibleRecord
   validates :uuid, presence: true
   validates :version, presence: true
 
-  before_validation :cache_fragments_and_snap_labs
-
   scope :book_location, ->(chapter, section) do
     where("content_pages.book_location = '[?,?]'", chapter.to_i, section.to_i)
   end
@@ -90,24 +88,40 @@ class Content::Models::Page < IndestructibleRecord
     tags.filter(&:cnxmod?)
   end
 
-  def fragments
-    return @fragments unless @fragments.nil?
-    return [] unless cache_fragments_and_snap_labs
+  def cache_fragments_and_snap_labs
+    return if id.nil? || fragment_splitter.nil?
 
-    frags = super
-    @fragments = frags.nil? ? nil : frags.map { |yaml| YAML.load(yaml) }
+    self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
+    self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
+      {
+        id: snap_lab_node.attr('id'),
+        title: parser.snap_lab_title(snap_lab_node),
+        fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab').map(&:to_yaml)
+      }
+    end
+  end
+
+  def fragments
+    @fragments ||= (super || []).map { |yaml| YAML.load(yaml) }
+  end
+
+  def fragments=(fragments)
+    @fragments = nil
+    super
   end
 
   def snap_labs
-    return @snap_labs unless @snap_labs.nil?
-    return [] unless cache_fragments_and_snap_labs
-
-    sls = super
-    @snap_labs = sls.nil? ? nil : sls.map do |snap_lab|
+    @snap_labs ||= (super || []).map do |snap_lab|
       sl = snap_lab.symbolize_keys
       sl.merge fragments: sl[:fragments].map { |yaml| YAML.load(yaml) }
     end
   end
+
+  def snap_labs=(snap_labs)
+    @snap_labs = nil
+    super
+  end
+
 
   def snap_labs_with_page_id
     snap_labs.map{ |snap_lab| snap_lab.merge(page_id: id) }
@@ -131,6 +145,8 @@ class Content::Models::Page < IndestructibleRecord
   end
 
   def reference_view_url(book = chapter.book)
+    raise('Unpersisted Page') if id.nil?
+
     "#{book.reference_view_url}/page/#{id}"
   end
 
@@ -150,21 +166,5 @@ class Content::Models::Page < IndestructibleRecord
     @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
       chapter.book.reading_processing_instructions, reference_view_url
     )
-  end
-
-  def cache_fragments_and_snap_labs
-    return true if read_attribute(:fragments).present?
-    return false if fragment_splitter.nil?
-
-    self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
-      {
-        id: snap_lab_node.attr('id'),
-        title: parser.snap_lab_title(snap_lab_node),
-        fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab').map(&:to_yaml)
-      }
-    end
-    self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
-
-    true
   end
 end

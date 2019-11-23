@@ -50,6 +50,8 @@ class Content::Models::Book < IndestructibleRecord
   end
 
   def reference_view_url
+    raise('Unpersisted Ecosystem') if ecosystem.id.nil?
+
     "/book/#{ecosystem.id}"
   end
 end

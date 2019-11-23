@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
+RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine do
 
   before(:all) do
     cnx_page_1 = OpenStax::Cnx::V1::Page.new(
@@ -18,7 +18,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
     chapter_20 = FactoryBot.create :content_chapter, book: @book, book_location: [20]
 
     @pages = OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
-      VCR.use_cassette("Content_Routines_UpdatePageContent/with_book", VCR_OPTS) do
+      VCR.use_cassette("Content_Routines_TransformAndCachePageContent/with_book", VCR_OPTS) do
         [
           Content::Routines::ImportPage[
             cnx_page: cnx_page_1, chapter: chapter_1, book_location: [1, 2]

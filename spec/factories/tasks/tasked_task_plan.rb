@@ -44,7 +44,9 @@ FactoryBot.define do
         end
       end
 
-      Content::Routines::PopulateExercisePools[book: chapter.book]
+      book = chapter.book
+      Content::Routines::PopulateExercisePools.call book: book
+      Content::Routines::TransformAndCachePageContent.call book: book, pages: chapter.pages
 
       ecosystem_model = chapter.book.ecosystem
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
