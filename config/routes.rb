@@ -250,7 +250,6 @@ Rails.application.routes.draw do
 
     resources :courses, except: :show do
       member do
-        post :roster
         post :set_ecosystem
         post :set_catalog_offering
         post :teachers, controller: :teachers

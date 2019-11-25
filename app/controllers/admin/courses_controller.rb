@@ -147,16 +147,6 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to admin_courses_path(query: params[:query], order_by: params[:order_by])
   end
 
-  def roster
-    handle_with(
-      Admin::CoursesRoster,
-      success: -> { flash[:notice] = 'Student roster import has been queued.' },
-      failure: -> { flash[:error] = @handler_result.errors.map(&:message).flatten }
-    )
-
-    redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
-  end
-
   def set_ecosystem
     if params[:ecosystem_id].blank?
       flash[:error] = 'Please select a course ecosystem'
