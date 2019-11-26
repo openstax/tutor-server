@@ -5,7 +5,7 @@
   options ||= {}
 %>
 
-<%= form.fields 'student', model: form.object.student do |fields| %>
+<%= form.fields 'student', model: form.object.try(:student) do |fields| %>
   <%=
     render partial: File.join('admin', 'demo', 'user'),
            locals: { form: fields, options: options, name: 'Student' }
