@@ -87,10 +87,13 @@ class Api::V1::NotesController < Api::V1::ApiController
   EOS
 
   def highlighted_sections
-    pages = Content::Models::Page.select(:id, :title, :uuid, :book_location, 'COUNT(*) as "notes_count"')
-                                 .joins(:book, :notes)
-                                 .where(book: { uuid: params[:book_uuid] }, notes: { role: @roles })
-                                 .group(:id)
+    model = Content::Models::Page
+    pages = model.select(:id, :title, :uuid, :book_location).where(
+        id: model.select("max(#{model.table_name}.id) as id")
+          .joins(:book, :notes)
+          .where(book: { uuid: params[:book_uuid] }, notes: { role: @roles })
+          .group(:book_location)
+    )
     respond_with pages, represent_with: Api::V1::HighlightRepresenter
   end
 

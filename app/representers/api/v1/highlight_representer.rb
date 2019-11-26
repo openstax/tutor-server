@@ -35,10 +35,6 @@ module Api::V1
                 description: 'The title of the page'
               }
 
-      property :notes_count,
-               type: Integer,
-               readable: true,
-               writable: false
     end
 
     include Roar::JSON
