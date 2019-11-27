@@ -7,8 +7,6 @@ timeout ENV.fetch('UNICORN_TIMEOUT', 300)
 preload_app ENV.fetch('UNICORN_PRELOAD_APP', false)
 working_directory APP_DIR
 
-listen ENV.fetch('UNICORN_PORT', 3001)
-
 # unicorn file locations
 pid ENV.fetch('UNICORN_PID_PATH', "#{APP_DIR}/tmp/pids/unicorn.pid")
 unless ENV.fetch('UNICORN_LOG_TO_STDOUT', true)
