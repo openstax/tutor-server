@@ -19,25 +19,44 @@ class Demo::Export < Demo::Base
   end
 
   def relativize(time, original_reference, new_reference)
-    return time.iso8601 if new_reference.nil?
+    time = Time.parse(time) if time.is_a?(String)
 
     time_delta = (time - original_reference) + (new_reference - Time.current)
 
     "<%= Time.current #{time_delta >= 0 ? '+' : '-'} #{time_delta.abs/1.day}.days %>"
   end
 
-  def write(basename, dirname, filename, representer, hash)
+  def relativize_all!(object, original_reference, new_reference)
+    case object
+    when Hash
+      object.each do |key, value|
+        if key.to_s.ends_with? '_at'
+          object[key] = relativize(value, original_reference, new_reference)
+        else
+          relativize_all! value, original_reference, new_reference
+        end
+      end
+    when Array
+      object.each { |value| relativize_all! value, original_reference, new_reference }
+    else
+      object
+    end
+  end
+
+  def write(basename, dirname, filename, hash)
     dir = "config/demo/#{ActiveStorage::Filename.new(basename.to_s).sanitized
             }/#{ActiveStorage::Filename.new(dirname.to_s).sanitized}"
     FileUtils.mkdir_p dir
+    File.write "#{dir}/#{ActiveStorage::Filename.new(filename.to_s).sanitized}", hash.to_yaml
+  end
 
-    File.write(
-      "#{dir}/#{ActiveStorage::Filename.new(filename.to_s).sanitized}.yml.erb",
-      representer.new(Demo::Mash.new(hash)).to_hash.to_yaml
+  def write_with_course(basename, dirname, course, new_starts_at, representer, hash)
+    write basename, dirname, "#{course.name}.yml.erb", relativize_all!(
+      representer.new(Demo::Mash.new(hash)).to_hash, course.starts_at, new_starts_at
     )
   end
 
-  def exec(name:, courses:)
+  def exec(name:, courses:, starts_at: 2.months.ago)
     humanized_name = name.to_s.humanize
 
     # We anonymize data inside a transaction to make sure all records get the anonymized data,
@@ -64,6 +83,8 @@ class Demo::Export < Demo::Base
       periods = courses.flat_map(&:periods)
       periods.each_with_index do |period, index|
         period.update_attribute :name, "#{humanized_name} Period #{index + 1}"
+        period.update_attribute :enrollment_code,
+                                "#{humanized_name} Period #{index + 1} Enrollment Code"
       end
 
       students = periods.flat_map(&:students)
@@ -96,17 +117,20 @@ class Demo::Export < Demo::Base
       student_profiles = students.map(&:role).map(&:profile)
 
       courses.map(&:offering).uniq.each do |offering|
-        write name, :import, offering.title, Api::V1::Demo::Import::Representer,
-              book: offering.ecosystem.books.first, catalog_offering: offering
+        write name, :import, "#{offering.title}.yml", Api::V1::Demo::Import::Representer.new(
+          Demo::Mash.new(book: offering.ecosystem.books.first, catalog_offering: offering)
+        ).to_hash
       end
 
       courses.each do |course|
-        write name, :users, course.name, Api::V1::Demo::Users::Representer,
-              teachers: teacher_profiles, students: student_profiles
-        write name, :course, course.name, Api::V1::Demo::Course::Representer,
-              catalog_offering: course.offering, course: course
-        write name, :assign, course.name, Api::V1::Demo::Assign::Representer, course: course
-        write name, :work, course.name, Api::V1::Demo::Work::Representer, course: course
+        write_with_course name, :users, course, starts_at, Api::V1::Demo::Users::Representer,
+                                teachers: teacher_profiles, students: student_profiles
+        write_with_course name, :course, course, starts_at, Api::V1::Demo::Course::Representer,
+                                catalog_offering: course.offering, course: course
+        write_with_course name, :assign, course, starts_at, Api::V1::Demo::Assign::Representer,
+                                course: course
+        write_with_course name, :work, course, starts_at, Api::V1::Demo::Work::Representer,
+                                course: course
       end
 
       raise ActiveRecord::Rollback
