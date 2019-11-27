@@ -114,6 +114,17 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
       expect(response).to be_ok
       expect(response.body_as_hash[:pages]).to be_empty
     end
+
+    it 'does not fetch duplicates' do
+      new_note = FactoryBot.create :content_note, role: student_role
+      new_note.page.update_attributes! uuid: note.page.uuid
+      new_note.page.book.update_attributes! uuid: note.page.book.uuid
+
+      api_get :highlighted_sections, student_token, params: highlighted_sections_params
+
+      expect(response).to be_ok
+      expect(response.body_as_hash[:pages].length).to eq 1
+    end
   end
 
 end
