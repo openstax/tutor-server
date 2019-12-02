@@ -32,7 +32,10 @@ class DistributeTasks
     end
 
     # Make a list of all role_ids that still have tasks
-    tasks_by_role_id = existing_tasks.index_by { |task| task.taskings.first.entity_role_id }
+    tasks_by_role_id = {}
+    existing_tasks.each do |task|
+      task.taskings.each { |tasking| tasks_by_role_id[tasking.entity_role_id] = task }
+    end
 
     itp_args = { task_plan: task_plan }
 
