@@ -2,7 +2,7 @@ class Api::V1::Demo::CatalogOfferingRepresenter < Api::V1::Demo::BaseRepresenter
   # One of either id or title is required
   property :id,
            type: String,
-           readable: true,
+           readable: false,
            writeable: true
 
   property :title,

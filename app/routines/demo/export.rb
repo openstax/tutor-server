@@ -1,4 +1,4 @@
-# Creates demo config yml.erb files from a course
+# Creates demo config yml.erb files from one or more courses
 class Demo::Export < Demo::Base
   lev_routine transaction: :read_committed, use_jobba: true
 
@@ -23,7 +23,7 @@ class Demo::Export < Demo::Base
 
     time_delta = (time - original_reference) + (new_reference - Time.current)
 
-    "<%= Time.current #{time_delta >= 0 ? '+' : '-'} #{time_delta.abs/1.day}.days %>"
+    "<%= Time.current #{time_delta >= 0 ? '+' : '-'} #{(time_delta.abs/1.day).round}.days %>"
   end
 
   def relativize_all!(object, original_reference, new_reference)
@@ -116,7 +116,7 @@ class Demo::Export < Demo::Base
       teacher_profiles = teachers.map(&:role).map(&:profile)
       student_profiles = students.map(&:role).map(&:profile)
 
-      courses.map(&:offering).uniq.each do |offering|
+      courses.map(&:offering).compact.uniq.each do |offering|
         write name, :import, "#{offering.title}.yml", Api::V1::Demo::Import::Representer.new(
           Demo::Mash.new(book: offering.ecosystem.books.first, catalog_offering: offering)
         ).to_hash

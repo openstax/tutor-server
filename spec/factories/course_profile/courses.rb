@@ -50,6 +50,5 @@ FactoryBot.define do
     trait(:without_ecosystem) do
       after(:build) { |course| course.course_ecosystems.delete_all :delete_all }
     end
-
   end
 end
