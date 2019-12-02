@@ -95,7 +95,7 @@ RSpec.describe Demo::Export, type: :routine do
         expect(YAML.load(data).deep_symbolize_keys).to eq(
           teachers: [
             {
-              username: 'Spec Teacher 1 Username',
+              username: 'Spec_Teacher_1_Username',
               full_name: 'Spec Teacher 1 Full name',
               first_name: 'Spec Teacher 1 First name',
               last_name: 'Spec Teacher 1 Last name'
@@ -103,7 +103,7 @@ RSpec.describe Demo::Export, type: :routine do
           ],
           students: 10.times.map do |index|
             {
-              username: "Spec Student #{index + 1} Username",
+              username: "Spec_Student_#{index + 1}_Username",
               full_name: "Spec Student #{index + 1} Full name",
               first_name: "Spec Student #{index + 1} First name",
               last_name: "Spec Student #{index + 1} Last name"
@@ -124,7 +124,7 @@ RSpec.describe Demo::Export, type: :routine do
             ends_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
             teachers: [
               {
-                username: 'Spec Teacher 1 Username',
+                username: 'Spec_Teacher_1_Username',
                 full_name: 'Spec Teacher 1 Full name',
                 first_name: 'Spec Teacher 1 First name',
                 last_name: 'Spec Teacher 1 Last name',
@@ -136,7 +136,7 @@ RSpec.describe Demo::Export, type: :routine do
                 enrollment_code: 'Spec Period 1 Enrollment Code',
                 students: 10.times.map do |index|
                   {
-                    username: "Spec Student #{index + 1} Username",
+                    username: "Spec_Student_#{index + 1}_Username",
                     full_name: "Spec Student #{index + 1} Full name",
                     first_name: "Spec Student #{index + 1} First name",
                     last_name: "Spec Student #{index + 1} Last name"
@@ -184,7 +184,7 @@ RSpec.describe Demo::Export, type: :routine do
                 *10.times.map do |index|
                   {
                     student: {
-                      username: "Spec Student #{index + 1} Username",
+                      username: "Spec_Student_#{index + 1}_Username",
                       full_name: "Spec Student #{index + 1} Full name",
                       first_name: "Spec Student #{index + 1} First name",
                       last_name: "Spec Student #{index + 1} Last name"

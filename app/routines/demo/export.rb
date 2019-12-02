@@ -10,7 +10,9 @@ class Demo::Export < Demo::Base
     accounts.each_with_index do |account, index|
       user_name = "#{name} #{type.to_s.humanize} #{index + 1}"
 
-      [ :first_name, :last_name, :full_name, :title, :username ].each do |field|
+      account.username = "#{user_name} Username".gsub(/[^A-Za-z\d]+/, '_')
+
+      [ :first_name, :last_name, :full_name, :title ].each do |field|
         account.public_send "#{field}=", "#{user_name} #{field.to_s.humanize}"
       end
 
