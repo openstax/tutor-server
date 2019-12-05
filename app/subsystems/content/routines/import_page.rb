@@ -22,9 +22,11 @@ class Content::Routines::ImportPage
   def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true)
     ecosystem = chapter.book.ecosystem
 
+    cnx_page.convert_content!
+
     outputs.page = Content::Models::Page.new(url: cnx_page.canonical_url,
                                              title: cnx_page.title,
-                                             content: cnx_page.converted_content,
+                                             content: cnx_page.content,
                                              chapter: chapter,
                                              number: number,
                                              book_location: book_location,

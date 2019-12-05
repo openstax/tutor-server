@@ -146,7 +146,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         expect(page.full_hash).not_to be_empty
         expect(page.content).not_to be_blank
         expect(page.doc).not_to be_nil
-        expect(page.converted_content).not_to be_blank
         expect(page.root).not_to be_nil
         expect(page.los).not_to be_nil
         expect(page.tags).not_to be_nil
@@ -155,7 +154,9 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
 
     it "converts relative url's to absolute url's" do
       @hashes_with_pages.each do |hash, page|
-        doc = Nokogiri::HTML(page.converted_content)
+        page.convert_content!
+
+        doc = page.doc
 
         doc.css('[src]').each do |tag|
           uri = Addressable::URI.parse(tag.attributes['src'].value)
@@ -243,7 +244,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
 
     it 'extracts feature nodes by id' do
       feature_id = 'fs-id1164355841632'
-      feature_node = described_class.feature_node(@page.converted_root, feature_id)
+      feature_node = described_class.feature_node(@page.root, feature_id)
       expect(feature_node[:id]).to eq feature_id
     end
   end

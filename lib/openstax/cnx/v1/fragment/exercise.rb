@@ -19,7 +19,7 @@ module OpenStax::Cnx::V1
     attr_reader :embed_queries
 
     # This code is run from lib/openstax/cnx/v1/page.rb during import
-    def self.absolutize_exercise_urls(node)
+    def self.absolutize_exercise_urls!(node)
       uri = OpenStax::Exercises::V1.uri_for('/api/exercises')
 
       node.css(EXERCISE_EMBED_URL_CSS).each do |anchor|
@@ -35,8 +35,6 @@ module OpenStax::Cnx::V1
           break
         end
       end
-
-      node
     end
 
     def initialize(node:, title: nil, labels: [])

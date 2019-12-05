@@ -4,7 +4,6 @@ require 'vcr_helper'
 RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :medium do
 
   let(:phys_cnx_book) { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
-  let(:bio_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
   let(:bio_cc_book)   { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
 
   let(:ecosystem)     { FactoryBot.create :content_ecosystem }
@@ -28,7 +27,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
 
     result = nil
     expect do
-      result = Content::ImportBook.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
+      result = described_class.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
     end.to change{ Content::Models::Chapter.count }.by(4)
     expect(result.errors).to be_empty
 
@@ -52,7 +51,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
   end
 
   it 'adds a book_location signifier according to subcol structure' do
-    book_import = Content::ImportBook.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
+    book_import = described_class.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
     book = ecosystem.books.first
 
     book.chapters.each_with_index do |chapter, i|
@@ -68,42 +67,69 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
     end
   end
 
-  it 'handles bio units book locations correctly' do
-    Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cnx_book)
-    book = ecosystem.books.first
+  context 'with the bio book' do
+    before(:all) do
+      DatabaseCleaner.start
 
-    # Units are ignored
+      bio_cnx_book = OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7')
+      @ecosystem = FactoryBot.create :content_ecosystem
+      VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
+        described_class.call(ecosystem: @ecosystem, cnx_book: bio_cnx_book)
+      end
+    end
 
-    part = book.chapters.first
-    expect(part.title).to eq "The Study of Life"
-    expect(part.book_location).to eq [1]
+    after(:all)  { DatabaseCleaner.clean }
 
-    page = book.chapters.first.pages.first
-    expect(page.title).to eq "Introduction"
-    expect(page.book_location).to eq [1, 0]
+    it 'handles bio units book locations correctly' do
+      book = @ecosystem.books.first
 
-    # Jump to 3rd chapter
+      # Units are ignored
 
-    part = book.chapters.third
-    expect(part.title).to eq "Biological Macromolecules"
-    expect(part.book_location).to eq [3]
+      part = book.chapters.first
+      expect(part.title).to eq "The Study of Life"
+      expect(part.book_location).to eq [1]
 
-    # The second page of that chapter
+      page = book.chapters.first.pages.first
+      expect(page.title).to eq "Introduction"
+      expect(page.book_location).to eq [1, 0]
 
-    page = book.chapters.third.pages.second
-    expect(page.title).to eq "Macromolecules"
-    expect(page.book_location).to eq [3,1]
+      # Jump to 3rd chapter
 
-    # Jump to 6th chapter (getting us into 2nd unit)
+      part = book.chapters.third
+      expect(part.title).to eq "Biological Macromolecules"
+      expect(part.book_location).to eq [3]
 
-    part = book.chapters[5]
-    expect(part.title).to eq "Metabolism"
-    expect(part.book_location).to eq [6]
+      # The second page of that chapter
+
+      page = book.chapters.third.pages.second
+      expect(page.title).to eq "Macromolecules"
+      expect(page.book_location).to eq [3,1]
+
+      # Jump to 6th chapter (getting us into 2nd unit)
+
+      part = book.chapters[5]
+      expect(part.title).to eq "Metabolism"
+      expect(part.book_location).to eq [6]
+    end
+
+    it 'converts CNX links' do
+      @ecosystem.pages.each do |page|
+        page.send(:parser).root.css('[href]').each do |link|
+          expect(link.attr('href')).not_to include 'cnx.org'
+        end
+
+        page.fragments.each do |fragment|
+          Nokogiri::HTML(fragment.to_html).css('[href]').each do |link|
+            expect(link.attr('href')).not_to include 'cnx.org'
+          end
+        end
+      end
+    end
   end
 
   it 'handles the bio cc book correctly' do
     OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
-      Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cc_book)
+      described_class.call(ecosystem: ecosystem, cnx_book: bio_cc_book)
     end
     book = ecosystem.books.first
 

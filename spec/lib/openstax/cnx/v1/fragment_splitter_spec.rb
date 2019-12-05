@@ -53,12 +53,12 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
         }
       ]
 
-      @cnx_page_fragment_infos.each do |hash|
-        hash[:page] = OpenStax::Cnx::V1::Page.new(id: hash[:id])
-      end
-
       VCR.use_cassette('OpenStax_Cnx_V1_FragmentSplitter/with_pages', VCR_OPTS) do
-        @cnx_page_fragment_infos.each{ |hash| hash[:page].full_hash }
+        @cnx_page_fragment_infos.each do |hash|
+          hash[:page] = OpenStax::Cnx::V1::Page.new(id: hash[:id]).tap do |page|
+            page.convert_content!
+          end
+        end
       end
     end
 
@@ -67,7 +67,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
       fragment_splitter = described_class.new hs_processing_instructions, reference_view_url
 
       @cnx_page_fragment_infos.each do |hash|
-        fragments = fragment_splitter.split_into_fragments(hash[:page].converted_root)
+        fragments = fragment_splitter.split_into_fragments(hash[:page].root)
 
         expect(fragments.map(&:class)).to eq hash[:expected_hs_fragment_classes]
       end
@@ -84,7 +84,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
       )
 
       hash = @cnx_page_fragment_infos.first
-      fragments = fragment_splitter.split_into_fragments(hash[:page].converted_root)
+      fragments = fragment_splitter.split_into_fragments(hash[:page].root)
 
       expect(fragments.map(&:class)).to eq hash[:expected_worked_example_fragment_classes]
 

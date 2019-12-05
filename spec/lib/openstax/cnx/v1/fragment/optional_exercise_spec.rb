@@ -6,12 +6,14 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
     FactoryBot.build(:content_book).reading_processing_instructions
   end
   let(:reference_view_url) { Faker::Internet.url }
-  let(:fragment_splitter) do
+  let(:fragment_splitter)  do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
   let(:cnx_page_id)        { '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3' }
-  let(:cnx_page)           { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
-  let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
+  let(:cnx_page)           do
+    OpenStax::Cnx::V1::Page.new(id: cnx_page_id).tap { |page| page.convert_content! }
+  end
+  let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.root) }
   let(:exercise_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
   let(:expected_queries)   do

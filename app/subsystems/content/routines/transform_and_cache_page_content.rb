@@ -27,7 +27,7 @@ class Content::Routines::TransformAndCachePageContent
       doc = Nokogiri::HTML(page.content)
       doc.css('[href]').each do |link|
         # Transforms absolute CNX urls to absolute reference view URLs
-        # If the link goes to a page in the book, change the link to just the page's book_location
+        # If the link goes to a page in the book, change the link to just the page's link
         href_attr = link.attribute('href')
         uri = Addressable::URI.parse(href_attr.value) rescue next
         path = uri.path

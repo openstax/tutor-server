@@ -10,9 +10,9 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
     let(:book_cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
     it 'imports books and exercises as ecosystems' do
-      expect {
+      expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id)
-      }.to change { Content::Models::Ecosystem.count }.by(1)
+      end.to change { Content::Models::Ecosystem.count }.by(1)
     end
 
     it 'imports a book even if the book already exists' do
@@ -21,9 +21,9 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '4.4')
 
-      expect {
+      expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id)
-      }.to change { Content::Models::Ecosystem.count }.by(1)
+      end.to change { Content::Models::Ecosystem.count }.by(1)
     end
 
     it 'imports a book with a different version' do
@@ -32,9 +32,9 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '4.4')
 
-      expect {
+      expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id.sub('@4.4', '@4.3'))
-      }.to change { Content::Models::Ecosystem.count }.by(1)
+      end.to change { Content::Models::Ecosystem.count }.by(1)
     end
   end
 
@@ -43,9 +43,9 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
     let(:book_cnx_id) { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
 
     it 'imports books and exercises as ecosystems' do
-      expect {
+      expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id)
-      }.to change { Content::Models::Ecosystem.count }.by(1)
+      end.to change { Content::Models::Ecosystem.count }.by(1)
     end
 
     it 'imports a book even if the book already exists' do
@@ -54,9 +54,9 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '2.1')
 
-      expect {
+      expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id)
-      }.to change { Content::Models::Ecosystem.count }.by(1)
+      end.to change { Content::Models::Ecosystem.count }.by(1)
     end
 
     it 'imports a book with a different version' do
@@ -65,10 +65,9 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
                          url: "#{archive_url}#{book_cnx_id}",
                          version: '2.1')
 
-      expect {
+      expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id.sub('@2.1', '@1.1'))
-      }.to change { Content::Models::Ecosystem.count }.by(1)
+      end.to change { Content::Models::Ecosystem.count }.by(1)
     end
   end
-
 end

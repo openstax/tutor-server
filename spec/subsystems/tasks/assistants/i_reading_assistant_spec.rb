@@ -666,6 +666,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'combines exercises with context with the previous step when possible' do
+      node = Nokogiri::HTML.fragment(
+        "<div class=\"exercise\">
+           <a href=#ost/api/ex/#{video_exercise_id_tag.value}>[Link]</a>
+         </div>"
+      )
+      OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls! node
+
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [
           OpenStax::Cnx::V1::Fragment::Reading.new(
@@ -677,13 +684,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
             title: "Watch Isaac Newton use the Force against Robert Hooke"
           ),
           OpenStax::Cnx::V1::Fragment::Exercise.new(
-            node: OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(
-              Nokogiri::HTML.fragment(
-                "<div class=\"exercise\">
-                   <a href=#ost/api/ex/#{video_exercise_id_tag.value}>[Link]</a>
-                 </div>"
-              )
-            ).children.first,
+            node: node.children.first,
             title: nil
           ),
           OpenStax::Cnx::V1::Fragment::Interactive.new(

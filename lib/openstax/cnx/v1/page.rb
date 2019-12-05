@@ -102,29 +102,21 @@ module OpenStax::Cnx::V1
       @root ||= doc.at_css(ROOT_CSS)
     end
 
+    # Warning: Use only when importing, as it assumes all links currently point to CNX
     # Replaces links to embeddable sims (and maybe videos in the future) with iframes
     # Changes exercise urls and relative urls in the doc to be absolute
     # Changes any embedded http url (in a src attribute) to https
-    def converted_doc
-      # In the future, change CNX URLs to point to reference material within Tutor
-      @converted_doc ||= begin
-        cd = doc.dup
-        cd = OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes(cd)
-        cd = absolutize_and_secure_urls(cd)
-        map_note_format(cd)
-      end
-    end
+    def convert_content!
+      OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes!(doc)
+      absolutize_and_secure_urls!(doc)
+      map_note_format!(doc)
 
-    def converted_content
-      @converted_content ||= converted_doc.to_html
-    end
-
-    def converted_root
-      @converted_root ||= converted_doc.at_css(ROOT_CSS)
+      @content = doc.to_html
+      @root = nil
     end
 
     def snap_lab_nodes
-      converted_root.css(SNAP_LAB_CSS)
+      root.css(SNAP_LAB_CSS)
     end
 
     def snap_lab_title(snap_lab)
@@ -199,8 +191,8 @@ module OpenStax::Cnx::V1
       book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
     end
 
-    # add container div around note content for styling
-    def map_note_format(node)
+    # Adds a container div around note content for styling
+    def map_note_format!(node)
       note_selector = <<-eos
         .note:not(.learning-objectives),
         .example,
@@ -222,15 +214,14 @@ module OpenStax::Cnx::V1
         body.children = content
         note.add_child(body)
       end
-
-      node
     end
 
+    # Warning: Use only when importing, as it assumes all links currently point to CNX
     # Transforms relative URLs that point to other CNX pages to absolute URLs
     # Transforms absolute http URLs to https
-    def absolutize_and_secure_urls(node)
+    def absolutize_and_secure_urls!(node)
       # Absolutize exercise urls
-      node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(node.dup)
+      OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls!(node)
 
       # Absolutize embed urls
       node.css("[src]").each do |link|
@@ -275,8 +266,6 @@ module OpenStax::Cnx::V1
         # Relative link: make secure and absolute
         href.value = OpenStax::Cnx::V1.webview_url_for(uri)
       end
-
-      node
     end
   end
 end
