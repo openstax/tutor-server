@@ -10,6 +10,9 @@ class Demo::Export < Demo::Base
     accounts.each_with_index do |account, index|
       user_name = "#{name} #{type.to_s.humanize} #{index + 1}"
 
+      # Disable sending updates to Accounts
+      account.syncing = true
+
       account.username = "#{user_name} Username".gsub(/[^A-Za-z\d]+/, '_')
 
       [ :first_name, :last_name, :full_name, :title ].each do |field|

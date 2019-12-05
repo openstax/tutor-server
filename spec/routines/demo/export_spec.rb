@@ -15,6 +15,13 @@ RSpec.describe Demo::Export, type: :routine do
   let(:result)    { described_class.call name: :spec, courses: course }
 
   it 'creates anonymized demo configs with relativized dates from the given courses' do
+    allow(OpenStax::Accounts.configuration).to receive(:enable_stubbing?).and_return(false)
+    allow_any_instance_of(OpenStax::Accounts::Account).to(
+      receive(:valid_openstax_uid?).and_return(true)
+    )
+
+    expect(OpenStax::Accounts::Api).not_to receive(:update_account)
+
     expect(File).to receive(:write).exactly(5).times do |path, data|
       case path
       when "config/demo/spec/import/#{offering.title}.yml"
