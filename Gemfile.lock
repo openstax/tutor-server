@@ -19,7 +19,8 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    action_interceptor (1.1.2)
+    action_interceptor (1.2.0)
+      addressable
       rails (>= 3.1)
     actioncable (5.2.3)
       actionpack (= 5.2.3)
@@ -69,8 +70,8 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.6.0)
-      public_suffix (>= 2.0.2, < 4.0)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
     aes_key_wrap (1.0.1)
     apipie-rails (0.5.15)
       rails (>= 4.1)
@@ -196,7 +197,7 @@ GEM
     diff-lcs (1.3)
     diffy (3.3.0)
     docile (1.1.5)
-    doorkeeper (5.2.1)
+    doorkeeper (5.2.2)
       railties (>= 5)
     dotenv (2.7.1)
     dotenv-rails (2.7.1)
@@ -335,7 +336,7 @@ GEM
     kgio (2.11.2)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (9.0.3)
+    lev (9.0.4)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -401,7 +402,7 @@ GEM
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (8.1.0)
+    openstax_accounts (9.0.1)
       action_interceptor
       keyword_search
       lev
@@ -411,7 +412,7 @@ GEM
       openstax_api
       openstax_utilities
       pg
-      rails
+      rails (< 6.0)
       representable
       roar
     openstax_active_force (1.0.0)
@@ -469,7 +470,7 @@ GEM
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
     psych (3.1.0)
-    public_suffix (3.0.3)
+    public_suffix (4.0.1)
     rack (2.0.7)
     rack-attack (5.4.2)
       rack (>= 1.0, < 3)
@@ -772,7 +773,7 @@ DEPENDENCIES
   json-schema (~> 2.8.0)
   keyword_search!
   launchy
-  lev (~> 9.0.3)
+  lev (~> 9.0.4)
   lograge
   maruku
   mini_magick
@@ -783,7 +784,7 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts
+  openstax_accounts (~> 9.0.1)
   openstax_api
   openstax_healthcheck
   openstax_rescue_from

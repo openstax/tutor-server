@@ -1,5 +1,4 @@
 module MapUsersAccounts
-
   class << self
     def account_to_user(account)
       anonymous_user(account) || find_or_create_user(account)
@@ -18,10 +17,7 @@ module MapUsersAccounts
     def find_or_create_user(account)
       retry_count = 0
       begin
-        user = User::User.find_by_account(account)
-        return user if user.present?
-
-        result = User::CreateUser.call(account_id: account.id)
+        result = User::FindOrCreateUser.call(account_id: account.id)
 
         error = result.errors.first
         raise error.message unless error.nil?
@@ -35,5 +31,4 @@ module MapUsersAccounts
       end
     end
   end
-
 end

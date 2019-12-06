@@ -1,13 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe User::Models::Profile, type: :model do
-
   subject(:profile) { FactoryBot.create(:user_profile) }
 
   it { is_expected.to belong_to(:account) }
 
-  it { is_expected.to have_many(:groups_as_member) }
-  it { is_expected.to have_many(:groups_as_owner) }
   it { is_expected.to have_one(:administrator).dependent(:destroy) }
 
   it 'must enforce that one account is only used by one user' do
@@ -31,5 +28,4 @@ RSpec.describe User::Models::Profile, type: :model do
     expect(profile).to_not be_valid
     expect(profile.errors[:ui_settings].to_s).to include 'too long'
   end
-
 end

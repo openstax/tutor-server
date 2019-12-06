@@ -14,7 +14,7 @@ class PopulatePreviewCourseContent
 
   lev_routine active_job_enqueue_options: { queue: :preview }
 
-  uses_routine User::CreateUser, as: :create_user
+  uses_routine User::FindOrCreateUser, as: :find_or_create_user
   uses_routine CourseMembership::CreatePeriod, as: :create_period
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine Tasks::GetAssistant, as: :get_assistant
@@ -47,7 +47,8 @@ class PopulatePreviewCourseContent
 
     # Find preview student users
     preview_student_users = preview_student_accounts.map do |account|
-      User::User.find_by_account(account) || run(:create_user, account_id: account.id).outputs.user
+      User::User.find_by_account(account) ||
+      run(:find_or_create_user, account_id: account.id).outputs.user
     end
 
     num_students_per_period = preview_student_users.size/periods.size

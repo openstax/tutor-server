@@ -13,7 +13,7 @@ VCR::Configuration.class_exec do
       filter_sensitive_data("<#{secret_name}>") { secret_value }
 
       # If the secret value is a URL, it may be used without its protocol
-      if secret_value.starts_with?("http")
+      if secret_value.to_s.starts_with?('http')
         secret_value_without_protocol = secret_value.sub(/^https?\:\/\//,'')
         filter_sensitive_data("<#{secret_name}_without_protocol>") do
           secret_value_without_protocol

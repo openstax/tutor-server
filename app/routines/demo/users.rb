@@ -57,7 +57,9 @@ class Demo::Users < Demo::Base
             sign_contracts = attrs.has_key?(:sign_contracts) ? attrs[:sign_contracts] : true
 
             # The password will be set if stubbing is disabled
-            model = run(User::CreateUser, attrs.except(:sign_contracts)).outputs.user.tap do |user|
+            model = run(
+              User::FindOrCreateUser, attrs.except(:sign_contracts)
+            ).outputs.user.tap do |user|
               next unless sign_contracts
 
               sign_contract(user: user, name: :general_terms_of_use)
