@@ -2,12 +2,11 @@ require 'vcr'
 
 VCR::Configuration.class_exec do
   def filter_secret(path_to_secret)
-    secret_name = path_to_secret.join("_")
+    secret_name = path_to_secret.join('_')
 
     secret_value = Rails.application.secrets
-    path_to_secret.each do |key|
-      secret_value = secret_value[key.to_sym]
-    end
+    path_to_secret.each { |key| secret_value = secret_value[key.to_sym] }
+    secret_value = secret_value.to_s
 
     if secret_value.present?
       filter_sensitive_data("<#{secret_name}>") { secret_value }
@@ -23,7 +22,7 @@ VCR::Configuration.class_exec do
 
       # If the secret value is inside a URL, it will be URL encoded which means it
       # may be different from value.  Handle this.
-      url_secret_value = CGI::escape(secret_value.to_s)
+      url_secret_value = CGI::escape(secret_value)
       if secret_value != url_secret_value
         filter_sensitive_data("<#{secret_name}_url>") { url_secret_value }
       end
