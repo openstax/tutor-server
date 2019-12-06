@@ -6,12 +6,14 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
     FactoryBot.build(:content_book).reading_processing_instructions
   end
   let(:reference_view_url) { Faker::Internet.url }
-  let(:fragment_splitter) do
+  let(:fragment_splitter)  do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
   let(:cnx_page_id)        { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
-  let(:cnx_page)           { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
-  let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
+  let(:cnx_page)           do
+    OpenStax::Cnx::V1::Page.new(id: cnx_page_id).tap { |page| page.convert_content! }
+  end
+  let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.root) }
   let(:exercise_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
   let(:expected_queries)   do
@@ -26,7 +28,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   end
 
   it 'can absolutize exercise tag urls' do
-    absolutized_node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(
+    absolutized_node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls!(
       Nokogiri::HTML.fragment(
         "<div class=\"exercise\">
            <a href=\"#ost/api/ex/some-tag\">[Link]</a>
@@ -42,7 +44,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   end
 
   it 'can absolutize exercise nickname urls' do
-    absolutized_node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls(
+    absolutized_node = OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls!(
       Nokogiri::HTML.fragment(
         "<div class=\"exercise\">
            <a href=\"#exercise/Some Nickname\">[Link]</a>

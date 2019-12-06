@@ -6,21 +6,23 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
   let(:reading_processing_instructions) do
     FactoryBot.build(:content_book).reading_processing_instructions
   end
-  let(:reference_view_url) { Faker::Internet.url }
-  let(:fragment_splitter) do
+  let(:reference_view_url)    { Faker::Internet.url }
+  let(:fragment_splitter)     do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
   let(:cnx_page_id)           { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
-  let(:cnx_page)              { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
-  let(:fragments)             { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
+  let(:cnx_page)              do
+    OpenStax::Cnx::V1::Page.new(id: cnx_page_id).tap { |page| page.convert_content! }
+  end
+  let(:fragments)             { fragment_splitter.split_into_fragments(cnx_page.root) }
   let(:interactive_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
-  let(:expected_title)   { 'Virtual Physics: Forces and Motion: Basics' }
-  let(:expected_url)     do
+  let(:expected_title)        { 'Virtual Physics: Forces and Motion: Basics' }
+  let(:expected_url)          do
     'https://phet.colorado.edu/sims/html/forces-and-motion-basics/' +
     'latest/forces-and-motion-basics_en.html'
   end
-  let(:expected_content) do
+  let(:expected_content)      do
     <<~EOF
       <div data-type="note" data-has-label="true" id="fs-idp38765984" class="note ost-assessed-feature os-interactive virtual-physics ost-tag-lo-k12phys-ch04-s01-lo02" data-label="Virtual Physics: Forces and Motion: Basics" data-tutor-transform="true">
 

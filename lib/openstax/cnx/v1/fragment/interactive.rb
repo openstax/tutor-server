@@ -12,7 +12,7 @@ class OpenStax::Cnx::V1::Fragment
     self.iframe_classes += ['interactive']
 
     # This code is run from lib/openstax/cnx/v1/page.rb during import
-    def self.replace_interactive_links_with_iframes(node)
+    def self.replace_interactive_links_with_iframes!(node)
       containers = node.css(CONTAINER_CSS, OpenStax::Cnx::V1::CustomCss.instance)
 
       containers.each do |container|
@@ -31,8 +31,6 @@ class OpenStax::Cnx::V1::Fragment
         # Replace the container with the new iframe
         container.replace(iframe)
       end
-
-      node
     end
   end
 end

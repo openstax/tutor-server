@@ -91,7 +91,7 @@ class Content::Models::Page < IndestructibleRecord
   def cache_fragments_and_snap_labs
     return if id.nil? || fragment_splitter.nil?
 
-    self.fragments = fragment_splitter.split_into_fragments(parser.converted_root).map(&:to_yaml)
+    self.fragments = fragment_splitter.split_into_fragments(parser.root).map(&:to_yaml)
     self.snap_labs = parser.snap_lab_nodes.map do |snap_lab_node|
       {
         id: snap_lab_node.attr('id'),
