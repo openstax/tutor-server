@@ -68,14 +68,13 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
     return render_api_errors('Either task_plan_ids or research_identifiers must be provided') \
       if task_plan_ids.nil? && research_identifiers.nil?
 
-    all_tasks = Tasks::Models::Task.joins(:task_plan).preload(
+    all_tasks = Tasks::Models::Task.joins(:task_plan, taskings: { role: :student }).preload(
       :task_plan, taskings: { role: :student }
     )
     all_tasks = all_tasks.where(task_plan: { id: task_plan_ids }) unless task_plan_ids.nil?
-    all_tasks = all_tasks.joins(taskings: :role).where(
+    all_tasks = all_tasks.where(
       taskings: { role: { research_identifier: research_identifiers } }
     ) unless research_identifiers.nil?
-    all_tasks = all_tasks.reject { |task| task.taskings.empty? }
 
     ordered_ex_nums_by_calc_uuid = {}
     active_calculation_uuid_by_task_id = {}
@@ -102,7 +101,7 @@ class Api::V1::Research::SparfaController < Api::V1::Research::BaseController
 
       student_by_uuid = tasks.flat_map(&:taskings).map do |tasking|
         tasking.role.student
-      end.compact.index_by(&:uuid)
+      end.index_by(&:uuid)
 
       sparfa_requests = calcs.values.flatten.map do |calc|
         calc.slice(:ecosystem_matrix_uuid).merge(

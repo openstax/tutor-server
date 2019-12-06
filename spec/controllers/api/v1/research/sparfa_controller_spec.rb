@@ -2,20 +2,23 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true, version: :v1 do
-  let(:task_plan)     { FactoryBot.create :tasked_task_plan, number_of_students: 2 }
-  let(:course_1)      { task_plan.owner }
-  let(:period)        { task_plan.tasking_plans.first.target }
-  let(:student_role)  { task_plan.tasks.first.taskings.first.role }
-  let(:student_1)     { student_role.student }
-  let!(:course_2)     { FactoryBot.create :course_profile_course }
+  let(:task_plan)        { FactoryBot.create :tasked_task_plan, number_of_students: 2 }
+  let(:course_1)         { task_plan.owner }
+  let(:period)           { task_plan.tasking_plans.first.target }
+  let(:student)          { period.students.to_a.first }
+  let!(:teacher_student) { FactoryBot.create :course_membership_teacher_student, period: period }
 
-  let(:research_user) { FactoryBot.create :user, :researcher }
-  let(:research_token) do
+  let!(:course_2)        { FactoryBot.create :course_profile_course }
+
+  let(:research_user)    { FactoryBot.create :user, :researcher }
+  let(:research_token)   do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: research_user.id
   end
 
+  before                 { DistributeTasks.call task_plan: task_plan }
+
   context 'GET #students' do
-    let(:params) { { research_identifiers: [ student_role.research_identifier ] } }
+    let(:params) { { research_identifiers: [ student.research_identifier ] } }
 
     it 'retrieves exercises and matrices for students with the given research_identifiers' do
       api_post :students, research_token, body: params.to_json
@@ -27,9 +30,9 @@ RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true
             ordered_exercise_numbers: kind_of(Array),
             ecosystem_matrix: {
               responded_before: kind_of(String),
-              research_identifiers: [ student_role.research_identifier ],
+              research_identifiers: [ student.research_identifier ],
               exercise_uids: kind_of(Array),
-              L_ids: [ student_1.uuid ],
+              L_ids: [ student.uuid ],
               Q_ids: kind_of(Array),
               C_ids: kind_of(Array),
               d_data: kind_of(Array),
@@ -197,7 +200,7 @@ RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true
 
     context 'with research_identifiers' do
       let(:params) do
-        { task_plan_ids: task_plan_ids, research_identifiers: [ student_role.research_identifier ] }
+        { task_plan_ids: task_plan_ids, research_identifiers: [ student.research_identifier ] }
       end
 
       context 'without calculation uuids' do
@@ -214,9 +217,9 @@ RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true
                       ordered_exercise_numbers: kind_of(Array),
                       ecosystem_matrix: {
                         responded_before: kind_of(String),
-                        research_identifiers: [ student_role.research_identifier ],
+                        research_identifiers: [ student.research_identifier ],
                         exercise_uids: kind_of(Array),
-                        L_ids: [ student_1.uuid ],
+                        L_ids: [ student.uuid ],
                         Q_ids: kind_of(Array),
                         C_ids: kind_of(Array),
                         d_data: kind_of(Array),
@@ -268,9 +271,9 @@ RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true
                       ordered_exercise_numbers: kind_of(Array),
                       ecosystem_matrix: {
                         responded_before: kind_of(String),
-                        research_identifiers: [ student_role.research_identifier ],
+                        research_identifiers: [ student.research_identifier ],
                         exercise_uids: kind_of(Array),
-                        L_ids: [ student_1.uuid ],
+                        L_ids: [ student.uuid ],
                         Q_ids: kind_of(Array),
                         C_ids: kind_of(Array),
                         d_data: kind_of(Array),
@@ -296,9 +299,9 @@ RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true
                       ordered_exercise_numbers: kind_of(Array),
                       ecosystem_matrix: {
                         responded_before: kind_of(String),
-                        research_identifiers: [ student_role.research_identifier ],
+                        research_identifiers: [ student.research_identifier ],
                         exercise_uids: kind_of(Array),
-                        L_ids: [ student_1.uuid ],
+                        L_ids: [ student.uuid ],
                         Q_ids: kind_of(Array),
                         C_ids: kind_of(Array),
                         d_data: kind_of(Array),
