@@ -8,13 +8,15 @@ class Demo::Assign < Demo::Base
   protected
 
   def convert_book_locations(book_locations)
+    return [] if book_locations.nil?
+
     case book_locations.first
     when Hash
       book_locations.map { |book_location| [ book_location[:chapter], book_location[:section] ] }
     when Array
       book_locations
     else
-      [ book_locations ].flatten
+      [ book_locations ]
     end
   end
 
@@ -30,7 +32,7 @@ class Demo::Assign < Demo::Base
 
     all_book_locations = task_plans.flat_map do |task_plan|
       convert_book_locations task_plan[:book_locations]
-    end.uniq
+    end.compact.uniq
     pages_by_book_location = ecosystem.pages.where(
       Content::Models::Page.arel_table[:book_location].in all_book_locations
     ).preload(:homework_core_pool).index_by(&:book_location)
