@@ -1,8 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe Demo::Export, type: :routine do
-  let(:task_plan) { FactoryBot.create :tasked_task_plan }
-  let(:course)    { task_plan.owner }
+  let(:reading)   { FactoryBot.create :tasked_task_plan, type: :reading }
+  let(:course)    { reading.owner }
+  let!(:homework) do
+    reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
+
+    FactoryBot.create(
+      :tasks_task_plan,
+      type: :homework,
+      owner: course,
+      assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
+      target: course.periods.first,
+      settings: {
+        page_ids: reading_pages.map(&:id).map(&:to_s),
+        exercise_ids: reading_pages.first.exercises.first(5).map(&:id).map(&:to_s),
+        exercises_count_dynamic: 4
+      }
+    ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
+  end
+  let!(:external) do
+    FactoryBot.create(
+      :tasks_task_plan,
+      type: :external,
+      owner: course,
+      assistant_code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant',
+      target: course.periods.first,
+      settings: { external_url: Faker::Internet.url }
+    ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
+  end
   let(:ecosystem) { course.ecosystems.first }
   let!(:offering) do
     FactoryBot.create(:catalog_offering, ecosystem: ecosystem).tap do |offering|
@@ -160,9 +186,9 @@ RSpec.describe Demo::Export, type: :routine do
         expect(YAML.load(data).deep_symbolize_keys).to match(
           course: {
             name: 'Spec Course 1',
-            task_plans: [
+            task_plans: a_collection_containing_exactly(
               {
-                title: 'Spec Assignment 1',
+                title: 'Spec Reading 1',
                 type: 'reading',
                 book_locations: [
                   {
@@ -176,32 +202,86 @@ RSpec.describe Demo::Export, type: :routine do
                   },
                   opens_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
                   due_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
-                ]
+                ],
+                is_published: true
+              },
+              {
+                title: 'Spec Homework 1',
+                type: 'homework',
+                book_locations: [
+                  {
+                    chapter: 1,
+                    section: 1
+                  }
+                ],
+                exercises_count_core: 5,
+                exercises_count_dynamic: 4,
+                assigned_to: [
+                  period: {
+                    name: 'Spec Period 1'
+                  },
+                  opens_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                  due_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                ],
+                is_published: true
+              },
+              {
+                title: 'Spec External 1',
+                type: 'external',
+                external_url: 'https://example.com/Spec External 1',
+                assigned_to: [
+                  period: {
+                    name: 'Spec Period 1'
+                  },
+                  opens_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                  due_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                ],
+                is_published: true
               }
-            ]
+            )
           }
         )
       when 'config/demo/spec/work/Spec Course 1.yml.erb'
         expect(YAML.load(data).deep_symbolize_keys).to match(
           course: {
             name: 'Spec Course 1',
-            task_plans: [
-              title: 'Spec Assignment 1',
-              tasks: a_collection_containing_exactly(
-                *10.times.map do |index|
-                  {
-                    student: {
-                      username: "Spec_Student_#{index + 1}_Username",
-                      full_name: "Spec Student #{index + 1} Full name",
-                      first_name: "Spec Student #{index + 1} First name",
-                      last_name: "Spec Student #{index + 1} Last name"
-                    },
-                    progress: 0.0,
-                    score: 0.0
-                  }
-                end
-              )
-            ]
+            task_plans: a_collection_containing_exactly(
+              *[ reading, homework ].map do |task_plan|
+                {
+                  title: "Spec #{task_plan.type.humanize} 1",
+                  tasks: a_collection_containing_exactly(
+                    *10.times.map do |index|
+                      {
+                        student: {
+                          username: "Spec_Student_#{index + 1}_Username",
+                          full_name: "Spec Student #{index + 1} Full name",
+                          first_name: "Spec Student #{index + 1} First name",
+                          last_name: "Spec Student #{index + 1} Last name"
+                        },
+                        progress: 0.0,
+                        score: 0.0
+                      }
+                    end
+                  )
+                }
+              end,
+              {
+                title: 'Spec External 1',
+                tasks: a_collection_containing_exactly(
+                  *10.times.map do |index|
+                    {
+                      student: {
+                        username: "Spec_Student_#{index + 1}_Username",
+                        full_name: "Spec Student #{index + 1} Full name",
+                        first_name: "Spec Student #{index + 1} First name",
+                        last_name: "Spec Student #{index + 1} Last name"
+                      },
+                      progress: 0.0
+                    }
+                  end
+                )
+              }
+            )
           }
         )
       else

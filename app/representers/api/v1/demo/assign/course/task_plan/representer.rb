@@ -5,23 +5,6 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
            writeable: true,
            schema_info: { required: true }
 
-  property :exercises_count_core,
-           type: Integer,
-           readable: false,
-           writeable: true
-
-  property :exercises_count_dynamic,
-           type: Integer,
-           readable: true,
-           writeable: true,
-           getter: ->(*) { settings['exercises_count_dynamic'] }
-
-  property :is_published,
-           type: Virtus::Attribute::Boolean,
-           readable: false,
-           writeable: true,
-           getter: ->(*) { respond_to?(:is_published) ? is_published : is_published? }
-
   collection :book_locations,
              extend:
              Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter,
@@ -38,6 +21,18 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              writeable: true,
              schema_info: { required: true }
 
+  property :exercises_count_core,
+           type: Integer,
+           readable: true,
+           writeable: true,
+           getter: ->(*) { settings['exercise_ids']&.size }
+
+  property :exercises_count_dynamic,
+           type: Integer,
+           readable: true,
+           writeable: true,
+           getter: ->(*) { settings['exercises_count_dynamic'] }
+
   property :external_url,
            type: String,
            readable: true,
@@ -51,4 +46,10 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              readable: true,
              writeable: true,
              schema_info: { required: true }
+
+  property :is_published,
+           type: Virtus::Attribute::Boolean,
+           readable: true,
+           writeable: true,
+           getter: ->(*) { respond_to?(:is_published) ? is_published : is_published? }
 end

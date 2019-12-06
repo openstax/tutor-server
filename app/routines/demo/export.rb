@@ -88,8 +88,9 @@ class Demo::Export < Demo::Base
       periods = courses.flat_map(&:periods)
       periods.each_with_index do |period, index|
         period.update_attribute :name, "#{humanized_name} Period #{index + 1}"
-        period.update_attribute :enrollment_code,
-                                "#{humanized_name} Period #{index + 1} Enrollment Code"
+        period.update_attribute(
+          :enrollment_code, "#{humanized_name} Period #{index + 1} Enrollment Code"
+        )
       end
 
       students = periods.flat_map(&:students)
@@ -106,16 +107,17 @@ class Demo::Export < Demo::Base
 
       # Anonymize assignment titles
 
-      courses.flat_map(&:task_plans).each_with_index do |task_plan, index|
-        assignment_title = "#{humanized_name} Assignment #{index + 1}"
+      courses.flat_map(&:task_plans).group_by(&:type).each do |type, task_plans|
+        task_plans.each_with_index do |task_plan, index|
+          assignment_title = "#{humanized_name} #{type.humanize} #{index + 1}"
 
-        task_plan.update_attribute :title, assignment_title
-
-        task_plan.update_attribute(
-          :settings, task_plan.settings.merge(
-            'external_url' => "https://example.com/#{assignment_title}"
-          )
-        ) if task_plan.settings.has_key?('external_url')
+          task_plan.update_attribute :title, assignment_title
+          task_plan.update_attribute(
+            :settings, task_plan.settings.merge(
+              'external_url' => "https://example.com/#{assignment_title}"
+            )
+          ) if type == 'external'
+        end
       end
 
       # Preload the rest of the data
