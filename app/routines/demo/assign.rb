@@ -97,7 +97,7 @@ class Demo::Assign < Demo::Base
                                                       .map(&:to_s)
         attrs[:settings][:exercises_count_dynamic] = task_plan[:exercises_count_dynamic]
       when 'external'
-        task_plan[:external_url] ||= Faker::Internet.url
+        task_plan[:external_url] ||= 'https://example.com'
 
         attrs[:settings][:external_url] = task_plan[:external_url]
       end

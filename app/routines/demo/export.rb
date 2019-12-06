@@ -107,7 +107,15 @@ class Demo::Export < Demo::Base
       # Anonymize assignment titles
 
       courses.flat_map(&:task_plans).each_with_index do |task_plan, index|
-        task_plan.update_attribute :title, "#{humanized_name} Assignment #{index + 1}"
+        assignment_title = "#{humanized_name} Assignment #{index + 1}"
+
+        task_plan.update_attribute :title, assignment_title
+
+        task_plan.update_attribute(
+          :settings, task_plan.settings.merge(
+            'external_url' => "https://example.com/#{assignment_title}"
+          )
+        ) if task_plan.settings.has_key?('external_url')
       end
 
       # Preload the rest of the data
