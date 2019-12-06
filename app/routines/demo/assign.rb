@@ -14,7 +14,7 @@ class Demo::Assign < Demo::Base
     when Array
       book_locations
     else
-      [ book_locations ]
+      [ book_locations ].flatten
     end
   end
 
@@ -65,6 +65,7 @@ class Demo::Assign < Demo::Base
 
       book_locations = convert_book_locations task_plan[:book_locations]
       pages = book_locations.map { |book_location| pages_by_book_location[book_location] }
+      page_ids = pages.map(&:id).map(&:to_s)
 
       attrs = {
         title: task_plan[:title],
@@ -72,11 +73,15 @@ class Demo::Assign < Demo::Base
         owner: course_model,
         content_ecosystem_id: ecosystem.id,
         assistant: assistants_by_task_plan_type[task_plan[:type]],
-        settings: { page_ids: pages.map(&:id).map(&:to_s) },
+        settings: {},
         is_preview: false
       }
 
-      if task_plan[:type] == 'homework'
+      # Type-specific task_plan settings
+      case task_plan[:type]
+      when 'reading'
+        attrs[:settings][:page_ids] = page_ids
+      when 'homework'
         task_plan[:exercises_count_core] ||= 3
         task_plan[:exercises_count_dynamic] ||= 3
 
@@ -86,12 +91,15 @@ class Demo::Assign < Demo::Base
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
         ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        attrs[:settings].merge!(
-          exercise_ids: exercise_ids.shuffle
-                                    .take(task_plan[:exercises_count_core])
-                                    .map(&:to_s),
-          exercises_count_dynamic: task_plan[:exercises_count_dynamic]
-        )
+        attrs[:settings][:page_ids] = page_ids
+        attrs[:settings][:exercise_ids] = exercise_ids.shuffle
+                                                      .take(task_plan[:exercises_count_core])
+                                                      .map(&:to_s)
+        attrs[:settings][:exercises_count_dynamic] = task_plan[:exercises_count_dynamic]
+      when 'external'
+        task_plan[:external_url] ||= Faker::Internet.url
+
+        attrs[:settings][:external_url] = task_plan[:external_url]
       end
 
       task_plan[:is_published] = true if task_plan[:is_published].nil?

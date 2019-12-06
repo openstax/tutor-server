@@ -12,8 +12,9 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
 
   property :exercises_count_dynamic,
            type: Integer,
-           readable: false,
-           writeable: true
+           readable: true,
+           writeable: true,
+           getter: ->(*) { settings['exercises_count_dynamic'] }
 
   property :is_published,
            type: Virtus::Attribute::Boolean,
@@ -26,6 +27,8 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter,
              class: Demo::Mash,
              getter: ->(*) do
+               next unless settings.has_key? 'page_ids'
+
                Content::Models::Page.where(id: settings['page_ids'])
                                     .map(&:book_location).sort.map do |book_location|
                  Demo::Mash.new(chapter: book_location.first, section: book_location.last)
@@ -34,6 +37,12 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              readable: true,
              writeable: true,
              schema_info: { required: true }
+
+  property :external_url,
+           type: String,
+           readable: true,
+           writeable: true,
+           getter: ->(*) { settings['external_url'] }
 
   collection :assigned_to,
              extend: Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter,
