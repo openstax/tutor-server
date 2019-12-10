@@ -7,7 +7,7 @@ module OpenStax::Cnx::V1
     def initialize(processing_instructions, reference_view_url)
       @processing_instructions = processing_instructions.map do |processing_instruction|
         OpenStruct.new(processing_instruction.to_h).tap do |pi_struct|
-          pi_struct.fragments = [pi_struct.fragments].flatten.map(&:to_s).map(&:classify) \
+          pi_struct.fragments = [pi_struct.fragments].flatten.map(&:to_s).map(&:camelize) \
             unless pi_struct.fragments.nil?
           pi_struct.only = [pi_struct.only].flatten.map(&:to_s) unless pi_struct.only.nil?
           pi_struct.except = [pi_struct.except].flatten.map(&:to_s) unless pi_struct.except.nil?
