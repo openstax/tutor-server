@@ -70,16 +70,6 @@ class Api::V1::Research::CourseRepresenter < Roar::Decorator
            writeable: false,
            getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
 
-  property :default_open_time,
-           type: String,
-           readable: true,
-           writeable: false
-
-  property :default_due_time,
-           type: String,
-           readable: true,
-           writeable: false
-
   property :salesforce_book_name,
            type: String,
            readable: true,
@@ -170,40 +160,22 @@ class Api::V1::Research::CourseRepresenter < Roar::Decorator
                            "an LMS; can be `nil` which indicates no choice yet"
            }
 
-  property :homework_score_weight,
+  property :reading_weight,
            type: Float,
+           writeable: true,
            readable: true,
-           writeable: false,
-           schema_info: {
-              required: true,
-              description: "The weight given to homework scores when calculating the average"
-           }
-
-  property :homework_progress_weight,
-           type: Float,
-           readable: true,
-           writeable: false,
-           schema_info: {
-              required: true,
-              description: "The weight given to homework progress when calculating the average"
-           }
-
-  property :reading_score_weight,
-           type: Float,
-           readable: true,
-           writeable: false,
            schema_info: {
               required: true,
               description: "The weight given to reading scores when calculating the average"
            }
 
-  property :reading_progress_weight,
+  property :homework_weight,
            type: Float,
+           writeable: true,
            readable: true,
-           writeable: false,
            schema_info: {
               required: true,
-              description: "The weight given to reading progress when calculating the average"
+              description: "The weight given to homework scores when calculating the average"
            }
 
   collection :periods,

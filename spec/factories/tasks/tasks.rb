@@ -25,9 +25,11 @@ FactoryBot.define do
       )
       task.title ||= task.task_plan.title
       task.description ||= task.task_plan.description
-      task.time_zone ||= task.task_plan.owner&.time_zone
+      owner = task.task_plan.owner
+      task.time_zone ||= owner.time_zone unless owner.nil?
       task.opens_at ||= task.time_zone&.to_tz&.now || evaluator.current_time
       task.due_at ||= task.opens_at + evaluator.duration
+      task.closes_at ||= owner.ends_at - 1.day unless owner.nil?
 
       AddSpyInfo[to: task, from: task.ecosystem]
 

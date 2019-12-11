@@ -233,7 +233,6 @@ RSpec.describe GetDashboard, type: :routine do
                 title: @unpublished_reading_plan.title,
                 type: @unpublished_reading_plan.type,
                 description: @unpublished_reading_plan.description,
-                is_feedback_immediate: @unpublished_reading_plan.is_feedback_immediate,
                 is_draft?: @unpublished_reading_plan.is_draft?,
                 is_publishing?: @unpublished_reading_plan.is_publishing?,
                 is_published?: @unpublished_reading_plan.is_published?,
@@ -250,7 +249,6 @@ RSpec.describe GetDashboard, type: :routine do
                 title: @unpublished_homework_plan.title,
                 type: @unpublished_homework_plan.type,
                 description: @unpublished_homework_plan.description,
-                is_feedback_immediate: @unpublished_homework_plan.is_feedback_immediate,
                 is_draft?: @unpublished_homework_plan.is_draft?,
                 is_publishing?: @unpublished_homework_plan.is_publishing?,
                 is_published?: @unpublished_homework_plan.is_published?,
@@ -280,8 +278,8 @@ RSpec.describe GetDashboard, type: :routine do
 
       context 'with a time period specified' do
         before(:all) do
-          @start_at_ntz = DateTimeUtilities.remove_tz @current_time + 1.hour
-          @end_at_ntz = DateTimeUtilities.remove_tz @current_time + 2.days
+          @start_at_ntz = DateTimeUtilities.remove_tz @current_time - 1.week
+          @end_at_ntz = DateTimeUtilities.remove_tz @current_time + 1.week + 1.day
         end
 
         it "works for a #{role_type}" do
@@ -347,7 +345,6 @@ RSpec.describe GetDashboard, type: :routine do
                 title: @unpublished_reading_plan.title,
                 type: @unpublished_reading_plan.type,
                 description: @unpublished_reading_plan.description,
-                is_feedback_immediate: @unpublished_reading_plan.is_feedback_immediate,
                 is_draft?: @unpublished_reading_plan.is_draft?,
                 is_publishing?: @unpublished_reading_plan.is_publishing?,
                 is_published?: @unpublished_reading_plan.is_published?,
@@ -364,7 +361,6 @@ RSpec.describe GetDashboard, type: :routine do
                 title: @unpublished_homework_plan.title,
                 type: @unpublished_homework_plan.type,
                 description: @unpublished_homework_plan.description,
-                is_feedback_immediate: @unpublished_homework_plan.is_feedback_immediate,
                 is_draft?: @unpublished_homework_plan.is_draft?,
                 is_publishing?: @unpublished_homework_plan.is_publishing?,
                 is_published?: @unpublished_homework_plan.is_published?,

@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
-
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -13,16 +12,6 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
     allow(SecureRandom).to receive(:random_number) { 123456 }
 
     expect(represented['enrollment_code']).to eq('123456')
-  end
-
-  it 'includes the default open time' do
-    period.default_open_time = '16:43'
-    expect(represented['default_open_time']).to eq('16:43')
-  end
-
-  it 'includes the default due time' do
-    period.default_due_time = '16:44'
-    expect(represented['default_due_time']).to eq('16:44')
   end
 
   it 'includes is_archived: false if the period has not been archived' do
@@ -40,7 +29,7 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
     expect(represented['is_archived']).to eq false
   end
 
-  it "includes student count" do
+  it 'includes student count' do
     student = AddUserAsPeriodStudent.call(
       period: period, user: FactoryBot.create(:user_profile)
     ).outputs.student

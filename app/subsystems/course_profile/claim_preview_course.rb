@@ -61,11 +61,11 @@ class CourseProfile::ClaimPreviewCourse
     end
 
     tasking_plans = Tasks::Models::TaskingPlan.joins(:task_plan).where(task_plan: { owner: course })
-    tasking_plans.update_all( update[%w{opens_at_ntz due_at_ntz}] )
-    tasks = Tasks::Models::Task
-              .joins(taskings: :period )
-              .where(taskings: { period: { course_profile_course_id: course.id } })
-    tasks.update_all( update[%w{opens_at_ntz due_at_ntz feedback_at_ntz last_worked_at}] )
+    tasking_plans.update_all update[%w{opens_at_ntz due_at_ntz closes_at_ntz}]
+    tasks = Tasks::Models::Task.joins(taskings: :period ).where(
+      taskings: { period: { course_profile_course_id: course.id } }
+    )
+    tasks.update_all update[%w{opens_at_ntz due_at_ntz closes_at_ntz last_worked_at}]
 
     course.taskings.reset
 

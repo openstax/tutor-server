@@ -52,7 +52,8 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
   end
 
   context 'homework task plan' do
-    let(:exercise_ids)  { @old_pages.flat_map(&:homework_core_exercise_ids)[0..5].map(&:to_s) }
+    let(:exercise_ids) { @old_pages.flat_map(&:homework_core_exercise_ids)[0..5] }
+    let(:exercises)    { Content::Models::Exercise.where(id: exercise_ids) }
 
     let(:original_homework_plan) do
       FactoryBot.create(
@@ -60,7 +61,12 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         type: 'homework',
         ecosystem: @old_ecosystem,
         owner: @old_course,
-        settings: { exercise_ids: exercise_ids, exercises_count_dynamic: 3 }
+        settings: {
+          exercises: exercises.map do |exercise|
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          end,
+          exercises_count_dynamic: 3
+        }
       )
     end
 
@@ -72,7 +78,12 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         type: 'homework',
         ecosystem: @old_ecosystem,
         owner: @course,
-        settings: { exercise_ids: exercise_ids, exercises_count_dynamic: 3 }
+        settings: {
+          exercises: exercises.map do |exercise|
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          end,
+          exercises_count_dynamic: 3
+        }
       )
       expect(cloned_homework_plan).not_to be_valid
 
@@ -80,11 +91,13 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         task_plan: cloned_homework_plan, ecosystem: @ecosystem
       ]
       expect(updated_homework_plan.ecosystem).to eq @ecosystem
-      expect(updated_homework_plan.settings['exercise_ids'].length).to eq exercise_ids.length
-      expect(updated_homework_plan.settings['exercise_ids']).not_to eq exercise_ids
+      expect(updated_homework_plan.settings['exercises'].length).to eq exercises.length
+      expect(updated_homework_plan.settings['exercises'].map { |ex| ex['id'] }).not_to(
+        eq exercises.map(&:id).map(&:to_s)
+      )
       expect(updated_homework_plan).to be_valid
 
-      new_exercise_ids = updated_homework_plan.settings['exercise_ids']
+      new_exercise_ids = updated_homework_plan.settings['exercises'].map { |ex| ex['id'] }
       expect(@ecosystem.exercises.where(id: new_exercise_ids).count).to eq new_exercise_ids.length
     end
   end

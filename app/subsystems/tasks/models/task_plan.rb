@@ -4,7 +4,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
-    'title', 'description', 'first_published_at', 'last_published_at', 'is_feedback_immediate'
+    'title', 'description', 'first_published_at', 'last_published_at'
   ]
 
   attr_accessor :is_publish_requested
@@ -19,10 +19,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   belongs_to :assistant
   belongs_to :owner, polymorphic: true
   belongs_to :ecosystem, subsystem: :content
+  belongs_to :grading_template, optional: true, inverse_of: :task_plans
 
-  # These associations to not have dependent: :destroy because the task_plan is soft-deleted
+  # These associations do not have dependent: :destroy because the task_plan is soft-deleted
   has_many :tasking_plans, inverse_of: :task_plan
   has_many :tasks, inverse_of: :task_plan
+  has_many :extensions, inverse_of: :task_plan
 
   json_serialize :settings, Hash
 
@@ -36,7 +38,11 @@ class Tasks::Models::TaskPlan < ApplicationRecord
            :valid_ecosystem,
            :ecosystem_matches,
            :changes_allowed,
-           :not_past_due_when_publishing
+           :not_past_due_when_publishing,
+           :has_grading_template_if_gradable,
+           :grading_template_same_course,
+           :grading_template_type_matches,
+           :correct_num_points_for_homework
 
   scope :tasked_to_period_id, ->(period_id) do
     joins(:tasking_plans).where(
@@ -82,11 +88,25 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        owner.try(:ecosystems)&.first
   end
 
+  def available_points_per_question_index
+    @available_points_per_question_index ||= Hash.new(1.0).tap do |available|
+      next if type != 'homework'
+
+      question_index = 0
+      settings['exercises'].each do |exercise|
+        exercise['points'].each do |points|
+          available[question_index] = points
+          question_index += 1
+        end
+      end
+    end
+  end
+
   protected
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(
-      exercises: { id: settings['exercise_ids'] }
+      exercises: { id: settings['exercises'].map { |ex| ex['id'] } }
     ).to_a
   end
 
@@ -97,7 +117,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def get_ecosystems_from_settings
-    if settings['exercise_ids'].present?
+    if settings['exercises'].present?
       get_ecosystems_from_exercise_ids
     elsif settings['page_ids'].present?
       get_ecosystems_from_page_ids
@@ -127,14 +147,39 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def ecosystem_matches
     return if ecosystem.nil?
 
-    # Special checks for the page_ids and exercise_ids settings
-    errors.add(:settings, '- Invalid exercises selected') \
-      if settings['exercise_ids'].present? && get_ecosystems_from_exercise_ids != [ ecosystem ]
+    # Special checks for the page_ids and exercises settings
+    errors.add(
+      :settings,
+      "- Some of the given exercise IDs do not belong to the ecosystem with ID #{ecosystem.id}"
+    ) if settings['exercises'].present? && get_ecosystems_from_exercise_ids != [ ecosystem ]
 
-    errors.add(:settings, '- Invalid pages selected') \
-      if settings['page_ids'].present? && get_ecosystems_from_page_ids != [ ecosystem ]
+    errors.add(
+      :settings,
+      "- Some of the given page IDs do not belong to the ecosystem with ID #{ecosystem.id}"
+    ) if settings['page_ids'].present? && get_ecosystems_from_page_ids != [ ecosystem ]
 
     throw(:abort) if errors.any?
+  end
+
+  def has_grading_template_if_gradable
+    return unless [ 'reading', 'homework' ].include?(type) && grading_template.nil?
+
+    errors.add :grading_template, 'must be present for readings and homeworks'
+    throw :abort
+  end
+
+  def grading_template_same_course
+    return if grading_template.nil? || grading_template.course == owner
+
+    errors.add :grading_template, 'must belong to the same course'
+    throw :abort
+  end
+
+  def grading_template_type_matches
+    return if grading_template.nil? || grading_template.task_plan_type == type
+
+    errors.add :grading_template, 'is for a different task_plan type'
+    throw :abort
   end
 
   def changes_allowed
@@ -153,6 +198,29 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
     errors.add :due_at, 'cannot be in the past when publishing'
     throw :abort
+  end
+
+  def correct_num_points_for_homework
+    return if type != 'homework' || settings.blank? || settings['exercises'].blank?
+
+    exercise_ids = settings['exercises'].map { |ex| ex['id'] }
+    num_questions_by_exercise_id = {}
+    Content::Models::Exercise.where(id: exercise_ids).select(:id, :content).each do |exercise|
+      num_questions_by_exercise_id[exercise.id.to_s] = exercise.num_questions
+    end
+
+    settings['exercises'].each do |exercise|
+      expected = num_questions_by_exercise_id[exercise['id']]
+      got = exercise['points'].size
+
+      errors.add(
+        :settings,
+        "- Expected the size of the points array for the Exercise with ID #{
+        exercise['id']} to be #{expected}, but was #{got}"
+      ) unless expected == got
+    end
+
+    throw(:abort) unless errors.empty?
   end
 
   def trim_text

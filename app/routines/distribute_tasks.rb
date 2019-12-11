@@ -65,13 +65,15 @@ class DistributeTasks
     # Update existing tasks
     updated_tasks = []
     tasked_tasking_plans.each do |tasking_plan|
-      task = tasks_by_role_id[tasking_plan.target_id]
+      role_id = tasking_plan.target_id
+      task = tasks_by_role_id[role_id]
 
       task.title = task_plan.title
       task.description = task_plan.description
       task.opens_at_ntz = tasking_plan.opens_at_ntz
       task.due_at_ntz = tasking_plan.due_at_ntz
-      task.feedback_at_ntz = task_plan.is_feedback_immediate ? nil : tasking_plan.due_at_ntz
+      task.closes_at_ntz = tasking_plan.closes_at_ntz
+      task.extension = task_plan.extensions.to_a.find { |ex| ex.entity_role_id == role_id }
 
       updated_tasks << task if task.changed?
     end
@@ -79,7 +81,7 @@ class DistributeTasks
     Tasks::Models::Task.import(
       updated_tasks, validate: false, on_duplicate_key_update: {
         conflict_target: [ :id ],
-        columns: [ :title, :description, :opens_at_ntz, :due_at_ntz, :feedback_at_ntz ]
+        columns: [ :title, :description, :opens_at_ntz, :due_at_ntz, :closes_at_ntz ]
       }
     ) unless updated_tasks.empty?
 

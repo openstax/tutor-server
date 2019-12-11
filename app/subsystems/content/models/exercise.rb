@@ -78,9 +78,11 @@ class Content::Models::Exercise < IndestructibleRecord
     content_hash['questions']
   end
 
-  def content_as_independent_questions
-    @content_as_independent_questions ||= questions_hash.map do |question|
-      { id: question['id'], content: content_hash.merge('questions' => [question]).to_json }
+  def questions
+    @questions ||= questions_hash.map do |question|
+      Content::Question.new(
+        id: question['id'], content_hash: content_hash.merge('questions' => [question])
+      )
     end
   end
 
