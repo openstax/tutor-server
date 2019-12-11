@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
                                              version: :v1, speed: :medium do
-
   before(:all) do
     @course = FactoryBot.create :course_profile_course, :with_assistants
     period = FactoryBot.create :course_membership_period, course: @course
@@ -258,17 +257,19 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   end
 
   context '#create' do
+    let(:valid_json_hash) { Api::V1::TaskPlanRepresenter.new(@task_plan).to_hash }
+
     it 'allows a teacher to create a task_plan for their course' do
       controller.sign_in @teacher
       expect { api_post :create,
                         nil,
                         params: { course_id: @course.id },
-                        body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
-        .to change{ Tasks::Models::TaskPlan.count }.by(1)
+                        body: valid_json_hash.to_json }
+        .to change { Tasks::Models::TaskPlan.count }.by(1)
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
+      expect(response.body).to eq(
+        Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.order(:created_at).last).to_json
       )
     end
 
@@ -277,11 +278,22 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       expect { api_post :create,
                         nil,
                         params: { course_id: @course.id },
-                        body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
-        .to change{ @teacher_student_role.taskings.count }.by(1)
+                        body: valid_json_hash.to_json }
+        .to change { @teacher_student_role.taskings.count }.by(1)
       expect(response).to have_http_status(:success)
 
       expect(@task_plan).not_to be_out_to_students
+    end
+
+    it 'does not allow the teacher to create a task_plan with no tasking_plans' do
+      controller.sign_in @teacher
+
+      expect do
+        api_post :create, nil, params: { course_id: @course.id },
+                               body: valid_json_hash.merge('tasking_plans' => []).to_json
+      end.not_to change { Tasks::Models::TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq 'tasking_plans_cant_be_blank'
     end
 
     it 'does not allow an unauthorized user to create a task_plan' do
@@ -410,10 +422,12 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   end
 
   context '#update' do
+    let(:valid_json_hash) { Api::V1::TaskPlanRepresenter.new(@task_plan).to_hash }
+
     it 'allows a teacher to update a task_plan for their course' do
       controller.sign_in @teacher
       api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-              body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+              body: valid_json_hash.to_json
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(@task_plan.reload).to_json)
@@ -426,7 +440,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
 
       controller.sign_in @teacher
       api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-              body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
+              body: valid_json_hash.to_json
       expect(response).to have_http_status(:success)
 
       expect(Tasks::Models::Task.find_by(id: old_preview_task)).to be_nil
@@ -438,16 +452,27 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
       expect(@task_plan).not_to be_out_to_students
     end
 
+    it 'does not allow the teacher to delete all the tasking_plans' do
+      controller.sign_in @teacher
+      api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                            body: valid_json_hash.merge(
+                              'is_publish_requested' => false, 'tasking_plans' => []
+                            ).to_json
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq 'tasking_plans_cant_be_blank'
+      expect(@task_plan.tasking_plans.reload).not_to be_empty
+    end
+
     it 'does not allow an unauthorized user to update a task_plan' do
       controller.sign_in @user
       expect { api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-               body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+                                     body: valid_json_hash.to_json }
         .to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to update a task_plan' do
       expect { api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-               body: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json }
+                                     body: valid_json_hash.to_json }
         .to raise_error(SecurityTransgression)
     end
 
@@ -477,6 +502,15 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
 
         expect(response.body_as_hash[:publish_job_url]).to include('/api/jobs/')
+      end
+
+      it 'does not allow the teacher to delete all the tasking_plans' do
+        controller.sign_in @teacher
+        api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                              body: valid_json_hash.merge('tasking_plans' => []).to_json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'tasking_plans_cant_be_blank'
+        expect(@task_plan.tasking_plans.reload).not_to be_empty
       end
 
       it 'does not update first_published_at for task_plans that are already published' do
@@ -720,5 +754,4 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
   def get_assistant(course:, task_plan_type:)
     course.course_assistants.find_by(tasks_task_plan_type: task_plan_type).assistant
   end
-
 end
