@@ -31,8 +31,6 @@ class CourseMembership::Models::Period < ApplicationRecord
                                                  conditions: -> { where(archived_at: nil) } }
   validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
 
-  validate :default_times_have_good_values
-
   default_scope { order(:name) }
 
   def archived?
