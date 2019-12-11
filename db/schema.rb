@@ -272,8 +272,6 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.datetime "updated_at", null: false
     t.string "enrollment_code", null: false
     t.datetime "archived_at"
-    t.string "default_open_time"
-    t.string "default_due_time"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["archived_at"], name: "index_course_membership_periods_on_archived_at"
     t.index ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id"
@@ -337,8 +335,6 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.string "teach_token", null: false
     t.integer "catalog_offering_id"
     t.string "appearance_code"
-    t.string "default_open_time"
-    t.string "default_due_time"
     t.integer "time_zone_id", null: false
     t.boolean "is_college"
     t.datetime "starts_at", null: false
@@ -367,10 +363,8 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.string "last_lms_scores_push_job_id"
     t.string "creator_campaign_member_id"
     t.string "latest_adoption_decision"
-    t.decimal "homework_score_weight", precision: 3, scale: 2, default: "1.0", null: false
-    t.decimal "homework_progress_weight", precision: 3, scale: 2, default: "0.0", null: false
-    t.decimal "reading_score_weight", precision: 3, scale: 2, default: "0.0", null: false
-    t.decimal "reading_progress_weight", precision: 3, scale: 2, default: "0.0", null: false
+    t.float "homework_weight", default: 0.5, null: false
+    t.float "reading_weight", default: 0.5, null: false
     t.index ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id"
     t.index ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id"
     t.index ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed"
@@ -768,6 +762,26 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.index ["tasks_assistant_id", "course_profile_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id"
   end
 
+  create_table "tasks_grading_templates", force: :cascade do |t|
+    t.bigint "course_profile_course_id", null: false
+    t.integer "task_plan_type", null: false
+    t.string "name", null: false
+    t.float "completion_weight", null: false
+    t.float "correctness_weight", null: false
+    t.integer "auto_grading_feedback_on", null: false
+    t.integer "manual_grading_feedback_on", null: false
+    t.float "late_work_immediate_penalty", null: false
+    t.float "late_work_per_day_penalty", null: false
+    t.string "default_open_time", null: false
+    t.string "default_due_time", null: false
+    t.integer "default_due_date_offset_days", null: false
+    t.integer "default_close_date_offset_days", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_profile_course_id", "task_plan_type"], name: "index_tasks_grading_templates_on_course_and_task_plan_type"
+    t.index ["course_profile_course_id"], name: "index_tasks_grading_templates_on_course_profile_course_id"
+  end
+
   create_table "tasks_performance_report_exports", id: :serial, force: :cascade do |t|
     t.integer "course_profile_course_id", null: false
     t.integer "entity_role_id", null: false
@@ -840,15 +854,16 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "content_ecosystem_id", null: false
-    t.boolean "is_feedback_immediate", default: true, null: false
     t.datetime "withdrawn_at"
     t.datetime "last_published_at"
     t.integer "cloned_from_id"
     t.boolean "is_preview", default: false
+    t.integer "tasks_grading_template_id"
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
     t.index ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id"
+    t.index ["tasks_grading_template_id"], name: "index_tasks_task_plans_on_tasks_grading_template_id"
     t.index ["withdrawn_at"], name: "index_tasks_task_plans_on_withdrawn_at"
   end
 
@@ -1152,6 +1167,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
   add_foreign_key "tasks_task_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_plans", "tasks_grading_templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "tasks_task_plans", "tasks_task_plans", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade

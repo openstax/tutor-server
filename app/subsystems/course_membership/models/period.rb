@@ -2,8 +2,6 @@ class CourseMembership::Models::Period < ApplicationRecord
 
   acts_as_paranoid column: :archived_at, without_default_scope: true
 
-  include DefaultTimeValidations
-
   wrapped_by CourseMembership::Strategies::Direct::Period
 
   auto_uuid
@@ -33,8 +31,6 @@ class CourseMembership::Models::Period < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :course_profile_course_id,
                                                  conditions: -> { where(archived_at: nil) } }
   validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
-
-  validate :default_times_have_good_values
 
   default_scope { order(:name) }
 
