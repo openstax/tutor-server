@@ -17,7 +17,6 @@ env:
     - TAG=speed:slow
     - TAG=~speed:slow
     - ASSETS=true
-    - LINT=true
 rvm: 2.6.1
 cache: bundler
 before_install:
@@ -26,7 +25,6 @@ bundler_args: --without production --retry=6
 before_script:
   - bundle exec rake parallel:create parallel:load_schema parallel:seed --trace
 script:
-  - "[[ -n $LINT ]] && bundle exec rake lint:branch || [[ -z $LINT ]]"
   - "[[ -n $ASSETS ]] && bundle exec rake assets:precompile || [[ -z $ASSETS ]]"
   - >-
       [[ -n $TAG ]] && bundle exec parallel_rspec ./spec --test-options "--tag $TAG" ||

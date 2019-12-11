@@ -197,7 +197,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       task_step.complete! completed_at: completed_at
       expect(task_step.first_completed_at).to eq completed_at
       expect(task_step.last_completed_at).to eq completed_at
-      task_step.task.update_attribute :feedback_at, Time.current + 1.hour
+      task_step.task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :due
 
       expect do
         api_put :update, @user_1_token,

@@ -27,8 +27,6 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
         num_enrolled_students: 0,
         enrollment_code: '012345',
         enrollment_url: a_string_matching(/enroll\/012345/),
-        default_open_time: '00:01',
-        default_due_time: '07:00',
         is_archived: false
       ))
     end
@@ -83,44 +81,6 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       end
 
       expect(response).to have_http_status(:forbidden)
-    end
-
-    it 'allows teachers to change the default open time' do
-      api_patch :update, teacher_token,
-        params: { id: period.id },
-        body: { default_open_time: '18:32' }.to_json
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body_as_hash[:default_open_time]).to eq('18:32')
-    end
-
-    it 'freaks if the default open time is in a bad format' do
-      expect {
-        api_patch :update, teacher_token,
-          params: { id: period.id },
-          body: { default_open_time: '1:00' }.to_json
-      }.not_to change { period.reload.default_open_time }
-
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
-
-    it 'allows teachers to change the default due time' do
-      api_patch :update, teacher_token,
-        params: { id: period.id },
-        body: { default_due_time: '18:33' }.to_json
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body_as_hash[:default_due_time]).to eq('18:33')
-    end
-
-    it 'freaks if the default due time is in a bad format' do
-      expect {
-        api_patch :update, teacher_token,
-          params: { id: period.id },
-          body: { default_due_time: '25:00' }.to_json
-      }.not_to change { period.reload.default_open_time }
-
-      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 

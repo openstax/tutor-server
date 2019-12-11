@@ -10,8 +10,16 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it { is_expected.to belong_to(:cloned_from).optional }
 
+  it do
+    # grading_template is not optional for reading/homework
+    task_plan.type = 'external'
+
+    is_expected.to belong_to(:grading_template).optional
+  end
+
   it { is_expected.to have_many(:tasking_plans) }
   it { is_expected.to have_many(:tasks) }
+  it { is_expected.to have_many(:extensions) }
 
   it { is_expected.to validate_presence_of(:title) }
 
@@ -31,7 +39,9 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     task_plan.assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: '::Tasks::Assistants::IReadingAssistant'
     )
-    task_plan.settings = { exercise_ids: [exercise.id.to_s] }
+    task_plan.settings = {
+      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions } ]
+    }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = { page_ids: [] }
@@ -52,7 +62,9 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    task_plan.settings = { exercise_ids: [exercise.id.to_s] }
+    task_plan.settings = {
+      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions } ]
+    }
     # Not valid because the course does not have the ecosystem
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
@@ -62,7 +74,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    task_plan.settings = { page_ids: [page.id.to_s] }
+    task_plan.settings = { page_ids: [ page.id.to_s ] }
     # Not valid because the course does not have the ecosystem
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
@@ -77,7 +89,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan.ecosystem).to eq ecosystem
   end
 
-  it "requires that any exercise_ids or page_ids be in the task_plan's ecosystem" do
+  it "requires that any exercises or page_ids be in the task_plan's ecosystem" do
     book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
     page = FactoryBot.create :content_page, book: book
     exercise = FactoryBot.create :content_exercise, page: page
@@ -87,23 +99,64 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       :tasks_assistant, code_class_name: '::Tasks::Assistants::HomeworkAssistant'
     )
     task_plan.settings = {
-      page_ids: ['1', '2'], exercise_ids: ['1', '2'], exercises_count_dynamic: 2
+      page_ids: ['1', '2'], exercises: [
+        { id: '1', points: [ 1 ] }, { id: '2', points: [ 1 ] }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: [page.id.to_s], exercise_ids: ['1', '2'], exercises_count_dynamic: 2
+      page_ids: [page.id.to_s], exercises: [
+        { id: '1', points: [ 1 ] }, { id: '2', points: [ 1 ] }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: ['1', '2'], exercise_ids: [exercise.id.to_s], exercises_count_dynamic: 2
+      page_ids: ['1', '2'], exercises: [
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: [page.id.to_s], exercise_ids: [exercise.id.to_s], exercises_count_dynamic: 2
+      page_ids: [page.id.to_s], exercises: [
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+      ], exercises_count_dynamic: 2
     }
+    expect(task_plan).to be_valid
+  end
+
+  it 'validates that it has a grading template, if it is a reading or homework' do
+    expect(task_plan).to be_valid
+
+    task_plan.grading_template = nil
+    expect(task_plan).not_to be_valid
+
+    task_plan.type = 'homework'
+    task_plan.settings['exercises'] = [ { 'id' => '1', 'points' => [ 1 ] } ]
+    expect(task_plan).not_to be_valid
+
+    task_plan.type = 'external'
+    task_plan.settings = { 'external_url' => 'https://www.example.com' }
+    expect(task_plan).to be_valid
+  end
+
+  it 'validates that the grading template belongs to the same course' do
+    expect(task_plan).to be_valid
+    task_plan.grading_template = FactoryBot.create :tasks_grading_template
+    expect(task_plan).not_to be_valid
+  end
+
+  it 'validates that the grading template is for the correct task_plan type' do
+    expect(task_plan).to be_valid
+
+    grading_template = task_plan.grading_template
+
+    grading_template.task_plan_type = ([ 'reading', 'homework' ] - [ task_plan.type ]).sample
+    expect(task_plan).not_to be_valid
+
+    grading_template.task_plan_type = task_plan.type
     expect(task_plan).to be_valid
   end
 
@@ -177,13 +230,11 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
     end
 
-    it 'allows name, description and is_feedback_immediate and due_at' +
-       ' to be updated after a task is open' do
+    it 'allows name, description and due_at to be updated after a task is open' do
       student_task
 
       task_plan.title = 'New Title'
       task_plan.description = 'New description!'
-      task_plan.is_feedback_immediate = false
       task_plan.tasking_plans.first.due_at = Time.current + 1.week
       expect(task_plan).to be_valid
       expect(task_plan.save).to eq true
@@ -203,14 +254,13 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     end
 
     it 'will not allow other fields to be updated after tasks are available to students' do
-      task_plan.reload.settings = { exercise_ids: [] }
+      task_plan.reload.settings = { exercises: [] }
       expect(task_plan).to be_valid
 
       student_task
 
-      task_plan.reload.settings = { exercise_ids: [] }
+      task_plan.reload.settings = { exercises: [] }
       expect(task_plan).not_to be_valid
     end
   end
-
 end

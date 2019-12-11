@@ -98,10 +98,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                         id: kind_of(Integer),
                         uuid: kind_of(String),
                         question_id: kind_of(String),
-                        answer_ids: kind_of(Array),
                         step_number: number,
                         group_type: kind_of(String),
                         free_response: nil,
+                        answer_ids: kind_of(Array),
+                        correct_answer_id: kind_of(String),
                         selected_answer_id: nil,
                         completed: false,
                         correct: false,
@@ -183,10 +184,11 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
                         id: kind_of(Integer),
                         uuid: kind_of(String),
                         question_id: kind_of(String),
-                        answer_ids: kind_of(Array),
                         step_number: number,
                         group_type: kind_of(String),
                         free_response: "A sentence explaining all the things!",
+                        answer_ids: kind_of(Array),
+                        correct_answer_id: kind_of(String),
                         selected_answer_id: kind_of(String),
                         completed: true,
                         correct: true,
@@ -241,7 +243,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
-          expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+          expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+          expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
           expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
@@ -269,7 +273,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
-          expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+          expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+          expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
           expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq true
         end
@@ -304,7 +310,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
-          expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+          expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+          expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
           expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
@@ -412,7 +420,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
-          expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+          expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+          expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
           expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
@@ -440,7 +450,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
-          expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+          expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+          expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
           expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq true
         end
@@ -475,7 +487,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
           expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
           expect(task_cache.due_at).to be_within(1).of(task.due_at)
-          expect(task_cache.feedback_at).to be_nil
+          expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+          expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+          expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
           expect(task_cache.withdrawn_at).to be_nil
           expect(task_cache.is_cached_for_period).to eq false
         end
@@ -636,7 +650,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
         expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
         expect(task_cache.due_at).to be_within(1).of(task.due_at)
-        expect(task_cache.feedback_at).to be_nil
+        expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+        expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+        expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
         expect(task_cache.withdrawn_at).to be_nil
         expect(task_cache.is_cached_for_period).to eq false
       end
@@ -662,7 +678,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
         expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
         expect(task_cache.due_at).to be_within(1).of(task.due_at)
-        expect(task_cache.feedback_at).to be_nil
+        expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+        expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+        expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
         expect(task_cache.withdrawn_at).to be_nil
         expect(task_cache.is_cached_for_period).to eq true
       end
@@ -694,7 +712,9 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
 
         expect(task_cache.opens_at).to be_within(1).of(task.opens_at)
         expect(task_cache.due_at).to be_within(1).of(task.due_at)
-        expect(task_cache.feedback_at).to be_nil
+        expect(task_cache.closes_at).to be_within(1).of(task.closes_at)
+        expect(task_cache.auto_grading_feedback_on).to eq task.auto_grading_feedback_on
+        expect(task_cache.manual_grading_feedback_on).to eq task.manual_grading_feedback_on
         expect(task_cache.withdrawn_at).to be_nil
         expect(task_cache.is_cached_for_period).to eq false
       end

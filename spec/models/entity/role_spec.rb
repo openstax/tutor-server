@@ -4,6 +4,7 @@ RSpec.describe Entity::Role, type: :model do
   subject(:role) { FactoryBot.create :entity_role }
 
   it { is_expected.to have_many(:taskings).dependent(:destroy) }
+  it { is_expected.to have_many(:extensions).dependent(:destroy) }
 
   it { is_expected.to have_one(:student).dependent(:destroy) }
   it { is_expected.to have_one(:teacher).dependent(:destroy) }

@@ -33,13 +33,19 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       owner: course,
       type: 'homework',
       ecosystem: @ecosystem,
-      settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
+      settings: {
+        exercises: exercises[0..5].map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        end,
+        exercises_count_dynamic: 3
+      }
     ).tap do |task_plan|
       task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
   end
-  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids).map(&:to_s) }
+  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids) }
+  let(:exercises)    { Content::Models::Exercise.where(id: exercise_ids) }
 
   context 'with no teacher_student roles' do
     context 'homework' do
@@ -273,6 +279,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         let(:new_description) { 'New Description' }
         let(:new_opens_at)    { tasking_plan.time_zone.to_tz.now.yesterday }
         let(:new_due_at)      { tasking_plan.time_zone.to_tz.now.tomorrow }
+        let(:new_closes_at)   { tasking_plan.time_zone.to_tz.now.tomorrow + 1.week }
 
         before do
           task_plan.title = new_title
@@ -281,15 +288,12 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
           tasking_plan.opens_at = new_opens_at
           tasking_plan.due_at = new_due_at
+          tasking_plan.closes_at = new_closes_at
           tasking_plan.save!
         end
 
         context 'homework' do
-          before do
-            task_plan.type = 'homework'
-            task_plan.is_feedback_immediate = false
-            task_plan.save validate: false
-          end
+          before { task_plan.update_attribute :type, 'homework' }
 
           it 'can create or update normal and preview tasks' do
             result = described_class.call(task_plan: task_plan)
@@ -297,30 +301,21 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
+            gt = task_plan.grading_template
             task_plan.tasks.each do |task|
-              expect(task.title).to       eq new_title
-              expect(task.description).to eq new_description
-              expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
-              expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.feedback_at).to eq task.due_at
+              expect(task.title).to                    eq new_title
+              expect(task.description).to              eq new_description
+              expect(task.opens_at).to                 be_within(1e-6).of(new_opens_at)
+              expect(task.due_at).to                   be_within(1e-6).of(new_due_at)
+              expect(task.closes_at).to                be_within(1e-6).of(new_closes_at)
+              expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
-          end
-
-          it 'sets feedback_at to nil when feedback is immediate' do
-            task_plan.update_attribute :is_feedback_immediate, true
-
-            described_class.call(task_plan: task_plan)
-
-            task_plan.tasks.each { |task| expect(task.feedback_at).to be_nil }
           end
         end
 
         context 'reading' do
-          before do
-            task_plan.type = 'reading'
-            task_plan.is_feedback_immediate = true
-            task_plan.save validate: false
-          end
+          before { task_plan.update_attribute :type, 'reading' }
 
           it 'can create or update normal and preview tasks' do
             result = described_class.call(task_plan: task_plan)
@@ -328,12 +323,15 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
+            gt = task_plan.grading_template
             task_plan.tasks.each do |task|
               expect(task.title).to       eq new_title
               expect(task.description).to eq new_description
               expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.feedback_at).to be_nil
+              expect(task.closes_at).to   be_within(1e-6).of(new_closes_at)
+              expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
           end
         end

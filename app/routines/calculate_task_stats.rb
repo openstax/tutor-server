@@ -7,10 +7,9 @@ class CalculateTaskStats
     current_time = Time.current
 
     # Preload each task's student and period
-    tasks = [tasks].flatten
-    ActiveRecord::Associations::Preloader.new.preload(tasks, taskings: [ :period, role: :student ])
-
-    tasks = tasks.reject do |task|
+    tasks = [ tasks ].flatten
+    ActiveRecord::Associations::Preloader.new.preload tasks, taskings: [ :period, role: :student ]
+    tasks = [tasks].flatten.reject do |task|
       task.taskings.all? do |tasking|
         period = tasking.period
         student = tasking.role.student
@@ -191,8 +190,13 @@ class CalculateTaskStats
               completed_exs = exs.select { |ex| ex[:completed] }
               selected_count_by_answer_id = Hash.new 0
               completed_exs.each { |ex| selected_count_by_answer_id[ex[:selected_answer_id]] += 1 }
+              correct_answer_id = exs.first[:correct_answer_id]
               answer_stats = exs.first[:answer_ids].map do |answer_id|
-                { answer_id: answer_id, selected_count: selected_count_by_answer_id[answer_id] }
+                {
+                  answer_id: answer_id,
+                  selected_count: selected_count_by_answer_id[answer_id],
+                  is_correct: answer_id == correct_answer_id
+                }
               end
               answers = completed_exs.map do |ex|
                 {

@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Exercise update progression", type: :request, api: true, version: :v1 do
-
+RSpec.describe 'Exercise update progression', type: :request, api: true, version: :v1 do
   let(:application)     { FactoryBot.create :doorkeeper_application }
   let(:user_1)          { FactoryBot.create(:user_profile) }
   let(:user_1_token)    do
@@ -14,15 +13,13 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
                                               tasked_to: Role::GetDefaultUserRole[user_1]
   end
 
+  let(:grading_template) { tasked.task_step.task.task_plan.grading_template }
+
   let(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 
-  before do
-    tasked.task_step.task.feedback_at = Time.current + 1.week
-    tasked.task_step.task.save!
-  end
+  before { grading_template.update_attribute :auto_grading_feedback_on, :due }
 
   it "only shows feedback and correct answer id after completed and feedback available" do
-
     api_get(step_route_base, user_1_token)
 
     expect(response.body_as_hash).not_to have_key(:solution)
@@ -62,8 +59,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     # Get it again after feedback is available
-    tasked.task_step.task.feedback_at = Time.current.yesterday
-    tasked.task_step.task.save!
+    grading_template.update_attribute :auto_grading_feedback_on, :answer
 
     api_get(step_route_base, user_1_token)
 
@@ -84,7 +80,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(tasked.answer_id).to eq answer_id
     expect(tasked.free_response).to eq 'My first answer'
 
-    # No feedback yet because feedback date has not been reached
+    # No feedback yet
     expect(response.body_as_hash).not_to include(:solution)
     expect(response.body_as_hash).not_to include(:correct_answer_id)
     expect(response.body_as_hash).not_to include(:feedback_html)
@@ -97,9 +93,8 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
             params: { free_response: 'Something else!' }.to_json)
     expect(response).to have_http_status(:success)
 
-    # The feedback date arrives
-    tasked.task_step.task.feedback_at = Time.current.yesterday
-    tasked.task_step.task.save!
+    # Feedback is now available
+    grading_template.update_attribute :auto_grading_feedback_on, :answer
 
     # Free response cannot be changed
     api_put("#{step_route_base}", user_1_token,
@@ -120,5 +115,4 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     tasked.reload
     expect(tasked.answer_id).to eq answer_id
   end
-
 end

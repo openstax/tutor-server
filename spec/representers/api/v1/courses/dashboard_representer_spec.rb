@@ -1,21 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
+  let(:opens_at)           { Time.current }
+  let(:api_opens_at)       { DateTimeUtilities.to_api_s(opens_at) }
 
-  let(:opens_at) { Time.current }
-  let(:api_opens_at) { DateTimeUtilities.to_api_s(opens_at) }
+  let(:due_at)             { opens_at + 1.week }
+  let(:api_due_at)         { DateTimeUtilities.to_api_s(due_at) }
 
-  let(:due_at) { opens_at + 1.week }
-  let(:api_due_at) { DateTimeUtilities.to_api_s(due_at) }
+  let(:closes_at)          { due_at + 1.week }
+  let(:api_closes_at)      { DateTimeUtilities.to_api_s(closes_at) }
 
-  let(:last_worked_at) { opens_at + 1.day }
+  let(:last_worked_at)     { opens_at + 1.day }
   let(:api_last_worked_at) { DateTimeUtilities.to_api_s(last_worked_at) }
 
-  let(:published_at) { opens_at }
+  let(:published_at)       { opens_at }
 
-  let(:publish_job_uuid) { "394839483948" }
+  let(:publish_job_uuid)   { '394839483948' }
 
-  let(:publish_job_url) { 'https://www.example.com' }
+  let(:publish_job_url)    { 'https://www.example.com' }
 
   let(:publish_job) do
     OpenStruct.new(
@@ -59,7 +61,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
               target_id: 42,
               target_type: 'CourseMembership::Models::Period',
               opens_at: opens_at,
-              due_at: due_at
+              due_at: due_at,
+              closes_at: closes_at
             )
           ]
         )
@@ -70,7 +73,9 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           title: 'HW2',
           opens_at: opens_at,
           due_at: due_at,
-          feedback_available?: true,
+          closes_at: closes_at,
+          auto_grading_feedback_available?: true,
+          manual_grading_feedback_available?: false,
           last_worked_at: last_worked_at,
           task_type: :homework,
           completed?: false,
@@ -78,10 +83,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           actual_and_placeholder_exercise_count: 5,
           completed_exercise_count: 4,
           correct_exercise_count: 3,
-          completed_on_time_exercise_count: 2,
-          completed_accepted_late_exercise_count: 0,
           completed_steps_count: 4,
-          completed_on_time_steps_count: 2,
           withdrawn?: true
         ),
         OpenStruct.new(
@@ -98,9 +100,11 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         OpenStruct.new(
           id: 89,
           title: 'HW3',
-          feedback_available?: true,
+          auto_grading_feedback_available?: true,
+          manual_grading_feedback_available?: false,
           opens_at: opens_at,
           due_at: due_at,
+          closes_at: closes_at,
           last_worked_at: last_worked_at,
           task_type: :homework,
           completed?: true,
@@ -115,6 +119,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           title: 'Ext1',
           opens_at: opens_at,
           due_at: due_at,
+          closes_at: closes_at,
           last_worked_at: last_worked_at,
           task_type: :external,
           completed?: true,
@@ -147,106 +152,109 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
     )
   end
 
-  it "represents dashboard output" do
+  it 'represents dashboard output' do
     representation = described_class.new(data).as_json
 
     expect(representation).to include(
-      "plans" => [
+      'plans' => [
         a_hash_including(
-          "id" => '23',
-          "title" => 'HW1',
-          "is_trouble" => false,
-          "type" => 'homework',
-          "is_draft" => false,
-          "is_publishing" => true,
-          "is_published" => true,
-          "first_published_at" => be_kind_of(String),
-          "last_published_at" => be_kind_of(String),
-          "publish_last_requested_at" => be_kind_of(String),
-          "publish_job" => publish_job_representation.deep_stringify_keys,
-          "tasking_plans" => [
+          'id' => '23',
+          'title' => 'HW1',
+          'is_trouble' => false,
+          'type' => 'homework',
+          'is_draft' => false,
+          'is_publishing' => true,
+          'is_published' => true,
+          'first_published_at' => be_kind_of(String),
+          'last_published_at' => be_kind_of(String),
+          'publish_last_requested_at' => be_kind_of(String),
+          'publish_job' => publish_job_representation.deep_stringify_keys,
+          'tasking_plans' => [
             {
-              "target_id" => '42',
-              "target_type" => 'period',
-              "opens_at" => api_opens_at,
-              "due_at" => api_due_at
+              'target_id' => '42',
+              'target_type' => 'period',
+              'opens_at' => api_opens_at,
+              'due_at' => api_due_at,
+              'closes_at' => api_closes_at
             }
           ]
         )
       ],
-      "tasks" => a_collection_containing_exactly(
+      'tasks' => a_collection_containing_exactly(
         a_hash_including(
-          "id" => '34',
-          "title" => 'HW2',
-          "opens_at" => api_opens_at,
-          "due_at" => api_due_at,
-          "last_worked_at" => api_last_worked_at,
-          "completed_on_time_exercise_count" => 2,
-          "completed_steps_count" => 4,
-          "completed_on_time_steps_count" => 2,
-          "completed_accepted_late_exercise_count" => 0,
-          "type" => 'homework',
-          "complete" => false,
-          "exercise_count" => 5,
-          "complete_exercise_count" => 4,
-          "is_deleted" => true
+          'id' => '34',
+          'title' => 'HW2',
+          'opens_at' => api_opens_at,
+          'due_at' => api_due_at,
+          'closes_at' => api_closes_at,
+          'last_worked_at' => api_last_worked_at,
+          'completed_steps_count' => 4,
+          'type' => 'homework',
+          'complete' => false,
+          'exercise_count' => 5,
+          'complete_exercise_count' => 4,
+          'is_deleted' => true
         ),
         a_hash_including(
-          "id" => '37',
-          "title" => 'Reading 1',
-          "due_at" => api_due_at,
-          "last_worked_at" => api_last_worked_at,
-          "type" => 'reading',
-          "complete" => false,
-          "exercise_count" => 7,
-          "complete_exercise_count" => 6,
-          "is_deleted" => false
+          'id' => '37',
+          'title' => 'Reading 1',
+          'due_at' => api_due_at,
+          'last_worked_at' => api_last_worked_at,
+          'type' => 'reading',
+          'complete' => false,
+          'exercise_count' => 7,
+          'complete_exercise_count' => 6,
+          'is_deleted' => false
         ),
         a_hash_including(
-          "id" => '89',
-          "title" => 'HW3',
-          "opens_at" => api_opens_at,
-          "due_at" => api_due_at,
-          "last_worked_at" => api_last_worked_at,
-          "type" => 'homework',
-          "complete" => true,
-          "exercise_count" => 8,
-          "complete_exercise_count" => 8,
-          "correct_exercise_count" => 3,
-          "is_deleted" => false
+          'id' => '89',
+          'title' => 'HW3',
+          'opens_at' => api_opens_at,
+          'due_at' => api_due_at,
+          'last_worked_at' => api_last_worked_at,
+          'type' => 'homework',
+          'complete' => true,
+          'exercise_count' => 8,
+          'complete_exercise_count' => 8,
+          'correct_exercise_count' => 3,
+          'is_deleted' => false
         ),
         a_hash_including(
-          "id" => '99',
-          "title" => 'Ext1',
-          "opens_at" => api_opens_at,
-          "due_at" => api_due_at,
-          "last_worked_at" => api_last_worked_at,
-          "type" => 'external',
-          "complete" => true,
-          "is_deleted" => false
-        ),
+          'id' => '99',
+          'title' => 'Ext1',
+          'opens_at' => api_opens_at,
+          'due_at' => api_due_at,
+          'closes_at' => api_closes_at,
+          'last_worked_at' => api_last_worked_at,
+          'type' => 'external',
+          'complete' => true,
+          'is_deleted' => false
+        )
       ),
-      "role" => {
-        "id" => '34',
-        "type" => 'teacher'
+      'role' => {
+        'id' => '34',
+        'type' => 'teacher'
       },
-      "course" => {
-        "name" => 'Physics 101',
-        "teachers" => [
-          { "id" => '42',
-            "role_id" => '43',
-            "first_name" => 'Andrew',
-            "last_name" => 'Garcia' },
-          { "id" => '44',
-            "role_id" => '45',
-            "first_name" => 'Bob',
-            "last_name" => 'Newhart' }
+      'course' => {
+        'name' => 'Physics 101',
+        'teachers' => [
+          {
+            'id' => '42',
+            'role_id' => '43',
+            'first_name' => 'Andrew',
+            'last_name' => 'Garcia'
+          },
+          {
+            'id' => '44',
+            'role_id' => '45',
+            'first_name' => 'Bob',
+            'last_name' => 'Newhart'
+          }
         ]
       }
     )
 
-    expect(representation["tasks"][1]).to_not have_key "correct_exercise_count"
-    expect(representation["tasks"][2]).to     have_key "correct_exercise_count"
+    expect(representation['tasks'][1]).to_not have_key 'correct_exercise_count'
+    expect(representation['tasks'][2]).to     have_key 'correct_exercise_count'
   end
-
 end

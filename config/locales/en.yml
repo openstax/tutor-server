@@ -31,9 +31,6 @@ en:
       term_years_to_import:
         name: 'Term years to import'
         help_block: 'Comma-separated list of Salesforce-formatted term years, e.g. "2015 - 16 Spring, 2016 - 17 Fall", blank to disable import'
-      default_open_time:
-        name: 'Default task open time'
-        help_block: 'In the format HH:MM'
       biglearn_student_clues_algorithm_name:
         name: 'Biglearn algorithm for calculating Student CLUes'
         labels:
@@ -61,9 +58,6 @@ en:
         labels:
           biglearn_sparfa: SPARFA
           local_query: Local Query
-      default_due_time:
-        name: 'Default task due time'
-        help_block: 'In the format HH:MM'
       course_appearance_codes:
         name: 'Valid Course Appearance Codes'
         help_block: 'As a Ruby Hash'

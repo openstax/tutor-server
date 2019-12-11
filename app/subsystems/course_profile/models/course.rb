@@ -1,8 +1,6 @@
 class CourseProfile::Models::Course < ApplicationRecord
   acts_as_paranoid without_default_scope: true
 
-  include DefaultTimeValidations
-
   MIN_YEAR = 2015
   MAX_FUTURE_YEARS = 2
 
@@ -40,19 +38,19 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :study_courses, subsystem: :research, inverse_of: :course
   has_many :studies, through: :study_courses, subsystem: :research, inverse_of: :courses
 
+  has_many :grading_templates, subsystem: :tasks, inverse_of: :course
+
   unique_token :teach_token
 
   enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter, :preview ]
 
   validates :time_zone, uniqueness: true
   validates :name, :term, :year, :starts_at, :ends_at, presence: true
-  validates :homework_score_weight,
-            :homework_progress_weight,
-            :reading_score_weight,
-            :reading_progress_weight,
+  validates :homework_weight,
+            :reading_weight,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
 
-  validate :default_times_have_good_values, :ends_after_it_starts, :valid_year
+  validate :ends_after_it_starts, :valid_year
 
   validate :lms_enabling_changeable, :weights_add_up
 
@@ -72,14 +70,6 @@ class CourseProfile::Models::Course < ApplicationRecord
   def ecosystem
     # Slightly more efficient than .ecosystems.first
     course_ecosystems.first&.ecosystem
-  end
-
-  def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.default_due_time
-  end
-
-  def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.default_open_time
   end
 
   def term_year
@@ -118,17 +108,13 @@ class CourseProfile::Models::Course < ApplicationRecord
     return if starts_at.present? && ends_at.present?
 
     ty = term_year
-    self.starts_at ||= ty.try!(:starts_at)
-    self.ends_at   ||= ty.try!(:ends_at)
+    self.starts_at ||= ty&.starts_at
+    self.ends_at   ||= ty&.ends_at
   end
 
   def set_weights
-    self.homework_progress_weight ||= 0
-    self.reading_score_weight ||= 0
-    self.reading_progress_weight ||= 0
-    self.homework_score_weight ||= 1 - [
-      homework_progress_weight, reading_score_weight, reading_progress_weight
-    ].sum
+    self.homework_weight ||= 0.5
+    self.reading_weight ||= 1 - homework_weight
   end
 
   def ends_after_it_starts
@@ -161,9 +147,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   end
 
   def weights_add_up
-    return if [
-      homework_score_weight, homework_progress_weight, reading_score_weight, reading_progress_weight
-    ].sum == 1
+    return if [ homework_weight, reading_weight ].sum == 1
 
     errors.add(:base, 'weights must add up to exactly 1')
     throw :abort
