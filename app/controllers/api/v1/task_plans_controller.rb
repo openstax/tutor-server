@@ -131,7 +131,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
       uuid = distribute_tasks task_plan
 
-      render_api_errors(task_plan.errors) && return
+      raise ActiveRecord::Rollback if render_api_errors(task_plan.errors)
 
       ShortCode::Create[task_plan.to_global_id.to_s]
 
@@ -178,9 +178,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       end
 
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+
       uuid = distribute_tasks task_plan
 
-      render_api_errors(task_plan.errors) || respond_with(
+      raise ActiveRecord::Rollback if render_api_errors(task_plan.errors)
+
+      respond_with(
         task_plan,
         represent_with: Api::V1::TaskPlanRepresenter,
         responder: ResponderWithPutPatchDeleteContent,
