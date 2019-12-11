@@ -123,6 +123,8 @@ Rails.application.routes.draw do
         get :'(/:pool_types)', action: :show
       end
 
+      resources :grading_templates, shallow: true, only: [ :index, :create, :update, :destroy ]
+
       resources :task_plans, path: :plans, shallow: true, except: [ :new, :edit ] do
         member do
           get :stats

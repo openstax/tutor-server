@@ -1,4 +1,5 @@
 OSU::AccessPolicy.register(User::Models::Profile, UserAccessPolicy)
+OSU::AccessPolicy.register(Tasks::Models::GradingTemplate, GradingTemplateAccessPolicy)
 OSU::AccessPolicy.register(Tasks::Models::Task, TaskAccessPolicy)
 OSU::AccessPolicy.register(Tasks::Models::TaskPlan, TaskPlanAccessPolicy)
 OSU::AccessPolicy.register(Tasks::Models::TaskedExercise, TaskedAccessPolicy)
