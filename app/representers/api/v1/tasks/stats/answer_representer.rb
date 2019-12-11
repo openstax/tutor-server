@@ -2,7 +2,6 @@ module Api::V1
   module Tasks
     module Stats
       class AnswerRepresenter < Roar::Decorator
-
         include Roar::JSON
 
         collection :student_names,
@@ -19,7 +18,6 @@ module Api::V1
                  type: String,
                  writeable: false,
                  readable: true
-
       end
     end
   end

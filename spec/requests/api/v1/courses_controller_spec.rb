@@ -477,19 +477,23 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         time_zone = @course.time_zone
         opens_at = time_zone.now - 2.months
         due_at = time_zone.now + 2.months
+        closes_at = time_zone.now + 2.months
 
-        # User time-zone-less strings to update the open/due dates
+        # Use time-zone-less strings to update the open/due dates
         opens_at_str = opens_at.strftime '%Y-%m-%d %H:%M:%S'
         due_at_str = due_at.strftime '%Y-%m-%d %H:%M:%S'
+        closes_at_str = closes_at.strftime '%Y-%m-%d %H:%M:%S'
 
         task_plan = FactoryBot.build :tasks_task_plan, course: @course, num_tasking_plans: 0
         tasking_plan = FactoryBot.create :tasks_tasking_plan, task_plan: task_plan,
                                                                opens_at: opens_at_str,
-                                                               due_at: due_at_str
+                                                               due_at: due_at_str,
+                                                               closes_at: closes_at_str
 
         # The time zone is inferred from the course's TimeZone
         expect(tasking_plan.opens_at).to be_within(1).of(opens_at)
         expect(tasking_plan.due_at).to be_within(1).of(due_at)
+        expect(tasking_plan.closes_at).to be_within(1).of(closes_at)
 
         # Change course TimeZone to Edinburgh
         course_name = @course.name
@@ -506,58 +510,17 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         # Reinterpret the time-zone-less strings as being in the Edingburgh time zone
         new_opens_at = edinburgh_tz.parse(opens_at_str)
         new_due_at = edinburgh_tz.parse(due_at_str)
+        new_closes_at = edinburgh_tz.parse(closes_at_str)
 
-        # The open/due dates changed
+        # The open/due/close dates changed
         expect(tasking_plan.reload.opens_at).not_to be_within(1).of(opens_at)
         expect(tasking_plan.due_at).not_to be_within(1).of(due_at)
+        expect(tasking_plan.closes_at).not_to be_within(1).of(closes_at)
 
         # They now act as if they were specified in the Edinburgh time zone
         expect(tasking_plan.opens_at).to be_within(1).of(new_opens_at)
         expect(tasking_plan.due_at).to be_within(1).of(new_due_at)
-      end
-
-      it 'updates the default open time' do
-        course_name = @course.name
-        api_patch api_course_url(@course.id), @user_1_token,
-                  params: { default_open_time: '01:02' }.to_json
-
-        expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:timezone]).to eq 'US/Central'
-        expect(response.body_as_hash[:default_open_time]).to eq '01:02'
-        expect(@course.reload.name).to eq course_name
-        expect(@course.timezone).to eq 'US/Central'
-        expect(@course.default_open_time).to eq '01:02'
-      end
-
-      it 'freaks if the default open time is in a bad format' do
-        expect do
-          api_patch api_course_url(@course.id), @user_1_token,
-                    params: { default_open_time: '1pm' }.to_json
-        end.not_to change{ @course.reload.default_open_time }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'updates the default due time' do
-        course_name = @course.name
-        api_patch api_course_url(@course.id), @user_1_token,
-                  params: { default_due_time: '02:02' }.to_json
-
-        expect(@course.reload.name).to eq course_name
-        expect(@course.timezone).to eq 'US/Central'
-        expect(@course.reload.default_due_time).to eq '02:02'
-        expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:timezone]).to eq 'US/Central'
-        expect(response.body_as_hash[:default_due_time]).to eq '02:02'
-      end
-
-      it 'freaks if the default due time is in a bad format' do
-        expect do
-          api_patch api_course_url(@course.id), @user_1_token,
-                    params: { default_due_time: '1pm' }.to_json
-        end.not_to change{ @course.reload.default_open_time }
-
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(tasking_plan.closes_at).to be_within(1).of(new_closes_at)
       end
 
       it 'updates is_college' do
@@ -681,6 +644,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[0], is_correct: true]
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[1], is_correct: true]
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[2], is_correct: false]
+        @hw2_task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :answer
 
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[0], is_correct: false]
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[1], is_correct: false]

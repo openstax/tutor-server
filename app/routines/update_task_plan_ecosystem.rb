@@ -59,24 +59,21 @@ class UpdateTaskPlanEcosystem
 
     return unless outputs.task_plan.type == 'homework'
 
-    exercise_ids = outputs.task_plan.settings['exercise_ids'].map(&:to_i)
+    exercises = outputs.task_plan.settings['exercises']
 
-    return unless exercise_ids.present?
+    return unless exercises.present?
 
-    # Update exercise ids to the new ecosystem by exercise number
+    # Update exercises to the new ecosystem by exercise number
     exercise_number_by_id = Content::Models::Exercise.where(
-      id: exercise_ids
+      id: exercises.map { |ex| ex['id'] }
     ).pluck(:id, :number).to_h
-    exercise_index_by_number = {}
-    exercise_ids.each_with_index do |id, index|
-      exercise_index_by_number[exercise_number_by_id[id]] = index
+    exercise_numbers = exercises.map { |exercise| exercise_number_by_id[exercise['id'].to_i] }
+    new_exercise_id_by_number = ecosystem.exercises.where(
+      number: exercise_numbers
+    ).pluck(:number, :id).to_h
+    outputs.task_plan.settings['exercises'] = exercises.each_with_index.map do |hash, index|
+      number = exercise_numbers[index]
+      { 'id' => new_exercise_id_by_number[number].to_s, 'points' => hash['points'] }
     end
-    new_exercise_ids = []
-    ecosystem.exercises.where(
-      number: exercise_index_by_number.keys
-    ).pluck(:id, :number).sort_by do |_, number|
-      exercise_index_by_number[number]
-    end.each { |id, _| new_exercise_ids << id.to_s }
-    outputs.task_plan.settings['exercise_ids'] = new_exercise_ids
   end
 end

@@ -19,20 +19,24 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
                                .assistant
 
     # Draft assignment, not included in the scores
-    draft_task_plan = Tasks::Models::TaskPlan.new(
+    draft_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Draft task plan',
       course: @course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: @ecosystem.id,
-      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) }
+      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) },
+      num_tasking_plans: 0
     )
 
-    draft_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    draft_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: draft_task_plan,
       opens_at: @course.time_zone.now,
-      due_at: @course.time_zone.now + 1.week
+      due_at: @course.time_zone.now + 1.week,
+      closes_at: @course.time_zone.now + 2.weeks
     )
 
     draft_task_plan.save!

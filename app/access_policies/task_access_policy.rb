@@ -28,5 +28,4 @@ class TaskAccessPolicy
 
     course.present? && UserIsCourseTeacher[user: user, course: course]
   end
-
 end

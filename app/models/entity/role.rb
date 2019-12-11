@@ -7,6 +7,7 @@ module Entity
     has_one :teacher_student, dependent: :destroy, subsystem: :course_membership, inverse_of: :role
 
     has_many :taskings, subsystem: :tasks, dependent: :destroy, inverse_of: :role
+    has_many :extensions, subsystem: :tasks, dependent: :destroy, inverse_of: :role
 
     has_many :notes, subsystem: :content, dependent: :destroy, inverse_of: :role
 

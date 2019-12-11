@@ -12,10 +12,9 @@ class CreateCourse
 
   def exec(name:, is_preview:, is_test:, is_college: nil, is_concept_coach: nil, term: nil,
            year: nil, num_sections: 1, catalog_offering: nil, appearance_code: nil, starts_at: nil,
-           ends_at: nil, school: nil, timezone: nil, cloned_from: nil, default_open_time: nil,
-           default_due_time: nil, estimated_student_count: nil, does_cost: nil,
-           homework_score_weight: nil, homework_progress_weight: nil,
-           reading_score_weight: nil, reading_progress_weight: nil)
+           ends_at: nil, school: nil, timezone: nil, cloned_from: nil,
+           estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil,
+           grading_templates: Tasks::Models::GradingTemplate.default)
 
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
@@ -56,13 +55,10 @@ class CreateCourse
       school: school,
       timezone: timezone || 'US/Central',
       cloned_from: cloned_from,
-      default_open_time: default_open_time,
-      default_due_time: default_due_time,
       estimated_student_count: estimated_student_count,
-      homework_score_weight: homework_score_weight,
-      homework_progress_weight: homework_progress_weight,
-      reading_score_weight: reading_score_weight,
-      reading_progress_weight: reading_progress_weight
+      reading_weight: reading_weight,
+      homework_weight: homework_weight,
+      grading_templates: grading_templates
     )
 
     unless catalog_offering.blank?

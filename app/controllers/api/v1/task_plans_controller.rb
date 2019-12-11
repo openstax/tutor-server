@@ -25,7 +25,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
                                     that are clones of some other task plan
 
    ### Example JSON response
-   #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :readable)}
+   #{json_schema(Api::V1::TaskPlan::SearchRepresenter, include: :readable)}
   EOS
   def index
     course = CourseProfile::Models::Course.find(params[:course_id])
@@ -62,7 +62,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     respond_with(Lev::Outputs.new(items: task_plans),
                  user_options: { exclude_job_info: true },
-                 represent_with: Api::V1::TaskPlanSearchRepresenter)
+                 represent_with: Api::V1::TaskPlan::SearchRepresenter)
   end
 
   ###############################################################
@@ -72,11 +72,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/plans/:id', "Retrieve a TaskPlan"
   description <<-EOS
    ### Example JSON response
-   #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
+   #{json_schema(Api::V1::TaskPlan::Representer, include: :readable)}
   EOS
   def show
     plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_read(plan, Api::V1::TaskPlanRepresenter)
+    standard_read(plan, Api::V1::TaskPlan::Representer)
   end
 
   ###############################################################
@@ -109,14 +109,14 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 #{Tasks::Assistants::EventAssistant.schema}
 </pre>
 
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
+    #{json_schema(Api::V1::TaskPlan::Representer, include: :writeable)}
   EOS
   def create
     # Modified standard_create code
     Tasks::Models::TaskPlan.transaction do
       course = CourseProfile::Models::Course.find(params[:course_id])
       task_plan = Tasks::Models::TaskPlan.new(course: course)
-      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      consume!(task_plan, represent_with: Api::V1::TaskPlan::Representer)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
       raise(IllegalState, "No assistant for task plan of type #{task_plan.type}") \
@@ -135,7 +135,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
       ShortCode::Create[task_plan.to_global_id.to_s]
 
-      respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+      respond_with task_plan, represent_with: Api::V1::TaskPlan::Representer,
                               status: uuid.nil? ? :ok : :accepted,
                               location: nil
     end
@@ -147,7 +147,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
   api :PUT, '/plans/:id', 'Updates the specified TaskPlan'
   description <<-EOS
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
+    #{json_schema(Api::V1::TaskPlan::Representer, include: :writeable)}
   EOS
   def update
     Tasks::Models::TaskPlan.transaction do
@@ -166,7 +166,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
         # Call Roar's consume! but force the TaskingPlans that were already open
         # to the old open date in order to prevent their open dates from changing
-        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter).tap do |result|
+        consume!(task_plan, represent_with: Api::V1::TaskPlan::Representer).tap do |result|
           task_plan.tasking_plans.each do |tp|
             tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
               if opens_at_ntzs[tp.target_type].has_key?(tp.target_id)
@@ -174,7 +174,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         end
       else
         # If no tasks are open, just call Roar's consume! like usual
-        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+        consume!(task_plan, represent_with: Api::V1::TaskPlan::Representer)
       end
 
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
@@ -185,7 +185,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
       respond_with(
         task_plan,
-        represent_with: Api::V1::TaskPlanRepresenter,
+        represent_with: Api::V1::TaskPlan::Representer,
         responder: ResponderWithPutPatchDeleteContent,
         status: uuid.nil? ? :ok : :accepted
       )
@@ -234,11 +234,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         }
     }
     </pre>
-    #{json_schema(Api::V1::TaskPlanWithStatsRepresenter, include: :readable)}
+    #{json_schema(Api::V1::TaskPlan::Stats::Representer, include: :readable)}
   EOS
   def stats
     plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_read(plan, Api::V1::TaskPlanWithStatsRepresenter)
+    standard_read(plan, Api::V1::TaskPlan::Stats::Representer)
   end
 
   ###############################################################
@@ -362,11 +362,23 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         }
     }
     </pre>
-    #{json_schema(Api::V1::TaskPlanWithDetailedStatsRepresenter, include: :readable)}
+    #{json_schema(Api::V1::TaskPlan::Stats::DetailedRepresenter, include: :readable)}
   EOS
   def review
     plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_read(plan, Api::V1::TaskPlanWithDetailedStatsRepresenter)
+    standard_read(plan, Api::V1::TaskPlan::Stats::DetailedRepresenter)
+  end
+
+  api :GET, '/plans/:id/scores', "Retrieves a TaskPlan's scores"
+  description <<-EOS
+    Retrieves all student scores for a TaskPlan
+
+    #{json_schema(Api::V1::TaskPlan::Scores::Representer, include: :readable)}
+  EOS
+  def scores
+    standard_read(
+      Tasks::Models::TaskPlan.find(params[:id]), Api::V1::TaskPlan::Scores::Representer
+    )
   end
 
   ###############################################################
@@ -379,11 +391,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     Possible error code: task_plan_is_already_deleted
 
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
+    #{json_schema(Api::V1::TaskPlan::Representer, include: :readable)}
   EOS
   def destroy
     task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_destroy(task_plan, Api::V1::TaskPlanRepresenter) do |task_plan|
+    standard_destroy(task_plan, Api::V1::TaskPlan::Representer) do |task_plan|
       send_to_biglearn task_plan
     end
   end
@@ -394,11 +406,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     Possible error code: task_plan_is_not_deleted
 
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
+    #{json_schema(Api::V1::TaskPlan::Representer, include: :readable)}
   EOS
   def restore
     task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_restore(task_plan, Api::V1::TaskPlanRepresenter) do |task_plan|
+    standard_restore(task_plan, Api::V1::TaskPlan::Representer) do |task_plan|
       send_to_biglearn task_plan
     end
   end

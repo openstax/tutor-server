@@ -102,66 +102,6 @@ RSpec.describe Api::V1::TasksController, type: :request, api: true, version: :v1
     end
   end
 
-  context "#accept_late_work" do
-    context 'withdrawn task_plan' do
-      before{ task_1.task_plan.destroy! }
-
-      it 'does not change is_late_work_accepted to true' do
-        expect do
-          api_put accept_late_work_api_task_url(task_1.id), teacher_user_token
-        end.to raise_error(SecurityTransgression)
-
-        expect(task_1.accepted_late_at).to be_nil
-      end
-    end
-
-    context 'non-withdrawn task_plan' do
-      it "changes is_late_work_accepted to true" do
-        expect(task_1.accepted_late_at).to be_nil
-        api_put accept_late_work_api_task_url(task_1.id), teacher_user_token
-        expect(response).to have_http_status(:no_content)
-        expect(task_1.reload.accepted_late_at).not_to be_nil
-      end
-
-      it "can only be used by teachers" do
-        expect do
-          api_put accept_late_work_api_task_url(task_1.id), user_1_token
-        end.to raise_error(SecurityTransgression)
-      end
-    end
-  end
-
-  context "#reject_late_work" do
-    before { task_1.update_attribute :accepted_late_at, Time.current }
-
-    context 'withdrawn task_plan' do
-      before{ task_1.task_plan.destroy! }
-
-      it 'does not change is_late_work_accepted to false' do
-        expect {
-          api_put reject_late_work_api_task_url(task_1.id), teacher_user_token
-        }.to raise_error(SecurityTransgression)
-
-        expect(task_1.reload.accepted_late_at).not_to be_nil
-      end
-    end
-
-    context 'non-withdrawn task_plan' do
-      it "changes is_late_work_accepted to false" do
-        expect(task_1.accepted_late_at).not_to be_nil
-        api_put reject_late_work_api_task_url(task_1.id), teacher_user_token
-        expect(response).to have_http_status(:no_content)
-        expect(task_1.reload.accepted_late_at).to be_nil
-      end
-
-      it "can only be used by teachers" do
-        expect {
-          api_put reject_late_work_api_task_url(task_1.id), user_1_token
-        }.to raise_error(SecurityTransgression)
-      end
-    end
-  end
-
   context "#destroy" do
     context 'student' do
       let(:token) { user_1_token }

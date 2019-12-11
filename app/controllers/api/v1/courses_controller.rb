@@ -149,10 +149,16 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def clone
     OSU::AccessPolicy.require_action_allowed!(:clone, current_api_user, @course)
 
-    attributes = consumed(Api::V1::CourseCloneRepresenter)
-      .slice(:copy_question_library, :name, :is_college, :term, :year, :num_sections, :timezone,
-             :default_open_time, :default_due_time, :estimated_student_count)
-      .merge(course: @course, teacher_user: current_human_user)
+    attributes = consumed(Api::V1::CourseCloneRepresenter).slice(
+      :copy_question_library,
+      :name,
+      :is_college,
+      :term,
+      :year,
+      :num_sections,
+      :timezone,
+      :estimated_student_count
+    ).merge(course: @course, teacher_user: current_human_user)
 
     course = CloneCourse[attributes]
 

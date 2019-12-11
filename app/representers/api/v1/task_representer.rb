@@ -24,20 +24,60 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :due_at_without_extension,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(due_at_without_extension) },
+             schema_info: {
+               description: 'When the task was due before any extensions (nil means never due)'
+             }
+
     property :due_at,
              type: String,
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             schema_info: { description: "When the task is due (nil means never due)" }
+             schema_info: { description: 'When the task is due (nil means never due)' }
 
-    property :feedback_at,
+    property :closes_at_without_extension,
+             type: String,
              writeable: false,
              readable: true,
-             getter: ->(*) { DateTimeUtilities.to_api_s(feedback_at) },
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at_without_extension) },
              schema_info: {
-               type: 'date',
-               description: "Feedback should be shown for the task after this time"
+               description: 'When the task closed before any extensions (nil means never due)'
+             }
+
+    property :closes_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
+             schema_info: { description: 'When the task closes (nil means never closes)' }
+
+    property :auto_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for automatically graded questions.
+                 One of either "answer", "due" or "publish"
+               DESCRIPTION
+             }
+
+    property :manual_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for manually graded questions.
+                 One of either "grade" or "publish"
+               DESCRIPTION
              }
 
     property :withdrawn?,
@@ -53,11 +93,9 @@ module Api::V1
              type: Array,
              writeable: false,
              readable: true,
-             getter: ->(*) {
-               roles.map{ |r|
-                   { role_id: r.id, name: r.course_member.name }
-                 }
-             },
+             getter: ->(*) do
+               roles.map { |role| { role_id: role.id, name: role.course_member.name } }
+             end,
              schema_info: {
                required: true,
                description: "The students who were assigned this task"

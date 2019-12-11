@@ -31,6 +31,7 @@ FactoryBot.define do
       task.description ||= task.task_plan.description
       task.opens_at ||= now
       task.due_at ||= task.opens_at + evaluator.duration
+      task.closes_at ||= task.course.ends_at - 1.day unless task.course.nil?
 
       AddSpyInfo[to: task, from: task.ecosystem]
 

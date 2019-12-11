@@ -41,7 +41,7 @@ class FilterExcludedExercises
       exercise_numbers_by_task_id.values_at(
         *tasks.filter do |task|
           (!task.due_at.nil? && !task.past_due?(current_time: current_time)) ||
-          !task.feedback_available?(current_time: current_time)
+          !task.auto_grading_feedback_available?(current_time: current_time)
         end.map(&:id)
       ).flatten.uniq
     end

@@ -4,14 +4,11 @@ class Tasks::Models::Task < ApplicationRecord
   CACHE_COLUMNS = [
     :steps_count,
     :completed_steps_count,
-    :completed_on_time_steps_count,
     :core_steps_count,
     :completed_core_steps_count,
     :exercise_steps_count,
     :completed_exercise_steps_count,
-    :completed_on_time_exercise_steps_count,
     :correct_exercise_steps_count,
-    :correct_on_time_exercise_steps_count,
     :placeholder_steps_count,
     :placeholder_exercise_steps_count,
   ]
@@ -32,16 +29,14 @@ class Tasks::Models::Task < ApplicationRecord
 
   belongs_to :course, subsystem: :course_profile, inverse_of: :tasks
 
-  belongs_to :course, subsystem: :course_profile, optional: true # Remove optional after migration
-
-  belongs_to :course, subsystem: :course_profile, optional: true # Remove optional after migration
-
   belongs_to :task_plan, inverse_of: :tasks, optional: true
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
+  belongs_to :extension, optional: true, inverse_of: :task
+
   delegate :timezone, :time_zone, to: :course
-  has_timezone :opens_at, :due_at, :feedback_at, suffix: :ntz
+  has_timezone :opens_at, :due_at, :closes_at, suffix: :ntz
 
   sortable_has_many :task_steps, on: :number, inverse_of: :task do
     # Because we update task_step counts in the middle of the following methods,
@@ -71,12 +66,12 @@ class Tasks::Models::Task < ApplicationRecord
 
   validates :title, presence: true
 
-  # Concept Coach and Practice Widget tasks have no open or due dates
+  # Concept Coach and Practice Widget tasks have no open, due or close dates
   # We already validate dates for teacher-created assignments in the TaskingPlan
-  validates :opens_at_ntz, :due_at_ntz, :feedback_at_ntz,
-            timeliness: { type: :date }, allow_nil: true
+  validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, timeliness: { type: :date },
+            allow_nil: true
 
-  validate :due_at_on_or_after_opens_at
+  validate :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at
 
   before_validation :update_cached_attributes
   after_create :update_caches_now
@@ -121,6 +116,124 @@ class Tasks::Models::Task < ApplicationRecord
     task_steps.spaced_practice_group.to_a.count { |step| step.exercise? || step.placeholder? }
   end
 
+  alias_method :due_at_without_extension, :due_at
+  alias_method :closes_at_without_extension, :closes_at
+
+  def extended?
+    !extension.nil?
+  end
+
+  def due_at
+    [ due_at_without_extension, extension&.due_at ].compact.max
+  end
+
+  def closes_at
+    [ closes_at_without_extension, extension&.closes_at ].compact.max
+  end
+
+  def grading_template
+    task_plan&.grading_template
+  end
+
+  def completion_weight
+    grading_template&.completion_weight || (reading? ? 0.9 : 0.0)
+  end
+
+  def correctness_weight
+    grading_template&.correctness_weight || (reading? ? 0.1 : 1.0)
+  end
+
+  def auto_grading_feedback_on
+    grading_template&.auto_grading_feedback_on || 'answer'
+  end
+
+  def manual_grading_feedback_on
+    grading_template&.manual_grading_feedback_on || 'grade'
+  end
+
+  def late_work_penalty_applied
+    grading_template&.late_work_penalty_applied || 'never'
+  end
+
+  def late_work_penalty_per_period
+    grading_template&.late_work_penalty || 0.0
+  end
+
+  def lateness
+    return 0 if last_worked_at.blank? || due_at.blank?
+
+    last_worked_at - due_at
+  end
+
+  def late_work_penalty
+    return 0.0 if lateness <= 0
+
+    penalty = case late_work_penalty_applied
+    when 'immediately'
+      late_work_penalty_per_period
+    when 'daily'
+      (lateness/1.day).ceil * late_work_penalty_per_period
+    else
+      0.0
+    end
+  end
+
+  def late_work_multiplier
+    1.0 - late_work_penalty
+  end
+
+  def completion
+    steps_count == 0 ? nil : completed_steps_count / steps_count.to_f
+  end
+
+  def correctness
+    actual_and_placeholder_exercise_count == 0 ?
+      nil : correct_exercise_count / actual_and_placeholder_exercise_count.to_f
+  end
+
+  def available_points_per_question_index
+    task_plan&.available_points_per_question_index || Hash.new(1.0)
+  end
+
+  def available_points
+    available_points_per_question_index.values_at(
+      *actual_and_placeholder_exercise_count.times.to_a
+    ).sum
+  end
+
+  def points_without_lateness
+    exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+      task_step.exercise? && task_step.tasked.is_correct? ?
+        available_points_per_question_index[index] : 0.0
+    end.sum
+  end
+
+  def late_work_point_penalty
+    late_work_penalty * points_without_lateness
+  end
+
+  def points
+    late_work_multiplier * points_without_lateness
+  end
+
+  def score_without_lateness(current_time: Time.current)
+    total = if past_due?(current_time: current_time)
+      available_points
+    else
+      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+        task_step.exercise? && task_step.completed? ?
+          available_points_per_question_index[index] : 0.0
+      end.sum
+    end
+
+    points_without_lateness/total unless total == 0.0
+  end
+
+  def score
+    swl = score_without_lateness
+    late_work_multiplier * swl unless swl.nil?
+  end
+
   def is_preview
     task_plan.present? && task_plan.is_preview
   end
@@ -143,18 +256,11 @@ class Tasks::Models::Task < ApplicationRecord
     self.core_page_ids = core_steps.map(&:content_page_id).uniq
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
-    self.completed_on_time_steps_count = completed_steps.count { |step| step_on_time?(step) }
     self.core_steps_count = core_steps.count
     self.completed_core_steps_count = completed_core_steps.count
     self.exercise_steps_count = exercise_steps.count
     self.completed_exercise_steps_count = completed_exercise_steps.count
-    self.completed_on_time_exercise_steps_count = completed_exercise_steps.count do |step|
-      step_on_time?(step)
-    end
     self.correct_exercise_steps_count = correct_exercise_steps.count
-    self.correct_on_time_exercise_steps_count = correct_exercise_steps.count do |step|
-      step_on_time?(step)
-    end
     self.placeholder_steps_count = placeholder_steps.count
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
@@ -193,8 +299,36 @@ class Tasks::Models::Task < ApplicationRecord
     !due_at.nil? && current_time > due_at
   end
 
-  def feedback_available?(current_time: Time.current)
-    feedback_at.nil? || current_time >= feedback_at
+  def past_close?(current_time: Time.current)
+    !closes_at.nil? && current_time > closes_at
+  end
+
+  def auto_grading_feedback_available?(current_time: Time.current, current_time_ntz: nil)
+    case auto_grading_feedback_on
+    when 'answer'
+      true
+    when 'due'
+      if current_time_ntz.nil?
+        !due_at.nil? && current_time >= due_at
+      else
+        !due_at_ntz.nil? && current_time_ntz >= due_at_ntz
+      end
+    when 'publish'
+      false
+    else
+      false
+    end
+  end
+
+  def manual_grading_feedback_available?
+    case manual_grading_feedback_on
+    when 'grade'
+      false
+    when 'publish'
+      false
+    else
+      false
+    end
   end
 
   def withdrawn?
@@ -265,6 +399,11 @@ class Tasks::Models::Task < ApplicationRecord
     task_steps.filter(&:exercise?)
   end
 
+  def exercise_and_placeholder_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
+    task_steps.filter { |step| step.exercise? || step.placeholder? }
+  end
+
   def core_task_steps(preload_taskeds: false)
     self.preload_taskeds if preload_taskeds
     task_steps.filter(&:is_core?)
@@ -311,55 +450,8 @@ class Tasks::Models::Task < ApplicationRecord
     completed_exercise_steps_count
   end
 
-  def completed_on_time_exercise_count
-    completed_on_time_exercise_steps_count
-  end
-
-  def completed_accepted_late_exercise_count
-    completed_accepted_late_exercise_steps_count
-  end
-
   def correct_exercise_count
     correct_exercise_steps_count
-  end
-
-  def correct_on_time_exercise_count
-    correct_on_time_exercise_steps_count
-  end
-
-  def correct_accepted_late_exercise_count
-    correct_accepted_late_exercise_steps_count
-  end
-
-  def effective_correct_exercise_count
-    [ correct_on_time_exercise_count, correct_accepted_late_exercise_count ].max
-  end
-
-  def effective_completed_steps_count
-    [ completed_on_time_steps_count, completed_accepted_late_steps_count ].max
-  end
-
-  def score
-    actual_and_placeholder_exercise_count == 0 ?
-      nil : effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
-  end
-
-  def progress
-    steps_count == 0 ? nil : effective_completed_steps_count / steps_count.to_f
-  end
-
-  def accept_late_work
-    self.completed_accepted_late_steps_count = completed_steps_count
-    self.completed_accepted_late_exercise_steps_count = completed_exercise_steps_count
-    self.correct_accepted_late_exercise_steps_count = correct_exercise_steps_count
-    self.accepted_late_at = Time.current
-  end
-
-  def reject_late_work
-    self.completed_accepted_late_steps_count = 0
-    self.completed_accepted_late_exercise_steps_count = 0
-    self.correct_accepted_late_exercise_steps_count = 0
-    self.accepted_late_at = nil
   end
 
   protected
@@ -371,7 +463,10 @@ class Tasks::Models::Task < ApplicationRecord
     throw :abort
   end
 
-  def step_on_time?(step)
-    due_at.nil? || (step.last_completed_at.present? && step.last_completed_at < due_at)
+  def closes_at_on_or_after_due_at
+    return if closes_at.nil? || due_at.nil? || closes_at >= due_at
+
+    errors.add(:closes_at, 'must be on or after due_at')
+    throw :abort
   end
 end

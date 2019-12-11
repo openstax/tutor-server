@@ -1,5 +1,4 @@
 class SetupPerformanceReportData
-
   lev_routine
 
   protected
@@ -64,89 +63,114 @@ class SetupPerformanceReportData
     page_ids = pages.map(&:id).map(&:to_s)
     exercise_ids = Content::Models::Page.where(
       id: page_ids
-    ).pluck(:homework_core_exercise_ids).flatten.map(&:to_s)
+    ).pluck(:homework_core_exercise_ids).flatten
+    exercises = Content::Models::Exercise.where(id: exercise_ids)
 
     time_zone = course.time_zone
 
-    reading_taskplan = Tasks::Models::TaskPlan.new(
+    reading_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Reading task plan',
       course: course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: ecosystem.id,
-      settings: { page_ids: page_ids.first(2) }
+      settings: { page_ids: page_ids.first(2).map(&:to_s) },
+      num_tasking_plans: 0
     )
 
-    reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    reading_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course,
       task_plan: reading_taskplan,
       opens_at: time_zone.now,
-      due_at: time_zone.now + 1.week
+      due_at: time_zone.now + 1.week,
+      closes_at: time_zone.now + 2.weeks
     )
 
     reading_taskplan.save!
 
     DistributeTasks[task_plan: reading_taskplan]
 
-    homework_taskplan = Tasks::Models::TaskPlan.new(
+    homework_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Homework task plan',
       course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.first(5),
+        exercises: exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        end,
         exercises_count_dynamic: 2
-      }
+      },
+      num_tasking_plans: 0
     )
 
-    homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    homework_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course, task_plan: homework_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now.tomorrow
+      opens_at: time_zone.now,
+      due_at: time_zone.now.tomorrow,
+      closes_at: time_zone.now.tomorrow + 1.day
     )
 
     homework_taskplan.save!
 
     DistributeTasks[task_plan: homework_taskplan]
 
-    homework2_taskplan = Tasks::Models::TaskPlan.new(
+    homework2_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Homework 2 task plan',
       course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.last(2),
+        exercises: exercises.last(2).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        end,
         exercises_count_dynamic: 2
-      }
+      },
+      num_tasking_plans: 0
     )
 
-    homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    homework2_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course, task_plan: homework2_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now + 2.weeks
+      opens_at: time_zone.now,
+      due_at: time_zone.now + 2.weeks,
+      closes_at: time_zone.now + 4.weeks
     )
 
     homework2_taskplan.save!
 
     DistributeTasks[task_plan: homework2_taskplan]
 
-    future_homework_taskplan = Tasks::Models::TaskPlan.new(
+    future_homework_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Future Homework task plan',
       course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.first(5),
+        exercises: exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        end,
         exercises_count_dynamic: 2
-      }
+      },
+      num_tasking_plans: 0
     )
 
-    future_homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    future_homework_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course,
       task_plan: future_homework_taskplan,
       opens_at: time_zone.now + 1.5.days,
-      due_at: time_zone.now + 2.days
+      due_at: time_zone.now + 2.days,
+      closes_at: time_zone.now + 2.5.days
     )
 
     future_homework_taskplan.save!

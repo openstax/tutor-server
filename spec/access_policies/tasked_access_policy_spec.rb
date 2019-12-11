@@ -22,25 +22,28 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
         context 'and the tasked is part of a task for the requestor' do
           before { allow(DoesTaskingExist).to receive(:[]) { true } }
 
-          context "and the task is deleted" do
-            before do
-              allow(tasked.task_step.task).to receive(:withdrawn?) { true }
-              allow(tasked.task_step.task).to receive(:past_open?) { true }
-            end
+          context "and the task's open date has not passed" do
+            before { allow(tasked.task_step.task).to receive(:past_open?) { false } }
 
-            it { should eq action == :read }
+            it { should eq false }
           end
 
           context "and the task's open date has passed" do
             before { allow(tasked.task_step.task).to receive(:past_open?) { true } }
 
             it { should eq true }
-          end
 
-          context "and the task's open date has not passed" do
-            before { allow(tasked.task_step.task).to receive(:past_open?) { false } }
+            context "and the task is deleted" do
+              before { allow(tasked.task_step.task).to receive(:withdrawn?) { true } }
 
-            it { should eq false }
+              it { should eq action == :read }
+            end
+
+            context "and the task's close date has passed" do
+              before { allow(tasked.task_step.task).to receive(:past_close?) { true } }
+
+              it { should eq action == :read }
+            end
           end
         end
 
@@ -51,8 +54,10 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
         end
 
         context 'and the requestor is a course teacher' do
-          before { allow(DoesTaskingExist).to receive(:[]) { false }
-                   allow(UserIsCourseTeacher).to receive(:[]) { true } }
+          before do
+            allow(DoesTaskingExist   ).to receive(:[]) { false }
+            allow(UserIsCourseTeacher).to receive(:[]) { true  }
+          end
 
           it { should eq action == :read }
         end

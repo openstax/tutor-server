@@ -1,9 +1,9 @@
 module Api::V1::Tasks
   class TaskedExerciseRepresenter < TaskStepRepresenter
     FEEDBACK_AVAILABLE = ->(*) { task_step.feedback_available? }
-    INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) {
-      user_options.try!(:[], :include_content) && task_step.feedback_available?
-    }
+    INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) do
+      user_options&.[](:include_content) && task_step.feedback_available?
+    end
 
     property :title,
              type: String,

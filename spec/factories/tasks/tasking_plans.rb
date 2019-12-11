@@ -13,6 +13,7 @@ FactoryBot.define do
 
       tasking_plan.opens_at ||= tasking_plan.time_zone.now
       tasking_plan.due_at ||= tasking_plan.opens_at + evaluator.duration
+      tasking_plan.closes_at ||= tasking_plan.task_plan.course.ends_at - 1.day
     end
   end
 end

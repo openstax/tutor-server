@@ -65,6 +65,7 @@ class ExportAndUploadResearchData
           "Task Type",
           "Task Opens At",
           "Task Due At",
+          "Task Closes At",
           "Step ID",
           "Step Number",
           "Step Type",
@@ -179,6 +180,7 @@ class ExportAndUploadResearchData
                 task.task_type,
                 format_time(task.opens_at),
                 format_time(task.due_at),
+                format_time(task.closes_at),
                 step.id,
                 step.number,
                 type,
@@ -351,7 +353,7 @@ class ExportAndUploadResearchData
             stimulus = exercise.content_hash['stimulus_html']
             json = exercise.content
 
-            exercise.questions_hash.each_with_index do |question, q_index|
+            exercise.questions.each_with_index do |question, q_index|
               begin
                 solution = (question['collaborator_solutions'] || []).first
                 correct_answers = []

@@ -21,7 +21,7 @@ class TaskExercise
       max_num_questions = task_steps.size
     end
 
-    questions = exercise.content_as_independent_questions
+    questions = exercise.questions
     is_in_multipart = exercise.is_multipart?
     questions = questions.first(max_num_questions) unless max_num_questions.nil?
     outputs.task_steps = questions.each_with_index.map do |question, question_index|
@@ -55,7 +55,7 @@ class TaskExercise
         exercise: exercise,
         url: exercise.url,
         title: title || exercise.title,
-        question_id: question[:id],
+        question_id: question.id,
         question_index: question_index,
         answer_ids: exercise.question_answer_ids[question_index],
         is_in_multipart: is_in_multipart

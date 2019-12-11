@@ -80,7 +80,8 @@ class Tasks::UpdatePeriodCaches
           [ :course_membership_period_id, :content_ecosystem_id, :tasks_task_plan_id ]
         end
         Tasks::Models::PeriodCache.import period_caches, validate: false, on_duplicate_key_update: {
-          columns: [ :opens_at, :due_at, :student_ids, :as_toc ], conflict_target: conflict_target
+          columns: [ :opens_at, :due_at, :closes_at, :student_ids, :as_toc ],
+          conflict_target: conflict_target
         }
 
         # Mark the TaskCaches as cached for period
@@ -221,6 +222,7 @@ class Tasks::UpdatePeriodCaches
       task_plan: task_plan,
       opens_at: tasking_plan&.opens_at,
       due_at: tasking_plan&.due_at,
+      closes_at: tasking_plan&.closes_at,
       student_ids: period_toc[:student_ids],
       as_toc: period_toc
     )
