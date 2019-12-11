@@ -26,7 +26,8 @@ class TaskExercise
     labels = current_step.labels
     spy = current_step.spy
 
-    questions = exercise.content_as_independent_questions
+    questions = exercise.questions
+    is_in_multipart = questions.size > 1
     outputs.task_steps = questions.each_with_index.map do |question, question_index|
       # Make sure that all steps after the first exercise part get their own new step
       if question_index > 0
@@ -50,10 +51,10 @@ class TaskExercise
         exercise: exercise,
         url: exercise.url,
         title: title || exercise.title,
-        question_id: question[:id],
+        question_id: question.id,
         question_index: question_index,
         answer_ids: exercise.question_answer_ids[question_index],
-        is_in_multipart: questions.size > 1
+        is_in_multipart: is_in_multipart
       )
 
       current_step.tasked.set_correct_answer_id

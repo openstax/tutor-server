@@ -8,13 +8,15 @@ FactoryBot.define do
     transient           do
       uid               { nil }
       tags              { nil }
-      num_parts         { 1 }
+
+      num_questions     { 1 }
+
       wrapper           { OpenStax::Exercises::V1::Exercise.new(content: content) }
     end
 
     content             do
       OpenStax::Exercises::V1::FakeClient.new_exercise_hash(
-        number: number, version: version, uid: uid, tags: tags, num_parts: num_parts
+        number: number, version: version, uid: uid, tags: tags, num_questions: num_questions
       ).to_json
     end
     question_answer_ids { wrapper.question_answer_ids }

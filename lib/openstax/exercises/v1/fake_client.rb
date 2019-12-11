@@ -46,7 +46,7 @@ class OpenStax::Exercises::V1::FakeClient
   # Methods to help fake the fake content
   #
   def self.new_exercise_hash(uuid: SecureRandom.uuid, group_uuid: SecureRandom.uuid,
-                             number: -1, version: 1, uid: nil, tags: nil, num_parts: 1)
+                             number: -1, version: 1, uid: nil, tags: nil, num_questions: 1)
     {
       uuid: uuid,
       group_uuid: group_uuid,
@@ -62,7 +62,7 @@ class OpenStax::Exercises::V1::FakeClient
           asset: "https://somewhere.com/something.png"
         }
       ],
-      questions: num_parts.times.map do |index|
+      questions: num_questions.times.map do |index|
         question_number = number + index
 
         {

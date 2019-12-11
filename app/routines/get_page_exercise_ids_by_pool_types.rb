@@ -3,7 +3,8 @@ class GetPageExerciseIdsByPoolTypes
 
   protected
 
-  def exec(ecosystem:, page_ids: nil, pool_types: nil)
+  def exec(ecosystem:, page_ids: nil, exercise_ids: nil, pool_types: nil)
+    exercise_ids_set = Set.new(exercise_ids.map(&:to_i)) unless exercise_ids.nil?
     pool_types = [ pool_types ].flatten.compact.uniq
 
     # Default to all types
@@ -27,7 +28,10 @@ class GetPageExerciseIdsByPoolTypes
     outputs.exercise_ids_by_pool_type = {}
     pool_types.each do |pool_type|
       outputs.exercise_ids_by_pool_type[pool_type] = pages.flat_map do |page|
-        page.send pool_method_name_by_pool_type[pool_type]
+        page_exercise_ids = page.send pool_method_name_by_pool_type[pool_type]
+        next page_exercise_ids if exercise_ids_set.nil?
+
+        page_exercise_ids.select { |exercise_id| exercise_ids_set.include? exercise_id }
       end
     end
   end

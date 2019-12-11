@@ -8,7 +8,10 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = FactoryBot.create :course_profile_course, :with_assistants
+    @course = FactoryBot.create(
+      :course_profile_course, :with_assistants, :with_grading_templates,
+                              reading_weight: 0, homework_weight: 1
+    )
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
     @teacher = FactoryBot.create(:user_profile)
@@ -32,20 +35,24 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
                                 .find_by(tasks_task_plan_type: 'external')
                                 .assistant
 
-    external_task_plan = Tasks::Models::TaskPlan.new(
+    external_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'External assignment',
       owner: @course,
       type: 'external',
       assistant: external_assistant,
       content_ecosystem_id: @ecosystem.id,
-      settings: { external_url: 'https://www.example.com' }
+      settings: { external_url: 'https://www.example.com' },
+      num_tasking_plans: 0
     )
 
-    external_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    external_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: external_task_plan,
       opens_at: @course.time_zone.to_tz.now - 4.weeks,
       due_at: @course.time_zone.to_tz.now - 3.weeks,
+      closes_at: @course.time_zone.to_tz.now - 2.weeks,
       time_zone: @course.time_zone
     )
 
@@ -58,19 +65,23 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
                              .find_by(tasks_task_plan_type: 'event')
                              .assistant
 
-    event_task_plan = Tasks::Models::TaskPlan.new(
+    event_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Event',
       owner: @course,
       type: 'event',
       assistant: event_assistant,
-      content_ecosystem_id: @ecosystem.id
+      content_ecosystem_id: @ecosystem.id,
+      num_tasking_plans: 0
     )
 
-    event_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    event_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: event_task_plan,
       opens_at: @course.time_zone.to_tz.now - 1.week,
       due_at: @course.time_zone.to_tz.now,
+      closes_at: @course.time_zone.to_tz.now + 1.week,
       time_zone: @course.time_zone
     )
 
@@ -83,20 +94,24 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
                                .find_by(tasks_task_plan_type: 'reading')
                                .assistant
 
-    draft_task_plan = Tasks::Models::TaskPlan.new(
+    draft_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Draft task plan',
       owner: @course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: @ecosystem.id,
-      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) }
+      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) },
+      num_tasking_plans: 0
     )
 
-    draft_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    draft_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: draft_task_plan,
       opens_at: @course.time_zone.to_tz.now,
       due_at: @course.time_zone.to_tz.now + 1.week,
+      closes_at: @course.time_zone.to_tz.now + 2.weeks,
       time_zone: @course.time_zone
     )
 
@@ -156,11 +171,10 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'returns the proper numbers (feedback_at does not matter)' do
+    it 'returns the proper numbers (auto_grading_feedback_on does not matter)' do
       tasks = Tasks::Models::Task.where(title: 'Homework task plan')
       tasks.each do |task|
-        task.feedback_at = task.time_zone.to_tz.now + 1.2.days
-        task.save!
+        task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
       end
 
       expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
@@ -299,15 +313,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
           expect(data.step_count).to be_a Integer
           expect(data.completed_step_count).to be_a Integer
-          expect(data.completed_on_time_step_count).to be_a Integer
-          expect(data.completed_accepted_late_step_count).to be_a Integer
           expect(data.actual_and_placeholder_exercise_count).to be_a Integer
           expect(data.completed_exercise_count).to be_a Integer
-          expect(data.completed_on_time_exercise_count).to be_a Integer
-          expect(data.completed_accepted_late_exercise_count).to be_a Integer
           expect(data.correct_exercise_count).to be_a Integer
-          expect(data.correct_on_time_exercise_count).to be_a Integer
-          expect(data.correct_accepted_late_exercise_count).to be_a Integer
           expect(data.recovered_exercise_count).to be_a Integer
           expect(data.score).to be_a data.type == 'external' ? NilClass : Float
           expect(data.progress).to be_a Float
@@ -473,15 +481,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
         expect(data.step_count).to be_a Integer
         expect(data.completed_step_count).to be_a Integer
-        expect(data.completed_on_time_step_count).to be_a Integer
-        expect(data.completed_accepted_late_step_count).to be_a Integer
         expect(data.actual_and_placeholder_exercise_count).to be_a Integer
         expect(data.completed_exercise_count).to be_a Integer
-        expect(data.completed_on_time_exercise_count).to be_a Integer
-        expect(data.completed_accepted_late_exercise_count).to be_a Integer
         expect(data.correct_exercise_count).to be_a Integer
-        expect(data.correct_on_time_exercise_count).to be_a Integer
-        expect(data.correct_accepted_late_exercise_count).to be_a Integer
         expect(data.recovered_exercise_count).to be_a Integer
         expect(data.score).to be_a data.type == 'external' ? NilClass : Float
         expect(data.progress).to be_a Float
@@ -492,13 +494,12 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'does not include correctness and score for tasks with feedback_at in the future' do
+    it 'does not include correctness and score for tasks with no feedback available' do
       task = Tasks::Models::Task.joins(:taskings).find_by(
         taskings: { entity_role_id: @student_1.roles.first.id },
         title: 'Homework task plan'
       )
-      task.feedback_at = task.time_zone.to_tz.now + 1.2.days
-      task.save!
+      task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
 
       expect(report.data_headings.size).to eq expected_tasks
 
@@ -560,12 +561,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
         expect(data.step_count).to be_a Integer
         expect(data.completed_step_count).to be_a Integer
-        expect(data.completed_on_time_step_count).to be_a Integer
-        expect(data.completed_accepted_late_step_count).to be_a Integer
         expect(data.actual_and_placeholder_exercise_count).to be_a Integer
         expect(data.completed_exercise_count).to be_a Integer
-        expect(data.completed_on_time_exercise_count).to be_a Integer
-        expect(data.completed_accepted_late_exercise_count).to be_a Integer
         expect(data.recovered_exercise_count).to be_a Integer
         expect(data.progress).to be_a Float
         expect(data.due_at).to be_a Time

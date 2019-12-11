@@ -47,6 +47,12 @@ FactoryBot.define do
       after(:create) { |course| Tasks::CreateCourseAssistants[course: course] }
     end
 
+    trait(:with_grading_templates) do
+      after(:create) do |course|
+        course.grading_templates.concat Tasks::Models::GradingTemplate.default
+      end
+    end
+
     trait(:without_ecosystem) do
       after(:build) { |course| course.course_ecosystems.delete_all :delete_all }
     end

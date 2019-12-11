@@ -59,23 +59,23 @@ class Demo::Assign < Demo::Base
     ) unless missing_task_plan_types.empty?
 
     outputs.task_plans = task_plans.map do |task_plan|
-      log do
-        "Creating #{task_plan[:type]} #{task_plan[:title]
-        } for course #{course_model.name} (id: #{course_model.id})"
-      end
+      type = task_plan[:type]
+      title = task_plan[:title]
+      log { "Creating #{type} #{title} for course #{course_model.name} (id: #{course_model.id})" }
 
       book_indices = convert_book_indices task_plan[:book_indices]
       pages = book_indices.map { |book_indices| pages_by_book_indices[book_indices] }
       page_ids = pages.map(&:id).map(&:to_s)
 
       attrs = {
-        title: task_plan[:title],
-        type: task_plan[:type],
+        title: title,
+        type: type,
         owner: course_model,
         content_ecosystem_id: ecosystem.id,
-        assistant: assistants_by_task_plan_type[task_plan[:type]],
+        assistant: assistants_by_task_plan_type[type],
         settings: {},
-        is_preview: false
+        is_preview: false,
+        grading_template: course_model.grading_templates.detect { |gt| gt.task_plan_type == type }
       }
 
       # Type-specific task_plan settings
@@ -92,11 +92,14 @@ class Demo::Assign < Demo::Base
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
         ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        attrs[:settings][:page_ids] = page_ids
-        attrs[:settings][:exercise_ids] = exercise_ids.shuffle
-                                                      .take(task_plan[:exercises_count_core])
-                                                      .map(&:to_s)
-        attrs[:settings][:exercises_count_dynamic] = task_plan[:exercises_count_dynamic]
+        exercises = Content::Models::Exercise.where(id: exercise_ids).select(:id, :content)
+        attrs[:settings].merge!(
+          page_ids: page_ids,
+          exercises: exercises.shuffle.take(task_plan[:exercises_count_core]).map do |exercise|
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          end,
+          exercises_count_dynamic: task_plan[:exercises_count_dynamic]
+        )
       when 'external'
         task_plan[:external_url] ||= 'https://example.com'
 
@@ -126,7 +129,7 @@ class Demo::Assign < Demo::Base
           target: period,
           opens_at: assigned_to[:opens_at],
           due_at: assigned_to[:due_at],
-          time_zone: course_model.time_zone
+          closes_at: assigned_to[:closes_at] || course_model.ends_at - 1.day
         )
       end
 

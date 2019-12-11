@@ -2,7 +2,6 @@ module Api::V1
   module Tasks
     module Stats
       class QuestionRepresenter < Roar::Decorator
-
         include Roar::JSON
 
         property :question_id,
@@ -24,7 +23,6 @@ module Api::V1
                    writeable: false,
                    readable: true,
                    extend: Api::V1::Tasks::Stats::AnswerStatsRepresenter
-
       end
     end
   end

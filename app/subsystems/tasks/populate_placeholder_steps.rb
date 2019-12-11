@@ -141,7 +141,7 @@ class Tasks::PopulatePlaceholderSteps
           exercise = exercises[index]
           task_step = placeholder_steps[index]
 
-          if exercise.nil? || exercise.questions_hash.blank?
+          if exercise.nil? || exercise.num_questions == 0
             # Extra step: Remove it
             # We don't compact the task steps (gaps are ok) so we don't decrement num_added_steps
             task_step_ids_to_delete << task_step.id
@@ -159,7 +159,7 @@ class Tasks::PopulatePlaceholderSteps
                 labels: labels
               )
 
-              num_added_steps += exercise.number_of_parts
+              num_added_steps += exercise.num_questions
             else
               # Reuse a placeholder step
               tasked_placeholder_ids_to_delete << task_step.tasked_id
@@ -169,7 +169,7 @@ class Tasks::PopulatePlaceholderSteps
               task_step.number += num_added_steps
               task_step.changes_applied
 
-              num_added_steps += exercise.number_of_parts - 1
+              num_added_steps += exercise.num_questions - 1
             end
 
             # Detect PEs being used as SPEs and set the step type to :personalized_group

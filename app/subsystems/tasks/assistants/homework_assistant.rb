@@ -2,17 +2,32 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   def self.schema
     '{
       "type": "object",
-      "required": [
-        "exercise_ids",
-        "exercises_count_dynamic"
-      ],
       "properties": {
-        "exercise_ids": {
+        "exercises": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "points": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "multipleOf" : 0.1,
+                  "minimum": 0
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "id",
+              "points"
+            ],
+            "additionalProperties": false
           },
-          "minItems": 1,
+          "minItems": 0,
           "uniqueItems": true
         },
         "exercises_count_dynamic": {
@@ -27,6 +42,10 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
           }
         }
       },
+      "required": [
+        "exercises",
+        "exercises_count_dynamic"
+      ],
       "additionalProperties": false
     }'
   end
@@ -34,9 +53,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   def initialize(task_plan:, individualized_tasking_plans:)
     super
 
-    exercise_ids = task_plan.settings['exercise_ids'].map(&:to_i)
-    raise 'No exercises selected' if exercise_ids.blank?
+    @exercise_hashes = task_plan.settings['exercises']
 
+    exercise_ids = @exercise_hashes.map { |ex| ex['id'].to_i }
     exercises_by_id = ecosystem.exercises.where(id: exercise_ids).index_by(&:id)
     @exercises = exercises_by_id.values_at(*exercise_ids).compact
 
@@ -54,7 +73,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   protected
 
   def num_spaced_practice_exercises
-    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic'].to_i
+    exercises_count_dynamic = task_plan.settings['exercises_count_dynamic'].to_i
     num_spaced_practice_exercises = [0, exercises_count_dynamic].max
     num_spaced_practice_exercises
   end

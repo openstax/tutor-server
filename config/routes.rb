@@ -86,11 +86,6 @@ Rails.application.routes.draw do
     end
 
     resources :tasks, only: [ :show, :destroy ] do
-      member do
-        put :accept_late_work
-        put :reject_late_work
-      end
-
       resources :steps, controller: :task_steps, shallow: true, only: [ :show, :update ]
     end
 
@@ -123,10 +118,13 @@ Rails.application.routes.draw do
         get :'(/:pool_types)', action: :show
       end
 
+      resources :grading_templates, shallow: true, only: [ :index, :create, :update, :destroy ]
+
       resources :task_plans, path: :plans, shallow: true, except: [ :new, :edit ] do
         member do
           get :stats
           get :review
+          get :scores
           put :restore
         end
       end

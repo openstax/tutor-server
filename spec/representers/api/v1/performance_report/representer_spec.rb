@@ -1,14 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
-
-  let(:period)               { FactoryBot.create(:course_membership_period) }
-  let(:last_worked_at)       { Time.current                                  }
-  let(:due_at)               { Time.current + 1.week                         }
-  let(:accepted_late_at)     { Time.current + 2.weeks}
-  let(:api_last_worked_at)   { DateTimeUtilities.to_api_s(last_worked_at)    }
-  let(:api_due_at)           { DateTimeUtilities.to_api_s(due_at)            }
-  let(:api_accepted_late_at) { DateTimeUtilities.to_api_s(accepted_late_at)}
+  let(:period)             { FactoryBot.create(:course_membership_period) }
+  let(:last_worked_at)     { Time.current                                 }
+  let(:due_at)             { Time.current + 1.week                        }
+  let(:api_last_worked_at) { DateTimeUtilities.to_api_s(last_worked_at)   }
+  let(:api_due_at)         { DateTimeUtilities.to_api_s(due_at)           }
 
   let(:report) do
     {
@@ -32,7 +29,6 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
               type: "homework",
               id: 5,
               last_worked_at: last_worked_at,
-              accepted_late_at: accepted_late_at,
               due_at: due_at,
               actual_and_placeholder_exercise_count: 6,
               completed_exercise_count: 6,
@@ -52,7 +48,6 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
     expect(task_data).to include(
       'last_worked_at' => api_last_worked_at,
       'due_at' => api_due_at,
-      'accepted_late_at' => api_accepted_late_at
     )
   end
 

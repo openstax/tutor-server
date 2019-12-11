@@ -26,16 +26,6 @@ class Api::V1::Research::PeriodRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true }
 
-  property :default_open_time,
-           type: String,
-           readable: true,
-           writeable: true
-
-  property :default_due_time,
-           type: String,
-           readable: true,
-           writeable: true
-
   property :archived?,
            as: :is_archived,
            readable: true,

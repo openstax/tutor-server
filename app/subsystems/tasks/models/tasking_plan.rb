@@ -1,17 +1,17 @@
 class Tasks::Models::TaskingPlan < ApplicationRecord
-
-  belongs_to_time_zone :opens_at, :due_at, suffix: :ntz
+  belongs_to_time_zone :opens_at, :due_at, :closes_at, suffix: :ntz
 
   belongs_to :task_plan, inverse_of: :tasking_plans, touch: true
   belongs_to :target, polymorphic: true
 
+  before_validation :set_time_zone
+
   validates :task_plan, uniqueness: { scope: [ :target_type, :target_id ] }
 
-  validates :opens_at_ntz, :due_at_ntz, presence: true, timeliness: { type: :date }
+  validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, presence: true, timeliness: { type: :date }
 
-  validate :due_at_in_the_future, :due_at_on_or_after_opens_at,
-           :opens_after_course_starts, :due_before_course_ends,
-           :owner_can_task_target
+  validate :due_at_in_the_future, :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at,
+           :opens_after_course_starts, :closes_before_course_ends, :owner_can_task_target
 
   def past_open?(current_time: Time.current)
     opens_at.nil? || current_time > opens_at
@@ -21,7 +21,15 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
     !due_at.nil? && current_time > due_at
   end
 
+  def past_close?(current_time: Time.current)
+    !closes_at.nil? && current_time > closes_at
+  end
+
   protected
+
+  def set_time_zone
+    self.time_zone ||= task_plan.owner.try(:time_zone)
+  end
 
   def due_at_in_the_future
     return if task_plan.try(:is_draft?) ||
@@ -38,8 +46,15 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
     throw :abort
   end
 
+  def closes_at_on_or_after_due_at
+    return if closes_at.nil? || due_at.nil? || closes_at > due_at
+
+    errors.add(:closes_at, 'cannot be before due_at')
+    throw :abort
+  end
+
   def opens_after_course_starts
-    return if task_plan.try!(:owner_type) != 'CourseProfile::Models::Course' ||
+    return if task_plan&.owner_type != 'CourseProfile::Models::Course' ||
               opens_at.nil? ||
               task_plan.owner.starts_at <= opens_at
 
@@ -47,12 +62,12 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
     throw :abort
   end
 
-  def due_before_course_ends
-    return if task_plan.try!(:owner_type) != 'CourseProfile::Models::Course' ||
-              due_at.nil? ||
-              task_plan.owner.ends_at >= due_at
+  def closes_before_course_ends
+    return if task_plan&.owner_type != 'CourseProfile::Models::Course' ||
+              closes_at.nil? ||
+              task_plan.owner.ends_at >= closes_at
 
-    errors.add(:due_at, 'cannot be after the course ends')
+    errors.add(:closes_at, 'cannot be after the course ends')
     throw :abort
   end
 
@@ -64,5 +79,4 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
     errors.add(:target, 'cannot be assigned to')
     throw :abort
   end
-
 end

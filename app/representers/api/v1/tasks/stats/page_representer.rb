@@ -2,7 +2,6 @@ module Api::V1
   module Tasks
     module Stats
       class PageRepresenter < Roar::Decorator
-
         include Roar::JSON
         include Representable::Coercion
 
@@ -61,7 +60,6 @@ module Api::V1
                  readable: true,
                  writeable: false,
                  schema_info: { type: 'boolean' }
-
       end
     end
   end

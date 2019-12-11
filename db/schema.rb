@@ -246,8 +246,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.datetime "updated_at", null: false
     t.string "enrollment_code", null: false
     t.datetime "archived_at"
-    t.string "default_open_time"
-    t.string "default_due_time"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["archived_at"], name: "index_course_membership_periods_on_archived_at"
     t.index ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id"
@@ -311,8 +309,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.string "teach_token", null: false
     t.integer "catalog_offering_id"
     t.string "appearance_code"
-    t.string "default_open_time"
-    t.string "default_due_time"
     t.integer "time_zone_id", null: false
     t.boolean "is_college"
     t.datetime "starts_at", null: false
@@ -341,10 +337,8 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.string "last_lms_scores_push_job_id"
     t.string "creator_campaign_member_id"
     t.string "latest_adoption_decision"
-    t.decimal "homework_score_weight", precision: 3, scale: 2, default: "1.0", null: false
-    t.decimal "homework_progress_weight", precision: 3, scale: 2, default: "0.0", null: false
-    t.decimal "reading_score_weight", precision: 3, scale: 2, default: "0.0", null: false
-    t.decimal "reading_progress_weight", precision: 3, scale: 2, default: "0.0", null: false
+    t.float "homework_weight", default: 0.5, null: false
+    t.float "reading_weight", default: 0.5, null: false
     t.index ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id"
     t.index ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id"
     t.index ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed"
@@ -742,6 +736,40 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.index ["tasks_assistant_id", "course_profile_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id"
   end
 
+  create_table "tasks_extensions", force: :cascade do |t|
+    t.bigint "tasks_task_plan_id", null: false
+    t.bigint "entity_role_id", null: false
+    t.bigint "time_zone_id", null: false
+    t.datetime "due_at_ntz", null: false
+    t.datetime "closes_at_ntz", null: false
+    t.index ["entity_role_id"], name: "index_tasks_extensions_on_entity_role_id"
+    t.index ["tasks_task_plan_id", "entity_role_id"], name: "index_tasks_extensions_on_tasks_task_plan_id_and_entity_role_id", unique: true
+    t.index ["tasks_task_plan_id"], name: "index_tasks_extensions_on_tasks_task_plan_id"
+    t.index ["time_zone_id"], name: "index_tasks_extensions_on_time_zone_id"
+  end
+
+  create_table "tasks_grading_templates", force: :cascade do |t|
+    t.bigint "course_profile_course_id", null: false
+    t.integer "task_plan_type", null: false
+    t.string "name", null: false
+    t.float "completion_weight", null: false
+    t.float "correctness_weight", null: false
+    t.integer "auto_grading_feedback_on", null: false
+    t.integer "manual_grading_feedback_on", null: false
+    t.float "late_work_penalty", null: false
+    t.string "default_open_time", null: false
+    t.string "default_due_time", null: false
+    t.integer "default_due_date_offset_days", null: false
+    t.integer "default_close_date_offset_days", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "late_work_penalty_applied", null: false
+    t.bigint "cloned_from_id"
+    t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
+    t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
+  end
+
   create_table "tasks_performance_report_exports", id: :serial, force: :cascade do |t|
     t.integer "course_profile_course_id", null: false
     t.integer "entity_role_id", null: false
@@ -762,6 +790,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.text "as_toc", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "closes_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_period_caches_on_content_ecosystem_id"
     t.index ["course_membership_period_id", "content_ecosystem_id", "tasks_task_plan_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id_and_t_t_p_id", unique: true
     t.index ["course_membership_period_id", "content_ecosystem_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id", unique: true, where: "(tasks_task_plan_id IS NULL)"
@@ -778,7 +807,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.integer "task_type", null: false
     t.datetime "opens_at"
     t.datetime "due_at"
-    t.datetime "feedback_at"
     t.integer "student_ids", null: false, array: true
     t.string "student_names", null: false, array: true
     t.text "as_toc", default: "{}", null: false
@@ -788,9 +816,11 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.integer "teacher_student_ids", null: false, array: true
     t.bigint "tasks_task_plan_id"
     t.datetime "withdrawn_at"
+    t.integer "auto_grading_feedback_on", null: false
+    t.integer "manual_grading_feedback_on", null: false
+    t.datetime "closes_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
     t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"
-    t.index ["feedback_at"], name: "index_tasks_task_caches_on_feedback_at"
     t.index ["is_cached_for_period"], name: "index_tasks_task_caches_on_is_cached_for_period"
     t.index ["opens_at"], name: "index_tasks_task_caches_on_opens_at"
     t.index ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
@@ -814,15 +844,16 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "content_ecosystem_id", null: false
-    t.boolean "is_feedback_immediate", default: true, null: false
     t.datetime "withdrawn_at"
     t.datetime "last_published_at"
     t.integer "cloned_from_id"
     t.boolean "is_preview", default: false
+    t.integer "tasks_grading_template_id"
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
     t.index ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id"
+    t.index ["tasks_grading_template_id"], name: "index_tasks_task_plans_on_tasks_grading_template_id"
     t.index ["withdrawn_at"], name: "index_tasks_task_plans_on_withdrawn_at"
   end
 
@@ -919,6 +950,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "time_zone_id", null: false
+    t.datetime "closes_at_ntz", null: false
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz"
     t.index ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz"
     t.index ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
@@ -944,7 +976,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.text "description"
     t.datetime "opens_at_ntz"
     t.datetime "due_at_ntz"
-    t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
     t.integer "steps_count", default: 0, null: false
     t.integer "completed_steps_count", default: 0, null: false
@@ -959,13 +990,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "spy", default: "{}", null: false
-    t.integer "correct_on_time_exercise_steps_count", default: 0, null: false
-    t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
-    t.integer "completed_on_time_steps_count", default: 0, null: false
-    t.datetime "accepted_late_at"
-    t.integer "correct_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer "completed_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer "completed_accepted_late_steps_count", default: 0, null: false
     t.integer "time_zone_id"
     t.datetime "hidden_at"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
@@ -977,14 +1001,17 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
+    t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "student_history_at"
+    t.bigint "tasks_extension_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"
     t.index ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at"
     t.index ["opens_at_ntz"], name: "index_tasks_tasks_on_opens_at_ntz"
     t.index ["task_type", "created_at"], name: "index_tasks_tasks_on_task_type_and_created_at"
+    t.index ["tasks_extension_id"], name: "index_tasks_tasks_on_tasks_extension_id"
     t.index ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id"
     t.index ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id"
     t.index ["uuid"], name: "index_tasks_tasks_on_uuid", unique: true
@@ -1109,6 +1136,9 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
   add_foreign_key "tasks_concept_coach_tasks", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_extensions", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_extensions", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_period_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
@@ -1119,6 +1149,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
   add_foreign_key "tasks_task_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_task_plans", "tasks_grading_templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "tasks_task_plans", "tasks_task_plans", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
@@ -1128,6 +1159,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasks", "tasks_extensions", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade

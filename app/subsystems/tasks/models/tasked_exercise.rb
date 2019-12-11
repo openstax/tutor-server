@@ -38,13 +38,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
     return if question_index.nil?
 
-    questions = exercise&.content_as_independent_questions
+    questions = exercise&.questions
     return if questions.nil?
 
     question = questions[question_index]
     return if question.nil?
 
-    question[:content]
+    question.content
   end
 
   def parser

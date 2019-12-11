@@ -15,6 +15,8 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
     worked_pages.each do |page|
       is_correct = !@worst_pages.include?(page)
       task = FactoryBot.create :tasks_task, ecosystem: ecosystem, tasked_to: role
+      task.grading_template.update_attribute :auto_grading_feedback_on, :answer
+
       OpenStax::Biglearn::Api::FakeClient::CLUE_MIN_NUM_RESPONSES.times do
         exercise = FactoryBot.create :content_exercise, page: page
         task_step = FactoryBot.create :tasks_task_step, task: task, page: page
@@ -45,6 +47,7 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
         spy_info: {}
       }
     )
+
     expect { result }
       .to  not_change { Tasks::Models::Task.count }
       .and not_change { Tasks::Models::Tasking.count }
