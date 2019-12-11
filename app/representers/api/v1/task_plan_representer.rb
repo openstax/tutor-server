@@ -1,5 +1,4 @@
 class Api::V1::TaskPlanRepresenter < Roar::Decorator
-
   include Roar::JSON
   include Representable::Coercion
 
@@ -7,6 +6,12 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false
+
+  property :tasks_grading_template_id,
+           as: :grading_template_id,
+           type: String,
+           readable: true,
+           writeable: true
 
   property :is_trouble,
            readable: true,
@@ -114,5 +119,4 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
              setter: RailsCollectionSetter,
              readable: true,
              writeable: true
-
 end
