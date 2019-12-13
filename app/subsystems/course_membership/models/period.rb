@@ -1,8 +1,6 @@
 class CourseMembership::Models::Period < ApplicationRecord
   acts_as_paranoid column: :archived_at, without_default_scope: true
 
-  include DefaultTimeValidations
-
   auto_uuid
 
   belongs_to :course, subsystem: :course_profile, inverse_of: :periods
@@ -41,14 +39,6 @@ class CourseMembership::Models::Period < ApplicationRecord
     st = students.preload(:role)
     st = st.reject(&:dropped?) unless include_dropped_students
     st.map(&:role)
-  end
-
-  def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.default_open_time
-  end
-
-  def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.default_due_time
   end
 
   def enrollment_code_for_url

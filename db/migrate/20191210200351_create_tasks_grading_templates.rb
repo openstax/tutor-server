@@ -25,6 +25,9 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
 
     add_column :tasks_task_plans, :tasks_grading_template_id, :integer
 
+    add_column :tasks_task_caches, :auto_grading_feedback_on, :integer
+    add_column :tasks_task_caches, :manual_grading_feedback_on, :integer
+
     CourseProfile::Models::Course.reset_column_information
     Tasks::Models::TaskPlan.reset_column_information
     CourseProfile::Models::Course.find_each do |course|
@@ -40,7 +43,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         completion_weight: homework_completion_weight,
         correctness_weight: homework_correctness_weight,
         auto_grading_feedback_on: :answer,
-        manual_grading_feedback_on: :manual_publish,
+        manual_grading_feedback_on: :publish,
         late_work_immediate_penalty: 0,
         late_work_per_day_penalty: 0.1,
         default_open_time: course.default_open_time,
@@ -61,7 +64,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         completion_weight: reading_completion_weight,
         correctness_weight: reading_correctness_weight,
         auto_grading_feedback_on: :answer,
-        manual_grading_feedback_on: :manual_publish,
+        manual_grading_feedback_on: :publish,
         late_work_immediate_penalty: 0,
         late_work_per_day_penalty: 0.1,
         default_open_time: course.default_open_time,
@@ -84,6 +87,14 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       ).update_all(tasks_grading_template_id: reading_template.id)
     end
 
+    Tasks::Models::TaskCache.reset_column_information
+    Tasks::Models::TaskCache.where.not(feedback_at: nil).update_all(auto_grading_feedback_on: :due)
+    Tasks::Models::TaskCache.where(feedback_at: nil).update_all(auto_grading_feedback_on: :answer)
+    Tasks::Models::TaskCache.update_all(manual_grading_feedback_on: :grade)
+
+    change_column_null :tasks_task_caches, :auto_grading_feedback_on, false
+    change_column_null :tasks_task_caches, :manual_grading_feedback_on, false
+
     add_index :tasks_grading_templates, [ :course_profile_course_id, :task_plan_type ],
               name: 'index_tasks_grading_templates_on_course_and_task_plan_type'
 
@@ -93,6 +104,10 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
                     on_update: :cascade, on_delete: :restrict
 
     remove_column :tasks_task_plans, :is_feedback_immediate, :boolean, default: true, null: false
+
+    remove_column :tasks_tasks, :feedback_at_ntz, :datetime
+
+    remove_column :tasks_task_caches, :feedback_at, :datetime
 
     remove_column :course_profile_courses, :homework_progress_weight, :float,
                   precision: 3, scale: 2, default: 0, null: false

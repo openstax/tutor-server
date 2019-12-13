@@ -156,11 +156,10 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'returns the proper numbers (feedback_at does not matter)' do
+    it 'returns the proper numbers (auto_grading_feedback_on does not matter)' do
       tasks = Tasks::Models::Task.where(title: 'Homework task plan')
       tasks.each do |task|
-        task.feedback_at = task.time_zone.to_tz.now + 1.2.days
-        task.save!
+        task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
       end
 
       expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
@@ -492,13 +491,12 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'does not include correctness and score for tasks with feedback_at in the future' do
+    it 'does not include correctness and score for tasks with no feedback available' do
       task = Tasks::Models::Task.joins(:taskings).find_by(
         taskings: { entity_role_id: @student_1.roles.first.id },
         title: 'Homework task plan'
       )
-      task.feedback_at = task.time_zone.to_tz.now + 1.2.days
-      task.save!
+      task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
 
       expect(report.data_headings.size).to eq expected_tasks
 

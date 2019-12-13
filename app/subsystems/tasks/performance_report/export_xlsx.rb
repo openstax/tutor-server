@@ -413,18 +413,12 @@ module Tasks
               [student[:student_identifier].to_s.gsub('=', ''), style: @normal_R]
             ]
             sum_formula = []
-            sum_formula << "#{@course.homework_score_weight}*#{
+            sum_formula << "#{@course.homework_weight}*#{
               Axlsx::cell_r(num_student_info_columns + 1, row_index - 1)
-            }" if @course.homework_score_weight > 0
-            sum_formula << "#{@course.homework_progress_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 2, row_index - 1)
-            }" if @course.homework_progress_weight > 0
-            sum_formula << "#{@course.reading_score_weight}*#{
+            }" if @course.homework_weight > 0
+            sum_formula << "#{@course.reading_weight}*#{
               Axlsx::cell_r(num_student_info_columns + 3, row_index - 1)
-            }" if @course.reading_score_weight > 0
-            sum_formula << "#{@course.reading_progress_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 4, row_index - 1)
-            }" if @course.reading_progress_weight > 0
+            }" if @course.reading_weight > 0
             student_columns += [
               [
                 "#{@eq}IFERROR(SUM(#{sum_formula.join(',')}),0)", style: @pct_L

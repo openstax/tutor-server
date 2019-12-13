@@ -90,8 +90,8 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !first_completed_at.nil?
   end
 
-  def feedback_available?
-    completed? && task.feedback_available?
+  def feedback_available?(current_time: Time.current)
+    completed? && task.auto_grading_feedback_available?(current_time: current_time)
   end
 
   def group_name

@@ -1,5 +1,4 @@
 class CourseProfile::ClaimPreviewCourse
-
   lev_routine express_output: :course
 
   protected
@@ -41,11 +40,10 @@ class CourseProfile::ClaimPreviewCourse
     tasks = Tasks::Models::Task
               .joins(taskings: :period )
               .where(taskings: { period: { course_profile_course_id: course.id } })
-    tasks.update_all( update[%w{opens_at_ntz due_at_ntz feedback_at_ntz last_worked_at}] )
+    tasks.update_all( update[%w{opens_at_ntz due_at_ntz last_worked_at}] )
 
     course.taskings.reset
 
     outputs.course = course
   end
-
 end

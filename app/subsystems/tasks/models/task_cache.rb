@@ -7,11 +7,13 @@ class Tasks::Models::TaskCache < ApplicationRecord
 
   enum task_type: Tasks::Models::Task.task_types.keys
 
-  validates :task_type, presence: true
+  enum auto_grading_feedback_on:   [ :answer, :due, :publish ], _prefix: true
+  enum manual_grading_feedback_on: [ :grade, :publish ], _prefix: true
+
+  validates :task_type, :auto_grading_feedback_on, :manual_grading_feedback_on, presence: true
   validates :ecosystem, uniqueness: { scope: :tasks_task_id }
 
-  validates :opens_at, :due_at, :feedback_at, :withdrawn_at,
-            timeliness: { type: :date }, allow_nil: true
+  validates :opens_at, :due_at, :withdrawn_at, timeliness: { type: :date }, allow_nil: true
   validates :is_cached_for_period, inclusion: { in: [ true, false ] }
 
   def practice?

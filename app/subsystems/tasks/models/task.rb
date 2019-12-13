@@ -30,7 +30,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   json_serialize :spy, Hash
 
-  belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz, optional: true
+  belongs_to_time_zone :opens_at, :due_at, suffix: :ntz, optional: true
 
   belongs_to :task_plan, inverse_of: :tasks, optional: true
 
@@ -66,14 +66,21 @@ class Tasks::Models::Task < ApplicationRecord
 
   # Concept Coach and Practice Widget tasks have no open or due dates
   # We already validate dates for teacher-created assignments in the TaskingPlan
-  validates :opens_at_ntz, :due_at_ntz, :feedback_at_ntz,
-            timeliness: { type: :date }, allow_nil: true
+  validates :opens_at_ntz, :due_at_ntz, timeliness: { type: :date }, allow_nil: true
 
   validate :due_at_on_or_after_opens_at
 
   before_validation :update_cached_attributes
   after_create :update_caches_now
   after_touch :update_caches_later
+
+  def auto_grading_feedback_on
+    task_plan.nil? ? 'answer' : task_plan.auto_grading_feedback_on
+  end
+
+  def manual_grading_feedback_on
+    task_plan.nil? ? 'grade' : task_plan.manual_grading_feedback_on
+  end
 
   def is_preview
     task_plan.present? && task_plan.is_preview
@@ -143,8 +150,32 @@ class Tasks::Models::Task < ApplicationRecord
     !due_at.nil? && current_time > due_at
   end
 
-  def feedback_available?(current_time: Time.current)
-    feedback_at.nil? || current_time >= feedback_at
+  def auto_grading_feedback_available?(current_time: Time.current, current_time_ntz: nil)
+    case auto_grading_feedback_on
+    when 'answer'
+      true
+    when 'due'
+      if current_time_ntz.nil?
+        !due_at.nil? && current_time >= due_at
+      else
+        !due_at_ntz.nil? && current_time_ntz >= due_at_ntz
+      end
+    when 'publish'
+      false
+    else
+      false
+    end
+  end
+
+  def manual_grading_feedback_available?
+    case manual_grading_feedback_on
+    when 'grade'
+      false
+    when 'publish'
+      false
+    else
+      false
+    end
   end
 
   def withdrawn?

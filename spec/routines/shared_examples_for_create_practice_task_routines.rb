@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
-
   let(:student)       { FactoryBot.create :course_membership_student }
   let(:course)        { student.course }
   let(:role)          { student.role }
@@ -51,8 +50,8 @@ RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
     expect(errors).to be_empty
     expect(practice_task).to be_persisted
     expect(practice_task.task_steps.size).to eq 5
-    practice_task.task_steps.each{ |task_step| expect(task_step.exercise?).to eq true }
-    expect(practice_task.feedback_available?).to be_truthy
+    practice_task.task_steps.each { |task_step| expect(task_step.exercise?).to eq true }
+    expect(practice_task.auto_grading_feedback_available?).to eq true
+    expect(practice_task.manual_grading_feedback_available?).to eq false
   end
-
 end
