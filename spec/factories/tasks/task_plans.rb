@@ -13,12 +13,11 @@ FactoryBot.define do
       target                    { nil }
     end
 
-    title                 { 'A task' }
-    settings              { {} }
-    type                  { 'reading' }
-    is_feedback_immediate { type != 'homework' }
-    first_published_at    { published_at }
-    last_published_at     { published_at }
+    title                       { 'A task' }
+    settings                    { {} }
+    type                        { 'reading' }
+    first_published_at          { published_at }
+    last_published_at           { published_at }
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }
@@ -27,6 +26,12 @@ FactoryBot.define do
 
       task_plan.owner ||= evaluator.target.try(:course) || build(:course_profile_course)
       task_plan.ecosystem ||= task_plan.owner.ecosystem || build(:content_ecosystem)
+      task_plan.grading_template ||= task_plan.owner.grading_templates.detect do |grading_template|
+        grading_template.task_plan_type.to_s == task_plan.type
+      end
+      task_plan.grading_template ||= build(
+        :tasks_grading_template, course: task_plan.owner, task_plan_type: task_plan.type.to_sym
+      ) if [ 'reading', 'homework' ].include? task_plan.type
 
       task_plan.tasking_plans += evaluator.num_tasking_plans.times.map do
         args = {

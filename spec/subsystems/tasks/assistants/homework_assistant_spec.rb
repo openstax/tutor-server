@@ -27,7 +27,6 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
         description: "Hello!",
-        is_feedback_immediate: true,
         settings: {
           exercise_ids: @teacher_selected_exercise_ids,
           exercises_count_dynamic: @tutor_selected_exercise_count
@@ -64,12 +63,13 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
     after(:all)  { DatabaseCleaner.clean }
 
-    it "sets description, task type, and feedback_at" do
+    it "sets description, task type, and feedback enums" do
       @tasks.each do |task|
         expect(task.description).to eq("Hello!")
         expect(task.homework?).to be_truthy
-        # feedback_at == nil because the task plan was set to immediate_feedback
-        expect(task.feedback_at).to be_nil
+        # feedback enums copied from the task_plan's grading template
+        expect(task.auto_grading_feedback_on).to eq @task_plan.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq @task_plan.manual_grading_feedback_on
       end
     end
 

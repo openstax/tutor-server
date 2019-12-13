@@ -32,13 +32,28 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
              schema_info: { description: "When the task is due (nil means never due)" }
 
-    property :feedback_at,
+    property :auto_grading_feedback_on,
+             type: String,
              writeable: false,
              readable: true,
-             getter: ->(*) { DateTimeUtilities.to_api_s(feedback_at) },
              schema_info: {
-               type: 'date',
-               description: "Feedback should be shown for the task after this time"
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for automatically graded questions.
+                 One of either "answer", "due" or "publish"
+               DESCRIPTION
+             }
+
+    property :manual_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for manually graded questions.
+                 One of either "grade" or "publish"
+               DESCRIPTION
              }
 
     property :withdrawn?,
@@ -54,11 +69,9 @@ module Api::V1
              type: Array,
              writeable: false,
              readable: true,
-             getter: ->(*) {
-               roles.map{ |r|
-                   { role_id: r.id, name: r.course_member.name }
-                 }
-             },
+             getter: ->(*) do
+               roles.map { |role| { role_id: role.id, name: role.course_member.name } }
+             end,
              schema_info: {
                required: true,
                description: "The students who were assigned this task"

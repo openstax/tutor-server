@@ -4,7 +4,6 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, vcr: VCR_OPTS do
-
   before(:all) do
     @user_1 = FactoryBot.create :user_profile
     @user_1_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: @user_1.id
@@ -485,52 +484,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(tasking_plan.due_at).to be_within(1).of(new_due_at)
       end
 
-      it 'updates the default open time' do
-        course_name = @course.name
-        api_patch :update, @user_1_token, params: { id: @course.id },
-                                          body: { default_open_time: '01:02' }.to_json
-
-        expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
-        expect(response.body_as_hash[:default_open_time]).to eq '01:02'
-        expect(@course.reload.name).to eq course_name
-        expect(@course.time_zone.name).to eq 'Central Time (US & Canada)'
-        expect(@course.default_open_time).to eq '01:02'
-      end
-
-      it 'freaks if the default open time is in a bad format' do
-        expect do
-          api_patch :update, @user_1_token,
-                    params: { id: @course.id },
-                    body: { default_open_time: '1pm' }.to_json
-        end.not_to change{ @course.reload.default_open_time }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'updates the default due time' do
-        course_name = @course.name
-        api_patch :update, @user_1_token, params: { id: @course.id },
-                                          body: { default_due_time: '02:02' }.to_json
-
-        expect(@course.reload.name).to eq course_name
-        expect(@course.time_zone.name).to eq 'Central Time (US & Canada)'
-        expect(@course.reload.default_due_time).to eq '02:02'
-        expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
-        expect(response.body_as_hash[:default_due_time]).to eq '02:02'
-      end
-
-      it 'freaks if the default due time is in a bad format' do
-        expect do
-          api_patch :update, @user_1_token,
-                    params: { id: @course.id },
-                    body: { default_due_time: '1pm' }.to_json
-        end.not_to change{ @course.reload.default_open_time }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
       it 'updates is_college' do
         expect(@course.is_college).to eq true
         api_patch :update, @user_1_token,
@@ -640,6 +593,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[0], is_correct: true]
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[1], is_correct: true]
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[2], is_correct: false]
+        @hw2_task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :answer
 
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[0], is_correct: false]
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[1], is_correct: false]
@@ -1076,5 +1030,4 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response.body_as_hash.size).to eq courses.size
     end
   end
-
 end

@@ -100,21 +100,14 @@ module Tasks
             tasks: reading_tasks, current_time_ntz: current_time_ntz
           )
 
-          homework_score_weight = course.homework_score_weight.to_f
-          homework_progress_weight = course.homework_progress_weight.to_f
-          reading_score_weight = course.reading_score_weight.to_f
-          reading_progress_weight = course.reading_progress_weight.to_f
+          homework_weight = course.homework_weight.to_f
+          reading_weight = course.reading_weight.to_f
 
-          course_average = if (homework_score_weight    > 0 && homework_score.nil?   ) ||
-                              (homework_progress_weight > 0 && homework_progress.nil?) ||
-                              (reading_score_weight     > 0 && reading_score.nil?    ) ||
-                              (reading_progress_weight  > 0 && reading_progress.nil? )
+          course_average = if (homework_weight > 0 && homework_score.nil?) ||
+                              (reading_weight  > 0 && reading_score.nil? )
             nil
           else
-            homework_score_weight    * (homework_score    || 0) +
-            homework_progress_weight * (homework_progress || 0) +
-            reading_score_weight     * (reading_score     || 0) +
-            reading_progress_weight  * (reading_progress  || 0)
+            homework_weight * (homework_score || 0) + reading_weight  * (reading_score  || 0)
           end
 
           OpenStruct.new(
@@ -255,7 +248,7 @@ module Tasks
       return false if task.actual_and_placeholder_exercise_count == 0
 
       included_in_progress_averages?(task: task, current_time_ntz: current_time_ntz) && (
-        is_teacher || task.feedback_at_ntz.nil? || task.feedback_at_ntz <= current_time_ntz
+        is_teacher || task.auto_grading_feedback_available?(current_time_ntz: current_time_ntz)
       )
     end
 
@@ -303,7 +296,9 @@ module Tasks
         due_at = DateTimeUtilities.apply_tz(tt.due_at_ntz, tz)
         late = tt.worked_on? && due_at.present? && tt.last_worked_at > due_at
         type = tt.task_type
-        show_score = is_teacher || tt.feedback_at_ntz.nil? || tt.feedback_at_ntz <= current_time_ntz
+        show_score = is_teacher || tt.auto_grading_feedback_available?(
+          current_time_ntz: current_time_ntz
+        )
         OpenStruct.new(
           {
             task: tt,

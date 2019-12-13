@@ -102,13 +102,13 @@ module Api::V1::Courses
                type: Integer,
                readable: true,
                writeable: false,
-               if: ->(*) { feedback_available? }
+               if: ->(*) { auto_grading_feedback_available? }
 
       property :correct_exercise_count,
                type: Integer,
                readable: true,
                writeable: false,
-               if: ->(*) { feedback_available? }
+               if: ->(*) { auto_grading_feedback_available? }
 
       property :steps_count,
                type: Integer,

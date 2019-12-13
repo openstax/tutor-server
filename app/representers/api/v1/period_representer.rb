@@ -45,18 +45,6 @@ module Api::V1
                required: true
              }
 
-    property :default_open_time,
-             type: String,
-             readable: true,
-             writeable: true,
-             schema_info: { required: false }
-
-    property :default_due_time,
-             type: String,
-             readable: true,
-             writeable: true,
-             schema_info: { required: false }
-
     property :archived?,
              as: :is_archived,
              readable: true,

@@ -6,8 +6,8 @@ FactoryBot.define do
     name                           { Faker::App.name }
     completion_weight              { (rand * 10).round/10.0 }
     correctness_weight             { 1 - completion_weight }
-    auto_grading_feedback_on       { [ :answer, :due, :auto_publish ].sample }
-    manual_grading_feedback_on     { [ :grade, :manual_publish ].sample }
+    auto_grading_feedback_on       { [ :answer, :due, :publish ].sample }
+    manual_grading_feedback_on     { [ :grade, :publish ].sample }
     late_work_immediate_penalty    { (rand * 10).round/10.0 }
     late_work_per_day_penalty      { (1 - late_work_immediate_penalty)*(rand * 10).round/10.0 }
     default_open_time              { '07:00:00' }

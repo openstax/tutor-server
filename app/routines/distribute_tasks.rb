@@ -71,15 +71,13 @@ class DistributeTasks
       task.description = task_plan.description
       task.opens_at_ntz = tasking_plan.opens_at_ntz
       task.due_at_ntz = tasking_plan.due_at_ntz
-      task.feedback_at_ntz = task_plan.is_feedback_immediate ? nil : tasking_plan.due_at_ntz
 
       updated_tasks << task if task.changed?
     end
 
     Tasks::Models::Task.import(
       updated_tasks, validate: false, on_duplicate_key_update: {
-        conflict_target: [ :id ],
-        columns: [ :title, :description, :opens_at_ntz, :due_at_ntz, :feedback_at_ntz ]
+        conflict_target: [ :id ], columns: [ :title, :description, :opens_at_ntz, :due_at_ntz ]
       }
     ) unless updated_tasks.empty?
 

@@ -1,5 +1,4 @@
 class SetupPerformanceReportData
-
   lev_routine
 
   protected
@@ -68,16 +67,19 @@ class SetupPerformanceReportData
 
     time_zone = course.time_zone.to_tz
 
-    reading_taskplan = Tasks::Models::TaskPlan.new(
+    reading_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Reading task plan',
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: ecosystem.id,
-      settings: { page_ids: page_ids.first(2) }
+      settings: { page_ids: page_ids.first(2).map(&:to_s) },
+      num_tasking_plans: 0
     )
 
-    reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    reading_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course,
       task_plan: reading_taskplan,
       opens_at: time_zone.now,
@@ -89,7 +91,8 @@ class SetupPerformanceReportData
 
     DistributeTasks[task_plan: reading_taskplan]
 
-    homework_taskplan = Tasks::Models::TaskPlan.new(
+    homework_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Homework task plan',
       owner: course,
       type: 'homework',
@@ -98,10 +101,12 @@ class SetupPerformanceReportData
       settings: {
         exercise_ids: exercise_ids.first(5),
         exercises_count_dynamic: 2
-      }
+      },
+      num_tasking_plans: 0
     )
 
-    homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    homework_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course, task_plan: homework_taskplan,
       opens_at: time_zone.now, due_at: time_zone.now.tomorrow,
       time_zone: course.time_zone

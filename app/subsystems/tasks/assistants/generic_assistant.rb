@@ -169,11 +169,11 @@ class Tasks::Assistants::GenericAssistant
       time_zone: individualized_tasking_plan.time_zone,
       opens_at: individualized_tasking_plan.opens_at,
       due_at: individualized_tasking_plan.due_at,
-      feedback_at: task_plan.is_feedback_immediate ? nil : individualized_tasking_plan.due_at,
       ecosystem: task_plan.ecosystem
     ].tap do |task|
-      task.taskings << Tasks::Models::Tasking.new(task: task, role: role,
-                                                  period: @periods_by_role_id[role.id])
+      task.taskings << Tasks::Models::Tasking.new(
+        task: task, role: role, period: @periods_by_role_id[role.id]
+      )
       AddSpyInfo[to: task, from: ecosystem]
     end
   end

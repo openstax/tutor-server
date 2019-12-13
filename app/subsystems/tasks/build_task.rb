@@ -4,6 +4,6 @@ class Tasks::BuildTask
   protected
 
   def exec(attributes)
-    outputs[:task] = Tasks::Models::Task.new(attributes)
+    outputs.task = Tasks::Models::Task.new(attributes)
   end
 end
