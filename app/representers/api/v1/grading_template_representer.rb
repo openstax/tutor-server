@@ -32,17 +32,31 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            writeable: true,
            schema_info: { required: true }
 
-  property :auto_grading_feedback_on,
-           type: String,
-           readable: true,
-           writeable: true,
-           schema_info: { required: true }
+    property :auto_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for automatically graded questions.
+                 One of either "answer", "due" or "publish"
+               DESCRIPTION
+             }
 
-  property :manual_grading_feedback_on,
-           type: String,
-           readable: true,
-           writeable: true,
-           schema_info: { required: true }
+    property :manual_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for manually graded questions.
+                 One of either "grade" or "publish"
+               DESCRIPTION
+             }
 
   property :late_work_immediate_penalty,
            type: Float,

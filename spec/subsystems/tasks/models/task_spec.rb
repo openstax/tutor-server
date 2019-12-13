@@ -204,16 +204,27 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     end
   end
 
-  it 'knows when feedback should be available' do
+  it 'knows when auto grading feedback should be available' do
     task.due_at = nil
-    task.feedback_at = nil
-    expect(task.feedback_available?).to eq true
+    task.task_plan.grading_template.auto_grading_feedback_on = :answer
+    expect(task.auto_grading_feedback_available?).to eq true
 
-    task.feedback_at = Time.current.yesterday
-    expect(task.feedback_available?).to eq true
+    task.task_plan.grading_template.auto_grading_feedback_on = :due
+    expect(task.auto_grading_feedback_available?).to eq false
 
-    task.feedback_at = Time.current.tomorrow
-    expect(task.feedback_available?).to eq false
+    task.due_at = task.time_zone.to_tz.now
+    expect(task.auto_grading_feedback_available?).to eq true
+
+    task.task_plan.grading_template.auto_grading_feedback_on = :publish
+    expect(task.auto_grading_feedback_available?).to eq false
+  end
+
+  it 'knows when manual grading feedback should be available' do
+    task.task_plan.grading_template.manual_grading_feedback_on = :grade
+    expect(task.manual_grading_feedback_available?).to eq false
+
+    task.task_plan.grading_template.manual_grading_feedback_on = :publish
+    expect(task.manual_grading_feedback_available?).to eq false
   end
 
   it 'counts exercise steps' do

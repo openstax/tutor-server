@@ -15,16 +15,6 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
     expect(represented['enrollment_code']).to eq('123456')
   end
 
-  it 'includes the default open time' do
-    period.to_model.default_open_time = '16:43'
-    expect(represented['default_open_time']).to eq('16:43')
-  end
-
-  it 'includes the default due time' do
-    period.to_model.default_due_time = '16:44'
-    expect(represented['default_due_time']).to eq('16:44')
-  end
-
   it 'includes is_archived: false if the period has not been archived' do
     expect(represented['is_archived']).to eq false
   end

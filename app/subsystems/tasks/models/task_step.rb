@@ -1,5 +1,4 @@
 class Tasks::Models::TaskStep < ApplicationRecord
-
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, polymorphic: true, dependent: :destroy, inverse_of: :task_step, touch: true
   belongs_to :page, subsystem: :content, inverse_of: :task_steps, optional: true
@@ -86,8 +85,8 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !first_completed_at.nil?
   end
 
-  def feedback_available?
-    completed? && task.feedback_available?
+  def feedback_available?(current_time: Time.current)
+    completed? && task.auto_grading_feedback_available?(current_time: current_time)
   end
 
   def group_name
@@ -103,5 +102,4 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
     spy.merge response_validation: tasked.response_validation
   end
-
 end

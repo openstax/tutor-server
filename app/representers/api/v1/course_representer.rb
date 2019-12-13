@@ -72,16 +72,6 @@ module Api::V1
              writeable: true,
              getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
 
-    property :default_open_time,
-             type: String,
-             readable: true,
-             writeable: true
-
-    property :default_due_time,
-             type: String,
-             readable: true,
-             writeable: true
-
     property :salesforce_book_name,
              type: String,
              readable: true,
@@ -217,25 +207,7 @@ module Api::V1
                 description: "Background job ID of last push of scores to LMS"
              }
 
-    property :homework_score_weight,
-             type: Float,
-             writeable: true,
-             readable: true,
-             schema_info: {
-                required: true,
-                description: "The weight given to homework scores when calculating the average"
-             }
-
-    property :homework_progress_weight,
-             type: Float,
-             writeable: true,
-             readable: true,
-             schema_info: {
-                required: true,
-                description: "The weight given to homework progress when calculating the average"
-             }
-
-    property :reading_score_weight,
+    property :reading_weight,
              type: Float,
              writeable: true,
              readable: true,
@@ -244,13 +216,13 @@ module Api::V1
                 description: "The weight given to reading scores when calculating the average"
              }
 
-    property :reading_progress_weight,
+    property :homework_weight,
              type: Float,
              writeable: true,
              readable: true,
              schema_info: {
                 required: true,
-                description: "The weight given to reading progress when calculating the average"
+                description: "The weight given to homework scores when calculating the average"
              }
 
     collection :periods,

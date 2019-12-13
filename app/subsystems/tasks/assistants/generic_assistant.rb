@@ -2,7 +2,6 @@
 # It's not intended for direct use
 # since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
-
   def initialize(task_plan:, individualized_tasking_plans:)
     @task_plan = task_plan
     @individualized_tasking_plans = individualized_tasking_plans
@@ -155,7 +154,7 @@ class Tasks::Assistants::GenericAssistant
     unless uncached_page_ids.empty?
       page_models = Content::Models::Page.where(id: uncached_page_ids)
       pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
-      pages.each{ |page| @page_cache[page.id] = page }
+      pages.each { |page| @page_cache[page.id] = page }
     end
 
     @page_cache.values_at(*page_ids)
@@ -172,11 +171,11 @@ class Tasks::Assistants::GenericAssistant
       time_zone: individualized_tasking_plan.time_zone,
       opens_at: individualized_tasking_plan.opens_at,
       due_at: individualized_tasking_plan.due_at,
-      feedback_at: task_plan.is_feedback_immediate ? nil : individualized_tasking_plan.due_at,
       ecosystem: task_plan.ecosystem
     ].tap do |task|
-      task.taskings << Tasks::Models::Tasking.new(task: task, role: role,
-                                                  period: @periods_by_role_id[role.id])
+      task.taskings << Tasks::Models::Tasking.new(
+        task: task, role: role, period: @periods_by_role_id[role.id]
+      )
       AddSpyInfo[to: task, from: ecosystem]
     end
   end
@@ -205,5 +204,4 @@ class Tasks::Assistants::GenericAssistant
 
     task
   end
-
 end

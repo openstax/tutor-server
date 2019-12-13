@@ -285,11 +285,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         context 'homework' do
-          before do
-            task_plan.type = 'homework'
-            task_plan.is_feedback_immediate = false
-            task_plan.save validate: false
-          end
+          before { task_plan.update_attribute :type, 'homework' }
 
           it 'can create or update normal and preview tasks' do
             result = described_class.call(task_plan: task_plan)
@@ -298,29 +294,18 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(task_plan.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
             task_plan.tasks.each do |task|
-              expect(task.title).to       eq new_title
-              expect(task.description).to eq new_description
-              expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
-              expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.feedback_at).to eq task.due_at
+              expect(task.title).to                    eq new_title
+              expect(task.description).to              eq new_description
+              expect(task.opens_at).to                 be_within(1e-6).of(new_opens_at)
+              expect(task.due_at).to                   be_within(1e-6).of(new_due_at)
+              expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
             end
-          end
-
-          it 'sets feedback_at to nil when feedback is immediate' do
-            task_plan.update_attribute :is_feedback_immediate, true
-
-            described_class.call(task_plan: task_plan)
-
-            task_plan.tasks.each { |task| expect(task.feedback_at).to be_nil }
           end
         end
 
         context 'reading' do
-          before do
-            task_plan.type = 'reading'
-            task_plan.is_feedback_immediate = true
-            task_plan.save validate: false
-          end
+          before { task_plan.update_attribute :type, 'reading' }
 
           it 'can create or update normal and preview tasks' do
             result = described_class.call(task_plan: task_plan)
@@ -333,7 +318,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task.description).to eq new_description
               expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.feedback_at).to be_nil
+              expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
             end
           end
         end

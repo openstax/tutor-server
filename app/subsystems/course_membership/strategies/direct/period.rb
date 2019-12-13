@@ -5,7 +5,6 @@ class CourseMembership::Strategies::Direct::Period < Entitee
   exposes :course, :name,
           :student_roles, :teacher_roles,
           :teacher_student_roles,
-          :default_open_time, :default_due_time,
           :enrollment_code, :enrollment_code_for_url,
           :archived_at, :archived?, :num_enrolled_students
 

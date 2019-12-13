@@ -44,14 +44,6 @@ class CourseMembership::Models::Period < ApplicationRecord
     st.map(&:role)
   end
 
-  def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.default_open_time
-  end
-
-  def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.default_due_time
-  end
-
   def enrollment_code_for_url
     enrollment_code.gsub(/ /,'-')
   end

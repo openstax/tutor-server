@@ -177,13 +177,11 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       expect(task_plan.reload.out_to_students?(current_time: future_time + 2.days)).to eq true
     end
 
-    it 'allows name, description and is_feedback_immediate and due_at' +
-       ' to be updated after a task is open' do
+    it 'allows name, description and due_at to be updated after a task is open' do
       student_task
 
       task_plan.title = 'New Title'
       task_plan.description = 'New description!'
-      task_plan.is_feedback_immediate = false
       task_plan.tasking_plans.first.due_at = Time.current + 1.week
       expect(task_plan).to be_valid
       expect(task_plan.save).to eq true

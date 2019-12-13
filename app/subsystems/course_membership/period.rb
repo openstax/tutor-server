@@ -32,18 +32,6 @@ module CourseMembership
       verify_and_return @strategy.enrollment_code, klass: String, error: StrategyError
     end
 
-    def default_open_time
-      verify_and_return @strategy.default_open_time, klass: String,
-                                                     error: StrategyError,
-                                                     allow_nil: true
-    end
-
-    def default_due_time
-      verify_and_return @strategy.default_due_time, klass: String,
-                                                    error: StrategyError,
-                                                    allow_nil: true
-    end
-
     def assignments_count
       @strategy.assignments_count
     end

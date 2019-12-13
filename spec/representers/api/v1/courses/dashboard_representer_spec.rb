@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
-
   let(:opens_at) { Time.current }
   let(:api_opens_at) { DateTimeUtilities.to_api_s(opens_at) }
 
@@ -70,7 +69,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           title: 'HW2',
           opens_at: opens_at,
           due_at: due_at,
-          feedback_available?: true,
+          auto_grading_feedback_available?: true,
+          manual_grading_feedback_available?: false,
           last_worked_at: last_worked_at,
           task_type: :homework,
           completed?: false,
@@ -98,7 +98,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         OpenStruct.new(
           id: 89,
           title: 'HW3',
-          feedback_available?: true,
+          auto_grading_feedback_available?: true,
+          manual_grading_feedback_available?: false,
           opens_at: opens_at,
           due_at: due_at,
           last_worked_at: last_worked_at,
@@ -248,5 +249,4 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
     expect(representation["tasks"][1]).to_not have_key "correct_exercise_count"
     expect(representation["tasks"][2]).to     have_key "correct_exercise_count"
   end
-
 end

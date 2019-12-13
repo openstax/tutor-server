@@ -818,7 +818,6 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.integer "task_type", null: false
     t.datetime "opens_at"
     t.datetime "due_at"
-    t.datetime "feedback_at"
     t.integer "student_ids", null: false, array: true
     t.string "student_names", null: false, array: true
     t.text "as_toc", default: "{}", null: false
@@ -828,9 +827,10 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.integer "teacher_student_ids", null: false, array: true
     t.bigint "tasks_task_plan_id"
     t.datetime "withdrawn_at"
+    t.integer "auto_grading_feedback_on", null: false
+    t.integer "manual_grading_feedback_on", null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
     t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"
-    t.index ["feedback_at"], name: "index_tasks_task_caches_on_feedback_at"
     t.index ["is_cached_for_period"], name: "index_tasks_task_caches_on_is_cached_for_period"
     t.index ["opens_at"], name: "index_tasks_task_caches_on_opens_at"
     t.index ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
@@ -985,7 +985,6 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.text "description"
     t.datetime "opens_at_ntz"
     t.datetime "due_at_ntz"
-    t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
     t.integer "steps_count", default: 0, null: false
     t.integer "completed_steps_count", default: 0, null: false

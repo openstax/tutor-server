@@ -53,8 +53,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   end
 
   it 'cannot have answer or free response updated after feedback is available' do
-    tasked_exercise.task_step.task.feedback_at = nil
-    tasked_exercise.task_step.task.save!
+    grading_template = tasked_exercise.task_step.task.task_plan.grading_template
+    grading_template.update_attribute :auto_grading_feedback_on, :answer
 
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
@@ -66,9 +66,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     expect(tasked_exercise.reload).to be_valid
 
-    tasked_exercise.task_step.task.feedback_at = Time.current.yesterday
-    tasked_exercise.task_step.task.save!
-
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
@@ -76,6 +73,16 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).not_to be_valid
+
+    grading_template.update_attribute :auto_grading_feedback_on, :due
+
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    expect(tasked_exercise).to be_valid
+
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.free_response = 'some new thing'
+    expect(tasked_exercise).to be_valid
   end
 
   it "invalidates task's cache when updated" do

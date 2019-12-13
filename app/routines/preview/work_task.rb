@@ -22,7 +22,7 @@ module Preview
         completed_at_value = completed_at.is_a?(Proc) ? completed_at.call(task_step, index) :
                                                         completed_at
         # Can't rework steps after feedback date
-        next if task_step.completed? && task.feedback_available?(current_time: completed_at)
+        next if task_step.feedback_available?(current_time: completed_at)
 
         if task_step.exercise?
           is_correct_value = is_correct.is_a?(Proc) ? is_correct.call(task_step, index) : is_correct

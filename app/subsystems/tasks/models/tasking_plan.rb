@@ -1,5 +1,4 @@
 class Tasks::Models::TaskingPlan < ApplicationRecord
-
   belongs_to_time_zone :opens_at, :due_at, suffix: :ntz
 
   belongs_to :task_plan, inverse_of: :tasking_plans, touch: true
@@ -64,5 +63,4 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
     errors.add(:target, 'cannot be assigned to')
     throw :abort
   end
-
 end
