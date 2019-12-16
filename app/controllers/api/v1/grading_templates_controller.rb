@@ -10,10 +10,11 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
   api :GET, '/courses/1/grading_templates', 'Returns all grading templates for the given course'
   description <<~DESCRIPTION
     Returns all grading templates for the given course
-    #{json_schema(Api::V1::GradingTemplateRepresenter, include: :readable)}
+    #{json_schema(Api::V1::GradingTemplateSearchRepresenter, include: :readable)}
   DESCRIPTION
   def index
-    standard_index course.grading_templates.preload(:course), Api::V1::GradingTemplatesRepresenter
+    standard_index course.grading_templates.preload(:course),
+                   Api::V1::GradingTemplateSearchRepresenter
   end
 
   api :POST, '/courses/1/grading_templates', 'Creates a new grading template for the given course'
