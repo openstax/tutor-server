@@ -8,7 +8,7 @@ RSpec.describe Api::V1::GradingTemplatesController, type: :request, api: true, v
   end
   let!(:grading_template)  { FactoryBot.create :tasks_grading_template, course: course }
 
-  context '#index' do
+  context 'GET /api/courses/1/grading_templates' do
     it "returns all of the given course's grading templates" do
       api_get api_course_grading_templates_path(course), teacher_token
 
@@ -17,6 +17,62 @@ RSpec.describe Api::V1::GradingTemplatesController, type: :request, api: true, v
       expect(response.body_as_hash[:items]).to eq [
         Api::V1::GradingTemplateRepresenter.new(grading_template).to_hash.deep_symbolize_keys
       ]
+    end
+  end
+
+  context 'POST /api/courses/1/grading_templates' do
+    it 'creates a new grading template for the course' do
+      expect do
+        api_post api_course_grading_templates_path(course), teacher_token,
+                 params: Api::V1::GradingTemplateRepresenter.new(
+                   grading_template
+                 ).to_hash.except('id', 'course_id').to_json
+      end.to change { Tasks::Models::GradingTemplate.count }.by(1)
+
+      expect(response).to have_http_status(:created)
+      expect(response.body_as_hash.except(:id, :created_at)).to eq(
+        Api::V1::GradingTemplateRepresenter.new(
+          grading_template
+        ).to_hash.deep_symbolize_keys.except(:id, :created_at)
+      )
+    end
+  end
+
+  context 'PATCH /api/grading_templates/1' do
+    let(:grading_template_2) { FactoryBot.create :tasks_grading_template }
+
+    it 'updates the grading template with the given id' do
+      expect do
+        api_patch api_grading_template_path(grading_template), teacher_token,
+                  params: Api::V1::GradingTemplateRepresenter.new(
+                    grading_template_2
+                  ).to_hash.except('id', 'course_id').to_json
+      end.to change { grading_template.reload.updated_at }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body_as_hash.slice(:id, :course_id, :created_at)).to eq(
+        Api::V1::GradingTemplateRepresenter.new(
+          grading_template
+        ).to_hash.deep_symbolize_keys.slice(:id, :course_id, :created_at)
+      )
+      expect(response.body_as_hash.except(:id, :course_id, :created_at)).to eq(
+        Api::V1::GradingTemplateRepresenter.new(
+          grading_template_2
+        ).to_hash.deep_symbolize_keys.except(:id, :course_id, :created_at)
+      )
+    end
+  end
+
+  context 'DELETE /api/grading_templates/1' do
+    it 'deletes the grading template with the given id' do
+      expect do
+        api_delete api_grading_template_path(grading_template), teacher_token
+      end.to change { Tasks::Models::GradingTemplate.count }.by(-1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body_as_hash).to eq Api::V1::GradingTemplateRepresenter.new(
+        grading_template
+      ).to_hash.deep_symbolize_keys
     end
   end
 end
