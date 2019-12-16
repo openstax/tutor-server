@@ -97,7 +97,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
 
     it 'has a course average based on the other averages' do
-      expect(cell(11,4,0)).to match /SUM\(1\.0\*E11\)/
+      expect(cell(11,4,0)).to match /SUM\(0\.5\*E11\,0\.5\*G11\)/
     end
   end
 
