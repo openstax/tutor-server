@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::GetPerformanceReport, type: :routine do
-
   before(:all) do
     VCR.use_cassette("Tasks_GetPerformanceReport/with_book", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
@@ -598,7 +597,6 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       data_types = student.data.map(&:type)
       expect(data_types).to eq expected_task_types
     end
-
   end
 
   context 'random role' do
