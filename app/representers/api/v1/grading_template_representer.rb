@@ -8,6 +8,13 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true }
 
+  property :course_profile_course_id,
+           as: :course_id,
+           type: String,
+           readable: true,
+           writeable: false,
+           schema_info: { required: true }
+
   property :task_plan_type,
            type: String,
            readable: true,

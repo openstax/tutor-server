@@ -15,6 +15,18 @@ RSpec.describe Api::V1::GradingTemplateRepresenter, type: :representer do
     end
   end
 
+  context 'course_id' do
+    it 'can be read' do
+      expect(representation['course_id']).to eq represented.course_profile_course_id.to_s
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect do
+        representer.from_hash('course_id' => '42')
+      end.not_to change { represented.course_profile_course_id }
+    end
+  end
+
   context 'task_plan_type' do
     it 'can be read' do
       expect(representation['task_plan_type']).to eq represented.task_plan_type
