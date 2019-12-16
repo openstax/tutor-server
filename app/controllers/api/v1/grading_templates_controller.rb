@@ -13,7 +13,7 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
     #{json_schema(Api::V1::GradingTemplateRepresenter, include: :readable)}
   DESCRIPTION
   def index
-    standard_index course.grading_templates.preload(:course), Api::V1::GradingTemplateRepresenter
+    standard_index course.grading_templates.preload(:course), Api::V1::GradingTemplatesRepresenter
   end
 
   api :POST, '/courses/1/grading_templates', 'Creates a new grading template for the given course'

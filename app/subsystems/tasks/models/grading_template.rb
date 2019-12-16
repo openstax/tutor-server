@@ -3,7 +3,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
   has_many :task_plans, inverse_of: :grading_template
 
-  enum task_plan_type: [ :reading, :homework ]
+  enum task_plan_type:             [ :reading, :homework ]
   enum auto_grading_feedback_on:   [ :answer, :due, :publish ], _prefix: true
   enum manual_grading_feedback_on: [ :grade, :publish ], _prefix: true
 

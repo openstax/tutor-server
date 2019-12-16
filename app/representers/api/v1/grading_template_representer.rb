@@ -34,7 +34,7 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
 
     property :auto_grading_feedback_on,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true,
              schema_info: {
                required: true,
@@ -47,7 +47,7 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
 
     property :manual_grading_feedback_on,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true,
              schema_info: {
                required: true,
@@ -98,6 +98,6 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false,
-           getter: ->(*) { DateTimeUtilities.to_api_s(starts_at) },
+           getter: ->(*) { DateTimeUtilities.to_api_s(created_at) },
            schema_info: { required: true }
 end
