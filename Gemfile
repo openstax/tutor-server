@@ -203,7 +203,7 @@ gem 'boxr'
 # OAuth gem for generating and validating lti requests
 gem 'oauth', '~> 0.5.1'
 
-gem 'scout_apm', '~> 3.0.x'
+gem 'scout_apm', '~> 3.0.0.pre28'
 
 # Respond to ELB healthchecks in /ping and /ping/
 gem 'openstax_healthcheck'
