@@ -14,7 +14,6 @@ class Api::V1::OfferingsController < Api::V1::ApiController
     #{json_schema(Api::V1::OfferingSearchRepresenter, include: :readable)}
   EOS
   def index
-    standard_index(Catalog::Models::Offering.all,
-                   Api::V1::OfferingSearchRepresenter)
+    standard_index Catalog::Models::Offering.all, Api::V1::OfferingSearchRepresenter
   end
 end
