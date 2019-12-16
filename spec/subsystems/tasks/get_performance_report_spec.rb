@@ -8,7 +8,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = FactoryBot.create :course_profile_course, :with_assistants
+    @course = FactoryBot.create(
+      :course_profile_course, :with_assistants, reading_weight: 0, homework_weight: 1
+    )
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
     @teacher = FactoryBot.create(:user_profile)

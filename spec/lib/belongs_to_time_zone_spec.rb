@@ -37,6 +37,7 @@ RSpec.describe BelongsToTimeZone, type: :lib do
     end
 
     it 'replaces input time_zones with the record\'s time_zone, ignoring offsets' do
+      task.due_at = nil
       expect(task.due_at).to be_nil
 
       task_tz = time_zone.to_tz
