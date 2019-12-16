@@ -15,7 +15,8 @@ class CreateCourse
   def exec(name:, is_preview:, is_test:, is_college: nil, is_concept_coach: nil, term: nil,
            year: nil, num_sections: 0, catalog_offering: nil, appearance_code: nil, starts_at: nil,
            ends_at: nil, school: nil, time_zone: nil, cloned_from: nil,
-           estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil)
+           estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil,
+           grading_templates: Tasks::Models::GradingTemplate.default)
 
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
@@ -69,7 +70,8 @@ class CreateCourse
       cloned_from: cloned_from,
       estimated_student_count: estimated_student_count,
       reading_weight: reading_weight,
-      homework_weight: homework_weight
+      homework_weight: homework_weight,
+      grading_templates: grading_templates
     )
 
     unless catalog_offering.blank?

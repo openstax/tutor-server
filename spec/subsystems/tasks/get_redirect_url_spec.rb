@@ -43,5 +43,4 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
       described_class.call(gid: task_plan_gid, user: user)
     ).to have_routine_error(:user_not_in_course_with_required_role)
   end
-
 end

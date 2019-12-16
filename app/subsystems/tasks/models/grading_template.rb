@@ -17,6 +17,41 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
   validate :default_times_have_good_values
 
+  DEFAULT_ATTRIBUTES = [
+    {
+      task_plan_type: :homework,
+      name: 'OpenStax Homework',
+      completion_weight: 0,
+      correctness_weight: 1,
+      auto_grading_feedback_on: :answer,
+      manual_grading_feedback_on: :publish,
+      late_work_immediate_penalty: 0,
+      late_work_per_day_penalty: 0.1,
+      default_open_time: '00:01',
+      default_due_time: '07:00',
+      default_due_date_offset_days: 7,
+      default_close_date_offset_days: 7
+    },
+    {
+      task_plan_type: :reading,
+      name: 'OpenStax Reading',
+      completion_weight: 0.9,
+      correctness_weight: 0.1,
+      auto_grading_feedback_on: :answer,
+      manual_grading_feedback_on: :grade,
+      late_work_immediate_penalty: 0,
+      late_work_per_day_penalty: 0.1,
+      default_open_time: '00:01',
+      default_due_time: '07:00',
+      default_due_date_offset_days: 7,
+      default_close_date_offset_days: 7
+    }
+  ]
+
+  def self.default
+    DEFAULT_ATTRIBUTES.map { |attributes| new(attributes) }
+  end
+
   def default_times_have_good_values
     [ :default_open_time, :default_due_time ].each do |time_field|
       value = self.send(time_field)
