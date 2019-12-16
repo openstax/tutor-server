@@ -93,4 +93,11 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            readable: true,
            writeable: true,
            schema_info: { required: true }
+
+  property :created_at,
+           type: String,
+           readable: true,
+           writeable: false,
+           getter: ->(*) { DateTimeUtilities.to_api_s(starts_at) },
+           schema_info: { required: true }
 end

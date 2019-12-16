@@ -1,5 +1,4 @@
 class CloneCourse
-
   lev_routine express_output: :course
 
   uses_routine CreateCourse,
@@ -15,7 +14,6 @@ class CloneCourse
   def exec(course:, teacher_user:, copy_question_library:,
            name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
            time_zone: nil, estimated_student_count: nil)
-
     attrs = {
       name: name || course.name,
       is_college: is_college.nil? ? course.is_college : is_college,
@@ -35,7 +33,8 @@ class CloneCourse
       estimated_student_count: estimated_student_count,
       is_preview: false,
       reading_weight: course.reading_weight,
-      homework_weight: course.homework_weight
+      homework_weight: course.homework_weight,
+      grading_templates: course.grading_templates.map(&:dup)
     }
 
     run(:create_course, attrs)
@@ -49,7 +48,5 @@ class CloneCourse
         )
       end
     end
-
   end
-
 end
