@@ -46,8 +46,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         manual_grading_feedback_on: :publish,
         late_work_immediate_penalty: 0,
         late_work_per_day_penalty: 0.1,
-        default_open_time: course.default_open_time,
-        default_due_time: course.default_due_time,
+        default_open_time: course.default_open_time || '00:01',
+        default_due_time: course.default_due_time || '07:00',
         default_due_date_offset_days: 7,
         default_close_date_offset_days: 7
       )
@@ -67,8 +67,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         manual_grading_feedback_on: :publish,
         late_work_immediate_penalty: 0,
         late_work_per_day_penalty: 0.1,
-        default_open_time: course.default_open_time,
-        default_due_time: course.default_due_time,
+        default_open_time: course.default_open_time || '00:01',
+        default_due_time: course.default_due_time || '07:00',
         default_due_date_offset_days: 7,
         default_close_date_offset_days: 7
       )
