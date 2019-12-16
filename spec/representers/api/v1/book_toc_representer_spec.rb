@@ -20,5 +20,4 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
     expect(represented['archive_url']).to eq 'archive'
     expect(represented['webview_url']).to eq 'webview'
   end
-
 end

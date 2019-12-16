@@ -20,5 +20,4 @@ RSpec.describe Api::V1::ChapterTocRepresenter, type: :representer do
   it 'renames book_location to chapter_section' do
     expect(represented['chapter_section']).to eq([4, 1])
   end
-
 end
