@@ -65,9 +65,13 @@ RSpec.describe Api::V1::GradingTemplatesController, type: :request, api: true, v
 
   context 'DELETE /api/grading_templates/1' do
     it 'deletes the grading template with the given id' do
+      FactoryBot.create(
+        :tasks_grading_template, course: course, task_plan_type: grading_template.task_plan_type
+      )
       expect do
         api_delete api_grading_template_path(grading_template), teacher_token
-      end.to change { Tasks::Models::GradingTemplate.count }.by(-1)
+      end.not_to change { Tasks::Models::GradingTemplate.count }
+      expect(grading_template.reload.deleted?).to eq true
 
       expect(response).to have_http_status(:ok)
       expect(response.body_as_hash).to eq Api::V1::GradingTemplateRepresenter.new(
