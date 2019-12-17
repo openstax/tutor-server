@@ -133,6 +133,18 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
   end
 
+  it 'validates that the grading template is for the correct task_plan type' do
+    expect(task_plan).to be_valid
+
+    grading_template = task_plan.grading_template
+
+    grading_template.task_plan_type = ([ 'reading', 'homework' ] - [ task_plan.type ]).sample
+    expect(task_plan).not_to be_valid
+
+    grading_template.task_plan_type = task_plan.type
+    expect(task_plan).to be_valid
+  end
+
   it 'requires all tasking_plan due_ats to be in the future when publishing' do
     task_plan.is_publish_requested = true
     expect(task_plan).to be_valid

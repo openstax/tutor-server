@@ -36,7 +36,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   validate :valid_settings,
            :same_ecosystem,
            :has_grading_template_if_gradable,
-           :same_course,
+           :grading_template_same_course,
+           :grading_template_type_matches,
            :changes_allowed,
            :not_past_due_when_publishing
 
@@ -145,10 +146,17 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     throw :abort
   end
 
-  def same_course
+  def grading_template_same_course
     return if grading_template.nil? || grading_template.course == owner
 
     errors.add :grading_template, 'must belong to the same course'
+    throw :abort
+  end
+
+  def grading_template_type_matches
+    return if grading_template.nil? || grading_template.task_plan_type == type
+
+    errors.add :grading_template, 'is for a different task_plan type'
     throw :abort
   end
 
