@@ -1,5 +1,4 @@
 class Tasks::GetAssistant
-
   # Gets the assistant for the provided course / task_plan combination,
   # lazily loading a course's default assistants if needed.
 
@@ -31,5 +30,4 @@ class Tasks::GetAssistant
   def create_default_course_assistants(course:)
     run(:create_course_assistants, course: course)
   end
-
 end
