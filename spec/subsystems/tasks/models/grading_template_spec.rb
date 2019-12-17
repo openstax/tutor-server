@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::GradingTemplate, type: :model do
-  subject { FactoryBot.create :tasks_grading_template }
+  subject(:grading_template) { FactoryBot.create :tasks_grading_template }
 
   it { is_expected.to belong_to(:course) }
 
@@ -27,63 +27,84 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     end
   end
 
-  let(:course) { subject.course }
+  let(:course) { grading_template.course }
 
   it 'validates that the weights add up to 1' do
     (0..10).map { |index| index/10.0 }.each do |completion_weight|
-      subject.completion_weight = completion_weight
-      subject.correctness_weight = (1 - completion_weight).round(1)
-      expect(subject).to be_valid
+      grading_template.completion_weight = completion_weight
+      grading_template.correctness_weight = (1 - completion_weight).round(1)
+      expect(grading_template).to be_valid
     end
 
-    subject.completion_weight = 0.42
-    subject.correctness_weight = 0.42
-    expect(subject).not_to be_valid
+    grading_template.completion_weight = 0.42
+    grading_template.correctness_weight = 0.42
+    expect(grading_template).not_to be_valid
 
-    subject.completion_weight = 1.42
-    subject.correctness_weight = -0.42
-    expect(subject).not_to be_valid
+    grading_template.completion_weight = 1.42
+    grading_template.correctness_weight = -0.42
+    expect(grading_template).not_to be_valid
 
-    subject.completion_weight = -0.42
-    subject.correctness_weight = 1.42
-    expect(subject).not_to be_valid
+    grading_template.completion_weight = -0.42
+    grading_template.correctness_weight = 1.42
+    expect(grading_template).not_to be_valid
   end
 
   it 'validates the format of default times' do
-    subject.default_open_time = '16:32'
-    expect(subject).to be_valid
+    grading_template.default_open_time = '16:32'
+    expect(grading_template).to be_valid
 
-    subject.default_due_time = '16:'
-    expect(subject).not_to be_valid
+    grading_template.default_due_time = '16:'
+    expect(grading_template).not_to be_valid
 
-    subject.default_open_time = '24:00'
-    expect(subject).not_to be_valid
+    grading_template.default_open_time = '24:00'
+    expect(grading_template).not_to be_valid
 
-    subject.default_due_time = '23:60'
-    expect(subject).not_to be_valid
+    grading_template.default_due_time = '23:60'
+    expect(grading_template).not_to be_valid
   end
 
   it 'cannot change its type if it has task_plans' do
-    task_plan = FactoryBot.create :tasks_task_plan, owner: course, grading_template: subject
-    old_task_plan_type = subject.task_plan_type
+    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+                                                    grading_template: grading_template
+    old_task_plan_type = grading_template.task_plan_type
     new_task_plan_type = ([ 'reading', 'homework' ] - [ old_task_plan_type ]).sample
-    subject.task_plan_type = new_task_plan_type
-    expect(subject.save).to eq false
-    expect(subject.reload.task_plan_type).to eq old_task_plan_type
+    grading_template.task_plan_type = new_task_plan_type
+    expect(grading_template.save).to eq false
+    expect(grading_template.reload.task_plan_type).to eq old_task_plan_type
 
     task_plan.destroy
-    subject.task_plan_type = new_task_plan_type
-    expect(subject.save).to eq true
-    expect(subject.reload.task_plan_type).to eq new_task_plan_type
+    grading_template.task_plan_type = new_task_plan_type
+    expect(grading_template.save).to eq true
+    expect(grading_template.reload.task_plan_type).to eq new_task_plan_type
   end
 
   it 'cannot be destroyed if it has task_plans' do
-    task_plan = FactoryBot.create :tasks_task_plan, owner: course, grading_template: subject
-    expect(subject.destroy).to eq false
-    expect(subject.reload.deleted?).to eq false
+    FactoryBot.create(
+      :tasks_grading_template, course: course, task_plan_type: grading_template.task_plan_type
+    )
+    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+                                                    grading_template: grading_template
+    expect(grading_template.destroy).to eq false
+    expect(grading_template.reload.deleted?).to eq false
 
     task_plan.destroy!
-    expect { subject.reload.destroy! }.not_to change { Tasks::Models::GradingTemplate.count }
-    expect(subject.reload.deleted?).to eq true
+    expect do
+      grading_template.reload.destroy!
+    end.not_to change { Tasks::Models::GradingTemplate.count }
+    expect(grading_template.reload.deleted?).to eq true
+  end
+
+  it 'cannot be destroyed if it is the last grading template for a task_plan_type' do
+    expect(grading_template.destroy).to eq false
+    expect(grading_template.reload.deleted?).to eq false
+
+    grading_template_2 = FactoryBot.create(
+      :tasks_grading_template, course: course, task_plan_type: grading_template.task_plan_type
+    )
+    expect { grading_template.destroy! }.not_to change { Tasks::Models::GradingTemplate.count }
+    expect(grading_template.reload.deleted?).to eq true
+
+    expect(grading_template_2.destroy).to eq false
+    expect(grading_template_2.reload.deleted?).to eq false
   end
 end
