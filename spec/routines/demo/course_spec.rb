@@ -37,6 +37,7 @@ RSpec.describe Demo::Course, type: :routine do
       expect(course.name).to eq 'AP US History Review'
       expect(course.offering).to eq catalog_offering
       expect(course.ecosystems).to eq [catalog_offering.ecosystem]
+      expect(course.grading_templates.size).to eq 2
       expect(course.is_college).to eq true
 
       teachers = course.teachers

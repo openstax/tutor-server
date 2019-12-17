@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
-
   before(:all) do
     VCR.use_cassette("Tasks_ExportPerformanceReport/with_book", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
@@ -20,16 +19,19 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
                                .assistant
 
     # Draft assignment, not included in the scores
-    draft_task_plan = Tasks::Models::TaskPlan.new(
+    draft_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Draft task plan',
       owner: @course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: @ecosystem.id,
-      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) }
+      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) },
+      num_tasking_plans: 0
     )
 
-    draft_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    draft_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: draft_task_plan,
       opens_at: @course.time_zone.to_tz.now,
@@ -74,5 +76,4 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
     @course.update_attribute(:name, 'Tro' + (['lo'] * 150).join)
     expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
   end
-
 end

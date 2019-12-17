@@ -116,7 +116,8 @@ class SetupPerformanceReportData
 
     DistributeTasks[task_plan: homework_taskplan]
 
-    homework2_taskplan = Tasks::Models::TaskPlan.new(
+    homework2_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Homework 2 task plan',
       owner: course,
       type: 'homework',
@@ -125,10 +126,12 @@ class SetupPerformanceReportData
       settings: {
         exercise_ids: exercise_ids.last(2),
         exercises_count_dynamic: 2
-      }
+      },
+      num_tasking_plans: 0
     )
 
-    homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    homework2_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course, task_plan: homework2_taskplan,
       opens_at: time_zone.now, due_at: time_zone.now + 2.weeks,
       time_zone: course.time_zone
@@ -138,7 +141,8 @@ class SetupPerformanceReportData
 
     DistributeTasks[task_plan: homework2_taskplan]
 
-    future_homework_taskplan = Tasks::Models::TaskPlan.new(
+    future_homework_taskplan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Future Homework task plan',
       owner: course,
       type: 'homework',
@@ -147,10 +151,12 @@ class SetupPerformanceReportData
       settings: {
         exercise_ids: exercise_ids.first(5),
         exercises_count_dynamic: 2
-      }
+      },
+      num_tasking_plans: 0
     )
 
-    future_homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    future_homework_taskplan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: course,
       task_plan: future_homework_taskplan,
       opens_at: time_zone.now + 1.5.days,
@@ -162,7 +168,7 @@ class SetupPerformanceReportData
 
     DistributeTasks[task_plan: future_homework_taskplan]
 
-    roles.map{ |role| get_student_tasks(role) }
+    roles.map { |role| get_student_tasks(role) }
   end
 
   def answer_tasks(student_tasks)

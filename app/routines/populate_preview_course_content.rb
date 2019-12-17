@@ -93,7 +93,8 @@ class PopulatePreviewCourseContent
         is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
-        settings: { 'page_ids' => page_ids }
+        settings: { 'page_ids' => page_ids },
+        grading_template: course.grading_templates.detect { |gt| gt.task_plan_type == 'reading' }
       )
       reading_tp.assistant = run(:get_assistant, course: course, task_plan: reading_tp)
                                .outputs.assistant
@@ -117,7 +118,8 @@ class PopulatePreviewCourseContent
         type: 'homework',
         settings: { 'page_ids' => page_ids,
                     'exercise_ids' => exercise_ids,
-                    'exercises_count_dynamic' => exercises_count_dynamic }
+                    'exercises_count_dynamic' => exercises_count_dynamic },
+        grading_template: course.grading_templates.detect { |gt| gt.task_plan_type == 'homework' }
       )
       homework_tp.assistant = run(:get_assistant, course: course, task_plan: homework_tp)
                                 .outputs.assistant
