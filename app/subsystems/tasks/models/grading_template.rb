@@ -1,4 +1,6 @@
 class Tasks::Models::GradingTemplate < ApplicationRecord
+  acts_as_paranoid without_default_scope: true
+
   belongs_to :course, subsystem: :course_profile, inverse_of: :grading_templates
 
   has_many :task_plans, inverse_of: :grading_template
@@ -25,7 +27,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
   validate :weights_add_up, :default_times_have_good_values
 
-  before_destroy :no_task_plans
+  before_update  :no_task_plans_when_changing_task_plan_type
+  before_destroy :no_task_plans_on_destroy
 
   DEFAULT_ATTRIBUTES = [
     {
@@ -93,8 +96,20 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     throw(:abort) if errors.any?
   end
 
-  def no_task_plans
-    return if task_plans.empty?
+  def has_task_plans?
+    !task_plans.reject(&:withdrawn?).empty?
+  end
+
+  def no_task_plans_when_changing_task_plan_type
+    return unless task_plan_type_changed? && has_task_plans?
+
+    errors.add :task_plan_type,
+               'cannot be changed because this template is assigned to one or more task_plans'
+    throw :abort
+  end
+
+  def no_task_plans_on_destroy
+    return unless has_task_plans?
 
     errors.add :base, 'cannot be deleted because it is assigned to one or more task_plans'
     throw :abort

@@ -776,10 +776,10 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.string "default_due_time", null: false
     t.integer "default_due_date_offset_days", null: false
     t.integer "default_close_date_offset_days", null: false
+    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_profile_course_id", "task_plan_type"], name: "index_tasks_grading_templates_on_course_and_task_plan_type"
-    t.index ["course_profile_course_id"], name: "index_tasks_grading_templates_on_course_profile_course_id"
+    t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
   end
 
   create_table "tasks_performance_report_exports", id: :serial, force: :cascade do |t|
