@@ -39,7 +39,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       homework_template = Tasks::Models::GradingTemplate.new(
         course: course,
         task_plan_type: :homework,
-        name: 'Default Homework Template',
+        name: 'OpenStax Homework',
         completion_weight: homework_completion_weight,
         correctness_weight: homework_correctness_weight,
         auto_grading_feedback_on: :answer,
@@ -60,11 +60,11 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       reading_template = Tasks::Models::GradingTemplate.new(
         course: course,
         task_plan_type: :reading,
-        name: 'Default Reading Template',
+        name: 'OpenStax Reading',
         completion_weight: reading_completion_weight,
         correctness_weight: reading_correctness_weight,
         auto_grading_feedback_on: :answer,
-        manual_grading_feedback_on: :publish,
+        manual_grading_feedback_on: :grade,
         late_work_immediate_penalty: 0,
         late_work_per_day_penalty: 0.1,
         default_open_time: course.default_open_time || '00:01',

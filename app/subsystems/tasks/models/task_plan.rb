@@ -33,7 +33,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
-  validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
+  validate :valid_settings,
+           :same_ecosystem,
+           :has_grading_template_if_gradable,
+           :same_course,
+           :changes_allowed,
+           :not_past_due_when_publishing
 
   scope :tasked_to_period_id, ->(period_id) do
     joins(:tasking_plans).where(
@@ -100,7 +105,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def set_ecosystem
-    self.ecosystem ||= cloned_from.try!(:ecosystem) ||
+    self.ecosystem ||= cloned_from&.ecosystem ||
                        get_ecosystem_from_settings ||
                        owner.try(:ecosystems).try(:first)
   end
@@ -127,6 +132,20 @@ class Tasks::Models::TaskPlan < ApplicationRecord
       if settings['page_ids'].present? && ecosystem != get_ecosystem_from_page_ids
 
     throw(:abort) if errors.any?
+  end
+
+  def has_grading_template_if_gradable
+    return unless [ 'reading', 'homework' ].include?(type) && grading_template.nil?
+
+    errors.add :grading_template, 'must be present for readings and homeworks'
+    throw :abort
+  end
+
+  def same_course
+    return if grading_template.nil? || grading_template.course == owner
+
+    errors.add :grading_template, 'must belong to the same course'
+    throw :abort
   end
 
   def changes_allowed

@@ -108,6 +108,27 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
+  it 'validates that it has a grading template, if it is a reading or homework' do
+    expect(task_plan).to be_valid
+
+    task_plan.grading_template = nil
+    expect(task_plan).not_to be_valid
+
+    task_plan.type = 'homework'
+    task_plan.settings['exercise_ids'] = ['1']
+    expect(task_plan).not_to be_valid
+
+    task_plan.type = 'external'
+    task_plan.settings = { 'external_url' => 'https://www.example.com' }
+    expect(task_plan).to be_valid
+  end
+
+  it 'validates that the grading template belongs to the same course' do
+    expect(task_plan).to be_valid
+    task_plan.grading_template = FactoryBot.create :tasks_grading_template
+    expect(task_plan).not_to be_valid
+  end
+
   it 'requires all tasking_plan due_ats to be in the future when publishing' do
     task_plan.is_publish_requested = true
     expect(task_plan).to be_valid

@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
-
   before(:all) do
     ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do
       FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
@@ -10,7 +9,8 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
 
     offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem.to_model
 
-    @course = FactoryBot.create :course_profile_course, offering: offering, is_preview: true
+    @course = FactoryBot.create :course_profile_course, :with_grading_templates,
+                                                        offering: offering, is_preview: true
   end
 
   let(:expected_opens_at) do
@@ -102,5 +102,4 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
       end
     end
   end
-
 end
