@@ -15,7 +15,9 @@ FactoryBot.define do
 
     title                       { 'A task' }
     settings                    { {} }
-    type                        { 'reading' }
+    type                        do
+      grading_template.nil? ? 'reading' : grading_template.task_plan_type
+    end
     first_published_at          { published_at }
     last_published_at           { published_at }
 
