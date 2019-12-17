@@ -13,7 +13,7 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
     #{json_schema(Api::V1::GradingTemplateSearchRepresenter, include: :readable)}
   DESCRIPTION
   def index
-    standard_index course.grading_templates.preload(:course),
+    standard_index course.grading_templates.without_deleted.preload(:course),
                    Api::V1::GradingTemplateSearchRepresenter
   end
 
@@ -35,8 +35,7 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
     #{json_schema(Api::V1::GradingTemplateRepresenter, include: :writeable)}
   DESCRIPTION
   def update
-    standard_update Tasks::Models::GradingTemplate.find(params[:id]),
-                    Api::V1::GradingTemplateRepresenter
+    standard_update grading_template, Api::V1::GradingTemplateRepresenter
   end
 
   api :DELETE, '/grading_templates/1', 'Deletes the given grading template'
@@ -45,13 +44,16 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
     #{json_schema(Api::V1::GradingTemplateRepresenter, include: :readable)}
   DESCRIPTION
   def destroy
-    standard_destroy Tasks::Models::GradingTemplate.find(params[:id]),
-                     Api::V1::GradingTemplateRepresenter
+    standard_destroy grading_template, Api::V1::GradingTemplateRepresenter
   end
 
   protected
 
   def course
     @course ||= CourseProfile::Models::Course.find params[:course_id]
+  end
+
+  def grading_template
+    @grading_template ||= Tasks::Models::GradingTemplate.without_deleted.find params[:id]
   end
 end

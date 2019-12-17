@@ -1,7 +1,7 @@
 class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
   def up
     create_table :tasks_grading_templates do |t|
-      t.references :course_profile_course,          null: false
+      t.references :course_profile_course,          null: false, index: false
       t.integer    :task_plan_type,                 null: false
       t.string     :name,                           null: false
       t.float      :completion_weight,              precision: 3, scale: 2, null: false
@@ -14,6 +14,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       t.string     :default_due_time,               null: false
       t.integer    :default_due_date_offset_days,   null: false
       t.integer    :default_close_date_offset_days, null: false
+      t.datetime   :deleted_at
 
       t.timestamps
     end
@@ -95,8 +96,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
     change_column_null :tasks_task_caches, :auto_grading_feedback_on, false
     change_column_null :tasks_task_caches, :manual_grading_feedback_on, false
 
-    add_index :tasks_grading_templates, [ :course_profile_course_id, :task_plan_type ],
-              name: 'index_tasks_grading_templates_on_course_and_task_plan_type'
+    add_index :tasks_grading_templates, [ :course_profile_course_id, :task_plan_type, :deleted_at ],
+              name: 'index_tasks_grading_templates_on_course_type_and_deleted'
 
     add_index :tasks_task_plans, :tasks_grading_template_id
 

@@ -63,11 +63,27 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     expect(subject).not_to be_valid
   end
 
+  it 'cannot change its type if it has task_plans' do
+    task_plan = FactoryBot.create :tasks_task_plan, owner: course, grading_template: subject
+    old_task_plan_type = subject.task_plan_type
+    new_task_plan_type = ([ 'reading', 'homework' ] - [ old_task_plan_type ]).sample
+    subject.task_plan_type = new_task_plan_type
+    expect(subject.save).to eq false
+    expect(subject.reload.task_plan_type).to eq old_task_plan_type
+
+    task_plan.destroy
+    subject.task_plan_type = new_task_plan_type
+    expect(subject.save).to eq true
+    expect(subject.reload.task_plan_type).to eq new_task_plan_type
+  end
+
   it 'cannot be destroyed if it has task_plans' do
     task_plan = FactoryBot.create :tasks_task_plan, owner: course, grading_template: subject
-    expect { subject.destroy }.not_to change { Tasks::Models::GradingTemplate.count }
+    expect(subject.destroy).to eq false
+    expect(subject.reload.deleted?).to eq false
 
-    task_plan.really_destroy!
-    expect { subject.destroy! }.to change { Tasks::Models::GradingTemplate.count }.by(-1)
+    task_plan.destroy!
+    expect { subject.reload.destroy! }.not_to change { Tasks::Models::GradingTemplate.count }
+    expect(subject.reload.deleted?).to eq true
   end
 end
