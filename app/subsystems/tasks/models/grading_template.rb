@@ -28,7 +28,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
   validate :weights_add_up, :default_times_have_good_values
 
   before_update  :no_task_plans_when_changing_task_plan_type
-  before_destroy :no_task_plans_on_destroy
+  before_destroy :no_task_plans_on_destroy, :not_last_template
 
   DEFAULT_ATTRIBUTES = [
     {
@@ -112,6 +112,15 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     return unless has_task_plans?
 
     errors.add :base, 'cannot be deleted because it is assigned to one or more task_plans'
+    throw :abort
+  end
+
+  def not_last_template
+    return if course.grading_templates.where(
+      task_plan_type: task_plan_type
+    ).without_deleted.where.not(id: id).exists?
+
+    errors.add :base, "cannot be deleted because it is the last #{task_plan_type} grading template"
     throw :abort
   end
 end
