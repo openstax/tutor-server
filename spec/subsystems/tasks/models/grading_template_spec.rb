@@ -5,6 +5,8 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
 
   it { is_expected.to belong_to(:course) }
 
+  it { is_expected.to have_many(:task_plans) }
+
   [
     :task_plan_type, :name, :completion_weight, :correctness_weight, :auto_grading_feedback_on,
     :manual_grading_feedback_on, :late_work_immediate_penalty, :late_work_per_day_penalty,
@@ -12,7 +14,12 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     :default_close_date_offset_days
   ].each { |field| it { is_expected.to validate_presence_of(field) } }
 
-  [ :completion_weight, :correctness_weight ].each do |field|
+  [
+    :completion_weight,
+    :correctness_weight,
+    :late_work_immediate_penalty,
+    :late_work_per_day_penalty
+  ].each do |field|
     it do
       is_expected.to(
         validate_numericality_of(field).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(1)
@@ -20,7 +27,29 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     end
   end
 
-  it 'validates format of default times' do
+  let(:course) { subject.course }
+
+  it 'validates that the weights add up to 1' do
+    (0..10).map { |index| index/10.0 }.each do |completion_weight|
+      subject.completion_weight = completion_weight
+      subject.correctness_weight = (1 - completion_weight).round(1)
+      expect(subject).to be_valid
+    end
+
+    subject.completion_weight = 0.42
+    subject.correctness_weight = 0.42
+    expect(subject).not_to be_valid
+
+    subject.completion_weight = 1.42
+    subject.correctness_weight = -0.42
+    expect(subject).not_to be_valid
+
+    subject.completion_weight = -0.42
+    subject.correctness_weight = 1.42
+    expect(subject).not_to be_valid
+  end
+
+  it 'validates the format of default times' do
     subject.default_open_time = '16:32'
     expect(subject).to be_valid
 
@@ -32,5 +61,13 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
 
     subject.default_due_time = '23:60'
     expect(subject).not_to be_valid
+  end
+
+  it 'cannot be destroyed if it has task_plans' do
+    task_plan = FactoryBot.create :tasks_task_plan, owner: course, grading_template: subject
+    expect { subject.destroy }.not_to change { Tasks::Models::GradingTemplate.count }
+
+    task_plan.really_destroy!
+    expect { subject.destroy! }.to change { Tasks::Models::GradingTemplate.count }.by(-1)
   end
 end

@@ -9,7 +9,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       ]
     end
     @course = FactoryBot.create(
-      :course_profile_course, :with_assistants, reading_weight: 0, homework_weight: 1
+      :course_profile_course, :with_assistants, :with_grading_templates,
+                              reading_weight: 0, homework_weight: 1
     )
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
@@ -34,16 +35,19 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
                                 .find_by(tasks_task_plan_type: 'external')
                                 .assistant
 
-    external_task_plan = Tasks::Models::TaskPlan.new(
+    external_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'External assignment',
       owner: @course,
       type: 'external',
       assistant: external_assistant,
       content_ecosystem_id: @ecosystem.id,
-      settings: { external_url: 'https://www.example.com' }
+      settings: { external_url: 'https://www.example.com' },
+      num_tasking_plans: 0
     )
 
-    external_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    external_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: external_task_plan,
       opens_at: @course.time_zone.to_tz.now - 4.weeks,
@@ -60,15 +64,18 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
                              .find_by(tasks_task_plan_type: 'event')
                              .assistant
 
-    event_task_plan = Tasks::Models::TaskPlan.new(
+    event_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Event',
       owner: @course,
       type: 'event',
       assistant: event_assistant,
-      content_ecosystem_id: @ecosystem.id
+      content_ecosystem_id: @ecosystem.id,
+      num_tasking_plans: 0
     )
 
-    event_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    event_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: event_task_plan,
       opens_at: @course.time_zone.to_tz.now - 1.week,
@@ -85,16 +92,19 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
                                .find_by(tasks_task_plan_type: 'reading')
                                .assistant
 
-    draft_task_plan = Tasks::Models::TaskPlan.new(
+    draft_task_plan = FactoryBot.build(
+      :tasks_task_plan,
       title: 'Draft task plan',
       owner: @course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: @ecosystem.id,
-      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) }
+      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) },
+      num_tasking_plans: 0
     )
 
-    draft_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+    draft_task_plan.tasking_plans << FactoryBot.build(
+      :tasks_tasking_plan,
       target: @course,
       task_plan: draft_task_plan,
       opens_at: @course.time_zone.to_tz.now,

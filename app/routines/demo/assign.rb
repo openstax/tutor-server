@@ -60,23 +60,23 @@ class Demo::Assign < Demo::Base
     ) unless missing_task_plan_types.empty?
 
     outputs.task_plans = task_plans.map do |task_plan|
-      log do
-        "Creating #{task_plan[:type]} #{task_plan[:title]
-        } for course #{course_model.name} (id: #{course_model.id})"
-      end
+      type = task_plan[:type]
+      title = task_plan[:title]
+      log { "Creating #{type} #{title} for course #{course_model.name} (id: #{course_model.id})" }
 
       book_indices = convert_book_indices task_plan[:book_indices]
       pages = book_indices.map { |book_indices| pages_by_book_indices[book_indices] }
       page_ids = pages.map(&:id).map(&:to_s)
 
       attrs = {
-        title: task_plan[:title],
-        type: task_plan[:type],
+        title: title,
+        type: type,
         owner: course_model,
         content_ecosystem_id: ecosystem.id,
-        assistant: assistants_by_task_plan_type[task_plan[:type]],
+        assistant: assistants_by_task_plan_type[type],
         settings: {},
-        is_preview: false
+        is_preview: false,
+        grading_template: course_model.grading_templates.detect { |gt| gt.task_plan_type == type }
       }
 
       # Type-specific task_plan settings

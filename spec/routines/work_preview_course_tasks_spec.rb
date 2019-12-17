@@ -9,7 +9,8 @@ RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :slow do
 
     offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem
 
-    @course = FactoryBot.create :course_profile_course, offering: offering, is_preview: true
+    @course = FactoryBot.create :course_profile_course, :with_grading_templates,
+                                                        offering: offering, is_preview: true
   end
 
   before do

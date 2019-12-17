@@ -2,38 +2,38 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Demo::Assign, type: :routine do
-  let(:config_base_dir)   { File.join Rails.root, 'spec', 'fixtures', 'demo' }
-  let(:user_config)       do
+  let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
+  let(:user_config)     do
     {
       users: Api::V1::Demo::Users::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'users', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }
   end
-  let(:import_config)     do
+  let(:import_config)   do
     {
       import: Api::V1::Demo::Import::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }
   end
-  let(:course_config)     do
+  let(:course_config)   do
     {
       course: Api::V1::Demo::Course::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'course', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }
   end
-  let(:assign_config)     do
+  let(:assign_config)   do
     {
       assign: Api::V1::Demo::Assign::Representer.new(Demo::Mash.new).from_hash(
         YAML.load_file File.join(config_base_dir, 'assign', 'review', 'apush.yml')
       ).deep_symbolize_keys
     }
   end
-  let(:result)            { described_class.call assign_config }
+  let(:result)          { described_class.call assign_config }
 
-  let!(:course)           do
+  let!(:course)         do
     Demo::Users.call user_config
     VCR.use_cassette('Demo_Import/imports_the_demo_book', VCR_OPTS) do
       Demo::Import.call import_config
@@ -64,7 +64,7 @@ RSpec.describe Demo::Assign, type: :routine do
       expect(task_plan.owner).to eq course
       expect(task_plan.ecosystem).to eq course.ecosystems.first
       expect(task_plan.assistant).not_to be_blank
-
+      expect(task_plan.grading_template).to be_in course.grading_templates
       settings = task_plan.settings
       case task_plan.type
       when 'reading'

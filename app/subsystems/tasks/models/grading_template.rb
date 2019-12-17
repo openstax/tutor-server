@@ -7,15 +7,25 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
   enum auto_grading_feedback_on:   [ :answer, :due, :publish ], _prefix: true
   enum manual_grading_feedback_on: [ :grade, :publish ], _prefix: true
 
-  validates :task_plan_type, :name, :auto_grading_feedback_on, :manual_grading_feedback_on,
-            :late_work_immediate_penalty, :late_work_per_day_penalty, :default_open_time,
-            :default_due_time, :default_due_date_offset_days, :default_close_date_offset_days,
+  validates :task_plan_type,
+            :name,
+            :auto_grading_feedback_on,
+            :manual_grading_feedback_on,
+            :default_open_time,
+            :default_due_time,
+            :default_due_date_offset_days,
+            :default_close_date_offset_days,
             presence: true
 
-  validates :completion_weight, :correctness_weight,
+  validates :completion_weight,
+            :correctness_weight,
+            :late_work_immediate_penalty,
+            :late_work_per_day_penalty,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
 
-  validate :default_times_have_good_values
+  validate :weights_add_up, :default_times_have_good_values
+
+  before_destroy :no_task_plans
 
   DEFAULT_ATTRIBUTES = [
     {
@@ -52,6 +62,16 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     DEFAULT_ATTRIBUTES.map { |attributes| new(attributes) }
   end
 
+  protected
+
+  def weights_add_up
+    return if completion_weight.nil? || correctness_weight.nil? ||
+              [ completion_weight, correctness_weight ].sum == 1
+
+    errors.add :base, 'weights must add up to exactly 1'
+    throw :abort
+  end
+
   def default_times_have_good_values
     [ :default_open_time, :default_due_time ].each do |time_field|
       value = self.send(time_field)
@@ -71,5 +91,12 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     end
 
     throw(:abort) if errors.any?
+  end
+
+  def no_task_plans
+    return if task_plans.empty?
+
+    errors.add :base, 'cannot be deleted because it is assigned to one or more task_plans'
+    throw :abort
   end
 end
