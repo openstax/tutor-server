@@ -277,7 +277,7 @@ module Tasks
 
       return nil if applicable_tasks.empty?
 
-      average(array: applicable_tasks, value_getter: ->(task) { task.progress })
+      average(array: applicable_tasks, value_getter: ->(task) { task.completion })
     end
 
     def average(array:, value_getter: nil)
@@ -334,7 +334,7 @@ module Tasks
               correct_accepted_late_exercise_count:   correct_accepted_late_exercise_count,
               recovered_exercise_count:               tt.recovered_exercise_steps_count,
               score:                                  score,
-              progress:                               tt.progress
+              progress:                               tt.completion
             )
           end
         )

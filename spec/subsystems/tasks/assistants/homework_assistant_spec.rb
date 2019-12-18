@@ -70,12 +70,13 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
     after(:all)  { DatabaseCleaner.clean }
 
     it "sets description, task type, and feedback enums" do
+      grading_template = @task_plan.grading_template
       @tasks.each do |task|
         expect(task.description).to eq("Hello!")
         expect(task.homework?).to be_truthy
         # feedback enums copied from the task_plan's grading template
-        expect(task.auto_grading_feedback_on).to eq @task_plan.auto_grading_feedback_on
-        expect(task.manual_grading_feedback_on).to eq @task_plan.manual_grading_feedback_on
+        expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
       end
     end
 

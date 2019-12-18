@@ -293,13 +293,14 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
+            gt = task_plan.grading_template
             task_plan.tasks.each do |task|
               expect(task.title).to                    eq new_title
               expect(task.description).to              eq new_description
               expect(task.opens_at).to                 be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to                   be_within(1e-6).of(new_due_at)
-              expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
-              expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
+              expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
           end
         end
@@ -313,13 +314,14 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(result.errors).to be_empty
             expect(task_plan.tasks.size).to eq 3
             expect(task_plan).to be_out_to_students
+            gt = task_plan.grading_template
             task_plan.tasks.each do |task|
               expect(task.title).to       eq new_title
               expect(task.description).to eq new_description
               expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
-              expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
+              expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
           end
         end

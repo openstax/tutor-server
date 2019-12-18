@@ -54,14 +54,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   scope :preload_tasks, -> { preload(tasks: :time_zone) }
 
-  def auto_grading_feedback_on
-    grading_template.nil? ? 'answer' : grading_template.auto_grading_feedback_on
-  end
-
-  def manual_grading_feedback_on
-    grading_template.nil? ? 'grade' : grading_template.manual_grading_feedback_on
-  end
-
   def withdrawn?
     deleted?
   end
